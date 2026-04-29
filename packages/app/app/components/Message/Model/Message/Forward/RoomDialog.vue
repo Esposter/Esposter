@@ -5,7 +5,7 @@ import { useAlertStore } from "@/store/alert";
 import { useDataStore } from "@/store/message/data";
 import { useForwardStore } from "@/store/message/input/forward";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { RoutePath, takeOne } from "@esposter/shared";
+import { normalizeString, RoutePath, takeOne } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
@@ -30,11 +30,11 @@ const {
   searchQuery,
 } = useCursorSearcher(
   (searchQuery, cursor, opts) => {
-    const trimmedSearchQuery = searchQuery.trim();
+    const normalizedSearchQuery = normalizeString(searchQuery);
     return $trpc.room.readRooms.query(
       {
         cursor,
-        filter: trimmedSearchQuery ? { name: trimmedSearchQuery } : undefined,
+        filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined,
       },
       opts,
     );

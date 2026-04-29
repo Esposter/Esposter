@@ -99,8 +99,8 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
       if (value) parts.push(`${name}${ID_SEPARATOR}${value}`);
     }
 
-    const trimmedTrailingMessage = normalizeString(trailingMessage.value);
-    if (trimmedTrailingMessage) parts.push(trimmedTrailingMessage);
+    const normalizedTrailingMessage = normalizeString(trailingMessage.value);
+    if (normalizedTrailingMessage) parts.push(normalizedTrailingMessage);
     return parts.join(" ");
   };
 

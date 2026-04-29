@@ -13,7 +13,7 @@ export const useImportFile = () => {
         await showOpenFilePicker({
           types: [
             {
-              accept: { [mimeType]: accept.split(",").map(normalizeString) },
+              accept: { [mimeType]: accept.split(",").map((value) => normalizeString(value)) },
               description: (accept.split(",")[0] ?? "").replace(/^\./, "").toUpperCase(),
             },
           ],

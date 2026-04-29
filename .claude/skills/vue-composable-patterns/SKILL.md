@@ -489,7 +489,7 @@ Follow the `useReadUserToRooms` pattern for batch ancillary reads — a composab
 
 When an `onClick` (or any event handler) calls an `async` function, **always wrap with `getSynchronizedFunction`** from `#shared/util/getSynchronizedFunction`. Never use `void fn()` or a bare `() => { fn() }`.
 
-`getSynchronizedFunction` debounces concurrent calls and handles floating-promise lint errors in a single pattern.
+`getSynchronizedFunction` prevents concurrent calls (re-entrancy guard) and handles floating-promise lint errors in a single pattern.
 
 ```typescript
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";

@@ -251,20 +251,21 @@ export const roomRouter = router({
 
       roomEventEmitter.emit("leaveRoom", { ...deletedMember, sessionId: ctx.getSessionPayload.session.id });
 
-      if (kickedMember) {
-        const messageClient = await useTableClient(AzureTable.Messages);
-        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-          message: `${kickedMember.name} left the room.`,
-          roomId,
-          type: MessageType.System,
-          userId: ctx.getSessionPayload.user.id,
-        });
-        messageEventEmitter.emit("createMessage", [
-          [systemMessage],
-          { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-        ]);
-      }
+      if (kickedMember)
+        try {
+          const messageClient = await useTableClient(AzureTable.Messages);
+          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+            message: `${kickedMember.name} left the room.`,
+            roomId,
+            type: MessageType.System,
+            userId: ctx.getSessionPayload.user.id,
+          });
+          messageEventEmitter.emit("createMessage", [
+            [systemMessage],
+            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
+          ]);
+        } catch {}
     }),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
@@ -338,18 +339,20 @@ export const roomRouter = router({
       const { roomId, roomInMessage, user } = userToRoomWithRelations;
       roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
 
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-      const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-        message: `${user.name} joined the room.`,
-        roomId,
-        type: MessageType.System,
-        userId: user.id,
-      });
-      messageEventEmitter.emit("createMessage", [
-        [systemMessage],
-        { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-      ]);
+      try {
+        const messageClient = await useTableClient(AzureTable.Messages);
+        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+          message: `${user.name} joined the room.`,
+          roomId,
+          type: MessageType.System,
+          userId: user.id,
+        });
+        messageEventEmitter.emit("createMessage", [
+          [systemMessage],
+          { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
+        ]);
+      } catch {}
 
       return roomInMessage;
     }),
@@ -387,20 +390,21 @@ export const roomRouter = router({
         columns: { name: true },
         where: { id: { eq: userId } },
       });
-      if (leavingMember) {
-        const messageClient = await useTableClient(AzureTable.Messages);
-        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-          message: `${leavingMember.name} left the room.`,
-          roomId: userToRoom.roomId,
-          type: MessageType.System,
-          userId,
-        });
-        messageEventEmitter.emit("createMessage", [
-          [systemMessage],
-          { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-        ]);
-      }
+      if (leavingMember)
+        try {
+          const messageClient = await useTableClient(AzureTable.Messages);
+          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+            message: `${leavingMember.name} left the room.`,
+            roomId: userToRoom.roomId,
+            type: MessageType.System,
+            userId,
+          });
+          messageEventEmitter.emit("createMessage", [
+            [systemMessage],
+            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
+          ]);
+        } catch {}
 
       return userToRoom.roomId;
     }),

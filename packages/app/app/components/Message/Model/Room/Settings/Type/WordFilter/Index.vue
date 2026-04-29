@@ -5,6 +5,8 @@ interface WordFilterProps {
   roomId: RoomInMessage["id"];
 }
 
+import { normalizeString } from "@esposter/shared";
+
 const { roomId } = defineProps<WordFilterProps>();
 const { $trpc } = useNuxtApp();
 const words = ref<string[]>(await $trpc.roomFilter.readRoomFilter.query({ roomId }));
@@ -13,7 +15,7 @@ const save = async () => {
   await $trpc.roomFilter.updateRoomFilter.mutate({ roomId, words: words.value });
 };
 const addWord = () => {
-  const trimmed = newWord.value.trim().toLowerCase();
+  const trimmed = normalizeString(newWord.value).toLowerCase();
   if (!trimmed || words.value.includes(trimmed)) return;
   words.value = [...words.value, trimmed];
   newWord.value = "";

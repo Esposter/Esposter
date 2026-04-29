@@ -1,58 +1,70 @@
 ---
 name: string-utils
-description: Esposter string normalization conventions — normalizeString for trim+null coercion, when to use it vs raw .trim(), and Zod schema alignment.
+description: Esposter string normalization conventions — normalizeString replaces all .trim() usages; never use .trim() outside Zod schemas and the base function itself.
 ---
 
 # String Normalization
 
 ## `normalizeString`
 
-Trims whitespace and coerces empty/whitespace-only strings to `null`. Lives in `@esposter/shared`.
+Trims whitespace and returns empty string for absent/null/undefined inputs. Lives in `@esposter/shared`.
 
 ```ts
 import { normalizeString } from "@esposter/shared";
 
 normalizeString("  hello  "); // → "hello"
-normalizeString("   "); // → null
-normalizeString(""); // → null
-normalizeString(null); // → null
-normalizeString(undefined); // → null
+normalizeString("   "); // → ""
+normalizeString(""); // → ""
+normalizeString(null); // → ""
+normalizeString(undefined); // → ""
 ```
+
+## Convention: `string` not `string | null`
+
+Optional text fields use empty string as the "absent" sentinel — never `null`:
+
+- DB column: `text("field").notNull().default("")`
+- TypeScript type: `string` (not `string | null`)
+- Zod schema: `z.string().trim().max(N)` in the base `selectXxxSchema` (never in derived schemas)
 
 ## When to use `normalizeString`
 
-Use it whenever a string field can be "absent" (null in DB) — i.e. whitespace-only should be treated the same as empty.
+Use everywhere a string needs trimming **except** the two cases below:
 
-- tRPC mutation inputs: `topic: normalizeString(topic.value)`
-- Event handlers that coerce to null: `@update:model-value="group = normalizeString($event)"`
-- Optional text params before mutations: `const topic = normalizeString(command.parameterValues.text)`
-- Fallback to empty string: `normalizeString(text) ?? ""`
+- tRPC mutation inputs: `normalizeString(topic.value)`
+- Event handlers: `@update:model-value="group = normalizeString($event)"`
+- Parsing (CSV, XLSX, clipboard): `normalizeString(cell?.toString())`
+- Array mapping: `values.map(normalizeString).filter(Boolean)`
+- Guard checks: `if (!normalizeString(value)) return;`
+- Filter predicates: `.filter((line) => normalizeString(line) !== "")`
 
 ## When NOT to use `normalizeString`
 
-Keep raw `.trim()` for:
+Only two exceptions:
 
-- **Validation checks**: `!value.trim()`, `value.trim() !== ""`
-- **Internal parsing** (CSV, XLSX, clipboard): `cell.toString().trim()`
-- **String utilities** (prettify, getInitials): internal transformations where `""` is valid
-- **The `Trim` column transformation** in table editor — `.trim()` is the explicit transform
-- Zod schemas: use `.trim()` in `.transform()` steps; `normalizeString` is for runtime call sites
+1. **Zod schemas** — use `.trim()` in the schema transform step (`.trim().max(N)`)
+2. **The `normalizeString` function itself** — obviously
+
+`.trimStart()` and `.trimEnd()` are separate methods — replace only when semantically equivalent to a full `.trim()`.
+
+## Preserve `undefined` when needed
+
+When the old value in a `watch` callback must stay `undefined` to signal "first render" (distinct from an empty string that was previously seen):
+
+```ts
+const sanitizedOld = oldValue !== undefined ? normalizeString(oldValue) : oldValue;
+```
 
 ## Zod Schema Alignment
 
-When `normalizeString` is used at the call site, the server-side Zod schema for the same field must also trim + coerce empty to null so validation matches:
+Base select schemas use `.trim().max(N)` so server validation matches client normalization:
 
 ```ts
-// Schema field that accepts nullable string, normalizing whitespace
-z.string()
-  .trim()
-  .transform((v) => v || null)
-  .nullable();
-// or if the field is optional with null fallback:
-z.string()
-  .trim()
-  .nullish()
-  .transform((v) => v?.trim() || null);
+// In selectRoomInMessageSchema override:
+topic: z.string().trim().max(ROOM_TOPIC_MAX_LENGTH),
+
+// In selectSurveySchema override:
+group: z.string().trim().max(SURVEY_GROUP_MAX_LENGTH),
 ```
 
-This ensures client-side normalization and server-side validation agree — a whitespace-only value is always null in the DB.
+Never add trim transforms to derived schemas (`UpdateRoomInput`, `UpdateSurveyInput` etc.) — only in the base select schema.

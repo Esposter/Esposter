@@ -5,6 +5,7 @@ import type { SlashCommandType } from "@/models/message/slashCommands/SlashComma
 
 import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
+import { normalizeString } from "@esposter/shared";
 import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
@@ -80,11 +81,11 @@ const submit = async () => {
   if (!pendingSlashCommand.value || !currentRoomId.value) return;
 
   const missingRequiredParameters = pendingSlashCommand.value.parameters.filter(
-    ({ isRequired, name }) => isRequired && !parameterValues.value[name]?.trim(),
+    ({ isRequired, name }) => isRequired && !normalizeString(parameterValues.value[name]),
   );
 
   for (const { isRequired, name } of pendingSlashCommand.value.parameters)
-    if (isRequired) setErrors(name, parameterValues.value[name]?.trim() ? [] : [REQUIRED_ERROR_MESSAGE]);
+    if (isRequired) setErrors(name, normalizeString(parameterValues.value[name]) ? [] : [REQUIRED_ERROR_MESSAGE]);
 
   if (missingRequiredParameters.length > 0) {
     const hiddenMissingParameters = missingRequiredParameters.filter(

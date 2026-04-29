@@ -9,11 +9,11 @@ import { NotFoundError, normalizeString } from "@esposter/shared";
 export const deserializeClause = (
   string: string,
 ): Extract<Clause<Record<string, unknown>>, { operator: BinaryOperator }> => {
-  const trimmedString = normalizeString(string);
-  const match = CLAUSE_REGEX.exec(trimmedString);
-  if (!match) throw new NotFoundError(deserializeClause.name, trimmedString);
+  const normalizedString = normalizeString(string);
+  const match = CLAUSE_REGEX.exec(normalizedString);
+  if (!match) throw new NotFoundError(deserializeClause.name, normalizedString);
   const groups = match.groups as Record<keyof Clause<Record<string, unknown>>, string> | undefined;
-  if (!groups) throw new NotFoundError(deserializeClause.name, trimmedString);
+  if (!groups) throw new NotFoundError(deserializeClause.name, normalizedString);
   return {
     key: deserializeKey(groups.key),
     not: Boolean(groups.not),
