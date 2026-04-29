@@ -10,9 +10,8 @@ export const assertNotWordFiltered = async (db: Context["db"], userId: string, r
     where: { roomId: { eq: roomId } },
   });
   if (!filter?.words.length) return;
-  const canBypass = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
-  if (canBypass) return;
-  const lower = messageText.toLowerCase();
-  if (filter.words.some((word) => lower.includes(word.toLowerCase())))
+  const isPermitted = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
+  if (isPermitted) return;
+  else if (filter.words.some((word) => messageText.toLowerCase().includes(word.toLowerCase())))
     throw new TRPCError({ code: "FORBIDDEN", message: "Message contains blocked content." });
 };

@@ -1,4 +1,4 @@
-import type { StandardMessageEntity } from "@esposter/db-schema";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
@@ -8,7 +8,7 @@ export const useThreadStore = defineStore("message/thread", () => {
   const { $trpc } = useNuxtApp();
   const activeRootRowKey = ref<null | string>(null);
   const activeRoomId = ref<null | string>(null);
-  const threadMessages = ref<StandardMessageEntity[]>([]);
+  const threadMessages = ref<MessageEntity[]>([]);
   const layoutStore = useLayoutStore();
   const messageLayoutStore = useMessageLayoutStore();
 

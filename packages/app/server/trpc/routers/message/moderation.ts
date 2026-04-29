@@ -24,12 +24,17 @@ import { router } from "@@/server/trpc";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import { getTableNullClause, getTopNEntities, serializeClauses, serializeEntity } from "@esposter/db";
+import {
+  AZURE_TABLE_BATCH_SIZE,
+  getTableNullClause,
+  getTopNEntities,
+  serializeClauses,
+  serializeEntity,
+} from "@esposter/db";
 import {
   AdminActionType,
-  AzureTable,
-  AZURE_MAX_BATCH_SIZE,
   AZURE_MAX_PAGE_SIZE,
+  AzureTable,
   bansInMessage,
   BinaryOperator,
   CompositeKeyPropertyNames,
@@ -120,8 +125,8 @@ export const moderationRouter = router({
           for await (const page of messageClient
             .listEntities<StandardMessageEntity>({ queryOptions: { filter } })
             .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE })) {
-            for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE) {
-              const batch = page.slice(i, i + AZURE_MAX_BATCH_SIZE);
+            for (let i = 0; i < page.length; i += AZURE_TABLE_BATCH_SIZE) {
+              const batch = page.slice(i, i + AZURE_TABLE_BATCH_SIZE);
               await messageClient.submitTransaction(
                 batch.map(({ partitionKey, rowKey }) => [
                   "update",
