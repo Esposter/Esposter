@@ -788,10 +788,10 @@ describe("message", () => {
       await roomCaller.joinRoom(invite);
       const message = getMessage(user.id);
 
-      vi.setSystemTime(1);
+      vi.advanceTimersByTime(1);
       await mockSessionOnce(mockContext.db, user);
       await messageCaller.createMessage({ message, roomId: newRoom.id });
-      vi.setSystemTime(2);
+      vi.advanceTimersByTime(1);
       await mockSessionOnce(mockContext.db, user);
 
       await expect(
@@ -809,10 +809,10 @@ describe("message", () => {
       await roomCaller.joinRoom(invite);
       const message = getMessage(user.id);
 
-      vi.setSystemTime(1);
+      vi.advanceTimersByTime(1);
       await mockSessionOnce(mockContext.db, user);
       await messageCaller.createMessage({ message, roomId: newRoom.id });
-      vi.setSystemTime(2);
+      vi.advanceTimersByTime(1);
       await mockSessionOnce(mockContext.db, user);
 
       await expect(messageCaller.createMessage({ message, roomId: newRoom.id })).resolves.toBeDefined();

@@ -60,7 +60,9 @@ describe("moderation", () => {
   });
 
   beforeEach(async () => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({
+      toFake: ["Date", "setTimeout", "clearTimeout", "setInterval", "clearInterval", "setImmediate", "clearImmediate"],
+    });
     vi.setSystemTime(0);
     const room = await roomCaller.createRoom({ name });
     roomId = room.id;
@@ -245,6 +247,7 @@ describe("moderation", () => {
       for (let i = 0; i < messageCount; i++) {
         await mockSessionOnce(mockContext.db, member);
         await messageCaller.createMessage({ message, roomId });
+        vi.advanceTimersByTime(1);
       }
 
       await moderationCaller.executeAdminAction({
@@ -267,7 +270,7 @@ describe("moderation", () => {
     test("owner reads empty ban list after room creation", async () => {
       expect.hasAssertions();
 
-      const result = await moderationCaller.readBans({ limit: 15, roomId });
+      const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(0);
       expect(result.nextCursor).toBeUndefined();
@@ -283,7 +286,7 @@ describe("moderation", () => {
         type: AdminActionType.CreateBan,
       });
 
-      const result = await moderationCaller.readBans({ limit: 15, roomId });
+      const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(1);
       expect(takeOne(result.items).userId).toBe(member.id);
@@ -295,7 +298,7 @@ describe("moderation", () => {
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
 
-      await expect(moderationCaller.readBans({ limit: 15, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      await expect(moderationCaller.readBans({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
         `[TRPCError: UNAUTHORIZED]`,
       );
     });
@@ -308,9 +311,9 @@ describe("moderation", () => {
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
 
-      await expect(
-        moderationCaller.readModerationLog({ limit: 15, roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+      await expect(moderationCaller.readModerationLog({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: UNAUTHORIZED]`,
+      );
     });
   });
 
@@ -326,7 +329,7 @@ describe("moderation", () => {
       });
       await moderationCaller.deleteBan({ roomId, userId: member.id });
 
-      const result = await moderationCaller.readBans({ limit: 15, roomId });
+      const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(0);
     });
