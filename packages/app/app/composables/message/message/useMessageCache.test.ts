@@ -51,6 +51,7 @@ describe(useMessageCache, () => {
         setup: () => {
           router = useRouter();
           router.currentRoute.value.params.id = initialRouteId;
+          triggerRef(router.currentRoute);
           const dataStore = useDataStore();
           ({ items } = storeToRefs(dataStore));
           ({ flush } = useMessageCache());
