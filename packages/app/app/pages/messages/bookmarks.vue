@@ -6,10 +6,8 @@ definePageMeta({ middleware: "auth" });
 
 const { readBookmarks, readMoreBookmarks } = useReadBookmarks();
 const bookmarkStore = useBookmarkStore();
-const { hasMore, items } = storeToRefs(bookmarkStore);
+const { displayItems, hasMore } = storeToRefs(bookmarkStore);
 const { deleteBookmark } = bookmarkStore;
-await readBookmarks();
-
 const parseBookmarkRowKey = (rowKey: string) => {
   const separatorIndex = rowKey.indexOf(ID_SEPARATOR);
   return {
@@ -17,6 +15,8 @@ const parseBookmarkRowKey = (rowKey: string) => {
     roomId: rowKey.slice(0, separatorIndex),
   };
 };
+
+await readBookmarks();
 </script>
 
 <template>
@@ -27,29 +27,17 @@ const parseBookmarkRowKey = (rowKey: string) => {
     <div class="bg-surface" flex flex-col h-full overflow-y-auto>
       <v-container>
         <div class="text-headline-small" font-bold mb-6>Saved Messages</div>
-        <v-list v-if="items.length > 0" rd>
-          <v-list-item
-            v-for="{ rowKey } of items"
+        <v-list v-if="displayItems.length > 0" rd>
+          <MessageModelMessageBookmarkListItem
+            v-for="{ rowKey, message, creator } of displayItems"
             :key="rowKey"
+            :creator
+            :message
             :to="
               RoutePath.MessagesMessage(parseBookmarkRowKey(rowKey).roomId, parseBookmarkRowKey(rowKey).messageRowKey)
             "
-          >
-            <template #append>
-              <v-btn
-                icon="mdi-bookmark-remove"
-                variant="text"
-                size="small"
-                color="error"
-                @click.prevent="
-                  deleteBookmark(parseBookmarkRowKey(rowKey).roomId, parseBookmarkRowKey(rowKey).messageRowKey)
-                "
-              />
-            </template>
-            <v-list-item-subtitle class="text-medium-emphasis">
-              Room: {{ parseBookmarkRowKey(rowKey).roomId }}
-            </v-list-item-subtitle>
-          </v-list-item>
+            @delete="deleteBookmark(parseBookmarkRowKey(rowKey).roomId, parseBookmarkRowKey(rowKey).messageRowKey)"
+          />
           <StyledWaypoint :is-active="hasMore" @change="readMoreBookmarks" />
         </v-list>
         <span v-else class="text-medium-emphasis">No saved messages yet.</span>
