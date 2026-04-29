@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH } from "@esposter/db-schema";
 import { formRules } from "@/services/vuetify/formRules";
+import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH } from "@esposter/db-schema";
 import { normalizeString } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
@@ -45,7 +45,6 @@ const deleteWord = (word: string) => {
             :disabled="isAtMaxWords"
             :rules="[formRules.requireAtMostNCharacters(FILTER_KEY_MAX_LENGTH)]"
             density="compact"
-            hide-details="auto"
             placeholder="Add a word..."
             @keydown.enter.prevent="createWord()"
           >

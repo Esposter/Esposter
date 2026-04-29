@@ -8,6 +8,7 @@ import { useTableClient } from "@@/server/composables/azure/table/useTableClient
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { router } from "@@/server/trpc";
+import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
   createEntity,
@@ -27,13 +28,13 @@ import {
   MessageEntityMap,
   MessageType,
   selectRoomInMessageSchema,
-  standardMessageEntitySchema,
   StandardMessageEntity,
+  standardMessageEntitySchema,
   WebhookMessageEntity,
 } from "@esposter/db-schema";
-import { getColumns, inArray } from "drizzle-orm";
 import { ID_SEPARATOR, ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { getColumns, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 const createBookmarkInputSchema = z.object({
@@ -83,18 +84,41 @@ export const bookmarkRouter = router({
   readBookmarkMessages: standardAuthedProcedure
     .input(readBookmarkMessagesInputSchema)
     .query(async ({ ctx, input: { rowKeys } }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const bookmarkClient = await useTableClient(AzureTable.Bookmarks);
       const messageClient = await useTableClient(AzureTable.Messages);
-      const byRoom = new Map<string, string[]>();
-      for (const bookmarkRowKey of rowKeys) {
-        const sep = bookmarkRowKey.indexOf(ID_SEPARATOR);
-        const roomId = bookmarkRowKey.slice(0, sep);
-        const messageRowKey = bookmarkRowKey.slice(sep + 1);
-        const existing = byRoom.get(roomId);
-        if (existing) existing.push(messageRowKey);
-        else byRoom.set(roomId, [messageRowKey]);
+      const uniqueRowKeys = [...new Set(rowKeys)];
+      const bookmarkClauses: Clause<BookmarkEntity>[] = [
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: userId },
+        ...uniqueRowKeys.map((rowKey) => ({
+          key: CompositeKeyPropertyNames.rowKey,
+          operator: BinaryOperator.eq,
+          value: rowKey,
+        })),
+      ];
+      const foundBookmarks = await getTopNEntities(bookmarkClient, uniqueRowKeys.length, BookmarkEntity, {
+        filter: serializeClauses(bookmarkClauses),
+      });
+      const bookmarksByRowKey = new Map(foundBookmarks.map((bookmark) => [bookmark.rowKey, bookmark]));
+      const bookmarks: BookmarkEntity[] = [];
+      for (const rowKey of rowKeys) {
+        const bookmark = bookmarksByRowKey.get(rowKey);
+        if (!bookmark)
+          throw new TRPCError({ code: "NOT_FOUND", message: new NotFoundError("Bookmark", rowKey).message });
+        bookmarks.push(bookmark);
       }
+      const messageRowKeysByRoomIdMap = new Map<string, string[]>();
+      for (const bookmark of bookmarks) {
+        const sep = bookmark.rowKey.indexOf(ID_SEPARATOR);
+        const roomId = bookmark.rowKey.slice(0, sep);
+        const messageRowKey = bookmark.rowKey.slice(sep + 1);
+        const existingMessageRowKeys = messageRowKeysByRoomIdMap.get(roomId);
+        if (existingMessageRowKeys) existingMessageRowKeys.push(messageRowKey);
+        else messageRowKeysByRoomIdMap.set(roomId, [messageRowKey]);
+      }
+      await isMember(ctx.db, ctx.getSessionPayload, [...messageRowKeysByRoomIdMap.keys()]);
       const messageArrays = await Promise.all(
-        [...byRoom.entries()].map(([roomId, messageRowKeys]) => {
+        [...messageRowKeysByRoomIdMap.entries()].map(([roomId, messageRowKeys]) => {
           const clauses: Clause<StandardMessageEntity>[] = [
             { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
             getTableNullClause(ItemMetadataPropertyNames.deletedAt),

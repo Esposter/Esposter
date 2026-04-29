@@ -3,12 +3,14 @@ import type { User } from "@esposter/db-schema";
 
 import { EN_US_COMPARATOR } from "@/services/shared/constants";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { useUserStore } from "@/store/message/user";
 
 export const useMemberStore = defineStore("message/user/member", () => {
   const { $trpc } = useNuxtApp();
+  const userStore = useUserStore();
+  const { storeUser, storeUsers } = userStore;
   const { items, ...restData } = useCursorPaginationData<User>();
   const members = computed(() => items.value.toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name)));
-  const memberMap = ref(new Map<string, User>());
   const count = ref(0);
   const {
     createMember: baseStoreCreateMember,
@@ -19,7 +21,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
       get: () => members.value,
       set: (newMembers) => {
         items.value = newMembers;
-        for (const member of newMembers) memberMap.value.set(member.id, member);
+        storeUsers(newMembers);
       },
     }),
     ["id"],
@@ -27,12 +29,11 @@ export const useMemberStore = defineStore("message/user/member", () => {
   );
   const storeCreateMember = (member: User) => {
     baseStoreCreateMember(member);
-    memberMap.value.set(member.id, member);
+    storeUser(member);
     count.value++;
   };
   const storeDeleteMember = (id: User["id"]) => {
     baseStoreDeleteMember({ id });
-    memberMap.value.delete(id);
     count.value--;
   };
   const deleteMember = async (input: DeleteMemberInput) => {
@@ -42,7 +43,6 @@ export const useMemberStore = defineStore("message/user/member", () => {
 
   return {
     count,
-    memberMap,
     members,
     ...restData,
     deleteMember,

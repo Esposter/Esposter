@@ -782,11 +782,17 @@ describe("message", () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
-      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 1000 });
-      const userId = getMockSession().user.id;
-      const message = getMessage(userId);
+      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 2 });
+      const invite = await roomCaller.createInvite({ roomId: newRoom.id });
+      const { user } = await mockSessionOnce(mockContext.db);
+      await roomCaller.joinRoom(invite);
+      const message = getMessage(user.id);
 
+      vi.setSystemTime(1);
+      await mockSessionOnce(mockContext.db, user);
       await messageCaller.createMessage({ message, roomId: newRoom.id });
+      vi.setSystemTime(2);
+      await mockSessionOnce(mockContext.db, user);
 
       await expect(
         messageCaller.createMessage({ message, roomId: newRoom.id }),
@@ -797,12 +803,17 @@ describe("message", () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
-      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 1000 });
-      const userId = getMockSession().user.id;
-      const message = getMessage(userId);
+      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 1 });
+      const invite = await roomCaller.createInvite({ roomId: newRoom.id });
+      const { user } = await mockSessionOnce(mockContext.db);
+      await roomCaller.joinRoom(invite);
+      const message = getMessage(user.id);
 
+      vi.setSystemTime(1);
+      await mockSessionOnce(mockContext.db, user);
       await messageCaller.createMessage({ message, roomId: newRoom.id });
-      vi.setSystemTime(2000);
+      vi.setSystemTime(2);
+      await mockSessionOnce(mockContext.db, user);
 
       await expect(messageCaller.createMessage({ message, roomId: newRoom.id })).resolves.toBeDefined();
     });
@@ -814,10 +825,14 @@ describe("message", () => {
 
       const newRoom = await roomCaller.createRoom({ name });
       await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: ["spam"] });
+      const { user } = await mockSessionOnce(mockContext.db);
+      getMockSession();
+      await roomCaller.createMembers({ roomId: newRoom.id, userIds: [user.id] });
+      await mockSessionOnce(mockContext.db, user);
 
       await expect(
         messageCaller.createMessage({ message: `<p>this is spam</p>`, roomId: newRoom.id }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: FORBIDDEN]`);
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
     });
 
     test("message without blocked word succeeds", async () => {

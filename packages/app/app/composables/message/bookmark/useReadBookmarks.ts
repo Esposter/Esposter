@@ -1,22 +1,31 @@
 import { getBookmarkRowKey } from "#shared/services/message/getBookmarkRowKey";
 import { useBookmarkStore } from "@/store/message/bookmark";
+import { useUserStore } from "@/store/message/user";
 import { useAppUserStore } from "@/store/message/user/appUser";
-import { useMemberStore } from "@/store/message/user/member";
+import { MessageType } from "@esposter/db-schema";
 
 export const useReadBookmarks = () => {
   const { $trpc } = useNuxtApp();
   const bookmarkStore = useBookmarkStore();
   const { bookmarkMessageMap } = storeToRefs(bookmarkStore);
   const { readItems, readMoreItems } = bookmarkStore;
-  const memberStore = useMemberStore();
-  const { memberMap } = storeToRefs(memberStore);
+  const userStore = useUserStore();
+  const { userMap } = storeToRefs(userStore);
+  const { storeUsers } = userStore;
   const appUserStore = useAppUserStore();
   const { appUserMap } = storeToRefs(appUserStore);
 
+  const isBookmarkMessageCached = (rowKey: string) => {
+    const message = bookmarkMessageMap.value.get(rowKey);
+    if (!message) return false;
+    if (message.type === MessageType.Webhook) return appUserMap.value.has(message.appUser.id);
+    return userMap.value.has(message.userId);
+  };
   const readBookmarkMessages = async (rowKeys: string[]) => {
-    if (rowKeys.length === 0) return;
-    const { appUsers, messages, users } = await $trpc.bookmark.readBookmarkMessages.query({ rowKeys });
-    for (const user of users) memberMap.value.set(user.id, user);
+    const unreadRowKeys = rowKeys.filter((rowKey) => !isBookmarkMessageCached(rowKey));
+    if (unreadRowKeys.length === 0) return;
+    const { appUsers, messages, users } = await $trpc.bookmark.readBookmarkMessages.query({ rowKeys: unreadRowKeys });
+    storeUsers(users);
     for (const appUser of appUsers) appUserMap.value.set(appUser.id, appUser);
     for (const message of messages)
       bookmarkMessageMap.value.set(getBookmarkRowKey(message.partitionKey, message.rowKey), message);
@@ -24,7 +33,7 @@ export const useReadBookmarks = () => {
   const readBookmarks = () =>
     readItems(
       () => $trpc.bookmark.readBookmarks.query({}),
-      async ({ items }) => readBookmarkMessages(items.map(({ rowKey }) => rowKey)),
+      ({ items }) => readBookmarkMessages(items.map(({ rowKey }) => rowKey)),
     );
   const readMoreBookmarks = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {

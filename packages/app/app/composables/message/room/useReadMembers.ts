@@ -3,6 +3,7 @@ import type { User } from "@esposter/db-schema";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
+import { useUserStore } from "@/store/message/user";
 import { useMemberStore } from "@/store/message/user/member";
 import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -13,7 +14,9 @@ export const useReadMembers = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
   const { readItems, readMoreItems } = memberStore;
-  const { count, memberMap } = storeToRefs(memberStore);
+  const { count } = storeToRefs(memberStore);
+  const userStore = useUserStore();
+  const { storeUsers } = userStore;
   const readUserStatuses = useReadUserStatuses();
   const roleStore = useRoleStore();
   const { readMemberRoles } = roleStore;
@@ -31,7 +34,7 @@ export const useReadMembers = () => {
         return $trpc.room.readMembers.query({ roomId });
       },
       async ({ items }) => {
-        for (const member of items) memberMap.value.set(member.id, member);
+        storeUsers(items);
         await readMetadata(
           roomId,
           items.map(({ id }) => id),
@@ -50,7 +53,7 @@ export const useReadMembers = () => {
     return readMoreItems(
       async (cursor) => {
         const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
-        for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
+        storeUsers(cursorPaginationData.items);
         await readMetadata(
           roomId,
           cursorPaginationData.items.map(({ id }) => id),

@@ -2,7 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
@@ -253,7 +253,7 @@ describe("moderation", () => {
         type: AdminActionType.SoftBan,
       });
 
-      const messagesClient = await useTableClient(AzureTable.Messages);
+      const messagesClient = await useTableClientMock(AzureTable.Messages);
       const memberMessages: StandardMessageEntity[] = [];
       for await (const page of messagesClient.listEntities<StandardMessageEntity>().byPage())
         memberMessages.push(...page.filter(({ userId }) => userId === member.id));

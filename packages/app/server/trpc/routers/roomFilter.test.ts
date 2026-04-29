@@ -3,7 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { roomFilterRouter } from "@@/server/trpc/routers/roomFilter";
@@ -69,6 +69,7 @@ describe("roomFilter", () => {
       expect.hasAssertions();
 
       const { user } = await mockSessionOnce(mockContext.db);
+      getMockSession();
       await roomCaller.createMembers({ roomId, userIds: [user.id] });
       await mockSessionOnce(mockContext.db, user);
 
@@ -81,6 +82,7 @@ describe("roomFilter", () => {
       expect.hasAssertions();
 
       const { user } = await mockSessionOnce(mockContext.db);
+      getMockSession();
       await roomCaller.createMembers({ roomId, userIds: [user.id] });
       const role = await roleCaller.createRole({
         name: crypto.randomUUID(),

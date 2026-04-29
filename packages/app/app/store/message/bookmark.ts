@@ -1,13 +1,13 @@
 import type { BookmarkEntity, MessageEntity } from "@esposter/db-schema";
 
 import { getBookmarkRowKey } from "#shared/services/message/getBookmarkRowKey";
+import { useUserStore } from "@/store/message/user";
 import { useAppUserStore } from "@/store/message/user/appUser";
-import { useMemberStore } from "@/store/message/user/member";
 import { MessageType } from "@esposter/db-schema";
 
 export const useBookmarkStore = defineStore("message/bookmark", () => {
   const { $trpc } = useNuxtApp();
-  const memberStore = useMemberStore();
+  const userStore = useUserStore();
   const appUserStore = useAppUserStore();
   const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<BookmarkEntity>();
   const bookmarkMessageMap = ref(new Map<string, MessageEntity>());
@@ -18,7 +18,7 @@ export const useBookmarkStore = defineStore("message/bookmark", () => {
       const creator =
         message.type === MessageType.Webhook
           ? appUserStore.appUserMap.get(message.appUser.id)
-          : memberStore.memberMap.get(message.userId);
+          : userStore.userMap.get(message.userId);
       if (!creator) return [];
       return [{ creator, message, rowKey }];
     }),

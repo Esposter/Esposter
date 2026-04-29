@@ -8,7 +8,7 @@ const parseMarkdownRow = (line: string): string[] =>
   line
     .slice(2, -2)
     .split(` ${ID_SEPARATOR} `)
-    .map((cell) => cell.replaceAll(String.raw`\${ID_SEPARATOR}`, ID_SEPARATOR));
+    .map((cell) => cell.replaceAll(`\\${ID_SEPARATOR}`, ID_SEPARATOR));
 
 const isSeparatorRow = (cells: string[]): boolean => cells.every((cell) => /^:?-+:?$/.test(cell));
 
