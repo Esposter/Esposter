@@ -37,7 +37,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
   ```
 
 - Never use dot-access (`store.method()`) in components.
-- **Store-to-store** (inside a Pinia store file): declare nested stores at the root of the setup function — **never call `useXxxStore()` inside an action function**. Pinia requires a reactive context and calling it inside a function (which may run outside Vue's reactivity system) can silently fail or error. Access refs/computeds via dot syntax (`otherStore.someRef`) to maintain reactivity — **never use `storeToRefs` inside a store**. Methods **must** be destructured at the root: `const { methodName } = otherStore`. Never call `otherStore.methodName()` inline — destructure first.
+- **Store-to-store** (inside a Pinia store file): declare nested stores at the root of the setup function as an Esposter efficiency convention — avoid calling `useXxxStore()` repeatedly inside each action to prevent repeated store lookups. Access refs/computeds via dot syntax (`otherStore.someRef`) to maintain reactivity — **never use `storeToRefs` inside a store**. Methods **must** be destructured at the root: `const { methodName } = otherStore`. Never call `otherStore.methodName()` inline — destructure first.
 
   ```typescript
   // CORRECT — nested store declared at root; method destructured at root
@@ -314,7 +314,7 @@ const storeMessages = (messages: MessageEntity[], users: User[]) => {
   const userMap = new Map(users.map((u) => [u.id, u])); // ❌ local map
   for (const message of messages) {
     const creator = userMap.get(message.userId);
-    if (creator) bookmarkMessageCreatorMap.value.set(rowKey, creator); // ❌ duplicated map
+    if (creator) bookmarkMessageCreatorMap.value.set(getBookmarkRowKey(message.partitionKey, message.rowKey), creator); // ❌ duplicated map
   }
 };
 

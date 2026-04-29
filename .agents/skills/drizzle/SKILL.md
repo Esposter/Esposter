@@ -23,7 +23,7 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
 ## Table Definition
 
 - **Use `pgTable` wrapper from `@/pgTable`** (not raw `drizzle-orm/pg-core`) for all tables — including join tables. Pass composite PKs via `extraConfig`.
-- **Pass `schema: messageSchema`** for all message-feature tables to group them under the `message` Postgres schema.
+- **Pass `schema: messageSchema`** for all message-feature tables (chat messages, webhooks, bookmarks, moderation logs, room filters, etc.) to group them under the `message` Postgres schema.
 
   ```typescript
   export const friends = pgTable(
