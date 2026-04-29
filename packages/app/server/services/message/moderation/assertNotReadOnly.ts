@@ -10,6 +10,6 @@ export const assertNotReadOnly = async (db: Context["db"], userId: string, roomI
     where: { id: { eq: roomId } },
   });
   if (!room?.isReadOnly) return;
-  const canBypass = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
-  if (!canBypass) throw new TRPCError({ code: "FORBIDDEN" });
+  const isPermitted = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
+  if (!isPermitted) throw new TRPCError({ code: "FORBIDDEN" });
 };

@@ -10,14 +10,13 @@ export const assertNotInSlowmode = async (db: Context["db"], userId: string, roo
     where: { id: { eq: roomId } },
   });
   if (!room?.slowmodeMs) return;
-  const canBypass = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
-  if (canBypass) return;
+  const isPermitted = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
+  if (isPermitted) return;
   const member = await db.query.usersToRoomsInMessage.findFirst({
     columns: { lastMessageAt: true },
     where: { roomId: { eq: roomId }, userId: { eq: userId } },
   });
-  if (member?.lastMessageAt) {
-    const elapsedMs = Date.now() - member.lastMessageAt.getTime();
-    if (elapsedMs < room.slowmodeMs) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-  }
+  if (!member?.lastMessageAt) return;
+  const elapsedMs = Date.now() - member.lastMessageAt.getTime();
+  if (elapsedMs < room.slowmodeMs) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 };

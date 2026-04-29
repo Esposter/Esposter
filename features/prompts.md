@@ -119,8 +119,8 @@ export const assertNotInSlowmode = async (db: Context["db"], userId: string, roo
     where: { id: { eq: roomId } },
   });
   if (!room?.slowmodeMs) return;
-  const canBypass = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
-  if (canBypass) return;
+  const isPermitted = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
+  if (isPermitted) return;
   const member = await db.query.usersToRoomsInMessage.findFirst({
     columns: { lastMessageAt: true },
     where: { roomId: { eq: roomId }, userId: { eq: userId } },
@@ -303,8 +303,8 @@ Run `pnpm db:gen && pnpm db:up`.
 export const assertNotWordFiltered = async (db, userId, roomId, messageText) => {
   const filter = await db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } });
   if (!filter?.words.length) return;
-  const canBypass = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
-  if (canBypass) return;
+  const isPermitted = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
+  if (isPermitted) return;
   const lower = messageText.toLowerCase();
   if (filter.words.some((w) => lower.includes(w.toLowerCase())))
     throw new TRPCError({ code: "FORBIDDEN", message: "Message contains blocked content." });
