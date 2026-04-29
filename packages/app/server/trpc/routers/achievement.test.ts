@@ -1,5 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { UserAchievementWithRelations } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -15,7 +16,6 @@ import {
   UserAchievementRelations,
   WebpageAchievementName,
 } from "@esposter/db-schema";
-import type { UserAchievementWithRelations } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";

@@ -92,6 +92,7 @@ describe("roomFilter", () => {
       await mockSessionOnce(mockContext.db, user);
 
       const result = await roomFilterCaller.upsertRoomFilter({ roomId, words });
+
       expect(result.words).toStrictEqual(words);
     });
   });

@@ -5,10 +5,10 @@ import type { SlashCommandType } from "@/models/message/slashCommands/SlashComma
 
 import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
-import { normalizeString } from "@esposter/shared";
 import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
+import { normalizeString } from "@esposter/shared";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);

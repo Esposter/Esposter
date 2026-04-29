@@ -1,9 +1,9 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { upsertEntity } from "@esposter/db";
 import { AzureTable, getReverseTickedTimestamp, UserActivityEntity } from "@esposter/db-schema";
-import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { initTRPC } from "@trpc/server";
 
 const t = initTRPC.context<AuthedContext>().create();

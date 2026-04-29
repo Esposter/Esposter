@@ -4,11 +4,11 @@ import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { normalizeString } from "@esposter/shared";
 import SlashCommandList from "@/components/Message/Model/Message/SlashCommandList.vue";
 import { getRender } from "@/services/message/getRender";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
+import { normalizeString } from "@esposter/shared";
 
 export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, SlashCommand>, "editor"> = {
   char: "/",
