@@ -273,6 +273,28 @@ Use DB column names (snake_case where applicable) in constraint/index names, not
   check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`);
   ```
 
+## `.returning()` — Error Handling Pattern
+
+All mutations that call `.returning()` must:
+
+1. **Destructure the first element**: `const [result] = await db.insert(...).returning()`
+2. **Guard for undefined and throw** — never return a fallback like `?? []` or `?? null`:
+   ```ts
+   const [updatedFilter] = await ctx.db
+     .insert(roomFiltersInMessage)
+     .values({ roomId, words })
+     .onConflictDoUpdate({ set: { words }, target: roomFiltersInMessage.roomId })
+     .returning();
+   if (!updatedFilter)
+     throw new TRPCError({
+       code: "BAD_REQUEST",
+       message: new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomFilter, roomId).message,
+     });
+   return updatedFilter;
+   ```
+3. **Return the full entity** — never return a subset of fields (e.g. `.words`) from a mutation. Let callers destructure what they need.
+4. **Add `DatabaseEntityType` if missing** — if the table has no corresponding `DatabaseEntityType` value, add one to `packages/db-schema/src/models/shared/DatabaseEntityType.ts`, then run `pnpm build` in `packages/db-schema/` to rebuild the dist.
+
 ## Migrations
 
 - **Never run `pnpm db:gen` or `pnpm db:up` automatically** — always let the user decide when to generate and apply migrations. After schema changes, note what migration is needed and instruct the user to run it manually from `packages/db-schema`:
