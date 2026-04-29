@@ -2,6 +2,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Clause } from "@esposter/db-schema";
 
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { getBookmarkRowKey } from "#shared/services/message/getBookmarkRowKey";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -18,6 +19,7 @@ import {
   serializeClauses,
 } from "@esposter/db";
 import {
+  appUsersInMessage,
   AzureTable,
   BinaryOperator,
   BookmarkEntity,
@@ -27,7 +29,9 @@ import {
   selectRoomInMessageSchema,
   standardMessageEntitySchema,
   StandardMessageEntity,
+  WebhookMessageEntity,
 } from "@esposter/db-schema";
+import { getColumns, inArray } from "drizzle-orm";
 import { ID_SEPARATOR, ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -62,7 +66,7 @@ export const bookmarkRouter = router({
       const bookmarkClient = await useTableClient(AzureTable.Bookmarks);
       const entity = new BookmarkEntity({
         partitionKey: userId,
-        rowKey: `${roomId}|${messageRowKey}`,
+        rowKey: getBookmarkRowKey(roomId, messageRowKey),
       });
       await createEntity(bookmarkClient, entity);
     }),
@@ -71,7 +75,7 @@ export const bookmarkRouter = router({
     .mutation(async ({ ctx, input: { messageRowKey, roomId } }) => {
       const userId = ctx.getSessionPayload.user.id;
       const bookmarkClient = await useTableClient(AzureTable.Bookmarks);
-      const rowKey = `${roomId}|${messageRowKey}`;
+      const rowKey = getBookmarkRowKey(roomId, messageRowKey);
       const entity = await getEntity(bookmarkClient, BookmarkEntity, userId, rowKey);
       if (!entity) throw new TRPCError({ code: "NOT_FOUND", message: new NotFoundError("Bookmark", rowKey).message });
       await deleteEntity(bookmarkClient, userId, rowKey);
@@ -111,9 +115,21 @@ export const bookmarkRouter = router({
           messages.filter((m): m is StandardMessageEntity => m.type !== MessageType.Webhook).map((m) => m.userId),
         ),
       ];
-      const messageUsers =
-        userIds.length > 0 ? await ctx.db.query.users.findMany({ where: { id: { in: userIds } } }) : [];
-      return { messages, users: messageUsers };
+      const appUserIds = [
+        ...new Set(
+          messages.filter((m): m is WebhookMessageEntity => m.type === MessageType.Webhook).map((m) => m.appUser.id),
+        ),
+      ];
+      const [messageUsers, messageAppUsers] = await Promise.all([
+        userIds.length > 0 ? ctx.db.query.users.findMany({ where: { id: { in: userIds } } }) : [],
+        appUserIds.length > 0
+          ? ctx.db
+              .select(getColumns(appUsersInMessage))
+              .from(appUsersInMessage)
+              .where(inArray(appUsersInMessage.id, appUserIds))
+          : [],
+      ]);
+      return { appUsers: messageAppUsers, messages, users: messageUsers };
     }),
   readBookmarks: standardAuthedProcedure
     .input(readBookmarksInputSchema)
