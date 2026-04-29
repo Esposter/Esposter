@@ -1,7 +1,11 @@
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
-import { text, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { check, text, uuid } from "drizzle-orm/pg-core";
+
+export const FILTER_KEY_MAX_LENGTH = 100;
+export const FILTER_WORDS_MAX_LENGTH = 1000;
 
 export const roomFiltersInMessage = pgTable(
   "roomFilters",
@@ -14,6 +18,12 @@ export const roomFiltersInMessage = pgTable(
     words: text("words").array().notNull().default([]),
   },
   {
+    extraConfig: ({ words }) => [
+      check(
+        "room_filters_words_size_check",
+        sql`cardinality(${words}) <= ${sql.raw(FILTER_WORDS_MAX_LENGTH.toString())}`,
+      ),
+    ],
     schema: messageSchema,
   },
 );

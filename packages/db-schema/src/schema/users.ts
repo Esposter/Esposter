@@ -1,4 +1,5 @@
 import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
+import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { boolean, check, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -32,7 +33,7 @@ export const users = pgTable(
 export type User = typeof users.$inferSelect;
 
 export const selectUserSchema = createSelectSchema(users, {
-  biography: z.string().max(USER_BIOGRAPHY_MAX_LENGTH),
+  biography: z.string().transform(normalizeString).pipe(z.string().max(USER_BIOGRAPHY_MAX_LENGTH)),
   email: z.email(),
   name: createNameSchema(USER_NAME_MAX_LENGTH),
 });

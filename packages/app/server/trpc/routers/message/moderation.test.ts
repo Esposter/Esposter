@@ -35,6 +35,7 @@ describe("moderation", () => {
   let roomId: string;
   const durationMs = 1;
   const name = "name";
+  const message = "message";
 
   const createMember = async () => {
     const { user } = await mockSessionOnce(mockContext.db);
@@ -243,7 +244,7 @@ describe("moderation", () => {
 
       for (let i = 0; i < messageCount; i++) {
         await mockSessionOnce(mockContext.db, member);
-        await messageCaller.createMessage({ message: " ", roomId });
+        await messageCaller.createMessage({ message, roomId });
       }
 
       await moderationCaller.executeAdminAction({
@@ -258,7 +259,7 @@ describe("moderation", () => {
         memberMessages.push(...page.filter(({ userId }) => userId === member.id));
 
       expect(memberMessages).toHaveLength(messageCount);
-      expect(memberMessages.every(({ deletedAt }) => deletedAt !== null && deletedAt !== undefined)).toBe(true);
+      expect(memberMessages.every(({ deletedAt }) => deletedAt)).toBe(true);
     });
   });
 

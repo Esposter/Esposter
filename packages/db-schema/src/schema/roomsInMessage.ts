@@ -3,6 +3,7 @@ import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
 import { users } from "@/schema/users";
+import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { boolean, check, integer, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -56,5 +57,5 @@ export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
   name: createNameSchema(ROOM_NAME_MAX_LENGTH).nullable(),
-  topic: z.string().trim().max(ROOM_TOPIC_MAX_LENGTH),
+  topic: z.string().transform(normalizeString).pipe(z.string().max(ROOM_TOPIC_MAX_LENGTH)),
 });

@@ -10,6 +10,7 @@ import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDuratio
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";
+import { normalizeString } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 interface MemberListItemProps {
@@ -243,7 +244,7 @@ const warnReason = ref("");
                       try {
                         if (!currentRoom) return;
                         await $trpc.moderation.executeAdminAction.mutate({
-                          reason: warnReason || undefined,
+                          reason: normalizeString(warnReason) || undefined,
                           roomId: currentRoom.id,
                           targetUserId: member.id,
                           type: AdminActionType.Warn,

@@ -1,6 +1,7 @@
 import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
+import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -34,6 +35,6 @@ export const surveys = pgTable(
 export type Survey = typeof surveys.$inferSelect;
 
 export const selectSurveySchema = createSelectSchema(surveys, {
-  group: z.string().trim().max(SURVEY_GROUP_MAX_LENGTH),
+  group: z.string().transform(normalizeString).pipe(z.string().max(SURVEY_GROUP_MAX_LENGTH)),
   name: createNameSchema(SURVEY_NAME_MAX_LENGTH),
 });

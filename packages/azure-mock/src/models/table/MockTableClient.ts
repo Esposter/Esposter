@@ -125,6 +125,12 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   }
 
   async submitTransaction(actions: Parameters<TableClient["submitTransaction"]>[0]): Promise<TableTransactionResponse> {
+    let partitionKey: string | undefined;
+    for (const [, entity] of actions)
+      if (partitionKey === undefined) partitionKey = entity.partitionKey;
+      else if (entity.partitionKey !== partitionKey)
+        throw new MockRestError("All transaction actions must target the same partitionKey.", 400);
+
     const snapshot = new Map(this.table);
     try {
       for (const [type, entity, updateMode] of actions)
