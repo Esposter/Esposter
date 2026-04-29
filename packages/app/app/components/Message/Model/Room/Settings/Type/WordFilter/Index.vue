@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH } from "@esposter/db-schema";
+import { formRules } from "@/services/vuetify/formRules";
 import { normalizeString } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
@@ -14,7 +16,9 @@ const initialWords = ref<string[]>(await $trpc.roomFilter.readRoomFilter.query({
 const words = ref([...initialWords.value]);
 const newWord = ref("");
 const isDirty = computed(() => !deepEqual(words.value, initialWords.value));
+const isAtMaxWords = computed(() => words.value.length >= FILTER_WORDS_MAX_LENGTH);
 const createWord = () => {
+  if (isAtMaxWords.value) return;
   const normalizedWord = normalizeString(newWord.value).toLowerCase();
   if (!normalizedWord || words.value.includes(normalizedWord)) return;
   words.value = [...words.value, normalizedWord];
@@ -38,13 +42,15 @@ const deleteWord = (word: string) => {
           <div font-semibold>Blocked Words</div>
           <v-text-field
             v-model="newWord"
+            :disabled="isAtMaxWords"
+            :rules="[formRules.requireAtMostNCharacters(FILTER_KEY_MAX_LENGTH)]"
             density="compact"
             hide-details="auto"
             placeholder="Add a word..."
             @keydown.enter.prevent="createWord()"
           >
             <template #append-inner>
-              <v-btn icon="mdi-plus" size="x-small" variant="text" @click="createWord()" />
+              <v-btn :disabled="isAtMaxWords" icon="mdi-plus" size="x-small" variant="text" @click="createWord()" />
             </template>
           </v-text-field>
           <div v-if="words.length > 0" flex flex-wrap gap-2 mt-1>

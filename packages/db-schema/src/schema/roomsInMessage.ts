@@ -38,7 +38,7 @@ export const roomsInMessage = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name, participantKey, topic, type }) => [
+    extraConfig: ({ name, participantKey, slowmodeMs, topic, type }) => [
       check(
         "rooms_name_check",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${name} IS NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${name} IS NOT NULL AND ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)})`,
@@ -47,6 +47,7 @@ export const roomsInMessage = pgTable(
         "participant_key_type",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${participantKey} IS NOT NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${participantKey} IS NULL)`,
       ),
+      check("rooms_slowmode_ms_check", sql`${slowmodeMs} IS NULL OR ${slowmodeMs} >= 1`),
       check("rooms_topic_length_check", sql`LENGTH(${topic}) <= ${sql.raw(ROOM_TOPIC_MAX_LENGTH.toString())}`),
     ],
     schema: messageSchema,
@@ -57,5 +58,6 @@ export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
   name: createNameSchema(ROOM_NAME_MAX_LENGTH).nullable(),
+  slowmodeMs: z.int().min(1).nullable(),
   topic: z.string().transform(normalizeString).pipe(z.string().max(ROOM_TOPIC_MAX_LENGTH)),
 });
