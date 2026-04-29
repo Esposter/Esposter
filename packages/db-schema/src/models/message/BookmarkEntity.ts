@@ -2,6 +2,7 @@ import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity
 import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
+import { selectUserSchema } from "schema/users";
 import { z } from "zod";
 
 export class BookmarkEntity extends AzureEntity {
@@ -14,8 +15,7 @@ export class BookmarkEntity extends AzureEntity {
 export const bookmarkEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      // userId
-      partitionKey: z.string(),
+      partitionKey: selectUserSchema.shape.id,
       // ${roomId}|${messageRowKey}
       rowKey: z.string(),
     }),

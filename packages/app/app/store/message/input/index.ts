@@ -30,9 +30,8 @@ export const useInputStore = defineStore("message/input", () => {
   const draftRoomIds = ref(initDraftRoomIds());
 
   watchDebounced(
-    input,
-    (newInput) => {
-      const roomId = roomStore.currentRoomId;
+    () => [input.value, roomStore.currentRoomId] as const,
+    ([newInput, roomId]) => {
       if (!roomId) return;
       const key = `${DRAFT_KEY_PREFIX}${roomId}`;
       const hasDraft = Boolean(newInput && !EMPTY_TEXT_REGEX.test(newInput));

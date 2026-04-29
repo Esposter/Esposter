@@ -11,6 +11,7 @@ import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants"
 import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
+import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
 import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -128,6 +129,8 @@ export const moderationRouter = router({
                   serializeEntity({ deletedAt: now, partitionKey, rowKey, updatedAt: now }),
                 ]),
               );
+              for (const { partitionKey, rowKey } of batch)
+                messageEventEmitter.emit("deleteMessage", { partitionKey, rowKey });
             }
 
           break;

@@ -15,7 +15,9 @@ export const useThreadStore = defineStore("message/thread", () => {
   const openThread = async (roomId: string, rootRowKey: string) => {
     activeRoomId.value = roomId;
     activeRootRowKey.value = rootRowKey;
-    threadMessages.value = await $trpc.message.readThread.query({ roomId, rootRowKey });
+    const messages = await $trpc.message.readThread.query({ roomId, rootRowKey });
+    if (activeRoomId.value !== roomId || activeRootRowKey.value !== rootRowKey) return;
+    threadMessages.value = messages;
     messageLayoutStore.rightDrawer = RightDrawer.Thread;
     layoutStore.isRightDrawerOpen = true;
   };

@@ -4,10 +4,10 @@ import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
 
-const { $trpc } = useNuxtApp();
+const { readBookmarks, readMoreBookmarks } = useReadBookmarks();
 const bookmarkStore = useBookmarkStore();
-const { bookmarks } = storeToRefs(bookmarkStore);
-const { deleteBookmark, readBookmarks } = bookmarkStore;
+const { hasMore, items } = storeToRefs(bookmarkStore);
+const { deleteBookmark } = bookmarkStore;
 await readBookmarks();
 
 const parseBookmarkRowKey = (rowKey: string) => {
@@ -27,9 +27,9 @@ const parseBookmarkRowKey = (rowKey: string) => {
     <div class="bg-surface" flex flex-col h-full overflow-y-auto>
       <v-container>
         <div class="text-headline-small" font-bold mb-6>Saved Messages</div>
-        <v-list v-if="bookmarks.length > 0" rd>
+        <v-list v-if="items.length > 0" rd>
           <v-list-item
-            v-for="{ rowKey } of bookmarks"
+            v-for="{ rowKey } of items"
             :key="rowKey"
             :to="
               RoutePath.MessagesMessage(parseBookmarkRowKey(rowKey).roomId, parseBookmarkRowKey(rowKey).messageRowKey)
@@ -50,6 +50,7 @@ const parseBookmarkRowKey = (rowKey: string) => {
               Room: {{ parseBookmarkRowKey(rowKey).roomId }}
             </v-list-item-subtitle>
           </v-list-item>
+          <StyledWaypoint :is-active="hasMore" @change="readMoreBookmarks" />
         </v-list>
         <span v-else class="text-medium-emphasis">No saved messages yet.</span>
       </v-container>

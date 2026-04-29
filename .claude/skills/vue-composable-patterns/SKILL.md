@@ -1,7 +1,71 @@
 ---
 name: vue-composable-patterns
-description: Esposter-specific Vue 3 composable and form patterns — MaybeRefOrGetter, SSR safety, online/offline, type-driven state reset, and resource management. Apply when writing composables, form dialogs, or browser-aware reactive code.
+description: Esposter-specific Vue 3 composable and form patterns — MaybeRefOrGetter, SSR safety, online/offline, type-driven state reset, resource management, and cursor pagination (store + useRead* composable + StyledWaypoint). Apply when writing composables, form dialogs, paginated lists, or browser-aware reactive code.
 ---
+
+## Cursor Pagination — Store + Composable + Waypoint
+
+Every paginated list follows a three-layer pattern. **Never load pages directly in a component or store a raw array for paginated data.**
+
+### Layer 1 — Store
+
+Call `useCursorPaginationData<TItem>()` — it handles the ref + cast internally. Expose `hasMore`, `items`, `readItems`, `readMoreItems`:
+
+```ts
+export const useFooStore = defineStore("feature/foo", () => {
+  const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<FooEntity>();
+  // mutations update items.value directly (optimistic or after server response)
+  return { hasMore, items, readItems, readMoreItems };
+});
+```
+
+### Layer 2 — `useRead*` Composable
+
+Wrap `readItems` (first page) and `readMoreItems` (subsequent pages) with tRPC calls. The `readMoreItems` callback receives the current `cursor` automatically:
+
+```ts
+export const useReadFoos = (roomId: string) => {
+  const { $trpc } = useNuxtApp();
+  const fooStore = useFooStore();
+  const { readItems, readMoreItems } = fooStore;
+  const readFoos = () => readItems(() => $trpc.foo.readFoos.query({ roomId }));
+  const readMoreFoos = (onComplete: () => void) =>
+    readMoreItems((cursor) => $trpc.foo.readFoos.query({ cursor, roomId }), onComplete);
+  return { readFoos, readMoreFoos };
+};
+```
+
+For global (non-room-scoped) lists omit the `roomId` parameter entirely.
+
+### Layer 3 — Component / Page
+
+Call `readFoos()` in `await` at setup time, destructure `hasMore` + `items` via `storeToRefs`, and place `<StyledWaypoint>` at the bottom of the list. The waypoint emits `change` with an `onComplete` callback when it enters the viewport:
+
+```vue
+<script setup lang="ts">
+const { readFoos, readMoreFoos } = useReadFoos(roomId);
+const fooStore = useFooStore();
+const { hasMore, items } = storeToRefs(fooStore);
+await readFoos();
+</script>
+
+<template>
+  <v-list v-if="items.length > 0">
+    <v-list-item v-for="item of items" :key="item.id" ... />
+    <StyledWaypoint :is-active="hasMore" @change="readMoreFoos" />
+  </v-list>
+</template>
+```
+
+`StyledWaypoint` is placed **inside** the list container, after all items — it only triggers when `:is-active` is true, so it is safe to always render it.
+
+### Rules
+
+- **Never** store a paginated list as a plain `ref<TItem[]>` — always use `CursorPaginationData<TItem>`.
+- **Never** call `readItems`/`readMoreItems` from a component directly — always go through a `useRead*` composable.
+- Optimistic mutations update `items.value` directly (spread for create, filter for delete) — no need to re-fetch.
+- `readMoreItems` appends; `readItems` resets the full `CursorPaginationData` ref (handles navigating back to first page).
+- For multi-list pagination (e.g., messages per room) use `useCursorPaginationDataMap` instead of `useCursorPaginationOperationData`.
 
 # Vue Composable & Form Patterns (Esposter)
 

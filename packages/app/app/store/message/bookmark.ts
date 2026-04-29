@@ -2,29 +2,27 @@ import type { BookmarkEntity } from "@esposter/db-schema";
 
 export const useBookmarkStore = defineStore("message/bookmark", () => {
   const { $trpc } = useNuxtApp();
-  const bookmarks = ref<BookmarkEntity[]>([]);
-  const isBookmarked = (roomId: string, messageRowKey: string) =>
-    bookmarks.value.some(({ rowKey }) => rowKey === `${roomId}|${messageRowKey}`);
+  const { hasMore, items, readItems, readMoreItems } = useCursorPaginationData<BookmarkEntity>();
 
-  const readBookmarks = async () => {
-    bookmarks.value = await $trpc.bookmark.readBookmarks.query({});
-  };
+  const isBookmarked = (roomId: string, messageRowKey: string) =>
+    items.value.some(({ rowKey }) => rowKey === `${roomId}|${messageRowKey}`);
+
   const createBookmark = async (roomId: string, messageRowKey: string) => {
     await $trpc.bookmark.createBookmark.mutate({ messageRowKey, roomId });
-    bookmarks.value = [
-      ...bookmarks.value,
-      { partitionKey: "", rowKey: `${roomId}|${messageRowKey}` } as BookmarkEntity,
-    ];
+    items.value = [...items.value, { partitionKey: "", rowKey: `${roomId}|${messageRowKey}` } as BookmarkEntity];
   };
   const deleteBookmark = async (roomId: string, messageRowKey: string) => {
     await $trpc.bookmark.deleteBookmark.mutate({ messageRowKey, roomId });
-    bookmarks.value = bookmarks.value.filter(({ rowKey }) => rowKey !== `${roomId}|${messageRowKey}`);
+    items.value = items.value.filter(({ rowKey }) => rowKey !== `${roomId}|${messageRowKey}`);
   };
+
   return {
-    bookmarks,
     createBookmark,
     deleteBookmark,
+    hasMore,
     isBookmarked,
-    readBookmarks,
+    items,
+    readItems,
+    readMoreItems,
   };
 });

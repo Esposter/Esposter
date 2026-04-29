@@ -253,6 +253,26 @@ myError.issues.push({ code: "custom", message: "..." });
 
 - **Record maps over switch statements** — when a switch on an enum drives different async operations, prefer `const actionMap: Record<EnumType, (args) => Promise<void>> = { [Enum.A]: ..., [Enum.B]: ... }` and call `await actionMap[type](args)`. Exhaustiveness is enforced by the Record key type; no `default: exhaustiveGuard(type)` needed.
 
+- **Paginated endpoint schemas** — never define `limit` and `cursor` manually on paginated input schemas. Always use `createCursorPaginationParamsSchema` (Azure Table / any cursor-based endpoint) or `createBasePaginationParamsSchema` (non-cursor). When the sort order is fixed in the implementation, omit `sortBy` from the schema: `createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true })`. The function bakes in the correct `DEFAULT_READ_LIMIT`, `MAX_READ_LIMIT`, and `cursor: z.string().optional()` — never override these manually. On the server side, wire cursor into `getCursorWhereAzureTable` (Azure Table) or `getCursorWhere` (Postgres), fetch `limit + 1` rows, and return `getCursorPaginationData(items, limit, sortBy)`:
+
+  ```typescript
+  // WRONG — manual limit/cursor definition
+  const readBookmarksInputSchema = z.object({
+    cursor: z.string().optional(),
+    limit: z.int().min(1).max(MAX_READ_LIMIT).default(50),
+  });
+
+  // CORRECT — use the shared factory
+  const readBookmarksInputSchema = z.object({
+    ...createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true }).shape,
+  });
+  // Query impl:
+  const sortBy: SortItem<keyof BookmarkEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
+  if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
+  const items = await getTopNEntities(client, limit + 1, BookmarkEntity, { filter: serializeClauses(clauses) });
+  return getCursorPaginationData(items, limit, sortBy);
+  ```
+
 - **`refineAtLeastOne`** — when an update/patch schema has all-optional fields and at least one must be provided, always use `refineAtLeastOne(schema, ["field1", "field2", ...])` from `#shared/services/zod/refineAtLeastOne`. Never inline `.refine((data) => ...)` for this pattern:
 
   ```typescript

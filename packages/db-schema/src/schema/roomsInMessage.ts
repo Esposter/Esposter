@@ -54,4 +54,9 @@ export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
   name: createNameSchema(ROOM_NAME_MAX_LENGTH).nullable(),
+  topic: z
+    .string()
+    .trim()
+    .transform((v) => v || null)
+    .nullable(),
 });

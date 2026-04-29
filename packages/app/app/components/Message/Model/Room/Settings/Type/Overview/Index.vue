@@ -2,6 +2,7 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { normalizeString } from "@esposter/shared";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 
@@ -33,7 +34,7 @@ const isChanged = computed(
     selectedCategoryId.value !== (room.value?.categoryId ?? null) ||
     isReadOnly.value !== (room.value?.isReadOnly ?? false) ||
     slowmodeMs.value !== (room.value?.slowmodeMs ?? null) ||
-    topic.value.trim() !== (room.value?.topic ?? ""),
+    normalizeString(topic.value) !== room.value?.topic,
 );
 const save = async () => {
   if (!isChanged.value) return;
@@ -42,7 +43,7 @@ const save = async () => {
     id: roomId,
     isReadOnly: isReadOnly.value,
     slowmodeMs: slowmodeMs.value,
-    topic: topic.value.trim() || null,
+    topic: normalizeString(topic.value),
   });
   storeUpdateRoom(updatedRoom);
 };

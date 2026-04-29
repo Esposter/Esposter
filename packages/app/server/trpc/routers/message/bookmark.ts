@@ -1,10 +1,14 @@
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Clause } from "@esposter/db-schema";
 
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
+import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { createEntity, deleteEntity, getTopNEntities, serializeClauses } from "@esposter/db";
+import { createEntity, deleteEntity, getEntity, getTopNEntities, serializeClauses } from "@esposter/db";
 import {
   AzureTable,
   BinaryOperator,
@@ -30,8 +34,7 @@ const deleteBookmarkInputSchema = z.object({
 export type DeleteBookmarkInput = z.infer<typeof deleteBookmarkInputSchema>;
 
 const readBookmarksInputSchema = z.object({
-  cursor: z.string().optional(),
-  limit: z.int().min(1).max(MAX_READ_LIMIT).default(50),
+  ...createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true }).shape,
 });
 export type ReadBookmarksInput = z.infer<typeof readBookmarksInputSchema>;
 
@@ -53,18 +56,23 @@ export const bookmarkRouter = router({
       const userId = ctx.getSessionPayload.user.id;
       const bookmarkClient = await useTableClient(AzureTable.Bookmarks);
       const rowKey = `${roomId}|${messageRowKey}`;
-      const entity = await bookmarkClient.getEntity<BookmarkEntity>(userId, rowKey).catch(() => null);
+      const entity = await getEntity(bookmarkClient, BookmarkEntity, userId, rowKey);
       if (!entity) throw new TRPCError({ code: "NOT_FOUND", message: new NotFoundError("Bookmark", rowKey).message });
       await deleteEntity(bookmarkClient, userId, rowKey);
     }),
-  readBookmarks: standardAuthedProcedure.input(readBookmarksInputSchema).query(async ({ ctx, input: { limit } }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    const bookmarkClient = await useTableClient(AzureTable.Bookmarks);
-    const clauses: Clause<BookmarkEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: userId },
-    ];
-    return getTopNEntities(bookmarkClient, limit, BookmarkEntity, {
-      filter: serializeClauses(clauses),
-    });
-  }),
+  readBookmarks: standardAuthedProcedure
+    .input(readBookmarksInputSchema)
+    .query(async ({ ctx, input: { cursor, limit } }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const bookmarkClient = await useTableClient(AzureTable.Bookmarks);
+      const sortBy: SortItem<keyof BookmarkEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
+      const clauses: Clause<BookmarkEntity>[] = [
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: userId },
+      ];
+      if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
+      const bookmarks = await getTopNEntities(bookmarkClient, limit + 1, BookmarkEntity, {
+        filter: serializeClauses(clauses),
+      });
+      return getCursorPaginationData(bookmarks, limit, sortBy);
+    }),
 });

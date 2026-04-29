@@ -307,6 +307,9 @@ export const messageRouter = router({
       await Promise.all(
         roomIds.map(async (roomId) => {
           await assertNotTimedOut(ctx.db, ctx.getSessionPayload.user.id, roomId);
+          await assertNotReadOnly(ctx.db, ctx.getSessionPayload.user.id, roomId);
+          await assertNotInSlowmode(ctx.db, ctx.getSessionPayload.user.id, roomId);
+          if (message) await assertNotWordFiltered(ctx.db, ctx.getSessionPayload.user.id, roomId, message);
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, messageAscendingClient, {
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
@@ -491,6 +494,7 @@ export const messageRouter = router({
     const replies = await getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
       filter: serializeClauses(replyClauses),
     });
+    if (rootMessage?.deletedAt) return replies;
     return rootMessage ? [rootMessage, ...replies] : replies;
   }),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(async ({ ctx, input }) => {

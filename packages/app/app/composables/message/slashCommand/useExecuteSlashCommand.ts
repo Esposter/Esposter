@@ -9,7 +9,7 @@ import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 import { MessageType } from "@esposter/db-schema";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, normalizeString } from "@esposter/shared";
 import { marked } from "marked";
 
 export const useExecuteSlashCommand = () => {
@@ -60,7 +60,7 @@ export const useExecuteSlashCommand = () => {
       }
       case SlashCommandType.Shrug: {
         const { text } = command.parameterValues;
-        const prefix = text?.trim() ?? "";
+        const prefix = normalizeString(text) ?? "";
         createMessageInput = { message: `${prefix}¯\\_(ツ)_/¯`, roomId, type: MessageType.Message };
         break;
       }
@@ -68,7 +68,7 @@ export const useExecuteSlashCommand = () => {
         createMessageInput = { message: `(╯°□°）╯︵ ┻━┻`, roomId, type: MessageType.Message };
         break;
       case SlashCommandType.Topic: {
-        const topic = command.parameterValues.text?.trim() ?? null;
+        const topic = normalizeString(command.parameterValues.text);
         await $trpc.room.updateRoom.mutate({ id: roomId, topic });
         break;
       }

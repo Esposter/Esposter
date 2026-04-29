@@ -81,12 +81,6 @@ describe("roomFilter", () => {
 
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.createMembers({ roomId, userIds: [user.id] });
-      await roleCaller.createRole({
-        name: crypto.randomUUID(),
-        permissions: RoomPermission.ManageRoom,
-        position: 5,
-        roomId,
-      });
       const role = await roleCaller.createRole({
         name: crypto.randomUUID(),
         permissions: RoomPermission.ManageRoom,
