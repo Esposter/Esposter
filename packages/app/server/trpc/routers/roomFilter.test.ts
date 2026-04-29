@@ -4,9 +4,9 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
-import { roomFilterRouter } from "@@/server/trpc/routers/roomFilter";
-import { roomRouter } from "@@/server/trpc/routers/room";
 import { roleRouter } from "@@/server/trpc/routers/role";
+import { roomRouter } from "@@/server/trpc/routers/room";
+import { roomFilterRouter } from "@@/server/trpc/routers/roomFilter";
 import { RoomPermission, roomsInMessage } from "@esposter/db-schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -37,14 +37,18 @@ describe("roomFilter", () => {
   describe("readRoomFilter", () => {
     test("returns empty array when no filter configured", async () => {
       expect.hasAssertions();
+
       const words = await roomFilterCaller.readRoomFilter({ roomId });
+
       expect(words).toStrictEqual([]);
     });
 
     test("returns words after updateRoomFilter", async () => {
       expect.hasAssertions();
+
       await roomFilterCaller.updateRoomFilter({ roomId, words: ["spam", "badword"] });
       const words = await roomFilterCaller.readRoomFilter({ roomId });
+
       expect(words).toStrictEqual(["spam", "badword"]);
     });
   });
@@ -52,14 +56,17 @@ describe("roomFilter", () => {
   describe("updateRoomFilter", () => {
     test("owner can set and overwrite word list", async () => {
       expect.hasAssertions();
+
       await roomFilterCaller.updateRoomFilter({ roomId, words: ["spam"] });
       await roomFilterCaller.updateRoomFilter({ roomId, words: ["spam", "badword"] });
       const words = await roomFilterCaller.readRoomFilter({ roomId });
+
       expect(words).toStrictEqual(["spam", "badword"]);
     });
 
     test(`member without ${RoomPermission.ManageRoom} permission cannot updateRoomFilter — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
+
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.createMembers({ roomId, userIds: [user.id] });
       await mockSessionOnce(mockContext.db, user);
@@ -71,6 +78,7 @@ describe("roomFilter", () => {
 
     test(`member with ${RoomPermission.ManageRoom} permission can updateRoomFilter`, async () => {
       expect.hasAssertions();
+
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.createMembers({ roomId, userIds: [user.id] });
       await roleCaller.createRole({

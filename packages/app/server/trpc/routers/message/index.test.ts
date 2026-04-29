@@ -782,7 +782,7 @@ describe("message", () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
-      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 1_000 });
+      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 1000 });
       const userId = getMockSession().user.id;
       const message = getMessage(userId);
 
@@ -797,12 +797,12 @@ describe("message", () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
-      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 1_000 });
+      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 1000 });
       const userId = getMockSession().user.id;
       const message = getMessage(userId);
 
       await messageCaller.createMessage({ message, roomId: newRoom.id });
-      vi.setSystemTime(2_000);
+      vi.setSystemTime(2000);
 
       await expect(messageCaller.createMessage({ message, roomId: newRoom.id })).resolves.toBeDefined();
     });
@@ -814,7 +814,6 @@ describe("message", () => {
 
       const newRoom = await roomCaller.createRoom({ name });
       await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: ["spam"] });
-      const userId = getMockSession().user.id;
 
       await expect(
         messageCaller.createMessage({ message: `<p>this is spam</p>`, roomId: newRoom.id }),

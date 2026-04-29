@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
-import { DRAFT_KEY_PREFIX } from "@/store/message/input/constants";
 import { useInputStore } from "@/store/message/input";
-import { createPinia, setActivePinia } from "pinia";
+import { DRAFT_KEY_PREFIX } from "@/store/message/input/constants";
 import { marked } from "marked";
+import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useInputStore, () => {

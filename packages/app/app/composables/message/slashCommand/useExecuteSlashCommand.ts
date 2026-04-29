@@ -47,9 +47,9 @@ export const useExecuteSlashCommand = () => {
         const durationMs = parseDuration(time);
         if (!durationMs) break;
         setTimeout(() => {
-          if (Notification.permission === "granted") {
+          if (Notification.permission === "granted")
+            // oxlint-disable-next-line no-new
             new Notification("Reminder", { body: message });
-          }
         }, durationMs);
         break;
       }
@@ -68,7 +68,7 @@ export const useExecuteSlashCommand = () => {
         createMessageInput = { message: `(╯°□°）╯︵ ┻━┻`, roomId, type: MessageType.Message };
         break;
       case SlashCommandType.Topic: {
-        const topic = command.parameterValues.text?.trim() || null;
+        const topic = command.parameterValues.text?.trim() ?? null;
         await $trpc.room.updateRoom.mutate({ id: roomId, topic });
         break;
       }

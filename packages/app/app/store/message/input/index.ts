@@ -9,7 +9,7 @@ import { getIsServer } from "@esposter/shared";
 
 export const useInputStore = defineStore("message/input", () => {
   const roomStore = useRoomStore();
-  const { data: input, getData, setData } = useDataMap(() => roomStore.currentRoomId, "");
+  const { data: input, setData } = useDataMap(() => roomStore.currentRoomId, "");
   const uploadFileStore = useUploadFileStore();
 
   const initDraftRoomIds = (): Set<string> => {

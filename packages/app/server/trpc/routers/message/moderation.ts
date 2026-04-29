@@ -1,11 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type {
-  AzureUpdateEntity,
-  BanInMessage,
-  BanInMessageWithRelations,
-  Clause,
-  StandardMessageEntity,
-} from "@esposter/db-schema";
+import type { BanInMessage, BanInMessageWithRelations, Clause, StandardMessageEntity } from "@esposter/db-schema";
 
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
@@ -13,7 +7,7 @@ import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput"
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
@@ -30,21 +24,16 @@ import { router } from "@@/server/trpc";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import {
-  getTableNullClause,
-  getTopNEntities,
-  getTopNEntitiesByType,
-  serializeClauses,
-  updateEntity,
-} from "@esposter/db";
+import { getTableNullClause, getTopNEntities, serializeClauses, serializeEntity } from "@esposter/db";
 import {
   AdminActionType,
   AzureTable,
+  AZURE_MAX_BATCH_SIZE,
+  AZURE_MAX_PAGE_SIZE,
   bansInMessage,
   BinaryOperator,
   CompositeKeyPropertyNames,
   DatabaseEntityType,
-  MessageEntityMap,
   ModerationLogEntity,
   roomIdSchema,
   RoomPermission,
@@ -122,25 +111,25 @@ export const moderationRouter = router({
               .onConflictDoNothing();
           });
           const messageClient = await useTableClient(AzureTable.Messages);
-          const clauses: Clause<StandardMessageEntity>[] = [
+          const filter = serializeClauses([
             { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
             { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: targetUserId },
             getTableNullClause(ItemMetadataPropertyNames.deletedAt),
-          ];
-          const recentMessages = await getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
-            filter: serializeClauses(clauses),
-          });
+          ] as Clause<StandardMessageEntity>[]);
           const now = new Date();
-          await Promise.all(
-            recentMessages.map((message) => {
-              const updatedMessage: AzureUpdateEntity<StandardMessageEntity> = {
-                deletedAt: now,
-                partitionKey: message.partitionKey,
-                rowKey: message.rowKey,
-              };
-              return updateEntity(messageClient, updatedMessage);
-            }),
-          );
+          for await (const page of messageClient
+            .listEntities<StandardMessageEntity>({ queryOptions: { filter } })
+            .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE })) {
+            for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE) {
+              const batch = page.slice(i, i + AZURE_MAX_BATCH_SIZE);
+              await messageClient.submitTransaction(
+                batch.map(({ partitionKey, rowKey }) => [
+                  "update",
+                  serializeEntity({ deletedAt: now, partitionKey, rowKey, updatedAt: now }),
+                ]),
+              );
+            }
+          }
           break;
         }
         case AdminActionType.TimeoutUser:

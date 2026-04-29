@@ -32,10 +32,10 @@ const {
   emissive,
   emissiveIntensity,
   hexPolygonColor,
+  isAtmosphereVisible,
   ringMaxRadius,
   rings,
   shininess,
-  isAtmosphereVisible,
 } = {
   arcLength: 0.9,
   arcTime: dayjs.duration(2, "second").asMilliseconds(),
@@ -45,10 +45,10 @@ const {
   emissive: "#220038",
   emissiveIntensity: 0.1,
   hexPolygonColor: "rgba(255,255,255,0.7)",
+  isAtmosphereVisible: true,
   ringMaxRadius: 3,
   rings: 3,
   shininess: 0.7,
-  isAtmosphereVisible: true,
 };
 const id = "globe";
 const { width } = useWindowSize();

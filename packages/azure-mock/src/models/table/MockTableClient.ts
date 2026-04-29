@@ -96,10 +96,16 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
       ? tableEntities.filter((e) => createTableFilterPredicate(filter)(e))
       : tableEntities;
     return {
-      byPage: () =>
+      byPage: ({ maxPageSize } = {}) =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
           const allEntitiesWithMetadata = entities.map((e) => withMetadata(e));
-          if (allEntitiesWithMetadata.length > 0) yield await Promise.resolve(allEntitiesWithMetadata);
+          if (allEntitiesWithMetadata.length === 0) return;
+          if (!maxPageSize) {
+            yield await Promise.resolve(allEntitiesWithMetadata);
+            return;
+          }
+          for (let i = 0; i < allEntitiesWithMetadata.length; i += maxPageSize)
+            yield await Promise.resolve(allEntitiesWithMetadata.slice(i, i + maxPageSize));
         })(resultTableEntities),
       next: () =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
@@ -115,8 +121,30 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     throw new Error("Method not implemented.");
   }
 
-  submitTransaction(): Promise<TableTransactionResponse> {
-    throw new Error("Method not implemented.");
+  async submitTransaction(actions: Parameters<TableClient["submitTransaction"]>[0]): Promise<TableTransactionResponse> {
+    for (const [type, entity, options] of actions as Array<
+      [string, TableEntity, { updateMode?: UpdateMode } | undefined]
+    >) {
+      switch (type) {
+        case "create":
+          await this.createEntity(entity);
+          break;
+        case "delete":
+          await this.deleteEntity(entity.partitionKey, entity.rowKey);
+          break;
+        case "update":
+          await this.updateEntity(entity, options?.updateMode);
+          break;
+        case "upsert":
+          await this.upsertEntity(entity, options?.updateMode);
+          break;
+      }
+    }
+    return {
+      getResponseForEntity: () => undefined,
+      status: 202,
+      subResponses: [],
+    } as unknown as TableTransactionResponse;
   }
 
   updateEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {

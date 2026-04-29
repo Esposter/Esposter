@@ -1,6 +1,6 @@
 const DURATION_PATTERN = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i;
 
-export const parseDuration = (input: string): number | null => {
+export const parseDuration = (input: string): null | number => {
   const match = DURATION_PATTERN.exec(input.trim());
   if (!match) return null;
 

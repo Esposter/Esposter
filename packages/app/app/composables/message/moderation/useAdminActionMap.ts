@@ -19,12 +19,12 @@ export const useAdminActionMap = () => {
       await storeDeleteRoom({ id: roomId });
       notify("You have been kicked from this room.");
     },
+    [AdminActionType.KickFromVoice]: () => {
+      notify("You have been kicked from voice.");
+    },
     [AdminActionType.SoftBan]: async (roomId: string) => {
       await storeDeleteRoom({ id: roomId });
       notify("You have been soft-banned from this room.");
-    },
-    [AdminActionType.KickFromVoice]: () => {
-      notify("You have been kicked from voice.");
     },
     [AdminActionType.TimeoutUser]: (_roomId: string, durationMs?: number) => {
       const minutes = durationMs ? Math.max(1, Math.ceil(durationMs / 60000)) : 0;

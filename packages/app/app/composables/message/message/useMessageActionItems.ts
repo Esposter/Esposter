@@ -4,8 +4,8 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { useBookmarkStore } from "@/store/message/bookmark";
 import { useMessageStore } from "@/store/message";
+import { useBookmarkStore } from "@/store/message/bookmark";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
@@ -89,9 +89,9 @@ export const useMessageActionItems = (
   );
   const viewThreadItem: Item = {
     icon: "mdi-comment-multiple-outline",
-    onClick: () => {
-      openThread(message.partitionKey, message.rowKey);
-    },
+    onClick: getSynchronizedFunction(async () => {
+      await openThread(message.partitionKey, message.rowKey);
+    }),
     title: "View Thread",
   };
   const bookmarkItem = computed<Item>(() =>
@@ -140,8 +140,6 @@ export const useMessageActionItems = (
         return [copyTextItem, copyMessageLinkItem];
       case MessageType.Message:
         return [copyTextItem, viewThreadItem, pinMessageItem.value, bookmarkItem.value, copyMessageLinkItem];
-      case MessageType.Webhook:
-        return [copyTextItem, pinMessageItem.value, bookmarkItem.value, copyMessageLinkItem];
       case MessageType.PinMessage:
         return [copyMessageLinkItem];
       case MessageType.Poll:
@@ -150,6 +148,8 @@ export const useMessageActionItems = (
         return [copyMessageLinkItem];
       case MessageType.VoiceCall:
         return [copyMessageLinkItem];
+      case MessageType.Webhook:
+        return [copyTextItem, pinMessageItem.value, bookmarkItem.value, copyMessageLinkItem];
       default:
         return exhaustiveGuard(message);
     }

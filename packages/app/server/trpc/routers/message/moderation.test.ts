@@ -4,25 +4,30 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { messageRouter } from "@@/server/trpc/routers/message";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import {
   AdminActionType,
+  AzureTable,
+  AZURE_MAX_PAGE_SIZE,
   bansInMessage,
   DatabaseEntityType,
   RoomPermission,
   roomsInMessage,
+  StandardMessageEntity,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { MockTableDatabase } from "azure-mock";
 import { NotFoundError, takeOne } from "@esposter/shared";
+import { MockTableDatabase } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("moderation", () => {
   let mockContext: Context;
+  let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let moderationCaller: DecorateRouterRecord<TRPCRouter["moderation"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -46,6 +51,7 @@ describe("moderation", () => {
 
   beforeAll(async () => {
     mockContext = await createMockContext();
+    messageCaller = createCallerFactory(messageRouter)(mockContext);
     moderationCaller = createCallerFactory(moderationRouter)(mockContext);
     roleCaller = createCallerFactory(roleRouter)(mockContext);
     roomCaller = createCallerFactory(roomRouter)(mockContext);
@@ -226,6 +232,30 @@ describe("moderation", () => {
       expect(banRows).toHaveLength(1);
       expect(takeOne(banRows).userId).toBe(member.id);
       expect(membershipRows).toHaveLength(0);
+    });
+
+    test(`${AdminActionType.SoftBan}: soft-deletes all messages across pagination boundaries — AZURE_MAX_PAGE_SIZE + 1 messages all deleted`, async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      const messageCount = AZURE_MAX_PAGE_SIZE + 1;
+
+      for (let i = 0; i < messageCount; i++) {
+        await mockSessionOnce(mockContext.db, member);
+        await messageCaller.createMessage({ message: " ", roomId });
+      }
+
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: member.id,
+        type: AdminActionType.SoftBan,
+      });
+
+      const allMessages = [...(MockTableDatabase.get(AzureTable.Messages)?.values() ?? [])] as StandardMessageEntity[];
+      const memberMessages = allMessages.filter(({ userId }) => userId === member.id);
+
+      expect(memberMessages).toHaveLength(messageCount);
+      expect(memberMessages.every(({ deletedAt }) => deletedAt !== null && deletedAt !== undefined)).toBe(true);
     });
   });
 
