@@ -34,7 +34,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>>(
       async (newThrottledSearchQuery, oldThrottledSearchQuery) => {
         const sanitizedNewThrottledSearchQuery = normalizeString(newThrottledSearchQuery);
         const sanitizedOldThrottledSearchQuery =
-          oldThrottledSearchQuery !== undefined ? normalizeString(oldThrottledSearchQuery) : oldThrottledSearchQuery;
+          oldThrottledSearchQuery === undefined ? oldThrottledSearchQuery : normalizeString(oldThrottledSearchQuery);
         if (
           sanitizedNewThrottledSearchQuery === sanitizedOldThrottledSearchQuery ||
           !(isIncludeEmptySearchQuery || sanitizedNewThrottledSearchQuery)

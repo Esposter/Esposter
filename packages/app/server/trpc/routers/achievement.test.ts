@@ -13,9 +13,9 @@ import {
   roomsInMessage,
   SpecialAchievementName,
   UserAchievementRelations,
-  type UserAchievementWithRelations,
   WebpageAchievementName,
 } from "@esposter/db-schema";
+import type { UserAchievementWithRelations } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";

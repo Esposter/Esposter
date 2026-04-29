@@ -8,7 +8,6 @@ description: Esposter Pinia store conventions — full store name, destructure w
 ## Usage in Vue Components
 
 - **`storeToRefs` is auto-imported** — never write `import { storeToRefs } from "pinia"`. Same applies to `defineStore` in `.vue` and composable files.
-- **Naming**: always use the full descriptive store name — `const fileTableEditorStore = useFileTableEditorStore()`, `const objectStore = useObjectStore()`. Never use `const store = ...` — the only exception is a conditional assignment where the store type varies at runtime (e.g. `const store = isEnemy ? useEnemyStore() : usePlayerStore()`).
 - **In Vue components**: always assign the store to a named variable first (`const roleStore = useRoleStore()`), then destructure from it. Never destructure directly from the `useXxxStore()` call. Then keep each store's lines grouped together in this order — fully extract one store before moving to the next. Never batch all store inits, then all storeToRefs, then all methods:
   1. `const xyzStore = useXyzStore()`
   2. `const { ref1, ref2 } = storeToRefs(xyzStore)` _(omit if no refs/computeds needed)_
@@ -223,9 +222,9 @@ const unban = async (input: UnbanUserInput) => {
   };
   ```
 
-- **Prefer CRUD verbs over domain-specific verbs** — when a store action clearly maps to creating or deleting a record, name it `createXxx`/`deleteXxx`, never a domain-specific synonym: `deleteBan` not `unban`, `deleteMember` not `kick`. Reserve domain terms only when there is no clean CRUD mapping.
+- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteMember` not `kick`. Reserve domain terms only when there is no clean CRUD mapping.
 
-- **`store` prefix for state-update-only counterparts of async user actions** — `deleteFriend` (user action) + `storeDeleteFriend` (subscription-driven state update). Never add `store` prefix to unpaired methods:
+- **`store*` prefix for subscription-driven state-update counterparts** — `deleteFriend` (user action) + `storeDeleteFriend` (subscription state update). Never add `store*` prefix to unpaired methods:
 
   ```ts
   // friend.ts — createOperationData wraps base CRUD; store methods add dedup / id-mapping

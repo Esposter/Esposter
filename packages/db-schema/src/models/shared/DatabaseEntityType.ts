@@ -12,6 +12,7 @@ export enum DatabaseEntityType {
   PushSubscription = "PushSubscription",
   Room = "Room",
   RoomCategory = "RoomCategory",
+  RoomFilter = "RoomFilter",
   RoomRole = "RoomRole",
   SearchHistory = "SearchHistory",
   Survey = "Survey",

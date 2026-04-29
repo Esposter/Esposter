@@ -7,9 +7,6 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 ## Core Rules
 
-- **Constant arrays use PascalCase** — `export const PermissionItems = [...]`, `export const FrierenExpressions: Expression[] = [...]`. This applies to all static data arrays exported from `services/`. File names match: `PermissionItems.ts`, `FrierenExpressions.ts`.
-- **No `With` prefix on mixin interfaces** — name them after the capability they represent: `SourceColumnId`, `SourceColumnIds`, `ApplicableColumnTypes`. Not `WithSourceColumnId`, `WithSourceColumnIds`, `WithApplicableColumnTypes`. The corresponding schema variables drop the `with` prefix too: `sourceColumnIdSchema` not `withSourceColumnIdSchema`.
-- **`A` prefix is for abstract classes only** — never use `A` prefix on interfaces. `AColumn` is an abstract class → correct. `ASlashCommand` as an interface → wrong, use `SlashCommand`. If it's an interface, just name it after the concept.
 - TypeScript compiler: `strict` mode enabled. ESLint: `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
 - **Always use strict equality** — `===` and `!==` only. Never `==` or `!=`, including null checks: use `=== null || === undefined` (or optional chaining) instead of `== null`.
 - `Omit` is **BANNED** — use `Except` from `type-fest` (`import type { Except } from "type-fest"`). Note: `Except` is not re-exported from `@esposter/shared` — always import directly from `type-fest`.
@@ -26,8 +23,6 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - Always use named imports from libraries — only when not already auto-imported by Nuxt or Nuxt modules (e.g. `ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; VueUse composables are all auto-imported and must not be manually imported).
 - Explicitly type variables with proper types.
 - **Never use generic variable names like `parsed`** — always use a descriptive name that includes the type: `parsedDate`, `parsedResult`, `parsedConfig`, etc.
-- **Never abbreviate variable names** — use the full descriptive name. `directMessageRoom` not `dmRoom`, `existingDirectMessage` not `existing`, `directMessageParticipantsMap` not `dmParticipantsMap`. Abbreviations that save a few characters at the cost of clarity are banned.
-- **Time values use `Ms` suffix** — exception to the no-abbreviation rule. `Ms` is a widely recognized time unit abbreviation: `slowmodeMs`, `durationMs`, `timeoutMs`, `cooldownMs`. Never use unit words: `slowmodeSeconds`, `durationMilliseconds`.
 - **No `current*` variable caching of `.value`** — don't assign `const currentX = x.value` just to use it once. If TypeScript narrowing is needed after a guard, assign with a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source value is already non-reactive (e.g. a `readonly` prop field).
 - **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype. **Exception**: `structuredClone(new ClassName(...))` is intentional when a plain object is explicitly required (e.g. Vjsf does not accept class instances — must use `structuredClone` to strip the prototype). Always add a comment explaining why.
 - **Boolean casting** — never use `!!` to cast to boolean. Always use `Boolean(value)`.
@@ -114,9 +109,6 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 ## Helper Functions
 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
-- **Function naming prefixes** — use `get*` for functions that derive or compute a display value (e.g. `getVisibilityTooltip`, `getRowTitle`). Use CRUD prefixes (`create*`, `update*`, `delete*`) for heavier operations that interact with data or stores.
-- **Boolean-returning functions** — always use `is*` prefix (e.g. `isManageable`, `isExpired`, `isRoomAdmin`). Never `can*` or `should*`. Exception: use `has*` when `is*` reads unnaturally — specifically when checking possession/membership (e.g. `hasPermission`, `hasMember`). The rule in full: prefer `is` → fall back to `has` → never `can`/`should`/`get` for booleans.
-- **No cardinality suffixes on function names** — when upgrading a function from single-item to batch (array) inputs, keep the same name. Don't add `ByRooms`, `ByIds`, `Many`, `Batch`, or similar suffixes — the parameter type already communicates that. Callers that previously passed a single value now wrap in `[value]` and extract from the returned map: `(await getPermissions(db, userId, [roomId])).get(roomId) ?? 0n`.
 - **Prefer inferred return types on service functions** — don't annotate `Promise<Map<string, bigint>>` when TypeScript can infer it. Only annotate when the inferred type is too broad or when enforcing a public API contract (see `Return Type Annotations` above).
 
 ## Exhaustive Switch Guards
@@ -152,7 +144,6 @@ Applies to nested switches too (each inner switch on an enum needs its own guard
 ## Enum Naming
 
 - **Never abbreviate enum value names** — use the full word: `Absolute` not `Abs`, `Subtract` not `Sub`, `Configuration` not `Config`. This applies to both the enum key and string value. Abbreviated names save nothing and hurt readability.
-- **Name interface fields by their full type name** — when an interface field holds a value of an enum type `FooType`, name the field `fooType` (not `foo`, `mode`, `type`, or any abbreviation). Examples: `aggregationType: AggregationTransformationType`, `stringTransformationType: StringTransformationType`, `datePartType: DatePartType`. Never shorten to generic names like `transform`, `mode`, or `value`.
 
 ## Enum Extension via mergeObjectsStrict
 
@@ -365,7 +356,6 @@ export const mathOperationTransformationSchema = z.object({
 **Rules:**
 
 - Each shared interface/schema lives in its own file (one export per file rule)
-- No `With` prefix on mixin interface names — `SourceColumnId` not `WithSourceColumnId`; schema variables follow: `sourceColumnIdSchema` not `withSourceColumnIdSchema`
 - Members spread `.shape` from the base schema (never `.extend()`) — see zod skill
 - Members that don't need the shared field just use `z.object({...})` directly
 - Use `SourceColumnId` (singular) for single-source, `SourceColumnIds` (plural) for multi-source

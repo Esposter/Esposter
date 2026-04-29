@@ -141,7 +141,7 @@ After successful send, update `lastMessageAt` on `usersToRoomsInMessage`.
 - `defineModel<number | null>()`, `v-text-field` (type=number, min=0), hint "Milliseconds between messages. Leave empty to disable."
 - Emit save on blur/enter.
 
-Add to `packages/app/app/components/Message/Model/Room/Settings/Type/Overview/Index.vue` with diff check in `isChanged` computed.
+Add to `packages/app/app/components/Message/Model/Room/Settings/Type/Overview/Index.vue` with diff check in `isDirty` computed.
 
 ### Composer feedback
 

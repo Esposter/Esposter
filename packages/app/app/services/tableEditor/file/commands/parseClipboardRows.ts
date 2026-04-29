@@ -6,9 +6,9 @@ import { ID_SEPARATOR, normalizeString, takeOne } from "@esposter/shared";
 
 const parseMarkdownRow = (line: string): string[] =>
   line
-    .split(ID_SEPARATOR)
-    .slice(1, -1)
-    .map((cell) => normalizeString(cell).replaceAll(String.raw`\${ID_SEPARATOR}`, ID_SEPARATOR));
+    .slice(2, -2)
+    .split(` ${ID_SEPARATOR} `)
+    .map((cell) => cell.replaceAll(String.raw`\${ID_SEPARATOR}`, ID_SEPARATOR));
 
 const isSeparatorRow = (cells: string[]): boolean => cells.every((cell) => /^:?-+:?$/.test(cell));
 

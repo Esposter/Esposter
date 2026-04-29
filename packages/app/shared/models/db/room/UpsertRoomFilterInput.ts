@@ -1,8 +1,8 @@
 import { roomIdSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-export const updateRoomFilterInputSchema = z.object({
+export const upsertRoomFilterInputSchema = z.object({
   ...roomIdSchema.shape,
   words: z.string().array(),
 });
-export type UpdateRoomFilterInput = z.infer<typeof updateRoomFilterInputSchema>;
+export type UpsertRoomFilterInput = z.infer<typeof upsertRoomFilterInputSchema>;

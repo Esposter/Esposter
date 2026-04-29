@@ -19,20 +19,6 @@ description: Esposter tRPC conventions — procedure typing with generics, route
 
   Same rule applies to `.mutation<T>(...)`.
 
-## Variable Naming
-
-- **Use `userId` for the session user's ID** — never use abbreviated or first-person names like `me`, `myId`, `self`:
-
-  ```ts
-  // CORRECT
-  const userId = ctx.getSessionPayload.user.id;
-
-  // WRONG
-  const me = ctx.getSessionPayload.user.id;
-  ```
-
-- **Name DB result variables after the entity** — `newFriend`, `updatedFriend`, `existingFriend`, not `created`, `updated`, `existing`.
-
 ## Async Procedures
 
 - **Omit `async` when there is no `await`** — if a procedure body only `return`s a promise (e.g. a Drizzle query chain), drop the `async` keyword:
@@ -104,22 +90,6 @@ description: Esposter tRPC conventions — procedure typing with generics, route
   if (inFilterRoomIds.some((value) => typeof value !== "string")) throw new TRPCError({ ... });
   if (inFilterRoomIds.length > 0) await isMember(...);
   ```
-
-## Subscription Naming
-
-Subscriptions must be named `on` + the **exact mutation procedure name** (camelCase, verbObject order):
-
-- `createMessage` mutation → `onCreateMessage` subscription ✓
-- `updateRole` mutation → `onUpdateRole` subscription ✓
-- `joinVoiceChannel` mutation → `onJoinVoiceChannel` subscription ✓
-- `setMute` mutation → `onSetMute` subscription ✓
-
-The corresponding input schema and exported type follow the same pattern:
-
-- Schema: `onUpdateRoleInputSchema = z.object({ ... })`
-- Type: `export type OnUpdateRoleInput = z.infer<typeof onUpdateRoleInputSchema>`
-
-When a single subscription fires for multiple mutation types (e.g. a role-change subscription that covers createRole/updateRole/deleteRole/assignRole/revokeRole), name it after the **primary** mutation it corresponds to (`onUpdateRole`, not `onRoleUpdate`).
 
 ## Metadata Loading in useRead\* Composables
 

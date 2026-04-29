@@ -184,7 +184,9 @@ export const roomRouter = router({
             ]);
           }),
         );
-      } catch {}
+      } catch {
+        /* System message creation is non-critical */
+      }
       return newMembers;
     }),
   createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(({ ctx, input }) =>
@@ -265,7 +267,9 @@ export const roomRouter = router({
             [systemMessage],
             { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
           ]);
-        } catch {}
+        } catch {
+          /* System message creation is non-critical */
+        }
     }),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
@@ -352,7 +356,9 @@ export const roomRouter = router({
           [systemMessage],
           { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
         ]);
-      } catch {}
+      } catch {
+        /* System message creation is non-critical */
+      }
 
       return roomInMessage;
     }),
@@ -404,7 +410,9 @@ export const roomRouter = router({
             [systemMessage],
             { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
           ]);
-        } catch {}
+        } catch {
+          /* System message creation is non-critical */
+        }
 
       return userToRoom.roomId;
     }),

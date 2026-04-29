@@ -29,7 +29,7 @@ const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(()
   { title: "None (uncategorized)", value: null },
   ...categories.value.map(({ id, name }) => ({ title: name, value: id })),
 ]);
-const isChanged = computed(
+const isDirty = computed(
   () =>
     selectedCategoryId.value !== (room.value?.categoryId ?? null) ||
     isReadOnly.value !== (room.value?.isReadOnly ?? false) ||
@@ -37,7 +37,7 @@ const isChanged = computed(
     normalizeString(topic.value) !== (room.value?.topic ?? ""),
 );
 const save = async () => {
-  if (!isChanged.value) return;
+  if (!isDirty.value) return;
   const updatedRoom = await $trpc.room.updateRoom.mutate({
     categoryId: selectedCategoryId.value,
     id: roomId,

@@ -17,6 +17,8 @@ describe("roomFilter", () => {
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomId: string;
   const name = "name";
+  const words = ["word"];
+  const updatedWords = ["word", "updatedWord"];
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -43,40 +45,39 @@ describe("roomFilter", () => {
       expect(words).toStrictEqual([]);
     });
 
-    test("returns words after updateRoomFilter", async () => {
+    test("returns words after upsertRoomFilter", async () => {
       expect.hasAssertions();
 
-      await roomFilterCaller.updateRoomFilter({ roomId, words: ["spam", "badword"] });
-      const words = await roomFilterCaller.readRoomFilter({ roomId });
+      await roomFilterCaller.upsertRoomFilter({ roomId, words });
+      const readWords = await roomFilterCaller.readRoomFilter({ roomId });
 
-      expect(words).toStrictEqual(["spam", "badword"]);
+      expect(readWords).toStrictEqual(words);
     });
   });
 
-  describe("updateRoomFilter", () => {
+  describe("upsertRoomFilter", () => {
     test("owner can set and overwrite word list", async () => {
       expect.hasAssertions();
 
-      await roomFilterCaller.updateRoomFilter({ roomId, words: ["spam"] });
-      await roomFilterCaller.updateRoomFilter({ roomId, words: ["spam", "badword"] });
-      const words = await roomFilterCaller.readRoomFilter({ roomId });
+      await roomFilterCaller.upsertRoomFilter({ roomId, words });
+      const result = await roomFilterCaller.upsertRoomFilter({ roomId, words: updatedWords });
 
-      expect(words).toStrictEqual(["spam", "badword"]);
+      expect(result.words).toStrictEqual(updatedWords);
     });
 
-    test(`member without ${RoomPermission.ManageRoom} permission cannot updateRoomFilter — throws UNAUTHORIZED`, async () => {
+    test(`member without ${RoomPermission.ManageRoom} permission cannot upsertRoomFilter — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
 
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.createMembers({ roomId, userIds: [user.id] });
       await mockSessionOnce(mockContext.db, user);
 
-      await expect(
-        roomFilterCaller.updateRoomFilter({ roomId, words: ["spam"] }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+      await expect(roomFilterCaller.upsertRoomFilter({ roomId, words })).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: UNAUTHORIZED]`,
+      );
     });
 
-    test(`member with ${RoomPermission.ManageRoom} permission can updateRoomFilter`, async () => {
+    test(`member with ${RoomPermission.ManageRoom} permission can upsertRoomFilter`, async () => {
       expect.hasAssertions();
 
       const { user } = await mockSessionOnce(mockContext.db);
@@ -90,7 +91,8 @@ describe("roomFilter", () => {
       await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
       await mockSessionOnce(mockContext.db, user);
 
-      await expect(roomFilterCaller.updateRoomFilter({ roomId, words: ["spam"] })).resolves.toBeUndefined();
+      const result = await roomFilterCaller.upsertRoomFilter({ roomId, words });
+      expect(result.words).toStrictEqual(words);
     });
   });
 });
