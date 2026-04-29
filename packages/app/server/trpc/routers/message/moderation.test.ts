@@ -2,6 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
@@ -234,11 +235,11 @@ describe("moderation", () => {
       expect(membershipRows).toHaveLength(0);
     });
 
-    test(`${AdminActionType.SoftBan}: soft-deletes all messages across pagination boundaries — AZURE_TABLE_BATCH_SIZE + 1 messages all deleted`, async () => {
+    test(`${AdminActionType.SoftBan}: soft-deletes all messages across pagination boundaries — AZURE_MAX_PAGE_SIZE + 1 messages all deleted`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
-      const messageCount = AZURE_TABLE_BATCH_SIZE + 1;
+      const messageCount = AZURE_MAX_PAGE_SIZE + 1;
 
       for (let i = 0; i < messageCount; i++) {
         await mockSessionOnce(mockContext.db, member);
@@ -251,10 +252,10 @@ describe("moderation", () => {
         type: AdminActionType.SoftBan,
       });
 
-      const allMessages = [
-        ...(MockTableDatabase.get(AzureTable.Messages)?.values() ?? []),
-      ] as unknown as StandardMessageEntity[];
-      const memberMessages = allMessages.filter(({ userId }) => userId === member.id);
+      const messagesClient = await useTableClient(AzureTable.Messages);
+      const memberMessages: StandardMessageEntity[] = [];
+      for await (const page of messagesClient.listEntities<StandardMessageEntity>().byPage())
+        memberMessages.push(...page.filter(({ userId }) => userId === member.id));
 
       expect(memberMessages).toHaveLength(messageCount);
       expect(memberMessages.every(({ deletedAt }) => deletedAt !== null && deletedAt !== undefined)).toBe(true);

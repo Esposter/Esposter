@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 export const roomFilterRouter = router({
   readRoomFilter: getMemberProcedure(roomIdSchema, "roomId").query(async ({ ctx, input: { roomId } }) => {
     const filter = await ctx.db.query.roomFiltersInMessage.findFirst({
-      where: eq(roomFiltersInMessage.roomId, roomId),
+      where: { roomId: { eq: roomId } },
     });
     return filter?.words ?? [];
   }),

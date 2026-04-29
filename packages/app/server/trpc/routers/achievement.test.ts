@@ -1,4 +1,3 @@
-import type { AchievementEvents } from "@@/server/services/achievement/events/achievementEventEmitter";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -14,6 +13,7 @@ import {
   roomsInMessage,
   SpecialAchievementName,
   UserAchievementRelations,
+  type UserAchievementWithRelations,
   WebpageAchievementName,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -95,7 +95,7 @@ describe("achievement", () => {
       },
     );
 
-    const unlockedAchievements = [] as unknown as AchievementEvents["updateAchievement"][0];
+    const unlockedAchievements: UserAchievementWithRelations[] = [];
 
     assert(!data.done);
 

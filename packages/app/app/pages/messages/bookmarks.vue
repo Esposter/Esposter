@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useBookmarkStore } from "@/store/message/bookmark";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
