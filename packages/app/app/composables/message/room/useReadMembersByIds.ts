@@ -13,7 +13,7 @@ export const useReadMembersByIds = () => {
   return async (memberIds: User["id"][]) => {
     if (!currentRoomId.value) return;
 
-    const ids = memberIds.filter((id) => !userMap.value.has(id));
+    const ids = [...new Set(memberIds)].filter((id) => !userMap.value.has(id));
     if (ids.length === 0) return;
 
     const members = await $trpc.room.readMembersByIds.query({ ids, roomId: currentRoomId.value });

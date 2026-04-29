@@ -252,7 +252,7 @@ Always use explicit, descriptive names — never bare column names like `"name"`
 | Index             | `{table}_{col}_index`           | `"blocks_blockedId_index"`                     |
 | Composite index   | `{table}_{col1}_{col2}_index`   | `"room_roles_room_id_position_index"`          |
 
-Use DB column names (snake_case where applicable) in constraint/index names, not TS property names.
+Use underscores to separate components (table, column, type), but preserve the column name's camelCase as defined in the DB schema.
 
 ## CHECK Constraints with `sql` Template Literals
 
