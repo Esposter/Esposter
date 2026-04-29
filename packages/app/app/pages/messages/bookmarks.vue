@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useBookmarkStore } from "@/store/message/bookmark";
-import { RoutePath } from "@esposter/shared";
+import { ID_SEPARATOR, RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
 
@@ -11,7 +11,7 @@ const { deleteBookmark } = bookmarkStore;
 await readBookmarks();
 
 const parseBookmarkRowKey = (rowKey: string) => {
-  const separatorIndex = rowKey.indexOf("|");
+  const separatorIndex = rowKey.indexOf(ID_SEPARATOR);
   return {
     messageRowKey: rowKey.slice(separatorIndex + 1),
     roomId: rowKey.slice(0, separatorIndex),

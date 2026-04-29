@@ -1,7 +1,9 @@
+import { normalizeString } from "@esposter/shared";
+
 const DURATION_PATTERN = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i;
 
 export const parseDuration = (input: string): null | number => {
-  const match = DURATION_PATTERN.exec(input.trim());
+  const match = DURATION_PATTERN.exec(normalizeString(input));
   if (!match) return null;
 
   const hours = Number(match[1] ?? 0);

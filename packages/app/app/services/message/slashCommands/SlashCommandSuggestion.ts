@@ -4,6 +4,7 @@ import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { normalizeString } from "@esposter/shared";
 import SlashCommandList from "@/components/Message/Model/Message/SlashCommandList.vue";
 import { getRender } from "@/services/message/getRender";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
@@ -14,7 +15,7 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
   command: getSynchronizedFunction(async ({ editor, props: slashCommand, range }) => {
     const { doc } = editor.state;
     const endPosition = doc.content.size - 1;
-    const remainingText = doc.textBetween(range.to, endPosition, " ").trim();
+    const remainingText = normalizeString(doc.textBetween(range.to, endPosition, " "));
     editor.chain().focus().deleteRange({ from: range.from, to: endPosition }).run();
 
     if (slashCommand.parameters.length > 0) {

@@ -53,7 +53,14 @@ import {
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import {
+  InvalidOperationError,
+  ItemMetadataPropertyNames,
+  normalizeString,
+  NotFoundError,
+  Operation,
+  takeOne,
+} from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, getColumns, ilike, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -160,22 +167,24 @@ export const roomRouter = router({
         .values(userIds.map((userId) => ({ roomId, userId })))
         .returning();
       const createdMembers = await ctx.db.query.users.findMany({ where: { id: { in: userIds } } });
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-      await Promise.all(
-        createdMembers.map(async ({ name }) => {
-          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-            message: `${name} joined the room.`,
-            roomId,
-            type: MessageType.System,
-            userId: ctx.getSessionPayload.user.id,
-          });
-          messageEventEmitter.emit("createMessage", [
-            [systemMessage],
-            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-          ]);
-        }),
-      );
+      try {
+        const messageClient = await useTableClient(AzureTable.Messages);
+        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+        await Promise.all(
+          createdMembers.map(async ({ name }) => {
+            const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+              message: `${name} joined the room.`,
+              roomId,
+              type: MessageType.System,
+              userId: ctx.getSessionPayload.user.id,
+            });
+            messageEventEmitter.emit("createMessage", [
+              [systemMessage],
+              { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
+            ]);
+          }),
+        );
+      } catch {}
       return newMembers;
     }),
   createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(({ ctx, input }) =>
@@ -604,7 +613,7 @@ export const roomRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
-    const name = rest.name?.trim();
+    const name = normalizeString(rest.name) || undefined;
     const updatedRoom = (
       await ctx.db
         .update(roomsInMessage)

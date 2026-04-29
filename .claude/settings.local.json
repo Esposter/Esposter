@@ -50,7 +50,8 @@
       "Bash(pnpm typecheck:packages *)",
       "Bash(git diff *)",
       "Bash(git ls-tree *)",
-      "PowerShell(ls *)"
+      "PowerShell(ls *)",
+      "PowerShell(pnpm typecheck *)"
     ]
   }
 }

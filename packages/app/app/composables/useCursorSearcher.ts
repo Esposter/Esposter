@@ -4,6 +4,7 @@ import type { ToData } from "@esposter/shared";
 import type { TRPCProcedureOptions } from "@trpc/client";
 
 import { dayjs } from "#shared/services/dayjs";
+import { normalizeString } from "@esposter/shared";
 
 export const useCursorSearcher = <TItem extends ToData<AEntity>>(
   query: (searchQuery: string, cursor?: string, opts?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
@@ -19,7 +20,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>>(
 
   if (isAutoSearch) {
     const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
-    const isSearchQueryEmpty = computed(() => !searchQuery.value.trim());
+    const isSearchQueryEmpty = computed(() => !normalizeString(searchQuery.value));
     let abortController: AbortController | undefined;
 
     watch(isSearchQueryEmpty, (newIsSearchQueryEmpty) => {
@@ -31,8 +32,9 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>>(
     watch(
       throttledSearchQuery,
       async (newThrottledSearchQuery, oldThrottledSearchQuery) => {
-        const sanitizedNewThrottledSearchQuery = newThrottledSearchQuery.trim();
-        const sanitizedOldThrottledSearchQuery = oldThrottledSearchQuery?.trim();
+        const sanitizedNewThrottledSearchQuery = normalizeString(newThrottledSearchQuery);
+        const sanitizedOldThrottledSearchQuery =
+          oldThrottledSearchQuery !== undefined ? normalizeString(oldThrottledSearchQuery) : oldThrottledSearchQuery;
         if (
           sanitizedNewThrottledSearchQuery === sanitizedOldThrottledSearchQuery ||
           !(isIncludeEmptySearchQuery || sanitizedNewThrottledSearchQuery)

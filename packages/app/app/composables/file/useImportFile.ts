@@ -1,7 +1,7 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
 import { useAlertStore } from "@/store/alert";
-import { takeOne } from "@esposter/shared";
+import { normalizeString, takeOne } from "@esposter/shared";
 import { showOpenFilePicker } from "show-open-file-picker";
 
 export const useImportFile = () => {
@@ -13,7 +13,7 @@ export const useImportFile = () => {
         await showOpenFilePicker({
           types: [
             {
-              accept: { [mimeType]: accept.split(",").map((ext) => ext.trim()) },
+              accept: { [mimeType]: accept.split(",").map(normalizeString) },
               description: (accept.split(",")[0] ?? "").replace(/^\./, "").toUpperCase(),
             },
           ],

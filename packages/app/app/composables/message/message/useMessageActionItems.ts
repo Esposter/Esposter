@@ -9,7 +9,7 @@ import { useBookmarkStore } from "@/store/message/bookmark";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
-import { exhaustiveGuard, RoutePath } from "@esposter/shared";
+import { exhaustiveGuard, normalizeString, RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (
@@ -65,7 +65,7 @@ export const useMessageActionItems = (
   const copyTextItem: Item = {
     icon: "mdi-content-copy",
     onClick: getSynchronizedFunction(async () => {
-      const textContent = parse(message.message).textContent.trim();
+      const textContent = normalizeString(parse(message.message).textContent);
       if (textContent) await copy(textContent);
     }),
     title: "Copy Text",

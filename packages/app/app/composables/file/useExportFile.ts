@@ -1,6 +1,7 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
 import { useAlertStore } from "@/store/alert";
+import { normalizeString } from "@esposter/shared";
 import { showSaveFilePicker } from "show-open-file-picker";
 
 export const useExportFile = () => {

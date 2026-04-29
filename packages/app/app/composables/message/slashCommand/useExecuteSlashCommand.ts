@@ -60,7 +60,7 @@ export const useExecuteSlashCommand = () => {
       }
       case SlashCommandType.Shrug: {
         const { text } = command.parameterValues;
-        const prefix = normalizeString(text) ?? "";
+        const prefix = normalizeString(text);
         createMessageInput = { message: `${prefix}¯\\_(ツ)_/¯`, roomId, type: MessageType.Message };
         break;
       }

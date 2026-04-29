@@ -1,3 +1,6 @@
 import type { Filter } from "@esposter/db-schema";
 
-export const getIsSearchQueryEmpty = (query: string, filters: Filter[]) => !query.trim() && filters.length === 0;
+import { normalizeString } from "@esposter/shared";
+
+export const getIsSearchQueryEmpty = (query: string, filters: Filter[]) =>
+  !normalizeString(query) && filters.length === 0;

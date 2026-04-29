@@ -1,16 +1,18 @@
 import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
+import { sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
 export const SURVEY_NAME_MAX_LENGTH = 100;
+export const SURVEY_GROUP_MAX_LENGTH = 100;
 
 export const surveys = pgTable(
   "surveys",
   {
-    group: text("group"),
+    group: text("group").notNull().default(""),
     id: uuid("id").primaryKey().defaultRandom(),
     model: text("model").notNull().default(""),
     modelVersion: integer("modelVersion").notNull().default(0),
@@ -22,17 +24,16 @@ export const surveys = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [check("surveys_name_length_check", createNameCheckSql(name, SURVEY_NAME_MAX_LENGTH))],
+    extraConfig: ({ group, name }) => [
+      check("surveys_name_length_check", createNameCheckSql(name, SURVEY_NAME_MAX_LENGTH)),
+      check("surveys_group_length_check", sql`LENGTH(${group}) <= ${sql.raw(SURVEY_GROUP_MAX_LENGTH.toString())}`),
+    ],
   },
 );
 
 export type Survey = typeof surveys.$inferSelect;
 
 export const selectSurveySchema = createSelectSchema(surveys, {
-  group: z
-    .string()
-    .trim()
-    .transform((v) => v || null)
-    .nullable(),
+  group: z.string().trim().max(SURVEY_GROUP_MAX_LENGTH),
   name: createNameSchema(SURVEY_NAME_MAX_LENGTH),
 });
