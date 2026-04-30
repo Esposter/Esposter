@@ -257,19 +257,19 @@ myError.issues.push({ code: "custom", message: "..." });
 
   ```typescript
   // WRONG — manual limit/cursor definition
-  const readBookmarksInputSchema = z.object({
+  const readModerationLogsInputSchema = z.object({
     cursor: z.string().optional(),
     limit: z.int().min(1).max(MAX_READ_LIMIT).default(50),
   });
 
   // CORRECT — use the shared factory
-  const readBookmarksInputSchema = z.object({
+  const readModerationLogsInputSchema = z.object({
     ...createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true }).shape,
   });
   // Query impl:
-  const sortBy: SortItem<keyof BookmarkEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
+  const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
   if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
-  const items = await getTopNEntities(client, limit + 1, BookmarkEntity, { filter: serializeClauses(clauses) });
+  const items = await getTopNEntities(client, limit + 1, ModerationLogEntity, { filter: serializeClauses(clauses) });
   return getCursorPaginationData(items, limit, sortBy);
   ```
 
