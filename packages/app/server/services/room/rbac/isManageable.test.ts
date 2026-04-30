@@ -57,9 +57,9 @@ describe(isManageable, () => {
     expect.hasAssertions();
 
     const role = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
-    await mockSessionOnce(mockContext.db);
-    const { user } = getMockSession();
-    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    const inviteCode = await roomCaller.createInvite({ roomId });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(inviteCode);
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
 
     const result = await isManageable(mockContext.db, user.id, roomId, 4);
@@ -71,9 +71,9 @@ describe(isManageable, () => {
     expect.hasAssertions();
 
     const role = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
-    await mockSessionOnce(mockContext.db);
-    const { user } = getMockSession();
-    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    const inviteCode = await roomCaller.createInvite({ roomId });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(inviteCode);
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
 
     const [equalPosition, higherPosition] = await Promise.all([

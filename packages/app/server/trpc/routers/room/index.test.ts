@@ -408,22 +408,6 @@ describe("room", () => {
     );
   });
 
-  test("fails create members with direct message room", async () => {
-    expect.hasAssertions();
-
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await makeFriends(mainUser, user);
-    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
-
-    await expect(
-      roomCaller.createMembers({ roomId: directMessage.id, userIds: [user.id] }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
-    );
-  });
-
   test("fails kick member with direct message room", async () => {
     expect.hasAssertions();
 
@@ -596,69 +580,6 @@ describe("room", () => {
     await expect(
       roomCaller.readMembersByIds({ ids: [userId], roomId: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("creates members", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    const newMember = await roomCaller.createMembers({ roomId: newRoom.id, userIds: [user.id] });
-
-    expect(newMember).toHaveLength(1);
-    expect(takeOne(newMember).roomId).toBe(newRoom.id);
-    expect(takeOne(newMember).userId).toBe(user.id);
-
-    const members = await roomCaller.readMembers({ roomId: newRoom.id });
-
-    expect(members.items).toHaveLength(2);
-    expect(takeOne(members.items).id).toBe(userId);
-    expect(takeOne(members.items, 1)).toStrictEqual(user);
-  });
-
-  test("fails create members with non-creator", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const { user } = await mockSessionOnce(mockContext.db);
-
-    await expect(
-      roomCaller.createMembers({ roomId: newRoom.id, userIds: [user.id] }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("fails create members with duplicate membership", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const userId = getMockSession().user.id;
-
-    await expect(
-      roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${expectedUsersToRoomsInsertError(newRoom.id, userId)}]`);
-  });
-
-  test("fails create members with non-existent user", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const userId = crypto.randomUUID();
-
-    await expect(
-      roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${expectedUsersToRoomsInsertError(newRoom.id, userId)}]`);
-  });
-
-  test("fails create members with non-existent room", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-
-    await expect(roomCaller.createMembers({ roomId, userIds: [userId] })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
   });
 
   test("kicks member with owner", async () => {

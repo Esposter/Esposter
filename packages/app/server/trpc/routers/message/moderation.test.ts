@@ -4,8 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { messageRouter } from "@@/server/trpc/routers/message";
+import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
@@ -27,19 +26,17 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 
 describe("moderation", () => {
   let mockContext: Context;
-  let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let moderationCaller: DecorateRouterRecord<TRPCRouter["moderation"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
   const durationMs = 1;
   const name = "name";
-  const message = "message";
 
   const createMember = async () => {
+    const inviteCode = await roomCaller.createInvite({ roomId });
     const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    await roomCaller.joinRoom(inviteCode);
     return user;
   };
 
@@ -52,7 +49,6 @@ describe("moderation", () => {
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    messageCaller = createCallerFactory(messageRouter)(mockContext);
     moderationCaller = createCallerFactory(moderationRouter)(mockContext);
     roleCaller = createCallerFactory(roleRouter)(mockContext);
     roomCaller = createCallerFactory(roomRouter)(mockContext);
@@ -241,7 +237,6 @@ describe("moderation", () => {
 
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
-      await messageCaller.createMessage({ message, roomId });
       await moderationCaller.executeAdminAction({
         roomId,
         targetUserId: member.id,

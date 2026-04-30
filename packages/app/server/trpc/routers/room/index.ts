@@ -1,5 +1,5 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { RoomInMessage, User, UserToRoomInMessage } from "@esposter/db-schema";
+import type { RoomInMessage, User } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
@@ -106,12 +106,6 @@ export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 const countMembersInputSchema = roomIdSchema;
 export type CountMembersInput = z.infer<typeof countMembersInputSchema>;
 
-const createMembersInputSchema = z.object({
-  ...roomIdSchema.shape,
-  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
-});
-export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
-
 const readInviteInputSchema = selectInviteInMessageSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
 
@@ -151,36 +145,6 @@ export const roomRouter = router({
         code: "UNPROCESSABLE_CONTENT",
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
       });
-    }),
-  createMembers: getPermissionsProcedure(RoomPermission.ManageRoom, createMembersInputSchema, "roomId")
-    .use(isRoom)
-    .mutation<UserToRoomInMessage[]>(async ({ ctx, input: { roomId, userIds } }) => {
-      const newMembers = await ctx.db
-        .insert(usersToRoomsInMessage)
-        .values(userIds.map((userId) => ({ roomId, userId })))
-        .returning();
-      const createdMembers = await ctx.db.query.users.findMany({ where: { id: { in: userIds } } });
-      try {
-        const messageClient = await useTableClient(AzureTable.Messages);
-        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-        await Promise.all(
-          createdMembers.map(async ({ name }) => {
-            const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-              message: `${name} joined the room.`,
-              roomId,
-              type: MessageType.System,
-              userId: ctx.getSessionPayload.user.id,
-            });
-            messageEventEmitter.emit("createMessage", [
-              [systemMessage],
-              { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-            ]);
-          }),
-        );
-      } catch {
-        /* System message creation is non-critical */
-      }
-      return newMembers;
     }),
   createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {

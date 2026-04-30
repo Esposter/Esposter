@@ -46,6 +46,7 @@ describe("message", () => {
   const mimetype = "image/jpeg";
   const size = 1000;
   const name = "name";
+  const slowmodeMs = 1;
   const getMessage = (userId: string) =>
     `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
   const updatedMessage = "updatedMessage";
@@ -782,16 +783,14 @@ describe("message", () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
-      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 2 });
+      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs });
       const invite = await roomCaller.createInvite({ roomId: newRoom.id });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite);
       const message = getMessage(user.id);
 
-      vi.advanceTimersByTime(1);
       await mockSessionOnce(mockContext.db, user);
       await messageCaller.createMessage({ message, roomId: newRoom.id });
-      vi.advanceTimersByTime(1);
       await mockSessionOnce(mockContext.db, user);
 
       await expect(
@@ -803,7 +802,7 @@ describe("message", () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
-      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 1 });
+      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs });
       const invite = await roomCaller.createInvite({ roomId: newRoom.id });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite);
@@ -825,9 +824,9 @@ describe("message", () => {
 
       const newRoom = await roomCaller.createRoom({ name });
       await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: ["spam"] });
+      const inviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
       const { user } = await mockSessionOnce(mockContext.db);
-      getMockSession();
-      await roomCaller.createMembers({ roomId: newRoom.id, userIds: [user.id] });
+      await roomCaller.joinRoom(inviteCode);
       await mockSessionOnce(mockContext.db, user);
 
       await expect(

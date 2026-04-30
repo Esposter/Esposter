@@ -3,7 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { roomFilterRouter } from "@@/server/trpc/routers/roomFilter";
@@ -68,9 +68,9 @@ describe("roomFilter", () => {
     test(`member without ${RoomPermission.ManageRoom} permission cannot upsertRoomFilter — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
 
+      const inviteCode = await roomCaller.createInvite({ roomId });
       const { user } = await mockSessionOnce(mockContext.db);
-      getMockSession();
-      await roomCaller.createMembers({ roomId, userIds: [user.id] });
+      await roomCaller.joinRoom(inviteCode);
       await mockSessionOnce(mockContext.db, user);
 
       await expect(roomFilterCaller.upsertRoomFilter({ roomId, words })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -81,9 +81,9 @@ describe("roomFilter", () => {
     test(`member with ${RoomPermission.ManageRoom} permission can upsertRoomFilter`, async () => {
       expect.hasAssertions();
 
+      const inviteCode = await roomCaller.createInvite({ roomId });
       const { user } = await mockSessionOnce(mockContext.db);
-      getMockSession();
-      await roomCaller.createMembers({ roomId, userIds: [user.id] });
+      await roomCaller.joinRoom(inviteCode);
       const role = await roleCaller.createRole({
         name: crypto.randomUUID(),
         permissions: RoomPermission.ManageRoom,
