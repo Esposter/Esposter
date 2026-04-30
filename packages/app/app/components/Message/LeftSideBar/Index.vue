@@ -8,7 +8,6 @@ import { RoutePath } from "@esposter/shared";
     <v-divider />
     <div flex-1 overflow-y-auto>
       <v-list-item font-bold :to="RoutePath.MessagesFriends">Friends</v-list-item>
-      <v-list-item font-bold :to="RoutePath.MessagesBookmarks">Saved Messages</v-list-item>
       <v-divider />
       <MessageLeftSideBarRooms />
       <v-divider />

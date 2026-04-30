@@ -5,7 +5,6 @@ import { DeletableMessageTypes } from "#shared/services/message/DeletableMessage
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/message";
-import { useBookmarkStore } from "@/store/message/bookmark";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
@@ -35,8 +34,6 @@ export const useMessageActionItems = (
   const { copy } = messageStore;
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const bookmarkStore = useBookmarkStore();
-  const { createBookmark, deleteBookmark } = bookmarkStore;
   const threadStore = useThreadStore();
   const { openThread } = threadStore;
   const runtimeConfig = useRuntimeConfig();
@@ -94,23 +91,6 @@ export const useMessageActionItems = (
     }),
     title: "View Thread",
   };
-  const bookmarkItem = computed<Item>(() =>
-    bookmarkStore.isBookmarked(message.partitionKey, message.rowKey)
-      ? {
-          icon: "mdi-bookmark-remove",
-          onClick: getSynchronizedFunction(async () => {
-            await deleteBookmark(message.partitionKey, message.rowKey);
-          }),
-          title: "Remove Bookmark",
-        }
-      : {
-          icon: "mdi-bookmark-outline",
-          onClick: getSynchronizedFunction(async () => {
-            await createBookmark(message.partitionKey, message.rowKey);
-          }),
-          title: "Bookmark Message",
-        },
-  );
   const copyMessageLinkItem: Item = {
     icon: "mdi-link-variant",
     onClick: getSynchronizedFunction(async () => {
@@ -139,7 +119,7 @@ export const useMessageActionItems = (
       case MessageType.EditRoom:
         return [copyTextItem, copyMessageLinkItem];
       case MessageType.Message:
-        return [copyTextItem, viewThreadItem, pinMessageItem.value, bookmarkItem.value, copyMessageLinkItem];
+        return [copyTextItem, viewThreadItem, pinMessageItem.value, copyMessageLinkItem];
       case MessageType.PinMessage:
         return [copyMessageLinkItem];
       case MessageType.Poll:
@@ -149,7 +129,7 @@ export const useMessageActionItems = (
       case MessageType.VoiceCall:
         return [copyMessageLinkItem];
       case MessageType.Webhook:
-        return [copyTextItem, pinMessageItem.value, bookmarkItem.value, copyMessageLinkItem];
+        return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
       default:
         return exhaustiveGuard(message);
     }

@@ -73,7 +73,7 @@ pnpm export:gen       # regenerate index.ts barrel via ctix
 Two storage systems, each with a distinct role:
 
 - **PostgreSQL (Drizzle ORM)** — relational, structured data: users, rooms, roles, bans, invites, push subscriptions, posts, achievements. Schema lives in `packages/db-schema/src/schema/`. Migrations output to `packages/app/server/db/migrations/`.
-- **Azure Table Storage** — high-volume, append-heavy data: messages (`AzureTable.Messages` + `AzureTable.MessagesAscending`), moderation logs (`AzureTable.ModerationLog`), bookmarks. Accessed via `useTableClient` composable in server code. `partitionKey = roomId`, `rowKey = reverseTickedTimestamp` (newest-first ordering).
+- **Azure Table Storage** — high-volume, append-heavy data: messages (`AzureTable.Messages` + `AzureTable.MessagesAscending`), moderation logs (`AzureTable.ModerationLog`). Accessed via `useTableClient` composable in server code. `partitionKey = roomId`, `rowKey = reverseTickedTimestamp` (newest-first ordering).
 
 When adding a new feature, use Postgres for anything relational/queryable and Azure Table for anything message-like (high write volume, time-ordered, no complex joins needed).
 

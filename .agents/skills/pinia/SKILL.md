@@ -314,7 +314,7 @@ const storeMessages = (messages: MessageEntity[], users: User[]) => {
   const userMap = new Map(users.map((u) => [u.id, u])); // ❌ local map
   for (const message of messages) {
     const creator = userMap.get(message.userId);
-    if (creator) bookmarkMessageCreatorMap.value.set(rowKey, creator); // ❌ duplicated map
+    if (creator) messageCreatorMap.value.set(message.rowKey, creator); // ❌ duplicated map
   }
 };
 
@@ -322,8 +322,7 @@ const storeMessages = (messages: MessageEntity[], users: User[]) => {
 const memberStore = useMemberStore(); // declared at store root
 const storeMessages = (messages: MessageEntity[], users: User[]) => {
   for (const user of users) memberStore.memberMap.set(user.id, user);
-  for (const message of messages)
-    bookmarkMessageMap.value.set(getBookmarkRowKey(message.partitionKey, message.rowKey), message);
+  for (const message of messages) messageMap.value.set(message.rowKey, message);
 };
 // In displayItems computed, look up creators from memberStore.memberMap directly
 ```
