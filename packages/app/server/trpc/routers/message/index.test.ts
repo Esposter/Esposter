@@ -46,7 +46,6 @@ describe("message", () => {
   const mimetype = "image/jpeg";
   const size = 1000;
   const name = "name";
-  const slowmodeMs = 1;
   const getMessage = (userId: string) =>
     `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
   const updatedMessage = "updatedMessage";
@@ -783,13 +782,14 @@ describe("message", () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
-      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs });
+      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 2 });
       const invite = await roomCaller.createInvite({ roomId: newRoom.id });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite);
       const message = getMessage(user.id);
 
       await mockSessionOnce(mockContext.db, user);
+      vi.advanceTimersByTime(1);
       await messageCaller.createMessage({ message, roomId: newRoom.id });
       await mockSessionOnce(mockContext.db, user);
       vi.advanceTimersByTime(1);
@@ -803,17 +803,17 @@ describe("message", () => {
       expect.hasAssertions();
 
       const newRoom = await roomCaller.createRoom({ name });
-      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs });
+      await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 1 });
       const invite = await roomCaller.createInvite({ roomId: newRoom.id });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite);
       const message = getMessage(user.id);
 
-      vi.advanceTimersByTime(1);
       await mockSessionOnce(mockContext.db, user);
+      vi.advanceTimersByTime(1);
       await messageCaller.createMessage({ message, roomId: newRoom.id });
-      vi.advanceTimersByTime(1);
       await mockSessionOnce(mockContext.db, user);
+      vi.advanceTimersByTime(1);
 
       await expect(messageCaller.createMessage({ message, roomId: newRoom.id })).resolves.toBeDefined();
     });
