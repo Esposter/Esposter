@@ -792,6 +792,7 @@ describe("message", () => {
       await mockSessionOnce(mockContext.db, user);
       await messageCaller.createMessage({ message, roomId: newRoom.id });
       await mockSessionOnce(mockContext.db, user);
+      vi.advanceTimersByTime(1);
 
       await expect(
         messageCaller.createMessage({ message, roomId: newRoom.id }),

@@ -236,7 +236,6 @@ describe("moderation", () => {
       expect.hasAssertions();
 
       const member = await createMember();
-      await mockSessionOnce(mockContext.db, member);
       await moderationCaller.executeAdminAction({
         roomId,
         targetUserId: member.id,
