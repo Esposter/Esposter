@@ -243,16 +243,16 @@ const result = await ctx.db.query.usersToRooms.findFirst({
 
 Always use explicit, descriptive names — never bare column names like `"name"` or `"position"`.
 
-| Type              | Pattern                         | Example                                        |
-| ----------------- | ------------------------------- | ---------------------------------------------- |
-| Length check      | `{table}_{column}_length_check` | `"users_name_length_check"`                    |
-| Other check       | `{table}_{column}_check`        | `"room_categories_position_check"`             |
-| Semantic check    | descriptive phrase              | `"no_self_block"`, `"rooms_name_check"`        |
-| Unique constraint | `{table}_{col1}_{col2}_unique`  | `"push_subscriptions_endpoint_user_id_unique"` |
-| Index             | `{table}_{col}_index`           | `"blocks_blockedId_index"`                     |
-| Composite index   | `{table}_{col1}_{col2}_index`   | `"room_roles_room_id_position_index"`          |
+| Type              | Pattern                         | Example                                       |
+| ----------------- | ------------------------------- | --------------------------------------------- |
+| Length check      | `{table}_{column}_length_check` | `"users_name_length_check"`                   |
+| Other check       | `{table}_{column}_check`        | `"room_categories_position_check"`            |
+| Semantic check    | descriptive phrase              | `"no_self_block"`, `"rooms_name_check"`       |
+| Unique constraint | `{table}_{col1}_{col2}_unique`  | `"push_subscriptions_endpoint_userId_unique"` |
+| Index             | `{table}_{col}_index`           | `"blocks_blockedId_index"`                    |
+| Composite index   | `{table}_{col1}_{col2}_index`   | `"room_roles_roomId_position_index"`          |
 
-Use DB column names (snake_case where applicable) in constraint/index names, not TS property names.
+Use the DB column name (as defined in the schema string) in constraint/index names. Since column names match the TS property name (camelCase), index/constraint names use camelCase column names — e.g. `roomId`, `userId`, `achievementId`.
 
 ## CHECK Constraints with `sql` Template Literals
 

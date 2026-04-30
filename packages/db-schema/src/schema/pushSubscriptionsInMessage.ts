@@ -12,15 +12,15 @@ export const pushSubscriptionsInMessage = pgTable(
   {
     auth: text("auth").notNull(),
     endpoint: text("endpoint").notNull(),
-    expirationTime: timestamp("expiration_time"),
+    expirationTime: timestamp("expirationTime"),
     id: uuid("id").primaryKey().defaultRandom(),
     p256dh: text("p256dh").notNull(),
-    userId: text("user_id")
+    userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ endpoint, userId }) => [unique("push_subscriptions_endpoint_user_id_unique").on(endpoint, userId)],
+    extraConfig: ({ endpoint, userId }) => [unique("push_subscriptions_endpoint_userId_unique").on(endpoint, userId)],
     schema: messageSchema,
   },
 );
