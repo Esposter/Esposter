@@ -185,7 +185,7 @@ catalog:
   postgres: ^3.4.9
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.0.1
-  read-excel-file: ^9.0.6
+  read-excel-file: ^9.0.7
   rolldown: ^1.0.0-rc.18
   rolldown-plugin-dts: ^0.23.2
   rxjs: ^7.8.2
