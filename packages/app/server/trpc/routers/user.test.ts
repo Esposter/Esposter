@@ -253,8 +253,8 @@ describe("user", () => {
     const getSessionPayload = await mockSessionOnce(mockContext.db);
     await caller.updateUser({ biography });
     replayMockSession(getSessionPayload);
-    const updatedUser = await caller.updateUser({ biography: null });
+    const updatedUser = await caller.updateUser({ biography: "" });
 
-    expect(updatedUser.biography).toBeNull();
+    expect(updatedUser.biography).toBe("");
   });
 });

@@ -1,10 +1,10 @@
-import { useMemberStore } from "@/store/message/user/member";
+import { useUserStore } from "@/store/message/user";
 import { MENTION_ID_ATTRIBUTE, MENTION_LABEL_ATTRIBUTE } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageWithMentions = (message: MaybeRefOrGetter<string>) => {
-  const memberStore = useMemberStore();
-  const { memberMap } = storeToRefs(memberStore);
+  const userStore = useUserStore();
+  const { userMap } = storeToRefs(userStore);
   const mentions = useMentions(message);
   return computed(() => {
     const messageHtml = parse(toValue(message));
@@ -12,7 +12,7 @@ export const useMessageWithMentions = (message: MaybeRefOrGetter<string>) => {
     for (const mention of mentions.value) {
       const memberId = mention.getAttribute(MENTION_ID_ATTRIBUTE);
       if (!memberId) continue;
-      const member = memberMap.value.get(memberId);
+      const member = userMap.value.get(memberId);
       if (!member?.name || member.name === mention.textContent.slice(1)) continue;
 
       mention.textContent = `@${member.name}`;

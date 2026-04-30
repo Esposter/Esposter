@@ -6,5 +6,7 @@ export const AdminActionColorMap = {
   [AdminActionType.ForceUnmute]: "success",
   [AdminActionType.KickFromRoom]: "error",
   [AdminActionType.KickFromVoice]: "warning",
+  [AdminActionType.SoftBan]: "error",
   [AdminActionType.TimeoutUser]: "warning",
+  [AdminActionType.Warn]: "warning",
 } as const satisfies Record<AdminActionType, string>;

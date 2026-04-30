@@ -2,6 +2,7 @@
 import type { Survey } from "@esposter/db-schema";
 
 import { useSurveyStore } from "@/store/survey";
+import { normalizeString } from "@esposter/shared";
 
 interface ChangeGroupDialogButtonProps {
   survey: Survey;
@@ -34,7 +35,7 @@ const group = ref(survey.group);
     <v-container fluid>
       <v-row>
         <v-col cols="12">
-          <SurveyGroupCombobox :model-value="group" @update:model-value="group = $event?.trim() ?? null" />
+          <SurveyGroupCombobox :model-value="group" @update:model-value="group = normalizeString($event)" />
         </v-col>
       </v-row>
     </v-container>

@@ -17,10 +17,10 @@ export const searchHistoriesInMessage = pgTable(
     filters: jsonb("filters").notNull().$type<Filter[]>().default([]),
     id: uuid("id").primaryKey().defaultRandom(),
     query: text("query").notNull().default(""),
-    roomId: uuid("room_id")
+    roomId: uuid("roomId")
       .notNull()
       .references(() => roomsInMessage.id),
-    userId: text("user_id")
+    userId: text("userId")
       .notNull()
       .references(() => users.id),
   },

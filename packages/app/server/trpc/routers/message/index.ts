@@ -8,6 +8,7 @@ import type {
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
+import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
@@ -27,7 +28,10 @@ import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
+import { assertNotInSlowmode } from "@@/server/services/message/moderation/assertNotInSlowmode";
+import { assertNotReadOnly } from "@@/server/services/message/moderation/assertNotReadOnly";
 import { assertNotTimedOut } from "@@/server/services/message/moderation/assertNotTimedOut";
+import { assertNotWordFiltered } from "@@/server/services/message/moderation/assertNotWordFiltered";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
@@ -69,11 +73,13 @@ import {
   selectRoomInMessageSchema,
   standardCreateMessageInputSchema,
   StandardMessageEntity,
+  StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
@@ -160,12 +166,25 @@ export const messageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId")
     .concat(timeoutPlugin)
     .mutation<MessageEntity>(async ({ ctx, input }) => {
+      await assertNotReadOnly(ctx.db, ctx.getSessionPayload.user.id, input.roomId);
+      await assertNotInSlowmode(ctx.db, ctx.getSessionPayload.user.id, input.roomId);
+      if (input.message)
+        await assertNotWordFiltered(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
       const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
         ...input,
         userId: ctx.getSessionPayload.user.id,
       });
+      await ctx.db
+        .update(usersToRoomsInMessage)
+        .set({ lastMessageAt: new Date() })
+        .where(
+          and(
+            eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+            eq(usersToRoomsInMessage.roomId, input.roomId),
+          ),
+        );
       messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.getSessionPayload.session.id }]);
 
       const readPushSubscriptions = await getPushSubscriptionsForMessage(ctx.db, newMessageEntity);
@@ -288,6 +307,9 @@ export const messageRouter = router({
       await Promise.all(
         roomIds.map(async (roomId) => {
           await assertNotTimedOut(ctx.db, ctx.getSessionPayload.user.id, roomId);
+          await assertNotReadOnly(ctx.db, ctx.getSessionPayload.user.id, roomId);
+          await assertNotInSlowmode(ctx.db, ctx.getSessionPayload.user.id, roomId);
+          if (message) await assertNotWordFiltered(ctx.db, ctx.getSessionPayload.user.id, roomId, message);
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, messageAscendingClient, {
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
@@ -459,6 +481,22 @@ export const messageRouter = router({
       });
     },
   ),
+  readThread: getMemberProcedure(readThreadInputSchema, "roomId").query(async ({ input: { roomId, rootRowKey } }) => {
+    const messageClient = await useTableClient(AzureTable.Messages);
+    const [rootMessage, replyClauses] = await Promise.all([
+      getEntity(messageClient, StandardMessageEntity, roomId, rootRowKey),
+      Promise.resolve([
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+        { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: rootRowKey },
+        getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+      ] as Clause<StandardMessageEntity>[]),
+    ]);
+    const replies = await getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
+      filter: serializeClauses(replyClauses),
+    });
+    if (rootMessage?.deletedAt) return replies;
+    return rootMessage ? [rootMessage, ...replies] : replies;
+  }),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(async ({ ctx, input }) => {
     const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
     if (inFilterRoomIds.some((value) => typeof value !== "string"))

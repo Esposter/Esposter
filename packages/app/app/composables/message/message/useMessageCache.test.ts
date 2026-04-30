@@ -13,7 +13,7 @@ import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMessageCache, () => {
   let router: Router;
@@ -51,19 +51,25 @@ describe(useMessageCache, () => {
         setup: () => {
           router = useRouter();
           router.currentRoute.value.params.id = initialRouteId;
+          triggerRef(router.currentRoute);
           const dataStore = useDataStore();
           ({ items } = storeToRefs(dataStore));
           ({ flush } = useMessageCache());
+
+          onUnmounted(() => {
+            items.value = [];
+          });
         },
       }),
     );
   };
 
+  beforeEach(() => {
+    goOffline();
+  });
+
   afterEach(async () => {
-    if (wrapper) {
-      items.value = [];
-      wrapper.unmount();
-    }
+    wrapper?.unmount();
     vi.restoreAllMocks();
     await resetIndexedDb();
     const databases = await indexedDB.databases();
@@ -136,7 +142,6 @@ describe(useMessageCache, () => {
       [new StandardMessageEntity({ message, partitionKey: secondPartitionKey, rowKey, userId })],
       secondPartitionKey,
     );
-    goOffline();
     await mountCache();
     setRouteId(secondPartitionKey);
     await flushCache();
@@ -171,7 +176,6 @@ describe(useMessageCache, () => {
       [new StandardMessageEntity({ message, partitionKey, rowKey, userId })],
       partitionKey,
     );
-    goOffline();
     await mountCache(crypto.randomUUID());
     setRouteId(partitionKey);
     setRouteId(crypto.randomUUID());

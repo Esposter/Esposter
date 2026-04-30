@@ -9,19 +9,19 @@ import { z } from "zod";
 export const userAchievements = pgTable(
   "user_achievements",
   {
-    achievementId: uuid("achievement_id")
+    achievementId: uuid("achievementId")
       .notNull()
       .references(() => achievements.id, { onDelete: "cascade" }),
     amount: integer("amount").notNull(),
     id: uuid("id").primaryKey().defaultRandom(),
-    unlockedAt: timestamp("unlocked_at"),
-    userId: text("user_id")
+    unlockedAt: timestamp("unlockedAt"),
+    userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
     extraConfig: ({ achievementId, amount, userId }) => [
-      uniqueIndex("user_achievements_user_id_achievement_id_unique").on(userId, achievementId),
+      uniqueIndex("user_achievements_userId_achievementId_unique").on(userId, achievementId),
       check("user_achievements_amount_check", sql`${amount} >= 1`),
     ],
   },

@@ -17,8 +17,8 @@ export const useMessageCache = () => {
   let pendingOperation: Promise<void> = Promise.resolve();
 
   watchDeep(items, (messages) => {
-    if (!currentRoomId.value || messages.length === 0) return;
     const roomId = currentRoomId.value;
+    if (!roomId || messages.length === 0) return;
     pendingOperation = pendingOperation
       .catch(() => undefined)
       .then(() =>
@@ -30,13 +30,13 @@ export const useMessageCache = () => {
       );
   });
 
-  watch(currentRoomId, (roomId) => {
-    if (!roomId || online.value) return;
+  watch(currentRoomId, (newCurrentRoomId) => {
+    if (!newCurrentRoomId || online.value) return;
     pendingOperation = pendingOperation
       .catch(() => undefined)
       .then(async () => {
-        const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, roomId);
-        if (currentRoomId.value !== roomId || items.value.length > 0 || cachedMessages.length === 0) return;
+        const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, newCurrentRoomId);
+        if (currentRoomId.value !== newCurrentRoomId || items.value.length > 0 || cachedMessages.length === 0) return;
 
         const cachedData = new CursorPaginationData<MessageEntity>();
         cachedData.items = cachedMessages;

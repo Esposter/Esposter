@@ -16,7 +16,6 @@ const { roomId } = defineProps<RoomSettingsDialogButtonProps>();
 const dialog = ref(false);
 const settingsType = ref<keyof typeof SettingsContentMap>(SettingsType.Overview);
 const isDeleteOpen = ref(false);
-
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));

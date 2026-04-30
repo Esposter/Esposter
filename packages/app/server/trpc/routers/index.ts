@@ -11,6 +11,7 @@ import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { messageRouter } from "@@/server/trpc/routers/message";
+import { bookmarkRouter } from "@@/server/trpc/routers/message/bookmark";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { postRouter } from "@@/server/trpc/routers/post";
@@ -20,6 +21,7 @@ import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { voiceRouter } from "@@/server/trpc/routers/room/voice";
 import { roomCategoryRouter } from "@@/server/trpc/routers/roomCategory";
+import { roomFilterRouter } from "@@/server/trpc/routers/roomFilter";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
@@ -32,6 +34,7 @@ import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 const trpcRouterWithoutAchievements = router({
   app: appRouter,
   block: blockRouter,
+  bookmark: bookmarkRouter,
   clicker: clickerRouter,
   dashboard: dashboardRouter,
   directMessage: directMessageRouter,
@@ -49,6 +52,7 @@ const trpcRouterWithoutAchievements = router({
   role: roleRouter,
   room: roomRouter,
   roomCategory: roomCategoryRouter,
+  roomFilter: roomFilterRouter,
   searchHistory: searchHistoryRouter,
   survey: surveyRouter,
   tableEditor: tableEditorRouter,

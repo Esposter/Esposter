@@ -2,10 +2,10 @@ import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnV
 
 import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, normalizeString } from "@esposter/shared";
 
 export const coerceValue = (value: string, type: ColumnType): ColumnValue => {
-  const sanitizedValue = value.trim();
+  const sanitizedValue = normalizeString(value);
   if (!sanitizedValue) return null;
   switch (type) {
     case ColumnType.Boolean:

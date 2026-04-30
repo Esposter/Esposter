@@ -252,7 +252,7 @@ Always use explicit, descriptive names — never bare column names like `"name"`
 | Index             | `{table}_{col}_index`           | `"blocks_blockedId_index"`                     |
 | Composite index   | `{table}_{col1}_{col2}_index`   | `"room_roles_room_id_position_index"`          |
 
-Use DB column names (snake_case where applicable) in constraint/index names, not TS property names.
+Use underscores to separate components (table, column, type), but preserve the column name's camelCase as defined in the DB schema.
 
 ## CHECK Constraints with `sql` Template Literals
 
@@ -273,12 +273,59 @@ Use DB column names (snake_case where applicable) in constraint/index names, not
   check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`);
   ```
 
+## `.returning()` — Error Handling Pattern
+
+All mutations that call `.returning()` must:
+
+1. **Destructure the first element**: `const [result] = await db.insert(...).returning()`
+2. **Guard for undefined and throw** — never return a fallback like `?? []` or `?? null`:
+   ```ts
+   const [updatedFilter] = await ctx.db
+     .insert(roomFiltersInMessage)
+     .values({ roomId, words })
+     .onConflictDoUpdate({ set: { words }, target: roomFiltersInMessage.roomId })
+     .returning();
+   if (!updatedFilter)
+     throw new TRPCError({
+       code: "BAD_REQUEST",
+       message: new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomFilter, roomId).message,
+     });
+   return updatedFilter;
+   ```
+3. **Return the full entity** — never return a subset of fields (e.g. `.words`) from a mutation. Let callers destructure what they need.
+4. **Add `DatabaseEntityType` if missing** — if the table has no corresponding `DatabaseEntityType` value, add one to `packages/db-schema/src/models/shared/DatabaseEntityType.ts`, then run `pnpm build` in `packages/db-schema/` to rebuild the dist.
+
 ## Migrations
 
 - **Never run `pnpm db:gen` or `pnpm db:up` automatically** — always let the user decide when to generate and apply migrations. After schema changes, note what migration is needed and instruct the user to run it manually from `packages/db-schema`:
   ```sh
   pnpm db:gen   # generates migration SQL from schema diff
   pnpm db:up    # applies pending migrations to the DB
+  ```
+
+## Nullable String Columns
+
+- **Use `.notNull().default("")` for optional user-editable text fields** — never use `null` as the "not set" state for strings. Empty string `""` is the canonical absent value for text content (biography, color, topic, group, description, etc.).
+- **Keep `null` only for semantically distinct absence**:
+  - URL fields (`image`, `url`) — null means "no image/URL set"; `""` would fail URL validation
+  - Fields constrained to `null` by a CHECK constraint (e.g. `roomsInMessage.name` must be `null` for DirectMessage type)
+  - Nullable FK references where `null` means the referenced row was deleted (audit trail semantics)
+  - Auth-framework-managed fields (`accounts`, `sessions`) — do not touch
+- **Update downstream `??` fallbacks to `||`** when a field changes from nullable to `""` — `"" ?? fallback` returns `""` (not the fallback), so `??` must become `||` in template expressions and JS/TS checks.
+
+## Time Duration Columns
+
+- **Always store time durations in milliseconds** — never seconds, minutes, or hours. Milliseconds is the standard unit; only deviate when sub-millisecond precision is genuinely required.
+- **Column names must carry the `Ms` suffix** — `slowmodeMs`, `durationMs`, `timeoutMs`. This is an explicit exception to the no-abbreviation rule: `Ms` is a widely recognized, unambiguous suffix for milliseconds.
+
+  ```ts
+  // CORRECT
+  slowmodeMs: integer("slowmodeMs"),
+  durationMs: integer("durationMs").notNull(),
+
+  // WRONG
+  slowmodeSeconds: integer("slowmodeSeconds"),
+  durationMilliseconds: integer("durationMilliseconds"),
   ```
 
 ## Primary Keys

@@ -1,5 +1,5 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { RoomInMessage, User, UserToRoomInMessage } from "@esposter/db-schema";
+import type { RoomInMessage, User } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
@@ -13,8 +13,10 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createCode } from "#shared/util/math/random/createCode";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
+import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { readInviteCode } from "@@/server/services/message/readInviteCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -30,13 +32,15 @@ import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfani
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { deleteDirectory } from "@esposter/db";
+import { createMessage, deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
+  AzureTable,
   CODE_LENGTH,
   DatabaseEntityType,
   InviteInMessageRelations,
   invitesInMessage,
+  MessageType,
   roomIdSchema,
   RoomPermission,
   roomRolesInMessage,
@@ -102,12 +106,6 @@ export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 const countMembersInputSchema = roomIdSchema;
 export type CountMembersInput = z.infer<typeof countMembersInputSchema>;
 
-const createMembersInputSchema = z.object({
-  ...roomIdSchema.shape,
-  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
-});
-export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
-
 const readInviteInputSchema = selectInviteInMessageSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
 
@@ -148,14 +146,6 @@ export const roomRouter = router({
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
       });
     }),
-  createMembers: getPermissionsProcedure(RoomPermission.ManageRoom, createMembersInputSchema, "roomId")
-    .use(isRoom)
-    .mutation<UserToRoomInMessage[]>(({ ctx, input: { roomId, userIds } }) =>
-      ctx.db
-        .insert(usersToRoomsInMessage)
-        .values(userIds.map((userId) => ({ roomId, userId })))
-        .returning(),
-    ),
   createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       const newRoom = (
@@ -200,12 +190,14 @@ export const roomRouter = router({
           ).message,
         });
 
-      const deletedMember = (
-        await ctx.db
+      const [deletedMember, kickedMember] = await Promise.all([
+        ctx.db
           .delete(usersToRoomsInMessage)
           .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
           .returning()
-      )[0];
+          .then((rows) => rows[0]),
+        ctx.db.query.users.findFirst({ columns: { name: true }, where: { id: { eq: userId } } }),
+      ]);
       if (!deletedMember)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -217,6 +209,24 @@ export const roomRouter = router({
         });
 
       roomEventEmitter.emit("leaveRoom", { ...deletedMember, sessionId: ctx.getSessionPayload.session.id });
+
+      if (kickedMember)
+        try {
+          const messageClient = await useTableClient(AzureTable.Messages);
+          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+            message: `${kickedMember.name} left the room.`,
+            roomId,
+            type: MessageType.System,
+            userId: ctx.getSessionPayload.user.id,
+          });
+          messageEventEmitter.emit("createMessage", [
+            [systemMessage],
+            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
+          ]);
+        } catch {
+          /* System message creation is non-critical */
+        }
     }),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
@@ -289,6 +299,24 @@ export const roomRouter = router({
 
       const { roomId, roomInMessage, user } = userToRoomWithRelations;
       roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
+
+      try {
+        const messageClient = await useTableClient(AzureTable.Messages);
+        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+          message: `${user.name} joined the room.`,
+          roomId,
+          type: MessageType.System,
+          userId: user.id,
+        });
+        messageEventEmitter.emit("createMessage", [
+          [systemMessage],
+          { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
+        ]);
+      } catch {
+        /* System message creation is non-critical */
+      }
+
       return roomInMessage;
     }),
   ),
@@ -320,6 +348,29 @@ export const roomRouter = router({
         });
 
       roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.getSessionPayload.session.id });
+
+      const leavingMember = await ctx.db.query.users.findFirst({
+        columns: { name: true },
+        where: { id: { eq: userId } },
+      });
+      if (leavingMember)
+        try {
+          const messageClient = await useTableClient(AzureTable.Messages);
+          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+            message: `${leavingMember.name} left the room.`,
+            roomId: userToRoom.roomId,
+            type: MessageType.System,
+            userId,
+          });
+          messageEventEmitter.emit("createMessage", [
+            [systemMessage],
+            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
+          ]);
+        } catch {
+          /* System message creation is non-critical */
+        }
+
       return userToRoom.roomId;
     }),
   onDeleteRoom: standardAuthedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({
@@ -531,14 +582,7 @@ export const roomRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
-    const name = rest.name?.trim();
-    const updatedRoom = (
-      await ctx.db
-        .update(roomsInMessage)
-        .set({ ...rest, name })
-        .where(eq(roomsInMessage.id, id))
-        .returning()
-    )[0];
+    const updatedRoom = (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0];
     if (!updatedRoom)
       throw new TRPCError({
         code: "BAD_REQUEST",

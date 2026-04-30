@@ -2,6 +2,7 @@
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
 import { useSearchMessageStore } from "@/store/message/search";
 import { FilterTypes } from "@esposter/db-schema";
+import { normalizeString } from "@esposter/shared";
 
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
@@ -33,7 +34,7 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
     @keydown.enter="
       async () => {
         if (activeSelectedFilter && !activeSelectedFilter.value) {
-          const value = searchQuery.trim();
+          const value = normalizeString(searchQuery);
           if (!value) return;
           activeSelectedFilter.value = value;
           searchQuery = '';
@@ -65,9 +66,9 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
         if (!value && !menu) return;
 
         if (value[value.length - 1] === ':') {
-          const trimmedValue = value.trim();
+          const normalizedValue = normalizeString(value);
           const filterType = filterTypes.find(
-            (type) => type.toLowerCase() === trimmedValue.slice(0, trimmedValue.length - 1).toLowerCase(),
+            (type) => type.toLowerCase() === normalizedValue.slice(0, normalizedValue.length - 1).toLowerCase(),
           );
           if (filterType) {
             createFilter(filterType);

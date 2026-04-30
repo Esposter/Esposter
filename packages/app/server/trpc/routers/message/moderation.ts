@@ -1,5 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { BanInMessage, BanInMessageWithRelations, Clause } from "@esposter/db-schema";
+import type { BanInMessage, BanInMessageWithRelations, Clause, StandardMessageEntity } from "@esposter/db-schema";
 
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
@@ -11,6 +11,7 @@ import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants"
 import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
+import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
 import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -24,9 +25,11 @@ import { router } from "@@/server/trpc";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import { getTableNullClause, getTopNEntities, serializeClauses } from "@esposter/db";
+import { getTableNullClause, getTopNEntities, serializeClauses, serializeEntity } from "@esposter/db";
 import {
   AdminActionType,
+  AZURE_MAX_BATCH_SIZE,
+  AZURE_MAX_PAGE_SIZE,
   AzureTable,
   bansInMessage,
   BinaryOperator,
@@ -35,6 +38,7 @@ import {
   ModerationLogEntity,
   roomIdSchema,
   RoomPermission,
+  StandardMessageEntityPropertyNames,
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -97,11 +101,47 @@ export const moderationRouter = router({
             .delete(usersToRoomsInMessage)
             .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
           break;
+        case AdminActionType.SoftBan: {
+          await ctx.db.transaction(async (tx) => {
+            await tx
+              .delete(usersToRoomsInMessage)
+              .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
+            await tx
+              .insert(bansInMessage)
+              .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
+              .onConflictDoNothing();
+          });
+          const messageClient = await useTableClient(AzureTable.Messages);
+          const filter = serializeClauses([
+            { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+            { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: targetUserId },
+            getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+          ] as Clause<StandardMessageEntity>[]);
+          const now = new Date();
+          for await (const page of messageClient
+            .listEntities<StandardMessageEntity>({ queryOptions: { filter } })
+            .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
+            for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE) {
+              const batch = page.slice(i, i + AZURE_MAX_BATCH_SIZE);
+              await messageClient.submitTransaction(
+                batch.map(({ partitionKey, rowKey }) => [
+                  "update",
+                  serializeEntity({ deletedAt: now, partitionKey, rowKey, updatedAt: now }),
+                ]),
+              );
+              for (const { partitionKey, rowKey } of batch)
+                messageEventEmitter.emit("deleteMessage", { partitionKey, rowKey });
+            }
+
+          break;
+        }
         case AdminActionType.TimeoutUser:
           await ctx.db
             .update(usersToRoomsInMessage)
             .set({ timeoutUntil: new Date(Date.now() + input.durationMs) })
             .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
+          break;
+        case AdminActionType.Warn:
           break;
         default:
           exhaustiveGuard(input);
@@ -131,7 +171,9 @@ export const moderationRouter = router({
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<
     CursorPaginationData<BanInMessageWithRelations>
   >(async ({ ctx, input: { cursor, limit, roomId } }) => {
-    const sortBy: SortItem<keyof BanInMessage>[] = [{ key: "createdAt", order: SortOrder.Desc }];
+    const sortBy: SortItem<keyof BanInMessage>[] = [
+      { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
+    ];
     const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
     if (cursor) wheres.push(getCursorWhere(bansInMessage, cursor, sortBy));
 

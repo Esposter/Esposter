@@ -2,21 +2,25 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import {
   AdminActionType,
+  AzureTable,
   bansInMessage,
   DatabaseEntityType,
   RoomPermission,
   roomsInMessage,
+  StandardMessageEntity,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { NotFoundError, takeOne } from "@esposter/shared";
+import { MockTableDatabase } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -30,9 +34,9 @@ describe("moderation", () => {
   const name = "name";
 
   const createMember = async () => {
+    const inviteCode = await roomCaller.createInvite({ roomId });
     const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    await roomCaller.joinRoom(inviteCode);
     return user;
   };
 
@@ -51,7 +55,9 @@ describe("moderation", () => {
   });
 
   beforeEach(async () => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({
+      toFake: ["Date", "setTimeout", "clearTimeout", "setInterval", "clearInterval", "setImmediate", "clearImmediate"],
+    });
     vi.setSystemTime(0);
     const room = await roomCaller.createRoom({ name });
     roomId = room.id;
@@ -59,6 +65,7 @@ describe("moderation", () => {
 
   afterEach(async () => {
     vi.useRealTimers();
+    MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
   });
 
@@ -201,13 +208,55 @@ describe("moderation", () => {
         }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
+
+    test(`${AdminActionType.SoftBan}: owner soft-bans member — ban row inserted, usersToRoomsInMessage row deleted`, async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: member.id,
+        type: AdminActionType.SoftBan,
+      });
+      const banRows = await mockContext.db
+        .select()
+        .from(bansInMessage)
+        .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, member.id)));
+      const membershipRows = await mockContext.db
+        .select()
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
+
+      expect(banRows).toHaveLength(1);
+      expect(takeOne(banRows).userId).toBe(member.id);
+      expect(membershipRows).toHaveLength(0);
+    });
+
+    test(`${AdminActionType.SoftBan}: soft-deletes all messages`, async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: member.id,
+        type: AdminActionType.SoftBan,
+      });
+
+      const messagesClient = await useTableClientMock(AzureTable.Messages);
+      const memberMessages: StandardMessageEntity[] = [];
+      for await (const page of messagesClient.listEntities<StandardMessageEntity>().byPage())
+        memberMessages.push(...page);
+
+      expect(memberMessages).toHaveLength(1);
+      expect(memberMessages.every(({ deletedAt }) => deletedAt)).toBe(true);
+    });
   });
 
   describe("readBans", () => {
     test("owner reads empty ban list after room creation", async () => {
       expect.hasAssertions();
 
-      const result = await moderationCaller.readBans({ limit: 15, roomId });
+      const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(0);
       expect(result.nextCursor).toBeUndefined();
@@ -223,7 +272,7 @@ describe("moderation", () => {
         type: AdminActionType.CreateBan,
       });
 
-      const result = await moderationCaller.readBans({ limit: 15, roomId });
+      const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(1);
       expect(takeOne(result.items).userId).toBe(member.id);
@@ -235,7 +284,7 @@ describe("moderation", () => {
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
 
-      await expect(moderationCaller.readBans({ limit: 15, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      await expect(moderationCaller.readBans({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
         `[TRPCError: UNAUTHORIZED]`,
       );
     });
@@ -248,9 +297,9 @@ describe("moderation", () => {
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
 
-      await expect(
-        moderationCaller.readModerationLog({ limit: 15, roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+      await expect(moderationCaller.readModerationLog({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: UNAUTHORIZED]`,
+      );
     });
   });
 
@@ -266,7 +315,7 @@ describe("moderation", () => {
       });
       await moderationCaller.deleteBan({ roomId, userId: member.id });
 
-      const result = await moderationCaller.readBans({ limit: 15, roomId });
+      const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(0);
     });

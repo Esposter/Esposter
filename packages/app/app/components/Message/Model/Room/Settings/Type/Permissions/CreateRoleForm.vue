@@ -2,6 +2,7 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
+import { normalizeString } from "@esposter/shared";
 
 interface CreateRoleFormProps {
   roomId: RoomInMessage["id"];
@@ -13,10 +14,10 @@ const { createRole } = roleStore;
 const name = ref("");
 
 const submit = async () => {
-  const trimmedName = name.value.trim();
-  if (!trimmedName) return;
+  const normalizedName = normalizeString(name.value);
+  if (!normalizedName) return;
   name.value = "";
-  await createRole({ name: trimmedName, permissions: 0n, position: 0, roomId });
+  await createRole({ name: normalizedName, permissions: 0n, position: 0, roomId });
 };
 </script>
 
@@ -26,7 +27,7 @@ const submit = async () => {
       <v-tooltip text="Create role">
         <template #activator="{ props: tooltipProps }">
           <v-btn
-            :disabled="!name.trim()"
+            :disabled="!normalizeString(name)"
             density="compact"
             icon="mdi-plus"
             size="small"

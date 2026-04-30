@@ -21,9 +21,9 @@ describe("role", () => {
   const position = 5;
 
   const createMember = async () => {
+    const inviteCode = await roomCaller.createInvite({ roomId });
     const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    await roomCaller.joinRoom(inviteCode);
     return user;
   };
 

@@ -7,6 +7,7 @@ import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
+import { normalizeString } from "@esposter/shared";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
@@ -22,8 +23,8 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
     return;
   }
   const pollContent: PollMessageContent = {
-    options: options.value.map((label) => ({ id: crypto.randomUUID(), label: label.trim() })),
-    question: question.value.trim(),
+    options: options.value.map((label) => ({ id: crypto.randomUUID(), label: normalizeString(label) })),
+    question: normalizeString(question.value),
     votes: {},
   };
   await createMessage({

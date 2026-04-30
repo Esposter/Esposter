@@ -80,7 +80,7 @@ describe(useSlashCommandStore, () => {
 
     expect(parameterValues.value).toStrictEqual({
       [parameter1]: parameterValue1,
-      [parameter2]: parameterValue2.trim(),
+      [parameter2]: "",
     });
     expect(trailingMessage.value).toBe("");
   });
@@ -100,7 +100,7 @@ describe(useSlashCommandStore, () => {
 
     expect(parameterValues.value).toStrictEqual({
       [parameter1]: parameterValue1,
-      [parameter2]: parameterValue2.trim(),
+      [parameter2]: "",
     });
   });
 
@@ -119,7 +119,7 @@ describe(useSlashCommandStore, () => {
 
     expect(parameterValues.value).toStrictEqual({
       [parameter1]: parameterValue1,
-      [parameter2]: parameterValue2.trim(),
+      [parameter2]: "",
     });
   });
 
@@ -139,7 +139,7 @@ describe(useSlashCommandStore, () => {
 
     expect(parameterValues.value[parameter1]).toBe(parameterValue1);
     expect(parameterValues.value[parameter3]).toBe(parameterValue3);
-    expect(parameterValues.value[parameter2]).toBe(parameterValue2.trim());
+    expect(parameterValues.value[parameter2]).toBe("");
   });
 
   test("clears store correctly", () => {

@@ -5,6 +5,7 @@ export enum MessageType {
   Message = "Message",
   PinMessage = "PinMessage",
   Poll = "Poll",
+  System = "System",
   VoiceCall = "VoiceCall",
   Webhook = "Webhook",
 }

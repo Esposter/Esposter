@@ -5,9 +5,11 @@ import { DeletableMessageTypes } from "#shared/services/message/DeletableMessage
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/message";
+import { useBookmarkStore } from "@/store/message/bookmark";
 import { useRoomStore } from "@/store/message/room";
+import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
-import { exhaustiveGuard, RoutePath } from "@esposter/shared";
+import { exhaustiveGuard, normalizeString, RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (
@@ -33,6 +35,10 @@ export const useMessageActionItems = (
   const { copy } = messageStore;
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
+  const bookmarkStore = useBookmarkStore();
+  const { createBookmark, deleteBookmark } = bookmarkStore;
+  const threadStore = useThreadStore();
+  const { openThread } = threadStore;
   const runtimeConfig = useRuntimeConfig();
   const editMessageItem: Item = {
     icon: "mdi-pencil",
@@ -59,7 +65,7 @@ export const useMessageActionItems = (
   const copyTextItem: Item = {
     icon: "mdi-content-copy",
     onClick: getSynchronizedFunction(async () => {
-      const textContent = parse(message.message).textContent.trim();
+      const textContent = normalizeString(parse(message.message).textContent);
       if (textContent) await copy(textContent);
     }),
     title: "Copy Text",
@@ -79,6 +85,30 @@ export const useMessageActionItems = (
             onPin(true);
           },
           title: "Pin Message",
+        },
+  );
+  const viewThreadItem: Item = {
+    icon: "mdi-comment-multiple-outline",
+    onClick: getSynchronizedFunction(async () => {
+      await openThread(message.partitionKey, message.rowKey);
+    }),
+    title: "View Thread",
+  };
+  const bookmarkItem = computed<Item>(() =>
+    bookmarkStore.isBookmarked(message.partitionKey, message.rowKey)
+      ? {
+          icon: "mdi-bookmark-remove",
+          onClick: getSynchronizedFunction(async () => {
+            await deleteBookmark(message.partitionKey, message.rowKey);
+          }),
+          title: "Remove Bookmark",
+        }
+      : {
+          icon: "mdi-bookmark-outline",
+          onClick: getSynchronizedFunction(async () => {
+            await createBookmark(message.partitionKey, message.rowKey);
+          }),
+          title: "Bookmark Message",
         },
   );
   const copyMessageLinkItem: Item = {
@@ -109,14 +139,17 @@ export const useMessageActionItems = (
       case MessageType.EditRoom:
         return [copyTextItem, copyMessageLinkItem];
       case MessageType.Message:
-      case MessageType.Webhook:
-        return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
+        return [copyTextItem, viewThreadItem, pinMessageItem.value, bookmarkItem.value, copyMessageLinkItem];
       case MessageType.PinMessage:
         return [copyMessageLinkItem];
       case MessageType.Poll:
         return [pinMessageItem.value, copyMessageLinkItem];
+      case MessageType.System:
+        return [copyMessageLinkItem];
       case MessageType.VoiceCall:
         return [copyMessageLinkItem];
+      case MessageType.Webhook:
+        return [copyTextItem, pinMessageItem.value, bookmarkItem.value, copyMessageLinkItem];
       default:
         return exhaustiveGuard(message);
     }

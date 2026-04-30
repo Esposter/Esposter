@@ -5,5 +5,6 @@ export enum SettingsType {
   Webhooks = "Webhooks",
   Bans = "Bans",
   AuditLog = "Audit Log",
+  WordFilter = "Word Filter",
   Delete = "Delete",
 }

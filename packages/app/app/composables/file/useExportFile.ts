@@ -1,6 +1,7 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
 import { useAlertStore } from "@/store/alert";
+import { normalizeString } from "@esposter/shared";
 import { showSaveFilePicker } from "show-open-file-picker";
 
 export const useExportFile = () => {
@@ -18,7 +19,7 @@ export const useExportFile = () => {
         suggestedName: fileName,
         types: [
           {
-            accept: { [mimeType]: accept.split(",").map((ext) => ext.trim()) },
+            accept: { [mimeType]: accept.split(",").map((ext) => normalizeString(ext)) },
             description: (accept.split(",")[0] ?? "").replace(/^\./, "").toUpperCase(),
           },
         ],

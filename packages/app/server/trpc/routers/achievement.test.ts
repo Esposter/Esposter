@@ -1,6 +1,6 @@
-import type { AchievementEvents } from "@@/server/services/achievement/events/achievementEventEmitter";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { UserAchievementWithRelations } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -95,7 +95,7 @@ describe("achievement", () => {
       },
     );
 
-    const unlockedAchievements = [] as unknown as AchievementEvents["updateAchievement"][0];
+    const unlockedAchievements: UserAchievementWithRelations[] = [];
 
     assert(!data.done);
 

@@ -10,6 +10,7 @@ import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDuratio
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";
+import { normalizeString } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 interface MemberListItemProps {
@@ -47,6 +48,11 @@ const isKickable = computed(() => {
 });
 const timeoutDurationSelectItems = Object.entries(TimeoutDurationMap).map(([title, value]) => ({ title, value }));
 const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
+const isWarnable = computed(() => {
+  if (!myPermissions.value) return false;
+  return hasPermission(myPermissions.value.permissions, RoomPermission.ManageMessages, myPermissions.value.isRoomOwner);
+});
+const warnReason = ref("");
 </script>
 
 <template>
@@ -67,7 +73,7 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
               </v-tooltip>
             </div>
             <div v-if="memberRoles.length > 0" flex flex-wrap gap-1 mt-1>
-              <v-chip v-for="{ id, name, color } of memberRoles" :key="id" size="x-small" :color="color ?? undefined">
+              <v-chip v-for="{ id, name, color } of memberRoles" :key="id" size="x-small" :color>
                 {{ name }}
               </v-chip>
             </div>
@@ -102,6 +108,45 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
                           :="tooltipProps"
                           color="error"
                           icon="mdi-account-cancel-outline"
+                          variant="plain"
+                          size="small"
+                          :ripple="false"
+                          @click.stop="updateIsOpen(true)"
+                        />
+                      </template>
+                    </v-tooltip>
+                  </template>
+                </StyledDeleteFormDialog>
+                <StyledDeleteFormDialog
+                  v-if="isBannable"
+                  :card-props="{
+                    title: 'Soft Ban Member',
+                    text: `Are you sure you want to soft-ban ${member.name}? They will be kicked and their recent messages deleted, but can rejoin via invite.`,
+                  }"
+                  :confirm-button-props="{ text: 'Soft Ban' }"
+                  @delete="
+                    async (onComplete) => {
+                      try {
+                        if (!currentRoom) return;
+                        await $trpc.moderation.executeAdminAction.mutate({
+                          roomId: currentRoom.id,
+                          targetUserId: member.id,
+                          type: AdminActionType.SoftBan,
+                        });
+                      } finally {
+                        onComplete();
+                      }
+                    }
+                  "
+                >
+                  <template #activator="{ updateIsOpen }">
+                    <v-tooltip text="Soft Ban" location="top">
+                      <template #activator="{ props: tooltipProps }">
+                        <v-btn
+                          v-show="isHovering"
+                          :="tooltipProps"
+                          color="error"
+                          icon="mdi-account-arrow-left"
                           variant="plain"
                           size="small"
                           :ripple="false"
@@ -187,6 +232,51 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
                       v-model="selectedTimeoutDurationMs"
                       :items="timeoutDurationSelectItems"
                       label="Duration"
+                    />
+                  </div>
+                </StyledFormDialog>
+                <StyledFormDialog
+                  v-if="isWarnable && !isSelf"
+                  :card-props="{ title: `Warn ${member.name}` }"
+                  :confirm-button-props="{ color: 'warning', text: 'Warn' }"
+                  @submit="
+                    async (_event, onComplete) => {
+                      try {
+                        if (!currentRoom) return;
+                        await $trpc.moderation.executeAdminAction.mutate({
+                          reason: normalizeString(warnReason) || undefined,
+                          roomId: currentRoom.id,
+                          targetUserId: member.id,
+                          type: AdminActionType.Warn,
+                        });
+                      } finally {
+                        onComplete();
+                      }
+                    }
+                  "
+                >
+                  <template #activator="{ updateIsOpen }">
+                    <v-tooltip text="Warn" location="top">
+                      <template #activator="{ props: tooltipProps }">
+                        <v-btn
+                          v-show="isHovering"
+                          :="tooltipProps"
+                          color="warning"
+                          icon="mdi-alert-circle-outline"
+                          variant="plain"
+                          size="small"
+                          :ripple="false"
+                          @click.stop="updateIsOpen(true)"
+                        />
+                      </template>
+                    </v-tooltip>
+                  </template>
+                  <div px-4 py-2>
+                    <v-text-field
+                      v-model="warnReason"
+                      label="Reason (optional)"
+                      hint="Visible in the audit log"
+                      persistent-hint
                     />
                   </div>
                 </StyledFormDialog>

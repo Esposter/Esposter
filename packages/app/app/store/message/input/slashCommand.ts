@@ -3,7 +3,7 @@ import type { SlashCommandParameter } from "@/models/message/slashCommands/Slash
 import type { SlashCommandParameterError } from "@/models/message/slashCommands/SlashCommandParameterError";
 
 import { useRoomStore } from "@/store/message/room";
-import { ID_SEPARATOR, takeOne, toRawDeep } from "@esposter/shared";
+import { ID_SEPARATOR, normalizeString, takeOne, toRawDeep } from "@esposter/shared";
 
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
   const roomStore = useRoomStore();
@@ -36,7 +36,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     parameters: SlashCommandParameter[],
   ): { parameterValues: Record<string, string>; trailingMessage: string } => {
     const result: Record<string, string> = {};
-    let remainingText = text.trim();
+    let remainingText = normalizeString(text);
 
     while (remainingText.length > 0) {
       const currentText = remainingText;
@@ -99,8 +99,8 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
       if (value) parts.push(`${name}${ID_SEPARATOR}${value}`);
     }
 
-    const trimmedTrailingMessage = trailingMessage.value.trim();
-    if (trimmedTrailingMessage) parts.push(trimmedTrailingMessage);
+    const normalizedTrailingMessage = normalizeString(trailingMessage.value);
+    if (normalizedTrailingMessage) parts.push(normalizedTrailingMessage);
     return parts.join(" ");
   };
 

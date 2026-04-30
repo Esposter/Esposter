@@ -8,7 +8,6 @@ description: Esposter Pinia store conventions — full store name, destructure w
 ## Usage in Vue Components
 
 - **`storeToRefs` is auto-imported** — never write `import { storeToRefs } from "pinia"`. Same applies to `defineStore` in `.vue` and composable files.
-- **Naming**: always use the full descriptive store name — `const fileTableEditorStore = useFileTableEditorStore()`, `const objectStore = useObjectStore()`. Never use `const store = ...` — the only exception is a conditional assignment where the store type varies at runtime (e.g. `const store = isEnemy ? useEnemyStore() : usePlayerStore()`).
 - **In Vue components**: always assign the store to a named variable first (`const roleStore = useRoleStore()`), then destructure from it. Never destructure directly from the `useXxxStore()` call. Then keep each store's lines grouped together in this order — fully extract one store before moving to the next. Never batch all store inits, then all storeToRefs, then all methods:
   1. `const xyzStore = useXyzStore()`
   2. `const { ref1, ref2 } = storeToRefs(xyzStore)` _(omit if no refs/computeds needed)_
@@ -38,7 +37,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
   ```
 
 - Never use dot-access (`store.method()`) in components.
-- **Store-to-store** (inside a Pinia store file): declare nested stores at the root of the setup function — **never call `useXxxStore()` inside an action function**. Pinia requires a reactive context and calling it inside a function (which may run outside Vue's reactivity system) can silently fail or error. Access refs/computeds via dot syntax (`otherStore.someRef`) to maintain reactivity — **never use `storeToRefs` inside a store**. Methods **must** be destructured at the root: `const { methodName } = otherStore`. Never call `otherStore.methodName()` inline — destructure first.
+- **Store-to-store** (inside a Pinia store file): declare nested stores at the root of the setup function as an Esposter efficiency convention — avoid calling `useXxxStore()` repeatedly inside each action to prevent repeated store lookups. Access refs/computeds via dot syntax (`otherStore.someRef`) to maintain reactivity — **never use `storeToRefs` inside a store**. Methods **must** be destructured at the root: `const { methodName } = otherStore`. Never call `otherStore.methodName()` inline — destructure first.
 
   ```typescript
   // CORRECT — nested store declared at root; method destructured at root
@@ -223,9 +222,9 @@ const unban = async (input: UnbanUserInput) => {
   };
   ```
 
-- **Prefer CRUD verbs over domain-specific verbs** — when a store action clearly maps to creating or deleting a record, name it `createXxx`/`deleteXxx`, never a domain-specific synonym: `deleteBan` not `unban`, `deleteMember` not `kick`. Reserve domain terms only when there is no clean CRUD mapping.
+- **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteMember` not `kick`. Reserve domain terms only when there is no clean CRUD mapping.
 
-- **`store` prefix for state-update-only counterparts of async user actions** — `deleteFriend` (user action) + `storeDeleteFriend` (subscription-driven state update). Never add `store` prefix to unpaired methods:
+- **`store*` prefix for subscription-driven state-update counterparts** — `deleteFriend` (user action) + `storeDeleteFriend` (subscription state update). Never add `store*` prefix to unpaired methods:
 
   ```ts
   // friend.ts — createOperationData wraps base CRUD; store methods add dedup / id-mapping
@@ -305,6 +304,32 @@ await createRole(roomId, { id: selectedRole.value.id, permissions: pendingPermis
 await createRole({ roomId, id: selectedRole.value.id, permissions: pendingPermissions.value });
 ```
 
+## Reuse Existing Store Maps — Never Build Local Maps in Actions
+
+When a store action receives a list of entities that are already cached in another store's map (e.g. `memberMap` in `useMemberStore`, `appUserMap` in `useAppUserStore`), write them into that map directly. Do **not** build a transient local `Map` just to look up values within the same action, and do **not** create a second parallel map ref in the store to hold the same data.
+
+```typescript
+// WRONG — local userMap built only to populate a parallel creatorMap
+const storeMessages = (messages: MessageEntity[], users: User[]) => {
+  const userMap = new Map(users.map((u) => [u.id, u])); // ❌ local map
+  for (const message of messages) {
+    const creator = userMap.get(message.userId);
+    if (creator) bookmarkMessageCreatorMap.value.set(getBookmarkRowKey(message.partitionKey, message.rowKey), creator); // ❌ duplicated map
+  }
+};
+
+// CORRECT — write directly into the existing memberMap; look up from it at display time
+const memberStore = useMemberStore(); // declared at store root
+const storeMessages = (messages: MessageEntity[], users: User[]) => {
+  for (const user of users) memberStore.memberMap.set(user.id, user);
+  for (const message of messages)
+    bookmarkMessageMap.value.set(getBookmarkRowKey(message.partitionKey, message.rowKey), message);
+};
+// In displayItems computed, look up creators from memberStore.memberMap directly
+```
+
+This keeps a single source of truth for user data and avoids duplicating the same entries across multiple maps.
+
 ## Reactive Map Mutations
 
 Vue 3 tracks `Map` mutations (`set`, `delete`, `clear`) on a `ref(new Map(...))` — no need to clone and reassign. Call `.set()` directly on `rolesMap.value`.
@@ -324,22 +349,22 @@ Clear local form input **before** `await`-ing the store action so the field empt
 ```typescript
 // WRONG — field stays filled until server responds
 const submit = async () => {
-  const trimmedName = name.value.trim();
-  if (!trimmedName) return;
-  await createRole({ name: trimmedName, permissions: 0n, position: 0, roomId });
+  const normalizedName = normalizeString(name.value);
+  if (!normalizedName) return;
+  await createRole({ name: normalizedName, permissions: 0n, position: 0, roomId });
   name.value = "";
 };
 
 // CORRECT — clear first, then fire the request
 const submit = async () => {
-  const trimmedName = name.value.trim();
-  if (!trimmedName) return;
+  const normalizedName = normalizeString(name.value);
+  if (!normalizedName) return;
   name.value = "";
-  await createRole({ name: trimmedName, permissions: 0n, position: 0, roomId });
+  await createRole({ name: normalizedName, permissions: 0n, position: 0, roomId });
 };
 ```
 
-Capture the trimmed value in a local variable first so clearing `name` doesn't affect the value passed to the store.
+Capture the normalized value in a local variable first so clearing `name` doesn't affect the value passed to the store.
 
 ## useDataMap for Key-to-Value State
 

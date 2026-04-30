@@ -14,9 +14,9 @@ const roleStore = useRoleStore();
 const { getRoles } = roleStore;
 const { selectedMemberId, selectedRole } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
-const { memberMap } = storeToRefs(memberStore);
+const { members } = storeToRefs(memberStore);
 const selectedMember = computed(() =>
-  selectedMemberId.value ? (memberMap.value.get(selectedMemberId.value) ?? null) : null,
+  selectedMemberId.value ? (members.value.find(({ id }) => id === selectedMemberId.value) ?? null) : null,
 );
 const roles = computed(() => getRoles(roomId).toSorted((a, b) => (a.isEveryone ? -1 : b.isEveryone ? 1 : 0)));
 const tab = ref(PermissionsTab.Roles);

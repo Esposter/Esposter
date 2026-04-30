@@ -2,6 +2,7 @@ import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
+import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -31,12 +32,13 @@ export const RoomPermission = {
 
 export type RoomPermission = (typeof RoomPermission)[keyof typeof RoomPermission];
 
+export const ROOM_ROLE_COLOR_MAX_LENGTH = 9;
 export const ROOM_ROLE_NAME_MAX_LENGTH = 100;
 
 export const roomRolesInMessage = pgTable(
   "room_roles",
   {
-    color: text("color"),
+    color: text("color").notNull().default(""),
     id: uuid("id").primaryKey().defaultRandom(),
     isEveryone: boolean("isEveryone").notNull().default(false),
     name: text("name").notNull(),
@@ -48,9 +50,13 @@ export const roomRolesInMessage = pgTable(
   },
   {
     extraConfig: (table) => [
+      check(
+        "room_roles_color_length_check",
+        sql`LENGTH(${table.color}) <= ${sql.raw(ROOM_ROLE_COLOR_MAX_LENGTH.toString())}`,
+      ),
       check("room_roles_name_length_check", createNameCheckSql(table.name, ROOM_ROLE_NAME_MAX_LENGTH)),
       check("room_roles_position_check", sql`${table.position} >= 0`),
-      index("room_roles_room_id_position_index").on(table.roomId, table.position),
+      index("room_roles_roomId_position_index").on(table.roomId, table.position),
       uniqueIndex("room_roles_everyone_unique")
         .on(table.roomId)
         .where(sql`${table.isEveryone} = TRUE`),
@@ -62,6 +68,7 @@ export const roomRolesInMessage = pgTable(
 export type RoomRoleInMessage = typeof roomRolesInMessage.$inferSelect;
 
 export const selectRoomRoleInMessageSchema = createSelectSchema(roomRolesInMessage, {
+  color: z.string().transform(normalizeString).pipe(z.string().max(ROOM_ROLE_COLOR_MAX_LENGTH)),
   name: createNameSchema(ROOM_ROLE_NAME_MAX_LENGTH),
   permissions: z.bigint(),
   position: z.int().nonnegative(),

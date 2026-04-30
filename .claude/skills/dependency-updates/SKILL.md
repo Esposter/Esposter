@@ -11,7 +11,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 1. **Check what's outdated** (run from repo root):
 
-   ```
+   ```bash
    pnpm outdated -r
    ```
 

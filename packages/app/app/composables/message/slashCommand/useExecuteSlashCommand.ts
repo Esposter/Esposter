@@ -2,16 +2,18 @@ import type { SlashCommandParameters } from "@/models/message/slashCommands/Slas
 import type { StandardCreateMessageInput } from "@esposter/db-schema";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
+import { parseDuration } from "@/services/message/slashCommands/parseDuration";
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 import { MessageType } from "@esposter/db-schema";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, normalizeString } from "@esposter/shared";
 import { marked } from "marked";
 
 export const useExecuteSlashCommand = () => {
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
@@ -40,6 +42,17 @@ export const useExecuteSlashCommand = () => {
       case SlashCommandType.Poll:
         isOpen.value = true;
         break;
+      case SlashCommandType.Remind: {
+        const { message, time } = command.parameterValues;
+        const durationMs = parseDuration(time);
+        if (!durationMs) break;
+        setTimeout(() => {
+          if (Notification.permission === "granted")
+            // oxlint-disable-next-line no-new
+            new Notification("Reminder", { body: message });
+        }, durationMs);
+        break;
+      }
       case SlashCommandType.Roll: {
         const roll = Math.floor(Math.random() * 100) + 1;
         createMessageInput = { message: `🎲 Rolled a **${roll}**`, roomId, type: MessageType.Message };
@@ -47,13 +60,18 @@ export const useExecuteSlashCommand = () => {
       }
       case SlashCommandType.Shrug: {
         const { text } = command.parameterValues;
-        const prefix = text?.trim() ?? "";
+        const prefix = normalizeString(text);
         createMessageInput = { message: `${prefix}¯\\_(ツ)_/¯`, roomId, type: MessageType.Message };
         break;
       }
       case SlashCommandType.TableFlip:
         createMessageInput = { message: `(╯°□°）╯︵ ┻━┻`, roomId, type: MessageType.Message };
         break;
+      case SlashCommandType.Topic: {
+        const topic = normalizeString(command.parameterValues.text);
+        await $trpc.room.updateRoom.mutate({ id: roomId, topic });
+        break;
+      }
       case SlashCommandType.Unflip:
         createMessageInput = { message: `┬─┬ノ( º _ ºノ)`, roomId, type: MessageType.Message };
         break;

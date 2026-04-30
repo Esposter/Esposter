@@ -46,9 +46,9 @@ describe(getPermissions, () => {
   test("updates @everyone permissions for all members", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const { user } = getMockSession();
-    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    const inviteCode = await roomCaller.createInvite({ roomId });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(inviteCode);
 
     const roles = await roleCaller.readRoles({ roomIds: [roomId] });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
@@ -62,9 +62,9 @@ describe(getPermissions, () => {
   test("ors @everyone + assigned role permissions", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const { user } = getMockSession();
-    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    const inviteCode = await roomCaller.createInvite({ roomId });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(inviteCode);
 
     const roles = await roleCaller.readRoles({ roomIds: [roomId] });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);

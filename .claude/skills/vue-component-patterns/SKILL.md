@@ -114,7 +114,7 @@ This keeps the parent component lean and makes each slot independently readable 
 
 The array lives in `services/` (co-located with the component's feature folder), not inline in the component. **Constant arrays use PascalCase names.**
 
-```
+```text
 services/permission/PermissionItems.ts   ← array defined here
 components/Permission/List.vue           ← imports and v-for renders
 ```
