@@ -9,6 +9,8 @@ const dataStore = useDataStore();
 const { hasMore, hasMoreNewer } = storeToRefs(dataStore);
 const scrollStore = useScrollStore();
 const { isScrolling, messageContainer, messageContainerElement } = storeToRefs(scrollStore);
+const bottomSentinel = useTemplateRef("bottomSentinel");
+const isPinnedToBottom = useElementVisibility(bottomSentinel, { scrollTarget: messageContainerElement });
 const previousScrollHeight = ref(0);
 const readMoreNewerMessages = async (onComplete: () => void) => {
   await baseReadMoreNewerMessages(() => {
@@ -31,6 +33,7 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
 <template>
   <v-list
     ref="messageContainer"
+    :class="{ 'overflow-anchor-none': isPinnedToBottom }"
     flex-1
     flex
     pb-0
@@ -38,9 +41,9 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
     flex-col-reverse
     overflow-x-hidden
     overflow-y-auto
-    overflow-anchor-none
     lines="two"
   >
+    <div ref="bottomSentinel" />
     <template v-if="isPending">
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
