@@ -1,7 +1,8 @@
+import { pgTable } from "@/pgTable";
 import { posts } from "@/schema/posts";
 import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
-import { check, integer, pgTable, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { check, integer, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
@@ -16,10 +17,12 @@ export const likes = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     value: integer("value").notNull(),
   },
-  ({ postId, userId, value }) => [
-    primaryKey({ columns: [userId, postId] }),
-    check("likes_value_check", sql`${value} = 1 OR ${value} = -1`),
-  ],
+  {
+    extraConfig: ({ postId, userId, value }) => [
+      primaryKey({ columns: [userId, postId] }),
+      check("likes_value_check", sql`${value} = 1 OR ${value} = -1`),
+    ],
+  },
 );
 
 export type Like = typeof likes.$inferSelect;

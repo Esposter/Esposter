@@ -88,7 +88,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": 7.0.0-dev.20260428.1
+  "@typescript/native-preview": ^7.0.0-dev.20260501.1
   "@unocss/eslint-config": ^66.6.8
   "@unocss/nuxt": ^66.6.8
   "@vite-pwa/nuxt": ^1.1.1
@@ -104,8 +104,8 @@ catalog:
   "@vue/language-core": ^3.2.7
   "@vue/test-utils": ^2.4.10
   "@vuepic/vue-datepicker": ^12.1.0
-  "@vueuse/core": ^14.2.1
-  "@vueuse/nuxt": ^14.2.1
+  "@vueuse/core": ^14.3.0
+  "@vueuse/nuxt": ^14.3.0
   ajv: ^8.20.0
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
@@ -124,7 +124,7 @@ catalog:
   drizzle-kit: 1.0.0-beta.23
   drizzle-orm: 1.0.0-beta.23
   emoji-mart-vue-fast: ^15.0.5
-  eslint: ^10.2.1
+  eslint: ^10.3.0
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-oxlint: ^1.62.0
   eslint-plugin-perfectionist: ^5.9.0
@@ -187,7 +187,7 @@ catalog:
   rate-limiter-flexible: ^11.0.1
   read-excel-file: ^9.0.7
   rolldown: ^1.0.0-rc.18
-  rolldown-plugin-dts: ^0.23.2
+  rolldown-plugin-dts: ^0.24.1
   rxjs: ^7.8.2
   sanitize-html: ^2.17.3
   sass-embedded: ^1.99.0
@@ -229,7 +229,7 @@ catalog:
   write-excel-file: ^4.0.4
   ws: ^8.20.0
   xmlbuilder2: ^4.0.3
-  zod: ^4.4.1
+  zod: ^4.4.2
 
 catalogMode: strict
 
