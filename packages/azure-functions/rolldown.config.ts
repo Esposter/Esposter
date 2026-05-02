@@ -1,7 +1,7 @@
 import type { Plugin, RolldownOptions, RolldownPluginOption } from "rolldown";
 
 import { rolldownConfigurationNode } from "@esposter/configuration";
-// @ts-expect-error TS2321: Excessive stack depth
+
 const rolldownConfiguration: RolldownOptions = {
   ...rolldownConfigurationNode,
   external: [],
