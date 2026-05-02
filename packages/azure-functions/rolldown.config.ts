@@ -1,6 +1,7 @@
 import type { Plugin, RolldownOptions, RolldownPluginOption } from "rolldown";
 
 import { rolldownConfigurationNode } from "@esposter/configuration";
+// oxlint-disable-next-line ban-ts-comment prefer-ts-expect-error
 // @ts-ignore TS2321: Excessive stack depth
 const rolldownConfiguration: RolldownOptions = {
   ...rolldownConfigurationNode,
