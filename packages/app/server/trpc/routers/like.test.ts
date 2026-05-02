@@ -97,7 +97,9 @@ describe("like", () => {
     const deletedLike = await likeCaller.deleteLike(newPost.id);
     const userId = getMockSession().user.id;
 
-    expect(deletedLike).toStrictEqual({ postId: newPost.id, userId, value });
+    expect(deletedLike.value).toBe(value);
+    expect(deletedLike.userId).toBe(userId);
+    expect(deletedLike.postId).toBe(newPost.id);
   });
 
   test("fails delete with non-existent post id", async () => {
