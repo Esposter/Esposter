@@ -3,7 +3,6 @@ export enum DatabaseEntityType {
   AppUser = "AppUser",
   Ban = "Ban",
   Block = "Block",
-  DirectMessage = "DirectMessage",
   Friend = "Friend",
   FriendRequest = "FriendRequest",
   Invite = "Invite",
@@ -21,6 +20,6 @@ export enum DatabaseEntityType {
   UserStatus = "UserStatus",
   UserToRoom = "UserToRoom",
   UserToRoomRole = "UserToRoomRole",
-  VerificationToken = "VerificationToken",
+  Verification = "Verification",
   Webhook = "Webhook",
 }

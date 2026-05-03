@@ -37,5 +37,5 @@ export const webhooksInMessage = pgTable(
 export type WebhookInMessage = typeof webhooksInMessage.$inferSelect;
 
 export const selectWebhookInMessageSchema = createSelectSchema(webhooksInMessage, {
-  name: createNameSchema(WEBHOOK_NAME_MAX_LENGTH),
+  name: (schema) => createNameSchema(WEBHOOK_NAME_MAX_LENGTH, schema),
 });

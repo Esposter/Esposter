@@ -1,12 +1,10 @@
-import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
+import { createNameCheckSql, createNameSchema, createNormalizedStringSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
-import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 /* eslint-disable perfectionist/sort-objects */
 export const RoomPermission = {
@@ -68,8 +66,7 @@ export const roomRolesInMessage = pgTable(
 export type RoomRoleInMessage = typeof roomRolesInMessage.$inferSelect;
 
 export const selectRoomRoleInMessageSchema = createSelectSchema(roomRolesInMessage, {
-  color: z.string().transform(normalizeString).pipe(z.string().max(ROOM_ROLE_COLOR_MAX_LENGTH)),
-  name: createNameSchema(ROOM_ROLE_NAME_MAX_LENGTH),
-  permissions: z.bigint(),
-  position: z.int().nonnegative(),
+  color: (schema) => createNormalizedStringSchema(ROOM_ROLE_COLOR_MAX_LENGTH, schema),
+  name: (schema) => createNameSchema(ROOM_ROLE_NAME_MAX_LENGTH, schema),
+  position: (schema) => schema.nonnegative(),
 });

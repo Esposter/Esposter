@@ -28,7 +28,7 @@ export const pushSubscriptionsInMessage = pgTable(
 export type PushSubscriptionInMessageEntity = typeof pushSubscriptionsInMessage.$inferSelect;
 
 export const selectPushSubscriptionInMessageSchema = createSelectSchema(pushSubscriptionsInMessage, {
-  endpoint: z.url(),
+  endpoint: (schema) => schema.pipe(z.url()),
 });
 
 export type PushSubscriptionInMessageWithRelations = PushSubscriptionInMessageEntity & { user: User };

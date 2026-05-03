@@ -5,7 +5,6 @@ import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const ROOM_CATEGORY_NAME_MAX_LENGTH = 100;
 
@@ -31,6 +30,6 @@ export const roomCategoriesInMessage = pgTable(
 export type RoomCategoryInMessage = typeof roomCategoriesInMessage.$inferSelect;
 
 export const selectRoomCategoryInMessageSchema = createSelectSchema(roomCategoriesInMessage, {
-  name: createNameSchema(ROOM_CATEGORY_NAME_MAX_LENGTH),
-  position: z.int().nonnegative(),
+  name: (schema) => createNameSchema(ROOM_CATEGORY_NAME_MAX_LENGTH, schema),
+  position: (schema) => schema.nonnegative(),
 });
