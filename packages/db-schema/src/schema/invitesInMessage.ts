@@ -5,7 +5,6 @@ import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const CODE_LENGTH = 8;
 
@@ -32,5 +31,5 @@ export const invitesInMessage = pgTable(
 export type InviteInMessage = typeof invitesInMessage.$inferSelect;
 
 export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, {
-  code: z.string().length(CODE_LENGTH),
+  code: (schema) => schema.length(CODE_LENGTH),
 });

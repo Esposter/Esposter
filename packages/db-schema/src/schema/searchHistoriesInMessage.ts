@@ -36,5 +36,5 @@ export type SearchHistoryInMessage = typeof searchHistoriesInMessage.$inferSelec
 
 export const selectSearchHistoryInMessageSchema = createSelectSchema(searchHistoriesInMessage, {
   filters: z.array(filterSchema),
-  query: z.string().max(MESSAGE_MAX_LENGTH),
+  query: (schema) => schema.max(MESSAGE_MAX_LENGTH),
 });

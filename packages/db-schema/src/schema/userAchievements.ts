@@ -4,7 +4,6 @@ import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const userAchievements = pgTable(
   "user_achievements",
@@ -30,5 +29,5 @@ export const userAchievements = pgTable(
 export type UserAchievement = typeof userAchievements.$inferSelect;
 
 export const selectUserAchievementSchema = createSelectSchema(userAchievements, {
-  amount: z.int().min(1),
+  amount: (schema) => schema.min(1),
 });

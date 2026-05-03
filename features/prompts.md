@@ -1,0 +1,2 @@
+- I think nickname can just be part of users to rooms and just have an update endpoint? etc like our update endpoints
+- tests can also just be related to that as well, don't need separate test files

@@ -2,8 +2,11 @@ import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSu
 
 import { authClient } from "@/services/auth/authClient";
 import { useAchievementStore } from "@/store/achievement";
+import { getIsServer } from "@esposter/shared";
 
 export const useAchievementSubscribables = async () => {
+  if (getIsServer()) return;
+
   const onlineSubscribableContext: OnlineSubscribableContext = {
     instance: getCurrentInstance(),
     scope: getCurrentScope(),

@@ -2,7 +2,7 @@
 import { mapToUserAchievementWithDefinition } from "@/services/achievement/mapToUserAchievementWithDefinition";
 import { useAchievementStore } from "@/store/achievement";
 
-useAchievementSubscribables();
+await useAchievementSubscribables();
 
 const { $trpc } = useNuxtApp();
 const achievementStore = useAchievementStore();

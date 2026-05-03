@@ -46,6 +46,6 @@ export const userStatusesInMessage = pgTable(
 export type UserStatusInMessage = typeof userStatusesInMessage.$inferSelect;
 
 export const selectUserStatusInMessageSchema = createSelectSchema(userStatusesInMessage, {
-  message: z.string().max(STATUS_MESSAGE_MAX_LENGTH),
+  message: (schema) => schema.max(STATUS_MESSAGE_MAX_LENGTH),
   status: userStatusSchema.nullable(),
 });

@@ -24,5 +24,5 @@ export const appUsersInMessage = pgTable(
 export type AppUserInMessage = typeof appUsersInMessage.$inferSelect;
 
 export const selectAppUserInMessageSchema = createSelectSchema(appUsersInMessage, {
-  name: createNameSchema(APP_USER_NAME_MAX_LENGTH),
+  name: (schema) => createNameSchema(APP_USER_NAME_MAX_LENGTH, schema),
 });

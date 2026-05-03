@@ -1,9 +1,8 @@
-import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
+import { createNameCheckSql, createNameSchema, createNormalizedStringSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
 import { users } from "@/schema/users";
-import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { boolean, check, integer, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -57,7 +56,7 @@ export const roomsInMessage = pgTable(
 export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
-  name: createNameSchema(ROOM_NAME_MAX_LENGTH).nullable(),
-  slowmodeMs: z.int().min(1).nullable(),
-  topic: z.string().transform(normalizeString).pipe(z.string().max(ROOM_TOPIC_MAX_LENGTH)),
+  name: (schema) => createNameSchema(ROOM_NAME_MAX_LENGTH, schema),
+  slowmodeMs: (schema) => schema.min(1),
+  topic: (schema) => createNormalizedStringSchema(ROOM_TOPIC_MAX_LENGTH, schema),
 });

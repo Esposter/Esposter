@@ -5,7 +5,6 @@ import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, index, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const friendRequests = pgTable(
   "friend_requests",
@@ -33,5 +32,5 @@ export type FriendRequest = typeof friendRequests.$inferSelect;
 export type FriendRequestWithRelations = FriendRequest & { receiver: User; sender: User };
 
 export const selectFriendRequestSchema = createSelectSchema(friendRequests, {
-  id: z.string().min(1),
+  id: (schema) => schema.min(1),
 });

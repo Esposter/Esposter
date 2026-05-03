@@ -8,7 +8,7 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { DatabaseEntityType, friends, roomsInMessage } from "@esposter/db-schema";
+import { DatabaseEntityType, DerivedDatabaseEntityType, friends, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -192,7 +192,7 @@ describe("directMessage", () => {
     getMockSession();
 
     await expect(caller.createDirectMessage([user.id])).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId).message}]`,
     );
   });
 
@@ -202,7 +202,7 @@ describe("directMessage", () => {
     const userId = getMockSession().user.id;
 
     await expect(caller.createDirectMessage([userId])).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId).message}]`,
     );
   });
 

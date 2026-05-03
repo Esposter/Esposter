@@ -3,7 +3,7 @@ import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { DatabaseEntityType } from "@esposter/db-schema";
+import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 import { RoutePath, takeOne, uuidValidateV4 } from "@esposter/shared";
 
 export const useDirectMessageStore = defineStore("message/room/directMessage", () => {
@@ -13,7 +13,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     createDirectMessage: storeCreateDirectMessage,
     deleteDirectMessage: storeDeleteDirectMessage,
     ...restOperationData
-  } = createOperationData(items, ["id"], DatabaseEntityType.DirectMessage);
+  } = createOperationData(items, ["id"], DerivedDatabaseEntityType.DirectMessage);
   const directMessages = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const directMessageParticipantsMap = ref(new Map<string, User[]>());
   const router = useRouter();

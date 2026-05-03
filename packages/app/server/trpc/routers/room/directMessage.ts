@@ -14,7 +14,7 @@ import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
-  DatabaseEntityType,
+  DerivedDatabaseEntityType,
   friends,
   roomsInMessage,
   RoomType,
@@ -51,7 +51,8 @@ export const directMessageRouter = router({
         if (targetUserIds.length === 0)
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message,
+            message: new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId)
+              .message,
           });
 
         const acceptedFriendships = await tx
@@ -66,7 +67,8 @@ export const directMessageRouter = router({
         if (acceptedFriendships.length !== targetUserIds.length)
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message,
+            message: new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId)
+              .message,
           });
 
         const participantKey = allUserIds.toSorted().join(ID_SEPARATOR);
@@ -80,8 +82,11 @@ export const directMessageRouter = router({
         if (!room)
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, participantKey)
-              .message,
+            message: new InvalidOperationError(
+              Operation.Create,
+              DerivedDatabaseEntityType.DirectMessage,
+              participantKey,
+            ).message,
           });
 
         await tx
