@@ -114,7 +114,7 @@ catalog:
   better-auth: ^1.6.9
   codemirror: ^6.0.2
   crossws: ^0.4.5
-  ctix: 2.7.2
+  ctix: ^2.8.0
   data-urls: ^7.0.0
   dayjs: ^1.11.20
   debug: ^4.4.3
@@ -185,7 +185,7 @@ catalog:
   postgres: ^3.4.9
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.0.2
-  read-excel-file: ^9.0.7
+  read-excel-file: ^9.0.9
   rolldown: ^1.0.0-rc.18
   rolldown-plugin-dts: ^0.24.1
   rxjs: ^7.8.2
@@ -226,7 +226,7 @@ catalog:
   vuetify-nuxt-module: ^1.0.0-beta.2
   web-push: ^3.6.7
   worker-timers: ^8.0.31
-  write-excel-file: ^4.0.4
+  write-excel-file: ^4.0.5
   ws: ^8.20.0
   xmlbuilder2: ^4.0.3
   zod: ^4.4.2
