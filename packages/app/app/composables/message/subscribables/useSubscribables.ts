@@ -1,4 +1,8 @@
+import { getIsServer } from "@esposter/shared";
+
 export const useSubscribables = async () => {
+  if (getIsServer()) return;
+
   useEmojiSubscribables();
   useMessageCache();
   useModerationSubscribables();
