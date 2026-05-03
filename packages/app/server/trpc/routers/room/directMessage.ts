@@ -14,7 +14,6 @@ import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
-  DatabaseEntityType,
   DerivedDatabaseEntityType,
   friends,
   roomsInMessage,
