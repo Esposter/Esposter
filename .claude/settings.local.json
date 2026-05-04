@@ -51,7 +51,8 @@
       "Bash(git diff *)",
       "Bash(git ls-tree *)",
       "PowerShell(ls *)",
-      "PowerShell(pnpm typecheck *)"
+      "PowerShell(pnpm typecheck *)",
+      "Bash(Get-ChildItem *)"
     ]
   }
 }

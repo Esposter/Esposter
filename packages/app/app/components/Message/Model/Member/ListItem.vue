@@ -4,13 +4,8 @@ import type { VNodeChild } from "vue";
 import type { VHover } from "vuetify/lib/components/VHover/VHover.mjs";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
-import { hasPermission } from "#shared/services/room/rbac/hasPermission";
-import { authClient } from "@/services/auth/authClient";
-import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
-import { AdminActionType, RoomPermission } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 interface MemberListItemProps {
@@ -24,42 +19,29 @@ defineSlots<{
 }>();
 const { member } = defineProps<MemberListItemProps>();
 const emit = defineEmits<{ click: [event: KeyboardEvent | MouseEvent] }>();
-const { data: session } = await authClient.useSession(useFetch);
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === member.id);
-const { $trpc } = useNuxtApp();
 const roleStore = useRoleStore();
-const { getMemberRoles, getMyPermissions } = roleStore;
+const { getMemberRoles } = roleStore;
 const memberRoles = computed(() =>
   currentRoom.value?.id
     ? getMemberRoles(currentRoom.value.id, member.id).toSorted((a, b) => b.position - a.position)
     : [],
 );
-const isSelf = computed(() => session.value?.user.id === member.id);
-const myPermissions = computed(() => (currentRoom.value?.id ? getMyPermissions(currentRoom.value.id) : undefined));
-const isBannable = computed(() => {
-  if (!myPermissions.value) return false;
-  return hasPermission(myPermissions.value.permissions, RoomPermission.BanMembers, myPermissions.value.isRoomOwner);
-});
-const isKickable = computed(() => {
-  if (!myPermissions.value) return false;
-  return hasPermission(myPermissions.value.permissions, RoomPermission.KickMembers, myPermissions.value.isRoomOwner);
-});
-const timeoutDurationSelectItems = Object.entries(TimeoutDurationMap).map(([title, value]) => ({ title, value }));
-const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
-const isWarnable = computed(() => {
-  if (!myPermissions.value) return false;
-  return hasPermission(myPermissions.value.permissions, RoomPermission.ManageMessages, myPermissions.value.isRoomOwner);
-});
-const warnReason = ref("");
+const isMenuOpen = ref(false);
 </script>
 
 <template>
   <v-hover #default="{ isHovering, props: hoverProps }">
-    <v-menu location="end" :close-on-content-click="false" open-on-hover :open-delay="400" :close-delay="100">
+    <v-menu v-model="isMenuOpen" location="end" :close-on-content-click="false">
       <template #activator="{ props: menuProps }">
-        <v-list-item :="mergeProps(hoverProps, menuProps)" :value="member.name" @click="emit('click', $event)">
+        <v-list-item
+          :="mergeProps(hoverProps, menuProps)"
+          :active="isMenuOpen"
+          :value="member.name"
+          @click="emit('click', $event)"
+        >
           <template #prepend>
             <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="member.name" />
           </template>
@@ -79,209 +61,7 @@ const warnReason = ref("");
             </div>
           </v-list-item-title>
           <template #append="listItemProps">
-            <slot name="append" :="{ hoverProps: { props: hoverProps, isHovering }, listItemProps }">
-              <template v-if="!isSelf">
-                <StyledDeleteFormDialog
-                  v-if="isBannable"
-                  :card-props="{ title: 'Ban User', text: `Are you sure you want to ban ${member.name}?` }"
-                  :confirm-button-props="{ text: 'Ban' }"
-                  @delete="
-                    async (onComplete) => {
-                      try {
-                        if (!currentRoom) return;
-                        await $trpc.moderation.executeAdminAction.mutate({
-                          roomId: currentRoom.id,
-                          targetUserId: member.id,
-                          type: AdminActionType.CreateBan,
-                        });
-                      } finally {
-                        onComplete();
-                      }
-                    }
-                  "
-                >
-                  <template #activator="{ updateIsOpen }">
-                    <v-tooltip text="Ban" location="top">
-                      <template #activator="{ props: tooltipProps }">
-                        <v-btn
-                          v-show="isHovering"
-                          :="tooltipProps"
-                          color="error"
-                          icon="mdi-account-cancel-outline"
-                          variant="plain"
-                          size="small"
-                          :ripple="false"
-                          @click.stop="updateIsOpen(true)"
-                        />
-                      </template>
-                    </v-tooltip>
-                  </template>
-                </StyledDeleteFormDialog>
-                <StyledDeleteFormDialog
-                  v-if="isBannable"
-                  :card-props="{
-                    title: 'Soft Ban Member',
-                    text: `Are you sure you want to soft-ban ${member.name}? They will be kicked and their recent messages deleted, but can rejoin via invite.`,
-                  }"
-                  :confirm-button-props="{ text: 'Soft Ban' }"
-                  @delete="
-                    async (onComplete) => {
-                      try {
-                        if (!currentRoom) return;
-                        await $trpc.moderation.executeAdminAction.mutate({
-                          roomId: currentRoom.id,
-                          targetUserId: member.id,
-                          type: AdminActionType.SoftBan,
-                        });
-                      } finally {
-                        onComplete();
-                      }
-                    }
-                  "
-                >
-                  <template #activator="{ updateIsOpen }">
-                    <v-tooltip text="Soft Ban" location="top">
-                      <template #activator="{ props: tooltipProps }">
-                        <v-btn
-                          v-show="isHovering"
-                          :="tooltipProps"
-                          color="error"
-                          icon="mdi-account-arrow-left"
-                          variant="plain"
-                          size="small"
-                          :ripple="false"
-                          @click.stop="updateIsOpen(true)"
-                        />
-                      </template>
-                    </v-tooltip>
-                  </template>
-                </StyledDeleteFormDialog>
-                <StyledDeleteFormDialog
-                  v-if="isKickable"
-                  :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
-                  :confirm-button-props="{ text: 'Kick' }"
-                  @delete="
-                    async (onComplete) => {
-                      try {
-                        if (!currentRoom) return;
-                        await $trpc.moderation.executeAdminAction.mutate({
-                          roomId: currentRoom.id,
-                          targetUserId: member.id,
-                          type: AdminActionType.KickFromRoom,
-                        });
-                      } finally {
-                        onComplete();
-                      }
-                    }
-                  "
-                >
-                  <template #activator="{ updateIsOpen }">
-                    <v-tooltip :text="`Kick ${member.name}`" location="top">
-                      <template #activator="{ props: tooltipProps }">
-                        <v-btn
-                          v-show="isHovering"
-                          :="tooltipProps"
-                          icon="mdi-close"
-                          variant="plain"
-                          size="small"
-                          :ripple="false"
-                          @click.stop="updateIsOpen(true)"
-                        />
-                      </template>
-                    </v-tooltip>
-                  </template>
-                </StyledDeleteFormDialog>
-                <StyledFormDialog
-                  v-if="isKickable"
-                  :card-props="{ title: `Timeout ${member.name}` }"
-                  :confirm-button-props="{ color: 'warning', text: 'Timeout' }"
-                  @submit="
-                    async (_event, onComplete) => {
-                      try {
-                        if (!currentRoom) return;
-                        await $trpc.moderation.executeAdminAction.mutate({
-                          durationMs: selectedTimeoutDurationMs,
-                          roomId: currentRoom.id,
-                          targetUserId: member.id,
-                          type: AdminActionType.TimeoutUser,
-                        });
-                      } finally {
-                        onComplete();
-                      }
-                    }
-                  "
-                >
-                  <template #activator="{ updateIsOpen }">
-                    <v-tooltip text="Timeout" location="top">
-                      <template #activator="{ props: tooltipProps }">
-                        <v-btn
-                          v-show="isHovering"
-                          :="tooltipProps"
-                          color="warning"
-                          icon="mdi-timer-off-outline"
-                          variant="plain"
-                          size="small"
-                          :ripple="false"
-                          @click.stop="updateIsOpen(true)"
-                        />
-                      </template>
-                    </v-tooltip>
-                  </template>
-                  <div px-4 py-2>
-                    <v-select
-                      v-model="selectedTimeoutDurationMs"
-                      :items="timeoutDurationSelectItems"
-                      label="Duration"
-                    />
-                  </div>
-                </StyledFormDialog>
-                <StyledFormDialog
-                  v-if="isWarnable && !isSelf"
-                  :card-props="{ title: `Warn ${member.name}` }"
-                  :confirm-button-props="{ color: 'warning', text: 'Warn' }"
-                  @submit="
-                    async (_event, onComplete) => {
-                      try {
-                        if (!currentRoom) return;
-                        await $trpc.moderation.executeAdminAction.mutate({
-                          reason: normalizeString(warnReason) || undefined,
-                          roomId: currentRoom.id,
-                          targetUserId: member.id,
-                          type: AdminActionType.Warn,
-                        });
-                      } finally {
-                        onComplete();
-                      }
-                    }
-                  "
-                >
-                  <template #activator="{ updateIsOpen }">
-                    <v-tooltip text="Warn" location="top">
-                      <template #activator="{ props: tooltipProps }">
-                        <v-btn
-                          v-show="isHovering"
-                          :="tooltipProps"
-                          color="warning"
-                          icon="mdi-alert-circle-outline"
-                          variant="plain"
-                          size="small"
-                          :ripple="false"
-                          @click.stop="updateIsOpen(true)"
-                        />
-                      </template>
-                    </v-tooltip>
-                  </template>
-                  <div px-4 py-2>
-                    <v-text-field
-                      v-model="warnReason"
-                      label="Reason (optional)"
-                      hint="Visible in the audit log"
-                      persistent-hint
-                    />
-                  </div>
-                </StyledFormDialog>
-              </template>
-            </slot>
+            <slot name="append" :="{ hoverProps: { props: hoverProps, isHovering }, listItemProps }" />
           </template>
         </v-list-item>
       </template>
