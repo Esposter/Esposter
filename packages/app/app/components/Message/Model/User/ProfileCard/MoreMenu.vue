@@ -11,9 +11,6 @@ interface ProfileCardMoreMenuProps {
 const { user } = defineProps<ProfileCardMoreMenuProps>();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const { copy } = useClipboard();
-const isFriend = computed(() => friends.value.some(({ id }) => id === user.id));
-const hasSentRequest = computed(() => sentFriendRequests.value.some(({ receiverId }) => receiverId === user.id));
 </script>
 
 <template>
@@ -29,7 +26,7 @@ const hasSentRequest = computed(() => sentFriendRequests.value.some(({ receiverI
     </template>
     <v-list density="compact" text-sm>
       <MessageModelUserProfileCardMoreMenuModerationItems v-if="currentRoomId" :user :room-id="currentRoomId" />
-      <v-list-item append-icon="mdi-identifier" title="Copy User ID" @click="copy(user.id)" />
+      <MessageModelUserProfileCardMoreMenuCopyUserIdListItem :user-id="user.id" />
     </v-list>
   </v-menu>
 </template>
