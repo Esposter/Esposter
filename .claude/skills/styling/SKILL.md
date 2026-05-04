@@ -42,6 +42,42 @@ Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS ut
 
 When in doubt, prefer the shorter form — UnoCSS abbreviations are canonical in this project.
 
+## Gap Directionality
+
+Use axis-specific gap utilities instead of the omnidirectional `gap-{n}`:
+
+- **`flex` (row)** → `gap-x-{n}` (space between columns only)
+- **`flex-col`** → `gap-y-{n}` (space between rows only)
+- **`grid` / two-dimensional layouts** → `gap-{n}` (both axes intentional)
+
+Examples:
+
+```html
+<!-- flex row of chips/buttons -->
+<div flex gap-x-2>...</div>
+
+<!-- flex-col list -->
+<div flex flex-col gap-y-1>...</div>
+
+<!-- grid card layout -->
+<div grid grid-cols-3 gap-4>...</div>
+```
+
+## Absolute Positioning Within a Container
+
+Use `relative` on the parent and `absolute top-0 right-0` (or other corners) to pin UI elements:
+
+```html
+<!-- banner with action buttons top-right -->
+<div class="bg-background" relative h-20>
+  <div absolute top-0 right-0 flex gap-x-1 p-1>
+    <slot name="actions" />
+  </div>
+</div>
+```
+
+Prefer this over manual margin/padding tricks when element should float independent of sibling flow.
+
 ## Units
 
 - **Always use `rem` instead of `px`** for all CSS values (font sizes, spacing, widths, heights, borders, etc.).

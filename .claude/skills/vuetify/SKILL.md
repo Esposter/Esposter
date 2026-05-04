@@ -73,6 +73,7 @@ When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use 
 
 ## Vuetify Selects and List Items
 
+- For `v-list-item` icon placement: use `prepend-icon` for decorative/category icons (shown before the title), use `append-icon` for action/severity icons (shown after the title, e.g. moderation actions). Action icon color and icon value should come from the relevant `AdminAction*Map` constants — never hardcode them inline.
 - When building items for `v-autocomplete`, `v-select`, or `v-list-item` (in a `v-menu` / `v-list`), always type them as `SelectItemCategoryDefinition<T>[]` (`{ title: string, value: T }`) from `@/models/vuetify/SelectItemCategoryDefinition`. Never inline untyped `{ title, value }` arrays — always extract to a typed constant.
 - **Never specify `item-title` or `item-value` props** — Vuetify's defaults are already `"title"` and `"value"`, which match `SelectItemCategoryDefinition` exactly. If your source data has different field names (e.g. `{ id, name }`), map it to `{ title, value }` at the call site — never pass the raw shape and compensate with `item-title`/`item-value`.
 
