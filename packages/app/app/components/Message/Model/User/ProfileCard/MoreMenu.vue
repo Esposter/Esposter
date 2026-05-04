@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
+import { useRoomStore } from "@/store/message/room";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { mergeProps } from "vue";
@@ -15,6 +16,8 @@ const { friends } = storeToRefs(friendStore);
 const friendRequestStore = useFriendRequestStore();
 const { sendFriendRequest } = friendRequestStore;
 const { sentFriendRequests } = storeToRefs(friendRequestStore);
+const roomStore = useRoomStore();
+const { currentRoomId } = storeToRefs(roomStore);
 const { copy } = useClipboard();
 const isFriend = computed(() => friends.value.some(({ id }) => id === user.id));
 const hasSentRequest = computed(() => sentFriendRequests.value.some(({ receiverId }) => receiverId === user.id));
@@ -38,7 +41,7 @@ const hasSentRequest = computed(() => sentFriendRequests.value.some(({ receiverI
         title="Add Friend"
         @click="sendFriendRequest(user.id)"
       />
-      <MessageModelUserProfileCardMoreMenuModerationItems :user />
+      <MessageModelUserProfileCardMoreMenuModerationItems v-if="currentRoomId" :user :room-id="currentRoomId" />
       <v-list-item append-icon="mdi-identifier" title="Copy User ID" @click="copy(user.id)" />
     </v-list>
   </v-menu>

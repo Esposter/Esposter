@@ -39,7 +39,7 @@ const isMenuOpen = ref(false);
         <v-list-item
           :="mergeProps(hoverProps, menuProps)"
           :active="isMenuOpen"
-          :value="member.name"
+          :value="member.id"
           @click="emit('click', $event)"
         >
           <template #prepend>

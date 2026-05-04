@@ -52,7 +52,7 @@
       "Bash(git ls-tree *)",
       "PowerShell(ls *)",
       "PowerShell(pnpm typecheck *)",
-      "Bash(Get-ChildItem *)"
+      "PowerShell(Get-ChildItem *)"
     ]
   }
 }

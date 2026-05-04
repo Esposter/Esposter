@@ -2,35 +2,62 @@
 import type { User } from "@esposter/db-schema";
 
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
-import { useRoomStore } from "@/store/message/room";
+import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useRoleStore } from "@/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 
 interface ModerationItemsProps {
+  roomId: string;
   user: Pick<User, "id" | "name">;
 }
 
-const { user } = defineProps<ModerationItemsProps>();
-
-const roomStore = useRoomStore();
-const { currentRoom } = storeToRefs(roomStore);
+const { roomId, user } = defineProps<ModerationItemsProps>();
 const roleStore = useRoleStore();
-const { getMyPermissions } = roleStore;
-
-const myPermissions = computed(() => (currentRoom.value?.id ? getMyPermissions(currentRoom.value.id) : undefined));
-const isBannable = computed(() => {
-  if (!myPermissions.value) return false;
-  return hasPermission(myPermissions.value.permissions, RoomPermission.BanMembers, myPermissions.value.isRoomOwner);
+const { getMemberRoleMap, getMyPermissions, readMemberRoles } = roleStore;
+const myPermissions = computed(() => getMyPermissions(roomId));
+const targetTopPosition = computed(() => {
+  const roles = getMemberRoleMap(roomId)?.get(user.id);
+  if (!roles) return undefined;
+  return roles.length > 0 ? Math.max(...roles.map(({ position }) => position)) : -1;
 });
-const isKickable = computed(() => {
-  if (!myPermissions.value) return false;
-  return hasPermission(myPermissions.value.permissions, RoomPermission.KickMembers, myPermissions.value.isRoomOwner);
+const manageablePermissions = computed(() => {
+  const manageablePermissions = myPermissions.value;
+  if (
+    !manageablePermissions ||
+    targetTopPosition.value === undefined ||
+    !isManageable(manageablePermissions.topRolePosition, targetTopPosition.value, manageablePermissions.isRoomOwner)
+  )
+    return null;
+  return manageablePermissions;
 });
-const isWarnable = computed(() => {
-  if (!myPermissions.value) return false;
-  return hasPermission(myPermissions.value.permissions, RoomPermission.ManageMessages, myPermissions.value.isRoomOwner);
-});
-const hasModActions = computed(() => currentRoom.value && (isBannable.value || isKickable.value || isWarnable.value));
+const isBannable = computed(
+  () =>
+    manageablePermissions.value &&
+    hasPermission(
+      manageablePermissions.value.permissions,
+      RoomPermission.BanMembers,
+      manageablePermissions.value.isRoomOwner,
+    ),
+);
+const isKickable = computed(
+  () =>
+    manageablePermissions.value &&
+    hasPermission(
+      manageablePermissions.value.permissions,
+      RoomPermission.KickMembers,
+      manageablePermissions.value.isRoomOwner,
+    ),
+);
+const isWarnable = computed(
+  () =>
+    manageablePermissions.value &&
+    hasPermission(
+      manageablePermissions.value.permissions,
+      RoomPermission.ManageMessages,
+      manageablePermissions.value.isRoomOwner,
+    ),
+);
+const hasModActions = computed(() => isBannable.value || isKickable.value || isWarnable.value);
 </script>
 
 <template>
