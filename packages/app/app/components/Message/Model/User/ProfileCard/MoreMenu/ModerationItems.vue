@@ -13,7 +13,7 @@ interface ModerationItemsProps {
 
 const { roomId, user } = defineProps<ModerationItemsProps>();
 const roleStore = useRoleStore();
-const { getMemberRoleMap, getMyPermissions, readMemberRoles } = roleStore;
+const { getMemberRoleMap, getMyPermissions } = roleStore;
 const myPermissions = computed(() => getMyPermissions(roomId));
 const targetTopPosition = computed(() => {
   const roles = getMemberRoleMap(roomId)?.get(user.id);
