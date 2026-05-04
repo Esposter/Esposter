@@ -12,10 +12,8 @@ interface WarnDialogProps {
 
 const { user } = defineProps<WarnDialogProps>();
 const { $trpc } = useNuxtApp();
-
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
-
 const warnReason = ref("");
 </script>
 

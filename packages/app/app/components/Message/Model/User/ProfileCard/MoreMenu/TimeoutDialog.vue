@@ -12,10 +12,8 @@ interface TimeoutDialogProps {
 
 const { user } = defineProps<TimeoutDialogProps>();
 const { $trpc } = useNuxtApp();
-
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
-
 const timeoutDurationSelectItems = Object.entries(TimeoutDurationMap).map(([title, value]) => ({ title, value }));
 const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
 </script>

@@ -11,7 +11,6 @@ interface KickDialogProps {
 
 const { user } = defineProps<KickDialogProps>();
 const { $trpc } = useNuxtApp();
-
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 </script>

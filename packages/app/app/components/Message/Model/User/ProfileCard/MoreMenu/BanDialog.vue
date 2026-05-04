@@ -11,7 +11,6 @@ interface BanDialogProps {
 
 const { user } = defineProps<BanDialogProps>();
 const { $trpc } = useNuxtApp();
-
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 </script>

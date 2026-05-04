@@ -11,7 +11,6 @@ interface SoftBanDialogProps {
 
 const { user } = defineProps<SoftBanDialogProps>();
 const { $trpc } = useNuxtApp();
-
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 </script>
