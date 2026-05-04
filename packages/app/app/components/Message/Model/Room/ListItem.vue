@@ -5,6 +5,7 @@ import { authClient } from "@/services/auth/authClient";
 import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { RoutePath } from "@esposter/shared";
 
 interface RoomListItemProps {
@@ -24,6 +25,13 @@ const isCreator = computed(() => room.userId === session.value?.user.id);
 const roleStore = useRoleStore();
 const { isManageable } = roleStore;
 const isVisible = computed(() => isCreator.value || isManageable(room.id));
+const userToRoomStore = useUserToRoomStore();
+const { lastMessageAtMap } = storeToRefs(userToRoomStore);
+const hasUnread = computed(() => {
+  if (isActive.value) return false;
+  const lastMessageAt = lastMessageAtMap.value.get(room.id);
+  return lastMessageAt && lastMessageAt < room.updatedAt;
+});
 </script>
 
 <template>
@@ -32,7 +40,7 @@ const isVisible = computed(() => isCreator.value || isManageable(room.id));
       <template #prepend>
         <StyledAvatar :image="room.image" :name="roomName" />
       </template>
-      <v-list-item-title pr-6>
+      <v-list-item-title pr-6 :class="hasUnread ? 'font-weight-bold' : 'text-medium-emphasis'">
         {{ roomName }}
         <span v-if="hasDraft" class="text-medium-emphasis" italic text-xs> — Draft</span>
       </v-list-item-title>

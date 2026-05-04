@@ -65,7 +65,6 @@
     "@fullcalendar/vue3": "catalog:",
     "@koumoul/vjsf": "catalog:",
     "@mdi/font": "catalog:",
-    "@takumi-rs/core": "catalog:",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-code-block-lowlight": "catalog:",
     "@tiptap/extension-file-handler": "catalog:",

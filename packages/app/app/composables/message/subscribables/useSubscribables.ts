@@ -10,6 +10,7 @@ export const useSubscribables = async () => {
   usePushSubscription();
   useRoleSubscribables();
   useRoomSubscribables();
+  useUserToRoomSubscribables();
   await Promise.all([
     useFriendSubscribables(),
     useTypingSubscribables(),

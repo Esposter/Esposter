@@ -141,9 +141,6 @@ catalogs:
     '@rolldown/plugin-node-polyfills':
       specifier: ^1.0.3
       version: 1.0.3
-    '@takumi-rs/core':
-      specifier: ^1.1.2
-      version: 1.1.2
     '@tiptap/core':
       specifier: ^3.22.5
       version: 3.22.5
@@ -821,9 +818,6 @@ importers:
       '@mdi/font':
         specifier: 'catalog:'
         version: 7.4.47
-      '@takumi-rs/core':
-        specifier: 'catalog:'
-        version: 1.1.2
       '@tiptap/core':
         specifier: 'catalog:'
         version: 3.22.5(@tiptap/pm@3.22.5)
@@ -18011,8 +18005,10 @@ snapshots:
     transitivePeerDependencies:
       - react
       - react-dom
+    optional: true
 
-  '@takumi-rs/helpers@1.1.2': {}
+  '@takumi-rs/helpers@1.1.2':
+    optional: true
 
   '@tanstack/table-core@8.21.3': {}
 
