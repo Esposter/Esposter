@@ -4,6 +4,7 @@ import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { boolean, index, pgEnum, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
 export enum NotificationType {
@@ -42,3 +43,7 @@ export const usersToRoomsInMessage = pgTable(
 );
 
 export type UserToRoomInMessage = typeof usersToRoomsInMessage.$inferSelect;
+
+export const selectUserToRoomInMessageSchema = createSelectSchema(usersToRoomsInMessage, {
+  notificationType: notificationTypeSchema,
+});

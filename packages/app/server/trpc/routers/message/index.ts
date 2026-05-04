@@ -28,16 +28,13 @@ import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
-import { assertNotInSlowmode } from "@@/server/services/message/moderation/assertNotInSlowmode";
-import { assertNotReadOnly } from "@@/server/services/message/moderation/assertNotReadOnly";
-import { assertNotTimedOut } from "@@/server/services/message/moderation/assertNotTimedOut";
-import { assertNotWordFiltered } from "@@/server/services/message/moderation/assertNotWordFiltered";
+import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
+import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
-import { timeoutPlugin } from "@@/server/trpc/plugins/timeoutPlugin";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
@@ -75,11 +72,10 @@ import {
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
-  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
@@ -162,29 +158,20 @@ const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomInMe
 export type GetWebPubSubClientAccessUrlInput = z.infer<typeof getWebPubSubClientAccessUrlInputSchema>;
 
 export const messageRouter = router({
-  // oxlint-disable-next-line prefer-spread
-  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId")
-    .concat(timeoutPlugin)
-    .mutation<MessageEntity>(async ({ ctx, input }) => {
-      await assertNotReadOnly(ctx.db, ctx.getSessionPayload.user.id, input.roomId);
-      await assertNotInSlowmode(ctx.db, ctx.getSessionPayload.user.id, input.roomId);
-      if (input.message)
-        await assertNotWordFiltered(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
+  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
+    async ({ ctx, input }) => {
+      await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+      const now = new Date();
       const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
         ...input,
         userId: ctx.getSessionPayload.user.id,
       });
-      await ctx.db
-        .update(usersToRoomsInMessage)
-        .set({ lastMessageAt: new Date() })
-        .where(
-          and(
-            eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
-            eq(usersToRoomsInMessage.roomId, input.roomId),
-          ),
-        );
+      await updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, {
+        lastMessageAt: now,
+        roomId: input.roomId,
+      });
       messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.getSessionPayload.session.id }]);
 
       const readPushSubscriptions = await getPushSubscriptionsForMessage(ctx.db, newMessageEntity);
@@ -212,7 +199,7 @@ export const messageRouter = router({
       const updatedRoom = (
         await ctx.db
           .update(roomsInMessage)
-          .set({ updatedAt: new Date() })
+          .set({ updatedAt: now })
           .where(eq(roomsInMessage.id, input.roomId))
           .returning()
       )[0];
@@ -224,7 +211,8 @@ export const messageRouter = router({
 
       roomEventEmitter.emit("updateRoom", updatedRoom);
       return newMessageEntity;
-    }),
+    },
+  ),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ ctx, input }) => {
@@ -293,7 +281,6 @@ export const messageRouter = router({
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await isMember(ctx.db, ctx.getSessionPayload, roomIds);
-
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageEntity = await getEntity(messageClient, StandardMessageEntity, partitionKey, rowKey);
       if (!messageEntity)
@@ -302,14 +289,13 @@ export const messageRouter = router({
           message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
         });
 
+      await Promise.all(
+        roomIds.map((roomId) => assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, message)),
+      );
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       await Promise.all(
         roomIds.map(async (roomId) => {
-          await assertNotTimedOut(ctx.db, ctx.getSessionPayload.user.id, roomId);
-          await assertNotReadOnly(ctx.db, ctx.getSessionPayload.user.id, roomId);
-          await assertNotInSlowmode(ctx.db, ctx.getSessionPayload.user.id, roomId);
-          if (message) await assertNotWordFiltered(ctx.db, ctx.getSessionPayload.user.id, roomId, message);
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, messageAscendingClient, {
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
