@@ -163,12 +163,13 @@ export const messageRouter = router({
       await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+      const now = new Date();
       const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
         ...input,
         userId: ctx.getSessionPayload.user.id,
       });
       await updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, {
-        lastMessageAt: new Date(),
+        lastMessageAt: now,
         roomId: input.roomId,
       });
       messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.getSessionPayload.session.id }]);
@@ -198,7 +199,7 @@ export const messageRouter = router({
       const updatedRoom = (
         await ctx.db
           .update(roomsInMessage)
-          .set({ updatedAt: new Date() })
+          .set({ updatedAt: now })
           .where(eq(roomsInMessage.id, input.roomId))
           .returning()
       )[0];

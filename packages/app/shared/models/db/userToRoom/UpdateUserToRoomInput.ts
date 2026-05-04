@@ -5,7 +5,8 @@ import { z } from "zod";
 export const updateUserToRoomInputSchema = refineAtLeastOne(
   z.object({
     ...roomIdSchema.shape,
-    ...selectUserToRoomInMessageSchema.pick({ lastMessageAt: true, notificationType: true }).partial().shape,
+    ...selectUserToRoomInMessageSchema.pick({ notificationType: true }).partial().shape,
+    lastMessageAt: selectUserToRoomInMessageSchema.shape.lastMessageAt.unwrap().optional(),
   }),
   ["lastMessageAt", "notificationType"],
 );
