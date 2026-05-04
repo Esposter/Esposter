@@ -28,8 +28,8 @@ catalogs:
       specifier: ^4.13.1
       version: 4.13.1
     '@azure/search-documents':
-      specifier: ^12.2.0
-      version: 12.2.0
+      specifier: ^13.0.0
+      version: 13.0.0
     '@azure/storage-blob':
       specifier: ^12.31.0
       version: 12.31.0
@@ -754,7 +754,7 @@ importers:
         version: 5.12.0
       '@azure/search-documents':
         specifier: 'catalog:'
-        version: 12.2.0
+        version: 13.0.0
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.31.0
@@ -1442,7 +1442,7 @@ importers:
         version: 1.10.1
       '@azure/search-documents':
         specifier: 'catalog:'
-        version: 12.2.0
+        version: 13.0.0
       '@esposter/db-mock':
         specifier: workspace:*
         version: link:../db-mock
@@ -1592,6 +1592,10 @@ packages:
     peerDependencies:
       '@types/json-schema': ^7.0.15
 
+  '@azure-rest/core-client@2.6.0':
+    resolution: {integrity: sha512-iuFKDm8XPzNxPfRjhyU5/xKZmcRDzSuEghXDHHk4MjBV/wFL34GmYVBZnn9wmuoLBeS1qAw9ceMdaeJBPcB1QQ==}
+    engines: {node: '>=20.0.0'}
+
   '@azure/abort-controller@2.1.2':
     resolution: {integrity: sha512-nBrLsEWm4J2u5LpAPjxADTlq3trDgVZZXHNKabeXZtpq3d3AbN/KGO82R87rdDz5/lYB024rtEf10/q0urNgsA==}
     engines: {node: '>=18.0.0'}
@@ -1671,8 +1675,8 @@ packages:
     resolution: {integrity: sha512-ObTeMoNPmq19X3z40et9Xvs4ZoWVeJg43PZMRLG5iwVL+2nCtAerG3YTDItqPp1CfXNwmCXBbg8jn1DOx65c3g==}
     engines: {node: '>=20'}
 
-  '@azure/search-documents@12.2.0':
-    resolution: {integrity: sha512-4+Qw+qaGqnkdUCq/vEFzk/bkROogTvdbPb1fmI8poxNfDDN1q2WHxBmhI7CYwesrBj1yXC4i5E0aISBxZqZi0g==}
+  '@azure/search-documents@13.0.0':
+    resolution: {integrity: sha512-vFdbPUaH7epWcZl+8IjgBd4li8CLyzH55gIbncpGrcHdGNhf1i4n+LUNx96k3acYr1hWRuXqQol52VQ7GN+x1Q==}
     engines: {node: '>=20.0.0'}
 
   '@azure/storage-blob@12.31.0':
@@ -13497,6 +13501,17 @@ snapshots:
       '@types/json-schema': 7.0.15
       js-yaml: 4.1.1
 
+  '@azure-rest/core-client@2.6.0':
+    dependencies:
+      '@azure/abort-controller': 2.1.2
+      '@azure/core-auth': 1.10.1
+      '@azure/core-rest-pipeline': 1.23.0
+      '@azure/core-tracing': 1.3.1
+      '@typespec/ts-http-runtime': 0.3.5
+      tslib: 2.8.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@azure/abort-controller@2.1.2':
     dependencies:
       tslib: 2.8.1
@@ -13636,17 +13651,14 @@ snapshots:
       '@azure/msal-common': 16.5.2
       jsonwebtoken: 9.0.3
 
-  '@azure/search-documents@12.2.0':
+  '@azure/search-documents@13.0.0':
     dependencies:
+      '@azure-rest/core-client': 2.6.0
       '@azure/core-auth': 1.10.1
-      '@azure/core-client': 1.10.1
-      '@azure/core-http-compat': 2.4.0(@azure/core-client@1.10.1)(@azure/core-rest-pipeline@1.23.0)
-      '@azure/core-paging': 1.6.2
       '@azure/core-rest-pipeline': 1.23.0
       '@azure/core-tracing': 1.3.1
       '@azure/core-util': 1.13.1
       '@azure/logger': 1.3.0
-      events: 3.3.0
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color

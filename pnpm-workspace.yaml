@@ -18,7 +18,7 @@ catalog:
   "@azure/eventgrid": ^5.12.0
   "@azure/functions": ^4.14.0
   "@azure/identity": ^4.13.1
-  "@azure/search-documents": ^12.2.0
+  "@azure/search-documents": ^13.0.0
   "@azure/storage-blob": ^12.31.0
   "@azure/storage-queue": ^12.29.0
   "@azure/web-pubsub": ^1.2.0
