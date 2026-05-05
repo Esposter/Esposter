@@ -83,9 +83,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
       audio.srcObject = remoteStream;
       audio.muted = isRemoteAudioMuted;
       remoteAudioElements.set(remoteId, audio);
-      void ResultAsync.fromPromise(audio.play(), toAppError).tapErr((error) =>
-        console.warn("[WebRTC] audio.play() rejected (autoplay policy?):", error),
-      );
+      await ResultAsync.fromPromise(audio.play(), toAppError).tapErr(console.error);
     });
 
     peerConnection.onicecandidate = getSynchronizedFunction(async ({ candidate }) => {
@@ -120,46 +118,46 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   const getSignalHandler =
     (roomId: string) =>
     async ({ payload: { data, type }, senderId }: { payload: VoiceSignalPayload; senderId: string }) => {
-      try {
-        switch (type) {
-          case VoiceSignalType.Answer: {
-            const peerConnection = peerConnections.get(senderId);
-            if (!peerConnection) return;
-            await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
-            await flushIceCandidates(senderId);
-            break;
-          }
-          case VoiceSignalType.Candidate: {
-            const peerConnection = peerConnections.get(senderId);
-            const candidateData = jsonDateParse<RTCIceCandidateInit>(data);
-            if (!peerConnection?.remoteDescription) {
-              const queue = candidateQueues.get(senderId) ?? [];
-              queue.push(candidateData);
-              candidateQueues.set(senderId, queue);
-              return;
+      await ResultAsync.fromPromise(
+        (async () => {
+          switch (type) {
+            case VoiceSignalType.Answer: {
+              const peerConnection = peerConnections.get(senderId);
+              if (!peerConnection) return;
+              await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
+              await flushIceCandidates(senderId);
+              break;
             }
-            await peerConnection.addIceCandidate(candidateData);
-            break;
+            case VoiceSignalType.Candidate: {
+              const peerConnection = peerConnections.get(senderId);
+              const candidateData = jsonDateParse<RTCIceCandidateInit>(data);
+              if (!peerConnection?.remoteDescription) {
+                const queue = candidateQueues.get(senderId) ?? [];
+                queue.push(candidateData);
+                candidateQueues.set(senderId, queue);
+                return;
+              }
+              await peerConnection.addIceCandidate(candidateData);
+              break;
+            }
+            case VoiceSignalType.Offer: {
+              const peerConnection = buildPeerConnection(roomId, senderId);
+              await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
+              await flushIceCandidates(senderId);
+              const answer = await peerConnection.createAnswer();
+              await peerConnection.setLocalDescription(answer);
+              await $trpc.voice.sendSignal.mutate({
+                payload: { data: JSON.stringify(answer), targetId: senderId, type: VoiceSignalType.Answer },
+                roomId,
+              });
+              break;
+            }
+            default:
+              exhaustiveGuard(type);
           }
-          case VoiceSignalType.Offer: {
-            const peerConnection = buildPeerConnection(roomId, senderId);
-            await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
-            await flushIceCandidates(senderId);
-            const answer = await peerConnection.createAnswer();
-            await peerConnection.setLocalDescription(answer);
-            await $trpc.voice.sendSignal.mutate({
-              payload: { data: JSON.stringify(answer), targetId: senderId, type: VoiceSignalType.Answer },
-              roomId,
-            });
-            break;
-          }
-          default:
-            exhaustiveGuard(type);
-        }
-      } catch (error) {
-        // Drop malformed signal payloads to prevent unhandled rejections from aborting the subscription
-        console.warn("[WebRTC] Dropped malformed signal:", error);
-      }
+        })(),
+        toAppError,
+      ).tapErr(console.error);
     };
 
   const acquireLocalStream = async () => {

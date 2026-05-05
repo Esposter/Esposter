@@ -20,7 +20,7 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
 
   const { roomId, targetUserId, type } = parsedInput.data;
   const durationMs = parsedInput.data.type === AdminActionType.TimeoutUser ? parsedInput.data.durationMs : undefined;
-  void ResultAsync.fromPromise(
+  await ResultAsync.fromPromise(
     useTableClient(AzureTable.ModerationLog).then((moderationLogClient) =>
       createEntity(
         moderationLogClient,

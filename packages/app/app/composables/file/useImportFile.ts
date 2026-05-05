@@ -1,8 +1,7 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
-import { toAppError } from "@esposter/shared";
+import { normalizeString, takeOne, toAppError } from "@esposter/shared";
 import { useAlertStore } from "@/store/alert";
-import { normalizeString, takeOne } from "@esposter/shared";
 import { err, ok, ResultAsync } from "neverthrow";
 import { showOpenFilePicker } from "show-open-file-picker";
 

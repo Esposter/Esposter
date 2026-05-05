@@ -187,7 +187,7 @@ export const postRouter = router({
     );
     return deletedPost;
   }),
-  readPost: standardRateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) =>
+  readPost: standardRateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(({ ctx, input }) =>
     requireEntity(
       ctx.db.query.posts.findFirst({
         where: {

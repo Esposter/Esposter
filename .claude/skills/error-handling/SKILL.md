@@ -15,7 +15,7 @@ import { toAppError } from "@esposter/shared";
 ### Async operation → alert on failure (composables)
 
 ```typescript
-void ResultAsync.fromPromise(someAsyncOp(), toAppError)
+await ResultAsync.fromPromise(someAsyncOp(), toAppError)
   .tap((result) => doSomethingWith(result))
   .tapErr((error) => createAlert(error.message, "error"));
 ```
@@ -38,13 +38,14 @@ return ResultAsync.fromPromise(auth.save(value), toAppError).match(
 );
 ```
 
-### Best-effort (fire-and-forget, still log)
+### Best-effort (still log)
 
 ```typescript
-void ResultAsync.fromPromise(bestEffortOp(), toAppError).tapErr(console.error);
+await ResultAsync.fromPromise(bestEffortOp(), toAppError).tapErr(console.error);
 ```
 
-Never use `catch {}` (silent swallow). Always `.tapErr(console.error)` at minimum.
+Never use `catch {}` (silent swallow). Never use `console.warn` — always `.tapErr(console.error)`.
+Never use `void` with ResultAsync — always `await`. Since ResultAsync never rejects, awaiting is always safe.
 
 ### Discriminated error types
 
@@ -127,9 +128,7 @@ const updated = requireMutation(
 
 Keep `try-catch` for:
 
-- **Error discriminators** that set HTTP status or re-throw selectively (ws.ts, webhook handlers)
 - **Azure Functions** that must re-throw for platform retry semantics
-- **Best-effort in loops / retry** (invite code generation)
 - **try-finally for `onComplete` callbacks** in pagination composables — `finally` guarantees the callback even when errors are thrown upstream
 
 ## try/finally vs neverthrow

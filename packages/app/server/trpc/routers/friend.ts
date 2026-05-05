@@ -26,7 +26,7 @@ export const friendRouter = router({
       });
 
     const friendshipId = getFriendshipId(userId, friendId);
-    const deletedFriend = requireMutation(
+    requireMutation(
       (await ctx.db.delete(friends).where(eq(friends.id, friendshipId)).returning())[0],
       Operation.Delete,
       DatabaseEntityType.Friend,

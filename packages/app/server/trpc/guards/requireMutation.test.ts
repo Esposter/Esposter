@@ -16,20 +16,24 @@ describe(requireMutation, () => {
   test("throws TRPCError with code BAD_REQUEST when result is undefined (default)", () => {
     expect.hasAssertions();
 
-    expect(() => requireMutation(undefined, Operation.Create, "Entity", "")).toThrow(TRPCError);
+    expect(() => {
+      requireMutation(undefined, Operation.Create, "Entity", "");
+    }).toThrow(TRPCError);
 
-    expect(() => requireMutation(undefined, Operation.Create, "Entity", "")).toThrowError(
-      expect.objectContaining({ code: "BAD_REQUEST" }),
-    );
+    expect(() => {
+      requireMutation(undefined, Operation.Create, "Entity", "");
+    }).toThrow(expect.objectContaining({ code: "BAD_REQUEST" }));
   });
 
   test("throws TRPCError with code NOT_FOUND when result is undefined and code param is NOT_FOUND", () => {
     expect.hasAssertions();
 
-    expect(() => requireMutation(undefined, Operation.Create, "Entity", "", "NOT_FOUND")).toThrow(TRPCError);
+    expect(() => {
+      requireMutation(undefined, Operation.Create, "Entity", "", "NOT_FOUND");
+    }).toThrow(TRPCError);
 
-    expect(() => requireMutation(undefined, Operation.Create, "Entity", "", "NOT_FOUND")).toThrowError(
-      expect.objectContaining({ code: "NOT_FOUND" }),
-    );
+    expect(() => {
+      requireMutation(undefined, Operation.Create, "Entity", "", "NOT_FOUND");
+    }).toThrow(expect.objectContaining({ code: "NOT_FOUND" }));
   });
 });

@@ -16,7 +16,8 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { createMessage } from "@esposter/db";
 import { AzureTable, MessageType, roomIdSchema, selectRoomInMessageSchema } from "@esposter/db-schema";
-import { ForbiddenError, NotFoundError } from "@esposter/shared";
+import { ForbiddenError, NotFoundError, toAppError } from "@esposter/shared";
+import { ResultAsync } from "neverthrow";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -45,19 +46,24 @@ export const voiceRouter = router({
 
       if (isFirstJoiner) {
         voiceCallStartTimeMap.set(roomId, new Date());
-        try {
-          const messageClient = await useTableClient(AzureTable.Messages);
-          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-            roomId,
-            type: MessageType.VoiceCall,
-            userId: user.id,
-          });
-          messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId: session.id }]);
-        } catch (error) {
-          // System message creation is best-effort — voice membership is already committed
-          console.error(error);
-        }
+        await ResultAsync.fromPromise(
+          Promise.all([useTableClient(AzureTable.Messages), useTableClient(AzureTable.MessagesAscending)]),
+          toAppError,
+        )
+          .andThen(([messageClient, messageAscendingClient]) =>
+            ResultAsync.fromPromise(
+              createMessage(messageClient, messageAscendingClient, {
+                roomId,
+                type: MessageType.VoiceCall,
+                userId: user.id,
+              }),
+              toAppError,
+            ),
+          )
+          .tap((systemMessage) => {
+            messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId: session.id }]);
+          })
+          .tapErr(console.error);
       }
 
       return getRoomParticipants(roomId);
@@ -73,21 +79,26 @@ export const voiceRouter = router({
       const callStart = voiceCallStartTimeMap.get(roomId);
       voiceCallStartTimeMap.delete(roomId);
       const durationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / 1000) : 0;
-      try {
-        const messageClient = await useTableClient(AzureTable.Messages);
-        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-        // Non-empty message field signals "call ended" — value is duration in seconds
-        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-          message: String(durationSeconds),
-          roomId,
-          type: MessageType.VoiceCall,
-          userId: user.id,
-        });
-        messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
-      } catch (error) {
-        // System message creation is best-effort — voice membership is already committed
-        console.error(error);
-      }
+      await ResultAsync.fromPromise(
+        Promise.all([useTableClient(AzureTable.Messages), useTableClient(AzureTable.MessagesAscending)]),
+        toAppError,
+      )
+        .andThen(([messageClient, messageAscendingClient]) =>
+          ResultAsync.fromPromise(
+            createMessage(messageClient, messageAscendingClient, {
+              // Non-empty message field signals "call ended" — value is duration in seconds
+              message: String(durationSeconds),
+              roomId,
+              type: MessageType.VoiceCall,
+              userId: user.id,
+            }),
+            toAppError,
+          ),
+        )
+        .tap((systemMessage) => {
+          messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
+        })
+        .tapErr(console.error);
     }
   }),
   onJoinVoiceChannel: standardAuthedProcedure.input(onJoinVoiceChannelInputSchema).subscription(async function* ({

@@ -12,7 +12,7 @@ import { jsonDateParse, streamToText, toAppError } from "@esposter/shared";
 import { ResultAsync } from "neverthrow";
 
 export const tableEditorRouter = router({
-  readTableEditorConfiguration: standardAuthedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {
+  readTableEditorConfiguration: standardAuthedProcedure.query<TableEditorConfiguration>(({ ctx }) => {
     const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
     return ResultAsync.fromPromise(
       useDownload(AzureContainer.TableEditorAssets, blobName).then(async ({ readableStreamBody }) => {

@@ -29,7 +29,7 @@ export const useSave = <T extends ItemMetadata, TDef extends TRPCResolverDef>(
   const session = authClient.useSession();
   const alertStore = useAlertStore();
   const saveToLocalStorage = useSaveToLocalStorage();
-  return async (): Promise<boolean> => {
+  return (): Promise<boolean> => {
     const value = toValue(maybeValue);
     saveItemMetadata(value);
 
