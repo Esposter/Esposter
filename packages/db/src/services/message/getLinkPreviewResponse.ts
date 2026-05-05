@@ -32,6 +32,6 @@ export const getLinkPreviewResponse = (message: string): Promise<LinkPreviewResp
     }),
     toAppError,
   )
-    .tapErr(console.error)
+    .orTee(console.error)
     .unwrapOr(null);
 };

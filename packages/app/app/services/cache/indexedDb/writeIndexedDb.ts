@@ -25,6 +25,6 @@ export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends Inde
     }),
     toAppError,
   )
-    .tapErr(console.error)
+    .orTee(console.error)
     .unwrapOr(undefined);
 };

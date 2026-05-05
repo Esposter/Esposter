@@ -17,8 +17,8 @@ export const usePasteFromClipboard = () => {
     const dataSource = editedItem.value.dataSource;
     await ResultAsync.fromPromise(window.navigator.clipboard.readText(), toAppError)
       .map((text) => parseClipboardRows(text, dataSource))
-      .tap(createRows)
-      .tapErr((error) => {
+      .andTee(createRows)
+      .orTee((error) => {
         createAlert(error.message, "error");
       });
   };

@@ -19,7 +19,7 @@ export const emailEditorRouter = router({
       }),
       toAppError,
     )
-      .tapErr(console.error)
+      .orTee(console.error)
       .unwrapOr(new EmailEditor());
   }),
   saveEmailEditor: standardAuthedProcedure.input(emailEditorSchema).mutation(async ({ ctx, input }) => {

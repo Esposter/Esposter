@@ -19,7 +19,7 @@ export const webpageEditorRouter = router({
       }),
       toAppError,
     )
-      .tapErr(console.error)
+      .orTee(console.error)
       .unwrapOr(new WebpageEditor());
   }),
   saveWebpageEditor: standardAuthedProcedure.input(webpageEditorSchema).mutation(async ({ ctx, input }) => {

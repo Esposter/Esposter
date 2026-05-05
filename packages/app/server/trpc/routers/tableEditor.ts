@@ -22,7 +22,7 @@ export const tableEditorRouter = router({
       }),
       toAppError,
     )
-      .tapErr(console.error)
+      .orTee(console.error)
       .unwrapOr(new TableEditorConfiguration());
   }),
   saveTableEditorConfiguration: standardAuthedProcedure

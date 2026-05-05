@@ -19,7 +19,7 @@ export const flowchartEditorRouter = router({
       }),
       toAppError,
     )
-      .tapErr(console.error)
+      .orTee(console.error)
       .unwrapOr(new FlowchartEditor());
   }),
   saveFlowchartEditor: standardAuthedProcedure.input(flowchartEditorSchema).mutation(async ({ ctx, input }) => {

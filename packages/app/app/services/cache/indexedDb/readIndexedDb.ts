@@ -17,5 +17,5 @@ export const readIndexedDb = <T extends IndexedDbStoreName, TIndex extends Index
     ),
     toAppError,
   )
-    .tapErr(console.error)
+    .orTee(console.error)
     .unwrapOr([]);

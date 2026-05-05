@@ -16,14 +16,14 @@ import { toAppError } from "@esposter/shared";
 
 ```typescript
 await ResultAsync.fromPromise(someAsyncOp(), toAppError)
-  .tap((result) => doSomethingWith(result))
-  .tapErr((error) => createAlert(error.message, "error"));
+  .andTee((result) => doSomethingWith(result))
+  .orTee((error) => createAlert(error.message, "error"));
 ```
 
 ### Async operation → fallback value (services / routers)
 
 ```typescript
-return ResultAsync.fromPromise(someAsyncOp(), toAppError).tapErr(console.error).unwrapOr(defaultValue);
+return ResultAsync.fromPromise(someAsyncOp(), toAppError).orTee(console.error).unwrapOr(defaultValue);
 ```
 
 ### Async operation → boolean success (composables)
@@ -41,10 +41,10 @@ return ResultAsync.fromPromise(auth.save(value), toAppError).match(
 ### Best-effort (still log)
 
 ```typescript
-await ResultAsync.fromPromise(bestEffortOp(), toAppError).tapErr(console.error);
+await ResultAsync.fromPromise(bestEffortOp(), toAppError).orTee(console.error);
 ```
 
-Never use `catch {}` (silent swallow). Never use `console.warn` — always `.tapErr(console.error)`.
+Never use `catch {}` (silent swallow). Never use `console.warn` — always `.orTee(console.error)`.
 Never use `void` with ResultAsync — always `await`. Since ResultAsync never rejects, awaiting is always safe.
 
 ### Discriminated error types
@@ -67,21 +67,21 @@ const value = result.value;
 ResultAsync.fromPromise(step1(), toAppError)
   .andThen((a) => ResultAsync.fromPromise(step2(a), toAppError))
   .andThen((b) => ResultAsync.fromPromise(step3(b), toAppError))
-  .tapErr((error) => createAlert(error.message, "error"));
+  .orTee((error) => createAlert(error.message, "error"));
 ```
 
 ### Sync transform after async operation
 
-Use `.map()` (not `.andThen`) when the next step is synchronous and doesn't throw. Never chain a sync call via `.then()` on the raw Promise before `fromPromise` — errors thrown there bypass `tapErr`.
+Use `.map()` (not `.andThen`) when the next step is synchronous and doesn't throw. Never chain a sync call via `.then()` on the raw Promise before `fromPromise` — errors thrown there bypass `orTee`.
 
 ```typescript
-// CORRECT — sync parseClipboardRows uses .map(); errors from readText() caught by tapErr
+// CORRECT — sync parseClipboardRows uses .map(); errors from readText() caught by orTee
 ResultAsync.fromPromise(window.navigator.clipboard.readText(), toAppError)
   .map((text) => parseClipboardRows(text, dataSource))
-  .tap(createRows)
-  .tapErr((error) => createAlert(error.message, "error"));
+  .andTee(createRows)
+  .orTee((error) => createAlert(error.message, "error"));
 
-// WRONG — .then() runs outside ResultAsync; parseClipboardRows errors bypass tapErr
+// WRONG — .then() runs outside ResultAsync; parseClipboardRows errors bypass orTee
 ResultAsync.fromPromise(
   window.navigator.clipboard.readText().then((text) => parseClipboardRows(text, dataSource)),
   toAppError,

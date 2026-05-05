@@ -83,7 +83,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
       audio.srcObject = remoteStream;
       audio.muted = isRemoteAudioMuted;
       remoteAudioElements.set(remoteId, audio);
-      await ResultAsync.fromPromise(audio.play(), toAppError).tapErr(console.error);
+      await ResultAsync.fromPromise(audio.play(), toAppError).orTee(console.error);
     });
 
     peerConnection.onicecandidate = getSynchronizedFunction(async ({ candidate }) => {
@@ -157,7 +157,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
           }
         })(),
         toAppError,
-      ).tapErr(console.error);
+      ).orTee(console.error);
     };
 
   const acquireLocalStream = async () => {

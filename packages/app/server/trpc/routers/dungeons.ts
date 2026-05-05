@@ -19,7 +19,7 @@ export const dungeonsRouter = router({
       }),
       toAppError,
     )
-      .tapErr(console.error)
+      .orTee(console.error)
       .unwrapOr(new Dungeons());
   }),
   saveDungeons: standardAuthedProcedure.input(dungeonsSchema).mutation(async ({ ctx, input }) => {

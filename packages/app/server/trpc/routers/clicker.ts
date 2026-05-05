@@ -23,7 +23,7 @@ export const clickerRouter = router({
       }),
       toAppError,
     )
-      .tapErr(console.error)
+      .orTee(console.error)
       .unwrapOr(new Clicker());
   }),
   readUpgradeMap: standardRateLimitedProcedure.query(() => UpgradeMap),

@@ -60,10 +60,10 @@ export const voiceRouter = router({
               toAppError,
             ),
           )
-          .tap((systemMessage) => {
+          .andTee((systemMessage) => {
             messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId: session.id }]);
           })
-          .tapErr(console.error);
+          .orTee(console.error);
       }
 
       return getRoomParticipants(roomId);
@@ -95,10 +95,10 @@ export const voiceRouter = router({
             toAppError,
           ),
         )
-        .tap((systemMessage) => {
+        .andTee((systemMessage) => {
           messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
         })
-        .tapErr(console.error);
+        .orTee(console.error);
     }
   }),
   onJoinVoiceChannel: standardAuthedProcedure.input(onJoinVoiceChannelInputSchema).subscription(async function* ({
