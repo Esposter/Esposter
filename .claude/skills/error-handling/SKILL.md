@@ -9,7 +9,7 @@ import { getResult, getResultAsync, noop } from "@esposter/shared";
 // getResult: sync fn → Result<T, Error>
 // getResultAsync: async fn → ResultAsync<T, Error>
 // Always use these instead of fromThrowable or ResultAsync.fromPromise directly.
-// noop: () => undefined — use as the ok-handler in .match(noop, errorHandler)
+// noop: () => {} — use as the ok-handler in .match(noop, errorHandler)
 ```
 
 ## Patterns

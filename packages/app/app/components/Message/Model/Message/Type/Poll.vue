@@ -53,7 +53,7 @@ const vote = async (optionId: null | string) => {
       })
         .orElse((error) =>
           getResultAsync(async () => {
-            await getResultAsync(async () =>
+            await getResultAsync(() =>
               storeUpdateMessage({
                 message: previousMessage,
                 partitionKey: message.partitionKey,

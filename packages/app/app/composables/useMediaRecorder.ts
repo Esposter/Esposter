@@ -1,7 +1,7 @@
 import type { ConfigurableNavigator } from "@vueuse/core";
 
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { defu } from "defu";
 
 interface UseMediaRecorderOptions extends ConfigurableNavigator {
@@ -38,11 +38,11 @@ interface UseMediaRecorderOptions extends ConfigurableNavigator {
 const defaultOptions: UseMediaRecorderOptions = {
   constraints: { audio: false, video: false },
   mediaRecorderOptions: {},
-  onError: () => {},
-  onPause: () => {},
-  onResume: () => {},
-  onStart: () => {},
-  onStop: () => {},
+  onError: noop,
+  onPause: noop,
+  onResume: noop,
+  onStart: noop,
+  onStop: noop,
 };
 
 export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
