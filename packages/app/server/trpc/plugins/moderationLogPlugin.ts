@@ -35,7 +35,7 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
       ),
     ),
     toAppError,
-  ).orTee(console.error);
+  ).match(() => undefined, console.error);
 
   return result;
 });

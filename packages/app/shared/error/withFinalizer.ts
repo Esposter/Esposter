@@ -1,19 +1,12 @@
-import type { Result, ResultAsync } from "neverthrow";
-
+import { getResultAsync } from "#shared/error/getResultAsync";
 import { toAppError } from "@esposter/shared";
 
-export const withFinalizer = async <T, E>(
-  resultAsync: ResultAsync<T, E>,
-  finalizer: () => ResultAsync<unknown, unknown>,
+export const withFinalizer = async <T>(
+  fn: () => PromiseLike<T> | T,
+  finalizer: () => PromiseLike<unknown> | unknown,
 ): Promise<T> => {
-  const runFinalizer = () => finalizer().match(() => {}, console.error);
-  let result: Result<T, E>;
-  try {
-    result = await resultAsync;
-  } catch (error) {
-    await runFinalizer();
-    throw error;
-  }
+  const runFinalizer = () => getResultAsync(finalizer).match(() => undefined, console.error);
+  const result = await getResultAsync(fn);
   await runFinalizer();
   return result.match(
     (value) => value,

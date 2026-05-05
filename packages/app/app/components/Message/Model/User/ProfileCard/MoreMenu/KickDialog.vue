@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
 import { useRoomStore } from "@/store/message/room";
@@ -23,17 +22,14 @@ const { currentRoom } = storeToRefs(roomStore);
     :confirm-button-props="{ text: 'Kick' }"
     @delete="
       async (onComplete) => {
-        await withFinalizer(
-          getResultAsync(async () => {
-            if (!currentRoom) return;
-            await $trpc.moderation.executeAdminAction.mutate({
-              roomId: currentRoom.id,
-              targetUserId: user.id,
-              type: AdminActionType.KickFromRoom,
-            });
-          }),
-          () => getResultAsync(onComplete),
-        );
+        await withFinalizer(async () => {
+          if (!currentRoom) return;
+          await $trpc.moderation.executeAdminAction.mutate({
+            roomId: currentRoom.id,
+            targetUserId: user.id,
+            type: AdminActionType.KickFromRoom,
+          });
+        }, onComplete);
       }
     "
   >

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from "vuetify";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { formRules } from "@/services/vuetify/formRules";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
@@ -13,15 +12,12 @@ const { createRoomCategory } = roomCategoryStore;
 const dialog = ref(false);
 const name = ref("");
 const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
-  await withFinalizer(
-    getResultAsync(async () => {
-      const normalizedName = normalizeString(name.value);
-      if (!normalizedName) return;
-      await createRoomCategory({ name: normalizedName });
-      name.value = "";
-    }),
-    () => getResultAsync(onComplete),
-  );
+  await withFinalizer(async () => {
+    const normalizedName = normalizeString(name.value);
+    if (!normalizedName) return;
+    await createRoomCategory({ name: normalizedName });
+    name.value = "";
+  }, onComplete);
 };
 </script>
 

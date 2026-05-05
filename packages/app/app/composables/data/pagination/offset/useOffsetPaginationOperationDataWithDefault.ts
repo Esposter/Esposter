@@ -1,4 +1,3 @@
-import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 
@@ -16,23 +15,23 @@ export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems:
   };
   const readItems = async (query: () => Promise<OffsetPaginationData<TItem>>, onComplete?: () => void) => {
     await withFinalizer(
-      getResultAsync(async () => {
+      async () => {
         const newOffsetPaginationData = await query();
         initializeOffsetPaginationData(newOffsetPaginationData);
-      }),
-      () => getResultAsync(() => onComplete?.()),
+      },
+      () => onComplete?.(),
     );
   };
   const getReadMoreItems =
     (query: (offset?: number) => Promise<OffsetPaginationData<TItem>>, onComplete?: () => void) =>
     async (offset?: number) => {
       await withFinalizer(
-        getResultAsync(async () => {
+        async () => {
           const { hasMore: newHasMore, items: newItems } = await query(offset);
           hasMore.value = newHasMore;
           items.value.push(...newItems);
-        }),
-        () => getResultAsync(() => onComplete?.()),
+        },
+        () => onComplete?.(),
       );
     };
 

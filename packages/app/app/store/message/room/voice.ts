@@ -95,18 +95,17 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     const roomId = callRoomId.value;
     if (!roomId) return;
     await withFinalizer(
-      getResultAsync(async () => {
+      async () => {
         if (sessionId.value) deleteVoiceParticipant(roomId, sessionId.value);
         await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
-      }),
-      () =>
-        getResultAsync(async () => {
-          callRoomId.value = undefined;
-          isDeafened.value = false;
-          isForceMuted.value = false;
-          await cleanupAll();
-          clearSpeakers();
-        }),
+      },
+      async () => {
+        callRoomId.value = undefined;
+        isDeafened.value = false;
+        isForceMuted.value = false;
+        await cleanupAll();
+        clearSpeakers();
+      },
     );
   };
 

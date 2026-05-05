@@ -15,23 +15,20 @@ export const useExportFile = () => {
     mimeType: MimeType,
     accept: string,
   ): Promise<void> =>
-    getResultAsync(() => serialize(mimeType))
-      .andThen((blob) =>
-        getResultAsync(() =>
-          showSaveFilePicker({
-            suggestedName: fileName,
-            types: [
-              {
-                accept: { [mimeType]: accept.split(",").map((ext) => normalizeString(ext)) },
-                description: (accept.split(",")[0] ?? "").replace(/^\./, "").toUpperCase(),
-              },
-            ],
-          }),
-        ).map((fileHandle) => ({ blob, fileHandle })),
-      )
-      .andThen(({ blob, fileHandle }) =>
-        getResultAsync(() => fileHandle.createWritable()).map((writable) => ({ blob, writable })),
-      )
+    getResultAsync(async () => {
+      const blob = await serialize(mimeType);
+      const fileHandle = await showSaveFilePicker({
+        suggestedName: fileName,
+        types: [
+          {
+            accept: { [mimeType]: accept.split(",").map((ext) => normalizeString(ext)) },
+            description: (accept.split(",")[0] ?? "").replace(/^\./, "").toUpperCase(),
+          },
+        ],
+      });
+      const writable = await fileHandle.createWritable();
+      return { blob, writable };
+    })
       .andThen(({ blob, writable }) =>
         getResultAsync(async () => {
           await writable.write(blob);

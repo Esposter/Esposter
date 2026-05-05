@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 
@@ -19,10 +18,7 @@ const { deleteRoomCategory } = roomCategoryStore;
     :card-props="{ title: 'Delete Category', text: `Are you sure you want to delete ${category.name}?` }"
     @delete="
       async (onComplete) => {
-        await withFinalizer(
-          getResultAsync(() => deleteRoomCategory(category.id)),
-          () => getResultAsync(onComplete),
-        );
+        await withFinalizer(() => deleteRoomCategory(category.id), onComplete);
       }
     "
   >

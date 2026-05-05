@@ -2,7 +2,6 @@
 import type { MessageEntity } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { useDataStore } from "@/store/message/data";
@@ -25,7 +24,7 @@ const editedMessageHtml = ref(useMessageWithMentions(() => message.message).valu
 const onUpdateMessage = (editor: Editor) => {
   getSynchronizedFunction(async () => {
     await withFinalizer(
-      getResultAsync(async () => {
+      async () => {
         if (editedMessageHtml.value === message.message) return;
         else if (EMPTY_TEXT_REGEX.test(editor.getText())) {
           emit("update:delete-mode", true);
@@ -36,12 +35,11 @@ const onUpdateMessage = (editor: Editor) => {
           partitionKey: message.partitionKey,
           rowKey: message.rowKey,
         });
-      }),
-      () =>
-        getResultAsync(() => {
-          emit("update:update-mode", false);
-          editedMessageHtml.value = message.message;
-        }),
+      },
+      () => {
+        emit("update:update-mode", false);
+        editedMessageHtml.value = message.message;
+      },
     );
   })();
 };

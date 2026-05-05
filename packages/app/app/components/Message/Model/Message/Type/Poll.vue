@@ -8,7 +8,7 @@ import { pollMessageContentSchema } from "@/models/message/poll/PollMessageConte
 import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
-import { err } from "neverthrow";
+import { err, ok } from "neverthrow";
 
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
@@ -44,18 +44,25 @@ const vote = async (optionId: null | string) => {
   else updatedVotes[userId.value] = optionId;
   const updatedMessage = JSON.stringify({ ...pollContent.value, votes: updatedVotes });
   await withFinalizer(
-    getResultAsync(async () => {
-      await storeUpdateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-      await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-    }).orElse((error) =>
-      getResultAsync(() =>
-        storeUpdateMessage({ message: previousMessage, partitionKey: message.partitionKey, rowKey: message.rowKey }),
-      )
-        .orTee(console.error)
-        .orElse(() => ok(undefined))
-        .andThen(() => err(error)),
-    ),
-    () => getResultAsync(() => (isVoting.value = false)),
+    () =>
+      getResultAsync(async () => {
+        await storeUpdateMessage({
+          message: updatedMessage,
+          partitionKey: message.partitionKey,
+          rowKey: message.rowKey,
+        });
+        await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
+      }).orElse((error) =>
+        getResultAsync(() =>
+          storeUpdateMessage({ message: previousMessage, partitionKey: message.partitionKey, rowKey: message.rowKey }),
+        )
+          .orTee(console.error)
+          .orElse(() => ok(undefined))
+          .andThen(() => err(error)),
+      ),
+    () => {
+      isVoting.value = false;
+    },
   );
 };
 </script>

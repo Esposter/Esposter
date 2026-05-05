@@ -2,7 +2,6 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { useColorsStore } from "@/store/colors";
 
@@ -30,10 +29,8 @@ const { text } = storeToRefs(colorsStore);
     @confirm="
       async (onComplete) => {
         await withFinalizer(
-          getResultAsync(() =>
-            $trpc.message.pinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
-          ),
-          () => getResultAsync(onComplete),
+          () => $trpc.message.pinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
+          onComplete,
         );
       }
     "

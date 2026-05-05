@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { useColorsStore } from "@/store/colors";
 import { useCommentStore } from "@/store/post/comment";
@@ -29,10 +28,7 @@ const { text } = storeToRefs(colorsStore);
     }"
     @delete="
       async (onComplete) => {
-        await withFinalizer(
-          getResultAsync(() => deleteComment(commentId)),
-          () => getResultAsync(onComplete),
-        );
+        await withFinalizer(() => deleteComment(commentId), onComplete);
       }
     "
   >

@@ -3,7 +3,6 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { ReadItemsCacheOptions } from "@/models/cache/indexedDb/ReadItemsCacheOptions";
 import type { Promisable } from "type-fest";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
@@ -44,7 +43,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     const refresh = async () => {
       isPending.value = true;
       await withFinalizer(
-        getResultAsync(async () => {
+        async () => {
           if (!online.value && cacheOptions) {
             const cachedItems = await readIndexedDb(cacheOptions.configuration, cacheOptions.partitionKey);
             const cachedData = new CursorPaginationData<TItem>();
@@ -66,11 +65,10 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
               : undefined,
             onComplete?.(data),
           ]);
-        }),
-        () =>
-          getResultAsync(() => {
-            isPending.value = false;
-          }),
+        },
+        () => {
+          isPending.value = false;
+        },
       );
     };
     // Absorbs query errors so component setup never fails — errors are handled by the tRPC link chain
@@ -83,7 +81,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     cacheOptions?: ReadItemsCacheOptions<T>,
   ) => {
     await withFinalizer(
-      getResultAsync(async () => {
+      async () => {
         if (!online.value) return;
         const { hasMore: newHasMore, items: newItems, nextCursor: newNextCursor } = await query(nextCursor.value);
         hasMore.value = newHasMore;
@@ -95,8 +93,8 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
             items.value as IndexedDbDatabaseSchema[T]["value"][],
             cacheOptions.partitionKey,
           );
-      }),
-      () => getResultAsync(() => onComplete?.()),
+      },
+      () => onComplete?.(),
     );
   };
 

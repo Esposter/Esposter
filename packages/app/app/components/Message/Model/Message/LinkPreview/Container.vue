@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { LinkPreviewResponse, MessageEntity } from "@esposter/db-schema";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
 
 interface ContainerProps {
@@ -27,8 +26,8 @@ const isActive = ref(false);
       @delete="
         async (onComplete) => {
           await withFinalizer(
-            getResultAsync(() => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey })),
-            () => getResultAsync(onComplete),
+            () => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey }),
+            onComplete,
           );
         }
       "
