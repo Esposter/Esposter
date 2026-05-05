@@ -55,18 +55,11 @@ import {
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
 } from "@esposter/db-schema";
-import {
-  InvalidOperationError,
-  ItemMetadataPropertyNames,
-  NotFoundError,
-  Operation,
-  takeOne,
-  toAppError,
-} from "@esposter/shared";
+import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, getColumns, ilike, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
-import { ResultAsync } from "neverthrow";
+import { getResultAsync } from "@esposter/shared";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomInMessageSchema.shape.id.optional();
@@ -78,20 +71,17 @@ const createSystemRoomMessage = async (
   message: string,
   sessionId: string,
 ): Promise<void> => {
-  await ResultAsync.fromPromise(
-    (async () => {
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-      const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-        message,
-        roomId,
-        type: MessageType.System,
-        userId,
-      });
-      messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
-    })(),
-    toAppError,
-  )
+  await getResultAsync(async () => {
+    const messageClient = await useTableClient(AzureTable.Messages);
+    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+    const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+      message,
+      roomId,
+      type: MessageType.System,
+      userId,
+    });
+    messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
+  })
     .orTee(console.error)
     .unwrapOr(undefined);
 };
@@ -162,18 +152,17 @@ export const roomRouter = router({
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
     .mutation<string>(async ({ ctx, input: { roomId } }) => {
-      let inviteCode = await readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
+      const inviteCode = await readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
       if (inviteCode) return inviteCode;
 
       for (let i = 0; i < 3; i++) {
-        inviteCode = createCode(CODE_LENGTH);
+        const code = createCode(CODE_LENGTH);
         if (
-          await ResultAsync.fromPromise(
-            ctx.db.insert(invitesInMessage).values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id }),
-            toAppError,
+          await getResultAsync(() =>
+            ctx.db.insert(invitesInMessage).values({ code, roomId, userId: ctx.getSessionPayload.user.id }),
           ).unwrapOr(null)
         )
-          return inviteCode;
+          return code;
       }
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",

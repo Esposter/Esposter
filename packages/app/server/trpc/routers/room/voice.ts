@@ -16,9 +16,9 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { createMessage } from "@esposter/db";
 import { AzureTable, MessageType, roomIdSchema, selectRoomInMessageSchema } from "@esposter/db-schema";
-import { ForbiddenError, NotFoundError, toAppError } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
+import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { ResultAsync } from "neverthrow";
 import { z } from "zod";
 
 const roomIdInputSchema = roomIdSchema;
@@ -46,18 +46,16 @@ export const voiceRouter = router({
 
       if (isFirstJoiner) {
         voiceCallStartTimeMap.set(roomId, new Date());
-        await ResultAsync.fromPromise(
+        await getResultAsync(() =>
           Promise.all([useTableClient(AzureTable.Messages), useTableClient(AzureTable.MessagesAscending)]),
-          toAppError,
         )
           .andThen(([messageClient, messageAscendingClient]) =>
-            ResultAsync.fromPromise(
+            getResultAsync(() =>
               createMessage(messageClient, messageAscendingClient, {
                 roomId,
                 type: MessageType.VoiceCall,
                 userId: user.id,
               }),
-              toAppError,
             ),
           )
           .andTee((systemMessage) => {
@@ -80,19 +78,17 @@ export const voiceRouter = router({
       const callStart = voiceCallStartTimeMap.get(roomId);
       voiceCallStartTimeMap.delete(roomId);
       const callDurationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / 1000) : 0;
-      await ResultAsync.fromPromise(
+      await getResultAsync(() =>
         Promise.all([useTableClient(AzureTable.Messages), useTableClient(AzureTable.MessagesAscending)]),
-        toAppError,
       )
         .andThen(([messageClient, messageAscendingClient]) =>
-          ResultAsync.fromPromise(
+          getResultAsync(() =>
             createMessage(messageClient, messageAscendingClient, {
               message: String(callDurationSeconds),
               roomId,
               type: MessageType.VoiceCall,
               userId: user.id,
             }),
-            toAppError,
           ),
         )
         .andTee((systemMessage) => {

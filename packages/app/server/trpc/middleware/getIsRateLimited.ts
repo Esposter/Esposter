@@ -4,9 +4,9 @@ import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { middleware } from "@@/server/trpc";
-import { ID_SEPARATOR, toAppError } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
+import { ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { ResultAsync } from "neverthrow";
 
 export const getIsRateLimited = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
@@ -23,9 +23,8 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     }
 
     const rateLimiter = RateLimiterMap[type];
-    const rateLimiterResult = await ResultAsync.fromPromise(
+    const rateLimiterResult = await getResultAsync(() =>
       rateLimiter.consume(getSessionPayload ? getSessionPayload.user.id : `${path}${ID_SEPARATOR}${ipAddress}`),
-      toAppError,
     );
     const { msBeforeNext, remainingPoints } = rateLimiterResult.match(
       (result) => result,

@@ -1,4 +1,4 @@
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import {
   TableEditorConfiguration,
   tableEditorConfigurationSchema,

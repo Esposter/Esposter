@@ -1,6 +1,6 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createEntity } from "@esposter/db";

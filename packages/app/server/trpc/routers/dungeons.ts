@@ -1,4 +1,4 @@
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { Dungeons, dungeonsSchema } from "#shared/models/dungeons/data/Dungeons";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";

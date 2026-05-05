@@ -1,9 +1,8 @@
 import type { ConfigurableNavigator } from "@vueuse/core";
 
+import { getResultAsync } from "@esposter/shared";
 import { useAlertStore } from "@/store/alert";
-import { toAppError } from "@esposter/shared";
 import { defu } from "defu";
-import { ResultAsync } from "neverthrow";
 
 interface UseMediaRecorderOptions extends ConfigurableNavigator {
   /**
@@ -109,7 +108,7 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
     data.value = [];
     stream.value = undefined;
 
-    await ResultAsync.fromPromise(window.navigator.mediaDevices.getUserMedia(toValue(constraints)), toAppError).match(
+    await getResultAsync(() => window.navigator.mediaDevices.getUserMedia(toValue(constraints))).match(
       (value) => {
         stream.value = value;
       },

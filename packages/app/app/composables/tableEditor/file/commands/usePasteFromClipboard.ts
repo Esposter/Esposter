@@ -1,6 +1,6 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { parseClipboardRows } from "@/services/tableEditor/file/commands/parseClipboardRows";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";

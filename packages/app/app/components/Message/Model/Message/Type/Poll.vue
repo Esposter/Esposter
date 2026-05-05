@@ -2,7 +2,7 @@
 import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";

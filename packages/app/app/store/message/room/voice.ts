@@ -1,6 +1,6 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";

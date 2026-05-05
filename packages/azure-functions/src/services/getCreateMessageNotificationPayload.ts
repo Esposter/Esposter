@@ -1,8 +1,7 @@
 import type { InvocationContext } from "@azure/functions";
 
 import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@/services/constants";
-import { normalizeString, truncate } from "@esposter/shared";
-import { fromThrowable } from "neverthrow";
+import { getResult, normalizeString, truncate } from "@esposter/shared";
 import parse from "node-html-parser";
 
 export const getCreateMessageNotificationPayload = (
@@ -12,7 +11,7 @@ export const getCreateMessageNotificationPayload = (
 ): string | undefined => {
   let textContent: string | undefined = message;
 
-  fromThrowable(() => normalizeString(parse(message).querySelector("p")?.structuredText))().match(
+  getResult(() => normalizeString(parse(message).querySelector("p")?.structuredText)).match(
     (newTextContent) => {
       textContent = newTextContent;
     },

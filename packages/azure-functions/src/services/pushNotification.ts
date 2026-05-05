@@ -6,9 +6,8 @@ import { getCreateMessageNotificationPayload } from "@/services/getCreateMessage
 import { webpush } from "@/services/webpush";
 import { getPushSubscriptionsForMessage } from "@esposter/db";
 import { pushSubscriptionsInMessage } from "@esposter/db-schema";
-import { RoutePath, toAppError } from "@esposter/shared";
+import { getResultAsync, RoutePath } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { ResultAsync } from "neverthrow";
 import { WebPushError } from "web-push";
 
 export const pushNotification = async (
@@ -34,12 +33,11 @@ export const pushNotification = async (
   await Promise.all(
     readPushSubscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) =>
       (async () => {
-        await ResultAsync.fromPromise(
+        await getResultAsync(() =>
           webpush.sendNotification(
             { endpoint, expirationTime: expirationTime ? expirationTime.getTime() : null, keys: { auth, p256dh } },
             payload,
           ),
-          toAppError,
         ).match(
           () => undefined,
           async (error) => {

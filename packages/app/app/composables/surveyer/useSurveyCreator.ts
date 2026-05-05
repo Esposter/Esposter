@@ -2,7 +2,7 @@ import type { Survey } from "@esposter/db-schema";
 import type { Base } from "survey-core";
 import type { ThemeTabPlugin } from "survey-creator-core";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";

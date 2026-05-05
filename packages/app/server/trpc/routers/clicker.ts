@@ -1,4 +1,4 @@
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { Clicker, clickerSchema } from "#shared/models/clicker/data/Clicker";

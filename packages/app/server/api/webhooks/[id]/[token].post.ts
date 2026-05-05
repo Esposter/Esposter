@@ -2,8 +2,7 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { webhookRateLimiter } from "@@/server/services/rateLimiter/webhookRateLimiter";
 import { RestError } from "@azure/storage-blob";
 import { selectWebhookInMessageSchema } from "@esposter/db-schema";
-import { toAppError } from "@esposter/shared";
-import { ResultAsync } from "neverthrow";
+import { getResultAsync } from "@esposter/shared";
 import { RateLimiterRes } from "rate-limiter-flexible";
 
 export default defineEventHandler(async (event) => {
@@ -18,25 +17,22 @@ export default defineEventHandler(async (event) => {
 
   const runtimeConfig = useRuntimeConfig(event);
   const body = await readBody(event);
-  return ResultAsync.fromPromise(
-    (async () => {
-      await webhookRateLimiter.consume(id);
-      const { _data, status } = await $fetch.raw<unknown>(
-        `${runtimeConfig.public.azure.function.baseUrl}/api/webhooks/${id}/${token}`,
-        {
-          body,
-          headers: {
-            "Content-Type": MimeType.Json,
-            "x-functions-key": runtimeConfig.azure.function.key,
-          },
-          method: "POST",
+  return getResultAsync(async () => {
+    await webhookRateLimiter.consume(id);
+    const { _data, status } = await $fetch.raw<unknown>(
+      `${runtimeConfig.public.azure.function.baseUrl}/api/webhooks/${id}/${token}`,
+      {
+        body,
+        headers: {
+          "Content-Type": MimeType.Json,
+          "x-functions-key": runtimeConfig.azure.function.key,
         },
-      );
-      setResponseStatus(event, status);
-      return _data;
-    })(),
-    (err) => err,
-  ).match(
+        method: "POST",
+      },
+    );
+    setResponseStatus(event, status);
+    return _data;
+  }).match(
     (data) => data,
     (error) => {
       if (error instanceof RestError) {
@@ -46,7 +42,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 429);
         return { message: "Rate limit exceeded." };
       } else {
-        console.error(toAppError(error));
+        console.error(error);
         setResponseStatus(event, 500);
         return { message: "An internal server error occurred." };
       }

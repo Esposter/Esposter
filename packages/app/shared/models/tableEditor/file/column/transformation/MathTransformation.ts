@@ -3,9 +3,8 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { mathVariableSchema } from "#shared/models/tableEditor/file/column/transformation/MathVariable";
-import { createItemEntityTypeSchema } from "@esposter/shared";
+import { createItemEntityTypeSchema, getResult } from "@esposter/shared";
 import { parse } from "mathjs";
-import { fromThrowable } from "neverthrow";
 import { z } from "zod";
 
 export interface MathTransformation extends ItemEntityType<ColumnTransformationType.Math> {
@@ -20,7 +19,7 @@ export const mathTransformationSchema = z
     variables: z.array(mathVariableSchema),
   })
   .superRefine(({ expression }, ctx) => {
-    fromThrowable(() => parse(expression))().match(
+    getResult(() => parse(expression)).match(
       () => undefined,
       (error) => {
         ctx.addIssue({

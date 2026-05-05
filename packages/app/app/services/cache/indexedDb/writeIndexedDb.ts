@@ -3,7 +3,7 @@ import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/Index
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { IndexKey, IndexNames } from "idb";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { toRawDeep } from "@esposter/shared";
 

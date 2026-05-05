@@ -1,4 +1,4 @@
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { EmailEditor, emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";

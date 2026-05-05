@@ -4,39 +4,35 @@ import { db } from "@/services/db";
 import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { app } from "@azure/functions";
 import { AzureFunction, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
-import { toAppError } from "@esposter/shared";
-import { ResultAsync } from "neverthrow";
+import { getResultAsync } from "@esposter/shared";
 import { z, ZodError } from "zod";
 
 app.http(AzureFunction.PushWebhook, {
   authLevel: "function",
   handler: (request, context) => {
     context.log(`${AzureFunction.PushWebhook} processed a request for URL: ${request.url}`);
-    return ResultAsync.fromPromise(
-      (async () => {
-        const { id, token } = await selectWebhookInMessageSchema
-          .pick({ id: true, token: true })
-          .parseAsync(request.params);
-        const webhook = await db.query.webhooksInMessage.findFirst({
-          columns: { id: true, roomId: true, userId: true },
-          where: { id: { eq: id }, isActive: { eq: true }, token: { eq: token } },
-        });
-        if (!webhook) return { jsonBody: { message: "Webhook not found." }, status: 404 };
+    return getResultAsync(async () => {
+      const { id, token } = await selectWebhookInMessageSchema
+        .pick({ id: true, token: true })
+        .parseAsync(request.params);
+      const webhook = await db.query.webhooksInMessage.findFirst({
+        columns: { id: true, roomId: true, userId: true },
+        where: { id: { eq: id }, isActive: { eq: true }, token: { eq: token } },
+      });
+      if (!webhook) return { jsonBody: { message: "Webhook not found." }, status: 404 };
 
-        const body = await request.json();
-        const payload = await webhookPayloadSchema.parseAsync(body);
-        const data: WebhookEventGridData = { payload, webhook };
-        await eventGridPublisherClient.send([
-          { data, dataVersion: "1.0", eventType: AzureFunction.ProcessWebhook, subject: webhook.id },
-        ]);
-        context.log(`Pushed to ${AzureFunction.ProcessWebhook} for webhook id: ${webhook.id}`);
-        return {
-          jsonBody: { message: "Webhook accepted." },
-          status: 202,
-        };
-      })(),
-      toAppError,
-    ).match(
+      const body = await request.json();
+      const payload = await webhookPayloadSchema.parseAsync(body);
+      const data: WebhookEventGridData = { payload, webhook };
+      await eventGridPublisherClient.send([
+        { data, dataVersion: "1.0", eventType: AzureFunction.ProcessWebhook, subject: webhook.id },
+      ]);
+      context.log(`Pushed to ${AzureFunction.ProcessWebhook} for webhook id: ${webhook.id}`);
+      return {
+        jsonBody: { message: "Webhook accepted." },
+        status: 202,
+      };
+    }).match(
       (response) => response,
       (error) => {
         if (error instanceof ZodError) {

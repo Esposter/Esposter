@@ -1,6 +1,6 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";

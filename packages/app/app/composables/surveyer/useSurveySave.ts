@@ -1,7 +1,7 @@
 import type { Survey } from "@esposter/db-schema";
 import type { SurveyCreatorModel } from "survey-creator-core";
 
-import { getResultAsync } from "#shared/error/getResultAsync";
+import { getResultAsync } from "@esposter/shared";
 import { THEME_KEY } from "@/services/survey/constants";
 import { useSurveyStore } from "@/store/survey";
 

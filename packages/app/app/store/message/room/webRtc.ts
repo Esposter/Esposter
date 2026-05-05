@@ -5,8 +5,8 @@ import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useVoiceStore } from "@/store/message/room/voice";
-import { exhaustiveGuard, jsonDateParse, toAppError } from "@esposter/shared";
-import { ResultAsync } from "neverthrow";
+import { getResultAsync } from "@esposter/shared";
+import { exhaustiveGuard, jsonDateParse } from "@esposter/shared";
 // Module-level WebRTC state — only one voice call at a time.
 let localStream: MediaStream | null = null;
 let isRemoteAudioMuted = false;
@@ -83,7 +83,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
       audio.srcObject = remoteStream;
       audio.muted = isRemoteAudioMuted;
       remoteAudioElements.set(remoteId, audio);
-      await ResultAsync.fromPromise(audio.play(), toAppError).match(() => undefined, console.error);
+      await getResultAsync(() => audio.play()).match(() => undefined, console.error);
     });
 
     peerConnection.onicecandidate = getSynchronizedFunction(async ({ candidate }) => {
@@ -118,46 +118,43 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   const getSignalHandler =
     (roomId: string) =>
     async ({ payload: { data, type }, senderId }: { payload: VoiceSignalPayload; senderId: string }) => {
-      await ResultAsync.fromPromise(
-        (async () => {
-          switch (type) {
-            case VoiceSignalType.Answer: {
-              const peerConnection = peerConnections.get(senderId);
-              if (!peerConnection) return;
-              await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
-              await flushIceCandidates(senderId);
-              break;
-            }
-            case VoiceSignalType.Candidate: {
-              const peerConnection = peerConnections.get(senderId);
-              const candidateData = jsonDateParse<RTCIceCandidateInit>(data);
-              if (!peerConnection?.remoteDescription) {
-                const queue = candidateQueues.get(senderId) ?? [];
-                queue.push(candidateData);
-                candidateQueues.set(senderId, queue);
-                return;
-              }
-              await peerConnection.addIceCandidate(candidateData);
-              break;
-            }
-            case VoiceSignalType.Offer: {
-              const peerConnection = buildPeerConnection(roomId, senderId);
-              await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
-              await flushIceCandidates(senderId);
-              const answer = await peerConnection.createAnswer();
-              await peerConnection.setLocalDescription(answer);
-              await $trpc.voice.sendSignal.mutate({
-                payload: { data: JSON.stringify(answer), targetId: senderId, type: VoiceSignalType.Answer },
-                roomId,
-              });
-              break;
-            }
-            default:
-              exhaustiveGuard(type);
+      await getResultAsync(async () => {
+        switch (type) {
+          case VoiceSignalType.Answer: {
+            const peerConnection = peerConnections.get(senderId);
+            if (!peerConnection) return;
+            await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
+            await flushIceCandidates(senderId);
+            break;
           }
-        })(),
-        toAppError,
-      ).match(() => undefined, console.error);
+          case VoiceSignalType.Candidate: {
+            const peerConnection = peerConnections.get(senderId);
+            const candidateData = jsonDateParse<RTCIceCandidateInit>(data);
+            if (!peerConnection?.remoteDescription) {
+              const queue = candidateQueues.get(senderId) ?? [];
+              queue.push(candidateData);
+              candidateQueues.set(senderId, queue);
+              return;
+            }
+            await peerConnection.addIceCandidate(candidateData);
+            break;
+          }
+          case VoiceSignalType.Offer: {
+            const peerConnection = buildPeerConnection(roomId, senderId);
+            await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
+            await flushIceCandidates(senderId);
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            await $trpc.voice.sendSignal.mutate({
+              payload: { data: JSON.stringify(answer), targetId: senderId, type: VoiceSignalType.Answer },
+              roomId,
+            });
+            break;
+          }
+          default:
+            exhaustiveGuard(type);
+        }
+      }).match(() => undefined, console.error);
     };
 
   const acquireLocalStream = async () => {
