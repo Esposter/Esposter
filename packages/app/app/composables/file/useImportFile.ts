@@ -1,29 +1,31 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
+import { toAppError } from "@esposter/shared";
 import { useAlertStore } from "@/store/alert";
 import { normalizeString, takeOne } from "@esposter/shared";
+import { err, ok, ResultAsync } from "neverthrow";
 import { showOpenFilePicker } from "show-open-file-picker";
 
 export const useImportFile = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
-  return async (mimeType: MimeType, accept: string, onSelect: (file: File) => Promise<void>): Promise<void> => {
-    try {
-      const fileHandle = takeOne(
-        await showOpenFilePicker({
-          types: [
-            {
-              accept: { [mimeType]: accept.split(",").map((value) => normalizeString(value)) },
-              description: (accept.split(",")[0] ?? "").replace(/^\./, "").toUpperCase(),
-            },
-          ],
-        }),
-      );
-      const file = await fileHandle.getFile();
-      await onSelect(file);
-    } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") return;
-      createAlert(error instanceof Error ? error.message : String(error), "error");
-    }
-  };
+  return (mimeType: MimeType, accept: string, onSelect: (file: File) => Promise<void>): ResultAsync<void, Error> =>
+    ResultAsync.fromPromise(
+      showOpenFilePicker({
+        types: [
+          {
+            accept: { [mimeType]: accept.split(",").map((value) => normalizeString(value)) },
+            description: (accept.split(",")[0] ?? "").replace(/^\./, "").toUpperCase(),
+          },
+        ],
+      }),
+      toAppError,
+    )
+      .andThen((handles) => ResultAsync.fromPromise(takeOne(handles).getFile(), toAppError))
+      .andThen((file) => ResultAsync.fromPromise(onSelect(file), toAppError))
+      .orElse((error) => {
+        if (error.name === "AbortError") return ok(undefined);
+        createAlert(error.message, "error");
+        return err(error);
+      });
 };

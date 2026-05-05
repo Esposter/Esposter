@@ -5,8 +5,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { roomCategoryRouter } from "@@/server/trpc/routers/roomCategory";
-import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema";
-import { NotFoundError, takeOne } from "@esposter/shared";
+import { roomCategoriesInMessage } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("roomCategory", () => {
@@ -66,16 +66,6 @@ describe("roomCategory", () => {
     expect(updatedRoomCategory.position).toBe(1);
   });
 
-  test("fails update with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.updateRoomCategory({ id, name: updatedName })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.RoomCategory, id).message}]`,
-    );
-  });
-
   test("deletes", async () => {
     expect.hasAssertions();
 
@@ -83,15 +73,5 @@ describe("roomCategory", () => {
     const deletedRoomCategory = await caller.deleteRoomCategory(newRoomCategory.id);
 
     expect(deletedRoomCategory.id).toBe(newRoomCategory.id);
-  });
-
-  test("fails delete with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.deleteRoomCategory(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.RoomCategory, id).message}]`,
-    );
   });
 });

@@ -1,8 +1,10 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
+import { toAppError } from "@esposter/shared";
 import { parseClipboardRows } from "@/services/tableEditor/file/commands/parseClipboardRows";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { ResultAsync } from "neverthrow";
 
 export const usePasteFromClipboard = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItem>();
@@ -12,12 +14,12 @@ export const usePasteFromClipboard = () => {
   const createRows = useCreateRows();
   return async () => {
     if (!editedItem.value?.dataSource) return;
-    try {
-      const text = await window.navigator.clipboard.readText();
-      const rows = parseClipboardRows(text, editedItem.value.dataSource);
-      createRows(rows);
-    } catch (error) {
-      createAlert(error instanceof Error ? error.message : "Failed to paste from clipboard", "error");
-    }
+    const dataSource = editedItem.value.dataSource;
+    await ResultAsync.fromPromise(window.navigator.clipboard.readText(), toAppError)
+      .map((text) => parseClipboardRows(text, dataSource))
+      .tap(createRows)
+      .tapErr((error) => {
+        createAlert(error.message, "error");
+      });
   };
 };

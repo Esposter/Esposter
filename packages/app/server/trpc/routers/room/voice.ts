@@ -54,8 +54,9 @@ export const voiceRouter = router({
             userId: user.id,
           });
           messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId: session.id }]);
-        } catch {
+        } catch (error) {
           // System message creation is best-effort — voice membership is already committed
+          console.error(error);
         }
       }
 
@@ -83,8 +84,9 @@ export const voiceRouter = router({
           userId: user.id,
         });
         messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
-      } catch {
+      } catch (error) {
         // System message creation is best-effort — voice membership is already committed
+        console.error(error);
       }
     }
   }),

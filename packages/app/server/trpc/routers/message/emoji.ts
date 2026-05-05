@@ -15,6 +15,7 @@ import { on } from "@@/server/services/events/on";
 import { emojiEventEmitter } from "@@/server/services/message/events/emojiEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
 import { createEntity, deleteEntity, getEntity, getTopNEntities, serializeClauses, updateEntity } from "@esposter/db";
@@ -155,18 +156,12 @@ export const emojiRouter = router({
       const messagesMetadataClient = (await useTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
-      const readEmoji = await getEntity(
-        messagesMetadataClient,
-        MessageEmojiMetadataEntity,
-        input.partitionKey,
-        input.rowKey,
+      const readEmoji = await requireEntity(
+        getEntity(messagesMetadataClient, MessageEmojiMetadataEntity, input.partitionKey, input.rowKey),
+        MessageMetadataType.Emoji,
+        JSON.stringify(input),
       );
-      if (!readEmoji)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Read, MessageMetadataType.Emoji, JSON.stringify(input)).message,
-        });
-      else if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.getSessionPayload.user.id)
+      if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.getSessionPayload.user.id)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(readEmoji))

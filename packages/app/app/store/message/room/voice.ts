@@ -79,7 +79,8 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
       setParticipants(roomId, participants);
       if (sessionId.value) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, sessionId.value, stream);
-    } catch {
+    } catch (error) {
+      console.error(error);
       await leaveVoice();
     }
   };

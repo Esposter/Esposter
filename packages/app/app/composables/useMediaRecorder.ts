@@ -1,7 +1,9 @@
 import type { ConfigurableNavigator } from "@vueuse/core";
 
+import { toAppError } from "@esposter/shared";
 import { useAlertStore } from "@/store/alert";
 import { defu } from "defu";
+import { ResultAsync } from "neverthrow";
 
 interface UseMediaRecorderOptions extends ConfigurableNavigator {
   /**
@@ -102,12 +104,16 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
     if (state.value === "recording") return;
     data.value = [];
 
-    try {
-      stream.value = await window.navigator.mediaDevices.getUserMedia(toValue(constraints));
-    } catch (error) {
-      if (error instanceof DOMException) createAlert(error.message, "error");
+    const streamResult = await ResultAsync.fromPromise(
+      window.navigator.mediaDevices.getUserMedia(toValue(constraints)),
+      toAppError,
+    );
+    if (streamResult.isErr()) {
+      if (streamResult.error instanceof DOMException) createAlert(streamResult.error.message, "error");
+      else console.error(streamResult.error);
       return;
     }
+    stream.value = streamResult.value;
 
     const newMediaRecorder = new MediaRecorder(stream.value, toValue(mediaRecorderOptions));
     setupMediaRecorder(newMediaRecorder);

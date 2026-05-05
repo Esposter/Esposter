@@ -5,7 +5,8 @@ import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useVoiceStore } from "@/store/message/room/voice";
-import { exhaustiveGuard, jsonDateParse } from "@esposter/shared";
+import { exhaustiveGuard, jsonDateParse, toAppError } from "@esposter/shared";
+import { ResultAsync } from "neverthrow";
 // Module-level WebRTC state — only one voice call at a time.
 let localStream: MediaStream | null = null;
 let isRemoteAudioMuted = false;
@@ -17,7 +18,6 @@ let signalUnsubscribable: undefined | Unsubscribable;
 
 export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   const { $trpc } = useNuxtApp();
-  const isProduction = useIsProduction();
 
   const cleanupPeer = async (id: string) => {
     peerConnections.get(id)?.close();
@@ -83,11 +83,9 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
       audio.srcObject = remoteStream;
       audio.muted = isRemoteAudioMuted;
       remoteAudioElements.set(remoteId, audio);
-      try {
-        await audio.play();
-      } catch (error: unknown) {
-        if (!isProduction) console.warn("[WebRTC] audio.play() rejected (autoplay policy?):", error);
-      }
+      void ResultAsync.fromPromise(audio.play(), toAppError).tapErr((error) =>
+        console.warn("[WebRTC] audio.play() rejected (autoplay policy?):", error),
+      );
     });
 
     peerConnection.onicecandidate = getSynchronizedFunction(async ({ candidate }) => {
@@ -160,7 +158,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
         }
       } catch (error) {
         // Drop malformed signal payloads to prevent unhandled rejections from aborting the subscription
-        if (!isProduction) console.warn("[WebRTC] Dropped malformed signal:", error);
+        console.warn("[WebRTC] Dropped malformed signal:", error);
       }
     };
 

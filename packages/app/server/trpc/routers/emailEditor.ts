@@ -5,20 +5,22 @@ import { SAVE_FILENAME } from "@@/server/services/emailEditor/constants";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { AzureContainer } from "@esposter/db-schema";
-import { jsonDateParse, streamToText } from "@esposter/shared";
+import { jsonDateParse, streamToText, toAppError } from "@esposter/shared";
+import { ResultAsync } from "neverthrow";
 
 export const emailEditorRouter = router({
-  readEmailEditor: standardAuthedProcedure.query<EmailEditor>(async ({ ctx }) => {
-    try {
-      const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
-      const { readableStreamBody } = await useDownload(AzureContainer.EmailEditorAssets, blobName);
-      if (!readableStreamBody) return new EmailEditor();
-
-      const json = await streamToText(readableStreamBody);
-      return new EmailEditor(jsonDateParse(json));
-    } catch {
-      return new EmailEditor();
-    }
+  readEmailEditor: standardAuthedProcedure.query<EmailEditor>(({ ctx }) => {
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
+    return ResultAsync.fromPromise(
+      useDownload(AzureContainer.EmailEditorAssets, blobName).then(async ({ readableStreamBody }) => {
+        if (!readableStreamBody) return new EmailEditor();
+        const json = await streamToText(readableStreamBody);
+        return new EmailEditor(jsonDateParse(json));
+      }),
+      toAppError,
+    )
+      .tapErr(console.error)
+      .unwrapOr(new EmailEditor());
   }),
   saveEmailEditor: standardAuthedProcedure.input(emailEditorSchema).mutation(async ({ ctx, input }) => {
     const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;

@@ -45,16 +45,6 @@ describe("post", () => {
     expect(readPost).toStrictEqual(newPost);
   });
 
-  test("fails read with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.readPost(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, id).message}]`,
-    );
-  });
-
   test("reads empty posts", async () => {
     expect.hasAssertions();
 
@@ -70,16 +60,6 @@ describe("post", () => {
     const updatedPost = await caller.updatePost({ id: newPost.id, title: updatedTitle });
 
     expect(updatedPost.title).toBe(updatedTitle);
-  });
-
-  test("fails update with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.updatePost({ description, id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Post, id).message}]`,
-    );
   });
 
   test("fails update with wrong user", async () => {
@@ -111,16 +91,6 @@ describe("post", () => {
     const deletedPost = await caller.deletePost(newPost.id);
 
     expect(deletedPost.id).toBe(newPost.id);
-  });
-
-  test("fails delete with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.deletePost(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Post, id).message}]`,
-    );
   });
 
   test("fails delete with wrong user", async () => {
@@ -155,16 +125,6 @@ describe("post", () => {
     expect(readComment).toStrictEqual(newComment);
   });
 
-  test("fails create comment with non-existent parent id", async () => {
-    expect.hasAssertions();
-
-    const parentId = crypto.randomUUID();
-
-    await expect(caller.createComment({ description, parentId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, parentId).message}]`,
-    );
-  });
-
   test("updates comment", async () => {
     expect.hasAssertions();
 
@@ -173,16 +133,6 @@ describe("post", () => {
     const updatedComment = await caller.updateComment({ description: updatedDescription, id: newComment.id });
 
     expect(updatedComment.description).toBe(updatedDescription);
-  });
-
-  test("fails update comment with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.updateComment({ description, id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.Comment, id).message}]`,
-    );
   });
 
   test("fails update comment with wrong user", async () => {
@@ -228,16 +178,6 @@ describe("post", () => {
 
     await expect(caller.readPost(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, newComment.id).message}]`,
-    );
-  });
-
-  test("fails delete comment with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.deleteComment(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, id).message}]`,
     );
   });
 

@@ -1,10 +1,10 @@
 import { upsertRoomFilterInputSchema } from "#shared/models/db/room/UpsertRoomFilterInput";
 import { router } from "@@/server/trpc";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { DatabaseEntityType, roomFiltersInMessage, roomIdSchema, RoomPermission } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { Operation } from "@esposter/shared";
 
 export const roomFilterRouter = router({
   readRoomFilter: getMemberProcedure(roomIdSchema, "roomId").query(async ({ ctx, input: { roomId } }) => {
@@ -15,16 +15,18 @@ export const roomFilterRouter = router({
   }),
   upsertRoomFilter: getPermissionsProcedure(RoomPermission.ManageRoom, upsertRoomFilterInputSchema, "roomId").mutation(
     async ({ ctx, input: { roomId, words } }) => {
-      const [updatedFilter] = await ctx.db
-        .insert(roomFiltersInMessage)
-        .values({ roomId, words })
-        .onConflictDoUpdate({ set: { words }, target: roomFiltersInMessage.roomId })
-        .returning();
-      if (!updatedFilter)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomFilter, roomId).message,
-        });
+      const updatedFilter = requireMutation(
+        (
+          await ctx.db
+            .insert(roomFiltersInMessage)
+            .values({ roomId, words })
+            .onConflictDoUpdate({ set: { words }, target: roomFiltersInMessage.roomId })
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.RoomFilter,
+        roomId,
+      );
       return updatedFilter;
     },
   ),

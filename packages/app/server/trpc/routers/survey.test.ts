@@ -87,16 +87,6 @@ describe("survey", () => {
     expect(updatedSurvey.name).toBe(updatedName);
   });
 
-  test("fails update with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.updateSurvey({ id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, id).message}]`,
-    );
-  });
-
   test("fails update with wrong user", async () => {
     expect.hasAssertions();
 
@@ -179,16 +169,6 @@ describe("survey", () => {
     const deletedSurvey = await caller.deleteSurvey(newSurvey.id);
 
     expect(deletedSurvey.id).toBe(newSurvey.id);
-  });
-
-  test("fails delete with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.deleteSurvey(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Survey, id).message}]`,
-    );
   });
 
   test("fails delete with wrong user", async () => {

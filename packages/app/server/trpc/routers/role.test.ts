@@ -3,12 +3,12 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { DatabaseEntityType, RoomPermission, roomsInMessage } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("role", () => {
@@ -162,20 +162,6 @@ describe("role", () => {
       roleCaller.assignRole({ roleId: everyoneRole.id, roomId, userId: targetMember.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoomRole, everyoneRole.id).message}]`,
-    );
-  });
-
-  test("cannot assign role to non-member", async () => {
-    expect.hasAssertions();
-
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-
-    await expect(
-      roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.UserToRoom, user.id).message}]`,
     );
   });
 

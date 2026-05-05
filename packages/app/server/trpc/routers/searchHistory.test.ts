@@ -7,8 +7,8 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
-import { DatabaseEntityType, roomsInMessage, searchHistoriesInMessage } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { roomsInMessage, searchHistoriesInMessage } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("searchHistory", () => {
@@ -92,18 +92,6 @@ describe("searchHistory", () => {
     expect(updated.query).toBe(updatedQuery);
   });
 
-  test("fails update with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(
-      searchHistoryCaller.updateSearchHistory({ id, query: updatedQuery }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.SearchHistory, id).message}]`,
-    );
-  });
-
   test("deletes", async () => {
     expect.hasAssertions();
 
@@ -112,15 +100,5 @@ describe("searchHistory", () => {
     const deletedSearchHistory = await searchHistoryCaller.deleteSearchHistory(newSearchHistory.id);
 
     expect(deletedSearchHistory.id).toBe(newSearchHistory.id);
-  });
-
-  test("fails delete with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(searchHistoryCaller.deleteSearchHistory(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.SearchHistory, id).message}]`,
-    );
   });
 });

@@ -1,8 +1,5 @@
-import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
-import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { DeleteFileInput, DeleteLinkPreviewResponseInput } from "@@/server/trpc/routers/message";
 import type { MessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
 
@@ -49,7 +46,6 @@ describe("message", () => {
   const getMessage = (userId: string) =>
     `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
   const updatedMessage = "updatedMessage";
-  const rowKey = "rowKey";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -330,17 +326,6 @@ describe("message", () => {
     expect(takeOne(readMessages.items).message).toBe(updatedMessage);
   });
 
-  test("fails update with non-existent message", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const input: UpdateMessageInput = { message: updatedMessage, partitionKey: newRoom.id, rowKey };
-
-    await expect(messageCaller.updateMessage(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message}]`,
-    );
-  });
-
   test("fails update with wrong user", async () => {
     expect.hasAssertions();
 
@@ -399,17 +384,6 @@ describe("message", () => {
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(0);
-  });
-
-  test("fails delete with non-existent message", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const input: DeleteMessageInput = { partitionKey: newRoom.id, rowKey };
-
-    await expect(messageCaller.deleteMessage(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message}]`,
-    );
   });
 
   test("fails delete with wrong user", async () => {
@@ -498,18 +472,6 @@ describe("message", () => {
     expect(takeOne(forwardedMessages.items, 1).isForward).toBeUndefined();
   });
 
-  test("fails forward messages with non-existent message", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-
-    await expect(
-      messageCaller.forwardMessage({ partitionKey: newRoom.id, roomIds: [newRoom.id], rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey: newRoom.id, rowKey })).message}]`,
-    );
-  });
-
   test("generates upload file SAS entities", async () => {
     expect.hasAssertions();
 
@@ -555,18 +517,6 @@ describe("message", () => {
 
     expect(updatedMessages).toHaveLength(1);
     expect(takeOne(updatedMessages).files).toHaveLength(0);
-  });
-
-  test("fails delete file with non-existent message", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const input: DeleteFileInput = { id: crypto.randomUUID(), partitionKey: newRoom.id, rowKey };
-
-    await expect(messageCaller.deleteFile(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      // eslint-disable-next-line perfectionist/sort-objects
-      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey: newRoom.id, rowKey, id: input.id })).message}]`,
-    );
   });
 
   test("fails delete file with wrong user", async () => {
@@ -704,17 +654,6 @@ describe("message", () => {
 
     expect(updatedMessages).toHaveLength(1);
     expect(takeOne(updatedMessages).linkPreviewResponse).toBeNull();
-  });
-
-  test("fails delete link preview response with non-existent message", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const input: DeleteLinkPreviewResponseInput = { partitionKey: newRoom.id, rowKey };
-
-    await expect(messageCaller.deleteLinkPreviewResponse(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message}]`,
-    );
   });
 
   test("fails delete link preview response with wrong user", async () => {

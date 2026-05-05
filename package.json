@@ -37,6 +37,9 @@
     "typecheck:packages": "pnpm typecheck --ignore @esposter/app",
     "watch:packages": "lerna watch --ignore @esposter/app -- pnpm build:packages"
   },
+  "dependencies": {
+    "neverthrow": "catalog:"
+  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@lerna-lite/cli": "catalog:",

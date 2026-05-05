@@ -25,6 +25,8 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { isRoom } from "@@/server/trpc/middleware/userToRoom/isRoom";
@@ -264,38 +266,26 @@ export const roomRouter = router({
       });
       if (ban) throw new TRPCError({ code: "FORBIDDEN" });
 
-      const userToRoom = (
-        await tx
-          .insert(usersToRoomsInMessage)
-          .values({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id })
-          .returning()
-      )[0];
-      if (!userToRoom)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Create,
-            DatabaseEntityType.UserToRoom,
-            JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id }),
-          ).message,
-        });
+      const userToRoom = requireMutation(
+        (
+          await tx
+            .insert(usersToRoomsInMessage)
+            .values({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id })
+            .returning()
+        )[0],
+        Operation.Create,
+        DatabaseEntityType.UserToRoom,
+        JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id }),
+      );
 
-      const userToRoomWithRelations = await tx.query.usersToRoomsInMessage.findFirst({
-        where: {
-          roomId: {
-            eq: userToRoom.roomId,
-          },
-          userId: {
-            eq: userToRoom.userId,
-          },
-        },
-        with: UserToRoomInMessageRelations,
-      });
-      if (!userToRoomWithRelations)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.UserToRoom, JSON.stringify(userToRoom)).message,
-        });
+      const userToRoomWithRelations = await requireEntity(
+        tx.query.usersToRoomsInMessage.findFirst({
+          where: { roomId: { eq: userToRoom.roomId }, userId: { eq: userToRoom.userId } },
+          with: UserToRoomInMessageRelations,
+        }),
+        DatabaseEntityType.UserToRoom,
+        JSON.stringify(userToRoom),
+      );
 
       const { roomId, roomInMessage, user } = userToRoomWithRelations;
       roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
@@ -582,13 +572,12 @@ export const roomRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
-    const updatedRoom = (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0];
-    if (!updatedRoom)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, id).message,
-      });
-
+    const updatedRoom = requireMutation(
+      (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0],
+      Operation.Update,
+      DatabaseEntityType.Room,
+      id,
+    );
     roomEventEmitter.emit("updateRoom", updatedRoom);
     return updatedRoom;
   }),
