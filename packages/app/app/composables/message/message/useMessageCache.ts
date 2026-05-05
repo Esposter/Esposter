@@ -20,8 +20,9 @@ export const useMessageCache = () => {
   watchDeep(items, (messages) => {
     const roomId = currentRoomId.value;
     if (!roomId || messages.length === 0) return;
+    const previousOperation = pendingOperation;
     pendingOperation = getResultAsync(async () => {
-      await pendingOperation;
+      await previousOperation;
       await writeIndexedDb(
         MessageIndexedDbStoreConfiguration,
         messages.filter((message) => !message.isLoading),
@@ -34,8 +35,9 @@ export const useMessageCache = () => {
 
   watch(currentRoomId, (newCurrentRoomId) => {
     if (!newCurrentRoomId || online.value) return;
+    const previousOperation = pendingOperation;
     pendingOperation = getResultAsync(async () => {
-      await pendingOperation;
+      await previousOperation;
       const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, newCurrentRoomId);
       if (currentRoomId.value !== newCurrentRoomId || items.value.length > 0 || cachedMessages.length === 0) return;
 

@@ -53,11 +53,13 @@ const vote = async (optionId: null | string) => {
       })
         .orElse((error) =>
           getResultAsync(async () => {
-            await storeUpdateMessage({
-              message: previousMessage,
-              partitionKey: message.partitionKey,
-              rowKey: message.rowKey,
-            }).catch(console.error);
+            await getResultAsync(async () =>
+              storeUpdateMessage({
+                message: previousMessage,
+                partitionKey: message.partitionKey,
+                rowKey: message.rowKey,
+              }),
+            ).match(() => undefined, console.error);
             throw error;
           }),
         )

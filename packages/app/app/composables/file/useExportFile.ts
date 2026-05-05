@@ -33,7 +33,7 @@ export const useExportFile = () => {
           await writable.close();
         }).orElse((error) =>
           getResultAsync(async () => {
-            await writable.abort().catch(console.error);
+            await getResultAsync(async () => writable.abort()).match(() => undefined, console.error);
             throw error;
           }),
         ),
