@@ -52,6 +52,7 @@ const vote = async (optionId: null | string) => {
         storeUpdateMessage({ message: previousMessage, partitionKey: message.partitionKey, rowKey: message.rowKey }),
       )
         .orTee(console.error)
+        .orElse(() => ok(undefined))
         .andThen(() => err(error)),
     ),
     () => getResultAsync(() => (isVoting.value = false)),

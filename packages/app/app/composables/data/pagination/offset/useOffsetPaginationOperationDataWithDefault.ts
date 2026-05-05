@@ -1,6 +1,6 @@
-import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
+import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 
 export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems: Ref<TItem[]>) => {
   const items = defaultItems;

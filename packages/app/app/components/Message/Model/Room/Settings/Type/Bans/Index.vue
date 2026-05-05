@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { dayjs } from "#shared/services/dayjs";
 import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
+import { dayjs } from "#shared/services/dayjs";
 import { useBanStore } from "@/store/message/user/ban";
 
 interface BansProps {

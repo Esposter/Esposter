@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
-import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";

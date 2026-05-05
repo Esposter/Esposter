@@ -10,7 +10,7 @@ export const requireMutation = <T>(
   context: string,
   code: "BAD_REQUEST" | "NOT_FOUND" = "BAD_REQUEST",
 ): T => {
-  if (!result)
+  if (result === undefined)
     throw new TRPCError({
       code,
       message: new InvalidOperationError(operation, name, context).message,

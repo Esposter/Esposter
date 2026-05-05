@@ -95,13 +95,14 @@ ResultAsync.fromPromise(
 ### Abort / cancel (recover from specific error)
 
 ```typescript
-ResultAsync.fromPromise(showOpenFilePicker(), toAppError)
+await ResultAsync.fromPromise(showOpenFilePicker(), toAppError)
   .andThen(...)
   .orElse((error) => {
     if (error.name === "AbortError") return ok(undefined); // user cancelled — not an error
     createAlert(error.message, "error");
     return err(error);
-  });
+  })
+  .unwrapOr(undefined);
 ```
 
 ## tRPC Backend Guards
