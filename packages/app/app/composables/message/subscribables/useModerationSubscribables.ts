@@ -1,4 +1,4 @@
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useRoomStore } from "@/store/message/room";
 
 export const useModerationSubscribables = () => {

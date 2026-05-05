@@ -4,8 +4,8 @@ import type { ReadItemsCacheOptions } from "@/models/cache/indexedDb/ReadItemsCa
 import type { Promisable } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { withFinalizer } from "#shared/util/withFinalizer";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { withFinalizer } from "#shared/error/withFinalizer";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 

@@ -1,8 +1,8 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Survey } from "@esposter/db-schema";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { withFinalizer } from "#shared/util/withFinalizer";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { withFinalizer } from "#shared/error/withFinalizer";
 import { useSurveyStore } from "@/store/survey";
 
 export const useReadSurveys = () => {

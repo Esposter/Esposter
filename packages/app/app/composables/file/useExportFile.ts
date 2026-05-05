@@ -1,6 +1,6 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
+import { getResultAsync } from "#shared/error/getResultAsync";
 import { useAlertStore } from "@/store/alert";
 import { normalizeString } from "@esposter/shared";
 import { err } from "neverthrow";

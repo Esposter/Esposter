@@ -3,7 +3,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadStore } from "@/store/message/thread";

@@ -108,12 +108,16 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
       window.navigator.mediaDevices.getUserMedia(toValue(constraints)),
       toAppError,
     );
-    if (streamResult.isErr()) {
-      if (streamResult.error instanceof DOMException) createAlert(streamResult.error.message, "error");
-      else console.error(streamResult.error);
-      return;
-    }
-    stream.value = streamResult.value;
+    streamResult.match(
+      (value) => {
+        stream.value = value;
+      },
+      (error) => {
+        if (error instanceof DOMException) createAlert(error.message, "error");
+        else console.error(error);
+      },
+    );
+    if (!stream.value) return;
 
     const newMediaRecorder = new MediaRecorder(stream.value, toValue(mediaRecorderOptions));
     setupMediaRecorder(newMediaRecorder);

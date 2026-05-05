@@ -2,7 +2,7 @@
 import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 import type { EditorView } from "@codemirror/view";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
+import { getResultAsync } from "#shared/error/getResultAsync";
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { Codemirror } from "vue-codemirror";

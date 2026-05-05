@@ -1,7 +1,7 @@
 import { describe } from "vitest";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { withFinalizer } from "#shared/util/withFinalizer";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { withFinalizer } from "#shared/error/withFinalizer";
 
 export const withAsyncIterator = async <T, R>(
   createIterator: () => AsyncIterable<T>,

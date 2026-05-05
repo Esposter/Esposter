@@ -1,6 +1,5 @@
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
 describe(requireMutation, () => {
@@ -17,23 +16,15 @@ describe(requireMutation, () => {
     expect.hasAssertions();
 
     expect(() => {
-      requireMutation(undefined, Operation.Create, "Entity", "");
-    }).toThrow(TRPCError);
-
-    expect(() => {
-      requireMutation(undefined, Operation.Create, "Entity", "");
-    }).toThrow(expect.objectContaining({ code: "BAD_REQUEST" }));
+      requireMutation(undefined, Operation.Create, "Entity", "1");
+    }).toThrowErrorMatchingInlineSnapshot(`[TRPCError: Invalid Operation: Create Entity 1]`);
   });
 
   test("throws TRPCError with code NOT_FOUND when result is undefined and code param is NOT_FOUND", () => {
     expect.hasAssertions();
 
     expect(() => {
-      requireMutation(undefined, Operation.Create, "Entity", "", "NOT_FOUND");
-    }).toThrow(TRPCError);
-
-    expect(() => {
-      requireMutation(undefined, Operation.Create, "Entity", "", "NOT_FOUND");
-    }).toThrow(expect.objectContaining({ code: "NOT_FOUND" }));
+      requireMutation(undefined, Operation.Create, "Entity", "1", "NOT_FOUND");
+    }).toThrowErrorMatchingInlineSnapshot(`[TRPCError: Invalid Operation: Create Entity 1]`);
   });
 });

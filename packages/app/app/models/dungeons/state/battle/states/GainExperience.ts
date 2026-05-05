@@ -3,7 +3,7 @@ import type { State } from "@/models/dungeons/state/State";
 import type { PhaserEvents } from "@/services/phaser/events";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { calculateExperienceGain } from "@/services/dungeons/monster/calculateExperienceGain";
 import { calculateLevelExperience } from "@/services/dungeons/monster/calculateLevelExperience";

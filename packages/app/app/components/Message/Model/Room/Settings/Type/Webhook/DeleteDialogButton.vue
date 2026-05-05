@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { withFinalizer } from "#shared/util/withFinalizer";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { withFinalizer } from "#shared/error/withFinalizer";
 import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface DeleteDialogButtonProps {

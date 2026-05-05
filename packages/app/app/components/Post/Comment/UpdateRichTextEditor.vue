@@ -2,8 +2,8 @@
 import type { PostWithRelations } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/vue-3";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { withFinalizer } from "#shared/util/withFinalizer";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { withFinalizer } from "#shared/error/withFinalizer";
 import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 

@@ -2,8 +2,8 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { withFinalizer } from "#shared/util/withFinalizer";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { withFinalizer } from "#shared/error/withFinalizer";
 import { useColorsStore } from "@/store/colors";
 
 interface ConfirmDeleteDialogProps {

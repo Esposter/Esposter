@@ -2,8 +2,8 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { withFinalizer } from "#shared/util/withFinalizer";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { withFinalizer } from "#shared/error/withFinalizer";
 import { useBanStore } from "@/store/message/user/ban";
 
 interface BansProps {

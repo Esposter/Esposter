@@ -2,8 +2,8 @@ import type { Survey } from "@esposter/db-schema";
 import type { Base } from "survey-core";
 import type { ThemeTabPlugin } from "survey-creator-core";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/survey/constants";

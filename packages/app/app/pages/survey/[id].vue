@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SurveyResponseEntity } from "@esposter/db-schema";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
+import { getResultAsync } from "#shared/error/getResultAsync";
 import { validate } from "@/services/router/validate";
 import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/survey/constants";
 import { parseSurveyModel } from "@/services/survey/parseSurveyModel";

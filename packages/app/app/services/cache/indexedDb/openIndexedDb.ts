@@ -1,8 +1,8 @@
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IDBPDatabase } from "idb";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";

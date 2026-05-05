@@ -6,6 +6,9 @@ export const withFinalizer = async <T, E>(
 ): Promise<T> => {
   const result = await resultAsync;
   const finalizerResult = await finalizer();
-  if (finalizerResult.isErr()) console.error(finalizerResult.error);
+  finalizerResult.match(
+    () => {},
+    (error) => console.error(error),
+  );
   return result._unsafeUnwrap();
 };

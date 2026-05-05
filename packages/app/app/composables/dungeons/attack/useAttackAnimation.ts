@@ -2,7 +2,7 @@ import type { Attack } from "#shared/models/dungeons/attack/Attack";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { dayjs } from "#shared/services/dayjs";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";

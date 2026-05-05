@@ -1,6 +1,6 @@
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { withFinalizer } from "#shared/util/withFinalizer";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { withFinalizer } from "#shared/error/withFinalizer";
 
 export const useOffsetPaginationOperationData = <TItem>(offsetPaginationData: Ref<OffsetPaginationData<TItem>>) => {
   const items = computed({

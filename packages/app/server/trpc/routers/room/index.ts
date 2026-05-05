@@ -171,7 +171,7 @@ export const roomRouter = router({
           ctx.db.insert(invitesInMessage).values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id }),
           toAppError,
         );
-        if (createInviteResult.isOk()) return inviteCode;
+        if (createInviteResult.unwrapOr(null)) return inviteCode;
       }
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",

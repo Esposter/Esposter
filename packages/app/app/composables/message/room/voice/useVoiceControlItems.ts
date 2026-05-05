@@ -1,4 +1,4 @@
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useVoiceStore } from "@/store/message/room/voice";
 
 interface VoiceControlItem {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
 import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";

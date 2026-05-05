@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from "vuetify";
 
-import { getResultAsync } from "#shared/util/getResultAsync";
-import { withFinalizer } from "#shared/util/withFinalizer";
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { withFinalizer } from "#shared/error/withFinalizer";
 import { formRules } from "@/services/vuetify/formRules";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "@esposter/db-schema";

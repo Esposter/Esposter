@@ -2,7 +2,7 @@ import type { VoiceSignalPayload } from "#shared/models/room/voice/VoiceSignalPa
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useVoiceStore } from "@/store/message/room/voice";
 import { exhaustiveGuard, jsonDateParse, toAppError } from "@esposter/shared";

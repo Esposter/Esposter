@@ -2,7 +2,7 @@ import type { Effect } from "@/models/dungeons/npc/effect/Effect";
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { applyNpcEffect } from "@/services/dungeons/scene/world/applyNpcEffect";
 import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
 import { phaserEventEmitter } from "@/services/phaser/events";
