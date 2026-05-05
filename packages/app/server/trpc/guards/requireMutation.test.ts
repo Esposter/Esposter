@@ -19,8 +19,8 @@ describe(requireMutation, () => {
     let error: unknown;
     try {
       requireMutation(undefined, Operation.Create, "Entity", "1");
-    } catch (err) {
-      error = err;
+    } catch (error) {
+      error = error;
     }
 
     expect(error).toBeInstanceOf(TRPCError);
@@ -34,8 +34,8 @@ describe(requireMutation, () => {
     let error: unknown;
     try {
       requireMutation(undefined, Operation.Create, "Entity", "1", "NOT_FOUND");
-    } catch (err) {
-      error = err;
+    } catch (error) {
+      error = error;
     }
 
     expect(error).toBeInstanceOf(TRPCError);

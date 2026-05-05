@@ -17,8 +17,12 @@ import { toAppError } from "@esposter/shared";
 ```typescript
 await ResultAsync.fromPromise(someAsyncOp(), toAppError)
   .andTee((result) => doSomethingWith(result))
-  .orTee((error) => createAlert(error.message, "error"))
-  .unwrapOr(undefined);
+  .match(
+    () => undefined,
+    (error) => {
+      createAlert(error.message, "error");
+    },
+  );
 ```
 
 ### Async operation → fallback value (services / routers)
@@ -48,6 +52,8 @@ await ResultAsync.fromPromise(bestEffortOp(), toAppError).orTee(console.error).u
 Never leave a `Result` or `ResultAsync` unhandled. Finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
 Never use `catch {}` (silent swallow). Never use `console.warn` — always `.orTee(console.error)`.
 Never use `void` with ResultAsync — always `await`. Since ResultAsync never rejects, awaiting is always safe.
+Never end a fire-and-forget chain with `.orTee(handler)` alone — it returns `ResultAsync` and the lint rule flags it. Use `.match(() => undefined, handler)` instead.
+No-op ok handler: always `() => undefined`, never `() => {}`. `undefined` makes the return type explicit; `{}` implies `void` and confuses type inference.
 
 ### Discriminated error types
 
@@ -63,15 +69,35 @@ if (result.isErr()) {
 const value = result.value;
 ```
 
-### Chaining multiple fallible steps
+### Chaining multiple fallible steps — prefer `getResultAsync`
+
+When steps are sequential with no per-step error recovery or mid-chain `.andTee()`, collapse into one `getResultAsync`. Simpler, no chaining overhead, catches both sync throws and async rejections uniformly.
 
 ```typescript
-ResultAsync.fromPromise(step1(), toAppError)
+// CORRECT — single getResultAsync, sequential await
+await getResultAsync(async () => {
+  const a = await step1();
+  const b = await step2(a);
+  await step3(b);
+}).match(
+  () => undefined,
+  (error) => {
+    createAlert(error.message, "error");
+  },
+);
+
+// WRONG — unnecessary andThen chain when result is discarded
+await ResultAsync.fromPromise(step1(), toAppError)
   .andThen((a) => ResultAsync.fromPromise(step2(a), toAppError))
   .andThen((b) => ResultAsync.fromPromise(step3(b), toAppError))
-  .orTee((error) => createAlert(error.message, "error"))
-  .unwrapOr(undefined);
+  .match(...);
 ```
+
+Keep `.andThen()` chains only when:
+
+- Per-step error recovery (`.orElse()` on a specific step)
+- Mid-chain `.andTee()` for side effects on the ok path
+- Return type is `ResultAsync<T, E>` used by the caller (not discarded)
 
 ### Sync transform after async operation
 

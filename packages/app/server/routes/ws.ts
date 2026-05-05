@@ -38,8 +38,7 @@ export default defineWebSocketHandler({
     peer.wsAdapter.emit("close", event.code, event.reason);
     const req = getReq(peer);
     const caller = createCaller(createContext({ req, res: peer.wsAdapter } as CreateWSSContextFnOptions));
-    const disconnectResult = await ResultAsync.fromPromise(caller.disconnect(), toAppError);
-    disconnectResult.match(
+    await ResultAsync.fromPromise(caller.disconnect(), toAppError).match(
       () => {
         console.log(`WS connection closed, clients: ${wss.clients.size}`);
       },
@@ -62,8 +61,7 @@ export default defineWebSocketHandler({
     peer.wsAdapter = new WsAdapter(peer);
     wss.addConnection(peer.wsAdapter, req);
     const caller = createCaller(createContext({ req, res: peer.wsAdapter } as CreateWSSContextFnOptions));
-    const connectResult = await ResultAsync.fromPromise(caller.connect(), toAppError);
-    connectResult.match(
+    await ResultAsync.fromPromise(caller.connect(), toAppError).match(
       () => {
         console.log(`WS connection opened, clients: ${wss.clients.size}`);
       },

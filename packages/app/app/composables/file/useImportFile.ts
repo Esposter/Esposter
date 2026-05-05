@@ -9,23 +9,22 @@ export const useImportFile = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   return (mimeType: MimeType, accept: string, onSelect: (file: File) => Promise<void>): Promise<void> =>
-    getResultAsync(() =>
-      showOpenFilePicker({
+    getResultAsync(async () => {
+      const handles = await showOpenFilePicker({
         types: [
           {
             accept: { [mimeType]: accept.split(",").map((value) => normalizeString(value)) },
             description: (accept.split(",")[0] ?? "").replace(/^\./, "").toUpperCase(),
           },
         ],
-      }),
-    )
-      .andThen((handles) => getResultAsync(() => takeOne(handles).getFile()))
-      .andThen((file) => getResultAsync(() => onSelect(file)))
-      .match(
-        () => undefined,
-        (error) => {
-          if (error instanceof Error && error.name === "AbortError") return;
-          createAlert(error instanceof Error ? error.message : String(error), "error");
-        },
-      );
+      });
+      const file = await takeOne(handles).getFile();
+      await onSelect(file);
+    }).match(
+      () => undefined,
+      (error) => {
+        if (error instanceof Error && error.name === "AbortError") return;
+        createAlert(error instanceof Error ? error.message : String(error), "error");
+      },
+    );
 };

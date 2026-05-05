@@ -9,7 +9,11 @@ export const getTableClient = async <TAzureTable extends AzureTable>(
   tableName: TAzureTable,
 ) => {
   const tableClient = TableClient.fromConnectionString(connectionString, tableName);
-  const result = await ResultAsync.fromPromise(tableClient.createTable(), toAppError);
-  if (result.isErr() && (result.error as { statusCode?: number }).statusCode !== 409) throw result.error;
+  await ResultAsync.fromPromise(tableClient.createTable(), toAppError).match(
+    () => undefined,
+    (error) => {
+      if ((error as { statusCode?: number }).statusCode !== 409) throw error;
+    },
+  );
   return tableClient as unknown as CustomTableClient<AzureTableEntityMap[TAzureTable]>;
 };

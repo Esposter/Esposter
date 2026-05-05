@@ -1,10 +1,9 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
+import { getResultAsync } from "#shared/error/getResultAsync";
 import { parseClipboardRows } from "@/services/tableEditor/file/commands/parseClipboardRows";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { toAppError } from "@esposter/shared";
-import { Result, ResultAsync } from "neverthrow";
 
 export const usePasteFromClipboard = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItem>();
@@ -15,11 +14,15 @@ export const usePasteFromClipboard = () => {
   return async () => {
     if (!editedItem.value?.dataSource) return;
     const dataSource = editedItem.value.dataSource;
-    await ResultAsync.fromPromise(window.navigator.clipboard.readText(), toAppError)
-      .andThen((text) => Result.fromThrowable(() => parseClipboardRows(text, dataSource), toAppError)())
-      .andThen((rows) => ResultAsync.fromPromise(createRows(rows), toAppError))
-      .orTee((error) => {
+    await getResultAsync(async () => {
+      const text = await window.navigator.clipboard.readText();
+      const rows = parseClipboardRows(text, dataSource);
+      createRows(rows);
+    }).match(
+      () => undefined,
+      (error) => {
         createAlert(error.message, "error");
-      });
+      },
+    );
   };
 };

@@ -143,7 +143,7 @@ describe("role", () => {
 
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
     const { user: nonMember } = await mockSessionOnce(mockContext.db);
-    await roleCaller.readMyPermissions({ roomIds: [] }); // consume mockSessionOnce, revert to owner session
+    await roleCaller.readMyPermissions({ roomIds: [] }); // Consume mockSessionOnce, revert to owner session
 
     await expect(
       roleCaller.assignRole({ roleId: role.id, roomId, userId: nonMember.id }),

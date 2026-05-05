@@ -13,8 +13,11 @@ export const useCopyToClipboard = () => {
   const { createAlert } = alertStore;
   return async (rowIds?: string[]) => {
     if (!editedItem.value?.dataSource) return;
-    await ResultAsync.fromPromise(copyToClipboard(editedItem.value.dataSource, rowIds), toAppError).orTee((error) => {
-      createAlert(error.message, "error");
-    });
+    await ResultAsync.fromPromise(copyToClipboard(editedItem.value.dataSource, rowIds), toAppError).match(
+      () => undefined,
+      (error) => {
+        createAlert(error.message, "error");
+      },
+    );
   };
 };
