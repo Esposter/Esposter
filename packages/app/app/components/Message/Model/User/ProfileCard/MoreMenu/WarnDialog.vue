@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
+import { getResultAsync } from "#shared/util/getResultAsync";
+import { withFinalizer } from "#shared/util/withFinalizer";
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
@@ -23,17 +25,18 @@ const warnReason = ref("");
     :confirm-button-props="{ color: 'warning', text: 'Warn' }"
     @submit="
       async (_event, onComplete) => {
-        try {
-          if (!currentRoom) return;
-          await $trpc.moderation.executeAdminAction.mutate({
-            reason: normalizeString(warnReason) || undefined,
-            roomId: currentRoom.id,
-            targetUserId: user.id,
-            type: AdminActionType.Warn,
-          });
-        } finally {
-          onComplete();
-        }
+        await withFinalizer(
+          getResultAsync(async () => {
+            if (!currentRoom) return;
+            await $trpc.moderation.executeAdminAction.mutate({
+              reason: normalizeString(warnReason) || undefined,
+              roomId: currentRoom.id,
+              targetUserId: user.id,
+              type: AdminActionType.Warn,
+            });
+          }),
+          () => getResultAsync(onComplete),
+        );
       }
     "
   >

@@ -7,7 +7,7 @@ Esposter uses **neverthrow** for explicit error handling. No silent swallows —
 ```typescript
 import { toAppError } from "@esposter/shared";
 // toAppError: (error: unknown) => Error
-// Maps unknown catch values to Error — preserves existing Error instances (including DOMException etc.)
+// Maps unknown thrown values to Error — preserves existing Error instances (including DOMException etc.)
 ```
 
 ## Patterns
@@ -17,7 +17,8 @@ import { toAppError } from "@esposter/shared";
 ```typescript
 await ResultAsync.fromPromise(someAsyncOp(), toAppError)
   .andTee((result) => doSomethingWith(result))
-  .orTee((error) => createAlert(error.message, "error"));
+  .orTee((error) => createAlert(error.message, "error"))
+  .unwrapOr(undefined);
 ```
 
 ### Async operation → fallback value (services / routers)
@@ -41,9 +42,10 @@ return ResultAsync.fromPromise(auth.save(value), toAppError).match(
 ### Best-effort (still log)
 
 ```typescript
-await ResultAsync.fromPromise(bestEffortOp(), toAppError).orTee(console.error);
+await ResultAsync.fromPromise(bestEffortOp(), toAppError).orTee(console.error).unwrapOr(undefined);
 ```
 
+Never leave a `Result` or `ResultAsync` unhandled. Finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
 Never use `catch {}` (silent swallow). Never use `console.warn` — always `.orTee(console.error)`.
 Never use `void` with ResultAsync — always `await`. Since ResultAsync never rejects, awaiting is always safe.
 
@@ -67,7 +69,8 @@ const value = result.value;
 ResultAsync.fromPromise(step1(), toAppError)
   .andThen((a) => ResultAsync.fromPromise(step2(a), toAppError))
   .andThen((b) => ResultAsync.fromPromise(step3(b), toAppError))
-  .orTee((error) => createAlert(error.message, "error"));
+  .orTee((error) => createAlert(error.message, "error"))
+  .unwrapOr(undefined);
 ```
 
 ### Sync transform after async operation
@@ -79,7 +82,8 @@ Use `.map()` (not `.andThen`) when the next step is synchronous and doesn't thro
 ResultAsync.fromPromise(window.navigator.clipboard.readText(), toAppError)
   .map((text) => parseClipboardRows(text, dataSource))
   .andTee(createRows)
-  .orTee((error) => createAlert(error.message, "error"));
+  .orTee((error) => createAlert(error.message, "error"))
+  .unwrapOr(undefined);
 
 // WRONG — .then() runs outside ResultAsync; parseClipboardRows errors bypass orTee
 ResultAsync.fromPromise(
@@ -124,22 +128,16 @@ const updated = requireMutation(
 );
 ```
 
-## What NOT to convert
+## Finalizers
 
-Keep `try-catch` for:
-
-- **Azure Functions** that must re-throw for platform retry semantics
-- **try-finally for `onComplete` callbacks** in pagination composables — `finally` guarantees the callback even when errors are thrown upstream
-
-## try/finally vs neverthrow
-
-`try/finally` is only needed when you have cleanup that must run even on throw (e.g. `writable.abort()` in file export, `isPending = false` in pagination). With neverthrow, since `ResultAsync` always resolves, you can do:
+Use `withFinalizer` when cleanup must run for both Ok and Err outcomes. It runs the finalizer, logs finalizer failure, then unwraps the original result so callers keep the old failure behavior.
 
 ```typescript
-isLoading.value = true;
-const result = await someResultAsync;
-isLoading.value = false; // always runs — ResultAsync never rejects
-result.match(onSuccess, onError);
+await withFinalizer(ResultAsync.fromPromise(save(), toAppError), () =>
+  ResultAsync.fromThrowable(async () => onComplete(), toAppError)(),
+);
 ```
+
+For simple loading flags around a `ResultAsync`, set the flag after `await`; `ResultAsync` resolves to a `Result` instead of rejecting.
 
 `useInFlight()` handles loading state automatically — prefer it over manual `isLoading` flags.

@@ -1,6 +1,7 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { getResultAsync } from "#shared/util/getResultAsync";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
@@ -19,8 +20,9 @@ export const useMessageCache = () => {
   watchDeep(items, (messages) => {
     const roomId = currentRoomId.value;
     if (!roomId || messages.length === 0) return;
-    pendingOperation = pendingOperation
-      .catch(() => undefined)
+    pendingOperation = getResultAsync(() => pendingOperation)
+      .orTee(console.error)
+      .unwrapOr(undefined)
       .then(() =>
         writeIndexedDb(
           MessageIndexedDbStoreConfiguration,
@@ -32,8 +34,9 @@ export const useMessageCache = () => {
 
   watch(currentRoomId, (newCurrentRoomId) => {
     if (!newCurrentRoomId || online.value) return;
-    pendingOperation = pendingOperation
-      .catch(() => undefined)
+    pendingOperation = getResultAsync(() => pendingOperation)
+      .orTee(console.error)
+      .unwrapOr(undefined)
       .then(async () => {
         const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, newCurrentRoomId);
         if (currentRoomId.value !== newCurrentRoomId || items.value.length > 0 || cachedMessages.length === 0) return;

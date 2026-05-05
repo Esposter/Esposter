@@ -11,8 +11,8 @@ import { on } from "@@/server/services/events/on";
 import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
 import { router } from "@@/server/trpc";
-import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
   AzureContainer,
   DatabaseEntityType,

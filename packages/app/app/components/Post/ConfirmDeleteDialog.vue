@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
+import { getResultAsync } from "#shared/util/getResultAsync";
+import { withFinalizer } from "#shared/util/withFinalizer";
 import { useColorsStore } from "@/store/colors";
 import { usePostStore } from "@/store/post";
 import { RoutePath } from "@esposter/shared";
@@ -28,12 +30,13 @@ const { text } = storeToRefs(colorsStore);
     }"
     @delete="
       async (onComplete) => {
-        try {
-          await deletePost(postId);
-          await navigateTo(RoutePath.Index);
-        } finally {
-          onComplete();
-        }
+        await withFinalizer(
+          getResultAsync(async () => {
+            await deletePost(postId);
+            await navigateTo(RoutePath.Index);
+          }),
+          () => getResultAsync(onComplete),
+        );
       }
     "
   >

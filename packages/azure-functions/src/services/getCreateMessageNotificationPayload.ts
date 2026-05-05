@@ -2,6 +2,7 @@ import type { InvocationContext } from "@azure/functions";
 
 import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@/services/constants";
 import { normalizeString, truncate } from "@esposter/shared";
+import { fromThrowable } from "neverthrow";
 import parse from "node-html-parser";
 
 export const getCreateMessageNotificationPayload = (
@@ -11,11 +12,14 @@ export const getCreateMessageNotificationPayload = (
 ): string | undefined => {
   let textContent: string | undefined = message;
 
-  try {
-    textContent = normalizeString(parse(message).querySelector("p")?.structuredText);
-  } catch (error) {
-    context.error(`Failed to create message notification payload for message ${message}: `, error);
-  }
+  fromThrowable(() => normalizeString(parse(message).querySelector("p")?.structuredText))().match(
+    (newTextContent) => {
+      textContent = newTextContent;
+    },
+    (error) => {
+      context.error(`Failed to create message notification payload for message ${message}: `, error);
+    },
+  );
 
   if (!textContent) return undefined;
 

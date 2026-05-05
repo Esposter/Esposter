@@ -158,7 +158,7 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
 
   items.reverse();
 
-  // We just need items for the rest so that we don't try to do operations on undefined
+  // We just need items for the rest so that we don't run operations on undefined
   for (let i = numberOfCards; i < maxShownCards; i++) items.push({});
   return items;
 });

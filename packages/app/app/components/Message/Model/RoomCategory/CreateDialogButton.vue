@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from "vuetify";
 
+import { getResultAsync } from "#shared/util/getResultAsync";
+import { withFinalizer } from "#shared/util/withFinalizer";
 import { formRules } from "@/services/vuetify/formRules";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "@esposter/db-schema";
@@ -10,16 +12,16 @@ const roomCategoryStore = useRoomCategoryStore();
 const { createRoomCategory } = roomCategoryStore;
 const dialog = ref(false);
 const name = ref("");
-
 const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
-  try {
-    const normalizedName = normalizeString(name.value);
-    if (!normalizedName) return;
-    await createRoomCategory({ name: normalizedName });
-    name.value = "";
-  } finally {
-    onComplete();
-  }
+  await withFinalizer(
+    getResultAsync(async () => {
+      const normalizedName = normalizeString(name.value);
+      if (!normalizedName) return;
+      await createRoomCategory({ name: normalizedName });
+      name.value = "";
+    }),
+    () => getResultAsync(onComplete),
+  );
 };
 </script>
 

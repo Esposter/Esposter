@@ -2,6 +2,7 @@ import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnV
 import type { MathTransformation } from "#shared/models/tableEditor/file/column/transformation/MathTransformation";
 
 import { evaluate } from "mathjs";
+import { fromThrowable } from "neverthrow";
 
 export const computeMathTransformation = (
   transformation: MathTransformation,
@@ -13,10 +14,8 @@ export const computeMathTransformation = (
       return [name, value === null ? 0 : Number(value)];
     }),
   );
-  try {
-    const result: unknown = evaluate(transformation.expression, scope);
-    return typeof result === "number" && isFinite(result) ? result : null;
-  } catch {
-    return null;
-  }
+  return fromThrowable((): unknown => evaluate(transformation.expression, scope))().match(
+    (result) => (typeof result === "number" && isFinite(result) ? result : null),
+    () => null,
+  );
 };

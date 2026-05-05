@@ -4,8 +4,9 @@ import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { middleware } from "@@/server/trpc";
-import { ID_SEPARATOR } from "@esposter/shared";
+import { ID_SEPARATOR, toAppError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { ResultAsync } from "neverthrow";
 
 export const getIsRateLimited = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
@@ -22,18 +23,21 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     }
 
     const rateLimiter = RateLimiterMap[type];
-    try {
-      const { msBeforeNext, remainingPoints } = await rateLimiter.consume(
-        getSessionPayload ? getSessionPayload.user.id : `${path}${ID_SEPARATOR}${ipAddress}`,
-      );
-      if ("setHeader" in ctx.res) {
-        ctx.res.setHeader("Retry-After", msBeforeNext / 1000);
-        ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
-        ctx.res.setHeader("X-RateLimit-Remaining", remainingPoints);
-        ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + msBeforeNext).toISOString());
-      }
-    } catch {
-      throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+    const rateLimiterResult = await ResultAsync.fromPromise(
+      rateLimiter.consume(getSessionPayload ? getSessionPayload.user.id : `${path}${ID_SEPARATOR}${ipAddress}`),
+      toAppError,
+    );
+    const { msBeforeNext, remainingPoints } = rateLimiterResult.match(
+      (result) => result,
+      () => {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      },
+    );
+    if ("setHeader" in ctx.res) {
+      ctx.res.setHeader("Retry-After", msBeforeNext / 1000);
+      ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
+      ctx.res.setHeader("X-RateLimit-Remaining", remainingPoints);
+      ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + msBeforeNext).toISOString());
     }
 
     return next({ ctx: { getSessionPayload } });

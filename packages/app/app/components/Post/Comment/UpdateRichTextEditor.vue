@@ -2,6 +2,8 @@
 import type { PostWithRelations } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/vue-3";
 
+import { getResultAsync } from "#shared/util/getResultAsync";
+import { withFinalizer } from "#shared/util/withFinalizer";
 import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
@@ -17,19 +19,23 @@ const emit = defineEmits<{
 const commentStore = useCommentStore();
 const { updateComment } = commentStore;
 const editedDescriptionHtml = ref(comment.description);
+const resetUpdateMode = () => {
+  emit("update:update-mode", false);
+  editedDescriptionHtml.value = comment.description;
+};
 const onUpdateComment = async (editor: Editor) => {
-  try {
-    if (editedDescriptionHtml.value === comment.description) return;
-    if (EMPTY_TEXT_REGEX.test(editor.getText())) {
-      emit("update:delete-mode", true);
-      return;
-    }
+  await withFinalizer(
+    getResultAsync(async () => {
+      if (editedDescriptionHtml.value === comment.description) return;
+      if (EMPTY_TEXT_REGEX.test(editor.getText())) {
+        emit("update:delete-mode", true);
+        return;
+      }
 
-    await updateComment({ description: editedDescriptionHtml.value, id: comment.id });
-  } finally {
-    emit("update:update-mode", false);
-    editedDescriptionHtml.value = comment.description;
-  }
+      await updateComment({ description: editedDescriptionHtml.value, id: comment.id });
+    }),
+    () => getResultAsync(resetUpdateMode),
+  );
 };
 </script>
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SurveyResponseEntity } from "@esposter/db-schema";
 
+import { getResultAsync } from "#shared/util/getResultAsync";
 import { validate } from "@/services/router/validate";
 import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/survey/constants";
 import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
@@ -45,12 +46,16 @@ model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSav
   showSaveInProgress();
   survey.clearIncorrectValues(true);
 
-  try {
+  await getResultAsync(async () => {
     await saveSurveyResponse(survey);
     showSaveSuccess();
-  } catch {
-    showSaveError();
-  }
+  })
+    .orElse(() =>
+      getResultAsync(() => {
+        showSaveError();
+      }),
+    )
+    .unwrapOr(undefined);
 });
 
 const isLoading = ref(true);

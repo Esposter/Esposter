@@ -1,9 +1,9 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
-import { toAppError } from "@esposter/shared";
 import { parseClipboardRows } from "@/services/tableEditor/file/commands/parseClipboardRows";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { toAppError } from "@esposter/shared";
 import { ResultAsync } from "neverthrow";
 
 export const usePasteFromClipboard = () => {

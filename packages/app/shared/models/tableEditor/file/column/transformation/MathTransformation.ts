@@ -5,6 +5,7 @@ import { ColumnTransformationType } from "#shared/models/tableEditor/file/column
 import { mathVariableSchema } from "#shared/models/tableEditor/file/column/transformation/MathVariable";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { parse } from "mathjs";
+import { fromThrowable } from "neverthrow";
 import { z } from "zod";
 
 export interface MathTransformation extends ItemEntityType<ColumnTransformationType.Math> {
@@ -19,14 +20,15 @@ export const mathTransformationSchema = z
     variables: z.array(mathVariableSchema),
   })
   .superRefine(({ expression }, ctx) => {
-    try {
-      parse(expression);
-    } catch (error) {
-      ctx.addIssue({
-        code: "custom",
-        message: error instanceof Error ? error.message : "Invalid expression",
-        path: ["expression"],
-      });
-    }
+    fromThrowable(() => parse(expression))().match(
+      () => undefined,
+      (error) => {
+        ctx.addIssue({
+          code: "custom",
+          message: error instanceof Error ? error.message : "Invalid expression",
+          path: ["expression"],
+        });
+      },
+    );
   })
   .meta({ title: ColumnTransformationType.Math }) satisfies z.ZodType<MathTransformation>;

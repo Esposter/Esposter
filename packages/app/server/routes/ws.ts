@@ -8,8 +8,10 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createContext } from "@@/server/trpc/context";
 import { trpcRouter } from "@@/server/trpc/routers";
 import { userRouter } from "@@/server/trpc/routers/user";
+import { toAppError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
+import { ResultAsync } from "neverthrow";
 
 const wss = new WssAdapter();
 const handler = applyWSSHandler({
@@ -36,12 +38,15 @@ export default defineWebSocketHandler({
     peer.wsAdapter.emit("close", event.code, event.reason);
     const req = getReq(peer);
     const caller = createCaller(createContext({ req, res: peer.wsAdapter } as CreateWSSContextFnOptions));
-    try {
-      await caller.disconnect();
-      console.log(`WS connection closed, clients: ${wss.clients.size}`);
-    } catch (error) {
-      if (error instanceof TRPCError && error.code !== "UNAUTHORIZED") throw error;
-    }
+    const disconnectResult = await ResultAsync.fromPromise(caller.disconnect(), toAppError);
+    disconnectResult.match(
+      () => {
+        console.log(`WS connection closed, clients: ${wss.clients.size}`);
+      },
+      (error) => {
+        if (error instanceof TRPCError && error.code !== "UNAUTHORIZED") throw error;
+      },
+    );
   },
 
   error(peer, error) {
@@ -57,11 +62,14 @@ export default defineWebSocketHandler({
     peer.wsAdapter = new WsAdapter(peer);
     wss.addConnection(peer.wsAdapter, req);
     const caller = createCaller(createContext({ req, res: peer.wsAdapter } as CreateWSSContextFnOptions));
-    try {
-      await caller.connect();
-      console.log(`WS connection opened, clients: ${wss.clients.size}`);
-    } catch (error) {
-      if (error instanceof TRPCError && error.code !== "UNAUTHORIZED") throw error;
-    }
+    const connectResult = await ResultAsync.fromPromise(caller.connect(), toAppError);
+    connectResult.match(
+      () => {
+        console.log(`WS connection opened, clients: ${wss.clients.size}`);
+      },
+      (error) => {
+        if (error instanceof TRPCError && error.code !== "UNAUTHORIZED") throw error;
+      },
+    );
   },
 });

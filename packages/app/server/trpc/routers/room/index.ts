@@ -55,14 +55,46 @@ import {
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import {
+  InvalidOperationError,
+  ItemMetadataPropertyNames,
+  NotFoundError,
+  Operation,
+  takeOne,
+  toAppError,
+} from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, getColumns, ilike, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
+import { ResultAsync } from "neverthrow";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomInMessageSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
+
+const createSystemRoomMessage = async (
+  roomId: string,
+  userId: string,
+  message: string,
+  sessionId: string,
+): Promise<void> => {
+  await ResultAsync.fromPromise(
+    (async () => {
+      const messageClient = await useTableClient(AzureTable.Messages);
+      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+      const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+        message,
+        roomId,
+        type: MessageType.System,
+        userId,
+      });
+      messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
+    })(),
+    toAppError,
+  )
+    .orTee(console.error)
+    .unwrapOr(undefined);
+};
 
 const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });
 export type ReadMutualRoomsInput = z.infer<typeof readMutualRoomsInputSchema>;
@@ -133,16 +165,14 @@ export const roomRouter = router({
       let inviteCode = await readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
       if (inviteCode) return inviteCode;
 
-      for (let i = 0; i < 3; i++)
-        try {
-          inviteCode = createCode(CODE_LENGTH);
-          await ctx.db
-            .insert(invitesInMessage)
-            .values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id });
-          return inviteCode;
-        } catch {
-          continue;
-        }
+      for (let i = 0; i < 3; i++) {
+        inviteCode = createCode(CODE_LENGTH);
+        const createInviteResult = await ResultAsync.fromPromise(
+          ctx.db.insert(invitesInMessage).values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id }),
+          toAppError,
+        );
+        if (createInviteResult.isOk()) return inviteCode;
+      }
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
@@ -213,22 +243,12 @@ export const roomRouter = router({
       roomEventEmitter.emit("leaveRoom", { ...deletedMember, sessionId: ctx.getSessionPayload.session.id });
 
       if (kickedMember)
-        try {
-          const messageClient = await useTableClient(AzureTable.Messages);
-          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-            message: `${kickedMember.name} left the room.`,
-            roomId,
-            type: MessageType.System,
-            userId: ctx.getSessionPayload.user.id,
-          });
-          messageEventEmitter.emit("createMessage", [
-            [systemMessage],
-            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-          ]);
-        } catch {
-          /* System message creation is non-critical */
-        }
+        await createSystemRoomMessage(
+          roomId,
+          ctx.getSessionPayload.user.id,
+          `${kickedMember.name} left the room.`,
+          ctx.getSessionPayload.session.id,
+        );
     }),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
@@ -290,22 +310,7 @@ export const roomRouter = router({
       const { roomId, roomInMessage, user } = userToRoomWithRelations;
       roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
 
-      try {
-        const messageClient = await useTableClient(AzureTable.Messages);
-        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-          message: `${user.name} joined the room.`,
-          roomId,
-          type: MessageType.System,
-          userId: user.id,
-        });
-        messageEventEmitter.emit("createMessage", [
-          [systemMessage],
-          { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-        ]);
-      } catch {
-        /* System message creation is non-critical */
-      }
+      await createSystemRoomMessage(roomId, user.id, `${user.name} joined the room.`, ctx.getSessionPayload.session.id);
 
       return roomInMessage;
     }),
@@ -344,22 +349,12 @@ export const roomRouter = router({
         where: { id: { eq: userId } },
       });
       if (leavingMember)
-        try {
-          const messageClient = await useTableClient(AzureTable.Messages);
-          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-            message: `${leavingMember.name} left the room.`,
-            roomId: userToRoom.roomId,
-            type: MessageType.System,
-            userId,
-          });
-          messageEventEmitter.emit("createMessage", [
-            [systemMessage],
-            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-          ]);
-        } catch {
-          /* System message creation is non-critical */
-        }
+        await createSystemRoomMessage(
+          userToRoom.roomId,
+          userId,
+          `${leavingMember.name} left the room.`,
+          ctx.getSessionPayload.session.id,
+        );
 
       return userToRoom.roomId;
     }),

@@ -3,8 +3,8 @@ import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/Index
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { IndexKey, IndexNames } from "idb";
 
-import { toAppError, toRawDeep } from "@esposter/shared";
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
+import { toAppError, toRawDeep } from "@esposter/shared";
 import { ResultAsync } from "neverthrow";
 
 export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends IndexNames<IndexedDbDatabaseSchema, T>>(

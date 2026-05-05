@@ -92,7 +92,7 @@ export const BuildingMap = {
     baseValue: 1.1e12,
   },
   [BuildingId.Idleverse]: {
-    flavorDescription: `There's been countless other idle universes running alongside our own. You've finally found a way to hijack their production and convert whatever they've been making into ${compileVariable(
+    flavorDescription: `There's been countless other idle universes running alongside our own. You've found a way to hijack their production and convert whatever they've been making into ${compileVariable(
       "pluralName",
     )}!`,
     basePrice: 1.2e22,

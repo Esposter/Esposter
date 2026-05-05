@@ -1,5 +1,7 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
+import { getResultAsync } from "#shared/util/getResultAsync";
+import { withFinalizer } from "#shared/util/withFinalizer";
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { LOCAL_PARTICIPANT_ID } from "@/services/message/voice/constants";
@@ -73,31 +75,39 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     const roomId = roomStore.currentRoomId;
     if (!roomId || callRoomId.value) return;
     callRoomId.value = roomId;
-    try {
+    await getResultAsync(async () => {
       const stream = await acquireLocalStream();
       subscribeToSignals(roomId);
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
       setParticipants(roomId, participants);
       if (sessionId.value) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, sessionId.value, stream);
-    } catch (error) {
-      console.error(error);
-      await leaveVoice();
-    }
+    })
+      .orElse((error) =>
+        getResultAsync(async () => {
+          console.error(error);
+          await leaveVoice();
+        }),
+      )
+      .unwrapOr(undefined);
   };
 
   const leaveVoice = async () => {
     const roomId = callRoomId.value;
     if (!roomId) return;
-    try {
-      if (sessionId.value) deleteVoiceParticipant(roomId, sessionId.value);
-      await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
-    } finally {
-      callRoomId.value = undefined;
-      isDeafened.value = false;
-      isForceMuted.value = false;
-      await cleanupAll();
-      clearSpeakers();
-    }
+    await withFinalizer(
+      getResultAsync(async () => {
+        if (sessionId.value) deleteVoiceParticipant(roomId, sessionId.value);
+        await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
+      }),
+      () =>
+        getResultAsync(async () => {
+          callRoomId.value = undefined;
+          isDeafened.value = false;
+          isForceMuted.value = false;
+          await cleanupAll();
+          clearSpeakers();
+        }),
+    );
   };
 
   const toggleDeafen = () => {

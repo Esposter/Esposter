@@ -2,7 +2,9 @@
 import type { MessageEntity } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
+import { getResultAsync } from "#shared/util/getResultAsync";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { withFinalizer } from "#shared/util/withFinalizer";
 import { useDataStore } from "@/store/message/data";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
@@ -20,24 +22,31 @@ const emit = defineEmits<{
 const dataStore = useDataStore();
 const { updateMessage } = dataStore;
 const editedMessageHtml = ref(useMessageWithMentions(() => message.message).value);
+const resetUpdateMode = () => {
+  emit("update:update-mode", false);
+  editedMessageHtml.value = message.message;
+};
 const onUpdateMessage = (editor: Editor) => {
-  try {
-    if (editedMessageHtml.value === message.message) return;
-    else if (EMPTY_TEXT_REGEX.test(editor.getText())) {
-      emit("update:delete-mode", true);
-      return;
-    } else
-      getSynchronizedFunction(async () => {
-        await updateMessage({
+  if (editedMessageHtml.value === message.message) {
+    resetUpdateMode();
+    return;
+  } else if (EMPTY_TEXT_REGEX.test(editor.getText())) {
+    emit("update:delete-mode", true);
+    resetUpdateMode();
+    return;
+  }
+  getSynchronizedFunction(async () => {
+    await withFinalizer(
+      getResultAsync(() =>
+        updateMessage({
           message: editedMessageHtml.value,
           partitionKey: message.partitionKey,
           rowKey: message.rowKey,
-        });
-      })();
-  } finally {
-    emit("update:update-mode", false);
-    editedMessageHtml.value = message.message;
-  }
+        }),
+      ),
+      () => getResultAsync(resetUpdateMode),
+    );
+  })();
 };
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {

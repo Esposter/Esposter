@@ -1,7 +1,7 @@
 import type { ConfigurableNavigator } from "@vueuse/core";
 
-import { toAppError } from "@esposter/shared";
 import { useAlertStore } from "@/store/alert";
+import { toAppError } from "@esposter/shared";
 import { defu } from "defu";
 import { ResultAsync } from "neverthrow";
 

@@ -2,6 +2,8 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { getResultAsync } from "#shared/util/getResultAsync";
+import { withFinalizer } from "#shared/util/withFinalizer";
 import { useColorsStore } from "@/store/colors";
 
 interface ConfirmDeleteDialogProps {
@@ -26,11 +28,12 @@ const { text } = storeToRefs(colorsStore);
     }"
     @delete="
       async (onComplete) => {
-        try {
-          await $trpc.message.deleteMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
-        } finally {
-          onComplete();
-        }
+        await withFinalizer(
+          getResultAsync(() =>
+            $trpc.message.deleteMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
+          ),
+          () => getResultAsync(onComplete),
+        );
       }
     "
   >

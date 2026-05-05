@@ -1,4 +1,6 @@
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
+import { getResultAsync } from "#shared/util/getResultAsync";
+import { withFinalizer } from "#shared/util/withFinalizer";
 
 export const useOffsetPaginationOperationData = <TItem>(offsetPaginationData: Ref<OffsetPaginationData<TItem>>) => {
   const items = computed({
@@ -21,23 +23,25 @@ export const useOffsetPaginationOperationData = <TItem>(offsetPaginationData: Re
     offsetPaginationData.value = new OffsetPaginationData<TItem>();
   };
   const readItems = async (query: () => Promise<OffsetPaginationData<TItem>>, onComplete?: () => void) => {
-    try {
-      const newOffsetPaginationData = await query();
-      initializeOffsetPaginationData(newOffsetPaginationData);
-    } finally {
-      onComplete?.();
-    }
+    await withFinalizer(
+      getResultAsync(async () => {
+        const newOffsetPaginationData = await query();
+        initializeOffsetPaginationData(newOffsetPaginationData);
+      }),
+      () => getResultAsync(() => onComplete?.()),
+    );
   };
   const getReadMoreItems =
     (query: (offset?: number) => Promise<OffsetPaginationData<TItem>>, onComplete?: () => void) =>
     async (offset?: number) => {
-      try {
-        const { hasMore: newHasMore, items: newItems } = await query(offset);
-        hasMore.value = newHasMore;
-        items.value = newItems;
-      } finally {
-        onComplete?.();
-      }
+      await withFinalizer(
+        getResultAsync(async () => {
+          const { hasMore: newHasMore, items: newItems } = await query(offset);
+          hasMore.value = newHasMore;
+          items.value = newItems;
+        }),
+        () => getResultAsync(() => onComplete?.()),
+      );
     };
 
   return {

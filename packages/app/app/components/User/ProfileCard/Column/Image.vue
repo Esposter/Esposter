@@ -2,6 +2,8 @@
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
+import { getResultAsync } from "#shared/util/getResultAsync";
+import { withFinalizer } from "#shared/util/withFinalizer";
 import { formRules } from "@/services/vuetify/formRules";
 import { takeOne } from "@esposter/shared";
 
@@ -41,11 +43,15 @@ const isLoading = ref(false);
             const file = Array.isArray(files) ? takeOne(files) : files;
             isLoading = true;
 
-            try {
-              modelValue = await $trpc.user.uploadProfileImage.mutate(file);
-            } finally {
-              isLoading = false;
-            }
+            await withFinalizer(
+              getResultAsync(async () => {
+                modelValue = await $trpc.user.uploadProfileImage.mutate(file);
+              }),
+              () =>
+                getResultAsync(() => {
+                  isLoading = false;
+                }),
+            );
           }
         "
       />

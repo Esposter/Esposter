@@ -14,11 +14,11 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { ranking } from "@@/server/services/post/ranking";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
@@ -26,7 +26,8 @@ import {
   posts,
   selectPostSchema,
 } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
@@ -149,6 +150,11 @@ export const postRouter = router({
         input,
       );
       const { parentId: postId } = deletedComment;
+      if (!postId)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, input).message,
+        });
 
       const post = await requireEntity(
         tx.query.posts.findFirst({

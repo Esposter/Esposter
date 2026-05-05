@@ -20,7 +20,8 @@ import type { Except } from "type-fest";
 import { MockRestError } from "@/models/MockRestError";
 import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { exhaustiveGuard, ID_SEPARATOR } from "@esposter/shared";
+import { exhaustiveGuard, ID_SEPARATOR, toAppError } from "@esposter/shared";
+import { ResultAsync } from "neverthrow";
 /**
  * An in-memory mock of the Azure TableClient.
  * It uses a Map to simulate table storage and correctly implements the TableClient interface.
@@ -132,29 +133,32 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
         throw new MockRestError("All transaction actions must target the same partitionKey.", 400);
 
     const snapshot = new Map(this.table);
-    try {
-      for (const [type, entity, updateMode] of actions)
-        switch (type) {
-          case "create":
-            await this.createEntity(entity);
-            break;
-          case "delete":
-            await this.deleteEntity(entity.partitionKey, entity.rowKey);
-            break;
-          case "update":
-            await this.updateEntity(entity, updateMode);
-            break;
-          case "upsert":
-            await this.upsertEntity(entity, updateMode);
-            break;
-          default:
-            exhaustiveGuard(type);
-        }
-    } catch (error) {
+    const transactionResult = await ResultAsync.fromPromise(
+      (async () => {
+        for (const [type, entity, updateMode] of actions)
+          switch (type) {
+            case "create":
+              await this.createEntity(entity);
+              break;
+            case "delete":
+              await this.deleteEntity(entity.partitionKey, entity.rowKey);
+              break;
+            case "update":
+              await this.updateEntity(entity, updateMode);
+              break;
+            case "upsert":
+              await this.upsertEntity(entity, updateMode);
+              break;
+            default:
+              exhaustiveGuard(type);
+          }
+      })(),
+      toAppError,
+    ).orTee(() => {
       this.table.clear();
       for (const [key, value] of snapshot) this.table.set(key, value);
-      throw error;
-    }
+    });
+    transactionResult._unsafeUnwrap();
     return {
       getResponseForEntity: () => undefined,
       status: 202,

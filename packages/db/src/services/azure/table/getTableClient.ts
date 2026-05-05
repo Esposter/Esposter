@@ -1,16 +1,14 @@
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
 import { TableClient } from "@azure/data-tables";
+import { toAppError } from "@esposter/shared";
+import { ResultAsync } from "neverthrow";
 
 export const getTableClient = async <TAzureTable extends AzureTable>(
   connectionString: string,
   tableName: TAzureTable,
 ) => {
   const tableClient = TableClient.fromConnectionString(connectionString, tableName);
-  try {
-    await tableClient.createTable();
-    return tableClient as unknown as CustomTableClient<AzureTableEntityMap[TAzureTable]>;
-  } catch {
-    return tableClient as unknown as CustomTableClient<AzureTableEntityMap[TAzureTable]>;
-  }
+  await ResultAsync.fromPromise(tableClient.createTable(), toAppError).unwrapOr(undefined);
+  return tableClient as unknown as CustomTableClient<AzureTableEntityMap[TAzureTable]>;
 };
