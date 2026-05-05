@@ -1,7 +1,7 @@
 import type { ConfigurableNavigator } from "@vueuse/core";
 
-import { getResultAsync } from "@esposter/shared";
 import { useAlertStore } from "@/store/alert";
+import { getResultAsync } from "@esposter/shared";
 import { defu } from "defu";
 
 interface UseMediaRecorderOptions extends ConfigurableNavigator {

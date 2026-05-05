@@ -1,12 +1,12 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { getResultAsync } from "@esposter/shared";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
+import { getResultAsync } from "@esposter/shared";
 
 export const useMessageCache = () => {
   const roomStore = useRoomStore();

@@ -1,11 +1,11 @@
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IDBPDatabase } from "idb";
 
-import { getResultAsync } from "@esposter/shared";
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
+import { getResultAsync } from "@esposter/shared";
 import { openDB } from "idb";
 
 const DATABASE_NAME = "esposter";

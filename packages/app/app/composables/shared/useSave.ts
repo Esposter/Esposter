@@ -2,10 +2,10 @@ import type { ItemMetadata } from "@esposter/shared";
 import type { Resolver, TRPCResolverDef } from "@trpc/client";
 import type { z } from "zod";
 
-import { getResultAsync } from "@esposter/shared";
 import { authClient } from "@/services/auth/authClient";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { useAlertStore } from "@/store/alert";
+import { getResultAsync } from "@esposter/shared";
 
 interface UseSaveAuthOptions<TDef extends TRPCResolverDef> {
   save: Resolver<TDef>;

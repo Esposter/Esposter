@@ -2,9 +2,9 @@
 import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 import type { EditorView } from "@codemirror/view";
 
-import { getResultAsync } from "@esposter/shared";
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
+import { getResultAsync } from "@esposter/shared";
 import { Codemirror } from "vue-codemirror";
 
 interface FileRendererCodeProps extends FileRendererComponentProps {
