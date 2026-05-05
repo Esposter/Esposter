@@ -3,7 +3,7 @@ import type { MimeType } from "#shared/models/file/MimeType";
 import { getResultAsync } from "#shared/error/getResultAsync";
 import { useAlertStore } from "@/store/alert";
 import { normalizeString } from "@esposter/shared";
-import { err } from "neverthrow";
+import { err, ok } from "neverthrow";
 import { showSaveFilePicker } from "show-open-file-picker";
 
 export const useExportFile = () => {
@@ -39,6 +39,7 @@ export const useExportFile = () => {
         }).orElse((error) =>
           getResultAsync(() => writable.abort())
             .orTee(console.error)
+            .orElse(() => ok(undefined))
             .andThen(() => err(error)),
         ),
       )

@@ -47,23 +47,24 @@ export const voiceRouter = router({
       if (isFirstJoiner) {
         voiceCallStartTimeMap.set(roomId, new Date());
         await ResultAsync.fromPromise(
-          Promise.resolve().then(async () => {
-            const [messageClient, messageAscendingClient] = await Promise.all([
-              useTableClient(AzureTable.Messages),
-              useTableClient(AzureTable.MessagesAscending),
-            ]);
-            return createMessage(messageClient, messageAscendingClient, {
-              roomId,
-              type: MessageType.VoiceCall,
-              userId: user.id,
-            });
-          }),
+          Promise.all([useTableClient(AzureTable.Messages), useTableClient(AzureTable.MessagesAscending)]),
           toAppError,
         )
+          .andThen(([messageClient, messageAscendingClient]) =>
+            ResultAsync.fromPromise(
+              createMessage(messageClient, messageAscendingClient, {
+                roomId,
+                type: MessageType.VoiceCall,
+                userId: user.id,
+              }),
+              toAppError,
+            ),
+          )
           .andTee((systemMessage) => {
             messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId: session.id }]);
           })
-          .orTee(console.error);
+          .orTee(console.error)
+          .unwrapOr(undefined);
       }
 
       return getRoomParticipants(roomId);
@@ -80,24 +81,25 @@ export const voiceRouter = router({
       voiceCallStartTimeMap.delete(roomId);
       const callDurationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / 1000) : 0;
       await ResultAsync.fromPromise(
-        Promise.resolve().then(async () => {
-          const [messageClient, messageAscendingClient] = await Promise.all([
-            useTableClient(AzureTable.Messages),
-            useTableClient(AzureTable.MessagesAscending),
-          ]);
-          return createMessage(messageClient, messageAscendingClient, {
-            message: String(callDurationSeconds),
-            roomId,
-            type: MessageType.VoiceCall,
-            userId: user.id,
-          });
-        }),
+        Promise.all([useTableClient(AzureTable.Messages), useTableClient(AzureTable.MessagesAscending)]),
         toAppError,
       )
+        .andThen(([messageClient, messageAscendingClient]) =>
+          ResultAsync.fromPromise(
+            createMessage(messageClient, messageAscendingClient, {
+              message: String(callDurationSeconds),
+              roomId,
+              type: MessageType.VoiceCall,
+              userId: user.id,
+            }),
+            toAppError,
+          ),
+        )
         .andTee((systemMessage) => {
           messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
         })
-        .orTee(console.error);
+        .orTee(console.error)
+        .unwrapOr(undefined);
     }
   }),
   onJoinVoiceChannel: standardAuthedProcedure.input(onJoinVoiceChannelInputSchema).subscription(async function* ({

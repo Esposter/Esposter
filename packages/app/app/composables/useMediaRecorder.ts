@@ -102,7 +102,12 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
 
   const start = async (timeslice?: number) => {
     if (state.value === "recording") return;
+    else if (!isSupported.value) {
+      createAlert("Media devices API is not supported in this environment.", "error");
+      return;
+    }
     data.value = [];
+    stream.value = undefined;
 
     await ResultAsync.fromPromise(window.navigator.mediaDevices.getUserMedia(toValue(constraints)), toAppError).match(
       (value) => {

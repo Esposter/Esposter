@@ -131,7 +131,7 @@ const updated = requireMutation(
 
 ## Finalizers
 
-Use `withFinalizer` when cleanup must run for both Ok and Err outcomes. It runs the finalizer, logs finalizer failure, then unwraps the original result so callers keep the old failure behavior.
+Use `withFinalizer` when cleanup must run for both Ok and Err outcomes. It runs the finalizer, logs finalizer failure, then unwraps the original result — returning `Promise<T>` (throws on Err). No terminal consumer (`.unwrapOr`, `.match`) is needed.
 
 ```typescript
 await withFinalizer(ResultAsync.fromPromise(save(), toAppError), () =>

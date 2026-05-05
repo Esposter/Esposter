@@ -161,7 +161,9 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
       })
       .match(
         () => undefined,
-        () => undefined,
+        (error) => {
+          throw error;
+        },
       );
     return {
       getResponseForEntity: () => undefined,

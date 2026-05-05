@@ -285,7 +285,7 @@ export const surveyRouter = router({
       const surveyResponse = await requireEntity(
         getEntity(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
         AzureEntityType.SurveyResponse,
-        `${input.partitionKey}/${input.rowKey}`,
+        JSON.stringify({ partitionKey: input.partitionKey, rowKey: input.rowKey }),
       );
       if (input.model === surveyResponse.model)
         throw new TRPCError({
