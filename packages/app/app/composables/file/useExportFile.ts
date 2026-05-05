@@ -1,9 +1,7 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
-import { getResultAsync } from "@esposter/shared";
 import { useAlertStore } from "@/store/alert";
-import { normalizeString } from "@esposter/shared";
-import { err, ok } from "neverthrow";
+import { getResultAsync, normalizeString } from "@esposter/shared";
 import { showSaveFilePicker } from "show-open-file-picker";
 
 export const useExportFile = () => {
@@ -34,10 +32,10 @@ export const useExportFile = () => {
           await writable.write(blob);
           await writable.close();
         }).orElse((error) =>
-          getResultAsync(() => writable.abort())
-            .orTee(console.error)
-            .orElse(() => ok(undefined))
-            .andThen(() => err(error)),
+          getResultAsync(async () => {
+            await writable.abort().catch(console.error);
+            throw error;
+          }),
         ),
       )
       .match(

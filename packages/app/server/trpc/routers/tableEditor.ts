@@ -1,4 +1,3 @@
-import { getResultAsync } from "@esposter/shared";
 import {
   TableEditorConfiguration,
   tableEditorConfigurationSchema,
@@ -9,7 +8,7 @@ import { SAVE_FILENAME } from "@@/server/services/tableEditor/constants";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { AzureContainer } from "@esposter/db-schema";
-import { jsonDateParse, streamToText } from "@esposter/shared";
+import { getResultAsync, jsonDateParse, streamToText } from "@esposter/shared";
 
 export const tableEditorRouter = router({
   readTableEditorConfiguration: standardAuthedProcedure.query<TableEditorConfiguration>(({ ctx }) => {

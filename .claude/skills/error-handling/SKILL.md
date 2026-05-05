@@ -162,15 +162,12 @@ const updated = requireMutation(
 
 Use `withFinalizer` when cleanup must run for both Ok and Err outcomes. It runs the finalizer, logs finalizer failure, then unwraps the original result — returning `Promise<T>` (throws on Err). No terminal consumer (`.unwrapOr`, `.match`) is needed.
 
-Both arguments are plain `() => PromiseLike<T>` — not `ResultAsync`.
+Both arguments are plain `() => Promisable<T>` — not `ResultAsync`.
 
 ```typescript
-await withFinalizer(
-  async () => {
-    await save();
-  },
-  () => onComplete?.(),
-);
+await withFinalizer(async () => {
+  await save();
+}, onComplete);
 ```
 
 For simple loading flags around a `ResultAsync`, set the flag after `await`; `ResultAsync` resolves to a `Result` instead of rejecting.

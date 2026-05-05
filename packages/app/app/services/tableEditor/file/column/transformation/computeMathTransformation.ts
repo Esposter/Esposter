@@ -14,7 +14,7 @@ export const computeMathTransformation = (
       return [name, value === null ? 0 : Number(value)];
     }),
   );
-  return getResult((): unknown => evaluate(transformation.expression, scope)).match(
+  return getResult(() => evaluate(transformation.expression, scope)).match(
     (result) => (typeof result === "number" && isFinite(result) ? result : null),
     () => null,
   );

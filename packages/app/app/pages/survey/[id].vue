@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { SurveyResponseEntity } from "@esposter/db-schema";
 
-import { getResultAsync } from "@esposter/shared";
 import { validate } from "@/services/router/validate";
 import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/survey/constants";
 import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
+import { getResult, getResultAsync } from "@esposter/shared";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
 
@@ -45,13 +45,12 @@ model.onCurrentPageChanged.add(saveSurveyResponse);
 model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSaveSuccess }) => {
   showSaveInProgress();
   survey.clearIncorrectValues(true);
-
   await getResultAsync(async () => {
     await saveSurveyResponse(survey);
     showSaveSuccess();
   })
     .orElse(() =>
-      getResultAsync(() => {
+      getResult(() => {
         showSaveError();
       }),
     )

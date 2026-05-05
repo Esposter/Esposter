@@ -22,25 +22,19 @@ export const useOffsetPaginationOperationData = <TItem>(offsetPaginationData: Re
     offsetPaginationData.value = new OffsetPaginationData<TItem>();
   };
   const readItems = async (query: () => Promise<OffsetPaginationData<TItem>>, onComplete?: () => void) => {
-    await withFinalizer(
-      async () => {
-        const newOffsetPaginationData = await query();
-        initializeOffsetPaginationData(newOffsetPaginationData);
-      },
-      () => onComplete?.(),
-    );
+    await withFinalizer(async () => {
+      const newOffsetPaginationData = await query();
+      initializeOffsetPaginationData(newOffsetPaginationData);
+    }, onComplete);
   };
   const getReadMoreItems =
     (query: (offset?: number) => Promise<OffsetPaginationData<TItem>>, onComplete?: () => void) =>
     async (offset?: number) => {
-      await withFinalizer(
-        async () => {
-          const { hasMore: newHasMore, items: newItems } = await query(offset);
-          hasMore.value = newHasMore;
-          items.value = newItems;
-        },
-        () => onComplete?.(),
-      );
+      await withFinalizer(async () => {
+        const { hasMore: newHasMore, items: newItems } = await query(offset);
+        hasMore.value = newHasMore;
+        items.value = newItems;
+      }, onComplete);
     };
 
   return {

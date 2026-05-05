@@ -80,22 +80,19 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     onComplete?: () => Promisable<void>,
     cacheOptions?: ReadItemsCacheOptions<T>,
   ) => {
-    await withFinalizer(
-      async () => {
-        if (!online.value) return;
-        const { hasMore: newHasMore, items: newItems, nextCursor: newNextCursor } = await query(nextCursor.value);
-        hasMore.value = newHasMore;
-        nextCursor.value = newNextCursor;
-        items.value.push(...newItems);
-        if (cacheOptions)
-          await writeIndexedDb(
-            cacheOptions.configuration,
-            items.value as IndexedDbDatabaseSchema[T]["value"][],
-            cacheOptions.partitionKey,
-          );
-      },
-      () => onComplete?.(),
-    );
+    await withFinalizer(async () => {
+      if (!online.value) return;
+      const { hasMore: newHasMore, items: newItems, nextCursor: newNextCursor } = await query(nextCursor.value);
+      hasMore.value = newHasMore;
+      nextCursor.value = newNextCursor;
+      items.value.push(...newItems);
+      if (cacheOptions)
+        await writeIndexedDb(
+          cacheOptions.configuration,
+          items.value as IndexedDbDatabaseSchema[T]["value"][],
+          cacheOptions.partitionKey,
+        );
+    }, onComplete);
   };
 
   return {

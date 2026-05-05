@@ -1,4 +1,3 @@
-import { getResultAsync } from "@esposter/shared";
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { Clicker, clickerSchema } from "#shared/models/clicker/data/Clicker";
@@ -9,7 +8,7 @@ import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { AzureContainer } from "@esposter/db-schema";
-import { jsonDateParse, streamToText } from "@esposter/shared";
+import { getResultAsync, jsonDateParse, streamToText } from "@esposter/shared";
 
 export const clickerRouter = router({
   readBuildingMap: standardRateLimitedProcedure.query(() => BuildingMap),

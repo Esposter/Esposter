@@ -2,13 +2,11 @@
 import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-import { getResultAsync } from "@esposter/shared";
 import { withFinalizer } from "#shared/error/withFinalizer";
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
-import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
-import { err, ok } from "neverthrow";
+import { getResultAsync, InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
@@ -54,16 +52,14 @@ const vote = async (optionId: null | string) => {
         await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
       })
         .orElse((error) =>
-          getResultAsync(() =>
-            storeUpdateMessage({
+          getResultAsync(async () => {
+            await storeUpdateMessage({
               message: previousMessage,
               partitionKey: message.partitionKey,
               rowKey: message.rowKey,
-            }),
-          )
-            .orTee(console.error)
-            .orElse(() => ok(undefined))
-            .andThen(() => err(error)),
+            }).catch(console.error);
+            throw error;
+          }),
         )
         .match(
           () => undefined,

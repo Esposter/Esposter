@@ -2,14 +2,13 @@ import type { Survey } from "@esposter/db-schema";
 import type { Base } from "survey-core";
 import type { ThemeTabPlugin } from "survey-creator-core";
 
-import { getResultAsync } from "@esposter/shared";
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getActions } from "@/services/survey/getActions";
 import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
-import { getPropertyNames, takeOne } from "@esposter/shared";
+import { getPropertyNames, getResult, getResultAsync, takeOne } from "@esposter/shared";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
@@ -65,7 +64,7 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
       callback("success", downloadFileSasUrl);
     })
       .orElse(() =>
-        getResultAsync(() => {
+        getResult(() => {
           callback("error");
         }),
       )

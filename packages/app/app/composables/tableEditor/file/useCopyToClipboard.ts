@@ -1,9 +1,9 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
-import { getResultAsync } from "@esposter/shared";
 import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { getResultAsync } from "@esposter/shared";
 
 export const useCopyToClipboard = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItem>();
@@ -11,8 +11,9 @@ export const useCopyToClipboard = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   return async (rowIds?: string[]) => {
-    if (!editedItem.value?.dataSource) return;
-    await getResultAsync(() => copyToClipboard(editedItem.value.dataSource, rowIds)).match(
+    const dataSource = editedItem.value?.dataSource;
+    if (!dataSource) return;
+    await getResultAsync(() => copyToClipboard(dataSource, rowIds)).match(
       () => undefined,
       (error) => {
         createAlert(error.message, "error");

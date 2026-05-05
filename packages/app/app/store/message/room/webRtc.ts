@@ -5,8 +5,7 @@ import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useVoiceStore } from "@/store/message/room/voice";
-import { getResultAsync } from "@esposter/shared";
-import { exhaustiveGuard, jsonDateParse } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, jsonDateParse } from "@esposter/shared";
 // Module-level WebRTC state — only one voice call at a time.
 let localStream: MediaStream | null = null;
 let isRemoteAudioMuted = false;
