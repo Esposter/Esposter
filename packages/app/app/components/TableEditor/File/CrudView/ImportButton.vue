@@ -36,13 +36,11 @@ const previewRows = computed(() => previewDataSource.value?.rows.slice(0, 5) ?? 
         icon="mdi-upload"
         :="props"
         @click="
-          async () => {
-            await importFile(dataSourceConfiguration.mimeType, dataSourceConfiguration.accept, async (file) => {
-              const result = await dataSourceConfiguration.deserialize(file, modelValue);
-              pendingName = trimFileExtension(result.metadata.name);
-              previewDataSource = result;
-            });
-          }
+          importFile(dataSourceConfiguration.mimeType, dataSourceConfiguration.accept, async (file) => {
+            const result = await dataSourceConfiguration.deserialize(file, modelValue);
+            pendingName = trimFileExtension(result.metadata.name);
+            previewDataSource = result;
+          })
         "
       />
     </template>

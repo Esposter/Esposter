@@ -18,7 +18,6 @@ export default defineEventHandler(async (event) => {
 
   const runtimeConfig = useRuntimeConfig(event);
   const body = await readBody(event);
-
   return ResultAsync.fromPromise(
     (async () => {
       await webhookRateLimiter.consume(id);
@@ -36,7 +35,7 @@ export default defineEventHandler(async (event) => {
       setResponseStatus(event, status);
       return _data;
     })(),
-    toAppError,
+    (err) => err,
   ).match(
     (data) => data,
     (error) => {
@@ -47,6 +46,7 @@ export default defineEventHandler(async (event) => {
         setResponseStatus(event, 429);
         return { message: "Rate limit exceeded." };
       } else {
+        console.error(toAppError(error));
         setResponseStatus(event, 500);
         return { message: "An internal server error occurred." };
       }

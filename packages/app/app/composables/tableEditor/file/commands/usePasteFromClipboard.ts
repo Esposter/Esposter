@@ -4,7 +4,7 @@ import { parseClipboardRows } from "@/services/tableEditor/file/commands/parseCl
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { toAppError } from "@esposter/shared";
-import { ResultAsync } from "neverthrow";
+import { Result, ResultAsync } from "neverthrow";
 
 export const usePasteFromClipboard = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItem>();
@@ -16,8 +16,8 @@ export const usePasteFromClipboard = () => {
     if (!editedItem.value?.dataSource) return;
     const dataSource = editedItem.value.dataSource;
     await ResultAsync.fromPromise(window.navigator.clipboard.readText(), toAppError)
-      .map((text) => parseClipboardRows(text, dataSource))
-      .andTee(createRows)
+      .andThen((text) => Result.fromThrowable(() => parseClipboardRows(text, dataSource), toAppError)())
+      .andThen((rows) => ResultAsync.fromPromise(createRows(rows), toAppError))
       .orTee((error) => {
         createAlert(error.message, "error");
       });

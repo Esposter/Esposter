@@ -21,17 +21,15 @@ const importJsonFile = useImportJsonFile();
         :flat="false"
         :="props"
         @click="
-          async () => {
-            await importJsonFile(async (file) => {
-              const fileText = await file.text();
-              const result = TableEditorTypeTableEditorSchemaMap[tableEditorType].safeParse(jsonDateParse(fileText));
-              if (!result.success) {
-                createAlert(z.prettifyError(result.error), 'error');
-                return;
-              }
-              await importConfiguration(result.data);
-            });
-          }
+          importJsonFile(async (file) => {
+            const fileText = await file.text();
+            const result = TableEditorTypeTableEditorSchemaMap[tableEditorType].safeParse(jsonDateParse(fileText));
+            if (!result.success) {
+              createAlert(z.prettifyError(result.error), 'error');
+              return;
+            }
+            await importConfiguration(result.data);
+          })
         "
       >
         <v-icon icon="mdi-upload" />
