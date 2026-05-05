@@ -8,7 +8,9 @@ export const withAsyncIterator = <T, R>(
   const iterator = createIterator()[Symbol.asyncIterator]();
   return withFinalizer(
     () => fn(iterator),
-    () => iterator.return?.(),
+    () => {
+      iterator.return?.();
+    },
   );
 };
 
