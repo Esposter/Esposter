@@ -98,7 +98,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
       getResult: () => response,
       isDone: () => true,
       isStopped: () => false,
-      onProgress: noop,
+      onProgress: () => noop,
       poll: () => Promise.resolve(),
       pollUntilDone: () => Promise.resolve(response),
       stopPolling: noop,
