@@ -7,7 +7,7 @@ export const withFinalizer = async <T>(fn: () => PromiseLike<T>, finalizer: () =
   return result.match(
     (value) => value,
     (error) => {
-      throw toAppError(error);
+      throw error;
     },
   );
 };
