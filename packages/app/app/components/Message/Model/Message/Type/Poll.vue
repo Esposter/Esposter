@@ -6,7 +6,7 @@ import { withFinalizer } from "#shared/error/withFinalizer";
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
-import { getResultAsync, InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, jsonDateParse, noop, Operation } from "@esposter/shared";
 
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
@@ -59,16 +59,13 @@ const vote = async (optionId: null | string) => {
                 partitionKey: message.partitionKey,
                 rowKey: message.rowKey,
               }),
-            ).match(() => undefined, console.error);
+            ).match(noop, console.error);
             throw error;
           }),
         )
-        .match(
-          () => undefined,
-          (error) => {
-            throw error;
-          },
-        ),
+        .match(noop, (error) => {
+          throw error;
+        }),
     () => {
       isVoting.value = false;
     },

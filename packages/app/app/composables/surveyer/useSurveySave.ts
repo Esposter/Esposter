@@ -3,7 +3,7 @@ import type { SurveyCreatorModel } from "survey-creator-core";
 
 import { THEME_KEY } from "@/services/survey/constants";
 import { useSurveyStore } from "@/store/survey";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const useSurveySave = (survey: Ref<Survey>, creator: SurveyCreatorModel) => {
   const surveyStore = useSurveyStore();
@@ -24,11 +24,8 @@ export const useSurveySave = (survey: Ref<Survey>, creator: SurveyCreatorModel) 
         }),
       );
       callback(saveNo, true);
-    }).match(
-      () => undefined,
-      () => {
-        callback(saveNo, false);
-      },
-    );
+    }).match(noop, () => {
+      callback(saveNo, false);
+    });
   };
 };

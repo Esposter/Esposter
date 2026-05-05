@@ -1,7 +1,7 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync, normalizeString } from "@esposter/shared";
+import { getResultAsync, noop, normalizeString } from "@esposter/shared";
 import { showSaveFilePicker } from "show-open-file-picker";
 
 export const useExportFile = () => {
@@ -33,16 +33,13 @@ export const useExportFile = () => {
           await writable.close();
         }).orElse((error) =>
           getResultAsync(async () => {
-            await getResultAsync(async () => writable.abort()).match(() => undefined, console.error);
+            await getResultAsync(async () => writable.abort()).match(noop, console.error);
             throw error;
           }),
         ),
       )
-      .match(
-        () => undefined,
-        (error) => {
-          if (error instanceof Error && error.name === "AbortError") return;
-          createAlert(error instanceof Error ? error.message : String(error), "error");
-        },
-      );
+      .match(noop, (error) => {
+        if (error instanceof Error && error.name === "AbortError") return;
+        createAlert(error instanceof Error ? error.message : String(error), "error");
+      });
 };

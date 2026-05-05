@@ -4,7 +4,7 @@ import { executeAdminActionInputSchema } from "#shared/models/db/moderation/Exec
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createEntity } from "@esposter/db";
 import { AdminActionType, AzureTable, getReverseTickedTimestamp, ModerationLogEntity } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";
 
 const t = initTRPC.context<AuthedContext>().create();
@@ -32,7 +32,7 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
         type,
       }),
     );
-  }).match(() => undefined, console.error);
+  }).match(noop, console.error);
 
   return result;
 });

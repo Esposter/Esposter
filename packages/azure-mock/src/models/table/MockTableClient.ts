@@ -20,7 +20,7 @@ import type { Except } from "type-fest";
 import { MockRestError } from "@/models/MockRestError";
 import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { exhaustiveGuard, getResultAsync, ID_SEPARATOR } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
  * It uses a Map to simulate table storage and correctly implements the TableClient interface.
@@ -155,14 +155,11 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
         this.table.clear();
         for (const [key, value] of snapshot) this.table.set(key, value);
       })
-      .match(
-        () => undefined,
-        (error) => {
-          throw error;
-        },
-      );
+      .match(noop, (error) => {
+        throw error;
+      });
     return {
-      getResponseForEntity: () => undefined,
+      getResponseForEntity: noop,
       status: 202,
       subResponses: [],
     } as unknown as TableTransactionResponse;

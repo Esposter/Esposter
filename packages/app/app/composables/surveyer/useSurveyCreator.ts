@@ -8,7 +8,7 @@ import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getActions } from "@/services/survey/getActions";
 import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
-import { getPropertyNames, getResultAsync, takeOne } from "@esposter/shared";
+import { getPropertyNames, getResultAsync, noop, takeOne } from "@esposter/shared";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
@@ -62,12 +62,9 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
         }),
       );
       callback("success", downloadFileSasUrl);
-    }).match(
-      () => undefined,
-      () => {
-        callback("error");
-      },
-    );
+    }).match(noop, () => {
+      callback("error");
+    });
   });
   // Add all the possible delete file events
   const remove = LogoImageViewModel.prototype.remove;

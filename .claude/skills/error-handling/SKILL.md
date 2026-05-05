@@ -5,10 +5,11 @@ Esposter uses **neverthrow** for explicit error handling. No silent swallows —
 ## Core Utility
 
 ```typescript
-import { getResult, getResultAsync } from "@esposter/shared";
+import { getResult, getResultAsync, noop } from "@esposter/shared";
 // getResult: sync fn → Result<T, Error>
 // getResultAsync: async fn → ResultAsync<T, Error>
 // Always use these instead of fromThrowable or ResultAsync.fromPromise directly.
+// noop: () => undefined — use as the ok-handler in .match(noop, errorHandler)
 ```
 
 ## Patterns
@@ -27,12 +28,9 @@ return getResult(() => new RegExp(pattern).exec(value)).match(
 ```typescript
 await getResultAsync(() => someAsyncOp())
   .andTee((result) => doSomethingWith(result))
-  .match(
-    () => undefined,
-    (error) => {
-      createAlert(error.message, "error");
-    },
-  );
+  .match(noop, (error) => {
+    createAlert(error.message, "error");
+  });
 ```
 
 ### Async operation → fallback value (services / routers)
@@ -66,8 +64,8 @@ await getResultAsync(() => bestEffortOp())
 Never leave a `Result` or `ResultAsync` unhandled. Finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
 Never use `catch {}` (silent swallow). Never use `console.warn` — always `.orTee(console.error)`.
 Never use `void` with ResultAsync — always `await`. Since ResultAsync never rejects, awaiting is always safe.
-Never end a fire-and-forget chain with `.orTee(handler)` alone — it returns `ResultAsync` and the lint rule flags it. Use `.match(() => undefined, handler)` instead.
-No-op ok handler: always `() => undefined`, never `() => {}`. `undefined` makes the return type explicit; `{}` implies `void` and confuses type inference.
+Never end a fire-and-forget chain with `.orTee(handler)` alone — it returns `ResultAsync` and the lint rule flags it. Use `.match(noop, handler)` instead.
+No-op ok handler: always `noop` (from `@esposter/shared`). Never inline `() => undefined` or `() => {}` — `noop` is the canonical form.
 
 Always use `getResult(() => expr)` for sync throwing operations and `getResultAsync(() => asyncExpr)` for async ones. Never call `fromThrowable` or `ResultAsync.fromPromise` directly.
 
@@ -99,10 +97,7 @@ await getResultAsync(() => showSaveFilePicker())
         .andThen(() => err(error)),
     ),
   )
-  .match(
-    () => undefined,
-    (error) => createAlert(error.message, "error"),
-  );
+  .match(noop, (error) => createAlert(error.message, "error"));
 ```
 
 ### Sync transform after async operation

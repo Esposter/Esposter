@@ -72,7 +72,7 @@ return typeof result === "number" && isFinite(result) ? result : null;
 ```typescript
 .superRefine(({ expression }, ctx) => {
   fromThrowable(() => parse(expression))().match(
-    () => undefined,
+    noop,
     (error) => {
       ctx.addIssue({
         code: "custom",

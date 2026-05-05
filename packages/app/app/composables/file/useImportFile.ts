@@ -1,7 +1,7 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync, normalizeString, takeOne } from "@esposter/shared";
+import { getResultAsync, noop, normalizeString, takeOne } from "@esposter/shared";
 import { showOpenFilePicker } from "show-open-file-picker";
 
 export const useImportFile = () => {
@@ -19,11 +19,8 @@ export const useImportFile = () => {
       });
       const file = await takeOne(handles).getFile();
       await onSelect(file);
-    }).match(
-      () => undefined,
-      (error) => {
-        if (error instanceof Error && error.name === "AbortError") return;
-        createAlert(error instanceof Error ? error.message : String(error), "error");
-      },
-    );
+    }).match(noop, (error) => {
+      if (error instanceof Error && error.name === "AbortError") return;
+      createAlert(error instanceof Error ? error.message : String(error), "error");
+    });
 };

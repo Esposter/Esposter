@@ -6,7 +6,7 @@ import { getCreateMessageNotificationPayload } from "@/services/getCreateMessage
 import { webpush } from "@/services/webpush";
 import { getPushSubscriptionsForMessage } from "@esposter/db";
 import { pushSubscriptionsInMessage } from "@esposter/db-schema";
-import { getResultAsync, RoutePath } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { WebPushError } from "web-push";
 
@@ -38,18 +38,15 @@ export const pushNotification = async (
             { endpoint, expirationTime: expirationTime ? expirationTime.getTime() : null, keys: { auth, p256dh } },
             payload,
           ),
-        ).match(
-          () => undefined,
-          async (error) => {
-            if (error instanceof WebPushError)
-              if (error.statusCode === 410) {
-                // A 410 GONE status means the subscription is no longer valid and should be deleted
-                context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
-                await db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id));
-              } else context.error(`Failed to send push notification to ${endpoint}: `, error);
-            else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
-          },
-        );
+        ).match(noop, async (error) => {
+          if (error instanceof WebPushError)
+            if (error.statusCode === 410) {
+              // A 410 GONE status means the subscription is no longer valid and should be deleted
+              context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
+              await db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id));
+            } else context.error(`Failed to send push notification to ${endpoint}: `, error);
+          else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
+        });
       })(),
     ),
   );

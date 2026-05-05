@@ -3,7 +3,7 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { mathVariableSchema } from "#shared/models/tableEditor/file/column/transformation/MathVariable";
-import { createItemEntityTypeSchema, getResult } from "@esposter/shared";
+import { createItemEntityTypeSchema, getResult, noop } from "@esposter/shared";
 import { parse } from "mathjs";
 import { z } from "zod";
 
@@ -19,15 +19,12 @@ export const mathTransformationSchema = z
     variables: z.array(mathVariableSchema),
   })
   .superRefine(({ expression }, ctx) => {
-    getResult(() => parse(expression)).match(
-      () => undefined,
-      (error) => {
-        ctx.addIssue({
-          code: "custom",
-          message: error instanceof Error ? error.message : "Invalid expression",
-          path: ["expression"],
-        });
-      },
-    );
+    getResult(() => parse(expression)).match(noop, (error) => {
+      ctx.addIssue({
+        code: "custom",
+        message: error instanceof Error ? error.message : "Invalid expression",
+        path: ["expression"],
+      });
+    });
   })
   .meta({ title: ColumnTransformationType.Math }) satisfies z.ZodType<MathTransformation>;

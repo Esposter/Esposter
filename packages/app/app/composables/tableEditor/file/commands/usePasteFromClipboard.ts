@@ -3,7 +3,7 @@ import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/
 import { parseClipboardRows } from "@/services/tableEditor/file/commands/parseClipboardRows";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const usePasteFromClipboard = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItem>();
@@ -18,11 +18,8 @@ export const usePasteFromClipboard = () => {
       const text = await window.navigator.clipboard.readText();
       const rows = parseClipboardRows(text, dataSource);
       createRows(rows);
-    }).match(
-      () => undefined,
-      (error) => {
-        createAlert(error.message, "error");
-      },
-    );
+    }).match(noop, (error) => {
+      createAlert(error.message, "error");
+    });
   };
 };
