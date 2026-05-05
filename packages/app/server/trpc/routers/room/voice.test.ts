@@ -11,7 +11,7 @@ import { roomRouter } from "@@/server/trpc/routers/room";
 import { voiceRouter } from "@@/server/trpc/routers/room/voice";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { roomsInMessage } from "@esposter/db-schema";
-import { ForbiddenError, takeOne } from "@esposter/shared";
+import { ForbiddenError, NotFoundError, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("voice", () => {
@@ -277,6 +277,21 @@ describe("voice", () => {
 
     await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new ForbiddenError("Must join voice channel first").message}]`,
+    );
+  });
+
+  test("fails sendSignal if target is not in voice channel", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
+    await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
+    replayMockSession(sessionPayload);
+    const targetId = getMockSession().session.id;
+    const payload = { data: "{}", targetId, type: VoiceSignalType.Offer };
+
+    await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError("Target participant", targetId).message}]`,
     );
   });
 });

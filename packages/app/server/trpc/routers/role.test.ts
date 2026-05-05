@@ -8,7 +8,7 @@ import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { DatabaseEntityType, RoomPermission, roomsInMessage } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("role", () => {
@@ -136,6 +136,20 @@ describe("role", () => {
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
     expect(memberRoles.some(({ roleId }) => roleId === role.id)).toBe(true);
+  });
+
+  test("assignRole throws NOT_FOUND if target is not a room member", async () => {
+    expect.hasAssertions();
+
+    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const { user: nonMember } = await mockSessionOnce(mockContext.db);
+    await roleCaller.readMyPermissions({ roomIds: [] }); // consume mockSessionOnce, revert to owner session
+
+    await expect(
+      roleCaller.assignRole({ roleId: role.id, roomId, userId: nonMember.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.UserToRoom, nonMember.id).message}]`,
+    );
   });
 
   test("assignRole is idempotent on duplicate", async () => {

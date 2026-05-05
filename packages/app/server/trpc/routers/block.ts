@@ -21,7 +21,7 @@ export const blockRouter = router({
       });
     const blockedUser = await requireEntity(
       ctx.db.query.users.findFirst({ where: { id: { eq: targetUserId } } }),
-      DatabaseEntityType.Block,
+      DatabaseEntityType.User,
       targetUserId,
     );
     const friendshipId = getFriendshipId(userId, targetUserId);

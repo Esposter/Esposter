@@ -55,7 +55,7 @@ export const userRouter = router({
       )[0],
       Operation.Update,
       DatabaseEntityType.UserStatus,
-      userRouter.disconnect.name,
+      userRouter.connect.name,
     );
 
     userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });

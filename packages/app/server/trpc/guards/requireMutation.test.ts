@@ -25,7 +25,7 @@ describe(requireMutation, () => {
 
     expect(error).toBeInstanceOf(TRPCError);
     expect((error as TRPCError).code).toBe("BAD_REQUEST");
-    expect(error).toMatchInlineSnapshot(`[TRPCError: Invalid Operation: Create Entity 1]`);
+    expect(error).toMatchInlineSnapshot(`[TRPCError: Invalid operation: Create, name: Entity, 1]`);
   });
 
   test("throws TRPCError with code NOT_FOUND when result is undefined and code param is NOT_FOUND", () => {
@@ -40,6 +40,6 @@ describe(requireMutation, () => {
 
     expect(error).toBeInstanceOf(TRPCError);
     expect((error as TRPCError).code).toBe("NOT_FOUND");
-    expect(error).toMatchInlineSnapshot(`[TRPCError: Invalid Operation: Create Entity 1]`);
+    expect(error).toMatchInlineSnapshot(`[TRPCError: Invalid operation: Create, name: Entity, 1]`);
   });
 });

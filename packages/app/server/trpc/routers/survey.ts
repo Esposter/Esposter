@@ -111,7 +111,7 @@ export const surveyRouter = router({
       )[0],
       Operation.Create,
       DatabaseEntityType.Survey,
-      JSON.stringify(input),
+      ctx.getSessionPayload.user.id,
     );
 
     const blobName = `${newSurvey.id}/${SURVEY_MODEL_FILENAME}`;
@@ -180,7 +180,7 @@ export const surveyRouter = router({
         (await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id)).returning())[0],
         Operation.Update,
         DatabaseEntityType.Survey,
-        JSON.stringify(rest),
+        id,
       );
 
       const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
@@ -285,7 +285,7 @@ export const surveyRouter = router({
       const surveyResponse = await requireEntity(
         getEntity(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
         AzureEntityType.SurveyResponse,
-        JSON.stringify(input),
+        `${input.partitionKey}/${input.rowKey}`,
       );
       if (input.model === surveyResponse.model)
         throw new TRPCError({

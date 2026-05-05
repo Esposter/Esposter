@@ -45,7 +45,7 @@ export const friendRequestRouter = router({
       );
       const senderUser = await requireEntity(
         ctx.db.query.users.findFirst({ where: { id: { eq: senderId } } }),
-        DatabaseEntityType.Friend,
+        DatabaseEntityType.User,
         senderId,
       );
       const receiverUser: User = {
@@ -121,7 +121,7 @@ export const friendRequestRouter = router({
         });
       const receiverUser = await requireEntity(
         ctx.db.query.users.findFirst({ where: { id: { eq: receiverId } } }),
-        DatabaseEntityType.Friend,
+        DatabaseEntityType.User,
         receiverId,
       );
       const friendshipId = getFriendshipId(userId, receiverId);
