@@ -1,4 +1,4 @@
-/* eslint-disable require-await -- async wrappers intentional: converts sync throws into rejections so ResultAsync.fromPromise captures them */
+/* oxlint-disable require-await -- async wrappers intentional: converts sync throws into rejections so ResultAsync.fromPromise captures them */
 import type { Promisable } from "type-fest";
 
 import { getResultAsync } from "@esposter/shared";
