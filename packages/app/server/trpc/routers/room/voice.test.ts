@@ -287,7 +287,7 @@ describe("voice", () => {
     const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     replayMockSession(sessionPayload);
-    const targetId = getMockSession().session.id;
+    const targetId = crypto.randomUUID();
     const payload = { data: "{}", targetId, type: VoiceSignalType.Offer };
 
     await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(

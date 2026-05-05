@@ -3,7 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
@@ -142,13 +142,13 @@ describe("role", () => {
     expect.hasAssertions();
 
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
-    const { user: nonMember } = await mockSessionOnce(mockContext.db);
-    await roleCaller.readMyPermissions({ roomIds: [] }); // Consume mockSessionOnce, revert to owner session
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
 
     await expect(
-      roleCaller.assignRole({ roleId: role.id, roomId, userId: nonMember.id }),
+      roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.UserToRoom, nonMember.id).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.UserToRoom, user.id).message}]`,
     );
   });
 

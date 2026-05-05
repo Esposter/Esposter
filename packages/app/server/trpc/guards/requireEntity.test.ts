@@ -1,4 +1,5 @@
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { NotFoundError } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(requireEntity, () => {
@@ -15,7 +16,7 @@ describe(requireEntity, () => {
     expect.hasAssertions();
 
     await expect(requireEntity(Promise.resolve(undefined), "Entity", "1")).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Entity "1" not found]`,
+      `[TRPCError: ${new NotFoundError("Entity", "1").message}]`,
     );
   });
 });

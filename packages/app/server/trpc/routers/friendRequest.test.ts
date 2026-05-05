@@ -9,7 +9,7 @@ import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -106,7 +106,7 @@ describe("friendRequest", () => {
     const userId = crypto.randomUUID();
 
     await expect(friendRequestCaller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Friend, userId).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, userId).message}]`,
     );
   });
 

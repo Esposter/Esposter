@@ -69,35 +69,27 @@ if (result.isErr()) {
 const value = result.value;
 ```
 
-### Chaining multiple fallible steps — prefer `getResultAsync`
+### Chaining multiple fallible steps
 
-When steps are sequential with no per-step error recovery or mid-chain `.andTee()`, collapse into one `getResultAsync`. Simpler, no chaining overhead, catches both sync throws and async rejections uniformly.
+Use `ResultAsync.fromPromise(promise, toAppError).andThen(...)` chains when different steps need different error handling (`.orElse()` on a specific step) or mid-chain side effects (`.andTee()`).
 
 ```typescript
-// CORRECT — single getResultAsync, sequential await
-await getResultAsync(async () => {
-  const a = await step1();
-  const b = await step2(a);
-  await step3(b);
-}).match(
-  () => undefined,
-  (error) => {
-    createAlert(error.message, "error");
-  },
-);
-
-// WRONG — unnecessary andThen chain when result is discarded
-await ResultAsync.fromPromise(step1(), toAppError)
-  .andThen((a) => ResultAsync.fromPromise(step2(a), toAppError))
-  .andThen((b) => ResultAsync.fromPromise(step3(b), toAppError))
-  .match(...);
+// per-step error recovery — use andThen chain
+await ResultAsync.fromPromise(showSaveFilePicker(), toAppError)
+  .andThen(({ blob, writable }) =>
+    ResultAsync.fromPromise(writable.write(blob), toAppError).orElse((error) =>
+      ResultAsync.fromPromise(writable.abort(), toAppError)
+        .orTee(console.error)
+        .andThen(() => err(error)),
+    ),
+  )
+  .match(
+    () => undefined,
+    (error) => createAlert(error.message, "error"),
+  );
 ```
 
-Keep `.andThen()` chains only when:
-
-- Per-step error recovery (`.orElse()` on a specific step)
-- Mid-chain `.andTee()` for side effects on the ok path
-- Return type is `ResultAsync<T, E>` used by the caller (not discarded)
+`getResultAsync` is a lower-level building block — use it only when a utility explicitly requires a `ResultAsync` from a throwable function (e.g., internally inside `withFinalizer`). Don't reach for it as a general replacement for `ResultAsync.fromPromise`.
 
 ### Sync transform after async operation
 
@@ -159,9 +151,14 @@ const updated = requireMutation(
 
 Use `withFinalizer` when cleanup must run for both Ok and Err outcomes. It runs the finalizer, logs finalizer failure, then unwraps the original result — returning `Promise<T>` (throws on Err). No terminal consumer (`.unwrapOr`, `.match`) is needed.
 
+Both arguments are plain `() => PromiseLike<T> | T` — not `ResultAsync`.
+
 ```typescript
-await withFinalizer(ResultAsync.fromPromise(save(), toAppError), () =>
-  ResultAsync.fromThrowable(async () => onComplete(), toAppError)(),
+await withFinalizer(
+  async () => {
+    await save();
+  },
+  () => onComplete?.(),
 );
 ```
 
