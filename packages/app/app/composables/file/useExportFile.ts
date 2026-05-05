@@ -9,13 +9,13 @@ import { showSaveFilePicker } from "show-open-file-picker";
 export const useExportFile = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
-  return async (
+  return (
     serialize: (type: MimeType) => Promise<Blob>,
     fileName: string,
     mimeType: MimeType,
     accept: string,
-  ): Promise<void> => {
-    const exportResult = await getResultAsync(() => serialize(mimeType))
+  ): Promise<void> =>
+    getResultAsync(() => serialize(mimeType))
       .andThen((blob) =>
         getResultAsync(() =>
           showSaveFilePicker({
@@ -41,13 +41,12 @@ export const useExportFile = () => {
             .orTee(console.error)
             .andThen(() => err(error)),
         ),
+      )
+      .match(
+        () => undefined,
+        (error) => {
+          if (error instanceof Error && error.name === "AbortError") return;
+          createAlert(error instanceof Error ? error.message : String(error), "error");
+        },
       );
-    exportResult.match(
-      () => undefined,
-      (error) => {
-        if (error instanceof Error && error.name === "AbortError") return;
-        createAlert(error instanceof Error ? error.message : String(error), "error");
-      },
-    );
-  };
 };

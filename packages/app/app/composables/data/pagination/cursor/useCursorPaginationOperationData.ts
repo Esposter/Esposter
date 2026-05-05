@@ -3,9 +3,9 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { ReadItemsCacheOptions } from "@/models/cache/indexedDb/ReadItemsCacheOptions";
 import type { Promisable } from "type-fest";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { getResultAsync } from "#shared/error/getResultAsync";
 import { withFinalizer } from "#shared/error/withFinalizer";
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 
@@ -96,7 +96,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
             cacheOptions.partitionKey,
           );
       }),
-      () => getResultAsync(async () => onComplete?.()),
+      () => getResultAsync(() => onComplete?.()),
     );
   };
 

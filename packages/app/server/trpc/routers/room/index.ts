@@ -167,11 +167,13 @@ export const roomRouter = router({
 
       for (let i = 0; i < 3; i++) {
         inviteCode = createCode(CODE_LENGTH);
-        const createInviteResult = await ResultAsync.fromPromise(
-          ctx.db.insert(invitesInMessage).values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id }),
-          toAppError,
-        );
-        if (createInviteResult.unwrapOr(null)) return inviteCode;
+        if (
+          await ResultAsync.fromPromise(
+            ctx.db.insert(invitesInMessage).values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id }),
+            toAppError,
+          ).unwrapOr(null)
+        )
+          return inviteCode;
       }
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",

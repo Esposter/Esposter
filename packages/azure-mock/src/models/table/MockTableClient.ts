@@ -133,7 +133,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
         throw new MockRestError("All transaction actions must target the same partitionKey.", 400);
 
     const snapshot = new Map(this.table);
-    const transactionResult = await ResultAsync.fromPromise(
+    await ResultAsync.fromPromise(
       (async () => {
         for (const [type, entity, updateMode] of actions)
           switch (type) {
@@ -154,11 +154,15 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
           }
       })(),
       toAppError,
-    ).orTee(() => {
-      this.table.clear();
-      for (const [key, value] of snapshot) this.table.set(key, value);
-    });
-    transactionResult._unsafeUnwrap();
+    )
+      .orTee(() => {
+        this.table.clear();
+        for (const [key, value] of snapshot) this.table.set(key, value);
+      })
+      .match(
+        () => undefined,
+        () => undefined,
+      );
     return {
       getResponseForEntity: () => undefined,
       status: 202,

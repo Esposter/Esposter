@@ -48,7 +48,7 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
         },
       },
     });
-    if (!userAchievement) {
+    if (!userAchievement)
       userAchievement = requireMutation(
         (
           await ctx.db
@@ -69,7 +69,7 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
           userId,
         }),
       );
-    } else if (userAchievement.unlockedAt) continue;
+    else if (userAchievement.unlockedAt) continue;
     else newAmount += userAchievement.amount;
 
     const updatedUserAchievement = requireMutation(

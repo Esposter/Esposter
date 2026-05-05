@@ -30,14 +30,13 @@ export const friendRequestNotification = async (
   await Promise.all(
     readPushSubscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) =>
       (async () => {
-        const notificationResult = await ResultAsync.fromPromise(
+        await ResultAsync.fromPromise(
           webpush.sendNotification(
             { endpoint, expirationTime: expirationTime ? expirationTime.getTime() : null, keys: { auth, p256dh } },
             payload,
           ),
           toAppError,
-        );
-        await notificationResult.match(
+        ).match(
           () => undefined,
           async (error) => {
             if (error instanceof WebPushError)

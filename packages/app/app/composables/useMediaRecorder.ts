@@ -104,11 +104,7 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
     if (state.value === "recording") return;
     data.value = [];
 
-    const streamResult = await ResultAsync.fromPromise(
-      window.navigator.mediaDevices.getUserMedia(toValue(constraints)),
-      toAppError,
-    );
-    streamResult.match(
+    await ResultAsync.fromPromise(window.navigator.mediaDevices.getUserMedia(toValue(constraints)), toAppError).match(
       (value) => {
         stream.value = value;
       },

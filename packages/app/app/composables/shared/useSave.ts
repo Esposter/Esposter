@@ -29,7 +29,7 @@ export const useSave = <T extends ItemMetadata, TDef extends TRPCResolverDef>(
   const session = authClient.useSession();
   const alertStore = useAlertStore();
   const saveToLocalStorage = useSaveToLocalStorage();
-  return async (): Promise<boolean> => {
+  return (): Promise<boolean> => {
     const value = toValue(maybeValue);
     saveItemMetadata(value);
 
@@ -42,7 +42,7 @@ export const useSave = <T extends ItemMetadata, TDef extends TRPCResolverDef>(
         },
       );
 
-    if (unauth) return await saveToLocalStorage(unauth.key, unauth.schema, value);
-    return false;
+    if (unauth) return Promise.resolve(saveToLocalStorage(unauth.key, unauth.schema, value));
+    return Promise.resolve(false);
   };
 };

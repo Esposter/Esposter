@@ -7,12 +7,10 @@ import { toAppError } from "@esposter/shared";
 import { ResultAsync } from "neverthrow";
 
 app.eventGrid(AzureFunction.ProcessPushNotification, {
-  handler: async (event, context) => {
+  handler: (event, context) => {
     context.log(`${AzureFunction.ProcessPushNotification} processed message: `, event.data);
     const data = event.data as unknown as PushNotificationEventGridData;
-
-    const notificationResult = await ResultAsync.fromPromise(pushNotification(context, data), toAppError);
-    notificationResult.match(
+    return ResultAsync.fromPromise(pushNotification(context, data), toAppError).match(
       () => {
         context.log(`Successfully processed push notifications for room ${data.message.partitionKey}.`);
       },

@@ -10,9 +10,8 @@ import { z, ZodError } from "zod";
 
 app.http(AzureFunction.PushWebhook, {
   authLevel: "function",
-  handler: async (request, context) => {
+  handler: (request, context) => {
     context.log(`${AzureFunction.PushWebhook} processed a request for URL: ${request.url}`);
-
     return ResultAsync.fromPromise(
       (async () => {
         const { id, token } = await selectWebhookInMessageSchema

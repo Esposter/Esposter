@@ -12,11 +12,10 @@ import { toAppError } from "@esposter/shared";
 import { ResultAsync } from "neverthrow";
 
 app.eventGrid(AzureFunction.ProcessWebhook, {
-  handler: async (event, context) => {
+  handler: (event, context) => {
     context.log(`${AzureFunction.ProcessWebhook} processed message: `, event.data);
     const { payload, webhook } = event.data as unknown as WebhookEventGridData;
-
-    const webhookResult = await ResultAsync.fromPromise(
+    return ResultAsync.fromPromise(
       (async () => {
         const messageClient = await getTableClient(AzureTable.Messages);
         const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
@@ -47,8 +46,7 @@ app.eventGrid(AzureFunction.ProcessWebhook, {
         );
       })(),
       toAppError,
-    );
-    webhookResult.match(
+    ).match(
       () => undefined,
       (error) => {
         context.error(`${AzureFunction.ProcessWebhook} failed: `, error);

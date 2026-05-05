@@ -2,11 +2,13 @@
 import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
+import { getResultAsync } from "#shared/error/getResultAsync";
+import { withFinalizer } from "#shared/error/withFinalizer";
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
-import { InvalidOperationError, jsonDateParse, Operation, toAppError } from "@esposter/shared";
-import { err, ResultAsync } from "neverthrow";
+import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import { err } from "neverthrow";
 
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
@@ -41,20 +43,19 @@ const vote = async (optionId: null | string) => {
   if (optionId === null) delete updatedVotes[userId.value];
   else updatedVotes[userId.value] = optionId;
   const updatedMessage = JSON.stringify({ ...pollContent.value, votes: updatedVotes });
-  await storeUpdateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-  const updateResult = await ResultAsync.fromPromise(
-    updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey }),
-    toAppError,
-  ).orElse((error) =>
-    ResultAsync.fromPromise(
-      storeUpdateMessage({ message: previousMessage, partitionKey: message.partitionKey, rowKey: message.rowKey }),
-      toAppError,
-    )
-      .orTee(console.error)
-      .andThen(() => err(error)),
+  await withFinalizer(
+    getResultAsync(async () => {
+      await storeUpdateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
+      await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
+    }).orElse((error) =>
+      getResultAsync(() =>
+        storeUpdateMessage({ message: previousMessage, partitionKey: message.partitionKey, rowKey: message.rowKey }),
+      )
+        .orTee(console.error)
+        .andThen(() => err(error)),
+    ),
+    () => getResultAsync(() => (isVoting.value = false)),
   );
-  isVoting.value = false;
-  updateResult._unsafeUnwrap();
 };
 </script>
 

@@ -7,12 +7,10 @@ import { toAppError } from "@esposter/shared";
 import { ResultAsync } from "neverthrow";
 
 app.eventGrid(AzureFunction.ProcessFriendRequestNotification, {
-  handler: async (event, context) => {
+  handler: (event, context) => {
     context.log(`${AzureFunction.ProcessFriendRequestNotification} processed message: `, event.data);
     const data = event.data as unknown as FriendRequestNotificationEventGridData;
-
-    const notificationResult = await ResultAsync.fromPromise(friendRequestNotification(context, data), toAppError);
-    notificationResult.match(
+    return ResultAsync.fromPromise(friendRequestNotification(context, data), toAppError).match(
       () => {
         context.log(`Successfully processed friend request notification for user ${data.receiverId}.`);
       },
