@@ -9,7 +9,7 @@ export const getCreateMessageNotificationPayload = (
   message: string,
   { icon, title, url }: { icon?: null | string; title?: null | string; url: string },
 ): string | undefined => {
-  let textContent: string | undefined = message;
+  let textContent: string | undefined;
 
   getResult(() => normalizeString(parse(message).querySelector("p")?.structuredText)).match(
     (newTextContent) => {
