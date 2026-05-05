@@ -1,12 +1,11 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 
+import { getResultAsync } from "#shared/error/getResultAsync";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createEntity } from "@esposter/db";
 import { AdminActionType, AzureTable, getReverseTickedTimestamp, ModerationLogEntity } from "@esposter/db-schema";
-import { toAppError } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";
-import { ResultAsync } from "neverthrow";
 
 const t = initTRPC.context<AuthedContext>().create();
 
@@ -20,22 +19,20 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
 
   const { roomId, targetUserId, type } = parsedInput.data;
   const durationMs = parsedInput.data.type === AdminActionType.TimeoutUser ? parsedInput.data.durationMs : undefined;
-  await ResultAsync.fromPromise(
-    useTableClient(AzureTable.ModerationLog).then((moderationLogClient) =>
-      createEntity(
-        moderationLogClient,
-        new ModerationLogEntity({
-          actorUserId: ctx.getSessionPayload.user.id,
-          durationMs,
-          partitionKey: roomId,
-          rowKey: getReverseTickedTimestamp(),
-          targetUserId,
-          type,
-        }),
-      ),
-    ),
-    toAppError,
-  ).match(() => undefined, console.error);
+  await getResultAsync(async () => {
+    const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
+    await createEntity(
+      moderationLogClient,
+      new ModerationLogEntity({
+        actorUserId: ctx.getSessionPayload.user.id,
+        durationMs,
+        partitionKey: roomId,
+        rowKey: getReverseTickedTimestamp(),
+        targetUserId,
+        type,
+      }),
+    );
+  }).match(() => undefined, console.error);
 
   return result;
 });

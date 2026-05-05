@@ -224,12 +224,11 @@ export const roomRouter = router({
           ).message,
         });
 
-      const [deletedMember, kickedMember] = await Promise.all([
+      const [[deletedMember], kickedMember] = await Promise.all([
         ctx.db
           .delete(usersToRoomsInMessage)
           .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
-          .returning()
-          .then((rows) => rows[0]),
+          .returning(),
         ctx.db.query.users.findFirst({ columns: { name: true }, where: { id: { eq: userId } } }),
       ]);
       if (!deletedMember)

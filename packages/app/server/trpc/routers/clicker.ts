@@ -1,3 +1,4 @@
+import { getResultAsync } from "#shared/error/getResultAsync";
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { Clicker, clickerSchema } from "#shared/models/clicker/data/Clicker";
@@ -8,21 +9,18 @@ import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { AzureContainer } from "@esposter/db-schema";
-import { jsonDateParse, streamToText, toAppError } from "@esposter/shared";
-import { ResultAsync } from "neverthrow";
+import { jsonDateParse, streamToText } from "@esposter/shared";
 
 export const clickerRouter = router({
   readBuildingMap: standardRateLimitedProcedure.query(() => BuildingMap),
   readClicker: standardAuthedProcedure.query<Clicker>(({ ctx }) => {
     const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
-    return ResultAsync.fromPromise(
-      useDownload(AzureContainer.ClickerAssets, blobName).then(async ({ readableStreamBody }) => {
-        if (!readableStreamBody) return new Clicker();
-        const json = await streamToText(readableStreamBody);
-        return new Clicker(jsonDateParse(json));
-      }),
-      toAppError,
-    )
+    return getResultAsync(async () => {
+      const { readableStreamBody } = await useDownload(AzureContainer.ClickerAssets, blobName);
+      if (!readableStreamBody) return new Clicker();
+      const json = await streamToText(readableStreamBody);
+      return new Clicker(jsonDateParse(json));
+    })
       .orTee(console.error)
       .unwrapOr(new Clicker());
   }),

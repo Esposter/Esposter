@@ -1,3 +1,4 @@
+import { getResultAsync } from "#shared/error/getResultAsync";
 import {
   TableEditorConfiguration,
   tableEditorConfigurationSchema,
@@ -8,20 +9,17 @@ import { SAVE_FILENAME } from "@@/server/services/tableEditor/constants";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { AzureContainer } from "@esposter/db-schema";
-import { jsonDateParse, streamToText, toAppError } from "@esposter/shared";
-import { ResultAsync } from "neverthrow";
+import { jsonDateParse, streamToText } from "@esposter/shared";
 
 export const tableEditorRouter = router({
   readTableEditorConfiguration: standardAuthedProcedure.query<TableEditorConfiguration>(({ ctx }) => {
     const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
-    return ResultAsync.fromPromise(
-      useDownload(AzureContainer.TableEditorAssets, blobName).then(async ({ readableStreamBody }) => {
-        if (!readableStreamBody) return new TableEditorConfiguration();
-        const json = await streamToText(readableStreamBody);
-        return new TableEditorConfiguration(jsonDateParse(json));
-      }),
-      toAppError,
-    )
+    return getResultAsync(async () => {
+      const { readableStreamBody } = await useDownload(AzureContainer.TableEditorAssets, blobName);
+      if (!readableStreamBody) return new TableEditorConfiguration();
+      const json = await streamToText(readableStreamBody);
+      return new TableEditorConfiguration(jsonDateParse(json));
+    })
       .orTee(console.error)
       .unwrapOr(new TableEditorConfiguration());
   }),

@@ -3,9 +3,9 @@ import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/Index
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { IndexKey, IndexNames } from "idb";
 
+import { getResultAsync } from "#shared/error/getResultAsync";
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { toAppError, toRawDeep } from "@esposter/shared";
-import { ResultAsync } from "neverthrow";
+import { toRawDeep } from "@esposter/shared";
 
 export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends IndexNames<IndexedDbDatabaseSchema, T>>(
   configuration: IndexedDbStoreConfiguration<T, TIndex>,
@@ -13,18 +13,16 @@ export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends Inde
   partitionKey: IndexKey<IndexedDbDatabaseSchema, T, TIndex>,
 ): Promise<void> => {
   const { indexName, limit, storeName } = configuration;
-  return ResultAsync.fromPromise(
-    openIndexedDb().then(async (db) => {
-      const tx = db.transaction(storeName, "readwrite");
-      const objectStore = tx.objectStore(storeName);
-      const existingKeys = await objectStore.index(indexName).getAllKeys(partitionKey);
-      for (const key of existingKeys) await objectStore.delete(key);
-      const itemsToCache = limit ? items.slice(0, limit) : items;
-      for (const item of itemsToCache) await objectStore.put(toRawDeep(item));
-      await tx.done;
-    }),
-    toAppError,
-  )
+  return getResultAsync(async () => {
+    const db = await openIndexedDb();
+    const tx = db.transaction(storeName, "readwrite");
+    const objectStore = tx.objectStore(storeName);
+    const existingKeys = await objectStore.index(indexName).getAllKeys(partitionKey);
+    for (const key of existingKeys) await objectStore.delete(key);
+    const itemsToCache = limit ? items.slice(0, limit) : items;
+    for (const item of itemsToCache) await objectStore.put(toRawDeep(item));
+    await tx.done;
+  })
     .orTee(console.error)
     .unwrapOr(undefined);
 };

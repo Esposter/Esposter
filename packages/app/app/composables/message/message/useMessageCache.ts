@@ -20,31 +20,31 @@ export const useMessageCache = () => {
   watchDeep(items, (messages) => {
     const roomId = currentRoomId.value;
     if (!roomId || messages.length === 0) return;
-    pendingOperation = getResultAsync(() => pendingOperation)
-      .orTee(console.error)
-      .unwrapOr(undefined)
-      .then(() =>
-        writeIndexedDb(
-          MessageIndexedDbStoreConfiguration,
-          messages.filter((message) => !message.isLoading),
-          roomId,
-        ),
+    pendingOperation = getResultAsync(async () => {
+      await pendingOperation;
+      await writeIndexedDb(
+        MessageIndexedDbStoreConfiguration,
+        messages.filter((message) => !message.isLoading),
+        roomId,
       );
+    })
+      .orTee(console.error)
+      .unwrapOr(undefined);
   });
 
   watch(currentRoomId, (newCurrentRoomId) => {
     if (!newCurrentRoomId || online.value) return;
-    pendingOperation = getResultAsync(() => pendingOperation)
-      .orTee(console.error)
-      .unwrapOr(undefined)
-      .then(async () => {
-        const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, newCurrentRoomId);
-        if (currentRoomId.value !== newCurrentRoomId || items.value.length > 0 || cachedMessages.length === 0) return;
+    pendingOperation = getResultAsync(async () => {
+      await pendingOperation;
+      const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, newCurrentRoomId);
+      if (currentRoomId.value !== newCurrentRoomId || items.value.length > 0 || cachedMessages.length === 0) return;
 
-        const cachedData = new CursorPaginationData<MessageEntity>();
-        cachedData.items = cachedMessages;
-        initializeCursorPaginationData(cachedData);
-      });
+      const cachedData = new CursorPaginationData<MessageEntity>();
+      cachedData.items = cachedMessages;
+      initializeCursorPaginationData(cachedData);
+    })
+      .orTee(console.error)
+      .unwrapOr(undefined);
   });
 
   const flush = () => pendingOperation;

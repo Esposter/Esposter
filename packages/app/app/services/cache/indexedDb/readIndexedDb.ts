@@ -3,19 +3,16 @@ import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/Index
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { IndexKey, IndexNames } from "idb";
 
+import { getResultAsync } from "#shared/error/getResultAsync";
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { toAppError } from "@esposter/shared";
-import { ResultAsync } from "neverthrow";
 
 export const readIndexedDb = <T extends IndexedDbStoreName, TIndex extends IndexNames<IndexedDbDatabaseSchema, T>>(
   { indexName, storeName }: IndexedDbStoreConfiguration<T, TIndex>,
   partitionKey: IndexKey<IndexedDbDatabaseSchema, T, TIndex>,
 ): Promise<IndexedDbDatabaseSchema[T]["value"][]> =>
-  ResultAsync.fromPromise(
-    openIndexedDb().then((db) =>
-      db.transaction(storeName, "readonly").objectStore(storeName).index(indexName).getAll(partitionKey),
-    ),
-    toAppError,
-  )
+  getResultAsync(async () => {
+    const db = await openIndexedDb();
+    return db.transaction(storeName, "readonly").objectStore(storeName).index(indexName).getAll(partitionKey);
+  })
     .orTee(console.error)
     .unwrapOr([]);

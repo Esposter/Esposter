@@ -52,14 +52,25 @@ const vote = async (optionId: null | string) => {
           rowKey: message.rowKey,
         });
         await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-      }).orElse((error) =>
-        getResultAsync(() =>
-          storeUpdateMessage({ message: previousMessage, partitionKey: message.partitionKey, rowKey: message.rowKey }),
+      })
+        .orElse((error) =>
+          getResultAsync(() =>
+            storeUpdateMessage({
+              message: previousMessage,
+              partitionKey: message.partitionKey,
+              rowKey: message.rowKey,
+            }),
+          )
+            .orTee(console.error)
+            .orElse(() => ok(undefined))
+            .andThen(() => err(error)),
         )
-          .orTee(console.error)
-          .orElse(() => ok(undefined))
-          .andThen(() => err(error)),
-      ),
+        .match(
+          () => undefined,
+          (error) => {
+            throw error;
+          },
+        ),
     () => {
       isVoting.value = false;
     },
