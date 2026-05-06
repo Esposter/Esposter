@@ -14,13 +14,13 @@ import { z } from "zod";
 export const searchHistoriesInMessage = pgTable(
   "search_histories",
   {
-    filters: jsonb("filters").notNull().$type<Filter[]>().default([]),
-    id: uuid("id").primaryKey().defaultRandom(),
-    query: text("query").notNull().default(""),
-    roomId: uuid("roomId")
+    filters: jsonb().notNull().$type<Filter[]>().default([]),
+    id: uuid().primaryKey().defaultRandom(),
+    query: text().notNull().default(""),
+    roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id),
-    userId: text("userId")
+    userId: text()
       .notNull()
       .references(() => users.id),
   },

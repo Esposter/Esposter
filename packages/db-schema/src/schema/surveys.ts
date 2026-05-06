@@ -11,14 +11,14 @@ export const SURVEY_GROUP_MAX_LENGTH = 100;
 export const surveys = pgTable(
   "surveys",
   {
-    group: text("group").notNull().default(""),
-    id: uuid("id").primaryKey().defaultRandom(),
-    model: text("model").notNull().default(""),
-    modelVersion: integer("modelVersion").notNull().default(0),
-    name: text("name").notNull(),
-    publishedAt: timestamp("publishedAt"),
-    publishVersion: integer("publishVersion").notNull().default(0),
-    userId: text("userId")
+    group: text().notNull().default(""),
+    id: uuid().primaryKey().defaultRandom(),
+    model: text().notNull().default(""),
+    modelVersion: integer().notNull().default(0),
+    name: text().notNull(),
+    publishedAt: timestamp(),
+    publishVersion: integer().notNull().default(0),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

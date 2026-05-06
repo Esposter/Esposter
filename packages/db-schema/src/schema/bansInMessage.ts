@@ -11,11 +11,11 @@ export const bansInMessage = pgTable(
   "bans",
   {
     // No FK — audit record must survive moderator account deletion
-    bannedByUserId: text("bannedByUserId"),
-    roomId: uuid("roomId")
+    bannedByUserId: text(),
+    roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    userId: text("userId")
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

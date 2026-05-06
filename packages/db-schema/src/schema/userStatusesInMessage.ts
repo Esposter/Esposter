@@ -24,12 +24,12 @@ export const userStatusEnum = pgEnum("user_status", UserStatus);
 export const userStatusesInMessage = pgTable(
   "user_statuses",
   {
-    expiresAt: timestamp("expiresAt"),
-    isConnected: boolean("isConnected").notNull().default(true),
-    message: text("message").notNull().default(""),
+    expiresAt: timestamp(),
+    isConnected: boolean().notNull().default(true),
+    message: text().notNull().default(""),
     // This is only used if the user manually sets a status
-    status: userStatusEnum("status"),
-    userId: text("userId")
+    status: userStatusEnum(),
+    userId: text()
       .primaryKey()
       .references(() => users.id, { onDelete: "cascade" }),
   },

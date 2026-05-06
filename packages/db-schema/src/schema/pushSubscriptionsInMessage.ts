@@ -10,12 +10,12 @@ import { z } from "zod";
 export const pushSubscriptionsInMessage = pgTable(
   "push_subscriptions",
   {
-    auth: text("auth").notNull(),
-    endpoint: text("endpoint").notNull(),
-    expirationTime: timestamp("expirationTime"),
-    id: uuid("id").primaryKey().defaultRandom(),
-    p256dh: text("p256dh").notNull(),
-    userId: text("userId")
+    auth: text().notNull(),
+    endpoint: text().notNull(),
+    expirationTime: timestamp(),
+    id: uuid().primaryKey().defaultRandom(),
+    p256dh: text().notNull(),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

@@ -9,7 +9,7 @@ import type {
 } from "drizzle-orm/pg-core";
 
 import { metadataSchema } from "@/metadataSchema";
-import { pgTable as basePgTable } from "drizzle-orm/pg-core";
+import { camelCase } from "drizzle-orm/pg-core";
 
 export interface PgTable {
   <TTableName extends string, TColumnsMap extends Record<string, AnyPgColumnBuilder>, TSchema extends string>(
@@ -62,7 +62,7 @@ export const pgTable: PgTable = <
     },
     extraConfig,
   ) ??
-  basePgTable<TTableName, TColumnsMap & typeof metadataSchema>(
+  camelCase.table<TTableName, TColumnsMap & typeof metadataSchema>(
     name,
     {
       ...metadataSchema,

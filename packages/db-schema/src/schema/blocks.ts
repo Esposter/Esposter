@@ -7,10 +7,10 @@ import { createSelectSchema } from "drizzle-orm/zod";
 export const blocks = pgTable(
   "blocks",
   {
-    blockedId: text("blockedId")
+    blockedId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    blockerId: text("blockerId")
+    blockerId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

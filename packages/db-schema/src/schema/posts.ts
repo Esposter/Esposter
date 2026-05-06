@@ -12,15 +12,15 @@ export const POST_DESCRIPTION_MAX_LENGTH = 1000;
 export const posts = pgTable(
   "posts",
   {
-    depth: integer("depth").notNull().default(0),
-    description: text("description").notNull().default(""),
-    id: uuid("id").primaryKey().defaultRandom(),
-    noComments: integer("noComments").notNull().default(0),
-    noLikes: integer("noLikes").notNull().default(0),
-    parentId: uuid("parentId").references((): AnyPgColumn => posts.id, { onDelete: "cascade" }),
-    ranking: doublePrecision("ranking").notNull(),
-    title: text("title").notNull().default(""),
-    userId: text("userId")
+    depth: integer().notNull().default(0),
+    description: text().notNull().default(""),
+    id: uuid().primaryKey().defaultRandom(),
+    noComments: integer().notNull().default(0),
+    noLikes: integer().notNull().default(0),
+    parentId: uuid().references((): AnyPgColumn => posts.id, { onDelete: "cascade" }),
+    ranking: doublePrecision().notNull(),
+    title: text().notNull().default(""),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

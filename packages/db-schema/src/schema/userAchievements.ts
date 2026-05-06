@@ -8,13 +8,13 @@ import { createSelectSchema } from "drizzle-orm/zod";
 export const userAchievements = pgTable(
   "user_achievements",
   {
-    achievementId: uuid("achievementId")
+    achievementId: uuid()
       .notNull()
       .references(() => achievements.id, { onDelete: "cascade" }),
-    amount: integer("amount").notNull(),
-    id: uuid("id").primaryKey().defaultRandom(),
-    unlockedAt: timestamp("unlockedAt"),
-    userId: text("userId")
+    amount: integer().notNull(),
+    id: uuid().primaryKey().defaultRandom(),
+    unlockedAt: timestamp(),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

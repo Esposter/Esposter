@@ -6,8 +6,8 @@ import { createSelectSchema } from "drizzle-orm/zod";
 export const achievementNameEnum = pgEnum("achievement_name", AchievementName);
 
 export const achievements = pgTable("achievements", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: achievementNameEnum("name").notNull().unique(),
+  id: uuid().primaryKey().defaultRandom(),
+  name: achievementNameEnum().notNull().unique(),
 });
 
 export type Achievement = typeof achievements.$inferSelect;

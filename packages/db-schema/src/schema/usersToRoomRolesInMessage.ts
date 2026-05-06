@@ -12,13 +12,13 @@ import { createSelectSchema } from "drizzle-orm/zod";
 export const usersToRoomRolesInMessage = pgTable(
   "users_to_room_roles",
   {
-    roleId: uuid("roleId")
+    roleId: uuid()
       .notNull()
       .references(() => roomRolesInMessage.id, { onDelete: "cascade" }),
-    roomId: uuid("roomId")
+    roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    userId: text("userId")
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

@@ -1,6 +1,7 @@
 import { createNameCheckSql, createNameSchema, createNormalizedStringSchema } from "@/models/shared/Name";
+import { pgTable } from "@/pgTable";
 import { sql } from "drizzle-orm";
-import { boolean, check, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, check, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
@@ -10,23 +11,22 @@ export const USER_NAME_MAX_LENGTH = 100;
 export const users = pgTable(
   "users",
   {
-    biography: text("biography").notNull().default(""),
-    createdAt: timestamp("created_at").notNull(),
-    deletedAt: timestamp("deleted_at"),
-    email: text("email").notNull().unique(),
-    emailVerified: boolean("email_verified").notNull(),
-    id: text("id").primaryKey(),
-    image: text("image"),
-    name: text("name").notNull(),
-    updatedAt: timestamp("updated_at").notNull(),
+    biography: text().notNull().default(""),
+    email: text().notNull().unique(),
+    emailVerified: boolean().notNull(),
+    id: text().primaryKey(),
+    image: text(),
+    name: text().notNull(),
   },
-  ({ biography, name }) => [
-    check(
-      "users_biography_length_check",
-      sql`LENGTH(${biography}) <= ${sql.raw(USER_BIOGRAPHY_MAX_LENGTH.toString())}`,
-    ),
-    check("users_name_length_check", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
-  ],
+  {
+    extraConfig: ({ biography, name }) => [
+      check(
+        "users_biography_length_check",
+        sql`LENGTH(${biography}) <= ${sql.raw(USER_BIOGRAPHY_MAX_LENGTH.toString())}`,
+      ),
+      check("users_name_length_check", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
+    ],
+  },
 );
 
 export type User = typeof users.$inferSelect;

@@ -12,17 +12,17 @@ export const WEBHOOK_NAME_MAX_LENGTH = 100;
 export const webhooksInMessage = pgTable(
   "webhooks",
   {
-    creatorId: text("creatorId")
+    creatorId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    id: uuid("id").primaryKey().defaultRandom(),
-    isActive: boolean("isActive").notNull().default(true),
-    name: text("name").notNull().default(""),
-    roomId: uuid("roomId")
+    id: uuid().primaryKey().defaultRandom(),
+    isActive: boolean().notNull().default(true),
+    name: text().notNull().default(""),
+    roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    token: text("token").notNull(),
-    userId: uuid("userId")
+    token: text().notNull(),
+    userId: uuid()
       .notNull()
       // 1:1 with appUsers
       .unique()

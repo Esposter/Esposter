@@ -5,9 +5,9 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   NotificationType,
   pushSubscriptionsInMessage,
+  relations,
   roomsInMessage,
   RoomType,
-  schema,
   users,
   UserStatus,
   userStatusesInMessage,
@@ -25,7 +25,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
 
 describe(getPushSubscriptionsForMessage, () => {
-  let db: PostgresJsDatabase<typeof schema>;
+  let db: PostgresJsDatabase<typeof relations>;
   const name = "name";
   const roomId = crypto.randomUUID();
   const allOnlineUserId = crypto.randomUUID();

@@ -11,11 +11,11 @@ export const friendRequests = pgTable(
   {
     // Natural key — getFriendshipId(senderId, receiverId).
     // Conflicts on insert act as idempotency: if A already sent to B, a second send is a no-op.
-    id: text("id").primaryKey(),
-    receiverId: text("receiverId")
+    id: text().primaryKey(),
+    receiverId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    senderId: text("senderId")
+    senderId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

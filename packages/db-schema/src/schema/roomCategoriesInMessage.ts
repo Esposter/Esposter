@@ -11,10 +11,10 @@ export const ROOM_CATEGORY_NAME_MAX_LENGTH = 100;
 export const roomCategoriesInMessage = pgTable(
   "room_categories",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    name: text("name").notNull(),
-    position: integer("position").notNull().default(0),
-    userId: text("userId")
+    id: uuid().primaryKey().defaultRandom(),
+    name: text().notNull(),
+    position: integer().notNull().default(0),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

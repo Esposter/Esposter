@@ -1,19 +1,17 @@
-import type { RecursiveDeepOmitItemEntity } from "#shared/util/types/RecursiveDeepOmitItemEntity";
-
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
-import { omitDeepItemEntity } from "@/services/shared/metadata/omitDeepItemEntity";
 import { useDashboardStore } from "@/store/dashboard";
 import { jsonDateParse } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
+import { omitDeep } from "lodash-omitdeep";
 
 export const useReadDashboard = async () => {
   const { $trpc } = useNuxtApp();
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
   const { dashboard } = storeToRefs(dashboardStore);
-  const virtualDashboard = computed<RecursiveDeepOmitItemEntity<Dashboard>>((oldVirtualDashboard) => {
-    const newVirtualDashboard = omitDeepItemEntity(dashboard.value);
+  const virtualDashboard = computed((oldVirtualDashboard) => {
+    const newVirtualDashboard = omitDeep(dashboard.value);
     return oldVirtualDashboard && deepEqual(newVirtualDashboard, oldVirtualDashboard)
       ? oldVirtualDashboard
       : newVirtualDashboard;

@@ -9,13 +9,13 @@ import { z } from "zod";
 export const likes = pgTable(
   "likes",
   {
-    postId: uuid("postId")
+    postId: uuid()
       .notNull()
       .references(() => posts.id, { onDelete: "cascade" }),
-    userId: text("userId")
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    value: integer("value").notNull(),
+    value: integer().notNull(),
   },
   {
     extraConfig: ({ postId, userId, value }) => [

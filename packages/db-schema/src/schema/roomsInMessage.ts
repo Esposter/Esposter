@@ -23,16 +23,16 @@ export const roomTypeEnum = pgEnum("room_type", RoomType);
 export const roomsInMessage = pgTable(
   "rooms",
   {
-    categoryId: uuid("categoryId").references(() => roomCategoriesInMessage.id, { onDelete: "set null" }),
-    id: uuid("id").primaryKey().defaultRandom(),
-    image: text("image"),
-    isReadOnly: boolean("isReadOnly").notNull().default(false),
-    name: text("name"),
-    participantKey: text("participantKey").unique(),
-    slowmodeMs: integer("slowmodeMs"),
-    topic: text("topic").notNull().default(""),
-    type: roomTypeEnum("type").notNull().default(RoomType.Room),
-    userId: text("userId")
+    categoryId: uuid().references(() => roomCategoriesInMessage.id, { onDelete: "set null" }),
+    id: uuid().primaryKey().defaultRandom(),
+    image: text(),
+    isReadOnly: boolean().notNull().default(false),
+    name: text(),
+    participantKey: text().unique(),
+    slowmodeMs: integer(),
+    topic: text().notNull().default(""),
+    type: roomTypeEnum().notNull().default(RoomType.Room),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
