@@ -1,6 +1,7 @@
 # [Esposter](https://esposter.com)
 
 [![Build Status][badge-ci]][url-ci]
+[![Repository Score][badge-score]][url-score]
 [![Apache-2.0 licensed][badge-license]][url-license]
 
 ### Table of Contents
@@ -278,10 +279,6 @@ pnpm preview
 Esposter is a lerna + pnpm workspaces monorepo.
 Packages are used directly by the nuxt application via `workspace:*`.
 
-### Miscellaneous Tools
-
-https://devina.io/svg-minifier
-
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
@@ -290,4 +287,6 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yaml?query=event%3Apush+branch%3Amain
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
+[badge-score]: https://img.shields.io/badge/score-81%2F100-yellow
+[url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest
