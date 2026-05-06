@@ -1,5 +1,3 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-export const future: NuxtConfig["future"] = {
-  compatibilityVersion: 5,
-};
+export const future: NuxtConfig["future"] = {};
