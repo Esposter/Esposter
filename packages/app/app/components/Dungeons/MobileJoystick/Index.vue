@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { GameObjects } from "phaser";
-import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
+import type VirtualJoystick from "phaser4-rex-plugins/plugins/virtualjoystick";
 
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/scene/joystick/constants";

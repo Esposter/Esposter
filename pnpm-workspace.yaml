@@ -180,7 +180,7 @@ catalog:
   pathe: ^2.0.3
   pdfjs-dist: ^5.7.284
   phaser: ^4.1.0
-  phaser3-rex-plugins: ^1.80.20
+  phaser4-rex-plugins: ^4.0.6
   pinia: ^3.0.4
   pluralize: ^8.0.0
   postgres: ^3.4.9

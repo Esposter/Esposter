@@ -84,15 +84,15 @@ Any Phaser class that chains to `Scene → TextureManager → Texture → Frame 
 
 ## SSR / "Phaser is not defined" Fix
 
-**Problem**: `vue-phaserjs/dist/index.js` bundled `phaser3-rex-plugins` subpath imports (e.g. `phaser3-rex-plugins/plugins/clickoutside.js`). The bundled code accesses `Phaser.Scene`, `Phaser.Game`, etc. as globals at module-evaluation time, which fails in Node.js SSR.
+**Problem**: `vue-phaserjs/dist/index.js` bundled `phaser4-rex-plugins` subpath imports (e.g. `phaser4-rex-plugins/plugins/clickoutside.js`). The bundled code accesses `Phaser.Scene`, `Phaser.Game`, etc. as globals at module-evaluation time, which fails in Node.js SSR.
 
-**Root cause**: The `external` array used string literal `"phaser3-rex-plugins"` which only matches the root package name, not subpath imports like `"phaser3-rex-plugins/plugins/clickoutside.js"`.
+**Root cause**: The `external` array used string literal `"phaser4-rex-plugins"` which only matches the root package name, not subpath imports like `"phaser4-rex-plugins/plugins/clickoutside.js"`.
 
 **Fix** (`packages/vue-phaserjs/vite.config.js`): Use a RegExp to match all subpaths:
 
 ```js
 rolldownOptions: {
-  external: ["phaser", /^phaser3-rex-plugins/, "pinia", "vue"],
+  external: ["phaser", /^phaser4-rex-plugins/, "pinia", "vue"],
 },
 ```
 

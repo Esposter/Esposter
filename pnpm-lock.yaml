@@ -507,9 +507,9 @@ catalogs:
     phaser:
       specifier: ^4.1.0
       version: 4.1.0
-    phaser3-rex-plugins:
-      specifier: ^1.80.20
-      version: 1.80.20
+    phaser4-rex-plugins:
+      specifier: ^4.0.6
+      version: 4.0.6
     pinia:
       specifier: ^3.0.4
       version: 3.0.4
@@ -1050,9 +1050,9 @@ importers:
       phaser:
         specifier: 'catalog:'
         version: 4.1.0
-      phaser3-rex-plugins:
+      phaser4-rex-plugins:
         specifier: 'catalog:'
-        version: 1.80.20(graphology-types@0.24.8)
+        version: 4.0.6(graphology-types@0.24.8)
       pinia:
         specifier: 'catalog:'
         version: 3.0.4(typescript@5.9.3)(vue@3.5.34(typescript@5.9.3))
@@ -1555,9 +1555,9 @@ importers:
       phaser:
         specifier: 'catalog:'
         version: 4.1.0
-      phaser3-rex-plugins:
+      phaser4-rex-plugins:
         specifier: 'catalog:'
-        version: 1.80.20(graphology-types@0.24.8)
+        version: 4.0.6(graphology-types@0.24.8)
       pinia:
         specifier: 'catalog:'
         version: 3.0.4(typescript@5.9.3)(vue@3.5.34(typescript@5.9.3))
@@ -7895,8 +7895,8 @@ packages:
     resolution: {integrity: sha512-ixNtAJndqh173VQ4KodSdJEI6nuioBWI0V1ITNKhZZsO0pEMoDxz539T4FTTbSZ/xIOSuDnzxLVRqBVSvPNE2g==}
     engines: {node: '>=18.0'}
 
-  cross-fetch@4.0.0:
-    resolution: {integrity: sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==}
+  cross-fetch@4.1.0:
+    resolution: {integrity: sha512-uKm5PU+MHTootlWEY+mZ4vvXoCn4fLQxT9dSc1sXVMSFkINTJVN8cAQROpwcKm8bJ/c7rgZVIBWzH5T78sNZZw==}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -9371,8 +9371,8 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
-  i18next-http-backend@2.7.3:
-    resolution: {integrity: sha512-FgZxrXdRA5u44xfYsJlEBL4/KH3f2IluBpgV/7riW0YW2VEyM8FzVt2XHAOi6id0Ppj7vZvCZVpp5LrGXnc8Ig==}
+  i18next-http-backend@3.0.6:
+    resolution: {integrity: sha512-mBOqy8993jtqAoj6XaI1XeC/8/9v6EPS+681ziegrPvTB0DoaCY7PpTS0SpY56qLMoS4OI1TZEM2Zf59zNh05w==}
 
   i18next@22.5.1:
     resolution: {integrity: sha512-8TGPgM3pAD+VRsMtUMNknRz3kzqwp/gPALrWMsDnmC1mKqJwpWyooQRLMcbTwq8z8YwSmuj+ZYvc+xCuEpkssA==}
@@ -10911,8 +10911,8 @@ packages:
   perfect-debounce@2.1.0:
     resolution: {integrity: sha512-LjgdTytVFXeUgtHZr9WYViYSM/g8MkcTPYDlPa3cDqMirHjKiSZPYd6DoL7pK8AJQr+uWkQvCjHNdiMqsrJs+g==}
 
-  phaser3-rex-plugins@1.80.20:
-    resolution: {integrity: sha512-XZLUy74r1jUaRWpGplRhhA+wEeOvnNb0qlhlyMtwdwZwIlCA7C7WtgvynOB/PyVrzS09cUBwEFyG+A3P5fL+Uw==}
+  phaser4-rex-plugins@4.0.6:
+    resolution: {integrity: sha512-qPHmKIpONwL1bqBRbxD2tcquFQPDxS3dx3qmYcjbBvUrKDGSDo1Etm7BQcH1fx3xvnHFn9rk3wjctDlfCk00cg==}
 
   phaser@4.1.0:
     resolution: {integrity: sha512-ZXv5Bhyg2BqJGAAxNI2xvmzGXW9q+TwUG1RLri5ZDBYGGtcma6aWUO/eJ7EbozeqRd5fKdpo4ycNMQt+Bi5iYg==}
@@ -12217,6 +12217,9 @@ packages:
   tinypool@2.1.0:
     resolution: {integrity: sha512-Pugqs6M0m7Lv1I7FtxN4aoyToKg1C4tu+/381vH35y8oENM/Ai7f7C4StcoK4/+BSw9ebcS8jRiVrORFKCALLw==}
     engines: {node: ^20.0.0 || >=22.0.0}
+
+  tinyqueue@3.0.0:
+    resolution: {integrity: sha512-gRa9gwYU3ECmQYv3lslts5hxuIa90veaEcxDYuu3QGOIAEM2mOZkVHp48ANJuu1CURtRdHKUBY5Lm1tHV+sD4g==}
 
   tinyrainbow@3.1.0:
     resolution: {integrity: sha512-Bf+ILmBgretUrdJxzXM0SgXLZ3XfiaUuOj/IKQHuTXip+05Xn+uyEYdVg0kYDipTBcLrCVyUzAPz7QmArb0mmw==}
@@ -20197,7 +20200,7 @@ snapshots:
 
   croner@10.0.1: {}
 
-  cross-fetch@4.0.0:
+  cross-fetch@4.1.0:
     dependencies:
       node-fetch: 2.7.0
     transitivePeerDependencies:
@@ -21796,9 +21799,9 @@ snapshots:
 
   human-signals@5.0.0: {}
 
-  i18next-http-backend@2.7.3:
+  i18next-http-backend@3.0.6:
     dependencies:
-      cross-fetch: 4.0.0
+      cross-fetch: 4.1.0
     transitivePeerDependencies:
       - encoding
 
@@ -23988,16 +23991,17 @@ snapshots:
 
   perfect-debounce@2.1.0: {}
 
-  phaser3-rex-plugins@1.80.20(graphology-types@0.24.8):
+  phaser4-rex-plugins@4.0.6(graphology-types@0.24.8):
     dependencies:
       dagre: 0.8.5
       eventemitter3: 3.1.2
       graphology: 0.25.4(graphology-types@0.24.8)
       i18next: 22.5.1
-      i18next-http-backend: 2.7.3
+      i18next-http-backend: 3.0.6
       js-yaml: 4.1.1
       mustache: 4.2.0
       papaparse: 5.5.3
+      tinyqueue: 3.0.0
       webfontloader: 1.6.28
     transitivePeerDependencies:
       - encoding
@@ -25466,6 +25470,8 @@ snapshots:
       picomatch: 4.0.4
 
   tinypool@2.1.0: {}
+
+  tinyqueue@3.0.0: {}
 
   tinyrainbow@3.1.0: {}
 

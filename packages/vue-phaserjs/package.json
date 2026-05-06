@@ -41,7 +41,7 @@
   },
   "peerDependencies": {
     "phaser": "catalog:",
-    "phaser3-rex-plugins": "catalog:",
+    "phaser4-rex-plugins": "catalog:",
     "pinia": "catalog:",
     "vue": "catalog:"
   }
