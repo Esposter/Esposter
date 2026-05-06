@@ -5,5 +5,5 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "../shared/services/app/co
 export const site: NuxtConfig["site"] = {
   description: SITE_DESCRIPTION,
   name: SITE_NAME,
-  url: process.env.BASE_URL ?? SITE_URL,
+  url: process.env.BASE_URL || SITE_URL,
 };
