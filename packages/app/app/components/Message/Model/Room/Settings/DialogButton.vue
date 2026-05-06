@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import type { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { SettingsType } from "@/models/message/room/SettingsType";
-import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { mergeProps } from "vue";

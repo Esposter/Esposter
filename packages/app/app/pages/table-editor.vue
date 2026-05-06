@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { TableEditorType, TableEditorTypes } from "#shared/models/tableEditor/data/TableEditorType";
+import type { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
+
+import { TableEditorTypes } from "#shared/models/tableEditor/data/TableEditorType";
 import { ID_QUERY_PARAMETER_KEY, ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle";
 import { useTableEditorStore } from "@/store/tableEditor";

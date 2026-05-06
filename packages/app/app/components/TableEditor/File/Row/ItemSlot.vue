@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
-import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
 import { useCellStore } from "@/store/tableEditor/file/cell";
 

@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { VisualType, VisualTypes } from "#shared/models/dashboard/data/VisualType";
+import type { VisualType } from "#shared/models/dashboard/data/VisualType";
+
+import { VisualTypes } from "#shared/models/dashboard/data/VisualType";
 import { ID_QUERY_PARAMETER_KEY, ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { uuidValidateV4 } from "@esposter/shared";

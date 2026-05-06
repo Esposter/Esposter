@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
-import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";

@@ -2,8 +2,8 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { EditableColumnValue } from "#shared/models/tableEditor/file/column/EditableColumnValue";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
-import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
 import { useCellStore } from "@/store/tableEditor/file/cell";
 import { takeOne, toRawDeep } from "@esposter/shared";
