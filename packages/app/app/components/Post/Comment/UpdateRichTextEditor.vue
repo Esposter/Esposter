@@ -2,7 +2,7 @@
 import type { PostWithRelations } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/vue-3";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
@@ -23,7 +23,7 @@ const resetUpdateMode = () => {
   editedDescriptionHtml.value = comment.description;
 };
 const onUpdateComment = async (editor: Editor) => {
-  await withFinalizer(async () => {
+  await withFinalizerAsync(async () => {
     if (editedDescriptionHtml.value === comment.description) return;
     if (EMPTY_TEXT_REGEX.test(editor.getText())) {
       emit("update:delete-mode", true);

@@ -3,7 +3,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { useDataStore } from "@/store/message/data";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
@@ -23,7 +23,7 @@ const { updateMessage } = dataStore;
 const editedMessageHtml = ref(useMessageWithMentions(() => message.message).value);
 const onUpdateMessage = (editor: Editor) => {
   getSynchronizedFunction(async () => {
-    await withFinalizer(
+    await withFinalizerAsync(
       async () => {
         if (editedMessageHtml.value === message.message) return;
         else if (EMPTY_TEXT_REGEX.test(editor.getText())) {

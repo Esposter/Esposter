@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
 import { useColorsStore } from "@/store/colors";
 import { usePostStore } from "@/store/post";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 interface PostConfirmDeleteDialogProps {
   postId: string;
@@ -29,7 +28,7 @@ const { text } = storeToRefs(colorsStore);
     }"
     @delete="
       async (onComplete) => {
-        await withFinalizer(async () => {
+        await withFinalizerAsync(async () => {
           await deletePost(postId);
           await navigateTo(RoutePath.Index);
         }, onComplete);

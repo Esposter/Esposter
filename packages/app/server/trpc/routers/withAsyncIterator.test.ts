@@ -1,4 +1,4 @@
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { describe } from "vitest";
 
 export const withAsyncIterator = <T, R>(
@@ -6,7 +6,7 @@ export const withAsyncIterator = <T, R>(
   fn: (iterator: AsyncIterator<T>) => Promise<R>,
 ): Promise<R> => {
   const iterator = createIterator()[Symbol.asyncIterator]();
-  return withFinalizer(
+  return withFinalizerAsync(
     () => fn(iterator),
     async () => {
       await iterator.return?.();

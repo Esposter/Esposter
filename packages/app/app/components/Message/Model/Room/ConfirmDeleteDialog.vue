@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
 
@@ -32,7 +32,7 @@ const { deleteRoom, leaveRoom } = roomStore;
     :confirm-button-props="{ text: isCreator ? 'Delete' : 'Leave' }"
     @delete="
       async (onComplete) => {
-        await withFinalizer(() => (isCreator ? deleteRoom(roomId) : leaveRoom(roomId)), onComplete);
+        await withFinalizerAsync(() => (isCreator ? deleteRoom(roomId) : leaveRoom(roomId)), onComplete);
       }
     "
   >

@@ -3,7 +3,7 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { ReadItemsCacheOptions } from "@/models/cache/indexedDb/ReadItemsCacheOptions";
 import type { Promisable } from "type-fest";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
@@ -42,7 +42,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     const isPending = ref(true);
     const refresh = async () => {
       isPending.value = true;
-      await withFinalizer(
+      await withFinalizerAsync(
         async () => {
           if (!online.value && cacheOptions) {
             const cachedItems = await readIndexedDb(cacheOptions.configuration, cacheOptions.partitionKey);
@@ -80,7 +80,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     onComplete?: () => Promisable<void>,
     cacheOptions?: ReadItemsCacheOptions<T>,
   ) => {
-    await withFinalizer(async () => {
+    await withFinalizerAsync(async () => {
       if (!online.value) return;
       const { hasMore: newHasMore, items: newItems, nextCursor: newNextCursor } = await query(nextCursor.value);
       hasMore.value = newHasMore;

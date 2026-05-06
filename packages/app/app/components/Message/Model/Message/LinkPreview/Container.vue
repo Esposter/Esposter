@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LinkPreviewResponse, MessageEntity } from "@esposter/db-schema";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface ContainerProps {
   linkPreviewResponse: LinkPreviewResponse;
@@ -25,7 +25,7 @@ const isActive = ref(false);
       :confirm-button-props="{ text: 'Remove All Embeds' }"
       @delete="
         async (onComplete) => {
-          await withFinalizer(
+          await withFinalizerAsync(
             () => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey }),
             onComplete,
           );

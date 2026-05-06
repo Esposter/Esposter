@@ -1,4 +1,4 @@
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 
 export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems: Ref<TItem[]>) => {
@@ -14,7 +14,7 @@ export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems:
     items.value = [];
   };
   const readItems = async (query: () => Promise<OffsetPaginationData<TItem>>, onComplete?: () => void) => {
-    await withFinalizer(async () => {
+    await withFinalizerAsync(async () => {
       const newOffsetPaginationData = await query();
       initializeOffsetPaginationData(newOffsetPaginationData);
     }, onComplete);
@@ -22,7 +22,7 @@ export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems:
   const getReadMoreItems =
     (query: (offset?: number) => Promise<OffsetPaginationData<TItem>>, onComplete?: () => void) =>
     async (offset?: number) => {
-      await withFinalizer(async () => {
+      await withFinalizerAsync(async () => {
         const { hasMore: newHasMore, items: newItems } = await query(offset);
         hasMore.value = newHasMore;
         items.value.push(...newItems);

@@ -1,11 +1,9 @@
-import { noop } from "@esposter/shared";
+import { noop, withFinalizer } from "@esposter/shared";
 
 export const ignoreWarn = <TReturn>(fn: () => TReturn) => {
   const warn = console.warn;
   console.warn = noop;
-  try {
-    return fn();
-  } finally {
+  return withFinalizer(fn, () => {
     console.warn = warn;
-  }
+  });
 };

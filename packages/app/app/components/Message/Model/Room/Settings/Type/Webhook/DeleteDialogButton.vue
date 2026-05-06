@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface DeleteDialogButtonProps {
@@ -19,7 +19,7 @@ const { deleteWebhook } = webhookStore;
     :card-props="{ title: 'Delete Webhook', text: `Are you sure you want to delete ${webhook.name}?` }"
     @delete="
       async (onComplete) => {
-        await withFinalizer(() => deleteWebhook(roomId, { id: webhook.id }), onComplete);
+        await withFinalizerAsync(() => deleteWebhook(roomId, { id: webhook.id }), onComplete);
       }
     "
   >

@@ -1,7 +1,7 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Survey } from "@esposter/db-schema";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { useSurveyStore } from "@/store/survey";
 
 export const useReadSurveys = () => {
@@ -19,7 +19,7 @@ export const useReadSurveys = () => {
     sortBy: SortItem<keyof Survey>[];
   }) => {
     isLoading.value = true;
-    await withFinalizer(
+    await withFinalizerAsync(
       async () => {
         const [newCount, { hasMore: newHasMore, items: newItems }] = await Promise.all([
           $trpc.survey.count.query(),

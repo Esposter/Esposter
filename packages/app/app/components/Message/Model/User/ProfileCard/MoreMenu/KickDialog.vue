@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
@@ -22,7 +22,7 @@ const { currentRoom } = storeToRefs(roomStore);
     :confirm-button-props="{ text: 'Kick' }"
     @delete="
       async (onComplete) => {
-        await withFinalizer(async () => {
+        await withFinalizerAsync(async () => {
           if (!currentRoom) return;
           await $trpc.moderation.executeAdminAction.mutate({
             roomId: currentRoom.id,

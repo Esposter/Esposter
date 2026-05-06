@@ -5,11 +5,13 @@ Esposter uses **neverthrow** for explicit error handling. No silent swallows —
 ## Core Utility
 
 ```typescript
-import { getResult, getResultAsync, noop } from "@esposter/shared";
+import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } from "@esposter/shared";
 // getResult: sync fn → Result<T, Error>
 // getResultAsync: async fn → ResultAsync<T, Error>
 // Always use these instead of fromThrowable or ResultAsync.fromPromise directly.
 // noop: () => {} — use as the ok-handler in .match(noop, errorHandler)
+// withFinalizer: sync fn + sync finalizer — use for sync cleanup (e.g. restoring globals)
+// withFinalizerAsync: async/sync fn + async/sync finalizer — use for all async operations
 ```
 
 ## Patterns
@@ -155,14 +157,37 @@ const updated = requireMutation(
 
 ## Finalizers
 
-Use `withFinalizer` when cleanup must run for both Ok and Err outcomes. It runs the finalizer, logs finalizer failure, then unwraps the original result — returning `Promise<T>` (throws on Err). No terminal consumer (`.unwrapOr`, `.match`) is needed.
+Two variants — both live in `@esposter/shared`. Both run the finalizer regardless of success/failure, log finalizer errors silently, then unwrap the original result (throwing on Err). No terminal consumer (`.unwrapOr`, `.match`) needed.
 
-Both arguments are plain `() => Promisable<T>` — not `ResultAsync`.
+### `withFinalizer` — sync
+
+Use when both the operation and the finalizer are synchronous:
 
 ```typescript
-await withFinalizer(async () => {
+// restoring a global (see ignoreWarn.ts)
+return withFinalizer(fn, () => {
+  console.warn = warn;
+});
+```
+
+### `withFinalizerAsync` — async/sync mix
+
+Use for all async operations. Both arguments are plain `() => Promisable<T>` — not `ResultAsync`:
+
+```typescript
+await withFinalizerAsync(async () => {
   await save();
 }, onComplete);
+
+// loading flag pattern
+await withFinalizerAsync(
+  async () => {
+    items.value = await fetchItems();
+  },
+  () => {
+    isPending.value = false;
+  },
+);
 ```
 
 For simple loading flags around a `ResultAsync`, set the flag after `await`; `ResultAsync` resolves to a `Result` instead of rejecting.

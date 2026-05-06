@@ -2,7 +2,7 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { useColorsStore } from "@/store/colors";
 
 interface ConfirmPinDialogProps {
@@ -28,7 +28,7 @@ const { text } = storeToRefs(colorsStore);
     :confirm-button-props="{ text: 'Oh yeah. Pin it' }"
     @confirm="
       async (onComplete) => {
-        await withFinalizer(
+        await withFinalizerAsync(
           () => $trpc.message.pinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
           onComplete,
         );

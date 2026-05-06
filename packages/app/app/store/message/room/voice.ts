@@ -1,13 +1,12 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { LOCAL_PARTICIPANT_ID } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useWebRtcStore } from "@/store/message/room/webRtc";
 import { AdminActionType } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 
 export const useVoiceStore = defineStore("message/room/voice", () => {
   const { $trpc } = useNuxtApp();
@@ -94,7 +93,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
   const leaveVoice = async () => {
     const roomId = callRoomId.value;
     if (!roomId) return;
-    await withFinalizer(
+    await withFinalizerAsync(
       async () => {
         if (sessionId.value) deleteVoiceParticipant(roomId, sessionId.value);
         await $trpc.voice.leaveVoiceChannel.mutate({ roomId });

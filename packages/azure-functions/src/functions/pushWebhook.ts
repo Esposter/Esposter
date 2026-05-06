@@ -42,12 +42,12 @@ app.http(AzureFunction.PushWebhook, {
             jsonBody: { errors, message: "Invalid request." },
             status: 400,
           };
-        } else if (error instanceof SyntaxError) {
+        } else if (error instanceof SyntaxError)
           return {
             jsonBody: { message: "Malformed JSON body." },
             status: 400,
           };
-        } else {
+        else {
           context.error("An internal error occurred: ", error);
           return {
             jsonBody: { message: "An internal server error occurred." },

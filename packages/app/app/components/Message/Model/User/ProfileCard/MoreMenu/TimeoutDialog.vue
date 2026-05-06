@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
+import { withFinalizerAsync } from "@esposter/shared";
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
 import { useRoomStore } from "@/store/message/room";
@@ -25,7 +25,7 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
     :confirm-button-props="{ color: 'warning', text: 'Timeout' }"
     @submit="
       async (_event, onComplete) => {
-        await withFinalizer(async () => {
+        await withFinalizerAsync(async () => {
           if (!currentRoom) return;
           await $trpc.moderation.executeAdminAction.mutate({
             durationMs: selectedTimeoutDurationMs,

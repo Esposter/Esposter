@@ -2,11 +2,17 @@
 import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-import { withFinalizer } from "#shared/error/withFinalizer";
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
-import { getResultAsync, InvalidOperationError, jsonDateParse, noop, Operation } from "@esposter/shared";
+import {
+  getResultAsync,
+  InvalidOperationError,
+  jsonDateParse,
+  noop,
+  Operation,
+  withFinalizerAsync,
+} from "@esposter/shared";
 
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
@@ -41,7 +47,7 @@ const vote = async (optionId: null | string) => {
   if (optionId === null) delete updatedVotes[userId.value];
   else updatedVotes[userId.value] = optionId;
   const updatedMessage = JSON.stringify({ ...pollContent.value, votes: updatedVotes });
-  await withFinalizer(
+  await withFinalizerAsync(
     () =>
       getResultAsync(async () => {
         await storeUpdateMessage({
