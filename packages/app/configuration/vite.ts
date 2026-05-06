@@ -13,6 +13,15 @@ export const vite: NuxtConfig["vite"] = {
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    rolldownOptions: {
+      // @vue-pdf-viewer/viewer imports `renderTextLayer` from pdfjs-dist as a fallback
+      // for older pdfjs versions; pdfjs-dist 5.x uses the `TextLayer` class instead,
+      // so this import is intentionally dead code and the warning is harmless.
+      onwarn: (warning, warn) => {
+        if (warning.code === "IMPORT_IS_UNDEFINED" && warning.message.includes("renderTextLayer")) return;
+        warn(warning);
+      },
+    },
   },
   css: {
     preprocessorOptions: {
