@@ -1,9 +1,9 @@
 import { normalizeString } from "@esposter/shared";
 
-const DURATION_PATTERN = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/iu;
+const DURATION_REGEX = new RegExp(String.raw`^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$`, "iu");
 
 export const parseDuration = (input: string): null | number => {
-  const match = DURATION_PATTERN.exec(normalizeString(input));
+  const match = DURATION_REGEX.exec(normalizeString(input));
   if (!match) return null;
 
   const hours = Number(match[1] ?? 0);

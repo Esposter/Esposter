@@ -13,7 +13,7 @@ export const useImportFile = () => {
         types: [
           {
             accept: { [mimeType]: accept.split(",").map((value) => normalizeString(value)) },
-            description: (accept.split(",")[0] ?? "").replace(/^\./u, "").toUpperCase(),
+            description: (accept.split(",")[0] ?? "").replace(new RegExp(String.raw`^\.`, "u"), "").toUpperCase(),
           },
         ],
       });

@@ -7,7 +7,9 @@ const clickerStore = useClickerStore();
 const { clicker, clickerItemProperties } = storeToRefs(clickerStore);
 const buildingStore = useBuildingStore();
 const { allBuildingPower } = storeToRefs(buildingStore);
-const displayNoPointsHtml = computed(() => formatNumberLong(clicker.value.noPoints, 3).replaceAll(/\s/g, "<br />"));
+const displayNoPointsHtml = computed(() =>
+  formatNumberLong(clicker.value.noPoints, 3).replaceAll(new RegExp(String.raw`\s`, "gu"), "<br />"),
+);
 const displayAllBuildingPower = computed(() => formatNumberLong(allBuildingPower.value));
 </script>
 

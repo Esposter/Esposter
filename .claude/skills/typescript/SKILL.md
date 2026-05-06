@@ -27,6 +27,14 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype. **Exception**: `structuredClone(new ClassName(...))` is intentional when a plain object is explicitly required (e.g. Vjsf does not accept class instances — must use `structuredClone` to strip the prototype). Always add a comment explaining why.
 - **Boolean casting** — never use `!!` to cast to boolean. Always use `Boolean(value)`.
 
+## Regex
+
+- **Always use `new RegExp(pattern, flags)`** — never regex literals `/pattern/flags`. Reason: literals make it easy to forget the `u` flag; constructor form makes the flags explicit and obvious.
+- **Always include the `u` flag** (Unicode-aware mode). Use `"u"` for standard patterns; `"gu"` for global+unicode; `"gmu"` for global+multiline+unicode.
+- **Use `String.raw` for patterns with backslash sequences** — `new RegExp(String.raw`\d{10,}`, "u")` is cleaner than `new RegExp("\\d{10,}", "u")`. Exception: patterns with `${` template interpolations must use regular template literals.
+- **Patterns built dynamically from variables** use regular template literals: `new RegExp(\`\\b${escaped}\\s\*\\(\`, "u")`.
+- **Named constants use `_REGEX` suffix** — `EMPTY_TEXT_REGEX`, `DURATION_REGEX`. Never `_RE`, `_PATTERN`.
+
 ## Function Syntax
 
 - **Always use arrow functions** — `const fn = () => { ... }` and `export const fn = () => { ... }`. Never use the `function` keyword except for the narrow cases below.

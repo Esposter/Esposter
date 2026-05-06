@@ -12,7 +12,7 @@ export const SpecialAchievementDefinitionMap = {
       operator: AchievementOperator.Matches,
       path: "message",
       type: AchievementConditionType.Property,
-      value: /^[A-Z\s!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?0-9]*$/,
+      value: new RegExp(String.raw`^[A-Z\s!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?0-9]*$`, "u"),
     },
     description: "Send a message in all uppercase",
     icon: "mdi-format-letter-case-upper",
@@ -26,7 +26,7 @@ export const SpecialAchievementDefinitionMap = {
       operator: AchievementOperator.Matches,
       path: "message",
       type: AchievementConditionType.Property,
-      value: /^[a-z\s!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?0-9]*$/,
+      value: new RegExp(String.raw`^[a-z\s!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?0-9]*$`, "u"),
     },
     description: "Send a message in all lowercase",
     icon: "mdi-format-letter-case-lower",
@@ -42,7 +42,7 @@ export const SpecialAchievementDefinitionMap = {
         const segmenter = new Intl.Segmenter("en-US", { granularity: "grapheme" });
         const segments = [...segmenter.segment(value)];
         const emojiCount = segments.filter((segment) =>
-          /\p{Emoji_Presentation}|\p{Extended_Pictographic}/u.test(segment.segment),
+          new RegExp(String.raw`\p{Emoji_Presentation}|\p{Extended_Pictographic}`, "u").test(segment.segment),
         ).length;
         return emojiCount >= 10;
       },
@@ -77,7 +77,7 @@ export const SpecialAchievementDefinitionMap = {
       operator: AchievementOperator.Matches,
       path: "message",
       type: AchievementConditionType.Property,
-      value: /\d{10,}/,
+      value: new RegExp(String.raw`\d{10,}`, "u"),
     },
     description: "Send a message with 10+ numbers",
     icon: "mdi-numeric",

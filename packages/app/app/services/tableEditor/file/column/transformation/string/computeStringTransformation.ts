@@ -6,7 +6,7 @@ export const computeStringTransformation = (value: string, transform: StringTran
     case StringTransformationType.Lowercase:
       return value.toLowerCase();
     case StringTransformationType.TitleCase:
-      return value.toLowerCase().replaceAll(/(?:^|\s)\S/gu, (char) => char.toUpperCase());
+      return value.toLowerCase().replaceAll(new RegExp(String.raw`(?:^|\s)\S`, "gu"), (char) => char.toUpperCase());
     case StringTransformationType.Trim:
       return value.trim();
     case StringTransformationType.Uppercase:

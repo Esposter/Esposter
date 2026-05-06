@@ -14,7 +14,7 @@ export const createMessageEntity = <T extends CreateMessageInput>(
 ): InstanceType<MessageEntityMap[T["type"]]> => {
   const createdAt = new Date();
   if (input.type === MessageType.Webhook) {
-    const { roomId, ...rest } = input as WebhookCreateMessageInput;
+    const { roomId, ...rest } = input;
     return new WebhookMessageEntity({
       ...rest,
       createdAt,
@@ -23,7 +23,7 @@ export const createMessageEntity = <T extends CreateMessageInput>(
       updatedAt: createdAt,
     }) as InstanceType<MessageEntityMap[T["type"]]>;
   } else {
-    const { roomId, ...rest } = input as ServerCreateMessageInput;
+    const { roomId, ...rest } = input;
     return new StandardMessageEntity({
       ...rest,
       createdAt,

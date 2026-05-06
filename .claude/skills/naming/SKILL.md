@@ -47,6 +47,10 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 
 - Always use full descriptive store name — `const fileTableEditorStore = useFileTableEditorStore()`. Never `const store = ...`. Exception: conditional assignment where store type varies at runtime
 
+## Regex Constants
+
+- Named regex constants use `_REGEX` suffix — `EMPTY_TEXT_REGEX`, `DURATION_REGEX`. **Never** `_RE`, `_PATTERN`, or any other suffix.
+
 ## tRPC
 
 - `upsert*` for procedures that do `insert().onConflictDoUpdate()` — never `update*` for these (update implies the record already exists). Domain operation names (`subscribe`, `connect`) are exempt

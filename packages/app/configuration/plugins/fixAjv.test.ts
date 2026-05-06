@@ -71,7 +71,7 @@ describe("fixAjv", () => {
       const result = transform("exports.useColors = function() {};\n", BROWSER_JS_ID);
 
       expect(result).toContain("_exports.useColors = function() {};");
-      expect(result).not.toMatch(/(?<!_)exports\.useColors/);
+      expect(result).not.toMatch(new RegExp(String.raw`(?<!_)exports\.useColors`, "u"));
     });
 
     test("converts module.exports = expr to const _debug + export default", () => {
@@ -267,7 +267,7 @@ describe("fixAjv", () => {
         const result = transform(code, AJV_ID);
 
         // Module.exports line is suppressed; exports.default becomes the export
-        expect(result).not.toMatch(/^export default Ajv;\nexport default Ajv;/m);
+        expect(result).not.toMatch(new RegExp(String.raw`^export default Ajv;\nexport default Ajv;`, "mu"));
         expect(result).toContain("export default Ajv;");
       });
 

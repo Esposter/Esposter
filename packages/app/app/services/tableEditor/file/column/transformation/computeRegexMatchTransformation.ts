@@ -8,7 +8,7 @@ export const computeRegexMatchTransformation = (
   transformation: RegexMatchTransformation,
 ): ColumnValue => {
   if (typeof value !== "string") return null;
-  return getResult(() => new RegExp(transformation.pattern).exec(value)).match(
+  return getResult(() => new RegExp(transformation.pattern, "u").exec(value)).match(
     (match) => {
       if (!match) return null;
       return match[transformation.groupIndex] ?? null;

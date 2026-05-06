@@ -9,7 +9,7 @@ interface PermissionListItemProps {
 const { permission, permissionKey } = defineProps<PermissionListItemProps>();
 const modelValue = defineModel<bigint>({ required: true });
 const isEnabled = computed(() => Boolean(modelValue.value & permission));
-const title = computed(() => normalizeString(permissionKey.replaceAll(/([A-Z])/g, " $1")));
+const title = computed(() => normalizeString(permissionKey.replaceAll(new RegExp("([A-Z])", "gu"), " $1")));
 </script>
 
 <template>

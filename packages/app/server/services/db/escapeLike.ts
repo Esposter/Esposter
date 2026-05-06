@@ -1,1 +1,2 @@
-export const escapeLike = (value: string): string => value.replaceAll(/[%_\\]/gu, String.raw`\$&`);
+export const escapeLike = (value: string): string =>
+  value.replaceAll(new RegExp(String.raw`[%_\\]`, "gu"), String.raw`\$&`);
