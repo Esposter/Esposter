@@ -25,7 +25,7 @@ describe(withAsyncIterator, () => {
     expect.hasAssertions();
 
     const returnFn = vi.fn<() => Promise<IteratorResult<unknown>>>();
-    await withAsyncIterator(makeIterator(returnFn), async () => "result");
+    await withAsyncIterator(makeIterator(returnFn), () => Promise.resolve("result"));
 
     expect(returnFn).toHaveBeenCalledTimes(1);
   });
@@ -35,11 +35,9 @@ describe(withAsyncIterator, () => {
 
     const returnFn = vi.fn<() => Promise<IteratorResult<unknown>>>();
 
-    await expect(
-      withAsyncIterator(makeIterator(returnFn), async () => {
-        throw new Error("fail");
-      }),
-    ).rejects.toThrow("fail");
+    await expect(withAsyncIterator(makeIterator(returnFn), () => Promise.reject(new Error("fail")))).rejects.toThrow(
+      "fail",
+    );
     expect(returnFn).toHaveBeenCalledTimes(1);
   });
 });
