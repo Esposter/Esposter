@@ -5,6 +5,7 @@ import type { z } from "zod";
 import { authClient } from "@/services/auth/authClient";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { useAlertStore } from "@/store/alert";
+import { getResultAsync } from "@esposter/shared";
 
 interface UseSaveAuthOptions<TDef extends TRPCResolverDef> {
   save: Resolver<TDef>;
@@ -27,20 +28,20 @@ export const useSave = <T extends ItemMetadata, TDef extends TRPCResolverDef>(
   const session = authClient.useSession();
   const alertStore = useAlertStore();
   const saveToLocalStorage = useSaveToLocalStorage();
-  return async (): Promise<boolean> => {
+  return (): Promise<boolean> => {
     const value = toValue(maybeValue);
     saveItemMetadata(value);
 
     if (session.value.data && auth)
-      try {
-        await auth.save(value);
-        return true;
-      } catch (error) {
-        alertStore.createAlert(error instanceof Error ? error.message : String(error), "error");
-        return false;
-      }
+      return getResultAsync(() => auth.save(value)).match(
+        () => true,
+        (error) => {
+          alertStore.createAlert(error.message, "error");
+          return false;
+        },
+      );
 
-    if (unauth) return saveToLocalStorage(unauth.key, unauth.schema, value);
-    return false;
+    if (unauth) return Promise.resolve(saveToLocalStorage(unauth.key, unauth.schema, value));
+    return Promise.resolve(false);
   };
 };

@@ -11,6 +11,7 @@ import { on } from "@@/server/services/events/on";
 import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
 import { router } from "@@/server/trpc";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
   AzureContainer,
@@ -41,42 +42,40 @@ export type OnUpsertStatusInput = z.infer<typeof onUpsertStatusInputSchema>;
 
 export const userRouter = router({
   connect: standardAuthedProcedure.mutation(async ({ ctx }) => {
-    const upsertedStatus = (
-      await ctx.db
-        .insert(userStatusesInMessage)
-        .values({ isConnected: true, userId: ctx.getSessionPayload.user.id })
-        .onConflictDoUpdate({
-          set: { isConnected: true },
-          target: userStatusesInMessage.userId,
-        })
-        .returning()
-    )[0];
-    if (!upsertedStatus)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserStatus, userRouter.disconnect.name)
-          .message,
-      });
+    const upsertedStatus = requireMutation(
+      (
+        await ctx.db
+          .insert(userStatusesInMessage)
+          .values({ isConnected: true, userId: ctx.getSessionPayload.user.id })
+          .onConflictDoUpdate({
+            set: { isConnected: true },
+            target: userStatusesInMessage.userId,
+          })
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.UserStatus,
+      userRouter.connect.name,
+    );
 
     userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
   }),
   disconnect: standardAuthedProcedure.mutation(async ({ ctx }) => {
-    const upsertedStatus = (
-      await ctx.db
-        .insert(userStatusesInMessage)
-        .values({ isConnected: false, userId: ctx.getSessionPayload.user.id })
-        .onConflictDoUpdate({
-          set: { isConnected: false },
-          target: userStatusesInMessage.userId,
-        })
-        .returning()
-    )[0];
-    if (!upsertedStatus)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserStatus, userRouter.disconnect.name)
-          .message,
-      });
+    const upsertedStatus = requireMutation(
+      (
+        await ctx.db
+          .insert(userStatusesInMessage)
+          .values({ isConnected: false, userId: ctx.getSessionPayload.user.id })
+          .onConflictDoUpdate({
+            set: { isConnected: false },
+            target: userStatusesInMessage.userId,
+          })
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.UserStatus,
+      userRouter.disconnect.name,
+    );
 
     userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
   }),
@@ -129,15 +128,12 @@ export const userRouter = router({
     return resultUserStatuses;
   }),
   updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation(async ({ ctx, input }) => {
-    const updatedUser = (
-      await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning()
-    )[0];
-    if (!updatedUser)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.User, ctx.getSessionPayload.user.id)
-          .message,
-      });
+    const updatedUser = requireMutation(
+      (await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning())[0],
+      Operation.Update,
+      DatabaseEntityType.User,
+      ctx.getSessionPayload.user.id,
+    );
     return updatedUser;
   }),
   uploadProfileImage: standardAuthedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
@@ -150,22 +146,21 @@ export const userRouter = router({
     return blockBlobClient.url;
   }),
   upsertStatus: standardAuthedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
-    const upsertedStatus = (
-      await ctx.db
-        .insert(userStatusesInMessage)
-        .values({ ...input, userId: ctx.getSessionPayload.user.id })
-        .onConflictDoUpdate({
-          set: input,
-          target: userStatusesInMessage.userId,
-        })
-        .returning()
-    )[0];
-    if (!upsertedStatus)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserStatus, JSON.stringify(input))
-          .message,
-      });
+    const upsertedStatus = requireMutation(
+      (
+        await ctx.db
+          .insert(userStatusesInMessage)
+          .values({ ...input, userId: ctx.getSessionPayload.user.id })
+          .onConflictDoUpdate({
+            set: input,
+            target: userStatusesInMessage.userId,
+          })
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.UserStatus,
+      JSON.stringify(input),
+    );
 
     const detectedStatus = { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) };
     userEventEmitter.emit("upsertStatus", detectedStatus);

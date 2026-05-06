@@ -8,20 +8,19 @@ import { SAVE_FILENAME } from "@@/server/services/tableEditor/constants";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { AzureContainer } from "@esposter/db-schema";
-import { jsonDateParse, streamToText } from "@esposter/shared";
+import { getResultAsync, jsonDateParse, streamToText } from "@esposter/shared";
 
 export const tableEditorRouter = router({
-  readTableEditorConfiguration: standardAuthedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {
-    try {
-      const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
+  readTableEditorConfiguration: standardAuthedProcedure.query<TableEditorConfiguration>(({ ctx }) => {
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
+    return getResultAsync(async () => {
       const { readableStreamBody } = await useDownload(AzureContainer.TableEditorAssets, blobName);
       if (!readableStreamBody) return new TableEditorConfiguration();
-
       const json = await streamToText(readableStreamBody);
       return new TableEditorConfiguration(jsonDateParse(json));
-    } catch {
-      return new TableEditorConfiguration();
-    }
+    })
+      .orTee(console.error)
+      .unwrapOr(new TableEditorConfiguration());
   }),
   saveTableEditorConfiguration: standardAuthedProcedure
     .input(tableEditorConfigurationSchema)

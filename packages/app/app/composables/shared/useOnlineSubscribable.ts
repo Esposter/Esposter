@@ -1,7 +1,7 @@
 import type { Promisable } from "type-fest";
 import type { ComponentInternalInstance, EffectScope, MultiWatchSources, WatchSource } from "vue";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 
 export interface OnlineSubscribableContext {
   instance?: ComponentInternalInstance | null;

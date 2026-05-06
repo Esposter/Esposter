@@ -11,6 +11,7 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { router } from "@@/server/trpc";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
@@ -77,17 +78,12 @@ export const directMessageRouter = router({
           .values({ participantKey, type: RoomType.DirectMessage, userId })
           .onConflictDoNothing({ target: roomsInMessage.participantKey })
           .returning();
-        const room =
-          newRoom ?? (await tx.query.roomsInMessage.findFirst({ where: { participantKey: { eq: participantKey } } }));
-        if (!room)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(
-              Operation.Create,
-              DerivedDatabaseEntityType.DirectMessage,
-              participantKey,
-            ).message,
-          });
+        const room = requireMutation(
+          newRoom ?? (await tx.query.roomsInMessage.findFirst({ where: { participantKey: { eq: participantKey } } })),
+          Operation.Create,
+          DerivedDatabaseEntityType.DirectMessage,
+          participantKey,
+        );
 
         await tx
           .insert(usersToRoomsInMessage)

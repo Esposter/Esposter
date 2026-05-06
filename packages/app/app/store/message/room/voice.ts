@@ -6,6 +6,7 @@ import { LOCAL_PARTICIPANT_ID } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useWebRtcStore } from "@/store/message/room/webRtc";
 import { AdminActionType } from "@esposter/db-schema";
+import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 
 export const useVoiceStore = defineStore("message/room/voice", () => {
   const { $trpc } = useNuxtApp();
@@ -73,30 +74,44 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     const roomId = roomStore.currentRoomId;
     if (!roomId || callRoomId.value) return;
     callRoomId.value = roomId;
-    try {
+    let isJoined = false;
+    await getResultAsync(async () => {
       const stream = await acquireLocalStream();
       subscribeToSignals(roomId);
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
+      isJoined = true;
       setParticipants(roomId, participants);
       if (sessionId.value) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, sessionId.value, stream);
-    } catch {
-      await leaveVoice();
-    }
+    })
+      .orElse((error) =>
+        getResultAsync(async () => {
+          console.error(error);
+          if (isJoined) await leaveVoice();
+          else {
+            callRoomId.value = undefined;
+            await cleanupAll();
+          }
+        }),
+      )
+      .unwrapOr(undefined);
   };
 
   const leaveVoice = async () => {
     const roomId = callRoomId.value;
     if (!roomId) return;
-    try {
-      if (sessionId.value) deleteVoiceParticipant(roomId, sessionId.value);
-      await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
-    } finally {
-      callRoomId.value = undefined;
-      isDeafened.value = false;
-      isForceMuted.value = false;
-      await cleanupAll();
-      clearSpeakers();
-    }
+    await withFinalizerAsync(
+      async () => {
+        if (sessionId.value) deleteVoiceParticipant(roomId, sessionId.value);
+        await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
+      },
+      async () => {
+        callRoomId.value = undefined;
+        isDeafened.value = false;
+        isForceMuted.value = false;
+        await cleanupAll();
+        clearSpeakers();
+      },
+    );
   };
 
   const toggleDeafen = () => {

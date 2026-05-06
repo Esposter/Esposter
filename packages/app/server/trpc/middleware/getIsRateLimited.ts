@@ -4,8 +4,9 @@ import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { middleware } from "@@/server/trpc";
-import { ID_SEPARATOR } from "@esposter/shared";
+import { getResultAsync, ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { RateLimiterRes } from "rate-limiter-flexible";
 
 export const getIsRateLimited = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
@@ -22,18 +23,21 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     }
 
     const rateLimiter = RateLimiterMap[type];
-    try {
-      const { msBeforeNext, remainingPoints } = await rateLimiter.consume(
-        getSessionPayload ? getSessionPayload.user.id : `${path}${ID_SEPARATOR}${ipAddress}`,
-      );
-      if ("setHeader" in ctx.res) {
-        ctx.res.setHeader("Retry-After", msBeforeNext / 1000);
-        ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
-        ctx.res.setHeader("X-RateLimit-Remaining", remainingPoints);
-        ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + msBeforeNext).toISOString());
-      }
-    } catch {
-      throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+    const rateLimiterResult = await getResultAsync(() =>
+      rateLimiter.consume(getSessionPayload ? getSessionPayload.user.id : `${path}${ID_SEPARATOR}${ipAddress}`),
+    );
+    const { msBeforeNext, remainingPoints } = rateLimiterResult.match(
+      (result) => result,
+      (error) => {
+        if (error instanceof RateLimiterRes) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      },
+    );
+    if ("setHeader" in ctx.res) {
+      ctx.res.setHeader("Retry-After", msBeforeNext / 1000);
+      ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
+      ctx.res.setHeader("X-RateLimit-Remaining", remainingPoints);
+      ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + msBeforeNext).toISOString());
     }
 
     return next({ ctx: { getSessionPayload } });

@@ -20,7 +20,7 @@ import type { Except } from "type-fest";
 import { MockRestError } from "@/models/MockRestError";
 import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { exhaustiveGuard, ID_SEPARATOR } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
  * It uses a Map to simulate table storage and correctly implements the TableClient interface.
@@ -132,7 +132,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
         throw new MockRestError("All transaction actions must target the same partitionKey.", 400);
 
     const snapshot = new Map(this.table);
-    try {
+    await getResultAsync(async () => {
       for (const [type, entity, updateMode] of actions)
         switch (type) {
           case "create":
@@ -150,13 +150,16 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
           default:
             exhaustiveGuard(type);
         }
-    } catch (error) {
-      this.table.clear();
-      for (const [key, value] of snapshot) this.table.set(key, value);
-      throw error;
-    }
+    })
+      .orTee(() => {
+        this.table.clear();
+        for (const [key, value] of snapshot) this.table.set(key, value);
+      })
+      .match(noop, (error) => {
+        throw error;
+      });
     return {
-      getResponseForEntity: () => undefined,
+      getResponseForEntity: noop,
       status: 202,
       subResponses: [],
     } as unknown as TableTransactionResponse;

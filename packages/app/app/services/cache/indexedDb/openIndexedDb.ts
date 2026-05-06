@@ -1,9 +1,11 @@
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IDBPDatabase } from "idb";
 
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
+import { getResultAsync } from "@esposter/shared";
 import { openDB } from "idb";
 
 const DATABASE_NAME = "esposter";
@@ -26,9 +28,13 @@ export const openIndexedDb = (): Promise<IDBPDatabase<IndexedDbDatabaseSchema>> 
       }
     },
   });
-  promise.catch(() => {
-    if (databasePromise === promise) databasePromise = undefined;
-  });
+  getSynchronizedFunction(async () => {
+    await getResultAsync(() => promise)
+      .orTee(() => {
+        if (databasePromise === promise) databasePromise = undefined;
+      })
+      .unwrapOr(undefined);
+  })();
   databasePromise = promise;
   return databasePromise;
 };

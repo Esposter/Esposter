@@ -1,7 +1,7 @@
 import type { Item } from "@/models/shared/Item";
 
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useRoleStore } from "@/store/message/room/role";
 import { useVoiceStore } from "@/store/message/room/voice";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";

@@ -4,14 +4,14 @@ import { db } from "@/services/db";
 import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { app } from "@azure/functions";
 import { AzureFunction, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
+import { getResultAsync } from "@esposter/shared";
 import { z, ZodError } from "zod";
 
 app.http(AzureFunction.PushWebhook, {
   authLevel: "function",
-  handler: async (request, context) => {
-    context.log(`${AzureFunction.PushWebhook} processed a request for URL: ${request.url}`);
-
-    try {
+  handler: (request, context) => {
+    context.log(`${AzureFunction.PushWebhook} received a request`);
+    return getResultAsync(async () => {
       const { id, token } = await selectWebhookInMessageSchema
         .pick({ id: true, token: true })
         .parseAsync(request.params);
@@ -32,22 +32,30 @@ app.http(AzureFunction.PushWebhook, {
         jsonBody: { message: "Webhook accepted." },
         status: 202,
       };
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const errors = z.treeifyError(error);
-        context.log("Validation failed: ", errors);
-        return {
-          jsonBody: { errors, message: "Invalid request body." },
-          status: 400,
-        };
-      } else {
-        context.error("An internal error occurred: ", error);
-        return {
-          jsonBody: { message: "An internal server error occurred." },
-          status: 500,
-        };
-      }
-    }
+    }).match(
+      (response) => response,
+      (error) => {
+        if (error instanceof ZodError) {
+          const errors = z.treeifyError(error);
+          context.log("Validation failed: ", errors);
+          return {
+            jsonBody: { errors, message: "Invalid request." },
+            status: 400,
+          };
+        } else if (error instanceof SyntaxError)
+          return {
+            jsonBody: { message: "Malformed JSON body." },
+            status: 400,
+          };
+        else {
+          context.error("An internal error occurred: ", error);
+          return {
+            jsonBody: { message: "An internal server error occurred." },
+            status: 500,
+          };
+        }
+      },
+    );
   },
   methods: ["POST"],
   route: "webhooks/{id}/{token}",

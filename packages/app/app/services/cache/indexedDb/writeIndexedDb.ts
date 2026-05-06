@@ -4,18 +4,15 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { IndexKey, IndexNames } from "idb";
 
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { toRawDeep } from "@esposter/shared";
+import { getResultAsync, toRawDeep } from "@esposter/shared";
 
-export const writeIndexedDb = async <
-  T extends IndexedDbStoreName,
-  TIndex extends IndexNames<IndexedDbDatabaseSchema, T>,
->(
+export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends IndexNames<IndexedDbDatabaseSchema, T>>(
   configuration: IndexedDbStoreConfiguration<T, TIndex>,
   items: IndexedDbDatabaseSchema[T]["value"][],
   partitionKey: IndexKey<IndexedDbDatabaseSchema, T, TIndex>,
 ): Promise<void> => {
-  try {
-    const { indexName, limit, storeName } = configuration;
+  const { indexName, limit, storeName } = configuration;
+  return getResultAsync(async () => {
     const db = await openIndexedDb();
     const tx = db.transaction(storeName, "readwrite");
     const objectStore = tx.objectStore(storeName);
@@ -24,7 +21,7 @@ export const writeIndexedDb = async <
     const itemsToCache = limit ? items.slice(0, limit) : items;
     for (const item of itemsToCache) await objectStore.put(toRawDeep(item));
     await tx.done;
-  } catch {
-    // Best-effort cache write
-  }
+  })
+    .orTee(console.error)
+    .unwrapOr(undefined);
 };

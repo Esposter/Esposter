@@ -1,11 +1,11 @@
 import type { VoiceSignalPayload } from "#shared/models/room/voice/VoiceSignalPayload";
 import type { Unsubscribable } from "@trpc/server/observable";
 
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useVoiceStore } from "@/store/message/room/voice";
-import { exhaustiveGuard, jsonDateParse } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, jsonDateParse, noop } from "@esposter/shared";
 // Module-level WebRTC state — only one voice call at a time.
 let localStream: MediaStream | null = null;
 let isRemoteAudioMuted = false;
@@ -17,7 +17,6 @@ let signalUnsubscribable: undefined | Unsubscribable;
 
 export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   const { $trpc } = useNuxtApp();
-  const isProduction = useIsProduction();
 
   const cleanupPeer = async (id: string) => {
     peerConnections.get(id)?.close();
@@ -83,11 +82,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
       audio.srcObject = remoteStream;
       audio.muted = isRemoteAudioMuted;
       remoteAudioElements.set(remoteId, audio);
-      try {
-        await audio.play();
-      } catch (error: unknown) {
-        if (!isProduction) console.warn("[WebRTC] audio.play() rejected (autoplay policy?):", error);
-      }
+      await getResultAsync(() => audio.play()).match(noop, console.error);
     });
 
     peerConnection.onicecandidate = getSynchronizedFunction(async ({ candidate }) => {
@@ -122,7 +117,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   const getSignalHandler =
     (roomId: string) =>
     async ({ payload: { data, type }, senderId }: { payload: VoiceSignalPayload; senderId: string }) => {
-      try {
+      await getResultAsync(async () => {
         switch (type) {
           case VoiceSignalType.Answer: {
             const peerConnection = peerConnections.get(senderId);
@@ -158,10 +153,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
           default:
             exhaustiveGuard(type);
         }
-      } catch (error) {
-        // Drop malformed signal payloads to prevent unhandled rejections from aborting the subscription
-        if (!isProduction) console.warn("[WebRTC] Dropped malformed signal:", error);
-      }
+      }).match(noop, console.error);
     };
 
   const acquireLocalStream = async () => {

@@ -67,8 +67,10 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 ## Promise Style
 
-- **Always use `async`/`await`** — never use `.then()` or `.catch()` promise chains. Use `try`/`catch` blocks for error handling.
+- **Always use `async`/`await` with neverthrow for fallible work** — never use `.catch()` promise chains or `try`/`catch` blocks. Wrap rejecting promises with `ResultAsync.fromPromise(...)`, throwing sync functions with `fromThrowable(...)`, and throwing async functions with `ResultAsync.fromThrowable(...)`.
   - **Exception**: `.then()` is acceptable only for building a **promise queue** (serialising sequential async operations in a sync context, e.g. `chain = chain.then(async () => {...})`). This pattern cannot be expressed with `await` inside a synchronous watcher/event callback. All other `.then()`/`.catch()` usages must be converted.
+- Every `Result` / `ResultAsync` must be consumed with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`; `.orTee(...)` by itself is not enough.
+- Use the shared `withFinalizer(...)` helper for cleanup that must run after both success and failure.
 - When fire-and-forgetting an async operation, extract to a named `async` function and call it without `await`.
 - **Never use `void asyncFn()`** — when passing an async function to a sync callback slot (e.g. `onScopeDispose`, event listeners, Phaser callbacks), wrap it with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction` instead. This satisfies `@typescript-eslint/no-misused-promises` without suppressing the lint rule.
 

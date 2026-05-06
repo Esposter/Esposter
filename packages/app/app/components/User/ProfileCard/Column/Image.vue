@@ -3,7 +3,7 @@ import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
 import { formRules } from "@/services/vuetify/formRules";
-import { takeOne } from "@esposter/shared";
+import { takeOne, withFinalizerAsync } from "@esposter/shared";
 
 export interface UserProfileCardColumnImageProps {
   editMode: boolean;
@@ -41,11 +41,14 @@ const isLoading = ref(false);
             const file = Array.isArray(files) ? takeOne(files) : files;
             isLoading = true;
 
-            try {
-              modelValue = await $trpc.user.uploadProfileImage.mutate(file);
-            } finally {
-              isLoading = false;
-            }
+            await withFinalizerAsync(
+              async () => {
+                modelValue = await $trpc.user.uploadProfileImage.mutate(file);
+              },
+              () => {
+                isLoading = false;
+              },
+            );
           }
         "
       />

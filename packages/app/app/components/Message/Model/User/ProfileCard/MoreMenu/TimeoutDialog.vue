@@ -5,6 +5,7 @@ import { AdminActionListItemPropsMap } from "@/services/message/moderation/Admin
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface TimeoutDialogProps {
   user: Pick<User, "id" | "name">;
@@ -24,7 +25,7 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
     :confirm-button-props="{ color: 'warning', text: 'Timeout' }"
     @submit="
       async (_event, onComplete) => {
-        try {
+        await withFinalizerAsync(async () => {
           if (!currentRoom) return;
           await $trpc.moderation.executeAdminAction.mutate({
             durationMs: selectedTimeoutDurationMs,
@@ -32,9 +33,7 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
             targetUserId: user.id,
             type: AdminActionType.TimeoutUser,
           });
-        } finally {
-          onComplete();
-        }
+        }, onComplete);
       }
     "
   >

@@ -67,8 +67,9 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 ## Promise Style
 
-- **Always use `async`/`await`** — never use `.then()` or `.catch()` promise chains. Use `try`/`catch` blocks for error handling.
+- **Always use `async`/`await` with neverthrow for fallible work** — `try`/`catch` is **BANNED**. Never use `.catch()` promise chains. Use shared wrappers: `getResult(() => ...)` for sync throwing operations and `getResultAsync(() => ...)` for async/rejecting operations. Do not call `fromThrowable(...)` / `ResultAsync.fromPromise(...)` / `ResultAsync.fromThrowable(...)` directly. For cleanup that must run after both success and failure, use `withFinalizer(...)` / `withFinalizerAsync(...)`. **Exception**: `try`/`finally` (no `catch`) is allowed only when the function must stay synchronous and using `withFinalizer` would force an undesirable async cascade (e.g. `ignoreWarn`).
   - **Exception**: `.then()` is acceptable only for building a **promise queue** (serialising sequential async operations in a sync context, e.g. `chain = chain.then(async () => {...})`). This pattern cannot be expressed with `await` inside a synchronous watcher/event callback. All other `.then()`/`.catch()` usages must be converted.
+- Every `Result` / `ResultAsync` must be consumed with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`; `.orTee(...)` by itself is not enough.
 - When fire-and-forgetting an async operation, extract to a named `async` function and call it without `await`.
 - **Never use `void asyncFn()`** — when passing an async function to a sync callback slot (e.g. `onScopeDispose`, event listeners, Phaser callbacks), wrap it with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction` instead. This satisfies `@typescript-eslint/no-misused-promises` without suppressing the lint rule.
 

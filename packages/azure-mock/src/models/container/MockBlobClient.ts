@@ -34,7 +34,7 @@ import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
-import { takeOne } from "@esposter/shared";
+import { noop, takeOne } from "@esposter/shared";
 import { Readable } from "node:stream";
 
 export class MockBlobClient implements Except<BlobClient, "accountName"> {
@@ -98,10 +98,10 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
       getResult: () => response,
       isDone: () => true,
       isStopped: () => false,
-      onProgress: () => () => {},
+      onProgress: () => noop,
       poll: () => Promise.resolve(),
       pollUntilDone: () => Promise.resolve(response),
-      stopPolling: () => {},
+      stopPolling: noop,
     });
   }
 

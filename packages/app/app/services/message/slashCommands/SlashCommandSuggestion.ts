@@ -3,7 +3,7 @@ import type { SlashCommandTypeWithoutParameters } from "@/models/message/slashCo
 import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import SlashCommandList from "@/components/Message/Model/Message/SlashCommandList.vue";
 import { getRender } from "@/services/message/getRender";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";

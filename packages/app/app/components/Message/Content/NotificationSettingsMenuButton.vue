@@ -35,7 +35,7 @@ const { notificationType } = storeToRefs(userToRoomStore);
       >
         <v-radio v-for="[value, label] of Object.entries(NotificationTypeLabelMap)" :key="value" :value :label>
           <template #label="{ props: labelProps }">
-            <v-label :="labelProps" text-sm :text="label" @click="() => {}" />
+            <v-label :="labelProps" text-sm :text="label" />
           </template>
         </v-radio>
       </v-radio-group>

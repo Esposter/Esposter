@@ -16,6 +16,8 @@ import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
 import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
@@ -28,7 +30,7 @@ import {
   usersToRoomRolesInMessage,
   UserToRoomRoleInMessageRelations,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -42,31 +44,29 @@ export const roleRouter = router({
     "roomId",
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { roleId, roomId, userId } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
-    const [role, member, actorContext] = await Promise.all([
-      ctx.db.query.roomRolesInMessage.findFirst({
-        where: { id: { eq: roleId }, roomId: { eq: roomId } },
-      }),
-      ctx.db.query.usersToRoomsInMessage.findFirst({
-        columns: { userId: true },
-        where: { roomId: { eq: roomId }, userId: { eq: userId } },
-      }),
+    const [role, actorContext] = await Promise.all([
+      requireEntity(
+        ctx.db.query.roomRolesInMessage.findFirst({
+          where: { id: { eq: roleId }, roomId: { eq: roomId } },
+        }),
+        DatabaseEntityType.RoomRole,
+        roleId,
+      ),
       getActorContext(ctx.db, actorUserId, roomId),
+      requireEntity(
+        ctx.db.query.usersToRoomsInMessage.findFirst({
+          columns: { userId: true },
+          where: { roomId: { eq: roomId }, userId: { eq: userId } },
+        }),
+        DatabaseEntityType.UserToRoom,
+        userId,
+      ),
     ]);
 
-    if (!role)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.RoomRole, roleId).message,
-      });
-    else if (role.isEveryone)
+    if (role.isEveryone)
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoomRole, roleId).message,
-      });
-    else if (!member)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.UserToRoom, userId).message,
       });
 
     const { actorTopPosition, isOwner } = actorContext;
@@ -100,18 +100,12 @@ export const roleRouter = router({
       if (!hasAdmin && (permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    const createdRole = (
-      await ctx.db.insert(roomRolesInMessage).values({ color, name, permissions, position, roomId }).returning()
-    )[0];
-    if (!createdRole)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(
-          Operation.Create,
-          DatabaseEntityType.RoomRole,
-          JSON.stringify({ name, roomId }),
-        ).message,
-      });
+    const createdRole = requireMutation(
+      (await ctx.db.insert(roomRolesInMessage).values({ color, name, permissions, position, roomId }).returning())[0],
+      Operation.Create,
+      DatabaseEntityType.RoomRole,
+      JSON.stringify({ name, roomId }),
+    );
 
     roleEventEmitter.emit("createRole", [
       createdRole,
@@ -126,18 +120,17 @@ export const roleRouter = router({
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { id, roomId } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
     const [role, actorContext] = await Promise.all([
-      ctx.db.query.roomRolesInMessage.findFirst({
-        columns: { isEveryone: true, position: true },
-        where: { id: { eq: id }, roomId: { eq: roomId } },
-      }),
+      requireEntity(
+        ctx.db.query.roomRolesInMessage.findFirst({
+          columns: { isEveryone: true, position: true },
+          where: { id: { eq: id }, roomId: { eq: roomId } },
+        }),
+        DatabaseEntityType.RoomRole,
+        id,
+      ),
       getActorContext(ctx.db, actorUserId, roomId),
     ]);
 
-    if (!role)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.RoomRole, id).message,
-      });
     if (role.isEveryone)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -147,17 +140,18 @@ export const roleRouter = router({
     const { actorTopPosition, isOwner } = actorContext;
     if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    const deletedRole = (
-      await ctx.db
-        .delete(roomRolesInMessage)
-        .where(and(eq(roomRolesInMessage.id, id), eq(roomRolesInMessage.roomId, roomId)))
-        .returning()
-    )[0];
-    if (!deletedRole)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.RoomRole, id).message,
-      });
+    const deletedRole = requireMutation(
+      (
+        await ctx.db
+          .delete(roomRolesInMessage)
+          .where(and(eq(roomRolesInMessage.id, id), eq(roomRolesInMessage.roomId, roomId)))
+          .returning()
+      )[0],
+      Operation.Delete,
+      DatabaseEntityType.RoomRole,
+      id,
+      "NOT_FOUND",
+    );
 
     roleEventEmitter.emit("deleteRole", [
       { id, roomId },
@@ -245,18 +239,16 @@ export const roleRouter = router({
     async ({ ctx, input: { roleId, roomId, userId } }) => {
       const actorUserId = ctx.getSessionPayload.user.id;
       const [role, actorContext] = await Promise.all([
-        ctx.db.query.roomRolesInMessage.findFirst({
-          columns: { position: true },
-          where: { id: { eq: roleId }, roomId: { eq: roomId } },
-        }),
+        requireEntity(
+          ctx.db.query.roomRolesInMessage.findFirst({
+            columns: { position: true },
+            where: { id: { eq: roleId }, roomId: { eq: roomId } },
+          }),
+          DatabaseEntityType.RoomRole,
+          roleId,
+        ),
         getActorContext(ctx.db, actorUserId, roomId),
       ]);
-
-      if (!role)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.RoomRole, roleId).message,
-        });
 
       const { actorTopPosition, isOwner } = actorContext;
       if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -287,18 +279,16 @@ export const roleRouter = router({
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
     const [role, actorContext] = await Promise.all([
-      ctx.db.query.roomRolesInMessage.findFirst({
-        columns: { position: true },
-        where: { id: { eq: id }, roomId: { eq: roomId } },
-      }),
+      requireEntity(
+        ctx.db.query.roomRolesInMessage.findFirst({
+          columns: { position: true },
+          where: { id: { eq: id }, roomId: { eq: roomId } },
+        }),
+        DatabaseEntityType.RoomRole,
+        id,
+      ),
       getActorContext(ctx.db, actorUserId, roomId),
     ]);
-
-    if (!role)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.RoomRole, id).message,
-      });
 
     const { actorTopPosition, isOwner } = actorContext;
     if (
@@ -312,19 +302,19 @@ export const roleRouter = router({
       if (!hasAdmin && (rest.permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    const updatedRole = (
-      await ctx.db
-        .update(roomRolesInMessage)
-        .set(rest)
-        .where(and(eq(roomRolesInMessage.id, id), eq(roomRolesInMessage.roomId, roomId)))
-        .returning()
-    )[0];
-    if (!updatedRole)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.RoomRole, id).message,
-      });
-
+    const updatedRole = requireMutation(
+      (
+        await ctx.db
+          .update(roomRolesInMessage)
+          .set(rest)
+          .where(and(eq(roomRolesInMessage.id, id), eq(roomRolesInMessage.roomId, roomId)))
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.RoomRole,
+      id,
+      "NOT_FOUND",
+    );
     roleEventEmitter.emit("updateRole", [
       updatedRole,
       { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId },

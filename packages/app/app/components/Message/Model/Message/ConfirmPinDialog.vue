@@ -3,6 +3,7 @@ import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { useColorsStore } from "@/store/colors";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface ConfirmPinDialogProps {
   message: MessageEntity;
@@ -27,11 +28,10 @@ const { text } = storeToRefs(colorsStore);
     :confirm-button-props="{ text: 'Oh yeah. Pin it' }"
     @confirm="
       async (onComplete) => {
-        try {
-          await $trpc.message.pinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
-        } finally {
-          onComplete();
-        }
+        await withFinalizerAsync(
+          () => $trpc.message.pinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
+          onComplete,
+        );
       }
     "
   >

@@ -22,6 +22,7 @@ import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
@@ -42,7 +43,7 @@ import {
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { exhaustiveGuard, ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
+import { exhaustiveGuard, ItemMetadataPropertyNames } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -52,16 +53,14 @@ const onAdminActionInputSchema = roomIdSchema;
 export const moderationRouter = router({
   deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation(
     async ({ ctx, input: { roomId, userId } }) => {
-      const ban = await ctx.db.query.bansInMessage.findFirst({
-        columns: { userId: true },
-        where: { roomId: { eq: roomId }, userId: { eq: userId } },
-      });
-      if (!ban)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Ban, userId).message,
-        });
-
+      await requireEntity(
+        ctx.db.query.bansInMessage.findFirst({
+          columns: { userId: true },
+          where: { roomId: { eq: roomId }, userId: { eq: userId } },
+        }),
+        DatabaseEntityType.Ban,
+        userId,
+      );
       await ctx.db.delete(bansInMessage).where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, userId)));
     },
   ),

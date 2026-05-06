@@ -5,7 +5,14 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
-import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import {
+  getResultAsync,
+  InvalidOperationError,
+  jsonDateParse,
+  noop,
+  Operation,
+  withFinalizerAsync,
+} from "@esposter/shared";
 
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
@@ -40,15 +47,29 @@ const vote = async (optionId: null | string) => {
   if (optionId === null) delete updatedVotes[userId.value];
   else updatedVotes[userId.value] = optionId;
   const updatedMessage = JSON.stringify({ ...pollContent.value, votes: updatedVotes });
-  await storeUpdateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-  try {
-    await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-  } catch (error) {
-    await storeUpdateMessage({ message: previousMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-    throw error;
-  } finally {
-    isVoting.value = false;
-  }
+  await withFinalizerAsync(
+    () =>
+      getResultAsync(async () => {
+        await storeUpdateMessage({
+          message: updatedMessage,
+          partitionKey: message.partitionKey,
+          rowKey: message.rowKey,
+        });
+        await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
+      }).match(noop, async (error) => {
+        await getResultAsync(() =>
+          storeUpdateMessage({
+            message: previousMessage,
+            partitionKey: message.partitionKey,
+            rowKey: message.rowKey,
+          }),
+        ).match(noop, console.error);
+        throw error;
+      }),
+    () => {
+      isVoting.value = false;
+    },
+  );
 };
 </script>
 

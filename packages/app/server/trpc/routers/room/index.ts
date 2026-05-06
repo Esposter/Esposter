@@ -25,6 +25,8 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { isRoom } from "@@/server/trpc/middleware/userToRoom/isRoom";
@@ -53,7 +55,14 @@ import {
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import {
+  getResultAsync,
+  InvalidOperationError,
+  ItemMetadataPropertyNames,
+  NotFoundError,
+  Operation,
+  takeOne,
+} from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, getColumns, ilike, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -61,6 +70,27 @@ import { z } from "zod";
 
 const readRoomInputSchema = selectRoomInMessageSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
+
+const createSystemRoomMessage = async (
+  roomId: string,
+  userId: string,
+  message: string,
+  sessionId: string,
+): Promise<void> => {
+  await getResultAsync(async () => {
+    const messageClient = await useTableClient(AzureTable.Messages);
+    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+    const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+      message,
+      roomId,
+      type: MessageType.System,
+      userId,
+    });
+    messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
+  })
+    .orTee(console.error)
+    .unwrapOr(undefined);
+};
 
 const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });
 export type ReadMutualRoomsInput = z.infer<typeof readMutualRoomsInputSchema>;
@@ -128,19 +158,18 @@ export const roomRouter = router({
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
     .mutation<string>(async ({ ctx, input: { roomId } }) => {
-      let inviteCode = await readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
+      const inviteCode = await readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
       if (inviteCode) return inviteCode;
 
-      for (let i = 0; i < 3; i++)
-        try {
-          inviteCode = createCode(CODE_LENGTH);
-          await ctx.db
-            .insert(invitesInMessage)
-            .values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id });
-          return inviteCode;
-        } catch {
-          continue;
-        }
+      for (let i = 0; i < 3; i++) {
+        const code = createCode(CODE_LENGTH);
+        if (
+          await getResultAsync(() =>
+            ctx.db.insert(invitesInMessage).values({ code, roomId, userId: ctx.getSessionPayload.user.id }),
+          ).unwrapOr(null)
+        )
+          return code;
+      }
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
@@ -190,12 +219,11 @@ export const roomRouter = router({
           ).message,
         });
 
-      const [deletedMember, kickedMember] = await Promise.all([
+      const [[deletedMember], kickedMember] = await Promise.all([
         ctx.db
           .delete(usersToRoomsInMessage)
           .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
-          .returning()
-          .then((rows) => rows[0]),
+          .returning(),
         ctx.db.query.users.findFirst({ columns: { name: true }, where: { id: { eq: userId } } }),
       ]);
       if (!deletedMember)
@@ -211,22 +239,12 @@ export const roomRouter = router({
       roomEventEmitter.emit("leaveRoom", { ...deletedMember, sessionId: ctx.getSessionPayload.session.id });
 
       if (kickedMember)
-        try {
-          const messageClient = await useTableClient(AzureTable.Messages);
-          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-            message: `${kickedMember.name} left the room.`,
-            roomId,
-            type: MessageType.System,
-            userId: ctx.getSessionPayload.user.id,
-          });
-          messageEventEmitter.emit("createMessage", [
-            [systemMessage],
-            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-          ]);
-        } catch {
-          /* System message creation is non-critical */
-        }
+        await createSystemRoomMessage(
+          roomId,
+          ctx.getSessionPayload.user.id,
+          `${kickedMember.name} was kicked from the room.`,
+          ctx.getSessionPayload.session.id,
+        );
     }),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
@@ -234,8 +252,8 @@ export const roomRouter = router({
     await deleteDirectory(containerClient, input, true);
     return deletedRoom;
   }),
-  joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(({ ctx, input }) =>
-    ctx.db.transaction(async (tx) => {
+  joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
+    const { roomId, roomInMessage, user } = await ctx.db.transaction(async (tx) => {
       const invite = await tx.query.invitesInMessage.findFirst({
         columns: {
           roomId: true,
@@ -264,62 +282,36 @@ export const roomRouter = router({
       });
       if (ban) throw new TRPCError({ code: "FORBIDDEN" });
 
-      const userToRoom = (
-        await tx
-          .insert(usersToRoomsInMessage)
-          .values({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id })
-          .returning()
-      )[0];
-      if (!userToRoom)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Create,
-            DatabaseEntityType.UserToRoom,
-            JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id }),
-          ).message,
-        });
+      const userToRoom = requireMutation(
+        (
+          await tx
+            .insert(usersToRoomsInMessage)
+            .values({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id })
+            .returning()
+        )[0],
+        Operation.Create,
+        DatabaseEntityType.UserToRoom,
+        JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id }),
+      );
 
-      const userToRoomWithRelations = await tx.query.usersToRoomsInMessage.findFirst({
-        where: {
-          roomId: {
-            eq: userToRoom.roomId,
-          },
-          userId: {
-            eq: userToRoom.userId,
-          },
-        },
-        with: UserToRoomInMessageRelations,
-      });
-      if (!userToRoomWithRelations)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.UserToRoom, JSON.stringify(userToRoom)).message,
-        });
+      const userToRoomWithRelations = await requireEntity(
+        tx.query.usersToRoomsInMessage.findFirst({
+          where: { roomId: { eq: userToRoom.roomId }, userId: { eq: userToRoom.userId } },
+          with: UserToRoomInMessageRelations,
+        }),
+        DatabaseEntityType.UserToRoom,
+        JSON.stringify(userToRoom),
+      );
 
       const { roomId, roomInMessage, user } = userToRoomWithRelations;
-      roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
+      return { roomId, roomInMessage, user };
+    });
 
-      try {
-        const messageClient = await useTableClient(AzureTable.Messages);
-        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-          message: `${user.name} joined the room.`,
-          roomId,
-          type: MessageType.System,
-          userId: user.id,
-        });
-        messageEventEmitter.emit("createMessage", [
-          [systemMessage],
-          { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-        ]);
-      } catch {
-        /* System message creation is non-critical */
-      }
+    roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
+    await createSystemRoomMessage(roomId, user.id, `${user.name} joined the room.`, ctx.getSessionPayload.session.id);
 
-      return roomInMessage;
-    }),
-  ),
+    return roomInMessage;
+  }),
   leaveRoom: standardAuthedProcedure
     .input(leaveRoomInputSchema)
     .use(isRoom)
@@ -354,22 +346,12 @@ export const roomRouter = router({
         where: { id: { eq: userId } },
       });
       if (leavingMember)
-        try {
-          const messageClient = await useTableClient(AzureTable.Messages);
-          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-            message: `${leavingMember.name} left the room.`,
-            roomId: userToRoom.roomId,
-            type: MessageType.System,
-            userId,
-          });
-          messageEventEmitter.emit("createMessage", [
-            [systemMessage],
-            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-          ]);
-        } catch {
-          /* System message creation is non-critical */
-        }
+        await createSystemRoomMessage(
+          userToRoom.roomId,
+          userId,
+          `${leavingMember.name} left the room.`,
+          ctx.getSessionPayload.session.id,
+        );
 
       return userToRoom.roomId;
     }),
@@ -582,13 +564,12 @@ export const roomRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
-    const updatedRoom = (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0];
-    if (!updatedRoom)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, id).message,
-      });
-
+    const updatedRoom = requireMutation(
+      (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0],
+      Operation.Update,
+      DatabaseEntityType.Room,
+      id,
+    );
     roomEventEmitter.emit("updateRoom", updatedRoom);
     return updatedRoom;
   }),

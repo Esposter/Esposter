@@ -4,7 +4,7 @@ import type { User } from "@esposter/db-schema";
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
+import { normalizeString, withFinalizerAsync } from "@esposter/shared";
 
 interface WarnDialogProps {
   user: Pick<User, "id" | "name">;
@@ -23,7 +23,7 @@ const warnReason = ref("");
     :confirm-button-props="{ color: 'warning', text: 'Warn' }"
     @submit="
       async (_event, onComplete) => {
-        try {
+        await withFinalizerAsync(async () => {
           if (!currentRoom) return;
           await $trpc.moderation.executeAdminAction.mutate({
             reason: normalizeString(warnReason) || undefined,
@@ -31,9 +31,7 @@ const warnReason = ref("");
             targetUserId: user.id,
             type: AdminActionType.Warn,
           });
-        } finally {
-          onComplete();
-        }
+        }, onComplete);
       }
     "
   >

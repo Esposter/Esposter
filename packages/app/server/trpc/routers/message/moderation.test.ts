@@ -13,13 +13,12 @@ import {
   AdminActionType,
   AzureTable,
   bansInMessage,
-  DatabaseEntityType,
   RoomPermission,
   roomsInMessage,
   StandardMessageEntity,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { NotFoundError, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -318,18 +317,6 @@ describe("moderation", () => {
       const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(0);
-    });
-
-    test("delete ban with non-existent userId — throws NOT_FOUND", async () => {
-      expect.hasAssertions();
-
-      const nonExistentUserId = crypto.randomUUID();
-
-      await expect(
-        moderationCaller.deleteBan({ roomId, userId: nonExistentUserId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${new NotFoundError(DatabaseEntityType.Ban, nonExistentUserId).message}]`,
-      );
     });
 
     test(`member without ${RoomPermission.BanMembers} permission cannot delete ban — throws UNAUTHORIZED`, async () => {

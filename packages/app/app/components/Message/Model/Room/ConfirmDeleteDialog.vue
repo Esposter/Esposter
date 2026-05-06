@@ -3,6 +3,7 @@ import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.
 
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface RoomConfirmDeleteDialogProps {
   creatorId: string;
@@ -31,11 +32,7 @@ const { deleteRoom, leaveRoom } = roomStore;
     :confirm-button-props="{ text: isCreator ? 'Delete' : 'Leave' }"
     @delete="
       async (onComplete) => {
-        try {
-          await (isCreator ? deleteRoom(roomId) : leaveRoom(roomId));
-        } finally {
-          onComplete();
-        }
+        await withFinalizerAsync(() => (isCreator ? deleteRoom(roomId) : leaveRoom(roomId)), onComplete);
       }
     "
   >

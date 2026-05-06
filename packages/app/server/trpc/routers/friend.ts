@@ -8,6 +8,8 @@ import { on } from "@@/server/services/events/on";
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { friendEventEmitter } from "@@/server/services/message/events/friendEventEmitter";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -24,13 +26,13 @@ export const friendRouter = router({
       });
 
     const friendshipId = getFriendshipId(userId, friendId);
-    const [deletedFriend] = await ctx.db.delete(friends).where(eq(friends.id, friendshipId)).returning();
-    if (!deletedFriend)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, friendshipId).message,
-      });
-
+    requireMutation(
+      (await ctx.db.delete(friends).where(eq(friends.id, friendshipId)).returning())[0],
+      Operation.Delete,
+      DatabaseEntityType.Friend,
+      friendshipId,
+      "NOT_FOUND",
+    );
     friendEventEmitter.emit("deleteFriend", { receiverId: friendId, senderId: userId });
   }),
   onDeleteFriend: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
@@ -101,12 +103,11 @@ export const friendRouter = router({
         .returning();
       if (newRequest) return newRequest;
 
-      const existingRequest = await ctx.db.query.friendRequests.findFirst({ where: { id: { eq: id } } });
-      if (!existingRequest)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, id).message,
-        });
+      const existingRequest = await requireEntity(
+        ctx.db.query.friendRequests.findFirst({ where: { id: { eq: id } } }),
+        DatabaseEntityType.Friend,
+        id,
+      );
       return existingRequest;
     }),
 });

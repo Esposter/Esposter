@@ -138,6 +138,20 @@ describe("role", () => {
     expect(memberRoles.some(({ roleId }) => roleId === role.id)).toBe(true);
   });
 
+  test("assignRole throws NOT_FOUND if target is not a room member", async () => {
+    expect.hasAssertions();
+
+    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+
+    await expect(
+      roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.UserToRoom, user.id).message}]`,
+    );
+  });
+
   test("assignRole is idempotent on duplicate", async () => {
     expect.hasAssertions();
 
@@ -162,20 +176,6 @@ describe("role", () => {
       roleCaller.assignRole({ roleId: everyoneRole.id, roomId, userId: targetMember.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoomRole, everyoneRole.id).message}]`,
-    );
-  });
-
-  test("cannot assign role to non-member", async () => {
-    expect.hasAssertions();
-
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-
-    await expect(
-      roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.UserToRoom, user.id).message}]`,
     );
   });
 

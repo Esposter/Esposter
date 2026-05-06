@@ -4,6 +4,7 @@ import type { User } from "@esposter/db-schema";
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface KickDialogProps {
   user: Pick<User, "id" | "name">;
@@ -21,16 +22,14 @@ const { currentRoom } = storeToRefs(roomStore);
     :confirm-button-props="{ text: 'Kick' }"
     @delete="
       async (onComplete) => {
-        try {
+        await withFinalizerAsync(async () => {
           if (!currentRoom) return;
           await $trpc.moderation.executeAdminAction.mutate({
             roomId: currentRoom.id,
             targetUserId: user.id,
             type: AdminActionType.KickFromRoom,
           });
-        } finally {
-          onComplete();
-        }
+        }, onComplete);
       }
     "
   >

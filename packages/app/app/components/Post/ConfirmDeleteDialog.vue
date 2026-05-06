@@ -3,7 +3,7 @@ import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.
 
 import { useColorsStore } from "@/store/colors";
 import { usePostStore } from "@/store/post";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 interface PostConfirmDeleteDialogProps {
   postId: string;
@@ -28,12 +28,10 @@ const { text } = storeToRefs(colorsStore);
     }"
     @delete="
       async (onComplete) => {
-        try {
+        await withFinalizerAsync(async () => {
           await deletePost(postId);
           await navigateTo(RoutePath.Index);
-        } finally {
-          onComplete();
-        }
+        }, onComplete);
       }
     "
   >

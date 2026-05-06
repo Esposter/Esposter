@@ -284,14 +284,14 @@ describe("voice", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { user } = getMockSession();
-    const sessionPayload = await mockSessionOnce(mockContext.db, user);
+    const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     replayMockSession(sessionPayload);
-    const payload = { data: "{}", targetId: crypto.randomUUID(), type: VoiceSignalType.Offer };
+    const targetId = crypto.randomUUID();
+    const payload = { data: "{}", targetId, type: VoiceSignalType.Offer };
 
     await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError("Target participant", payload.targetId).message}]`,
+      `[TRPCError: ${new NotFoundError("Target participant", targetId).message}]`,
     );
   });
 });

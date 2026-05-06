@@ -16,7 +16,7 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { createMessage } from "@esposter/db";
 import { AzureTable, MessageType, roomIdSchema, selectRoomInMessageSchema } from "@esposter/db-schema";
-import { ForbiddenError, NotFoundError } from "@esposter/shared";
+import { ForbiddenError, getResultAsync, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -45,18 +45,23 @@ export const voiceRouter = router({
 
       if (isFirstJoiner) {
         voiceCallStartTimeMap.set(roomId, new Date());
-        try {
-          const messageClient = await useTableClient(AzureTable.Messages);
-          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-            roomId,
-            type: MessageType.VoiceCall,
-            userId: user.id,
-          });
-          messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId: session.id }]);
-        } catch {
-          // System message creation is best-effort — voice membership is already committed
-        }
+        await getResultAsync(() =>
+          Promise.all([useTableClient(AzureTable.Messages), useTableClient(AzureTable.MessagesAscending)]),
+        )
+          .andThen(([messageClient, messageAscendingClient]) =>
+            getResultAsync(() =>
+              createMessage(messageClient, messageAscendingClient, {
+                roomId,
+                type: MessageType.VoiceCall,
+                userId: user.id,
+              }),
+            ),
+          )
+          .andTee((systemMessage) => {
+            messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId: session.id }]);
+          })
+          .orTee(console.error)
+          .unwrapOr(undefined);
       }
 
       return getRoomParticipants(roomId);
@@ -71,21 +76,25 @@ export const voiceRouter = router({
     if (wasDeleted && getRoomParticipants(roomId).length === 0) {
       const callStart = voiceCallStartTimeMap.get(roomId);
       voiceCallStartTimeMap.delete(roomId);
-      const durationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / 1000) : 0;
-      try {
-        const messageClient = await useTableClient(AzureTable.Messages);
-        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-        // Non-empty message field signals "call ended" — value is duration in seconds
-        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-          message: String(durationSeconds),
-          roomId,
-          type: MessageType.VoiceCall,
-          userId: user.id,
-        });
-        messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
-      } catch {
-        // System message creation is best-effort — voice membership is already committed
-      }
+      const callDurationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / 1000) : 0;
+      await getResultAsync(() =>
+        Promise.all([useTableClient(AzureTable.Messages), useTableClient(AzureTable.MessagesAscending)]),
+      )
+        .andThen(([messageClient, messageAscendingClient]) =>
+          getResultAsync(() =>
+            createMessage(messageClient, messageAscendingClient, {
+              message: String(callDurationSeconds),
+              roomId,
+              type: MessageType.VoiceCall,
+              userId: user.id,
+            }),
+          ),
+        )
+        .andTee((systemMessage) => {
+          messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
+        })
+        .orTee(console.error)
+        .unwrapOr(undefined);
     }
   }),
   onJoinVoiceChannel: standardAuthedProcedure.input(onJoinVoiceChannelInputSchema).subscription(async function* ({

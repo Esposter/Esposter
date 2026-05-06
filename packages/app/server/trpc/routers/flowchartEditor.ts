@@ -5,20 +5,19 @@ import { SAVE_FILENAME } from "@@/server/services/flowchartEditor/constants";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { AzureContainer } from "@esposter/db-schema";
-import { jsonDateParse, streamToText } from "@esposter/shared";
+import { getResultAsync, jsonDateParse, streamToText } from "@esposter/shared";
 
 export const flowchartEditorRouter = router({
-  readFlowchartEditor: standardAuthedProcedure.query<FlowchartEditor>(async ({ ctx }) => {
-    try {
-      const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
+  readFlowchartEditor: standardAuthedProcedure.query<FlowchartEditor>(({ ctx }) => {
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
+    return getResultAsync(async () => {
       const { readableStreamBody } = await useDownload(AzureContainer.FlowchartEditorAssets, blobName);
       if (!readableStreamBody) return new FlowchartEditor();
-
       const json = await streamToText(readableStreamBody);
       return new FlowchartEditor(jsonDateParse(json));
-    } catch {
-      return new FlowchartEditor();
-    }
+    })
+      .orTee(console.error)
+      .unwrapOr(new FlowchartEditor());
   }),
   saveFlowchartEditor: standardAuthedProcedure.input(flowchartEditorSchema).mutation(async ({ ctx, input }) => {
     const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;

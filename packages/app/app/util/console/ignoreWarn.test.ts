@@ -1,11 +1,12 @@
 import { ignoreWarn } from "@/util/console/ignoreWarn";
+import { noop } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
 describe(ignoreWarn, () => {
   test("ignores warn", () => {
     expect.hasAssertions();
 
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const warn = vi.spyOn(console, "warn").mockImplementation(noop);
     ignoreWarn(() => {
       console.warn();
     });

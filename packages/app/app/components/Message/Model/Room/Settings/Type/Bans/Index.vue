@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useBanStore } from "@/store/message/user/ban";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface BansProps {
   roomId: RoomInMessage["id"];
@@ -36,11 +37,7 @@ await readBans();
             :confirm-button-props="{ color: 'primary', text: 'Unban' }"
             @delete="
               async (onComplete) => {
-                try {
-                  await deleteBan({ roomId, userId });
-                } finally {
-                  onComplete();
-                }
+                await withFinalizerAsync(() => deleteBan({ roomId, userId }), onComplete);
               }
             "
           >

@@ -3,6 +3,7 @@ import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { useColorsStore } from "@/store/colors";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface ConfirmDeleteDialogProps {
   message: MessageEntity;
@@ -26,11 +27,10 @@ const { text } = storeToRefs(colorsStore);
     }"
     @delete="
       async (onComplete) => {
-        try {
-          await $trpc.message.deleteMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
-        } finally {
-          onComplete();
-        }
+        await withFinalizerAsync(
+          () => $trpc.message.deleteMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
+          onComplete,
+        );
       }
     "
   >

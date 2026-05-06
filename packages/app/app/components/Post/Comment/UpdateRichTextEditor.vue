@@ -4,6 +4,7 @@ import type { Editor } from "@tiptap/vue-3";
 
 import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface PostUpdateCommentRichTextEditorProps {
   comment: PostWithRelations;
@@ -17,8 +18,12 @@ const emit = defineEmits<{
 const commentStore = useCommentStore();
 const { updateComment } = commentStore;
 const editedDescriptionHtml = ref(comment.description);
+const resetUpdateMode = () => {
+  emit("update:update-mode", false);
+  editedDescriptionHtml.value = comment.description;
+};
 const onUpdateComment = async (editor: Editor) => {
-  try {
+  await withFinalizerAsync(async () => {
     if (editedDescriptionHtml.value === comment.description) return;
     if (EMPTY_TEXT_REGEX.test(editor.getText())) {
       emit("update:delete-mode", true);
@@ -26,10 +31,7 @@ const onUpdateComment = async (editor: Editor) => {
     }
 
     await updateComment({ description: editedDescriptionHtml.value, id: comment.id });
-  } finally {
-    emit("update:update-mode", false);
-    editedDescriptionHtml.value = comment.description;
-  }
+  }, resetUpdateMode);
 };
 </script>
 

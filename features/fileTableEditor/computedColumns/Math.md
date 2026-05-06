@@ -71,15 +71,16 @@ return typeof result === "number" && isFinite(result) ? result : null;
 
 ```typescript
 .superRefine(({ expression }, ctx) => {
-  try {
-    parse(expression);
-  } catch (error) {
-    ctx.addIssue({
-      code: "custom",
-      message: error instanceof Error ? error.message : "Invalid expression",
-      path: ["expression"],
-    });
-  }
+  fromThrowable(() => parse(expression))().match(
+    noop,
+    (error) => {
+      ctx.addIssue({
+        code: "custom",
+        message: error instanceof Error ? error.message : "Invalid expression",
+        path: ["expression"],
+      });
+    },
+  );
 })
 ```
 

@@ -34,6 +34,8 @@ import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
@@ -196,19 +198,18 @@ export const messageRouter = router({
         ]);
       }
 
-      const updatedRoom = (
-        await ctx.db
-          .update(roomsInMessage)
-          .set({ updatedAt: now })
-          .where(eq(roomsInMessage.id, input.roomId))
-          .returning()
-      )[0];
-      if (!updatedRoom)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, input.roomId).message,
-        });
-
+      const updatedRoom = requireMutation(
+        (
+          await ctx.db
+            .update(roomsInMessage)
+            .set({ updatedAt: now })
+            .where(eq(roomsInMessage.id, input.roomId))
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.Room,
+        input.roomId,
+      );
       roomEventEmitter.emit("updateRoom", updatedRoom);
       return newMessageEntity;
     },
@@ -282,12 +283,11 @@ export const messageRouter = router({
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await isMember(ctx.db, ctx.getSessionPayload, roomIds);
       const messageClient = await useTableClient(AzureTable.Messages);
-      const messageEntity = await getEntity(messageClient, StandardMessageEntity, partitionKey, rowKey);
-      if (!messageEntity)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
-        });
+      const messageEntity = await requireEntity(
+        getEntity(messageClient, StandardMessageEntity, partitionKey, rowKey),
+        AzureEntityType.Message,
+        JSON.stringify({ partitionKey, rowKey }),
+      );
 
       await Promise.all(
         roomIds.map((roomId) => assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, message)),

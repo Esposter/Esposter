@@ -3,6 +3,7 @@ import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/
 import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const useCopyToClipboard = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItem>();
@@ -10,11 +11,10 @@ export const useCopyToClipboard = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   return async (rowIds?: string[]) => {
-    if (!editedItem.value?.dataSource) return;
-    try {
-      await copyToClipboard(editedItem.value.dataSource, rowIds);
-    } catch (error) {
-      createAlert(error instanceof Error ? error.message : "Failed to copy to clipboard", "error");
-    }
+    const dataSource = editedItem.value?.dataSource;
+    if (!dataSource) return;
+    await getResultAsync(() => copyToClipboard(dataSource, rowIds)).match(noop, (error) => {
+      createAlert(error.message, "error");
+    });
   };
 };

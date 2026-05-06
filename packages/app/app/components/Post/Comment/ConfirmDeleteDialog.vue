@@ -3,6 +3,7 @@ import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.
 
 import { useColorsStore } from "@/store/colors";
 import { useCommentStore } from "@/store/post/comment";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface PostCommentConfirmDeleteDialogProps {
   commentId: string;
@@ -27,11 +28,7 @@ const { text } = storeToRefs(colorsStore);
     }"
     @delete="
       async (onComplete) => {
-        try {
-          await deleteComment(commentId);
-        } finally {
-          onComplete();
-        }
+        await withFinalizerAsync(() => deleteComment(commentId), onComplete);
       }
     "
   >

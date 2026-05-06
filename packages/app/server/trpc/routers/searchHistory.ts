@@ -10,11 +10,11 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { router } from "@@/server/trpc";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, searchHistoriesInMessage, selectSearchHistoryInMessageSchema } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -29,40 +29,39 @@ export type ReadSearchHistoriesInput = z.infer<typeof readSearchHistoriesInputSc
 export const searchHistoryRouter = router({
   createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistoryInMessage>(
     async ({ ctx, input }) => {
-      const newHistory = (
-        await ctx.db
-          .insert(searchHistoriesInMessage)
-          .values({ ...input, userId: ctx.getSessionPayload.user.id })
-          .returning()
-      )[0];
-      if (!newHistory)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.SearchHistory, JSON.stringify(input))
-            .message,
-        });
+      const newHistory = requireMutation(
+        (
+          await ctx.db
+            .insert(searchHistoriesInMessage)
+            .values({ ...input, userId: ctx.getSessionPayload.user.id })
+            .returning()
+        )[0],
+        Operation.Create,
+        DatabaseEntityType.SearchHistory,
+        JSON.stringify(input),
+      );
       return newHistory;
     },
   ),
   deleteSearchHistory: standardAuthedProcedure
     .input(deleteSearchHistoryInputSchema)
     .mutation<SearchHistoryInMessage>(async ({ ctx, input }) => {
-      const deletedSearchHistory = (
-        await ctx.db
-          .delete(searchHistoriesInMessage)
-          .where(
-            and(
-              eq(searchHistoriesInMessage.id, input),
-              eq(searchHistoriesInMessage.userId, ctx.getSessionPayload.user.id),
-            ),
-          )
-          .returning()
-      )[0];
-      if (!deletedSearchHistory)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.SearchHistory, input).message,
-        });
+      const deletedSearchHistory = requireMutation(
+        (
+          await ctx.db
+            .delete(searchHistoriesInMessage)
+            .where(
+              and(
+                eq(searchHistoriesInMessage.id, input),
+                eq(searchHistoriesInMessage.userId, ctx.getSessionPayload.user.id),
+              ),
+            )
+            .returning()
+        )[0],
+        Operation.Delete,
+        DatabaseEntityType.SearchHistory,
+        input,
+      );
       return deletedSearchHistory;
     }),
   readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId").query(
@@ -82,23 +81,23 @@ export const searchHistoryRouter = router({
   updateSearchHistory: standardAuthedProcedure
     .input(updateSearchHistoryInputSchema)
     .mutation<SearchHistoryInMessage>(async ({ ctx, input: { id, query } }) => {
-      const updatedSearchHistory = (
-        await ctx.db
-          .update(searchHistoriesInMessage)
-          .set({ query })
-          .where(
-            and(
-              eq(searchHistoriesInMessage.id, id),
-              eq(searchHistoriesInMessage.userId, ctx.getSessionPayload.user.id),
-            ),
-          )
-          .returning()
-      )[0];
-      if (!updatedSearchHistory)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.SearchHistory, id).message,
-        });
+      const updatedSearchHistory = requireMutation(
+        (
+          await ctx.db
+            .update(searchHistoriesInMessage)
+            .set({ query })
+            .where(
+              and(
+                eq(searchHistoriesInMessage.id, id),
+                eq(searchHistoriesInMessage.userId, ctx.getSessionPayload.user.id),
+              ),
+            )
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.SearchHistory,
+        id,
+      );
       return updatedSearchHistory;
     }),
 });
