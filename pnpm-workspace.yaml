@@ -88,7 +88,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260505.1
+  "@typescript/native-preview": ^7.0.0-dev.20260506.1
   "@unocss/eslint-config": ^66.6.8
   "@unocss/nuxt": ^66.6.8
   "@vite-pwa/nuxt": ^1.1.1
@@ -100,7 +100,7 @@ catalog:
   "@vue-flow/core": ^1.48.2
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
-  "@vue-pdf-viewer/viewer": ^4.1.0
+  "@vue-pdf-viewer/viewer": ^4.2.0
   "@vue/language-core": ^3.2.8
   "@vue/test-utils": ^2.4.10
   "@vuepic/vue-datepicker": ^12.1.0
@@ -185,7 +185,7 @@ catalog:
   pluralize: ^8.0.0
   postgres: ^3.4.9
   prosemirror-state: ^1.4.4
-  rate-limiter-flexible: ^11.0.2
+  rate-limiter-flexible: ^11.1.0
   read-excel-file: ^9.0.9
   rolldown: ^1.0.0-rc.18
   rolldown-plugin-dts: ^0.24.1
@@ -216,7 +216,7 @@ catalog:
   vite: ^8.0.10
   vite-plugin-mkcert: ^2.0.0
   vitest: ^4.1.5
-  vue: ^3.5.33
+  vue: ^3.5.34
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
