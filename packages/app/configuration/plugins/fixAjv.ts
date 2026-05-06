@@ -152,11 +152,11 @@ export const fixAjv = {
       .replaceAll(/^module\.exports\.[\w$]+ = [\w$]+;?\n/gmu, "")
       // Step 9: `var X = module.exports = function...{}` chained assignment (e.g. json-schema-traverse)
       .replaceAll(
-        /^var ([\w$]+) = module\.exports = ((?:function\b)[\s\S]*?^});?\n/gmu,
+        /^var ([\w$]+) = module\.exports = ((?:function\b)[\s\S]*?^\});?\n/gmu,
         "const $1 = $2;\nexport default $1;\n",
       )
       // Step 10: multiline module.exports = { ... } or function...{}
-      .replaceAll(/^module\.exports = ((?:\{|function\b)[\s\S]*?^});?\n/gmu, "export default $1;\n")
+      .replaceAll(/^module\.exports = ((?:\{|function\b)[\s\S]*?^\});?\n/gmu, "export default $1;\n")
       // Steps 11–14: exports.X → named exports
       .replace(/^exports\.default = ([\w$]+);\n/mu, "export default $1;\n")
       .replaceAll(/^exports\.([\w$]+) = \1;\n/gmu, "export { $1 };\n")
@@ -168,7 +168,7 @@ export const fixAjv = {
         return `export { ${propName} as ${exportName} } from "${modPath}";\n`;
       })
       .replaceAll(/^exports\.([\w$]+) = (.+);\n/gmu, "export const $1 = $2;\n")
-      .replaceAll(/^exports\.([\w$]+) = (\{[\s\S]*?^});\n/gmu, "export const $1 = $2;\n")
+      .replaceAll(/^exports\.([\w$]+) = (\{[\s\S]*?^\});\n/gmu, "export const $1 = $2;\n")
       .replaceAll(/^exports\.([\w$]+) = (\[[\s\S]*?^\]);\n/gmu, "export const $1 = $2;\n")
       // Step 15: TypeScript enum IIFEs — `})(NAME || (exports.NAME = NAME = {}));`
       // Exports.NAME is inside the IIFE call so all top-level exports.X transforms miss it.
