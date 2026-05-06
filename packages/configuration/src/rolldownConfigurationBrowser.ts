@@ -15,8 +15,8 @@ export const rolldownConfigurationBrowser: RolldownOptions = {
     // @esposter/db-schema
     "zod",
     // @esposter/db-mock
-    /^drizzle-kit/,
-    /^drizzle-orm/,
+    /^drizzle-kit/u,
+    /^drizzle-orm/u,
     "@electric-sql/pglite",
   ],
   input: "src/index.ts",
