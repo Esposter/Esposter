@@ -10,7 +10,7 @@ import { z, ZodError } from "zod";
 app.http(AzureFunction.PushWebhook, {
   authLevel: "function",
   handler: (request, context) => {
-    context.log(`${AzureFunction.PushWebhook} processed a request for URL: ${request.url}`);
+    context.log(`${AzureFunction.PushWebhook} received a request`);
     return getResultAsync(async () => {
       const { id, token } = await selectWebhookInMessageSchema
         .pick({ id: true, token: true })
@@ -39,7 +39,12 @@ app.http(AzureFunction.PushWebhook, {
           const errors = z.treeifyError(error);
           context.log("Validation failed: ", errors);
           return {
-            jsonBody: { errors, message: "Invalid request body." },
+            jsonBody: { errors, message: "Invalid request." },
+            status: 400,
+          };
+        } else if (error instanceof SyntaxError) {
+          return {
+            jsonBody: { message: "Malformed JSON body." },
             status: 400,
           };
         } else {

@@ -6,6 +6,7 @@ import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { middleware } from "@@/server/trpc";
 import { getResultAsync, ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { RateLimiterRes } from "rate-limiter-flexible";
 
 export const getIsRateLimited = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
@@ -27,8 +28,9 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     );
     const { msBeforeNext, remainingPoints } = rateLimiterResult.match(
       (result) => result,
-      () => {
-        throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      (error) => {
+        if (error instanceof RateLimiterRes) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       },
     );
     if ("setHeader" in ctx.res) {

@@ -15,8 +15,9 @@ describe(requireEntity, () => {
   test("throws TRPCError with code NOT_FOUND when query returns undefined", async () => {
     expect.hasAssertions();
 
-    await expect(requireEntity(Promise.resolve(undefined), "Entity", "1")).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError("Entity", "1").message}]`,
-    );
+    await expect(requireEntity(Promise.resolve(undefined), "Entity", "1")).rejects.toMatchObject({
+      code: "NOT_FOUND",
+      message: new NotFoundError("Entity", "1").message,
+    });
   });
 });

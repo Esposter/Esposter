@@ -9,17 +9,13 @@ export const getCreateMessageNotificationPayload = (
   message: string,
   { icon, title, url }: { icon?: null | string; title?: null | string; url: string },
 ): string | undefined => {
-  let textContent: string | undefined;
-
-  getResult(() => normalizeString(parse(message).querySelector("p")?.structuredText)).match(
-    (newTextContent) => {
-      textContent = newTextContent;
-    },
+  const textContent = getResult(() => normalizeString(parse(message).querySelector("p")?.structuredText)).match(
+    (newTextContent) => newTextContent,
     (error) => {
       context.error(`Failed to create message notification payload for message ${message}: `, error);
+      return undefined;
     },
   );
-
   if (!textContent) return undefined;
 
   return JSON.stringify({

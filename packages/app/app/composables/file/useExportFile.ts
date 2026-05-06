@@ -14,7 +14,6 @@ export const useExportFile = () => {
     accept: string,
   ): Promise<void> =>
     getResultAsync(async () => {
-      const blob = await serialize(mimeType);
       const fileHandle = await showSaveFilePicker({
         suggestedName: fileName,
         types: [
@@ -24,6 +23,7 @@ export const useExportFile = () => {
           },
         ],
       });
+      const blob = await serialize(mimeType);
       const writable = await fileHandle.createWritable();
       return { blob, writable };
     })

@@ -67,7 +67,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 ## Promise Style
 
-- **Always use `async`/`await` with neverthrow for fallible work** — never use `.catch()` promise chains or `try`/`catch` blocks. Wrap rejecting promises with `ResultAsync.fromPromise(...)`, throwing sync functions with `fromThrowable(...)`, and throwing async functions with `ResultAsync.fromThrowable(...)`.
+- **Always use `async`/`await` with neverthrow for fallible work** — `try`/`catch` is **BANNED**. Never use `.catch()` promise chains. Wrap rejecting promises with `ResultAsync.fromPromise(...)`, throwing sync functions with `fromThrowable(...)`, and throwing async functions with `ResultAsync.fromThrowable(...)`. For cleanup that must run after both success and failure, use `withFinalizer(fn, cleanup)` from `#shared/error/withFinalizer`. **Exception**: `try`/`finally` (no `catch`) is allowed only when the function must stay synchronous and using `withFinalizer` would force an undesirable async cascade (e.g. `ignoreWarn`).
   - **Exception**: `.then()` is acceptable only for building a **promise queue** (serialising sequential async operations in a sync context, e.g. `chain = chain.then(async () => {...})`). This pattern cannot be expressed with `await` inside a synchronous watcher/event callback. All other `.then()`/`.catch()` usages must be converted.
 - Every `Result` / `ResultAsync` must be consumed with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`; `.orTee(...)` by itself is not enough.
 - Use the shared `withFinalizer(...)` helper for cleanup that must run after both success and failure.

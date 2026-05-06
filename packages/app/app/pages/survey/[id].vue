@@ -4,7 +4,7 @@ import type { SurveyResponseEntity } from "@esposter/db-schema";
 import { validate } from "@/services/router/validate";
 import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/survey/constants";
 import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
 
@@ -45,12 +45,7 @@ model.onCurrentPageChanged.add(saveSurveyResponse);
 model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSaveSuccess }) => {
   showSaveInProgress();
   survey.clearIncorrectValues(true);
-  await getResultAsync(async () => {
-    await saveSurveyResponse(survey);
-    showSaveSuccess();
-  }).match(noop, () => {
-    showSaveError();
-  });
+  await getResultAsync(() => saveSurveyResponse(survey)).match(showSaveSuccess, showSaveError);
 });
 
 const isLoading = ref(true);

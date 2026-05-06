@@ -252,8 +252,8 @@ export const roomRouter = router({
     await deleteDirectory(containerClient, input, true);
     return deletedRoom;
   }),
-  joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(({ ctx, input }) =>
-    ctx.db.transaction(async (tx) => {
+  joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
+    const { roomId, roomInMessage, user } = await ctx.db.transaction(async (tx) => {
       const invite = await tx.query.invitesInMessage.findFirst({
         columns: {
           roomId: true,
@@ -304,13 +304,14 @@ export const roomRouter = router({
       );
 
       const { roomId, roomInMessage, user } = userToRoomWithRelations;
-      roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
+      return { roomId, roomInMessage, user };
+    });
 
-      await createSystemRoomMessage(roomId, user.id, `${user.name} joined the room.`, ctx.getSessionPayload.session.id);
+    roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
+    await createSystemRoomMessage(roomId, user.id, `${user.name} joined the room.`, ctx.getSessionPayload.session.id);
 
-      return roomInMessage;
-    }),
-  ),
+    return roomInMessage;
+  }),
   leaveRoom: standardAuthedProcedure
     .input(leaveRoomInputSchema)
     .use(isRoom)
