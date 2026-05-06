@@ -242,7 +242,7 @@ export const roomRouter = router({
         await createSystemRoomMessage(
           roomId,
           ctx.getSessionPayload.user.id,
-          `${kickedMember.name} left the room.`,
+          `${kickedMember.name} was kicked from the room.`,
           ctx.getSessionPayload.session.id,
         );
     }),
