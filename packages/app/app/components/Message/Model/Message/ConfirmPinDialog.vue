@@ -2,8 +2,8 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { withFinalizerAsync } from "@esposter/shared";
 import { useColorsStore } from "@/store/colors";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface ConfirmPinDialogProps {
   message: MessageEntity;

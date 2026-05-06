@@ -1,5 +1,5 @@
-import { withFinalizerAsync } from "@esposter/shared";
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
+import { withFinalizerAsync } from "@esposter/shared";
 
 export const useOffsetPaginationOperationData = <TItem>(offsetPaginationData: Ref<OffsetPaginationData<TItem>>) => {
   const items = computed({

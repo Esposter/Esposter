@@ -3,10 +3,10 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
-import { withFinalizerAsync } from "@esposter/shared";
 import { useDataStore } from "@/store/message/data";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 import { Extension } from "@tiptap/vue-3";
 
 interface MessageEditorProps {

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
-import { withFinalizerAsync } from "@esposter/shared";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface RoomCategoryDeleteDialogButtonProps {
   category: RoomCategoryInMessage;

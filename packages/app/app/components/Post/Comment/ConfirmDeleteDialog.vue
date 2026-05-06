@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
-import { withFinalizerAsync } from "@esposter/shared";
 import { useColorsStore } from "@/store/colors";
 import { useCommentStore } from "@/store/post/comment";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface PostCommentConfirmDeleteDialogProps {
   commentId: string;

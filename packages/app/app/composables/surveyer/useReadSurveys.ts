@@ -1,8 +1,8 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Survey } from "@esposter/db-schema";
 
-import { withFinalizerAsync } from "@esposter/shared";
 import { useSurveyStore } from "@/store/survey";
+import { withFinalizerAsync } from "@esposter/shared";
 
 export const useReadSurveys = () => {
   const { $trpc } = useNuxtApp();

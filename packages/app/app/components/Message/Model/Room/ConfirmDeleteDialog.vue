@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
-import { withFinalizerAsync } from "@esposter/shared";
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface RoomConfirmDeleteDialogProps {
   creatorId: string;

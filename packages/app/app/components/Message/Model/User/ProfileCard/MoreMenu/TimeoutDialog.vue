@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
-import { withFinalizerAsync } from "@esposter/shared";
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface TimeoutDialogProps {
   user: Pick<User, "id" | "name">;

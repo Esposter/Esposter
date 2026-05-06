@@ -3,10 +3,10 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { ReadItemsCacheOptions } from "@/models/cache/indexedDb/ReadItemsCacheOptions";
 import type { Promisable } from "type-fest";
 
-import { withFinalizerAsync } from "@esposter/shared";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
+import { withFinalizerAsync } from "@esposter/shared";
 
 export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Ref<CursorPaginationData<TItem>>) => {
   const online = useOnline();

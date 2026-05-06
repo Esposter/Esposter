@@ -56,22 +56,16 @@ const vote = async (optionId: null | string) => {
           rowKey: message.rowKey,
         });
         await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-      })
-        .orElse((error) =>
-          getResultAsync(async () => {
-            await getResultAsync(() =>
-              storeUpdateMessage({
-                message: previousMessage,
-                partitionKey: message.partitionKey,
-                rowKey: message.rowKey,
-              }),
-            ).match(noop, console.error);
-            throw error;
+      }).match(noop, async (error) => {
+        await getResultAsync(() =>
+          storeUpdateMessage({
+            message: previousMessage,
+            partitionKey: message.partitionKey,
+            rowKey: message.rowKey,
           }),
-        )
-        .match(noop, (error) => {
-          throw error;
-        }),
+        ).match(noop, console.error);
+        throw error;
+      }),
     () => {
       isVoting.value = false;
     },

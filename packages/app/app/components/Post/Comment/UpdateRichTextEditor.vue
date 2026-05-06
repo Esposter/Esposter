@@ -2,9 +2,9 @@
 import type { PostWithRelations } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/vue-3";
 
-import { withFinalizerAsync } from "@esposter/shared";
 import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface PostUpdateCommentRichTextEditorProps {
   comment: PostWithRelations;

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
-import { withFinalizerAsync } from "@esposter/shared";
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface BanDialogProps {
   user: Pick<User, "id" | "name">;

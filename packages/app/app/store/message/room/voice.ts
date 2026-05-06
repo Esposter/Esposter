@@ -74,17 +74,23 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     const roomId = roomStore.currentRoomId;
     if (!roomId || callRoomId.value) return;
     callRoomId.value = roomId;
+    let isJoined = false;
     await getResultAsync(async () => {
       const stream = await acquireLocalStream();
       subscribeToSignals(roomId);
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
+      isJoined = true;
       setParticipants(roomId, participants);
       if (sessionId.value) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, sessionId.value, stream);
     })
       .orElse((error) =>
         getResultAsync(async () => {
           console.error(error);
-          await leaveVoice();
+          if (isJoined) await leaveVoice();
+          else {
+            callRoomId.value = undefined;
+            await cleanupAll();
+          }
         }),
       )
       .unwrapOr(undefined);
