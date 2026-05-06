@@ -11,5 +11,5 @@ export const AllSpecialValues: { isPlainObject: boolean; value: unknown }[] = [
   { isPlainObject: false, value: 0 },
   { isPlainObject: false, value: Symbol("") },
   { isPlainObject: false, value: noop },
-  { isPlainObject: false, value: new RegExp("") },
+  { isPlainObject: false, value: new RegExp("", "u") },
 ];
