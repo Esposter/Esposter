@@ -43,7 +43,7 @@ catalog:
   "@fullcalendar/vue3": ^6.1.20
   "@happy-dom/global-registrator": ^20.9.0
   "@json-layout/vocabulary": ^2.13.0
-  "@koumoul/vjsf": ^4.3.1
+  "@koumoul/vjsf": ^4.4.0
   "@lerna-lite/cli": ^5.2.1
   "@lerna-lite/publish": ^5.2.1
   "@lerna-lite/run": ^5.2.1
@@ -88,7 +88,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260504.1
+  "@typescript/native-preview": ^7.0.0-dev.20260505.1
   "@unocss/eslint-config": ^66.6.8
   "@unocss/nuxt": ^66.6.8
   "@vite-pwa/nuxt": ^1.1.1
@@ -173,7 +173,7 @@ catalog:
   nuxt-security: ^2.5.1
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
-  oxfmt: ^0.47.0
+  oxfmt: ^0.48.0
   oxlint: ^1.62.0
   oxlint-tsgolint: ^0.22.1
   p-progress: ^1.0.0
@@ -221,7 +221,7 @@ catalog:
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
   vue-router: ^5.0.6
-  vue-tsc: ^3.2.7
+  vue-tsc: ^3.2.8
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.0.6
   vuetify-nuxt-module: ^1.0.0-beta.3
