@@ -45,7 +45,7 @@ model.onCurrentPageChanged.add(saveSurveyResponse);
 model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSaveSuccess }) => {
   showSaveInProgress();
   survey.clearIncorrectValues(true);
-  await getResultAsync(() => saveSurveyResponse(survey)).match(showSaveSuccess, showSaveError);
+  await getResultAsync(() => saveSurveyResponse(survey)).match(() => showSaveSuccess(), showSaveError);
 });
 
 const isLoading = ref(true);
