@@ -1,4 +1,4 @@
-const prefixMatch = new RegExp(/(?!xmlns)^.*:/);
+const prefixMatch = new RegExp(/(?!xmlns)^.*:/u);
 
 export const normalize = (string: string): string => string.toLowerCase();
 
@@ -10,4 +10,4 @@ export const parseNumbers = (string: string): number | string =>
   isNaN(Number(string)) ? string : Number(string) % 1 === 0 ? parseInt(string, 10) : parseFloat(string);
 
 export const parseBooleans = (string: string): boolean | string =>
-  /^(?:true|false)$/i.test(string) ? string.toLowerCase() === "true" : string;
+  /^(?:true|false)$/iu.test(string) ? string.toLowerCase() === "true" : string;

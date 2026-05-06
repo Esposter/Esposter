@@ -29,11 +29,11 @@ import type { Plugin } from "vite";
 //   Uses `module.exports = require('./common')(exports)` with `exports.X` for cross-references.
 //   Introduces `const _exports = {};`, remaps all `exports.*` to `_exports.*`,
 //   Then emits `const _debug = common(_exports); export default _debug;`.
-const ESM_FLAG_RE = /Object\.defineProperty\(exports, "__esModule", \{[^}]*\}\);\n/g;
-const REQUIRE_RE = /^(const|var) (\w+) = require\("([^"]+)"\);\n/gm;
-const INLINE_REQUIRE_RE = /\brequire\(["']([^"']+)["']\)/g;
+const ESM_FLAG_RE = /Object\.defineProperty\(exports, "__esModule", \{[^}]*\}\);\n/gu;
+const REQUIRE_RE = /^(const|var) (\w+) = require\("([^"]+)"\);\n/gmu;
+const INLINE_REQUIRE_RE = /\brequire\(["']([^"']+)["']\)/gu;
 const ODP_REEXPORT_RE =
-  /^Object\.defineProperty\(exports, "([\w$]+)", \{ enumerable: true, get: function \(\) \{ return (\w+)\.([\w$]+); \} \}\);\n/gm;
+  /^Object\.defineProperty\(exports, "([\w$]+)", \{ enumerable: true, get: function \(\) \{ return (\w+)\.([\w$]+); \} \}\);\n/gmu;
 
 export const fixAjv = {
   enforce: "pre",
@@ -46,7 +46,7 @@ export const fixAjv = {
       const inlineRequireMap = new Map<string, string>();
       for (const [, path] of code.matchAll(INLINE_REQUIRE_RE)) {
         if (!path || !path.startsWith(".") || inlineRequireMap.has(path)) continue;
-        const varName = path.replace(/^(?:\.\/)+/, "").replaceAll(/[^a-zA-Z0-9_$]/g, "_");
+        const varName = path.replace(/^(?:\.\/)+/u, "").replaceAll(/[^a-zA-Z0-9_$]/gu, "_");
         inlineRequireMap.set(path, varName);
       }
       const result = code
@@ -57,9 +57,9 @@ export const fixAjv = {
           return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
         })
         // Remap `exports.X` → `_exports.X` (negative lookbehind avoids touching `module.exports`)
-        .replaceAll(/(?<!module\.)\bexports\b/g, "_exports")
-        .replaceAll(/^module\.exports = (.+);\n/gm, "const _debug = $1;\nexport default _debug;\n")
-        .replaceAll(/\bmodule\.exports\b/g, "_debug");
+        .replaceAll(/(?<!module\.)\bexports\b/gu, "_exports")
+        .replaceAll(/^module\.exports = (.+);\n/gmu, "const _debug = $1;\nexport default _debug;\n")
+        .replaceAll(/\bmodule\.exports\b/gu, "_debug");
       const imports = [...inlineRequireMap.entries()]
         .map(([path, varName]) => `import * as ${varName} from "${path}";\n`)
         .join("");
@@ -71,14 +71,14 @@ export const fixAjv = {
       const pkgRequireMap = new Map<string, string>();
       for (const [, path] of code.matchAll(INLINE_REQUIRE_RE)) {
         if (!path || path.startsWith(".") || pkgRequireMap.has(path)) continue;
-        pkgRequireMap.set(path, path.replaceAll(/[^a-zA-Z0-9_$]/g, "_"));
+        pkgRequireMap.set(path, path.replaceAll(/[^a-zA-Z0-9_$]/gu, "_"));
       }
       const result = code
         .replaceAll(INLINE_REQUIRE_RE, (_, path: string) => {
           const vn = pkgRequireMap.get(path);
           return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
         })
-        .replace(/^module\.exports = ([\w$]+);?\n/m, (_, x) => `${x}.default = ${x};\nexport default ${x};\n`);
+        .replace(/^module\.exports = ([\w$]+);?\n/mu, (_, x) => `${x}.default = ${x};\nexport default ${x};\n`);
       const imports = Array.from(pkgRequireMap, ([path, vn]) => `import * as ${vn} from "${path}";\n`).join("");
       return `${imports}${result}`;
     }
@@ -108,7 +108,7 @@ export const fixAjv = {
     // Equal.code = '...'` — equal must stay callable).
     const needsUnwrapVars = new Set<string>();
     for (const [varName] of requireMap) {
-      const escaped = varName.replaceAll(/[$()*+.?[\\\]^{|}]/g, String.raw`\$&`);
+      const escaped = varName.replaceAll(/[$()*+.?[\\\]^{|}]/gu, String.raw`\$&`);
       if (new RegExp(`\\b${escaped}\\.[\\w$]+ =(?!=)`).test(code) || new RegExp(`\\b${escaped}\\s*\\(`).test(code))
         needsUnwrapVars.add(varName);
     }
@@ -120,7 +120,7 @@ export const fixAjv = {
       // And must not be extracted or we'd create a spurious circular import.
       if (!path?.startsWith(".")) continue;
       if (inlineRequireMap.has(path) || handledPaths.has(path)) continue;
-      const varName = path.replace(/^(?:\.\/)+/, "").replaceAll(/[^a-zA-Z0-9_$]/g, "_");
+      const varName = path.replace(/^(?:\.\/)+/u, "").replaceAll(/[^a-zA-Z0-9_$]/gu, "_");
       inlineRequireMap.set(path, varName);
     }
 
@@ -131,7 +131,7 @@ export const fixAjv = {
       .replace("'use strict'\n", "")
       .replace(ESM_FLAG_RE, "")
       // Step 3: remove void 0 init chains
-      .replaceAll(/^(?:exports\.[\w$]+ = )+void 0;\n/gm, "")
+      .replaceAll(/^(?:exports\.[\w$]+ = )+void 0;\n/gmu, "")
       // Step 4: top-level require() → import
       .replace(REQUIRE_RE, (_m: string, _kw: string, vName: string, modPath: string) => {
         if (needsUnwrapVars.has(vName))
@@ -144,22 +144,22 @@ export const fixAjv = {
         return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
       })
       // Steps 6–8: module.exports assignments
-      .replaceAll(/^module\.exports = exports = [\w$]+;?\n/gm, "")
-      .replaceAll(/^module\.exports = ([\w$]+);?\n/gm, (_, x) =>
+      .replaceAll(/^module\.exports = exports = [\w$]+;?\n/gmu, "")
+      .replaceAll(/^module\.exports = ([\w$]+);?\n/gmu, (_, x) =>
         // If the file uses `exports.default = X` (__esModule style), skip — step 11 handles it.
-        /^exports\.default = /m.test(code) ? "" : `export default ${x};\n`,
+        /^exports\.default = /mu.test(code) ? "" : `export default ${x};\n`,
       )
-      .replaceAll(/^module\.exports\.[\w$]+ = [\w$]+;?\n/gm, "")
+      .replaceAll(/^module\.exports\.[\w$]+ = [\w$]+;?\n/gmu, "")
       // Step 9: `var X = module.exports = function...{}` chained assignment (e.g. json-schema-traverse)
       .replaceAll(
-        /^var ([\w$]+) = module\.exports = ((?:function\b)[\s\S]*?^});?\n/gm,
+        /^var ([\w$]+) = module\.exports = ((?:function\b)[\s\S]*?^});?\n/gmu,
         "const $1 = $2;\nexport default $1;\n",
       )
       // Step 10: multiline module.exports = { ... } or function...{}
-      .replaceAll(/^module\.exports = ((?:\{|function\b)[\s\S]*?^});?\n/gm, "export default $1;\n")
+      .replaceAll(/^module\.exports = ((?:\{|function\b)[\s\S]*?^});?\n/gmu, "export default $1;\n")
       // Steps 11–14: exports.X → named exports
-      .replace(/^exports\.default = ([\w$]+);\n/m, "export default $1;\n")
-      .replaceAll(/^exports\.([\w$]+) = \1;\n/gm, "export { $1 };\n")
+      .replace(/^exports\.default = ([\w$]+);\n/mu, "export default $1;\n")
+      .replaceAll(/^exports\.([\w$]+) = \1;\n/gmu, "export { $1 };\n")
       .replace(ODP_REEXPORT_RE, (_, exportName: string, varName: string, propName: string) => {
         const modPath = requireMap.get(varName);
         if (!modPath) return "";
@@ -167,17 +167,17 @@ export const fixAjv = {
         if (propName === "default") return `export { default as ${exportName} } from "${modPath}";\n`;
         return `export { ${propName} as ${exportName} } from "${modPath}";\n`;
       })
-      .replaceAll(/^exports\.([\w$]+) = (.+);\n/gm, "export const $1 = $2;\n")
-      .replaceAll(/^exports\.([\w$]+) = (\{[\s\S]*?^});\n/gm, "export const $1 = $2;\n")
-      .replaceAll(/^exports\.([\w$]+) = (\[[\s\S]*?^\]);\n/gm, "export const $1 = $2;\n")
+      .replaceAll(/^exports\.([\w$]+) = (.+);\n/gmu, "export const $1 = $2;\n")
+      .replaceAll(/^exports\.([\w$]+) = (\{[\s\S]*?^});\n/gmu, "export const $1 = $2;\n")
+      .replaceAll(/^exports\.([\w$]+) = (\[[\s\S]*?^\]);\n/gmu, "export const $1 = $2;\n")
       // Step 15: TypeScript enum IIFEs — `})(NAME || (exports.NAME = NAME = {}));`
       // Exports.NAME is inside the IIFE call so all top-level exports.X transforms miss it.
       .replaceAll(
-        /\}\)\(([\w$]+) \|\| \(exports\.\1 = \1 = \{\}\)\);\n/g,
+        /\}\)\(([\w$]+) \|\| \(exports\.\1 = \1 = \{\}\)\);\n/gu,
         "})($1 || ($1 = $1 = {}));\nexport { $1 };\n",
       )
       // Step 16: clean up remaining exports.X reads (internal references after step 14)
-      .replaceAll(/\bexports\.([\w$]+)\b/g, "$1");
+      .replaceAll(/\bexports\.([\w$]+)\b/gu, "$1");
     // Prepend imports for inline requires extracted in step 5.
     if (inlineRequireMap.size > 0) {
       const imports = [...inlineRequireMap.entries()]
@@ -188,7 +188,7 @@ export const fixAjv = {
     // Set `.default = self` on default-exported identifiers so consumers that call `X.default(...)`
     // (expecting old CJS interop wrapping) continue to work alongside `X(...)` callers.
     result = result.replace(
-      /^export default ([\w$]+);\n/m,
+      /^export default ([\w$]+);\n/mu,
       (_, name) => `${name}.default = ${name};\nexport default ${name};\n`,
     );
     return result;

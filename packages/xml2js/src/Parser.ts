@@ -75,12 +75,12 @@ export class Parser {
       let emptyString = "";
       // Remove the '#' key altogether if it's blank
       const char = object[this.options.charkey] as string;
-      if (/^\s*$/.exec(char) && !cdata) {
+      if (/^\s*$/u.exec(char) && !cdata) {
         emptyString = char;
         delete object[this.options.charkey];
       } else {
         if (this.options.trim) object[this.options.charkey] = char.trim();
-        if (this.options.normalize) object[this.options.charkey] = char.replaceAll(/\s{2,}/g, " ").trim();
+        if (this.options.normalize) object[this.options.charkey] = char.replaceAll(/\s{2,}/gu, " ").trim();
 
         object[this.options.charkey] = this.options.valueProcessors
           ? processItem(this.options.valueProcessors, char, nodeName)
@@ -161,7 +161,7 @@ export class Parser {
         };
         if (this.options.normalize)
           charChild[this.options.charkey] = takeOne(charChild, this.options.charkey)
-            .replaceAll(/\s{2,}/g, " ")
+            .replaceAll(/\s{2,}/gu, " ")
             .trim();
 
         (object[this.options.childkey] as Record<string, string>[]).push(charChild);

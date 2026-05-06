@@ -1,6 +1,6 @@
 import { normalizeString } from "@esposter/shared";
 
-const DURATION_PATTERN = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i;
+const DURATION_PATTERN = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/iu;
 
 export const parseDuration = (input: string): null | number => {
   const match = DURATION_PATTERN.exec(normalizeString(input));

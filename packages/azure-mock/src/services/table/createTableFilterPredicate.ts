@@ -11,8 +11,8 @@ export const createTableFilterPredicate = <T extends Record<string, unknown>>(
 ): ((entity: TableEntity<T>) => boolean) => {
   // Preserve spacing when stripping parentheses so patterns like not(<clause>) still match
   const normalizedFilter = filter.replaceAll(String.raw`(`, " ").replaceAll(String.raw`)`, "");
-  const andGroups = normalizedFilter.split(/\s+and\s+/i).filter(Boolean);
-  const orGroups = andGroups.map((group) => group.split(/\s+or\s+/i).filter(Boolean));
+  const andGroups = normalizedFilter.split(/\s+and\s+/iu).filter(Boolean);
+  const orGroups = andGroups.map((group) => group.split(/\s+or\s+/iu).filter(Boolean));
   return (entity) => {
     for (const orGroup of orGroups) {
       let isGroupMatched = false;

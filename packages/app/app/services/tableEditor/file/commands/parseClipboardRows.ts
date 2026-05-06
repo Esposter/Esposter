@@ -10,11 +10,11 @@ const parseMarkdownRow = (line: string): string[] =>
     .split(` ${ID_SEPARATOR} `)
     .map((cell) => cell.replaceAll(`\\${ID_SEPARATOR}`, ID_SEPARATOR));
 
-const isSeparatorRow = (cells: string[]): boolean => cells.every((cell) => /^:?-+:?$/.test(cell));
+const isSeparatorRow = (cells: string[]): boolean => cells.every((cell) => /^:?-+:?$/u.test(cell));
 
 export const parseClipboardRows = (text: string, dataSource: DataSource): Row[] => {
   const allRows = text
-    .split(/\r?\n/)
+    .split(/\r?\n/u)
     .filter((line) => normalizeString(line) !== "")
     .map((line) => parseMarkdownRow(line));
   const dataRows = allRows.filter((cells) => !isSeparatorRow(cells));
