@@ -15,27 +15,31 @@ export const withAsyncIterator = <T, R>(
 };
 
 describe(withAsyncIterator, () => {
-  const makeIterator = (returnFn: () => Promise<void>) => () => ({
+  const makeIterator = (returnFn: () => Promise<IteratorResult<unknown>>) => () => ({
     [Symbol.asyncIterator]() {
-      return { next: vi.fn(), return: returnFn };
+      return { next: vi.fn<() => Promise<IteratorResult<unknown>>>(), return: returnFn };
     },
   });
 
   test("calls iterator.return() when fn resolves", async () => {
     expect.hasAssertions();
-    const returnFn = vi.fn();
+
+    const returnFn = vi.fn<() => Promise<IteratorResult<unknown>>>();
     await withAsyncIterator(makeIterator(returnFn), async () => "result");
-    expect(returnFn).toHaveBeenCalledOnce();
+
+    expect(returnFn).toHaveBeenCalledTimes(1);
   });
 
   test("calls iterator.return() when fn rejects", async () => {
     expect.hasAssertions();
-    const returnFn = vi.fn();
+
+    const returnFn = vi.fn<() => Promise<IteratorResult<unknown>>>();
+
     await expect(
       withAsyncIterator(makeIterator(returnFn), async () => {
         throw new Error("fail");
       }),
     ).rejects.toThrow("fail");
-    expect(returnFn).toHaveBeenCalledOnce();
+    expect(returnFn).toHaveBeenCalledTimes(1);
   });
 });
