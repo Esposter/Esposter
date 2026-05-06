@@ -1,4 +1,4 @@
-/* oxlint-disable no-unused-vars @typescript-eslint/no-unnecessary-type-assertion @typescript-eslint/no-unused-vars */
+/* oxlint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import type { CreateMessageInput } from "@/models/message/CreateMessageInput";
 import type { MessageEntityMap } from "@/models/message/MessageEntityMap";
 import type { ServerCreateMessageInput } from "@/models/message/ServerCreateMessageInput";
@@ -14,7 +14,7 @@ export const createMessageEntity = <T extends CreateMessageInput>(
 ): InstanceType<MessageEntityMap[T["type"]]> => {
   const createdAt = new Date();
   if (input.type === MessageType.Webhook) {
-    const { roomId, ...rest } = input;
+    const { roomId, ...rest } = input as WebhookCreateMessageInput;
     return new WebhookMessageEntity({
       ...rest,
       createdAt,
@@ -23,7 +23,7 @@ export const createMessageEntity = <T extends CreateMessageInput>(
       updatedAt: createdAt,
     }) as InstanceType<MessageEntityMap[T["type"]]>;
   } else {
-    const { roomId, ...rest } = input;
+    const { roomId, ...rest } = input as ServerCreateMessageInput;
     return new StandardMessageEntity({
       ...rest,
       createdAt,

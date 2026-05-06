@@ -14,7 +14,7 @@ const isSeparatorRow = (cells: string[]): boolean => cells.every((cell) => /^:?-
 
 export const parseClipboardRows = (text: string, dataSource: DataSource): Row[] => {
   const allRows = text
-    .split(/\r?\n/u)
+    .split(new RegExp(String.raw`\r?\n`, "u"))
     .filter((line) => normalizeString(line) !== "")
     .map((line) => parseMarkdownRow(line));
   const dataRows = allRows.filter((cells) => !isSeparatorRow(cells));
