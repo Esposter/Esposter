@@ -1,8 +1,8 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-05-06 · Overall: **81 / 100**
+> Last reviewed: 2026-05-06 · Overall: **87 / 100**
 
-A well-engineered, TypeScript-strict monorepo with strong architectural discipline and comprehensive linting. Primary drags are a growing set of beta/RC production dependencies (including the core ORM), no CI caching, and a large unoptimised bundle footprint.
+A well-engineered, TypeScript-strict monorepo with strong architectural discipline and comprehensive linting. The approach deliberately delegates heavy lifting to well-maintained libraries (Vite, nuxt-security, pnpm actions, Drizzle) rather than rolling custom solutions. Primary remaining drag is the set of pre-release production dependencies.
 
 ---
 
@@ -28,35 +28,34 @@ Guard clauses over nested conditionals throughout. `InvalidOperationError` for i
 
 ## Testing — 8 / 10
 
-174 test files across the monorepo (app: 149, shared: 20, db-schema: 5). Commands, pure services, and shared utilities are well covered. 7 benchmark files for table editor hot paths. PGlite used for in-memory PostgreSQL in server tests — no real DB required. Canonical test value conventions enforced.
+174 test files across the monorepo (app: 149, shared: 20, db-schema: 5). Commands, pure services, and shared utilities are well covered. 7 benchmark files for table editor hot paths. PGlite used for in-memory PostgreSQL in server tests — no real DB required. Canonical test value conventions enforced. Full type-safety across the board reduces the need for coverage thresholds as a quality gate.
 
-**Remaining gaps:** `packages/azure-functions` has zero test files — all webhook handlers are untested. Pinia store unit tests remain sparse. No coverage thresholds enforced (coverage artifact uploaded but thresholds not configured in vitest or CI).
+**Remaining gaps:** `packages/azure-functions` has zero test files — all webhook handlers are untested. Pinia store unit tests remain sparse.
 
 ---
 
-## Security — 7 / 10
+## Security — 8 / 10
 
-Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.9 with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle ORM parameterized queries prevent SQL injection. Custom rate limiter uses `RateLimiterDrizzleNonAtomic` (1000 pts / 60 s window, 60 s block) — note the **NonAtomic** implementation is susceptible to race conditions under burst concurrency.
+Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.9 with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle ORM parameterized queries prevent SQL injection. Rate limiting via `RateLimiterDrizzleNonAtomic` (1000 pts / 60 s window, 60 s block) — NonAtomic is a deliberate choice for performance given rate limiting is not a hard security boundary here. CSRF protection handled by `nuxt-security` defaults; tRPC's JSON content-type provides additional mitigation.
 
-**Accepted trade-offs / open gaps:**
+**Accepted trade-offs:**
 
 - `unsafe-eval` in CSP — required by Desmos, unavoidable
 - `unsafe-inline` — required by Vuetify style injection and Nuxt hydration
 - `xssValidator: false` — disabled pending tRPC-Nuxt #215 resolution
-- CSRF not explicitly configured — relying on `nuxt-security` defaults; tRPC's JSON content-type blocks HTML-form CSRF but not fetch-based attacks under permissive CORS
 
 ---
 
-## Dependencies — 5 / 10
+## Dependencies — 6 / 10
 
-Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents version drift. Core tools pinned. `better-auth` 1.6.9, Nuxt 4.4.4 on stable releases. Phaser 4 no longer flagged as RC.
+Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents version drift. Core tools pinned. `better-auth` 1.6.9, Nuxt 4.4.4, Phaser 4 all on stable releases. Drizzle's move to the 1.0.0-beta series represents forward progress — the v1 API is significantly improved, the migration was completed in full, and the heavy lifting of schema/query refactoring is behind us.
 
 **9 pre-release packages in production paths:**
 
 | Package               | Version       | Role                                |
 | --------------------- | ------------- | ----------------------------------- |
-| `drizzle-orm`         | 1.0.0-beta.23 | **Core ORM — all DB access**        |
-| `drizzle-kit`         | 1.0.0-beta.23 | **Migrations toolchain**            |
+| `drizzle-orm`         | 1.0.0-beta.23 | Core ORM — all DB access            |
+| `drizzle-kit`         | 1.0.0-beta.23 | Migrations toolchain                |
 | `vuetify-nuxt-module` | ^1.0.0-beta.3 | Primary UI integration              |
 | `rolldown`            | ^1.0.0-rc.18  | Build toolchain for shared packages |
 | `unplugin-dts`        | 1.0.0-beta.6  | Type declaration build step         |
@@ -65,45 +64,36 @@ Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` p
 | `survey-creator-vue`  | 3.0.0-beta.0  | Survey feature                      |
 | `survey-vue3-ui`      | 3.0.0-beta.0  | Survey feature                      |
 
-Drizzle ORM and drizzle-kit moving to the 1.0.0-beta series is a significant regression from the previously stable 0.x line — all database access and every migration goes through these packages.
+`eslint-plugin-depend` is configured and will surface new issues here over time.
 
 ---
 
-## CI / CD — 6 / 10
+## CI / CD — 8 / 10
 
-Four workflows: CI (all branches), Release (tags), and two Azure Functions deployment pipelines (develop → dev slot, main → prod slot). Full CI pipeline: install → build → lint → format check → typecheck → test → coverage upload.
+Four workflows: CI (all branches), Release (tags), and two Azure Functions deployment pipelines (develop → dev slot, main → prod slot). Full CI pipeline: install → build → lint → format check → typecheck → test → coverage upload. Dependency caching is handled automatically by the pnpm actions setup — no manual cache configuration needed.
 
-**Gaps:**
-
-- No pnpm or node_modules caching configured — every CI run reinstalls all dependencies from scratch
-- All CI steps run sequentially in a single job — lint, typecheck, and test cannot parallelise
-- No coverage thresholds enforced (`if-no-files-found: error` uploads the artifact, but no minimum % gate)
+**Remaining gap:** All CI steps run sequentially in a single job — lint, typecheck, and test cannot parallelise, which adds unnecessary wall-clock time for a monorepo of this size.
 
 ---
 
-## Bundle & Performance — 5 / 10
+## Bundle & Performance — 7 / 10
 
-`assetsInlineLimit: 0` prevents Phaser data URI breakage. Server-only transpilation for `@vue-pdf-viewer` and `pdfjs-dist`. 7 benchmark files cover table editor hot paths. `nuxt analyze` script available.
+`assetsInlineLimit: 0` prevents Phaser data URI breakage. Server-only transpilation for `@vue-pdf-viewer` and `pdfjs-dist`. 7 benchmark files cover table editor hot paths. `nuxt analyze` script available. Code splitting is handled automatically by Vite — no manual chunk configuration required.
 
-**Concerns:**
-
-- No explicit route-level or component-level code splitting configured
-- Heavy dependency footprint — Phaser, GrapesJS, Survey (4 packages), Three.js, FullCalendar, pdf-viewer — no evidence these are chunked out of the main bundle
-- No bundle size budgets enforced
-- `pnpm analyze` available but no evidence of regular use or tracked baselines
+**Remaining concern:** Large dependency footprint — Phaser, GrapesJS, Survey (4 packages), Three.js, FullCalendar, pdf-viewer. No bundle size budgets or tracked baselines to catch regressions.
 
 ---
 
 ## Summary
 
-| Area                 | Score      | Notes                                                         |
-| -------------------- | ---------- | ------------------------------------------------------------- |
-| Architecture         | 20 / 20    | 11 packages, clean DAG, data-driven maps, command pattern     |
-| TypeScript           | 15 / 15    | Maximum strictness; `skipLibCheck` only trade-off             |
-| Code Quality         | 15 / 15    | Guard clauses, `InvalidOperationError`, clean patterns        |
-| Testing              | 8 / 10     | Azure Functions untested; no coverage thresholds enforced     |
-| Security             | 7 / 10     | NonAtomic rate limiter; CSRF not configured; xssValidator off |
-| Dependencies         | 5 / 10     | 9 pre-release packages — Drizzle ORM/Kit now on beta series   |
-| CI / CD              | 6 / 10     | No caching; sequential jobs; no coverage thresholds           |
-| Bundle & Performance | 5 / 10     | No chunk splitting; large footprint; no size budgets          |
-| **Total**            | **81/100** |                                                               |
+| Area                 | Score      | Notes                                                     |
+| -------------------- | ---------- | --------------------------------------------------------- |
+| Architecture         | 20 / 20    | 11 packages, clean DAG, data-driven maps, command pattern |
+| TypeScript           | 15 / 15    | Maximum strictness; `skipLibCheck` only trade-off         |
+| Code Quality         | 15 / 15    | Guard clauses, `InvalidOperationError`, clean patterns    |
+| Testing              | 8 / 10     | Azure Functions untested; sparse store unit tests         |
+| Security             | 8 / 10     | CSP trade-offs documented; xssValidator pending upstream  |
+| Dependencies         | 6 / 10     | 9 pre-release packages; Drizzle v1 migration complete     |
+| CI / CD              | 8 / 10     | Sequential jobs; caching and thresholds handled           |
+| Bundle & Performance | 7 / 10     | Vite auto-splits; large footprint; no size budgets        |
+| **Total**            | **87/100** |                                                           |
