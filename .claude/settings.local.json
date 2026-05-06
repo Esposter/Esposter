@@ -8,6 +8,7 @@
       "Bash(do echo:*)",
       "Bash(done)",
       "Bash(echo \"EXIT:$?\")",
+      "Bash(echo \"EXIT_CODE: $?\")",
       "Bash(file:*)",
       "Bash(find:*)",
       "Bash(for f:*)",

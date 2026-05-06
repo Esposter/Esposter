@@ -20,14 +20,14 @@ export const notificationTypeEnum = pgEnum("notification_type", NotificationType
 export const usersToRoomsInMessage = pgTable(
   "users_to_rooms",
   {
-    isHidden: boolean("isHidden").notNull().default(false),
-    lastMessageAt: timestamp("lastMessageAt"),
-    notificationType: notificationTypeEnum("notificationType").notNull().default(NotificationType.DirectMessage),
-    roomId: uuid("roomId")
+    isHidden: boolean().notNull().default(false),
+    lastMessageAt: timestamp(),
+    notificationType: notificationTypeEnum().notNull().default(NotificationType.DirectMessage),
+    roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    timeoutUntil: timestamp("timeoutUntil"),
-    userId: text("userId")
+    timeoutUntil: timestamp(),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

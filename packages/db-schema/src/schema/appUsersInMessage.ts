@@ -9,9 +9,9 @@ export const APP_USER_NAME_MAX_LENGTH = 100;
 export const appUsersInMessage = pgTable(
   "app_users",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    image: text("image"),
-    name: text("name").notNull(),
+    id: uuid().primaryKey().defaultRandom(),
+    image: text(),
+    name: text().notNull(),
   },
   {
     extraConfig: ({ name }) => [

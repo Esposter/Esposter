@@ -6,6 +6,7 @@ import { betterAuth } from "better-auth";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
+    camelCase: true,
     provider: "pg",
     schema,
     usePlural: true,

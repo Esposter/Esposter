@@ -1,10 +1,10 @@
-import type { schema } from "@esposter/db-schema";
+import type { relations } from "@esposter/db-schema";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { pushSubscriptionsInMessage } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
-export const getPushSubscriptionsForUser = (db: PostgresJsDatabase<typeof schema>, userId: string) =>
+export const getPushSubscriptionsForUser = (db: PostgresJsDatabase<typeof relations>, userId: string) =>
   db
     .select({
       auth: pushSubscriptionsInMessage.auth,

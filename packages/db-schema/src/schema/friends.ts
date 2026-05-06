@@ -10,11 +10,11 @@ export const friends = pgTable(
     // Natural key — getFriendshipId(senderId, receiverId).
     // Text PK: every lookup goes through this value, it never changes,
     // And there is exactly one row per user pair.
-    id: text("id").primaryKey(),
-    receiverId: text("receiverId")
+    id: text().primaryKey(),
+    receiverId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    senderId: text("senderId")
+    senderId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

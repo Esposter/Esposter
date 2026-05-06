@@ -184,6 +184,7 @@
     "@nuxt/test-utils": "catalog:",
     "@nuxtjs/seo": "catalog:",
     "@pinia/nuxt": "catalog:",
+    "@takumi-rs/core": "catalog:",
     "@types/dedent": "catalog:",
     "@types/deep-equal": "catalog:",
     "@types/fs-extra": "catalog:",

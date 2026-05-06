@@ -11,12 +11,12 @@ export const CODE_LENGTH = 8;
 export const invitesInMessage = pgTable(
   "invites",
   {
-    code: text("code").notNull().unique(),
-    id: uuid("id").primaryKey().defaultRandom(),
-    roomId: uuid("roomId")
+    code: text().notNull().unique(),
+    id: uuid().primaryKey().defaultRandom(),
+    roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    userId: text("userId")
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },

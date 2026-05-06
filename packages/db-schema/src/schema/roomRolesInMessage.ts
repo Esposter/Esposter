@@ -36,13 +36,13 @@ export const ROOM_ROLE_NAME_MAX_LENGTH = 100;
 export const roomRolesInMessage = pgTable(
   "room_roles",
   {
-    color: text("color").notNull().default(""),
-    id: uuid("id").primaryKey().defaultRandom(),
-    isEveryone: boolean("isEveryone").notNull().default(false),
-    name: text("name").notNull(),
-    permissions: bigint("permissions", { mode: "bigint" }).notNull().default(0n),
-    position: integer("position").notNull().default(0),
-    roomId: uuid("roomId")
+    color: text().notNull().default(""),
+    id: uuid().primaryKey().defaultRandom(),
+    isEveryone: boolean().notNull().default(false),
+    name: text().notNull(),
+    permissions: bigint({ mode: "bigint" }).notNull().default(0n),
+    position: integer().notNull().default(0),
+    roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
   },

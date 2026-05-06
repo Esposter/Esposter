@@ -1,3 +1,3 @@
-import { pgSchema } from "drizzle-orm/pg-core";
+import { camelCase } from "drizzle-orm/pg-core";
 
-export const messageSchema = pgSchema("message");
+export const messageSchema = camelCase.schema("message");

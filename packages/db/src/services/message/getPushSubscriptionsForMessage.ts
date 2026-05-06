@@ -1,4 +1,4 @@
-import type { MessageEntity, schema } from "@esposter/db-schema";
+import type { MessageEntity, relations } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
@@ -13,7 +13,7 @@ import { getMentions, MENTION_EVERYONE_ID, MENTION_HERE_ID, MENTION_ID_ATTRIBUTE
 import { and, eq, inArray, isNull, ne, or } from "drizzle-orm";
 
 export const getPushSubscriptionsForMessage = (
-  db: PostgresJsDatabase<typeof schema>,
+  db: PostgresJsDatabase<typeof relations>,
   { message, partitionKey, userId }: Pick<MessageEntity, "message" | "partitionKey" | "userId">,
 ) => {
   const andWheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, partitionKey)];
