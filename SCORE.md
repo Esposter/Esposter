@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-05-06 · Overall: **87 / 100**
+> Last reviewed: 2026-05-06 · Overall: **88 / 100**
 
 A well-engineered, TypeScript-strict monorepo with strong architectural discipline and comprehensive linting. The approach deliberately delegates heavy lifting to well-maintained libraries (Vite, nuxt-security, pnpm actions, Drizzle) rather than rolling custom solutions. Primary remaining drag is the set of pre-release production dependencies.
 
@@ -68,11 +68,11 @@ Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` p
 
 ---
 
-## CI / CD — 8 / 10
+## CI / CD — 9 / 10
 
 Four workflows: CI (all branches), Release (tags), and two Azure Functions deployment pipelines (develop → dev slot, main → prod slot). Full CI pipeline: install → build → lint → format check → typecheck → test → coverage upload. Dependency caching is handled automatically by the pnpm actions setup — no manual cache configuration needed.
 
-**Remaining gap:** All CI steps run sequentially in a single job — lint, typecheck, and test cannot parallelise, which adds unnecessary wall-clock time for a monorepo of this size.
+**Note:** CI steps run sequentially in a single job by design — parallelising across jobs interleaves log output, making failures harder to diagnose. Wall-clock time is the accepted trade-off.
 
 ---
 
@@ -94,6 +94,6 @@ Four workflows: CI (all branches), Release (tags), and two Azure Functions deplo
 | Testing              | 8 / 10     | Azure Functions untested; sparse store unit tests         |
 | Security             | 8 / 10     | CSP trade-offs documented; xssValidator pending upstream  |
 | Dependencies         | 6 / 10     | 9 pre-release packages; Drizzle v1 migration complete     |
-| CI / CD              | 8 / 10     | Sequential jobs; caching and thresholds handled           |
+| CI / CD              | 9 / 10     | Sequential by design; caching and thresholds handled      |
 | Bundle & Performance | 7 / 10     | Vite auto-splits; large footprint; no size budgets        |
-| **Total**            | **87/100** |                                                           |
+| **Total**            | **88/100** |                                                           |
