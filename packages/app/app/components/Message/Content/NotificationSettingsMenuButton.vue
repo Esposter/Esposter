@@ -15,11 +15,11 @@ const { userToRoomMap } = storeToRefs(userToRoomStore);
 const { updateUserToRoom } = userToRoomStore;
 const notificationType = computed({
   get: () => {
-    if (!userId.value) return null;
-    else return userToRoomMap.value.get(userId.value)?.notificationType ?? null;
+    if (userId.value) return userToRoomMap.value.get(userId.value)?.notificationType ?? NotificationType.DirectMessage;
+    else return NotificationType.DirectMessage;
   },
   set: (value) => {
-    if (!value || !currentRoomId.value || !userId.value) return;
+    if (!currentRoomId.value) return;
     updateUserToRoom({ notificationType: value, roomId: currentRoomId.value });
   },
 });

@@ -73,7 +73,6 @@ import {
   standardCreateMessageInputSchema,
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
-  usersToRoomsInMessage,
   standardMessageEntitySchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
@@ -198,7 +197,7 @@ export const messageRouter = router({
           },
           notificationOptions: {
             icon: ctx.getSessionPayload.user.image,
-            title: nickname || ctx.getSessionPayload.user.name,
+            title: nickname ?? ctx.getSessionPayload.user.name,
           },
         };
         await eventGridPublisherClient.send([
