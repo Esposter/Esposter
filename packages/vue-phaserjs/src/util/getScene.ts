@@ -7,5 +7,5 @@ import { useGame } from "@/composables/useGame";
 // When we actually need to use it
 export const getScene = (sceneKey: SceneWithPlugins["scene"]["key"]) => {
   const game = useGame();
-  return game.scene.getScene(sceneKey) as SceneWithPlugins;
+  return game.scene.getScene(sceneKey);
 };

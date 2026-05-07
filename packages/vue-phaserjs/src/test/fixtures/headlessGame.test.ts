@@ -20,7 +20,7 @@ export const startTestScene = (key: string): SceneWithPlugins => {
   const Scene = createSceneClass(key);
   // Add without autoStart so READY/SHUTDOWN listeners are in place before the scene boots.
   testGame.scene.add(key, Scene, false);
-  const scene = testGame.scene.getScene(key) as SceneWithPlugins;
+  const scene = testGame.scene.getScene(key);
   const readyListener = () => {
     ExternalSceneStore.sceneReadyMap.set(key, true);
   };
