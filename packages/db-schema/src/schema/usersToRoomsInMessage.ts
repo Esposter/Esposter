@@ -18,7 +18,7 @@ export const notificationTypeSchema = z.enum(NotificationType) satisfies z.ZodTy
 export const notificationTypeEnum = pgEnum("notification_type", NotificationType);
 
 export const usersToRoomsInMessage = pgTable(
-  "users_to_rooms",
+  "usersToRooms",
   {
     isHidden: boolean().notNull().default(false),
     lastMessageAt: timestamp(),

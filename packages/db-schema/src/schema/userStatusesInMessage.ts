@@ -22,7 +22,7 @@ export const UserStatuses: ReadonlySet<UserStatus> = new Set(Object.values(UserS
 export const userStatusEnum = pgEnum("user_status", UserStatus);
 
 export const userStatusesInMessage = pgTable(
-  "user_statuses",
+  "userStatuses",
   {
     expiresAt: timestamp(),
     isConnected: boolean().notNull().default(true),

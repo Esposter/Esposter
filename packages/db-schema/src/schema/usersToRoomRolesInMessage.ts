@@ -10,7 +10,7 @@ import { foreignKey, index, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const usersToRoomRolesInMessage = pgTable(
-  "users_to_room_roles",
+  "usersToRoomRoles",
   {
     roleId: uuid()
       .notNull()

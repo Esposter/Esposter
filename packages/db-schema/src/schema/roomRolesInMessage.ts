@@ -34,7 +34,7 @@ export const ROOM_ROLE_COLOR_MAX_LENGTH = 9;
 export const ROOM_ROLE_NAME_MAX_LENGTH = 100;
 
 export const roomRolesInMessage = pgTable(
-  "room_roles",
+  "roomRoles",
   {
     color: text().notNull().default(""),
     id: uuid().primaryKey().defaultRandom(),

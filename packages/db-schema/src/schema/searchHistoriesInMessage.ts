@@ -12,7 +12,7 @@ import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
 export const searchHistoriesInMessage = pgTable(
-  "search_histories",
+  "searchHistories",
   {
     filters: jsonb().notNull().$type<Filter[]>().default([]),
     id: uuid().primaryKey().defaultRandom(),

@@ -9,7 +9,7 @@ import { createSelectSchema } from "drizzle-orm/zod";
 export const ROOM_CATEGORY_NAME_MAX_LENGTH = 100;
 
 export const roomCategoriesInMessage = pgTable(
-  "room_categories",
+  "roomCategories",
   {
     id: uuid().primaryKey().defaultRandom(),
     name: text().notNull(),

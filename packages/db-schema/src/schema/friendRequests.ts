@@ -7,7 +7,7 @@ import { check, index, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const friendRequests = pgTable(
-  "friend_requests",
+  "friendRequests",
   {
     // Natural key — getFriendshipId(senderId, receiverId).
     // Conflicts on insert act as idempotency: if A already sent to B, a second send is a no-op.

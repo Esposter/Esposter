@@ -6,7 +6,7 @@ import { check, integer, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const userAchievements = pgTable(
-  "user_achievements",
+  "userAchievements",
   {
     achievementId: uuid()
       .notNull()
