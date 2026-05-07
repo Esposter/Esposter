@@ -38,6 +38,38 @@ const { selectedRole, selectedRoleId } = useSelectedRole(roles);
 
 **Fix:** extract the lower-level block into a composable (`use*`) or a child component, then call it at the same level as everything else.
 
+## Async Data: Wrapper + Pure Child Pattern
+
+When a component needs async/reactive data (e.g. from a store that populates after mount), split into:
+
+- **`Index.vue` (wrapper)** — owns data lookup + `v-if` guard; pure orchestration
+- **`Form.vue` (pure child)** — receives the data as a required prop; initializes local state once synchronously; no store access for the guarded data
+
+This avoids async race conditions where a `ref` is initialized once at setup time before the store is populated, silently overwriting real data with `""`.
+
+```vue
+<!-- Index.vue — wrapper owns the lookup and v-if guard -->
+<script setup lang="ts">
+const { roomId } = defineProps<{ roomId: string }>();
+const { data: session } = await authClient.useSession(useFetch);
+const userId = computed(() => session.value?.user.id);
+const { getUserToRoomMap } = useUserToRoomStore();
+const userToRoom = computed(() => (userId.value ? getUserToRoomMap(roomId)?.get(userId.value) : undefined));
+</script>
+<template>
+  <FeatureForm v-if="userToRoom" :room-id :user-to-room="userToRoom" />
+</template>
+
+<!-- Form.vue — pure: prop is guaranteed non-undefined, ref init is safe -->
+<script setup lang="ts">
+const { roomId, userToRoom } = defineProps<{ roomId: string; userToRoom: UserToRoom }>();
+const { updateUserToRoom } = useUserToRoomStore();
+const nickname = ref(userToRoom.nickname ?? "");
+</script>
+```
+
+**When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data — if the store can be empty at component creation time, the wrapper + `v-if` pattern is required.
+
 ## Generic SFC Components
 
 When a component's model value type (or other prop type) depends on an enum/discriminant key, make the component generic:
