@@ -187,7 +187,7 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.1.0
   read-excel-file: ^9.0.9
-  rolldown: ^1.0.0-rc.18
+  rolldown: ^1.0.0
   rolldown-plugin-dts: ^0.24.1
   rxjs: ^7.8.2
   sanitize-html: ^2.17.3
