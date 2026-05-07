@@ -2,8 +2,8 @@ import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateU
 import type { Context } from "@@/server/trpc/context";
 import type { User } from "@esposter/db-schema";
 
-import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
+import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { DatabaseEntityType, RoomPermission, usersToRoomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
