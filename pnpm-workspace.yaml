@@ -29,7 +29,7 @@ catalog:
   "@codemirror/language-data": ^6.5.2
   "@codemirror/state": ^6.6.0
   "@codemirror/theme-one-dark": ^6.1.3
-  "@codemirror/view": ^6.42.0
+  "@codemirror/view": ^6.42.1
   "@dxup/nuxt": ^0.4.1
   "@dxup/unimport": ^0.1.2
   "@electric-sql/pglite": ^0.4.5
@@ -42,8 +42,8 @@ catalog:
   "@fullcalendar/timegrid": ^6.1.20
   "@fullcalendar/vue3": ^6.1.20
   "@happy-dom/global-registrator": ^20.9.0
-  "@json-layout/vocabulary": ^2.13.0
-  "@koumoul/vjsf": ^4.4.0
+  "@json-layout/vocabulary": ^2.13.1
+  "@koumoul/vjsf": ^4.5.0
   "@lerna-lite/cli": ^5.2.1
   "@lerna-lite/publish": ^5.2.1
   "@lerna-lite/run": ^5.2.1
@@ -80,15 +80,15 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^5.0.0
-  "@types/node": ^25.6.0
+  "@types/node": ^25.6.2
   "@types/pluralize": ^0.0.33
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
-  "@types/three": ^0.184.0
+  "@types/three": ^0.184.1
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260506.1
+  "@typescript/native-preview": ^7.0.0-dev.20260507.1
   "@unocss/eslint-config": ^66.6.8
   "@unocss/nuxt": ^66.6.8
   "@vite-pwa/nuxt": ^1.1.1
@@ -110,7 +110,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.10.6
+  apexcharts: ^5.11.0
   better-auth: ^1.6.9
   codemirror: ^6.0.2
   crossws: ^0.4.5
@@ -165,7 +165,7 @@ catalog:
   marked: ^18.0.3
   mathjs: ^15.2.0
   mime-types: ^3.0.2
-  mjml-browser: ^5.1.0
+  mjml-browser: ^5.2.0
   nano-staged: ^1.0.2
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
@@ -187,8 +187,8 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.1.0
   read-excel-file: ^9.0.9
-  rolldown: ^1.0.0-rc.18
-  rolldown-plugin-dts: ^0.24.1
+  rolldown: ^1.0.0
+  rolldown-plugin-dts: ^0.25.0
   rxjs: ^7.8.2
   sanitize-html: ^2.17.3
   sass-embedded: ^1.99.0
@@ -213,7 +213,7 @@ catalog:
   unplugin-dts: 1.0.0-beta.6
   v-viewer: ^3.0.23
   viewerjs: ^1.11.7
-  vite: ^8.0.10
+  vite: ^8.0.11
   vite-plugin-mkcert: ^2.0.0
   vitest: ^4.1.5
   vue: ^3.5.34
@@ -227,7 +227,7 @@ catalog:
   vuetify-nuxt-module: ^1.0.0-beta.3
   web-push: ^3.6.7
   worker-timers: ^8.0.31
-  write-excel-file: ^4.0.5
+  write-excel-file: ^4.0.6
   ws: ^8.20.0
   xmlbuilder2: ^4.0.3
   zod: ^4.4.3
@@ -239,7 +239,7 @@ cleanupUnusedCatalogs: true
 overrides:
   crossws: ^0.4.5
   pdfjs-dist: ^5.7.284
-  vite: ^8.0.10
+  vite: ^8.0.11
   vue-router: ^5.0.6
 
 shellEmulator: true
