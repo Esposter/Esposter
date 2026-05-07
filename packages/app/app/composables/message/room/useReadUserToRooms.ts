@@ -5,15 +5,11 @@ import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 export const useReadUserToRooms = () => {
   const { $trpc } = useNuxtApp();
   const userToRoomStore = useUserToRoomStore();
-  const { lastMessageAtMap } = storeToRefs(userToRoomStore);
-  const { setNotificationType } = userToRoomStore;
+  const { userToRoomMap } = storeToRefs(userToRoomStore);
   return async (roomIds: RoomInMessage["id"][]) => {
     if (roomIds.length === 0) return;
 
-    const readUserToRooms = await $trpc.userToRoom.readUserToRooms.query({ roomIds });
-    for (const { lastMessageAt, notificationType, roomId } of readUserToRooms) {
-      setNotificationType(roomId, notificationType);
-      if (lastMessageAt) lastMessageAtMap.value.set(roomId, lastMessageAt);
-    }
+    const userToRooms = await $trpc.userToRoom.readUserToRooms.query({ roomIds });
+    for (const userToRoom of userToRooms) userToRoomMap.value.set(userToRoom.roomId, userToRoom);
   };
 };

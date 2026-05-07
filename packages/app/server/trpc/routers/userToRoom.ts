@@ -31,7 +31,6 @@ export const userToRoomRouter = router({
   readUserToRooms: standardAuthedProcedure.input(readUserToRoomsInputSchema).query(async ({ ctx, input }) => {
     await isMember(ctx.db, ctx.getSessionPayload, input.roomIds);
     return ctx.db.query.usersToRoomsInMessage.findMany({
-      columns: { lastMessageAt: true, notificationType: true, roomId: true, userId: true },
       where: { roomId: { in: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
     });
   }),

@@ -9,6 +9,8 @@ const { readMembers, readMoreMembers } = useReadMembers();
 const { isPending } = await readMembers();
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
+const roomStore = useRoomStore();
+const { currentRoom } = storeToRefs(roomStore);
 </script>
 
 <template>
@@ -16,8 +18,14 @@ const { hasMore, members } = storeToRefs(memberStore);
     <template v-if="isPending">
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
-    <template v-else>
-      <MessageModelMemberListItem v-for="member of members" :key="member.id" :member @click="emit('select', member.id)">
+    <template v-else-if="currentRoom">
+      <MessageModelMemberListItem
+        v-for="member of members"
+        :key="member.id"
+        :member
+        :room="currentRoom"
+        @click="emit('select', member.id)"
+      >
         <template #append="{ hoverProps: { isHovering } }">
           <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
         </template>

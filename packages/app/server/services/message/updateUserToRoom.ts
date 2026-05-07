@@ -2,8 +2,9 @@ import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateU
 import type { Context } from "@@/server/trpc/context";
 import type { User } from "@esposter/db-schema";
 
+import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
-import { DatabaseEntityType, usersToRoomsInMessage } from "@esposter/db-schema";
+import { DatabaseEntityType, RoomPermission, usersToRoomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
@@ -11,13 +12,20 @@ import { and, eq } from "drizzle-orm";
 export const updateUserToRoom = async (
   db: Context["db"],
   userId: User["id"],
-  { roomId, ...rest }: UpdateUserToRoomInput,
+  { roomId, targetUserId, ...rest }: UpdateUserToRoomInput,
 ) => {
+  const effectiveUserId = targetUserId ?? userId;
+
+  if (targetUserId && targetUserId !== userId) {
+    const isPermitted = await hasPermission(db, userId, roomId, RoomPermission.ManageNicknames);
+    if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
   const updatedUserToRoom = (
     await db
       .update(usersToRoomsInMessage)
       .set(rest)
-      .where(and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, roomId)))
+      .where(and(eq(usersToRoomsInMessage.userId, effectiveUserId), eq(usersToRoomsInMessage.roomId, roomId)))
       .returning()
   )[0];
   if (!updatedUserToRoom)

@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoleStore } from "@/store/message/room/role";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useMemberStore } from "@/store/message/user/member";
 
 interface MemberPanelProps {
@@ -15,6 +16,9 @@ const { selectMember } = roleStore;
 const { selectedMemberId } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
+const userToRoomStore = useUserToRoomStore();
+const { getDisplayName } = userToRoomStore;
+const displayName = computed(() => getDisplayName(member, roomId));
 const { readMembers, readMoreMembers } = useReadMembers();
 const { isPending } = await readMembers();
 </script>
@@ -32,9 +36,9 @@ const { isPending } = await readMembers();
         @click="selectMember(member.id)"
       >
         <template #prepend>
-          <StyledAvatar :image="member.image" :name="member.name" mr-2 />
+          <StyledAvatar :image="member.image" :name="displayName" mr-2 />
         </template>
-        <v-list-item-title>{{ member.name }}</v-list-item-title>
+        <v-list-item-title>{{ displayName }}</v-list-item-title>
       </v-list-item>
       <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
         <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />

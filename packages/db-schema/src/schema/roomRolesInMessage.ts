@@ -22,9 +22,10 @@ export const RoomPermission = {
   BanMembers: 1n << 8n, // 256  — permanent ban
   MuteMembers: 1n << 9n, // 512  — force-mute/unmute in voice
   MoveMembers: 1n << 10n, // 1024 — kick from voice channel
+  ManageNicknames: 1n << 11n, // 2048 — set per-room nicknames for other members
   // Advanced
-  ManageWebhooks: 1n << 11n, // 2048 — create/edit/delete webhooks
-  Administrator: 1n << 12n, // 4096 — all permissions; bypasses hierarchy checks; always the highest bit
+  ManageWebhooks: 1n << 12n, // 4096 — create/edit/delete webhooks
+  Administrator: 1n << 13n, // 8192 — all permissions; bypasses hierarchy checks; always the highest bit
 } as const;
 /* eslint-enable perfectionist/sort-objects */
 
