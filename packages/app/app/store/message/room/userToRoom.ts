@@ -25,6 +25,7 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
     roomNicknameMap.set(userId, nickname);
     setNicknameMap(roomId, roomNicknameMap);
   };
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const getDisplayName = (user: User, roomId: string): string => getNicknameMap(roomId)?.get(user.id) || user.name;
   const updateUserToRoom = async (input: UpdateUserToRoomInput) => {
     await $trpc.userToRoom.updateUserToRoom.mutate(input);
