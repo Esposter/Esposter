@@ -31,11 +31,11 @@ describe("userToRoom", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const readUserToRooms = await userToRoomCaller.readUserToRooms({ roomIds: [newRoom.id] });
+    const readUsersToRooms = await userToRoomCaller.readUsersToRooms({ roomIds: [newRoom.id] });
     const userId = getMockSession().user.id;
-    const userToRoom = takeOne(readUserToRooms);
+    const userToRoom = takeOne(readUsersToRooms);
 
-    expect(readUserToRooms).toHaveLength(1);
+    expect(readUsersToRooms).toHaveLength(1);
     expect(userToRoom.roomId).toBe(newRoom.id);
     expect(userToRoom.userId).toBe(userId);
     expect(userToRoom.notificationType).toBe(NotificationType.DirectMessage);
@@ -48,7 +48,7 @@ describe("userToRoom", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      userToRoomCaller.readUserToRooms({ roomIds: [newRoom.id] }),
+      userToRoomCaller.readUsersToRooms({ roomIds: [newRoom.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 

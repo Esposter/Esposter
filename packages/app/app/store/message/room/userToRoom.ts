@@ -12,12 +12,12 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
     setData: setUserToRoomMap,
   } = useDataMap(() => roomStore.currentRoomId, new Map<string, UserToRoomInMessage>());
   const setUserToRoom = (roomId: string, userId: string, userToRoom: UserToRoomInMessage) => {
-    const userToRoomMap = getUserToRoomMap(roomId) ?? new Map<string, UserToRoomInMessage>();
-    userToRoomMap.set(userId, userToRoom);
-    setUserToRoomMap(roomId, userToRoomMap);
+    const roomUserMap = getUserToRoomMap(roomId) ?? new Map<string, UserToRoomInMessage>();
+    roomUserMap.set(userId, userToRoom);
+    setUserToRoomMap(roomId, roomUserMap);
   };
   const getDisplayName = (user: User, roomId: string): string =>
-    getUserToRoomMap(roomId)?.get(user.id)?.nickname ?? user.name;
+    getUserToRoomMap(roomId)?.get(user.id)?.nickname || user.name;
   const updateUserToRoom = async (input: UpdateUserToRoomInput) => {
     await $trpc.userToRoom.updateUserToRoom.mutate(input);
   };

@@ -10,8 +10,8 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-const readUserToRoomsInputSchema = z.object({ roomIds: selectRoomInMessageSchema.shape.id.array().min(1) });
-export type ReadUserToRoomsInput = z.infer<typeof readUserToRoomsInputSchema>;
+const readUsersToRoomsInputSchema = z.object({ roomIds: selectRoomInMessageSchema.shape.id.array().min(1) });
+export type ReadUsersToRoomsInput = z.infer<typeof readUsersToRoomsInputSchema>;
 
 const onUpdateUserToRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnUpdateUserToRoomInput = z.infer<typeof onUpdateUserToRoomInputSchema>;
@@ -28,10 +28,10 @@ export const userToRoomRouter = router({
       yield data;
     }
   }),
-  readUserToRooms: standardAuthedProcedure.input(readUserToRoomsInputSchema).query(async ({ ctx, input }) => {
+  readUsersToRooms: standardAuthedProcedure.input(readUsersToRoomsInputSchema).query(async ({ ctx, input }) => {
     await isMember(ctx.db, ctx.getSessionPayload, input.roomIds);
     return ctx.db.query.usersToRoomsInMessage.findMany({
-      where: { roomId: { in: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
+      where: { roomId: { in: input.roomIds } },
     });
   }),
   updateUserToRoom: getMemberProcedure(updateUserToRoomInputSchema, "roomId").mutation(({ ctx, input }) =>

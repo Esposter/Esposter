@@ -10,7 +10,7 @@ interface MemberPanelProps {
   roomId: RoomInMessage["id"];
 }
 
-defineProps<MemberPanelProps>();
+const { roomId } = defineProps<MemberPanelProps>();
 const roleStore = useRoleStore();
 const { selectMember } = roleStore;
 const { selectedMemberId } = storeToRefs(roleStore);
