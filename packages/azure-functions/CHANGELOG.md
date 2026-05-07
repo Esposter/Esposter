@@ -3,14 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
+
+### Bug Fixes
+
+* add back type expect error ([9e3cf6f](https://github.com/Esposter/Esposter/commit/9e3cf6fd306b0faf14b5f1d5a3b00a5e30d74d5b))
+* code review comments ([680b85e](https://github.com/Esposter/Esposter/commit/680b85ec2fd3d4fcb178b10b6c3b75495382b5ca))
+* code review comments ([4ab7a46](https://github.com/Esposter/Esposter/commit/4ab7a460facafb0a35aa65cac34333f2cc1415d4))
+* lint ([f6e79f4](https://github.com/Esposter/Esposter/commit/f6e79f496c45f0d7369e7a288891846d6325bd3f))
+* lint ([3bbfdde](https://github.com/Esposter/Esposter/commit/3bbfdde3f875510a46c378a3df8639fdec2e739e))
+* lint wip ([8acd30e](https://github.com/Esposter/Esposter/commit/8acd30e554910d92719864b0f706e78833d27ebc))
+* remaining migrations ([14c864f](https://github.com/Esposter/Esposter/commit/14c864f5b31a0c61544e07bd34ea18bbd9df1af2))
+* types ([1609a7c](https://github.com/Esposter/Esposter/commit/1609a7c695c72bc3d2804c4bb5f2c849e374e029))
+* use ts-ignore to skip typedoc until ts-go support ([d74b67c](https://github.com/Esposter/Esposter/commit/d74b67cf8da227b10b643d5afdfcd1cb05458da1))
+* wip ([26a6fe1](https://github.com/Esposter/Esposter/commit/26a6fe1952674dac4cbf798b6129806c16eb198a))
+
+### Features
+
+* upgrade drizzle ([17b9f41](https://github.com/Esposter/Esposter/commit/17b9f41b180ba109382d34e9507ead13cbbb95b2))
+
 # [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
 
 ### Bug Fixes
 
 * bugs ([70417cd](https://github.com/Esposter/Esposter/commit/70417cd42515c5cfee36d179f75d8b46898cbfda))
+
 * get structured text ([63fbd76](https://github.com/Esposter/Esposter/commit/63fbd76f44462a71cb8aebfab34d15bf013fb92f))
+
 * push subscription rename ([83dce01](https://github.com/Esposter/Esposter/commit/83dce014c94ee7b1db33933a54e3eadb48d5ac9e))
+
 * types and lint ([ad56572](https://github.com/Esposter/Esposter/commit/ad56572087670f66d878cfa8f1778a78582c950b))
+
 * webhooks relation types as well as drizzle types ([6aaa379](https://github.com/Esposter/Esposter/commit/6aaa37935553103c7cb79829cf7e7fc1475356fc))
 
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)

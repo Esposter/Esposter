@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
+
+### Bug Fixes
+
+* code review comments ([680b85e](https://github.com/Esposter/Esposter/commit/680b85ec2fd3d4fcb178b10b6c3b75495382b5ca))
+* code review comments ([c9a8f1c](https://github.com/Esposter/Esposter/commit/c9a8f1c368b7036eddb76a2c1099ae22fb80c434))
+* code review comments ([4ab7a46](https://github.com/Esposter/Esposter/commit/4ab7a460facafb0a35aa65cac34333f2cc1415d4))
+* code review comments ([340d042](https://github.com/Esposter/Esposter/commit/340d042ebd9d0580047f67b84f415c5ecafb74be))
+* lint ([f6e79f4](https://github.com/Esposter/Esposter/commit/f6e79f496c45f0d7369e7a288891846d6325bd3f))
+* lint and typedoc warnings ([dcd64f4](https://github.com/Esposter/Esposter/commit/dcd64f45e16e41d8002a3cc5c9002c484cd01a43))
+* regex ([ccdea20](https://github.com/Esposter/Esposter/commit/ccdea209565ecfafc74927947015b3924615ac99))
+* remaining issues ([808764d](https://github.com/Esposter/Esposter/commit/808764d68404871df4632d4b7eadd83af780be0d))
+* remove unnecessary bookmarks feature ([cf27594](https://github.com/Esposter/Esposter/commit/cf275943c727cc6f63baa90d7aa8070ebc5f063d))
+* wip ([c0962e4](https://github.com/Esposter/Esposter/commit/c0962e4852cd751ebf2748aaea97e9122397e3a3))
+
+### Features
+
+* error handling wip ([74b7969](https://github.com/Esposter/Esposter/commit/74b796949376815f1f54982b7fc52d69bf31986f))
+* wip ([16aab97](https://github.com/Esposter/Esposter/commit/16aab97be86dead24d438cb654f16e73117e6304))
+
 # [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
 
 ### Bug Fixes

@@ -3,166 +3,402 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
+
+### Bug Fixes
+
+* ajv ([7c5a2ff](https://github.com/Esposter/Esposter/commit/7c5a2ffb0bb3ae7d39aa6ede7f64eda01ddaaf7a))
+* align syntax ([e3e731f](https://github.com/Esposter/Esposter/commit/e3e731fb420f5baa492a507fee1c9d37c14ad93e))
+* also make table names camel case, now all namings are aligned ([c504b0e](https://github.com/Esposter/Esposter/commit/c504b0e68c6b5247ef34cb763c86aabd15a1bf64))
+* assignment ([6f825eb](https://github.com/Esposter/Esposter/commit/6f825ebd7b7747e5bbc3964db2128090daca7311))
+* bookmark ([44fe375](https://github.com/Esposter/Esposter/commit/44fe375b02aa24f85042b9b2b9800e78aabbf2f1))
+* cleanup unnecessary blank lines ([8ce5868](https://github.com/Esposter/Esposter/commit/8ce58687d1c0621abedaff74cded3d72bab0dbe8))
+* cleanup unnecessary extra UI ([898f8ca](https://github.com/Esposter/Esposter/commit/898f8caefa05b6a5460dfbeddc31ada1fe7fc3c9))
+* cleanup unnecessary tests for unnecessary endpoint ([78f2ca8](https://github.com/Esposter/Esposter/commit/78f2ca8c866dc86f0c954aa82bbd3f1521ead575))
+* code comment issues ([52e4bfb](https://github.com/Esposter/Esposter/commit/52e4bfb58fa542500f56552f7a1a658a7077d0f6))
+* code review comments ([680b85e](https://github.com/Esposter/Esposter/commit/680b85ec2fd3d4fcb178b10b6c3b75495382b5ca))
+* code review comments ([c9a8f1c](https://github.com/Esposter/Esposter/commit/c9a8f1c368b7036eddb76a2c1099ae22fb80c434))
+* code review comments ([4ab7a46](https://github.com/Esposter/Esposter/commit/4ab7a460facafb0a35aa65cac34333f2cc1415d4))
+* code review comments ([340d042](https://github.com/Esposter/Esposter/commit/340d042ebd9d0580047f67b84f415c5ecafb74be))
+* code review comments ([c3f41ff](https://github.com/Esposter/Esposter/commit/c3f41ff57b20f793d8864bd8a2ebb39bb29b16c8))
+* code review comments ([2960a35](https://github.com/Esposter/Esposter/commit/2960a35493c6679140729031ba311f9ea2082b7e))
+* code review comments ([f341fb8](https://github.com/Esposter/Esposter/commit/f341fb84518c610871b05f5cf416d41c63aad7a0))
+* code review comments ([3cbfc3e](https://github.com/Esposter/Esposter/commit/3cbfc3e25158375dc3ebcc9badd5e7422419eceb))
+* condition ([9a13aa0](https://github.com/Esposter/Esposter/commit/9a13aa0f4041a29f8f439fd672598577b064dd55))
+* imports ([bc2ba37](https://github.com/Esposter/Esposter/commit/bc2ba370b86a1ddc241bd818d7ff30fc0bf066e3))
+* imports ([3b1d1bf](https://github.com/Esposter/Esposter/commit/3b1d1bf8072a171b086d43e36518031d9a589408))
+* lint ([67a64e8](https://github.com/Esposter/Esposter/commit/67a64e8e302eb660727c74155dd3f956f9bf5a81))
+* lint ([7bb3ecb](https://github.com/Esposter/Esposter/commit/7bb3ecbc02283f581ff12ad30b82485b6c49c697))
+* lint ([e5a02f5](https://github.com/Esposter/Esposter/commit/e5a02f57216f13a19d19feb5b3bedd06122db041))
+* lint ([b4f6695](https://github.com/Esposter/Esposter/commit/b4f6695aa5005276b3a9e5c2b80016989bc99439))
+* lint ([c5ac182](https://github.com/Esposter/Esposter/commit/c5ac1827af7f467265a01fc7e0fefcc669d1aa86))
+* lint ([5b22751](https://github.com/Esposter/Esposter/commit/5b22751305c996dbd20d619dc8f7004743e7c55f))
+* lint ([e11d2e3](https://github.com/Esposter/Esposter/commit/e11d2e3c8bdca7213c617dc65fa731d913c652e2))
+* lint ([5bb03c7](https://github.com/Esposter/Esposter/commit/5bb03c776d19846ea88163c5b194a1adde370d92))
+* lint ([ec79a25](https://github.com/Esposter/Esposter/commit/ec79a25eb467340949bcb061e7bb6fc052a6ebdd))
+* lint ([a9444a7](https://github.com/Esposter/Esposter/commit/a9444a7d308ca84648e62b9a710749a3fda2a7c3))
+* lint ([671af11](https://github.com/Esposter/Esposter/commit/671af1170558b8574c3d0ef3e7fe9a6d8eb4dcb4))
+* lint and typecheck ([92a9fe8](https://github.com/Esposter/Esposter/commit/92a9fe8d0898f5d964554167a8a7615426cecaf6))
+* lint and typecheck ([bb450a9](https://github.com/Esposter/Esposter/commit/bb450a96f9a02f3c2d8fa9dbdb94967125c7a55b))
+* lint and typedoc warnings ([dcd64f4](https://github.com/Esposter/Esposter/commit/dcd64f45e16e41d8002a3cc5c9002c484cd01a43))
+* lint wip ([8acd30e](https://github.com/Esposter/Esposter/commit/8acd30e554910d92719864b0f706e78833d27ebc))
+* lint wip ([7bd8c17](https://github.com/Esposter/Esposter/commit/7bd8c1773da3866e9aafc53222a71af1dd17e3f1))
+* lint wip ([53f7f9e](https://github.com/Esposter/Esposter/commit/53f7f9e59d29a0120f261ac9c115caf88f78d50f))
+* maybe try empty string ([4bd4ec9](https://github.com/Esposter/Esposter/commit/4bd4ec9960225ad97fc5490241484f06ebdff037))
+* migrate omitDeep to pkg ([b5c18aa](https://github.com/Esposter/Esposter/commit/b5c18aa3b2252aa0a312f0934811e6e343cffa7f))
+* only anchor if bottom sentinel visible ([8f70cea](https://github.com/Esposter/Esposter/commit/8f70cea73fe61626a7e523b88c109a7776de6402))
+* options + build error ([8530fc2](https://github.com/Esposter/Esposter/commit/8530fc2d313f58aca3726b717fb266d5ac224384))
+* refactor syntax ([a611eaf](https://github.com/Esposter/Esposter/commit/a611eafc3dfae1c6b52e22e21b80079d62097d12))
+* regex lint ([c8d3ead](https://github.com/Esposter/Esposter/commit/c8d3eadad12fe7b292fd0f10a864c742d0b65edd))
+* relations ([22defa7](https://github.com/Esposter/Esposter/commit/22defa7c4cc42b64c4138b660345657e3c64f36b))
+* remaining issues ([808764d](https://github.com/Esposter/Esposter/commit/808764d68404871df4632d4b7eadd83af780be0d))
+* remaining migrations ([14c864f](https://github.com/Esposter/Esposter/commit/14c864f5b31a0c61544e07bd34ea18bbd9df1af2))
+* remove unnecessary bookmarks feature ([cf27594](https://github.com/Esposter/Esposter/commit/cf275943c727cc6f63baa90d7aa8070ebc5f063d))
+* remove unnecessary import ([fc6161e](https://github.com/Esposter/Esposter/commit/fc6161ea1ff568dcd53678b9eabf70caa0364797))
+* remove unnecessary toAppError now ([7e72a64](https://github.com/Esposter/Esposter/commit/7e72a6441adb3014b74d3b4fafb25bf3887a0ca6))
+* schema ([b1547b4](https://github.com/Esposter/Esposter/commit/b1547b41f6a56ab697cc7705d601ab33103335cd))
+* slowmode checks etc ([9da9054](https://github.com/Esposter/Esposter/commit/9da905406baf74b2e9670cb78f34e57c1a49b4d6))
+* some comments ([f814c24](https://github.com/Esposter/Esposter/commit/f814c24bf886afd666cf63c15ec523546aa18e82))
+* subscribables only in client side ([95635d4](https://github.com/Esposter/Esposter/commit/95635d4986f97583d1da3eb315c86c13e5a0f6ac))
+* test and migration ([ce03487](https://github.com/Esposter/Esposter/commit/ce03487ae2a7bad1c986876780dcd92e826526d3))
+* test asserts ([f1d5130](https://github.com/Esposter/Esposter/commit/f1d51301cd758f5fcee48b4f295bb7242bd82f29))
+* tests ([7c9fadf](https://github.com/Esposter/Esposter/commit/7c9fadf91759fb2f749b9b718b75d722d6c501e6))
+* tests ([89f5242](https://github.com/Esposter/Esposter/commit/89f5242ab0a900ecb9e0ecc4e049f803c9f19530))
+* tests ([e4a85c9](https://github.com/Esposter/Esposter/commit/e4a85c99a2b787afc2416864b192964e5fac5569))
+* tests ([5022579](https://github.com/Esposter/Esposter/commit/502257990a7936e1ed01b8b31e43389445e88ed1))
+* tests ([673f5fc](https://github.com/Esposter/Esposter/commit/673f5fc85990cde266d53d266eb365dfb0132675))
+* tests wip ([2eeb386](https://github.com/Esposter/Esposter/commit/2eeb3866ec3769d639c48eb2a71ab5b9f0e4e9f1))
+* transforms + types + align skills md ([7da475a](https://github.com/Esposter/Esposter/commit/7da475a6634d312ae299b13960688b61e6494191))
+* types ([04f8f8d](https://github.com/Esposter/Esposter/commit/04f8f8d5681cc18423b2a4c0e9e8be31295105ec))
+* types ([7c17571](https://github.com/Esposter/Esposter/commit/7c1757190737bd9984e7d3de9f8f963cb247cceb))
+* types ([862d25b](https://github.com/Esposter/Esposter/commit/862d25b5c012513f7632f75540df854441ccf2f4))
+* types ([0666268](https://github.com/Esposter/Esposter/commit/06662682cefc15a6b332d3a665d0b405c496fe66))
+* types ([8a36847](https://github.com/Esposter/Esposter/commit/8a36847071d88a9c3e0813d3ac7b2529b102f44e))
+* types ([823f32a](https://github.com/Esposter/Esposter/commit/823f32ac1d2dadaa419888b3945d96396f9b7e4c))
+* types ([80728a1](https://github.com/Esposter/Esposter/commit/80728a16da11440d4ad4583040a98dd45cb2a7a7))
+* use message cache ([3f37475](https://github.com/Esposter/Esposter/commit/3f37475090f6e3942e9b2edd3951992eb1b29e73))
+* wip ([26a6fe1](https://github.com/Esposter/Esposter/commit/26a6fe1952674dac4cbf798b6129806c16eb198a))
+* wip ([c0962e4](https://github.com/Esposter/Esposter/commit/c0962e4852cd751ebf2748aaea97e9122397e3a3))
+
+### Features
+
+* Add tests ([c25c182](https://github.com/Esposter/Esposter/commit/c25c18218bb36e618a59be07bc871c3157eedf99))
+* add topic/drafts features ([0818c28](https://github.com/Esposter/Esposter/commit/0818c281d530e4a6fce3eb6e32b2d33d3659b81b))
+* error handling wip ([74b7969](https://github.com/Esposter/Esposter/commit/74b796949376815f1f54982b7fc52d69bf31986f))
+* migrate to profile card ([1ad5f1c](https://github.com/Esposter/Esposter/commit/1ad5f1cf678b84bad6907df33ccd3b830f2c54f9))
+* turn on compat ver 5 ([981b1b8](https://github.com/Esposter/Esposter/commit/981b1b81b78dbb76ae2970096d3ea941f1723ea4))
+* upgrade drizzle ([17b9f41](https://github.com/Esposter/Esposter/commit/17b9f41b180ba109382d34e9507ead13cbbb95b2))
+* upgrade to phaser 4 rex plugins ([88def4f](https://github.com/Esposter/Esposter/commit/88def4f478fe9c27d6b6548725c0d00de52ac0e0))
+* wip ([16aab97](https://github.com/Esposter/Esposter/commit/16aab97be86dead24d438cb654f16e73117e6304))
+
 # [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
 
 ### Bug Fixes
 
 * achievement tests ([3534399](https://github.com/Esposter/Esposter/commit/35343993eb7ad80cdaa12597be6554f94a34cdc7))
+
 * add back junction table relations ([2631f2d](https://github.com/Esposter/Esposter/commit/2631f2dfbe6d35541b0ae8e7d0e6731a2a5b7633))
+
 * add files ([ed8acf8](https://github.com/Esposter/Esposter/commit/ed8acf85bc404e941263b79b5e20b9f0cdcdd61b))
+
 * add files ([5133e5a](https://github.com/Esposter/Esposter/commit/5133e5a036bff9443e19da09002c90e4dd985d03))
+
 * add types ([4e939f6](https://github.com/Esposter/Esposter/commit/4e939f638a1c692f0eca92bf47ca489f6f6bcdfc))
+
 * all tests ([755e2fb](https://github.com/Esposter/Esposter/commit/755e2fba16fb531daf7664642b75813187cdf3fe))
+
 * also migrate db checks ([43dfd26](https://github.com/Esposter/Esposter/commit/43dfd26ef51d53f4e3e9f06c9c9c1c983d616c47))
+
 * batch room ids ([e8fc438](https://github.com/Esposter/Esposter/commit/e8fc438c41f3f4d9caeb2c5da0b4ab401837dc2b))
+
 * bugs ([70417cd](https://github.com/Esposter/Esposter/commit/70417cd42515c5cfee36d179f75d8b46898cbfda))
+
 * cache ([457f2f9](https://github.com/Esposter/Esposter/commit/457f2f937d36ab947f3ac2d57e6ed8f7ea5098e0))
+
 * cleanup ([4a5b114](https://github.com/Esposter/Esposter/commit/4a5b1147d6f8f95e108e139f8f9b56395c02c2f9))
+
 * cleanup pinia ([da2feb5](https://github.com/Esposter/Esposter/commit/da2feb541edbc4f3943df5dc66e1d6aa82df3ef9))
+
 * cleanup syntax ([56494c8](https://github.com/Esposter/Esposter/commit/56494c8f4ab11ab1f1e575212f0d74eaf1eabfc7))
+
 * cleanup unnecessary tests ([7c92fa4](https://github.com/Esposter/Esposter/commit/7c92fa41dae69d4863cf57ab33f4a8b886111ba4))
+
 * close button v-show ([60a5cb4](https://github.com/Esposter/Esposter/commit/60a5cb49c66daaad6cb7a4e79cc2216ccfe30110))
+
 * code review comments ([346b7f9](https://github.com/Esposter/Esposter/commit/346b7f947c18f6a1dc753b530f22be69e74db5b7))
+
 * code review comments ([bc643c3](https://github.com/Esposter/Esposter/commit/bc643c377fee97f8a68ee71c66d7bbd3c9dbdf8d))
+
 * code review comments ([b847e54](https://github.com/Esposter/Esposter/commit/b847e54e53fe2156e4a64ef7ae1c0b24207711af))
+
 * code review comments ([c655535](https://github.com/Esposter/Esposter/commit/c65553551e8cb9561f2b46fa21af2a50827a82cf))
+
 * code review comments ([144d33c](https://github.com/Esposter/Esposter/commit/144d33c40c6a9f643ede58a9922c5defb8742342))
+
 * code review comments ([75daab3](https://github.com/Esposter/Esposter/commit/75daab36a8c403e3bbc8dbddc477f78f09253e3d))
+
 * code review comments ([1130252](https://github.com/Esposter/Esposter/commit/11302526cdc66fe3bc3f2dfd717624b12752ccbc))
+
 * code review nitpicks ([9dbfc78](https://github.com/Esposter/Esposter/commit/9dbfc78b5b987a9cbd559c7bf0d7a4d2ae6cbb72))
+
 * default env to node ([f347f92](https://github.com/Esposter/Esposter/commit/f347f927539441860ed7a6b19f2789f8a91a4686))
+
 * deps and types ([ca1f5dd](https://github.com/Esposter/Esposter/commit/ca1f5dd6f5a39d1b43ffc8b98ea4833cedebfacf))
+
 * don't need check ([4d92d34](https://github.com/Esposter/Esposter/commit/4d92d34d36845f4e05405aaa25300d1bc3b827ea))
+
 * filter query ([07f1564](https://github.com/Esposter/Esposter/commit/07f1564a6b8825cd38e7ae8540d14872f1afc2c6))
+
 * fine, we'll cast ([c137e07](https://github.com/Esposter/Esposter/commit/c137e0714d4dab8d8f9471ddaad690f706472510))
+
 * format ([79cdb0f](https://github.com/Esposter/Esposter/commit/79cdb0f5c3a477d144c53a4034c95e59216f2ebf))
+
 * format ([0be4f09](https://github.com/Esposter/Esposter/commit/0be4f091d46a54cc9dcb04fe8a4e6c209b0c40a9))
+
 * imports ([a6f6431](https://github.com/Esposter/Esposter/commit/a6f643103e2f7312cd6c68f22752b4ad316fb1e6))
+
 * imports ([636af14](https://github.com/Esposter/Esposter/commit/636af1499cbe949b5d9bd4a635caf11b1573283b))
+
 * imports ([8d692b6](https://github.com/Esposter/Esposter/commit/8d692b64669364730c77c8a07593ffc2f2d8a434))
+
 * imports ([22e7c1a](https://github.com/Esposter/Esposter/commit/22e7c1a8335f82c9a4cc68922233f63cca365bb1))
+
 * imports ([2cc140e](https://github.com/Esposter/Esposter/commit/2cc140ee6f5507054b2fa7b8c319656b9dc2ee77))
+
 * imports ([4eb34f0](https://github.com/Esposter/Esposter/commit/4eb34f0d8c4c269a862032a2c0c3ed90d032e324))
+
 * imports ([500f0aa](https://github.com/Esposter/Esposter/commit/500f0aab0443f9b391dff230cab1e4265484c1bb))
+
 * in ([b17b956](https://github.com/Esposter/Esposter/commit/b17b9567b2765387ebbbbd6aa9a3530a5a189465))
+
 * index names ([bd355d6](https://github.com/Esposter/Esposter/commit/bd355d62e8afafdbdd667745e8592f45ff2f9461))
+
 * indexes ([704bab4](https://github.com/Esposter/Esposter/commit/704bab44077401766bbcda54aaec9c9b1dedd205))
+
 * invisible class ([7fc7bcc](https://github.com/Esposter/Esposter/commit/7fc7bcc64bbf7d9d9eae0509e0d095c256fcd3f6))
+
 * lint ([b3ba9c9](https://github.com/Esposter/Esposter/commit/b3ba9c9310df46bcc6d52b18ca2221d40186858a))
+
 * lint ([863174d](https://github.com/Esposter/Esposter/commit/863174de4c2c552012dc3eb5f2c8a49a6d492833))
+
 * lint ([7179c23](https://github.com/Esposter/Esposter/commit/7179c23b725e8ccf6cd9764d40ed74b21b5ee754))
+
 * lint ([f2278b6](https://github.com/Esposter/Esposter/commit/f2278b6e6f74e73ec29f4372a90ec2e17ebbd678))
+
 * lint ([45bbbe3](https://github.com/Esposter/Esposter/commit/45bbbe3db7009317e69c20911f630387634a5e2c))
+
 * lint ([8bdeca0](https://github.com/Esposter/Esposter/commit/8bdeca036e2f65ec9ee1b46546becf3623b9786f))
+
 * lint ([f7e7c43](https://github.com/Esposter/Esposter/commit/f7e7c430a81064d50e5049111e542507248b5d4e))
+
 * lint ([1fe6dc9](https://github.com/Esposter/Esposter/commit/1fe6dc9b63ae70fc31f5f1fae3541dda0f59a087))
+
 * lint ([e7929e0](https://github.com/Esposter/Esposter/commit/e7929e0a75faa1cff15f450750ead8b0f46cd3d9))
+
 * lint ([c0b4091](https://github.com/Esposter/Esposter/commit/c0b4091651b612e38f677da1581336edd22260f0))
+
 * lint ([3ddaac0](https://github.com/Esposter/Esposter/commit/3ddaac01ac1abd11f70e0ea3429d6d8c66ae8051))
+
 * lint ([13cc7f3](https://github.com/Esposter/Esposter/commit/13cc7f3f2262947fa8ef1c5832490d79819f10db))
+
 * lint ([c848c31](https://github.com/Esposter/Esposter/commit/c848c31b5403aaf95dd047c55affb74e4d59a8a3))
+
 * lint ([52b6638](https://github.com/Esposter/Esposter/commit/52b66385ae15cf3000a69785a0ea66389a2e12dc))
+
 * lint ([0db5751](https://github.com/Esposter/Esposter/commit/0db57517ee33ca142b0e981bc9f43df33d9a23ae))
+
 * lint ([b59b466](https://github.com/Esposter/Esposter/commit/b59b466183decfe0579af3082e664905a2fd05f7))
+
 * lint ([09df7c8](https://github.com/Esposter/Esposter/commit/09df7c8525373de546369ecaca9f6952e3338021))
+
 * lint ([e9a0a4e](https://github.com/Esposter/Esposter/commit/e9a0a4ed703256f0b9a3f3b2ab39ebac859436ea))
+
 * lint and foreign keys ([edc697b](https://github.com/Esposter/Esposter/commit/edc697bbf7d9f89fd1d67f4232e63004da84956e))
+
 * lint and review comments ([df9ad6d](https://github.com/Esposter/Esposter/commit/df9ad6d05530f162021e2e754f94e10f37d57db8))
+
 * member panel and setting status ([4351904](https://github.com/Esposter/Esposter/commit/4351904ff87341c83ea9dd44187f3341c9b204b0))
+
 * migrate files ([0b398c0](https://github.com/Esposter/Esposter/commit/0b398c0aaa333e5703d8a948db2862b717a1938f))
+
 * migration wip ([73268a8](https://github.com/Esposter/Esposter/commit/73268a856748e134bf1866af4bcfd3faf264862e))
+
 * moderation ([07c4533](https://github.com/Esposter/Esposter/commit/07c4533a7520457404fe9c8efbe7d9e6b30a605c))
+
 * more type issues ([6a468b6](https://github.com/Esposter/Esposter/commit/6a468b6c2b2b0f3579737dcb1c466f394210cf2e))
+
 * move create mock db ([b024631](https://github.com/Esposter/Esposter/commit/b0246312f69f77e2db4ace0803688b64b3b16304))
+
 * move to db-mock package ([2df4164](https://github.com/Esposter/Esposter/commit/2df416413bb4385f050c81213193bff200f24a66))
+
 * name for direct message is null ([61a7af5](https://github.com/Esposter/Esposter/commit/61a7af5c7a34e90549e98b2b9f0e3c749079da76))
+
 * pg table types ([49e7ca0](https://github.com/Esposter/Esposter/commit/49e7ca035936d289bdad23049b78469ae52c26ac))
+
 * push subscription rename ([4d42ccc](https://github.com/Esposter/Esposter/commit/4d42ccc61aa0271a88ce7df047a5f3ca90c24262))
+
 * refactor things ([3be1176](https://github.com/Esposter/Esposter/commit/3be11767c8d48da3ff66265a4ec3c066380ef51c))
+
 * refactor things ([722bb22](https://github.com/Esposter/Esposter/commit/722bb22c50e0ef59af667361233329f458c0ee87))
+
 * refactor things ([1278f18](https://github.com/Esposter/Esposter/commit/1278f18f5c1f1f494cafb9ae37a24275ed476329))
+
 * refactor to relational api ([dd22cd9](https://github.com/Esposter/Esposter/commit/dd22cd9b86434029b93f95575726ea1c07f3c1bb))
+
 * refactor to use property names ([a41c6d6](https://github.com/Esposter/Esposter/commit/a41c6d6c7edba9180c1611ba231744a2c74581a0))
+
 * refactors ([582bbfb](https://github.com/Esposter/Esposter/commit/582bbfbfa973c7f7fc944881259df93ab05cf9d0))
+
 * remaining issues ([1580e7c](https://github.com/Esposter/Esposter/commit/1580e7c540caed62b3e633ce3d8f2c0e69c9312f))
+
 * remaining types ([56b8b10](https://github.com/Esposter/Esposter/commit/56b8b102d57f3e9a343fe04f80efe9e95a59a187))
+
 * remove unnecessary owner ([91add57](https://github.com/Esposter/Esposter/commit/91add57cb24e844eb2938a135da529ae57236d18))
+
 * remove unnecessary test ([3a2d666](https://github.com/Esposter/Esposter/commit/3a2d666a964428b3c6b758d732def96f5b5d1f25))
+
 * renames ([03a7ec7](https://github.com/Esposter/Esposter/commit/03a7ec76f8e24247bbf658885df8377f1778423f))
+
 * role subscribables ([adfdc85](https://github.com/Esposter/Esposter/commit/adfdc8567b996d40be48734fca5075c91de777fd))
+
 * room permissions ([1ceae16](https://github.com/Esposter/Esposter/commit/1ceae1644034f52ca9cd0e4ba5e9ffc2da801c3a))
+
 * rooms import ([6f0bf32](https://github.com/Esposter/Esposter/commit/6f0bf324da32bb5b8be4f45d91975250bf1ead8d))
+
 * save context for online subscribable ([00d07f7](https://github.com/Esposter/Esposter/commit/00d07f768e258c7f7562765dd81246c36e17555d))
+
 * select schema ([a1bf006](https://github.com/Esposter/Esposter/commit/a1bf006468f2e0d4e82ee89d0ff99533ba64508c))
+
 * some lint issues ([6ac5961](https://github.com/Esposter/Esposter/commit/6ac596184c37d1b4ac79298de564541066f01895))
+
 * styles and things ([8e94ffd](https://github.com/Esposter/Esposter/commit/8e94ffdfbd66dd48832c30d30dfc130973d9c311))
+
 * test subquery ([2d75d76](https://github.com/Esposter/Esposter/commit/2d75d76a4d1df6b0a88dfb74405e8ab314cd7a45))
+
 * tests ([3561021](https://github.com/Esposter/Esposter/commit/35610212ed8540bf3db13addd98d2c0db88c02ed))
+
 * tests ([4edbe2a](https://github.com/Esposter/Esposter/commit/4edbe2a2ac2fe941cb29955a338247289f5d93c5))
+
 * tests ([e613f0e](https://github.com/Esposter/Esposter/commit/e613f0e1b81f2cc4ee4c3823670bf3b04129200a))
+
 * tests ([4862533](https://github.com/Esposter/Esposter/commit/48625333c4f47f90f75d7838151cc32093903ec7))
+
 * tests ([dceb07e](https://github.com/Esposter/Esposter/commit/dceb07e39f365649e857f3fd0a145bdfc6af5503))
+
 * tests ([f0d497e](https://github.com/Esposter/Esposter/commit/f0d497ea2ada0cb9030dd1f59937a715a59399b7))
+
 * tests ([b27e4c6](https://github.com/Esposter/Esposter/commit/b27e4c6fcd75d55a0e93047fe8cc84bc8242a506))
+
 * tests and achievements ([fe67521](https://github.com/Esposter/Esposter/commit/fe67521f450046c03524dce6498ac45cfb4d48ce))
+
 * tests and lint ([ce12352](https://github.com/Esposter/Esposter/commit/ce12352b7a6909e5b85598f08c9a9119024e1ad4))
+
 * tests and refactor code ([6a450be](https://github.com/Esposter/Esposter/commit/6a450be88b20af468d85a9a0e07611b5db10518f))
+
 * tests and review comments ([0514154](https://github.com/Esposter/Esposter/commit/0514154260419a7562d17db920bea94137903645))
+
 * tests wip ([02a5d6a](https://github.com/Esposter/Esposter/commit/02a5d6a5305bd208f746bb5bddd20025044b6dbe))
+
 * tests wip ([f35d53e](https://github.com/Esposter/Esposter/commit/f35d53e749862276e53efb771ee5ba9fb1685628))
+
 * tests wip ([92792ba](https://github.com/Esposter/Esposter/commit/92792baac2d258661ec8606cb2c4173706d7c4a1))
+
 * tests wip ([8433964](https://github.com/Esposter/Esposter/commit/84339645b9ff3e73967cea760b2629f7ff5f21b4))
+
 * truncate ([ccb1365](https://github.com/Esposter/Esposter/commit/ccb1365eb32286df855aff13f7fde559c919799e))
+
 * tweaks ([0e145e4](https://github.com/Esposter/Esposter/commit/0e145e4570db705e8a94325d376ebba8314f6abf))
+
 * types ([8d48f18](https://github.com/Esposter/Esposter/commit/8d48f1819894240c85a5e5b43191a95141a92f34))
+
 * types ([2740f0a](https://github.com/Esposter/Esposter/commit/2740f0a82dae4508af54d06b732bb421f031807f))
+
 * types ([e0e426b](https://github.com/Esposter/Esposter/commit/e0e426b280b7f625c618e952fb6f9e2d54510068))
+
 * types ([77601a6](https://github.com/Esposter/Esposter/commit/77601a6297dd12c5e87ddd114450e71c9db9135c))
+
 * types ([f82e38c](https://github.com/Esposter/Esposter/commit/f82e38c090e082193ec1da306e4a9025dc7c3f44))
+
 * types ([7d6f574](https://github.com/Esposter/Esposter/commit/7d6f5749bf3c6964730c39876245aeb085fca7dd))
+
 * types ([caf4700](https://github.com/Esposter/Esposter/commit/caf47007ad6bfaada08adca4c7283361e3995d61))
+
 * types ([489f8f9](https://github.com/Esposter/Esposter/commit/489f8f901481d4dfd374f31f3161ba6df9ae0779))
+
 * types ([ddcf02b](https://github.com/Esposter/Esposter/commit/ddcf02b0a5eb9818f9fd62f310028294989a69aa))
+
 * types ([3f8ead7](https://github.com/Esposter/Esposter/commit/3f8ead719ded6a33dd21c69a61de13e0078f5d5e))
+
 * types ([390675c](https://github.com/Esposter/Esposter/commit/390675cf090bcf179dd9b7edba7bc68fc7a9b918))
+
 * types and lint ([ad56572](https://github.com/Esposter/Esposter/commit/ad56572087670f66d878cfa8f1778a78582c950b))
+
 * types and tests ([67d17e9](https://github.com/Esposter/Esposter/commit/67d17e9c43f101042c78152e33c347e8170b44af))
+
 * undefined ([45f5de5](https://github.com/Esposter/Esposter/commit/45f5de5653f6b7928060cb0e8e996d1233decd00))
+
 * updated schema name ([bb7af01](https://github.com/Esposter/Esposter/commit/bb7af01118a534de691cb9e3664d450e30b6426e))
+
 * use upsert ([8794f62](https://github.com/Esposter/Esposter/commit/8794f620187c671f881773e2b2d5546051cb256c))
+
 * useFetch in sessions for composables used in vue components ([3234250](https://github.com/Esposter/Esposter/commit/3234250613456e39353507dab34a578d6aecc7d2))
+
 * visible button ([d923fe2](https://github.com/Esposter/Esposter/commit/d923fe2d63613ddf628115a360a3a35523963bc3))
+
 * webhooks relation types as well as drizzle types ([6aaa379](https://github.com/Esposter/Esposter/commit/6aaa37935553103c7cb79829cf7e7fc1475356fc))
+
 * wip ([7bcd4ec](https://github.com/Esposter/Esposter/commit/7bcd4ecf53bdd44ad7dee8a2fb5a9ec429718a40))
+
 * wip ([c430c0f](https://github.com/Esposter/Esposter/commit/c430c0f92dff1475a18a823f61d8fff5cedb7fdf))
+
 * wrap webhook creation in transaction ([e18362f](https://github.com/Esposter/Esposter/commit/e18362fe3fce9b8f8cda369c63cf5f3680daf5a2))
+
 * zod schemas ([d9eb27d](https://github.com/Esposter/Esposter/commit/d9eb27d957eb704d5b221c7278ace1c6717dbdab))
 
 ### Features
 
 * add back users to rooms relations ([811708c](https://github.com/Esposter/Esposter/commit/811708c54c85cd13c37d0c6c1af6da1c53d7731f))
+
 * Add bio ([9ba1709](https://github.com/Esposter/Esposter/commit/9ba17094fdc4456bbc50705e067274960c083795))
+
 * Add roles ([6374285](https://github.com/Esposter/Esposter/commit/6374285474f5aba65309e59e5270ec1ad1816b06))
+
 * Add search history relations ([07d5f2e](https://github.com/Esposter/Esposter/commit/07d5f2e767d13b987a66f9aeafdf1cc4fc0da9e1))
+
 * Add tests and components ([b637bb0](https://github.com/Esposter/Esposter/commit/b637bb0781c98a2b8d61182f059ec3b02a7d6eb5))
+
 * Add UI ([b09c23d](https://github.com/Esposter/Esposter/commit/b09c23da94ebd67c6382997e58d8d70d9e2aecdb))
+
 * Add user achievement relations ([8ff1f6e](https://github.com/Esposter/Esposter/commit/8ff1f6e50e9c208a71fce04dec37c8cf2f6a8183))
+
 * completely fix up db ([48512b8](https://github.com/Esposter/Esposter/commit/48512b885b1fae604f3d8bff87bc73b3c2cddf8c))
+
 * migrate invites ([a126d6b](https://github.com/Esposter/Esposter/commit/a126d6b5636d4ce0eea67593daf342ea9fb59b82))
+
 * migrate push subscriptions ([bcc7f9a](https://github.com/Esposter/Esposter/commit/bcc7f9abfe53ec854f317534a08fb1e8c1f25608))
+
 * migrate search histories ([3cfbdab](https://github.com/Esposter/Esposter/commit/3cfbdabf4fa01c4dfe6b03520f75c14be5aa9683))
+
 * migrate syntax for like,post and achievements ([57eaa25](https://github.com/Esposter/Esposter/commit/57eaa25e4870069e16b55d9233fb74d86ecd3bd0))
+
 * migrate user statuses in message ([ffe3408](https://github.com/Esposter/Esposter/commit/ffe34083300de924820139a4898943c277477f96))
+
 * migrate user to rooms in message ([49ee9f2](https://github.com/Esposter/Esposter/commit/49ee9f2fe536592f2c26a02829773e3aeff40e9b))
+
 * moderation wip ([c9b5310](https://github.com/Esposter/Esposter/commit/c9b5310d50b22ce68fb27d2975fc36ed20494602))
+
 * reimplement caching ([34c635c](https://github.com/Esposter/Esposter/commit/34c635c567e8745a6f343b38e20b7b973076eca7))
+
 * tick off things ([e08130d](https://github.com/Esposter/Esposter/commit/e08130d5570b01fd4485429b4934e85524ef5bbc))
+
 * Upgrade to drizzle v1 and run db up ([ee5db87](https://github.com/Esposter/Esposter/commit/ee5db87207aacf882197ad93b8380984896e849e))
+
 * wip ([159c457](https://github.com/Esposter/Esposter/commit/159c457351a7c4f9ade60856dae0e186804264d5))
 
 ### Performance Improvements
 
 * optimize db calls ([fa68ad1](https://github.com/Esposter/Esposter/commit/fa68ad147b9a3d8a84d7639d1ff28aa4547f2a56))
+
 * optimize db calls ([a613334](https://github.com/Esposter/Esposter/commit/a613334cd3e0e69dc66665282498415865cd082e))
 
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)

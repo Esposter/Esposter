@@ -3,11 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
+
+### Bug Fixes
+
+* lint ([aefc823](https://github.com/Esposter/Esposter/commit/aefc8235dcce421041f9cd050fd916b9619c3a15))
+* lint wip ([53f7f9e](https://github.com/Esposter/Esposter/commit/53f7f9e59d29a0120f261ac9c115caf88f78d50f))
+
+### Features
+
+* error handling wip ([74b7969](https://github.com/Esposter/Esposter/commit/74b796949376815f1f54982b7fc52d69bf31986f))
+* upgrade to phaser 4 rex plugins ([88def4f](https://github.com/Esposter/Esposter/commit/88def4f478fe9c27d6b6548725c0d00de52ac0e0))
+
 # [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
 
 ### Bug Fixes
 
 * add types ([4e939f6](https://github.com/Esposter/Esposter/commit/4e939f638a1c692f0eca92bf47ca489f6f6bcdfc))
+
 * move to db-mock package ([2df4164](https://github.com/Esposter/Esposter/commit/2df416413bb4385f050c81213193bff200f24a66))
 
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
