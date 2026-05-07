@@ -16,6 +16,8 @@ export const useCreator = (message: MaybeRefOrGetter<MessageEntity | undefined>)
     if (messageValue.type === MessageType.Webhook) {
       const appUser = appUserMap.value.get(messageValue.appUser.id);
       return appUser ? { ...appUser, ...messageValue.appUser } : undefined;
-    } else return userMap.value.get(messageValue.userId);
+    } else {
+      return userMap.value.get(messageValue.userId);
+    }
   });
 };
