@@ -10,7 +10,7 @@ export const useReadRooms = async () => {
   const { readItems, readMoreItems } = roomStore;
   const { currentRoomId } = storeToRefs(roomStore);
   const { data: session } = await authClient.useSession(useFetch);
-  const readUsersToRooms = useReadUsersToRooms();
+  const readMyUsersToRooms = useReadMyUsersToRooms();
   const readMyPermissions = useReadMyPermissions();
   const readRoles = useReadRoles();
   const readRooms = () => {
@@ -22,7 +22,7 @@ export const useReadRooms = async () => {
       async ({ items }) => {
         const roomIds = items.map(({ id }) => id);
         if (roomIds.length === 0) return;
-        await Promise.all([readUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
+        await Promise.all([readMyUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
       },
       {
         configuration: RoomIndexedDbStoreConfiguration,
@@ -39,7 +39,7 @@ export const useReadRooms = async () => {
         const response = await $trpc.room.readRooms.query({ cursor });
         const roomIds = response.items.map(({ id }) => id);
         if (roomIds.length === 0) return response;
-        await Promise.all([readUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
+        await Promise.all([readMyUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
         return response;
       },
       onComplete,
