@@ -1,23 +1,17 @@
 <script setup lang="ts">
-import { authClient } from "@/services/auth/authClient";
 import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLabelMap";
 import { useRoomStore } from "@/store/message/room";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { NotificationType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
 
-const { data: session } = await authClient.useSession(useFetch);
-const userId = computed(() => session.value?.user.id);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
-const { userToRoomMap } = storeToRefs(userToRoomStore);
+const { myUserToRoomMap } = storeToRefs(userToRoomStore);
 const { updateUserToRoom } = userToRoomStore;
 const notificationType = computed({
-  get: () => {
-    if (userId.value) return userToRoomMap.value.get(userId.value)?.notificationType ?? NotificationType.DirectMessage;
-    else return NotificationType.DirectMessage;
-  },
+  get: () => myUserToRoomMap.value?.notificationType ?? NotificationType.DirectMessage,
   set: (value) => {
     if (!currentRoomId.value) return;
     updateUserToRoom({ notificationType: value, roomId: currentRoomId.value });

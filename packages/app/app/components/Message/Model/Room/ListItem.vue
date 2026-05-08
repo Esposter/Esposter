@@ -14,7 +14,6 @@ interface RoomListItemProps {
 
 const { room } = defineProps<RoomListItemProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const userId = computed(() => session.value?.user.id);
 const roomName = useRoomName(() => room.id);
 const inputStore = useInputStore();
 const { draftRoomIds } = storeToRefs(inputStore);
@@ -27,10 +26,10 @@ const roleStore = useRoleStore();
 const { isManageable } = roleStore;
 const isVisible = computed(() => isCreator.value || isManageable(room.id));
 const userToRoomStore = useUserToRoomStore();
-const { getUserToRoomMap } = userToRoomStore;
+const { getMyUserToRoom } = userToRoomStore;
 const hasUnread = computed(() => {
-  if (isActive.value || !userId.value) return false;
-  const lastMessageAt = getUserToRoomMap(room.id)?.get(userId.value)?.lastMessageAt;
+  if (isActive.value) return false;
+  const lastMessageAt = getMyUserToRoom(room.id)?.lastMessageAt;
   return lastMessageAt && lastMessageAt < room.updatedAt;
 });
 </script>
