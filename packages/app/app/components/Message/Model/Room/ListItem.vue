@@ -41,7 +41,7 @@ const hasUnread = computed(() => {
       <template #prepend>
         <StyledAvatar :image="room.image" :name="roomName" />
       </template>
-      <v-list-item-title pr-6 :class="hasUnread ? 'font-weight-bold' : 'text-medium-emphasis'">
+      <v-list-item-title pr-6 :class="hasUnread ? 'font-weight-bold' : undefined">
         {{ roomName }}
         <span v-if="hasDraft" class="text-medium-emphasis" italic text-xs> — Draft</span>
       </v-list-item-title>
