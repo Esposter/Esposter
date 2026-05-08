@@ -1,7 +1,7 @@
 import { makeColumn, makeDataSource, makeRow } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { parseClipboardRows } from "@/services/tableEditor/file/commands/parseClipboardRows";
-import { serializeToMarkdown } from "@/services/tableEditor/file/commands/serializeToMarkdown";
-import { ID_SEPARATOR, takeOne } from "@esposter/shared";
+import { serializeToTsv } from "@/services/tableEditor/file/commands/serializeToTsv";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(parseClipboardRows, () => {
@@ -9,7 +9,7 @@ describe(parseClipboardRows, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")]);
-    const rows = parseClipboardRows("| a | b |\n| --- | --- |\n| 0 | 1 |", dataSource);
+    const rows = parseClipboardRows("a\tb\n0\t1", dataSource);
 
     expect(rows).toHaveLength(1);
     expect(takeOne(rows).data.a).toBe("0");
@@ -20,7 +20,7 @@ describe(parseClipboardRows, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")]);
-    const rows = parseClipboardRows("| a |\n| --- |\n| 0 |", dataSource);
+    const rows = parseClipboardRows("a\n0", dataSource);
 
     expect(takeOne(rows).data.b).toBeNull();
   });
@@ -29,7 +29,7 @@ describe(parseClipboardRows, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource([makeColumn("a")]);
-    const rows = parseClipboardRows("| a | extra |\n| --- | --- |\n| 0 | ignored |", dataSource);
+    const rows = parseClipboardRows("a\textra\n0\tignored", dataSource);
 
     expect(Object.keys(takeOne(rows).data)).toStrictEqual(["a"]);
   });
@@ -38,7 +38,7 @@ describe(parseClipboardRows, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource([makeColumn("a")]);
-    const rows = parseClipboardRows("| A |\n| --- |\n| 0 |", dataSource);
+    const rows = parseClipboardRows("A\n0", dataSource);
 
     expect(takeOne(rows).data.a).toBeNull();
   });
@@ -47,35 +47,17 @@ describe(parseClipboardRows, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource([makeColumn("a")]);
-    const rows = parseClipboardRows("| a |\n| --- |", dataSource);
+    const rows = parseClipboardRows("a", dataSource);
 
     expect(rows).toHaveLength(0);
   });
 
-  test("matches column names with leading and trailing whitespace", () => {
-    expect.hasAssertions();
-
-    const dataSource = makeDataSource([makeColumn(" a ")]);
-    const rows = parseClipboardRows("|  a  |\n| --- |\n| 0 |", dataSource);
-
-    expect(takeOne(rows).data[" a "]).toBe("0");
-  });
-
-  test("unescapes pipe characters in cell values", () => {
-    expect.hasAssertions();
-
-    const dataSource = makeDataSource([makeColumn("a")]);
-    const rows = parseClipboardRows(`| a |\n| --- |\n| x\\${ID_SEPARATOR}y |`, dataSource);
-
-    expect(takeOne(rows).data.a).toBe(`x${ID_SEPARATOR}y`);
-  });
-
-  describe("roundtrip with serializeToMarkdown", () => {
+  describe("roundtrip with serializeToTsv", () => {
     test("preserves basic string values", () => {
       expect.hasAssertions();
 
       const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")], [makeRow({ a: "0", b: "1" })]);
-      const rows = parseClipboardRows(serializeToMarkdown(dataSource), dataSource);
+      const rows = parseClipboardRows(serializeToTsv(dataSource), dataSource);
 
       expect(takeOne(rows).data.a).toBe("0");
       expect(takeOne(rows).data.b).toBe("1");
@@ -85,27 +67,9 @@ describe(parseClipboardRows, () => {
       expect.hasAssertions();
 
       const dataSource = makeDataSource([makeColumn(" a ")], [makeRow({ " a ": "0" })]);
-      const rows = parseClipboardRows(serializeToMarkdown(dataSource), dataSource);
+      const rows = parseClipboardRows(serializeToTsv(dataSource), dataSource);
 
       expect(takeOne(rows).data[" a "]).toBe("0");
-    });
-
-    test("preserves pipe characters in cell values", () => {
-      expect.hasAssertions();
-
-      const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: `x${ID_SEPARATOR}y` })]);
-      const rows = parseClipboardRows(serializeToMarkdown(dataSource), dataSource);
-
-      expect(takeOne(rows).data.a).toBe(`x${ID_SEPARATOR}y`);
-    });
-
-    test("preserves pipe characters in column names", () => {
-      expect.hasAssertions();
-
-      const dataSource = makeDataSource([makeColumn(`a${ID_SEPARATOR}b`)], [makeRow({ [`a${ID_SEPARATOR}b`]: "0" })]);
-      const rows = parseClipboardRows(serializeToMarkdown(dataSource), dataSource);
-
-      expect(takeOne(rows).data[`a${ID_SEPARATOR}b`]).toBe("0");
     });
   });
 });

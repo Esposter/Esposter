@@ -2,25 +2,16 @@ import type { DataSource } from "#shared/models/tableEditor/file/datasource/Data
 
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
-import { ID_SEPARATOR, normalizeString, takeOne } from "@esposter/shared";
-
-const parseMarkdownRow = (line: string): string[] =>
-  line
-    .slice(2, -2)
-    .split(` ${ID_SEPARATOR} `)
-    .map((cell) => cell.replaceAll(`\\${ID_SEPARATOR}`, ID_SEPARATOR));
-
-const isSeparatorRow = (cells: string[]): boolean => cells.every((cell) => /^:?-+:?$/u.test(cell));
+import { normalizeString, takeOne } from "@esposter/shared";
 
 export const parseClipboardRows = (text: string, dataSource: DataSource): Row[] => {
   const allRows = text
     .split(new RegExp(String.raw`\r?\n`, "u"))
     .filter((line) => normalizeString(line) !== "")
-    .map((line) => parseMarkdownRow(line));
-  const dataRows = allRows.filter((cells) => !isSeparatorRow(cells));
-  if (dataRows.length < 2) return [];
-  const headers = takeOne(dataRows);
-  return dataRows.slice(1).map((cells) => {
+    .map((line) => line.split("\t"));
+  if (allRows.length < 2) return [];
+  const headers = takeOne(allRows);
+  return allRows.slice(1).map((cells) => {
     const valueByHeader = new Map(headers.map((header, index) => [header, cells[index] ?? ""]));
     return new Row({
       data: Object.fromEntries(
