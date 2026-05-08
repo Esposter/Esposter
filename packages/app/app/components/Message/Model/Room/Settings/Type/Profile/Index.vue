@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 
 interface ProfileProps {
@@ -9,10 +8,8 @@ interface ProfileProps {
 }
 
 const { roomId } = defineProps<ProfileProps>();
-const { data: session } = await authClient.useSession(useFetch);
-const userId = computed(() => session.value?.user.id);
-const { getUserToRoomMap } = useUserToRoomStore();
-const userToRoom = computed(() => (userId.value ? getUserToRoomMap(roomId)?.get(userId.value) : undefined));
+const { getMyUserToRoom } = useUserToRoomStore();
+const userToRoom = computed(() => getMyUserToRoom(roomId));
 </script>
 
 <template>

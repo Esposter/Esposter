@@ -6,7 +6,7 @@ export const useUserToRoomSubscribables = () => {
   const roomStore = useRoomStore();
   const { rooms } = storeToRefs(roomStore);
   const userToRoomStore = useUserToRoomStore();
-  const { setNickname, setUserToRoom } = userToRoomStore;
+  const { setMyUserToRoom, setNickname } = userToRoomStore;
 
   useOnlineSubscribable(rooms, (newRooms) => {
     if (newRooms.length === 0) return undefined;
@@ -14,7 +14,7 @@ export const useUserToRoomSubscribables = () => {
     const newRoomIds = newRooms.map(({ id }) => id);
     const updateUserToRoomUnsubscribable = $trpc.userToRoom.onUpdateUserToRoom.subscribe(newRoomIds, {
       onData: (userToRoom) => {
-        setUserToRoom(userToRoom.roomId, userToRoom.userId, userToRoom);
+        setMyUserToRoom(userToRoom.roomId, userToRoom);
         setNickname(userToRoom.roomId, userToRoom.userId, userToRoom.nickname);
       },
     });

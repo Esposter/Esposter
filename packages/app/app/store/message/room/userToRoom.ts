@@ -7,23 +7,18 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const {
-    data: userToRoomMap,
-    getData: getUserToRoomMap,
-    setData: setUserToRoomMap,
-  } = useDataMap(() => roomStore.currentRoomId, new Map<string, UserToRoomInMessage>());
+    data: myUserToRoomMap,
+    getData: getMyUserToRoom,
+    setData: setMyUserToRoom,
+  } = useDataMap<undefined | UserToRoomInMessage>(() => roomStore.currentRoomId, undefined);
   const { getData: getNicknameMap, setData: setNicknameMap } = useDataMap(
     () => roomStore.currentRoomId,
     new Map<string, string>(),
   );
-  const setUserToRoom = (roomId: string, userId: string, userToRoom: UserToRoomInMessage) => {
-    const roomUserMap = getUserToRoomMap(roomId) ?? new Map<string, UserToRoomInMessage>();
-    roomUserMap.set(userId, userToRoom);
-    setUserToRoomMap(roomId, roomUserMap);
-  };
   const setNickname = (roomId: string, userId: string, nickname: string) => {
-    const roomNicknameMap = getNicknameMap(roomId) ?? new Map<string, string>();
-    roomNicknameMap.set(userId, nickname);
-    setNicknameMap(roomId, roomNicknameMap);
+    const nicknameMap = getNicknameMap(roomId) ?? new Map<string, string>();
+    nicknameMap.set(userId, nickname);
+    setNicknameMap(roomId, nicknameMap);
   };
   const getDisplayName = (user: User, roomId: string): string => getNicknameMap(roomId)?.get(user.id) || user.name;
   const updateUserToRoom = async (input: UpdateUserToRoomInput) => {
@@ -31,10 +26,10 @@ export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   };
   return {
     getDisplayName,
-    getUserToRoomMap,
+    getMyUserToRoom,
+    myUserToRoomMap,
+    setMyUserToRoom,
     setNickname,
-    setUserToRoom,
     updateUserToRoom,
-    userToRoomMap,
   };
 });
