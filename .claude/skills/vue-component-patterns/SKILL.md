@@ -64,7 +64,7 @@ const userToRoom = computed(() => (userId.value ? getUserToRoomMap(roomId)?.get(
 <script setup lang="ts">
 const { roomId, userToRoom } = defineProps<{ roomId: string; userToRoom: UserToRoom }>();
 const { updateUserToRoom } = useUserToRoomStore();
-const nickname = ref(userToRoom.nickname ?? "");
+const nickname = ref(userToRoom.nickname);
 </script>
 ```
 

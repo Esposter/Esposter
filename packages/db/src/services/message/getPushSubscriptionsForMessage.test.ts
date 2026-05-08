@@ -1,3 +1,4 @@
+import type { relations } from "@esposter/db-schema";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { getPushSubscriptionsForMessage } from "@/services/message/getPushSubscriptionsForMessage";
@@ -5,7 +6,6 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   NotificationType,
   pushSubscriptionsInMessage,
-  relations,
   roomsInMessage,
   RoomType,
   users,

@@ -10,7 +10,7 @@ interface ProfileFormProps {
 
 const { roomId, userToRoom } = defineProps<ProfileFormProps>();
 const { updateUserToRoom } = useUserToRoomStore();
-const nickname = ref(userToRoom.nickname ?? "");
+const nickname = ref(userToRoom.nickname);
 const save = async () => {
   await updateUserToRoom({ nickname: nickname.value, roomId });
 };
