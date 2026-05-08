@@ -197,7 +197,7 @@ export const messageRouter = router({
           },
           notificationOptions: {
             icon: ctx.getSessionPayload.user.image,
-            title: nickname ?? ctx.getSessionPayload.user.name,
+            title: nickname || ctx.getSessionPayload.user.name,
           },
         };
         await eventGridPublisherClient.send([
