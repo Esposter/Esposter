@@ -1,4 +1,3 @@
-/* oxlint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { IncomingMessage } from "node:http";
 
 import { normalizeString, takeOne } from "@esposter/shared";

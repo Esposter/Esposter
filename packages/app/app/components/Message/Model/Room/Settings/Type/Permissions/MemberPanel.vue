@@ -9,7 +9,7 @@ interface MemberPanelProps {
   roomId: RoomInMessage["id"];
 }
 
-defineProps<MemberPanelProps>();
+const { roomId } = defineProps<MemberPanelProps>();
 const roleStore = useRoleStore();
 const { selectMember } = roleStore;
 const { selectedMemberId } = storeToRefs(roleStore);
@@ -25,17 +25,14 @@ const { isPending } = await readMembers();
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
     <template v-else>
-      <v-list-item
+      <MessageModelRoomSettingsTypePermissionsMemberPanelListItem
         v-for="member of members"
         :key="member.id"
         :active="member.id === selectedMemberId"
+        :member
+        :room-id
         @click="selectMember(member.id)"
-      >
-        <template #prepend>
-          <StyledAvatar :image="member.image" :name="member.name" mr-2 />
-        </template>
-        <v-list-item-title>{{ member.name }}</v-list-item-title>
-      </v-list-item>
+      />
       <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
         <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>

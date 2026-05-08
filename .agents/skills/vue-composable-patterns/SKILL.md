@@ -476,12 +476,12 @@ const readRooms = () =>
     () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
     ({ items }) => {
       const roomIds = items.map(({ id }) => id);
-      return Promise.all([readUserToRooms(roomIds), readMyPermissions(roomIds)]);
+      return Promise.all([readUsersToRooms(roomIds), readMyPermissions(roomIds)]);
     },
   );
 ```
 
-Follow the `useReadUserToRooms` pattern for batch ancillary reads — a composable that accepts an array of IDs and calls the store method for each in `Promise.all`.
+Follow the `useReadUsersToRooms` pattern for batch ancillary reads — a composable that accepts an array of IDs and calls the store method for each in `Promise.all`.
 
 - Writable computed is NOT the right tool here — it requires a backing `_ref` and still needs an external sync watch when a parent can reset the model
 

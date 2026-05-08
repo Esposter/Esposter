@@ -179,6 +179,15 @@ export const messageRouter = router({
       const readPushSubscriptions = await getPushSubscriptionsForMessage(ctx.db, newMessageEntity);
       if (readPushSubscriptions.length > 0) {
         const eventGridPublisherClient = useEventGridPublisherClient();
+        const nickname = (
+          await ctx.db.query.usersToRoomsInMessage.findFirst({
+            columns: { nickname: true },
+            where: {
+              roomId: newMessageEntity.partitionKey,
+              userId: ctx.getSessionPayload.user.id,
+            },
+          })
+        )?.nickname;
         const data: PushNotificationEventGridData = {
           message: {
             message: newMessageEntity.message,
@@ -186,7 +195,10 @@ export const messageRouter = router({
             rowKey: newMessageEntity.rowKey,
             userId: newMessageEntity.userId,
           },
-          notificationOptions: { icon: ctx.getSessionPayload.user.image, title: ctx.getSessionPayload.user.name },
+          notificationOptions: {
+            icon: ctx.getSessionPayload.user.image,
+            title: nickname || ctx.getSessionPayload.user.name,
+          },
         };
         await eventGridPublisherClient.send([
           {

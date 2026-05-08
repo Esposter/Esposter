@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import type { User } from "@esposter/db-schema";
+import type { RoomInMessage, User } from "@esposter/db-schema";
 import type { VNodeChild } from "vue";
 import type { VHover } from "vuetify/lib/components/VHover/VHover.mjs";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
-import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { mergeProps } from "vue";
 
 interface MemberListItemProps {
   member: User;
+  room: RoomInMessage;
 }
 
 type VHoverSlotProps = Extract<VHover["v-slot:default"], Function> extends (props: infer P) => VNodeChild ? P : never;
@@ -17,18 +18,15 @@ type VHoverSlotProps = Extract<VHover["v-slot:default"], Function> extends (prop
 defineSlots<{
   append: ({ hoverProps, listItemProps }: { hoverProps: VHoverSlotProps; listItemProps: ListItemSlot }) => VNode;
 }>();
-const { member } = defineProps<MemberListItemProps>();
+const { member, room } = defineProps<MemberListItemProps>();
 const emit = defineEmits<{ click: [event: KeyboardEvent | MouseEvent] }>();
-const roomStore = useRoomStore();
-const { currentRoom } = storeToRefs(roomStore);
-const isCreator = computed(() => currentRoom.value?.userId === member.id);
+const isCreator = computed(() => room.userId === member.id);
+const userToRoomStore = useUserToRoomStore();
+const { getDisplayName } = userToRoomStore;
+const displayName = computed(() => getDisplayName(member, room.id));
 const roleStore = useRoleStore();
 const { getMemberRoles } = roleStore;
-const memberRoles = computed(() =>
-  currentRoom.value?.id
-    ? getMemberRoles(currentRoom.value.id, member.id).toSorted((a, b) => b.position - a.position)
-    : [],
-);
+const memberRoles = computed(() => getMemberRoles(room.id, member.id).toSorted((a, b) => b.position - a.position));
 const isMenuOpen = ref(false);
 </script>
 
@@ -43,11 +41,11 @@ const isMenuOpen = ref(false);
           @click="emit('click', $event)"
         >
           <template #prepend>
-            <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="member.name" />
+            <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="displayName" />
           </template>
           <v-list-item-title pr-6>
             <div flex items-center gap-x-1>
-              {{ member.name }}
+              {{ displayName }}
               <v-tooltip v-if="isCreator" text="Room Owner">
                 <template #activator="{ props }">
                   <v-icon icon="mdi-crown" :="props" color="yellow-darken-4" />

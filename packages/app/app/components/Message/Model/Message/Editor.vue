@@ -20,7 +20,12 @@ const emit = defineEmits<{
 }>();
 const dataStore = useDataStore();
 const { updateMessage } = dataStore;
-const editedMessageHtml = ref(useMessageWithMentions(() => message.message).value);
+const editedMessageHtml = ref(
+  useMessageWithMentions(
+    () => message.message,
+    () => message.partitionKey,
+  ).value,
+);
 const onUpdateMessage = (editor: Editor) => {
   getSynchronizedFunction(async () => {
     await withFinalizerAsync(

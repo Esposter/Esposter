@@ -1,0 +1,2 @@
+ALTER TABLE "message"."usersToRooms" ADD COLUMN "nickname" text DEFAULT '' NOT NULL;--> statement-breakpoint
+ALTER TABLE "message"."usersToRooms" ADD CONSTRAINT "users_to_rooms_nickname_length_check" CHECK (LENGTH("nickname") <= 32);

@@ -20,9 +20,14 @@ export const useReadMembers = () => {
   const readUserStatuses = useReadUserStatuses();
   const roleStore = useRoleStore();
   const { readMemberRoles } = roleStore;
+  const readNicknames = useReadNicknames();
   const readMetadata = (roomId: string, memberIds: User["id"][]) => {
     if (memberIds.length === 0) return Promise.resolve();
-    return Promise.all([readUserStatuses(memberIds), readMemberRoles({ roomId, userIds: memberIds })]);
+    return Promise.all([
+      readUserStatuses(memberIds),
+      readMemberRoles({ roomId, userIds: memberIds }),
+      readNicknames(roomId, memberIds),
+    ]);
   };
   const readMembers = () => {
     const roomId = currentRoomId.value;

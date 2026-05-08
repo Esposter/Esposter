@@ -10,8 +10,16 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-const readUserToRoomsInputSchema = z.object({ roomIds: selectRoomInMessageSchema.shape.id.array().min(1) });
-export type ReadUserToRoomsInput = z.infer<typeof readUserToRoomsInputSchema>;
+const readNicknamesInputSchema = z.object({
+  roomId: selectRoomInMessageSchema.shape.id,
+  userIds: z.string().array().min(1).max(MAX_READ_LIMIT),
+});
+export type ReadNicknamesInput = z.infer<typeof readNicknamesInputSchema>;
+
+const readMyUsersToRoomsInputSchema = z.object({
+  roomIds: selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+});
+export type ReadMyUsersToRoomsInput = z.infer<typeof readMyUsersToRoomsInputSchema>;
 
 const onUpdateUserToRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnUpdateUserToRoomInput = z.infer<typeof onUpdateUserToRoomInputSchema>;
@@ -28,11 +36,17 @@ export const userToRoomRouter = router({
       yield data;
     }
   }),
-  readUserToRooms: standardAuthedProcedure.input(readUserToRoomsInputSchema).query(async ({ ctx, input }) => {
+  readMyUsersToRooms: standardAuthedProcedure.input(readMyUsersToRoomsInputSchema).query(async ({ ctx, input }) => {
     await isMember(ctx.db, ctx.getSessionPayload, input.roomIds);
     return ctx.db.query.usersToRoomsInMessage.findMany({
-      columns: { lastMessageAt: true, notificationType: true, roomId: true, userId: true },
       where: { roomId: { in: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
+    });
+  }),
+  readNicknames: standardAuthedProcedure.input(readNicknamesInputSchema).query(async ({ ctx, input }) => {
+    await isMember(ctx.db, ctx.getSessionPayload, [input.roomId]);
+    return ctx.db.query.usersToRoomsInMessage.findMany({
+      columns: { nickname: true, roomId: true, userId: true },
+      where: { roomId: { eq: input.roomId }, userId: { in: input.userIds } },
     });
   }),
   updateUserToRoom: getMemberProcedure(updateUserToRoomInputSchema, "roomId").mutation(({ ctx, input }) =>

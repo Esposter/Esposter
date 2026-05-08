@@ -15,7 +15,10 @@ const {
 } = defineProps<MessageComponentProps>();
 const isSameBatch = computed(() => baseIsSameBatch && !isPreview);
 const displayCreatedAtShort = computed(() => dayjs(message.createdAt).format("H:mm"));
-const messageHtml = useMessageWithMentions(() => message.message);
+const messageHtml = useMessageWithMentions(
+  () => message.message,
+  () => message.partitionKey,
+);
 </script>
 
 <template>

@@ -8,6 +8,9 @@ export const SettingsListItemMap: Record<SettingsType, Except<Item, "onClick" | 
   [SettingsType.Overview]: {
     icon: "mdi-information-outline",
   },
+  [SettingsType.Profile]: {
+    icon: "mdi-account-circle-outline",
+  },
   [SettingsType.Permissions]: {
     icon: "mdi-shield-key-outline",
   },
