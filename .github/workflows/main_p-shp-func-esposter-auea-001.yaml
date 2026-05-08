@@ -31,7 +31,7 @@ jobs:
 
       - name: 🔧 Resolve Project Dependencies
         run: |
-          echo inject-workspace-packages=true >> .npmrc
+          echo force-legacy-deploy=true >> .npmrc
           echo node-linker=hoisted >> .npmrc
           pnpm --filter @esposter/azure-functions... i --no-frozen-lockfile
           pnpm --filter @esposter/configuration build
