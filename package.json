@@ -66,7 +66,7 @@
     "typedoc": "catalog:",
     "typescript": "catalog:",
     "unplugin-auto-import": "catalog:",
-    "vite": "catalog:",
+    "vite": "^8.0.11",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
   },
@@ -76,7 +76,7 @@
   "engines": {
     "node": "^24.15.0"
   },
-  "packageManager": "pnpm@10.33.3+sha512.a19744364a7e248b92657a4ca5973f9354d21caf982579674b1c539f32c7420c47138ad8b1254df07aba9bc782d9b3029e3db34d5dbff974326eb74dac8ff489",
+  "packageManager": "pnpm@11.0.8+sha512.4c4097e1dd2d42372c4e7fa5a791ff28fc75a484c7ac192e64b1df0fdef17594ba982f9b4fed9adfb3c757846f565b799b2763fb3733d1de1bcb82cf46684912",
   "crossOS": {
     "copyfiles": {
       "darwin": "cp -f",

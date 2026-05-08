@@ -239,6 +239,26 @@ export const stringTransformationTypeSchema = z.enum(
 - **Never use `ref<EnumType | null>(null)`** — always default to a sensible first enum value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`, etc.
 - **Never write `ref<EnumType>(EnumValue)`** — TypeScript infers the enum type from the value. Write `ref(ColumnType.String)`, not `ref<ColumnType>(ColumnType.String)`.
 
+## `null` vs `undefined`
+
+Prefer `undefined` for all absent/optional values in app-owned code. `null` is only permitted at the external system boundary.
+
+**App-owned code — always use `undefined`:**
+
+- `ref<T>()` (no argument) already infers `T | undefined` — never write `ref<T | null>(null)`.
+- Optional interface fields use `?:` (which implies `| undefined`), not `| null`.
+- Uninitialised state, optional function parameters, and absent return values are all `undefined`.
+- Never assign `?? null` — if the left side is already `T | undefined`, drop the fallback entirely.
+- `.nullable()` is **BANNED** in app-owned Zod schemas — use `.optional()` instead.
+
+**External boundary — keep `null` where the external system requires it:**
+
+- **Drizzle ORM** — nullable columns infer as `T | null`; convert via `nullToUndefined` from `@esposter/shared` before values enter app code.
+- **Azure SDK / EventGrid** — `SerializableValue`, EventGrid data shapes; keep raw types, convert on ingress.
+- **Vuetify** — a small number of Vuetify 3 props are typed as `T | null` (not `T | undefined`); use `null` only where the Vuetify prop type requires it, and add a comment explaining why.
+
+When checking `null` at a boundary, use `=== null` (strict equality — see Core Rules).
+
 ## Stable Identifiers for Selections
 
 - **Track selections by stable ID, not by name or index** — column names change, indices shift on delete/reorder. Always use `entity.id` (UUID) as the key when storing which items are selected/active. A stale ID in a selection is harmless; a stale name or index is a bug.

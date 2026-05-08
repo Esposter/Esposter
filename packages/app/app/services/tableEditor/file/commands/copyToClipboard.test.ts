@@ -4,21 +4,22 @@ import { takeOne } from "@esposter/shared";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(copyToClipboard, () => {
-  let written = "";
+  let writtenText = "";
 
   beforeAll(() => {
     vi.stubGlobal("window", globalThis);
+    vi.stubGlobal("ClipboardItem", undefined);
     vi.stubGlobal("navigator", {
       clipboard: {
         writeText: (text: string) => {
-          written = text;
+          writtenText = text;
         },
       },
     });
   });
 
   beforeEach(() => {
-    written = "";
+    writtenText = "";
   });
 
   afterAll(() => {
@@ -30,10 +31,10 @@ describe(copyToClipboard, () => {
 
     const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")], [makeRow({ a: "0", b: "1" })]);
     await copyToClipboard(dataSource);
-    const lines = written.split("\n");
+    const lines = writtenText.split("\n");
 
-    expect(takeOne(lines)).toBe("| a | b |");
-    expect(takeOne(lines, 2)).toBe("| 0 | 1 |");
+    expect(takeOne(lines)).toBe("a\tb");
+    expect(takeOne(lines, 1)).toBe("0\t1");
   });
 
   test("copies empty rows when rowIds is empty array", async () => {
@@ -41,10 +42,10 @@ describe(copyToClipboard, () => {
 
     const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "0" })]);
     await copyToClipboard(dataSource, []);
-    const lines = written.split("\n");
+    const lines = writtenText.split("\n");
 
-    expect(lines).toHaveLength(2);
-    expect(takeOne(lines)).toBe("| a |");
+    expect(lines).toHaveLength(1);
+    expect(takeOne(lines)).toBe("a");
   });
 
   test("copies only selected rows when rowIds passed", async () => {
@@ -53,9 +54,9 @@ describe(copyToClipboard, () => {
     const row = makeRow({ a: "0" });
     const dataSource = makeDataSource([makeColumn("a")], [row, makeRow({ a: "1" })]);
     await copyToClipboard(dataSource, [row.id]);
-    const lines = written.split("\n");
+    const lines = writtenText.split("\n");
 
-    expect(lines).toHaveLength(3);
-    expect(takeOne(lines, 2)).toBe("| 0 |");
+    expect(lines).toHaveLength(2);
+    expect(takeOne(lines, 1)).toBe("0");
   });
 });
