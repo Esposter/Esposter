@@ -42,4 +42,22 @@ describe(serializeToTsv, () => {
 
     expect(takeOne(lines)).toBe("a b");
   });
+
+  test("replaces newline characters in cell values with spaces", () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "x\ny" })]);
+    const lines = serializeToTsv(dataSource).split("\n");
+
+    expect(takeOne(lines, 1)).toBe("x y");
+  });
+
+  test("replaces carriage return characters in cell values with spaces", () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "x\ry" })]);
+    const lines = serializeToTsv(dataSource).split("\n");
+
+    expect(takeOne(lines, 1)).toBe("x y");
+  });
 });

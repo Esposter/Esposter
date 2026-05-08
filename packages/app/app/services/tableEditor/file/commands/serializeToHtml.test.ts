@@ -30,4 +30,12 @@ describe(serializeToHtml, () => {
       "<table><tr><th>a</th><th>b</th></tr><tr><td>0</td><td></td></tr></table>",
     );
   });
+
+  test("escapes HTML characters", () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource([makeColumn("a&")], [makeRow({ "a&": "<br>" })]);
+
+    expect(serializeToHtml(dataSource)).toBe("<table><tr><th>a&amp;</th></tr><tr><td>&lt;br&gt;</td></tr></table>");
+  });
 });
