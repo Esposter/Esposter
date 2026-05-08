@@ -31,12 +31,11 @@ jobs:
 
       - name: 🔧 Resolve Project Dependencies
         run: |
-          echo force-legacy-deploy=true >> .npmrc
           echo node-linker=hoisted >> .npmrc
           pnpm --filter @esposter/azure-functions... i --no-frozen-lockfile
           pnpm --filter @esposter/configuration build
           pnpm --filter @esposter/azure-functions... build
-          pnpm --filter @esposter/azure-functions deploy ${{ env.OUTPUT_DIRECTORY }}
+          pnpm --filter @esposter/azure-functions deploy --legacy ${{ env.OUTPUT_DIRECTORY }}
           cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
 
       - name: 📦 Zip Artifact for Deployment
