@@ -43,8 +43,8 @@ catalogs:
       specifier: ^1.0.4
       version: 1.0.4
     '@better-auth/drizzle-adapter':
-      specifier: ^1.6.9
-      version: 1.6.9
+      specifier: ^1.6.10
+      version: 1.6.10
     '@codemirror/lang-vue':
       specifier: ^0.1.3
       version: 0.1.3
@@ -776,7 +776,7 @@ importers:
         version: 1.0.4
       '@better-auth/drizzle-adapter':
         specifier: 'catalog:'
-        version: 1.6.9(@better-auth/core@1.6.9(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.4.3))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(drizzle-orm@1.0.0-rc.2(@electric-sql/pglite@0.4.5)(postgres@3.4.9)(valibot@1.4.0(typescript@5.9.3))(zod@4.4.3))
+        version: 1.6.10(@better-auth/core@1.6.9(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.4.3))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(drizzle-orm@1.0.0-rc.2(@electric-sql/pglite@0.4.5)(postgres@3.4.9)(valibot@1.4.0(typescript@5.9.3))(zod@4.4.3))
       '@codemirror/lang-vue':
         specifier: 'catalog:'
         version: 0.1.3
@@ -2271,6 +2271,16 @@ packages:
       '@cloudflare/workers-types':
         optional: true
       '@opentelemetry/api':
+        optional: true
+
+  '@better-auth/drizzle-adapter@1.6.10':
+    resolution: {integrity: sha512-Ax0Jlpvuu35P3U6FtUGfkLAUmBwYIF+JwwtHt+jBlOEQNIiBhbLHh8ArQxrKJFRTDYv/XoSsrvJ5OluPsUFuuQ==}
+    peerDependencies:
+      '@better-auth/core': ^1.6.10
+      '@better-auth/utils': 0.4.0
+      drizzle-orm: ^0.45.2
+    peerDependenciesMeta:
+      drizzle-orm:
         optional: true
 
   '@better-auth/drizzle-adapter@1.6.9':
@@ -14410,6 +14420,13 @@ snapshots:
       kysely: 0.28.17
       nanostores: 1.3.0
       zod: 4.4.3
+
+  '@better-auth/drizzle-adapter@1.6.10(@better-auth/core@1.6.9(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.4.3))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(drizzle-orm@1.0.0-rc.2(@electric-sql/pglite@0.4.5)(postgres@3.4.9)(valibot@1.4.0(typescript@5.9.3))(zod@4.4.3))':
+    dependencies:
+      '@better-auth/core': 1.6.9(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.4.3))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0)
+      '@better-auth/utils': 0.4.0
+    optionalDependencies:
+      drizzle-orm: 1.0.0-rc.2(@electric-sql/pglite@0.4.5)(postgres@3.4.9)(valibot@1.4.0(typescript@5.9.3))(zod@4.4.3)
 
   '@better-auth/drizzle-adapter@1.6.9(@better-auth/core@1.6.9(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.4.3))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(drizzle-orm@1.0.0-rc.2(@electric-sql/pglite@0.4.5)(postgres@3.4.9)(valibot@1.4.0(typescript@5.9.3))(zod@4.4.3))':
     dependencies:
