@@ -1,7 +1,8 @@
 import type { Plugin, RolldownOptions } from "rolldown";
 
-import { rolldownConfigurationBrowser } from "@/rolldownConfigurationBrowser";
 import nodePolyfills from "@rolldown/plugin-node-polyfills";
+
+import { rolldownConfigurationBrowser } from "./rolldownConfigurationBrowser";
 
 export const rolldownConfigurationIsomorphic: RolldownOptions = {
   ...rolldownConfigurationBrowser,
