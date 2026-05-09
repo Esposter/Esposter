@@ -8,6 +8,7 @@
 
 - 📖 [Documentation](#documentation)
 - 🏠 [Local Development](#local-development)
+- 🤝 [Community](#community)
 - ⚖️ [License](#license)
 
 ## <a name="documentation">📖 Documentation</a>
@@ -278,6 +279,10 @@ pnpm preview
 
 Esposter is a lerna + pnpm workspaces monorepo.
 Packages are used directly by the nuxt application via `workspace:*`.
+
+## <a name="community">🤝 Community</a>
+
+We welcome contributions from everyone and are committed to maintaining a friendly, safe, and welcoming community. Please see our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md) for more information.
 
 ## <a name="license">⚖️ License</a>
 

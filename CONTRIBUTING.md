@@ -5,7 +5,7 @@ Thanks for taking the time to contribute!
 ## Setup
 
 1. [Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the [`Esposter/Esposter`](https://github.com/Esposter/Esposter) repository and clone it locally.
-2. Install [Node.js](https://nodejs.org/en) `^24.15.0` and [pnpm](https://pnpm.io) `^10`.
+2. Install [Node.js](https://nodejs.org/en) `^24.15.0` and [pnpm](https://pnpm.io) `^11`.
 3. Install dependencies:
    ```bash
    pnpm install
@@ -123,6 +123,10 @@ Pre-commit hooks run the formatter automatically via [nano-staged](https://githu
 - **No comments** unless the _why_ is non-obvious (hidden constraints, workarounds).
 - **No `console.log`** in committed code.
 - Use `pnpm lint:fix` — never fix lint errors by hand.
+
+## Community
+
+Before contributing, please read our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md).
 
 ## License
 
