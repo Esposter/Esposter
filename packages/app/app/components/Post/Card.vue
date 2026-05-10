@@ -65,7 +65,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
   </PostConfirmDeleteDialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.card-content) {
   ul,
   ol {

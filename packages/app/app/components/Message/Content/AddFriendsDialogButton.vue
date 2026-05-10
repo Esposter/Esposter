@@ -62,7 +62,7 @@ const isCopied = ref(false);
   </v-dialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-field__input) {
   min-height: auto;
   font-size: 0.875rem;

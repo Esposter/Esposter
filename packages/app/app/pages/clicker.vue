@@ -31,7 +31,7 @@ const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-group__items > .v-list-item) {
   padding-inline-start: 1rem;
 }

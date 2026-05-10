@@ -10,15 +10,9 @@ const { buttonProps } = defineProps<StyledButtonProps>();
 </script>
 
 <template>
-  <v-btn class="button" un-color-white :="buttonProps">
+  <v-btn bg="[image:var(--midnight-bloom)]" un-color-white :="buttonProps">
     <template v-for="(_slot, name) of slots" #[name]>
       <slot :name />
     </template>
   </v-btn>
 </template>
-
-<style scoped>
-.button {
-  background-image: var(--midnight-bloom);
-}
-</style>

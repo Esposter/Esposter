@@ -113,7 +113,7 @@ const vote = async (optionId: null | string) => {
   </MessageModelMessageTypeListItem>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-label) {
   width: 100%;
 }

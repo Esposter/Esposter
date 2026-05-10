@@ -50,7 +50,7 @@ const emit = defineEmits<{
   </v-toolbar>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-toolbar__content) {
   flex-wrap: wrap;
 }

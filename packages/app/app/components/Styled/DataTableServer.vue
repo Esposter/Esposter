@@ -21,7 +21,7 @@ const { backgroundOpacity40 } = storeToRefs(colorsStore);
   </v-data-table-server>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-data-table__tr:hover) {
   background-color: v-bind(backgroundOpacity40);
 }

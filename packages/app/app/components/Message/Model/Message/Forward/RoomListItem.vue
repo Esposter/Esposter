@@ -41,7 +41,7 @@ const isActive = ref(false);
   </v-list-item>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-selection-control__input::before) {
   opacity: 0;
 }

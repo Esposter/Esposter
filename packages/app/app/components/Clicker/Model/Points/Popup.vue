@@ -23,7 +23,7 @@ const topPx = computed(() => `${top}px`);
   <div class="popup" absolute select-none font-bold text-headline-small pointer-events-none>+{{ displayPoints }}</div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 @keyframes animation {
   0% {
     opacity: 1;

@@ -47,7 +47,7 @@ watch(
   </span>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 span::after {
   content: "\200B";
 }

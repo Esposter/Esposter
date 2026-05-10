@@ -70,7 +70,7 @@ const selectEmoji = await useSelectEmoji(message);
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .reacted {
   background-color: v-bind(infoOpacity10);
   border: var(--border-width) var(--border-style) v-bind(info);

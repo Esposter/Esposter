@@ -22,7 +22,7 @@ const { clicker } = storeToRefs(clickerStore);
   </v-tooltip>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .v-btn:not(:first-of-type) {
   margin-left: 1rem;
 }

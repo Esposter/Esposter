@@ -47,7 +47,7 @@ const isUpdateMode = ref(false);
   </PostCommentConfirmDeleteDialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.card-content) {
   ul,
   ol {

@@ -19,7 +19,7 @@ const { background, border, surface } = storeToRefs(colorsStore);
   </v-container>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.vgl-layout) {
   width: 100%;
   min-height: 100%;

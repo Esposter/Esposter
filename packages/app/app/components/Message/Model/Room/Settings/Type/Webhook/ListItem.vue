@@ -40,7 +40,7 @@ const source = computed(() => `${runtimeConfig.public.baseUrl}/api/webhooks/${we
   </v-list-item>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-item__content) {
   overflow: visible;
 }

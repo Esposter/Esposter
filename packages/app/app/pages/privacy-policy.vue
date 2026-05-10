@@ -10,7 +10,7 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 // https://chromium.googlesource.com/chromium/blink/+/master/Source/core/css/html.css
 :deep(p) {
   display: block;

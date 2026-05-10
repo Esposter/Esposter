@@ -14,7 +14,7 @@ const { border } = storeToRefs(colorsStore);
   </v-navigation-drawer>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .border-color {
   border-color: v-bind(border);
 }

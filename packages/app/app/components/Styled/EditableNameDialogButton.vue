@@ -93,7 +93,7 @@ watch(
   </StyledFormDialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-btn__overlay) {
   transition: none;
 }

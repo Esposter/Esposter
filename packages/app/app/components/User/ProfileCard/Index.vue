@@ -83,7 +83,7 @@ const disabled = computed(
   </v-form>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .v-row:nth-of-type(even) {
   background-color: v-bind(backgroundOpacity20);
 }

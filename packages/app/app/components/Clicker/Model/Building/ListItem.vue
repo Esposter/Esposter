@@ -64,7 +64,7 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
   </ClickerModelItemMenu>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .list-item:last-of-type {
   margin-bottom: 0.25rem;
 }

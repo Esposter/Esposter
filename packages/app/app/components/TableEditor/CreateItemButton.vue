@@ -37,7 +37,7 @@ const itemCategoryDefinitions = computed(() => DefaultPropsMap[tableEditorType.v
   </v-menu>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-item__prepend > .v-icon) {
   margin-inline-end: 0.25rem;
 }

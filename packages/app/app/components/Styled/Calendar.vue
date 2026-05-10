@@ -51,7 +51,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
   </FullCalendar>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.fc-icon) {
   display: flex;
 }

@@ -177,7 +177,7 @@ onUnmounted(() => {
   <NuxtLayout ref="layout" />
 </template>
 
-<style lang="scss">
+<style>
 #profiler-toggle {
   top: v-bind(toggleTop) !important;
 }

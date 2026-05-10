@@ -69,7 +69,7 @@ const hasUnread = computed(() => {
   </v-hover>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-item__prepend > .v-list-item__spacer) {
   width: 0.5rem;
 }

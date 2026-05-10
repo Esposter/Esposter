@@ -1,5 +1,17 @@
+import type { ThemeOptions, VariationsOptions } from "vuetify/lib/composables/theme.mjs";
+
 import { defineConfig, presetAttributify, presetWind3 } from "unocss";
 import { presetVuetify } from "unocss-preset-vuetify";
+
+import vuetifyConfig from "./vuetify.config";
+
+const theme = vuetifyConfig.theme as Exclude<ThemeOptions, false>;
+const firstThemeColors = Object.values(theme.themes ?? {})[0]?.colors ?? {};
+const variations = theme.variations as VariationsOptions;
+const variationKeys = (variations?.colors ?? []).flatMap((color) => [
+  ...Array.from({ length: variations?.darken ?? 0 }, (_, i) => `${color}-darken-${i + 1}`),
+  ...Array.from({ length: variations?.lighten ?? 0 }, (_, i) => `${color}-lighten-${i + 1}`),
+]);
 
 export default defineConfig({
   outputToCssLayers: {
@@ -9,15 +21,8 @@ export default defineConfig({
   rules: [["overflow-anchor-none", { "overflow-anchor": "none" }]],
   safelist: [...Array.from({ length: 6 }, (_, i) => `elevation-${i}`)],
   theme: {
-    colors: {
-      backgroundOpacity20: "rgb(var(--v-theme-backgroundOpacity20))",
-      backgroundOpacity40: "rgb(var(--v-theme-backgroundOpacity40))",
-      backgroundOpacity80: "rgb(var(--v-theme-backgroundOpacity80))",
-      border: "rgb(var(--v-theme-border))",
-      infoOpacity10: "rgb(var(--v-theme-infoOpacity10))",
-      "primary-darken-1": "rgb(var(--v-theme-primary-darken-1))",
-      "primary-lighten-1": "rgb(var(--v-theme-primary-lighten-1))",
-      surfaceOpacity80: "rgb(var(--v-theme-surfaceOpacity80))",
-    },
+    colors: Object.fromEntries(
+      [...Object.keys(firstThemeColors), ...variationKeys].map((key) => [key, `rgb(var(--v-theme-${key}))`]),
+    ),
   },
 });
