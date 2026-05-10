@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import type { Router } from "vue-router";
 
+import { dayjs } from "#shared/services/dayjs";
 import { useInputStore } from "@/store/message/input";
 import { DRAFT_KEY_PREFIX } from "@/store/message/input/constants";
 import { marked } from "marked";
@@ -12,6 +13,7 @@ describe(useInputStore, () => {
   const roomId1 = crypto.randomUUID();
   const roomId2 = crypto.randomUUID();
   const draftContent = marked.parse("draftContent", { async: false });
+  const debounceMs = dayjs.duration(0.3, "seconds").asMilliseconds();
 
   beforeAll(() => {
     router = useRouter();
@@ -102,7 +104,7 @@ describe(useInputStore, () => {
     const { draftRoomIds, input } = storeToRefs(inputStore);
     input.value = draftContent;
     await nextTick();
-    vi.advanceTimersByTime(300);
+    vi.advanceTimersByTime(debounceMs);
     await nextTick();
 
     expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBe(draftContent);
@@ -118,7 +120,7 @@ describe(useInputStore, () => {
     const { draftRoomIds, input } = storeToRefs(inputStore);
     input.value = "";
     await nextTick();
-    vi.advanceTimersByTime(300);
+    vi.advanceTimersByTime(debounceMs);
     await nextTick();
 
     expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBeNull();
@@ -132,7 +134,7 @@ describe(useInputStore, () => {
     const { input } = storeToRefs(inputStore);
     input.value = draftContent;
     await nextTick();
-    vi.advanceTimersByTime(299);
+    vi.advanceTimersByTime(debounceMs - 1);
     await nextTick();
 
     expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBeNull();
