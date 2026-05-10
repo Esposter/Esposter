@@ -79,9 +79,33 @@ Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in 
 
 - Structural pseudo-selectors: `:nth-of-type`, `:nth-child`, `:not()`, `:first-of-type`
 - `:deep()` rules
-- Complex shorthand properties (`border: ... v-bind(color)`, `animation: ... v-bind(dur)`)
+- Complex shorthand properties with non-colour reactive values (`animation: ... v-bind(dur)`, `transform: ... v-bind(x)`)
 - Non-colour reactive values (`transform`, `top`, `left`, `height`, `fill`, `stroke`)
 - Element/tag selectors (`p`, `a`, `ul`, `li`)
+
+## `!important` Variant
+
+Prefix an attribute name with `!` to generate `!important` CSS:
+
+```html
+<!-- top: var(--app-bar-height) !important; z-index: 1500 !important -->
+<NuxtLoadingIndicator !top="[var(--app-bar-height)]" !z="[1500]" />
+```
+
+Use only when overriding third-party component styles that can't be targeted otherwise.
+
+## `field-sizing-content`
+
+Replaces `field-sizing: content` in scoped CSS — use directly as an attributify attribute on `<input>` / `<textarea>` elements:
+
+```diff
+- <input class="input" ... />
++ <input field-sizing-content ... />
+
+- <style scoped>
+- .input { field-sizing: content; }
+- </style>
+```
 
 ## Arbitrary CSS Values
 
@@ -125,14 +149,35 @@ Rules:
 
 Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS utilities:
 
-**Border (`b-` prefix):**
+**Border (`b-` prefix) — never use Vuetify `border="sm"` prop or `border-sm` class:**
+
+| Vuetify utility             | UnoCSS (use this) | Value |
+| --------------------------- | ----------------- | ----- |
+| `border-sm` / `border="sm"` | `b-1`             | 1px   |
+| `border-md` / `border="md"` | `b-2`             | 2px   |
+| `border-lg` / `border="lg"` | `b-4`             | 4px   |
+| `border-xl` / `border="xl"` | `b-8`             | 8px   |
 
 - `b-none` not `border-none`
 - `b-0` not `border-0`
-- `b-1` not `border-1`
 - `b-solid` not `border-solid`
 - `b-t-2` not `border-top-2`
 - `b-x-1` not `border-x-1`
+
+Note: `b-1` sets `border-width: 1px`. Border style (`solid`) is applied automatically by Wind3 preflight. For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. For the Vuetify overlay border use `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`.
+
+**`custom-border` / `border-color` scoped-class pattern → attributify:**
+
+```diff
+- <div class="custom-border" ...>
++ <div b-1 b-text ...>
+
+- <style scoped>
+- .custom-border { border: var(--border-width) var(--border-style) v-bind(text); }
+- </style>
+```
+
+`--border-width: thin` = 1px → `b-1`. `--border-style: solid` is covered by preflight. The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
 
 **Border-radius (`rd` prefix):**
 

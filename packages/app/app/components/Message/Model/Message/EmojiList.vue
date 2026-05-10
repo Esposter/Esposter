@@ -3,7 +3,6 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
-import { useColorsStore } from "@/store/colors";
 import { useEmojiStore } from "@/store/message/emoji";
 import { emojify } from "node-emoji";
 
@@ -14,8 +13,6 @@ interface MessageEmojiListProps {
 
 const { isPreview, message } = defineProps<MessageEmojiListProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const colorsStore = useColorsStore();
-const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = storeToRefs(colorsStore);
 const emojiStore = useEmojiStore();
 const { deleteEmoji, getEmojis, updateEmoji } = emojiStore;
 const emojis = computed(() =>
@@ -36,8 +33,13 @@ const selectEmoji = await useSelectEmoji(message);
     <div
       v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
-      :class="isReacted ? 'reacted' : 'not-reacted'"
+      :class="
+        isReacted
+          ? ['bg-infoOpacity10', 'b-info']
+          : ['bg-backgroundOpacity80', 'b-transparent', 'hover:bg-surfaceOpacity80', 'hover:b-border']
+      "
       z-1
+      b-1
       w-fit
       flex
       origin-center
@@ -69,20 +71,3 @@ const selectEmoji = await useSelectEmoji(message);
     />
   </div>
 </template>
-
-<style scoped>
-.reacted {
-  background-color: v-bind(infoOpacity10);
-  border: var(--border-width) var(--border-style) v-bind(info);
-}
-
-.not-reacted {
-  background-color: v-bind(backgroundOpacity80);
-  border: var(--border-width) var(--border-style) transparent;
-
-  &:hover {
-    background-color: v-bind(surfaceOpacity80);
-    border: var(--border-width) var(--border-style) v-bind(border);
-  }
-}
-</style>

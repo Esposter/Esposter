@@ -99,4 +99,3 @@ const upgradeIcon = computed(() => {
     </StyledCard>
   </v-menu>
 </template>
-<!-- @TODO: https://github.com/vuejs/core/issues/7312 -->

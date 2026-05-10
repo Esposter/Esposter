@@ -78,9 +78,33 @@ Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in 
 
 - Structural pseudo-selectors: `:nth-of-type`, `:nth-child`, `:not()`, `:first-of-type`
 - `:deep()` rules
-- Complex shorthand properties (`border: ... v-bind(color)`, `animation: ... v-bind(dur)`)
+- Complex shorthand properties with non-colour reactive values (`animation: ... v-bind(dur)`, `transform: ... v-bind(x)`)
 - Non-colour reactive values (`transform`, `top`, `left`, `height`, `fill`, `stroke`)
 - Element/tag selectors (`p`, `a`, `ul`, `li`)
+
+## `!important` Variant
+
+Prefix an attribute name with `!` to generate `!important` CSS:
+
+```html
+<!-- top: var(--app-bar-height) !important; z-index: 1500 !important -->
+<NuxtLoadingIndicator !top="[var(--app-bar-height)]" !z="[1500]" />
+```
+
+Use only when overriding third-party component styles that can't be targeted otherwise.
+
+## `field-sizing-content`
+
+Replaces `field-sizing: content` in scoped CSS — use directly as an attributify attribute on `<input>` / `<textarea>` elements:
+
+```diff
+- <input class="input" ... />
++ <input field-sizing-content ... />
+
+- <style scoped>
+- .input { field-sizing: content; }
+- </style>
+```
 
 ## Arbitrary CSS Values
 
@@ -139,7 +163,40 @@ Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS ut
 - `b-t-2` not `border-top-2`
 - `b-x-1` not `border-x-1`
 
-Note: `b-1` sets `border-width: 1px`. Border style (`solid`) and border colour (`#e5e7eb` from Wind3 preflight) are applied automatically. For reactive border colour use `class="border-color"` with `v-bind()` in scoped CSS.
+Note: `b-1` sets `border-width: 1px`. Border style (`solid`) is applied automatically by Wind3 preflight. For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. For the Vuetify overlay border use `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`.
+
+**`custom-border` / `border-color` scoped-class pattern → attributify:**
+
+```diff
+- <div class="custom-border" ...>
++ <div b-1 b-text ...>
+
+- <style scoped>
+- .custom-border { border: var(--border-width) var(--border-style) v-bind(text); }
+- </style>
+```
+
+`--border-width: thin` = 1px → `b-1`. `--border-style: solid` is covered by preflight. The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
+
+**BEM border class with focus/error variants (e.g. `parameter-chip`):**
+
+```diff
+- <div class="parameter-chip" :class="{ 'parameter-chip--error': isError }">
++ <div
++   :class="isError ? ['b-error'] : ['b-[rgba(var(--v-border-color),var(--v-border-opacity))]', 'focus-within:b-info']"
++   b-w="[1.5px]"
++ >
+
+- <style scoped lang="scss">
+- .parameter-chip {
+-   border: 1.5px solid rgba(var(--v-border-color), var(--v-border-opacity));
+-   &:focus-within { border-color: rgb(var(--v-theme-info)); }
+-   &--error { border-color: rgb(var(--v-theme-error)); }
+- }
+- </style>
+```
+
+When error and focus-within are mutually exclusive states, put both colours in the `:class` conditional so only the active state's colour class is present at any time.
 
 **Border-radius (`rd` prefix) — never use Vuetify `rounded="sm"` prop or `rounded-sm` class:**
 

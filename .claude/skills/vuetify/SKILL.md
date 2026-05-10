@@ -201,16 +201,21 @@ All shared values live as CSS custom properties in the `:root` block in `globals
 }
 </style>
 
-<!-- CORRECT — CSS custom property, no SASS dependency -->
+<!-- ALSO WRONG — scoped CSS class when attributify can do this directly -->
 <style scoped>
 .panel {
   border: var(--border-width) var(--border-style) v-bind(border);
   top: var(--app-bar-height);
 }
 </style>
+
+<!-- CORRECT — attributify; no style block needed -->
+<div b-1 b-border top="[var(--app-bar-height)]" />
 ```
 
-Only add `lang="scss"` when you actually need SCSS-specific features: `&` nesting, `@mixin`/`@include`, or `//` single-line comments. Simple styles with `v-bind()` and `:deep()` do not need `lang="scss"`.
+The goal is always attributify. The CSS custom-property form (`var(--border-width)` etc.) is only acceptable when a style block is genuinely required (e.g. `:deep()` selectors, `@keyframes`, element selectors). When the styles can be expressed as UnoCSS utilities, always prefer inline attributes and delete the style block entirely.
+
+Only add `lang="scss"` when you actually need SCSS-specific features: `@mixin`/`@include`, or `#{...}` interpolation. Simple styles with `v-bind()` and `:deep()` do not need `lang="scss"`.
 
 ## Keyboard Shortcut Components
 

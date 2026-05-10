@@ -42,9 +42,9 @@ onMounted(() => {
 
 <template>
   <div
-    class="parameter-chip"
+    :class="isError ? ['b-error'] : ['b-[rgba(var(--v-border-color),var(--v-border-opacity))]', 'focus-within:b-info']"
+    b-w="[1.5px]"
     bg-border
-    :class="{ 'parameter-chip--error': isError }"
     inline-flex
     items-center
     gap-1.5
@@ -53,13 +53,26 @@ onMounted(() => {
     py-1
     overflow-hidden
   >
-    <span class="parameter-chip__label" text-sm font-bold bg-background :class="isError ? 'text-error' : ''">
+    <span
+      text-sm
+      font-bold
+      bg-background
+      self-stretch
+      flex
+      items-center
+      -my-1
+      -ml-2
+      py-1
+      pr-1
+      pl-2
+      :class="isError ? 'text-error' : ''"
+    >
       {{ name }}
     </span>
     <input
       ref="input"
       v-model="modelValue"
-      class="parameter-chip__input"
+      field-sizing-content
       b-none
       text-sm
       color-inherit
@@ -92,29 +105,3 @@ onMounted(() => {
     />
   </div>
 </template>
-
-<style scoped lang="scss">
-.parameter-chip {
-  border: 1.5px solid rgba(var(--v-border-color), var(--v-border-opacity));
-
-  &:focus-within {
-    border-color: rgb(var(--v-theme-info));
-  }
-
-  &--error {
-    border-color: rgb(var(--v-theme-error));
-  }
-
-  &__label {
-    align-self: stretch;
-    display: flex;
-    align-items: center;
-    margin: -0.25rem 0 -0.25rem -0.5rem;
-    padding: 0.25rem 0.25rem 0.25rem 0.5rem;
-  }
-
-  &__input {
-    field-sizing: content;
-  }
-}
-</style>

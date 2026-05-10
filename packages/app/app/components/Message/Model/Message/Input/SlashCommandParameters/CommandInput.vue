@@ -30,7 +30,7 @@ onMounted(() => {
     <input
       ref="input"
       v-model="modelValue"
-      class="input"
+      field-sizing-content
       b-none
       text-sm
       font-bold
@@ -55,9 +55,3 @@ onMounted(() => {
     />
   </div>
 </template>
-
-<style scoped>
-.input {
-  field-sizing: content;
-}
-</style>
