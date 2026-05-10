@@ -181,7 +181,7 @@ onUnmounted(() => {
 #profiler-toggle {
   top: v-bind(toggleTop) !important;
 }
-// three.js profiler blocks the app menus since it is set to z-index 9999
+/* three.js profiler blocks the app menus since it is set to z-index 9999 */
 #profiler-mini-panel {
   top: v-bind(miniPanelTop) !important;
   z-index: 0 !important;
