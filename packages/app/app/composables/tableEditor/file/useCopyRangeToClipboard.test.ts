@@ -10,7 +10,7 @@ import { useCopyRangeToClipboard } from "@/composables/tableEditor/file/useCopyR
 import { useCellStore } from "@/store/tableEditor/file/cell";
 import { useRowStore } from "@/store/tableEditor/file/row";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useCopyRangeToClipboard, () => {
   let writeTextMock: ReturnType<typeof vi.fn<() => Promise<void>>>;
@@ -18,10 +18,11 @@ describe(useCopyRangeToClipboard, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     writeTextMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: { write: vi.fn<() => Promise<void>>(), writeText: writeTextMock },
-    });
+    vi.stubGlobal("navigator", { clipboard: { writeText: writeTextMock } });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   const selectRange = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number) => {

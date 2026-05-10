@@ -20,13 +20,11 @@ describe(usePasteRangeFromClipboard, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     readTextMock = vi.fn<() => Promise<string>>().mockResolvedValue("");
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: { readText: readTextMock },
-    });
+    vi.stubGlobal("navigator", { clipboard: { readText: readTextMock } });
   });
 
   afterEach(() => {
+    vi.unstubAllGlobals();
     const fileHistoryStore = useFileHistoryStore();
     fileHistoryStore.clear();
   });
