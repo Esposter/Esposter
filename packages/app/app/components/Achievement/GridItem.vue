@@ -15,14 +15,14 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
 
 <template>
   <v-col cols="12" sm="6" md="4" lg="3">
-    <StyledCard h-full hover cursor-auto>
+    <StyledCard hover h-full cursor-auto>
       <v-card-text h-full flex flex-col items-center text-center>
         <v-avatar :color="userAchievement?.unlockedAt ? 'success' : 'grey'" size="64">
           <v-icon :icon="achievementDefinition.icon" color="white" size="40" />
         </v-avatar>
         <div class="text-title-large" font-bold mt-2>{{ prettify(achievementDefinition.name) }}</div>
         <div class="text-body-small">{{ achievementDefinition.description }}</div>
-        <div v-if="userAchievement?.unlockedAt" class="text-body-small" text-gray italic font-bold mt-2>
+        <div v-if="userAchievement?.unlockedAt" class="text-body-small" text-gray font-bold italic mt-2>
           Unlocked {{ userAchievement.unlockedAt.toLocaleDateString() }}
         </div>
         <v-spacer />

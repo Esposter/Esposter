@@ -26,15 +26,15 @@ onMounted(() => {
 
 <template>
   <div inline-flex items-center gap-0.5>
-    <span font-bold text-sm>/</span>
+    <span text-sm font-bold>/</span>
     <input
       ref="input"
       v-model="modelValue"
       class="input"
       b-none
-      outline-none
       text-sm
       font-bold
+      outline-none
       bg-transparent
       @focus="emit('focus')"
       @blur="emit('blur')"

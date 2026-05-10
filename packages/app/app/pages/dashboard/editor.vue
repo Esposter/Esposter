@@ -24,8 +24,8 @@ onMounted(async () => {
 
 <template>
   <NuxtLayout>
-    <v-container h-full fluid>
-      <StyledCard flex flex-col size-full>
+    <v-container fluid h-full>
+      <StyledCard size-full flex flex-col>
         <DashboardEditorHeader />
         <DashboardEditorContent />
       </StyledCard>

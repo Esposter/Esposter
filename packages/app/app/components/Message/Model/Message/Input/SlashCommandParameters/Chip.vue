@@ -52,17 +52,17 @@ onMounted(() => {
     py-1
     overflow-hidden
   >
-    <span class="parameter-chip__label bg-background" font-bold text-sm :class="isError ? 'text-error' : ''">
+    <span class="parameter-chip__label bg-background" text-sm font-bold :class="isError ? 'text-error' : ''">
       {{ name }}
     </span>
     <input
       ref="input"
       v-model="modelValue"
       class="parameter-chip__input"
-      color-inherit
       b-none
-      outline-none
       text-sm
+      color-inherit
+      outline-none
       bg-transparent
       :autofocus
       @focus="emit('focus')"

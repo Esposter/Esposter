@@ -47,7 +47,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
     <template #left>
       <MessageLeftSideBar />
     </template>
-    <div class="bg-surface" flex flex-col h-full overflow-y-auto>
+    <div class="bg-surface" h-full flex flex-col overflow-y-auto>
       <v-container>
         <div class="text-headline-small" font-bold mb-6>Friends</div>
         <div mb-8>

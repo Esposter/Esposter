@@ -43,8 +43,8 @@ watch(
       v-model="trailingMessage"
       w-full
       b-none
-      outline-none
       text-sm
+      outline-none
       cursor-text
       bg-transparent
       :readonly="hiddenParameters.length > 0"

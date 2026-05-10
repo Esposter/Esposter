@@ -9,9 +9,9 @@ const { isOutlierHighlightEnabled } = storeToRefs(outlierStore);
   <v-tooltip :text="isOutlierHighlightEnabled ? 'Hide Outlier Highlighting' : 'Show Outlier Highlighting'">
     <template #activator="{ props: tooltipProps }">
       <v-btn
-        m-0
         size="small"
         tile
+        m-0
         variant="text"
         :color="isOutlierHighlightEnabled ? 'warning' : undefined"
         :icon="isOutlierHighlightEnabled ? 'mdi-alert-circle' : 'mdi-alert-circle-outline'"

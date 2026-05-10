@@ -95,7 +95,7 @@ const vote = async (optionId: null | string) => {
           <template v-for="{ id, label } of pollContent.options" :key="id">
             <v-radio :value="id">
               <template #label>
-                <div flex w-full>
+                <div w-full flex>
                   <div flex-1>{{ label }}</div>
                   <div class="text-caption text-medium-emphasis">
                     {{ getVoteDescription(voteCountMap.get(id) ?? 0) }} · {{ getVotePercentage(id) }}%

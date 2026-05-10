@@ -13,7 +13,7 @@ const voiceControlItems = useVoiceControlItems();
   <TransitionFade>
     <div v-if="isInChannel" class="bg-surface-variant" flex items-center gap-x-3 px-4 py-2 border-b>
       <v-icon icon="mdi-volume-high" size="small" color="success" />
-      <span text-sm font-medium flex-1>Voice</span>
+      <span flex-1 text-sm font-medium>Voice</span>
       <div flex items-center gap-x-1>
         <div v-for="{ id, image, isMuted: isParticipantMuted, name, userId } of roomParticipants" :key="id" relative>
           <v-menu v-if="userId !== session?.user.id && (isForceMuteable || isKickableFromVoice)">

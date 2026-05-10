@@ -8,7 +8,7 @@ const { isFindReplaceOpen } = storeToRefs(findReplaceStore);
 <template>
   <v-tooltip text="Find & Replace">
     <template #activator="{ props }">
-      <v-btn m-0 icon="mdi-magnify" size="small" tile :="props" @click.stop="isFindReplaceOpen = !isFindReplaceOpen" />
+      <v-btn icon="mdi-magnify" size="small" tile m-0 :="props" @click.stop="isFindReplaceOpen = !isFindReplaceOpen" />
     </template>
   </v-tooltip>
 </template>

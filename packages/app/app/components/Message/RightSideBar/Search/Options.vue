@@ -15,7 +15,7 @@ const { createFilter } = searchMessageStore;
       <v-list-item :="props" @click="createFilter(filterType)">
         <v-list-item-title font-bold>
           {{ uncapitalize(filterType) }}:
-          <span font-semibold text-gray>{{ FilterTypePlaceholderMap[filterType] }}</span>
+          <span text-gray font-semibold>{{ FilterTypePlaceholderMap[filterType] }}</span>
         </v-list-item-title>
         <template #append>
           <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />

@@ -15,7 +15,7 @@ const { visualType } = storeToRefs(visualStore);
     <v-toolbar-title font-bold px-4>
       <div flex flex-col justify-between gap-y-4 pt-4>
         <div>Dashboard Editor</div>
-        <div flex items-center w-full>
+        <div w-full flex items-center>
           <v-select
             v-model="visualType"
             :items="visualTypeItemCategoryDefinitions"

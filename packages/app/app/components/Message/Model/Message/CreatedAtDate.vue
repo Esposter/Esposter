@@ -16,5 +16,5 @@ const displayCreatedAt = computed(() => {
 </script>
 
 <template>
-  <span text-gray text-xs>{{ displayCreatedAt }}</span>
+  <span text-xs text-gray>{{ displayCreatedAt }}</span>
 </template>

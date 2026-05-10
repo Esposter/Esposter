@@ -34,7 +34,7 @@ const isActive = ref(false);
     <template #prepend>
       <StyledAvatar :image="room.image" :name="roomName" :avatar-props="{ size: 'small' }" />
     </template>
-    <v-list-item-title flex justify-between items-center>
+    <v-list-item-title flex items-center justify-between>
       {{ roomName }}
       <v-checkbox v-model="roomIds" :value="room.id" :ripple="false" density="compact" hide-details @click.stop />
     </v-list-item-title>

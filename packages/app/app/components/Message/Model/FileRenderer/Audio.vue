@@ -5,5 +5,5 @@ const { url } = defineProps<FileRendererComponentProps>();
 </script>
 
 <template>
-  <audio size-full :src="url" controls />
+  <audio :src="url" controls size-full />
 </template>

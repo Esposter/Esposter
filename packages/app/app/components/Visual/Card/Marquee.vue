@@ -23,7 +23,7 @@ const { "on-surface": onSurface, surface } = storeToRefs(colorsStore);
     p-4
   >
     <div class="scene" h-64>
-      <div class="grid" h-full grid gap-x-4 list-none px-4>
+      <div class="grid" grid h-full list-none gap-x-4 px-4>
         <div v-for="(card, index) of cards" :key="index" class="item-container">
           <div
             class="item border-sm"

@@ -13,7 +13,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateT
 </script>
 
 <template>
-  <v-container h-full flex flex-col fluid>
+  <v-container fluid h-full flex flex-col>
     <StyledDataTableServer
       flex
       flex-1

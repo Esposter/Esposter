@@ -15,8 +15,8 @@ const { sm, xs } = useVDisplay();
     font="[Montserrat] italic"
     flex
     items-center
-    p-4
     break-anywhere
+    p-4
     justify-center
     text-center
     :card-props="{ minHeight: '12rem' }"

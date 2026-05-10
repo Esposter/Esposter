@@ -6,5 +6,5 @@ const { isDragOver } = storeToRefs(dragStore);
 </script>
 
 <template>
-  <v-overlay v-model="isDragOver" items-center text-xl contained justify-center>Drop here</v-overlay>
+  <v-overlay v-model="isDragOver" contained items-center text-xl justify-center>Drop here</v-overlay>
 </template>

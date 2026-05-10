@@ -37,16 +37,16 @@ const selectEmoji = await useSelectEmoji(message);
       v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
-      rd-full
-      flex
-      items-center
-      shadow-md
       z-1
       w-fit
+      flex
       origin-center
-      active:scale-95
+      items-center
+      rd-full
+      shadow-md
       px-2
       cursor-pointer
+      active:scale-95
       @click="
         isReacted && userIds.length === 1
           ? deleteEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey })

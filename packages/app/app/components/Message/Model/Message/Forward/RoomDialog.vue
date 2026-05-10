@@ -48,7 +48,7 @@ const {
   <v-dialog v-if="forward && creator" v-model="dialog">
     <StyledCard>
       <v-card-title flex flex-col>
-        <div flex justify-between items-center>
+        <div flex items-center justify-between>
           Forward To
           <v-btn density="comfortable" icon="mdi-close" @click="dialog = false" />
         </div>

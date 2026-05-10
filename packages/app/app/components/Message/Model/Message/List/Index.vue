@@ -34,8 +34,8 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
   <v-list
     ref="messageContainer"
     :class="{ 'overflow-anchor-none': isPinnedToBottom }"
-    flex-1
     flex
+    flex-1
     basis-full
     flex-col-reverse
     pb-0

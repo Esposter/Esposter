@@ -22,7 +22,7 @@ const survey = defineModel<Survey>({ required: true });
       "
     />
     <template #append>
-      <span text-gray text-lg pr-4>
+      <span text-lg text-gray pr-4>
         (Version: {{ survey.modelVersion }}, Published Version: {{ survey.publishVersion }})
       </span>
     </template>

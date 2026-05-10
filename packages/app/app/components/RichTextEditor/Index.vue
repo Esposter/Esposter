@@ -120,7 +120,7 @@ onUnmounted(() => editor.value?.destroy());
 </script>
 
 <template>
-  <div flex flex-col w-full>
+  <div w-full flex flex-col>
     <StyledCard :card-props>
       <RichTextEditorMenuBar :editor />
       <v-divider thickness="2" />

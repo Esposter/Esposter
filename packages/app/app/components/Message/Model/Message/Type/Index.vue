@@ -25,18 +25,18 @@ const messageHtml = useMessageWithMentions(
   <MessageModelMessageTypeListItem :active :is-preview>
     <template #prepend>
       <div v-if="message.replyRowKey" relative flex flex-col items-center>
-        <MessageModelMessageReplySpine absolute mt-2.5 ml-7.5 top-0 :reply-row-key="message.replyRowKey" />
+        <MessageModelMessageReplySpine absolute ml-7.5 mt-2.5 top-0 :reply-row-key="message.replyRowKey" />
         <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
         <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" pl-2 />
       </div>
       <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
-      <span v-else :op="active ? undefined : 0" text-gray text-xs text-center>
+      <span v-else :op="active ? undefined : 0" text-xs text-gray text-center>
         {{ displayCreatedAtShort }}
       </span>
     </template>
     <MessageModelMessageReplyTitle v-if="message.replyRowKey || !isSameBatch" :creator :message />
     <div v-if="message.isForward" flex gap-x-2>
-      <div class="bg-border" w-1 h-inherit rd />
+      <div class="bg-border" h-inherit w-1 rd />
       <div flex flex-col gap-y-1>
         <v-list-item-subtitle>
           <span italic>
@@ -57,9 +57,9 @@ const messageHtml = useMessageWithMentions(
     </div>
     <div v-else flex flex-col gap-y-1>
       <slot>
-        <div flex gap-x-1 items-end>
+        <div flex items-end gap-x-1>
           <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100 v-html="messageHtml" />
-          <span v-if="message.isEdited" text-gray text-2.4 line-height-3.2>(edited)</span>
+          <span v-if="message.isEdited" text-2.4 text-gray line-height-3.2>(edited)</span>
         </div>
       </slot>
       <MessageModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />

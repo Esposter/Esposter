@@ -57,10 +57,10 @@ watch(
             <template #default="{ isHovering, props: hoverProps }">
               <v-btn
                 :style="{ pointerEvents: isEditable ? undefined : 'none' }"
-                font-bold
                 rounded="lg"
                 :ripple="false"
                 slim
+                font-bold
                 :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps)"
                 @click="updateIsOpen(true)"
               >

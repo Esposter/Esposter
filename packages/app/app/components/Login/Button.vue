@@ -25,11 +25,11 @@ const isLoading = ref(false);
   <button
     class="button"
     :style
+    h-12
+    w-full
     flex
     items-center
-    w-full
     rd
-    h-12
     mb-3
     pl-2
     @disabled="isLoading"

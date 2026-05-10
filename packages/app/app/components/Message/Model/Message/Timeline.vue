@@ -17,7 +17,7 @@ const displayDate = computed(() => {
 </script>
 
 <template>
-  <v-row v-if="areDifferentDays" flex items-center flex-none mt-4 density="compact">
+  <v-row v-if="areDifferentDays" flex flex-none items-center mt-4 density="compact">
     <v-col flex-1>
       <v-divider />
     </v-col>

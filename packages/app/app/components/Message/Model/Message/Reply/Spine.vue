@@ -18,10 +18,10 @@ const scrollToMessage = useScrollToMessage();
 <template>
   <div
     class="custom-border"
+    h-3
+    w-8
     b-l-2
     b-t-2
-    w-8
-    h-3
     rd-tl-2
     cursor-pointer
     @mouseenter="isIndicatorActive = true"

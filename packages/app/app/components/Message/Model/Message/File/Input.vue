@@ -35,7 +35,7 @@ const menuItems: Item[] = [
             :text="shortTitle ?? title"
           >
             <template #activator="{ props }">
-              <v-btn m-0 :color :icon size="small" tile variant="text" :="props" @click="onClick" />
+              <v-btn :color :icon size="small" tile m-0 variant="text" :="props" @click="onClick" />
             </template>
           </v-tooltip>
         </div>

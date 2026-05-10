@@ -38,7 +38,7 @@ const { text } = storeToRefs(colorsStore);
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <div class="custom-border" shadow-md rd-lg mx-4 py-2>
+    <div class="custom-border" rd-lg shadow-md mx-4 py-2>
       <slot name="messagePreview" />
     </div>
   </StyledDialog>

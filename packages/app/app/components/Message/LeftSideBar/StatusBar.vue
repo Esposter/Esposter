@@ -29,7 +29,7 @@ const callRoomName = useRoomName(callRoomId);
         </template>
       </v-list-item>
     </TransitionFade>
-    <StyledCard flex p-2 items-center rd-2>
+    <StyledCard flex items-center rd-2 p-2>
       <MessageModelStatusPickerMenuButton>
         <template #activator="{ menuProps }">
           <MessageModelMemberStatusAvatar
@@ -43,10 +43,10 @@ const callRoomName = useRoomName(callRoomId);
       </MessageModelStatusPickerMenuButton>
       <div w-full flex justify-between min-w-0>
         <div flex flex-col pl-2 justify-center min-w-0>
-          <div text-xs truncate>
+          <div truncate text-xs>
             {{ session.user.name }}
           </div>
-          <div text-xs text-gray truncate>
+          <div truncate text-xs text-gray>
             {{ getStatusMessage(session.user.id) || getStatusEnum(session.user.id) }}
           </div>
         </div>
