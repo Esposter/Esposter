@@ -41,7 +41,7 @@ describe(copyToClipboard, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "0" })]);
-    await copyToClipboard(dataSource, []);
+    await copyToClipboard(dataSource, { rowIds: [] });
     const lines = writtenText.split("\n");
 
     expect(lines).toHaveLength(1);
@@ -53,10 +53,21 @@ describe(copyToClipboard, () => {
 
     const row = makeRow({ a: "0" });
     const dataSource = makeDataSource([makeColumn("a")], [row, makeRow({ a: "1" })]);
-    await copyToClipboard(dataSource, [row.id]);
+    await copyToClipboard(dataSource, { rowIds: [row.id] });
     const lines = writtenText.split("\n");
 
     expect(lines).toHaveLength(2);
     expect(takeOne(lines, 1)).toBe("0");
+  });
+
+  test("omits header row when includeHeaders is false", async () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "42" })]);
+    await copyToClipboard(dataSource, { includeHeaders: false });
+    const lines = writtenText.split("\n");
+
+    expect(lines).toHaveLength(1);
+    expect(takeOne(lines)).toBe("42");
   });
 });

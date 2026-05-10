@@ -3,6 +3,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/datasource/Data
 
 import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
+import { useCellStore } from "@/store/tableEditor/file/cell";
 import { useColumnStore } from "@/store/tableEditor/file/column";
 import { useRowStore } from "@/store/tableEditor/file/row";
 import { VueDraggable } from "vue-draggable-plus";
@@ -29,6 +30,22 @@ const dragRows = computed({
 const isDraggable = computed(
   () => !search.value && sortBy.value.length === 0 && filteredRows.value === dataSource.rows,
 );
+const cellStore = useCellStore();
+const { editingCell, selectedCellRange } = storeToRefs(cellStore);
+const { endCellSelection } = cellStore;
+const copyRangeToClipboard = useCopyRangeToClipboard();
+
+useEventListener(document, "mouseup", () => {
+  endCellSelection();
+});
+
+useEventListener(document, "keydown", async (event: KeyboardEvent) => {
+  if (!event.ctrlKey || event.key !== "c" || !selectedCellRange.value || editingCell.value) return;
+  const activeElement = document.activeElement;
+  if (activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement) return;
+  event.preventDefault();
+  await copyRangeToClipboard();
+});
 </script>
 
 <template>
@@ -89,9 +106,14 @@ const isDraggable = computed(
         >
           <TableEditorFileRowHeaderSlot :column :get-sort-icon :header-column :is-sorted :toggle-sort />
         </template>
-        <template v-for="column of displayColumns" :key="column.id" #[`item.${toColumnKey(column.name)}`]="{ item }">
+        <template
+          v-for="(column, columnIndex) of displayColumns"
+          :key="column.id"
+          #[`item.${toColumnKey(column.name)}`]="{ item }"
+        >
           <TableEditorFileRowItemSlot
             :column
+            :column-index
             :columns="dataSource.columns"
             :item
             :row-index="rowIndexIdMap.get(item.id) ?? -1"

@@ -41,6 +41,7 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
+    "@2toad/profanity": "catalog:",
     "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
     "@azure/search-documents": "catalog:",
@@ -133,7 +134,6 @@
     "mjml-browser": "catalog:",
     "node-emoji": "catalog:",
     "node-html-parser": "catalog:",
-    "obscenity": "catalog:",
     "p-progress": "catalog:",
     "parse-tmx": "workspace:*",
     "pathe": "catalog:",
