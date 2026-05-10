@@ -23,6 +23,13 @@ export default defineConfig({
   presets: [presetWind3(), presetAttributify(), presetVuetify()],
   rules: [
     ["overflow-anchor-none", { "overflow-anchor": "none" }],
+    [
+      "elevation--1",
+      {
+        "box-shadow":
+          "inset 0 2px 1px -1px rgba(0,0,0,0.2), inset 0 1px 1px 0 rgba(0,0,0,0.14), inset 0 1px 3px 0 rgba(0,0,0,0.12)",
+      },
+    ],
     // UnoCSS appends / var(--un-bg-opacity) to rgb(var(--v-theme-border)), producing invalid background-color syntax.
     ["bg-border", { "background-color": "rgb(var(--v-theme-border))" }],
     // UnoCSS appends / var(--un-border-opacity) to border-color, breaking Vuetify's rgb(var()) format — bypass with explicit rules.
