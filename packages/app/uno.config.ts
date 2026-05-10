@@ -23,8 +23,12 @@ export default defineConfig({
   presets: [presetWind3(), presetAttributify(), presetVuetify()],
   rules: [
     ["overflow-anchor-none", { "overflow-anchor": "none" }],
-    // "border" clashes with UnoCSS border property handling, emitting extra / var(--un-bg-opacity) which is not supported for background-color.
+    // UnoCSS appends / var(--un-bg-opacity) to rgb(var(--v-theme-border)), producing invalid background-color syntax.
     ["bg-border", { "background-color": "rgb(var(--v-theme-border))" }],
+    // UnoCSS appends / var(--un-border-opacity) to border-color, breaking Vuetify's rgb(var()) format — bypass with explicit rules.
+    ...[...Object.keys(firstThemeColors), ...variationKeys].map(
+      (key) => [`b-${key}`, { "border-color": `rgb(var(--v-theme-${key}))` }] as [string, Record<string, string>],
+    ),
   ],
   safelist: Array.from({ length: 6 }, (_, i) => `elevation-${i}`),
   theme: {
