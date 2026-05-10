@@ -30,14 +30,11 @@ const bottomOffset = ref(0);
 // Fix the layout structure so navigating does not cause a layout shift
 const { bottom, left, middle, right } = useFixedLayoutStyles(bottomOffset);
 
-useResizeObserver(
-  () => footer.value?.$el,
-  (entries) => {
-    const entry = takeOne(entries);
-    const { bottom } = entry.contentRect;
-    bottomOffset.value = bottom;
-  },
-);
+useResizeObserver(footer, (entries) => {
+  const entry = takeOne(entries);
+  const { bottom } = entry.contentRect;
+  bottomOffset.value = bottom;
+});
 
 onMounted(() => {
   isLeftDrawerOpen.value = isLeftDrawerOpenAuto.value = slots.left ? isDesktop.value : false;

@@ -16,6 +16,7 @@ interface DataTableProps {
 }
 
 const { dataSource } = defineProps<DataTableProps>();
+const table = useTemplateRef("table");
 const columnStore = useColumnStore();
 const { displayColumns } = storeToRefs(columnStore);
 const rowStore = useRowStore();
@@ -108,11 +109,6 @@ onKeyStroke(["a", "A"], (event) => {
   }
 });
 
-onKeyStroke("Escape", () => {
-  if (editingCell.value || getIsInputFocused() || !selectedCellRange.value) return;
-  clearCellSelection();
-});
-
 onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
   if (editingCell.value || getIsInputFocused() || !focusCell.value) return;
   const arrowDelta = ArrowKeyDeltaMap[event.key];
@@ -126,6 +122,14 @@ onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
   if (event.shiftKey) extendCellSelection(newRowIndex, newColumnIndex);
   else startCellSelection(newRowIndex, newColumnIndex);
 });
+
+onClickOutside(table, () => {
+  clearCellSelection();
+});
+
+onKeyStroke("Escape", () => {
+  clearCellSelection();
+});
 </script>
 
 <template>
@@ -135,6 +139,7 @@ onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
     </template>
     <VueDraggable v-model="dragRows" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
       <StyledDataTable
+        ref="table"
         flex
         flex-1
         flex-col

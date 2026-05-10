@@ -89,8 +89,10 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
       const row = takeOne(rows, rowIndex);
       const originalRow = takeOne(this.originalRows, rowOffset);
       for (const column of columns) {
-        column.size += getValueSize(originalRow.data[column.name]) - getValueSize(row.data[column.name]);
-        row.data[column.name] = originalRow.data[column.name];
+        const columnValue = takeOne(row.data, column.name);
+        const originalColumnValue = takeOne(originalRow.data, column.name);
+        column.size += getValueSize(originalColumnValue) - getValueSize(columnValue);
+        row.data[column.name] = originalColumnValue;
       }
     }
   }
