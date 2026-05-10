@@ -10,11 +10,5 @@ defineProps<OutlierHighlightProps>();
 </script>
 
 <template>
-  <span :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }">{{ text }}</span>
+  <span :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }" after="content-['\200B']">{{ text }}</span>
 </template>
-
-<style scoped>
-span::after {
-  content: "\200B";
-}
-</style>

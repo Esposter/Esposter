@@ -33,7 +33,7 @@ watch(
 </script>
 
 <template>
-  <span ref="container">
+  <span ref="container" after="content-['\200B']">
     <template v-for="({ isMatch, text: part }, partIndex) of parts" :key="partIndex">
       <mark
         v-if="isMatch"
@@ -46,9 +46,3 @@ watch(
     </template>
   </span>
 </template>
-
-<style scoped>
-span::after {
-  content: "\200B";
-}
-</style>
