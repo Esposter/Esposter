@@ -19,10 +19,10 @@ export const addProfanityFilterMiddleware = <
   procedure.use(({ input, next }) => {
     for (const key of keys) {
       const value = input[key];
-      if (!value) continue;
+      if (value === null || value === undefined || value === "") continue;
       else if (typeof value !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
       else if (profanity.exists(value))
-        throw new TRPCError({ code: "BAD_REQUEST", message: `${key.toString()} contains profanity: ${value}.` });
+        throw new TRPCError({ code: "BAD_REQUEST", message: `${key.toString()} contains profanity.` });
     }
     return next();
   });

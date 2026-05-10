@@ -35,6 +35,8 @@ export const useCellStore = defineStore("tableEditor/file/cell", () => {
     cellState.value.rowIndex === rowIndex &&
     cellState.value.columnName === columnName;
 
+  const focusCell = computed(() => (cellState.value.mode === CellMode.Select ? cellState.value.focus : null));
+
   const startCellSelection = (rowIndex: number, columnIndex: number) => {
     cellState.value = {
       anchor: { columnIndex, rowIndex },
@@ -42,6 +44,11 @@ export const useCellStore = defineStore("tableEditor/file/cell", () => {
       isSelecting: true,
       mode: CellMode.Select,
     };
+  };
+  const shiftStartCellSelection = (rowIndex: number, columnIndex: number) => {
+    if (cellState.value.mode === CellMode.Select)
+      cellState.value = { ...cellState.value, focus: { columnIndex, rowIndex }, isSelecting: true };
+    else startCellSelection(rowIndex, columnIndex);
   };
   const extendCellSelection = (rowIndex: number, columnIndex: number) => {
     if (cellState.value.mode !== CellMode.Select) return;
@@ -65,11 +72,13 @@ export const useCellStore = defineStore("tableEditor/file/cell", () => {
     editingCell,
     endCellSelection,
     extendCellSelection,
+    focusCell,
     isCellInRange,
     isEditingCell,
     isSelectingCells,
     requestFocus,
     selectedCellRange,
+    shiftStartCellSelection,
     startCellSelection,
   };
 });

@@ -33,8 +33,16 @@ const isDraggable = computed(
   () => !search.value && sortBy.value.length === 0 && filteredRows.value === dataSource.rows,
 );
 const cellStore = useCellStore();
-const { editingCell, isSelectingCells, selectedCellRange } = storeToRefs(cellStore);
-const { endCellSelection, extendCellSelection, isCellInRange, isEditingCell, startCellSelection } = cellStore;
+const { editingCell, focusCell, isSelectingCells, selectedCellRange } = storeToRefs(cellStore);
+const {
+  clearCellSelection,
+  endCellSelection,
+  extendCellSelection,
+  isCellInRange,
+  isEditingCell,
+  shiftStartCellSelection,
+  startCellSelection,
+} = cellStore;
 const copyRangeToClipboard = useCopyRangeToClipboard();
 const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
   const column = displayColumns.value.find((col) => toColumnKey(col.name) === headerColumn.key);
@@ -51,7 +59,8 @@ const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
       )
         return;
       event.preventDefault();
-      startCellSelection(rowIndex, columnIndex);
+      if (event.shiftKey) shiftStartCellSelection(rowIndex, columnIndex);
+      else startCellSelection(rowIndex, columnIndex);
     },
     onMouseenter: (event: MouseEvent) => {
       if (!isSelectingCells.value) return;
@@ -69,11 +78,46 @@ useEventListener(document, "mouseup", () => {
 });
 
 useEventListener(document, "keydown", async (event: KeyboardEvent) => {
-  if (!event.ctrlKey || event.key !== "c" || !selectedCellRange.value || editingCell.value) return;
+  if (editingCell.value) return;
   const activeElement = document.activeElement;
   if (activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement) return;
-  event.preventDefault();
-  await copyRangeToClipboard();
+  const isModifierKey = event.ctrlKey || event.metaKey;
+  if (isModifierKey && event.key === "c" && selectedCellRange.value) {
+    event.preventDefault();
+    await copyRangeToClipboard();
+  } else if (isModifierKey && event.key === "a") {
+    event.preventDefault();
+    const rowCount = filteredRows.value.length;
+    const columnCount = displayColumns.value.length;
+    if (rowCount > 0 && columnCount > 0) {
+      startCellSelection(0, 0);
+      extendCellSelection(rowCount - 1, columnCount - 1);
+      endCellSelection();
+    }
+  } else if (event.key === "Escape" && selectedCellRange.value) {
+    clearCellSelection();
+  } else if (focusCell.value) {
+    const arrowKeyDeltas: Partial<Record<string, [number, number]>> = {
+      ArrowDown: [1, 0],
+      ArrowLeft: [0, -1],
+      ArrowRight: [0, 1],
+      ArrowUp: [-1, 0],
+    };
+    const arrowDelta = arrowKeyDeltas[event.key];
+    if (arrowDelta) {
+      event.preventDefault();
+      const [rowDelta, columnDelta] = arrowDelta;
+      const rowCount = filteredRows.value.length;
+      const columnCount = displayColumns.value.length;
+      const newRowIndex = Math.max(0, Math.min(rowCount - 1, focusCell.value.rowIndex + rowDelta));
+      const newColumnIndex = Math.max(0, Math.min(columnCount - 1, focusCell.value.columnIndex + columnDelta));
+      if (event.shiftKey) extendCellSelection(newRowIndex, newColumnIndex);
+      else {
+        startCellSelection(newRowIndex, newColumnIndex);
+        endCellSelection();
+      }
+    }
+  }
 });
 </script>
 
