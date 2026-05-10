@@ -84,4 +84,5 @@ Prefer this over manual margin/padding tricks when element should float independ
 
 ## Style Block
 
-- Always use `<style scoped lang="scss">` — `scoped` before `lang`.
+- Use `<style scoped>` — `scoped` is always required.
+- Omit `lang="scss"` unless the style block actually uses Sass features (variables, nesting, mixins). Plain CSS does not need it.
