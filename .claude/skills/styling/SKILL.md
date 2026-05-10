@@ -133,8 +133,8 @@ Split the CSS `transition` shorthand into separate UnoCSS attributes — one for
 <!-- Single property + CSS-variable duration: split into two attributes -->
 <NuxtInvisibleLink transition-colors duration-[var(--transition-duration)] ...>
   <!-- Multi-property with same static duration: use single arbitrary value (no clean split) -->
-  <button transition="[box-shadow_0.2s,transform_0.2s]" ...></button
-></NuxtInvisibleLink>
+  <button transition="[box-shadow_0.2s,transform_0.2s]" ...></button>
+</NuxtInvisibleLink>
 ```
 
 Rules:

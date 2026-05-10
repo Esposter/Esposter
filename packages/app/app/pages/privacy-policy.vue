@@ -11,7 +11,7 @@ const privacyPolicyHtml = await $fetch<string>("/privacyPolicy.html");
 </template>
 
 <style scoped>
-// https://chromium.googlesource.com/chromium/blink/+/master/Source/core/css/html.css
+/* https://chromium.googlesource.com/chromium/blink/+/master/Source/core/css/html.css */
 :deep(p) {
   display: block;
   -webkit-margin-before: 1rem;

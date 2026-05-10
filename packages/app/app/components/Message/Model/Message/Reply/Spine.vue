@@ -19,7 +19,8 @@ const scrollToMessage = useScrollToMessage();
     b-l-2
     b-t-2
     rd-tl-2
-    b-solid
+    b-l-solid
+    b-t-solid
     transition-border-color
     cursor-pointer
     duration="[var(--transition-duration)]"
