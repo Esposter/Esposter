@@ -106,8 +106,9 @@ const submit = async () => {
   await executeSlashCommand(payload);
 };
 
-useEventListener("keydown", (event: KeyboardEvent) => {
-  if (event.key === "Escape" || (event.key === "Backspace" && focusedIndex.value === -1)) collapseToText();
+onKeyStroke("Escape", () => collapseToText());
+onKeyStroke("Backspace", () => {
+  if (focusedIndex.value === -1) collapseToText();
 });
 </script>
 

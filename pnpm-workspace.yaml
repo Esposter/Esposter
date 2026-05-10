@@ -11,6 +11,7 @@ allowBuilds:
   vue-demi: true
 
 catalog:
+  "@2toad/profanity": ^3.3.0
   "@azure/core-client": ^1.10.1
   "@azure/core-http-compat": ^2.4.0
   "@azure/core-rest-pipeline": ^1.23.0
@@ -172,7 +173,6 @@ catalog:
   node-html-parser: ^7.1.0
   nuxt: ^4.4.4
   nuxt-security: ^2.5.1
-  obscenity: ^0.4.6
   oxfmt: ^0.48.0
   oxlint: ^1.63.0
   oxlint-tsgolint: ^0.22.1

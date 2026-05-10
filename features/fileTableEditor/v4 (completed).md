@@ -14,7 +14,7 @@ Architecture details in `computedColumns/overview.md`.
 
 ## New Transformations
 
-- [x] **String** (String → String) — `ColumnTransformationType.String` for single-column Basic string operations, discriminated by `stringTransformationType: StringTransformationType`: `Lowercase`, `TitleCase`, `Trim`, `Uppercase`. Single `sourceColumnId` restricted to `context.stringColumnItems`. Logic in `string/computeStringTransformation.ts`. Schema: `StringTransformation` in `shared/models/.../transformation/string/`.
+- [x] **String** (String → String) — `ColumnTransformationType.String` for single-column Basic string operations, discriminated by `stringTransformationType: StringTransformationType`: `LowerCase`, `TitleCase`, `Trim`, `UpperCase`. Single `sourceColumnId` restricted to `context.stringColumnItems`. Logic in `string/computeStringTransformation.ts`. Schema: `StringTransformation` in `shared/models/.../transformation/string/`.
   - Note: multi-column pattern interpolation (`{N}` placeholders) remains as the existing `ColumnTransformationType.StringPattern` (`StringPatternTransformation`) — it was not merged into `String`.
 - [x] **Split** (String → String) — extracts the Nth segment of a string split by a delimiter. Part of `ColumnTransformationType.String` via `StringTransformationType.Split`. Fields: `sourceColumnId` (string column), `delimiter: string`, `segmentIndex: number` (non-negative integer). Add `.refine()` ensuring `delimiter` is non-empty. Returns `null` when the index is out of range.
 

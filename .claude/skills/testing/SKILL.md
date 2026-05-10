@@ -80,6 +80,23 @@ The default mock session is always the **base user** (inserted by `createMockCon
 
 - **Never `.rejects.toThrow()`** — always assert the specific error: `.rejects.toThrowErrorMatchingInlineSnapshot(...)` or `.rejects.toBeInstanceOf(ErrorClass)`.
 
+## Mocking Globals (navigator, window, etc.)
+
+- **Use `vi.stubGlobal`** — never `Object.defineProperty` for globals; `stubGlobal` integrates with Vitest's stub tracking.
+- **`vi.unstubAllGlobals()` in `afterEach`** — when stubs are set per-test in `beforeEach`. When set once in `beforeAll`, clean up in `afterAll`.
+- **`vi.restoreAllMocks()` ≠ `vi.unstubAllGlobals()`** — `restoreAllMocks` only restores `vi.spyOn()` mocks; it does NOT clean up `vi.stubGlobal()` stubs.
+
+```ts
+beforeEach(() => {
+  writeTextMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
+  vi.stubGlobal("navigator", { clipboard: { writeText: writeTextMock } });
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+```
+
 ## Reactive Effects and Timers
 
 - **No `nextTick`** — no DOM, sync effects fire immediately. Use `flushPromises()` from `@vue/test-utils` for async watch callbacks.

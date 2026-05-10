@@ -8,7 +8,7 @@ const escapeHtml = (value: string): string =>
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
 
-export const serializeToHtml = (dataSource: DataSource): string => {
+export const serializeToHtml = (dataSource: DataSource, includeHeaders = true): string => {
   const headerCells = dataSource.columns.map((column) => `<th>${escapeHtml(column.name)}</th>`).join("");
   const dataRows = dataSource.rows
     .map((row) => {
@@ -18,5 +18,6 @@ export const serializeToHtml = (dataSource: DataSource): string => {
       return `<tr>${cells}</tr>`;
     })
     .join("");
-  return `<table><tr>${headerCells}</tr>${dataRows}</table>`;
+  const header = includeHeaders ? `<tr>${headerCells}</tr>` : "";
+  return `<table>${header}${dataRows}</table>`;
 };

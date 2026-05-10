@@ -10,10 +10,10 @@ export const useCreateRows = () => {
   const { editedItem } = storeToRefs(tableEditorStore);
   const fileHistoryStore = useFileHistoryStore();
   const { push } = fileHistoryStore;
-  return (rows: Row[]) => {
+  return (rows: Row[], startIndex?: number) => {
     if (!editedItem.value?.dataSource || rows.length === 0) return;
-    const startIndex = editedItem.value.dataSource.rows.length;
-    const command = new CreateRowsCommand(startIndex, rows);
+    const resolvedStartIndex = startIndex ?? editedItem.value.dataSource.rows.length;
+    const command = new CreateRowsCommand(resolvedStartIndex, rows);
     command.execute(editedItem.value);
     push(command);
   };

@@ -28,7 +28,7 @@ export const vite: NuxtConfig["vite"] = {
   optimizeDeps: {
     // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
     exclude: ["@vue-pdf-viewer/viewer"],
-    include: [...commonjsDeps, "pdfjs-dist", "debug"],
+    include: [...commonjsDeps, "debug", "pdfjs-dist"],
   },
   plugins: [fixAjv],
 };

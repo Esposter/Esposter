@@ -382,10 +382,10 @@ describe("columnFormSchema", () => {
                       },
                       "stringTransformationType": {
                         "enum": [
-                          "Lowercase",
+                          "LowerCase",
                           "TitleCase",
                           "Trim",
-                          "Uppercase",
+                          "UpperCase",
                         ],
                         "title": "String Transformation Type",
                         "type": "string",

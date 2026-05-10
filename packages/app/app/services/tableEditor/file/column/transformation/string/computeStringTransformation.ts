@@ -3,13 +3,13 @@ import { exhaustiveGuard } from "@esposter/shared";
 
 export const computeStringTransformation = (value: string, transform: StringTransformationType): string => {
   switch (transform) {
-    case StringTransformationType.Lowercase:
+    case StringTransformationType.LowerCase:
       return value.toLowerCase();
     case StringTransformationType.TitleCase:
       return value.toLowerCase().replaceAll(new RegExp(String.raw`(?:^|\s)\S`, "gu"), (char) => char.toUpperCase());
     case StringTransformationType.Trim:
       return value.trim();
-    case StringTransformationType.Uppercase:
+    case StringTransformationType.UpperCase:
       return value.toUpperCase();
     default:
       return exhaustiveGuard(transform);

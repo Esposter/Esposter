@@ -16,6 +16,7 @@ export const useRowStore = defineStore("tableEditor/file/row", () => {
   const columnStore = useColumnStore();
   const filterStore = useFilterStore();
   const findReplaceStore = useFindReplaceStore();
+  const copyIncludesHeaders = ref(true);
   const itemsPerPage = ref(10);
   const page = ref(1);
   const search = ref("");
@@ -59,5 +60,16 @@ export const useRowStore = defineStore("tableEditor/file/row", () => {
     navigateToCurrentOccurrence();
   });
 
-  return { filteredRows, headers, itemsPerPage, page, rowIndexIdMap, search, selectedRowIds, sortBy, tableHeaders };
+  return {
+    copyIncludesHeaders,
+    filteredRows,
+    headers,
+    itemsPerPage,
+    page,
+    rowIndexIdMap,
+    search,
+    selectedRowIds,
+    sortBy,
+    tableHeaders,
+  };
 });

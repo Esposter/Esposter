@@ -2,8 +2,6 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
-import { useFilterStore } from "@/store/tableEditor/file/filter";
 import { useRowStore } from "@/store/tableEditor/file/row";
 import { Vjsf } from "@koumoul/vjsf";
 
@@ -12,14 +10,7 @@ const configuration = useDataSourceConfiguration(modelValue);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const openPanels = ref(["columns", "data"]);
 const rowStore = useRowStore();
-const { selectedRowIds } = storeToRefs(rowStore);
-const filterStore = useFilterStore();
-const { columnFilters } = storeToRefs(filterStore);
-const filteredRowCount = computed(() =>
-  modelValue.value.dataSource
-    ? filterDataSourceRows(modelValue.value.dataSource.rows, columnFilters.value).length
-    : undefined,
-);
+const { filteredRows } = storeToRefs(rowStore);
 </script>
 
 <template>
@@ -50,19 +41,11 @@ const filteredRowCount = computed(() =>
             <template #title>
               Data
               <v-spacer />
-              <TableEditorFileStatisticsBar mr-4 :filtered-row-count :statistics="modelValue.dataSource.statistics" />
-              <TableEditorFileRowCopyToClipboardButton
-                :row-ids="selectedRowIds.length > 0 ? selectedRowIds : undefined"
+              <TableEditorFileStatisticsBar
+                mr-4
+                :filtered-row-count="filteredRows.length"
+                :statistics="modelValue.dataSource.statistics"
               />
-              <TableEditorFileRowPasteFromClipboardButton />
-              <TableEditorFileFindReplaceDialogButton />
-              <TableEditorFileColumnStatisticsDialogButton />
-              <TableEditorFileRowOutlierToggleButton />
-              <TableEditorFileRowClearFiltersButton />
-              <TableEditorFileRowStringTransformationDialogButton />
-              <TableEditorFileRowNullStrategyDialogButton />
-              <TableEditorFileRowDeduplicateDialogButton />
-              <TableEditorFileRowCreateDialogButton :data-source="modelValue.dataSource" />
             </template>
             <v-expansion-panel-text>
               <TableEditorFileRowTable :data-source="modelValue.dataSource" />
