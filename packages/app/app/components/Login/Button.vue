@@ -25,13 +25,13 @@ const isLoading = ref(false);
   <button
     class="button"
     :style
-    pl-2
     flex
     items-center
     w-full
     rd
-    mb-3
     h-12
+    mb-3
+    pl-2
     @disabled="isLoading"
     @click="
       async () => {
@@ -49,7 +49,7 @@ const isLoading = ref(false);
     "
   >
     <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
-    <div size-full flex justify-center items-center>
+    <div size-full flex items-center justify-center>
       <v-progress-circular v-if="isLoading" color="white" size="small" indeterminate />
       <span v-else font-bold text-white>{{ toTitleCase(provider) }}</span>
     </div>

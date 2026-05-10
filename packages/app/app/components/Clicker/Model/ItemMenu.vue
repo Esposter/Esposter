@@ -78,7 +78,7 @@ const upgradeIcon = computed(() => {
       </v-card-title>
       <v-card-text>
         <div v-if="description" pb-4 v-html="descriptionHtml" />
-        <div pb-4 flex justify-end font-italic>
+        <div flex pb-4 justify-end font-italic>
           <span text-right v-html="flavorDescriptionHtml" />
         </div>
         <div :class="{ 'not-affordable': !isAffordable }" flex>

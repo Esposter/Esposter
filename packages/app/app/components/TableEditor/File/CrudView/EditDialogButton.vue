@@ -62,7 +62,7 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || (!isCreat
       </v-tooltip>
       <slot name="prepend-actions" />
     </template>
-    <v-container overflow-y-auto fluid>
+    <v-container fluid overflow-y-auto>
       <slot />
     </v-container>
   </StyledFormDialog>

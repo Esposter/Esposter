@@ -42,11 +42,11 @@ watch(
       ref="input"
       v-model="trailingMessage"
       w-full
-      bg-transparent
       b-none
       outline-none
       text-sm
       cursor-text
+      bg-transparent
       :readonly="hiddenParameters.length > 0"
       :placeholder="hiddenParameters.length > 0 ? optionsLabel : ''"
       @focus="emit('focus')"

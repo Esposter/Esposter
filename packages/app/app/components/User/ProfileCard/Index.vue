@@ -56,7 +56,7 @@ const disabled = computed(
       }
     "
   >
-    <StyledCard mt-6 p-2>
+    <StyledCard p-2 mt-6>
       <v-card-title>
         <div font-bold>Personal Information</div>
         <v-divider mt-2 />

@@ -38,7 +38,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
             <div class="fc-event-title">{{ event.title }}</div>
           </div>
         </template>
-        <div text-center font-bold>
+        <div font-bold text-center>
           {{ event.title }}
         </div>
         <div

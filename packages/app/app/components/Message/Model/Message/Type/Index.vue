@@ -25,12 +25,12 @@ const messageHtml = useMessageWithMentions(
   <MessageModelMessageTypeListItem :active :is-preview>
     <template #prepend>
       <div v-if="message.replyRowKey" relative flex flex-col items-center>
-        <MessageModelMessageReplySpine absolute top-0 mt-2.5 ml-7.5 :reply-row-key="message.replyRowKey" />
+        <MessageModelMessageReplySpine absolute mt-2.5 ml-7.5 top-0 :reply-row-key="message.replyRowKey" />
         <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
         <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" pl-2 />
       </div>
       <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
-      <span v-else :op="active ? undefined : 0" text-center text-gray text-xs>
+      <span v-else :op="active ? undefined : 0" text-gray text-xs text-center>
         {{ displayCreatedAtShort }}
       </span>
     </template>

@@ -13,7 +13,7 @@ const callRoomName = useRoomName(callRoomId);
 </script>
 
 <template>
-  <div v-if="session" px-2 pb-2>
+  <div v-if="session" pb-2 px-2>
     <TransitionFade>
       <v-list-item
         v-if="isInChannel"
@@ -41,8 +41,8 @@ const callRoomName = useRoomName(callRoomId);
           />
         </template>
       </MessageModelStatusPickerMenuButton>
-      <div w-full min-w-0 flex justify-between>
-        <div pl-2 min-w-0 flex flex-col justify-center>
+      <div w-full flex justify-between min-w-0>
+        <div flex flex-col pl-2 justify-center min-w-0>
           <div text-xs truncate>
             {{ session.user.name }}
           </div>

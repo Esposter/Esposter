@@ -11,7 +11,7 @@ const voiceControlItems = useVoiceControlItems();
 
 <template>
   <TransitionFade>
-    <div v-if="isInChannel" class="bg-surface-variant" border-b flex items-center gap-x-3 px-4 py-2>
+    <div v-if="isInChannel" class="bg-surface-variant" flex items-center gap-x-3 px-4 py-2 border-b>
       <v-icon icon="mdi-volume-high" size="small" color="success" />
       <span text-sm font-medium flex-1>Voice</span>
       <div flex items-center gap-x-1>
@@ -33,14 +33,14 @@ const voiceControlItems = useVoiceControlItems();
           <StyledAvatar v-else size="x-small" :image :name />
           <div
             v-if="speakingIds.includes(id)"
-            absolute
-            inset-0
-            animate-pulse
             outline="2 solid green-500 offset-1"
-            pointer-events-none
+            absolute
+            animate-pulse
             rd-full
+            inset-0
+            pointer-events-none
           />
-          <v-icon v-if="isParticipantMuted" icon="mdi-microphone-off" size="x-small" absolute bottom-0 right-0 />
+          <v-icon v-if="isParticipantMuted" icon="mdi-microphone-off" size="x-small" absolute right-0 bottom-0 />
           <v-icon
             v-if="isDeafened && id === session?.session.id"
             icon="mdi-headphones-off"

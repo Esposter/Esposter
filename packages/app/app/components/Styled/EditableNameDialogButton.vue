@@ -76,7 +76,7 @@ watch(
         </template>
       </v-tooltip>
     </template>
-    <v-container px-6 fluid>
+    <v-container fluid px-6>
       <v-row>
         <v-col cols="12">
           <v-text-field

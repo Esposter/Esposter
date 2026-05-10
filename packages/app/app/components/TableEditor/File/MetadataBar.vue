@@ -18,7 +18,7 @@ const formattedDate = computed(() => dayjs(metadata.importedAt).format("MMM D, Y
       <v-card-title text-wrap>{{ metadata.name }}</v-card-title>
       <v-card-subtitle>Imported {{ formattedDate }}</v-card-subtitle>
       <template #append>
-        <div flex flex-wrap gap-2>
+        <div flex gap-2 flex-wrap>
           <v-chip label size="small" prepend-icon="mdi-database">{{ formatSize(metadata.size) }}</v-chip>
           <v-chip label size="small" prepend-icon="mdi-file-outline">
             {{ metadata.dataSourceType.toUpperCase() }}

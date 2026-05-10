@@ -32,7 +32,7 @@ const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
-  <div v-if="session && hasEmojis" flex items-center flex-wrap gap-1>
+  <div v-if="session && hasEmojis" flex items-center gap-1 flex-wrap>
     <div
       v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
@@ -40,13 +40,13 @@ const selectEmoji = await useSelectEmoji(message);
       rd-full
       flex
       items-center
-      px-2
       shadow-md
-      cursor-pointer
       z-1
       w-fit
       origin-center
       active:scale-95
+      px-2
+      cursor-pointer
       @click="
         isReacted && userIds.length === 1
           ? deleteEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey })

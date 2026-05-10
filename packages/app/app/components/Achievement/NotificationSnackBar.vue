@@ -31,7 +31,7 @@ const emit = defineEmits<{ close: [] }>();
         <div class="text-title-large" font-bold>Achievement Unlocked!</div>
         <div class="text-body-large">{{ prettify(userAchievement.achievement.name) }}</div>
         <div class="text-body-small">{{ userAchievement.achievement.description }}</div>
-        <div class="text-body-small" text-orange font-bold>+{{ userAchievement.achievement.points }} points</div>
+        <div class="text-body-small" font-bold text-orange>+{{ userAchievement.achievement.points }} points</div>
       </div>
     </div>
   </v-snackbar>

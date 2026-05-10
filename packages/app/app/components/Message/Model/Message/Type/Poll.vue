@@ -81,7 +81,7 @@ const vote = async (optionId: null | string) => {
     <span font-bold>{{ creator.name }}</span>
     <span text-gray> created a poll </span>
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
-    <v-card mt-2 variant="outlined" w-full>
+    <v-card variant="outlined" w-full mt-2>
       <v-card-title>{{ pollContent.question }}</v-card-title>
       <v-card-text>
         <v-radio-group

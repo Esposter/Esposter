@@ -17,7 +17,7 @@ const isLoading = ref(false);
 </script>
 
 <template>
-  <v-col flex flex-wrap items-center self-center gap-x-4 cols="6">
+  <v-col flex items-center self-center gap-x-4 flex-wrap cols="6">
     <template v-if="editMode">
       <v-avatar>
         <v-img v-if="modelValue" :src="modelValue" :alt="modelValue" />
@@ -32,8 +32,8 @@ const isLoading = ref(false);
         label="Upload image"
         density="compact"
         hide-details
-        my-2
         show-size
+        my-2
         @update:model-value="
           async (files?) => {
             if (!files) return;

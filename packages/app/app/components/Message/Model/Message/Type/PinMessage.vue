@@ -15,7 +15,7 @@ const scrollToMessage = useScrollToMessage();
     </template>
     <span font-bold>{{ creator.name }}</span>
     <span text-gray> pinned </span>
-    <span font-bold cursor-pointer hover:underline @click="message.replyRowKey && scrollToMessage(message.replyRowKey)">
+    <span font-bold hover:underline cursor-pointer @click="message.replyRowKey && scrollToMessage(message.replyRowKey)">
       a message</span
     >
     <span text-gray> to this room. </span>

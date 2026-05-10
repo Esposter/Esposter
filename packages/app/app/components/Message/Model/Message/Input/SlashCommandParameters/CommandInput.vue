@@ -31,11 +31,11 @@ onMounted(() => {
       ref="input"
       v-model="modelValue"
       class="input"
-      bg-transparent
       b-none
       outline-none
       text-sm
       font-bold
+      bg-transparent
       @focus="emit('focus')"
       @blur="emit('blur')"
       @keydown.enter.prevent="emit('navigate:next')"

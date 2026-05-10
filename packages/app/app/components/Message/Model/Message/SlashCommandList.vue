@@ -57,12 +57,12 @@ defineExpose({ onKeyDown });
 <template>
   <div
     v-if="items.length > 0"
-    class="bg-surface elevation-1 border-sm"
+    class="border-sm elevation-1 bg-surface"
     max-h-64
-    max-w-100
     flex
     flex-col
     rd
+    max-w-100
     overflow-y-auto
   >
     <v-card-title text-sm font-bold>{{ title }}</v-card-title>

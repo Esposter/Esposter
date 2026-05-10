@@ -20,10 +20,10 @@ const scrollToMessage = useScrollToMessage();
     class="custom-border"
     b-l-2
     b-t-2
-    cursor-pointer
     w-8
     h-3
     rd-tl-2
+    cursor-pointer
     @mouseenter="isIndicatorActive = true"
     @mouseleave="isIndicatorActive = false"
     @click="scrollToMessage(replyRowKey)"

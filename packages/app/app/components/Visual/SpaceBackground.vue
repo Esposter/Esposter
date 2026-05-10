@@ -22,10 +22,10 @@ onMounted(() => {
     :style="{ backgroundImage: `url(${NOT_FOUND_BACKGROUND_PATH})` }"
     h-full
     flex
-    justify-center
     items-center
     flex-col
     relative
+    justify-center
     bg="center cover black"
   >
     <slot />

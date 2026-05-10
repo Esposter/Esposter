@@ -13,7 +13,7 @@ const isFiltered = computed(() => filteredRowCount !== undefined && filteredRowC
 </script>
 
 <template>
-  <div flex flex-wrap gap-2>
+  <div flex gap-2 flex-wrap>
     <v-chip label size="small" :prepend-icon="isFiltered ? 'mdi-filter' : 'mdi-table-row'">
       <template v-if="isFiltered">{{ filteredRowCount }} / {{ statistics.rowCount }} rows</template>
       <template v-else>{{ statistics.rowCount }} rows</template>

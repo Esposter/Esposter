@@ -36,9 +36,9 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
     :class="{ 'overflow-anchor-none': isPinnedToBottom }"
     flex-1
     flex
-    pb-0
     basis-full
     flex-col-reverse
+    pb-0
     overflow-x-hidden
     overflow-y-auto
     lines="two"

@@ -18,7 +18,7 @@ const { search } = storeToRefs(rowStore);
     <TableEditorFileFindReplaceDialogButton />
   </div>
   <TableEditorFileFindReplaceBar />
-  <div flex flex-wrap items-center gap-1>
+  <div flex items-center gap-1 flex-wrap>
     <TableEditorFileColumnStatisticsDialogButton />
     <TableEditorFileRowOutlierToggleButton />
     <TableEditorFileRowClearFiltersButton />

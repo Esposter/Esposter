@@ -12,7 +12,7 @@ const { clicker } = storeToRefs(clickerStore);
   <v-tooltip v-for="clickerType of ClickerTypes" :key="clickerType" :text="NameMap[clickerType]">
     <template #activator="{ props }">
       <v-btn
-        class="bg-surface border-sm"
+        class="border-sm bg-surface"
         :="props"
         :active="clicker.type === clickerType"
         @click="clicker.type = clickerType"

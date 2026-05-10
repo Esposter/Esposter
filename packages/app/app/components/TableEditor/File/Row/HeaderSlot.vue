@@ -21,7 +21,7 @@ const { columnFilters } = storeToRefs(filterStore);
 
 <template>
   <div flex flex-col @click.stop>
-    <div class="group" flex cursor-pointer select-none items-center gap-1 @click="toggleSort(headerColumn)">
+    <div class="group" flex select-none items-center gap-1 cursor-pointer @click="toggleSort(headerColumn)">
       {{ column.name }}
       <v-icon
         transition-opacity

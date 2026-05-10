@@ -48,8 +48,8 @@ onMounted(() => {
     items-center
     gap-1.5
     rd
-    py-1
     px-2
+    py-1
     overflow-hidden
   >
     <span class="parameter-chip__label bg-background" font-bold text-sm :class="isError ? 'text-error' : ''">
@@ -60,10 +60,10 @@ onMounted(() => {
       v-model="modelValue"
       class="parameter-chip__input"
       color-inherit
-      bg-transparent
       b-none
       outline-none
       text-sm
+      bg-transparent
       :autofocus
       @focus="emit('focus')"
       @blur="emit('blur')"

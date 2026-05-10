@@ -27,7 +27,7 @@ const menuItems: Item[] = [
 <template>
   <v-col xl="2" lg="3" md="4" sm="6">
     <StyledCard h-full flex flex-col>
-      <v-card-title flex justify-end p-0>
+      <v-card-title flex p-0 justify-end>
         <div class="border-sm">
           <v-tooltip
             v-for="{ icon, shortTitle, title, onClick, color } of menuItems"
@@ -52,7 +52,7 @@ const menuItems: Item[] = [
           </template>
         </v-progress-linear>
       </v-card>
-      <v-card-actions px-4 text-sm>
+      <v-card-actions text-sm px-4>
         {{ file.filename }}
       </v-card-actions>
     </StyledCard>

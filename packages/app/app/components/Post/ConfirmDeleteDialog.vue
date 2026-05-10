@@ -38,7 +38,7 @@ const { text } = storeToRefs(colorsStore);
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
+    <div class="custom-border" rd-lg shadow-md mx-4 py-2>
       <slot name="postPreview" />
     </div>
   </StyledDeleteFormDialog>
