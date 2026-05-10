@@ -44,6 +44,7 @@ const {
   startCellSelection,
 } = cellStore;
 const copyRangeToClipboard = useCopyRangeToClipboard();
+const pasteRangeFromClipboard = usePasteRangeFromClipboard();
 const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
   const column = displayColumns.value.find((col) => toColumnKey(col.name) === headerColumn.key);
   if (!column) return {};
@@ -85,6 +86,9 @@ useEventListener(document, "keydown", async (event: KeyboardEvent) => {
   if (isModifierKey && event.key === "c" && selectedCellRange.value) {
     event.preventDefault();
     await copyRangeToClipboard();
+  } else if (isModifierKey && event.key === "v") {
+    event.preventDefault();
+    await pasteRangeFromClipboard(event.shiftKey);
   } else if (isModifierKey && event.key === "a") {
     event.preventDefault();
     const rowCount = filteredRows.value.length;

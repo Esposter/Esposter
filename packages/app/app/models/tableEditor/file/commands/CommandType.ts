@@ -11,6 +11,7 @@ export enum CommandType {
   MoveColumn = "MoveColumn",
   MoveRow = "MoveRow",
   NullStrategy = "NullStrategy",
+  PasteRange = "PasteRange",
   StringTransformation = "StringTransformation",
   ToggleColumnVisibility = "ToggleColumnVisibility",
   UpdateColumn = "UpdateColumn",

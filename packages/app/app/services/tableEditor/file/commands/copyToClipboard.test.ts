@@ -1,7 +1,7 @@
 import { makeColumn, makeDataSource, makeRow } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { takeOne } from "@esposter/shared";
-import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(copyToClipboard, () => {
   let writtenText = "";
@@ -69,5 +69,44 @@ describe(copyToClipboard, () => {
 
     expect(lines).toHaveLength(1);
     expect(takeOne(lines)).toBe("42");
+  });
+
+  describe("ClipboardItem branch", () => {
+    let writeMock: ReturnType<typeof vi.fn<() => Promise<void>>>;
+    const capturedItems: { "text/html": Blob; "text/plain": Blob }[] = [];
+
+    beforeEach(() => {
+      capturedItems.length = 0;
+      writeMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
+      vi.stubGlobal("ClipboardItem", function (items: { "text/html": Blob; "text/plain": Blob }) {
+        capturedItems.push(items);
+      });
+      vi.stubGlobal("navigator", { clipboard: { write: writeMock } });
+    });
+
+    afterEach(() => {
+      vi.stubGlobal("ClipboardItem", undefined);
+      vi.stubGlobal("navigator", {
+        clipboard: {
+          writeText: (text: string) => {
+            writtenText = text;
+          },
+        },
+      });
+    });
+
+    test("omits header row from HTML and TSV when includeHeaders is false", async () => {
+      expect.hasAssertions();
+      const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "42" })]);
+      await copyToClipboard(dataSource, { includeHeaders: false });
+      const items = takeOne(capturedItems);
+      assert.exists(items);
+      const { "text/html": htmlBlob, "text/plain": tsvBlob } = items;
+      const htmlText = await htmlBlob.text();
+      const tsvText = await tsvBlob.text();
+      expect(htmlText).not.toContain("<th>");
+      expect(htmlText).toContain("<td>42</td>");
+      expect(tsvText).toBe("42");
+    });
   });
 });
