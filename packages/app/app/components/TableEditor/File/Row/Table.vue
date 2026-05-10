@@ -10,7 +10,6 @@ import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { useCellStore } from "@/store/tableEditor/file/cell";
 import { useColumnStore } from "@/store/tableEditor/file/column";
 import { useRowStore } from "@/store/tableEditor/file/row";
-import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
 interface DataTableProps {
@@ -48,11 +47,16 @@ const {
 } = cellStore;
 const copyRangeToClipboard = useCopyRangeToClipboard();
 const pasteRangeFromClipboard = usePasteRangeFromClipboard();
+const columnKeyMap = computed(
+  () => new Map(displayColumns.value.map((column, columnIndex) => [toColumnKey(column.name), { column, columnIndex }])),
+);
 const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
-  const columnIndex = displayColumns.value.findIndex(({ name }) => toColumnKey(name) === headerColumn.key);
-  if (columnIndex === -1) return {};
-  const column = takeOne(displayColumns.value, columnIndex);
-  const rowIndex = rowIndexIdMap.value.get(item.id) ?? -1;
+  if (!headerColumn.key) return {};
+  const columnData = columnKeyMap.value.get(headerColumn.key);
+  if (!columnData) return {};
+  const { column, columnIndex } = columnData;
+  const rowIndex = rowIndexIdMap.value.get(item.id);
+  if (rowIndex === undefined) return {};
   const result: Record<string, unknown> = {
     onMousedown: (event: MouseEvent) => {
       if (
