@@ -45,13 +45,13 @@ describe(useStringTransformation, () => {
     expect(takeOne(dataSource.rows, 1).data[" "]).toBe("");
   });
 
-  test(`${StringTransformationType.Lowercase} lowercases all string cells`, () => {
+  test(`${StringTransformationType.LowerCase} lowercases all string cells`, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": "A" })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
-    stringTransformation(StringTransformationType.Lowercase);
+    stringTransformation(StringTransformationType.LowerCase);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -59,13 +59,13 @@ describe(useStringTransformation, () => {
     expect(takeOne(dataSource.rows).data[""]).toBe("a");
   });
 
-  test(`${StringTransformationType.Uppercase} uppercases all string cells`, () => {
+  test(`${StringTransformationType.UpperCase} uppercases all string cells`, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": "a" })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
-    stringTransformation(StringTransformationType.Uppercase);
+    stringTransformation(StringTransformationType.UpperCase);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);

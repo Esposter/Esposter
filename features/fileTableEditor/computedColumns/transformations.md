@@ -11,7 +11,7 @@ ColumnTransformationType
 ├── DatePart         — extract a calendar field (Year, Month, Day, Weekday, Hour, Minute)
 ├── RegexMatch       — regex capture group extraction from a string value
 ├── Math             — math expressions via mathjs (see Math.md)
-├── String           — single-column basic string transformations (Lowercase, TitleCase, Trim, Uppercase)
+├── String           — single-column basic string transformations (LowerCase, TitleCase, Trim, UpperCase)
 └── StringPattern    — multi-column string templating via positional pattern (see StringPattern.md)
 ```
 
@@ -91,10 +91,10 @@ Extends `SourceColumnId`. Restricted to string-typed source columns.
 { type: String, sourceColumnId: string, stringTransformationType: StringTransformationType }
 
 enum StringTransformationType {
-  Lowercase,
+  LowerCase,
   TitleCase,
   Trim,
-  Uppercase,
+  UpperCase,
 }
 ```
 

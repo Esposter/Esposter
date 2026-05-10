@@ -1,6 +1,5 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
-import { CopyRangeCommand } from "@/models/tableEditor/file/commands/CopyRangeCommand";
 import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -25,14 +24,12 @@ export const useCopyRangeToClipboard = () => {
     const range = selectedCellRange.value;
     if (!dataSource || !range) return;
 
-    const copiedRange = new CopyRangeCommand(
-      range,
-      displayColumns.value,
-      filteredRows.value,
-      copyIncludesHeaders.value,
-    ).execute();
-    const rangeDataSource = { ...dataSource, columns: copiedRange.columns, rows: copiedRange.rows };
-    await getResultAsync(() => copyToClipboard(rangeDataSource, { includeHeaders: copiedRange.includeHeaders })).match(
+    const rangeDataSource = {
+      ...dataSource,
+      columns: displayColumns.value.slice(range.columnStart, range.columnEnd + 1),
+      rows: filteredRows.value.slice(range.rowStart, range.rowEnd + 1),
+    };
+    await getResultAsync(() => copyToClipboard(rangeDataSource, { includeHeaders: copyIncludesHeaders.value })).match(
       noop,
       (error) => {
         createAlert(error.message, "error");

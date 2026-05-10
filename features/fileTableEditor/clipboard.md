@@ -17,18 +17,24 @@ Keyboard-driven copy/paste for cell ranges, aligned with Excel selection UX. All
 
 ### Implementation
 
-`CopyRangeCommand` (model, not extending `ADataSourceCommand` — read-only, no undo needed):
-
-- Constructor: `(range: CellRange, displayColumns: Column[], rows: Row[], includeHeaders: boolean)`
-- `execute()` → `CopiedRange { columns, rows, includeHeaders }` (sliced by range bounds)
-
-`useCopyRangeToClipboard` composable wires `CopyRangeCommand.execute()` to `copyToClipboard(rangeDataSource, options)`.
+`useCopyRangeToClipboard` slices `displayColumns` and `filteredRows` by the range bounds inline, then passes the result directly to `copyToClipboard(rangeDataSource, options)`.
 
 ---
 
-## Paste — Overwrite mode (default)
+## Paste
 
-**Keyboard**: `Ctrl+V` / `Cmd+V`
+**Keyboard**: `Ctrl+V` / `Cmd+V` (overwrite) · `Ctrl+Shift+V` / `Cmd+Shift+V` (shift down)
+
+The `PasteMode` enum (`models/tableEditor/file/commands/PasteMode.ts`) drives which mode runs:
+
+| Value                 | Trigger        | Behaviour                                                     |
+| --------------------- | -------------- | ------------------------------------------------------------- |
+| `PasteMode.Overwrite` | `Ctrl+V`       | Overwrites existing cells in-place; appends rows past the end |
+| `PasteMode.ShiftDown` | `Ctrl+Shift+V` | Inserts new rows at anchor, shifting existing rows down       |
+
+`usePasteRangeFromClipboard` accepts `pasteMode = PasteMode.Overwrite`.
+
+### Overwrite mode
 
 - Reads TSV from clipboard (position-based, no header row expected)
 - Anchor = top-left of current selection, or appends at end if no selection
@@ -36,8 +42,9 @@ Keyboard-driven copy/paste for cell ranges, aligned with Excel selection UX. All
 - Columns beyond the last display column are silently ignored
 - If pasted data extends past the last row, new rows are appended
 - Values are coerced to the target column's type via `coerceValue`
+- Columns pre-indexed via `Map<name, Column>` to avoid repeated linear scans
 
-### Undo/Redo
+#### Undo/Redo
 
 `PasteRangeCommand` extends `ADataSourceCommand<CommandType.PasteRange>`:
 
@@ -45,11 +52,7 @@ Keyboard-driven copy/paste for cell ranges, aligned with Excel selection UX. All
 - `doExecute`: overwrites cells; appends rows where needed; tracks `column.size` delta
 - `doUndo`: removes appended rows (count = `pastedValues.length - originalRows.length`); restores original cell values and sizes
 
----
-
-## Paste — Insert mode (push down)
-
-**Keyboard**: `Ctrl+Shift+V` / `Cmd+Shift+V`
+### Shift down mode
 
 - Reads TSV from clipboard (position-based)
 - Inserts parsed rows at anchor row index, shifting existing rows down
@@ -87,12 +90,12 @@ Anchor is preserved across Shift+click and Shift+Arrow; drag re-anchors on mouse
 | File                                                                   | Role                                                         |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------ |
 | `models/tableEditor/file/CellRange.ts`                                 | `CellRange` interface                                        |
-| `models/tableEditor/file/commands/CopyRangeCommand.ts`                 | Range extraction + `CopiedRange` return type                 |
+| `models/tableEditor/file/commands/PasteMode.ts`                        | `PasteMode` enum (`Overwrite` / `ShiftDown`)                 |
 | `models/tableEditor/file/commands/PasteRangeCommand.ts`                | Overwrite paste + undo                                       |
 | `services/tableEditor/file/commands/parseClipboardValuesByPosition.ts` | TSV → `string[][]` (no header row)                           |
-| `composables/tableEditor/file/useCopyRangeToClipboard.ts`              | Wires `CopyRangeCommand` → clipboard                         |
+| `composables/tableEditor/file/useCopyRangeToClipboard.ts`              | Slices range and writes to clipboard                         |
 | `composables/tableEditor/file/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `PasteRangeCommand` or `CreateRowsCommand` |
-| `components/TableEditor/File/Row/Table.vue`                            | Keyboard event handlers                                      |
+| `components/TableEditor/File/Row/Table.vue`                            | Keyboard event handlers; maps `shiftKey` → `PasteMode`       |
 | `store/tableEditor/file/cell.ts`                                       | `shiftStartCellSelection`, `focusCell` for keyboard nav      |
 
 ---
@@ -100,5 +103,4 @@ Anchor is preserved across Shift+click and Shift+Arrow; drag re-anchors on mouse
 ## Tests
 
 - `parseClipboardValuesByPosition.test.ts` — pure function: tab/newline splitting, CRLF, empty-line filtering
-- `CopyRangeCommand.test.ts` — range slicing for columns and rows, `includeHeaders` passthrough
-- `PasteRangeCommand.test.ts` — overwrite, append, undo/redo, column offset, type coercion, size tracking
+- `usePasteRangeFromClipboard.test.ts` — overwrite mode, shift down mode, undo/redo, column offset, type coercion, no-op cases

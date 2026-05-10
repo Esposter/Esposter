@@ -3,6 +3,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/datasource/Data
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import type { CellPropsFunction } from "vuetify/lib/components/VDataTable/types.mjs";
 
+import { PasteMode } from "@/models/tableEditor/file/commands/PasteMode";
 import { ArrowKeyDeltaMap } from "@/services/tableEditor/file/ArrowKeyDeltaMap";
 import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
@@ -95,7 +96,7 @@ onKeyStroke(["v", "V"], async (event) => {
   if (editingCell.value || getIsInputFocused() || (!event.ctrlKey && !event.metaKey) || !selectedCellRange.value)
     return;
   event.preventDefault();
-  await pasteRangeFromClipboard(event.shiftKey);
+  await pasteRangeFromClipboard(event.shiftKey ? PasteMode.ShiftDown : PasteMode.Overwrite);
 });
 
 onKeyStroke(["a", "A"], (event) => {

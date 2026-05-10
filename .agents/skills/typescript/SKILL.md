@@ -158,10 +158,10 @@ When a large enum has a meaningful "base" subset that should be handled separate
 ```ts
 // BasicStringTransformationType.ts (exported — sub-functions accept this for exhaustive switch)
 export enum BasicStringTransformationType {
-  Lowercase = "Lowercase",
+  LowerCase = "LowerCase",
   TitleCase = "TitleCase",
   Trim = "Trim",
-  Uppercase = "Uppercase",
+  UpperCase = "UpperCase",
 }
 export const basicStringTransformationTypeSchema = z.enum(
   BasicStringTransformationType,
@@ -179,7 +179,7 @@ export const stringTransformationTypeSchema = z.enum(
 ) satisfies z.ZodType<StringTransformationType>;
 ```
 
-**Why**: Functions like `computeStringTransformation` accept `BasicStringTransformationType` so their `switch` is **exhaustive** — TypeScript verifies all cases are handled and `default: exhaustiveGuard(transform)` is truly unreachable. `mergeObjectsStrict` ensures `StringTransformationType.Lowercase`, `StringTransformationType.Interpolate` etc. all work identically to a plain enum at call sites. Keeping the catch-all `enum BaseXxxType` unexported and co-located in the merged file avoids polluting exports with one-off internal groupings.
+**Why**: Functions like `computeStringTransformation` accept `BasicStringTransformationType` so their `switch` is **exhaustive** — TypeScript verifies all cases are handled and `default: exhaustiveGuard(transform)` is truly unreachable. `mergeObjectsStrict` ensures `StringTransformationType.LowerCase`, `StringTransformationType.Interpolate` etc. all work identically to a plain enum at call sites. Keeping the catch-all `enum BaseXxxType` unexported and co-located in the merged file avoids polluting exports with one-off internal groupings.
 
 ## Enum Values Array
 

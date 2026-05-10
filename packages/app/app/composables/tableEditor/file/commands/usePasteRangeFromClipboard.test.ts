@@ -7,6 +7,7 @@ import {
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { usePasteRangeFromClipboard } from "@/composables/tableEditor/file/commands/usePasteRangeFromClipboard";
+import { PasteMode } from "@/models/tableEditor/file/commands/PasteMode";
 import { useCellStore } from "@/store/tableEditor/file/cell";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
@@ -164,7 +165,7 @@ describe(usePasteRangeFromClipboard, () => {
     });
   });
 
-  describe("insert mode", () => {
+  describe("shift down mode", () => {
     test("inserts rows at anchor row position", async () => {
       expect.hasAssertions();
 
@@ -174,7 +175,7 @@ describe(usePasteRangeFromClipboard, () => {
       readTextMock.mockResolvedValueOnce("2");
       selectAnchor(1, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard(true);
+      await pasteRangeFromClipboard(PasteMode.ShiftDown);
 
       assert.exists(editedItem.value?.dataSource);
 
@@ -193,7 +194,7 @@ describe(usePasteRangeFromClipboard, () => {
       readTextMock.mockResolvedValueOnce("2");
       selectAnchor(1, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard(true);
+      await pasteRangeFromClipboard(PasteMode.ShiftDown);
       const fileHistoryStore = useFileHistoryStore();
       fileHistoryStore.undo(editedItem.value);
 

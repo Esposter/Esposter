@@ -80,7 +80,7 @@ computeValue(rows, row, columns, column, rowIndex?, visited = new Set()):
 | `shared/models/tableEditor/file/column/transformation/DatePartTransformation.ts`             |                                                              |
 | `shared/models/tableEditor/file/column/transformation/RegexMatchTransformation.ts`           |                                                              |
 | `shared/models/tableEditor/file/column/transformation/MathTransformation.ts`                 | mathjs expressions (v3)                                      |
-| `shared/models/tableEditor/file/column/transformation/string/StringTransformation.ts`        | Basic string ops: Lowercase, TitleCase, Trim, Uppercase (v4) |
+| `shared/models/tableEditor/file/column/transformation/string/StringTransformation.ts`        | Basic string ops: LowerCase, TitleCase, Trim, UpperCase (v4) |
 | `shared/models/tableEditor/file/column/transformation/string/StringTransformationType.ts`    | Enum (v4)                                                    |
 | `shared/models/tableEditor/file/column/transformation/string/StringPatternTransformation.ts` | Multi-column `{N}` pattern (v3)                              |
 
