@@ -3,6 +3,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/datasource/Data
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import type { CellPropsFunction } from "vuetify/lib/components/VDataTable/types.mjs";
 
+import { ArrowKeyDeltaMap } from "@/services/tableEditor/file/ArrowKeyDeltaMap";
 import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { useCellStore } from "@/store/tableEditor/file/cell";
@@ -65,8 +66,8 @@ const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
     },
     onMouseenter: (event: MouseEvent) => {
       if (!isSelectingCells.value) return;
-      else if (!(event.buttons & 1)) endCellSelection();
-      else extendCellSelection(rowIndex, columnIndex);
+      else if (event.buttons & 1) extendCellSelection(rowIndex, columnIndex);
+      else endCellSelection();
     },
   };
   if (isCellInRange(rowIndex, columnIndex))
@@ -74,53 +75,62 @@ const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
   return result;
 };
 
-useEventListener(document, "mouseup", () => {
-  endCellSelection();
+const getIsInputFocused = () => {
+  const activeElement = document.activeElement;
+  return activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement;
+};
+
+onKeyStroke(["c", "C"], async (event) => {
+  if (
+    editingCell.value ||
+    getIsInputFocused() ||
+    (!event.ctrlKey && !event.metaKey) ||
+    event.shiftKey ||
+    !selectedCellRange.value
+  )
+    return;
+  event.preventDefault();
+  await copyRangeToClipboard();
 });
 
-useEventListener(document, "keydown", async (event: KeyboardEvent) => {
-  if (editingCell.value) return;
-  const activeElement = document.activeElement;
-  if (activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement) return;
-  const isModifierKey = event.ctrlKey || event.metaKey;
-  if (isModifierKey && event.key === "c" && selectedCellRange.value) {
-    event.preventDefault();
-    await copyRangeToClipboard();
-  } else if (isModifierKey && event.key === "v") {
-    event.preventDefault();
-    await pasteRangeFromClipboard(event.shiftKey);
-  } else if (isModifierKey && event.key === "a") {
-    event.preventDefault();
-    const rowCount = filteredRows.value.length;
-    const columnCount = displayColumns.value.length;
-    if (rowCount > 0 && columnCount > 0) {
-      startCellSelection(0, 0);
-      extendCellSelection(rowCount - 1, columnCount - 1);
-      endCellSelection();
-    }
-  } else if (event.key === "Escape" && selectedCellRange.value) {
-    clearCellSelection();
-  } else if (focusCell.value) {
-    const arrowKeyDeltas: Partial<Record<string, [number, number]>> = {
-      ArrowDown: [1, 0],
-      ArrowLeft: [0, -1],
-      ArrowRight: [0, 1],
-      ArrowUp: [-1, 0],
-    };
-    const arrowDelta = arrowKeyDeltas[event.key];
-    if (arrowDelta) {
-      event.preventDefault();
-      const [rowDelta, columnDelta] = arrowDelta;
-      const rowCount = filteredRows.value.length;
-      const columnCount = displayColumns.value.length;
-      const newRowIndex = Math.max(0, Math.min(rowCount - 1, focusCell.value.rowIndex + rowDelta));
-      const newColumnIndex = Math.max(0, Math.min(columnCount - 1, focusCell.value.columnIndex + columnDelta));
-      if (event.shiftKey) extendCellSelection(newRowIndex, newColumnIndex);
-      else {
-        startCellSelection(newRowIndex, newColumnIndex);
-        endCellSelection();
-      }
-    }
+onKeyStroke(["v", "V"], async (event) => {
+  if (editingCell.value || getIsInputFocused() || (!event.ctrlKey && !event.metaKey) || !selectedCellRange.value)
+    return;
+  event.preventDefault();
+  await pasteRangeFromClipboard(event.shiftKey);
+});
+
+onKeyStroke(["a", "A"], (event) => {
+  if (editingCell.value || getIsInputFocused() || (!event.ctrlKey && !event.metaKey) || event.shiftKey) return;
+  event.preventDefault();
+  const rowCount = filteredRows.value.length;
+  const columnCount = displayColumns.value.length;
+  if (rowCount > 0 && columnCount > 0) {
+    startCellSelection(0, 0);
+    extendCellSelection(rowCount - 1, columnCount - 1);
+    endCellSelection();
+  }
+});
+
+onKeyStroke("Escape", () => {
+  if (editingCell.value || getIsInputFocused() || !selectedCellRange.value) return;
+  clearCellSelection();
+});
+
+onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
+  if (editingCell.value || getIsInputFocused() || !focusCell.value) return;
+  const arrowKeyDelta = ArrowKeyDeltaMap[event.key];
+  if (!arrowKeyDelta) return;
+  event.preventDefault();
+  const [rowDelta, columnDelta] = arrowKeyDelta;
+  const rowCount = filteredRows.value.length;
+  const columnCount = displayColumns.value.length;
+  const newRowIndex = Math.max(0, Math.min(rowCount - 1, focusCell.value.rowIndex + rowDelta));
+  const newColumnIndex = Math.max(0, Math.min(columnCount - 1, focusCell.value.columnIndex + columnDelta));
+  if (event.shiftKey) extendCellSelection(newRowIndex, newColumnIndex);
+  else {
+    startCellSelection(newRowIndex, newColumnIndex);
+    endCellSelection();
   }
 });
 </script>

@@ -1,7 +1,8 @@
+// @vitest-environment nuxt
 import { makeColumn, makeDataSource, makeRow } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { takeOne } from "@esposter/shared";
-import { afterAll, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(copyToClipboard, () => {
   let writtenText = "";
@@ -71,7 +72,7 @@ describe(copyToClipboard, () => {
     expect(takeOne(lines)).toBe("42");
   });
 
-  describe("ClipboardItem branch", () => {
+  describe("clipboardItem branch", () => {
     let writeMock: ReturnType<typeof vi.fn<() => Promise<void>>>;
     const capturedItems: { "text/html": Blob; "text/plain": Blob }[] = [];
 
@@ -97,6 +98,7 @@ describe(copyToClipboard, () => {
 
     test("omits header row from HTML and TSV when includeHeaders is false", async () => {
       expect.hasAssertions();
+
       const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "42" })]);
       await copyToClipboard(dataSource, { includeHeaders: false });
       const items = takeOne(capturedItems);
@@ -104,6 +106,7 @@ describe(copyToClipboard, () => {
       const { "text/html": htmlBlob, "text/plain": tsvBlob } = items;
       const htmlText = await htmlBlob.text();
       const tsvText = await tsvBlob.text();
+
       expect(htmlText).not.toContain("<th>");
       expect(htmlText).toContain("<td>42</td>");
       expect(tsvText).toBe("42");
