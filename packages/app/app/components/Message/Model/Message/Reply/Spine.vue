@@ -16,12 +16,12 @@ const scrollToMessage = useScrollToMessage();
     :class="isIndicatorActive ? 'b-text' : 'b-border'"
     h-3
     w-8
-    b-solid
     b-l-2
     b-t-2
     rd-tl-2
-    cursor-pointer
+    b-solid
     transition-border-color
+    cursor-pointer
     duration="[var(--transition-duration)]"
     @mouseenter="isIndicatorActive = true"
     @mouseleave="isIndicatorActive = false"
