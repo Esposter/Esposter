@@ -43,6 +43,7 @@ onMounted(() => {
 <template>
   <div
     :class="isError ? ['b-error'] : ['b-border', 'focus-within:b-info']"
+    b-solid
     b="[1.5px]"
     inline-flex
     items-center

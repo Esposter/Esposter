@@ -45,6 +45,7 @@ const selectEmoji = await useSelectEmoji(message);
       items-center
       b-1
       rd-full
+      b-solid
       shadow-md
       px-2
       cursor-pointer

@@ -163,13 +163,28 @@ Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS ut
 - `b-t-2` not `border-top-2`
 - `b-x-1` not `border-x-1`
 
-Note: `b-1` sets `border-width: 1px`. Border style (`solid`) is applied automatically by Wind3 preflight. For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. For the Vuetify overlay border use `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`.
+Note: `b-1` sets `border-width: 1px`. **`b-solid` is NOT applied automatically — always add it explicitly whenever you use a border-color utility.** For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. For the Vuetify overlay border use `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`.
+
+**Border-color + border-style must always appear together:**
+
+```html
+<!-- WRONG — border won't render without b-solid -->
+<div b-1 b-text>
+  <!-- CORRECT -->
+  <div b-solid b-1 b-text>
+    <!-- CORRECT — dynamic color, static style -->
+    <div b-solid b-1 :class="isError ? 'b-error' : 'b-border'"></div>
+  </div>
+</div>
+```
+
+This applies to all border-color utilities: `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, `b-primary`, etc. — including those in dynamic `:class` bindings (put `b-solid` as a static attribute).
 
 **`custom-border` / `border-color` scoped-class pattern → attributify:**
 
 ```diff
 - <div class="custom-border" ...>
-+ <div b-1 b-text ...>
++ <div b-solid b-1 b-text ...>
 
 - <style scoped>
 - .custom-border { border: var(--border-width) var(--border-style) v-bind(text); }
@@ -184,6 +199,7 @@ Note: `b-1` sets `border-width: 1px`. Border style (`solid`) is applied automati
 - <div class="parameter-chip" :class="{ 'parameter-chip--error': isError }">
 + <div
 +   :class="isError ? ['b-error'] : ['b-[rgba(var(--v-border-color),var(--v-border-opacity))]', 'focus-within:b-info']"
++   b-solid
 +   b-w="[1.5px]"
 + >
 

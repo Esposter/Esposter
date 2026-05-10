@@ -16,11 +16,13 @@ const scrollToMessage = useScrollToMessage();
     :class="isIndicatorActive ? 'b-text' : 'b-border'"
     h-3
     w-8
+    b-solid
     b-l-2
     b-t-2
     rd-tl-2
     cursor-pointer
-    transition="[border-color_var(--transition-duration)]"
+    transition-border-color
+    duration="[var(--transition-duration)]"
     @mouseenter="isIndicatorActive = true"
     @mouseleave="isIndicatorActive = false"
     @click="scrollToMessage(replyRowKey)"

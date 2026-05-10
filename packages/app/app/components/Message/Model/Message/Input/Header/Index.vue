@@ -12,10 +12,11 @@ const emit = defineEmits<{ close: [] }>();
     <slot />
     <v-btn
       top="1/2"
+      b-text
       absolute
       right-4
       b-1
-      b-text
+      b-solid
       translate-y="-1/2"
       icon="mdi-close"
       size="small"

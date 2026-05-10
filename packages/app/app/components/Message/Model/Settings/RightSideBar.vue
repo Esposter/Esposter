@@ -5,7 +5,7 @@ const emit = defineEmits<{ close: [event: MouseEvent] }>();
 <template>
   <v-navigation-drawer :width="96" location="right" floating permanent>
     <div flex pt-10 justify-center>
-      <v-btn icon="mdi-close" b-2 b-border @click="emit('close', $event)" />
+      <v-btn icon="mdi-close" b-border b-2 b-solid @click="emit('close', $event)" />
     </div>
   </v-navigation-drawer>
 </template>
