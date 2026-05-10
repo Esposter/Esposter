@@ -35,7 +35,7 @@ const { deletePost } = postStore;
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <div b-text b-1 rd-lg b-solid shadow-md mx-4 py-2>
+    <div b-1 rd-lg b-solid shadow-md mx-4 py-2 b-text>
       <slot name="postPreview" />
     </div>
   </StyledDeleteFormDialog>

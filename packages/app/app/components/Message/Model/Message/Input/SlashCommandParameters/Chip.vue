@@ -43,16 +43,16 @@ onMounted(() => {
 <template>
   <div
     :class="isError ? ['b-error'] : ['b-border', 'focus-within:b-info']"
-    b-solid
     b="[1.5px]"
     inline-flex
     items-center
     gap-1.5
     rd
-    bg-border
+    b-solid
     px-2
     py-1
     overflow-hidden
+    bg-border
   >
     <span
       :class="isError ? 'text-error' : ''"

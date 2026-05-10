@@ -18,7 +18,7 @@ export const useExecuteSlashCommand = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
-  const { createMessage } = dataStore;
+  const { storeSendMessage } = dataStore;
   const pollDialogStore = usePollDialogStore();
   const { isOpen } = storeToRefs(pollDialogStore);
   const replyStore = useReplyStore();
@@ -82,15 +82,14 @@ export const useExecuteSlashCommand = () => {
         exhaustiveGuard(command);
     }
 
-    if (createMessageInput) {
-      await createMessage({
-        ...createMessageInput,
-        message: createMessageInput.message
-          ? marked.parse(sanitizeHtml(createMessageInput.message), { async: false })
-          : undefined,
-        replyRowKey: replyRowKey.value,
-      });
-      replyRowKey.value = "";
-    }
+    if (!createMessageInput) return;
+
+    await storeSendMessage({
+      ...createMessageInput,
+      message: createMessageInput.message
+        ? marked.parse(sanitizeHtml(createMessageInput.message), { async: false })
+        : undefined,
+      replyRowKey: replyRowKey.value,
+    });
   };
 };
