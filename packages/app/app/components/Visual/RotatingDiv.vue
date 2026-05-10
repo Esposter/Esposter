@@ -10,9 +10,9 @@ const transform = useRotatingTransform(container);
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .div {
   transform: v-bind(transform);
-  transition: transform $transition-duration-root ease-out;
+  transition: transform var(--transition-duration) ease-out;
 }
 </style>

@@ -29,8 +29,8 @@ const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .sidebar {
-  top: calc(1rem + $app-bar-height);
+  top: calc(1rem + var(--app-bar-height));
 }
 </style>

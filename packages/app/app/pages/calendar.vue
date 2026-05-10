@@ -42,8 +42,8 @@ const events = computed<EventSourceInput>(() => {
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .v-container {
-  height: calc(100dvh - $app-bar-height);
+  height: calc(100dvh - var(--app-bar-height));
 }
 </style>

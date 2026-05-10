@@ -38,7 +38,7 @@ canvas {
 }
 
 .v-toolbar__content {
-  min-height: $app-bar-height;
+  min-height: var(--app-bar-height);
   height: auto !important;
 }
 </style>

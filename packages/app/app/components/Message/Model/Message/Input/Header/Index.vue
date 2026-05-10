@@ -28,8 +28,8 @@ const { text } = storeToRefs(colorsStore);
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .custom-border {
-  border: $border-width-root $border-style-root v-bind(text);
+  border: var(--border-width) var(--border-style) v-bind(text);
 }
 </style>

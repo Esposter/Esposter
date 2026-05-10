@@ -19,10 +19,10 @@ const { smAndDown } = useVDisplay();
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .accent {
   color: transparent;
-  background-image: $vue-gradient;
+  background-image: var(--vue-gradient);
   background-clip: text;
 }
 </style>

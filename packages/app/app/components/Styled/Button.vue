@@ -17,8 +17,8 @@ const { buttonProps } = defineProps<StyledButtonProps>();
   </v-btn>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .button {
-  background-image: $midnight-bloom;
+  background-image: var(--midnight-bloom);
 }
 </style>

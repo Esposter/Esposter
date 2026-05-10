@@ -41,8 +41,8 @@ const { text } = storeToRefs(colorsStore);
   </StyledDeleteFormDialog>
 </template>
 <!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
-<style scoped lang="scss">
+<style scoped>
 .custom-border {
-  border: $border-width-root $border-style-root v-bind(text);
+  border: var(--border-width) var(--border-style) v-bind(text);
 }
 </style>

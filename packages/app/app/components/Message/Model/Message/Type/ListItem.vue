@@ -28,7 +28,7 @@ const style = computed<CSSProperties>(() =>
   align-self: flex-start;
 
   > :first-child {
-    width: $avatar-width;
+    width: var(--avatar-width);
   }
 
   > .v-list-item__spacer {

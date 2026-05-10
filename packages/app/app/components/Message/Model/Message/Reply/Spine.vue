@@ -30,9 +30,9 @@ const scrollToMessage = useScrollToMessage();
   />
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .custom-border {
-  border: 0 $border-style-root v-bind(borderColor);
-  transition: border-color $transition-duration-root;
+  border: 0 var(--border-style) v-bind(borderColor);
+  transition: border-color var(--transition-duration);
 }
 </style>

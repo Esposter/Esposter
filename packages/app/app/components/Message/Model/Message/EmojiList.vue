@@ -73,16 +73,16 @@ const selectEmoji = await useSelectEmoji(message);
 <style scoped lang="scss">
 .reacted {
   background-color: v-bind(infoOpacity10);
-  border: $border-width-root $border-style-root v-bind(info);
+  border: var(--border-width) var(--border-style) v-bind(info);
 }
 
 .not-reacted {
   background-color: v-bind(backgroundOpacity80);
-  border: $border-width-root $border-style-root transparent;
+  border: var(--border-width) var(--border-style) transparent;
 
   &:hover {
     background-color: v-bind(surfaceOpacity80);
-    border: $border-width-root $border-style-root v-bind(border);
+    border: var(--border-width) var(--border-style) v-bind(border);
   }
 }
 </style>

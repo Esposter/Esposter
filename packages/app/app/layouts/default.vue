@@ -89,7 +89,7 @@ defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
 
 <style scoped lang="scss">
 .v-main {
-  padding-top: $app-bar-height;
+  padding-top: var(--app-bar-height);
 }
 // Only show scrollbar for part of the drawer that actually has
 // content greater than screen size rather than the entire drawer.

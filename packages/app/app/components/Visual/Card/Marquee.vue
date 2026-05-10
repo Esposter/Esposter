@@ -70,7 +70,7 @@ $card-length: 6;
   --inset: 0;
   --outset: 1;
   grid-template-columns: 1fr 1fr;
-  transition: transform $transition-move-duration-root;
+  transition: transform var(--transition-move-duration);
   transform: rotateX(20deg) rotateZ(-20deg) skewX(20deg);
   transform-style: preserve-3d;
 
@@ -93,7 +93,7 @@ $card-length: 6;
     content: "";
     position: absolute;
     inset: 4px 4px -2px -2px;
-    border-radius: $border-radius-root;
+    border-radius: var(--border-radius);
     background-color: v-bind(onSurface);
     opacity: 0.1;
     scale: 1 calc(1 + (var(--active) * 0.05));

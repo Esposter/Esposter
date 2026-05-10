@@ -22,7 +22,7 @@ const { primary, "primary-darken-1": primaryDarken1 } = storeToRefs(colorsStore)
 <style scoped lang="scss">
 .author {
   color: v-bind(primary);
-  transition: color $transition-duration-root;
+  transition: color var(--transition-duration);
 
   &:hover {
     color: v-bind(primaryDarken1);

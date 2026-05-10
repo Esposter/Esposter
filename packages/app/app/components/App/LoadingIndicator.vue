@@ -11,7 +11,7 @@ const { "primary-lighten-1": primaryLighten1 } = storeToRefs(colorsStore);
 
 <style scoped lang="scss">
 .loading-indicator {
-  top: $app-bar-height !important;
+  top: var(--app-bar-height) !important;
   box-shadow: 0 0 5px v-bind(primaryLighten1);
   // Put loading indicator just above appbar which has z index of 1000
   // but below menus which have z index of 2000

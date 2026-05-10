@@ -209,6 +209,7 @@ catalog:
   typescript: 5.9.3
   typescript-eslint: ^8.59.2
   unocss: ^66.6.8
+  unocss-preset-vuetify: ^0.3.0
   unplugin-auto-import: ^21.0.0
   unplugin-dts: 1.0.0-beta.6
   v-viewer: ^3.0.23
