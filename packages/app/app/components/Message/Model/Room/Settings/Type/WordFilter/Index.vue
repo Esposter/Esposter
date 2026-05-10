@@ -57,7 +57,7 @@ const deleteWord = (word: string) => {
               {{ word }}
             </v-chip>
           </div>
-          <span class="text-medium-emphasis" text-xs>
+          <span text-medium-emphasis text-xs>
             Messages containing these words will be blocked. Comparisons are case-insensitive.
           </span>
           <v-btn

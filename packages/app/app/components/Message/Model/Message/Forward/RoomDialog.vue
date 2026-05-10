@@ -52,7 +52,7 @@ const {
           Forward To
           <v-btn density="comfortable" icon="mdi-close" @click="dialog = false" />
         </div>
-        <div class="text-title-small" text-gray pb-2>Select where you want to share this message.</div>
+        <div text-title-small text-gray pb-2>Select where you want to share this message.</div>
         <v-text-field
           v-model="searchQuery"
           append-inner-icon="mdi-magnify"

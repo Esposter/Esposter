@@ -1,3 +1,3 @@
 <template>
-  <div class="text-headline-large" flex font-bold justify-center>Store</div>
+  <div text-headline-large flex font-bold justify-center>Store</div>
 </template>

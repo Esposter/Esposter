@@ -20,16 +20,16 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
         <v-avatar :color="userAchievement?.unlockedAt ? 'success' : 'grey'" size="64">
           <v-icon :icon="achievementDefinition.icon" color="white" size="40" />
         </v-avatar>
-        <div class="text-title-large" font-bold mt-2>{{ prettify(achievementDefinition.name) }}</div>
-        <div class="text-body-small">{{ achievementDefinition.description }}</div>
-        <div v-if="userAchievement?.unlockedAt" class="text-body-small" text-gray font-bold italic mt-2>
+        <div text-title-large font-bold mt-2>{{ prettify(achievementDefinition.name) }}</div>
+        <div text-body-small>{{ achievementDefinition.description }}</div>
+        <div v-if="userAchievement?.unlockedAt" text-body-small text-gray font-bold italic mt-2>
           Unlocked {{ userAchievement.unlockedAt.toLocaleDateString() }}
         </div>
         <v-spacer />
         <v-chip mt-2 :color="getCategoryColor(achievementDefinition.category)" size="small">
           {{ achievementDefinition.category }}
         </v-chip>
-        <div class="text-body-small" font-bold mt-2 text-orange>{{ achievementDefinition.points }} points</div>
+        <div text-body-small font-bold mt-2 text-orange>{{ achievementDefinition.points }} points</div>
         <v-progress-linear
           :model-value="((userAchievement?.amount ?? 0) / (achievementDefinition.amount ?? 1)) * 100"
           :height="6"
@@ -37,9 +37,7 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
           rd
           mt-2
         />
-        <div class="text-body-small" mt-1>
-          {{ userAchievement?.amount ?? 0 }} / {{ achievementDefinition.amount ?? 1 }}
-        </div>
+        <div text-body-small mt-1>{{ userAchievement?.amount ?? 0 }} / {{ achievementDefinition.amount ?? 1 }}</div>
       </v-card-text>
     </StyledCard>
   </v-col>

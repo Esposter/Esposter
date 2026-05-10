@@ -36,7 +36,7 @@ const messageHtml = useMessageWithMentions(
     </template>
     <MessageModelMessageReplyTitle v-if="message.replyRowKey || !isSameBatch" :creator :message />
     <div v-if="message.isForward" flex gap-x-2>
-      <div class="bg-border" h-inherit w-1 rd />
+      <div bg-border h-inherit w-1 rd />
       <div flex flex-col gap-y-1>
         <v-list-item-subtitle>
           <span italic>

@@ -37,10 +37,10 @@ const loginButtonsProps = ref<LoginButtonProps[]>([
     <v-container h-full flex items-center justify-center>
       <StyledCard :card-props="{ width: '100%', maxWidth: '30rem' }">
         <v-container>
-          <div class="text-headline-small" mb-1 text-center>Sign in to</div>
+          <div text-headline-small mb-1 text-center>Sign in to</div>
           <div flex items-center mb-2 justify-center>
             <AppLogo />
-            <span class="text-title-large" pl-2>{{ SITE_NAME }}</span>
+            <span text-title-large pl-2>{{ SITE_NAME }}</span>
           </div>
           <div mb-2 text-center>Login and start taking rides with {{ SITE_NAME }}!</div>
           <template v-for="loginButtonProps of loginButtonsProps" :key="loginButtonProps.provider">

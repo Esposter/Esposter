@@ -47,11 +47,11 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
     <template #left>
       <MessageLeftSideBar />
     </template>
-    <div class="bg-surface" h-full flex flex-col overflow-y-auto>
+    <div bg-surface h-full flex flex-col overflow-y-auto>
       <v-container>
-        <div class="text-headline-small" font-bold mb-6>Friends</div>
+        <div text-headline-small font-bold mb-6>Friends</div>
         <div mb-8>
-          <div class="text-title-large" mb-3>Add Friend</div>
+          <div text-title-large mb-3>Add Friend</div>
           <div flex gap-2>
             <v-text-field
               v-model="searchQuery"
@@ -96,7 +96,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
           <v-progress-linear v-if="isSearching" indeterminate mt-2 />
         </div>
         <div v-if="displayReceivedFriendRequests.length > 0" mb-8>
-          <div class="text-title-large" mb-3>Pending Requests — {{ displayReceivedFriendRequests.length }}</div>
+          <div text-title-large mb-3>Pending Requests — {{ displayReceivedFriendRequests.length }}</div>
           <v-list rd>
             <v-list-item v-for="{ id, sender } of displayReceivedFriendRequests" :key="id" :title="sender.name">
               <template #prepend>
@@ -127,7 +127,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
           </v-list>
         </div>
         <div mb-8>
-          <div class="text-title-large" mb-3>Friends — {{ displayFriends.length }}</div>
+          <div text-title-large mb-3>Friends — {{ displayFriends.length }}</div>
           <v-list v-if="displayFriends.length > 0" rd>
             <v-list-item v-for="{ id, name, image } of displayFriends" :key="id" :title="name">
               <template #prepend>
@@ -144,10 +144,10 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
               </template>
             </v-list-item>
           </v-list>
-          <span v-else class="text-medium-emphasis">No friends yet. Search for users above to add them.</span>
+          <span v-else text-medium-emphasis>No friends yet. Search for users above to add them.</span>
         </div>
         <div v-if="blockedUsers.length > 0">
-          <div class="text-title-large" mb-3>Blocked — {{ blockedUsers.length }}</div>
+          <div text-title-large mb-3>Blocked — {{ blockedUsers.length }}</div>
           <v-list rd>
             <v-list-item v-for="{ id, name, image } of blockedUsers" :key="id" :title="name">
               <template #prepend>

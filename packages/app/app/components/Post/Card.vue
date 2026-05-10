@@ -2,7 +2,6 @@
 import type { PostWithRelations } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { useColorsStore } from "@/store/colors";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCardProps {
@@ -14,8 +13,6 @@ interface PostCardProps {
 
 const { isCommentStore = false, post } = defineProps<PostCardProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const colorsStore = useColorsStore();
-const { surfaceOpacity80 } = storeToRefs(colorsStore);
 const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
 const isCreator = computed(() => post.userId === session.value?.user.id);
 const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description));
@@ -24,17 +21,18 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
 <template>
   <PostConfirmDeleteDialog :post-id="post.id">
     <template #activator="{ updateIsOpen }">
-      <StyledCard class="card">
+      <StyledCard pl-10 bg-surfaceOpacity80>
         <PostLikeSection absolute left-2 top-2 :post :is-comment-store />
         <v-card pt-2 px-2>
           <StyledAvatar :image="post.user.image" :name="post.user.name" />
           Posted by <span font-bold>{{ post.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
-          <v-card-title class="text-title-large" font-bold px-0 whitespace="normal!">
+          <v-card-title text-title-large font-bold px-0 whitespace-normal>
             {{ post.title }}
           </v-card-title>
           <v-card-text
             v-if="!isEmptyDescription"
-            class="card-content text-body-large"
+            class="card-content"
+            text-body-large
             pb-0
             px-0
             v-html="post.description"
@@ -51,12 +49,13 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
       <v-card shadow-none px-2>
         <StyledAvatar :image="post.user.image" :name="post.user.name" />
         Posted by <span font-bold>{{ post.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
-        <v-card-title class="text-title-large" whitespace-normal font-bold px-0>
+        <v-card-title text-title-large whitespace-normal font-bold px-0>
           {{ post.title }}
         </v-card-title>
         <v-card-text
           v-if="!isEmptyDescription"
-          class="card-content text-body-large"
+          class="card-content"
+          text-body-large
           pb-0
           px-0
           v-html="post.description"
@@ -67,11 +66,6 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
 </template>
 
 <style scoped lang="scss">
-.card {
-  padding-left: 2.5rem;
-  background-color: v-bind(surfaceOpacity80);
-}
-
 :deep(.card-content) {
   ul,
   ol {

@@ -32,7 +32,7 @@ const isLoading = ref(false);
     rd
     mb-3
     pl-2
-    @disabled="isLoading"
+    :disabled="isLoading"
     @click="
       async () => {
         isLoading = true;

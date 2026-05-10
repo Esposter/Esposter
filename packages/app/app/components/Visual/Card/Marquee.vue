@@ -26,7 +26,8 @@ const { "on-surface": onSurface, surface } = storeToRefs(colorsStore);
       <div class="grid" grid h-full list-none gap-x-4 px-4>
         <div v-for="(card, index) of cards" :key="index" class="item-container">
           <div
-            class="item border-sm"
+            class="item"
+            border-sm
             font="[Montserrat] italic"
             h-full
             flex

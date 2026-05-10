@@ -35,7 +35,7 @@ const isCopied = ref(false);
         <div mb-2>Send An Invite Link To A Friend!</div>
         <v-text-field
           v-model="inviteLink"
-          class="bg-background"
+          bg-background
           variant="outlined"
           hide-details
           readonly
@@ -56,7 +56,7 @@ const isCopied = ref(false);
             />
           </template>
         </v-text-field>
-        <div v-if="inviteLink" class="text-title-small" text-gray pt-2>Your invite link expires in 24 hours.</div>
+        <div v-if="inviteLink" text-title-small text-gray pt-2>Your invite link expires in 24 hours.</div>
       </v-card-text>
     </StyledCard>
   </v-dialog>

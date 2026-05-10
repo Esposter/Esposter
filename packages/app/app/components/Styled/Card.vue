@@ -13,7 +13,7 @@ const { cardAttrs = {}, cardProps = {} } = defineProps<StyledCardProps>();
 </script>
 
 <template>
-  <v-card class="border-sm" :="mergeProps(cardProps, cardAttrs)">
+  <v-card border-sm :="mergeProps(cardProps, cardAttrs)">
     <template v-for="(_slot, name) of slots" #[name]="scope">
       <slot :name :="{ ...scope }" />
     </template>

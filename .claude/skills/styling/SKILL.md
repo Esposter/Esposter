@@ -1,6 +1,6 @@
 ---
 name: styling
-description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, flex not d-flex, class only for dynamic or Vuetify-specific utilities. Apply when writing .vue or .scss files.
+description: Esposter UnoCSS Attributify Mode styling conventions — prop-based attributes for all static styles, flex not d-flex, class only for scoped CSS refs / dynamic bindings / third-party selectors. Apply when writing .vue or .scss files.
 ---
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
@@ -9,8 +9,69 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - **UnoCSS attributes go first** — before Vue/component props. e.g. `<StyledAvatar mr-3 :image="image" :name="name" />`
 - Use `flex` not `d-flex`.
 - Use `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
-- Only use `class="..."` when technically required (dynamic `:class` bindings, Vuetify-specific typography/colour classes like `text-overline`, `text-medium-emphasis`, `text-wrap`, Vuetify CSS variable-based colours like `bg-surface-variant`). UnoCSS utilities (spacing, flex, sizing) must always be attributes even when mixed with Vuetify classes: `<div class="text-overline" mb-2>`.
-- **Vuetify colour tokens** (e.g. `bg-surface-variant`, `bg-surface`, `text-on-surface`) must stay in `class="..."` — they are Vuetify CSS variable shorthands, not UnoCSS utilities, and do not work as attributify props.
+
+## What stays in `class="..."`
+
+Only use `class="..."` when technically required:
+
+- **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`, `class="card-content"`, `class="button"`, `class="custom-border"`)
+- **Dynamic bindings** — `:class="..."` always stays as-is
+- **Third-party component classes** — e.g. `vue-flow__panel`, `v-window__controls`, `fc-event-title`, Vuetify internal classes that start with `v-` (e.g. `v-theme--light`)
+- **SVG classes** — e.g. `fclass1`, `a`, `b`
+- **`elevation--1`** — negative elevation (double-dash form); `elevation-1` etc. can be attributify
+- **`group`** — UnoCSS group variant selector token; must stay in `class` so descendant `group-hover:` variants work
+
+## What can be attributify (including Vuetify utilities)
+
+`presetVuetify()` + `presetAttributify()` are both active in `uno.config.ts`. This means **ALL** of the following work as standalone attributify attributes:
+
+- Vuetify typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-caption`, etc.
+- Vuetify theme colours: `bg-surface`, `bg-surface-variant`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, `text-on-surface`, etc.
+- Custom theme colours: `bg-surfaceOpacity80`, `bg-backgroundOpacity40`, etc.
+- Vuetify border utilities: `border-sm`, `border-b-sm`, `border-color` (when it's the Vuetify utility, not a scoped CSS class name)
+
+## `v-bind(themeColor)` in CSS → attributify
+
+When a scoped CSS class exists _only_ to set a Vuetify theme colour with `v-bind()`, convert it to attributify and delete the class:
+
+```diff
+- <StyledCard class="card">
++ <StyledCard bg-surfaceOpacity80>
+
+- <style scoped lang="scss">
+- .card {
+-   background-color: v-bind(surfaceOpacity80);
+- }
+- </style>
+```
+
+Also remove the `storeToRefs` destructure (and `useColorsStore()` call if nothing else uses it).
+
+**Do NOT convert** when `v-bind` appears in:
+
+- Pseudo-selectors (`:hover`, `:nth-of-type`) — CSS only
+- Complex shorthand properties (`border: ... v-bind(color)`, `animation: ... v-bind(dur)`)
+- Non-colour reactive values (`transform`, `top`, `left`, `height`, `transition`, `fill`, `stroke`)
+- `:deep()` rules
+
+## Arbitrary CSS Values
+
+Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and CSS variable references — directly as attributify props:
+
+```html
+<!-- Instead of a scoped .sidebar { top: calc(1rem + var(--app-bar-height)) } -->
+<UserSideBar sticky top="[calc(1rem+var(--app-bar-height))]" />
+
+<!-- Fixed height with viewport calc -->
+<div h="[calc(100vh-3rem)]" overflow-y-auto />
+
+<!-- Arbitrary colour via hex -->
+<div bg="[#f0f0f0]" />
+```
+
+Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+var(--x))` not `calc(1rem + var(--x))`.
+
+When converting a scoped CSS class that only contains arbitrary-value properties, delete the class name and the `<style scoped>` block entirely.
 
 ## Abbreviated Utilities
 
@@ -69,7 +130,7 @@ Use `relative` on the parent and `absolute top-0 right-0` (or other corners) to 
 
 ```html
 <!-- banner with action buttons top-right -->
-<div class="bg-background" relative h-20>
+<div bg-background relative h-20>
   <div absolute top-0 right-0 flex gap-x-1 p-1>
     <slot name="actions" />
   </div>

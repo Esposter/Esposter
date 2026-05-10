@@ -22,7 +22,7 @@ onConnect(addEdges);
 
 <template>
   <NuxtLayout :left-navigation-drawer-props="{ scrim: false }" :right-navigation-drawer-props="{ scrim: false }">
-    <div class="bg-surface" h-full>
+    <div bg-surface h-full>
       <VueFlow
         :node-types="
           Object.fromEntries(Object.entries(NodeTypeMap).map(([nodeType, { component }]) => [nodeType, component]))
@@ -46,7 +46,7 @@ onConnect(addEdges);
         @drop="onDrop"
       >
         <Background />
-        <MiniMap class="bg-surface" />
+        <MiniMap bg-surface />
         <FlowchartEditorControls />
         <FlowchartEditorSideBarButton />
         <FlowchartEditorPanel />

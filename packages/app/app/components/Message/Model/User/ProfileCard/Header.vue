@@ -11,7 +11,7 @@ const { isSelf, user } = defineProps<ProfileCardHeaderProps>();
 </script>
 
 <template>
-  <div class="bg-background" relative h-20>
+  <div bg-background relative h-20>
     <div v-if="!isSelf" absolute flex gap-x-2 pt-2 pr-2 top-0 right-0>
       <slot name="actions" />
     </div>

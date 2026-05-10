@@ -45,8 +45,8 @@ const disabled = computed(
 </script>
 
 <template>
-  <div class="text-title-large" font-bold>Profile</div>
-  <div class="text-body-large">Your personal information</div>
+  <div text-title-large font-bold>Profile</div>
+  <div text-body-large>Your personal information</div>
   <v-form
     v-model="isEditFormValid"
     @submit.prevent="

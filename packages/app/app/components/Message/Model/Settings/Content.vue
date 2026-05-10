@@ -4,7 +4,7 @@ defineSlots<{ default: () => VNode }>();
 
 <template>
   <v-main h-dvh>
-    <v-container class="bg-surface" fluid relative h-full>
+    <v-container bg-surface fluid relative h-full>
       <slot />
     </v-container>
   </v-main>

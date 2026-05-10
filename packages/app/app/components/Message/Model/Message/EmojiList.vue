@@ -59,7 +59,7 @@ const selectEmoji = await useSelectEmoji(message);
       "
     >
       {{ emoji }}
-      <span class="text-title-small" pl-1>{{ userIds.length }}</span>
+      <span text-title-small pl-1>{{ userIds.length }}</span>
     </div>
     <StyledEmojiPicker
       v-if="!isPreview"

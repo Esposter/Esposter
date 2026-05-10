@@ -11,7 +11,7 @@ const voiceControlItems = useVoiceControlItems();
 
 <template>
   <TransitionFade>
-    <div v-if="isInChannel" class="bg-surface-variant" flex items-center gap-x-3 px-4 py-2 border-b>
+    <div v-if="isInChannel" bg-surface-variant flex items-center gap-x-3 px-4 py-2 border-b>
       <v-icon icon="mdi-volume-high" size="small" color="success" />
       <span flex-1 text-sm font-medium>Voice</span>
       <div flex items-center gap-x-1>

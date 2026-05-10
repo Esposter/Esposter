@@ -42,7 +42,8 @@ onMounted(() => {
 
 <template>
   <div
-    class="parameter-chip bg-border"
+    class="parameter-chip"
+    bg-border
     :class="{ 'parameter-chip--error': isError }"
     inline-flex
     items-center
@@ -52,7 +53,7 @@ onMounted(() => {
     py-1
     overflow-hidden
   >
-    <span class="parameter-chip__label bg-background" text-sm font-bold :class="isError ? 'text-error' : ''">
+    <span class="parameter-chip__label" bg-background text-sm font-bold :class="isError ? 'text-error' : ''">
       {{ name }}
     </span>
     <input
