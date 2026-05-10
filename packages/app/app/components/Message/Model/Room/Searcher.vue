@@ -4,8 +4,9 @@ import { useSearchStore } from "@/store/message/room/search";
 const searchStore = useSearchStore();
 const { searchQuery } = storeToRefs(searchStore);
 const dialog = ref(false);
-useEventListener("keydown", (event: KeyboardEvent) => {
-  if ((event.ctrlKey || event.metaKey) && event.key === "k") {
+
+onKeyStroke("k", (event) => {
+  if (event.ctrlKey || event.metaKey) {
     event.preventDefault();
     dialog.value = true;
   }

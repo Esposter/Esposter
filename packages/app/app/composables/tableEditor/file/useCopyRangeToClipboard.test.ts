@@ -25,7 +25,7 @@ describe(useCopyRangeToClipboard, () => {
   });
 
   const selectRange = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number) => {
-    const { startCellSelection, extendCellSelection } = useCellStore();
+    const { extendCellSelection, startCellSelection } = useCellStore();
     startCellSelection(rowStart, columnStart);
     extendCellSelection(rowEnd, columnEnd);
   };
