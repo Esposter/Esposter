@@ -1,56 +1,57 @@
-interface CellPosition {
-  columnIndex: number;
-  rowIndex: number;
-}
+import type { CellState } from "@/models/tableEditor/file/CellState";
 
-interface CellRange {
-  columnEnd: number;
-  columnStart: number;
-  rowEnd: number;
-  rowStart: number;
-}
+import { CellMode } from "@/models/tableEditor/file/CellMode";
 
 export const useCellStore = defineStore("tableEditor/file/cell", () => {
-  const editingCell = ref<null | { columnName: string; rowIndex: number }>(null);
-  const selectionAnchor = ref<CellPosition | null>(null);
-  const selectionFocus = ref<CellPosition | null>(null);
-  const isSelectingCells = ref(false);
+  const cellState = ref<CellState>({ mode: CellMode.View });
 
-  const selectedCellRange = computed<CellRange | null>(() => {
-    if (!selectionAnchor.value || !selectionFocus.value) return null;
+  const editingCell = computed(() =>
+    cellState.value.mode === CellMode.Edit
+      ? { columnName: cellState.value.columnName, rowIndex: cellState.value.rowIndex }
+      : null,
+  );
+
+  const selectedCellRange = computed(() => {
+    if (cellState.value.mode !== CellMode.Select) return null;
+    const { anchor, focus } = cellState.value;
     return {
-      columnEnd: Math.max(selectionAnchor.value.columnIndex, selectionFocus.value.columnIndex),
-      columnStart: Math.min(selectionAnchor.value.columnIndex, selectionFocus.value.columnIndex),
-      rowEnd: Math.max(selectionAnchor.value.rowIndex, selectionFocus.value.rowIndex),
-      rowStart: Math.min(selectionAnchor.value.rowIndex, selectionFocus.value.rowIndex),
+      columnEnd: Math.max(anchor.columnIndex, focus.columnIndex),
+      columnStart: Math.min(anchor.columnIndex, focus.columnIndex),
+      rowEnd: Math.max(anchor.rowIndex, focus.rowIndex),
+      rowStart: Math.min(anchor.rowIndex, focus.rowIndex),
     };
   });
 
-  const clearFocus = () => {
-    editingCell.value = null;
-  };
+  const isSelectingCells = computed(() => cellState.value.mode === CellMode.Select && cellState.value.isSelecting);
+
   const requestFocus = (rowIndex: number, columnName: string) => {
-    editingCell.value = { columnName, rowIndex };
+    cellState.value = { columnName, mode: CellMode.Edit, rowIndex };
+  };
+  const clearFocus = () => {
+    if (cellState.value.mode === CellMode.Edit) cellState.value = { mode: CellMode.View };
   };
   const isEditingCell = (rowIndex: number, columnName: string) =>
-    editingCell.value?.rowIndex === rowIndex && editingCell.value.columnName === columnName;
+    cellState.value.mode === CellMode.Edit &&
+    cellState.value.rowIndex === rowIndex &&
+    cellState.value.columnName === columnName;
 
   const startCellSelection = (rowIndex: number, columnIndex: number) => {
-    selectionAnchor.value = { columnIndex, rowIndex };
-    selectionFocus.value = { columnIndex, rowIndex };
-    isSelectingCells.value = true;
+    cellState.value = {
+      anchor: { columnIndex, rowIndex },
+      focus: { columnIndex, rowIndex },
+      isSelecting: true,
+      mode: CellMode.Select,
+    };
   };
   const extendCellSelection = (rowIndex: number, columnIndex: number) => {
-    if (!isSelectingCells.value) return;
-    selectionFocus.value = { columnIndex, rowIndex };
+    if (cellState.value.mode !== CellMode.Select) return;
+    cellState.value = { ...cellState.value, focus: { columnIndex, rowIndex } };
   };
   const endCellSelection = () => {
-    isSelectingCells.value = false;
+    if (cellState.value.mode === CellMode.Select) cellState.value = { ...cellState.value, isSelecting: false };
   };
   const clearCellSelection = () => {
-    selectionAnchor.value = null;
-    selectionFocus.value = null;
-    isSelectingCells.value = false;
+    if (cellState.value.mode === CellMode.Select) cellState.value = { mode: CellMode.View };
   };
   const isCellInRange = (rowIndex: number, columnIndex: number) => {
     if (!selectedCellRange.value) return false;

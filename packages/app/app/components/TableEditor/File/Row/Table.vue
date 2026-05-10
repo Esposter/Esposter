@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
+import type { CellPropsFunction } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
@@ -31,9 +33,36 @@ const isDraggable = computed(
   () => !search.value && sortBy.value.length === 0 && filteredRows.value === dataSource.rows,
 );
 const cellStore = useCellStore();
-const { editingCell, selectedCellRange } = storeToRefs(cellStore);
-const { endCellSelection } = cellStore;
+const { editingCell, isSelectingCells, selectedCellRange } = storeToRefs(cellStore);
+const { endCellSelection, extendCellSelection, isCellInRange, isEditingCell, startCellSelection } = cellStore;
 const copyRangeToClipboard = useCopyRangeToClipboard();
+const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
+  const column = displayColumns.value.find((col) => toColumnKey(col.name) === headerColumn.key);
+  if (!column) return {};
+  const columnIndex = displayColumns.value.indexOf(column);
+  const rowIndex = rowIndexIdMap.value.get(item.id) ?? -1;
+  const result: Record<string, unknown> = {
+    onMousedown: (event: MouseEvent) => {
+      if (
+        event.button !== 0 ||
+        isEditingCell(rowIndex, column.name) ||
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement
+      )
+        return;
+      event.preventDefault();
+      startCellSelection(rowIndex, columnIndex);
+    },
+    onMouseenter: (event: MouseEvent) => {
+      if (!isSelectingCells.value) return;
+      else if (!(event.buttons & 1)) endCellSelection();
+      else extendCellSelection(rowIndex, columnIndex);
+    },
+  };
+  if (isCellInRange(rowIndex, columnIndex))
+    result.style = { background: "rgba(var(--v-theme-info), var(--v-disabled-opacity))" };
+  return result;
+};
 
 useEventListener(document, "mouseup", () => {
   endCellSelection();
@@ -51,7 +80,7 @@ useEventListener(document, "keydown", async (event: KeyboardEvent) => {
 <template>
   <v-card flat>
     <template #text>
-      <TableEditorFileRowTextSlot />
+      <TableEditorFileRowTextSlot :data-source />
     </template>
     <VueDraggable v-model="dragRows" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
       <StyledDataTable
@@ -59,6 +88,7 @@ useEventListener(document, "keydown", async (event: KeyboardEvent) => {
         flex-1
         flex-col
         :data-table-props="{
+          cellProps,
           density: 'compact',
           headers: tableHeaders,
           itemsPerPage,
@@ -106,14 +136,9 @@ useEventListener(document, "keydown", async (event: KeyboardEvent) => {
         >
           <TableEditorFileRowHeaderSlot :column :get-sort-icon :header-column :is-sorted :toggle-sort />
         </template>
-        <template
-          v-for="(column, columnIndex) of displayColumns"
-          :key="column.id"
-          #[`item.${toColumnKey(column.name)}`]="{ item }"
-        >
+        <template v-for="column of displayColumns" :key="column.id" #[`item.${toColumnKey(column.name)}`]="{ item }">
           <TableEditorFileRowItemSlot
             :column
-            :column-index
             :columns="dataSource.columns"
             :item
             :row-index="rowIndexIdMap.get(item.id) ?? -1"
