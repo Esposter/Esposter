@@ -8,6 +8,7 @@ import { EN_US_SEGMENTER } from "./app/services/shared/constants";
 
 const BaseColorsCommon = {
   border: "#ccc",
+  error: "#ff5252",
   info: "#2d88ff",
   primary: "#42b883",
 } as const satisfies Partial<Colors>;

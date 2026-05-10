@@ -8,10 +8,13 @@ import vuetifyConfig from "./vuetify.config";
 const theme = vuetifyConfig.theme as Exclude<ThemeOptions, false>;
 const firstThemeColors = Object.values(theme.themes ?? {})[0]?.colors ?? {};
 const variations = theme.variations as VariationsOptions;
-const variationKeys = (variations?.colors ?? []).flatMap((color) => [
-  ...Array.from({ length: variations?.darken ?? 0 }, (_, i) => `${color}-darken-${i + 1}`),
-  ...Array.from({ length: variations?.lighten ?? 0 }, (_, i) => `${color}-lighten-${i + 1}`),
-]);
+const variationKeys: string[] = [];
+
+for (const color of variations?.colors ?? []) {
+  for (let i = 0; i < (variations?.darken ?? 0); i++) variationKeys.push(`${color}-darken-${i}`);
+
+  for (let i = 0; i < (variations?.lighten ?? 0); i++) variationKeys.push(`${color}-lighten-${i}`);
+}
 
 export default defineConfig({
   outputToCssLayers: {
@@ -19,7 +22,7 @@ export default defineConfig({
   },
   presets: [presetWind3(), presetAttributify(), presetVuetify()],
   rules: [["overflow-anchor-none", { "overflow-anchor": "none" }]],
-  safelist: [...Array.from({ length: 6 }, (_, i) => `elevation-${i}`)],
+  safelist: Array.from({ length: 6 }, (_, i) => `elevation-${i}`),
   theme: {
     colors: Object.fromEntries(
       [...Object.keys(firstThemeColors), ...variationKeys].map((key) => [key, `rgb(var(--v-theme-${key}))`]),

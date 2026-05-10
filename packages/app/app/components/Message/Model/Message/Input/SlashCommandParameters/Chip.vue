@@ -42,8 +42,8 @@ onMounted(() => {
 
 <template>
   <div
-    :class="isError ? ['b-error'] : ['b-[rgba(var(--v-border-color),var(--v-border-opacity))]', 'focus-within:b-info']"
-    b-w="[1.5px]"
+    :class="isError ? ['b-error'] : ['b-border', 'focus-within:b-info']"
+    b="[1.5px]"
     bg-border
     inline-flex
     items-center
@@ -54,18 +54,18 @@ onMounted(() => {
     overflow-hidden
   >
     <span
+      :class="isError ? 'text-error' : ''"
       text-sm
       font-bold
       bg-background
       self-stretch
       flex
       items-center
-      -my-1
-      -ml-2
+      my--1
+      ml--2
       py-1
       pr-1
       pl-2
-      :class="isError ? 'text-error' : ''"
     >
       {{ name }}
     </span>
