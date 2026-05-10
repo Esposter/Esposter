@@ -7,7 +7,7 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { marked } from "marked";
 
 const tableEditorStore = useTableEditorStore<DataSourceItem>();
-const { editedItem, editForm } = storeToRefs(tableEditorStore);
+const { editedItem } = storeToRefs(tableEditorStore);
 const fileHistoryStore = useFileHistoryStore();
 const { undo } = fileHistoryStore;
 const { isUndoable, undoDescription } = storeToRefs(fileHistoryStore);
@@ -17,15 +17,11 @@ const tooltipHtml = computed(() => {
   return sanitizeHtml(marked.parse(parts.join("\n\n"), { async: false }));
 });
 
-onKeyStroke(
-  ["z", "Z"],
-  (event) => {
-    if ((!event.ctrlKey && !event.metaKey) || event.shiftKey) return;
-    event.preventDefault();
-    undo(editedItem.value);
-  },
-  { target: () => editForm.value?.$el },
-);
+onKeyStroke(["z", "Z"], (event) => {
+  if ((!event.ctrlKey && !event.metaKey) || event.shiftKey) return;
+  event.preventDefault();
+  undo(editedItem.value);
+});
 </script>
 
 <template>

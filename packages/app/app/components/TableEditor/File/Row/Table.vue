@@ -34,10 +34,9 @@ const isDraggable = computed(
   () => !search.value && sortBy.value.length === 0 && filteredRows.value === dataSource.rows,
 );
 const cellStore = useCellStore();
-const { editingCell, focusCell, isSelectingCells, selectedCellRange } = storeToRefs(cellStore);
+const { editingCell, focusCell, selectedCellRange } = storeToRefs(cellStore);
 const {
   clearCellSelection,
-  endCellSelection,
   extendCellSelection,
   isCellInRange,
   isEditingCell,
@@ -65,9 +64,7 @@ const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
       else startCellSelection(rowIndex, columnIndex);
     },
     onMouseenter: (event: MouseEvent) => {
-      if (!isSelectingCells.value) return;
-      else if (event.buttons & 1) extendCellSelection(rowIndex, columnIndex);
-      else endCellSelection();
+      if (selectedCellRange.value && event.buttons & 1) extendCellSelection(rowIndex, columnIndex);
     },
   };
   if (isCellInRange(rowIndex, columnIndex))
@@ -108,7 +105,6 @@ onKeyStroke(["a", "A"], (event) => {
   if (rowCount > 0 && columnCount > 0) {
     startCellSelection(0, 0);
     extendCellSelection(rowCount - 1, columnCount - 1);
-    endCellSelection();
   }
 });
 
@@ -119,19 +115,16 @@ onKeyStroke("Escape", () => {
 
 onKeyStroke(["ArrowDown", "ArrowLeft", "ArrowRight", "ArrowUp"], (event) => {
   if (editingCell.value || getIsInputFocused() || !focusCell.value) return;
-  const arrowKeyDelta = ArrowKeyDeltaMap[event.key];
-  if (!arrowKeyDelta) return;
+  const arrowDelta = ArrowKeyDeltaMap[event.key];
+  if (!arrowDelta) return;
   event.preventDefault();
-  const [rowDelta, columnDelta] = arrowKeyDelta;
+  const [rowDelta, columnDelta] = arrowDelta;
   const rowCount = filteredRows.value.length;
   const columnCount = displayColumns.value.length;
   const newRowIndex = Math.max(0, Math.min(rowCount - 1, focusCell.value.rowIndex + rowDelta));
   const newColumnIndex = Math.max(0, Math.min(columnCount - 1, focusCell.value.columnIndex + columnDelta));
   if (event.shiftKey) extendCellSelection(newRowIndex, newColumnIndex);
-  else {
-    startCellSelection(newRowIndex, newColumnIndex);
-    endCellSelection();
-  }
+  else startCellSelection(newRowIndex, newColumnIndex);
 });
 </script>
 

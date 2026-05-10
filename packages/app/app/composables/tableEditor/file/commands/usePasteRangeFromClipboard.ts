@@ -6,9 +6,9 @@ import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
 import { parseClipboardValuesByPosition } from "@/services/tableEditor/file/commands/parseClipboardValuesByPosition";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
-import { useColumnStore } from "@/store/tableEditor/file/column";
 import { useCellStore } from "@/store/tableEditor/file/cell";
+import { useColumnStore } from "@/store/tableEditor/file/column";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { getResultAsync, noop, takeOne, toRawDeep } from "@esposter/shared";
 
 export const usePasteRangeFromClipboard = () => {
@@ -24,12 +24,13 @@ export const usePasteRangeFromClipboard = () => {
   const { createAlert } = alertStore;
   const createRows = useCreateRows();
   return async (insertMode = false) => {
-    if (!editedItem.value?.dataSource) return;
+    const editedItemValue = editedItem.value;
+    const dataSource = editedItemValue?.dataSource;
+    if (!dataSource) return;
     await getResultAsync(async () => {
       const text = await window.navigator.clipboard.readText();
       const pastedValues = parseClipboardValuesByPosition(text);
       if (pastedValues.length === 0) return;
-      const dataSource = editedItem.value!.dataSource!;
       const anchorRowIndex = selectedCellRange.value?.rowStart ?? dataSource.rows.length;
       const anchorColumnIndex = selectedCellRange.value?.columnStart ?? 0;
       const targetColumnNames = displayColumns.value.map((column) => column.name);
@@ -56,7 +57,7 @@ export const usePasteRangeFromClipboard = () => {
           targetColumnNames,
           originalRows,
         );
-        command.execute(editedItem.value!);
+        command.execute(editedItemValue);
         push(command);
       }
     }).match(noop, (error) => {

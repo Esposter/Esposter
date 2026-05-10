@@ -15,7 +15,9 @@ describe(parseClipboardValuesByPosition, () => {
 
   test("parses multiple rows", () => {
     expect.hasAssertions();
+
     const result = parseClipboardValuesByPosition("a\tb\n1\t2");
+
     expect(result).toHaveLength(2);
     expect(takeOne(result)).toStrictEqual(["a", "b"]);
     expect(takeOne(result, 1)).toStrictEqual(["1", "2"]);
@@ -23,7 +25,9 @@ describe(parseClipboardValuesByPosition, () => {
 
   test("handles CRLF line endings", () => {
     expect.hasAssertions();
+
     const result = parseClipboardValuesByPosition("a\tb\r\n1\t2");
+
     expect(result).toHaveLength(2);
     expect(takeOne(result)).toStrictEqual(["a", "b"]);
     expect(takeOne(result, 1)).toStrictEqual(["1", "2"]);
@@ -31,7 +35,9 @@ describe(parseClipboardValuesByPosition, () => {
 
   test("filters whitespace-only lines", () => {
     expect.hasAssertions();
+
     const result = parseClipboardValuesByPosition("a\n   \nb");
+
     expect(result).toHaveLength(2);
     expect(takeOne(result)).toStrictEqual(["a"]);
     expect(takeOne(result, 1)).toStrictEqual(["b"]);
@@ -44,7 +50,9 @@ describe(parseClipboardValuesByPosition, () => {
 
   test("preserves whitespace within values", () => {
     expect.hasAssertions();
+
     const result = parseClipboardValuesByPosition("  hello  \t world  ");
+
     expect(takeOne(takeOne(result))).toBe("  hello  ");
     expect(takeOne(takeOne(result), 1)).toBe(" world  ");
   });

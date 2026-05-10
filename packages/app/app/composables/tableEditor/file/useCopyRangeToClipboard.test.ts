@@ -20,19 +20,19 @@ describe(useCopyRangeToClipboard, () => {
     writeTextMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", {
       configurable: true,
-      value: { write: vi.fn(), writeText: writeTextMock },
+      value: { write: vi.fn<() => Promise<void>>(), writeText: writeTextMock },
     });
   });
 
   const selectRange = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number) => {
-    const cellStore = useCellStore();
-    cellStore.startCellSelection(rowStart, columnStart);
-    cellStore.extendCellSelection(rowEnd, columnEnd);
-    cellStore.endCellSelection();
+    const { startCellSelection, extendCellSelection } = useCellStore();
+    startCellSelection(rowStart, columnStart);
+    extendCellSelection(rowEnd, columnEnd);
   };
 
   test("writes selected range as TSV with headers", async () => {
     expect.hasAssertions();
+
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
     setupWithDataSource(
@@ -41,22 +41,26 @@ describe(useCopyRangeToClipboard, () => {
     selectRange(0, 0, 0, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
+
     expect(writeTextMock).toHaveBeenCalledWith("a\tb\n1\t2");
   });
 
   test("writes selected range as TSV without headers when toggle is off", async () => {
     expect.hasAssertions();
+
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = false;
     setupWithDataSource(makeDataSource([makeColumn("a"), makeColumn("b")], [makeRow({ a: "1", b: "2" })]));
     selectRange(0, 0, 0, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
+
     expect(writeTextMock).toHaveBeenCalledWith("1\t2");
   });
 
   test("writes only columns within the selection range", async () => {
     expect.hasAssertions();
+
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
     setupWithDataSource(
@@ -65,11 +69,13 @@ describe(useCopyRangeToClipboard, () => {
     selectRange(0, 0, 1, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
+
     expect(writeTextMock).toHaveBeenCalledWith("b\n2");
   });
 
   test("writes only rows within the selection range", async () => {
     expect.hasAssertions();
+
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
     setupWithDataSource(
@@ -78,23 +84,28 @@ describe(useCopyRangeToClipboard, () => {
     selectRange(1, 2, 0, 0);
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
+
     expect(writeTextMock).toHaveBeenCalledWith("a\n2\n3");
   });
 
   test("no-op when no cell range is selected", async () => {
     expect.hasAssertions();
+
     setupWithDataSource();
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
+
     expect(writeTextMock).not.toHaveBeenCalled();
   });
 
   test("no-op when dataSource is null", async () => {
     expect.hasAssertions();
+
     setupEditedItem();
     selectRange(0, 0, 0, 0);
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
+
     expect(writeTextMock).not.toHaveBeenCalled();
   });
 });

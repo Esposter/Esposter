@@ -22,8 +22,6 @@ export const useCellStore = defineStore("tableEditor/file/cell", () => {
     };
   });
 
-  const isSelectingCells = computed(() => cellState.value.mode === CellMode.Select && cellState.value.isSelecting);
-
   const requestFocus = (rowIndex: number, columnName: string) => {
     cellState.value = { columnName, mode: CellMode.Edit, rowIndex };
   };
@@ -41,21 +39,17 @@ export const useCellStore = defineStore("tableEditor/file/cell", () => {
     cellState.value = {
       anchor: { columnIndex, rowIndex },
       focus: { columnIndex, rowIndex },
-      isSelecting: true,
       mode: CellMode.Select,
     };
   };
   const shiftStartCellSelection = (rowIndex: number, columnIndex: number) => {
     if (cellState.value.mode === CellMode.Select)
-      cellState.value = { ...cellState.value, focus: { columnIndex, rowIndex }, isSelecting: true };
+      cellState.value = { ...cellState.value, focus: { columnIndex, rowIndex } };
     else startCellSelection(rowIndex, columnIndex);
   };
   const extendCellSelection = (rowIndex: number, columnIndex: number) => {
     if (cellState.value.mode !== CellMode.Select) return;
     cellState.value = { ...cellState.value, focus: { columnIndex, rowIndex } };
-  };
-  const endCellSelection = () => {
-    if (cellState.value.mode === CellMode.Select) cellState.value = { ...cellState.value, isSelecting: false };
   };
   const clearCellSelection = () => {
     if (cellState.value.mode === CellMode.Select) cellState.value = { mode: CellMode.View };
@@ -70,12 +64,10 @@ export const useCellStore = defineStore("tableEditor/file/cell", () => {
     clearCellSelection,
     clearFocus,
     editingCell,
-    endCellSelection,
     extendCellSelection,
     focusCell,
     isCellInRange,
     isEditingCell,
-    isSelectingCells,
     requestFocus,
     selectedCellRange,
     shiftStartCellSelection,
