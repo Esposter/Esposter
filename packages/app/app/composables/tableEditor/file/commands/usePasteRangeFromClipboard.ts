@@ -37,11 +37,11 @@ export const usePasteRangeFromClipboard = () => {
       if (insertMode) {
         const rows = pastedValues.map((pastedRow) => {
           const row = new Row({ data: Object.fromEntries(dataSource.columns.map((c) => [c.name, null])) });
-          for (let columnOffset = 0; columnOffset < pastedRow.length; columnOffset++) {
+          for (const [columnOffset, pastedValue] of pastedRow.entries()) {
             const columnIndex = anchorColumnIndex + columnOffset;
             if (columnIndex >= displayColumns.value.length) break;
             const column = takeOne(displayColumns.value, columnIndex);
-            row.data[column.name] = coerceValue(takeOne(pastedRow, columnOffset), column.type);
+            row.data[column.name] = coerceValue(pastedValue, column.type);
           }
           return row;
         });
