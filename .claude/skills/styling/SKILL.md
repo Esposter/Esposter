@@ -14,11 +14,10 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 
 Only use `class="..."` when technically required:
 
-- **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`, `class="card-content"`, `class="button"`, `class="custom-border"`)
+- **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`, `class="card-content"`)
 - **Dynamic bindings** — `:class="..."` always stays as-is
 - **Third-party component classes** — e.g. `vue-flow__panel`, `v-window__controls`, `fc-event-title`, Vuetify internal classes that start with `v-` (e.g. `v-theme--light`)
 - **SVG classes** — e.g. `fclass1`, `a`, `b`
-- **`elevation--1`** — negative elevation (double-dash form); `elevation-1` etc. can be attributify
 - **`group`** — UnoCSS group variant selector token; must stay in `class` so descendant `group-hover:` variants work
 
 ## What can be attributify (including Vuetify utilities)

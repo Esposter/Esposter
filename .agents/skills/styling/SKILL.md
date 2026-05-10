@@ -14,11 +14,10 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 
 Only use `class="..."` when technically required:
 
-- **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`, `class="card-content"`, `class="button"`, `class="custom-border"`)
+- **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`, `class="card-content"`)
 - **Dynamic bindings** — `:class="..."` always stays as-is
 - **Third-party component classes** — e.g. `vue-flow__panel`, `v-window__controls`, `fc-event-title`, Vuetify internal classes that start with `v-` (e.g. `v-theme--light`)
 - **SVG classes** — e.g. `fclass1`, `a`, `b`
-- **`elevation--1`** — negative elevation (double-dash form); `elevation-1` etc. can be attributify
 - **`group`** — UnoCSS group variant selector token; must stay in `class` so descendant `group-hover:` variants work
 
 ## What can be attributify (including Vuetify utilities)
@@ -28,7 +27,7 @@ Only use `class="..."` when technically required:
 - Vuetify typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-caption`, etc.
 - Vuetify theme colours: `bg-surface`, `bg-surface-variant`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, `text-on-surface`, etc.
 - Custom theme colours: `bg-surfaceOpacity80`, `bg-backgroundOpacity40`, etc.
-- Vuetify border utilities: `border-sm`, `border-b-sm`, `border-color` (when it's the Vuetify utility, not a scoped CSS class name)
+- Vuetify border colour utility: `border-color` (when it's the Vuetify utility, not a scoped CSS class name) — use `b-1`, `b-2` etc. instead of `border-sm`, `border-b-sm` (see Abbreviated Utilities below)
 
 ### Custom Vuetify theme colours must be registered in `uno.config.ts`
 
@@ -164,20 +163,20 @@ Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS ut
 - `b-t-2` not `border-top-2`
 - `b-x-1` not `border-x-1`
 
-Note: `b-1` sets `border-width: 1px`. Border style (`solid`) is applied automatically by Wind3 preflight. For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. For the Vuetify overlay border use `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`.
+Note: `b-1` sets `border-width: 1px`. Always add `b-solid` explicitly — border style is not automatic. For arbitrary widths use `b="[1.5px]"`. For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. For the Vuetify overlay border use `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`.
 
 **`custom-border` / `border-color` scoped-class pattern → attributify:**
 
 ```diff
 - <div class="custom-border" ...>
-+ <div b-1 b-text ...>
++ <div b-1 b-solid b-text ...>
 
 - <style scoped>
 - .custom-border { border: var(--border-width) var(--border-style) v-bind(text); }
 - </style>
 ```
 
-`--border-width: thin` = 1px → `b-1`. `--border-style: solid` → `b-solid` (must be explicit — not automatic). The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
+`--border-width: thin` = 1px → `b-1`. `--border-style: solid` → `b-solid`. The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
 
 **Border-radius (`rd` prefix):**
 
@@ -234,7 +233,7 @@ Prefer this over manual margin/padding tricks when element should float independ
 
 ## Units
 
-- **Always use `rem` instead of `px`** for all CSS values (font sizes, spacing, widths, heights, borders, etc.).
+- **Always use `rem` instead of `px`** in custom authored CSS values (font sizes, spacing, widths, heights, etc.). Exception: UnoCSS/Vuetify utility scale tokens (`b-1` = 1px, `b-2` = 2px, etc.) are px-mapped by framework design — do not convert them.
 
 ## Style Block
 
