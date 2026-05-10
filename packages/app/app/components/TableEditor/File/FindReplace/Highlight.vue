@@ -33,7 +33,7 @@ watch(
 </script>
 
 <template>
-  <span ref="container" after="content-['\200B']">
+  <span ref="container">
     <template v-for="({ isMatch, text: part }, partIndex) of parts" :key="partIndex">
       <mark
         v-if="isMatch"

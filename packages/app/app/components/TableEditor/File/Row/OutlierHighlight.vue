@@ -6,9 +6,9 @@ interface OutlierHighlightProps {
   text: string;
 }
 
-defineProps<OutlierHighlightProps>();
+const { isOutlier, text } = defineProps<OutlierHighlightProps>();
 </script>
 
 <template>
-  <span :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }" after="content-['\200B']">{{ text }}</span>
+  <span :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }">{{ text }}</span>
 </template>
