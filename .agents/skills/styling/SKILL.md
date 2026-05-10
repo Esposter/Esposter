@@ -177,7 +177,7 @@ Note: `b-1` sets `border-width: 1px`. Border style (`solid`) is applied automati
 - </style>
 ```
 
-`--border-width: thin` = 1px → `b-1`. `--border-style: solid` is covered by preflight. The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
+`--border-width: thin` = 1px → `b-1`. `--border-style: solid` → `b-solid` (must be explicit — not automatic). The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
 
 **Border-radius (`rd` prefix):**
 

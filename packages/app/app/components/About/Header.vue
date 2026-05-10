@@ -8,7 +8,13 @@ const ACCENT_CLASSES = ["text-transparent", "bg-clip-text", "bg-[image:var(--vue
 
 <template>
   <div flex flex-col items-center text-center>
-    <div :class="isDark ? ACCENT_CLASSES : []" font="[Inter] black" leading-tight :text="smAndDown ? '5xl' : '7xl'">
+    <div
+      :class="isDark ? ACCENT_CLASSES : []"
+      font="[Inter]"
+      font-black
+      leading-tight
+      :text="smAndDown ? '5xl' : '7xl'"
+    >
       The
       <span :class="!isDark ? ACCENT_CLASSES : []">Progressive</span>
       <br />

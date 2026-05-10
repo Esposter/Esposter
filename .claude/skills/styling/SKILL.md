@@ -191,7 +191,7 @@ This applies to all border-color utilities: `b-text`, `b-border`, `b-info`, `b-e
 - </style>
 ```
 
-`--border-width: thin` = 1px → `b-1`. `--border-style: solid` is covered by preflight. The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
+`--border-width: thin` = 1px → `b-1`. `--border-style: solid` → `b-solid` (must be explicit — not automatic). The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
 
 **BEM border class with focus/error variants (e.g. `parameter-chip`):**
 
