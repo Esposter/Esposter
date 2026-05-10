@@ -18,6 +18,7 @@ describe(useCopyRangeToClipboard, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     writeTextMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
+    vi.stubGlobal("ClipboardItem", undefined);
     vi.stubGlobal("navigator", { clipboard: { writeText: writeTextMock } });
   });
 
