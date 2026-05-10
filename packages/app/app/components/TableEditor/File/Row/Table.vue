@@ -10,6 +10,7 @@ import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { useCellStore } from "@/store/tableEditor/file/cell";
 import { useColumnStore } from "@/store/tableEditor/file/column";
 import { useRowStore } from "@/store/tableEditor/file/row";
+import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
 interface DataTableProps {
@@ -48,9 +49,9 @@ const {
 const copyRangeToClipboard = useCopyRangeToClipboard();
 const pasteRangeFromClipboard = usePasteRangeFromClipboard();
 const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
-  const column = displayColumns.value.find((col) => toColumnKey(col.name) === headerColumn.key);
-  if (!column) return {};
-  const columnIndex = displayColumns.value.indexOf(column);
+  const columnIndex = displayColumns.value.findIndex(({ name }) => toColumnKey(name) === headerColumn.key);
+  if (columnIndex === -1) return {};
+  const column = takeOne(displayColumns.value, columnIndex);
   const rowIndex = rowIndexIdMap.value.get(item.id) ?? -1;
   const result: Record<string, unknown> = {
     onMousedown: (event: MouseEvent) => {
@@ -129,6 +130,7 @@ onClickOutside(table, () => {
 });
 
 onKeyStroke("Escape", () => {
+  if (editingCell.value || getIsInputFocused()) return;
   clearCellSelection();
 });
 </script>
