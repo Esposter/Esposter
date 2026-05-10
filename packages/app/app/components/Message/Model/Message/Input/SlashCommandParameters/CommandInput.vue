@@ -30,11 +30,11 @@ onMounted(() => {
     <input
       ref="input"
       v-model="modelValue"
-      field-sizing-content
       b-none
       text-sm
       font-bold
       outline-none
+      field-sizing-content
       bg-transparent
       @focus="emit('focus')"
       @blur="emit('blur')"

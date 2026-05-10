@@ -27,7 +27,6 @@ const isLoading = ref(false);
     shadow="[0_2px_4px_0_rgba(0,0,0,0.25)]"
     hover:shadow="[0_2px_10px_2px_rgba(0,0,0,0.35)]"
     transition="[box-shadow_0.2s,transform_0.2s]"
-    hover:-translate-y-[3px]
     h-12
     w-full
     flex
@@ -35,6 +34,7 @@ const isLoading = ref(false);
     rd
     mb-3
     pl-2
+    hover:translate-y="[-3px]"
     :disabled="isLoading"
     @click="
       async () => {

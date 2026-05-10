@@ -11,11 +11,11 @@ const emit = defineEmits<{ close: [] }>();
   <div :class="isTopAttached ? '' : 'rd-t-2'" relative flex items-center gap-2 text-sm px-4 py-2 bg-background>
     <slot />
     <v-btn
+      top="1/2"
+      absolute
+      right-4
       b-1
       b-text
-      absolute
-      top="1/2"
-      right-4
       translate-y="-1/2"
       icon="mdi-close"
       size="small"
