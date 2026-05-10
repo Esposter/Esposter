@@ -46,9 +46,3 @@ watch(
     </template>
   </span>
 </template>
-
-<style scoped lang="scss">
-span::after {
-  content: "\200B";
-}
-</style>

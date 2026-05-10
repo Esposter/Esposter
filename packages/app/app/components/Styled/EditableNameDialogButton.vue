@@ -57,10 +57,10 @@ watch(
             <template #default="{ isHovering, props: hoverProps }">
               <v-btn
                 :style="{ pointerEvents: isEditable ? undefined : 'none' }"
-                font-bold
-                rounded="lg"
                 :ripple="false"
                 slim
+                rd-lg
+                font-bold
                 :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps)"
                 @click="updateIsOpen(true)"
               >
@@ -76,7 +76,7 @@ watch(
         </template>
       </v-tooltip>
     </template>
-    <v-container px-6 fluid>
+    <v-container fluid px-6>
       <v-row>
         <v-col cols="12">
           <v-text-field
@@ -93,7 +93,7 @@ watch(
   </StyledFormDialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-btn__overlay) {
   transition: none;
 }

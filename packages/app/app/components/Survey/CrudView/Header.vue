@@ -1,9 +1,9 @@
 <template>
   <v-toolbar pt-4>
     <v-toolbar-title px-4>
-      <div pt-4 flex items-center>
+      <div flex items-center pt-4>
         <SurveySearchBar />
-        <v-divider mx-4 thickness="2" vertical inset />
+        <v-divider thickness="2" vertical inset mx-4 />
         <SurveyCreateSurveyDialogButton />
       </div>
     </v-toolbar-title>

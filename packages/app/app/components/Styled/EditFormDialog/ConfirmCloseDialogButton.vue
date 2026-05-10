@@ -39,7 +39,7 @@ const dialog = ref(false);
           editing.`,
       }"
     >
-      <v-card-actions flex-wrap gap-y-2>
+      <v-card-actions gap-y-2 flex-wrap>
         <v-spacer />
         <v-btn text="Cancel" variant="outlined" @click="dialog = false" />
         <v-btn

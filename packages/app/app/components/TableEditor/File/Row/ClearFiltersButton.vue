@@ -16,9 +16,9 @@ const hasActiveFilters = computed(() =>
       <v-btn
         color="primary"
         icon="mdi-filter-off"
-        m-0
         size="small"
         tile
+        m-0
         variant="text"
         :="tooltipProps"
         @click.stop="clearColumnFilters()"

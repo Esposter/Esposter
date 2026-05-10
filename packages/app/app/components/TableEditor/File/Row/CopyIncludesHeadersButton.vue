@@ -9,9 +9,9 @@ const { copyIncludesHeaders } = storeToRefs(rowStore);
   <v-tooltip :text="copyIncludesHeaders ? 'Headers included in copy' : 'Headers excluded from copy'">
     <template #activator="{ props: tooltipProps }">
       <v-btn
-        m-0
         size="small"
         tile
+        m-0
         :icon="copyIncludesHeaders ? 'mdi-table-headers-eye' : 'mdi-table-headers-eye-off'"
         :="tooltipProps"
         @click="copyIncludesHeaders = !copyIncludesHeaders"

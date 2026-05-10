@@ -115,7 +115,7 @@ onKeyStroke("Backspace", () => {
 <template>
   <div v-if="pendingSlashCommand" w-full>
     <StyledCard>
-      <div flex items-center gap-2 px-4 pt-3 pb-2>
+      <div flex items-center gap-2 pt-3 pb-2 px-4>
         <MessageModelMessageInputSlashCommandParametersCommandInput
           v-model="commandTitle"
           :is-focused="focusedIndex === -1"
@@ -156,7 +156,7 @@ onKeyStroke("Backspace", () => {
         <MessageModelMessageInputSendMessageButton @click="submit" />
       </div>
     </StyledCard>
-    <div flex justify-between px-1 pt-1>
+    <div flex justify-between pt-1 px-1>
       <MessageModelMessageInputFooter />
     </div>
   </div>

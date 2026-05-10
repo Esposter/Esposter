@@ -42,12 +42,12 @@ const hasUnread = computed(() => {
       </template>
       <v-list-item-title pr-6 :class="hasUnread ? 'font-weight-bold' : undefined">
         {{ roomName }}
-        <span v-if="hasDraft" class="text-medium-emphasis" italic text-xs> — Draft</span>
+        <span v-if="hasDraft" text-xs italic text-medium-emphasis> — Draft</span>
       </v-list-item-title>
       <template #append>
         <v-tooltip v-if="room.isReadOnly" text="Read-only" location="top">
           <template #activator="{ props: activatorProps }">
-            <v-icon :="activatorProps" icon="mdi-bullhorn-outline" size="x-small" class="text-medium-emphasis" />
+            <v-icon :="activatorProps" icon="mdi-bullhorn-outline" size="x-small" text-medium-emphasis />
           </template>
         </v-tooltip>
         <MessageModelRoomSettingsDialogButton :room-id="room.id">
@@ -69,7 +69,7 @@ const hasUnread = computed(() => {
   </v-hover>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-item__prepend > .v-list-item__spacer) {
   width: 0.5rem;
 }

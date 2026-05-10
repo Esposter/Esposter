@@ -17,7 +17,6 @@ import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
 import { site } from "./configuration/site";
 import { typescript } from "./configuration/typescript";
-import { unocss } from "./configuration/unocss";
 import { vite } from "./configuration/vite";
 import { vuetify } from "./configuration/vuetify";
 
@@ -38,7 +37,6 @@ export default defineNuxtConfig({
   security,
   site,
   typescript,
-  unocss,
   vite,
   vuetify,
 });

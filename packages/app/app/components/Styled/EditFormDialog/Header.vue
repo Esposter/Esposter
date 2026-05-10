@@ -39,7 +39,7 @@ const emit = defineEmits<{
     <slot name="prepend-actions" />
     <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && isValid" />
     <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
-    <v-divider mx-2 thickness="2" vertical inset />
+    <v-divider thickness="2" vertical inset mx-2 />
     <StyledToggleFullScreenDialogButton :is-full-screen-dialog @click="emit('update:fullscreen-dialog', $event)" />
     <StyledEditFormDialogConfirmCloseDialogButton
       :edited-item
@@ -50,7 +50,7 @@ const emit = defineEmits<{
   </v-toolbar>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-toolbar__content) {
   flex-wrap: wrap;
 }

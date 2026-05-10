@@ -49,7 +49,7 @@ const toggleTheme = async () => {
   </v-tooltip>
 </template>
 
-<style lang="scss">
+<style>
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;

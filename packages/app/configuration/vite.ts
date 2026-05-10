@@ -14,17 +14,6 @@ export const vite: NuxtConfig["vite"] = {
       transformMixedEsModules: true,
     },
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `
-        @use "@/assets/css/classes.scss" as *;
-        @use "@/assets/css/components.scss" as *;
-        @use "@/assets/css/variables.scss" as *;
-        `,
-      },
-    },
-  },
   optimizeDeps: {
     // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
     exclude: ["@vue-pdf-viewer/viewer"],

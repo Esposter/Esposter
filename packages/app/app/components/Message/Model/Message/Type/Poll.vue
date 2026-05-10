@@ -81,7 +81,7 @@ const vote = async (optionId: null | string) => {
     <span font-bold>{{ creator.name }}</span>
     <span text-gray> created a poll </span>
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
-    <v-card mt-2 variant="outlined" w-full>
+    <v-card variant="outlined" w-full mt-2>
       <v-card-title>{{ pollContent.question }}</v-card-title>
       <v-card-text>
         <v-radio-group
@@ -95,9 +95,9 @@ const vote = async (optionId: null | string) => {
           <template v-for="{ id, label } of pollContent.options" :key="id">
             <v-radio :value="id">
               <template #label>
-                <div flex w-full>
+                <div w-full flex>
                   <div flex-1>{{ label }}</div>
-                  <div class="text-caption text-medium-emphasis">
+                  <div text-caption text-medium-emphasis>
                     {{ getVoteDescription(voteCountMap.get(id) ?? 0) }} · {{ getVotePercentage(id) }}%
                   </div>
                 </div>
@@ -113,7 +113,7 @@ const vote = async (optionId: null | string) => {
   </MessageModelMessageTypeListItem>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-label) {
   width: 100%;
 }

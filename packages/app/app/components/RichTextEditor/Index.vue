@@ -120,7 +120,7 @@ onUnmounted(() => editor.value?.destroy());
 </script>
 
 <template>
-  <div flex flex-col w-full>
+  <div w-full flex flex-col>
     <StyledCard :card-props>
       <RichTextEditorMenuBar :editor />
       <v-divider thickness="2" />
@@ -136,14 +136,14 @@ onUnmounted(() => editor.value?.destroy());
         </template>
       </RichTextEditorFooterBar>
     </StyledCard>
-    <div flex justify-between px-1 pt-1>
+    <div flex justify-between pt-1 px-1>
       <slot name="prepend-outer-footer">&nbsp;</slot>
       <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.ProseMirror) {
   padding: 1rem 1rem 0 1rem;
   height: v-bind(height);

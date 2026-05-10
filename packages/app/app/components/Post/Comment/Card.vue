@@ -18,8 +18,8 @@ const isUpdateMode = ref(false);
   <PostCommentConfirmDeleteDialog :comment-id="comment.id">
     <template #activator="{ updateIsOpen }">
       <div flex>
-        <PostLikeSection pt-2 :post="comment" is-comment-store />
-        <v-card px-2 pt-2 flex-1 shadow-none>
+        <PostLikeSection :post="comment" is-comment-store pt-2 />
+        <v-card flex-1 shadow-none pt-2 px-2>
           <StyledAvatar :image="comment.user.image" :name="comment.user.name" />
           Posted by <span font-bold>{{ comment.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
           <PostCommentUpdateRichTextEditor
@@ -29,7 +29,7 @@ const isUpdateMode = ref(false);
             @update:update-mode="isUpdateMode = $event"
             @update:delete-mode="updateIsOpen"
           />
-          <v-card-text v-else class="text-body-large card-content" px-0 pb-0 v-html="comment.description" />
+          <v-card-text v-else class="card-content" pb-0 px-0 text-body-large v-html="comment.description" />
           <v-card-actions p-0>
             <PostCommentUpdateButton v-if="isCreator" @update:update-mode="isUpdateMode = $event" />
             <PostCommentDeleteButton v-if="isCreator" @update:delete-mode="updateIsOpen" />
@@ -38,16 +38,16 @@ const isUpdateMode = ref(false);
       </div>
     </template>
     <template #commentPreview>
-      <v-card px-2 shadow-none>
+      <v-card shadow-none px-2>
         <StyledAvatar :image="comment.user.image" :name="comment.user.name" />
         Posted by <span font-bold>{{ comment.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
-        <v-card-text class="text-body-large card-content" px-0 pb-0 v-html="comment.description" />
+        <v-card-text class="card-content" pb-0 px-0 text-body-large v-html="comment.description" />
       </v-card>
     </template>
   </PostCommentConfirmDeleteDialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.card-content) {
   ul,
   ol {

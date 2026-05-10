@@ -59,7 +59,7 @@ watchImmediate(
       }
     "
   >
-    <v-container py-0 fluid>
+    <v-container fluid py-0>
       <v-checkbox
         v-for="{ id, name } of editedItem.dataSource?.columns ?? []"
         :key="id"

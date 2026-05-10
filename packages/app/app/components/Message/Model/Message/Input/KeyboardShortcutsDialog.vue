@@ -24,7 +24,7 @@ const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
             <div flex items-center gap-1>
               <template v-for="(key, keyIndex) of keys" :key>
                 <span v-if="keyIndex > 0" text-xs op-50>+</span>
-                <kbd text-xs px-1 py-0 op-70 font-mono>{{ key }}</kbd>
+                <kbd text-xs font-mono op-70 px-1 py-0>{{ key }}</kbd>
               </template>
             </div>
           </div>

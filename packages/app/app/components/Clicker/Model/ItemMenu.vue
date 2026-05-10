@@ -6,7 +6,6 @@ import type { VMenu } from "vuetify/components";
 
 import { Target } from "#shared/models/clicker/data/Target";
 import { formatNumberLong } from "@/services/clicker/format";
-import { useColorsStore } from "@/store/colors";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
 
@@ -21,8 +20,6 @@ const slots = defineSlots<{
 }>();
 const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
   defineProps<ItemMenuProps>();
-const colorsStore = useColorsStore();
-const { error } = storeToRefs(colorsStore);
 const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
 const displayPrice = computed(() => formatNumberLong(price));
@@ -56,7 +53,7 @@ const upgradeIcon = computed(() => {
             :alt="id"
           />
         </template>
-        <v-list-item-subtitle op-100 flex items-center>
+        <v-list-item-subtitle flex items-center op-100>
           {{ displayPrice }}
           <div pl-2>
             <ClickerModelItem size-4 />
@@ -78,10 +75,10 @@ const upgradeIcon = computed(() => {
       </v-card-title>
       <v-card-text>
         <div v-if="description" pb-4 v-html="descriptionHtml" />
-        <div pb-4 flex justify-end font-italic>
+        <div flex pb-4 justify-end font-italic>
           <span text-right v-html="flavorDescriptionHtml" />
         </div>
-        <div :class="{ 'not-affordable': !isAffordable }" flex>
+        <div :class="{ 'text-error': !isAffordable }" flex>
           <v-spacer />
           {{ displayPrice }}
           <div pl-2>
@@ -102,9 +99,3 @@ const upgradeIcon = computed(() => {
     </StyledCard>
   </v-menu>
 </template>
-<!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
-<style scoped lang="scss">
-.not-affordable {
-  color: v-bind(error);
-}
-</style>

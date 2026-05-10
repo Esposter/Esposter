@@ -19,7 +19,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Item>) => editItem({ 
 </script>
 
 <template>
-  <v-container h-full flex flex-col fluid>
+  <v-container fluid h-full flex flex-col>
     <StyledDataTable
       flex
       flex-1

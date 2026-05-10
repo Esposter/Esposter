@@ -20,7 +20,7 @@ await readModerationLog();
 
 <template>
   <div flex flex-col gap-4>
-    <div v-if="items.length === 0" class="text-medium-emphasis">No audit log entries.</div>
+    <div v-if="items.length === 0" text-medium-emphasis>No audit log entries.</div>
     <v-list v-else lines="two">
       <v-list-item v-for="{ actorUserId, durationMs, rowKey, targetUserId, type } of items" :key="rowKey">
         <template #prepend>

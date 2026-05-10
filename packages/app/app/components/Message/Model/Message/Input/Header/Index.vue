@@ -1,24 +1,22 @@
 <script setup lang="ts">
-import { useColorsStore } from "@/store/colors";
-
 interface HeaderProps {
   isTopAttached?: boolean;
 }
 
 const { isTopAttached } = defineProps<HeaderProps>();
 const emit = defineEmits<{ close: [] }>();
-const colorsStore = useColorsStore();
-const { text } = storeToRefs(colorsStore);
 </script>
 
 <template>
-  <div class="bg-background" :class="isTopAttached ? '' : 'rd-t-2'" relative text-sm px-4 py-2 flex items-center gap-2>
+  <div :class="isTopAttached ? '' : 'rd-t-2'" relative flex items-center gap-2 text-sm px-4 py-2 bg-background>
     <slot />
     <v-btn
-      class="custom-border"
-      absolute
       top="1/2"
+      absolute
       right-4
+      b-1
+      b-solid
+      b-text
       translate-y="-1/2"
       icon="mdi-close"
       size="small"
@@ -27,9 +25,3 @@ const { text } = storeToRefs(colorsStore);
     />
   </div>
 </template>
-
-<style scoped lang="scss">
-.custom-border {
-  border: $border-width-root $border-style-root v-bind(text);
-}
-</style>

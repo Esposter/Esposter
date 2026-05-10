@@ -48,11 +48,11 @@ const {
   <v-dialog v-if="forward && creator" v-model="dialog">
     <StyledCard>
       <v-card-title flex flex-col>
-        <div flex justify-between items-center>
+        <div flex items-center justify-between>
           Forward To
           <v-btn density="comfortable" icon="mdi-close" @click="dialog = false" />
         </div>
-        <div class="text-title-small" text-gray pb-2>Select where you want to share this message.</div>
+        <div text-gray pb-2 text-title-small>Select where you want to share this message.</div>
         <v-text-field
           v-model="searchQuery"
           append-inner-icon="mdi-magnify"

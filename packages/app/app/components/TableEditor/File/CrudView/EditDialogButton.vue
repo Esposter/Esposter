@@ -43,7 +43,7 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || (!isCreat
     <template #activator="{ updateIsOpen }">
       <v-tooltip :text="tooltipText">
         <template #activator="{ props: tooltipProps }">
-          <v-btn m-0 :icon size="small" tile :="tooltipProps" @click.stop="updateIsOpen(true)" />
+          <v-btn :icon size="small" tile m-0 :="tooltipProps" @click.stop="updateIsOpen(true)" />
         </template>
       </v-tooltip>
     </template>
@@ -62,7 +62,7 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || (!isCreat
       </v-tooltip>
       <slot name="prepend-actions" />
     </template>
-    <v-container overflow-y-auto fluid>
+    <v-container fluid overflow-y-auto>
       <slot />
     </v-container>
   </StyledFormDialog>

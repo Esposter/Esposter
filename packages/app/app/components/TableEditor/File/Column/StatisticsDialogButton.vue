@@ -5,7 +5,7 @@ const isOpen = ref(false);
 <template>
   <v-tooltip text="Column Statistics">
     <template #activator="{ props: tooltipProps }">
-      <v-btn m-0 icon="mdi-sigma" size="small" tile :="tooltipProps" @click.stop="isOpen = true" />
+      <v-btn icon="mdi-sigma" size="small" tile m-0 :="tooltipProps" @click.stop="isOpen = true" />
     </template>
   </v-tooltip>
   <TableEditorFileColumnStatisticsDialog v-model="isOpen" />

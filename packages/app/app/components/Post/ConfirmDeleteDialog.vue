@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
-import { useColorsStore } from "@/store/colors";
 import { usePostStore } from "@/store/post";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
@@ -16,8 +15,6 @@ defineSlots<{
 const { postId } = defineProps<PostConfirmDeleteDialogProps>();
 const postStore = usePostStore();
 const { deletePost } = postStore;
-const colorsStore = useColorsStore();
-const { text } = storeToRefs(colorsStore);
 </script>
 
 <template>
@@ -38,14 +35,8 @@ const { text } = storeToRefs(colorsStore);
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
+    <div b-1 rd-lg b-solid shadow-md mx-4 py-2 b-text>
       <slot name="postPreview" />
     </div>
   </StyledDeleteFormDialog>
 </template>
-<!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
-<style scoped lang="scss">
-.custom-border {
-  border: $border-width-root $border-style-root v-bind(text);
-}
-</style>

@@ -4,7 +4,7 @@ const { isVisible, message } = useAdminActionNotification();
 
 <template>
   <v-snackbar :model-value="isVisible" color="error">
-    <div flex justify-center items-center>
+    <div flex items-center justify-center>
       {{ message }}
     </div>
   </v-snackbar>

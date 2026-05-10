@@ -22,14 +22,14 @@ const menuItems: Item[] = [
 
 <template>
   <StyledCard :card-props="{ elevation: isHovering ? 12 : 2, ...hoverProps }">
-    <v-card-actions p-0 gap-0 min-h-auto>
+    <v-card-actions min-h-auto gap-0 p-0>
       <v-tooltip
         v-for="{ color, icon, shortTitle, title, onClick } of menuItems"
         :key="title"
         :text="shortTitle ?? title"
       >
         <template #activator="{ props }">
-          <v-btn m-0 :color density="comfortable" :icon size="small" tile :="props" @click.stop="onClick" />
+          <v-btn :color density="comfortable" :icon size="small" tile m-0 :="props" @click.stop="onClick" />
         </template>
       </v-tooltip>
     </v-card-actions>

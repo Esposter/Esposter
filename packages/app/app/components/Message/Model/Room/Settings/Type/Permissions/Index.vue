@@ -23,8 +23,8 @@ const tab = ref(PermissionsTab.Roles);
 </script>
 
 <template>
-  <div flex h-full gap-x-6>
-    <div w-56 flex-shrink-0 flex flex-col>
+  <div h-full flex gap-x-6>
+    <div w-56 flex flex-col flex-shrink-0>
       <v-tabs v-model="tab" density="compact" mb-3>
         <v-tab :value="PermissionsTab.Roles">{{ PermissionsTab.Roles }}</v-tab>
         <v-tab :value="PermissionsTab.Members">{{ PermissionsTab.Members }}</v-tab>
@@ -47,7 +47,7 @@ const tab = ref(PermissionsTab.Roles);
     <div v-else-if="selectedMember && tab === PermissionsTab.Members" flex-1 overflow-y-auto>
       <MessageModelRoomSettingsTypePermissionsMemberEditor :key="selectedMember.id" :member="selectedMember" :room-id />
     </div>
-    <div v-else flex-1 flex items-center justify-center text-medium-emphasis>
+    <div v-else flex flex-1 items-center justify-center text-medium-emphasis>
       {{
         tab === PermissionsTab.Roles
           ? "Select a role to edit its permissions."

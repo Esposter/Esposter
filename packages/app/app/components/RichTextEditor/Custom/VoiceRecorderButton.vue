@@ -45,7 +45,7 @@ const formattedTimer = computed(() => {
   <v-tooltip :text="isRecording ? 'Stop Recording' : 'Record Voice Message'">
     <template #activator="{ props }">
       <div flex items-center>
-        <span v-if="isRecording" pr-2 font-bold>
+        <span v-if="isRecording" font-bold pr-2>
           {{ formattedTimer }}
         </span>
         <v-btn

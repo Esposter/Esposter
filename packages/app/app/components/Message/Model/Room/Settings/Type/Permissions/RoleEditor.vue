@@ -16,7 +16,7 @@ const isDirty = computed(() => permissions.value !== role.permissions);
 </script>
 
 <template>
-  <div mb-2 text-lg font-bold>{{ role.name }}</div>
+  <div text-lg font-bold mb-2>{{ role.name }}</div>
   <MessageModelRoomSettingsTypePermissionsPermissionList v-model="permissions" />
   <template v-if="isDirty">
     <MessageModelRoomSettingsTypePermissionsSaveButton @save="updateRole({ id: role.id, permissions, roomId })" />

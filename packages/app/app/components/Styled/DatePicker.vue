@@ -27,9 +27,9 @@ const { border, surface } = storeToRefs(colorsStore);
 @use "@vuepic/vue-datepicker/dist/main.css";
 </style>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.dp__input) {
   background-color: v-bind(surface);
-  border: $border-width-root $border-style-root v-bind(border);
+  border: var(--border-width) var(--border-style) v-bind(border);
 }
 </style>

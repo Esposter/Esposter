@@ -22,7 +22,7 @@ onMounted(() => {
   <NuxtLayout>
     <VisualSpaceBackground>
       <div flex flex-col items-center>
-        <div class="text-background v-theme--light" text-center text-5xl>Lost in space?</div>
+        <div text-5xl text-center>Lost in space?</div>
         <NuxtInvisibleLink pt-4 :to="RoutePath.Index">
           <StyledButton :button-props="{ text: 'Go back home' }" />
         </NuxtInvisibleLink>

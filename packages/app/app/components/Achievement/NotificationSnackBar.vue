@@ -28,10 +28,10 @@ const emit = defineEmits<{ close: [] }>();
     <div flex items-center>
       <v-icon mr-3 :icon="userAchievement.achievement.icon" size="large" />
       <div>
-        <div class="text-title-large" font-bold>Achievement Unlocked!</div>
-        <div class="text-body-large">{{ prettify(userAchievement.achievement.name) }}</div>
-        <div class="text-body-small">{{ userAchievement.achievement.description }}</div>
-        <div class="text-body-small" text-orange font-bold>+{{ userAchievement.achievement.points }} points</div>
+        <div font-bold text-title-large>Achievement Unlocked!</div>
+        <div text-body-large>{{ prettify(userAchievement.achievement.name) }}</div>
+        <div text-body-small>{{ userAchievement.achievement.description }}</div>
+        <div font-bold text-body-small text-orange>+{{ userAchievement.achievement.points }} points</div>
       </div>
     </div>
   </v-snackbar>

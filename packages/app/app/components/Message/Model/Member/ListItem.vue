@@ -52,7 +52,7 @@ const isMenuOpen = ref(false);
                 </template>
               </v-tooltip>
             </div>
-            <div v-if="memberRoles.length > 0" flex flex-wrap gap-1 mt-1>
+            <div v-if="memberRoles.length > 0" flex gap-1 mt-1 flex-wrap>
               <v-chip v-for="{ id, name, color } of memberRoles" :key="id" size="x-small" :color>
                 {{ name }}
               </v-chip>
@@ -68,7 +68,7 @@ const isMenuOpen = ref(false);
   </v-hover>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-item__prepend > .v-list-item__spacer) {
   width: 0.5rem;
 }

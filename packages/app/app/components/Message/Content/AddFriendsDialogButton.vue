@@ -35,10 +35,10 @@ const isCopied = ref(false);
         <div mb-2>Send An Invite Link To A Friend!</div>
         <v-text-field
           v-model="inviteLink"
-          class="bg-background"
           variant="outlined"
           hide-details
           readonly
+          bg-background
           :color="isCopied ? 'success' : undefined"
           :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite('example')}`"
         >
@@ -56,13 +56,13 @@ const isCopied = ref(false);
             />
           </template>
         </v-text-field>
-        <div v-if="inviteLink" class="text-title-small" text-gray pt-2>Your invite link expires in 24 hours.</div>
+        <div v-if="inviteLink" text-gray pt-2 text-title-small>Your invite link expires in 24 hours.</div>
       </v-card-text>
     </StyledCard>
   </v-dialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-field__input) {
   min-height: auto;
   font-size: 0.875rem;

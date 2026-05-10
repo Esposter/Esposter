@@ -21,7 +21,7 @@ const { creator, dialog } = useSurveyCreator(survey);
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.svc-creator__banner) {
   display: none;
 }

@@ -6,6 +6,7 @@ import { parseDuration } from "@/services/message/slashCommands/parseDuration";
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
+import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
 import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 import { MessageType } from "@esposter/db-schema";
@@ -17,9 +18,11 @@ export const useExecuteSlashCommand = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
-  const { createMessage } = dataStore;
+  const { storeSendMessage } = dataStore;
   const pollDialogStore = usePollDialogStore();
   const { isOpen } = storeToRefs(pollDialogStore);
+  const replyStore = useReplyStore();
+  const { rowKey: replyRowKey } = storeToRefs(replyStore);
   return async (
     command: { [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P } }[SlashCommandType],
   ) => {
@@ -79,12 +82,14 @@ export const useExecuteSlashCommand = () => {
         exhaustiveGuard(command);
     }
 
-    if (createMessageInput)
-      await createMessage({
-        ...createMessageInput,
-        message: createMessageInput.message
-          ? marked.parse(sanitizeHtml(createMessageInput.message), { async: false })
-          : undefined,
-      });
+    if (!createMessageInput) return;
+
+    await storeSendMessage({
+      ...createMessageInput,
+      message: createMessageInput.message
+        ? marked.parse(sanitizeHtml(createMessageInput.message), { async: false })
+        : undefined,
+      replyRowKey: replyRowKey.value,
+    });
   };
 };

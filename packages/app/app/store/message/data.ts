@@ -75,12 +75,15 @@ export const useDataStore = defineStore("message/data", () => {
       roomId,
       type: MessageType.Message,
     };
+    await storeSendMessage(input, editor);
+  };
+  const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
     await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
     await createMessage(input);
-    clearDraft(roomId);
+    clearDraft(input.roomId);
   };
   MessageHookMap.ResetSend.push((editor) => {
-    editor.commands.clearContent(true);
+    editor?.commands.clearContent(true);
   });
   // We only expose the internal store crud message functions for subscriptions
   // Everything else will directly use trpc mutations that are tracked by the related subscriptions
@@ -96,6 +99,7 @@ export const useDataStore = defineStore("message/data", () => {
     updateMessage,
     ...restOperationData,
     sendMessage,
+    storeSendMessage,
     ...restData,
     typings,
   };

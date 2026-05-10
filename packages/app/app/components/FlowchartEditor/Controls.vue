@@ -19,11 +19,11 @@ const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANS
   </Controls>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.vue-flow__controls-button) {
   background-color: v-bind(surface);
   fill: v-bind(text);
-  border: $border-width-root $border-style-root v-bind(text);
+  border: var(--border-width) var(--border-style) v-bind(text);
 
   &:hover {
     background-color: v-bind(surfaceOpacity80);

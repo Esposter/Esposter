@@ -20,7 +20,7 @@ await readBans();
 
 <template>
   <div flex flex-col gap-4>
-    <div v-if="items.length === 0" class="text-medium-emphasis">No banned users.</div>
+    <div v-if="items.length === 0" text-medium-emphasis>No banned users.</div>
     <v-list v-else lines="two">
       <v-list-item v-for="{ bannedByUser, createdAt, user, userId } of items" :key="userId">
         <template #prepend>

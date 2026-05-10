@@ -17,7 +17,6 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
 <template>
   <v-autocomplete
     v-model="selectedFilters"
-    cursor-text
     autocomplete="suppress"
     density="compact"
     menu-icon=""
@@ -30,6 +29,7 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
     hide-no-data
     multiple
     return-object
+    cursor-text
     @keydown.esc="blur()"
     @keydown.enter="
       async () => {
