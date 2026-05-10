@@ -5,14 +5,13 @@ const transform = useRotatingTransform(container);
 </script>
 
 <template>
-  <div ref="container" class="div">
+  <div ref="container" class="container" transition-transform duration="[var(--transition-duration)]" ease-out>
     <slot />
   </div>
 </template>
 
 <style scoped>
-.div {
+.container {
   transform: v-bind(transform);
-  transition: transform var(--transition-duration) ease-out;
 }
 </style>

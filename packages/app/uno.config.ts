@@ -21,7 +21,11 @@ export default defineConfig({
     cssLayerName: (layer) => (layer === "properties" ? null : `uno.${layer}`),
   },
   presets: [presetWind3(), presetAttributify(), presetVuetify()],
-  rules: [["overflow-anchor-none", { "overflow-anchor": "none" }]],
+  rules: [
+    ["overflow-anchor-none", { "overflow-anchor": "none" }],
+    // "border" clashes with UnoCSS border property handling, emitting uninitialised --un-bg-border instead of --un-bg-opacity.
+    ["bg-border", { "background-color": "rgb(var(--v-theme-border))" }],
+  ],
   safelist: Array.from({ length: 6 }, (_, i) => `elevation-${i}`),
   theme: {
     colors: Object.fromEntries(

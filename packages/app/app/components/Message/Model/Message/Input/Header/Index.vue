@@ -11,6 +11,7 @@ const emit = defineEmits<{ close: [] }>();
   <div :class="isTopAttached ? '' : 'rd-t-2'" relative flex items-center gap-2 text-sm px-4 py-2 bg-background>
     <slot />
     <v-btn
+      b-solid
       b-1
       b-text
       absolute

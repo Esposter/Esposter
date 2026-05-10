@@ -9,8 +9,8 @@ const { "primary-lighten-1": primaryLighten1 } = storeToRefs(colorsStore);
   <NuxtLoadingIndicator
     :height="2"
     :color="primaryLighten1?.toString()"
-    !top="[var(--app-bar-height)]"
+    top="[var(--app-bar-height)]!"
     shadow="[0_0_5px_rgb(var(--v-theme-primary-lighten-1))]"
-    !z="[1500]"
+    z="[1500]!"
   />
 </template>

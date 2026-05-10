@@ -39,6 +39,7 @@ const selectEmoji = await useSelectEmoji(message);
           : ['bg-backgroundOpacity80', 'b-transparent', 'hover:bg-surfaceOpacity80', 'hover:b-border']
       "
       z-1
+      b-solid
       b-1
       w-fit
       flex
