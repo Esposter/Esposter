@@ -1,5 +1,6 @@
 import type { Editor } from "@tiptap/core";
 
+import { dayjs } from "#shared/services/dayjs";
 import { validateFile } from "@/services/file/validateFile";
 import { DRAFT_KEY_PREFIX } from "@/store/message/input/constants";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
@@ -45,6 +46,7 @@ export const useInputStore = defineStore("message/input", () => {
         }
       }
     },
+    { debounce: dayjs.duration(0.3, "seconds").asMilliseconds() },
   );
 
   const clearDraft = (roomId: string) => {
