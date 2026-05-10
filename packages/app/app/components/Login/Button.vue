@@ -23,8 +23,11 @@ const isLoading = ref(false);
 
 <template>
   <button
-    class="button"
     :style
+    shadow="[0_2px_4px_0_rgba(0,0,0,0.25)]"
+    hover:shadow="[0_2px_10px_2px_rgba(0,0,0,0.35)]"
+    transition="[box-shadow_0.2s,transform_0.2s]"
+    hover:-translate-y-[3px]
     h-12
     w-full
     flex
@@ -55,17 +58,3 @@ const isLoading = ref(false);
     </div>
   </button>
 </template>
-
-<style scoped lang="scss">
-.button {
-  box-shadow: 0 2px 4px 0 rgba(black, 0.25);
-  transition:
-    box-shadow 0.2s,
-    transform 0.2s;
-
-  &:hover {
-    box-shadow: 0 2px 10px 2px rgba(black, 0.35);
-    transform: translateY(-3px);
-  }
-}
-</style>

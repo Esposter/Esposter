@@ -28,7 +28,23 @@ Only use `class="..."` when technically required:
 - Vuetify typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-caption`, etc.
 - Vuetify theme colours: `bg-surface`, `bg-surface-variant`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, `text-on-surface`, etc.
 - Custom theme colours: `bg-surfaceOpacity80`, `bg-backgroundOpacity40`, etc.
-- Vuetify border utilities: `border-sm`, `border-b-sm`, `border-color` (when it's the Vuetify utility, not a scoped CSS class name)
+
+### Custom Vuetify theme colours must be registered in `uno.config.ts`
+
+All custom colours not in the standard Vuetify palette (`primary`, `secondary`, `surface`, `background`, `error`, `warning`, `info`, `success`, `on-*`) must be added to `uno.config.ts` under `theme.colors` so UnoCSS can scan and generate them:
+
+```ts
+// uno.config.ts
+theme: {
+  colors: {
+    "primary-darken-1": 'rgb(var(--v-theme-primary-darken-1))',
+    surfaceOpacity80: 'rgb(var(--v-theme-surfaceOpacity80))',
+    // all custom colours from vuetify.config.ts → getBaseColorsExtension + variations
+  }
+}
+```
+
+Check `vuetify.config.ts` for the canonical list. Standard palette colours are handled by `presetVuetify()` automatically.
 
 ## `v-bind(themeColor)` in CSS → attributify
 
@@ -47,12 +63,24 @@ When a scoped CSS class exists _only_ to set a Vuetify theme colour with `v-bind
 
 Also remove the `storeToRefs` destructure (and `useColorsStore()` call if nothing else uses it).
 
+### Hover state → `hover:utility`
+
+`&:hover { color: v-bind(primary-darken-1); }` migrates to a standalone `hover:text-primary-darken-1` attribute:
+
+```diff
+- <NuxtInvisibleLink class="author" ...>
++ <NuxtInvisibleLink text-primary hover:text-primary-darken-1 transition-colors duration-[var(--transition-duration)] ...>
+```
+
+Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in Vue templates — only a leading `:` triggers `v-bind`.
+
 **Do NOT convert** when `v-bind` appears in:
 
-- Pseudo-selectors (`:hover`, `:nth-of-type`) — CSS only
-- Complex shorthand properties (`border: ... v-bind(color)`, `animation: ... v-bind(dur)`)
-- Non-colour reactive values (`transform`, `top`, `left`, `height`, `transition`, `fill`, `stroke`)
+- Structural pseudo-selectors: `:nth-of-type`, `:nth-child`, `:not()`, `:first-of-type`
 - `:deep()` rules
+- Complex shorthand properties (`border: ... v-bind(color)`, `animation: ... v-bind(dur)`)
+- Non-colour reactive values (`transform`, `top`, `left`, `height`, `fill`, `stroke`)
+- Element/tag selectors (`p`, `a`, `ul`, `li`)
 
 ## Arbitrary CSS Values
 
@@ -73,23 +101,58 @@ Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+var(--x)
 
 When converting a scoped CSS class that only contains arbitrary-value properties, delete the class name and the `<style scoped>` block entirely.
 
+## Transition Splitting
+
+Split the CSS `transition` shorthand into separate UnoCSS attributes — one for the property, one for the duration:
+
+```html
+<!-- Single property + CSS-variable duration: split into two attributes -->
+<NuxtInvisibleLink transition-colors duration-[var(--transition-duration)] ...>
+  <!-- Multi-property with same static duration: use single arbitrary value (no clean split) -->
+  <button transition="[box-shadow_0.2s,transform_0.2s]" ...></button
+></NuxtInvisibleLink>
+```
+
+Rules:
+
+- Single known property → use the UnoCSS shorthand (`transition-colors`, `transition-shadow`, `transition-transform`, `transition-opacity`, etc.)
+- Override the default duration with a separate `duration-{n}` or `duration-[var(--x)]` attribute
+- Multi-property transitions (e.g. `box-shadow` + `transform`) must stay as a single `transition="[...]"` arbitrary value — splitting them would cause the second `transition-property` to override the first
+- Spaces in arbitrary `transition` values become `_`
+
 ## Abbreviated Utilities
 
 Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS utilities:
 
-**Border (`b-` prefix):**
+**Border (`b-` prefix) — never use Vuetify `border="sm"` prop or `border-sm` class:**
+
+| Vuetify utility             | UnoCSS (use this) | Value |
+| --------------------------- | ----------------- | ----- |
+| `border-sm` / `border="sm"` | `b-1`             | 1px   |
+| `border-md` / `border="md"` | `b-2`             | 2px   |
+| `border-lg` / `border="lg"` | `b-4`             | 4px   |
+| `border-xl` / `border="xl"` | `b-8`             | 8px   |
 
 - `b-none` not `border-none`
 - `b-0` not `border-0`
-- `b-1` not `border-1`
 - `b-solid` not `border-solid`
 - `b-t-2` not `border-top-2`
 - `b-x-1` not `border-x-1`
 
-**Border-radius (`rd` prefix):**
+Note: `b-1` sets `border-width: 1px`. Border style (`solid`) and border colour (`#e5e7eb` from Wind3 preflight) are applied automatically. For reactive border colour use `class="border-color"` with `v-bind()` in scoped CSS.
+
+**Border-radius (`rd` prefix) — never use Vuetify `rounded="sm"` prop or `rounded-sm` class:**
+
+| Vuetify utility                           | UnoCSS (use this) | Value  |
+| ----------------------------------------- | ----------------- | ------ |
+| `rounded-sm` / `rounded="sm"`             | `rd-sm`           | 2px    |
+| `rounded` / `rounded-md` / `rounded="md"` | `rd`              | 4px    |
+| `rounded-lg` / `rounded="lg"`             | `rd-lg`           | 8px    |
+| `rounded-xl` / `rounded="xl"`             | `rd-3xl`          | 24px   |
+| `rounded-pill` / `rounded="pill"`         | `rd-full`         | 9999px |
+| `rounded-circle` / `rounded="circle"`     | `rd="50%"`        | 50%    |
 
 - `rd` not `rounded`
-- `rd-1` not `rounded-1`
 - `rd-t-2` not `rounded-t-2`
 - `rd-full` not `rounded-full`
 

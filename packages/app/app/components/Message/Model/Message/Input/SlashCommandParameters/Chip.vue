@@ -53,7 +53,7 @@ onMounted(() => {
     py-1
     overflow-hidden
   >
-    <span class="parameter-chip__label" bg-background text-sm font-bold :class="isError ? 'text-error' : ''">
+    <span class="parameter-chip__label" text-sm font-bold bg-background :class="isError ? 'text-error' : ''">
       {{ name }}
     </span>
     <input

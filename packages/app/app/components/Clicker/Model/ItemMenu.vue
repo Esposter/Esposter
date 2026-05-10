@@ -6,7 +6,6 @@ import type { VMenu } from "vuetify/components";
 
 import { Target } from "#shared/models/clicker/data/Target";
 import { formatNumberLong } from "@/services/clicker/format";
-import { useColorsStore } from "@/store/colors";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
 
@@ -21,8 +20,6 @@ const slots = defineSlots<{
 }>();
 const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
   defineProps<ItemMenuProps>();
-const colorsStore = useColorsStore();
-const { error } = storeToRefs(colorsStore);
 const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
 const displayPrice = computed(() => formatNumberLong(price));
@@ -81,7 +78,7 @@ const upgradeIcon = computed(() => {
         <div flex pb-4 justify-end font-italic>
           <span text-right v-html="flavorDescriptionHtml" />
         </div>
-        <div :class="{ 'not-affordable': !isAffordable }" flex>
+        <div :class="{ 'text-error': !isAffordable }" flex>
           <v-spacer />
           {{ displayPrice }}
           <div pl-2>
@@ -103,8 +100,3 @@ const upgradeIcon = computed(() => {
   </v-menu>
 </template>
 <!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
-<style scoped lang="scss">
-.not-affordable {
-  color: v-bind(error);
-}
-</style>

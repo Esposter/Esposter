@@ -30,6 +30,23 @@ Only use `class="..."` when technically required:
 - Custom theme colours: `bg-surfaceOpacity80`, `bg-backgroundOpacity40`, etc.
 - Vuetify border utilities: `border-sm`, `border-b-sm`, `border-color` (when it's the Vuetify utility, not a scoped CSS class name)
 
+### Custom Vuetify theme colours must be registered in `uno.config.ts`
+
+All custom colours not in the standard Vuetify palette (`primary`, `secondary`, `surface`, `background`, `error`, `warning`, `info`, `success`, `on-*`) must be added to `uno.config.ts` under `theme.colors` so UnoCSS can scan and generate them:
+
+```ts
+// uno.config.ts
+theme: {
+  colors: {
+    "primary-darken-1": 'rgb(var(--v-theme-primary-darken-1))',
+    surfaceOpacity80: 'rgb(var(--v-theme-surfaceOpacity80))',
+    // all custom colours from vuetify.config.ts → getBaseColorsExtension + variations
+  }
+}
+```
+
+Check `vuetify.config.ts` for the canonical list. Standard palette colours are handled by `presetVuetify()` automatically.
+
 ## `v-bind(themeColor)` in CSS → attributify
 
 When a scoped CSS class exists _only_ to set a Vuetify theme colour with `v-bind()`, convert it to attributify and delete the class:
@@ -47,12 +64,24 @@ When a scoped CSS class exists _only_ to set a Vuetify theme colour with `v-bind
 
 Also remove the `storeToRefs` destructure (and `useColorsStore()` call if nothing else uses it).
 
+### Hover state → `hover:utility`
+
+`&:hover { color: v-bind(primary-darken-1); }` migrates to a standalone `hover:text-primary-darken-1` attribute:
+
+```diff
+- <NuxtInvisibleLink class="author" ...>
++ <NuxtInvisibleLink text-primary hover:text-primary-darken-1 transition-colors duration-[var(--transition-duration)] ...>
+```
+
+Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in Vue templates — only a leading `:` triggers `v-bind`.
+
 **Do NOT convert** when `v-bind` appears in:
 
-- Pseudo-selectors (`:hover`, `:nth-of-type`) — CSS only
-- Complex shorthand properties (`border: ... v-bind(color)`, `animation: ... v-bind(dur)`)
-- Non-colour reactive values (`transform`, `top`, `left`, `height`, `transition`, `fill`, `stroke`)
+- Structural pseudo-selectors: `:nth-of-type`, `:nth-child`, `:not()`, `:first-of-type`
 - `:deep()` rules
+- Complex shorthand properties (`border: ... v-bind(color)`, `animation: ... v-bind(dur)`)
+- Non-colour reactive values (`transform`, `top`, `left`, `height`, `fill`, `stroke`)
+- Element/tag selectors (`p`, `a`, `ul`, `li`)
 
 ## Arbitrary CSS Values
 
@@ -72,6 +101,25 @@ Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and
 Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+var(--x))` not `calc(1rem + var(--x))`.
 
 When converting a scoped CSS class that only contains arbitrary-value properties, delete the class name and the `<style scoped>` block entirely.
+
+## Transition Splitting
+
+Split the CSS `transition` shorthand into separate UnoCSS attributes — one for the property, one for the duration:
+
+```html
+<!-- Single property + CSS-variable duration: split into two attributes -->
+<NuxtInvisibleLink transition-colors duration-[var(--transition-duration)] ...>
+  <!-- Multi-property with same static duration: use single arbitrary value (no clean split) -->
+  <button transition="[box-shadow_0.2s,transform_0.2s]" ...></button
+></NuxtInvisibleLink>
+```
+
+Rules:
+
+- Single known property → use the UnoCSS shorthand (`transition-colors`, `transition-shadow`, `transition-transform`, `transition-opacity`, etc.)
+- Override the default duration with a separate `duration-{n}` or `duration-[var(--x)]` attribute
+- Multi-property transitions (e.g. `box-shadow` + `transform`) must stay as a single `transition="[...]"` arbitrary value — splitting them would cause the second `transition-property` to override the first
+- Spaces in arbitrary `transition` values become `_`
 
 ## Abbreviated Utilities
 

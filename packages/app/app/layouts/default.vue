@@ -77,7 +77,11 @@ defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
       <slot name="right" />
     </v-navigation-drawer>
     <!-- Set max height here so we can hide global window scrollbar -->
-    <v-main ref="container" :style="{ ...middle, ...mainStyle, maxHeight: hideGlobalScrollbar ? '100dvh' : undefined }">
+    <v-main
+      ref="container"
+      pt="[var(--app-bar-height)]"
+      :style="{ ...middle, ...mainStyle, maxHeight: hideGlobalScrollbar ? '100dvh' : undefined }"
+    >
       <slot />
     </v-main>
 
@@ -88,9 +92,6 @@ defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
 </template>
 
 <style scoped lang="scss">
-.v-main {
-  padding-top: var(--app-bar-height);
-}
 // Only show scrollbar for part of the drawer that actually has
 // content greater than screen size rather than the entire drawer.
 // Make sure to apply attribute overflow-y-auto for the container

@@ -57,7 +57,7 @@ watch(
             <template #default="{ isHovering, props: hoverProps }">
               <v-btn
                 :style="{ pointerEvents: isEditable ? undefined : 'none' }"
-                rounded="lg"
+                rd-lg
                 :ripple="false"
                 slim
                 font-bold

@@ -27,7 +27,6 @@ const { "on-surface": onSurface, surface } = storeToRefs(colorsStore);
         <div v-for="(card, index) of cards" :key="index" class="item-container">
           <div
             class="item"
-            border-sm
             font="[Montserrat] italic"
             h-full
             flex
@@ -36,6 +35,7 @@ const { "on-surface": onSurface, surface } = storeToRefs(colorsStore);
             p-4
             justify-center
             text-center
+            border-sm
             cursor-pointer
           >
             {{ card.text }}

@@ -12,7 +12,7 @@ const { text } = storeToRefs(colorsStore);
 </script>
 
 <template>
-  <div bg-background :class="isTopAttached ? '' : 'rd-t-2'" relative flex items-center gap-2 text-sm px-4 py-2>
+  <div :class="isTopAttached ? '' : 'rd-t-2'" relative flex items-center gap-2 text-sm px-4 py-2 bg-background>
     <slot />
     <v-btn
       class="custom-border"

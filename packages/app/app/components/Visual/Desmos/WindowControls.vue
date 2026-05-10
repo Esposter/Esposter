@@ -3,7 +3,7 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
 </script>
 
 <template>
-  <div class="v-window__controls" fixed top-auto bottom-0>
+  <div class="v-window__controls" fixed top-auto bottom-0 h="[calc(100dvh-var(--app-bar-height))]">
     <v-tooltip location="right center" text="Left">
       <template #activator="{ props }">
         <v-btn icon="mdi-chevron-left" size="small" :="props" @click="emit('clickLeft', $event)" />
@@ -16,9 +16,3 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
     </v-tooltip>
   </div>
 </template>
-
-<style scoped>
-.v-window__controls {
-  height: calc(100dvh - var(--app-bar-height));
-}
-</style>

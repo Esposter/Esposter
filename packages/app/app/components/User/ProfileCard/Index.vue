@@ -45,7 +45,7 @@ const disabled = computed(
 </script>
 
 <template>
-  <div text-title-large font-bold>Profile</div>
+  <div font-bold text-title-large>Profile</div>
   <div text-body-large>Your personal information</div>
   <v-form
     v-model="isEditFormValid"
