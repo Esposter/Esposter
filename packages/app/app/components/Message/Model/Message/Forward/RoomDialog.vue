@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useAlertStore } from "@/store/alert";
 import { useDataStore } from "@/store/message/data";
-import { useForwardStore } from "@/store/message/forward";
+import { useForwardStore } from "@/store/message/input/forward";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { RoutePath, takeOne } from "@esposter/shared";
+import { normalizeString, RoutePath, takeOne } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
@@ -28,14 +29,16 @@ const {
   readMoreItemsSearched,
   searchQuery,
 } = useCursorSearcher(
-  (searchQuery, cursor, opts) =>
-    $trpc.room.readRooms.query(
+  (searchQuery, cursor, opts) => {
+    const normalizedSearchQuery = normalizeString(searchQuery);
+    return $trpc.room.readRooms.query(
       {
         cursor,
-        filter: { name: searchQuery },
+        filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined,
       },
       opts,
-    ),
+    );
+  },
   true,
   true,
 );
@@ -45,11 +48,11 @@ const {
   <v-dialog v-if="forward && creator" v-model="dialog">
     <StyledCard>
       <v-card-title flex flex-col>
-        <div flex justify-between items-center>
+        <div flex items-center justify-between>
           Forward To
           <v-btn density="comfortable" icon="mdi-close" @click="dialog = false" />
         </div>
-        <div class="text-title-small" text-gray pb-2>Select where you want to share this message.</div>
+        <div text-gray pb-2 text-title-small>Select where you want to share this message.</div>
         <v-text-field
           v-model="searchQuery"
           append-inner-icon="mdi-magnify"
@@ -67,7 +70,7 @@ const {
         </v-list>
       </v-card-text>
       <v-divider />
-      <MessageModelMessageType :creator :message="forward" is-preview />
+      <component :is="MessageComponentMap[forward.type]" v-if="forward" :creator :message="forward" is-preview />
       <v-divider />
       <v-card-actions flex-col gap-0>
         <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />

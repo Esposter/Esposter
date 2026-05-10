@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useColorsStore } from "@/store/colors";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
 const { noColumns, visuals } = storeToRefs(visualStore);
-const { background, border, surface } = useColors();
+const colorsStore = useColorsStore();
+const { background, border, surface } = storeToRefs(colorsStore);
 </script>
 
 <template>
@@ -17,12 +19,12 @@ const { background, border, surface } = useColors();
   </v-container>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.vgl-layout) {
   width: 100%;
   min-height: 100%;
   background-color: v-bind(background);
-  border-radius: $border-radius-root;
+  border-radius: var(--border-radius);
 }
 
 :deep(.vgl-item) {
@@ -34,7 +36,7 @@ const { background, border, surface } = useColors();
 
   &:not(.vgl-item--placeholder) {
     background-color: v-bind(surface);
-    border: $border-width-root $border-style-root v-bind(border);
+    border: var(--border-width) var(--border-style) v-bind(border);
   }
 }
 </style>

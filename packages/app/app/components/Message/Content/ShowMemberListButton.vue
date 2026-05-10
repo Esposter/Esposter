@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
-import { useLayoutStore as useMessageLayoutStore } from "@/store/message/layout";
+import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
 
 const layoutStore = useLayoutStore();
 const { isRightDrawerOpen } = storeToRefs(layoutStore);
@@ -10,7 +10,10 @@ const { rightDrawer } = storeToRefs(messageLayoutStore);
 </script>
 
 <template>
-  <v-tooltip location="bottom" :text="`${isRightDrawerOpen ? 'Hide' : 'Show'} Member List`">
+  <v-tooltip
+    location="bottom"
+    :text="`${isRightDrawerOpen && rightDrawer === RightDrawer.Member ? 'Hide' : 'Show'} Member List`"
+  >
     <template #activator="{ props }">
       <v-btn
         icon="mdi-account-multiple"

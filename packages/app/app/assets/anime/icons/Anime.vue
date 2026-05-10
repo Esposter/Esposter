@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const { surface, text } = useColors();
+import { useColorsStore } from "@/store/colors";
+
+const colorsStore = useColorsStore();
+const { surface, text } = storeToRefs(colorsStore);
 </script>
 
 <template>
@@ -20,7 +23,7 @@ const { surface, text } = useColors();
   </svg>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .a {
   stroke: v-bind(surface);
 }

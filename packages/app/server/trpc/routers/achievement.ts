@@ -4,9 +4,8 @@ import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { achievements, selectUserSchema, userAchievements } from "@esposter/db-schema";
+import { selectUserSchema, UserAchievementRelations } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
@@ -15,43 +14,36 @@ export type ReadUserAchievementsInput = z.infer<typeof readUserAchievementsInput
 export const achievementRouter = router({
   onUpdateAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     for await (const [data] of on(achievementEventEmitter, "updateAchievement", { signal })) {
-      const userAchievements = data.filter(({ userId }) => userId === ctx.session.user.id);
+      const userAchievements = data.filter(({ userId }) => userId === ctx.getSessionPayload.user.id);
       if (userAchievements.length > 0) yield userAchievements;
     }
   }),
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
-    const unlockedUserAchievementNames = await ctx.db
-      .select({ name: achievements.name })
-      .from(userAchievements)
-      .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
-      .where(and(eq(userAchievements.userId, userId), isNull(userAchievements.unlockedAt)));
+    const userId = ctx.getSessionPayload.user.id;
+    const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
+      where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },
+      with: UserAchievementRelations,
+    });
+    const unlockedUserAchievementNames = new Set(unlockedUserAchievements.map(({ achievement }) => achievement.name));
     return Object.fromEntries(
       Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
         achievementName,
         {
           ...achievementDefinition,
           description:
-            achievementDefinition.isHidden && !unlockedUserAchievementNames.some(({ name }) => name === achievementName)
+            achievementDefinition.isHidden && !unlockedUserAchievementNames.has(achievementName)
               ? "???"
               : achievementDefinition.description,
         },
       ]),
     ) as typeof AchievementDefinitionMap;
   }),
-  readUserAchievements: standardRateLimitedProcedure
-    .input(readUserAchievementsInputSchema)
-    .query(async ({ ctx, input }) => {
-      const userId = input ?? ctx.session?.user.id;
-      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-      const joinedUserAchievements = await ctx.db
-        .select()
-        .from(userAchievements)
-        .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
-        .where(and(eq(userAchievements.userId, userId)));
-      return joinedUserAchievements.map(({ achievements, user_achievements }) =>
-        Object.assign(user_achievements, { achievement: achievements }),
-      );
-    }),
+  readUserAchievements: standardRateLimitedProcedure.input(readUserAchievementsInputSchema).query(({ ctx, input }) => {
+    const userId = input ?? ctx.getSessionPayload?.user.id;
+    if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+    return ctx.db.query.userAchievements.findMany({
+      where: { userId: { eq: userId } },
+      with: UserAchievementRelations,
+    });
+  }),
 });

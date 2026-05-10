@@ -8,8 +8,8 @@ interface ListItemProps extends Pick<MessageComponentProps<StandardMessageEntity
   active?: boolean;
 }
 
-const { active, isPreview = false } = defineProps<ListItemProps>();
 const slots = defineSlots<Record<keyof VListItem["$slots"], () => VNode>>();
+const { active, isPreview = false } = defineProps<ListItemProps>();
 const style = computed<CSSProperties>(() =>
   isPreview ? { pointerEvents: "none", userSelect: "none" } : { pointerEvents: "auto", userSelect: "auto" },
 );
@@ -23,12 +23,12 @@ const style = computed<CSSProperties>(() =>
   </v-list-item>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-item__prepend) {
   align-self: flex-start;
 
   > :first-child {
-    width: $avatar-width;
+    width: var(--avatar-width);
   }
 
   > .v-list-item__spacer {
@@ -40,7 +40,7 @@ const style = computed<CSSProperties>(() =>
   pointer-events: v-bind("style.pointerEvents");
   user-select: v-bind("style.userSelect");
 }
-// We don't want to hide message content even if they added a bunch of newlines
+/* We don't want to hide message content even if they added a bunch of newlines */
 :deep(.v-list-item-subtitle) {
   line-clamp: unset;
   -webkit-line-clamp: unset;

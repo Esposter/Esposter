@@ -11,10 +11,10 @@ export interface BasePaginationParams<T extends string> {
 
 export const createBasePaginationParamsSchema = <T extends z.ZodType<string>>(
   sortKeySchema: T,
-  minSortBy = 0,
+  minimumSortBy = 0,
   defaultSortBy: SortItem<z.output<T>>[] = [],
 ) =>
   z.object({
     limit: z.int().min(1).max(MAX_READ_LIMIT).default(DEFAULT_READ_LIMIT),
-    sortBy: createSortItemSchema(sortKeySchema).array().min(minSortBy).default(defaultSortBy),
+    sortBy: createSortItemSchema(sortKeySchema).array().min(minimumSortBy).default(defaultSortBy),
   });

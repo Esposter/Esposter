@@ -12,6 +12,7 @@ const { createPost } = postStore;
   <NuxtLayout>
     <v-container>
       <PostUpsertForm
+        is-create
         @submit="
           async (_event, values) => {
             await createPost(values);

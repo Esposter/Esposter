@@ -24,8 +24,18 @@ jobs:
       - name: 🔍 Lint
         run: pnpm lint
 
+      - name: 📝 Format
+        run: pnpm format:check
+
       - name: ✅ Typecheck
         run: pnpm typecheck
 
       - name: 🧪 Test
-        run: pnpm test
+        run: pnpm coverage
+
+      - name: 📊 Upload Coverage
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: packages/app/coverage
+          if-no-files-found: error

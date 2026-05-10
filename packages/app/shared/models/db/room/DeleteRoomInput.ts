@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectRoomSchema } from "@esposter/db-schema";
+import { selectRoomInMessageSchema } from "@esposter/db-schema";
 
-export const deleteRoomInputSchema = selectRoomSchema.shape.id;
+export const deleteRoomInputSchema = selectRoomInMessageSchema.shape.id;
 export type DeleteRoomInput = z.infer<typeof deleteRoomInputSchema>;

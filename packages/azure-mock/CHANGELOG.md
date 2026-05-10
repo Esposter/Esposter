@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
+
+### Bug Fixes
+
+* code review comments ([c3f41ff](https://github.com/Esposter/Esposter/commit/c3f41ff57b20f793d8864bd8a2ebb39bb29b16c8))
+* lint and typecheck ([bb450a9](https://github.com/Esposter/Esposter/commit/bb450a96f9a02f3c2d8fa9dbdb94967125c7a55b))
+* lint and typedoc warnings ([dcd64f4](https://github.com/Esposter/Esposter/commit/dcd64f45e16e41d8002a3cc5c9002c484cd01a43))
+* lint wip ([8acd30e](https://github.com/Esposter/Esposter/commit/8acd30e554910d92719864b0f706e78833d27ebc))
+* remaining migrations ([14c864f](https://github.com/Esposter/Esposter/commit/14c864f5b31a0c61544e07bd34ea18bbd9df1af2))
+* transforms + types + align skills md ([7da475a](https://github.com/Esposter/Esposter/commit/7da475a6634d312ae299b13960688b61e6494191))
+* types ([d800cdc](https://github.com/Esposter/Esposter/commit/d800cdcb9f438db1973aaf6d11eeb8d7d37654a4))
+
+# [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
+
+### Bug Fixes
+
+* types ([90f6290](https://github.com/Esposter/Esposter/commit/90f6290b0de466dc9568a96295189a24926b50d1))
+
+* types ([caf4700](https://github.com/Esposter/Esposter/commit/caf47007ad6bfaada08adca4c7283361e3995d61))
+
+# [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
+
+### Bug Fixes
+
+* deps + disable unnecessary type args ([13cc22a](https://github.com/Esposter/Esposter/commit/13cc22a02897aa84b7cb637412a64d37aacbe2bd))
+
+# [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)
+
+### Bug Fixes
+
+* format + fix up some ignores ([6cd632f](https://github.com/Esposter/Esposter/commit/6cd632ff672ad8e0adee51b42cb6f6925f894b96))
+
+* switch ([bd6d033](https://github.com/Esposter/Esposter/commit/bd6d033f49bf191ef13704a1d6af616ad61a2fa9))
+
+### Features
+
+* Add oxlint type aware ([eb40e2d](https://github.com/Esposter/Esposter/commit/eb40e2d7da8c606c66053582284264e0fb3a2592))
+
+* migrate to oxfmt ([e7a0212](https://github.com/Esposter/Esposter/commit/e7a0212f9ec18d7193c96cc6069ac6ecf168e8bb))
+
+* switch to tsgo ([1e504b3](https://github.com/Esposter/Esposter/commit/1e504b3a6ce5144dadbdd9bc543018a35e7b6808))
+
 ## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
 
 **Note:** Version bump only for package azure-mock
@@ -16,10 +58,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * empty key tests ([d849357](https://github.com/Esposter/Esposter/commit/d849357f5f354425ebe105f628f3372d9f264b9b))
+
 * finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+
 * lint ([8007303](https://github.com/Esposter/Esposter/commit/800730345e8e21c3548277aabf627aa65bf4d601))
+
 * oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+
 * types ([76435d0](https://github.com/Esposter/Esposter/commit/76435d0dfcbd92859c516506fdae54daa01d652a))
+
 * update rolldown-plugin-dts and remove resolve option ([251fe7d](https://github.com/Esposter/Esposter/commit/251fe7d7811121e514fcadaafeafd20a6460dca4))
 
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
@@ -35,7 +82,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * add remaining tests ([87ad867](https://github.com/Esposter/Esposter/commit/87ad867732a695ad5da028fa700aaaeb3376c692))
+
 * lint ([5e8eb34](https://github.com/Esposter/Esposter/commit/5e8eb340d6f0e0a090076ddcd01aa4c404b3b894))
+
 * remove unnecessary tests ([f2829a5](https://github.com/Esposter/Esposter/commit/f2829a5f95f836a0ffc0fb4654c0bff907cb0dbf))
 
 # [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
@@ -43,6 +92,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * Add mock queue client ([079340a](https://github.com/Esposter/Esposter/commit/079340a01b61f47cb0ac753cc811de5676dc0e65))
+
 * migrate to event grid instead of storage queue ([6987115](https://github.com/Esposter/Esposter/commit/69871155a7f1114cb62229173c4c70a7f3ce1d81))
 
 # [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)

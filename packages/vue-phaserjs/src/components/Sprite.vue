@@ -8,13 +8,13 @@ import type { SetRequired } from "type-fest";
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { SpriteSetterMap } from "@/util/setterMap/SpriteSetterMap";
 
-export interface SpriteProps {
+interface SpriteEmits extends /** @vue-ignore */ SpriteEventEmitsOptions {}
+
+interface SpriteProps {
   configuration: SetRequired<Partial<SpriteConfiguration>, "texture">;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, sprite: GameObjects.Sprite) => void;
 }
-
-interface SpriteEmits extends /** @vue-ignore */ SpriteEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<SpriteProps>();
 const emit = defineEmits<SpriteEmits>();

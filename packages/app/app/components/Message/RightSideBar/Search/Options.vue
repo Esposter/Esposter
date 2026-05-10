@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FilterTypePlaceholderMap } from "@/services/message/filter/FilterTypePlaceholderMap";
-import { useSearchMessageStore } from "@/store/message/searchMessage";
-import { FilterType } from "@esposter/db-schema";
+import { useSearchMessageStore } from "@/store/message/search";
+import { FilterTypes } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";
 
 const searchMessageStore = useSearchMessageStore();
@@ -11,11 +11,11 @@ const { createFilter } = searchMessageStore;
 <template>
   <v-card-title text-base font-extrabold>Search Options</v-card-title>
   <v-list py-0 density="compact">
-    <v-hover v-for="filterType in Object.values(FilterType)" :key="filterType" #default="{ isHovering, props }">
+    <v-hover v-for="filterType in FilterTypes" :key="filterType" #default="{ isHovering, props }">
       <v-list-item :="props" @click="createFilter(filterType)">
         <v-list-item-title font-bold>
           {{ uncapitalize(filterType) }}:
-          <span font-semibold text-gray>{{ FilterTypePlaceholderMap[filterType] }}</span>
+          <span text-gray font-semibold>{{ FilterTypePlaceholderMap[filterType] }}</span>
         </v-list-item-title>
         <template #append>
           <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />

@@ -15,12 +15,12 @@ onRender(({ elapsed }) => {
   gem.value.rotation.y = 1.1 * elapsed;
 });
 
-watchEffect(() => {
-  if (!gem.value) return;
-  gem.value.material.roughnessMap = roughnessMap.value;
-  gem.value.material.displacementScale = 0.15;
-  gem.value.material.emissiveIntensity = 0;
-  gem.value.material.refractionRatio = 1;
+watch([gem, roughnessMap], ([newGem, newRoughnessMap]) => {
+  if (!newGem) return;
+  newGem.material.roughnessMap = newRoughnessMap;
+  newGem.material.displacementScale = 0.15;
+  newGem.material.emissiveIntensity = 0;
+  newGem.material.refractionRatio = 1;
 });
 </script>
 

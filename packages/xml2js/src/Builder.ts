@@ -6,7 +6,7 @@ import { takeOne } from "@esposter/shared";
 import { create } from "xmlbuilder2";
 
 export class Builder {
-  private options: typeof DefaultBuilderOptions = structuredClone(DefaultBuilderOptions);
+  private readonly options: typeof DefaultBuilderOptions = structuredClone(DefaultBuilderOptions);
 
   constructor(init?: Partial<BuilderOptions>) {
     Object.assign(this.options, init);

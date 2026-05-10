@@ -1,7 +1,8 @@
-import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable } from "@/pgTable";
+import { integer, text, timestamp } from "drizzle-orm/pg-core";
 
-export const rateLimiterFlexible = pgTable("rate_limiter_flexible", {
-  expire: timestamp("expire"),
-  key: text("key").primaryKey(),
-  points: integer("points").notNull(),
+export const rateLimiterFlexible = pgTable("rateLimiterFlexible", {
+  expire: timestamp(),
+  key: text().primaryKey(),
+  points: integer().notNull(),
 });

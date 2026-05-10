@@ -18,29 +18,29 @@ export const Bubble3DPropsData = {
   series: [
     {
       data: createData(20, {
-        max: 60,
-        min: 10,
+        maximum: 60,
+        minimum: 10,
       }),
       name: "Product1",
     },
     {
       data: createData(20, {
-        max: 60,
-        min: 10,
+        maximum: 60,
+        minimum: 10,
       }),
       name: "Product2",
     },
     {
       data: createData(20, {
-        max: 60,
-        min: 10,
+        maximum: 60,
+        minimum: 10,
       }),
       name: "Product3",
     },
     {
       data: createData(20, {
-        max: 60,
-        min: 10,
+        maximum: 60,
+        minimum: 10,
       }),
       name: "Product4",
     },

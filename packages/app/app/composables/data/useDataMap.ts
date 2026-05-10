@@ -1,9 +1,7 @@
-import type { ReadonlyRefOrGetter } from "@vueuse/core";
-
-export const useDataMap = <TItem>(currentId: ReadonlyRefOrGetter<string | undefined>, defaultValue: TItem) => {
+export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string | undefined>, defaultValue: TItem) => {
   const dataMap: Ref<Map<string, TItem>> = ref(new Map());
-  const getDataMap = (key: string) => dataMap.value.get(key);
-  const setDataMap = (key: string, value: TItem) => {
+  const getData = (key: string) => dataMap.value.get(key);
+  const setData = (key: string, value: TItem) => {
     dataMap.value.set(key, value);
   };
 
@@ -41,9 +39,9 @@ export const useDataMap = <TItem>(currentId: ReadonlyRefOrGetter<string | undefi
 
   return {
     data,
-    getDataMap,
+    getData,
     initializeData,
     resetData,
-    setDataMap,
+    setData,
   };
 };

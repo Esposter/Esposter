@@ -98,7 +98,7 @@ onMounted(() => {
   <div :id size-full />
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.dcg-container) {
   cursor: move;
 

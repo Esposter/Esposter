@@ -1,1 +1,3 @@
-../configuration/rolldown.config.node.ts
+import { rolldownConfigurationNode } from "@esposter/configuration";
+
+export default rolldownConfigurationNode;

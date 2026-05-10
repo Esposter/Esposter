@@ -47,9 +47,8 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
           break;
         case MenuOption.Summary: {
           const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
-          const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
           const { launchScene } = usePreviousScene(scene.scene.key);
-          selectedMonster.value = monsterPartyOptionGrid.value;
+          monsterDetailsSceneStore.selectedMonster = monsterPartyOptionGrid.value;
           launchScene(scene, SceneKey.MonsterDetails);
           break;
         }

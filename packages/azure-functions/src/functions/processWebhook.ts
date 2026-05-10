@@ -8,13 +8,13 @@ import { getWebPubSubServiceClient } from "@/services/getWebPubSubServiceClient"
 import { app } from "@azure/functions";
 import { createMessage } from "@esposter/db";
 import { AzureFunction, AzureTable, AzureWebPubSubHub } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 
 app.eventGrid(AzureFunction.ProcessWebhook, {
-  handler: async (event, context) => {
+  handler: (event, context) => {
     context.log(`${AzureFunction.ProcessWebhook} processed message: `, event.data);
     const { payload, webhook } = event.data as unknown as WebhookEventGridData;
-
-    try {
+    return getResultAsync(async () => {
       const messageClient = await getTableClient(AzureTable.Messages);
       const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
       const webhookCreateMessageInput = getWebhookCreateMessageInput(payload, webhook);
@@ -42,10 +42,10 @@ app.eventGrid(AzureFunction.ProcessWebhook, {
       context.log(
         `Pushed to ${AzureFunction.ProcessPushNotification} for message id: ${JSON.stringify({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })}`,
       );
-    } catch (error) {
+    }).match(noop, (error) => {
       context.error(`${AzureFunction.ProcessWebhook} failed: `, error);
       throw error;
-    }
+    });
   },
 });
 

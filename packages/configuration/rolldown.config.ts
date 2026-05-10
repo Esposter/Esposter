@@ -1,8 +1,3 @@
-import type { ConfigExport } from "rolldown";
+import { rolldownConfigurationNode } from "./src/rolldownConfigurationNode";
 
-import rolldownConfigurationBase from "@esposter/configuration/rolldown.config.base.js";
-import { defineConfig } from "rolldown";
-
-const rolldownConfiguration: ConfigExport = defineConfig([rolldownConfigurationBase]);
-
-export default rolldownConfiguration;
+export default rolldownConfigurationNode;

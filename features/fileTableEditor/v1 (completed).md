@@ -1,0 +1,58 @@
+# File Table Editor — Feature Roadmap
+
+## UX / Workflow
+
+- [x] **Undo/redo** — history stack for row/column mutations (Ctrl+Z / Ctrl+Shift+Z)
+- [x] **Row drag-and-drop** — drag rows to reorder them; recorded in undo/redo history
+- [x] **Add row manually** — dialog form with per-column typed inputs (respects hidden columns)
+- [x] **Add column manually** — dialog form with name, type selector, and vjsf for description/sourceName
+- [x] **Bulk row selection + delete** — checkboxes in the data table and column table to select and delete multiple rows or columns at once; single undoable command with full undo/redo support
+- [x] **Pagination config** — handled by v-data-table
+- [x] **Inline cell editing** ⚡ — click a cell directly in the data table to edit it in place; removes the friction of opening a dialog for every edit; expected behaviour for spreadsheet users
+- [x] **Import preview** — after parsing a file, show a read-only preview of the first 5 rows before confirming the import; preview and pending name live as local refs in `ImportButton`; confirm calls `setDataSource`, cancel discards
+- [x] **Row number column** — frozen `#` column showing the 1-based row index within the current filtered view; updates correctly when filters are active or rows are sorted; column keys namespaced with `ID_SEPARATOR` to prevent collisions with user-defined column names
+
+## Data Quality & Cleaning
+
+- [x] **Null/empty value strategy** — menu button with two strategies: "Replace with N/A" (replaces null/empty strings in visible String columns) and "Drop Row" (removes rows with any null or empty cell in visible columns); full undo/redo support via `NullStrategyCommand`
+- [x] **Duplicate row detection** — highlight/remove rows that are identical across all or selected columns
+- [x] **Trim/normalize strings** — bulk operation to strip extra whitespace, normalize casing (lowercase, title case, UPPER) across string columns
+- [x] **Find & replace** — global search and replace across all rows and columns; live per-character highlighting, prev/next occurrence navigation, replace current or replace all, full undo/redo support
+
+## Column Enhancements
+
+- [x] **Column reordering** — drag-and-drop to reorder columns (affects export order)
+- [x] **Column visibility toggle** — hide columns from the data table view without deleting them
+- [x] **Column descriptions/annotations** — a free-text notes field per column; shown as info-icon tooltip in column table, native tooltip on data table headers
+- [x] **Column type recast on change** ⚡ — when a user changes a column type, automatically re-coerce all existing cell values to the new type (e.g. String → Number converts "42" to 42); without this, type changes leave cells in a broken state
+
+## Data Import
+
+- [x] **JSON file support** — new `DataSourceType.Json`, handles flat arrays of objects
+- ~~**Multi-sheet XLSX** — single-sheet import is sufficient; `sheetIndex` is already configurable on `XlsxDataSourceItem`; multi-sheet merging adds complexity with low value~~
+- [x] **TSV file support** — handled natively by CSV import: set delimiter to tab (`\t`); no separate data source type needed
+- [x] **Paste from clipboard** — paste tabular data copied from Excel/Google Sheets directly
+- ~~**URL import** — fetch a remote CSV/JSON URL instead of uploading a file; removed due to security risk (SSRF), CORS complexity, unreliable external data, and low product value for a casual platform where users have local files~~
+
+## Filtering & Sorting
+
+- [x] **Column sorting** — click column header to sort rows ascending/descending in the UI (without mutating the data) — handled by v-data-table
+- [x] **Row filtering** — per-column filter text inputs in table headers; case-insensitive contains match; clear filters button in toolbar; resets pagination on change
+- [x] **Multi-column sort** ⚡ — sort by a primary column then a secondary column; v-data-table likely supports this with minimal wiring
+- ~~**Saved filter presets** — name and persist a set of active filters; removed as a niche power-user feature with low mainstream appeal; most users reset filters when done~~
+
+## Statistics & Analysis
+
+- [x] **Per-column stats panel** — min/max/avg for number columns, unique value count, null count (histogram excluded)
+- [x] **Data preview chart** — bar chart for numeric columns (min/avg/max), pie chart for boolean columns; accessible from column action row and column statistics dialog
+- [x] **Outlier detection** — flag numeric values that are > 2 standard deviations from the mean; toggle button in the data toolbar highlights outlier cells in orange
+- [x] **String/Date column stats** ⚡ — `computeColumnStats` already computes `uniqueCount` and `nullCount` for String/Date columns but shows nothing else; add most frequent value and empty % to fill the obvious gap in the stats panel UI
+- [x] **Data summary row** ⚡ — show count/sum/avg at the bottom of the data table for number columns; low implementation cost since `computeColumnStats` already exists
+
+## Export Enhancements
+
+- [x] **Filtered export** — export only currently visible (filtered) rows
+- [x] **Column subset export** — choose which columns to include in the export
+- [x] **JSON export** — export as a JSON array
+- [x] **Copy to clipboard** — copy selected rows as tab-separated text
+- ~~**Markdown export** — `serializeToMarkdown.ts` is already implemented but not exposed; not worth surfacing as an official export format since it's not a standard data interchange format and copy-to-clipboard already covers the shareability use case~~

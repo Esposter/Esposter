@@ -20,4 +20,5 @@ export default withNuxt(plugins)
       },
     },
   })
-  .append(oxlint);
+  .append(oxlint)
+  .append({ ignores: ["**/*.md"] });

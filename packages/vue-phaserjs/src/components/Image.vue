@@ -8,12 +8,12 @@ import type { SetRequired } from "type-fest";
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { ImageSetterMap } from "@/util/setterMap/ImageSetterMap";
 
-export interface ImageProps {
+interface ImageEmits extends /** @vue-ignore */ ImageEventEmitsOptions {}
+
+interface ImageProps {
   configuration: SetRequired<Partial<ImageConfiguration>, "texture">;
   onComplete?: (scene: SceneWithPlugins, image: GameObjects.Image) => void;
 }
-
-interface ImageEmits extends /** @vue-ignore */ ImageEventEmitsOptions {}
 
 const { configuration, onComplete } = defineProps<ImageProps>();
 const emit = defineEmits<ImageEmits>();

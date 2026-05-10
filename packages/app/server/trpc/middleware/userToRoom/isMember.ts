@@ -1,12 +1,19 @@
-import type { Session } from "#shared/models/auth/Session";
+import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 
 import { TRPCError } from "@trpc/server";
 
-export const isMember = async (db: Context["db"], session: Session, roomIds: string[]) => {
-  const foundUsersToRooms = await db.query.usersToRooms.findMany({
-    where: (usersToRooms, { and, eq, inArray }) =>
-      and(eq(usersToRooms.userId, session.user.id), inArray(usersToRooms.roomId, roomIds)),
+export const isMember = async (db: Context["db"], { user }: GetSessionPayload, roomIds: string | string[]) => {
+  const roomIdArray = Array.isArray(roomIds) ? roomIds : [roomIds];
+  const foundUsersToRooms = await db.query.usersToRoomsInMessage.findMany({
+    where: {
+      roomId: {
+        in: roomIdArray,
+      },
+      userId: {
+        eq: user.id,
+      },
+    },
   });
-  if (foundUsersToRooms.length !== roomIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (foundUsersToRooms.length !== roomIdArray.length) throw new TRPCError({ code: "UNAUTHORIZED" });
 };

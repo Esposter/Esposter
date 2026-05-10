@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useUploadFileStore } from "@/store/message/uploadFile";
+import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { takeOne } from "@esposter/shared";
 
 const uploadFileStore = useUploadFileStore();

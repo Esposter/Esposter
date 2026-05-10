@@ -4,6 +4,7 @@ export enum AzureTable {
   // Where the row key is the original timestamp of the message to allow for double indexing and sorting the messages both ways
   MessagesAscending = "MessagesAscending",
   MessagesMetadata = "MessagesMetadata",
+  ModerationLog = "ModerationLog",
   SurveyResponses = "SurveyResponses",
   UserActivities = "UserActivities",
 }

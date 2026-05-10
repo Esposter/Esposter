@@ -1,0 +1,68 @@
+# File Table Editor — Feature Roadmap v5
+
+## Column Enhancements
+
+- [x] **Configurable footer aggregate** ⚡ — add a `footerStatistic?: FooterStatisticType` field to `NumberColumn` (enum: `Summation | Average | Minimum | Maximum | UniqueCount`, undefined = no footer). `FooterSlot.vue` looks up the chosen statistic via `ColumnStatisticsDefinitionMap` instead of hardcoding Σ. The per-column choice is set in the column edit form via a select.
+
+## Visualization
+
+- [x] **String / Date column charts** ⚡ — `computeColumnChartData` returns `null` for String and Date columns, so the chart button in `StatisticsDialog` is hidden for them. Add:
+  - String → horizontal bar chart of top-10 most frequent values (data from `topFrequencies` on `ColumnStatistics`)
+  - Date → monthly histogram (group by `YYYY-MM`, count rows per bucket)
+
+  Chart button condition in `StatisticsDialog.vue` derived from `ChartableColumnTypes` (keyset of `ColumnChartDataMap`) — no hardcoded type list.
+
+- [x] **Computed column statistics** ⚡ — `ColumnStatisticsDefinitionMap` `applicableColumnTypes` never includes `ColumnType.Computed`, so the statistics dialog shows a blank row for every computed column. `getComputedColumnEffectiveType` already exists — use it in `computeColumnStatistics` to substitute the effective type when building the statistic context.
+
+## Export / Import
+
+- [x] **Export selected rows only** ⚡ — in `ExportDialog.vue`, check `selectedRowIds` from `useRowTableEditorStore`; if non-empty, filter `filteredRows` to only those rows before passing to the serializer. No extra checkbox needed — selection is detected automatically.
+
+## UX / Workflow
+
+- ~~**Column visibility quick menu** ⚡ — add a "Columns" icon button to `Row/TopSlot.vue` (or the table toolbar area) that opens a `v-menu` with a checkbox list of all columns. Calls existing `useToggleColumnVisibility` per item.~~ _(Not needed — `ToggleVisibilityButton` already exists in the Column tab; duplicating it in the toolbar adds bloat without clear benefit.)_
+- [x] **Keyboard cell navigation** ⚡ — in `ItemSlot.vue`, extend the existing inline-edit keyboard handlers:
+  - `Tab` / `Shift+Tab` — commit current edit and move focus to next / previous editable cell in the same row
+  - `ArrowDown` / `ArrowUp` — commit and move to the same column in the row below / above
+  - `Escape` — already implemented (cancel)
+  - `Enter` — already implemented (commit)
+
+  Requires a shared "which cell is focused" signal (a small store ref or an emitted event bubbling up through the row).
+
+- ~~**Column reorder by dragging row headers** — add drag handles to the `<thead>` column headers in `Row/Table.vue` using `VueDraggable` so columns can be reordered without switching to the Column tab. Calls existing `useReorderColumns`. Disable drag when search or sort is active (mirrors the existing Column/Table behaviour). Column display order is stored as an `order: number` field on each `AColumn` (0-indexed, `isHidden` from forms); `useReorderColumns` filters to the relevant column subset before computing displacement, fixing the hidden-column index bug.~~ _(Not needed — Column tab already has reorder functionality and is much more elegant since it's implicitly defined by the column order in the array; duplicating it in the row header adds bloat without clear benefit.)_
+- ~~**Named checkpoints** — extend `useFileHistoryStore` with a `checkpoints: Checkpoint[]` list (name, snapshot index). A "Save checkpoint" button in the undo toolbar lets users name the current position; a "Restore" menu lets them jump back to any named checkpoint.~~ _(Not needed — undo/redo already lets you traverse back to any prior state; checkpoints add UI complexity for marginal benefit over repeated Ctrl+Z.)_
+
+## Data Quality
+
+- ~~**Row description** ⚡ — add `description` to the `Row` model via `Description` (schema + class field). Show a small note icon in `ActionSlot.vue` (filled when description exists, outlined when empty); clicking opens a single-field popover to view/edit. Survives undo/redo via the existing command system.~~ _(Not worth the complexity — the Column tab already surfaces column descriptions; row-level notes are rarely useful for tabular data.)_
+- ~~**Computed column value preview** — when editing a Computed column in `EditDialogButton.vue`, render a read-only "Preview" table showing the first 5–10 computed values pulled from `editedItem.dataSource.rows` + `computeValue`.~~ _(Not needed — live column updates already give instant feedback in the table.)_
+
+## Refactoring
+
+### Vue Reactivity
+
+- [x] **`watchEffect` → `watch` throughout** — replaced all `watchEffect` usages with explicit `watch([dep1, dep2], ([newDep1, newDep2]) => { ... })`. Prop dependencies wrapped as `() => propName`. Files updated: `Visual/Gem/Scene.vue`, `Styled/Waypoint.vue`. Rule documented in `~/.claude/skills/vue/SKILL.md`.
+
+### Component Architecture
+
+- [x] **`FooterSlot.vue` — replace inline summation with `ColumnStatisticsDefinitionMap`** ⚡ — added `summation` entry to `ColumnStatisticsDefinitionMap`, `FooterSlot.vue` now builds a `ColumnStatisticComputeContext` and delegates to `ColumnStatisticsDefinitionMap.summation.compute` / `.format`.
+- [x] **`StatisticsDialog.vue` — extract `computeColumnStatistics` to a composable** ⚡ — extracted `useColumnStatistics()` composable at `composables/tableEditor/file/useColumnStatistics.ts`; `StatisticsDialog.vue` now calls `useColumnStatistics()` directly.
+- [x] **`computeColumnChartData` — replace if/else with `ColumnChartDataMap`** ⚡ — replaced with `const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatistics) => ColumnChartData | null>>` and a single lookup.
+
+### Type Safety
+
+- [x] **`computeColumnStatistics` — remove `as ColumnStatistics` cast** ⚡ — restructured to cast only the dynamic statistics portion as `Pick<ColumnStatistics, ColumnStatisticsKey>`, then spreads with the statically-known `columnName`/`columnType` fields. TypeScript verifies the combined shape satisfies `ColumnStatistics`.
+- [x] **`ColumnTransformationType.String` vs `StringSplit` — document or align** — added a comment in `ColumnTransformationType.ts` explaining that `StringSplit` is a separate top-level entry because it has distinct parameters (`delimiter`, `segmentIndex`) that don't fit the `StringTransformationType` enum shape.
+
+### Utilities
+
+- [x] **Extract `formatNullable` to a shared util** ⚡ — extracted to `app/util/formatNullable.ts`; `ColumnStatisticsDefinitionMap.ts` now imports it.
+- [x] **`emptyPercent` — broaden to all types or rename to `nullPercent`** ⚡ — renamed to `nullPercent` with `applicableColumnTypes: [ColumnType.Boolean, ColumnType.Date, ColumnType.Number, ColumnType.String]`; title changed to "Null %"; all references updated.
+- [x] **`ColumnTypeColorMap` — derive Computed column color from output type** ⚡ — added `getComputedColumnEffectiveType` helper (`services/tableEditor/file/column/getComputedColumnEffectiveType.ts`) mapping each `ColumnTransformationType` to its output `ColumnType`; added `getEffectiveColumnColor` (`services/tableEditor/file/column/getEffectiveColumnColor.ts`) that falls back to the transformation output type's color for `ColumnType.Computed`; `Column/Table.vue` now uses `getEffectiveColumnColor(column)`.
+- [x] **`getItemId` — document the separator contract** — added a comment noting that `ID_SEPARATOR` (`"|"`) is load-bearing and row IDs/column names must not contain it.
+
+### Test Coverage
+
+- [x] **Tests for `useFindReplace`** — `useFindReplace.test.ts` already covers all cases: no-op conditions, substring replace, undo/redo, specific cell, description format.
+- [x] **Tests for `useNullStrategy`** — `useNullStrategy.test.ts` already covers all variants, undo/redo, hidden-column skipping, and description.
+- [x] **Tests for `useStringTransformation`** — `useStringTransformation.test.ts` already covers all `StringTransformationType` variants, non-string skip, hidden-column skip, undo/redo, and description.

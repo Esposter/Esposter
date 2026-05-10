@@ -1,7 +1,5 @@
-import type { AEntity } from "#shared/models/entity/AEntity";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Clause, CompositeKey } from "@esposter/db-schema";
-import type { ToData } from "@esposter/shared";
+import type { AzureEntity, Clause } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
@@ -9,10 +7,10 @@ import { serializeKey } from "@esposter/db";
 import { BinaryOperator } from "@esposter/db-schema";
 import { exhaustiveGuard, NotFoundError } from "@esposter/shared";
 
-export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEntity>>(
+export const getCursorWhereAzureTable = <TItem extends AzureEntity>(
   serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
-): Clause[] => {
+): Clause<TItem>[] => {
   const cursors = deserialize(serializedCursors);
   const serializedSortBy = sortBy.map(({ key, ...rest }) => ({ key: serializeKey(key), ...rest }));
   return Object.entries(cursors).map(([key, value]) => {
@@ -31,6 +29,6 @@ export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEn
       default:
         exhaustiveGuard(sortItem.order);
     }
-    return { key, operator, value };
+    return { key, operator, value } as Clause<TItem>;
   });
 };

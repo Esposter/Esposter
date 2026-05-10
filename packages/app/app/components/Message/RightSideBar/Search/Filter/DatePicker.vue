@@ -4,7 +4,7 @@ import type { SerializableValue } from "@esposter/db-schema";
 import { dayjs } from "#shared/services/dayjs";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
-const { toJsDate } = useDate();
+const { toJsDate } = useVDate();
 const date = ref<Date | null>(null);
 </script>
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
+import { useColorsStore } from "@/store/colors";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Handle, Position } from "@vue-flow/core";
 import { NodeResizer } from "@vue-flow/node-resizer";
@@ -11,7 +12,8 @@ interface RectangleProps {
 }
 
 const { data, id } = defineProps<RectangleProps>();
-const { text } = useColors();
+const colorsStore = useColorsStore();
+const { text } = storeToRefs(colorsStore);
 const flowchartEditorStore = useFlowchartEditorStore();
 const { flowchartEditor } = storeToRefs(flowchartEditorStore);
 const node = computed(() => flowchartEditor.value.nodes.find((n) => n.id === id));

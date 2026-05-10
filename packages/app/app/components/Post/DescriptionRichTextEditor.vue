@@ -3,14 +3,14 @@ import type { FooterBarAppendSlotProps } from "@/components/RichTextEditor/Foote
 
 import { POST_DESCRIPTION_MAX_LENGTH } from "@esposter/db-schema";
 
-export interface DescriptionRichTextEditorProps {
+interface DescriptionRichTextEditorProps {
   height?: string;
   placeholder?: string;
 }
 
 const modelValue = defineModel<string>({ required: true });
 const { height = "15rem", placeholder } = defineProps<DescriptionRichTextEditorProps>();
-const slots = defineSlots<{
+defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => VNode;
 }>();
 </script>

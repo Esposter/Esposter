@@ -8,12 +8,12 @@ import type { SetRequired } from "type-fest";
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { PathFollowerSetterMap } from "@/util/setterMap/PathFollowerSetterMap";
 
-export interface PathFollowerProps {
+interface PathFollowerEmits extends /** @vue-ignore */ PathFollowerEventEmitsOptions {}
+
+interface PathFollowerProps {
   configuration: SetRequired<Partial<PathFollowerConfiguration>, "path" | "texture">;
   onComplete?: (scene: SceneWithPlugins, pathFollower: GameObjects.PathFollower) => void;
 }
-
-interface PathFollowerEmits extends /** @vue-ignore */ PathFollowerEventEmitsOptions {}
 
 const { configuration, onComplete } = defineProps<PathFollowerProps>();
 const emit = defineEmits<PathFollowerEmits>();

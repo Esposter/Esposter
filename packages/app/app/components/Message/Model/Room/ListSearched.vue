@@ -17,9 +17,9 @@ const { hasMore, items } = storeToRefs(searchStore);
       :to="RoutePath.Messages(id)"
       @click="emit('update:room')"
     >
-      <v-list-item :title="name" :value="id">
+      <v-list-item :title="name ?? ''" :value="id">
         <template #prepend>
-          <StyledAvatar :image :name />
+          <StyledAvatar :image :name="name ?? ''" />
         </template>
       </v-list-item>
     </NuxtInvisibleLink>

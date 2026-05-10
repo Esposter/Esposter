@@ -12,7 +12,7 @@ describe(getRandomValue, () => {
   test("fails for empty values", () => {
     expect.hasAssertions();
 
-    expect(() => getRandomValue("")).toThrowError(
+    expect(() => getRandomValue("")).toThrow(
       new InvalidOperationError(Operation.Read, getRandomValue.name, "cannot pick random value from empty values"),
     );
   });
@@ -20,7 +20,7 @@ describe(getRandomValue, () => {
   test("fails for empty array", () => {
     expect.hasAssertions();
 
-    expect(() => getRandomValue([])).toThrowError(
+    expect(() => getRandomValue([])).toThrow(
       new InvalidOperationError(Operation.Read, getRandomValue.name, "cannot pick random value from empty values"),
     );
   });

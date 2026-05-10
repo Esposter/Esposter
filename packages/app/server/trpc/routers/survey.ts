@@ -16,6 +16,8 @@ import { SURVEY_MODEL_FILENAME } from "@@/server/services/survey/constants";
 import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
 import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorProcedure";
@@ -39,7 +41,7 @@ import {
   surveyResponseEntitySchema,
   surveys,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -95,21 +97,22 @@ export type UpdateSurveyResponseInput = z.infer<typeof updateSurveyResponseInput
 export const surveyRouter = router({
   count: standardAuthedProcedure.query(
     async ({ ctx }) =>
-      takeOne(await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.session.user.id)))
-        .count,
+      takeOne(
+        await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.getSessionPayload.user.id)),
+      ).count,
   ),
   createSurvey: standardAuthedProcedure.input(createSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
-    const newSurvey = (
-      await ctx.db
-        .insert(surveys)
-        .values({ ...input, userId: ctx.session.user.id })
-        .returning()
-    )[0];
-    if (!newSurvey)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Survey, JSON.stringify(input)).message,
-      });
+    const newSurvey = requireMutation(
+      (
+        await ctx.db
+          .insert(surveys)
+          .values({ ...input, userId: ctx.getSessionPayload.user.id })
+          .returning()
+      )[0],
+      Operation.Create,
+      DatabaseEntityType.Survey,
+      ctx.getSessionPayload.user.id,
+    );
 
     const blobName = `${newSurvey.id}/${SURVEY_MODEL_FILENAME}`;
     await useUpload(AzureContainer.SurveyAssets, blobName, newSurvey.model);
@@ -132,17 +135,17 @@ export const surveyRouter = router({
     },
   ),
   deleteSurvey: standardAuthedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
-    const deletedSurvey = (
-      await ctx.db
-        .delete(surveys)
-        .where(and(eq(surveys.id, input), eq(surveys.userId, ctx.session.user.id)))
-        .returning()
-    )[0];
-    if (!deletedSurvey)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Survey, input).message,
-      });
+    const deletedSurvey = requireMutation(
+      (
+        await ctx.db
+          .delete(surveys)
+          .where(and(eq(surveys.id, input), eq(surveys.userId, ctx.getSessionPayload.user.id)))
+          .returning()
+      )[0],
+      Operation.Delete,
+      DatabaseEntityType.Survey,
+      input,
+    );
 
     const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
     await deleteDirectory(containerClient, input, true);
@@ -173,14 +176,12 @@ export const surveyRouter = router({
           ).message,
         });
 
-      const updatedSurvey = (await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id)).returning()).find(
-        Boolean,
+      const updatedSurvey = requireMutation(
+        (await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id)).returning())[0],
+        Operation.Update,
+        DatabaseEntityType.Survey,
+        id,
       );
-      if (!updatedSurvey)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, JSON.stringify(rest)).message,
-        });
 
       const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
       const blobUrls = extractBlobUrls(updatedSurvey.model);
@@ -196,12 +197,11 @@ export const surveyRouter = router({
   readSurveyModel: standardRateLimitedProcedure
     .input(readSurveyModelInputSchema)
     .query<string>(async ({ ctx, input }) => {
-      const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
-      if (!survey)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Survey, input).message,
-        });
+      const survey = await requireEntity(
+        ctx.db.query.surveys.findFirst({ where: { id: { eq: input } } }),
+        DatabaseEntityType.Survey,
+        input,
+      );
       return useUpdateBlobUrls(survey, true);
     }),
   readSurveyResponse: standardRateLimitedProcedure
@@ -215,32 +215,30 @@ export const surveyRouter = router({
     .input(readSurveysInputSchema)
     .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
       const resultSurveys = await ctx.db.query.surveys.findMany({
-        columns: {
-          model: false,
-        },
+        columns: { model: false },
         limit: limit + 1,
         offset,
         orderBy: (surveys, { desc }) =>
           sortBy.length > 0 ? parseSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
-        where: (surveys) => eq(surveys.userId, ctx.session.user.id),
+        where: { userId: { eq: ctx.getSessionPayload.user.id } },
       });
       return getOffsetPaginationData(resultSurveys, limit);
     }),
   updateSurvey: standardAuthedProcedure
     .input(updateSurveyInputSchema)
     .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
-      const updatedSurvey = (
-        await ctx.db
-          .update(surveys)
-          .set(rest)
-          .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)))
-          .returning()
-      )[0];
-      if (!updatedSurvey)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, id).message,
-        });
+      const updatedSurvey = requireMutation(
+        (
+          await ctx.db
+            .update(surveys)
+            .set(rest)
+            .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.getSessionPayload.user.id)))
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.Survey,
+        id,
+      );
       return updatedSurvey;
     }),
   updateSurveyModel: getCreatorProcedure(updateSurveyModelInputSchema, "id").mutation<Survey>(
@@ -262,18 +260,18 @@ export const surveyRouter = router({
           ).message,
         });
 
-      const updatedSurvey = (
-        await ctx.db
-          .update(surveys)
-          .set(rest)
-          .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)))
-          .returning()
-      )[0];
-      if (!updatedSurvey)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, id).message,
-        });
+      const updatedSurvey = requireMutation(
+        (
+          await ctx.db
+            .update(surveys)
+            .set(rest)
+            .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.getSessionPayload.user.id)))
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.Survey,
+        id,
+      );
 
       const blobName = `${updatedSurvey.id}/${SURVEY_MODEL_FILENAME}`;
       await useUpload(AzureContainer.SurveyAssets, blobName, updatedSurvey.model);
@@ -284,18 +282,12 @@ export const surveyRouter = router({
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ input }) => {
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-      const surveyResponse = await getEntity(
-        surveyResponseClient,
-        SurveyResponseEntity,
-        input.partitionKey,
-        input.rowKey,
+      const surveyResponse = await requireEntity(
+        getEntity(surveyResponseClient, SurveyResponseEntity, input.partitionKey, input.rowKey),
+        AzureEntityType.SurveyResponse,
+        JSON.stringify({ partitionKey: input.partitionKey, rowKey: input.rowKey }),
       );
-      if (!surveyResponse)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(AzureEntityType.SurveyResponse, JSON.stringify(input)).message,
-        });
-      else if (input.model === surveyResponse.model)
+      if (input.model === surveyResponse.model)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model")

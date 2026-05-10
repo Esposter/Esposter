@@ -5,7 +5,7 @@ import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { asc, desc } from "drizzle-orm";
 
-export function parseSortByToSql<TTable extends TableRelationalConfig["columns"]>(
+export function parseSortByToSql<TTable extends TableRelationalConfig>(
   table: TTable,
   sortBy: SortItem<keyof TTable & string>[],
 ): SQL[];

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-dynamic-delete */
 import type { QualifiedTag, SAXParser, Tag } from "sax";
 import type { convertableToString, ParserOptions } from "xml2js";
 
@@ -14,10 +13,10 @@ export class Parser {
     return `${this.options.attrkey}ns`;
   }
 
-  private options: typeof DefaultParserOptions = structuredClone(DefaultParserOptions);
+  private readonly options: typeof DefaultParserOptions = structuredClone(DefaultParserOptions);
   private resultObject: Record<string, unknown> | string = {};
-  private saxParser: SAXParser;
-  private stack: Record<string, unknown>[] = [];
+  private readonly saxParser: SAXParser;
+  private readonly stack: Record<string, unknown>[] = [];
 
   constructor(init?: Partial<ParserOptions>) {
     Object.assign(this.options, init);
@@ -76,12 +75,12 @@ export class Parser {
       let emptyString = "";
       // Remove the '#' key altogether if it's blank
       const char = object[this.options.charkey] as string;
-      if (/^\s*$/.exec(char) && !cdata) {
+      if (/^\s*$/u.exec(char) && !cdata) {
         emptyString = char;
         delete object[this.options.charkey];
       } else {
         if (this.options.trim) object[this.options.charkey] = char.trim();
-        if (this.options.normalize) object[this.options.charkey] = char.replaceAll(/\s{2,}/g, " ").trim();
+        if (this.options.normalize) object[this.options.charkey] = char.replaceAll(/\s{2,}/gu, " ").trim();
 
         object[this.options.charkey] = this.options.valueProcessors
           ? processItem(this.options.valueProcessors, char, nodeName)
@@ -145,7 +144,7 @@ export class Parser {
 
     const ontext = (text: string): Record<string, unknown> | undefined => {
       const object = this.stack.at(-1);
-      if (!object) return;
+      if (!object) return undefined;
 
       object[this.options.charkey] += text;
 
@@ -162,7 +161,7 @@ export class Parser {
         };
         if (this.options.normalize)
           charChild[this.options.charkey] = takeOne(charChild, this.options.charkey)
-            .replaceAll(/\s{2,}/g, " ")
+            .replaceAll(/\s{2,}/gu, " ")
             .trim();
 
         (object[this.options.childkey] as Record<string, string>[]).push(charChild);
@@ -171,9 +170,11 @@ export class Parser {
       return object;
     };
 
-    this.saxParser.ontext = ontext;
-    this.saxParser.oncdata = (text: string) => {
-      const object = ontext(text);
+    this.saxParser.ontext = (text) => {
+      ontext(text);
+    };
+    this.saxParser.oncdata = (cdata) => {
+      const object = ontext(cdata);
       if (!object) return;
       object.cdata = true;
     };
@@ -193,7 +194,7 @@ export class Parser {
     } else if (this.options.explicitArray) defineProperty(object, key, [newValue]);
     else defineProperty(object, key, newValue);
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  // oxlint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   private parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {
     const string = stripBOM(convertableToString.toString());
     this.saxParser.onend = () => {

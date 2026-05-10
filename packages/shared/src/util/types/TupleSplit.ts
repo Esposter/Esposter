@@ -1,5 +1,5 @@
-import type { TupleSplitHead } from "@/util/types/TupleSplitHead";
-import type { TupleSplitTail } from "@/util/types/TupleSplitTail";
+import type { BuildTuple } from "@/util/types/BuildTuple";
 
-// https://stackoverflow.com/questions/67605122/obtain-a-slice-of-a-typescript-parameters-tuple
-export type TupleSplit<T extends unknown[], N extends number> = [TupleSplitHead<T, N>, TupleSplitTail<T, N>];
+export type TupleSplit<T extends unknown[], N extends number> = T extends [...BuildTuple<N>, ...infer R]
+  ? [T extends [...infer H, ...R] ? H : BuildTuple<N, T[number]>, R]
+  : [T, []];

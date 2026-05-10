@@ -5,23 +5,22 @@ import { SAVE_FILENAME } from "@@/server/services/dashboard/constants";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { AzureContainer } from "@esposter/db-schema";
-import { jsonDateParse, streamToText } from "@esposter/shared";
+import { getResultAsync, jsonDateParse, streamToText } from "@esposter/shared";
 
 export const dashboardRouter = router({
-  readDashboard: standardAuthedProcedure.query<Dashboard>(async ({ ctx }) => {
-    try {
-      const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+  readDashboard: standardAuthedProcedure.query<Dashboard>(({ ctx }) => {
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
+    return getResultAsync(async () => {
       const { readableStreamBody } = await useDownload(AzureContainer.DashboardAssets, blobName);
       if (!readableStreamBody) return new Dashboard();
-
       const json = await streamToText(readableStreamBody);
       return new Dashboard(jsonDateParse(json));
-    } catch {
-      return new Dashboard();
-    }
+    })
+      .orTee(console.error)
+      .unwrapOr(new Dashboard());
   }),
   saveDashboard: standardAuthedProcedure.input(dashboardSchema).mutation(async ({ ctx, input }) => {
-    const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
     await useUpload(AzureContainer.DashboardAssets, blobName, JSON.stringify(input));
   }),
 });

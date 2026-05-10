@@ -1,5 +1,3 @@
-export type TupleSplitHead<T extends unknown[], N extends number> = T["length"] extends N
-  ? T
-  : T extends [...infer R, unknown]
-    ? TupleSplitHead<R, N>
-    : never;
+import type { TupleSplit } from "@/util/types/TupleSplit";
+
+export type TupleSplitHead<T extends unknown[], N extends number> = TupleSplit<T, N>[0];

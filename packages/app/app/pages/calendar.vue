@@ -22,8 +22,8 @@ const events = computed<EventSourceInput>(() => {
 
 <template>
   <NuxtLayout>
-    <v-container fluid>
-      <StyledCard p-4 h-full>
+    <v-container fluid h="[calc(100dvh-var(--app-bar-height))]">
+      <StyledCard h-full p-4>
         <StyledCalendar
           h-full
           :calendar-options="{
@@ -41,9 +41,3 @@ const events = computed<EventSourceInput>(() => {
     </v-container>
   </NuxtLayout>
 </template>
-
-<style scoped lang="scss">
-.v-container {
-  height: calc(100dvh - $app-bar-height);
-}
-</style>

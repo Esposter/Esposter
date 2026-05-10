@@ -12,9 +12,9 @@ const { comboboxProps } = defineProps<GroupComboboxProps>();
 const surveyStore = useSurveyStore();
 const { items } = storeToRefs(surveyStore);
 const groups = computed(() => {
-  const results = new Set<string>();
-  for (const { group } of items.value) if (group) results.add(group);
-  return [...results];
+  const groups = new Set<string>();
+  for (const { group } of items.value) if (group) groups.add(group);
+  return [...groups];
 });
 </script>
 

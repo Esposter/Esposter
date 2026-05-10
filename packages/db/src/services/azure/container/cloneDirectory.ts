@@ -21,7 +21,7 @@ export const cloneDirectory = async (
       .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
       sourceBlobNames.push(...segment.blobItems.map(({ name }) => name));
 
-  if (sourceBlobNames.length === 0) return;
+  if (sourceBlobNames.length === 0) return undefined;
 
   return Promise.all(
     sourceBlobNames.map(async (sourceBlobName) => {

@@ -9,7 +9,7 @@ describe(getPublishDirectory, () => {
   const survey: Survey = {
     createdAt: new Date(),
     deletedAt: null,
-    group: null,
+    group: "",
     id: crypto.randomUUID(),
     model: "model",
     modelVersion: 1,

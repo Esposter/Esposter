@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
-import { useSearchHistoryStore } from "@/store/message/searchHistory";
-import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { useSearchMessageStore } from "@/store/message/search";
+import { useSearchHistoryStore } from "@/store/message/search/history";
 
 const readSearchedMessages = useReadSearchedMessages();
 const { readMoreSearchHistories, readSearchHistories } = useReadSearchHistories();

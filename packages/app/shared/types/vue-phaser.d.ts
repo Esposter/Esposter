@@ -3,8 +3,8 @@ import type { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/Sp
 import type { TilesetKey } from "#shared/models/dungeons/keys/TilesetKey";
 import type { GridEngine } from "grid-engine";
 import type { Scene } from "phaser";
-import type SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
-import type VirtualJoystickPlugin from "phaser3-rex-plugins/plugins/virtualjoystick-plugin";
+import type SliderPlugin from "phaser4-rex-plugins/plugins/slider-plugin";
+import type VirtualJoystickPlugin from "phaser4-rex-plugins/plugins/virtualjoystick-plugin";
 
 import "vue-phaserjs";
 

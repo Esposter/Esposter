@@ -1,12 +1,14 @@
 # [Esposter](https://esposter.com)
 
 [![Build Status][badge-ci]][url-ci]
+[![Repository Score][badge-score]][url-score]
 [![Apache-2.0 licensed][badge-license]][url-license]
 
 ### Table of Contents
 
 - 📖 [Documentation](#documentation)
 - 🏠 [Local Development](#local-development)
+- 🤝 [Community](#community)
 - ⚖️ [License](#license)
 
 ## <a name="documentation">📖 Documentation</a>
@@ -199,7 +201,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | -------------------------- | ------------------------------------------------------------------------------ |
 | Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                  |
 | ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint     |
-| Prettier - Code formatter  | https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode     |
+| Oxfmt - Code formatter     | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode             |
 | GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens            |
 | Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell       |
 | Material Icon Theme        | https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme  |
@@ -278,9 +280,9 @@ pnpm preview
 Esposter is a lerna + pnpm workspaces monorepo.
 Packages are used directly by the nuxt application via `workspace:*`.
 
-### Miscellaneous Tools
+## <a name="community">🤝 Community</a>
 
-https://devina.io/svg-minifier
+We welcome contributions from everyone and are committed to maintaining a friendly, safe, and welcoming community. Please see our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md) for more information.
 
 ## <a name="license">⚖️ License</a>
 
@@ -290,4 +292,6 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yaml?query=event%3Apush+branch%3Amain
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
+[badge-score]: https://img.shields.io/badge/score-90%2F100-33c854
+[url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest

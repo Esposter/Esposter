@@ -2,6 +2,7 @@
 import type { VBtn, VCard, VTooltip } from "vuetify/components";
 
 import { formRules } from "@/services/vuetify/formRules";
+import { normalizeString } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 interface EditableNameDialogButtonProps {
@@ -17,7 +18,7 @@ interface EditableNameDialogButtonProps {
 defineSlots<{ default?: () => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
 const {
-  buttonProps,
+  buttonProps = {},
   cardProps,
   isEditable = true,
   maxLength,
@@ -38,7 +39,7 @@ watch(
 </script>
 
 <template>
-  <StyledDialog
+  <StyledFormDialog
     v-model="modelValue"
     :card-props
     :confirm-button-props="{ text: 'Save', disabled: editedName === name }"
@@ -56,11 +57,11 @@ watch(
             <template #default="{ isHovering, props: hoverProps }">
               <v-btn
                 :style="{ pointerEvents: isEditable ? undefined : 'none' }"
-                font-bold
-                rounded="lg"
                 :ripple="false"
                 slim
-                :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps ?? {})"
+                rd-lg
+                font-bold
+                :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps)"
                 @click="updateIsOpen(true)"
               >
                 <slot>
@@ -75,7 +76,7 @@ watch(
         </template>
       </v-tooltip>
     </template>
-    <v-container px-6 fluid>
+    <v-container fluid px-6>
       <v-row>
         <v-col cols="12">
           <v-text-field
@@ -84,15 +85,15 @@ watch(
             :placeholder
             autofocus
             :rules="[formRules.requireAtMostNCharacters(maxLength), formRules.isNotProfanity]"
-            @update:model-value="editedName = $event.trim()"
+            @update:model-value="editedName = normalizeString($event)"
           />
         </v-col>
       </v-row>
     </v-container>
-  </StyledDialog>
+  </StyledFormDialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-btn__overlay) {
   transition: none;
 }

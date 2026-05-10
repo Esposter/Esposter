@@ -4,7 +4,7 @@ import { THEME_COOKIE_NAME } from "@/services/vuetify/constants";
 
 defineSlots<{ default: () => VNode }>();
 
-const theme = useTheme();
+const theme = useVTheme();
 const themeCookie = useCookie(THEME_COOKIE_NAME, { default: () => ThemeMode.system });
 theme.change(themeCookie.value);
 </script>

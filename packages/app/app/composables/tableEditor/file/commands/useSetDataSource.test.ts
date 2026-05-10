@@ -1,0 +1,74 @@
+// @vitest-environment nuxt
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
+
+import {
+  makeDataSource,
+  setupEditedItem,
+  setupWithDataSource,
+} from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
+import { takeOne } from "@esposter/shared";
+import { createPinia, setActivePinia } from "pinia";
+import { afterEach, assert, beforeEach, describe, expect, test } from "vitest";
+
+describe(useSetDataSource, () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  afterEach(() => {
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
+    clear();
+  });
+
+  test("sets data source on edited item", () => {
+    expect.hasAssertions();
+
+    const { editedItem } = setupEditedItem();
+    const setDataSource = useSetDataSource();
+    const dataSource = makeDataSource();
+    setDataSource(dataSource);
+    const editedItemValue = editedItem.value;
+
+    assert.exists(editedItemValue);
+
+    expect(editedItemValue.dataSource).toStrictEqual(dataSource);
+  });
+
+  test("clears undo and redo history after setting data source", () => {
+    expect.hasAssertions();
+
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    const setDataSource = useSetDataSource();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
+    const { undo } = fileHistoryStore;
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
+
+    expect(isUndoable.value).toBe(true);
+
+    undo(editedItem.value);
+
+    expect(isRedoable.value).toBe(true);
+
+    setDataSource(makeDataSource());
+
+    expect(isUndoable.value).toBe(false);
+    expect(isRedoable.value).toBe(false);
+  });
+
+  test("no-op when editedItem is undefined", () => {
+    expect.hasAssertions();
+
+    const setDataSource = useSetDataSource();
+    setDataSource(makeDataSource());
+
+    const tableEditorStore = useTableEditorStore<DataSourceItem>();
+    const { editedItem } = storeToRefs(tableEditorStore);
+
+    expect(editedItem.value).toBeUndefined();
+  });
+});

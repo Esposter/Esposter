@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { DEFAULT_VIEWPORT_TRANSFORM } from "@/services/flowchartEditor/constants";
+import { useColorsStore } from "@/store/colors";
 import { ControlButton, Controls } from "@vue-flow/controls";
 import { useVueFlow } from "@vue-flow/core";
 import deepEqual from "fast-deep-equal";
 
 const { setViewport, viewport } = useVueFlow();
-const { surface, surfaceOpacity80, text } = useColors();
+const colorsStore = useColorsStore();
+const { surface, surfaceOpacity80, text } = storeToRefs(colorsStore);
 const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANSFORM));
 </script>
 
@@ -17,11 +19,11 @@ const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANS
   </Controls>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.vue-flow__controls-button) {
   background-color: v-bind(surface);
   fill: v-bind(text);
-  border: $border-width-root $border-style-root v-bind(text);
+  border: var(--border-width) var(--border-style) v-bind(text);
 
   &:hover {
     background-color: v-bind(surfaceOpacity80);

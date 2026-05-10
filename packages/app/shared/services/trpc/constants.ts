@@ -1,1 +1,1 @@
-export const TRPC_WS_PATH = "/_ws";
+export const TRPC_WS_PATH = "/ws";

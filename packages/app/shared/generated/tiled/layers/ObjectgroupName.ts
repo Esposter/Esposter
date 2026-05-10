@@ -6,3 +6,5 @@ export enum ObjectgroupName {
   "Npc/Smith" = "Npc/Smith",
   Sign = "Sign",
 }
+
+export const ObjectgroupNames: ReadonlySet<ObjectgroupName> = new Set(Object.values(ObjectgroupName));

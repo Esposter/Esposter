@@ -5,8 +5,8 @@ import { AttackKey } from "#shared/models/dungeons/keys/spritesheet/AttackKey";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 import { Animations } from "phaser";
 
-const { isToEnemy } = defineProps<AttackProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });
+const { isToEnemy } = defineProps<AttackProps>();
 const emit = defineEmits<{ complete: [] }>();
 const playSpriteAnimationKey = usePlayAnimation(AttackKey["Ice Shard Start"], isActive, emit);
 const onCompleteKey = `${Animations.Events.ANIMATION_COMPLETE_KEY}${AttackKey["Ice Shard Start"]}`;

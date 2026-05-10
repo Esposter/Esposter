@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
-import { useWebhookStore } from "@/store/message/webhook";
+import { useWebhookStore } from "@/store/message/room/webhook";
 
-interface WebhookSettingsProps {
-  roomId: Room["id"];
+interface WebhookProps {
+  roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<WebhookSettingsProps>();
+const { roomId } = defineProps<WebhookProps>();
 const webhookStore = useWebhookStore();
 const { createWebhook, readWebhooks } = webhookStore;
 const { items } = storeToRefs(webhookStore);
@@ -19,7 +19,7 @@ const isLoading = ref(false);
 
 <template>
   <div flex flex-col gap-y-4>
-    <div flex justify-center items-center gap-x-4>
+    <div flex items-center gap-x-4 justify-center>
       <v-text-field v-model="name" :disabled="isLoading" label="Name" density="compact" hide-details />
       <StyledButton
         :loading="isLoading"

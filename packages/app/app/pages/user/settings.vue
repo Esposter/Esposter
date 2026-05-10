@@ -5,7 +5,7 @@ import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
 
-const { smAndDown } = useDisplay();
+const { smAndDown } = useVDisplay();
 const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General" }];
 </script>
 
@@ -19,7 +19,7 @@ const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General
       </v-row>
       <v-row>
         <v-col :cols="smAndDown ? 12 : 5">
-          <UserSideBar class="sidebar" sticky :items="sections" />
+          <UserSideBar sticky top="[calc(1rem+var(--app-bar-height))]" :items="sections" />
         </v-col>
         <v-col :cols="smAndDown ? 12 : 7">
           <UserProfileCard />
@@ -28,9 +28,3 @@ const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General
     </v-container>
   </NuxtLayout>
 </template>
-
-<style scoped lang="scss">
-.sidebar {
-  top: calc(1rem + $app-bar-height);
-}
-</style>

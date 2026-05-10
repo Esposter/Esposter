@@ -3,14 +3,14 @@
   "extends": ["config:recommended", ":semanticCommitTypeAll(chore)"],
   "ignorePresets": [":prHourlyLimit2"],
   "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true
+    "automerge": true,
+    "enabled": true
   },
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
-      "automergeType": "branch"
+      "automergeType": "branch",
+      "matchUpdateTypes": ["minor", "patch"]
     }
   ],
   "rangeStrategy": "bump",

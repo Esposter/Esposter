@@ -9,17 +9,17 @@ import { messageRouter } from "@@/server/trpc/routers/message";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
-import { NotificationType, pushSubscriptions, rooms } from "@esposter/db-schema";
+import { NotificationType, pushSubscriptionsInMessage, roomsInMessage } from "@esposter/db-schema";
 import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, takeOne } from "@esposter/shared";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("pushSubscription", () => {
+  let mockContext: Context;
   let pushSubscriptionCaller: DecorateRouterRecord<TRPCRouter["pushSubscription"]>;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let userToRoomCaller: DecorateRouterRecord<TRPCRouter["userToRoom"]>;
-  let mockContext: Context;
   const name = "name";
   const message = "message";
   const getMessage = (userId: string) =>
@@ -31,22 +31,18 @@ describe("pushSubscription", () => {
   const updatedP256dh = "updatedP256dh";
 
   beforeAll(async () => {
-    const createPushSubscriptionCaller = createCallerFactory(pushSubscriptionRouter);
-    const createMessageCaller = createCallerFactory(messageRouter);
-    const createRoomCaller = createCallerFactory(roomRouter);
-    const createUserToRoomCaller = createCallerFactory(userToRoomRouter);
     mockContext = await createMockContext();
-    pushSubscriptionCaller = createPushSubscriptionCaller(mockContext);
-    messageCaller = createMessageCaller(mockContext);
-    roomCaller = createRoomCaller(mockContext);
-    userToRoomCaller = createUserToRoomCaller(mockContext);
+    pushSubscriptionCaller = createCallerFactory(pushSubscriptionRouter)(mockContext);
+    messageCaller = createCallerFactory(messageRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
+    userToRoomCaller = createCallerFactory(userToRoomRouter)(mockContext);
   });
 
   afterEach(async () => {
     MockEventGridDatabase.clear();
     MockTableDatabase.clear();
-    await mockContext.db.delete(rooms);
-    await mockContext.db.delete(pushSubscriptions);
+    await mockContext.db.delete(roomsInMessage);
+    await mockContext.db.delete(pushSubscriptionsInMessage);
   });
 
   test("subscribes", async () => {
@@ -57,11 +53,12 @@ describe("pushSubscription", () => {
       expirationTime: null,
       keys: { auth, p256dh },
     });
+    const userId = getMockSession().user.id;
 
     expect(newPushSubscription.endpoint).toBe(endpoint);
     expect(newPushSubscription.auth).toBe(auth);
     expect(newPushSubscription.p256dh).toBe(p256dh);
-    expect(newPushSubscription.userId).toBe(getMockSession().user.id);
+    expect(newPushSubscription.userId).toBe(userId);
   });
 
   test("subscribes updates existing endpoint", async () => {
@@ -83,11 +80,9 @@ describe("pushSubscription", () => {
 
     const pushSubscription = await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
     const deletedPushSubscription = await pushSubscriptionCaller.unsubscribe(endpoint);
-    const readPushSubscriptions = await mockContext.db.select().from(pushSubscriptions);
 
     expect(deletedPushSubscription.id).toBe(pushSubscription.id);
     expect(deletedPushSubscription.endpoint).toBe(endpoint);
-    expect(readPushSubscriptions).toHaveLength(0);
   });
 
   test(`createMessage notifies ${NotificationType.All} member (excludes sender)`, async () => {

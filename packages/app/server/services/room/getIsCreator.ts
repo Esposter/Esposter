@@ -1,7 +1,14 @@
-import type { Session } from "#shared/models/auth/Session";
+import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 
-export const getIsCreator = (db: Context["db"], session: Session, roomId: string) =>
-  db.query.rooms.findFirst({
-    where: (rooms, { and, eq }) => and(eq(rooms.id, roomId), eq(rooms.userId, session.user.id)),
+export const getIsCreator = (db: Context["db"], { user }: GetSessionPayload, roomId: string) =>
+  db.query.roomsInMessage.findFirst({
+    where: {
+      id: {
+        eq: roomId,
+      },
+      userId: {
+        eq: user.id,
+      },
+    },
   });

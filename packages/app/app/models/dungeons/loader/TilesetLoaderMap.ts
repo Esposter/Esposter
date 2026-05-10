@@ -33,3 +33,7 @@ export const TilesetLoaderMap: Record<TilesetKey, (scene: SceneWithPlugins) => L
   [TilesetKey.Teleport]: (scene) =>
     scene.load.image(TilesetKey.Teleport, `${FIRST_PARTY_FOLDER_PATH}/${TilesetKey.Teleport}.png`),
 };
+
+export const TilesetLoaders: ReadonlySet<(typeof TilesetLoaderMap)[keyof typeof TilesetLoaderMap]> = new Set(
+  Object.values(TilesetLoaderMap),
+);

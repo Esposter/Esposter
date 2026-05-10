@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { betterAuth } from "better-auth";
-import type { Component, CSSProperties } from "vue";
+import type { CSSProperties } from "vue";
 
 import { authClient } from "@/services/auth/authClient";
 import { useAlertStore } from "@/store/alert";
@@ -23,16 +23,19 @@ const isLoading = ref(false);
 
 <template>
   <button
-    class="button"
     :style
-    pl-2
+    shadow="[0_2px_4px_0_rgba(0,0,0,0.25)]"
+    hover:shadow="[0_2px_10px_2px_rgba(0,0,0,0.35)]"
+    transition="[box-shadow_0.2s,transform_0.2s]"
+    h-12
+    w-full
     flex
     items-center
-    w-full
     rd
     mb-3
-    h-12
-    @disabled="isLoading"
+    pl-2
+    hover:translate-y="[-3px]"
+    :disabled="isLoading"
     @click="
       async () => {
         isLoading = true;
@@ -49,23 +52,9 @@ const isLoading = ref(false);
     "
   >
     <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
-    <div size-full flex justify-center items-center>
+    <div size-full flex items-center justify-center>
       <v-progress-circular v-if="isLoading" color="white" size="small" indeterminate />
       <span v-else font-bold text-white>{{ toTitleCase(provider) }}</span>
     </div>
   </button>
 </template>
-
-<style scoped lang="scss">
-.button {
-  box-shadow: 0 2px 4px 0 rgba(black, 0.25);
-  transition:
-    box-shadow 0.2s,
-    transform 0.2s;
-
-  &:hover {
-    box-shadow: 0 2px 10px 2px rgba(black, 0.35);
-    transform: translateY(-3px);
-  }
-}
-</style>

@@ -6,7 +6,7 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { AzureEntityType } from "@esposter/db-schema";
+import { AzureEntityType, CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 export const usePinStore = defineStore("message/pin", () => {
@@ -14,7 +14,7 @@ export const usePinStore = defineStore("message/pin", () => {
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const { createMessage, deleteMessage } = createOperationData(
     items,
-    ["partitionKey", "rowKey"],
+    [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey],
     AzureEntityType.Message,
   );
   const messages = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
@@ -23,7 +23,12 @@ export const usePinStore = defineStore("message/pin", () => {
     if (!("isPinned" in input)) return;
 
     if (input.isPinned) {
-      const message = dataStore.items.find((i) => getIsEntityIdEqualComparator(["partitionKey", "rowKey"], input)(i));
+      const message = dataStore.items.find((i) =>
+        getIsEntityIdEqualComparator<MessageEntity>(
+          [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey],
+          input,
+        )(i),
+      );
       if (!message) return;
       createMessage(message);
     } else deleteMessage(input);

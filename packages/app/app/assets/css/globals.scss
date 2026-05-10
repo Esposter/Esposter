@@ -1,4 +1,14 @@
-@use "vuetify";
+:root {
+  --app-bar-height: 56px;
+  --avatar-width: 40px;
+  --border-width: thin;
+  --border-style: solid;
+  --border-radius: 4px;
+  --transition-duration: 0.3s;
+  --transition-move-duration: 0.5s;
+  --vue-gradient: linear-gradient(45deg, #42d392 25%, #647eff);
+  --midnight-bloom: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+}
 // https://vuetifyjs.com/en/getting-started/upgrade-guide/#css-reset
 @layer vuetify-core.reset {
   ul,

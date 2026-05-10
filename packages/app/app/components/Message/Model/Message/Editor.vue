@@ -2,10 +2,11 @@
 import type { MessageEntity } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useDataStore } from "@/store/message/data";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 import { Extension } from "@tiptap/vue-3";
 
 interface MessageEditorProps {
@@ -19,25 +20,33 @@ const emit = defineEmits<{
 }>();
 const dataStore = useDataStore();
 const { updateMessage } = dataStore;
-const editedMessageHtml = ref(useMessageWithMentions(() => message.message).value);
+const editedMessageHtml = ref(
+  useMessageWithMentions(
+    () => message.message,
+    () => message.partitionKey,
+  ).value,
+);
 const onUpdateMessage = (editor: Editor) => {
-  try {
-    if (editedMessageHtml.value === message.message) return;
-    else if (EMPTY_TEXT_REGEX.test(editor.getText())) {
-      emit("update:delete-mode", true);
-      return;
-    } else
-      getSynchronizedFunction(async () => {
+  getSynchronizedFunction(async () => {
+    await withFinalizerAsync(
+      async () => {
+        if (editedMessageHtml.value === message.message) return;
+        else if (EMPTY_TEXT_REGEX.test(editor.getText())) {
+          emit("update:delete-mode", true);
+          return;
+        }
         await updateMessage({
           message: editedMessageHtml.value,
           partitionKey: message.partitionKey,
           rowKey: message.rowKey,
         });
-      })();
-  } finally {
-    emit("update:update-mode", false);
-    editedMessageHtml.value = message.message;
-  }
+      },
+      () => {
+        emit("update:update-mode", false);
+        editedMessageHtml.value = message.message;
+      },
+    );
+  })();
 };
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
@@ -59,9 +68,10 @@ const mentionExtension = useMentionExtension();
 <template>
   <RichTextEditor
     v-model="editedMessageHtml"
+    autofocus="end"
     placeholder="Edit message"
-    :limit="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
+    :limit="MESSAGE_MAX_LENGTH"
     @keydown.esc="emit('update:update-mode', false)"
   >
     <template #append-footer="{ editor }">

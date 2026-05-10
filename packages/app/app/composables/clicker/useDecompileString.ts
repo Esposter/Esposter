@@ -1,6 +1,8 @@
-import { decompileVariable } from "@/services/clicker/compiler/decompileVariable";
+import { decompileVariables } from "#shared/services/compiler/decompileVariables";
+import { useClickerStore } from "@/store/clicker";
 
 export const useDecompileString = (string: string) => {
-  const clickerItemProperties = useClickerItemProperties();
-  return computed(() => decompileVariable(string, clickerItemProperties.value));
+  const clickerStore = useClickerStore();
+  const { clickerItemProperties } = storeToRefs(clickerStore);
+  return computed(() => decompileVariables(string, { ...clickerItemProperties.value }));
 };

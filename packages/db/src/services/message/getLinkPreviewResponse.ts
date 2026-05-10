@@ -1,20 +1,21 @@
 import type { LinkPreviewResponse } from "@esposter/db-schema";
 
+import { getResultAsync } from "@esposter/shared";
 import { getLinkPreview } from "link-preview-js";
 import { find } from "linkifyjs";
 import { parse } from "node-html-parser";
 import { lookup } from "node:dns";
 
-export const getLinkPreviewResponse = async (message: string): Promise<LinkPreviewResponse | null> => {
+export const getLinkPreviewResponse = (message: string): Promise<LinkPreviewResponse | null> => {
   const messageHtml = parse(message);
   const url = messageHtml.querySelector("a")?.getAttribute("href");
-  if (!url) return null;
+  if (!url) return Promise.resolve(null);
 
   const link = find(url, "url", { defaultProtocol: "https" })[0];
-  if (!link) return null;
+  if (!link) return Promise.resolve(null);
 
-  try {
-    const linkPreviewResponse = await getLinkPreview(link.href, {
+  return getResultAsync(() =>
+    getLinkPreview(link.href, {
       resolveDNSHost: (url) =>
         new Promise((resolve, reject) => {
           const hostname = new URL(url).hostname;
@@ -27,9 +28,8 @@ export const getLinkPreviewResponse = async (message: string): Promise<LinkPrevi
             resolve(address);
           });
         }),
-    });
-    return linkPreviewResponse;
-  } catch {
-    return null;
-  }
+    }),
+  )
+    .orTee(console.error)
+    .unwrapOr(null);
 };

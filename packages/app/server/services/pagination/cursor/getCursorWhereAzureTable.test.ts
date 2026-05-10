@@ -8,17 +8,18 @@ import { describe, expect, test } from "vitest";
 
 describe(getCursorWhereAzureTable, () => {
   const cursor = { partitionKey: "", rowKey: "" };
-  const binaryOperatorSortItemMap = {
+  const BinaryOperatorSortItemMap = {
     [BinaryOperator.ge]: { isIncludeValue: true, key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Asc },
     [BinaryOperator.gt]: { key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Asc },
     [BinaryOperator.le]: { isIncludeValue: true, key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Desc },
     [BinaryOperator.lt]: { key: CompositeKeyPropertyNames.partitionKey, order: SortOrder.Desc },
   } as const satisfies Partial<Record<BinaryOperator, SortItem<keyof CompositeKey>>>;
+  const BinaryOperatorSortItemMapEntries = Object.entries(BinaryOperatorSortItemMap);
 
   test("gets", () => {
     expect.hasAssertions();
 
-    for (const [operator, sortItem] of Object.entries(binaryOperatorSortItemMap)) {
+    for (const [operator, sortItem] of BinaryOperatorSortItemMapEntries) {
       const serializedCursors = serialize(cursor, [sortItem]);
 
       expect(getCursorWhereAzureTable(serializedCursors, [sortItem as SortItem<keyof CompositeKey>])).toStrictEqual([

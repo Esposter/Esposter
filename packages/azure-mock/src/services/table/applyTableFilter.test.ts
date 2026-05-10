@@ -15,7 +15,7 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.eq, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.eq,
@@ -31,7 +31,7 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.eq} negative`, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.eq,
@@ -46,7 +46,7 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.gt, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.gt,
@@ -62,7 +62,7 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.gt} negative`, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.gt,
@@ -77,7 +77,7 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.ge, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.ge,
@@ -93,7 +93,7 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.ge} negative`, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.ge,
@@ -108,7 +108,7 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.lt, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.lt,
@@ -124,7 +124,7 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.lt} negative`, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.lt,
@@ -139,7 +139,7 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.le, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.le,
@@ -155,7 +155,7 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.le} negative`, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.le,
@@ -170,7 +170,7 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.ne, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.ne,
@@ -186,7 +186,7 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.ne} negative`, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.ne,

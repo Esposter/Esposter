@@ -1,6 +1,4 @@
-import type { ReadonlyRefOrGetter } from "@vueuse/core";
-
-export const useDisplayWidths = (totalDisplayWidth: ReadonlyRefOrGetter<number>, displayWidth: Ref<number>) => {
+export const useVDisplayWidths = (totalDisplayWidth: MaybeRefOrGetter<number>, displayWidth: Ref<number>) => {
   const totalLeftCapDisplayWidth = ref<number>();
   const leftCapDisplayWidth = ref<number>();
   const totalMiddleDisplayWidth = ref<number>();
@@ -12,12 +10,13 @@ export const useDisplayWidths = (totalDisplayWidth: ReadonlyRefOrGetter<number>,
       leftCapDisplayWidth.value = newTotalDisplayWidth;
       middleDisplayWidth.value = 0;
       rightCapDisplayWidth.value = 0;
-    } else if (newTotalDisplayWidth <= (totalLeftCapDisplayWidth.value ?? 0) + (totalMiddleDisplayWidth.value ?? 0)) {
-      leftCapDisplayWidth.value = totalLeftCapDisplayWidth.value;
+      return;
+    }
+    leftCapDisplayWidth.value = totalLeftCapDisplayWidth.value;
+    if (newTotalDisplayWidth <= (totalLeftCapDisplayWidth.value ?? 0) + (totalMiddleDisplayWidth.value ?? 0)) {
       middleDisplayWidth.value = newTotalDisplayWidth - (leftCapDisplayWidth.value ?? 0);
       rightCapDisplayWidth.value = 0;
     } else {
-      leftCapDisplayWidth.value = totalLeftCapDisplayWidth.value;
       middleDisplayWidth.value = totalMiddleDisplayWidth.value;
       rightCapDisplayWidth.value =
         newTotalDisplayWidth - ((leftCapDisplayWidth.value ?? 0) + (middleDisplayWidth.value ?? 0));

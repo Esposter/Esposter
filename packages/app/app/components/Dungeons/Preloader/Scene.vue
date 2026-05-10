@@ -3,12 +3,12 @@ import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
-import { FontLoaderMap } from "@/models/dungeons/loader/FontLoaderMap";
-import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
-import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";
-import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
-import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
-import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
+import { FontLoaders } from "@/models/dungeons/loader/FontLoaderMap";
+import { ImageLoaders } from "@/models/dungeons/loader/image/ImageLoaderMap";
+import { SoundLoaders } from "@/models/dungeons/loader/sound/SoundLoaderMap";
+import { SpritesheetLoaders } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
+import { TilemapLoaders } from "@/models/dungeons/loader/TilemapLoaderMap";
+import { TilesetLoaders } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { prettify } from "@/util/text/prettify";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 
@@ -42,12 +42,12 @@ const preload = (scene: SceneWithPlugins) => {
       await switchToScene(isProduction ? SceneKey.Title : SceneKey.Title);
     });
 
-  for (const fontLoader of Object.values(FontLoaderMap)) fontLoader(scene);
-  for (const soundLoader of Object.values(SoundLoaderMap)) soundLoader(scene);
-  for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
-  for (const imageLoader of Object.values(ImageLoaderMap)) imageLoader(scene);
-  for (const tilesetLoader of Object.values(TilesetLoaderMap)) tilesetLoader(scene);
-  for (const tilemapLoader of Object.values(TilemapLoaderMap)) tilemapLoader(scene);
+  for (const fontLoader of FontLoaders) fontLoader(scene);
+  for (const soundLoader of SoundLoaders) soundLoader(scene);
+  for (const spritesheetLoader of SpritesheetLoaders) spritesheetLoader(scene);
+  for (const imageLoader of ImageLoaders) imageLoader(scene);
+  for (const tilesetLoader of TilesetLoaders) tilesetLoader(scene);
+  for (const tilemapLoader of TilemapLoaders) tilemapLoader(scene);
 };
 </script>
 

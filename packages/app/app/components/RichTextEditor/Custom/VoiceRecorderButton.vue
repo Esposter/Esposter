@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MimeType } from "#shared/models/file/MimeType";
 import { dayjs } from "#shared/services/dayjs";
 import { clearInterval, setInterval } from "worker-timers";
 
@@ -25,9 +26,10 @@ const { data, start, state, stop } = useMediaRecorder({
 
     if (data.value.length === 0) return;
 
-    const type = "audio/webm";
-    const blob = new Blob(data.value, { type });
-    const file = new File([blob], `Voice Message - ${dayjs().format("YYYY-MM-DD HH:mm:ss")}.webm`, { type });
+    const blob = new Blob(data.value, { type: MimeType.AudioWebm });
+    const file = new File([blob], `Voice Message - ${dayjs().format("YYYY-MM-DD HH:mm:ss")}.webm`, {
+      type: MimeType.AudioWebm,
+    });
     emit("upload-file", [file]);
   },
 });
@@ -43,7 +45,7 @@ const formattedTimer = computed(() => {
   <v-tooltip :text="isRecording ? 'Stop Recording' : 'Record Voice Message'">
     <template #activator="{ props }">
       <div flex items-center>
-        <span v-if="isRecording" pr-2 font-bold>
+        <span v-if="isRecording" font-bold pr-2>
           {{ formattedTimer }}
         </span>
         <v-btn

@@ -17,13 +17,13 @@ export const checkAchievementCondition = (
       return condition.conditions.some((c) => checkAchievementCondition(c, data));
     case AchievementConditionType.Property: {
       // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
-      const value = condition.path.split(".").reduce((property, key) => property[key], data);
+      const value = condition.path.split(".").reduce((property, key) => property?.[key], data);
       switch (condition.operator) {
         case AchievementOperator.Contains:
           return typeof value === "string" && value.toLowerCase().includes(condition.value.toLowerCase());
         case AchievementOperator.IsPalindrome: {
           if (typeof value !== "string") return false;
-          const sanitizedValue = value.toLowerCase().replaceAll(/[^a-z0-9]/g, "");
+          const sanitizedValue = value.toLowerCase().replaceAll(new RegExp("[^a-z0-9]", "gu"), "");
           return sanitizedValue === [...EN_US_SEGMENTER.segment(sanitizedValue)].toReversed().join("");
         }
         case AchievementOperator.Matches:
@@ -54,10 +54,13 @@ export const checkAchievementCondition = (
     }
     // oxlint-disable-next-line no-fallthrough
     case AchievementConditionType.Time: {
-      const { max, min, referenceUnit, unit } = condition;
+      const { maximum, minimum, referenceUnit, unit } = condition;
       const now = dayjs();
       const value = now.diff(now.startOf(referenceUnit), unit);
-      return value >= min && value < max;
+      return value >= minimum && value < maximum;
     }
+    default:
+      exhaustiveGuard(condition);
+      return false;
   }
 };

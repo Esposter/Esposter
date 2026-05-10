@@ -1,5 +1,3 @@
-export type TupleSplitTail<T, N extends number, O extends unknown[] = []> = O["length"] extends N
-  ? T
-  : T extends [infer F, ...infer R]
-    ? TupleSplitTail<[...R], N, [...O, F]>
-    : never;
+import type { TupleSplit } from "@/util/types/TupleSplit";
+
+export type TupleSplitTail<T extends unknown[], N extends number> = TupleSplit<T, N>[1];

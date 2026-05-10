@@ -8,6 +8,7 @@ import { EN_US_SEGMENTER } from "./app/services/shared/constants";
 
 const BaseColorsCommon = {
   border: "#ccc",
+  error: "#ff5252",
   info: "#2d88ff",
   primary: "#42b883",
 } as const satisfies Partial<Colors>;
@@ -31,7 +32,7 @@ export type BaseColors = (typeof BaseColorsMap)[Exclude<ThemeMode, ThemeMode.sys
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3
-    ? [...EN_US_SEGMENTER.segment(hexColor)].map((s) => s.segment).reduce((acc, curr) => `${acc}${curr}${curr}`, "")
+    ? Array.from(EN_US_SEGMENTER.segment(hexColor), (s) => s.segment).reduce((acc, curr) => `${acc}${curr}${curr}`, "")
     : hexColor;
 
 export const getBaseColorsExtension = (colors: BaseColors) => {

@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db-schema",
-  "version": "2.19.2",
+  "version": "2.23.0",
   "private": true,
   "description": "A library of database schemas and utilities using Drizzle ORM (PostgreSQL) that is available in both browser and server environments.",
   "keywords": [
@@ -34,20 +34,22 @@
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
-    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
     "db:gen": "pnpm db:run generate",
+    "db:pull": "pnpm db:run pull",
+    "db:run": "tsx --import ../db-mock/src/util/bigintPolyfill.ts node_modules/drizzle-kit/bin.cjs",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsgo"
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -59,7 +61,6 @@
   "peerDependencies": {
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "catalog:",
     "zod": "catalog:"
   }
 }

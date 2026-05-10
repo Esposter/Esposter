@@ -1,0 +1,2 @@
+ALTER TABLE "message"."roomFilters" ADD CONSTRAINT "room_filters_words_size_check" CHECK (cardinality("words") <= 1000);--> statement-breakpoint
+ALTER TABLE "message"."room_roles" ADD CONSTRAINT "room_roles_color_length_check" CHECK (LENGTH("color") <= 9);

@@ -3,7 +3,7 @@ import type { Building } from "#shared/models/clicker/data/building/Building";
 import type { Except } from "type-fest";
 
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
-import { compileVariable } from "#shared/services/clicker/compiler/compileVariable";
+import { compileVariable } from "#shared/services/compiler/compileVariable";
 
 export const BuildingMap = {
   [BuildingId.Cursor]: {
@@ -92,7 +92,7 @@ export const BuildingMap = {
     baseValue: 1.1e12,
   },
   [BuildingId.Idleverse]: {
-    flavorDescription: `There's been countless other idle universes running alongside our own. You've finally found a way to hijack their production and convert whatever they've been making into ${compileVariable(
+    flavorDescription: `There's been countless other idle universes running alongside our own. You've found a way to hijack their production and convert whatever they've been making into ${compileVariable(
       "pluralName",
     )}!`,
     basePrice: 1.2e22,
@@ -106,3 +106,7 @@ export const BuildingMap = {
     baseValue: 6.4e13,
   },
 } as const satisfies Record<BuildingId, Except<Building, "id">>;
+
+export const Buildings: ReadonlySet<(typeof BuildingMap)[keyof typeof BuildingMap]> = new Set(
+  Object.values(BuildingMap),
+);

@@ -5,8 +5,7 @@ import { useClickerStore } from "@/store/clicker";
 await useReadClicker();
 useTimers();
 const clickerStore = useClickerStore();
-const { clicker } = storeToRefs(clickerStore);
-const clickerItemProperties = useClickerItemProperties();
+const { clicker, clickerItemProperties } = storeToRefs(clickerStore);
 const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 3));
 </script>
 
@@ -15,7 +14,7 @@ const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 
     <Head>
       <Title>{{ displayNoPoints }} {{ clickerItemProperties.pluralName }}</Title>
     </Head>
-    <v-container h-full flex justify-center items-center flex-col>
+    <v-container h-full flex flex-col items-center justify-center>
       <ClickerHeader w-full />
       <ClickerModelPointsTitle />
       <ClickerContent />
@@ -32,7 +31,7 @@ const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-group__items > .v-list-item) {
   padding-inline-start: 1rem;
 }

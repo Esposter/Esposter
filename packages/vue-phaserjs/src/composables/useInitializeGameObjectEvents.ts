@@ -6,7 +6,7 @@ import { GameObjectEventMap } from "@/util/emit/GameObjectEventMap";
 import { getEventName } from "@/util/emit/getEventName";
 import { isEvent } from "@/util/emit/isEvent";
 import { takeOne } from "@esposter/shared";
-import ClickOutside from "phaser3-rex-plugins/plugins/clickoutside.js";
+import ClickOutside from "phaser4-rex-plugins/plugins/clickoutside.js";
 
 export const useInitializeGameObjectEvents = () => {
   const currentInstance = getCurrentInstance();
@@ -32,8 +32,7 @@ export const useInitializeGameObjectEvents = () => {
     for (const gameObjectEvent of gameObjectEvents) {
       const context = GameObjectEventMap[gameObjectEvent];
       const eventListener = (...args: Types.Input.EventData[]) => {
-        if ("eventIndex" in context)
-          takeOne(args, 0).stopPropagation = takeOne(args, context.eventIndex).stopPropagation;
+        if ("eventIndex" in context) takeOne(args).stopPropagation = takeOne(args, context.eventIndex).stopPropagation;
         emit(gameObjectEvent, ...args);
       };
 

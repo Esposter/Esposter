@@ -1,6 +1,6 @@
 {
   "name": "@esposter/xml2js",
-  "version": "2.19.2",
+  "version": "2.23.0",
   "description": "Simple XML to JavaScript object converter.",
   "keywords": [
     "json",
@@ -28,9 +28,11 @@
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "typecheck": "tsc"
+    "typecheck": "tsgo"
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
@@ -38,7 +40,6 @@
     "xmlbuilder2": "catalog:"
   },
   "devDependencies": {
-    "@rolldown/plugin-node-polyfills": "catalog:",
     "@types/sax": "catalog:",
     "@types/xml2js": "catalog:"
   }

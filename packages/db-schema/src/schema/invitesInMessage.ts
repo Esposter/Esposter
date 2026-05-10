@@ -1,0 +1,35 @@
+import { pgTable } from "@/pgTable";
+import { messageSchema } from "@/schema/messageSchema";
+import { roomsInMessage } from "@/schema/roomsInMessage";
+import { users } from "@/schema/users";
+import { sql } from "drizzle-orm";
+import { check, text, uuid } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-orm/zod";
+
+export const CODE_LENGTH = 8;
+
+export const invitesInMessage = pgTable(
+  "invites",
+  {
+    code: text().notNull().unique(),
+    id: uuid().primaryKey().defaultRandom(),
+    roomId: uuid()
+      .notNull()
+      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
+    userId: text()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  {
+    extraConfig: ({ code }) => [
+      check("invites_code_length_check", sql`LENGTH(${code}) = ${sql.raw(CODE_LENGTH.toString())}`),
+    ],
+    schema: messageSchema,
+  },
+);
+
+export type InviteInMessage = typeof invitesInMessage.$inferSelect;
+
+export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, {
+  code: (schema) => schema.length(CODE_LENGTH),
+});

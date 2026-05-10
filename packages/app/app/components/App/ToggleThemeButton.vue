@@ -21,10 +21,8 @@ const toggleTheme = async () => {
   const bottom = window.innerHeight - top;
   const maxRadius = Math.hypot(Math.max(left, right), Math.max(top, bottom));
 
-  await document.startViewTransition(async () => {
-    await nextTick(() => {
-      baseToggleTheme();
-    });
+  await document.startViewTransition(() => {
+    baseToggleTheme();
   }).ready;
   document.documentElement.animate(
     {
@@ -51,7 +49,7 @@ const toggleTheme = async () => {
   </v-tooltip>
 </template>
 
-<style lang="scss">
+<style>
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;

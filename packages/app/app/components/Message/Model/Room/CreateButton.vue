@@ -9,14 +9,7 @@ const { createRoom } = roomStore;
 <template>
   <v-tooltip text="Create Room">
     <template #activator="{ props }">
-      <v-btn
-        icon="mdi-plus"
-        variant="plain"
-        size="small"
-        :ripple="false"
-        :="props"
-        @click="createRoom({ name: DEFAULT_NAME })"
-      />
+      <v-btn icon="mdi-plus" size="small" :ripple="false" :="props" @click.stop="createRoom({ name: DEFAULT_NAME })" />
     </template>
   </v-tooltip>
 </template>

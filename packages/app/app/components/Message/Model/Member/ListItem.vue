@@ -1,91 +1,74 @@
 <script setup lang="ts">
-import type { User } from "@esposter/db-schema";
+import type { RoomInMessage, User } from "@esposter/db-schema";
 import type { VNodeChild } from "vue";
 import type { VHover } from "vuetify/lib/components/VHover/VHover.mjs";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
-import { authClient } from "@/services/auth/authClient";
-import { useRoomStore } from "@/store/message/room";
-import { useMemberStore } from "@/store/message/user/member";
+import { useRoleStore } from "@/store/message/room/role";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { mergeProps } from "vue";
 
 interface MemberListItemProps {
   member: User;
+  room: RoomInMessage;
 }
 
 type VHoverSlotProps = Extract<VHover["v-slot:default"], Function> extends (props: infer P) => VNodeChild ? P : never;
 
-const slots = defineSlots<{
+defineSlots<{
   append: ({ hoverProps, listItemProps }: { hoverProps: VHoverSlotProps; listItemProps: ListItemSlot }) => VNode;
 }>();
-const { member } = defineProps<MemberListItemProps>();
+const { member, room } = defineProps<MemberListItemProps>();
 const emit = defineEmits<{ click: [event: KeyboardEvent | MouseEvent] }>();
-const { data: session } = await authClient.useSession(useFetch);
-const roomStore = useRoomStore();
-const { currentRoom, isCreator: isRoomCreator } = storeToRefs(roomStore);
-const isCreator = computed(() => currentRoom.value?.userId === member.id);
-const isKickable = computed(() => isRoomCreator.value && member.id !== session.value?.user.id);
-const memberStore = useMemberStore();
-const { deleteMember } = memberStore;
+const isCreator = computed(() => room.userId === member.id);
+const userToRoomStore = useUserToRoomStore();
+const { getDisplayName } = userToRoomStore;
+const displayName = computed(() => getDisplayName(member, room.id));
+const roleStore = useRoleStore();
+const { getMemberRoles } = roleStore;
+const memberRoles = computed(() => getMemberRoles(room.id, member.id).toSorted((a, b) => b.position - a.position));
+const isMenuOpen = ref(false);
 </script>
 
 <template>
   <v-hover #default="{ isHovering, props: hoverProps }">
-    <v-list-item :="hoverProps" :value="member.name" @click="emit('click', $event)">
-      <template #prepend>
-        <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="member.name" />
-      </template>
-      <v-list-item-title pr-6>
-        <div flex items-center gap-x-1>
-          {{ member.name }}
-          <v-tooltip v-if="isCreator" text="Room Owner">
-            <template #activator="{ props }">
-              <v-icon icon="mdi-crown" :="props" color="yellow-darken-4" />
-            </template>
-          </v-tooltip>
-        </div>
-      </v-list-item-title>
-      <template #append="listItemProps">
-        <slot name="append" :="{ hoverProps: { props: hoverProps, isHovering }, listItemProps }">
-          <template v-if="isKickable">
-            <StyledDeleteDialog
-              :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
-              :confirm-button-props="{ text: 'Kick' }"
-              @delete="
-                async (onComplete) => {
-                  try {
-                    if (!currentRoom) return;
-                    await deleteMember({ roomId: currentRoom.id, userId: member.id });
-                  } finally {
-                    onComplete();
-                  }
-                }
-              "
-            >
-              <template #activator="{ updateIsOpen }">
-                <v-tooltip :text="`Kick ${member.name}`">
-                  <template #activator="{ props: tooltipProps }">
-                    <v-btn
-                      v-show="isHovering"
-                      :="tooltipProps"
-                      bg-transparent
-                      icon="mdi-close"
-                      variant="plain"
-                      size="small"
-                      :ripple="false"
-                      @click.stop="updateIsOpen(true)"
-                    />
-                  </template>
-                </v-tooltip>
-              </template>
-            </StyledDeleteDialog>
+    <v-menu v-model="isMenuOpen" location="end" :close-on-content-click="false">
+      <template #activator="{ props: menuProps }">
+        <v-list-item
+          :="mergeProps(hoverProps, menuProps)"
+          :active="isMenuOpen"
+          :value="member.id"
+          @click="emit('click', $event)"
+        >
+          <template #prepend>
+            <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="displayName" />
           </template>
-        </slot>
+          <v-list-item-title pr-6>
+            <div flex items-center gap-x-1>
+              {{ displayName }}
+              <v-tooltip v-if="isCreator" text="Room Owner">
+                <template #activator="{ props }">
+                  <v-icon icon="mdi-crown" :="props" color="yellow-darken-4" />
+                </template>
+              </v-tooltip>
+            </div>
+            <div v-if="memberRoles.length > 0" flex gap-1 mt-1 flex-wrap>
+              <v-chip v-for="{ id, name, color } of memberRoles" :key="id" size="x-small" :color>
+                {{ name }}
+              </v-chip>
+            </div>
+          </v-list-item-title>
+          <template #append="listItemProps">
+            <slot name="append" :="{ hoverProps: { props: hoverProps, isHovering }, listItemProps }" />
+          </template>
+        </v-list-item>
       </template>
-    </v-list-item>
+      <MessageModelUserProfileCard :user="member" />
+    </v-menu>
   </v-hover>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-item__prepend > .v-list-item__spacer) {
   width: 0.5rem;
 }

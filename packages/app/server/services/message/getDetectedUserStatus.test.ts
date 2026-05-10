@@ -1,5 +1,5 @@
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
-import { UserStatus } from "@esposter/db-schema";
+import { UserStatus, UserStatuses } from "@esposter/db-schema";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getDetectedUserStatus, () => {
@@ -19,7 +19,7 @@ describe(getDetectedUserStatus, () => {
   test("valid defined status", () => {
     expect.hasAssertions();
 
-    for (const status of Object.values(UserStatus))
+    for (const status of UserStatuses)
       expect(
         getDetectedUserStatus({
           createdAt,

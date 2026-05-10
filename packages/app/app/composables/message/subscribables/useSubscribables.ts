@@ -1,8 +1,20 @@
-export const useSubscribables = () => {
+import { getIsServer } from "@esposter/shared";
+
+export const useSubscribables = async () => {
+  if (getIsServer()) return;
+
   useEmojiSubscribables();
+  useMessageCache();
+  useModerationSubscribables();
   useMessageSubscribables();
   usePushSubscription();
+  useRoleSubscribables();
   useRoomSubscribables();
-  useTypingSubscribables();
-  useUserSubscribables();
+  useUserToRoomSubscribables();
+  await Promise.all([
+    useFriendSubscribables(),
+    useTypingSubscribables(),
+    useUserSubscribables(),
+    useVoiceSubscribables(),
+  ]);
 };

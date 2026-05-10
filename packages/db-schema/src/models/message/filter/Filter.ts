@@ -10,7 +10,7 @@ export interface Filter {
   value: SerializableValue;
 }
 
-export const filterSchema: z.ZodType<Filter> = z.object({
+export const filterSchema = z.object({
   type: filterTypeSchema,
   value: serializableValueSchema,
-});
+}) satisfies z.ZodType<Filter>;

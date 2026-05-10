@@ -5,7 +5,7 @@ import { serializeClause } from "@/services/azure/transformer/serializeClause";
 import { UnaryOperator } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
-export const serializeClauses = (clauses: Clause[]): string => {
+export const serializeClauses = (clauses: Clause<Record<string, unknown>>[]): string => {
   if (clauses.length === 0) return "";
   else if (clauses.length === 1) return serializeClause(takeOne(clauses));
 

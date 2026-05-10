@@ -1,0 +1,1 @@
+ALTER TABLE "message"."rooms" ADD CONSTRAINT "rooms_slowmode_ms_check" CHECK ("slowmodeMs" IS NULL OR "slowmodeMs" >= 1);

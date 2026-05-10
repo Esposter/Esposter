@@ -5,7 +5,7 @@ import { useGame } from "@/composables/useGame";
 // Because scenes may be instantiated at various different complex times
 // And are not always available, so we only want to grab the latest scene
 // When we actually need to use it
-export const getScene = (sceneKey: SceneWithPlugins["scene"]["key"]) => {
+export const getScene = (sceneKey: SceneWithPlugins["scene"]["key"]): SceneWithPlugins => {
   const game = useGame();
-  return game.scene.getScene(sceneKey) as SceneWithPlugins;
+  return game.scene.getScene(sceneKey);
 };

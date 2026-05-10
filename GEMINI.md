@@ -6,8 +6,8 @@
 **Description**: A comprehensive social platform monorepo ("A nice and casual place for posting random things").
 **Architecture**: Monorepo using pnpm workspaces and Lerna for package management.
 **Language**: TypeScript (Strict Mode)
-**Runtime**: Node.js `^24.13.0`
-**Package Manager**: pnpm `^10.28.1` (with Catalog protocol)
+**Runtime**: Node.js (see `engines.node` in `package.json`)
+**Package Manager**: pnpm (see `packageManager` in `package.json`)
 
 ## Technology Stack
 

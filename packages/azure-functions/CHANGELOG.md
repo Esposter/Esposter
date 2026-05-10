@@ -3,6 +3,65 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
+
+### Bug Fixes
+
+* add back type expect error ([9e3cf6f](https://github.com/Esposter/Esposter/commit/9e3cf6fd306b0faf14b5f1d5a3b00a5e30d74d5b))
+* code review comments ([680b85e](https://github.com/Esposter/Esposter/commit/680b85ec2fd3d4fcb178b10b6c3b75495382b5ca))
+* code review comments ([4ab7a46](https://github.com/Esposter/Esposter/commit/4ab7a460facafb0a35aa65cac34333f2cc1415d4))
+* lint ([f6e79f4](https://github.com/Esposter/Esposter/commit/f6e79f496c45f0d7369e7a288891846d6325bd3f))
+* lint ([3bbfdde](https://github.com/Esposter/Esposter/commit/3bbfdde3f875510a46c378a3df8639fdec2e739e))
+* lint wip ([8acd30e](https://github.com/Esposter/Esposter/commit/8acd30e554910d92719864b0f706e78833d27ebc))
+* remaining migrations ([14c864f](https://github.com/Esposter/Esposter/commit/14c864f5b31a0c61544e07bd34ea18bbd9df1af2))
+* types ([1609a7c](https://github.com/Esposter/Esposter/commit/1609a7c695c72bc3d2804c4bb5f2c849e374e029))
+* use ts-ignore to skip typedoc until ts-go support ([d74b67c](https://github.com/Esposter/Esposter/commit/d74b67cf8da227b10b643d5afdfcd1cb05458da1))
+* wip ([26a6fe1](https://github.com/Esposter/Esposter/commit/26a6fe1952674dac4cbf798b6129806c16eb198a))
+
+### Features
+
+* upgrade drizzle ([17b9f41](https://github.com/Esposter/Esposter/commit/17b9f41b180ba109382d34e9507ead13cbbb95b2))
+
+# [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
+
+### Bug Fixes
+
+* bugs ([70417cd](https://github.com/Esposter/Esposter/commit/70417cd42515c5cfee36d179f75d8b46898cbfda))
+
+* get structured text ([63fbd76](https://github.com/Esposter/Esposter/commit/63fbd76f44462a71cb8aebfab34d15bf013fb92f))
+
+* push subscription rename ([83dce01](https://github.com/Esposter/Esposter/commit/83dce014c94ee7b1db33933a54e3eadb48d5ac9e))
+
+* types and lint ([ad56572](https://github.com/Esposter/Esposter/commit/ad56572087670f66d878cfa8f1778a78582c950b))
+
+* webhooks relation types as well as drizzle types ([6aaa379](https://github.com/Esposter/Esposter/commit/6aaa37935553103c7cb79829cf7e7fc1475356fc))
+
+# [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
+
+### Bug Fixes
+
+* lint and code review comments ([f476766](https://github.com/Esposter/Esposter/commit/f476766af58ddcaa125faddf83dcd569cc164329))
+
+* review comments ([2396844](https://github.com/Esposter/Esposter/commit/23968440ae923c0fd1d1fce3d178eb69c31485c4))
+
+### Features
+
+* add friend request notification ([3bbd448](https://github.com/Esposter/Esposter/commit/3bbd448dcc23330bee926215d8ad196ce0388c94))
+
+# [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)
+
+### Bug Fixes
+
+* format + fix up some ignores ([6cd632f](https://github.com/Esposter/Esposter/commit/6cd632ff672ad8e0adee51b42cb6f6925f894b96))
+
+### Features
+
+* Add oxlint type aware ([eb40e2d](https://github.com/Esposter/Esposter/commit/eb40e2d7da8c606c66053582284264e0fb3a2592))
+
+* migrate to oxfmt ([e7a0212](https://github.com/Esposter/Esposter/commit/e7a0212f9ec18d7193c96cc6069ac6ecf168e8bb))
+
+* switch to tsgo ([1e504b3](https://github.com/Esposter/Esposter/commit/1e504b3a6ce5144dadbdd9bc543018a35e7b6808))
+
 ## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
 
 **Note:** Version bump only for package @esposter/azure-functions
@@ -30,7 +89,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * imports ([f953ac2](https://github.com/Esposter/Esposter/commit/f953ac249d0881c59e6dfaf2dc7f0581cb333c13))
+
 * types ([aada69f](https://github.com/Esposter/Esposter/commit/aada69f31c3e199bd814e013883462b0b7f7fcd5))
+
 * use esm imports ([e583736](https://github.com/Esposter/Esposter/commit/e5837369bff15c20868d9486d93bf5192c48c58c))
 
 ### Features
@@ -42,23 +103,37 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * don't send notif to self ([eb5be0d](https://github.com/Esposter/Esposter/commit/eb5be0dece285943425a09199ac6a5a74f701bfd))
+
 * event type ([724851d](https://github.com/Esposter/Esposter/commit/724851d2b4c600acd49cbb24ef305a93e5167463))
+
 * export default ([8cc1e6a](https://github.com/Esposter/Esposter/commit/8cc1e6a35c92e91235b6d7a4c35f4c3c17dc166e))
+
 * make polling period 5min to not sync with storage queue too much ([ea6440b](https://github.com/Esposter/Esposter/commit/ea6440bd82729debf411ec38f49cbf2bce44dffb))
+
 * move rate limit to backend api ([ba62838](https://github.com/Esposter/Esposter/commit/ba6283886ea1407bc68fa7b26b070a03ff98c2ec))
+
 * package name ([8e49e40](https://github.com/Esposter/Esposter/commit/8e49e40fd3f3b267c01c7bf794f429861c6c587c))
+
 * process env ([a7924d5](https://github.com/Esposter/Esposter/commit/a7924d5d07f17bb83e7d5b84f4d6fb442ddbc0b0))
+
 * properly await ([157d6c0](https://github.com/Esposter/Esposter/commit/157d6c02b75aa024ee7c40a20ebae00862aa26e0))
+
 * proxy webhook request ([5954c95](https://github.com/Esposter/Esposter/commit/5954c95b326b85aa091e17d595fd50dd908a73b4))
+
 * remove old build ([2ab799f](https://github.com/Esposter/Esposter/commit/2ab799f5dab1db8107ec285eec8cdbf0aa124da7))
+
 * revert back to module ([1635ca2](https://github.com/Esposter/Esposter/commit/1635ca22d4b3e2c907e58f4788673504ba0b4f95))
+
 * use managed identity instead ([ca191c3](https://github.com/Esposter/Esposter/commit/ca191c364ef9965bf9f14985fe058d4667f5e958))
 
 ### Features
 
 * Add mock queue client ([079340a](https://github.com/Esposter/Esposter/commit/079340a01b61f47cb0ac753cc811de5676dc0e65))
+
 * Add process push notifications + move to azure-functions pkg ([090f045](https://github.com/Esposter/Esposter/commit/090f0457b1131b376eab5d704ee2d319a5533ed4))
+
 * Add queue pushing ([5bf052a](https://github.com/Esposter/Esposter/commit/5bf052a89762871279ce4c310d11c6060097cf45))
+
 * migrate to event grid instead of storage queue ([6987115](https://github.com/Esposter/Esposter/commit/69871155a7f1114cb62229173c4c70a7f3ce1d81))
 
 # [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)

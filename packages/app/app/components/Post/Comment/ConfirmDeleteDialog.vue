@@ -2,6 +2,7 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
 import { useCommentStore } from "@/store/post/comment";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface PostCommentConfirmDeleteDialogProps {
   commentId: string;
@@ -14,36 +15,25 @@ defineSlots<{
 const { commentId } = defineProps<PostCommentConfirmDeleteDialogProps>();
 const commentStore = useCommentStore();
 const { deleteComment } = commentStore;
-const { text } = useColors();
 </script>
 
 <template>
-  <StyledDeleteDialog
+  <StyledDeleteFormDialog
     :card-props="{
       title: 'Delete Comment',
       text: 'Are you sure you want to delete this comment?',
     }"
     @delete="
       async (onComplete) => {
-        try {
-          await deleteComment(commentId);
-        } finally {
-          onComplete();
-        }
+        await withFinalizerAsync(() => deleteComment(commentId), onComplete);
       }
     "
   >
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
+    <div b-1 rd-lg b-solid shadow-md mx-4 py-2 b-text>
       <slot name="commentPreview" />
     </div>
-  </StyledDeleteDialog>
+  </StyledDeleteFormDialog>
 </template>
-<!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
-<style scoped lang="scss">
-.custom-border {
-  border: $border-width-root $border-style-root v-bind(text);
-}
-</style>

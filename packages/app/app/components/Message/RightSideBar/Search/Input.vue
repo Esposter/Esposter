@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
-import { useSearchMessageStore } from "@/store/message/searchMessage";
-import { FilterType } from "@esposter/db-schema";
+import { useSearchMessageStore } from "@/store/message/search";
+import { FilterTypes } from "@esposter/db-schema";
+import { normalizeString } from "@esposter/shared";
 
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
@@ -9,14 +10,13 @@ const { createFilter } = searchMessageStore;
 const { activeSelectedFilter, isSearchQueryEmpty, menu, searchQuery, selectedFilters } =
   storeToRefs(searchMessageStore);
 const searchQueryOnFocus = ref("");
-const filterTypes = Object.values(FilterType);
+const filterTypes = [...FilterTypes];
 const blur = () => (document.activeElement as HTMLElement | null)?.blur();
 </script>
 
 <template>
   <v-autocomplete
     v-model="selectedFilters"
-    cursor-text
     autocomplete="suppress"
     density="compact"
     menu-icon=""
@@ -29,11 +29,12 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
     hide-no-data
     multiple
     return-object
+    cursor-text
     @keydown.esc="blur()"
     @keydown.enter="
       async () => {
         if (activeSelectedFilter && !activeSelectedFilter.value) {
-          const value = searchQuery.trim();
+          const value = normalizeString(searchQuery);
           if (!value) return;
           activeSelectedFilter.value = value;
           searchQuery = '';
@@ -65,9 +66,9 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
         if (!value && !menu) return;
 
         if (value[value.length - 1] === ':') {
-          const trimmedValue = value.trim();
+          const normalizedValue = normalizeString(value);
           const filterType = filterTypes.find(
-            (type) => type.toLowerCase() === trimmedValue.slice(0, trimmedValue.length - 1).toLowerCase(),
+            (type) => type.toLowerCase() === normalizedValue.slice(0, normalizedValue.length - 1).toLowerCase(),
           );
           if (filterType) {
             createFilter(filterType);

@@ -1,20 +1,17 @@
-import type { ConfigExport, Plugin, RolldownPluginOption } from "rolldown";
+import type { Plugin, RolldownOptions, RolldownPluginOption } from "rolldown";
 
-import rolldownConfigurationBase from "@esposter/configuration/rolldown.config.base.js";
-import { defineConfig } from "rolldown";
-
-const rolldownConfiguration: ConfigExport = defineConfig([
-  {
-    ...rolldownConfigurationBase,
-    external: [],
-    platform: "node",
-    plugins: [
-      (rolldownConfigurationBase.plugins as RolldownPluginOption[]).filter(
-        (plugins) =>
-          !(Array.isArray(plugins) && (plugins as Plugin[]).some(({ name }) => name.includes("rolldown-plugin-dts"))),
-      ),
-    ],
-  },
-]);
+import { rolldownConfigurationNode } from "@esposter/configuration";
+// oxlint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+// @ts-ignore TS2321: Excessive stack depth
+const rolldownConfiguration: RolldownOptions = {
+  ...rolldownConfigurationNode,
+  external: [],
+  plugins: [
+    (rolldownConfigurationNode.plugins as RolldownPluginOption[]).filter(
+      (plugins) =>
+        !(Array.isArray(plugins) && (plugins as Plugin[]).some(({ name }) => name.includes("rolldown-plugin-dts"))),
+    ),
+  ],
+};
 
 export default rolldownConfiguration;

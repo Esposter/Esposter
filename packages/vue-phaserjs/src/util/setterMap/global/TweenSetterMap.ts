@@ -21,6 +21,5 @@ export const TweenSetterMap = {
     tweenchain.on(Tweens.Events.TWEEN_COMPLETE, () => {
       emit("update:tweenchain", undefined);
     });
-    return tweenchain;
   },
 } as const satisfies SetterMap<TweenConfiguration, GameObjects.GameObject, TweenEventEmitsOptions>;

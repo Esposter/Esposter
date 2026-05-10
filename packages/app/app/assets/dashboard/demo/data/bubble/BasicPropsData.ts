@@ -18,29 +18,29 @@ export const BasicPropsData = {
   series: [
     {
       data: createData(20, {
-        max: 60,
-        min: 10,
+        maximum: 60,
+        minimum: 10,
       }),
       name: "Bubble1",
     },
     {
       data: createData(20, {
-        max: 60,
-        min: 10,
+        maximum: 60,
+        minimum: 10,
       }),
       name: "Bubble2",
     },
     {
       data: createData(20, {
-        max: 60,
-        min: 10,
+        maximum: 60,
+        minimum: 10,
       }),
       name: "Bubble3",
     },
     {
       data: createData(20, {
-        max: 60,
-        min: 10,
+        maximum: 60,
+        minimum: 10,
       }),
       name: "Bubble4",
     },

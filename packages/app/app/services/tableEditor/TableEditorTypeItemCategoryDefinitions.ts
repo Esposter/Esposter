@@ -6,6 +6,9 @@ import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle";
 
 const TableEditorTypeItemCategoryDefinitionMap = {
+  [TableEditorType.File]: {
+    title: getTableEditorTitle(TableEditorType.File),
+  },
   [TableEditorType.TodoList]: {
     title: getTableEditorTitle(TableEditorType.TodoList),
   },

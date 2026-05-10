@@ -12,9 +12,8 @@ describe("webpageEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["webpageEditor"]>;
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(webpageEditorRouter);
     const mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(webpageEditorRouter)(mockContext);
   });
 
   afterEach(() => {

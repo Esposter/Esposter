@@ -1,6 +1,5 @@
 import type { AlphaSingleConfiguration } from "@/models/configuration/components/AlphaSingleConfiguration";
 import type { BlendModeConfiguration } from "@/models/configuration/components/BlendModeConfiguration";
-import type { ComputedSizeConfiguration } from "@/models/configuration/components/ComputedSizeConfiguration";
 import type { DepthConfiguration } from "@/models/configuration/components/DepthConfiguration";
 import type { MaskConfiguration } from "@/models/configuration/components/MaskConfiguration";
 import type { ScrollFactorConfiguration } from "@/models/configuration/components/ScrollFactorConfiguration";
@@ -14,7 +13,6 @@ export interface ContainerConfiguration
   extends
     AlphaSingleConfiguration,
     BlendModeConfiguration,
-    ComputedSizeConfiguration,
     DepthConfiguration,
     Except<Types.GameObjects.Container.ContainerConfig, keyof Types.GameObjects.GameObjectConfig>,
     GlobalConfiguration,

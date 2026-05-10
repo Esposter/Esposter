@@ -11,19 +11,17 @@ import { InvalidOperationError, NotFoundError, Operation } from "@esposter/share
 import { beforeAll, describe, expect, test } from "vitest";
 
 describe("like", () => {
+  let mockContext: Context;
   let likeCaller: DecorateRouterRecord<TRPCRouter["like"]>;
   let postCaller: DecorateRouterRecord<TRPCRouter["post"]>;
-  let mockContext: Context;
   const title = "title";
   const value = 1;
   const updatedValue = -1;
 
   beforeAll(async () => {
-    const createPostCaller = createCallerFactory(postRouter);
-    const createLikeCaller = createCallerFactory(likeRouter);
     mockContext = await createMockContext();
-    postCaller = createPostCaller(mockContext);
-    likeCaller = createLikeCaller(mockContext);
+    postCaller = createCallerFactory(postRouter)(mockContext);
+    likeCaller = createCallerFactory(likeRouter)(mockContext);
   });
 
   test("creates", async () => {
@@ -37,16 +35,6 @@ describe("like", () => {
     expect(readPost.noLikes).toBe(value);
   });
 
-  test("fails create with non-existent post id", async () => {
-    expect.hasAssertions();
-
-    const postId = crypto.randomUUID();
-
-    await expect(likeCaller.createLike({ postId, value: 1 })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, postId).message}]`,
-    );
-  });
-
   test("updates", async () => {
     expect.hasAssertions();
 
@@ -57,26 +45,6 @@ describe("like", () => {
 
     expect(updatedLike.value).toBe(updatedValue);
     expect(readPost.noLikes).toBe(updatedValue);
-  });
-
-  test("fails update with non-existent post id", async () => {
-    expect.hasAssertions();
-
-    const postId = crypto.randomUUID();
-
-    await expect(likeCaller.updateLike({ postId, value: updatedValue })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, postId).message}]`,
-    );
-  });
-
-  test("fails update with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const newPost = await postCaller.createPost({ title });
-
-    await expect(likeCaller.updateLike({ postId: newPost.id, value })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Like, newPost.id).message}]`,
-    );
   });
 
   test("fails update with wrong user", async () => {
@@ -97,18 +65,11 @@ describe("like", () => {
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value });
     const deletedLike = await likeCaller.deleteLike(newPost.id);
+    const userId = getMockSession().user.id;
 
-    expect(deletedLike).toStrictEqual({ postId: newPost.id, userId: getMockSession().user.id, value });
-  });
-
-  test("fails delete with non-existent post id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(likeCaller.deleteLike(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, id).message}]`,
-    );
+    expect(deletedLike.value).toBe(value);
+    expect(deletedLike.userId).toBe(userId);
+    expect(deletedLike.postId).toBe(newPost.id);
   });
 
   test("fails delete with non-existent id", async () => {

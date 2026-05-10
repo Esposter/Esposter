@@ -1,6 +1,6 @@
-import type { Session } from "#shared/models/auth/Session";
+import type { Session, User } from "better-auth";
 
 export interface Device {
-  sessionId: Session["session"]["id"];
-  userId: Session["user"]["id"];
+  sessionId: Session["id"];
+  userId: User["id"];
 }

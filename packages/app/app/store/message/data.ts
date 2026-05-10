@@ -9,10 +9,10 @@ import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useInputStore } from "@/store/message/input";
-import { useReplyStore } from "@/store/message/reply";
+import { useReplyStore } from "@/store/message/input/reply";
+import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
-import { useUploadFileStore } from "@/store/message/uploadFile";
-import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
+import { AzureEntityType, CompositeKeyPropertyNames, createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
@@ -25,10 +25,15 @@ export const useDataStore = defineStore("message/data", () => {
     deleteMessage: baseStoreDeleteMessage,
     updateMessage: baseStoreUpdateMessage,
     ...restOperationData
-  } = createOperationData(items, ["partitionKey", "rowKey"], AzureEntityType.Message);
+  } = createOperationData(
+    items,
+    [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey],
+    AzureEntityType.Message,
+  );
   const files = computed(() => items.value.flatMap(({ files }) => files));
   const hasMoreNewer = ref(false);
   const nextCursorNewer = ref<string>();
+  const typings = ref<CreateTypingInput[]>([]);
 
   const createMessage = async (input: StandardCreateMessageInput) => {
     if (!session.value.data) return;
@@ -56,26 +61,30 @@ export const useDataStore = defineStore("message/data", () => {
   };
 
   const inputStore = useInputStore();
-  const { validateInput } = inputStore;
+  const { clearDraft, validateInput } = inputStore;
   const uploadFileStore = useUploadFileStore();
   const replyStore = useReplyStore();
   const sendMessage = async (editor: Editor) => {
-    if (!roomStore.currentRoomId || !validateInput(editor, true)) return;
+    const roomId = roomStore.currentRoomId;
+    if (!roomId || !validateInput(editor, true)) return;
 
     const input: StandardCreateMessageInput = {
       files: uploadFileStore.files,
       message: inputStore.input,
       replyRowKey: replyStore.rowKey,
-      roomId: roomStore.currentRoomId,
+      roomId,
       type: MessageType.Message,
     };
+    await storeSendMessage(input, editor);
+  };
+  const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
     await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
     await createMessage(input);
+    clearDraft(input.roomId);
   };
   MessageHookMap.ResetSend.push((editor) => {
-    editor.commands.clearContent(true);
+    editor?.commands.clearContent(true);
   });
-  const typings = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
   // Everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {
@@ -90,6 +99,7 @@ export const useDataStore = defineStore("message/data", () => {
     updateMessage,
     ...restOperationData,
     sendMessage,
+    storeSendMessage,
     ...restData,
     typings,
   };

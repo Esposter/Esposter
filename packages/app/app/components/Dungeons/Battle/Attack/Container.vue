@@ -7,8 +7,8 @@ interface ContainerProps {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { isToEnemy } = defineProps<ContainerProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });
+const { isToEnemy } = defineProps<ContainerProps>();
 const position = computed(() => getAttackPosition(isToEnemy));
 </script>
 

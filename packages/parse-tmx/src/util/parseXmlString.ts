@@ -5,7 +5,7 @@ import parseDataUrl from "data-urls";
 export const parseXmlString = <T extends object>(xmlString: string): Promise<T> => {
   const xml = parseDataUrl(xmlString) ?? xmlString;
   return parseStringPromise(xml, {
-    attrValueProcessors: [(value: string) => parseXmlValue(value)],
+    attrValueProcessors: [(value) => parseXmlValue(value)],
     explicitChildren: true,
     preserveChildrenOrder: true,
   });

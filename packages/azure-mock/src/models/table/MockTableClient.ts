@@ -20,7 +20,7 @@ import type { Except } from "type-fest";
 import { MockRestError } from "@/models/MockRestError";
 import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { ID_SEPARATOR } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
  * It uses a Map to simulate table storage and correctly implements the TableClient interface.
@@ -96,10 +96,19 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
       ? tableEntities.filter((e) => createTableFilterPredicate(filter)(e))
       : tableEntities;
     return {
-      byPage: () =>
+      byPage: ({ maxPageSize } = {}) =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
+          if (maxPageSize !== undefined && maxPageSize <= 0)
+            throw new RangeError("maxPageSize must be greater than 0.");
+
           const allEntitiesWithMetadata = entities.map((e) => withMetadata(e));
-          if (allEntitiesWithMetadata.length > 0) yield await Promise.resolve(allEntitiesWithMetadata);
+          if (allEntitiesWithMetadata.length === 0) return;
+          else if (!maxPageSize) {
+            yield await Promise.resolve(allEntitiesWithMetadata);
+            return;
+          }
+          for (let i = 0; i < allEntitiesWithMetadata.length; i += maxPageSize)
+            yield await Promise.resolve(allEntitiesWithMetadata.slice(i, i + maxPageSize));
         })(resultTableEntities),
       next: () =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
@@ -115,8 +124,45 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     throw new Error("Method not implemented.");
   }
 
-  submitTransaction(): Promise<TableTransactionResponse> {
-    throw new Error("Method not implemented.");
+  async submitTransaction(actions: Parameters<TableClient["submitTransaction"]>[0]): Promise<TableTransactionResponse> {
+    let partitionKey: string | undefined;
+    for (const [, entity] of actions)
+      if (partitionKey === undefined) partitionKey = entity.partitionKey;
+      else if (entity.partitionKey !== partitionKey)
+        throw new MockRestError("All transaction actions must target the same partitionKey.", 400);
+
+    const snapshot = new Map(this.table);
+    await getResultAsync(async () => {
+      for (const [type, entity, updateMode] of actions)
+        switch (type) {
+          case "create":
+            await this.createEntity(entity);
+            break;
+          case "delete":
+            await this.deleteEntity(entity.partitionKey, entity.rowKey);
+            break;
+          case "update":
+            await this.updateEntity(entity, updateMode);
+            break;
+          case "upsert":
+            await this.upsertEntity(entity, updateMode);
+            break;
+          default:
+            exhaustiveGuard(type);
+        }
+    })
+      .orTee(() => {
+        this.table.clear();
+        for (const [key, value] of snapshot) this.table.set(key, value);
+      })
+      .match(noop, (error) => {
+        throw error;
+      });
+    return {
+      getResponseForEntity: noop,
+      status: 202,
+      subResponses: [],
+    } as unknown as TableTransactionResponse;
   }
 
   updateEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {

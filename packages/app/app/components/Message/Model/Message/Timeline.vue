@@ -17,11 +17,11 @@ const displayDate = computed(() => {
 </script>
 
 <template>
-  <v-row v-if="areDifferentDays" mt-4 flex items-center flex-none density="compact">
+  <v-row v-if="areDifferentDays" flex flex-none items-center mt-4 density="compact">
     <v-col flex-1>
       <v-divider />
     </v-col>
-    <div class="text-title-small" text-center>
+    <div text-title-small text-center>
       {{ displayDate }}
     </div>
     <v-col flex-1>

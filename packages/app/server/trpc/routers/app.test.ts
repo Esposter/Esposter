@@ -10,9 +10,8 @@ describe("appRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["app"]>;
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(appRouter);
     const mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(appRouter)(mockContext);
   });
 
   test("buildVersion", async () => {

@@ -1,3 +1,3 @@
-import type { AppUser, User } from "@esposter/db-schema";
+import type { AppUserInMessage, User } from "@esposter/db-schema";
 
-export type Creator = AppUser | User;
+export type Creator = AppUserInMessage | User;

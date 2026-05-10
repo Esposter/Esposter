@@ -6,7 +6,7 @@ const { onClick } = popupStore;
 </script>
 
 <template>
-  <div mt-12 relative>
+  <div relative mt-12>
     <ClientOnly>
       <ClickerModelRotatingCursors />
     </ClientOnly>

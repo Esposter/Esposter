@@ -10,7 +10,7 @@ describe(checkAchievementCondition, () => {
   const message = "message";
   const data = { message };
 
-  test(AchievementConditionType.Property, () => {
+  test(`${AchievementConditionType.Property} ${BinaryOperator.eq}`, () => {
     expect.hasAssertions();
 
     expect(
@@ -35,6 +35,10 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+  });
+
+  test(`${AchievementConditionType.Property} ${BinaryOperator.gt}`, () => {
+    expect.hasAssertions();
 
     expect(
       checkAchievementCondition(
@@ -58,6 +62,10 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+  });
+
+  test(`${AchievementConditionType.Property} ${BinaryOperator.ge}`, () => {
+    expect.hasAssertions();
 
     expect(
       checkAchievementCondition(
@@ -81,6 +89,10 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+  });
+
+  test(`${AchievementConditionType.Property} ${BinaryOperator.lt}`, () => {
+    expect.hasAssertions();
 
     expect(
       checkAchievementCondition(
@@ -104,6 +116,10 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+  });
+
+  test(`${AchievementConditionType.Property} ${BinaryOperator.le}`, () => {
+    expect.hasAssertions();
 
     expect(
       checkAchievementCondition(
@@ -127,6 +143,10 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+  });
+
+  test(`${AchievementConditionType.Property} ${BinaryOperator.ne}`, () => {
+    expect.hasAssertions();
 
     expect(
       checkAchievementCondition(
@@ -150,6 +170,10 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+  });
+
+  test(`${AchievementConditionType.Property} ${AchievementOperator.Contains}`, () => {
+    expect.hasAssertions();
 
     expect(
       checkAchievementCondition(
@@ -173,6 +197,10 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+  });
+
+  test(`${AchievementConditionType.Property} ${AchievementOperator.Matches}`, () => {
+    expect.hasAssertions();
 
     expect(
       checkAchievementCondition(
@@ -180,7 +208,7 @@ describe(checkAchievementCondition, () => {
           operator: AchievementOperator.Matches,
           path: "message",
           type: AchievementConditionType.Property,
-          value: /^[a-z]+$/,
+          value: new RegExp("^[a-z]+$", "u"),
         },
         data,
       ),
@@ -191,11 +219,15 @@ describe(checkAchievementCondition, () => {
           operator: AchievementOperator.Matches,
           path: "message",
           type: AchievementConditionType.Property,
-          value: /^[0-9]+$/,
+          value: new RegExp("^[0-9]+$", "u"),
         },
         data,
       ),
     ).toBe(false);
+  });
+
+  test(`${AchievementConditionType.Property} ${AchievementOperator.IsPalindrome}`, () => {
+    expect.hasAssertions();
 
     expect(
       checkAchievementCondition(
@@ -208,7 +240,6 @@ describe(checkAchievementCondition, () => {
         { message: "" },
       ),
     ).toBe(true);
-
     expect(
       checkAchievementCondition(
         {
@@ -220,6 +251,10 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+  });
+
+  test(`${AchievementConditionType.Property} ${AchievementOperator.Operation}`, () => {
+    expect.hasAssertions();
 
     expect(
       checkAchievementCondition(
@@ -232,7 +267,6 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(true);
-
     expect(
       checkAchievementCondition(
         {
@@ -242,6 +276,22 @@ describe(checkAchievementCondition, () => {
           type: AchievementConditionType.Property,
         } as PropertyCondition<"message.createMessage">,
         data,
+      ),
+    ).toBe(false);
+  });
+
+  test(`${AchievementConditionType.Property} missing value`, () => {
+    expect.hasAssertions();
+
+    expect(
+      checkAchievementCondition(
+        {
+          operator: BinaryOperator.eq,
+          path: "message",
+          type: AchievementConditionType.Property,
+          value: message,
+        },
+        {},
       ),
     ).toBe(false);
   });

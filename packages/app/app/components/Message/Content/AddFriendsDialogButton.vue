@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/message/room";
 import { RoutePath } from "@esposter/shared";
+import { mergeProps } from "vue";
 
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
@@ -19,10 +20,10 @@ const isCopied = ref(false);
 
 <template>
   <v-dialog v-model="dialog">
-    <template #activator>
+    <template #activator="{ props: dialogProps }">
       <v-tooltip location="bottom" text="Add Friends to Room">
-        <template #activator="{ props }">
-          <v-btn icon="mdi-account-plus" size="small" :="props" @click="dialog = true" />
+        <template #activator="{ props: tooltipProps }">
+          <v-btn icon="mdi-account-plus" size="small" :="mergeProps(dialogProps, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>
@@ -34,10 +35,10 @@ const isCopied = ref(false);
         <div mb-2>Send An Invite Link To A Friend!</div>
         <v-text-field
           v-model="inviteLink"
-          class="bg-background"
           variant="outlined"
           hide-details
           readonly
+          bg-background
           :color="isCopied ? 'success' : undefined"
           :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite('example')}`"
         >
@@ -55,13 +56,13 @@ const isCopied = ref(false);
             />
           </template>
         </v-text-field>
-        <div v-if="inviteLink" class="text-title-small" text-gray pt-2>Your invite link expires in 24 hours.</div>
+        <div v-if="inviteLink" text-gray pt-2 text-title-small>Your invite link expires in 24 hours.</div>
       </v-card-text>
     </StyledCard>
   </v-dialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-field__input) {
   min-height: auto;
   font-size: 0.875rem;

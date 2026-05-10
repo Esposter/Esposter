@@ -1,5 +1,5 @@
-import type { RequiredDeep } from "type-fest";
+import type { GetPaths } from "@/util/types/GetPaths";
 
-export type PropertyNames<T> = RequiredDeep<{
-  [P in keyof T]: P;
-}>;
+export type PropertyNames<T> = {
+  [P in GetPaths<T>]: P;
+};

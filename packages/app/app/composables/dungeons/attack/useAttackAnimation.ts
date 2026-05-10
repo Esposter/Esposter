@@ -1,8 +1,8 @@
 import type { Attack } from "#shared/models/dungeons/attack/Attack";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { dayjs } from "#shared/services/dayjs";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dungeons/battle/attackManager";
 import { useSettingsStore } from "@/store/dungeons/settings";
@@ -11,7 +11,7 @@ import { sleep } from "vue-phaserjs";
 export const useAttackAnimation = (scene: SceneWithPlugins, attack: Attack, isToEnemy: boolean) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
-  if (isSkipAnimations.value) return;
+  if (isSkipAnimations.value) return undefined;
 
   const attackManagerStore = useAttackManagerStore();
   const storeRefs = storeToRefs(attackManagerStore);

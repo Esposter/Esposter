@@ -1,0 +1,8 @@
+reviews:
+  path_filters:
+    - "!pnpm-lock.yaml"
+    # auto-generated migrations
+    - "!packages/app/server/db/migrations/**"
+  auto_review:
+    ignore_usernames:
+      - renovate[bot]

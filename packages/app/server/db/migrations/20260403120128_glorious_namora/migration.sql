@@ -1,0 +1,3 @@
+CREATE INDEX "friends_receiverId_idx" ON "friends" USING btree ("receiverId");--> statement-breakpoint
+CREATE INDEX "friends_senderId_idx" ON "friends" USING btree ("senderId");--> statement-breakpoint
+ALTER TABLE "message"."rooms" ADD CONSTRAINT "participant_key_type" CHECK (("message"."rooms"."type" = 'DirectMessage' AND "message"."rooms"."participantKey" IS NOT NULL) OR ("message"."rooms"."type" = 'Room' AND "message"."rooms"."participantKey" IS NULL));

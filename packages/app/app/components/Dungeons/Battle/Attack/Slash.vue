@@ -4,8 +4,8 @@ import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
 import { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
 
-const { isToEnemy } = defineProps<AttackProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });
+const { isToEnemy } = defineProps<AttackProps>();
 const emit = defineEmits<{ complete: [] }>();
 const playAnimationKey = usePlayAnimation(SpritesheetKey.Slash, isActive, emit);
 </script>

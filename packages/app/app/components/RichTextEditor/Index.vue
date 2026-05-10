@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
 import type { FileHandlePluginOptions } from "@tiptap/extension-file-handler";
-import type { AnyExtension } from "@tiptap/vue-3";
+import type { AnyExtension, FocusPosition } from "@tiptap/vue-3";
 import type { CSSProperties } from "vue";
 import type { VCard } from "vuetify/components";
 
@@ -12,6 +12,7 @@ import { EditorContent, useEditor } from "@tiptap/vue-3";
 import { Plugin } from "prosemirror-state";
 
 interface RichTextEditorProps {
+  autofocus?: FocusPosition;
   cardProps?: VCard["$props"];
   extensions?: AnyExtension[];
   height?: string;
@@ -19,7 +20,7 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
-const slots = defineSlots<{
+defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => VNode;
   "prepend-footer": (props: FooterBarPrependSlotProps) => VNode;
   "prepend-inner-header": () => VNode;
@@ -27,6 +28,7 @@ const slots = defineSlots<{
 }>();
 const modelValue = defineModel<string>({ required: true });
 const {
+  autofocus = false,
   cardProps,
   extensions,
   height = "auto",
@@ -36,6 +38,7 @@ const {
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
 const editor = useEditor({
+  autofocus,
   content: modelValue.value,
   extensions: [
     CharacterCount.configure({ limit }),
@@ -44,6 +47,7 @@ const editor = useEditor({
     }),
     Placeholder.configure({ placeholder: () => placeholder }),
     StarterKit.configure({
+      codeBlock: false,
       link: {
         // @ts-expect-error We can hijack the options property for our own purposes of reactively changing the cursor style
         cursorStyle: linkCursorStyle,
@@ -116,7 +120,7 @@ onUnmounted(() => editor.value?.destroy());
 </script>
 
 <template>
-  <div flex flex-col w-full>
+  <div w-full flex flex-col>
     <StyledCard :card-props>
       <RichTextEditorMenuBar :editor />
       <v-divider thickness="2" />
@@ -132,15 +136,14 @@ onUnmounted(() => editor.value?.destroy());
         </template>
       </RichTextEditorFooterBar>
     </StyledCard>
-    <div flex justify-between px-1 pt-1>
-      <!-- Add &nbsp; to avoid layout shift -->
+    <div flex justify-between pt-1 px-1>
       <slot name="prepend-outer-footer">&nbsp;</slot>
       <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.ProseMirror) {
   padding: 1rem 1rem 0 1rem;
   height: v-bind(height);

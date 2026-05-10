@@ -2,7 +2,7 @@ import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { authClient } from "@/services/auth/authClient";
@@ -13,7 +13,7 @@ import { Operation, RoutePath, takeOne, uuidValidateV4 } from "@esposter/shared"
 
 export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = useCursorPaginationData<Room>();
+  const { items, ...restData } = useCursorPaginationData<RoomInMessage>();
   const {
     createRoom: storeCreateRoom,
     deleteRoom: baseStoreDeleteRoom,
@@ -22,7 +22,9 @@ export const useRoomStore = defineStore("message/room", () => {
   } = createOperationData(items, ["id"], DatabaseEntityType.Room);
   const rooms = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
+    const [{ id }] = args;
     baseStoreDeleteRoom(...args);
+    if (currentRoomId.value !== id) return;
     await router.push({
       path: rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
       replace: true,
@@ -34,7 +36,7 @@ export const useRoomStore = defineStore("message/room", () => {
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
   });
   const currentRoom = computed(() => {
-    if (!currentRoomId.value) return;
+    if (!currentRoomId.value) return undefined;
     return rooms.value.find(({ id }) => id === currentRoomId.value);
   });
   const session = authClient.useSession();

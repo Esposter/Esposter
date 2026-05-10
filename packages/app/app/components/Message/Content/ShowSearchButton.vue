@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
-import { useLayoutStore as useMessageLayoutStore } from "@/store/message/layout";
+import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
 
 const layoutStore = useLayoutStore();
 const { isRightDrawerOpen } = storeToRefs(layoutStore);

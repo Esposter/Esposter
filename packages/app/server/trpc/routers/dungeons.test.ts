@@ -12,9 +12,8 @@ describe("dungeons", () => {
   let caller: DecorateRouterRecord<TRPCRouter["dungeons"]>;
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(dungeonsRouter);
     const mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(dungeonsRouter)(mockContext);
   });
 
   afterEach(() => {

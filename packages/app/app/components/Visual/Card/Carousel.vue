@@ -1,7 +1,6 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
 <script setup lang="ts">
 import type { Card } from "@/models/visual/Card";
-import type { Component } from "vue";
 
 import { dayjs } from "#shared/services/dayjs";
 import CardBase from "@/components/Visual/Card/Base.vue";
@@ -119,7 +118,7 @@ const moveOneCard = () => {
 };
 
 // Everytime the screen changes we animate, this is to avoid the cards getting stuck in weird positions.
-const { thresholds, width } = useDisplay();
+const { thresholds, width } = useVDisplay();
 
 const gap = computed<string>(() => {
   let gap = 2;
@@ -159,7 +158,7 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
 
   items.reverse();
 
-  // We just need items for the rest so that we don't try to do operations on undefined
+  // We just need items for the rest so that we don't run operations on undefined
   for (let i = numberOfCards; i < maxShownCards; i++) items.push({});
   return items;
 });
@@ -196,7 +195,7 @@ watch(
 </script>
 
 <template>
-  <div flex-1 grid grid-cols-2>
+  <div grid grid-cols-2 flex-1>
     <div
       v-for="(card, index) of cards"
       :key="index"

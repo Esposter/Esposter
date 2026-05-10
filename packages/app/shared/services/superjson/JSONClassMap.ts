@@ -12,6 +12,14 @@ import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
+import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
+import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
+import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
+import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
+import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
+import { Row } from "#shared/models/tableEditor/file/datasource/Row";
+import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -19,14 +27,21 @@ import { StandardMessageEntity, SurveyResponseEntity, WebhookMessageEntity } fro
 
 export const JSONClassMap: Record<string, Class<Serializable>> = {
   BasicChartConfiguration,
+  BooleanColumn,
   Chart,
   Clicker,
+  ComputedColumn,
+  CsvDataSourceItem,
   Dashboard,
+  DateColumn,
   Dungeons,
   EmailEditor,
   FlowchartEditor,
   MessageEmojiMetadataEntity,
+  NumberColumn,
+  Row,
   StandardMessageEntity,
+  StringColumn,
   SurveyResponseEntity,
   TableEditor,
   TableEditorConfiguration,
@@ -35,4 +50,5 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   VuetifyComponentItem,
   WebhookMessageEntity,
   WebpageEditor,
+  XlsxDataSourceItem,
 };

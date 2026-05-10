@@ -12,10 +12,8 @@ if (room) await navigateTo(RoutePath.Messages(room.id), { replace: true });
 
 <template>
   <NuxtLayout>
-    <template #default>
-      <div class="bg-surface" h-full>
-        <MessageLeftSideBar />
-      </div>
-    </template>
+    <div h-full bg-surface>
+      <MessageLeftSideBar />
+    </div>
   </NuxtLayout>
 </template>

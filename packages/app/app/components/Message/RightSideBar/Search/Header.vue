@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { useSearchMessageStore } from "@/store/message/search";
 
 const searchMessageStore = useSearchMessageStore();
 const { count, isSearching } = storeToRefs(searchMessageStore);

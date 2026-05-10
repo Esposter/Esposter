@@ -1,5 +1,4 @@
 import type { Grid } from "@/models/dungeons/Grid";
-import type { ReadonlyRefOrGetter } from "@vueuse/core";
 import type { Position } from "grid-engine";
 
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
@@ -8,7 +7,7 @@ import deepEqual from "fast-deep-equal";
 
 export const useOnGridClick = <TValue, TGrid extends readonly (readonly TValue[])[]>(
   grid: Grid<TValue, TGrid>,
-  position: ReadonlyRefOrGetter<Position>,
+  position: MaybeRefOrGetter<Position>,
   onConfirm?: () => void,
 ) => {
   const controlsStore = useControlsStore();

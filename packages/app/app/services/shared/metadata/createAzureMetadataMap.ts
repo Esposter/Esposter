@@ -1,7 +1,6 @@
 import type { MessageMetadataEntityMap } from "#shared/models/db/message/metadata/MessageMetadataEntityMap";
 import type { AzureMetadataOperationDataKey } from "@/models/shared/metadata/AzureMetadataOperationDataKey";
 import type { MessageMetadataType } from "@esposter/db-schema";
-import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { AzureMetadataOperation } from "@/models/shared/metadata/AzureMetadataOperation";
 import { uncapitalize } from "@esposter/shared";
@@ -9,7 +8,7 @@ import { uncapitalize } from "@esposter/shared";
 type TEntity<TType extends string> = TType extends MessageMetadataType ? MessageMetadataEntityMap[TType] : never;
 
 export const createAzureMetadataMap = <TType extends string>(
-  currentId: ReadonlyRefOrGetter<string | undefined>,
+  currentId: MaybeRefOrGetter<string | undefined>,
   azureEntityTypeKey: TType,
 ) => {
   // Map<partitionKey, Map<rowKey, T[]>>
@@ -23,7 +22,7 @@ export const createAzureMetadataMap = <TType extends string>(
   };
   const setMetadatas = (rowKey: string, metadatas: TEntity<TType>[]) => {
     const currentIdValue = toValue(currentId);
-    if (!currentIdValue) return [];
+    if (!currentIdValue) return;
     const newMap = metadataMap.value.get(currentIdValue) ?? new Map<string, TEntity<TType>[]>();
     newMap.set(rowKey, metadatas);
     metadataMap.value.set(currentIdValue, newMap);

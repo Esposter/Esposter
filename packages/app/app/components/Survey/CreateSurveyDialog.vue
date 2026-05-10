@@ -17,7 +17,7 @@ interface CreateSurveyDialogProps {
 defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => VNode;
 }>();
-const { cardProps, initialValue = { group: null, model: "", name: DEFAULT_NAME } } =
+const { cardProps, initialValue = { group: "", model: "", name: DEFAULT_NAME } } =
   defineProps<CreateSurveyDialogProps>();
 const surveyStore = useSurveyStore();
 const { createSurvey } = surveyStore;
@@ -26,7 +26,7 @@ const group = ref(initialValue.group);
 </script>
 
 <template>
-  <StyledCreateDialog
+  <StyledCreateFormDialog
     :card-props
     @create="
       async (onComplete) => {
@@ -56,5 +56,5 @@ const group = ref(initialValue.group);
         </v-col>
       </v-row>
     </v-container>
-  </StyledCreateDialog>
+  </StyledCreateFormDialog>
 </template>

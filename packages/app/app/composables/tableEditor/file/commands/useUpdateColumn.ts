@@ -1,0 +1,30 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
+import type { ToData } from "@esposter/shared";
+
+import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
+import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
+import { takeOne, toRawDeep } from "@esposter/shared";
+
+export const useUpdateColumn = () => {
+  const tableEditorStore = useTableEditorStore<DataSourceItem>();
+  const { editedItem } = storeToRefs(tableEditorStore);
+  const fileHistoryStore = useFileHistoryStore();
+  const { push } = fileHistoryStore;
+  return (originalName: string, updatedColumn: ToData<Column>) => {
+    if (!editedItem.value?.dataSource) return;
+    const columnIndex = editedItem.value.dataSource.columns.findIndex(({ name }) => name === originalName);
+    if (columnIndex === -1) return;
+    const originalColumn = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
+    const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row).data, originalName));
+    const command = new UpdateColumnCommand(
+      originalName,
+      originalColumn,
+      structuredClone(toRawDeep(updatedColumn)),
+      originalRowValues,
+    );
+    command.execute(editedItem.value);
+    push(command);
+  };
+};

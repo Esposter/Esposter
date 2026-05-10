@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import { trimFileExtension } from "@/util/trimFileExtension";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";

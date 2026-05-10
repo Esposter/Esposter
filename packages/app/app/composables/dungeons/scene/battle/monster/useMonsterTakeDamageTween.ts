@@ -7,7 +7,7 @@ import { useTween } from "vue-phaserjs";
 export const useMonsterTakeDamageTween = (isEnemy: boolean) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
-  if (isSkipAnimations.value) return;
+  if (isSkipAnimations.value) return undefined;
 
   const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
   const { monsterTween } = storeToRefs(store);

@@ -1,34 +1,35 @@
-import type { WatchHandle } from "vue";
+import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
 
 import { authClient } from "@/services/auth/authClient";
 import { useAchievementStore } from "@/store/achievement";
+import { getIsServer } from "@esposter/shared";
 
-export const useAchievementSubscribables = () => {
+export const useAchievementSubscribables = async () => {
+  if (getIsServer()) return;
+
+  const onlineSubscribableContext: OnlineSubscribableContext = {
+    instance: getCurrentInstance(),
+    scope: getCurrentScope(),
+  };
   const { $trpc } = useNuxtApp();
   const achievementStore = useAchievementStore();
   const { updateAchievement } = achievementStore;
-  const session = authClient.useSession();
-  let watchHandle: undefined | WatchHandle;
+  const { data: session } = await authClient.useSession(useFetch);
 
-  onMounted(() => {
-    watchHandle = watchImmediate(
-      () => session.value.data?.user.id,
-      (userId) => {
-        if (!userId) return;
+  useOnlineSubscribable(
+    () => session.value?.user.id,
+    (userId) => {
+      if (!userId) return undefined;
 
-        const updateAchievementUnsubscribable = $trpc.achievement.onUpdateAchievement.subscribe(undefined, {
-          onData: (data) => {
-            for (const achievement of data) updateAchievement(achievement);
-          },
-        });
-        return () => {
-          updateAchievementUnsubscribable.unsubscribe();
-        };
-      },
-    );
-  });
-
-  onUnmounted(() => {
-    watchHandle?.();
-  });
+      const updateAchievementUnsubscribable = $trpc.achievement.onUpdateAchievement.subscribe(undefined, {
+        onData: (achievements) => {
+          for (const achievement of achievements) updateAchievement(achievement);
+        },
+      });
+      return () => {
+        updateAchievementUnsubscribable.unsubscribe();
+      };
+    },
+    onlineSubscribableContext,
+  );
 };

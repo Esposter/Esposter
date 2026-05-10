@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
-import type { Component } from "vue";
 
 import { TypeRendererMap } from "@/models/message/file/TypeRendererMap";
 import { getLanguage } from "@/services/codemirror/getLanguage";

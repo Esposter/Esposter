@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useForwardStore } from "@/store/message/forward";
+import { useForwardStore } from "@/store/message/input/forward";
 
 interface ForwardRoomListItemProps {
-  room: Room;
+  room: RoomInMessage;
 }
 
 const { room } = defineProps<ForwardRoomListItemProps>();
@@ -16,9 +16,9 @@ const isActive = ref(false);
 
 <template>
   <v-list-item
+    rd
     px-2
     py-0
-    rd
     cursor-pointer
     :active="isActive"
     :ripple="false"
@@ -34,14 +34,14 @@ const isActive = ref(false);
     <template #prepend>
       <StyledAvatar :image="room.image" :name="roomName" :avatar-props="{ size: 'small' }" />
     </template>
-    <v-list-item-title flex justify-between items-center>
+    <v-list-item-title flex items-center justify-between>
       {{ roomName }}
       <v-checkbox v-model="roomIds" :value="room.id" :ripple="false" density="compact" hide-details @click.stop />
     </v-list-item-title>
   </v-list-item>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-selection-control__input::before) {
   opacity: 0;
 }

@@ -38,7 +38,7 @@ const { optionsMenu } = storeToRefs(messageStore);
     <template #activator="{ props: menuProps }">
       <v-tooltip text="More">
         <template #activator="{ props: tooltipProps }">
-          <v-btn m-0 icon="mdi-dots-horizontal" size="small" tile :="mergeProps(menuProps, tooltipProps)" />
+          <v-btn icon="mdi-dots-horizontal" size="small" tile m-0 :="mergeProps(menuProps, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>
@@ -48,12 +48,12 @@ const { optionsMenu } = storeToRefs(messageStore);
           <v-tooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :text="unemojify(emoji)">
             <template #activator="{ props }">
               <v-btn
+                :text="emoji"
+                icon
                 m-0
                 size-10
                 flex-1
-                rounded="sm"
-                :text="emoji"
-                icon
+                rd-sm
                 :="props"
                 @click="emit('update:select-emoji', emoji)"
               />
@@ -72,7 +72,7 @@ const { optionsMenu } = storeToRefs(messageStore);
       >
         <template #default="menuProps">
           <v-list-item :="menuProps">
-            <span>{{ EMOJI_PICKER_TOOLTIP_TEXT }}</span>
+            {{ EMOJI_PICKER_TOOLTIP_TEXT }}
             <template #append>
               <v-icon size="small" icon="mdi-emoticon" />
             </template>

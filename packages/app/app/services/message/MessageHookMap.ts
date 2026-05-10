@@ -10,7 +10,7 @@ export interface MessageHookMap {
   [Operation.Create]: ((message: MessageEntity) => Promisable<void>)[];
   [Operation.Delete]: ((input: DeleteMessageInput) => Promisable<void>)[];
   [Operation.Update]: ((input: MessageEvents["updateMessage"][number]) => Promisable<void>)[];
-  ResetSend: ((editor: Editor) => Promisable<void>)[];
+  ResetSend: ((editor?: Editor) => Promisable<void>)[];
 }
 
 export const MessageHookMap: MessageHookMap = {

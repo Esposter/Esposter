@@ -39,8 +39,8 @@ export const useDragAndDrop = () => {
     document.removeEventListener("drop", onDragEnd);
   };
 
-  const onDrop = ({ clientX, clientY }: DragEvent) => {
-    createNode({ x: clientX, y: clientY });
+  const onDrop = (event: DragEvent) => {
+    createNode({ x: event.clientX, y: event.clientY });
   };
 
   const createNode = ({ x, y }: XYPosition) => {

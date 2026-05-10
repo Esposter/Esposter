@@ -1,29 +1,31 @@
+import { createNameCheckSql, createNameSchema, createNormalizedStringSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
+import { createSelectSchema } from "drizzle-orm/zod";
 
 export const SURVEY_NAME_MAX_LENGTH = 100;
+export const SURVEY_GROUP_MAX_LENGTH = 100;
 
 export const surveys = pgTable(
   "surveys",
   {
-    group: text("group"),
-    id: uuid("id").primaryKey().defaultRandom(),
-    model: text("model").notNull().default(""),
-    modelVersion: integer("modelVersion").notNull().default(0),
-    name: text("name").notNull(),
-    publishedAt: timestamp("publishedAt"),
-    publishVersion: integer("publishVersion").notNull().default(0),
-    userId: text("userId")
+    group: text().notNull().default(""),
+    id: uuid().primaryKey().defaultRandom(),
+    model: text().notNull().default(""),
+    modelVersion: integer().notNull().default(0),
+    name: text().notNull(),
+    publishedAt: timestamp(),
+    publishVersion: integer().notNull().default(0),
+    userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [
-      check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(SURVEY_NAME_MAX_LENGTH.toString())}`),
+    extraConfig: ({ group, name }) => [
+      check("surveys_name_length_check", createNameCheckSql(name, SURVEY_NAME_MAX_LENGTH)),
+      check("surveys_group_length_check", sql`LENGTH(${group}) <= ${sql.raw(SURVEY_GROUP_MAX_LENGTH.toString())}`),
     ],
   },
 );
@@ -31,12 +33,6 @@ export const surveys = pgTable(
 export type Survey = typeof surveys.$inferSelect;
 
 export const selectSurveySchema = createSelectSchema(surveys, {
-  name: z.string().min(1).max(SURVEY_NAME_MAX_LENGTH),
+  group: (schema) => createNormalizedStringSchema(SURVEY_GROUP_MAX_LENGTH, schema),
+  name: (schema) => createNameSchema(SURVEY_NAME_MAX_LENGTH, schema),
 });
-
-export const surveysRelations = relations(surveys, ({ one }) => ({
-  user: one(users, {
-    fields: [surveys.userId],
-    references: [users.id],
-  }),
-}));

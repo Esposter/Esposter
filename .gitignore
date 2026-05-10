@@ -24,6 +24,7 @@ vitest.config.*.timestamp*
 .nitro
 .cache
 dist
+nuxt-build.cpuprofile
 
 # Dependencies
 node_modules

@@ -5,8 +5,8 @@ import { db } from "@/services/db";
 import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { webpush } from "@/services/webpush";
 import { getPushSubscriptionsForMessage } from "@esposter/db";
-import { pushSubscriptions } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { pushSubscriptionsInMessage } from "@esposter/db-schema";
+import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { WebPushError } from "web-push";
 
@@ -17,7 +17,7 @@ export const pushNotification = async (
     notificationOptions: { icon, title },
   }: PushNotificationEventGridData,
 ): Promise<void> => {
-  const payload = getCreateMessageNotificationPayload(message, {
+  const payload = getCreateMessageNotificationPayload(context, message, {
     icon,
     title,
     url: `${process.env.BASE_URL}${RoutePath.MessagesMessage(partitionKey, rowKey)}`,
@@ -33,19 +33,20 @@ export const pushNotification = async (
   await Promise.all(
     readPushSubscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) =>
       (async () => {
-        try {
-          await webpush.sendNotification(
+        await getResultAsync(() =>
+          webpush.sendNotification(
             { endpoint, expirationTime: expirationTime ? expirationTime.getTime() : null, keys: { auth, p256dh } },
             payload,
-          );
-        } catch (error) {
+          ),
+        ).match(noop, async (error) => {
           if (error instanceof WebPushError)
             if (error.statusCode === 410) {
               // A 410 GONE status means the subscription is no longer valid and should be deleted
               context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
-              await db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, id));
+              await db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id));
             } else context.error(`Failed to send push notification to ${endpoint}: `, error);
-        }
+          else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
+        });
       })(),
     ),
   );

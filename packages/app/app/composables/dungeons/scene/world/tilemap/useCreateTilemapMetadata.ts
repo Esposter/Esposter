@@ -1,8 +1,8 @@
 import type { Tilemaps } from "phaser";
 
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
-import { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
-import { BaseTilesetKey } from "#shared/generated/tiled/propertyTypes/enum/BaseTilesetKey";
+import { ObjectgroupNames } from "#shared/generated/tiled/layers/ObjectgroupName";
+import { BaseTilesetKeys } from "#shared/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import { addTilesetImage } from "@/services/dungeons/tilemap/addTilesetImage";
 import { createLayer } from "@/services/dungeons/tilemap/createLayer";
 import { getObjectLayer } from "@/services/dungeons/tilemap/getObjectLayer";
@@ -15,7 +15,7 @@ export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) 
 
   for (const layerName of Object.values(layerNameEnum)) {
     const tilesets: Tilemaps.Tileset[] = [];
-    for (const tilesetKey of Object.values(BaseTilesetKey)) {
+    for (const tilesetKey of BaseTilesetKeys) {
       const tileset = addTilesetImage(tilemap.value, tilemapKey.value, tilesetKey);
       if (!tileset) continue;
       tilesets.push(tileset);
@@ -31,7 +31,7 @@ export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) 
   if (!objectLayerMap.value) {
     objectLayerMap.value = new Map();
 
-    for (const objectgroupName of Object.values(ObjectgroupName)) {
+    for (const objectgroupName of ObjectgroupNames) {
       const objectLayer = getObjectLayer(tilemap.value, objectgroupName);
       if (!objectLayer) continue;
       objectLayerMap.value.set(objectgroupName, objectLayer);

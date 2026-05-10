@@ -1,6 +1,8 @@
 import type { z } from "zod";
 
-import { selectRoomSchema } from "@esposter/db-schema";
+import { selectRoomInMessageSchema } from "@esposter/db-schema";
 
-export const updateRoomInputSchema = selectRoomSchema.pick({ id: true, name: true }).partial({ name: true });
+export const updateRoomInputSchema = selectRoomInMessageSchema
+  .pick({ categoryId: true, id: true, isReadOnly: true, name: true, slowmodeMs: true, topic: true })
+  .partial({ categoryId: true, isReadOnly: true, name: true, slowmodeMs: true, topic: true });
 export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;

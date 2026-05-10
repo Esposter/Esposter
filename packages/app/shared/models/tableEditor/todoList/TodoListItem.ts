@@ -5,7 +5,7 @@ import {
   aTableEditorItemEntitySchema,
 } from "#shared/models/tableEditor/data/ATableEditorItemEntity";
 import { TodoListItemType, todoListItemTypeSchema } from "#shared/models/tableEditor/todoList/TodoListItemType";
-import { NOTES_MAX_LENGTH } from "#shared/services/tableEditor/todoList/constants";
+import { DESCRIPTION_MAX_LENGTH } from "#shared/services/constants";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -24,5 +24,5 @@ export const todoListItemSchema = z.object({
   ...aTableEditorItemEntitySchema.shape,
   ...createItemEntityTypeSchema(todoListItemTypeSchema).shape,
   dueAt: z.date().nullable(),
-  notes: z.string().max(NOTES_MAX_LENGTH),
+  notes: z.string().max(DESCRIPTION_MAX_LENGTH),
 }) satisfies z.ZodType<ToData<TodoListItem>>;

@@ -2,7 +2,7 @@
 import type { FileEntity, MessageEntity } from "@esposter/db-schema";
 
 import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";
-import { useDownloadFileStore } from "@/store/message/downloadFile";
+import { useDownloadFileStore } from "@/store/message/file";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { takeOne } from "@esposter/shared";
 
@@ -46,8 +46,8 @@ const isActive = ref(false);
       v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
       v-show="isActive"
       absolute
-      top-2
       right-2
+      top-2
     >
       <v-hover #default="{ isHovering, props: hoverProps }">
         <MessageModelMessageFileOptionsMenu
