@@ -56,6 +56,7 @@ const theme: ThemeOptions = {
       colors: {
         ...BaseColorsMap[ThemeMode.dark],
         ...getBaseColorsExtension(BaseColorsMap[ThemeMode.dark]),
+        "on-infoOpacity10": "#ffffff",
       },
       dark: true,
     },
@@ -63,6 +64,7 @@ const theme: ThemeOptions = {
       colors: {
         ...BaseColorsMap[ThemeMode.light],
         ...getBaseColorsExtension(BaseColorsMap[ThemeMode.light]),
+        "on-infoOpacity10": "#000000",
       },
       dark: false,
     },
