@@ -2,10 +2,11 @@ import type { SpecialMentionItem } from "@/models/message/SpecialMentionItem";
 import type { User } from "@esposter/db-schema";
 import type { MentionOptions } from "@tiptap/extension-mention";
 
-import MentionList from "@/components/Message/Model/Message/MentionList.vue";
+import MentionList from "@/components/Message/Model/Message/Suggestion/MentionList.vue";
 import { getRender } from "@/services/message/getRender";
 import { SpecialMentionItems } from "@/services/message/SpecialMentionItems";
 import { useRoomStore } from "@/store/message/room";
+import { PluginKey } from "@tiptap/pm/state";
 
 export const MentionSuggestion: MentionOptions<SpecialMentionItem | User>["suggestion"] = {
   items: async ({ query }) => {
@@ -25,5 +26,6 @@ export const MentionSuggestion: MentionOptions<SpecialMentionItem | User>["sugge
     });
     return [...matchingSpecialMentions, ...items];
   },
+  pluginKey: new PluginKey("mentionSuggestion"),
   render: getRender(MentionList),
 };
