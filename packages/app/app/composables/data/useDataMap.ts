@@ -1,4 +1,4 @@
-export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string | undefined>, defaultValue: TItem) => {
+export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultValue: TItem) => {
   const dataMap: Ref<Map<string, TItem>> = ref(new Map());
   const getData = (key: string) => dataMap.value.get(key);
   const setData = (key: string, value: TItem) => {

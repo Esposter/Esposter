@@ -7,7 +7,7 @@ import { Operation } from "@esposter/shared";
 
 export const useReplyStore = defineStore("message/input/reply", () => {
   const roomStore = useRoomStore();
-  const { data: rowKey } = useDataMap<string | undefined>(() => roomStore.currentRoomId, undefined);
+  const { data: rowKey } = useDataMap(() => roomStore.currentRoomId, "");
   MessageHookMap.ResetSend.push(() => {
     rowKey.value = "";
   });
@@ -25,7 +25,7 @@ export const useReplyStore = defineStore("message/input/reply", () => {
     replyMap.value.delete(rowKey);
   });
 
-  const activeRowKey = ref<string>();
+  const activeRowKey = ref("");
   const isIndicatorActive = ref(false);
 
   return {

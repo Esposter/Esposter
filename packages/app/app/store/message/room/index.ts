@@ -33,7 +33,7 @@ export const useRoomStore = defineStore("message/room", () => {
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
-    return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
+    return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : "";
   });
   const currentRoom = computed(() => {
     if (!currentRoomId.value) return undefined;

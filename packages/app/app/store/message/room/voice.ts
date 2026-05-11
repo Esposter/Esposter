@@ -21,7 +21,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     setupSpeakingDetection,
     subscribeToSignals,
   } = webRtcStore;
-  const callRoomId = ref<string>();
+  const callRoomId = ref("");
   const isDeafened = ref(false);
   const isForceMuted = ref(false);
   const voiceParticipantsRoomMap = ref(new Map<string, VoiceParticipant[]>());
@@ -88,7 +88,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
           console.error(error);
           if (isJoined) await leaveVoice();
           else {
-            callRoomId.value = undefined;
+            callRoomId.value = "";
             await cleanupAll();
           }
         }),
@@ -105,7 +105,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
         await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
       },
       async () => {
-        callRoomId.value = undefined;
+        callRoomId.value = "";
         isDeafened.value = false;
         isForceMuted.value = false;
         await cleanupAll();

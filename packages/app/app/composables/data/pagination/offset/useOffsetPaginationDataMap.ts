@@ -2,7 +2,7 @@ import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPag
 // We want to handle the case where we have a Record<id, OffsetPaginationData> scenario
 // Where we store multiple different lists for different ids, e.g. searched messages for room ids
 export const useOffsetPaginationDataMap = <TItem>(
-  currentId: MaybeRefOrGetter<string | undefined>,
+  currentId: MaybeRefOrGetter<string>,
 ): ReturnType<typeof useOffsetPaginationOperationData<TItem>> => {
   const offsetPaginationDataMap: Ref<Map<string, OffsetPaginationData<TItem>>> = ref(new Map());
   const offsetPaginationData = computed({

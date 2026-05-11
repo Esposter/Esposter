@@ -33,12 +33,12 @@ const propertySchemaMap = computed<Record<string, Component>>(() => {
   return result;
 });
 const properties = computed(() => Object.keys(propertySchemaMap.value));
-const selectedProperty = ref<string>();
+const selectedProperty = ref("");
 
 watch(
   () => editedItem.value?.component,
   () => {
-    selectedProperty.value = undefined;
+    selectedProperty.value = "";
   },
 );
 </script>

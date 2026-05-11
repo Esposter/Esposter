@@ -42,7 +42,7 @@ export class MoveInputResolver extends AInputResolver {
       ];
 
       sceneMode.value = SceneMode.Default;
-      monsterIdToMove.value = undefined;
+      monsterIdToMove.value = "";
       infoDialogMessage.value.text = DEFAULT_INFO_DIALOG_MESSAGE;
     } else if (justDownInput === PlayerSpecialInput.Cancel) onCancel();
     else if (isMovingDirection(justDownInput)) monsterPartyOptionGrid.move(justDownInput);

@@ -69,7 +69,7 @@ export const useReadMessages = () => {
 
         const response = await $trpc.message.readMessages.query({ roomId });
         hasMoreNewer.value = false;
-        nextCursorNewer.value = undefined;
+        nextCursorNewer.value = "";
         return response;
       },
       ({ items }) => readMetadata(items),
@@ -107,7 +107,7 @@ export const useReadMessages = () => {
       roomId: currentRoomId.value,
     });
     hasMoreNewer.value = hasMore;
-    nextCursorNewer.value = nextCursor;
+    nextCursorNewer.value = nextCursor ?? "";
 
     const rowKeys = new Set(items.map((item) => item.rowKey));
     const newerItems: MessageEntity[] = [];

@@ -28,8 +28,8 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
       cursorPaginationData.value.hasMore = hasMore;
     },
   });
-  const initializeCursorPaginationData = <TDataItem extends TItem>(data: CursorPaginationData<TDataItem>) => {
-    cursorPaginationData.value = data as CursorPaginationData<TItem>;
+  const initializeCursorPaginationData = (data: CursorPaginationData<TItem>) => {
+    cursorPaginationData.value = data;
   };
   const resetCursorPaginationData = () => {
     cursorPaginationData.value = new CursorPaginationData<TItem>();
@@ -76,7 +76,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     return { isPending, refresh };
   };
   const readMoreItems = async <T extends IndexedDbStoreName>(
-    query: (cursor?: string) => Promise<CursorPaginationData<TItem>>,
+    query: (cursor: string) => Promise<CursorPaginationData<TItem>>,
     onComplete?: () => Promisable<void>,
     cacheOptions?: ReadItemsCacheOptions<T>,
   ) => {

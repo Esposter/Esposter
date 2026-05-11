@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-05-07 · Overall: **90 / 100**
+> Last reviewed: 2026-05-11 · Nuxt `compatibilityDate`: `2026-05-06` · Overall: **89 / 100**
 
 A well-engineered, TypeScript-strict monorepo with strong architectural discipline and comprehensive linting. The approach deliberately delegates heavy lifting to well-maintained libraries (Vite, nuxt-security, pnpm actions, Drizzle) rather than rolling custom solutions. Primary remaining drag is the set of pre-release production dependencies.
 
@@ -12,7 +12,7 @@ A well-engineered, TypeScript-strict monorepo with strong architectural discipli
 
 ---
 
-## TypeScript — 15 / 15
+## TypeScript — 10 / 10
 
 `isolatedDeclarations: true`, `verbatimModuleSyntax: true`, `allowJs: false`; Nuxt 4 auto-generates a strict-mode tsconfig. Zod schemas co-located with models, `satisfies z.ZodType<T>` enforced, no raw `any` or `Omit`. `takeOne()` used consistently in place of direct index access.
 
@@ -20,7 +20,7 @@ A well-engineered, TypeScript-strict monorepo with strong architectural discipli
 
 ---
 
-## Code Quality & Patterns — 15 / 15
+## Code Quality & Patterns — 10 / 10
 
 Guard clauses over nested conditionals throughout. `InvalidOperationError` for impossible states — no silent fallbacks. `structuredClone(toRawDeep(...))` snapshot/restore for optimistic updates is consistent. Zod form schemas separated from entity schemas (via `.pick().extend()`) to keep class instances away from vjsf. `eslint-plugin-depend` active and configured with an explicit allowlist.
 
@@ -39,7 +39,7 @@ Guard clauses over nested conditionals throughout. `InvalidOperationError` for i
 
 ## Security — 8 / 10
 
-Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.9 with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle ORM parameterized queries prevent SQL injection. Rate limiting via `RateLimiterDrizzleNonAtomic` (1000 pts / 60 s window, 60 s block) — NonAtomic is a deliberate choice for performance given rate limiting is not a hard security boundary here. CSRF protection handled by `nuxt-security` defaults; tRPC's JSON content-type provides additional mitigation.
+Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.10 with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle ORM parameterized queries prevent SQL injection. Rate limiting via `RateLimiterDrizzleNonAtomic` (1000 pts / 60 s window, 60 s block) — NonAtomic is a deliberate choice for performance given rate limiting is not a hard security boundary here. CSRF protection handled by `nuxt-security` defaults; tRPC's JSON content-type provides additional mitigation.
 
 **Accepted trade-offs:**
 
@@ -49,25 +49,35 @@ Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.9
 
 ---
 
-## Dependencies — 6 / 10
+## Dependencies — 7 / 10
 
-Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents version drift. Core tools pinned. `better-auth` 1.6.9, Nuxt 4.4.4, Phaser 4 all on stable releases. Drizzle's move to the 1.0.0-beta series represents forward progress — the v1 API is significantly improved, the migration was completed in full, and the heavy lifting of schema/query refactoring is behind us.
+Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents version drift. Core tools pinned. `better-auth` 1.6.10, Nuxt 4.4.4, Phaser 4.1.0 all on stable releases. Drizzle graduated from beta to RC (`1.0.0-rc.2`) — the v1 API is stable in practice, schema/query migration complete. `rolldown` reached stable (`^1.0.0`) and is no longer a pre-release concern.
 
-**9 pre-release packages in production paths:**
+**8 pre-release packages in production paths** (down from 9):
 
-| Package               | Version       | Role                                |
-| --------------------- | ------------- | ----------------------------------- |
-| `drizzle-orm`         | 1.0.0-beta.23 | Core ORM — all DB access            |
-| `drizzle-kit`         | 1.0.0-beta.23 | Migrations toolchain                |
-| `vuetify-nuxt-module` | ^1.0.0-beta.3 | Primary UI integration              |
-| `rolldown`            | ^1.0.0-rc.18  | Build toolchain for shared packages |
-| `unplugin-dts`        | 1.0.0-beta.6  | Type declaration build step         |
-| `survey-core`         | 3.0.0-beta.0  | Survey feature                      |
-| `survey-creator-core` | 3.0.0-beta.0  | Survey feature                      |
-| `survey-creator-vue`  | 3.0.0-beta.0  | Survey feature                      |
-| `survey-vue3-ui`      | 3.0.0-beta.0  | Survey feature                      |
+| Package               | Version       | Change from last review | Role                        |
+| --------------------- | ------------- | ----------------------- | --------------------------- |
+| `drizzle-orm`         | 1.0.0-rc.2    | ↑ promoted from beta.23 | Core ORM — all DB access    |
+| `drizzle-kit`         | 1.0.0-rc.2    | ↑ promoted from beta.23 | Migrations toolchain        |
+| `vuetify-nuxt-module` | ^1.0.0-beta.4 | beta.3 → beta.4         | Primary UI integration      |
+| `unplugin-dts`        | 1.0.0-beta.6  | unchanged               | Type declaration build step |
+| `survey-core`         | 3.0.0-beta.0  | unchanged               | Survey feature              |
+| `survey-creator-core` | 3.0.0-beta.0  | unchanged               | Survey feature              |
+| `survey-creator-vue`  | 3.0.0-beta.0  | unchanged               | Survey feature              |
+| `survey-vue3-ui`      | 3.0.0-beta.0  | unchanged               | Survey feature              |
 
-`eslint-plugin-depend` is configured and will surface new issues here over time.
+`rolldown` (`^1.0.0`) graduated to stable since last review — removed from the list. `eslint-plugin-depend` is configured and will surface new issues here over time.
+
+---
+
+## Styling — 8 / 10
+
+UnoCSS `presetAttributify` + `presetWind4` enforced project-wide: all static styles as element attributes, `class` reserved for dynamic bindings, scoped CSS refs, and third-party selectors. Vuetify theme colors bridged via CSS custom properties (`rgb(var(--v-theme-...))`) and baked into UnoCSS theme + safelist — single source of truth for design tokens. CSS cascade managed via `outputToCssLayers`. Custom elevation (MD3) and typography shortcuts via `unocss-preset-vuetify`. Dark mode wired through `.v-theme--dark`/`.v-theme--light` class selectors, avoiding media-query conflicts with Vuetify.
+
+**Remaining concerns:**
+
+- Safelist enumerates all color × variation keys — no size baseline to catch CSS weight regressions.
+- No visual regression testing (Storybook / Chromatic or Playwright snapshots) — visual drift is caught by eye only.
 
 ---
 
@@ -89,14 +99,15 @@ Four workflows: CI (all branches), Release (tags), and two Azure Functions deplo
 
 ## Summary
 
-| Area                 | Score      | Notes                                                      |
-| -------------------- | ---------- | ---------------------------------------------------------- |
-| Architecture         | 20 / 20    | 11 packages, clean DAG, data-driven maps, command pattern  |
-| TypeScript           | 15 / 15    | Maximum strictness; `skipLibCheck` only trade-off          |
-| Code Quality         | 15 / 15    | Guard clauses, `InvalidOperationError`, clean patterns     |
-| Testing              | 10 / 10    | All logic-bearing stores tested; game/glue gaps documented |
-| Security             | 8 / 10     | CSP trade-offs documented; xssValidator pending upstream   |
-| Dependencies         | 6 / 10     | 9 pre-release packages; Drizzle v1 migration complete      |
-| CI / CD              | 9 / 10     | Sequential by design; caching and thresholds handled       |
-| Bundle & Performance | 7 / 10     | Vite auto-splits; large footprint; no size budgets         |
-| **Total**            | **90/100** |                                                            |
+| Area                 | Score        | Notes                                                                            |
+| -------------------- | ------------ | -------------------------------------------------------------------------------- |
+| Architecture         | 20 / 20      | 11 packages, clean DAG, data-driven maps, command pattern                        |
+| TypeScript           | 10 / 10      | Maximum strictness; `skipLibCheck` only trade-off                                |
+| Code Quality         | 10 / 10      | Guard clauses, `InvalidOperationError`, clean patterns                           |
+| Testing              | 10 / 10      | All logic-bearing stores tested; game/glue gaps documented                       |
+| Security             | 8 / 10       | CSP trade-offs documented; xssValidator pending upstream                         |
+| Dependencies         | 7 / 10       | 8 pre-release packages; rolldown stable, drizzle at RC                           |
+| Styling              | 8 / 10       | Attributify enforced; Vuetify token bridge; no size budgets or visual regression |
+| CI / CD              | 9 / 10       | Sequential by design; caching and thresholds handled                             |
+| Bundle & Performance | 7 / 10       | Vite auto-splits; large footprint; no size budgets                               |
+| **Total**            | **89 / 100** |                                                                                  |

@@ -28,7 +28,7 @@ export const useScrollToMessage = () => {
     activeRowKey.value = rowKey;
     document.getElementById(rowKey)?.scrollIntoView();
     useTimeoutFn(() => {
-      activeRowKey.value = undefined;
+      activeRowKey.value = "";
     }, dayjs.duration(2, "seconds").asMilliseconds());
   };
 };

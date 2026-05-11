@@ -371,9 +371,7 @@ export const messageRouter = router({
     signal,
   }) {
     if (lastEventId) {
-      let cursor: string | undefined = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [
-        MESSAGE_ROWKEY_SORT_ITEM,
-      ]);
+      let cursor: string = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROWKEY_SORT_ITEM]);
       let hasMore = true;
       const messages: MessageEntity[] = [];
 

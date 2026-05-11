@@ -57,7 +57,7 @@ Dockerfile text
 # Documentation
 *.ipynb text eol=lf
 *.markdown text diff=markdown
-*.md text diff=markdown
+*.md text eol=lf diff=markdown
 *.mdwn text diff=markdown
 *.mdown text diff=markdown
 *.mkd text diff=markdown
