@@ -114,7 +114,7 @@ Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and
 <UserSideBar sticky top="[calc(1rem+--app-bar-height)]" />
 
 <!-- Fixed height with viewport calc -->
-<div h="[calc(100dvh---app-bar-height)]" overflow-y-auto />
+<div h="[calc(100dvh_-_--app-bar-height)]" overflow-y-auto />
 
 <!-- Arbitrary colour via hex -->
 <div bg="[#f0f0f0]" />

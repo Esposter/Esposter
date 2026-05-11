@@ -8,11 +8,11 @@ import { SITE_NAME } from "@esposter/shared";
   <div text-title-large>
     {{ SITE_NAME }} is an independent, community-driven lifetime project. It was created by
     <NuxtInvisibleLink
-      text-primary
+      hover:text-primary-darken-1
       font-bold
       transition-colors
       duration-[--transition-duration]
-      hover:text-primary-darken-1
+      text-primary
       target="_blank"
       :to="LINKEDIN_PROFILE_URL"
     >
