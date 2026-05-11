@@ -1,6 +1,6 @@
 import { useRoomStore } from "@/store/message/room";
 
-export const useRoomName = (roomId: MaybeRefOrGetter<string | undefined>) => {
+export const useRoomName = (roomId: MaybeRefOrGetter<string>) => {
   const roomStore = useRoomStore();
   const { rooms } = storeToRefs(roomStore);
   const room = computed(() => {

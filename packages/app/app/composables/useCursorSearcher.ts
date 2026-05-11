@@ -7,14 +7,14 @@ import { dayjs } from "#shared/services/dayjs";
 import { normalizeString } from "@esposter/shared";
 
 export const useCursorSearcher = <TItem extends ToData<AEntity>>(
-  query: (searchQuery: string, cursor?: string, opts?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
+  query: (searchQuery: string, cursor: string, opts?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
   isAutoSearch?: true,
   isIncludeEmptySearchQuery?: true,
 ) => {
   const searchQuery = ref("");
   const { hasMore, initializeCursorPaginationData, items, readItems, readMoreItems, resetCursorPaginationData } =
     useCursorPaginationData<TItem>();
-  const readItemsSearched = (onComplete: () => void) => readItems(() => query(searchQuery.value), onComplete);
+  const readItemsSearched = (onComplete: () => void) => readItems(() => query(searchQuery.value, ""), onComplete);
   const readMoreItemsSearched = (onComplete: () => void) =>
     readMoreItems((cursor) => query(searchQuery.value, cursor), onComplete);
 
@@ -43,7 +43,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>>(
 
         abortController?.abort();
         abortController = new AbortController();
-        const cursorPaginationData = await query(sanitizedNewThrottledSearchQuery, undefined, {
+        const cursorPaginationData = await query(sanitizedNewThrottledSearchQuery, "", {
           signal: abortController.signal,
         });
         initializeCursorPaginationData(cursorPaginationData);

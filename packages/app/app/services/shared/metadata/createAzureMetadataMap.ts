@@ -8,7 +8,7 @@ import { uncapitalize } from "@esposter/shared";
 type TEntity<TType extends string> = TType extends MessageMetadataType ? MessageMetadataEntityMap[TType] : never;
 
 export const createAzureMetadataMap = <TType extends string>(
-  currentId: MaybeRefOrGetter<string | undefined>,
+  currentId: MaybeRefOrGetter<string>,
   azureEntityTypeKey: TType,
 ) => {
   // Map<partitionKey, Map<rowKey, T[]>>

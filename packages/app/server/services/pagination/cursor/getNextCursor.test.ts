@@ -8,7 +8,7 @@ describe(getNextCursor, () => {
   test("empty array", () => {
     expect.hasAssertions();
 
-    expect(getNextCursor([], [])).toBeUndefined();
+    expect(getNextCursor([], [])).toBe("");
   });
 
   test("gets next cursor", () => {

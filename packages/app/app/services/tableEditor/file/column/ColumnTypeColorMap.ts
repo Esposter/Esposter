@@ -6,4 +6,4 @@ export const ColumnTypeColorMap = {
   [ColumnType.Date]: "warning",
   [ColumnType.Number]: "primary",
   [ColumnType.String]: "info",
-} as const satisfies Record<ColumnType, string | undefined>;
+} as const satisfies Record<ColumnType, string>;

@@ -239,13 +239,31 @@ export const stringTransformationTypeSchema = z.enum(
 - **Never use `ref<EnumType | null>(null)`** — always default to a sensible first enum value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`, etc.
 - **Never write `ref<EnumType>(EnumValue)`** — TypeScript infers the enum type from the value. Write `ref(ColumnType.String)`, not `ref<ColumnType>(ColumnType.String)`.
 
+## `string` — Always Use `""` as Empty Sentinel
+
+Prefer `string` with `""` as the "absent/empty" sentinel over `string | undefined`. Do not use `string | undefined` for any app-owned string value.
+
+- **`ref<string>()` is BANNED** — always `ref("")`. TypeScript infers `Ref<string>`.
+- **`useDataMap<string | undefined>(..., undefined)` is BANNED** — use `useDataMap(..., "")`.
+- **`MaybeRefOrGetter<string | undefined>` is BANNED for currentId params** — always `MaybeRefOrGetter<string>`; internal `if (!currentIdValue)` guards handle `""` correctly.
+- **`cursor?: string` is BANNED** — always `cursor: string` with `z.string().default("")` in Zod schemas; server checks `if (cursor)` so `""` means "no cursor".
+- **`nextCursor = ""`** — `CursorPaginationData.nextCursor` is always `string`; `""` means no next page.
+- **Resetting**: assign `""` not `undefined`. Never use `value || undefined` to coerce before passing to an API — pass `""` directly.
+- **`currentRoomId`** and similar route-derived IDs return `""` (not `undefined`) when absent.
+
+**Legitimate `string | undefined` exceptions (third-party boundaries only):**
+
+- Browser API properties that are genuinely optional with no meaningful default (e.g. `MediaRecorder.mimeType`)
+- Type assertions on Vue Router params: `route.params.x as string | undefined` — normalise at the boundary, guard with `if (x)` immediately after
+- Node.js `req.socket.remoteAddress` and similar network properties
+
 ## `null` vs `undefined`
 
 Prefer `undefined` for all absent/optional values in app-owned code. `null` is only permitted at the external system boundary.
 
 **App-owned code — always use `undefined`:**
 
-- `ref<T>()` (no argument) already infers `T | undefined` — never write `ref<T | null>(null)`.
+- For string refs, use `ref("")` (see `string` section above) — not `ref<string>()`.
 - Optional interface fields use `?:` (which implies `| undefined`), not `| null`.
 - Uninitialised state, optional function parameters, and absent return values are all `undefined`.
 - Never assign `?? null` — if the left side is already `T | undefined`, drop the fallback entirely.

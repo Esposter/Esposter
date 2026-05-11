@@ -2,7 +2,7 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // Where we store multiple different lists for different ids, e.g. comments for post ids
 export const useCursorPaginationDataMap = <TItem>(
-  currentId: MaybeRefOrGetter<string | undefined>,
+  currentId: MaybeRefOrGetter<string>,
 ): ReturnType<typeof useCursorPaginationOperationData<TItem>> => {
   const cursorPaginationDataMap: Ref<Map<string, CursorPaginationData<TItem>>> = ref(new Map());
   const cursorPaginationData = computed({

@@ -32,7 +32,7 @@ export const useDataStore = defineStore("message/data", () => {
   );
   const files = computed(() => items.value.flatMap(({ files }) => files));
   const hasMoreNewer = ref(false);
-  const nextCursorNewer = ref<string>();
+  const nextCursorNewer = ref("");
   const typings = ref<CreateTypingInput[]>([]);
 
   const createMessage = async (input: StandardCreateMessageInput) => {

@@ -14,7 +14,7 @@ const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const dialogStore = useDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
-const roomName = useRoomName(() => currentRoom.value?.id);
+const roomName = useRoomName(() => currentRoom.value?.id ?? "");
 const placeholder = useRoomPlaceholder(currentRoom);
 const { smAndDown } = useVDisplay();
 </script>
