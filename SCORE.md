@@ -55,16 +55,16 @@ Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` p
 
 **8 pre-release packages in production paths** (down from 9):
 
-| Package               | Version       | Change from last review             | Role                           |
-| --------------------- | ------------- | ----------------------------------- | ------------------------------ |
-| `drizzle-orm`         | 1.0.0-rc.2    | ↑ promoted from beta.23             | Core ORM — all DB access       |
-| `drizzle-kit`         | 1.0.0-rc.2    | ↑ promoted from beta.23             | Migrations toolchain           |
-| `vuetify-nuxt-module` | ^1.0.0-beta.4 | beta.3 → beta.4                     | Primary UI integration         |
-| `unplugin-dts`        | 1.0.0-beta.6  | unchanged                           | Type declaration build step    |
-| `survey-core`         | 3.0.0-beta.0  | unchanged                           | Survey feature                 |
-| `survey-creator-core` | 3.0.0-beta.0  | unchanged                           | Survey feature                 |
-| `survey-creator-vue`  | 3.0.0-beta.0  | unchanged                           | Survey feature                 |
-| `survey-vue3-ui`      | 3.0.0-beta.0  | unchanged                           | Survey feature                 |
+| Package               | Version       | Change from last review | Role                        |
+| --------------------- | ------------- | ----------------------- | --------------------------- |
+| `drizzle-orm`         | 1.0.0-rc.2    | ↑ promoted from beta.23 | Core ORM — all DB access    |
+| `drizzle-kit`         | 1.0.0-rc.2    | ↑ promoted from beta.23 | Migrations toolchain        |
+| `vuetify-nuxt-module` | ^1.0.0-beta.4 | beta.3 → beta.4         | Primary UI integration      |
+| `unplugin-dts`        | 1.0.0-beta.6  | unchanged               | Type declaration build step |
+| `survey-core`         | 3.0.0-beta.0  | unchanged               | Survey feature              |
+| `survey-creator-core` | 3.0.0-beta.0  | unchanged               | Survey feature              |
+| `survey-creator-vue`  | 3.0.0-beta.0  | unchanged               | Survey feature              |
+| `survey-vue3-ui`      | 3.0.0-beta.0  | unchanged               | Survey feature              |
 
 `rolldown` (`^1.0.0`) graduated to stable since last review — removed from the list. `eslint-plugin-depend` is configured and will surface new issues here over time.
 
@@ -99,15 +99,15 @@ Four workflows: CI (all branches), Release (tags), and two Azure Functions deplo
 
 ## Summary
 
-| Area                 | Score      | Notes                                                                            |
-| -------------------- | ---------- | -------------------------------------------------------------------------------- |
-| Architecture         | 20 / 20    | 11 packages, clean DAG, data-driven maps, command pattern                        |
-| TypeScript           | 10 / 10    | Maximum strictness; `skipLibCheck` only trade-off                                |
-| Code Quality         | 10 / 10    | Guard clauses, `InvalidOperationError`, clean patterns                           |
-| Testing              | 10 / 10    | All logic-bearing stores tested; game/glue gaps documented                       |
-| Security             | 8 / 10     | CSP trade-offs documented; xssValidator pending upstream                         |
-| Dependencies         | 7 / 10     | 8 pre-release packages; rolldown stable, drizzle at RC                           |
-| Styling              | 8 / 10     | Attributify enforced; Vuetify token bridge; no size budgets or visual regression |
-| CI / CD              | 9 / 10     | Sequential by design; caching and thresholds handled                             |
-| Bundle & Performance | 7 / 10     | Vite auto-splits; large footprint; no size budgets                               |
-| **Total**            | **89 / 100** |                                                                                |
+| Area                 | Score        | Notes                                                                            |
+| -------------------- | ------------ | -------------------------------------------------------------------------------- |
+| Architecture         | 20 / 20      | 11 packages, clean DAG, data-driven maps, command pattern                        |
+| TypeScript           | 10 / 10      | Maximum strictness; `skipLibCheck` only trade-off                                |
+| Code Quality         | 10 / 10      | Guard clauses, `InvalidOperationError`, clean patterns                           |
+| Testing              | 10 / 10      | All logic-bearing stores tested; game/glue gaps documented                       |
+| Security             | 8 / 10       | CSP trade-offs documented; xssValidator pending upstream                         |
+| Dependencies         | 7 / 10       | 8 pre-release packages; rolldown stable, drizzle at RC                           |
+| Styling              | 8 / 10       | Attributify enforced; Vuetify token bridge; no size budgets or visual regression |
+| CI / CD              | 9 / 10       | Sequential by design; caching and thresholds handled                             |
+| Bundle & Performance | 7 / 10       | Vite auto-splits; large footprint; no size budgets                               |
+| **Total**            | **89 / 100** |                                                                                  |

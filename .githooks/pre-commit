@@ -2,8 +2,5 @@
 set -e
 STAGED=$(git diff --cached --name-only --diff-filter=ACMR)
 [ -z "$STAGED" ] && exit 0
-FMT=$(echo "$STAGED" | grep -E '\.(js|ts|jsx|tsx|vue)$' || true)
-if [ -n "$FMT" ]; then
-  echo "$FMT" | xargs -L 50 ./node_modules/.bin/oxfmt
-  echo "$FMT" | xargs git add
-fi
+echo "$STAGED" | xargs -L 50 ./node_modules/.bin/oxfmt
+echo "$STAGED" | xargs git add
