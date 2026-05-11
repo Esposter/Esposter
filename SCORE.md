@@ -39,7 +39,7 @@ Guard clauses over nested conditionals throughout. `InvalidOperationError` for i
 
 ## Security — 8 / 10
 
-Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.9 with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle ORM parameterized queries prevent SQL injection. Rate limiting via `RateLimiterDrizzleNonAtomic` (1000 pts / 60 s window, 60 s block) — NonAtomic is a deliberate choice for performance given rate limiting is not a hard security boundary here. CSRF protection handled by `nuxt-security` defaults; tRPC's JSON content-type provides additional mitigation.
+Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.10 with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle ORM parameterized queries prevent SQL injection. Rate limiting via `RateLimiterDrizzleNonAtomic` (1000 pts / 60 s window, 60 s block) — NonAtomic is a deliberate choice for performance given rate limiting is not a hard security boundary here. CSRF protection handled by `nuxt-security` defaults; tRPC's JSON content-type provides additional mitigation.
 
 **Accepted trade-offs:**
 
