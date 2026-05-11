@@ -41,12 +41,12 @@ watch(
     <input
       ref="input"
       v-model="trailingMessage"
-      w-full
-      b-none
       text-sm
       outline-none
-      cursor-text
+      b-none
       bg-transparent
+      w-full
+      cursor-text
       :readonly="hiddenParameters.length > 0"
       :placeholder="hiddenParameters.length > 0 ? optionsLabel : ''"
       @focus="emit('focus')"

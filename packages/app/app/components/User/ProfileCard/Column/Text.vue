@@ -15,7 +15,7 @@ const { editMode, value } = defineProps<UserProfileCardColumnTextProps>();
 </script>
 
 <template>
-  <v-col self-center font-bold cols="6">
+  <v-col font-bold self-center cols="6">
     <v-text-field
       v-if="editMode"
       v-model="modelValue"

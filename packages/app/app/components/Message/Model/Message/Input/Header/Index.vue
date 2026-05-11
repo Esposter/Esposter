@@ -8,15 +8,15 @@ const emit = defineEmits<{ close: [] }>();
 </script>
 
 <template>
-  <div :class="isTopAttached ? '' : 'rd-t-2'" relative flex items-center gap-2 text-sm px-4 py-2 bg-background>
+  <div :class="isTopAttached ? '' : 'rd-t-2'" text-sm px-4 py-2 bg-background flex gap-2 items-center relative>
     <slot />
     <v-btn
       top="1/2"
-      absolute
-      right-4
       b-1
-      b-solid
       b-text
+      b-solid
+      right-4
+      absolute
       translate-y="-1/2"
       icon="mdi-close"
       size="small"

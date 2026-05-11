@@ -30,7 +30,7 @@ await readMemberRoles({ roomId, userIds: [member.id] });
 
 <template>
   <div>
-    <div flex items-center gap-x-3 mb-4>
+    <div mb-4 flex gap-x-3 items-center>
       <StyledAvatar :image="member.image" :name="member.name" />
       <div text-lg font-bold>{{ member.name }}</div>
     </div>
@@ -39,9 +39,9 @@ await readMemberRoles({ roomId, userIds: [member.id] });
       <v-list-item v-for="role of allRoles" :key="role.id" :title="role.name">
         <template #prepend>
           <div
-            size-3
-            rd-full
             mr-2
+            rd-full
+            size-3
             :style="{ backgroundColor: role.color || 'rgb(var(--v-theme-on-surface-variant))' }"
           />
         </template>

@@ -1,8 +1,8 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
+import { unemojify } from "@/services/message/emoji/unemojify";
 import { useEmojiStore } from "@/store/message/emoji";
-import { unemojify } from "node-emoji";
 
 export const useSelectEmoji = async (message: MessageEntity) => {
   const { data: session } = await authClient.useSession(useFetch);

@@ -26,7 +26,7 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
       <div pt-2>
         <TableEditorSearchBar />
       </div>
-      <div flex gap-2 py-2 flex-wrap>
+      <div py-2 flex flex-wrap gap-2>
         <v-spacer />
         <TableEditorCreateItemButton />
         <TableEditorExportButton />

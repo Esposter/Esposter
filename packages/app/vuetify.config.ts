@@ -1,10 +1,12 @@
 import type { DefaultsOptions } from "vuetify/lib/composables/defaults.mjs";
+import type { DisplayOptions } from "vuetify/lib/composables/display.mjs";
 import type { Colors, ThemeOptions } from "vuetify/lib/composables/theme.mjs";
 
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
 import { EN_US_SEGMENTER } from "./app/services/shared/constants";
+import { forVuetify } from "./configuration/breakpoints";
 
 const BaseColorsCommon = {
   border: "#ccc",
@@ -106,4 +108,9 @@ const defaults: DefaultsOptions = {
   VTooltip: { location: "top" },
 };
 
-export default defineVuetifyConfiguration({ defaults, labComponents: true, theme });
+const display: DisplayOptions = {
+  mobileBreakpoint: "md",
+  thresholds: forVuetify,
+};
+
+export default defineVuetifyConfiguration({ defaults, display, labComponents: true, theme });

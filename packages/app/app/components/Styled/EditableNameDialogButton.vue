@@ -59,8 +59,8 @@ watch(
                 :style="{ pointerEvents: isEditable ? undefined : 'none' }"
                 :ripple="false"
                 slim
-                rd-lg
                 font-bold
+                rd-lg
                 :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps)"
                 @click="updateIsOpen(true)"
               >

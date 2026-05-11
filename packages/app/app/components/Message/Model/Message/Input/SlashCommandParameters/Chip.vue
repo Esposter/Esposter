@@ -44,41 +44,41 @@ onMounted(() => {
   <div
     :class="isError ? ['b-error'] : ['b-border', 'focus-within:b-info']"
     b="[1.5px]"
-    inline-flex
-    items-center
-    gap-1.5
-    rd
-    b-solid
     px-2
     py-1
-    overflow-hidden
+    rd
+    b-solid
     bg-border
+    inline-flex
+    gap-1.5
+    items-center
+    overflow-hidden
   >
     <span
       :class="isError ? 'text-error' : ''"
+      text-sm
+      font-bold
       my--1
       ml--2
+      py-1
+      pl-2
+      pr-1
+      bg-background
       flex
       items-center
       self-stretch
-      text-sm
-      font-bold
-      pl-2
-      pr-1
-      py-1
-      bg-background
     >
       {{ name }}
     </span>
     <input
       ref="input"
       v-model="modelValue"
-      b-none
       text-sm
       color-inherit
       outline-none
-      field-sizing-content
+      b-none
       bg-transparent
+      field-sizing-content
       :autofocus
       @focus="emit('focus')"
       @blur="emit('blur')"

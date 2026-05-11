@@ -22,7 +22,7 @@ onConnect(addEdges);
 
 <template>
   <NuxtLayout :left-navigation-drawer-props="{ scrim: false }" :right-navigation-drawer-props="{ scrim: false }">
-    <div h-full bg-surface>
+    <div bg-surface h-full>
       <VueFlow
         :node-types="
           Object.fromEntries(Object.entries(NodeTypeMap).map(([nodeType, { component }]) => [nodeType, component]))

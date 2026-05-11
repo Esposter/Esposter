@@ -27,7 +27,7 @@ const statusEnum = computed(() => getStatusEnum(user.id));
         <MessageModelUserProfileCardMoreMenu :user />
       </template>
     </MessageModelUserProfileCardHeader>
-    <v-card-text flex flex-col gap-y-3 pt-2>
+    <v-card-text pt-2 flex flex-col gap-y-3>
       <div>
         <div font-bold>{{ user.name }}</div>
         <div text-sm text-gray>{{ statusMessage || statusEnum }}</div>

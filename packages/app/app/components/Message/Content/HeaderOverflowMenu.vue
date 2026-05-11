@@ -12,7 +12,7 @@ import { mergeProps } from "vue";
       </v-tooltip>
     </template>
     <StyledCard>
-      <div flex pa-1>
+      <div pa-1 flex>
         <MessageContentHeaderActionButtons />
       </div>
     </StyledCard>

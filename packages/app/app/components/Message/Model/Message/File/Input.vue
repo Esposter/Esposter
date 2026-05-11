@@ -26,8 +26,8 @@ const menuItems: Item[] = [
 
 <template>
   <v-col xl="2" lg="3" md="4" sm="6">
-    <StyledCard h-full flex flex-col>
-      <v-card-title flex p-0 justify-end>
+    <StyledCard flex flex-col h-full>
+      <v-card-title p-0 flex justify-end>
         <div b-1>
           <v-tooltip
             v-for="{ icon, shortTitle, title, onClick, color } of menuItems"
@@ -41,7 +41,7 @@ const menuItems: Item[] = [
         </div>
       </v-card-title>
       <v-card-text pb-0>
-        <v-card h-full rd-4>
+        <v-card rd-4 h-full>
           <MessageModelFileRenderer :file :url="uploadFileUrl.url" is-preview />
         </v-card>
       </v-card-text>

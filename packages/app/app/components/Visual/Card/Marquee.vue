@@ -23,21 +23,21 @@ const { "on-surface": onSurface, surface } = storeToRefs(colorsStore);
     p-4
   >
     <div class="scene" h-64>
-      <div class="grid" grid h-full list-none gap-x-4 px-4>
+      <div class="grid" px-4 list-none gap-x-4 grid h-full>
         <div v-for="(card, index) of cards" :key="index" class="item-container">
           <div
             class="item"
             font="[Montserrat]"
-            h-full
-            flex
-            items-center
+            p-4
+            text-center
             b-1
             rd
-            p-4
-            justify-center
-            text-center
-            font-italic
+            flex
+            h-full
             cursor-pointer
+            font-italic
+            items-center
+            justify-center
           >
             {{ card.text }}
           </div>

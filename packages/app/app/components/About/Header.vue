@@ -3,16 +3,16 @@ import { VUEJS_LOGO_UWU_PATH } from "#shared/services/app/constants";
 
 const isDark = useIsDark();
 const { smAndDown } = useVDisplay();
-const ACCENT_CLASSES = ["text-transparent", "bg-clip-text", "bg-[image:var(--vue-gradient)]"];
+const ACCENT_CLASSES = ["text-transparent", "bg-clip-text", "bg-[image:--vue-gradient]"];
 </script>
 
 <template>
-  <div flex flex-col items-center text-center>
+  <div text-center flex flex-col items-center>
     <div
       :class="isDark ? ACCENT_CLASSES : []"
       font="[Inter]"
-      font-black
       leading-tight
+      font-black
       :text="smAndDown ? '5xl' : '7xl'"
     >
       The

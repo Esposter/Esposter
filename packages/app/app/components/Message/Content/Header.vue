@@ -43,9 +43,9 @@ const { smAndDown } = useVDisplay();
       "
     >
       <StyledAvatar :image="currentRoom.image" :name="roomName" :avatar-props="{ size: 'x-small' }" />
-      <div flex flex-col pl-2>
+      <div pl-2 flex flex-col>
         <span>{{ roomName }}</span>
-        <span v-if="currentRoom.topic" truncate text-xs text-medium-emphasis>{{ currentRoom.topic }}</span>
+        <span v-if="currentRoom.topic" text-medium-emphasis text-xs truncate>{{ currentRoom.topic }}</span>
       </div>
     </StyledEditableNameDialogButton>
     <template #append>

@@ -13,12 +13,12 @@ const { search } = storeToRefs(rowStore);
 </script>
 
 <template>
-  <div flex items-center gap-2>
+  <div flex gap-2 items-center>
     <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" hide-details single-line />
     <TableEditorFileFindReplaceDialogButton />
   </div>
   <TableEditorFileFindReplaceBar />
-  <div flex items-center gap-1 flex-wrap>
+  <div flex flex-wrap gap-1 items-center>
     <TableEditorFileColumnStatisticsDialogButton />
     <TableEditorFileRowOutlierToggleButton />
     <TableEditorFileRowClearFiltersButton />

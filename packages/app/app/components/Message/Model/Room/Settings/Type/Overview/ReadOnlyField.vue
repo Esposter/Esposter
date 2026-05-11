@@ -7,6 +7,6 @@ const emit = defineEmits<{ save: [] }>();
   <div flex flex-col gap-2>
     <div font-semibold>Read-only</div>
     <v-switch v-model="modelValue" color="primary" hide-details @update:model-value="emit('save')" />
-    <span text-xs text-medium-emphasis>Only members with Manage Messages permission can post.</span>
+    <span text-medium-emphasis text-xs>Only members with Manage Messages permission can post.</span>
   </div>
 </template>

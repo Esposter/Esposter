@@ -14,7 +14,7 @@ const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 
     <Head>
       <Title>{{ displayNoPoints }} {{ clickerItemProperties.pluralName }}</Title>
     </Head>
-    <v-container h-full flex flex-col items-center justify-center>
+    <v-container flex flex-col h-full items-center justify-center>
       <ClickerHeader w-full />
       <ClickerModelPointsTitle />
       <ClickerContent />

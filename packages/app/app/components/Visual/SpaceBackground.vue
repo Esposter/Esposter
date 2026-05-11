@@ -20,16 +20,16 @@ onMounted(() => {
 <template>
   <div
     :style="{ backgroundImage: `url(${NOT_FOUND_BACKGROUND_PATH})` }"
-    relative
-    h-full
     flex
     flex-col
+    h-full
     items-center
     justify-center
+    relative
     bg="center cover black"
   >
     <slot />
-    <div class="hover" absolute right-18 top-8>
+    <div class="hover" right-18 top-8 absolute>
       <VisualFloatingAstronaut />
     </div>
   </div>

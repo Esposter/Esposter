@@ -20,7 +20,7 @@ const topPx = computed(() => `${top}px`);
 </script>
 
 <template>
-  <div class="popup" absolute select-none font-bold text-headline-small pointer-events-none>+{{ displayPoints }}</div>
+  <div class="popup" font-bold pointer-events-none select-none absolute text-headline-small>+{{ displayPoints }}</div>
 </template>
 
 <style scoped>

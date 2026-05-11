@@ -79,7 +79,7 @@ defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
     <!-- Set max height here so we can hide global window scrollbar -->
     <v-main
       ref="container"
-      pt="[var(--app-bar-height)]"
+      pt="[--app-bar-height]"
       :style="{ ...middle, ...mainStyle, maxHeight: hideGlobalScrollbar ? '100dvh' : undefined }"
     >
       <slot />

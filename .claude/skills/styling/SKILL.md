@@ -68,7 +68,7 @@ Also remove the `storeToRefs` destructure (and `useColorsStore()` call if nothin
 
 ```diff
 - <NuxtInvisibleLink class="author" ...>
-+ <NuxtInvisibleLink text-primary hover:text-primary-darken-1 transition-colors duration-[var(--transition-duration)] ...>
++ <NuxtInvisibleLink text-primary hover:text-primary-darken-1 transition-colors duration-[--transition-duration] ...>
 ```
 
 Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in Vue templates — only a leading `:` triggers `v-bind`.
@@ -83,11 +83,11 @@ Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in 
 
 ## `!important` Variant
 
-Prefix an attribute name with `!` to generate `!important` CSS:
+Append `!` inside the attribute value to generate `!important` CSS:
 
 ```html
 <!-- top: var(--app-bar-height) !important; z-index: 1500 !important -->
-<NuxtLoadingIndicator !top="[var(--app-bar-height)]" !z="[1500]" />
+<NuxtLoadingIndicator top="[--app-bar-height]!" z="[1500]!" />
 ```
 
 Use only when overriding third-party component styles that can't be targeted otherwise.
@@ -111,16 +111,34 @@ Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and
 
 ```html
 <!-- Instead of a scoped .sidebar { top: calc(1rem + var(--app-bar-height)) } -->
-<UserSideBar sticky top="[calc(1rem+var(--app-bar-height))]" />
+<UserSideBar sticky top="[calc(1rem+--app-bar-height)]" />
 
 <!-- Fixed height with viewport calc -->
-<div h="[calc(100vh-3rem)]" overflow-y-auto />
+<div h="[calc(100dvh_-_--app-bar-height)]" overflow-y-auto />
 
 <!-- Arbitrary colour via hex -->
 <div bg="[#f0f0f0]" />
 ```
 
-Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+var(--x))` not `calc(1rem + var(--x))`.
+Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+--x)` not `calc(1rem + var(--x))`.
+
+### CSS Variables in Arbitrary Values
+
+**Never use `var()` inside UnoCSS arbitrary value brackets.** UnoCSS automatically wraps `--variable` names with `var()`:
+
+```html
+<!-- WRONG — var() keyword in template -->
+<div duration="[var(--transition-duration)]" />
+<div top="[var(--app-bar-height)]!" />
+<div shadow="[0_0_5px_rgb(var(--v-theme-primary-lighten-1))]" />
+
+<!-- CORRECT — --variable reference only -->
+<div duration="[--transition-duration]" />
+<div top="[--app-bar-height]!" />
+<div shadow="[0_0_5px_rgb(--v-theme-primary-lighten-1)]" />
+```
+
+Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects stays as-is — only the UnoCSS arbitrary value syntax gets the `--variable` shorthand.
 
 When converting a scoped CSS class that only contains arbitrary-value properties, delete the class name and the `<style scoped>` block entirely.
 
@@ -130,7 +148,7 @@ Split the CSS `transition` shorthand into separate UnoCSS attributes — one for
 
 ```html
 <!-- Single property + CSS-variable duration: split into two attributes -->
-<NuxtInvisibleLink transition-colors duration-[var(--transition-duration)] ...>
+<NuxtInvisibleLink transition-colors duration-[--transition-duration] ...>
   <!-- Multi-property with same static duration: use single arbitrary value (no clean split) -->
   <button transition="[box-shadow_0.2s,transform_0.2s]" ...></button>
 </NuxtInvisibleLink>
@@ -139,7 +157,7 @@ Split the CSS `transition` shorthand into separate UnoCSS attributes — one for
 Rules:
 
 - Single known property → use the UnoCSS shorthand (`transition-colors`, `transition-shadow`, `transition-transform`, `transition-opacity`, etc.)
-- Override the default duration with a separate `duration-{n}` or `duration-[var(--x)]` attribute
+- Override the default duration with a separate `duration-{n}` or `duration-[--x]` attribute (no `var()` wrapper)
 - Multi-property transitions (e.g. `box-shadow` + `transform`) must stay as a single `transition="[...]"` arbitrary value — splitting them would cause the second `transition-property` to override the first
 - Spaces in arbitrary `transition` values become `_`
 
