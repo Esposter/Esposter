@@ -2,12 +2,13 @@
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 
+import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { takeOne } from "@esposter/shared";
 
 const { command, items, query } = defineProps<Pick<SuggestionProps<SlashCommand>, "command" | "items" | "query">>();
 const title = computed(() => {
   const baseTitle = "COMMANDS";
-  return query ? `${baseTitle} MATCHING /${query}` : baseTitle;
+  return query ? `${baseTitle} MATCHING ${SuggestionTrigger.SlashCommand}${query}` : baseTitle;
 });
 const selectedIndex = ref(0);
 const selectItem = (index: number) => {
@@ -55,7 +56,7 @@ defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <div v-if="items.length > 0" b-1 rd bg-surface flex flex-col max-h-64 max-w-100 overflow-y-auto elevation-1>
+  <div v-show="items.length > 0" b-1 rd bg-surface flex flex-col max-h-64 max-w-100 overflow-y-auto elevation-1>
     <v-card-title text-sm font-bold>{{ title }}</v-card-title>
     <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
       <v-list-item

@@ -4,14 +4,16 @@ import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
-import SlashCommandList from "@/components/Message/Model/Message/SlashCommandList.vue";
+import SlashCommandList from "@/components/Message/Model/Message/Suggestion/SlashCommandList.vue";
 import { getRender } from "@/services/message/getRender";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
+import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { normalizeString } from "@esposter/shared";
+import { PluginKey } from "@tiptap/pm/state";
 
 export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, SlashCommand>, "editor"> = {
-  char: "/",
+  char: SuggestionTrigger.SlashCommand,
   command: getSynchronizedFunction(async ({ editor, props: slashCommand, range }) => {
     const { doc } = editor.state;
     const endPosition = doc.content.size - 1;
@@ -35,5 +37,6 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
         title.toLowerCase().includes(lowerQuery) || description.toLowerCase().includes(lowerQuery),
     );
   },
+  pluginKey: new PluginKey("slashCommandSuggestion"),
   render: getRender(SlashCommandList),
 };

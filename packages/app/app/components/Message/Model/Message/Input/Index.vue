@@ -44,6 +44,7 @@ const keyboardExtension = new Extension({
   },
 });
 const codeBlockExtension = useCodeBlockExtension();
+const emojiExtension = useEmojiExtension();
 const mentionExtension = useMentionExtension();
 const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
@@ -91,7 +92,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       autofocus="end"
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
-      :extensions="[keyboardExtension, codeBlockExtension, mentionExtension, slashCommandExtension]"
+      :extensions="[keyboardExtension, codeBlockExtension, emojiExtension, mentionExtension, slashCommandExtension]"
       :card-props="replyToMessage ? { class: 'rd-t-none' } : undefined"
       @paste="(_editor, files) => uploadFiles(files)"
     >

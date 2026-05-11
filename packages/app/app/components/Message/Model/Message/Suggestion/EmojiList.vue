@@ -1,30 +1,32 @@
 <script setup lang="ts">
-import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
-import type { SpecialMentionItem } from "@/models/message/SpecialMentionItem";
-import type { User } from "@esposter/db-schema";
+import type { EmojiItem } from "@/models/message/EmojiItem";
 import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 
+import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { takeOne } from "@esposter/shared";
 
-const { command, items, query } = defineProps<SuggestionProps<SpecialMentionItem | User, MentionNodeAttributes>>();
+const { command, items, query } = defineProps<Pick<SuggestionProps<EmojiItem>, "command" | "items" | "query">>();
 const title = computed(() => {
-  const title = "MEMBERS";
-  return query ? `${title} MATCHING @${query}` : title;
+  const baseTitle = "EMOJI";
+  return query ? `${baseTitle} MATCHING ${SuggestionTrigger.Emoji}${query}` : baseTitle;
 });
 const selectedIndex = ref(0);
 const selectItem = (index: number) => {
-  const item = takeOne(items, index);
-  command({ id: item.id, label: item.name });
+  const emojiItem = takeOne(items, index);
+  command(emojiItem);
 };
 const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
   switch (event.key) {
     case "ArrowDown":
+      event.preventDefault();
       selectedIndex.value = (selectedIndex.value + 1) % items.length;
       return true;
     case "ArrowUp":
+      event.preventDefault();
       selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
       return true;
     case "Enter":
+      event.preventDefault();
       selectItem(selectedIndex.value);
       return true;
     default:
@@ -43,24 +45,23 @@ defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <StyledCard v-if="items.length > 0" overflow-y-auto :card-props="{ maxHeight: 250, width: 400 }" :elevation="1">
+  <div v-show="items.length > 0" b-1 rd bg-surface flex flex-col max-h-64 max-w-80 overflow-y-auto elevation-1>
     <v-card-title text-sm font-bold>{{ title }}</v-card-title>
     <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
       <v-list-item
-        v-for="({ id, image, name }, index) of items"
-        :key="id"
+        v-for="({ emoji, name }, index) of items"
+        :key="name"
         :active="selectedIndex === index"
         :ripple="false"
         @click="selectItem(index)"
       >
         <template #prepend>
-          <MessageModelMemberStatusAvatar v-if="image" :id :image :name :avatar-props="{ size: 'x-small' }" />
-          <v-avatar v-else size="x-small">
-            <v-icon>mdi-at</v-icon>
-          </v-avatar>
+          <span text-xl leading-none mr-2>{{ emoji }}</span>
         </template>
-        <v-list-item-title font-semibold>{{ name }}</v-list-item-title>
+        <v-list-item-title font-semibold
+          >{{ SuggestionTrigger.Emoji }}{{ name }}{{ SuggestionTrigger.Emoji }}</v-list-item-title
+        >
       </v-list-item>
     </StyledList>
-  </StyledCard>
+  </div>
 </template>
