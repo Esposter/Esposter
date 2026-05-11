@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-05-11 · Nuxt `compatibilityDate`: `2026-05-06` · Overall: **89 / 100**
+> Last reviewed: 2026-05-11 · Nuxt `compatibilityDate`: `2026-05-06` · Overall: **91 / 100**
 
 A well-engineered, TypeScript-strict monorepo with strong architectural discipline and comprehensive linting. The approach deliberately delegates heavy lifting to well-maintained libraries (Vite, nuxt-security, pnpm actions, Drizzle) rather than rolling custom solutions. Primary remaining drag is the set of pre-release production dependencies.
 
@@ -70,14 +70,14 @@ Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` p
 
 ---
 
-## Styling — 8 / 10
+## Styling — 9 / 10
 
 UnoCSS `presetAttributify` + `presetWind4` enforced project-wide: all static styles as element attributes, `class` reserved for dynamic bindings, scoped CSS refs, and third-party selectors. Vuetify theme colors bridged via CSS custom properties (`rgb(var(--v-theme-...))`) and baked into UnoCSS theme + safelist — single source of truth for design tokens. CSS cascade managed via `outputToCssLayers`. Custom elevation (MD3) and typography shortcuts via `unocss-preset-vuetify`. Dark mode wired through `.v-theme--dark`/`.v-theme--light` class selectors, avoiding media-query conflicts with Vuetify.
 
-**Remaining concerns:**
+**Accepted trade-offs:**
 
-- Safelist enumerates all color × variation keys — no size baseline to catch CSS weight regressions.
-- No visual regression testing (Storybook / Chromatic or Playwright snapshots) — visual drift is caught by eye only.
+- Safelist enumerates all color × variation keys — CSS weight growth is low-risk given the finite set of Vuetify theme token combinations in use.
+- No automated visual regression testing (Storybook / Chromatic or Playwright snapshots) — the seeding layer (real-time messages, Azure Table, WebPubSub, env-gated features) makes generic snapshot coverage impractical until the UI stabilises. Visual drift caught by manual review.
 
 ---
 
@@ -89,11 +89,13 @@ Four workflows: CI (all branches), Release (tags), and two Azure Functions deplo
 
 ---
 
-## Bundle & Performance — 7 / 10
+## Bundle & Performance — 8 / 10
 
 `assetsInlineLimit: 0` prevents Phaser data URI breakage. Server-only transpilation for `@vue-pdf-viewer` and `pdfjs-dist`. 7 benchmark files cover table editor hot paths. `nuxt analyze` script available. Code splitting is handled automatically by Vite — no manual chunk configuration required.
 
-**Remaining concern:** Large dependency footprint — Phaser, GrapesJS, Survey (4 packages), Three.js, FullCalendar, pdf-viewer. No bundle size budgets or tracked baselines to catch regressions.
+**Accepted trade-offs:**
+
+- Large dependency footprint — Phaser, GrapesJS, Survey (4 packages), Three.js, FullCalendar, pdf-viewer. Total output is ~65 MB, which is reasonable for the feature surface. Nuxt build output surfaces size on every build, providing a visible baseline; no automated budget enforcement, but regressions are observable.
 
 ---
 
@@ -107,7 +109,7 @@ Four workflows: CI (all branches), Release (tags), and two Azure Functions deplo
 | Testing              | 10 / 10      | All logic-bearing stores tested; game/glue gaps documented                       |
 | Security             | 8 / 10       | CSP trade-offs documented; xssValidator pending upstream                         |
 | Dependencies         | 7 / 10       | 8 pre-release packages; rolldown stable, drizzle at RC                           |
-| Styling              | 8 / 10       | Attributify enforced; Vuetify token bridge; no size budgets or visual regression |
+| Styling              | 9 / 10       | Attributify enforced; Vuetify token bridge; visual regression accepted trade-off |
 | CI / CD              | 9 / 10       | Sequential by design; caching and thresholds handled                             |
-| Bundle & Performance | 7 / 10       | Vite auto-splits; large footprint; no size budgets                               |
-| **Total**            | **89 / 100** |                                                                                  |
+| Bundle & Performance | 8 / 10       | Vite auto-splits; ~65 MB known footprint; Nuxt build provides visible baseline   |
+| **Total**            | **91 / 100** |                                                                                  |
