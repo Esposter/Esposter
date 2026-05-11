@@ -9,7 +9,7 @@ const { column } = defineProps<ColumnItemSlotProps>();
 </script>
 
 <template>
-  <div flex items-center gap-1>
+  <div flex gap-1 items-center>
     {{ column.name }}
     <v-tooltip v-if="column.description" :text="column.description">
       <template #activator="{ props }">

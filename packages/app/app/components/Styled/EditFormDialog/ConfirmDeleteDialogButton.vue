@@ -24,7 +24,7 @@ const isDeletable = computed(() => nameTyped.value === name);
       </v-tooltip>
     </template>
     <StyledCard>
-      <v-card-title flex items-center whitespace-normal flex-wrap>
+      <v-card-title flex flex-wrap whitespace-normal items-center>
         Confirm Deletion of {{ originalItem.type }}:
         <v-code mx-2>{{ name }}</v-code>
         <StyledClipboardIconButton :source="name" />

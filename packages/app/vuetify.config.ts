@@ -4,10 +4,9 @@ import type { Colors, ThemeOptions } from "vuetify/lib/composables/theme.mjs";
 
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 
-import { forVuetify } from "./configuration/breakpoints";
-
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
 import { EN_US_SEGMENTER } from "./app/services/shared/constants";
+import { forVuetify } from "./configuration/breakpoints";
 
 const BaseColorsCommon = {
   border: "#ccc",

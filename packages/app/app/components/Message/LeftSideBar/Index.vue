@@ -3,7 +3,7 @@ import { RoutePath } from "@esposter/shared";
 </script>
 
 <template>
-  <div h-full flex flex-col>
+  <div flex flex-col h-full>
     <MessageLeftSideBarHeader />
     <v-divider />
     <div flex-1 overflow-y-auto>

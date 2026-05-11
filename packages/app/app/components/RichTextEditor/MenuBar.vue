@@ -63,7 +63,7 @@ const items = computed<MenuItem[]>(() => [
 </script>
 
 <template>
-  <div w-full flex flex-wrap>
+  <div flex flex-wrap w-full>
     <template v-for="(item, index) of items" :key="index">
       <v-divider v-if="isDivider(item)" thickness="2" vertical h-6 self-center />
       <v-tooltip v-else :text="item.title">

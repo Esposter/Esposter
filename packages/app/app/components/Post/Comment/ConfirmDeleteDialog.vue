@@ -32,7 +32,7 @@ const { deleteComment } = commentStore;
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <div b-1 rd-lg b-solid shadow-md mx-4 py-2 b-text>
+    <div mx-4 py-2 b-1 b-text rd-lg b-solid shadow-md>
       <slot name="commentPreview" />
     </div>
   </StyledDeleteFormDialog>

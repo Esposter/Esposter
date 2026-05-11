@@ -9,7 +9,7 @@ const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
 <template>
   <v-dialog v-model="isOpen" max-width="480">
     <v-card>
-      <v-card-title flex items-center gap-2>
+      <v-card-title flex gap-2 items-center>
         <v-icon icon="mdi-keyboard" />
         Keyboard Shortcuts
         <v-spacer />
@@ -18,13 +18,13 @@ const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
       <v-divider />
       <v-card-text>
         <div v-for="{ category, items } of KeyboardShortcutList" :key="category" mb-4>
-          <div text-xs font-bold uppercase op-60 mb-2>{{ category }}</div>
-          <div v-for="{ description, keys } of items" :key="description" flex items-center justify-between py-1>
+          <div text-xs font-bold mb-2 op-60 uppercase>{{ category }}</div>
+          <div v-for="{ description, keys } of items" :key="description" py-1 flex items-center justify-between>
             <span text-sm>{{ description }}</span>
-            <div flex items-center gap-1>
+            <div flex gap-1 items-center>
               <template v-for="(key, keyIndex) of keys" :key>
                 <span v-if="keyIndex > 0" text-xs op-50>+</span>
-                <kbd text-xs font-mono op-70 px-1 py-0>{{ key }}</kbd>
+                <kbd text-xs font-mono px-1 py-0 op-70>{{ key }}</kbd>
               </template>
             </div>
           </div>

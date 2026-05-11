@@ -12,7 +12,4 @@ const breakpoints: DisplayThresholds = {
 
 export const forVuetify = breakpoints;
 
-export const forUnoCSS = Object.entries(breakpoints).reduce(
-  (o, [key, value]) => ({ ...o, [key]: `${value}px` }),
-  {} as Record<keyof DisplayThresholds, string>,
-);
+export const forUnoCSS = Object.fromEntries(Object.entries(breakpoints).map(([key, value]) => [key, `${value}px`]));

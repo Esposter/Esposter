@@ -36,7 +36,7 @@ const onStatusClick = (clickedStatus: UserStatus) => {
     <template #activator="{ props: menuProps }">
       <slot name="activator" :menu-props />
     </template>
-    <StyledCard flex flex-col gap-2 p-3>
+    <StyledCard p-3 flex flex-col gap-2>
       <div text-sm font-bold>Set Status</div>
       <v-list density="compact" py-0>
         <v-list-item

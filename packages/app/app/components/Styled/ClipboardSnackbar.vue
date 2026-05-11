@@ -9,7 +9,7 @@ const { source } = defineProps<StyledClipboardSnackbarProps>();
 
 <template>
   <v-snackbar v-model="isCopied" color="primary">
-    <div flex items-center flex-wrap justify-center>
+    <div flex flex-wrap items-center justify-center>
       Copied <v-code mx-2>{{ source }}</v-code> successfully!
     </div>
   </v-snackbar>

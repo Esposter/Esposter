@@ -42,10 +42,10 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
       <div
         v-for="(buildingStatHtml, index) of buildingStatsHtml"
         :key="index"
-        rd
-        mt-1
         mx-8
+        mt-1
         px-1
+        rd
         v-html="buildingStatHtml"
       />
     </template>

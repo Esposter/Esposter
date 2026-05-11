@@ -19,7 +19,7 @@ const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General
       </v-row>
       <v-row>
         <v-col :cols="smAndDown ? 12 : 5">
-          <UserSideBar sticky top="[calc(1rem+var(--app-bar-height))]" :items="sections" />
+          <UserSideBar sticky top="[calc(1rem+--app-bar-height)]" :items="sections" />
         </v-col>
         <v-col :cols="smAndDown ? 12 : 7">
           <UserProfileCard />

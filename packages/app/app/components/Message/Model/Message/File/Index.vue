@@ -45,9 +45,9 @@ const isActive = ref(false);
     <div
       v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
       v-show="isActive"
-      absolute
       right-2
       top-2
+      absolute
     >
       <v-hover #default="{ isHovering, props: hoverProps }">
         <MessageModelMessageFileOptionsMenu

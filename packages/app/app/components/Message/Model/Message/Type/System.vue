@@ -12,7 +12,7 @@ const { active, isPreview = false, message } = defineProps<SystemProps>();
     <template #prepend>
       <v-icon icon="mdi-information-outline" size="small" />
     </template>
-    <span italic text-medium-emphasis>{{ message.message }}</span>
+    <span text-medium-emphasis italic>{{ message.message }}</span>
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     <MessageModelMessageEmojiList :is-preview :message />
   </MessageModelMessageTypeListItem>

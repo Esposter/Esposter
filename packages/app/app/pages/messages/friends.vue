@@ -47,7 +47,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
     <template #left>
       <MessageLeftSideBar />
     </template>
-    <div h-full flex flex-col overflow-y-auto bg-surface>
+    <div bg-surface flex flex-col h-full overflow-y-auto>
       <v-container>
         <div font-bold mb-6 text-headline-small>Friends</div>
         <div mb-8>
@@ -62,7 +62,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
               @click:clear="searchResults = []"
             />
           </div>
-          <v-list v-if="searchResults.length > 0" rd mt-2>
+          <v-list v-if="searchResults.length > 0" mt-2 rd>
             <v-list-item v-for="{ id, name, image } of searchResults" :key="id" :title="name">
               <template #prepend>
                 <v-avatar size="36" mr-3>

@@ -34,11 +34,11 @@ const loginButtonsProps = ref<LoginButtonProps[]>([
 
 <template>
   <NuxtLayout>
-    <v-container h-full flex items-center justify-center>
+    <v-container flex h-full items-center justify-center>
       <StyledCard :card-props="{ width: '100%', maxWidth: '30rem' }">
         <v-container>
-          <div mb-1 text-headline-small text-center>Sign in to</div>
-          <div flex items-center mb-2 justify-center>
+          <div mb-1 text-center text-headline-small>Sign in to</div>
+          <div mb-2 flex items-center justify-center>
             <AppLogo />
             <span pl-2 text-title-large>{{ SITE_NAME }}</span>
           </div>

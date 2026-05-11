@@ -19,7 +19,7 @@ const isLoading = ref(false);
 
 <template>
   <div flex flex-col gap-y-4>
-    <div flex items-center gap-x-4 justify-center>
+    <div flex gap-x-4 items-center justify-center>
       <v-text-field v-model="name" :disabled="isLoading" label="Name" density="compact" hide-details />
       <StyledButton
         :loading="isLoading"

@@ -11,10 +11,10 @@ const voiceControlItems = useVoiceControlItems();
 
 <template>
   <TransitionFade>
-    <div v-if="isInChannel" flex items-center gap-x-3 px-4 py-2 border-b bg-surface-variant>
+    <div v-if="isInChannel" bg-surface-variant px-4 py-2 border-b flex gap-x-3 items-center>
       <v-icon icon="mdi-volume-high" size="small" color="success" />
-      <span flex-1 text-sm font-medium>Voice</span>
-      <div flex items-center gap-x-1>
+      <span text-sm font-medium flex-1>Voice</span>
+      <div flex gap-x-1 items-center>
         <div v-for="{ id, image, isMuted: isParticipantMuted, name, userId } of roomParticipants" :key="id" relative>
           <v-menu v-if="userId !== session?.user.id && (isForceMuteable || isKickableFromVoice)">
             <template #activator="{ props: menuProps }">
@@ -34,20 +34,20 @@ const voiceControlItems = useVoiceControlItems();
           <div
             v-if="speakingIds.includes(id)"
             outline="2 solid green-500 offset-1"
+            rd-full
+            pointer-events-none
+            inset-0
             absolute
             animate-pulse
-            rd-full
-            inset-0
-            pointer-events-none
           />
-          <v-icon v-if="isParticipantMuted" icon="mdi-microphone-off" size="x-small" absolute right-0 bottom-0 />
+          <v-icon v-if="isParticipantMuted" icon="mdi-microphone-off" size="x-small" bottom-0 right-0 absolute />
           <v-icon
             v-if="isDeafened && id === session?.session.id"
             icon="mdi-headphones-off"
             size="x-small"
-            absolute
             bottom-0
             left-0
+            absolute
           />
         </div>
       </div>

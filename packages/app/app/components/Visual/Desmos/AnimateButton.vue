@@ -8,13 +8,13 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>();
       <!-- We actually want to ignore vuetify's dark mode and hardcode color="white"
        as Desmos' invert colors will also apply to this button when we use dark mode -->
       <v-btn
-        fixed
-        bottom-2
-        left-1
         color="white"
         icon="mdi-draw"
         size="small"
         rd
+        bottom-2
+        left-1
+        fixed
         :="props"
         @click="emit('click', $event)"
       />

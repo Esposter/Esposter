@@ -35,7 +35,7 @@ const { joinRoom } = roomStore;
     </Head>
     <VisualSpaceBackground>
       <v-dialog :model-value="true" persistent no-click-animation :scrim="false">
-        <StyledCard items-center p-8 bg-background>
+        <StyledCard p-8 bg-background items-center>
           <v-card-title>
             <StyledAvatar :image="invite.user.image" :name="invite.user.name" :avatar-props="{ size: '6rem' }" />
           </v-card-title>

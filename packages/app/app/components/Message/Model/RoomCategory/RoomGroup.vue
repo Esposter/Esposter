@@ -14,7 +14,7 @@ const isCollapsed = useLocalStorage(`message-category-${category?.id ?? "uncateg
   <div>
     <v-list-item v-if="category" density="compact" text-xs font-bold uppercase @click="isCollapsed = !isCollapsed">
       <v-list-item-title>
-        <div flex items-center gap-1>
+        <div flex gap-1 items-center>
           <v-icon :icon="isCollapsed ? 'mdi-chevron-right' : 'mdi-chevron-down'" size="x-small" />
           {{ category.name }}
         </div>

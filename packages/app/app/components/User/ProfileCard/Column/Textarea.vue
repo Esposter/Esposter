@@ -15,7 +15,7 @@ const { editMode, value } = defineProps<UserProfileCardColumnTextareaProps>();
 </script>
 
 <template>
-  <v-col self-center whitespace-pre-wrap font-bold cols="6">
+  <v-col font-bold whitespace-pre-wrap self-center cols="6">
     <v-textarea
       v-if="editMode"
       v-model="modelValue"

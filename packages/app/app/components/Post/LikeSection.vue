@@ -23,8 +23,8 @@ const unliked = computed(() =>
 <template>
   <div flex flex-col items-center>
     <v-btn
-      rd
       p-0
+      rd
       bg-transparent
       width="1.5rem"
       min-width="1.5rem"
@@ -45,8 +45,8 @@ const unliked = computed(() =>
     </v-btn>
     {{ post.noLikes }}
     <v-btn
-      rd
       p-0
+      rd
       bg-transparent
       width="1.5rem"
       min-width="1.5rem"

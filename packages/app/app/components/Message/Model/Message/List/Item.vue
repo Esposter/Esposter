@@ -61,8 +61,8 @@ watch(optionsMenu, (newOptionsMenu) => {
         :is="MessageComponentMap[message.type]"
         :id="message.rowKey"
         :mt="isSameBatch ? undefined : 4"
-        min-h-auto
         py-1
+        min-h-auto
         :op="message.isLoading ? 50 : undefined"
         :active="(isActive || activeReplyRowKey === message.rowKey) && !isOpen"
         :creator
@@ -88,8 +88,8 @@ watch(optionsMenu, (newOptionsMenu) => {
       </component>
       <div v-if="!message.isLoading" v-show="isActiveAndNotUpdateMode && !isOpen" relative z-1>
         <div
-          absolute
           right-4
+          absolute
           :top="isSameBatch ? -9 : -2"
           @mouseenter="isOptionsActive = true"
           @mouseleave="isOptionsActive = false"

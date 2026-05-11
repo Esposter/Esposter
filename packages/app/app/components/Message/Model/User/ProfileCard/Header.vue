@@ -11,12 +11,12 @@ const { isSelf, user } = defineProps<ProfileCardHeaderProps>();
 </script>
 
 <template>
-  <div relative h-20 bg-background>
-    <div v-if="!isSelf" absolute flex gap-x-2 pt-2 pr-2 top-0 right-0>
+  <div bg-background h-20 relative>
+    <div v-if="!isSelf" pr-2 pt-2 flex gap-x-2 right-0 top-0 absolute>
       <slot name="actions" />
     </div>
   </div>
-  <div mt--8 flex items-end justify-between px-4>
+  <div mt--8 px-4 flex items-end justify-between>
     <MessageModelMemberStatusAvatar :id="user.id" :image="user.image" :name="user.name" :avatar-props="{ size: 64 }" />
   </div>
 </template>

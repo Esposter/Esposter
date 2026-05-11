@@ -10,8 +10,8 @@ const { height, width } = useWindowSize();
 </script>
 
 <template>
-  <div h-full flex flex-col>
-    <v-list flex flex-1 flex-col items-center gap-y-4>
+  <div flex flex-col h-full>
+    <v-list flex flex-1 flex-col gap-y-4 items-center>
       <v-expansion-panels variant="accordion">
         <v-expansion-panel
           v-for="[nodeCategory, nodeTypes] of Object.entries(NodeCategoryTypeMap)"
@@ -24,8 +24,8 @@ const { height, width } = useWindowSize();
                 <template #activator="{ props }">
                   <component
                     :is="NodeTypeMap[nodeType].preview"
-                    size-auto
                     rd-1
+                    size-auto
                     :draggable="true"
                     :="props"
                     @dragstart="onDragStart($event)"

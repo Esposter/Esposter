@@ -2,9 +2,9 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
+import { emojify } from "@/services/message/emoji/emojify";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useEmojiStore } from "@/store/message/emoji";
-import { emojify } from "node-emoji";
 
 interface MessageEmojiListProps {
   isPreview?: boolean;

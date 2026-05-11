@@ -52,12 +52,12 @@ const deleteWord = (word: string) => {
               <v-btn :disabled="isAtMaxWords" icon="mdi-plus" size="x-small" variant="text" @click="createWord()" />
             </template>
           </v-text-field>
-          <div v-if="words.length > 0" flex gap-2 mt-1 flex-wrap>
+          <div v-if="words.length > 0" mt-1 flex flex-wrap gap-2>
             <v-chip v-for="word of words" :key="word" closable size="small" @click:close="deleteWord(word)">
               {{ word }}
             </v-chip>
           </div>
-          <span text-xs text-medium-emphasis>
+          <span text-medium-emphasis text-xs>
             Messages containing these words will be blocked. Comparisons are case-insensitive.
           </span>
           <v-btn

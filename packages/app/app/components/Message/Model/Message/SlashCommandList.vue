@@ -55,7 +55,7 @@ defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <div v-if="items.length > 0" max-h-64 flex flex-col b-1 rd max-w-100 overflow-y-auto elevation-1 bg-surface>
+  <div v-if="items.length > 0" b-1 rd bg-surface flex flex-col max-h-64 max-w-100 overflow-y-auto elevation-1>
     <v-card-title text-sm font-bold>{{ title }}</v-card-title>
     <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
       <v-list-item
@@ -68,7 +68,7 @@ defineExpose({ onKeyDown });
         <template #prepend>
           <v-icon :icon size="small" mr-2 />
         </template>
-        <v-list-item-title flex items-center gap-1 font-semibold>
+        <v-list-item-title font-semibold flex gap-1 items-center>
           {{ commandTitle }}
           <v-chip
             v-for="{ name } of parameters.filter(({ isRequired }) => isRequired)"

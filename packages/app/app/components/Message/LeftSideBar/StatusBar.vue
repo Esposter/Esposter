@@ -13,23 +13,23 @@ const callRoomName = useRoomName(callRoomId);
 </script>
 
 <template>
-  <div v-if="session" pb-2 px-2>
+  <div v-if="session" px-2 pb-2>
     <TransitionFade>
       <v-list-item
         v-if="isInChannel"
         :to="callRoomId && RoutePath.Messages(callRoomId)"
         prepend-icon="mdi-phone"
         density="compact"
-        rd
         base-color="success"
         mb-1
+        rd
       >
         <template #title>
           <span text-xs>In a call · {{ callRoomName }}</span>
         </template>
       </v-list-item>
     </TransitionFade>
-    <StyledCard flex items-center rd-2 p-2>
+    <StyledCard p-2 rd-2 flex items-center>
       <MessageModelStatusPickerMenuButton>
         <template #activator="{ menuProps }">
           <MessageModelMemberStatusAvatar
@@ -41,12 +41,12 @@ const callRoomName = useRoomName(callRoomId);
           />
         </template>
       </MessageModelStatusPickerMenuButton>
-      <div w-full flex justify-between min-w-0>
-        <div flex flex-col pl-2 justify-center min-w-0>
-          <div truncate text-xs>
+      <div flex min-w-0 w-full justify-between>
+        <div pl-2 flex flex-col min-w-0 justify-center>
+          <div text-xs truncate>
             {{ session.user.name }}
           </div>
-          <div truncate text-xs text-gray>
+          <div text-xs text-gray truncate>
             {{ getStatusMessage(session.user.id) || getStatusEnum(session.user.id) }}
           </div>
         </div>

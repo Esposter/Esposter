@@ -13,7 +13,7 @@ const { creator, dialog } = useSurveyCreator(survey);
     <Head>
       <Title>{{ survey.name }}</Title>
     </Head>
-    <div h-full flex flex-col>
+    <div flex flex-col h-full>
       <SurveyHeader v-model="survey" />
       <SurveyCreatorComponent :model="creator" />
     </div>

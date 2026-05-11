@@ -44,7 +44,7 @@ const isMenuOpen = ref(false);
             <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="displayName" />
           </template>
           <v-list-item-title pr-6>
-            <div flex items-center gap-x-1>
+            <div flex gap-x-1 items-center>
               {{ displayName }}
               <v-tooltip v-if="isCreator" text="Room Owner">
                 <template #activator="{ props }">
@@ -52,7 +52,7 @@ const isMenuOpen = ref(false);
                 </template>
               </v-tooltip>
             </div>
-            <div v-if="memberRoles.length > 0" flex gap-1 mt-1 flex-wrap>
+            <div v-if="memberRoles.length > 0" mt-1 flex flex-wrap gap-1>
               <v-chip v-for="{ id, name, color } of memberRoles" :key="id" size="x-small" :color>
                 {{ name }}
               </v-chip>

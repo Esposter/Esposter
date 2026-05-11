@@ -20,10 +20,10 @@ const scrollToMessage = useScrollToMessage();
 </script>
 
 <template>
-  <div flex items-center gap-x-1>
+  <div flex gap-x-1 items-center>
     <template v-if="reply && creator">
       <StyledAvatar :image="creator.image" :name="creator.name" :avatar-props="{ size: 'x-small' }" />
-      <div flex items-center gap-x-1>
+      <div flex gap-x-1 items-center>
         <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
         <span text-xs text-gray font-bold>{{ creator.name }}</span>
         <v-icon v-if="reply.isForward" icon="mdi-share" size="small" />
@@ -32,8 +32,8 @@ const scrollToMessage = useScrollToMessage();
           v-else
           :style="{ color }"
           text-xs
-          italic
           cursor-pointer
+          italic
           @mouseenter="isIndicatorActive = true"
           @mouseleave="isIndicatorActive = false"
           @click="scrollToMessage(reply.rowKey)"
@@ -45,7 +45,7 @@ const scrollToMessage = useScrollToMessage();
     </template>
     <template v-else>
       <v-icon pb-0.75 size="x-small" icon="mdi-reply" />
-      <span pb-0.75 text-xs italic>Original message was deleted</span>
+      <span text-xs pb-0.75 italic>Original message was deleted</span>
     </template>
   </div>
 </template>

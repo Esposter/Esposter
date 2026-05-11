@@ -18,7 +18,7 @@ for (const color of variations?.colors ?? []) {
 }
 
 const allColorKeys = [...Object.keys(firstThemeColors), ...variationKeys];
-const toKebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+const toKebabCase = (str: string) => str.replaceAll(new RegExp("[A-Z]", "gu"), (m) => `-${m.toLowerCase()}`);
 
 export default defineConfig({
   outputToCssLayers: {

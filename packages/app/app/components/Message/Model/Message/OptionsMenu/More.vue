@@ -2,9 +2,9 @@
 import type { Item } from "@/models/shared/Item";
 
 import { EmojiMoreMenuItems } from "@/services/message/emoji/EmojiMoreMenuItems";
+import { unemojify } from "@/services/message/emoji/unemojify";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useMessageStore } from "@/store/message";
-import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
@@ -51,9 +51,9 @@ const { optionsMenu } = storeToRefs(messageStore);
                 :text="emoji"
                 icon
                 m-0
-                size-10
-                flex-1
                 rd-sm
+                flex-1
+                size-10
                 :="props"
                 @click="emit('update:select-emoji', emoji)"
               />

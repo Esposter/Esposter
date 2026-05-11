@@ -15,7 +15,7 @@ const { creator, message } = defineProps<ReplyTitleProps>();
 <template>
   <v-list-item-title>
     <MessageModelMessageReply v-if="message.replyRowKey" :row-key="message.replyRowKey" />
-    <div flex items-center gap-x-2>
+    <div flex gap-x-2 items-center>
       <span font-bold>
         {{ creator.name }}
       </span>
