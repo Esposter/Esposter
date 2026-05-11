@@ -83,11 +83,11 @@ Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in 
 
 ## `!important` Variant
 
-Prefix an attribute name with `!` to generate `!important` CSS:
+Append `!` inside the attribute value to generate `!important` CSS:
 
 ```html
 <!-- top: var(--app-bar-height) !important; z-index: 1500 !important -->
-<NuxtLoadingIndicator !top="[var(--app-bar-height)]" !z="[1500]" />
+<NuxtLoadingIndicator top="[var(--app-bar-height)]!" z="[1500]!" />
 ```
 
 Use only when overriding third-party component styles that can't be targeted otherwise.

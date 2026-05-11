@@ -4,8 +4,7 @@ export const vuetify: NuxtConfig["vuetify"] = {
   moduleOptions: {
     prefixComposables: true,
     styles: {
-      colors: false,
-      utilities: false,
+      configFile: "assets/css/settings.scss",
     },
   },
 };

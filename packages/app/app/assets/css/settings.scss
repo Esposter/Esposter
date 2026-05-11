@@ -1,0 +1,31 @@
+@use "vuetify/settings" with (
+  $color-pack: false,
+  $utilities: (
+    "align-items": (
+      responsive: false,
+      unimportant: (
+        align-items,
+      ),
+    ),
+    "justify-content": (
+      responsive: false,
+      unimportant: (
+        justify-content,
+      ),
+    ),
+    "order": (
+      responsive: false,
+      unimportant: (
+        order,
+      ),
+    ),
+  ),
+  $grid-breakpoints: (
+    "xs": 0,
+    "sm": 600px,
+    "md": 960px,
+    "lg": 1280px,
+    "xl": 1920px,
+    "xxl": 2560px,
+  )
+);
