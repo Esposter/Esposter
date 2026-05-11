@@ -29,7 +29,7 @@ const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
-  <div v-if="session && hasEmojis" flex items-center gap-1 flex-wrap>
+  <div v-if="session && hasEmojis" flex flex-wrap gap-1 items-center>
     <div
       v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
@@ -38,17 +38,17 @@ const selectEmoji = await useSelectEmoji(message);
           ? ['bg-infoOpacity10', 'b-info']
           : ['bg-backgroundOpacity80', 'b-transparent', 'hover:bg-surfaceOpacity80', 'hover:b-border']
       "
-      z-1
-      w-fit
-      flex
-      origin-center
-      items-center
+      px-2
       b-1
       rd-full
       b-solid
-      shadow-md
-      px-2
+      flex
+      w-fit
       cursor-pointer
+      shadow-md
+      origin-center
+      items-center
+      z-1
       active:scale-95
       @click="
         isReacted && userIds.length === 1

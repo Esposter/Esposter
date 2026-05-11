@@ -13,8 +13,8 @@ const variations = theme.variations as VariationsOptions;
 const variationKeys: string[] = [];
 
 for (const color of variations?.colors ?? []) {
-  for (let i = 0; i < (variations?.darken ?? 0); i++) variationKeys.push(`${color}-darken-${i}`);
-  for (let i = 0; i < (variations?.lighten ?? 0); i++) variationKeys.push(`${color}-lighten-${i}`);
+  for (let i = 1; i <= (variations?.darken ?? 0); i++) variationKeys.push(`${color}-darken-${i}`);
+  for (let i = 1; i <= (variations?.lighten ?? 0); i++) variationKeys.push(`${color}-lighten-${i}`);
 }
 
 const allColorKeys = [...Object.keys(firstThemeColors), ...variationKeys];
@@ -55,7 +55,7 @@ export default defineConfig({
   ],
   shortcuts: Object.fromEntries(
     Object.entries(typographyPresets.md3).map(([name, styles]) => [
-      `text-${name}`,
+      `text-${toKebabCase(name)}`,
       [Object.fromEntries(Object.entries(styles).map(([k, v]) => [toKebabCase(k), v]))],
     ]),
   ),
