@@ -61,32 +61,51 @@ Quick reference for AI-assisted development. Avoids re-exploring files each sess
 
 ---
 
-## Call & Video (LiveKit)
+## Call & Video
 
 Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md`](specs/screenshare.md).
 
-### Key file map
+### Key file map (v1 current — mesh WebRTC)
 
-- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); `joinCall` returns `{ livekitUrl, livekitToken }`; `sendSignal` / `onSendSignal` removed
+- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); procedures use `callSessionId`, not `roomId`; includes `joinCallByToken` for shareable links
+- `server/services/message/call/callParticipantMap.ts` — `Map<callSessionId, Map<sessionId, CallParticipant>>` (keyed by callSessionId, not roomId)
+- `server/services/message/call/callStartTimeMap.ts` — `Map<callSessionId, Date>` for call duration calculation
+- `server/services/message/call/getOrCreateCallSession.ts` — upserts `callSessionsInMessage` row; 3-retry loop for unique token collision handling
+- `app/composables/message/subscribables/useCallSubscribables.ts` — calls `readCallSession` on room entry → sets `currentRoomCallSessionId`; all subscriptions use `callSessionId`
+- `app/store/message/room/call.ts` — `activeCallSessionId` (drives tRPC ops), `currentRoomCallSessionId` (viewed room), `callRoomId` (admin action checks), `callSessionParticipantsMap: Map<callSessionId, CallParticipant[]>`
+- `app/store/message/room/webRtc.ts` — `buildPeerConnection(callSessionId, remoteId)`, `createPeerConnectionOffer(callSessionId, remoteId)`, `subscribeToSignals(callSessionId)`
+
+### v2 (planned — LiveKit migration)
+
+- `server/trpc/routers/room/call.ts` — `joinCall` returns `{ livekitUrl, livekitToken }`; `sendSignal` / `onSendSignal` removed
 - `server/api/webhooks/livekit.post.ts` — receives LiveKit participant events; updates `callParticipantMap`; drives tRPC subscriptions
 - `app/composables/message/room/call/useCall.ts` — LiveKit `Room` wraps all track logic; exposes `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShare, stopScreenShare }`
-- `app/store/message/room/call.ts` — adds `isDeafened`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantSids`, `pinnedParticipantSid`
-- `app/components/Message/Content/CallScreenShare.vue` — presenter view (new)
-- `app/components/Message/Content/CallVideoGrid.vue` — camera tile grid (new)
 
-### Data flow: join call
+### Data flow: join call (v1 — mesh WebRTC)
 
 ```text
-Client A (joining)              Server (tRPC)             LiveKit SFU          Client B (in room)
-        |                             |                         |                      |
-        |-- joinCall ----------------->|                         |                      |
-        |                             |-- livekit createRoom -->|                      |
-        |                             |-- generate JWT token ---|                      |
-        |<-- { livekitUrl, livekitToken } ---|                    |                      |
-        |-- room.connect(url, token) ---------------------->|  |                      |
-        |                             |<-- webhook: participant_joined                 |
-        |                             |-- callEventEmitter.emit("join") -------------->|
-        |<======== audio/video tracks flow through LiveKit SFU ======================>|
+Client A (joining)                     Server (tRPC)               Client B (in room)
+        |                                    |                              |
+        |-- readCallSession({ roomId }) ----->|                              |
+        |<-- { id: callSessionId, token } ---|  (upserts callSessionsInMessage)
+        |   [set currentRoomCallSessionId]   |                              |
+        |-- onJoinCall.subscribe(callSessionId)                             |
+        |-- joinCall({ roomId }) ------------>|                              |
+        |<-- { callSessionId, participants } -|                              |
+        |   [set activeCallSessionId]         |-- onJoinCall emit --------->|
+        |-- sendSignal (offer) -------------->|-- onSendSignal emit ------->|
+        |<-- onSendSignal (answer) ------------|                             |
+        |<===================== audio flows via RTCPeerConnection ==========>|
+```
+
+### Data flow: join via shareable link (v1)
+
+```text
+Guest (any authed user)                Server (tRPC)               Room participants
+        |                                    |                              |
+        |-- joinCallByToken({ token }) ------>|  (no room membership check) |
+        |<-- { callSessionId, participants } -|                              |
+        |-- subscribe/signal as normal ------>|-- onJoinCall emit --------->|
 ```
 
 ### Data flow: screenshare start
@@ -148,16 +167,18 @@ getPushSubscriptionsForMessage(db, { message, partitionKey, userId })
 
 ## DB Schema
 
-| Table               | Key Fields                                                                                 |
-| ------------------- | ------------------------------------------------------------------------------------------ |
-| `rooms`             | `id`, `userId` (owner), `type` (Room/DM), `categoryId`, `participantKey`                   |
-| `usersToRooms`      | `userId`, `roomId` (PK), `notificationType` (All/DM/Never), `isHidden`, `timeoutUntil`     |
-| `roomRoles`         | `id`, `roomId`, `name`, `color`, `position`, `permissions` (bigint bitfield), `isEveryone` |
-| `usersToRoomRoles`  | `userId`, `roomId`, `roleId` (composite PK)                                                |
-| `bans`              | `roomId`, `userId`, `bannedByUserId`, `createdAt`                                          |
-| `userStatuses`      | `userId` (PK), `status` (nullable enum), `isConnected`, `message`, `expiresAt`             |
-| `pushSubscriptions` | `id`, `userId`, `endpoint`, `auth`, `p256dh`, `expirationTime`                             |
-| `roomCategories`    | `id`, `userId` (owner), `name`, `position`                                                 |
+| Table                   | Key Fields                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------ |
+| `rooms`                 | `id`, `userId` (owner), `type` (Room/DM), `categoryId`, `participantKey`                   |
+| `usersToRooms`          | `userId`, `roomId` (PK), `notificationType` (All/DM/Never), `isHidden`, `timeoutUntil`     |
+| `callSessionsInMessage` | `id` (UUID PK), `roomId` (unique FK → rooms), `token` (12-char, unique shareable code)     |
+| `invitesInMessage`      | `id`, `roomId`, `userId`, `token` (8-char, unique invite link code)                        |
+| `roomRoles`             | `id`, `roomId`, `name`, `color`, `position`, `permissions` (bigint bitfield), `isEveryone` |
+| `usersToRoomRoles`      | `userId`, `roomId`, `roleId` (composite PK)                                                |
+| `bans`                  | `roomId`, `userId`, `bannedByUserId`, `createdAt`                                          |
+| `userStatuses`          | `userId` (PK), `status` (nullable enum), `isConnected`, `message`, `expiresAt`             |
+| `pushSubscriptions`     | `id`, `userId`, `endpoint`, `auth`, `p256dh`, `expirationTime`                             |
+| `roomCategories`        | `id`, `userId` (owner), `name`, `position`                                                 |
 
 RBAC details (permission bitfield, service layer, role hierarchy) → see `specs/rbac.md`.
 

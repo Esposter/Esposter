@@ -84,7 +84,27 @@ Estimated: 0.25 vCPU × $0.000024/vCPU-s ≈ $5–12/month under typical communi
 
 ## tRPC Procedures
 
-All in `server/trpc/routers/room/call.ts`.
+All in `server/trpc/routers/room/call.ts`. Procedures are registered as `roomCall` (not `call` — reserved word).
+
+### v1 (current) — Mesh WebRTC + persistent call sessions
+
+| Procedure              | Type         | Auth             | Input                        | Purpose                                                                      |
+| ---------------------- | ------------ | ---------------- | ---------------------------- | ---------------------------------------------------------------------------- |
+| `readCallSession`      | query        | member           | `{ roomId }`                 | Upserts `callSessionsInMessage` row; returns `{ id, token, roomId }`         |
+| `joinCall`             | mutation     | member           | `{ roomId }`                 | Adds participant to in-memory map; returns `{ callSessionId, participants }` |
+| `joinCallByToken`      | mutation     | authed (no room) | `{ token }`                  | Join by shareable 12-char token — no room membership required                |
+| `leaveCall`            | mutation     | authed (no room) | `{ callSessionId }`          | Removes participant; on last leaver writes `MessageType.Call` system message |
+| `readCallParticipants` | query        | authed (no room) | `{ callSessionId }`          | Returns current participant list (initial load, non-participants)            |
+| `setMute`              | mutation     | authed (no room) | `{ callSessionId, isMuted }` | Syncs muted state; broadcasts `onSetMute`                                    |
+| `sendSignal`           | mutation     | authed (no room) | `{ callSessionId, payload }` | Sends WebRTC signaling payload to target participant                         |
+| `onJoinCall`           | subscription | authed (no room) | `callSessionId` (UUID)       | Fires when a participant joins                                               |
+| `onLeaveCall`          | subscription | authed (no room) | `callSessionId` (UUID)       | Fires when a participant leaves                                              |
+| `onSetMute`            | subscription | authed (no room) | `callSessionId` (UUID)       | Fires on mute toggle                                                         |
+| `onSendSignal`         | subscription | authed (no room) | `callSessionId` (UUID)       | Fires when a signal is sent to this session                                  |
+
+`requireCallSession(db, callSessionId)` — internal helper used by subscriptions; throws NOT_FOUND if session UUID doesn't exist (guards against guessing).
+
+### v2 (next) — LiveKit migration
 
 | Procedure              | Type             | Change from v1 | Purpose                                                                                                                  |
 | ---------------------- | ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -167,15 +187,29 @@ Exposes: `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShar
 
 ### State — Pinia Store (`store/message/room/call.ts`)
 
-| State                     | Kind       | Description                                            |
-| ------------------------- | ---------- | ------------------------------------------------------ |
-| `callParticipantsRoomMap` | `ref`      | `Map<roomId, CallParticipant[]>`                       |
-| `speakingIds`             | `ref`      | Session IDs currently speaking (AudioContext analysis) |
-| `isInChannel`             | `computed` | Derived from participant map + current session         |
-| `isMuted`                 | `computed` | Derived from participant map                           |
-| `isDeafened`              | `ref`      | Local only — not broadcast to others                   |
-| `isCameraEnabled`         | `ref`      | Local camera state                                     |
-| `isScreenSharing`         | `ref`      | Local screenshare state                                |
+#### v1 (current)
+
+| State                        | Kind       | Description                                                                   |
+| ---------------------------- | ---------- | ----------------------------------------------------------------------------- |
+| `callSessionParticipantsMap` | `ref`      | `Map<callSessionId, CallParticipant[]>` — keyed by session UUID, not roomId   |
+| `activeCallSessionId`        | `ref`      | Session the user is **in** — drives `leaveCall`, `setMute`, `sendSignal`      |
+| `currentRoomCallSessionId`   | `ref`      | Session for the **viewed** room — set by `useCallSubscribables` on room enter |
+| `callRoomId`                 | `ref`      | Room ID of active call — kept only for admin action room-scoped checks        |
+| `speakingIds`                | `ref`      | Session IDs currently speaking (AudioContext analysis)                        |
+| `isInCall`                   | `computed` | Derived: active participant list contains current sessionId                   |
+| `isMuted`                    | `computed` | Derived from active participant list                                          |
+| `isDeafened`                 | `ref`      | Local only — not broadcast                                                    |
+| `isForceMuted`               | `ref`      | Set by admin ForceMute action                                                 |
+| `roomParticipants`           | `computed` | Participants in currently viewed room (from `currentRoomCallSessionId`)       |
+
+#### v2 (additions for LiveKit)
+
+| State                          | Kind  | Description                          |
+| ------------------------------ | ----- | ------------------------------------ |
+| `isCameraEnabled`              | `ref` | Local camera state                   |
+| `isScreenSharing`              | `ref` | Local screenshare state              |
+| `screenSharingParticipantSids` | `ref` | SIDs of participants sharing screen  |
+| `pinnedParticipantSid`         | `ref` | Pinned presenter in screenshare view |
 
 ### Models
 
