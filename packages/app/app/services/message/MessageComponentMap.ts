@@ -19,6 +19,6 @@ export const MessageComponentMap = {
   ),
   [MessageType.Poll]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Poll.vue")),
   [MessageType.System]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/System.vue")),
-  [MessageType.VoiceCall]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/VoiceCall.vue")),
+  [MessageType.VoiceCall]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Call.vue")),
   [MessageType.Webhook]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Index.vue")),
 } as const satisfies Record<MessageType, Component>;

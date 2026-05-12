@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { useVoiceStore } from "@/store/message/room/voice";
+import { useCallStore } from "@/store/message/room/call";
 import { mergeProps } from "vue";
 
-const voiceStore = useVoiceStore();
-const { joinVoice, leaveVoice } = voiceStore;
-const { isInChannel, roomParticipants } = storeToRefs(voiceStore);
+const callStore = useCallStore();
+const { joinCall, leaveCall } = callStore;
+const { isInCall, roomParticipants } = storeToRefs(callStore);
 </script>
 
 <template>
-  <v-menu v-if="isInChannel" location="bottom end">
+  <v-menu v-if="isInCall" location="bottom end">
     <template #activator="{ props: menuProps }">
-      <v-tooltip location="bottom" text="Voice Call">
+      <v-tooltip location="bottom" text="Call">
         <template #activator="{ props: tooltipProps }">
           <v-btn :="mergeProps(menuProps, tooltipProps)" size="small" color="success" variant="text">
             <v-icon icon="mdi-phone" />
@@ -30,13 +30,13 @@ const { isInChannel, roomParticipants } = storeToRefs(voiceStore);
           </template>
         </v-list-item>
         <v-divider />
-        <v-list-item prepend-icon="mdi-phone-hangup" title="Leave Call" base-color="error" @click="leaveVoice()" />
+        <v-list-item prepend-icon="mdi-phone-hangup" title="Leave Call" base-color="error" @click="leaveCall()" />
       </v-list>
     </StyledCard>
   </v-menu>
-  <v-tooltip v-else location="bottom" text="Start Voice Call">
+  <v-tooltip v-else location="bottom" text="Start Call">
     <template #activator="{ props }">
-      <v-btn :="props" icon="mdi-phone" size="small" @click="joinVoice()" />
+      <v-btn :="props" icon="mdi-phone" size="small" @click="joinCall()" />
     </template>
   </v-tooltip>
 </template>

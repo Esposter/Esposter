@@ -1,15 +1,15 @@
-import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
+import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-import { voiceSignalPayloadSchema } from "#shared/models/room/voice/VoiceSignalPayload";
+import { callSignalPayloadSchema } from "#shared/models/room/call/CallSignalPayload";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
+import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
-import { voiceEventEmitter } from "@@/server/services/message/events/voiceEventEmitter";
-import { createVoiceParticipant } from "@@/server/services/message/voice/createVoiceParticipant";
-import { deleteVoiceParticipant } from "@@/server/services/message/voice/deleteVoiceParticipant";
-import { getRoomParticipants } from "@@/server/services/message/voice/getRoomParticipants";
-import { updateVoiceParticipantMute } from "@@/server/services/message/voice/updateVoiceParticipantMute";
-import { voiceCallStartTimeMap } from "@@/server/services/message/voice/voiceCallStartTimeMap";
+import { callStartTimeMap } from "@@/server/services/message/call/callStartTimeMap";
+import { createCallParticipant } from "@@/server/services/message/call/createCallParticipant";
+import { deleteCallParticipant } from "@@/server/services/message/call/deleteCallParticipant";
+import { getCallParticipants } from "@@/server/services/message/call/getCallParticipants";
+import { updateCallParticipantMute } from "@@/server/services/message/call/updateCallParticipantMute";
 import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
@@ -22,29 +22,29 @@ import { z } from "zod";
 
 const roomIdInputSchema = roomIdSchema;
 const setMuteInputSchema = z.object({ ...roomIdSchema.shape, isMuted: z.boolean() });
-const sendSignalInputSchema = z.object({ ...roomIdSchema.shape, payload: voiceSignalPayloadSchema });
-const onJoinVoiceChannelInputSchema = selectRoomInMessageSchema.shape.id;
-const onLeaveVoiceChannelInputSchema = selectRoomInMessageSchema.shape.id;
+const sendSignalInputSchema = z.object({ ...roomIdSchema.shape, payload: callSignalPayloadSchema });
+const onJoinCallInputSchema = selectRoomInMessageSchema.shape.id;
+const onLeaveCallInputSchema = selectRoomInMessageSchema.shape.id;
 const onSetMuteInputSchema = selectRoomInMessageSchema.shape.id;
 const onSendSignalInputSchema = selectRoomInMessageSchema.shape.id;
 
-export const voiceRouter = router({
-  joinVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation<VoiceParticipant[]>(
+export const callRouter = router({
+  joinCall: getMemberProcedure(roomIdInputSchema, "roomId").mutation<CallParticipant[]>(
     async ({ ctx, input: { roomId } }) => {
       const { session, user } = ctx.getSessionPayload;
-      const participant: VoiceParticipant = {
+      const participant: CallParticipant = {
         id: session.id,
         image: user.image ?? null,
         isMuted: false,
         name: user.name,
         userId: user.id,
       };
-      const isFirstJoiner = getRoomParticipants(roomId).length === 0;
-      createVoiceParticipant(roomId, participant);
-      voiceEventEmitter.emit("joinVoiceChannel", { participant, roomId, sessionId: session.id });
+      const isFirstJoiner = getCallParticipants(roomId).length === 0;
+      createCallParticipant(roomId, participant);
+      callEventEmitter.emit("joinCall", { participant, roomId, sessionId: session.id });
 
       if (isFirstJoiner) {
-        voiceCallStartTimeMap.set(roomId, new Date());
+        callStartTimeMap.set(roomId, new Date());
         await getResultAsync(() =>
           Promise.all([useTableClient(AzureTable.Messages), useTableClient(AzureTable.MessagesAscending)]),
         )
@@ -64,18 +64,18 @@ export const voiceRouter = router({
           .unwrapOr(undefined);
       }
 
-      return getRoomParticipants(roomId);
+      return getCallParticipants(roomId);
     },
   ),
-  leaveVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation(async ({ ctx, input: { roomId } }) => {
+  leaveCall: getMemberProcedure(roomIdInputSchema, "roomId").mutation(async ({ ctx, input: { roomId } }) => {
     const { session, user } = ctx.getSessionPayload;
     const sessionId = session.id;
-    const wasDeleted = deleteVoiceParticipant(roomId, sessionId);
-    if (wasDeleted) voiceEventEmitter.emit("leaveVoiceChannel", { id: sessionId, roomId, sessionId });
+    const wasDeleted = deleteCallParticipant(roomId, sessionId);
+    if (wasDeleted) callEventEmitter.emit("leaveCall", { id: sessionId, roomId, sessionId });
 
-    if (wasDeleted && getRoomParticipants(roomId).length === 0) {
-      const callStart = voiceCallStartTimeMap.get(roomId);
-      voiceCallStartTimeMap.delete(roomId);
+    if (wasDeleted && getCallParticipants(roomId).length === 0) {
+      const callStart = callStartTimeMap.get(roomId);
+      callStartTimeMap.delete(roomId);
       const callDurationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / 1000) : 0;
       await getResultAsync(() =>
         Promise.all([useTableClient(AzureTable.Messages), useTableClient(AzureTable.MessagesAscending)]),
@@ -97,26 +97,26 @@ export const voiceRouter = router({
         .unwrapOr(undefined);
     }
   }),
-  onJoinVoiceChannel: standardAuthedProcedure.input(onJoinVoiceChannelInputSchema).subscription(async function* ({
+  onJoinCall: standardAuthedProcedure.input(onJoinCallInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
   }) {
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
-    for await (const [{ participant, roomId, sessionId }] of on(voiceEventEmitter, "joinVoiceChannel", { signal })) {
+    for await (const [{ participant, roomId, sessionId }] of on(callEventEmitter, "joinCall", { signal })) {
       if (roomId !== input || sessionId === ctx.getSessionPayload.session.id) continue;
       yield participant;
     }
   }),
-  onLeaveVoiceChannel: standardAuthedProcedure.input(onLeaveVoiceChannelInputSchema).subscription(async function* ({
+  onLeaveCall: standardAuthedProcedure.input(onLeaveCallInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
   }) {
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
-    for await (const [{ id, roomId }] of on(voiceEventEmitter, "leaveVoiceChannel", { signal })) {
+    for await (const [{ id, roomId }] of on(callEventEmitter, "leaveCall", { signal })) {
       if (roomId !== input || id === ctx.getSessionPayload.session.id) continue;
       yield id;
     }
@@ -128,7 +128,7 @@ export const voiceRouter = router({
   }) {
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
-    for await (const [{ payload, roomId, senderId }] of on(voiceEventEmitter, "signal", { signal })) {
+    for await (const [{ payload, roomId, senderId }] of on(callEventEmitter, "signal", { signal })) {
       if (roomId !== input || payload.targetId !== ctx.getSessionPayload.session.id) continue;
       yield { payload, senderId };
     }
@@ -136,21 +136,21 @@ export const voiceRouter = router({
   onSetMute: standardAuthedProcedure.input(onSetMuteInputSchema).subscription(async function* ({ ctx, input, signal }) {
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
-    for await (const [{ id, isMuted, roomId }] of on(voiceEventEmitter, "muteChanged", { signal })) {
+    for await (const [{ id, isMuted, roomId }] of on(callEventEmitter, "muteChanged", { signal })) {
       if (roomId !== input) continue;
       yield { id, isMuted };
     }
   }),
-  readVoiceParticipants: getMemberProcedure(roomIdInputSchema, "roomId").query<VoiceParticipant[]>(
-    ({ input: { roomId } }) => getRoomParticipants(roomId),
+  readCallParticipants: getMemberProcedure(roomIdInputSchema, "roomId").query<CallParticipant[]>(
+    ({ input: { roomId } }) => getCallParticipants(roomId),
   ),
   sendSignal: getMemberProcedure(sendSignalInputSchema, "roomId").mutation(({ ctx, input: { payload, roomId } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
-    const participants = getRoomParticipants(roomId);
+    const participants = getCallParticipants(roomId);
     if (!participants.some((p) => p.id === sessionId))
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: new ForbiddenError("Must join voice channel first").message,
+        message: new ForbiddenError("Must join call first").message,
       });
 
     if (!participants.some((p) => p.id === payload.targetId))
@@ -159,16 +159,16 @@ export const voiceRouter = router({
         message: new NotFoundError("Target participant", payload.targetId).message,
       });
 
-    voiceEventEmitter.emit("signal", { payload, roomId, senderId: sessionId });
+    callEventEmitter.emit("signal", { payload, roomId, senderId: sessionId });
   }),
   setMute: getMemberProcedure(setMuteInputSchema, "roomId").mutation(({ ctx, input: { isMuted, roomId } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
-    if (!updateVoiceParticipantMute(roomId, sessionId, isMuted))
+    if (!updateCallParticipantMute(roomId, sessionId, isMuted))
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: new ForbiddenError("Must join voice channel first").message,
+        message: new ForbiddenError("Must join call first").message,
       });
 
-    voiceEventEmitter.emit("muteChanged", { id: sessionId, isMuted, roomId });
+    callEventEmitter.emit("muteChanged", { id: sessionId, isMuted, roomId });
   }),
 });

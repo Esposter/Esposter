@@ -18,7 +18,7 @@ import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription"
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { voiceRouter } from "@@/server/trpc/routers/room/voice";
+import { callRouter } from "@@/server/trpc/routers/room/call";
 import { roomCategoryRouter } from "@@/server/trpc/routers/roomCategory";
 import { roomFilterRouter } from "@@/server/trpc/routers/roomFilter";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
@@ -56,7 +56,7 @@ const trpcRouterWithoutAchievements = router({
   tableEditor: tableEditorRouter,
   user: userRouter,
   userToRoom: userToRoomRouter,
-  voice: voiceRouter,
+  call: callRouter,
   webhook: webhookRouter,
   webpageEditor: webpageEditorRouter,
 });

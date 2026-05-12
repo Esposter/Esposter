@@ -4,9 +4,9 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 
-interface VoiceCallProps extends MessageComponentProps<StandardMessageEntity> {}
+interface CallProps extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, creator, isPreview = false, message } = defineProps<VoiceCallProps>();
+const { active, creator, isPreview = false, message } = defineProps<CallProps>();
 const isCallEnded = computed(() => Boolean(message.message));
 const formattedDuration = computed(() => {
   if (!isCallEnded.value) return;

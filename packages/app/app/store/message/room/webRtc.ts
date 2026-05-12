@@ -1,10 +1,10 @@
-import type { VoiceSignalPayload } from "#shared/models/room/voice/VoiceSignalPayload";
+import type { CallSignalPayload } from "#shared/models/room/call/CallSignalPayload";
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
-import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
-import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
-import { useVoiceStore } from "@/store/message/room/voice";
+import { CallSignalType } from "#shared/models/room/call/CallSignalType";
+import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/call/constants";
+import { useCallStore } from "@/store/message/room/call";
 import { exhaustiveGuard, getResultAsync, jsonDateParse, noop } from "@esposter/shared";
 // Module-level WebRTC state — only one voice call at a time.
 let localStream: MediaStream | null = null;
@@ -46,14 +46,14 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
     analyser.fftSize = 256;
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
     let animationFrame = 0;
-    const voiceStore = useVoiceStore();
-    const { createSpeaker, deleteSpeaker } = voiceStore;
+    const callStore = useCallStore();
+    const { createSpeaker, deleteSpeaker } = callStore;
 
     const detectSpeaking = () => {
       analyser.getByteFrequencyData(dataArray);
       const average = dataArray.reduce((acc, val) => acc + val, 0) / dataArray.length;
       const isSpeaking = average > SPEAKING_THRESHOLD;
-      const isCurrentlySpeaking = voiceStore.speakingIds.includes(speakerId);
+      const isCurrentlySpeaking = callStore.speakingIds.includes(speakerId);
 
       if (isSpeaking && !isCurrentlySpeaking) createSpeaker(speakerId);
       else if (!isSpeaking && isCurrentlySpeaking) deleteSpeaker(speakerId);
@@ -87,8 +87,8 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
 
     peerConnection.onicecandidate = getSynchronizedFunction(async ({ candidate }) => {
       if (!candidate) return;
-      await $trpc.voice.sendSignal.mutate({
-        payload: { data: JSON.stringify(candidate.toJSON()), targetId: remoteId, type: VoiceSignalType.Candidate },
+      await $trpc.call.sendSignal.mutate({
+        payload: { data: JSON.stringify(candidate.toJSON()), targetId: remoteId, type: CallSignalType.Candidate },
         roomId,
       });
     });
@@ -100,8 +100,8 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
     const peerConnection = buildPeerConnection(roomId, remoteId);
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
-    await $trpc.voice.sendSignal.mutate({
-      payload: { data: JSON.stringify(offer), targetId: remoteId, type: VoiceSignalType.Offer },
+    await $trpc.call.sendSignal.mutate({
+      payload: { data: JSON.stringify(offer), targetId: remoteId, type: CallSignalType.Offer },
       roomId,
     });
   };
@@ -116,17 +116,17 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
 
   const getSignalHandler =
     (roomId: string) =>
-    async ({ payload: { data, type }, senderId }: { payload: VoiceSignalPayload; senderId: string }) => {
+    async ({ payload: { data, type }, senderId }: { payload: CallSignalPayload; senderId: string }) => {
       await getResultAsync(async () => {
         switch (type) {
-          case VoiceSignalType.Answer: {
+          case CallSignalType.Answer: {
             const peerConnection = peerConnections.get(senderId);
             if (!peerConnection) return;
             await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
             await flushIceCandidates(senderId);
             break;
           }
-          case VoiceSignalType.Candidate: {
+          case CallSignalType.Candidate: {
             const peerConnection = peerConnections.get(senderId);
             const candidateData = jsonDateParse<RTCIceCandidateInit>(data);
             if (!peerConnection?.remoteDescription) {
@@ -138,14 +138,14 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
             await peerConnection.addIceCandidate(candidateData);
             break;
           }
-          case VoiceSignalType.Offer: {
+          case CallSignalType.Offer: {
             const peerConnection = buildPeerConnection(roomId, senderId);
             await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
             await flushIceCandidates(senderId);
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(answer);
-            await $trpc.voice.sendSignal.mutate({
-              payload: { data: JSON.stringify(answer), targetId: senderId, type: VoiceSignalType.Answer },
+            await $trpc.call.sendSignal.mutate({
+              payload: { data: JSON.stringify(answer), targetId: senderId, type: CallSignalType.Answer },
               roomId,
             });
             break;
@@ -174,7 +174,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
 
   const subscribeToSignals = (roomId: string) => {
     unsubscribeFromSignals();
-    signalUnsubscribable = $trpc.voice.onSendSignal.subscribe(roomId, {
+    signalUnsubscribable = $trpc.call.onSendSignal.subscribe(roomId, {
       onData: getSynchronizedFunction(getSignalHandler(roomId)),
     });
   };

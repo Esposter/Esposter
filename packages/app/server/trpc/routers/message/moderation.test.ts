@@ -162,7 +162,7 @@ describe("moderation", () => {
       ).resolves.toBeUndefined();
     });
 
-    test(`${AdminActionType.KickFromVoice}: owner kicks member from voice — succeeds with no error`, async () => {
+    test(`${AdminActionType.KickFromVoice}: owner kicks member from the call — succeeds with no error`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();

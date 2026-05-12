@@ -15,6 +15,6 @@ export const useSubscribables = async () => {
     useFriendSubscribables(),
     useTypingSubscribables(),
     useUserSubscribables(),
-    useVoiceSubscribables(),
+    useCallSubscribables(),
   ]);
 };

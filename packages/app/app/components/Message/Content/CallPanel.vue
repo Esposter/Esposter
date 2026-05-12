@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import { authClient } from "@/services/auth/authClient";
-import { useVoiceStore } from "@/store/message/room/voice";
+import { useCallStore } from "@/store/message/room/call";
 
-const voiceStore = useVoiceStore();
-const { isDeafened, isInChannel, roomParticipants, speakingIds } = storeToRefs(voiceStore);
+const callStore = useCallStore();
+const { isDeafened, isInCall, roomParticipants, speakingIds } = storeToRefs(callStore);
 const { data: session } = await authClient.useSession(useFetch);
-const { getActions, isForceMuteable, isKickableFromVoice } = useVoiceParticipantActions();
-const voiceControlItems = useVoiceControlItems();
+const { getActions, isForceMuteable, isKickableFromCall } = useCallParticipantActions();
+const callControlItems = useCallControlItems();
 </script>
 
 <template>
   <TransitionFade>
-    <div v-if="isInChannel" bg-surface-variant px-4 py-2 border-b flex gap-x-3 items-center>
+    <div v-if="isInCall" bg-surface-variant px-4 py-2 border-b flex gap-x-3 items-center>
       <v-icon icon="mdi-volume-high" size="small" color="success" />
-      <span text-sm font-medium flex-1>Voice</span>
+      <span text-sm font-medium flex-1>Call</span>
       <div flex gap-x-1 items-center>
         <div v-for="{ id, image, isMuted: isParticipantMuted, name, userId } of roomParticipants" :key="id" relative>
-          <v-menu v-if="userId !== session?.user.id && (isForceMuteable || isKickableFromVoice)">
+          <v-menu v-if="userId !== session?.user.id && (isForceMuteable || isKickableFromCall)">
             <template #activator="{ props: menuProps }">
               <StyledAvatar size="x-small" :image :name :="menuProps" cursor-pointer />
             </template>
@@ -52,7 +52,7 @@ const voiceControlItems = useVoiceControlItems();
         </div>
       </div>
       <v-tooltip
-        v-for="{ tooltip, icon, color, variant, onClick } of voiceControlItems"
+        v-for="{ tooltip, icon, color, variant, onClick } of callControlItems"
         :key="tooltip"
         :text="tooltip"
         location="bottom"

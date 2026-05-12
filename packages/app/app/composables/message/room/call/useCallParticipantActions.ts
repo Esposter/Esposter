@@ -3,13 +3,13 @@ import type { Item } from "@/models/shared/Item";
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { useRoleStore } from "@/store/message/room/role";
-import { useVoiceStore } from "@/store/message/room/voice";
+import { useCallStore } from "@/store/message/room/call";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
-export const useVoiceParticipantActions = () => {
+export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();
-  const voiceStore = useVoiceStore();
-  const { callRoomId } = storeToRefs(voiceStore);
+  const callStore = useCallStore();
+  const { callRoomId } = storeToRefs(callStore);
   const roleStore = useRoleStore();
   const { getMyPermissions } = roleStore;
 
@@ -18,7 +18,7 @@ export const useVoiceParticipantActions = () => {
     if (!myPermissions.value) return false;
     return hasPermission(myPermissions.value.permissions, RoomPermission.MuteMembers, myPermissions.value.isRoomOwner);
   });
-  const isKickableFromVoice = computed(() => {
+  const isKickableFromCall = computed(() => {
     if (!myPermissions.value) return false;
     return hasPermission(myPermissions.value.permissions, RoomPermission.MoveMembers, myPermissions.value.isRoomOwner);
   });
@@ -51,7 +51,7 @@ export const useVoiceParticipantActions = () => {
         }),
         title: "Force Unmute",
       });
-    if (isKickableFromVoice.value)
+    if (isKickableFromCall.value)
       items.push({
         icon: "mdi-account-remove",
         onClick: getSynchronizedFunction(async () => {
@@ -61,10 +61,10 @@ export const useVoiceParticipantActions = () => {
             type: AdminActionType.KickFromVoice,
           });
         }),
-        title: "Kick from Voice",
+        title: "Kick from Call",
       });
     return items;
   };
 
-  return { getActions, isForceMuteable, isKickableFromVoice };
+  return { getActions, isForceMuteable, isKickableFromCall };
 };

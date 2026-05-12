@@ -61,6 +61,47 @@ Quick reference for AI-assisted development. Avoids re-exploring files each sess
 
 ---
 
+## Voice & Video (LiveKit)
+
+Full spec: [`specs/voice-channel.md`](specs/voice-channel.md). Screenshare: [`specs/screenshare.md`](specs/screenshare.md).
+
+### Key file map
+
+- `server/trpc/routers/room/voice.ts` — `joinVoiceChannel` returns `{ livekitUrl, livekitToken }`; `sendSignal` / `onSignal` removed
+- `server/api/webhooks/livekit.post.ts` — receives LiveKit participant events; updates `voiceRoomParticipantMap`; drives tRPC subscriptions
+- `app/composables/message/room/useVoiceChannel.ts` — LiveKit `Room` wraps all track logic; exposes `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShare, stopScreenShare }`
+- `app/store/message/voice.ts` — adds `isDeafened`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantSids`, `pinnedParticipantSid`
+- `app/components/Message/Content/VoiceScreenShare.vue` — presenter view (new)
+- `app/components/Message/Content/VoiceVideoGrid.vue` — camera tile grid (new)
+
+### Data flow: join voice channel
+
+```
+Client A (joining)              Server (tRPC)             LiveKit SFU          Client B (in room)
+        |                             |                         |                      |
+        |-- joinCall ----------------->|                         |                      |
+        |                             |-- livekit createRoom -->|                      |
+        |                             |-- generate JWT token ---|                      |
+        |<-- { livekitUrl, token } ---|                         |                      |
+        |-- room.connect(url, token) ---------------------->|  |                      |
+        |                             |<-- webhook: participant_joined                 |
+        |                             |-- voiceEventEmitter("join") ----------------->|
+        |<======== audio/video tracks flow through LiveKit SFU ======================>|
+```
+
+### Data flow: screenshare start
+
+```
+Sharer                          LiveKit SFU              Viewers
+   |-- getDisplayMedia() --------|                          |
+   |-- publishTrack(screenShare)->|                         |
+   |                             |-- TrackPublished ------->|
+   |                             |   (LiveKit Room event)   |
+   |                             |       [attach video to <video> el, switch to presenter layout]
+```
+
+---
+
 ## Data Flow: Send Message
 
 ```
