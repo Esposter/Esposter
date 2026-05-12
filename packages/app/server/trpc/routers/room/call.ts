@@ -75,9 +75,8 @@ export const callRouter = router({
     const existingId = await readCallSessionId(ctx.db, roomId);
     let callSessionId: string;
 
-    if (existingId) {
-      callSessionId = existingId;
-    } else {
+    if (existingId) callSessionId = existingId;
+    else {
       let createdId: string | undefined;
       for (let i = 0; i < 3; i++) {
         const id = createToken(CALL_TOKEN_LENGTH);
