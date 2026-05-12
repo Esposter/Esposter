@@ -12,10 +12,11 @@ export const getOrCreateCallSession = async (db: Context["db"], roomId: string) 
   if (existingCallSession) return existingCallSession;
 
   for (let i = 0; i < 3; i++) {
-    const token = createToken(CALL_TOKEN_LENGTH);
-    const createdCallSession = await getResultAsync(() =>
-      db.insert(callSessionsInMessage).values({ roomId, token }).returning(),
-    ).unwrapOr(null);
+    const id = createToken(CALL_TOKEN_LENGTH);
+    const insertResult = await getResultAsync(() =>
+      db.insert(callSessionsInMessage).values({ id, roomId }).returning(),
+    );
+    const createdCallSession = insertResult.orTee(console.error).unwrapOr(null);
     if (createdCallSession?.[0]) return createdCallSession[0];
   }
 

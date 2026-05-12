@@ -4,7 +4,7 @@ const callControlItems = useCallControlItems();
 
 <template>
   <div py-4 flex justify-center>
-    <div bg-grey-darken-4 px-4 py-2 rd-full flex gap-2 items-center style="background-color: rgba(66, 66, 66, 0.9)">
+    <div bg="[rgba(66,66,66,0.9)]" px-4 py-2 rd-full flex gap-2 items-center>
       <v-tooltip
         v-for="{ tooltip, icon, color, variant, onClick } of callControlItems"
         :key="tooltip"

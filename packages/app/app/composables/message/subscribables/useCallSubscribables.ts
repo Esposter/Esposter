@@ -35,8 +35,7 @@ export const useCallSubscribables = async () => {
     async (roomId) => {
       if (!roomId) return undefined;
 
-      const callSession = await $trpc.roomCall.readCallSession.query({ roomId });
-      const { id: callSessionId } = callSession;
+      const { id: callSessionId } = await $trpc.roomCall.readCallSession.query({ roomId });
       setCurrentRoomCallSessionId(callSessionId);
 
       const participants = await $trpc.roomCall.readCallParticipants.query({ callSessionId });

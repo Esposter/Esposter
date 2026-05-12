@@ -5,25 +5,25 @@ import { DatabaseEntityType, selectCallSessionInMessageSchema } from "@esposter/
 definePageMeta({
   middleware: "auth",
   validate: async (route) => {
-    const { token } = route.params;
-    if (typeof token !== "string") return false;
-    const result = await selectCallSessionInMessageSchema.shape.token.safeParseAsync(token);
+    const { id } = route.params;
+    if (typeof id !== "string") return false;
+    const result = await selectCallSessionInMessageSchema.shape.id.safeParseAsync(id);
     return result.success;
   },
 });
 
 const route = useRoute();
-const token = route.params.token as string;
-const isJoined = await useCallTokenSubscribables(token);
+const id = route.params.id as string;
+const isJoined = await useCallTokenSubscribables(id);
 if (!isJoined)
   throw createError({
     status: 404,
-    statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, token),
+    statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, id),
   });
 </script>
 
 <template>
-  <div h-screen w-screen overflow-hidden>
+  <div size-screen overflow-hidden>
     <Head>
       <Title>Call</Title>
     </Head>

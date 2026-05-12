@@ -2,10 +2,9 @@ CREATE TABLE "message"."call_sessions" (
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"deletedAt" timestamp,
 	"updatedAt" timestamp NOT NULL,
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-	"roomId" uuid NOT NULL UNIQUE,
-	"token" text NOT NULL UNIQUE,
-	CONSTRAINT "call_sessions_token_length_check" CHECK (LENGTH("token") = 12)
+	"id" text PRIMARY KEY,
+	"roomId" uuid,
+	CONSTRAINT "call_sessions_id_length_check" CHECK (LENGTH("id") = 12)
 );
 --> statement-breakpoint
 ALTER TABLE "message"."invites" RENAME COLUMN "code" TO "token";--> statement-breakpoint

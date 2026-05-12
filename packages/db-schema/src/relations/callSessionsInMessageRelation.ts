@@ -8,12 +8,12 @@ export const callSessionsInMessageRelation = defineRelationsPart(schema, (r) => 
   callSessionsInMessage: {
     roomInMessage: r.one.roomsInMessage({
       from: r.callSessionsInMessage.roomId,
-      optional: false,
+      optional: true,
       to: r.roomsInMessage.id,
     }),
   },
 }));
 
 export type CallSessionInMessageWithRelations = CallSessionInMessage & {
-  roomInMessage: RoomInMessage;
+  roomInMessage: RoomInMessage | null;
 };

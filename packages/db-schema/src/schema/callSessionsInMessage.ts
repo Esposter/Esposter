@@ -10,16 +10,12 @@ export const CALL_TOKEN_LENGTH = 12;
 export const callSessionsInMessage = pgTable(
   "call_sessions",
   {
-    id: uuid().primaryKey().defaultRandom(),
-    roomId: uuid()
-      .notNull()
-      .unique()
-      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    token: text().notNull().unique(),
+    id: text().primaryKey(),
+    roomId: uuid().references(() => roomsInMessage.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ token }) => [
-      check("call_sessions_token_length_check", sql`LENGTH(${token}) = ${sql.raw(CALL_TOKEN_LENGTH.toString())}`),
+    extraConfig: ({ id }) => [
+      check("call_sessions_id_length_check", sql`LENGTH(${id}) = ${sql.raw(CALL_TOKEN_LENGTH.toString())}`),
     ],
     schema: messageSchema,
   },
@@ -28,5 +24,5 @@ export const callSessionsInMessage = pgTable(
 export type CallSessionInMessage = typeof callSessionsInMessage.$inferSelect;
 
 export const selectCallSessionInMessageSchema = createSelectSchema(callSessionsInMessage, {
-  token: (schema) => schema.length(CALL_TOKEN_LENGTH),
+  id: (schema) => schema.length(CALL_TOKEN_LENGTH),
 });

@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "4ad47c70-5037-4366-9506-b63df999d53d",
+  "id": "3d502d02-3c08-4fbf-95ae-74d5514f6884",
   "prevIds": [
     "e525e63a-a3d5-40bc-b879-6ed6a9e7b218"
   ],
@@ -793,11 +793,11 @@
       "table": "call_sessions"
     },
     {
-      "type": "uuid",
+      "type": "text",
       "typeSchema": null,
       "notNull": true,
       "dimensions": 0,
-      "default": "gen_random_uuid()",
+      "default": null,
       "generated": null,
       "identity": null,
       "name": "id",
@@ -808,25 +808,12 @@
     {
       "type": "uuid",
       "typeSchema": null,
-      "notNull": true,
+      "notNull": false,
       "dimensions": 0,
       "default": null,
       "generated": null,
       "identity": null,
       "name": "roomId",
-      "entityType": "columns",
-      "schema": "message",
-      "table": "call_sessions"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "token",
       "entityType": "columns",
       "schema": "message",
       "table": "call_sessions"
@@ -4288,28 +4275,6 @@
     {
       "nameExplicit": false,
       "columns": [
-        "roomId"
-      ],
-      "nullsNotDistinct": false,
-      "name": "call_sessions_roomId_key",
-      "schema": "message",
-      "table": "call_sessions",
-      "entityType": "uniques"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "token"
-      ],
-      "nullsNotDistinct": false,
-      "name": "call_sessions_token_key",
-      "schema": "message",
-      "table": "call_sessions",
-      "entityType": "uniques"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
         "token"
       ],
       "nullsNotDistinct": false,
@@ -4388,8 +4353,8 @@
       "table": "blocks"
     },
     {
-      "value": "LENGTH(\"token\") = 12",
-      "name": "call_sessions_token_length_check",
+      "value": "LENGTH(\"id\") = 12",
+      "name": "call_sessions_id_length_check",
       "entityType": "checks",
       "schema": "message",
       "table": "call_sessions"

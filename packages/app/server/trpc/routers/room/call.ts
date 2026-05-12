@@ -30,7 +30,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 const joinCallInputSchema = roomIdSchema;
-const joinCallByTokenInputSchema = z.object({ token: selectCallSessionInMessageSchema.shape.token });
+const joinCallByTokenInputSchema = z.object({ id: selectCallSessionInMessageSchema.shape.id });
 const leaveCallInputSchema = callSessionIdSchema;
 const setMuteInputSchema = z.object({ ...callSessionIdSchema.shape, isMuted: z.boolean() });
 const sendSignalInputSchema = z.object({ ...callSessionIdSchema.shape, payload: callSignalPayloadSchema });
@@ -59,9 +59,9 @@ export const callRouter = router({
   }),
   joinCallByToken: standardAuthedProcedure
     .input(joinCallByTokenInputSchema)
-    .mutation<{ callSessionId: string; participants: CallParticipant[] }>(async ({ ctx, input: { token } }) => {
+    .mutation<{ callSessionId: string; participants: CallParticipant[] }>(async ({ ctx, input: { id } }) => {
       const callSession = await ctx.db.query.callSessionsInMessage.findFirst({
-        where: { token: { eq: token } },
+        where: { id: { eq: id } },
       });
       if (!callSession)
         throw new TRPCError({
@@ -93,7 +93,7 @@ export const callRouter = router({
       const callStart = callStartTimeMap.get(callSessionId);
       callStartTimeMap.delete(callSessionId);
       const callDurationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / 1000) : 0;
-      if (callSession)
+      if (callSession?.roomId)
         await getResultAsync(async () => {
           const [messageClient, messageAscendingClient] = await Promise.all([
             useTableClient(AzureTable.Messages),
@@ -157,7 +157,10 @@ export const callRouter = router({
   }),
   readCallParticipants: standardAuthedProcedure
     .input(readCallParticipantsInputSchema)
-    .query<CallParticipant[]>(({ input: { callSessionId } }) => getCallParticipants(callSessionId)),
+    .query<CallParticipant[]>(async ({ ctx, input: { callSessionId } }) => {
+      await requireCallSession(ctx.db, callSessionId);
+      return getCallParticipants(callSessionId);
+    }),
   readCallSession: getMemberProcedure(readCallSessionInputSchema, "roomId").query<CallSessionInMessage>(
     ({ ctx, input: { roomId } }) => getOrCreateCallSession(ctx.db, roomId),
   ),

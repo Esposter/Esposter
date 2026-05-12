@@ -47,6 +47,7 @@ describe("call", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const { id: expectedCallSessionId } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
     const { session, user } = await mockSessionOnce(mockContext.db, getMockSession().user);
     const { callSessionId, participants } = await roomCallCaller.joinCall({ roomId: newRoom.id });
 
@@ -54,7 +55,7 @@ describe("call", () => {
     expect(takeOne(participants).id).toBe(session.id);
     expect(takeOne(participants).userId).toBe(user.id);
     expect(takeOne(participants).isMuted).toBe(false);
-    expect(callSessionId).toBe(true);
+    expect(callSessionId).toStrictEqual(expectedCallSessionId);
   });
 
   test("joining call twice keeps participant list at 1", async () => {
@@ -304,12 +305,12 @@ describe("call", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { token } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
+    const { id: expectedCallSessionId } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
-    const { callSessionId, participants } = await roomCallCaller.joinCallByToken({ token });
+    const { callSessionId, participants } = await roomCallCaller.joinCallByToken({ id: expectedCallSessionId });
 
     expect(participants).toHaveLength(1);
-    expect(callSessionId).toBe(true);
+    expect(callSessionId).toBe(expectedCallSessionId);
     expect(takeOne(participants).isMuted).toBe(false);
   });
 });

@@ -8,7 +8,7 @@ Full-screen call experience for `/call/[token]`. Components are shared with the 
 
 ### v1 — Audio only (current)
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐  bg-black, h-screen, layout: false
 │                                                         │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │  ← auto-fit CSS grid
@@ -40,7 +40,7 @@ Switch `CallView` to presenter layout: screenshare fills main area, participant 
 
 ## Component Tree
 
-```
+```text
 pages/call/[token].vue                     layout: false (fullscreen)
   └── Call/View.vue                        fills h-screen, reads from store
         ├── Call/ParticipantTile.vue        one tile per participant
@@ -82,7 +82,7 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 
 ### Token join path
 
-```
+```text
 /call/[token]
   → useCallTokenSubscribables(token)          composable handles full lifecycle
     → store.joinCallByToken(token)
@@ -99,7 +99,7 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 
 ### Cleanup (page unmount)
 
-```
+```text
 onUnmounted in useCallTokenSubscribables
   → participantJoin/Leave/MuteChanged.unsubscribe()
   → store.leaveCall()

@@ -2,7 +2,7 @@ import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useCallStore } from "@/store/message/room/call";
 import { useWebRtcStore } from "@/store/message/room/webRtc";
 
-export const useCallTokenSubscribables = async (token: string) => {
+export const useCallTokenSubscribables = async (id: string) => {
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
   const { createCallParticipant, deleteCallParticipant, deleteSpeaker, joinCallByToken, leaveCall, setMute } =
@@ -11,7 +11,7 @@ export const useCallTokenSubscribables = async (token: string) => {
   const webRtcStore = useWebRtcStore();
   const { cleanupPeer, createPeerConnectionOffer } = webRtcStore;
 
-  const callSessionId = await joinCallByToken(token);
+  const callSessionId = await joinCallByToken(id);
   if (!callSessionId) return false;
 
   const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(callSessionId, {

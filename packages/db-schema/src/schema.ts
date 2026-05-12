@@ -1,9 +1,9 @@
 import { accounts } from "@/schema/accounts";
-import { callSessionsInMessage } from "@/schema/callSessionsInMessage";
 import { achievementNameEnum, achievements } from "@/schema/achievements";
 import { appUsersInMessage } from "@/schema/appUsersInMessage";
 import { bansInMessage } from "@/schema/bansInMessage";
 import { blocks } from "@/schema/blocks";
+import { callSessionsInMessage } from "@/schema/callSessionsInMessage";
 import { friendRequests } from "@/schema/friendRequests";
 import { friends } from "@/schema/friends";
 import { invitesInMessage } from "@/schema/invitesInMessage";
@@ -28,12 +28,12 @@ import { webhooksInMessage } from "@/schema/webhooksInMessage";
 
 export const schema = {
   accounts,
-  callSessionsInMessage,
   achievementNameEnum,
   achievements,
   appUsersInMessage,
   bansInMessage,
   blocks,
+  callSessionsInMessage,
   friendRequests,
   friends,
   invitesInMessage,
