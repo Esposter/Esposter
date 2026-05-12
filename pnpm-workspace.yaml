@@ -24,7 +24,7 @@ catalog:
   "@azure/storage-queue": ^12.29.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.0.4
-  "@better-auth/drizzle-adapter": ^1.6.10
+  "@better-auth/drizzle-adapter": ^1.6.11
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.3
   "@codemirror/language-data": ^6.5.2
@@ -112,7 +112,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.11.0
-  better-auth: ^1.6.10
+  better-auth: ^1.6.11
   codemirror: ^6.0.2
   crossws: ^0.4.5
   ctix: ^2.8.0
