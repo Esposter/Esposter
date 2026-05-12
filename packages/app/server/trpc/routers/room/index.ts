@@ -409,9 +409,7 @@ export const roomRouter = router({
   }),
   readInviteToken: getMemberProcedure(readInviteTokenInputSchema, "roomId")
     .use(isRoom)
-    .query<null | string>(({ ctx, input: { roomId } }) =>
-      readInviteToken(ctx.db, ctx.getSessionPayload.user.id, roomId),
-    ),
+    .query<string>(({ ctx, input: { roomId } }) => readInviteToken(ctx.db, ctx.getSessionPayload.user.id, roomId)),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];

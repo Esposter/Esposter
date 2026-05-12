@@ -78,42 +78,13 @@ export const useCallStore = defineStore("message/room/call", () => {
     speakingIds.value = [];
   };
 
-  const joinCall = async () => {
-    const roomId = roomStore.currentRoomId;
-    if (!roomId || activeCallSessionId.value || !currentRoomCallSessionId.value) return;
-    callRoomId.value = roomId;
-    const callSessionId = currentRoomCallSessionId.value;
-    let isJoined = false;
-    await getResultAsync(async () => {
-      const stream = await acquireLocalStream();
-      subscribeToSignals(callSessionId);
-      const { participants } = await $trpc.roomCall.joinCall.mutate({ roomId });
-      activeCallSessionId.value = callSessionId;
-      isJoined = true;
-      setParticipants(callSessionId, participants);
-      if (sessionId.value) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, sessionId.value, stream);
-    })
-      .orElse((error) =>
-        getResultAsync(async () => {
-          console.error(error);
-          if (isJoined) await leaveCall();
-          else {
-            callRoomId.value = "";
-            activeCallSessionId.value = "";
-            await cleanupAll();
-          }
-        }),
-      )
-      .unwrapOr(undefined);
-  };
-
-  const joinCallByToken = async (id: string): Promise<string | undefined> => {
+  const joinCall = async (id: string): Promise<string | undefined> => {
     if (activeCallSessionId.value) return activeCallSessionId.value;
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
     await getResultAsync(async () => {
       const stream = await acquireLocalStream();
-      const { callSessionId, participants } = await $trpc.roomCall.joinCallByToken.mutate({ id });
+      const { callSessionId, participants } = await $trpc.roomCall.joinCall.mutate({ id });
       subscribeToSignals(callSessionId);
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
@@ -133,6 +104,35 @@ export const useCallStore = defineStore("message/room/call", () => {
       )
       .unwrapOr(undefined);
     return joinedCallSessionId;
+  };
+
+  const joinCallByRoomId = async () => {
+    const roomId = roomStore.currentRoomId;
+    if (!roomId || activeCallSessionId.value || !currentRoomCallSessionId.value) return;
+    callRoomId.value = roomId;
+    const callSessionId = currentRoomCallSessionId.value;
+    let isJoined = false;
+    await getResultAsync(async () => {
+      const stream = await acquireLocalStream();
+      subscribeToSignals(callSessionId);
+      const { participants } = await $trpc.roomCall.joinCallByRoomId.mutate({ roomId });
+      activeCallSessionId.value = callSessionId;
+      isJoined = true;
+      setParticipants(callSessionId, participants);
+      if (sessionId.value) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, sessionId.value, stream);
+    })
+      .orElse((error) =>
+        getResultAsync(async () => {
+          console.error(error);
+          if (isJoined) await leaveCall();
+          else {
+            callRoomId.value = "";
+            activeCallSessionId.value = "";
+            await cleanupAll();
+          }
+        }),
+      )
+      .unwrapOr(undefined);
   };
 
   const leaveCall = async () => {
@@ -208,7 +208,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     isInCall,
     isMuted,
     joinCall,
-    joinCallByToken,
+    joinCallByRoomId,
     leaveCall,
     roomParticipants,
     setCurrentRoomCallSessionId,

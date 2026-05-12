@@ -6,7 +6,7 @@ import { mergeProps } from "vue";
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const inviteToken = ref<null | string>(null);
+const inviteToken = ref("");
 if (currentRoomId.value) inviteToken.value = await $trpc.room.readInviteToken.query({ roomId: currentRoomId.value });
 
 const roomName = useRoomName(currentRoomId);

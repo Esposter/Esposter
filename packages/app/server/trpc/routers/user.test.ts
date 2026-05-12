@@ -3,7 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { userRouter } from "@@/server/trpc/routers/user";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { DatabaseEntityType, UserStatus, userStatusesInMessage } from "@esposter/db-schema";
@@ -250,9 +250,9 @@ describe("user", () => {
   test("clears biography", async () => {
     expect.hasAssertions();
 
-    const getSessionPayload = await mockSessionOnce(mockContext.db);
+    const { user } = await mockSessionOnce(mockContext.db);
     await caller.updateUser({ biography });
-    replayMockSession(getSessionPayload);
+    await mockSessionOnce(mockContext.db, user);
     const updatedUser = await caller.updateUser({ biography: "" });
 
     expect(updatedUser.biography).toBe("");

@@ -67,10 +67,10 @@ Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md
 
 ### Key file map (v1 current — mesh WebRTC)
 
-- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); procedures use `callSessionId`, not `roomId`; includes `joinCallByToken` for shareable links
+- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); procedures use `callSessionId`, not `roomId`; includes `joinCall({ id })` for shareable links
 - `server/services/message/call/callParticipantMap.ts` — `Map<callSessionId, Map<sessionId, CallParticipant>>` (keyed by callSessionId, not roomId)
 - `server/services/message/call/callStartTimeMap.ts` — `Map<callSessionId, Date>` for call duration calculation
-- `server/services/message/call/getOrCreateCallSession.ts` — upserts `callSessionsInMessage` row; 3-retry loop for unique token collision handling
+- `server/services/message/call/readCallSessionId.ts` — reads call session id for a room; returns `""` if none exists
 - `app/composables/message/subscribables/useCallSubscribables.ts` — calls `readCallSession` on room entry → sets `currentRoomCallSessionId`; all subscriptions use `callSessionId`
 - `app/store/message/room/call.ts` — `activeCallSessionId` (drives tRPC ops), `currentRoomCallSessionId` (viewed room), `callRoomId` (admin action checks), `callSessionParticipantsMap: Map<callSessionId, CallParticipant[]>`
 - `app/store/message/room/webRtc.ts` — `buildPeerConnection(callSessionId, remoteId)`, `createPeerConnectionOffer(callSessionId, remoteId)`, `subscribeToSignals(callSessionId)`
@@ -87,10 +87,10 @@ Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md
 Client A (joining)                     Server (tRPC)               Client B (in room)
         |                                    |                              |
         |-- readCallSession({ roomId }) ----->|                              |
-        |<-- { id: callSessionId, token } ---|  (upserts callSessionsInMessage)
+        |<-- callSessionId (string) ---------|  (reads callSessionsInMessage)
         |   [set currentRoomCallSessionId]   |                              |
         |-- onJoinCall.subscribe(callSessionId)                             |
-        |-- joinCall({ roomId }) ------------>|                              |
+        |-- joinCallByRoomId({ roomId }) ---->|  (creates session if new)    |
         |<-- { callSessionId, participants } -|                              |
         |   [set activeCallSessionId]         |-- onJoinCall emit --------->|
         |-- sendSignal (offer) -------------->|-- onSendSignal emit ------->|
@@ -103,7 +103,7 @@ Client A (joining)                     Server (tRPC)               Client B (in 
 ```text
 Guest (any authed user)                Server (tRPC)               Room participants
         |                                    |                              |
-        |-- joinCallByToken({ token }) ------>|  (no room membership check) |
+        |-- joinCall({ id }) ---------------->|  (no room membership check) |
         |<-- { callSessionId, participants } -|                              |
         |-- subscribe/signal as normal ------>|-- onJoinCall emit --------->|
 ```
@@ -171,7 +171,7 @@ getPushSubscriptionsForMessage(db, { message, partitionKey, userId })
 | ----------------------- | ------------------------------------------------------------------------------------------ |
 | `rooms`                 | `id`, `userId` (owner), `type` (Room/DM), `categoryId`, `participantKey`                   |
 | `usersToRooms`          | `userId`, `roomId` (PK), `notificationType` (All/DM/Never), `isHidden`, `timeoutUntil`     |
-| `callSessionsInMessage` | `id` (UUID PK), `roomId` (unique FK → rooms), `token` (12-char, unique shareable code)     |
+| `callSessionsInMessage` | `id` (12-char text PK, shareable code), `roomId` (unique FK → rooms)                       |
 | `invitesInMessage`      | `id`, `roomId`, `userId`, `token` (8-char, unique invite link code)                        |
 | `roomRoles`             | `id`, `roomId`, `name`, `color`, `position`, `permissions` (bigint bitfield), `isEveryone` |
 | `usersToRoomRoles`      | `userId`, `roomId`, `roleId` (composite PK)                                                |

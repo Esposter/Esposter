@@ -12,7 +12,7 @@ import { AzureTable, MessageType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
 export const joinCallAsParticipant = async (
-  { id: callSessionId, roomId }: CallSessionInMessage,
+  { id: callSessionId, roomId }: Pick<CallSessionInMessage, "id" | "roomId">,
   participant: CallParticipant,
   sessionId: string,
   userId: string,
@@ -23,20 +23,21 @@ export const joinCallAsParticipant = async (
 
   if (isFirstJoiner) {
     callStartTimeMap.set(callSessionId, new Date());
-    await getResultAsync(async () => {
-      const [messageClient, messageAscendingClient] = await Promise.all([
-        useTableClient(AzureTable.Messages),
-        useTableClient(AzureTable.MessagesAscending),
-      ]);
-      const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-        roomId,
-        type: MessageType.Call,
-        userId,
-      });
-      messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
-    })
-      .orTee(console.error)
-      .unwrapOr(undefined);
+    if (roomId)
+      await getResultAsync(async () => {
+        const [messageClient, messageAscendingClient] = await Promise.all([
+          useTableClient(AzureTable.Messages),
+          useTableClient(AzureTable.MessagesAscending),
+        ]);
+        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+          roomId,
+          type: MessageType.Call,
+          userId,
+        });
+        messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
+      })
+        .orTee(console.error)
+        .unwrapOr(undefined);
   }
 
   return { callSessionId, participants: getCallParticipants(callSessionId) };

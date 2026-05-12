@@ -88,21 +88,21 @@ All in `server/trpc/routers/room/call.ts`. Procedures are registered as `roomCal
 
 ### v1 (current) — Mesh WebRTC + persistent call sessions
 
-| Procedure              | Type         | Auth             | Input                        | Purpose                                                                      |
-| ---------------------- | ------------ | ---------------- | ---------------------------- | ---------------------------------------------------------------------------- |
-| `readCallSession`      | query        | member           | `{ roomId }`                 | Upserts `callSessionsInMessage` row; returns `{ id, token, roomId }`         |
-| `joinCall`             | mutation     | member           | `{ roomId }`                 | Adds participant to in-memory map; returns `{ callSessionId, participants }` |
-| `joinCallByToken`      | mutation     | authed (no room) | `{ token }`                  | Join by shareable 12-char token — no room membership required                |
-| `leaveCall`            | mutation     | authed (no room) | `{ callSessionId }`          | Removes participant; on last leaver writes `MessageType.Call` system message |
-| `readCallParticipants` | query        | authed (no room) | `{ callSessionId }`          | Returns current participant list (initial load, non-participants)            |
-| `setMute`              | mutation     | authed (no room) | `{ callSessionId, isMuted }` | Syncs muted state; broadcasts `onSetMute`                                    |
-| `sendSignal`           | mutation     | authed (no room) | `{ callSessionId, payload }` | Sends WebRTC signaling payload to target participant                         |
-| `onJoinCall`           | subscription | authed (no room) | `callSessionId` (UUID)       | Fires when a participant joins                                               |
-| `onLeaveCall`          | subscription | authed (no room) | `callSessionId` (UUID)       | Fires when a participant leaves                                              |
-| `onSetMute`            | subscription | authed (no room) | `callSessionId` (UUID)       | Fires on mute toggle                                                         |
-| `onSendSignal`         | subscription | authed (no room) | `callSessionId` (UUID)       | Fires when a signal is sent to this session                                  |
+| Procedure              | Type         | Auth             | Input                        | Purpose                                                                                |
+| ---------------------- | ------------ | ---------------- | ---------------------------- | -------------------------------------------------------------------------------------- |
+| `readCallSession`      | query        | member           | `{ roomId }`                 | Reads `callSessionsInMessage` row; returns session `id` string (`""` if none exists)   |
+| `joinCallByRoomId`     | mutation     | member           | `{ roomId }`                 | Creates session if needed; adds participant; returns `{ callSessionId, participants }` |
+| `joinCall`             | mutation     | authed (no room) | `{ id }`                     | Join by shareable 12-char id — no room membership required                             |
+| `leaveCall`            | mutation     | authed (no room) | `{ callSessionId }`          | Removes participant; on last leaver writes `MessageType.Call` system message           |
+| `readCallParticipants` | query        | authed (no room) | `{ callSessionId }`          | Returns current participant list (initial load, non-participants)                      |
+| `setMute`              | mutation     | authed (no room) | `{ callSessionId, isMuted }` | Syncs muted state; broadcasts `onSetMute`                                              |
+| `sendSignal`           | mutation     | authed (no room) | `{ callSessionId, payload }` | Sends WebRTC signaling payload to target participant                                   |
+| `onJoinCall`           | subscription | authed (no room) | `callSessionId` (12-char)    | Fires when a participant joins                                                         |
+| `onLeaveCall`          | subscription | authed (no room) | `callSessionId` (12-char)    | Fires when a participant leaves                                                        |
+| `onSetMute`            | subscription | authed (no room) | `callSessionId` (12-char)    | Fires on mute toggle                                                                   |
+| `onSendSignal`         | subscription | authed (no room) | `callSessionId` (12-char)    | Fires when a signal is sent to this session                                            |
 
-`requireCallSession(db, callSessionId)` — internal helper used by subscriptions; throws NOT_FOUND if session UUID doesn't exist (guards against guessing).
+`requireCallSession(db, callSessionId)` — internal helper used by subscriptions; throws NOT_FOUND if session doesn't exist (guards against guessing).
 
 ### v2 (next) — LiveKit migration
 

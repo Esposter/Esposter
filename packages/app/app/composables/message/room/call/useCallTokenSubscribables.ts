@@ -5,13 +5,12 @@ import { useWebRtcStore } from "@/store/message/room/webRtc";
 export const useCallTokenSubscribables = async (id: string) => {
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
-  const { createCallParticipant, deleteCallParticipant, deleteSpeaker, joinCallByToken, leaveCall, setMute } =
-    callStore;
+  const { createCallParticipant, deleteCallParticipant, deleteSpeaker, joinCall, leaveCall, setMute } = callStore;
   const { isInCall } = storeToRefs(callStore);
   const webRtcStore = useWebRtcStore();
   const { cleanupPeer, createPeerConnectionOffer } = webRtcStore;
 
-  const callSessionId = await joinCallByToken(id);
+  const callSessionId = await joinCall(id);
   if (!callSessionId) return false;
 
   const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(callSessionId, {

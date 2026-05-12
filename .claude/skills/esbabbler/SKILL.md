@@ -58,29 +58,29 @@ Calls are built on top of `callSessionsInMessage` (Postgres) + ephemeral in-memo
 
 ### Key entities
 
-| Entity                                  | Role                                                                                                                                                              |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `callSessionsInMessage`                 | One persistent row per room. `id` (UUID) is the call session key. `token` (12-char alphanumeric) is the shareable join code. Created lazily on `readCallSession`. |
-| `callSessionParticipantMap` (in-memory) | `Map<callSessionId, Map<sessionId, CallParticipant>>`. Lost on server restart.                                                                                    |
-| `callStartTimeMap` (in-memory)          | `Map<callSessionId, Date>`. Tracks call start for duration calculation.                                                                                           |
+| Entity                                  | Role                                                                                                                                                      |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `callSessionsInMessage`                 | One persistent row per room. `id` (12-char alphanumeric) is both the session key and the shareable join code. Created lazily on first `joinCallByRoomId`. |
+| `callSessionParticipantMap` (in-memory) | `Map<callSessionId, Map<sessionId, CallParticipant>>`. Lost on server restart.                                                                            |
+| `callStartTimeMap` (in-memory)          | `Map<callSessionId, Date>`. Tracks call start for duration calculation.                                                                                   |
 
 ### Token vs code terminology
 
 All short random codes in this project are called **tokens**:
 
 - `invitesInMessage.token` (length 8) — invite link token
-- `callSessionsInMessage.token` (length 12) — shareable call/meeting link token
+- `callSessionsInMessage.id` (length 12) — the `id` IS the shareable call/meeting link token (no separate `token` field)
 - `createToken(length)` from `#shared/util/math/random/createToken` — the single generator (uses `crypto.getRandomValues`)
 
 Never use `code`, `createCode`, or `CODE_LENGTH` — those are the old names and have been deleted.
 
 ### Call session lifecycle
 
-1. **Room entry**: `readCallSession({ roomId })` → `getOrCreateCallSession` → upserts the session row, returns `{ id, token, roomId }`. Called by `useCallSubscribables` whenever the viewed room changes.
-2. **Join via room**: `joinCall({ roomId })` → room membership required → reuses the existing session → returns `{ callSessionId, participants }`.
-3. **Join via token**: `joinCallByToken({ token })` → auth only (no room membership) → finds session by token → same join flow.
+1. **Room entry**: `readCallSession({ roomId })` → reads `callSessionsInMessage`, returns `id` string (`""` if no session yet). Called by `useCallSubscribables` whenever the viewed room changes; subscriptions are skipped when `""`.
+2. **Join via room**: `joinCallByRoomId({ roomId })` → room membership required → creates session row if none exists (3-retry upsert inline) → returns `{ callSessionId, participants }`.
+3. **Join via id**: `joinCall({ id })` → auth only (no room membership) → finds session by id → same join flow.
 4. **Subscriptions** (`onJoinCall`, `onLeaveCall`, `onSetMute`, `onSendSignal`) take `callSessionId` (not `roomId`). Auth only — caller must have obtained the `callSessionId` through an authenticated call.
-5. **Leave**: `leaveCall({ callSessionId })`. On last leaver: writes call duration as `MessageType.Call` system message to the room.
+5. **Leave**: `leaveCall({ callSessionId })`. When the last participant leaves: writes call duration as `MessageType.Call` system message to the room.
 
 ### Client-side call stores
 
@@ -95,7 +95,7 @@ Never use `code`, `createCode`, or `CODE_LENGTH` — those are the old names and
 
 ### Shareable call link
 
-The call token gives a `/call/[token]` link that allows any authenticated user to join a call without being a room member. The page calls `joinCallByToken({ token })`.
+`/call/[id]` allows any authenticated user to join a call without being a room member. The page calls `joinCall({ id })`.
 
 ### Admin actions and calls
 

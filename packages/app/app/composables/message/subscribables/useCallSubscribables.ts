@@ -21,7 +21,7 @@ export const useCallSubscribables = async () => {
     createCallParticipant,
     deleteCallParticipant,
     deleteSpeaker,
-    joinCall,
+    joinCallByRoomId,
     setCurrentRoomCallSessionId,
     setMute,
     setParticipants,
@@ -35,8 +35,9 @@ export const useCallSubscribables = async () => {
     async (roomId) => {
       if (!roomId) return undefined;
 
-      const { id: callSessionId } = await $trpc.roomCall.readCallSession.query({ roomId });
+      const callSessionId = await $trpc.roomCall.readCallSessionId.query({ roomId });
       setCurrentRoomCallSessionId(callSessionId);
+      if (!callSessionId) return undefined;
 
       const participants = await $trpc.roomCall.readCallParticipants.query({ callSessionId });
       setParticipants(callSessionId, participants);
@@ -44,7 +45,7 @@ export const useCallSubscribables = async () => {
       if (isInCall.value) {
         const sessionId = session.value?.session.id;
         if (sessionId) deleteCallParticipant(callSessionId, sessionId);
-        await joinCall();
+        await joinCallByRoomId();
       }
 
       const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(callSessionId, {

@@ -10,7 +10,7 @@ import { createMockContext, getMockSession, mockSessionOnce, replayMockSession }
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { callRouter } from "@@/server/trpc/routers/room/call";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { callSessionsInMessage, roomsInMessage } from "@esposter/db-schema";
+import { callSessionsInMessage, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -37,7 +37,10 @@ describe("call", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { id: callSessionId } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
+    const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
+    replayMockSession(sessionPayload);
+    await roomCallCaller.leaveCall({ callSessionId });
     const participants = await roomCallCaller.readCallParticipants({ callSessionId });
 
     expect(participants).toStrictEqual([]);
@@ -47,15 +50,15 @@ describe("call", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { id: expectedCallSessionId } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
     const { session, user } = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const { callSessionId, participants } = await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { callSessionId, participants } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
 
     expect(participants).toHaveLength(1);
     expect(takeOne(participants).id).toBe(session.id);
     expect(takeOne(participants).userId).toBe(user.id);
     expect(takeOne(participants).isMuted).toBe(false);
-    expect(callSessionId).toStrictEqual(expectedCallSessionId);
+    const readSessionId = await roomCallCaller.readCallSessionId({ roomId: newRoom.id });
+    expect(callSessionId).toStrictEqual(readSessionId);
   });
 
   test("joining call twice keeps participant list at 1", async () => {
@@ -63,9 +66,9 @@ describe("call", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    await roomCallCaller.joinCall({ roomId: newRoom.id });
+    await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     replayMockSession(sessionPayload);
-    const { participants } = await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { participants } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
 
     expect(participants).toHaveLength(1);
     expect(takeOne(participants).id).toBe(sessionPayload.session.id);
@@ -75,12 +78,11 @@ describe("call", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { id: callSessionId } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
     const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     const emitSpy = vi.spyOn(callEventEmitter, "emit");
     replayMockSession(sessionPayload);
-    await roomCallCaller.joinCall({ roomId: newRoom.id });
+    await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
 
     expect(emitSpy).toHaveBeenCalledWith("joinCall", expect.objectContaining({ callSessionId }));
   });
@@ -90,7 +92,7 @@ describe("call", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const { session } = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const { callSessionId } = await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     const participants = await roomCallCaller.readCallParticipants({ callSessionId });
 
     expect(participants).toHaveLength(1);
@@ -102,7 +104,7 @@ describe("call", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const { callSessionId } = await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     replayMockSession(sessionPayload);
     await roomCallCaller.leaveCall({ callSessionId });
     const participants = await roomCallCaller.readCallParticipants({ callSessionId });
@@ -110,15 +112,16 @@ describe("call", () => {
     expect(participants).toStrictEqual([]);
   });
 
-  test("does not emit leave event when participant was not in call", async () => {
+  test("fails leaveCall if caller is not in call", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { id: callSessionId } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
-    const emitSpy = vi.spyOn(callEventEmitter, "emit");
-    await roomCallCaller.leaveCall({ callSessionId });
+    await mockSessionOnce(mockContext.db, getMockSession().user);
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
 
-    expect(emitSpy).not.toHaveBeenCalled();
+    await expect(roomCallCaller.leaveCall({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, getMockSession().session.id).message}]`,
+    );
   });
 
   test("sets mute", async () => {
@@ -126,10 +129,9 @@ describe("call", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const { callSessionId } = await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     replayMockSession(sessionPayload);
     await roomCallCaller.setMute({ callSessionId, isMuted: true });
-    replayMockSession(sessionPayload);
     const participants = await roomCallCaller.readCallParticipants({ callSessionId });
 
     expect(takeOne(participants).isMuted).toBe(true);
@@ -140,7 +142,8 @@ describe("call", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteToken = await roomCaller.createInvite({ roomId: newRoom.id });
-    const { id: callSessionId } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
+    await mockSessionOnce(mockContext.db, getMockSession().user);
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     const onJoinCall = await roomCallCaller.onJoinCall(callSessionId);
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteToken);
@@ -148,7 +151,7 @@ describe("call", () => {
     const data = await withAsyncIterator(
       () => onJoinCall,
       async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), roomCallCaller.joinCall({ roomId: newRoom.id })]);
+        const [result] = await Promise.all([iterator.next(), roomCallCaller.joinCallByRoomId({ roomId: newRoom.id })]);
         return result;
       },
     );
@@ -168,7 +171,7 @@ describe("call", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteToken);
     const joiningSessionPayload = await mockSessionOnce(mockContext.db, user);
-    const { callSessionId } = await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     const onLeaveCall = await roomCallCaller.onLeaveCall(callSessionId);
     replayMockSession(joiningSessionPayload);
     const data = await withAsyncIterator(
@@ -189,7 +192,7 @@ describe("call", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const { callSessionId } = await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     const onSetMute = await roomCallCaller.onSetMute(callSessionId);
     replayMockSession(sessionPayload);
     const data = await withAsyncIterator(
@@ -211,7 +214,7 @@ describe("call", () => {
     const newRoom = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db);
 
-    await expect(roomCallCaller.joinCall({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(roomCallCaller.joinCallByRoomId({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });
@@ -220,7 +223,8 @@ describe("call", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { id: callSessionId } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
+    await mockSessionOnce(mockContext.db, getMockSession().user);
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
 
     await expect(roomCallCaller.setMute({ callSessionId, isMuted: true })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new ForbiddenError("Must join call first").message}]`,
@@ -233,11 +237,11 @@ describe("call", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteToken = await roomCaller.createInvite({ roomId: newRoom.id });
     const defaultSessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    await roomCallCaller.joinCall({ roomId: newRoom.id });
+    await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteToken);
     const { session: userBSession } = await mockSessionOnce(mockContext.db, user);
-    const { participants } = await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { participants } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
 
     expect(participants).toHaveLength(2);
     expect(participants.some(({ id }) => id === defaultSessionPayload.session.id)).toBe(true);
@@ -250,13 +254,13 @@ describe("call", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteToken = await roomCaller.createInvite({ roomId: newRoom.id });
     const defaultSessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const { callSessionId } = await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     replayMockSession(defaultSessionPayload);
     const onSendSignal = await roomCallCaller.onSendSignal(callSessionId);
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteToken);
     const userBSessionPayload = await mockSessionOnce(mockContext.db, user);
-    await roomCallCaller.joinCall({ roomId: newRoom.id });
+    await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     replayMockSession(userBSessionPayload);
     const payload = { data: "{}", targetId: defaultSessionPayload.session.id, type: CallSignalType.Offer };
     const data = await withAsyncIterator(
@@ -277,7 +281,8 @@ describe("call", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { id: callSessionId } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
+    await mockSessionOnce(mockContext.db, getMockSession().user);
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     const sessionId = getMockSession().session.id;
     const payload = { data: "{}", targetId: sessionId, type: CallSignalType.Offer };
 
@@ -291,7 +296,7 @@ describe("call", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const { callSessionId } = await roomCallCaller.joinCall({ roomId: newRoom.id });
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
     replayMockSession(sessionPayload);
     const targetId = crypto.randomUUID();
     const payload = { data: "{}", targetId, type: CallSignalType.Offer };
@@ -301,13 +306,16 @@ describe("call", () => {
     );
   });
 
-  test("joins call via token", async () => {
+  test("joins call by id", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { id: expectedCallSessionId } = await roomCallCaller.readCallSession({ roomId: newRoom.id });
+    const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
+    const { callSessionId: expectedCallSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
+    replayMockSession(sessionPayload);
+    await roomCallCaller.leaveCall({ callSessionId: expectedCallSessionId });
     await mockSessionOnce(mockContext.db);
-    const { callSessionId, participants } = await roomCallCaller.joinCallByToken({ id: expectedCallSessionId });
+    const { callSessionId, participants } = await roomCallCaller.joinCall({ id: expectedCallSessionId });
 
     expect(participants).toHaveLength(1);
     expect(callSessionId).toBe(expectedCallSessionId);
