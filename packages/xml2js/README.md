@@ -9,7 +9,7 @@ Inspired by [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js).
 
 A complete rewrite from CoffeeScript to TypeScript that removes unnecessary dependencies like `events` — resolving issues such as [`this.removeAllListeners is not a function`](https://github.com/Leonidas-from-XIV/node-xml2js/issues/697). Retains all the options and behaviour of the original `xml2js`. Use `parseStringPromise` as the primary parsing API.
 
-### Table of Contents
+## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)

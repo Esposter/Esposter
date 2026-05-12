@@ -4,7 +4,7 @@
 
 Database connection utilities for Esposter — server environment only. Provides composables for Drizzle ORM (PostgreSQL), Azure Table Storage, Azure Blob Storage, Azure AI Search, and Azure WebPubSub.
 
-### Table of Contents
+## Table of Contents
 
 - 📖 [Documentation](#documentation)
 - ⚖️ [License](#license)

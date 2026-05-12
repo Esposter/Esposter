@@ -4,10 +4,11 @@
 [![Repository Score][badge-score]][url-score]
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-### Table of Contents
+## Table of Contents
 
 - 📖 [Documentation](#documentation)
 - 🏠 [Local Development](#local-development)
+- 📦 [Packages](#packages)
 - 🤝 [Community](#community)
 - ⚖️ [License](#license)
 

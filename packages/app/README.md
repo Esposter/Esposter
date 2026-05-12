@@ -4,7 +4,7 @@
 
 The main Esposter web application — a Nuxt 4 full-stack app serving the frontend, tRPC API, and server routes.
 
-### Table of Contents
+## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
@@ -87,7 +87,7 @@ pnpm coverage         # vitest run --coverage
 
 ### App Structure
 
-```
+```text
 packages/app/
 ├── app/
 │   ├── components/       # Vue components

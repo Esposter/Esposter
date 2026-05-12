@@ -4,7 +4,7 @@
 
 Serverless Azure Functions backend for Esposter. Handles asynchronous workloads triggered by Azure EventGrid events — push notifications, webhook delivery, and friend request notifications.
 
-### Table of Contents
+## Table of Contents
 
 - 📖 [Documentation](#documentation)
 - ⚖️ [License](#license)
@@ -28,7 +28,7 @@ Functions are triggered by **Azure EventGrid** events published by the main app 
 
 ### Flow
 
-```
+```text
 App (createMessage) → Azure EventGrid → processPushNotification
                                       → processWebhook
                                       → pushWebhook
