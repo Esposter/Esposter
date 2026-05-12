@@ -69,7 +69,6 @@ import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomInMessageSchema.shape.id.optional();
-export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
 const createSystemRoomMessage = async (
   roomId: string,
@@ -93,7 +92,6 @@ const createSystemRoomMessage = async (
 };
 
 const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });
-export type ReadMutualRoomsInput = z.infer<typeof readMutualRoomsInputSchema>;
 
 const readRoomsInputSchema = z
   .object({
@@ -104,19 +102,13 @@ const readRoomsInputSchema = z
     filter: selectRoomInMessageSchema.pick({ name: true }).optional(),
   })
   .prefault({});
-export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
-
 const onUpdateRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnUpdateRoomInput = z.infer<typeof onUpdateRoomInputSchema>;
 
 const onDeleteRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnDeleteRoomInput = z.infer<typeof onDeleteRoomInputSchema>;
 
 const onJoinRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnJoinRoomInput = z.infer<typeof onJoinRoomInputSchema>;
 
 const onLeaveRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnLeaveRoomInput = z.infer<typeof onLeaveRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
   ...roomIdSchema.shape,
@@ -125,25 +117,18 @@ const readMembersInputSchema = z.object({
   ]).shape,
   filter: selectUserSchema.pick({ name: true }).optional(),
 });
-export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
-
 const readMembersByIdsInputSchema = z.object({
   ...roomIdSchema.shape,
   ids: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
-export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 
 const countMembersInputSchema = roomIdSchema;
-export type CountMembersInput = z.infer<typeof countMembersInputSchema>;
 
 const readInviteInputSchema = selectInviteInMessageSchema.shape.token;
-export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
 
 const readInviteTokenInputSchema = roomIdSchema;
-export type ReadInviteTokenInput = z.infer<typeof readInviteTokenInputSchema>;
 
 const createInviteInputSchema = roomIdSchema;
-export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 
 export const roomRouter = router({
   countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(

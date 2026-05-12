@@ -26,13 +26,11 @@ import { and, count, eq, getColumns, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 const readWebhooksInputSchema = roomIdSchema;
-export type ReadWebhooksInput = z.infer<typeof readWebhooksInputSchema>;
 
 const readAppUsersByIdsInputSchema = z.object({
   ...roomIdSchema.shape,
   ids: selectAppUserInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
-export type ReadAppUsersByIdsInput = z.infer<typeof readAppUsersByIdsInputSchema>;
 
 export const webhookRouter = router({
   createWebhook: getPermissionsProcedure(

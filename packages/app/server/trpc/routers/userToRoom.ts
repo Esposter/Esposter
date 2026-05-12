@@ -14,15 +14,12 @@ const readNicknamesInputSchema = z.object({
   roomId: selectRoomInMessageSchema.shape.id,
   userIds: z.string().array().min(1).max(MAX_READ_LIMIT),
 });
-export type ReadNicknamesInput = z.infer<typeof readNicknamesInputSchema>;
 
 const readMyUsersToRoomsInputSchema = z.object({
   roomIds: selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
-export type ReadMyUsersToRoomsInput = z.infer<typeof readMyUsersToRoomsInputSchema>;
 
 const onUpdateUserToRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnUpdateUserToRoomInput = z.infer<typeof onUpdateUserToRoomInputSchema>;
 
 export const userToRoomRouter = router({
   onUpdateUserToRoom: standardAuthedProcedure.input(onUpdateUserToRoomInputSchema).subscription(async function* ({

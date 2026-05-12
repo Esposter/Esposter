@@ -47,44 +47,35 @@ import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const readSurveyInputSchema = z.object({ id: selectSurveySchema.shape.id });
-export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
 
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).prefault({});
-export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
 
 const readSurveyModelInputSchema = selectSurveySchema.shape.id;
-export type readSurveyModelInput = z.infer<typeof readSurveyModelInputSchema>;
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   surveyId: selectSurveySchema.shape.id,
 });
-export type GenerateUploadFileSasEntitiesInput = z.infer<typeof generateUploadFileSasEntitiesInputSchema>;
 
 const generateDownloadFileSasUrlsInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   surveyId: selectSurveySchema.shape.id,
 });
-export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
 
 const deleteFileInputSchema = z.object({
   blobPath: z.string().min(1).max(MAX_READ_LIMIT),
   surveyId: selectSurveySchema.shape.id,
 });
-export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
-export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
 
 const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({ partitionKey: true, rowKey: true });
-export type ReadSurveyResponseInput = z.infer<typeof readSurveyResponseInputSchema>;
 
 const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   model: true,
   partitionKey: true,
   rowKey: true,
 });
-export type CreateSurveyResponseInput = z.infer<typeof createSurveyResponseInputSchema>;
 
 const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   model: true,
@@ -92,7 +83,6 @@ const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   partitionKey: true,
   rowKey: true,
 });
-export type UpdateSurveyResponseInput = z.infer<typeof updateSurveyResponseInputSchema>;
 
 export const surveyRouter = router({
   count: standardAuthedProcedure.query(

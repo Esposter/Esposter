@@ -6,10 +6,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { selectUserSchema, UserAchievementRelations } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
-export type ReadUserAchievementsInput = z.infer<typeof readUserAchievementsInputSchema>;
 
 export const achievementRouter = router({
   onUpdateAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {

@@ -1,7 +1,6 @@
 import type { UserStatusInMessage } from "@esposter/db-schema";
 import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
-import type { z } from "zod";
 
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
@@ -29,16 +28,13 @@ import { eq, inArray } from "drizzle-orm";
 import { Readable } from "node:stream";
 
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
 
 const upsertStatusInputSchema = refineAtLeastOne(
   selectUserStatusInMessageSchema.pick({ message: true, status: true }).partial(),
   ["message", "status"],
 );
-export type UpsertStatusInput = z.infer<typeof upsertStatusInputSchema>;
 
 const onUpsertStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnUpsertStatusInput = z.infer<typeof onUpsertStatusInputSchema>;
 
 export const userRouter = router({
   connect: standardAuthedProcedure.mutation(async ({ ctx }) => {

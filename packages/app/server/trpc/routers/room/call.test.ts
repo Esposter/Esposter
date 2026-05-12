@@ -54,7 +54,7 @@ describe("call", () => {
     expect(takeOne(participants).id).toBe(session.id);
     expect(takeOne(participants).userId).toBe(user.id);
     expect(takeOne(participants).isMuted).toBe(false);
-    expect(callSessionId).toBeTruthy();
+    expect(callSessionId).toBe(true);
   });
 
   test("joining call twice keeps participant list at 1", async () => {
@@ -309,7 +309,7 @@ describe("call", () => {
     const { callSessionId, participants } = await roomCallCaller.joinCallByToken({ token });
 
     expect(participants).toHaveLength(1);
-    expect(callSessionId).toBeTruthy();
+    expect(callSessionId).toBe(true);
     expect(takeOne(participants).isMuted).toBe(false);
   });
 });

@@ -24,8 +24,6 @@ const readSearchHistoriesInputSchema = z.object({
   ]).shape,
   roomId: selectSearchHistoryInMessageSchema.shape.roomId,
 });
-export type ReadSearchHistoriesInput = z.infer<typeof readSearchHistoriesInputSchema>;
-
 export const searchHistoryRouter = router({
   createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistoryInMessage>(
     async ({ ctx, input }) => {
