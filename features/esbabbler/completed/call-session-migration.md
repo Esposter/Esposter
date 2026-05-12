@@ -38,15 +38,15 @@ export const createToken = (length: number): string => {
 
 ### Procedure naming (`server/trpc/routers/room/call.ts`)
 
-| Procedure          | Auth             | Input                        | Notes                                                                                 |
-| ------------------ | ---------------- | ---------------------------- | ------------------------------------------------------------------------------------- |
-| `readCallSession`  | member           | `{ roomId }`                 | Reads session row; returns `id` string (`""` if none exists)                          |
-| `joinCallByRoomId` | member           | `{ roomId }`                 | Creates session if needed (3-retry inline); returns `{ callSessionId, participants }` |
-| `joinCall`         | authed (no room) | `{ id }`                     | Joins by session id; no room membership needed                                        |
-| `leaveCall`        | authed (no room) | `{ callSessionId }`          |                                                                                       |
-| `setMute`          | authed (no room) | `{ callSessionId, isMuted }` |                                                                                       |
-| `sendSignal`       | authed (no room) | `{ callSessionId, payload }` |                                                                                       |
-| `onJoinCall` etc.  | authed (no room) | `callSessionId` (12-char)    | All subscriptions take callSessionId, not roomId                                      |
+| Procedure           | Auth             | Input                        | Notes                                                                                 |
+| ------------------- | ---------------- | ---------------------------- | ------------------------------------------------------------------------------------- |
+| `readCallSessionId` | member           | `{ roomId }`                 | Reads session row; returns `id` string (`""` if none exists)                          |
+| `joinCallByRoomId`  | member           | `{ roomId }`                 | Creates session if needed (3-retry inline); returns `{ callSessionId, participants }` |
+| `joinCall`          | authed (no room) | `{ id }`                     | Joins by session id; no room membership needed                                        |
+| `leaveCall`         | authed (no room) | `{ callSessionId }`          |                                                                                       |
+| `setMute`           | authed (no room) | `{ callSessionId, isMuted }` |                                                                                       |
+| `sendSignal`        | authed (no room) | `{ callSessionId, payload }` |                                                                                       |
+| `onJoinCall` etc.   | authed (no room) | `callSessionId` (12-char)    | All subscriptions take callSessionId, not roomId                                      |
 
 `requireCallSession(db, callSessionId)` — verifies session exists before allowing subscription.
 
@@ -70,7 +70,7 @@ Store methods:
 
 ### `useCallSubscribables` flow
 
-1. Room entry → `readCallSession({ roomId })` → returns `id` string
+1. Room entry → `readCallSessionId({ roomId })` → returns `id` string
 2. `setCurrentRoomCallSessionId(callSessionId)` — if `""`, return early (no session yet)
 3. `readCallParticipants({ callSessionId })` → `setParticipants`
 4. If already in call: re-join via `joinCallByRoomId()` (uses `currentRoomCallSessionId` already set)

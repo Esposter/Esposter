@@ -76,11 +76,11 @@ Never use `code`, `createCode`, or `CODE_LENGTH` — those are the old names and
 
 ### Call session lifecycle
 
-1. **Room entry**: `readCallSession({ roomId })` → reads `callSessionsInMessage`, returns `id` string (`""` if no session yet). Called by `useCallSubscribables` whenever the viewed room changes; subscriptions are skipped when `""`.
+1. **Room entry**: `readCallSessionId({ roomId })` → reads `callSessionsInMessage`, returns `id` string (`""` if no session yet). Called by `useCallSubscribables` whenever the viewed room changes; subscriptions are skipped when `""`.
 2. **Join via room**: `joinCallByRoomId({ roomId })` → room membership required → creates session row if none exists (3-retry upsert inline) → returns `{ callSessionId, participants }`.
 3. **Join via id**: `joinCall({ id })` → auth only (no room membership) → finds session by id → same join flow.
 4. **Subscriptions** (`onJoinCall`, `onLeaveCall`, `onSetMute`, `onSendSignal`) take `callSessionId` (not `roomId`). Auth only — caller must have obtained the `callSessionId` through an authenticated call.
-5. **Leave**: `leaveCall({ callSessionId })`. When the last participant leaves: writes call duration as `MessageType.Call` system message to the room.
+5. **Leave**: `leaveCall({ callSessionId })`. Throws `NOT_FOUND` if caller is not a participant. When the last participant leaves: writes call duration as `MessageType.Call` system message to the room.
 
 ### Client-side call stores
 

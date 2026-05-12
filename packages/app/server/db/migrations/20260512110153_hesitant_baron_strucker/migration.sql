@@ -3,7 +3,7 @@ CREATE TABLE "message"."call_sessions" (
 	"deletedAt" timestamp,
 	"updatedAt" timestamp NOT NULL,
 	"id" text PRIMARY KEY,
-	"roomId" uuid,
+	"roomId" uuid UNIQUE,
 	CONSTRAINT "call_sessions_id_length_check" CHECK (LENGTH("id") = 12)
 );
 --> statement-breakpoint

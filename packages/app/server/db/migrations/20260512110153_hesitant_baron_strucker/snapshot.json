@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "3d502d02-3c08-4fbf-95ae-74d5514f6884",
+  "id": "64307e5e-a1c4-4794-bc4f-39cc2c57547a",
   "prevIds": [
     "e525e63a-a3d5-40bc-b879-6ed6a9e7b218"
   ],
@@ -4270,6 +4270,17 @@
       "name": "achievements_name_unique",
       "schema": "public",
       "table": "achievements",
+      "entityType": "uniques"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "roomId"
+      ],
+      "nullsNotDistinct": false,
+      "name": "call_sessions_roomId_key",
+      "schema": "message",
+      "table": "call_sessions",
       "entityType": "uniques"
     },
     {

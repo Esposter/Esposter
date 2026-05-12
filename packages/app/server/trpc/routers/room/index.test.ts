@@ -306,13 +306,13 @@ describe("room", () => {
     expect(readInviteToken).toBe(newInviteToken);
   });
 
-  test("read invite token with no token to be null", async () => {
+  test("read invite token with no token to be empty", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const readInviteToken = await roomCaller.readInviteToken({ roomId: newRoom.id });
 
-    expect(readInviteToken).toBeNull();
+    expect(readInviteToken).toBe("");
   });
 
   test("creates invite to be cached", async () => {

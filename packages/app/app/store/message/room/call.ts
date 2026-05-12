@@ -108,14 +108,14 @@ export const useCallStore = defineStore("message/room/call", () => {
 
   const joinCallByRoomId = async () => {
     const roomId = roomStore.currentRoomId;
-    if (!roomId || activeCallSessionId.value || !currentRoomCallSessionId.value) return;
+    if (!roomId || activeCallSessionId.value) return;
     callRoomId.value = roomId;
-    const callSessionId = currentRoomCallSessionId.value;
     let isJoined = false;
     await getResultAsync(async () => {
       const stream = await acquireLocalStream();
+      const { callSessionId, participants } = await $trpc.roomCall.joinCallByRoomId.mutate({ roomId });
+      currentRoomCallSessionId.value = callSessionId;
       subscribeToSignals(callSessionId);
-      const { participants } = await $trpc.roomCall.joinCallByRoomId.mutate({ roomId });
       activeCallSessionId.value = callSessionId;
       isJoined = true;
       setParticipants(callSessionId, participants);

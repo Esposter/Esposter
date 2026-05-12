@@ -11,7 +11,9 @@ export const callSessionsInMessage = pgTable(
   "call_sessions",
   {
     id: text().primaryKey(),
-    roomId: uuid().references(() => roomsInMessage.id, { onDelete: "cascade" }),
+    roomId: uuid()
+      .unique()
+      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
   },
   {
     extraConfig: ({ id }) => [
