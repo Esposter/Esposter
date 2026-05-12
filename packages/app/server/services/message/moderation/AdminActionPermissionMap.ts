@@ -5,7 +5,7 @@ export const AdminActionPermissionMap = {
   [AdminActionType.ForceMute]: RoomPermission.MuteMembers,
   [AdminActionType.ForceUnmute]: RoomPermission.MuteMembers,
   [AdminActionType.KickFromRoom]: RoomPermission.KickMembers,
-  [AdminActionType.KickFromVoice]: RoomPermission.MoveMembers,
+  [AdminActionType.KickFromCall]: RoomPermission.MoveMembers,
   [AdminActionType.SoftBan]: RoomPermission.BanMembers,
   [AdminActionType.TimeoutUser]: RoomPermission.KickMembers,
   [AdminActionType.Warn]: RoomPermission.ManageMessages,

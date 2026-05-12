@@ -145,7 +145,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   AdminActionHookMap[AdminActionType.KickFromRoom].push(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();
   });
-  AdminActionHookMap[AdminActionType.KickFromVoice].push(async () => {
+  AdminActionHookMap[AdminActionType.KickFromCall].push(async () => {
     await leaveCall();
   });
   AdminActionHookMap[AdminActionType.TimeoutUser].push(async (roomId) => {

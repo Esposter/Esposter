@@ -6,7 +6,7 @@ import { CallSignalType } from "#shared/models/room/call/CallSignalType";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/call/constants";
 import { useCallStore } from "@/store/message/room/call";
 import { exhaustiveGuard, getResultAsync, jsonDateParse, noop } from "@esposter/shared";
-// Module-level WebRTC state — only one voice call at a time.
+// Module-level WebRTC state — only one call at a time.
 let localStream: MediaStream | null = null;
 let isRemoteAudioMuted = false;
 const peerConnections = new Map<string, RTCPeerConnection>();

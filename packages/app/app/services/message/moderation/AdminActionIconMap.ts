@@ -5,7 +5,7 @@ export const AdminActionIconMap = {
   [AdminActionType.ForceMute]: "mdi-microphone-off",
   [AdminActionType.ForceUnmute]: "mdi-microphone",
   [AdminActionType.KickFromRoom]: "mdi-account-remove",
-  [AdminActionType.KickFromVoice]: "mdi-headset-off",
+  [AdminActionType.KickFromCall]: "mdi-headset-off",
   [AdminActionType.SoftBan]: "mdi-account-arrow-left",
   [AdminActionType.TimeoutUser]: "mdi-clock-alert-outline",
   [AdminActionType.Warn]: "mdi-alert-circle-outline",

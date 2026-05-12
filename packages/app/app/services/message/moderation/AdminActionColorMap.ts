@@ -5,7 +5,7 @@ export const AdminActionColorMap = {
   [AdminActionType.ForceMute]: "warning",
   [AdminActionType.ForceUnmute]: "success",
   [AdminActionType.KickFromRoom]: "error",
-  [AdminActionType.KickFromVoice]: "warning",
+  [AdminActionType.KickFromCall]: "warning",
   [AdminActionType.SoftBan]: "error",
   [AdminActionType.TimeoutUser]: "warning",
   [AdminActionType.Warn]: "warning",

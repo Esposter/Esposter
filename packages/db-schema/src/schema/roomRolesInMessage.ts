@@ -20,8 +20,8 @@ export const RoomPermission = {
   // Moderation
   KickMembers: 1n << 7n, // 128  — remove a member from room
   BanMembers: 1n << 8n, // 256  — permanent ban
-  MuteMembers: 1n << 9n, // 512  — force-mute/unmute in voice
-  MoveMembers: 1n << 10n, // 1024 — kick from voice channel
+  MuteMembers: 1n << 9n, // 512  — force-mute/unmute in call
+  MoveMembers: 1n << 10n, // 1024 — kick from call
   ManageNicknames: 1n << 11n, // 2048 — set per-room nicknames for other members
   // Advanced
   ManageWebhooks: 1n << 12n, // 4096 — create/edit/delete webhooks

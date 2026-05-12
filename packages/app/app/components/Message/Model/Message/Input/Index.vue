@@ -103,7 +103,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         <RichTextEditorCustomUploadFileButton @upload-file="uploadFiles" />
       </template>
       <template #append-footer="{ editor }">
-        <RichTextEditorCustomVoiceRecorderButton @upload-file="uploadFiles" />
+        <RichTextEditorCustomAudioRecorderButton @upload-file="uploadFiles" />
         <MessageModelMessageInputSendMessageButton
           :disabled="!validateInput(editor)"
           @click="

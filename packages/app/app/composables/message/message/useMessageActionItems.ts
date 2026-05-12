@@ -126,7 +126,7 @@ export const useMessageActionItems = (
         return [pinMessageItem.value, copyMessageLinkItem];
       case MessageType.System:
         return [copyMessageLinkItem];
-      case MessageType.VoiceCall:
+      case MessageType.Call:
         return [copyMessageLinkItem];
       case MessageType.Webhook:
         return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];

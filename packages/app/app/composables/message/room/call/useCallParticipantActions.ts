@@ -58,7 +58,7 @@ export const useCallParticipantActions = () => {
           await $trpc.moderation.executeAdminAction.mutate({
             roomId,
             targetUserId: userId,
-            type: AdminActionType.KickFromVoice,
+            type: AdminActionType.KickFromCall,
           });
         }),
         title: "Kick from Call",

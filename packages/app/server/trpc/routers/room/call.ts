@@ -52,7 +52,7 @@ export const callRouter = router({
             getResultAsync(() =>
               createMessage(messageClient, messageAscendingClient, {
                 roomId,
-                type: MessageType.VoiceCall,
+                type: MessageType.Call,
                 userId: user.id,
               }),
             ),
@@ -85,7 +85,7 @@ export const callRouter = router({
             createMessage(messageClient, messageAscendingClient, {
               message: String(callDurationSeconds),
               roomId,
-              type: MessageType.VoiceCall,
+              type: MessageType.Call,
               userId: user.id,
             }),
           ),

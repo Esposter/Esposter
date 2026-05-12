@@ -162,7 +162,7 @@ describe("moderation", () => {
       ).resolves.toBeUndefined();
     });
 
-    test(`${AdminActionType.KickFromVoice}: owner kicks member from the call — succeeds with no error`, async () => {
+    test(`${AdminActionType.KickFromCall}: owner kicks member from the call — succeeds with no error`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -171,7 +171,7 @@ describe("moderation", () => {
         moderationCaller.executeAdminAction({
           roomId,
           targetUserId: member.id,
-          type: AdminActionType.KickFromVoice,
+          type: AdminActionType.KickFromCall,
         }),
       ).resolves.toBeUndefined();
     });
@@ -347,7 +347,7 @@ describe("moderation", () => {
             moderationCaller.executeAdminAction({
               roomId,
               targetUserId: member.id,
-              type: AdminActionType.KickFromVoice,
+              type: AdminActionType.KickFromCall,
             }),
           ]);
           return result;
@@ -356,7 +356,7 @@ describe("moderation", () => {
 
       assert(!data.done);
 
-      expect(data.value.type).toBe(AdminActionType.KickFromVoice);
+      expect(data.value.type).toBe(AdminActionType.KickFromCall);
       expect(data.value.durationMs).toBeUndefined();
     });
   });
