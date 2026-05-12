@@ -33,7 +33,6 @@ import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 const trpcRouterWithoutAchievements = router({
   app: appRouter,
   block: blockRouter,
-  call: callRouter,
   clicker: clickerRouter,
   dashboard: dashboardRouter,
   directMessage: directMessageRouter,
@@ -50,6 +49,7 @@ const trpcRouterWithoutAchievements = router({
   pushSubscription: pushSubscriptionRouter,
   role: roleRouter,
   room: roomRouter,
+  roomCall: callRouter,
   roomCategory: roomCategoryRouter,
   roomFilter: roomFilterRouter,
   searchHistory: searchHistoryRouter,

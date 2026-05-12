@@ -87,7 +87,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
 
     peerConnection.onicecandidate = getSynchronizedFunction(async ({ candidate }) => {
       if (!candidate) return;
-      await $trpc.call.sendSignal.mutate({
+      await $trpc.roomCall.sendSignal.mutate({
         payload: { data: JSON.stringify(candidate.toJSON()), targetId: remoteId, type: CallSignalType.Candidate },
         roomId,
       });
@@ -100,7 +100,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
     const peerConnection = buildPeerConnection(roomId, remoteId);
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
-    await $trpc.call.sendSignal.mutate({
+    await $trpc.roomCall.sendSignal.mutate({
       payload: { data: JSON.stringify(offer), targetId: remoteId, type: CallSignalType.Offer },
       roomId,
     });
@@ -144,7 +144,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
             await flushIceCandidates(senderId);
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(answer);
-            await $trpc.call.sendSignal.mutate({
+            await $trpc.roomCall.sendSignal.mutate({
               payload: { data: JSON.stringify(answer), targetId: senderId, type: CallSignalType.Answer },
               roomId,
             });
@@ -174,7 +174,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
 
   const subscribeToSignals = (roomId: string) => {
     unsubscribeFromSignals();
-    signalUnsubscribable = $trpc.call.onSendSignal.subscribe(roomId, {
+    signalUnsubscribable = $trpc.roomCall.onSendSignal.subscribe(roomId, {
       onData: getSynchronizedFunction(getSignalHandler(roomId)),
     });
   };

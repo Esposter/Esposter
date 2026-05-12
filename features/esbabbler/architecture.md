@@ -67,7 +67,7 @@ Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md
 
 ### Key file map
 
-- `server/trpc/routers/room/call.ts` — `joinCall` returns `{ livekitUrl, livekitToken }`; `sendSignal` / `onSendSignal` removed
+- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); `joinCall` returns `{ livekitUrl, livekitToken }`; `sendSignal` / `onSendSignal` removed
 - `server/api/webhooks/livekit.post.ts` — receives LiveKit participant events; updates `callParticipantMap`; drives tRPC subscriptions
 - `app/composables/message/room/call/useCall.ts` — LiveKit `Room` wraps all track logic; exposes `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShare, stopScreenShare }`
 - `app/store/message/room/call.ts` — adds `isDeafened`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantSids`, `pinnedParticipantSid`

@@ -78,7 +78,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     await getResultAsync(async () => {
       const stream = await acquireLocalStream();
       subscribeToSignals(roomId);
-      const participants = await $trpc.call.joinCall.mutate({ roomId });
+      const participants = await $trpc.roomCall.joinCall.mutate({ roomId });
       isJoined = true;
       setParticipants(roomId, participants);
       if (sessionId.value) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, sessionId.value, stream);
@@ -102,7 +102,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     await withFinalizerAsync(
       async () => {
         if (sessionId.value) deleteCallParticipant(roomId, sessionId.value);
-        await $trpc.call.leaveCall.mutate({ roomId });
+        await $trpc.roomCall.leaveCall.mutate({ roomId });
       },
       async () => {
         callRoomId.value = "";
@@ -124,7 +124,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     const newIsMuted = !isMuted.value;
     setMute(callRoomId.value, sessionId.value, newIsMuted);
     setLocalStreamMuted(newIsMuted);
-    await $trpc.call.setMute.mutate({ isMuted: newIsMuted, roomId: callRoomId.value });
+    await $trpc.roomCall.setMute.mutate({ isMuted: newIsMuted, roomId: callRoomId.value });
   };
 
   AdminActionHookMap[AdminActionType.CreateBan].push(async (roomId) => {

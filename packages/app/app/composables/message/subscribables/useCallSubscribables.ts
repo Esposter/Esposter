@@ -34,7 +34,7 @@ export const useCallSubscribables = async () => {
     async (roomId) => {
       if (!roomId) return undefined;
 
-      const participants = await $trpc.call.readCallParticipants.query({ roomId });
+      const participants = await $trpc.roomCall.readCallParticipants.query({ roomId });
       setParticipants(roomId, participants);
 
       if (isInCall.value) {
@@ -43,7 +43,7 @@ export const useCallSubscribables = async () => {
         await joinCall();
       }
 
-      const participantJoinUnsubscribable = $trpc.call.onJoinCall.subscribe(roomId, {
+      const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(roomId, {
         onData: getSynchronizedFunction(async (participant) => {
           createCallParticipant(roomId, participant);
           if (isInCall.value) {
@@ -53,14 +53,14 @@ export const useCallSubscribables = async () => {
           }
         }),
       });
-      const participantLeaveUnsubscribable = $trpc.call.onLeaveCall.subscribe(roomId, {
+      const participantLeaveUnsubscribable = $trpc.roomCall.onLeaveCall.subscribe(roomId, {
         onData: getSynchronizedFunction(async (id) => {
           deleteCallParticipant(roomId, id);
           await cleanupPeer(id);
           deleteSpeaker(id);
         }),
       });
-      const muteChangedUnsubscribable = $trpc.call.onSetMute.subscribe(roomId, {
+      const muteChangedUnsubscribable = $trpc.roomCall.onSetMute.subscribe(roomId, {
         onData: (muteChange) => {
           setMute(roomId, muteChange.id, muteChange.isMuted);
         },
@@ -69,7 +69,7 @@ export const useCallSubscribables = async () => {
       return async () => {
         const sessionId = session.value?.session.id;
         if (isInCall.value) {
-          await $trpc.call.leaveCall.mutate({ roomId });
+          await $trpc.roomCall.leaveCall.mutate({ roomId });
           if (sessionId) deleteCallParticipant(roomId, sessionId);
         }
         await cleanupAll();
