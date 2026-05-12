@@ -1,1 +1,1 @@
-export const trimFileExtension = (path: string) => path.replace(new RegExp(String.raw`\.[^/.]+$`, "u"), "");
+export const trimFileExtension = (path: string) => path.replace(/\.[^/.]+$/u, "");

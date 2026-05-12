@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { takeOne } from "@/util/array/takeOne";
 
-const ISO_DATE_REGEX = new RegExp(
-  String.raw`^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.{0,1}\d*))(?:Z|(\+|-)([\d|:]*))?$`,
-  "u",
-);
-const MS_AJAX_DATE_REGEX = new RegExp(String.raw`^\/Date\((d|-|.*)\)[\/|\\]$`, "u");
+const ISO_DATE_REGEX = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.{0,1}\d*))(?:Z|(\+|-)([\d|:]*))?$/u;
+const MS_AJAX_DATE_REGEX = /^\/Date\((-?\d+(?:[-+]\d+)?)\)[/\\]$/u;
 // oxlint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export const jsonDateParse = <T = any>(text: string): T =>
   JSON.parse(text, (_key, value) => {
@@ -19,7 +16,7 @@ export const jsonDateParse = <T = any>(text: string): T =>
         a = MS_AJAX_DATE_REGEX.exec(value);
 
         if (a) {
-          const b = takeOne(a, 1).split(new RegExp(String.raw`[-+,.]`, "u"));
+          const b = takeOne(a, 1).split(/[-+,.]/u);
           parsedValue = new Date(b[0] ? Number(b[0]) : 0 - Number(b[1]));
         }
       }

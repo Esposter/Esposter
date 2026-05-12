@@ -19,7 +19,7 @@ export const useExportFile = () => {
         types: [
           {
             accept: { [mimeType]: accept.split(",").map((ext) => normalizeString(ext)) },
-            description: (accept.split(",")[0] ?? "").replace(new RegExp(String.raw`^\.`, "u"), "").toUpperCase(),
+            description: (accept.split(",")[0] ?? "").replace(/^\./u, "").toUpperCase(),
           },
         ],
       });

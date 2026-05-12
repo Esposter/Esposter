@@ -8,7 +8,7 @@ import { normalizeString, takeOne } from "@esposter/shared";
 
 export const deserializeCsv = async (file: File, item: CsvDataSourceItem): Promise<DataSource> => {
   const text = await file.text();
-  const lines = text.split(new RegExp(String.raw`\r?\n`, "u")).filter((line) => normalizeString(line) !== "");
+  const lines = text.split(/\r?\n/u).filter((line) => normalizeString(line) !== "");
   if (lines.length === 0) return buildDataSource(file, DataSourceType.Csv, [], []);
   const sourceNames = deserializeCsvLine(takeOne(lines), item.configuration.delimiter).map(
     (sourceName, index) => normalizeString(sourceName) || `Column ${index + 1}`,
