@@ -487,8 +487,8 @@ catalogs:
       specifier: ^4.4.5
       version: 4.4.5
     nuxt-security:
-      specifier: ^2.5.1
-      version: 2.5.1
+      specifier: ^2.6.0
+      version: 2.6.0
     oxfmt:
       specifier: ^0.49.0
       version: 0.49.0
@@ -1254,7 +1254,7 @@ importers:
         version: 4.4.5(a1b4ac764f96703378943f14a61b560f)
       nuxt-security:
         specifier: 'catalog:'
-        version: 2.5.1(magicast@0.5.2)(rollup@4.60.3)
+        version: 2.6.0(magicast@0.5.2)(rollup@4.60.3)
       sass-embedded:
         specifier: 'catalog:'
         version: 1.99.0
@@ -10518,9 +10518,9 @@ packages:
       zod:
         optional: true
 
-  nuxt-security@2.5.1:
-    resolution: {integrity: sha512-gXUhJiOqgkKkP0FHDAPOuREjoala0p6G/4TIlkti1ZafpJV8TkjjFqCNT6NuiWHxKzVYY00OIR1tbRcZuJ7LmQ==}
-    engines: {node: '>=20.0.0'}
+  nuxt-security@2.6.0:
+    resolution: {integrity: sha512-5rEfyxw1gS+vl1s5q7GcGuFOL5g0I03Q/mz7Zfr+IRJFsaZKwRxNVMFNRbatfK3Dz65LuRPnLewLmJ+Yh9ujOA==}
+    engines: {node: '>=24.0.0'}
 
   nuxt-seo-utils@8.1.11:
     resolution: {integrity: sha512-q8sV6vB6zvX5kzRN3NZy8zKQ6QR1mwai2hqqer3YQiUvAI12zD+a/GF5teprzc/mCwcjF6w1bMlu7/naPQ9Cvw==}
@@ -23159,7 +23159,7 @@ snapshots:
       - yjs
       - yup
 
-  nuxt-security@2.5.1(magicast@0.5.2)(rollup@4.60.3):
+  nuxt-security@2.6.0(magicast@0.5.2)(rollup@4.60.3):
     dependencies:
       '@nuxt/kit': 4.4.5(magicast@0.5.2)
       basic-auth: 2.0.1
