@@ -61,20 +61,20 @@ Quick reference for AI-assisted development. Avoids re-exploring files each sess
 
 ---
 
-## Voice & Video (LiveKit)
+## Call & Video (LiveKit)
 
-Full spec: [`specs/voice-channel.md`](specs/voice-channel.md). Screenshare: [`specs/screenshare.md`](specs/screenshare.md).
+Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md`](specs/screenshare.md).
 
 ### Key file map
 
-- `server/trpc/routers/room/voice.ts` — `joinVoiceChannel` returns `{ livekitUrl, livekitToken }`; `sendSignal` / `onSignal` removed
-- `server/api/webhooks/livekit.post.ts` — receives LiveKit participant events; updates `voiceRoomParticipantMap`; drives tRPC subscriptions
-- `app/composables/message/room/useVoiceChannel.ts` — LiveKit `Room` wraps all track logic; exposes `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShare, stopScreenShare }`
-- `app/store/message/voice.ts` — adds `isDeafened`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantSids`, `pinnedParticipantSid`
-- `app/components/Message/Content/VoiceScreenShare.vue` — presenter view (new)
-- `app/components/Message/Content/VoiceVideoGrid.vue` — camera tile grid (new)
+- `server/trpc/routers/room/call.ts` — `joinCall` returns `{ livekitUrl, livekitToken }`; `sendSignal` / `onSendSignal` removed
+- `server/api/webhooks/livekit.post.ts` — receives LiveKit participant events; updates `callParticipantMap`; drives tRPC subscriptions
+- `app/composables/message/room/call/useCall.ts` — LiveKit `Room` wraps all track logic; exposes `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShare, stopScreenShare }`
+- `app/store/message/room/call.ts` — adds `isDeafened`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantSids`, `pinnedParticipantSid`
+- `app/components/Message/Content/CallScreenShare.vue` — presenter view (new)
+- `app/components/Message/Content/CallVideoGrid.vue` — camera tile grid (new)
 
-### Data flow: join voice channel
+### Data flow: join call
 
 ```
 Client A (joining)              Server (tRPC)             LiveKit SFU          Client B (in room)
@@ -85,7 +85,7 @@ Client A (joining)              Server (tRPC)             LiveKit SFU          C
         |<-- { livekitUrl, token } ---|                         |                      |
         |-- room.connect(url, token) ---------------------->|  |                      |
         |                             |<-- webhook: participant_joined                 |
-        |                             |-- voiceEventEmitter("join") ----------------->|
+        |                             |-- callEventEmitter.emit("join") -------------->|
         |<======== audio/video tracks flow through LiveKit SFU ======================>|
 ```
 
@@ -177,5 +177,5 @@ Messages stored in **Azure Table Storage** (not Postgres):
 
 - `AzureTable.Messages` + `AzureTable.MessagesAscending` (both updated on create)
 - `partitionKey = roomId`, `rowKey = reverseTickedTimestamp` (newest first)
-- `MessageType` enum: `Message | PinMessage | VoiceCall | ...`
+- `MessageType` enum: `Message | PinMessage | Call | ...`
 - Pinned messages filter: `isPinned = true`
