@@ -49,7 +49,7 @@ const { smAndDown } = useVDisplay();
       </div>
     </StyledEditableNameDialogButton>
     <template #append>
-      <MessageContentVoiceCallButton />
+      <MessageContentCallButton />
       <MessageContentNotificationSettingsMenuButton />
       <MessageContentHeaderActionButtons v-if="!smAndDown" />
       <MessageContentShowSearchButton />

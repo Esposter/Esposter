@@ -27,7 +27,7 @@ const { data, start, state, stop } = useMediaRecorder({
     if (data.value.length === 0) return;
 
     const blob = new Blob(data.value, { type: MimeType.AudioWebm });
-    const file = new File([blob], `Voice Message - ${dayjs().format("YYYY-MM-DD HH:mm:ss")}.webm`, {
+    const file = new File([blob], `Audio Message - ${dayjs().format("YYYY-MM-DD HH:mm:ss")}.webm`, {
       type: MimeType.AudioWebm,
     });
     emit("upload-file", [file]);
@@ -42,7 +42,7 @@ const formattedTimer = computed(() => {
 </script>
 
 <template>
-  <v-tooltip :text="isRecording ? 'Stop Recording' : 'Record Voice Message'">
+  <v-tooltip :text="isRecording ? 'Stop Recording' : 'Record Audio Message'">
     <template #activator="{ props }">
       <div flex items-center>
         <span v-if="isRecording" font-bold pr-2>

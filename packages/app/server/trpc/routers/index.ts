@@ -17,8 +17,8 @@ import { postRouter } from "@@/server/trpc/routers/post";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
+import { callRouter } from "@@/server/trpc/routers/room/call";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { voiceRouter } from "@@/server/trpc/routers/room/voice";
 import { roomCategoryRouter } from "@@/server/trpc/routers/roomCategory";
 import { roomFilterRouter } from "@@/server/trpc/routers/roomFilter";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
@@ -49,6 +49,7 @@ const trpcRouterWithoutAchievements = router({
   pushSubscription: pushSubscriptionRouter,
   role: roleRouter,
   room: roomRouter,
+  roomCall: callRouter,
   roomCategory: roomCategoryRouter,
   roomFilter: roomFilterRouter,
   searchHistory: searchHistoryRouter,
@@ -56,7 +57,6 @@ const trpcRouterWithoutAchievements = router({
   tableEditor: tableEditorRouter,
   user: userRouter,
   userToRoom: userToRoomRouter,
-  voice: voiceRouter,
   webhook: webhookRouter,
   webpageEditor: webpageEditorRouter,
 });

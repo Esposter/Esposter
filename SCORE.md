@@ -33,7 +33,7 @@ Guard clauses over nested conditionals throughout. `InvalidOperationError` for i
 **Accepted trade-offs:**
 
 - `packages/azure-functions` has no test files — function handlers are `app.eventGrid(...)` registration glue; the underlying services are thin and low-risk. Azure Functions v4 provides no dedicated test runtime, making handler-level testing impractical.
-- Pinia store unit tests cover all stores with real business logic (tableEditor undo/redo, message emoji/input/slash command/voice). The remaining 40 untested stores are Phaser game-engine state (dungeons, clicker) that cannot be meaningfully exercised outside the canvas runtime, or thin CRUD holders with no logic to assert.
+- Pinia store unit tests cover all stores with real business logic (tableEditor undo/redo, message emoji/input/slash command/call). The remaining 40 untested stores are Phaser game-engine state (dungeons, clicker) that cannot be meaningfully exercised outside the canvas runtime, or thin CRUD holders with no logic to assert.
 
 ---
 

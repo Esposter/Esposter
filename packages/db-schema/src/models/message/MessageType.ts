@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 export enum MessageType {
+  Call = "Call",
   EditRoom = "EditRoom",
   Message = "Message",
   PinMessage = "PinMessage",
   Poll = "Poll",
   System = "System",
-  VoiceCall = "VoiceCall",
   Webhook = "Webhook",
 }
 

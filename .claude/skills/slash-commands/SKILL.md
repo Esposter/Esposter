@@ -118,7 +118,7 @@ This applies in `SlashCommandSuggestion.ts`, `SlashCommandParameters.vue`, and a
 3. Add `case SlashCommandType.X:` to `SlashCommandSuggestion.ts`:
    - Immediate: call `createMessage` directly
    - Parameterized: set `pendingSlashCommand` in `useSlashCommandStore`
-4. No new `MessageType` unless the rendering is structurally different (e.g. Poll, VoiceCall)
+4. No new `MessageType` unless the rendering is structurally different (e.g. Poll, Call)
 
 ## Existing Commands
 

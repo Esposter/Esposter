@@ -88,7 +88,7 @@ When adding a new feature, use Postgres for anything relational/queryable and Az
 
 Root merger: `packages/app/server/trpc/routers/index.ts`
 
-All feature routers are flat-merged at the root (`message`, `room`, `moderation`, `voice`, `directMessage`, etc. — all top-level keys, even logically nested ones). The only exception is `achievement`, which is merged separately to avoid a circular dependency with the router that fires achievement events.
+All feature routers are flat-merged at the root (`message`, `room`, `moderation`, `call`, `directMessage`, etc. — all top-level keys, even logically nested ones). The only exception is `achievement`, which is merged separately to avoid a circular dependency with the router that fires achievement events.
 
 To add a new router:
 

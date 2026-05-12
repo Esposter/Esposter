@@ -12,7 +12,7 @@ Unified admin action system. All procedures gated behind specific `RoomPermissio
 export enum AdminActionType {
   ForceMute = "ForceMute",
   ForceUnmute = "ForceUnmute",
-  KickFromVoice = "KickFromVoice",
+  KickFromCall = "KickFromCall",
   KickFromRoom = "KickFromRoom",
   TimeoutUser = "TimeoutUser",
   BanUser = "BanUser",
@@ -33,21 +33,21 @@ export enum AdminActionType {
 
 ## Permission Gates
 
-| Action          | Required permission |
-| :-------------- | :------------------ |
-| `ForceMute`     | `MuteMembers`       |
-| `ForceUnmute`   | `MuteMembers`       |
-| `KickFromVoice` | `MoveMembers`       |
-| `KickFromRoom`  | `KickMembers`       |
-| `TimeoutUser`   | `KickMembers`       |
-| `BanUser`       | `BanMembers`        |
+| Action         | Required permission |
+| :------------- | :------------------ |
+| `ForceMute`    | `MuteMembers`       |
+| `ForceUnmute`  | `MuteMembers`       |
+| `KickFromCall` | `MoveMembers`       |
+| `KickFromRoom` | `KickMembers`       |
+| `TimeoutUser`  | `KickMembers`       |
+| `BanUser`      | `BanMembers`        |
 
 ---
 
 ## Action Behaviours
 
 - **Force-mute / force-unmute** — targeted client receives action via `onAdminAction`; sets `isMuted = true`, disables local toggle until `ForceUnmute`
-- **Kick from voice** — targeted client calls `leaveVoice()` locally; shows snackbar
+- **Kick from call** — targeted client calls `leaveCall()` locally; shows snackbar
 - **Kick from room** — targeted client navigates away; server deletes `usersToRooms` row
 - **Timeout** — `durationMs` required; server sets `timeoutUntil` on `usersToRooms`; all message-producing mutations (`createMessage`, `forwardMessage`, etc.) reject if `timeoutUntil > now()`
 - **Ban** — permanent; deletes `usersToRooms` + all `usersToRoomRoles` rows; inserts into `bans` table; join/invite flows reject banned users; `readBans`/`unbanUser` added behind `BanMembers`
@@ -68,8 +68,8 @@ Append-only Azure Table (`AzureTable.ModerationLog`):
 
 - [ ] **`AdminActionType` enum** — `shared/models/message/AdminActionType.ts`
 - [ ] **`moderationRouter`** — `server/trpc/routers/moderation.ts` (3 procedures above)
-- [ ] **Force-mute / force-unmute** — client handler in voice store
-- [ ] **Kick from voice** — client handler; calls `leaveVoice()` + snackbar
+- [ ] **Force-mute / force-unmute** — client handler in call store
+- [ ] **Kick from call** — client handler; calls `leaveCall()` + snackbar
 - [ ] **Kick from room** — client handler; navigate away; server deletes `usersToRooms`
 - [ ] **Timeout** — `durationMs` required; enforce in `createMessage`
 - [ ] **Ban** — cascade delete + `bans` insert; `readBans`/`unbanUser` procedures

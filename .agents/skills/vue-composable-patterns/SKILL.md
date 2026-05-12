@@ -324,8 +324,8 @@ The one-time `await readFriends()` in `<script setup>` handles the case where th
 Composables that manage tRPC subscriptions for a feature are named `use{Feature}Subscribables` and live in `composables/{domain}/subscribables/`. They are self-registering (no return value) and called from the aggregating `useSubscribables()` composable.
 
 ```typescript
-// composables/message/subscribables/useVoiceSubscribables.ts
-export const useVoiceSubscribables = async () => {
+// composables/message/subscribables/useCallSubscribables.ts
+export const useCallSubscribables = async () => {
   // calls useOnlineSubscribable, sets up tRPC subscriptions
   // no return value
 };
@@ -333,7 +333,7 @@ export const useVoiceSubscribables = async () => {
 // composables/message/subscribables/useSubscribables.ts
 export const useSubscribables = async () => {
   await useRoomSubscribables();
-  await useVoiceSubscribables();
+  await useCallSubscribables();
   // ...
 };
 ```

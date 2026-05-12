@@ -1,7 +1,7 @@
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
-import { useVoiceStore } from "@/store/message/room/voice";
+import { useCallStore } from "@/store/message/room/call";
 
-interface VoiceControlItem {
+interface CallControlItem {
   color?: string;
   icon: string;
   onClick: () => void;
@@ -9,11 +9,11 @@ interface VoiceControlItem {
   variant: "plain" | "tonal";
 }
 
-export const useVoiceControlItems = () => {
-  const voiceStore = useVoiceStore();
-  const { leaveVoice, toggleDeafen, toggleMute } = voiceStore;
-  const { isDeafened, isMuted } = storeToRefs(voiceStore);
-  return computed<VoiceControlItem[]>(() => [
+export const useCallControlItems = () => {
+  const callStore = useCallStore();
+  const { leaveCall, toggleDeafen, toggleMute } = callStore;
+  const { isDeafened, isMuted } = storeToRefs(callStore);
+  return computed<CallControlItem[]>(() => [
     {
       color: isMuted.value ? "error" : undefined,
       icon: isMuted.value ? "mdi-microphone-off" : "mdi-microphone",
@@ -36,9 +36,9 @@ export const useVoiceControlItems = () => {
       color: "error",
       icon: "mdi-phone-hangup",
       onClick: getSynchronizedFunction(async () => {
-        await leaveVoice();
+        await leaveCall();
       }),
-      tooltip: "Leave Voice",
+      tooltip: "Leave Call",
       variant: "tonal",
     },
   ]);

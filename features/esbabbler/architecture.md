@@ -61,6 +61,47 @@ Quick reference for AI-assisted development. Avoids re-exploring files each sess
 
 ---
 
+## Call & Video (LiveKit)
+
+Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md`](specs/screenshare.md).
+
+### Key file map
+
+- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); `joinCall` returns `{ livekitUrl, livekitToken }`; `sendSignal` / `onSendSignal` removed
+- `server/api/webhooks/livekit.post.ts` — receives LiveKit participant events; updates `callParticipantMap`; drives tRPC subscriptions
+- `app/composables/message/room/call/useCall.ts` — LiveKit `Room` wraps all track logic; exposes `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShare, stopScreenShare }`
+- `app/store/message/room/call.ts` — adds `isDeafened`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantSids`, `pinnedParticipantSid`
+- `app/components/Message/Content/CallScreenShare.vue` — presenter view (new)
+- `app/components/Message/Content/CallVideoGrid.vue` — camera tile grid (new)
+
+### Data flow: join call
+
+```text
+Client A (joining)              Server (tRPC)             LiveKit SFU          Client B (in room)
+        |                             |                         |                      |
+        |-- joinCall ----------------->|                         |                      |
+        |                             |-- livekit createRoom -->|                      |
+        |                             |-- generate JWT token ---|                      |
+        |<-- { livekitUrl, livekitToken } ---|                    |                      |
+        |-- room.connect(url, token) ---------------------->|  |                      |
+        |                             |<-- webhook: participant_joined                 |
+        |                             |-- callEventEmitter.emit("join") -------------->|
+        |<======== audio/video tracks flow through LiveKit SFU ======================>|
+```
+
+### Data flow: screenshare start
+
+```text
+Sharer                          LiveKit SFU              Viewers
+   |-- getDisplayMedia() --------|                          |
+   |-- publishTrack(screenShare)->|                         |
+   |                             |-- TrackPublished ------->|
+   |                             |   (LiveKit Room event)   |
+   |                             |       [attach video to <video> el, switch to presenter layout]
+```
+
+---
+
 ## Data Flow: Send Message
 
 ```
@@ -136,5 +177,5 @@ Messages stored in **Azure Table Storage** (not Postgres):
 
 - `AzureTable.Messages` + `AzureTable.MessagesAscending` (both updated on create)
 - `partitionKey = roomId`, `rowKey = reverseTickedTimestamp` (newest first)
-- `MessageType` enum: `Message | PinMessage | VoiceCall | ...`
+- `MessageType` enum: `Message | PinMessage | Call | ...`
 - Pinned messages filter: `isPinned = true`

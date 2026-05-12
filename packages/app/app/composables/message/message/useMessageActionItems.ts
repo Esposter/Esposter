@@ -116,6 +116,8 @@ export const useMessageActionItems = (
   );
   const actionMessageItems = computed<Item[]>(() => {
     switch (message.type) {
+      case MessageType.Call:
+        return [copyMessageLinkItem];
       case MessageType.EditRoom:
         return [copyTextItem, copyMessageLinkItem];
       case MessageType.Message:
@@ -125,8 +127,6 @@ export const useMessageActionItems = (
       case MessageType.Poll:
         return [pinMessageItem.value, copyMessageLinkItem];
       case MessageType.System:
-        return [copyMessageLinkItem];
-      case MessageType.VoiceCall:
         return [copyMessageLinkItem];
       case MessageType.Webhook:
         return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];

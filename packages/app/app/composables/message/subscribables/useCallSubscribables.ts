@@ -3,10 +3,10 @@ import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSu
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
-import { useVoiceStore } from "@/store/message/room/voice";
+import { useCallStore } from "@/store/message/room/call";
 import { useWebRtcStore } from "@/store/message/room/webRtc";
 
-export const useVoiceSubscribables = async () => {
+export const useCallSubscribables = async () => {
   const onlineSubscribableContext: OnlineSubscribableContext = {
     instance: getCurrentInstance(),
     scope: getCurrentScope(),
@@ -15,17 +15,17 @@ export const useVoiceSubscribables = async () => {
   const { data: session } = await authClient.useSession(useFetch);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const voiceStore = useVoiceStore();
+  const callStore = useCallStore();
   const {
     clearSpeakers,
-    createVoiceParticipant,
+    createCallParticipant,
+    deleteCallParticipant,
     deleteSpeaker,
-    deleteVoiceParticipant,
-    joinVoice,
+    joinCall,
     setMute,
     setParticipants,
-  } = voiceStore;
-  const { isInChannel } = storeToRefs(voiceStore);
+  } = callStore;
+  const { isInCall } = storeToRefs(callStore);
   const webRtcStore = useWebRtcStore();
   const { cleanupAll, cleanupPeer, createPeerConnectionOffer } = webRtcStore;
 
@@ -34,33 +34,33 @@ export const useVoiceSubscribables = async () => {
     async (roomId) => {
       if (!roomId) return undefined;
 
-      const participants = await $trpc.voice.readVoiceParticipants.query({ roomId });
+      const participants = await $trpc.roomCall.readCallParticipants.query({ roomId });
       setParticipants(roomId, participants);
 
-      if (isInChannel.value) {
+      if (isInCall.value) {
         const sessionId = session.value?.session.id;
-        if (sessionId) deleteVoiceParticipant(roomId, sessionId);
-        await joinVoice();
+        if (sessionId) deleteCallParticipant(roomId, sessionId);
+        await joinCall();
       }
 
-      const participantJoinUnsubscribable = $trpc.voice.onJoinVoiceChannel.subscribe(roomId, {
+      const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(roomId, {
         onData: getSynchronizedFunction(async (participant) => {
-          createVoiceParticipant(roomId, participant);
-          if (isInChannel.value) {
+          createCallParticipant(roomId, participant);
+          if (isInCall.value) {
             await cleanupPeer(participant.id);
             deleteSpeaker(participant.id);
             await createPeerConnectionOffer(roomId, participant.id);
           }
         }),
       });
-      const participantLeaveUnsubscribable = $trpc.voice.onLeaveVoiceChannel.subscribe(roomId, {
+      const participantLeaveUnsubscribable = $trpc.roomCall.onLeaveCall.subscribe(roomId, {
         onData: getSynchronizedFunction(async (id) => {
-          deleteVoiceParticipant(roomId, id);
+          deleteCallParticipant(roomId, id);
           await cleanupPeer(id);
           deleteSpeaker(id);
         }),
       });
-      const muteChangedUnsubscribable = $trpc.voice.onSetMute.subscribe(roomId, {
+      const muteChangedUnsubscribable = $trpc.roomCall.onSetMute.subscribe(roomId, {
         onData: (muteChange) => {
           setMute(roomId, muteChange.id, muteChange.isMuted);
         },
@@ -68,9 +68,9 @@ export const useVoiceSubscribables = async () => {
 
       return async () => {
         const sessionId = session.value?.session.id;
-        if (isInChannel.value) {
-          await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
-          if (sessionId) deleteVoiceParticipant(roomId, sessionId);
+        if (isInCall.value) {
+          await $trpc.roomCall.leaveCall.mutate({ roomId });
+          if (sessionId) deleteCallParticipant(roomId, sessionId);
         }
         await cleanupAll();
         clearSpeakers();

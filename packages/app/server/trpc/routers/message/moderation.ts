@@ -93,7 +93,7 @@ export const moderationRouter = router({
           break;
         case AdminActionType.ForceMute:
         case AdminActionType.ForceUnmute:
-        case AdminActionType.KickFromVoice:
+        case AdminActionType.KickFromCall:
           break;
         case AdminActionType.KickFromRoom:
           await ctx.db

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { authClient } from "@/services/auth/authClient";
-import { useVoiceStore } from "@/store/message/room/voice";
+import { useCallStore } from "@/store/message/room/call";
 import { useStatusStore } from "@/store/message/user/status";
 import { RoutePath } from "@esposter/shared";
 
 const { data: session } = await authClient.useSession(useFetch);
 const statusStore = useStatusStore();
 const { getStatusEnum, getStatusMessage } = statusStore;
-const voiceStore = useVoiceStore();
-const { callRoomId, isInChannel } = storeToRefs(voiceStore);
+const callStore = useCallStore();
+const { callRoomId, isInCall } = storeToRefs(callStore);
 const callRoomName = useRoomName(callRoomId);
 </script>
 
@@ -16,8 +16,8 @@ const callRoomName = useRoomName(callRoomId);
   <div v-if="session" px-2 pb-2>
     <TransitionFade>
       <v-list-item
-        v-if="isInChannel"
-        :to="callRoomId && RoutePath.Messages(callRoomId)"
+        v-if="isInCall && callRoomId"
+        :to="RoutePath.Messages(callRoomId)"
         prepend-icon="mdi-phone"
         density="compact"
         base-color="success"

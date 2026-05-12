@@ -1,5 +1,4 @@
-import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH } from "#shared/services/message/constants";
-import { roomIdSchema } from "@esposter/db-schema";
+import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH, roomIdSchema } from "@esposter/db-schema";
 import { normalizeString } from "@esposter/shared";
 import { z } from "zod";
 
