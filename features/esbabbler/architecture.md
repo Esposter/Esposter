@@ -76,13 +76,13 @@ Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md
 
 ### Data flow: join call
 
-```
+```text
 Client A (joining)              Server (tRPC)             LiveKit SFU          Client B (in room)
         |                             |                         |                      |
         |-- joinCall ----------------->|                         |                      |
         |                             |-- livekit createRoom -->|                      |
         |                             |-- generate JWT token ---|                      |
-        |<-- { livekitUrl, token } ---|                         |                      |
+        |<-- { livekitUrl, livekitToken } ---|                    |                      |
         |-- room.connect(url, token) ---------------------->|  |                      |
         |                             |<-- webhook: participant_joined                 |
         |                             |-- callEventEmitter.emit("join") -------------->|
@@ -91,7 +91,7 @@ Client A (joining)              Server (tRPC)             LiveKit SFU          C
 
 ### Data flow: screenshare start
 
-```
+```text
 Sharer                          LiveKit SFU              Viewers
    |-- getDisplayMedia() --------|                          |
    |-- publishTrack(screenShare)->|                         |

@@ -16,8 +16,8 @@ const callRoomName = useRoomName(callRoomId);
   <div v-if="session" px-2 pb-2>
     <TransitionFade>
       <v-list-item
-        v-if="isInCall"
-        :to="callRoomId && RoutePath.Messages(callRoomId)"
+        v-if="isInCall && callRoomId"
+        :to="RoutePath.Messages(callRoomId)"
         prepend-icon="mdi-phone"
         density="compact"
         base-color="success"
