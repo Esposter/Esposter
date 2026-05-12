@@ -469,8 +469,8 @@ catalogs:
       specifier: ^3.0.2
       version: 3.0.2
     mjml-browser:
-      specifier: ^5.2.0
-      version: 5.2.0
+      specifier: ^5.2.1
+      version: 5.2.1
     nano-staged:
       specifier: ^1.0.2
       version: 1.0.2
@@ -1031,7 +1031,7 @@ importers:
         version: 3.0.2
       mjml-browser:
         specifier: 'catalog:'
-        version: 5.2.0
+        version: 5.2.1
       node-emoji:
         specifier: 'catalog:'
         version: 2.2.0
@@ -10236,8 +10236,8 @@ packages:
   mjml-browser@4.18.0:
     resolution: {integrity: sha512-Y3kpr3IFBk3Wm7AwONZ5vDAX7FxAaMk+RKbcKKewsuGI9oNCOSM2dWNcWVFdzZ9PF7awoaCgBSQudnJaJbUiBA==}
 
-  mjml-browser@5.2.0:
-    resolution: {integrity: sha512-l0JBtR39GssCefi0g8vI6gxvXNcXVqIgIAmc4AKGB+AuisH37ZjzJjIVaykSCYZsDLB0fIAbaYcXdvR3eAc+dw==}
+  mjml-browser@5.2.1:
+    resolution: {integrity: sha512-1EKVXseoFqvM9EqiBx6LVEtMJQoSw0XfrYBscaekTfDUacZW32IqhiixGOx07LzAzz1B+B0Y78lD2CZnO5zGXA==}
 
   mlly@1.8.2:
     resolution: {integrity: sha512-d+ObxMQFmbt10sretNDytwt85VrbkhhUA/JBGm1MPaWJ65Cl4wOgLaB1NYvJSZ0Ef03MMEU/0xpPMXUIQ29UfA==}
@@ -22671,7 +22671,7 @@ snapshots:
 
   mjml-browser@4.18.0: {}
 
-  mjml-browser@5.2.0:
+  mjml-browser@5.2.1:
     dependencies:
       buffer: 6.0.3
       html-minifier-terser: 7.2.0
