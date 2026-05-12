@@ -6,7 +6,7 @@ import { normalizeString, takeOne } from "@esposter/shared";
 
 export const parseClipboardRows = (text: string, dataSource: DataSource): Row[] => {
   const allRows = text
-    .split(new RegExp(String.raw`\r?\n`, "u"))
+    .split(/\r?\n/u)
     .filter((line) => normalizeString(line) !== "")
     .map((line) => line.split("\t"));
   if (allRows.length < 2) return [];

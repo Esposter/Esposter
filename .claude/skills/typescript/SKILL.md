@@ -29,10 +29,9 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 ## Regex
 
-- **Always use `new RegExp(pattern, flags)`** — never regex literals `/pattern/flags`. Reason: literals make it easy to forget the `u` flag; constructor form makes the flags explicit and obvious.
-- **Always include the `u` flag** (Unicode-aware mode). Use `"u"` for standard patterns; `"gu"` for global+unicode; `"gmu"` for global+multiline+unicode.
-- **Use `String.raw` for patterns with backslash sequences** — `new RegExp(String.raw`\d{10,}`, "u")` is cleaner than `new RegExp("\\d{10,}", "u")`. Exception: patterns with `${` template interpolations must use regular template literals.
-- **Patterns built dynamically from variables** use regular template literals: `new RegExp(\`\\b${escaped}\\s\*\\(\`, "u")`.
+- **Always use regex literals** `/pattern/flags` for static patterns — `prefer-regex-literals` ESLint rule enforces this.
+- **Always include the `u` flag** (Unicode-aware mode). Use `/pattern/u` for standard; `/pattern/gu` for global+unicode; `/pattern/gmu` for global+multiline+unicode.
+- **Dynamic patterns only**: use `new RegExp(template, flags)` when the pattern contains variable interpolation — `new RegExp(\`\\b${escaped}\\s\*\\(\`, "u")`.
 - **Named constants use `_REGEX` suffix** — `EMPTY_TEXT_REGEX`, `DURATION_REGEX`. Never `_RE`, `_PATTERN`.
 
 ## Function Syntax

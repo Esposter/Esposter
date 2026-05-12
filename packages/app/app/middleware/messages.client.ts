@@ -3,7 +3,7 @@ import { RoutePath } from "@esposter/shared";
 export default defineNuxtRouteMiddleware((to, from) => {
   if (to.path === from.path) return;
 
-  const messagesBasePath = RoutePath.Messages("").replace(new RegExp("/$", "u"), "");
+  const messagesBasePath = RoutePath.Messages("").replace(/\/$/u, "");
   const isFromMessages = from.path.startsWith(messagesBasePath);
   const isToMessages = to.path.startsWith(messagesBasePath);
   // We only need to act if the user is *crossing* the boundary
