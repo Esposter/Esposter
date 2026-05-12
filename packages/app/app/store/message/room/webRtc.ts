@@ -68,7 +68,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
     });
   };
 
-  const buildPeerConnection = (roomId: string, remoteId: string) => {
+  const buildPeerConnection = (callSessionId: string, remoteId: string) => {
     const peerConnection = new window.RTCPeerConnection({ iceServers: ICE_SERVERS });
     peerConnections.set(remoteId, peerConnection);
 
@@ -88,21 +88,21 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
     peerConnection.onicecandidate = getSynchronizedFunction(async ({ candidate }) => {
       if (!candidate) return;
       await $trpc.roomCall.sendSignal.mutate({
+        callSessionId,
         payload: { data: JSON.stringify(candidate.toJSON()), targetId: remoteId, type: CallSignalType.Candidate },
-        roomId,
       });
     });
 
     return peerConnection;
   };
 
-  const createPeerConnectionOffer = async (roomId: string, remoteId: string) => {
-    const peerConnection = buildPeerConnection(roomId, remoteId);
+  const createPeerConnectionOffer = async (callSessionId: string, remoteId: string) => {
+    const peerConnection = buildPeerConnection(callSessionId, remoteId);
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
     await $trpc.roomCall.sendSignal.mutate({
+      callSessionId,
       payload: { data: JSON.stringify(offer), targetId: remoteId, type: CallSignalType.Offer },
-      roomId,
     });
   };
 
@@ -115,7 +115,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   };
 
   const getSignalHandler =
-    (roomId: string) =>
+    (callSessionId: string) =>
     async ({ payload: { data, type }, senderId }: { payload: CallSignalPayload; senderId: string }) => {
       await getResultAsync(async () => {
         switch (type) {
@@ -139,14 +139,14 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
             break;
           }
           case CallSignalType.Offer: {
-            const peerConnection = buildPeerConnection(roomId, senderId);
+            const peerConnection = buildPeerConnection(callSessionId, senderId);
             await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
             await flushIceCandidates(senderId);
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(answer);
             await $trpc.roomCall.sendSignal.mutate({
+              callSessionId,
               payload: { data: JSON.stringify(answer), targetId: senderId, type: CallSignalType.Answer },
-              roomId,
             });
             break;
           }
@@ -172,10 +172,10 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
     for (const audio of remoteAudioElements.values()) audio.muted = isDeafened;
   };
 
-  const subscribeToSignals = (roomId: string) => {
+  const subscribeToSignals = (callSessionId: string) => {
     unsubscribeFromSignals();
-    signalUnsubscribable = $trpc.roomCall.onSendSignal.subscribe(roomId, {
-      onData: getSynchronizedFunction(getSignalHandler(roomId)),
+    signalUnsubscribable = $trpc.roomCall.onSendSignal.subscribe(callSessionId, {
+      onData: getSynchronizedFunction(getSignalHandler(callSessionId)),
     });
   };
 

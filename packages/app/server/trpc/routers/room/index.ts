@@ -11,14 +11,14 @@ import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { createCode } from "#shared/util/math/random/createCode";
+import { createToken } from "#shared/util/math/random/createToken";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
-import { readInviteCode } from "@@/server/services/message/readInviteCode";
+import { readInviteToken } from "@@/server/services/message/readInviteToken";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -38,8 +38,8 @@ import { createMessage, deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
   AzureTable,
-  CODE_LENGTH,
   DatabaseEntityType,
+  INVITE_TOKEN_LENGTH,
   InviteInMessageRelations,
   invitesInMessage,
   MessageType,
@@ -136,11 +136,11 @@ export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 const countMembersInputSchema = roomIdSchema;
 export type CountMembersInput = z.infer<typeof countMembersInputSchema>;
 
-const readInviteInputSchema = selectInviteInMessageSchema.shape.code;
+const readInviteInputSchema = selectInviteInMessageSchema.shape.token;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
 
-const readInviteCodeInputSchema = roomIdSchema;
-export type ReadInviteCodeInput = z.infer<typeof readInviteCodeInputSchema>;
+const readInviteTokenInputSchema = roomIdSchema;
+export type ReadInviteTokenInput = z.infer<typeof readInviteTokenInputSchema>;
 
 const createInviteInputSchema = roomIdSchema;
 export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
@@ -158,17 +158,17 @@ export const roomRouter = router({
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
     .mutation<string>(async ({ ctx, input: { roomId } }) => {
-      const inviteCode = await readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
-      if (inviteCode) return inviteCode;
+      const inviteToken = await readInviteToken(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
+      if (inviteToken) return inviteToken;
 
       for (let i = 0; i < 3; i++) {
-        const code = createCode(CODE_LENGTH);
+        const token = createToken(INVITE_TOKEN_LENGTH);
         if (
           await getResultAsync(() =>
-            ctx.db.insert(invitesInMessage).values({ code, roomId, userId: ctx.getSessionPayload.user.id }),
+            ctx.db.insert(invitesInMessage).values({ roomId, token, userId: ctx.getSessionPayload.user.id }),
           ).unwrapOr(null)
         )
-          return code;
+          return token;
       }
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",
@@ -259,7 +259,7 @@ export const roomRouter = router({
           roomId: true,
         },
         where: {
-          code: {
+          token: {
             eq: input,
           },
         },
@@ -405,7 +405,7 @@ export const roomRouter = router({
   }),
   readInvite: standardAuthedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
     const invite = await ctx.db.query.invitesInMessage.findFirst({
-      where: { code: { eq: input } },
+      where: { token: { eq: input } },
       with: InviteInMessageRelations,
     });
     if (!invite) return null;
@@ -422,10 +422,10 @@ export const roomRouter = router({
     });
     return { ...invite, isMember: Boolean(isMember) };
   }),
-  readInviteCode: getMemberProcedure(readInviteCodeInputSchema, "roomId")
+  readInviteToken: getMemberProcedure(readInviteTokenInputSchema, "roomId")
     .use(isRoom)
     .query<null | string>(({ ctx, input: { roomId } }) =>
-      readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId),
+      readInviteToken(ctx.db, ctx.getSessionPayload.user.id, roomId),
     ),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {

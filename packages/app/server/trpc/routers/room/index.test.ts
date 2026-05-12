@@ -4,7 +4,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { User } from "better-auth";
 
-import { createCode } from "#shared/util/math/random/createCode";
+import { createToken } from "#shared/util/math/random/createToken";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
@@ -12,7 +12,7 @@ import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { CODE_LENGTH, DatabaseEntityType, friends, roomsInMessage } from "@esposter/db-schema";
+import { DatabaseEntityType, friends, INVITE_TOKEN_LENGTH, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -284,35 +284,35 @@ describe("room", () => {
 
     expect(readInvite.userId).toBe(userId);
     expect(readInvite.roomId).toBe(newRoom.id);
-    expect(readInvite.code).toBe(newInviteCode);
+    expect(readInvite.token).toBe(newInviteCode);
     expect(readInvite.isMember).toBe(true);
   });
 
   test("reads non-existent invite", async () => {
     expect.hasAssertions();
 
-    const readInvite = await roomCaller.readInvite(createCode(CODE_LENGTH));
+    const readInvite = await roomCaller.readInvite(createToken(INVITE_TOKEN_LENGTH));
 
     expect(readInvite).toBeNull();
   });
 
-  test("reads invite code", async () => {
+  test("reads invite token", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
-    const readInviteCode = await roomCaller.readInviteCode({ roomId: newRoom.id });
+    const newInviteToken = await roomCaller.createInvite({ roomId: newRoom.id });
+    const readInviteToken = await roomCaller.readInviteToken({ roomId: newRoom.id });
 
-    expect(readInviteCode).toBe(newInviteCode);
+    expect(readInviteToken).toBe(newInviteToken);
   });
 
-  test("read invite code with no code to be null", async () => {
+  test("read invite token with no token to be null", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const readInviteCode = await roomCaller.readInviteCode({ roomId: newRoom.id });
+    const readInviteToken = await roomCaller.readInviteToken({ roomId: newRoom.id });
 
-    expect(readInviteCode).toBeNull();
+    expect(readInviteToken).toBeNull();
   });
 
   test("creates invite to be cached", async () => {
@@ -350,7 +350,7 @@ describe("room", () => {
     );
   });
 
-  test("fails read invite code with direct message room", async () => {
+  test("fails read invite token with direct message room", async () => {
     expect.hasAssertions();
 
     const mainUser = getMockSession().user;
@@ -359,7 +359,7 @@ describe("room", () => {
     await makeFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
-    await expect(roomCaller.readInviteCode({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(roomCaller.readInviteToken({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
     );
   });

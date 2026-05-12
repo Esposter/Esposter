@@ -1,35 +1,32 @@
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
-import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
-export const INVITE_TOKEN_LENGTH = 8;
+export const CALL_TOKEN_LENGTH = 12;
 
-export const invitesInMessage = pgTable(
-  "invites",
+export const callSessionsInMessage = pgTable(
+  "call_sessions",
   {
     id: uuid().primaryKey().defaultRandom(),
     roomId: uuid()
       .notNull()
+      .unique()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
     token: text().notNull().unique(),
-    userId: text()
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
   },
   {
     extraConfig: ({ token }) => [
-      check("invites_token_length_check", sql`LENGTH(${token}) = ${sql.raw(INVITE_TOKEN_LENGTH.toString())}`),
+      check("call_sessions_token_length_check", sql`LENGTH(${token}) = ${sql.raw(CALL_TOKEN_LENGTH.toString())}`),
     ],
     schema: messageSchema,
   },
 );
 
-export type InviteInMessage = typeof invitesInMessage.$inferSelect;
+export type CallSessionInMessage = typeof callSessionsInMessage.$inferSelect;
 
-export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, {
-  token: (schema) => schema.length(INVITE_TOKEN_LENGTH),
+export const selectCallSessionInMessageSchema = createSelectSchema(callSessionsInMessage, {
+  token: (schema) => schema.length(CALL_TOKEN_LENGTH),
 });

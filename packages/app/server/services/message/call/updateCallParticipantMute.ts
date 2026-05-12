@@ -1,7 +1,7 @@
-import { callRoomParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 
-export const updateCallParticipantMute = (roomId: string, id: string, isMuted: boolean): boolean => {
-  const participantMap = callRoomParticipantMap.get(roomId);
+export const updateCallParticipantMute = (callSessionId: string, id: string, isMuted: boolean): boolean => {
+  const participantMap = callSessionParticipantMap.get(callSessionId);
   if (!participantMap) return false;
 
   const participant = participantMap.get(id);

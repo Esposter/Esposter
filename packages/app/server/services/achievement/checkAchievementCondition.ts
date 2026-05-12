@@ -1,8 +1,8 @@
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
+import { EN_US_SEGMENTER } from "#shared/services/constants";
 import { dayjs } from "#shared/services/dayjs";
-import { EN_US_SEGMENTER } from "@/services/shared/constants";
 import { BinaryOperator } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 

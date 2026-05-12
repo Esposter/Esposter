@@ -1,4 +1,5 @@
 import { accounts } from "@/schema/accounts";
+import { callSessionsInMessage } from "@/schema/callSessionsInMessage";
 import { achievementNameEnum, achievements } from "@/schema/achievements";
 import { appUsersInMessage } from "@/schema/appUsersInMessage";
 import { bansInMessage } from "@/schema/bansInMessage";
@@ -27,6 +28,7 @@ import { webhooksInMessage } from "@/schema/webhooksInMessage";
 
 export const schema = {
   accounts,
+  callSessionsInMessage,
   achievementNameEnum,
   achievements,
   appUsersInMessage,

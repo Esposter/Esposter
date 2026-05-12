@@ -1,4 +1,5 @@
 import { accountsRelation } from "@/relations/accountsRelation";
+import { callSessionsInMessageRelation } from "@/relations/callSessionsInMessageRelation";
 import { achievementsRelation } from "@/relations/achievementsRelation";
 import { appUsersInMessageRelation } from "@/relations/appUsersInMessageRelation";
 import { bansInMessageRelation } from "@/relations/bansInMessageRelation";
@@ -25,6 +26,7 @@ import { webhooksInMessageRelation } from "@/relations/webhooksInMessageRelation
 
 export const relations = {
   ...accountsRelation,
+  ...callSessionsInMessageRelation,
   ...achievementsRelation,
   ...appUsersInMessageRelation,
   ...bansInMessageRelation,

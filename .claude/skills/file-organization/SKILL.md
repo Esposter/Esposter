@@ -140,6 +140,16 @@ Use `dependencies` for packages that are not installed elsewhere and must be bun
 
 A test-only node package. `drizzle-kit` and `@electric-sql/pglite` are peers (heavy, not bundled). Both are listed in `rolldownConfigurationBrowser.external`. `eslint.config.js` is a symlink to `../configuration/eslint/index.typescript.js`.
 
+## Refactoring — No Alias Re-exports
+
+When renaming a file (e.g. `createCode.ts` → `createToken.ts`, `readInviteCode.ts` → `readInviteToken.ts`):
+
+- **Delete the old file** — never leave a re-export alias (e.g. `export { createToken as createCode } from "./createToken"`) in the old file's place.
+- Update all import sites to the new file path and name directly.
+- If a barrel (`index.ts`) exported the old name, update it too.
+
+The alias pattern looks helpful but creates confusion: the old name stays discoverable, callers assume it's the canonical name, and the rename never fully propagates.
+
 ## Line Endings
 
 - All files must use **LF** line endings (`\n`), not CRLF.
