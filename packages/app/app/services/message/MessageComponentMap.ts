@@ -12,6 +12,7 @@ export interface MessageComponentProps<T extends MessageEntity = MessageEntity> 
 }
 
 export const MessageComponentMap = {
+  [MessageType.Call]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Call.vue")),
   [MessageType.EditRoom]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/EditRoom.vue")),
   [MessageType.Message]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Index.vue")),
   [MessageType.PinMessage]: defineAsyncComponent(
@@ -19,6 +20,5 @@ export const MessageComponentMap = {
   ),
   [MessageType.Poll]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Poll.vue")),
   [MessageType.System]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/System.vue")),
-  [MessageType.Call]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Call.vue")),
   [MessageType.Webhook]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Index.vue")),
 } as const satisfies Record<MessageType, Component>;
