@@ -58,7 +58,7 @@ export const useOffsetPaginationCache = <
       pendingOperation = getResultAsync(async () => {
         await previousOperation;
         const cachedItems = await readIndexedDb(configuration, newPartitionKey);
-        if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0) return;
+        if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0 || toValue(items).length > 0) return;
 
         const cachedData = new OffsetPaginationData<IndexedDbDatabaseSchema[TStore]["value"]>();
         cachedData.items = cachedItems;
