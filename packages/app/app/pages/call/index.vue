@@ -13,7 +13,7 @@ const { createCall } = callStore;
 const callCodeOrLink = ref("");
 const isCreating = ref(false);
 const isJoining = ref(false);
-const callId = computed(() => normalizeString(callCodeOrLink.value).match(/[A-Za-z0-9]{12}/)?.[0] ?? "");
+const callId = computed(() => normalizeString(callCodeOrLink.value).match(/[A-Za-z0-9]{12}/u)?.[0] ?? "");
 const canJoin = computed(() => callId.value.length === CALL_ID_LENGTH);
 const startCall = async () => {
   isCreating.value = true;
