@@ -25,13 +25,13 @@ Only use `class="..."` when technically required:
 
 `presetVuetify()` + `presetAttributify()` are both active in `uno.config.ts`. This means **ALL** of the following work as standalone attributify attributes:
 
-- Vuetify typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-caption`, etc.
-- Vuetify theme colours: `bg-surface`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, `text-on-surface`, etc.
+- Vuetify MD3 typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-body-small`, etc. Do not use MD2 typography utilities such as `text-caption`; use the MD3 equivalent (`text-body-small`) instead.
+- Vuetify theme colours: `bg-surface`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, etc.
 - Custom theme colours: `bg-surface-opacity-80`, `bg-background-opacity-40`, etc.
 
 ### Custom Vuetify theme colours must be registered in `uno.config.ts`
 
-All custom colours not in the standard Vuetify palette (`primary`, `secondary`, `surface`, `background`, `error`, `warning`, `info`, `success`, `on-*`) must be added to `uno.config.ts` under `theme.colors` so UnoCSS can scan and generate them:
+All colors not explicitly defined in `vuetify.config.ts` must be added to `uno.config.ts` under `theme.colors` so UnoCSS can scan and generate them. Do not assume Vuetify default colors are supported: for example, use `text-primary` instead of `text-success`, and use `bg-surface` instead of `bg-surface-variant`.
 
 ```ts
 // uno.config.ts

@@ -38,12 +38,7 @@ await readMemberRoles({ roomId, userIds: [member.id] });
     <v-list v-else density="compact" rd>
       <v-list-item v-for="role of allRoles" :key="role.id" :title="role.name">
         <template #prepend>
-          <div
-            mr-2
-            rd-full
-            size-3
-            :style="{ backgroundColor: role.color || 'rgb(var(--v-theme-on-surface-variant))' }"
-          />
+          <div mr-2 rd-full size-3 :style="{ backgroundColor: role.color || 'rgb(var(--v-theme-surface))' }" />
         </template>
         <template #append>
           <v-switch
