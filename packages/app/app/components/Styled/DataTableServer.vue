@@ -9,7 +9,7 @@ interface StyledDataTableServerProps {
 const slots = defineSlots<Record<keyof VDataTableServer["$slots"], Function>>();
 const { dataTableServerProps } = defineProps<StyledDataTableServerProps>();
 const colorsStore = useColorsStore();
-const { backgroundOpacity40 } = storeToRefs(colorsStore);
+const { "background-opacity-40": backgroundOpacity40 } = storeToRefs(colorsStore);
 </script>
 
 <template>

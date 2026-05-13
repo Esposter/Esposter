@@ -29,7 +29,8 @@ export const openIndexedDb = (): Promise<IDBPDatabase<IndexedDbDatabaseSchema>> 
     },
   });
   getSynchronizedFunction(async () => {
-    await getResultAsync(() => promise).match(noop, () => {
+    await getResultAsync(() => promise).match(noop, (error) => {
+      console.error(error);
       if (databasePromise === promise) databasePromise = undefined;
     });
   })();

@@ -27,6 +27,6 @@ if (!isJoined)
     <Head>
       <Title>Call</Title>
     </Head>
-    <CallView />
+    <MessageContentCallView />
   </div>
 </template>

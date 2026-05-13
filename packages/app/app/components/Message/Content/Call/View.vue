@@ -10,8 +10,8 @@ const sessionId = computed(() => session.value?.session.id);
 
 <template>
   <div bg-background flex flex-col size-full relative>
-    <div flex-1 gap-3 grid content-center style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr))">
-      <CallParticipantTile
+    <div p-3 pb-24 flex-1 gap-3 grid content-center style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr))">
+      <MessageContentCallParticipantTile
         v-for="participant of callParticipants"
         :key="participant.id"
         :participant
@@ -24,7 +24,7 @@ const sessionId = computed(() => session.value?.session.id);
       />
     </div>
     <div bottom-0 left-0 right-0 absolute>
-      <CallControlBar />
+      <MessageContentCallControlBar />
     </div>
   </div>
 </template>

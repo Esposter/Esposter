@@ -35,8 +35,8 @@ const selectEmoji = await useSelectEmoji(message);
       :key="rowKey"
       :class="
         isReacted
-          ? ['bg-infoOpacity10', 'b-info']
-          : ['bg-backgroundOpacity80', 'b-transparent', 'hover:bg-surfaceOpacity80', 'hover:b-border']
+          ? ['bg-info-opacity-10', 'b-info']
+          : ['bg-background-opacity-80', 'b-transparent', 'hover:bg-surface-opacity-80', 'hover:b-border']
       "
       px-2
       b-1

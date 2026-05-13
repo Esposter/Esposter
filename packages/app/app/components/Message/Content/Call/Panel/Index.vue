@@ -6,8 +6,8 @@ const { isInCall } = storeToRefs(callStore);
 </script>
 
 <template>
-  <TransitionFade>
+  <div>
     <MessageContentCallPanelBar v-if="isInCall" />
-  </TransitionFade>
-  <MessageContentCallPanelDialog />
+    <MessageContentCallPanelDialog />
+  </div>
 </template>

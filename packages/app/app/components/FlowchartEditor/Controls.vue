@@ -7,7 +7,7 @@ import deepEqual from "fast-deep-equal";
 
 const { setViewport, viewport } = useVueFlow();
 const colorsStore = useColorsStore();
-const { surface, surfaceOpacity80, text } = storeToRefs(colorsStore);
+const { surface, "surface-opacity-80": surfaceOpacity80, text } = storeToRefs(colorsStore);
 const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANSFORM));
 </script>
 
@@ -19,7 +19,7 @@ const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANS
   </Controls>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 :deep(.vue-flow__controls-button) {
   background-color: v-bind(surface);
   fill: v-bind(text);

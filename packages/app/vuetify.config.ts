@@ -42,12 +42,12 @@ export const getBaseColorsExtension = (colors: BaseColors) => {
     Object.entries(colors).map(([color, hex]) => [color, `${hex[0]}${toSixDigitHexColor(hex.slice(1))}`]),
   );
   return {
-    backgroundOpacity20: `${sanitisedColors.background}33`,
-    backgroundOpacity40: `${sanitisedColors.background}66`,
-    backgroundOpacity80: `${sanitisedColors.background}cc`,
-    infoOpacity10: `${sanitisedColors.info}1a`,
-    "on-infoOpacity10": colors.text,
-    surfaceOpacity80: `${sanitisedColors.surface}cc`,
+    "background-opacity-20": `${sanitisedColors.background}33`,
+    "background-opacity-40": `${sanitisedColors.background}66`,
+    "background-opacity-80": `${sanitisedColors.background}cc`,
+    "info-opacity-10": `${sanitisedColors.info}1a`,
+    "on-info-opacity-10": colors.text,
+    "surface-opacity-80": `${sanitisedColors.surface}cc`,
   };
 };
 

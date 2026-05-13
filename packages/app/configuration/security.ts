@@ -44,7 +44,7 @@ export const security: NuxtConfig["security"] = {
       ],
     },
     permissionsPolicy: {
-      // live-kit
+      // Live-kit
       camera: "self",
       // @vue-pdf-viewer/viewer
       fullscreen: "self",

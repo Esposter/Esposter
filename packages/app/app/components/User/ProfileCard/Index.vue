@@ -10,7 +10,7 @@ import deepEqual from "fast-deep-equal";
 const { data: session } = await authClient.useSession(useFetch);
 const { updateUser } = authClient;
 const colorsStore = useColorsStore();
-const { backgroundOpacity20 } = storeToRefs(colorsStore);
+const { "background-opacity-20": backgroundOpacity20 } = storeToRefs(colorsStore);
 const profileCardRows = computed(() => {
   if (!session.value)
     throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });

@@ -9,6 +9,7 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - **UnoCSS attributes go first** — before Vue/component props. e.g. `<StyledAvatar mr-3 :image="image" :name="name" />`
 - Use `flex` not `d-flex`.
 - Use `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
+- Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index utilities unless the layout genuinely needs them. Do not add z-index defensively; rely on DOM order and positioning first.
 
 ## What stays in `class="..."`
 
@@ -26,7 +27,7 @@ Only use `class="..."` when technically required:
 
 - Vuetify typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-caption`, etc.
 - Vuetify theme colours: `bg-surface`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, `text-on-surface`, etc.
-- Custom theme colours: `bg-surfaceOpacity80`, `bg-backgroundOpacity40`, etc.
+- Custom theme colours: `bg-surface-opacity-80`, `bg-background-opacity-40`, etc.
 - Vuetify border colour utility: `border-color` (when it's the Vuetify utility, not a scoped CSS class name) — use `b-1`, `b-2` etc. instead of `border-sm`, `border-b-sm` (see Abbreviated Utilities below)
 
 ### Custom Vuetify theme colours must be registered in `uno.config.ts`
@@ -38,7 +39,7 @@ All custom colours not in the standard Vuetify palette (`primary`, `secondary`, 
 theme: {
   colors: {
     "primary-darken-1": 'rgb(var(--v-theme-primary-darken-1))',
-    surfaceOpacity80: 'rgb(var(--v-theme-surfaceOpacity80))',
+    "surface-opacity-80": 'rgb(var(--v-theme-surface-opacity-80))',
     // all custom colours from vuetify.config.ts → getBaseColorsExtension + variations
   }
 }
@@ -46,17 +47,23 @@ theme: {
 
 Check `vuetify.config.ts` for the canonical list. Standard palette colours are handled by `presetVuetify()` automatically.
 
+When reading hyphenated theme colours from `useColorsStore()`, destructure quoted keys and alias them to local camel-case variables:
+
+```ts
+const { "background-opacity-40": backgroundOpacity40 } = storeToRefs(colorsStore);
+```
+
 ## `v-bind(themeColor)` in CSS → attributify
 
 When a scoped CSS class exists _only_ to set a Vuetify theme colour with `v-bind()`, convert it to attributify and delete the class:
 
 ```diff
 - <StyledCard class="card">
-+ <StyledCard bg-surfaceOpacity80>
++ <StyledCard bg-surface-opacity-80>
 
 - <style scoped lang="scss">
 - .card {
--   background-color: v-bind(surfaceOpacity80);
+-   background-color: v-bind(surfaceOpacityColor);
 - }
 - </style>
 ```
