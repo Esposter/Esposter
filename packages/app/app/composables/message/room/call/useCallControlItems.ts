@@ -11,8 +11,8 @@ interface CallControlItem {
 
 export const useCallControlItems = () => {
   const callStore = useCallStore();
-  const { leaveCall, toggleDeafen, toggleMute } = callStore;
-  const { isDeafened, isMuted } = storeToRefs(callStore);
+  const { leaveCall, toggleCamera, toggleDeafen, toggleMute } = callStore;
+  const { isCameraEnabled, isDeafened, isMuted } = storeToRefs(callStore);
   return computed<CallControlItem[]>(() => [
     {
       color: isMuted.value ? "error" : undefined,
@@ -21,6 +21,15 @@ export const useCallControlItems = () => {
         await toggleMute();
       }),
       tooltip: isMuted.value ? "Unmute" : "Mute",
+      variant: "plain",
+    },
+    {
+      color: isCameraEnabled.value ? undefined : "error",
+      icon: isCameraEnabled.value ? "mdi-video" : "mdi-video-off",
+      onClick: getSynchronizedFunction(async () => {
+        await toggleCamera();
+      }),
+      tooltip: isCameraEnabled.value ? "Turn Camera Off" : "Turn Camera On",
       variant: "plain",
     },
     {

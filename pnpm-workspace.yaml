@@ -161,6 +161,8 @@ catalog:
   js-beautify: ^1.15.4
   link-preview-js: ^4.0.3
   linkifyjs: ^4.3.2
+  livekit-client: ^2.18.10
+  livekit-server-sdk: ^2.15.2
   lodash-omitdeep: ^1.9.0
   lowlight: ^3.3.0
   marked: ^18.0.3

@@ -18,7 +18,7 @@ export const joinCallAsParticipant = async (
   userId: string,
 ) => {
   const isFirstJoiner = getCallParticipants(callSessionId).length === 0;
-  createCallParticipant(callSessionId, participant);
+  createCallParticipant(callSessionId, { ...participant, isCameraEnabled: false });
   callEventEmitter.emit("joinCall", { callSessionId, participant, sessionId });
 
   if (isFirstJoiner) {

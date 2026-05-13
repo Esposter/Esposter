@@ -112,7 +112,6 @@ Affected files (representative):
 - `components/Message/RightSideBar/Search/Filter/DatePicker.vue`
 - `components/Message/Model/Message/LinkPreview/Index.vue`
 - `components/Styled/DatePicker.vue`
-- `store/message/room/webRtc.ts` — `localStream: MediaStream | null = null` → `| undefined`
 
 ---
 

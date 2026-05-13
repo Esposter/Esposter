@@ -29,11 +29,11 @@ Screensharing: see [`specs/screenshare.md`](screenshare.md).
 
 ## Technology
 
-### v1 (current) — Mesh WebRTC ≤ 8 users, audio only
+### v1 (completed) — Mesh WebRTC ≤ 8 users, audio only
 
 Each participant sends audio directly to every other participant (N² upload). No media server needed — STUN/TURN only for NAT traversal. Appropriate for audio-only calls up to ~5 people.
 
-### v2 (next) — LiveKit SFU
+### v2 (current) — LiveKit SFU
 
 **Why migrate:**
 
@@ -86,7 +86,7 @@ Estimated: 0.25 vCPU × $0.000024/vCPU-s ≈ $5–12/month under typical communi
 
 All in `server/trpc/routers/room/call.ts`. Procedures are registered as `roomCall` (not `call` — reserved word).
 
-### v1 (current) — Mesh WebRTC + persistent call sessions
+### v1 (completed) — Mesh WebRTC + persistent call sessions
 
 | Procedure              | Type         | Auth             | Input                        | Purpose                                                                                |
 | ---------------------- | ------------ | ---------------- | ---------------------------- | -------------------------------------------------------------------------------------- |
@@ -114,7 +114,7 @@ Each WebRTC peer connection IS an auth session. `sendSignal` routes to a specifi
 
 **This does NOT change for v2 (LiveKit).** The LiveKit `AccessToken` uses `identity: session.id` — LiveKit's participant identity maps 1:1 to the auth session. The webhook-driven `callParticipantMap` updates use the same `session.id` key. Multi-device: each device gets its own LiveKit participant (separate tracks, separate mute state) which is the correct model.
 
-### v2 (next) — LiveKit migration
+### v2 (current) — LiveKit migration
 
 | Procedure              | Type             | Change from v1 | Purpose                                                                                                                  |
 | ---------------------- | ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -152,17 +152,17 @@ return { livekitUrl: env.LIVEKIT_URL, livekitToken: await token.toJwt() };
 
 ## Client Architecture
 
-### Composable: `useCall.ts`
+### Media bridge: `store/message/room/liveKit.ts`
 
 Replaces all `RTCPeerConnection` / ICE candidate logic with a LiveKit `Room`.
 
 ```typescript
-import { Room, RoomEvent, Track } from "@livekit/client";
+import { Room, RoomEvent, Track } from "livekit-client";
 
 const room = new Room({ adaptiveStream: true, dynacast: true });
 
 async function join() {
-  const { livekitUrl, livekitToken } = await $trpc.room.call.joinCall.mutate({ roomId });
+  const { livekitUrl, livekitToken } = await $trpc.roomCall.joinCallByRoomId.mutate({ roomId });
   await room.connect(livekitUrl, livekitToken);
   await room.localParticipant.setMicrophoneEnabled(true);
   // bind events → update store
@@ -173,12 +173,12 @@ async function join() {
 
 async function leave() {
   await room.disconnect();
-  await $trpc.room.call.leaveCall.mutate({ roomId });
+  await $trpc.roomCall.leaveCall.mutate({ callSessionId });
 }
 
 async function toggleMute() {
   await room.localParticipant.setMicrophoneEnabled(!isEnabled);
-  await $trpc.room.call.setMute.mutate({ roomId, isMuted: !isEnabled });
+  await $trpc.roomCall.setMute.mutate({ callSessionId, isMuted: !isEnabled });
 }
 
 async function toggleCamera() {
@@ -193,7 +193,7 @@ async function toggleDeafen() {
 }
 ```
 
-Exposes: `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShare, stopScreenShare }`. State lives in the store.
+The call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute, toggleCamera, toggleDeafen }`; LiveKit-specific track handling stays in `liveKit.ts`.
 
 ### State — Pinia Store (`store/message/room/call.ts`)
 
@@ -202,7 +202,7 @@ Exposes: `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShar
 | State                        | Kind       | Description                                                                   |
 | ---------------------------- | ---------- | ----------------------------------------------------------------------------- |
 | `callSessionParticipantsMap` | `ref`      | `Map<callSessionId, CallParticipant[]>` — keyed by session UUID, not roomId   |
-| `activeCallSessionId`        | `ref`      | Session the user is **in** — drives `leaveCall`, `setMute`, `sendSignal`      |
+| `activeCallSessionId`        | `ref`      | Session the user is **in** — drives `leaveCall`, `setMute`, `setCamera`       |
 | `currentRoomCallSessionId`   | `ref`      | Session for the **viewed** room — set by `useCallSubscribables` on room enter |
 | `callRoomId`                 | `ref`      | Room ID of active call — kept only for admin action room-scoped checks        |
 | `speakingIds`                | `ref`      | Session IDs currently speaking (AudioContext analysis)                        |
@@ -245,7 +245,7 @@ Client A (joining)               Server (tRPC)            LiveKit SFU         Cl
         |-- room.connect(url, token) -------------------------->|                      |
         |                              |          [participant joined webhook]          |
         |                              |<-- webhook: participantJoined -----------------|
-        |                              |-- callEventEmitter.emit("join") ------------>|
+        |                              |-- callEventEmitter.emit("joinCall") -------->|
         |                              |                (onJoinCall sub)               |
         |<========= audio/video tracks flow through LiveKit SFU =====================>|
 ```
@@ -294,7 +294,7 @@ packages/app/
       livekit.post.ts                    # new — webhook receiver
     services/message/
       events/
-        callEventEmitter.ts              # unchanged
+        callEventEmitter.ts              # app-level tRPC observer bridge
       call/
         callParticipantMap.ts            # unchanged
         createCallParticipant.ts         # unchanged
@@ -302,13 +302,12 @@ packages/app/
         getCallParticipants.ts           # unchanged
         updateCallParticipantMute.ts     # unchanged
     trpc/routers/room/
-      call.ts                            # modified: joinCall returns token; remove sendSignal/onSendSignal; add onVideoChanged
+      call.ts                            # joinCall returns token; remove sendSignal/onSendSignal; add onVideoChanged
 
   app/
     store/message/room/
       call.ts                            # add: isDeafened, isCameraEnabled, isScreenSharing
-    composables/message/room/call/
-      useCall.ts                         # rewrite: LiveKit Room replaces RTCPeerConnection peer map
+      liveKit.ts                         # LiveKit Room replaces RTCPeerConnection peer map
     components/Message/
       Content/
         CallButton.vue                   # unchanged UX; reads token from joinCall

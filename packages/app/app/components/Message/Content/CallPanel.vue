@@ -15,7 +15,11 @@ const callControlItems = useCallControlItems();
       <v-icon icon="mdi-volume-high" size="small" color="success" />
       <span text-sm font-medium flex-1>Call</span>
       <div flex gap-x-1 items-center>
-        <div v-for="{ id, image, isMuted: isParticipantMuted, name, userId } of roomParticipants" :key="id" relative>
+        <div
+          v-for="{ id, image, isCameraEnabled, isMuted: isParticipantMuted, name, userId } of roomParticipants"
+          :key="id"
+          relative
+        >
           <v-menu v-if="userId !== session?.user.id && (isForceMuteable || isKickableFromCall)">
             <template #activator="{ props: menuProps }">
               <StyledAvatar size="x-small" :image :name :="menuProps" cursor-pointer />
@@ -41,6 +45,7 @@ const callControlItems = useCallControlItems();
             animate-pulse
           />
           <v-icon v-if="isParticipantMuted" icon="mdi-microphone-off" size="x-small" bottom-0 right-0 absolute />
+          <v-icon v-if="isCameraEnabled" icon="mdi-video" size="x-small" top-0 right-0 absolute />
           <v-icon
             v-if="isDeafened && id === session?.session.id"
             icon="mdi-headphones-off"

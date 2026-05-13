@@ -65,23 +65,18 @@ Quick reference for AI-assisted development. Avoids re-exploring files each sess
 
 Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md`](specs/screenshare.md).
 
-### Key file map (v1 current — mesh WebRTC)
+### Key file map (v2 current — LiveKit)
 
-- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); procedures use `callSessionId`, not `roomId`; includes `joinCall({ id })` for shareable links
+- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); procedures use `callSessionId`, not `roomId`; `joinCall({ id })` and `joinCallByRoomId({ roomId })` return `{ livekitUrl, livekitToken }`
 - `server/services/message/call/callParticipantMap.ts` — `Map<callSessionId, Map<sessionId, CallParticipant>>` (keyed by callSessionId, not roomId)
 - `server/services/message/call/callStartTimeMap.ts` — `Map<callSessionId, Date>` for call duration calculation
 - `server/services/message/call/readCallSessionId.ts` — reads call session id for a room; returns `""` if none exists
-- `app/composables/message/subscribables/useCallSubscribables.ts` — calls `readCallSession` on room entry → sets `currentRoomCallSessionId`; all subscriptions use `callSessionId`
+- `server/api/webhooks/livekit.post.ts` — LiveKit participant joined/left backup path into `callParticipantMap` + `callEventEmitter`
+- `app/composables/message/subscribables/useCallSubscribables.ts` — calls `readCallSessionId` on room entry → sets `currentRoomCallSessionId`; all subscriptions use `callSessionId`
 - `app/store/message/room/call.ts` — `activeCallSessionId` (drives tRPC ops), `currentRoomCallSessionId` (viewed room), `callRoomId` (admin action checks), `callSessionParticipantsMap: Map<callSessionId, CallParticipant[]>`
-- `app/store/message/room/webRtc.ts` — `buildPeerConnection(callSessionId, remoteId)`, `createPeerConnectionOffer(callSessionId, remoteId)`, `subscribeToSignals(callSessionId)`
+- `app/store/message/room/liveKit.ts` — LiveKit `Room` wraps media, active speaker, remote audio, mute/deafen, and camera track logic
 
-### v2 (planned — LiveKit migration)
-
-- `server/trpc/routers/room/call.ts` — `joinCall` returns `{ livekitUrl, livekitToken }`; `sendSignal` / `onSendSignal` removed
-- `server/api/webhooks/livekit.post.ts` — receives LiveKit participant events; updates `callParticipantMap`; drives tRPC subscriptions
-- `app/composables/message/room/call/useCall.ts` — LiveKit `Room` wraps all track logic; exposes `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShare, stopScreenShare }`
-
-### Data flow: join call (v1 — mesh WebRTC)
+### Data flow: join call (v2 — LiveKit)
 
 ```text
 Client A (joining)                     Server (tRPC)               Client B (in room)
@@ -91,11 +86,10 @@ Client A (joining)                     Server (tRPC)               Client B (in 
         |   [set currentRoomCallSessionId]   |                              |
         |-- onJoinCall.subscribe(callSessionId)                             |
         |-- joinCallByRoomId({ roomId }) ---->|  (creates session if new)    |
-        |<-- { callSessionId, participants } -|                              |
+        |<-- { callSessionId, participants, livekitUrl, livekitToken }        |
         |   [set activeCallSessionId]         |-- onJoinCall emit --------->|
-        |-- sendSignal (offer) -------------->|-- onSendSignal emit ------->|
-        |<-- onSendSignal (answer) ------------|                             |
-        |<===================== audio flows via RTCPeerConnection ==========>|
+        |-- room.connect(livekitUrl, token) ------------------------------->|
+        |<===================== audio/video flows via LiveKit SFU ==========>|
 ```
 
 ### Data flow: join via shareable link (v1)
@@ -104,8 +98,8 @@ Client A (joining)                     Server (tRPC)               Client B (in 
 Guest (any authed user)                Server (tRPC)               Room participants
         |                                    |                              |
         |-- joinCall({ id }) ---------------->|  (no room membership check) |
-        |<-- { callSessionId, participants } -|                              |
-        |-- subscribe/signal as normal ------>|-- onJoinCall emit --------->|
+        |<-- { callSessionId, participants, livekitUrl, livekitToken }        |
+        |-- room.connect(livekitUrl, token) --|-- onJoinCall emit --------->|
 ```
 
 ### Data flow: screenshare start

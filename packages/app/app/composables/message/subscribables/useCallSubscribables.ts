@@ -1,10 +1,8 @@
 import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
 
-import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
 import { useCallStore } from "@/store/message/room/call";
-import { useWebRtcStore } from "@/store/message/room/webRtc";
 
 export const useCallSubscribables = async () => {
   const onlineSubscribableContext: OnlineSubscribableContext = {
@@ -24,11 +22,10 @@ export const useCallSubscribables = async () => {
     joinCallByRoomId,
     setCurrentRoomCallSessionId,
     setMute,
+    setParticipantCamera,
     setParticipants,
   } = callStore;
   const { isInCall } = storeToRefs(callStore);
-  const webRtcStore = useWebRtcStore();
-  const { cleanupAll, cleanupPeer, createPeerConnectionOffer } = webRtcStore;
 
   useOnlineSubscribable(
     currentRoomId,
@@ -49,25 +46,24 @@ export const useCallSubscribables = async () => {
       }
 
       const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(callSessionId, {
-        onData: getSynchronizedFunction(async (participant) => {
+        onData: (participant) => {
           createCallParticipant(callSessionId, participant);
-          if (isInCall.value) {
-            await cleanupPeer(participant.id);
-            deleteSpeaker(participant.id);
-            await createPeerConnectionOffer(callSessionId, participant.id);
-          }
-        }),
+        },
       });
       const participantLeaveUnsubscribable = $trpc.roomCall.onLeaveCall.subscribe(callSessionId, {
-        onData: getSynchronizedFunction(async (id) => {
+        onData: (id) => {
           deleteCallParticipant(callSessionId, id);
-          await cleanupPeer(id);
           deleteSpeaker(id);
-        }),
+        },
       });
       const muteChangedUnsubscribable = $trpc.roomCall.onSetMute.subscribe(callSessionId, {
         onData: (muteChange) => {
           setMute(callSessionId, muteChange.id, muteChange.isMuted);
+        },
+      });
+      const videoChangedUnsubscribable = $trpc.roomCall.onVideoChanged.subscribe(callSessionId, {
+        onData: ({ id, isCameraEnabled }) => {
+          setParticipantCamera(callSessionId, id, isCameraEnabled);
         },
       });
 
@@ -78,11 +74,11 @@ export const useCallSubscribables = async () => {
           if (sessionId) deleteCallParticipant(callSessionId, sessionId);
         }
         setCurrentRoomCallSessionId("");
-        await cleanupAll();
         clearSpeakers();
         participantJoinUnsubscribable.unsubscribe();
         participantLeaveUnsubscribable.unsubscribe();
         muteChangedUnsubscribable.unsubscribe();
+        videoChangedUnsubscribable.unsubscribe();
       };
     },
     onlineSubscribableContext,

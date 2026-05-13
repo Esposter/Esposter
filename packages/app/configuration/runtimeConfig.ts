@@ -35,6 +35,11 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   },
+  livekit: {
+    apiKey: process.env.LIVEKIT_API_KEY,
+    apiSecret: process.env.LIVEKIT_API_SECRET,
+    url: process.env.LIVEKIT_URL,
+  },
   public: {
     appEnv: process.env.APP_ENV,
     azure: {

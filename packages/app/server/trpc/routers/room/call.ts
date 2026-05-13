@@ -1,6 +1,5 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-import { callSignalPayloadSchema } from "#shared/models/room/call/CallSignalPayload";
 import { createId } from "#shared/util/math/random/createId";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
@@ -29,24 +28,121 @@ import {
 } from "@esposter/db-schema";
 import { ForbiddenError, getResultAsync, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { AccessToken, RoomServiceClient, TrackSource } from "livekit-server-sdk";
+import { useRuntimeConfig } from "nitropack/runtime";
 import { z } from "zod";
 
 const joinCallByRoomIdInputSchema = roomIdSchema;
 const joinCallInputSchema = z.object({ id: selectCallSessionInMessageSchema.shape.id });
 const leaveCallInputSchema = callSessionIdSchema;
+const setCameraInputSchema = z.object({ ...callSessionIdSchema.shape, isCameraEnabled: z.boolean() });
 const setMuteInputSchema = z.object({ ...callSessionIdSchema.shape, isMuted: z.boolean() });
-const sendSignalInputSchema = z.object({ ...callSessionIdSchema.shape, payload: callSignalPayloadSchema });
 const readCallSessionIdInputSchema = roomIdSchema;
 const readCallParticipantsInputSchema = callSessionIdSchema;
 const onJoinCallInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onLeaveCallInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onSetMuteInputSchema = selectCallSessionInMessageSchema.shape.id;
-const onSendSignalInputSchema = selectCallSessionInMessageSchema.shape.id;
+const onVideoChangedInputSchema = selectCallSessionInMessageSchema.shape.id;
+
+interface JoinCallOutput {
+  callSessionId: string;
+  livekitToken: string;
+  livekitUrl: string;
+  participants: CallParticipant[];
+}
+
+const createLiveKitRoom = async (callSessionId: string) => {
+  const { livekit } = useRuntimeConfig();
+  if (!livekit?.url || !livekit.apiKey || !livekit.apiSecret) return;
+
+  const roomServiceClient = new RoomServiceClient(livekit.url, livekit.apiKey, livekit.apiSecret);
+  const rooms = await roomServiceClient.listRooms([callSessionId]);
+  if (rooms.some(({ name }) => name === callSessionId)) return;
+  await roomServiceClient.createRoom({ emptyTimeout: 60, name: callSessionId });
+};
+
+const createLiveKitToken = async (callSessionId: string, participant: CallParticipant) => {
+  const { livekit } = useRuntimeConfig();
+  if (!livekit?.url || !livekit.apiKey || !livekit.apiSecret) return { livekitToken: "", livekitUrl: "" };
+
+  const token = new AccessToken(livekit.apiKey, livekit.apiSecret, {
+    identity: participant.id,
+    metadata: JSON.stringify({ userId: participant.userId }),
+    name: participant.name,
+  });
+  token.addGrant({
+    canPublish: true,
+    canPublishSources: [
+      TrackSource.MICROPHONE,
+      TrackSource.CAMERA,
+      TrackSource.SCREEN_SHARE,
+      TrackSource.SCREEN_SHARE_AUDIO,
+    ],
+    canSubscribe: true,
+    room: callSessionId,
+    roomJoin: true,
+  });
+  return { livekitToken: await token.toJwt(), livekitUrl: livekit.url };
+};
+
+const setParticipantCamera = (callSessionId: string, id: string, isCameraEnabled: boolean) => {
+  const participant = getCallParticipants(callSessionId).find((p) => p.id === id);
+  if (!participant) return false;
+  participant.isCameraEnabled = isCameraEnabled;
+  return true;
+};
+
+const createParticipant = (session: { id: string }, user: { id: string; image?: null | string; name: string }) =>
+  ({
+    id: session.id,
+    image: user.image ?? null,
+    isCameraEnabled: false,
+    isMuted: false,
+    name: user.name,
+    userId: user.id,
+  }) satisfies CallParticipant;
+
+const createCallSessionId = async (db: Parameters<typeof readCallSessionId>[0], roomId: string) => {
+  const existingId = await readCallSessionId(db, roomId);
+  if (existingId) return existingId;
+
+  let createdId: string | undefined;
+  for (let i = 0; i < 3; i++) {
+    const id = createId(CALL_ID_LENGTH);
+    const insertResult = await getResultAsync(() =>
+      db.insert(callSessionsInMessage).values({ id, roomId }).returning(),
+    );
+    const result = insertResult.orTee(console.error).unwrapOr(null);
+    if (!result?.[0]) continue;
+    createdId = result[0].id;
+    break;
+  }
+  if (createdId) return createdId;
+
+  const fallback = await db.query.callSessionsInMessage.findFirst({ where: { roomId: { eq: roomId } } });
+  if (!fallback)
+    throw new TRPCError({
+      code: "UNPROCESSABLE_CONTENT",
+      message: new InvalidOperationError(Operation.Create, DatabaseEntityType.CallSession, roomId).message,
+    });
+  return fallback.id;
+};
+
+const joinLiveKitCall = async (
+  callSession: { id: string; roomId: string },
+  participant: CallParticipant,
+  userId: string,
+): Promise<JoinCallOutput> => {
+  await createLiveKitRoom(callSession.id);
+  const livekit = await createLiveKitToken(callSession.id, participant);
+  const result = await joinCallAsParticipant(callSession, participant, participant.id, userId);
+  return { ...result, ...livekit };
+};
 
 export const callRouter = router({
   joinCall: standardAuthedProcedure
     .input(joinCallInputSchema)
-    .mutation<{ callSessionId: string; participants: CallParticipant[] }>(async ({ ctx, input: { id } }) => {
+    .mutation<JoinCallOutput>(async ({ ctx, input: { id } }) => {
       const callSession = await ctx.db.query.callSessionsInMessage.findFirst({
         where: { id: { eq: id } },
       });
@@ -57,60 +153,15 @@ export const callRouter = router({
         });
 
       const { session, user } = ctx.getSessionPayload;
-      const participant: CallParticipant = {
-        id: session.id,
-        image: user.image ?? null,
-        isMuted: false,
-        name: user.name,
-        userId: user.id,
-      };
-      return joinCallAsParticipant(callSession, participant, session.id, user.id);
+      return joinLiveKitCall(callSession, createParticipant(session, user), user.id);
     }),
-  joinCallByRoomId: getMemberProcedure(joinCallByRoomIdInputSchema, "roomId").mutation<{
-    callSessionId: string;
-    participants: CallParticipant[];
-  }>(async ({ ctx, input: { roomId } }) => {
-    const { session, user } = ctx.getSessionPayload;
-
-    const existingId = await readCallSessionId(ctx.db, roomId);
-    let callSessionId: string;
-
-    if (existingId) callSessionId = existingId;
-    else {
-      let createdId: string | undefined;
-      for (let i = 0; i < 3; i++) {
-        const id = createId(CALL_ID_LENGTH);
-        const insertResult = await getResultAsync(() =>
-          ctx.db.insert(callSessionsInMessage).values({ id, roomId }).returning(),
-        );
-        const result = insertResult.orTee(console.error).unwrapOr(null);
-        if (result?.[0]) {
-          createdId = result[0].id;
-          break;
-        }
-      }
-      if (!createdId) {
-        const fallback = await ctx.db.query.callSessionsInMessage.findFirst({ where: { roomId: { eq: roomId } } });
-        if (!fallback)
-          throw new TRPCError({
-            code: "UNPROCESSABLE_CONTENT",
-            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.CallSession, roomId).message,
-          });
-        createdId = fallback.id;
-      }
-      callSessionId = createdId;
-    }
-
-    const callSession = { id: callSessionId, roomId };
-    const participant: CallParticipant = {
-      id: session.id,
-      image: user.image ?? null,
-      isMuted: false,
-      name: user.name,
-      userId: user.id,
-    };
-    return joinCallAsParticipant(callSession, participant, session.id, user.id);
-  }),
+  joinCallByRoomId: getMemberProcedure(joinCallByRoomIdInputSchema, "roomId").mutation<JoinCallOutput>(
+    async ({ ctx, input: { roomId } }) => {
+      const { session, user } = ctx.getSessionPayload;
+      const callSessionId = await createCallSessionId(ctx.db, roomId);
+      return joinLiveKitCall({ id: callSessionId, roomId }, createParticipant(session, user), user.id);
+    },
+  ),
   leaveCall: standardAuthedProcedure.input(leaveCallInputSchema).mutation(async ({ ctx, input: { callSessionId } }) => {
     const { session, user } = ctx.getSessionPayload;
     const sessionId = session.id;
@@ -176,19 +227,6 @@ export const callRouter = router({
       yield id;
     }
   }),
-  onSendSignal: standardAuthedProcedure.input(onSendSignalInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = on(callEventEmitter, "signal", { signal });
-    await requireCallSession(ctx.db, input);
-
-    for await (const [{ callSessionId, payload, senderId }] of events) {
-      if (callSessionId !== input || payload.targetId !== ctx.getSessionPayload.session.id) continue;
-      yield { payload, senderId };
-    }
-  }),
   onSetMute: standardAuthedProcedure.input(onSetMuteInputSchema).subscription(async function* ({ ctx, input, signal }) {
     const events = on(callEventEmitter, "muteChanged", { signal });
     await requireCallSession(ctx.db, input);
@@ -196,6 +234,19 @@ export const callRouter = router({
     for await (const [{ callSessionId, id, isMuted }] of events) {
       if (callSessionId !== input) continue;
       yield { id, isMuted };
+    }
+  }),
+  onVideoChanged: standardAuthedProcedure.input(onVideoChangedInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    const events = on(callEventEmitter, "videoChanged", { signal });
+    await requireCallSession(ctx.db, input);
+
+    for await (const [{ callSessionId, id, isCameraEnabled }] of events) {
+      if (callSessionId !== input) continue;
+      yield { id, isCameraEnabled };
     }
   }),
   readCallParticipants: standardAuthedProcedure
@@ -207,24 +258,17 @@ export const callRouter = router({
   readCallSessionId: getMemberProcedure(readCallSessionIdInputSchema, "roomId").query<string>(
     ({ ctx, input: { roomId } }) => readCallSessionId(ctx.db, roomId),
   ),
-  sendSignal: standardAuthedProcedure
-    .input(sendSignalInputSchema)
-    .mutation(({ ctx, input: { callSessionId, payload } }) => {
+  setCamera: standardAuthedProcedure
+    .input(setCameraInputSchema)
+    .mutation(({ ctx, input: { callSessionId, isCameraEnabled } }) => {
       const sessionId = ctx.getSessionPayload.session.id;
-      const participants = getCallParticipants(callSessionId);
-      if (!participants.some((p) => p.id === sessionId))
+      if (!setParticipantCamera(callSessionId, sessionId, isCameraEnabled))
         throw new TRPCError({
           code: "FORBIDDEN",
           message: new ForbiddenError("Must join call first").message,
         });
 
-      if (!participants.some((p) => p.id === payload.targetId))
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError("Target participant", payload.targetId).message,
-        });
-
-      callEventEmitter.emit("signal", { callSessionId, payload, senderId: sessionId });
+      callEventEmitter.emit("videoChanged", { callSessionId, id: sessionId, isCameraEnabled });
     }),
   setMute: standardAuthedProcedure.input(setMuteInputSchema).mutation(({ ctx, input: { callSessionId, isMuted } }) => {
     const sessionId = ctx.getSessionPayload.session.id;

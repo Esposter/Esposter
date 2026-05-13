@@ -22,6 +22,9 @@ declare global {
       GITHUB_CLIENT_SECRET: string;
       GOOGLE_CLIENT_ID: string;
       GOOGLE_CLIENT_SECRET: string;
+      LIVEKIT_API_KEY: string;
+      LIVEKIT_API_SECRET: string;
+      LIVEKIT_URL: string;
       VAPID_PRIVATE_KEY: string;
       VAPID_PUBLIC_KEY: string;
     }

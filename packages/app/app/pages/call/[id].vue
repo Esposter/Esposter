@@ -14,7 +14,7 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id as string;
-const isJoined = await useCallTokenSubscribables(id);
+const isJoined = await useCallIdSubscribables(id);
 if (!isJoined)
   throw createError({
     status: 404,
