@@ -72,9 +72,40 @@ Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md
 - `server/services/message/call/callStartTimeMap.ts` — `Map<callSessionId, Date>` for call duration calculation
 - `server/services/message/call/readCallSessionId.ts` — reads call session id for a room; returns `""` if none exists
 - `server/api/webhooks/livekit.post.ts` — LiveKit participant joined/left backup path into `callParticipantMap` + `callEventEmitter`
-- `app/composables/message/subscribables/useCallSubscribables.ts` — calls `readCallSessionId` on room entry → sets `currentRoomCallSessionId`; all subscriptions use `callSessionId`
+- `app/composables/message/subscribables/useCallSubscribables.ts` — room observer only: calls `readCallSessionId` on room entry → sets `currentRoomCallSessionId`; subscribes/unsubscribes to that room's call events without leaving the active call
+- `app/composables/message/room/call/useCallIdSubscribables.ts` — dedicated `/call/[id]` lifecycle; page unmount is an explicit call leave because the call page is the call surface
 - `app/store/message/room/call.ts` — `activeCallSessionId` (drives tRPC ops), `currentRoomCallSessionId` (viewed room), `callRoomId` (admin action checks), `callSessionParticipantsMap: Map<callSessionId, CallParticipant[]>`
 - `app/store/message/room/liveKit.ts` — LiveKit `Room` wraps media, active speaker, remote audio, mute/deafen, and camera track logic
+
+### Call lifetime boundary
+
+Room navigation is not call membership. A user remains in a call until one of these explicit leave boundaries occurs:
+
+- They click **Leave Call** from the room call controls, call view, or status bar controls.
+- They are removed by a moderation action that semantically ejects them from the call or room (`KickFromCall`, `KickFromRoom`, `TimeoutUser`, `CreateBan`).
+- The browser tab/session actually disconnects, crashes, logs out, or loses its LiveKit connection long enough for LiveKit to emit `participant_left`.
+- The standalone `/call/[id]` page unmounts, because that route is the whole call surface rather than a room observer.
+
+Changing rooms should only change `currentRoomCallSessionId`, participant observers, and inline room UI. It must not call `leaveCall`, disconnect LiveKit, reset `activeCallSessionId`, or remove the local participant from `callParticipantMap`.
+
+Implementation shape:
+
+```text
+useCallSubscribables cleanup on room change
+  → unsubscribe onJoinCall/onLeaveCall/onSetMute/onVideoChanged for the old room session
+  → setCurrentRoomCallSessionId("")
+  → clear room-scoped speaker hints if needed
+  → do not call roomCall.leaveCall
+  → do not disconnect LiveKit
+
+explicit leave action / moderation leave
+  → callStore.leaveCall()
+  → roomCall.leaveCall({ callSessionId: activeCallSessionId })
+  → disconnect LiveKit
+  → reset active call state
+```
+
+The persistent `StatusBar.vue` in the left sidebar is the return path when the user navigates away from the call room. `callRoomId` remains the room that owns the active call; clicking the status link navigates back to that room without changing call membership.
 
 ### Data flow: join call (v2 — LiveKit)
 

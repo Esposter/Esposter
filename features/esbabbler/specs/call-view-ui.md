@@ -107,6 +107,8 @@ onUnmounted in useCallIdSubscribables
     → reset activeCallSessionId, isDeafened, isForceMuted, local camera/screenshare state
 ```
 
+This differs intentionally from room navigation cleanup. `/call/[id]` is a dedicated call surface, so leaving the page means leaving the call. A normal room route change is only an observer swap and must not call `store.leaveCall()`.
+
 ---
 
 ## Differences from Room Call
@@ -115,7 +117,8 @@ onUnmounted in useCallIdSubscribables
 | -------------------------- | ----------------------------------------- | ---------------------------------------- |
 | Entry procedure            | `readCallSessionId({ roomId })` then join | `joinCall({ id })` directly              |
 | `callRoomId`               | Set (enables admin action room checks)    | Not set (no room membership)             |
-| `currentRoomCallSessionId` | Set (non-participant observer view)       | Not set                                  |
+| `currentRoomCallSessionId` | Set for the viewed room only              | Not set                                  |
 | Component reads            | `roomParticipants` in `CallPanel`         | `callParticipants` in `CallView`         |
 | Layout                     | Compact strip inside messages view        | Full-screen (`layout: false`)            |
 | Admin moderation actions   | Available (ForceMute, KickFromCall etc.)  | Not available (no room membership check) |
+| Route cleanup              | Unsubscribe viewed-room observers only    | Unsubscribe observers and leave call     |

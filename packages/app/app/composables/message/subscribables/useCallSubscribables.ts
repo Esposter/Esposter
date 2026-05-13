@@ -1,6 +1,5 @@
 import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
 
-import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
 import { useCallStore } from "@/store/message/room/call";
 
@@ -10,7 +9,6 @@ export const useCallSubscribables = async () => {
     scope: getCurrentScope(),
   };
   const { $trpc } = useNuxtApp();
-  const { data: session } = await authClient.useSession(useFetch);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const callStore = useCallStore();
@@ -19,13 +17,11 @@ export const useCallSubscribables = async () => {
     createCallParticipant,
     deleteCallParticipant,
     deleteSpeaker,
-    joinCallByRoomId,
     setCurrentRoomCallSessionId,
     setMute,
     setParticipantCamera,
     setParticipants,
   } = callStore;
-  const { isInCall } = storeToRefs(callStore);
 
   useOnlineSubscribable(
     currentRoomId,
@@ -38,12 +34,6 @@ export const useCallSubscribables = async () => {
 
       const participants = await $trpc.roomCall.readCallParticipants.query({ callSessionId });
       setParticipants(callSessionId, participants);
-
-      if (isInCall.value) {
-        const sessionId = session.value?.session.id;
-        if (sessionId) deleteCallParticipant(callSessionId, sessionId);
-        await joinCallByRoomId();
-      }
 
       const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(callSessionId, {
         onData: (participant) => {
@@ -68,11 +58,6 @@ export const useCallSubscribables = async () => {
       });
 
       return async () => {
-        const sessionId = session.value?.session.id;
-        if (isInCall.value) {
-          await $trpc.roomCall.leaveCall.mutate({ callSessionId });
-          if (sessionId) deleteCallParticipant(callSessionId, sessionId);
-        }
         setCurrentRoomCallSessionId("");
         clearSpeakers();
         participantJoinUnsubscribable.unsubscribe();

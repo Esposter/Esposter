@@ -1,8 +1,9 @@
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
+import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { StandardMessageEntity } from "@esposter/db-schema";
+import { type RoomInMessage, RoomType, StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -10,6 +11,22 @@ describe(writeIndexedDb, () => {
   const message1 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
   const message2 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
   const message3 = new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() });
+  const userId = crypto.randomUUID();
+  const room = {
+    categoryId: null,
+    createdAt: new Date(),
+    deletedAt: null,
+    id: crypto.randomUUID(),
+    image: null,
+    isReadOnly: false,
+    name: "",
+    participantKey: null,
+    slowmodeMs: null,
+    topic: "",
+    type: RoomType.Room,
+    updatedAt: new Date(),
+    userId,
+  } satisfies RoomInMessage;
 
   afterEach(async () => {
     await resetIndexedDb();
@@ -63,5 +80,16 @@ describe(writeIndexedDb, () => {
     expect(result2).toHaveLength(1);
     expect(takeOne(result1)).toStrictEqual(message1.toJSON());
     expect(takeOne(result2)).toStrictEqual(message2.toJSON());
+  });
+
+  test("adds the partitionKey to items that do not already include one", async () => {
+    expect.hasAssertions();
+
+    await writeIndexedDb(RoomIndexedDbStoreConfiguration, [room], userId);
+
+    const result = await readIndexedDb(RoomIndexedDbStoreConfiguration, userId);
+
+    expect(result).toHaveLength(1);
+    expect(takeOne(result)).toStrictEqual(Object.assign(structuredClone(room), { partitionKey: userId }));
   });
 });

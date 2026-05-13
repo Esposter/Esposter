@@ -4,6 +4,7 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { IndexKey, IndexNames } from "idb";
 
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
+import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { getResultAsync, noop, toRawDeep } from "@esposter/shared";
 
 export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends IndexNames<IndexedDbDatabaseSchema, T>>(
@@ -19,7 +20,16 @@ export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends Inde
     const existingKeys = await objectStore.index(indexName).getAllKeys(partitionKey);
     for (const key of existingKeys) await objectStore.delete(key);
     const itemsToCache = limit ? items.slice(0, limit) : items;
-    for (const item of itemsToCache) await objectStore.put(toRawDeep(item));
+    for (const item of itemsToCache) {
+      const rawItem = toRawDeep(item) as IndexedDbDatabaseSchema[T]["value"] & {
+        [CompositeKeyPropertyNames.partitionKey]: string;
+      };
+      await objectStore.put(
+        rawItem[CompositeKeyPropertyNames.partitionKey] !== undefined
+          ? rawItem
+          : Object.assign(structuredClone(rawItem), { [CompositeKeyPropertyNames.partitionKey]: partitionKey }),
+      );
+    }
     await tx.done;
   }).match(noop, console.error);
 };

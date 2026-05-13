@@ -10,6 +10,7 @@ Screensharing: see [`specs/screenshare.md`](screenshare.md).
 - Each room's header has a **📞 Start Call / Join Call** button (idle) or a **🟢 N in call** badge (active)
 - **Join** → connects microphone + optional camera, adds user to participant list
 - **Leave** → disconnects and removes user from the list
+- **Navigate away** → keeps the user in the call; only the inline room observer changes
 - **Mute** — mic off but still present (others see the mute badge)
 - **Deafen** — stop receiving all remote audio (you are effectively deaf; others still see you)
 - **Camera** — toggle local video track on/off
@@ -52,6 +53,43 @@ Each participant sends audio directly to every other participant (N² upload). N
 
 - Participant map (`callParticipantMap`) — updated via LiveKit webhooks (participant joined/left) so non-participants see who's in the channel via tRPC subscriptions
 - Token generation — `joinCall` mutation returns `{ livekitUrl, livekitToken }` which the client uses to connect
+
+---
+
+## Call Lifetime Boundary
+
+Call membership is anchored to the active LiveKit participant/session, not to the currently viewed room route. Navigating from room A to room B must not be interpreted as leaving room A's call.
+
+### Leave triggers
+
+Only these actions remove the local participant:
+
+- User intent: clicking **Leave Call** in room controls, call view controls, or any persistent call status control.
+- Moderation intent: `KickFromCall`, `KickFromRoom`, `TimeoutUser`, or `CreateBan` when the active call belongs to the affected room.
+- Session loss: logout, tab close, browser crash, or LiveKit disconnect that produces a `participant_left` webhook.
+- Standalone call-route unmount: leaving `/call/[id]` because that page is the full call context.
+
+### Non-leave transitions
+
+These must keep the active call connected:
+
+- Navigating to another room.
+- Opening a DM, settings page, profile page, or other in-app route while the app shell remains mounted.
+- Switching the inline room call observer from one `currentRoomCallSessionId` to another.
+- Losing the viewed room's call subscription while still connected to LiveKit.
+
+### Minimal client architecture
+
+Keep one owner for media membership and one owner for room observation:
+
+| Owner                                | Responsibility                                                                                                | Must not do                                               |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `callStore.leaveCall()`              | The only normal client path that calls `roomCall.leaveCall`, disconnects LiveKit, and resets active state     | Run implicitly during ordinary room navigation            |
+| `useCallSubscribables()`             | Observes the currently viewed room's call session and updates `currentRoomCallSessionId` / `roomParticipants` | Remove the active participant or disconnect LiveKit       |
+| `useCallIdSubscribables()`           | Owns `/call/[id]` page membership; joins on mount, leaves on unmount                                          | Reuse room-navigation cleanup semantics                   |
+| `StatusBar.vue` / persistent call UI | Shows the active call and links back to `callRoomId` after navigation                                         | Depend on `currentRoomCallSessionId` to decide membership |
+
+`activeCallSessionId` answers "what call am I in?" while `currentRoomCallSessionId` answers "what call belongs to the room I am looking at?" They can be different, and that is valid.
 
 ---
 
@@ -195,6 +233,8 @@ async function toggleDeafen() {
 
 The call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute, toggleCamera, toggleDeafen }`; LiveKit-specific track handling stays in `liveKit.ts`.
 
+`leaveCall` is an explicit membership action, not route cleanup. Room-level subscription cleanup should unsubscribe observers and clear viewed-room state only.
+
 ### State — Pinia Store (`store/message/room/call.ts`)
 
 #### v1 (current)
@@ -277,6 +317,8 @@ Validates the `Authorization` header with `WebhookReceiver` from `livekit-server
 - `participant_left` → `deleteCallParticipant` + `callEventEmitter.emit("leaveCall")`
 
 This is the backup for clients that disconnect without calling `leaveCall` (browser tab crash, network drop).
+
+LiveKit webhooks should be the backup for real media/session loss, not the primary path for in-app route changes. Route changes inside the Nuxt app must keep the LiveKit room connected unless an explicit leave trigger fires.
 
 ---
 
