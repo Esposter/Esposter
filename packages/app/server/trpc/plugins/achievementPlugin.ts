@@ -8,7 +8,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { achievements, DatabaseEntityType, userAchievements } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 const t = initTRPC.context<AuthedContext>().create();
 
@@ -80,7 +80,12 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
             amount: newAmount,
             unlockedAt: newAmount >= amount ? new Date() : undefined,
           })
-          .where(eq(userAchievements.id, userAchievement.id))
+          .where(
+            and(
+              eq(userAchievements.userId, userAchievement.userId),
+              eq(userAchievements.achievementId, userAchievement.achievementId),
+            ),
+          )
           .returning()
       )[0],
       Operation.Update,

@@ -21,7 +21,7 @@ export const readInviteToken = async (
     },
   });
   if (!invite) return "";
-  else if (dayjs(invite.createdAt).add(24, "hours").isAfter(Date.now())) return invite.token;
+  else if (dayjs(invite.createdAt).add(24, "hours").isAfter(Date.now())) return invite.id;
   else if (isAutoDelete)
     await db
       .delete(invitesInMessage)

@@ -11,18 +11,17 @@ export const INVITE_TOKEN_LENGTH = 8;
 export const invitesInMessage = pgTable(
   "invites",
   {
-    id: uuid().primaryKey().defaultRandom(),
+    id: text().primaryKey(),
     roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    token: text().notNull().unique(),
     userId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ token }) => [
-      check("invites_token_length_check", sql`LENGTH(${token}) = ${sql.raw(INVITE_TOKEN_LENGTH.toString())}`),
+    extraConfig: ({ id }) => [
+      check("invites_id_length_check", sql`LENGTH(${id}) = ${sql.raw(INVITE_TOKEN_LENGTH.toString())}`),
     ],
     schema: messageSchema,
   },
@@ -31,5 +30,5 @@ export const invitesInMessage = pgTable(
 export type InviteInMessage = typeof invitesInMessage.$inferSelect;
 
 export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, {
-  token: (schema) => schema.length(INVITE_TOKEN_LENGTH),
+  id: (schema) => schema.length(INVITE_TOKEN_LENGTH),
 });

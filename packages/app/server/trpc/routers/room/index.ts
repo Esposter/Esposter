@@ -124,7 +124,7 @@ const readMembersByIdsInputSchema = z.object({
 
 const countMembersInputSchema = roomIdSchema;
 
-const readInviteInputSchema = selectInviteInMessageSchema.shape.token;
+const readInviteInputSchema = selectInviteInMessageSchema.shape.id;
 
 const readInviteTokenInputSchema = roomIdSchema;
 
@@ -150,7 +150,7 @@ export const roomRouter = router({
         const token = createToken(INVITE_TOKEN_LENGTH);
         if (
           await getResultAsync(() =>
-            ctx.db.insert(invitesInMessage).values({ roomId, token, userId: ctx.getSessionPayload.user.id }),
+            ctx.db.insert(invitesInMessage).values({ roomId, id: token, userId: ctx.getSessionPayload.user.id }),
           ).unwrapOr(null)
         )
           return token;
@@ -244,7 +244,7 @@ export const roomRouter = router({
           roomId: true,
         },
         where: {
-          token: {
+          id: {
             eq: input,
           },
         },
@@ -390,7 +390,7 @@ export const roomRouter = router({
   }),
   readInvite: standardAuthedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
     const invite = await ctx.db.query.invitesInMessage.findFirst({
-      where: { token: { eq: input } },
+      where: { id: { eq: input } },
       with: InviteInMessageRelations,
     });
     if (!invite) return null;

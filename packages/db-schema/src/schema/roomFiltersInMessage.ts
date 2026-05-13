@@ -10,10 +10,8 @@ export const FILTER_WORDS_MAX_LENGTH = 1000;
 export const roomFiltersInMessage = pgTable(
   "roomFilters",
   {
-    id: uuid().primaryKey().defaultRandom(),
     roomId: uuid()
-      .notNull()
-      .unique()
+      .primaryKey()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
     words: text().array().notNull().default([]),
   },
