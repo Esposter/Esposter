@@ -59,15 +59,15 @@ catalog:
   "@pinia/nuxt": ^0.11.3
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^1.1.2
-  "@tiptap/core": ^3.23.1
-  "@tiptap/extension-code-block-lowlight": ^3.23.1
-  "@tiptap/extension-file-handler": ^3.23.1
-  "@tiptap/extension-mention": ^3.23.1
-  "@tiptap/extensions": ^3.23.1
-  "@tiptap/pm": ^3.23.1
-  "@tiptap/starter-kit": ^3.23.1
-  "@tiptap/suggestion": ^3.23.1
-  "@tiptap/vue-3": ^3.23.1
+  "@tiptap/core": ^3.23.2
+  "@tiptap/extension-code-block-lowlight": ^3.23.2
+  "@tiptap/extension-file-handler": ^3.23.2
+  "@tiptap/extension-mention": ^3.23.2
+  "@tiptap/extensions": ^3.23.2
+  "@tiptap/pm": ^3.23.2
+  "@tiptap/starter-kit": ^3.23.2
+  "@tiptap/suggestion": ^3.23.2
+  "@tiptap/vue-3": ^3.23.2
   "@tresjs/cientos": ^5.7.1
   "@tresjs/core": ^5.8.1
   "@tresjs/nuxt": ^5.6.1
@@ -229,7 +229,7 @@ catalog:
   web-push: ^3.6.7
   worker-timers: ^8.0.31
   write-excel-file: ^4.0.6
-  ws: ^8.20.0
+  ws: ^8.20.1
   xmlbuilder2: ^4.0.3
   zod: ^4.4.3
 
