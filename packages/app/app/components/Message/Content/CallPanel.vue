@@ -45,7 +45,7 @@ const callControlItems = useCallControlItems();
             animate-pulse
           />
           <v-icon v-if="isParticipantMuted" icon="mdi-microphone-off" size="x-small" bottom-0 right-0 absolute />
-          <v-icon v-if="isCameraEnabled" icon="mdi-video" size="x-small" top-0 right-0 absolute />
+          <v-icon v-if="isCameraEnabled" icon="mdi-video" size="x-small" right-0 top-0 absolute />
           <v-icon
             v-if="isDeafened && id === session?.session.id"
             icon="mdi-headphones-off"
