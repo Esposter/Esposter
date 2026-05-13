@@ -3,7 +3,7 @@ import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSu
 import { useRoomStore } from "@/store/message/room";
 import { useCallStore } from "@/store/message/room/call";
 
-export const useCallSubscribables = async () => {
+export const useCallSubscribables = () => {
   const onlineSubscribableContext: OnlineSubscribableContext = {
     instance: getCurrentInstance(),
     scope: getCurrentScope(),
@@ -57,7 +57,7 @@ export const useCallSubscribables = async () => {
         },
       });
 
-      return async () => {
+      return () => {
         setCurrentRoomCallSessionId("");
         clearSpeakers();
         participantJoinUnsubscribable.unsubscribe();

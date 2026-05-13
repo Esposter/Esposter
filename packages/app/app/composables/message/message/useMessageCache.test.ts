@@ -104,7 +104,19 @@ describe(useMessageCache, () => {
     const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
 
     expect(cachedMessages).toHaveLength(1);
-    expect(takeOne(cachedMessages).message).toBe(message);
+    expect(takeOne(cachedMessages).message).toStrictEqual(message);
+  });
+
+  test("does not persist loading messages", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await mountCache();
+    items.value = [new StandardMessageEntity({ isLoading: true, message, partitionKey, rowKey, userId })];
+    await flushCache();
+    const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
+
+    expect(cachedMessages).toHaveLength(0);
   });
 
   test("does not clear cache when items become empty on room switch", async () => {
@@ -147,7 +159,7 @@ describe(useMessageCache, () => {
     await flushCache();
 
     expect(items.value).toHaveLength(1);
-    expect(takeOne(items.value).message).toBe(message);
+    expect(takeOne(items.value).message).toStrictEqual(message);
   });
 
   test("does not populate store from cache when switching rooms online", async () => {

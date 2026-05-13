@@ -1,9 +1,11 @@
 import type { MessageEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
+import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { CompositeKeyPropertyNames, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
@@ -22,6 +24,7 @@ export const useReadMessages = () => {
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();
   const readEmojis = useReadEmojis();
+  const online = useOnline();
   const readMetadata = async (messages: MessageEntity[]) => {
     if (messages.length === 0) return;
 
@@ -49,6 +52,14 @@ export const useReadMessages = () => {
       throw new InvalidOperationError(Operation.Read, readMessages.name, CompositeKeyPropertyNames.partitionKey);
     return readItems(
       async () => {
+        if (!online.value) {
+          const cachedData = new CursorPaginationData<MessageEntity>();
+          cachedData.items = await readIndexedDb(MessageIndexedDbStoreConfiguration, roomId);
+          hasMoreNewer.value = false;
+          nextCursorNewer.value = "";
+          return cachedData;
+        }
+
         const rowKey = route.params.rowKey as string | undefined;
 
         if (rowKey) {
@@ -73,10 +84,6 @@ export const useReadMessages = () => {
         return response;
       },
       ({ items }) => readMetadata(items),
-      {
-        configuration: MessageIndexedDbStoreConfiguration,
-        partitionKey: roomId,
-      },
     );
   };
 
@@ -84,18 +91,11 @@ export const useReadMessages = () => {
     const roomId = currentRoomId.value;
     if (!roomId)
       throw new InvalidOperationError(Operation.Read, readMoreMessages.name, CompositeKeyPropertyNames.partitionKey);
-    return readMoreItems(
-      async (cursor) => {
-        const response = await $trpc.message.readMessages.query({ cursor, roomId });
-        await readMetadata(response.items);
-        return response;
-      },
-      onComplete,
-      {
-        configuration: MessageIndexedDbStoreConfiguration,
-        partitionKey: roomId,
-      },
-    );
+    return readMoreItems(async (cursor) => {
+      const response = await $trpc.message.readMessages.query({ cursor, roomId });
+      await readMetadata(response.items);
+      return response;
+    }, onComplete);
   };
 
   const readMoreNewerMessages = async (onComplete: () => void) => {

@@ -325,7 +325,7 @@ Composables that manage tRPC subscriptions for a feature are named `use{Feature}
 
 ```typescript
 // composables/message/subscribables/useCallSubscribables.ts
-export const useCallSubscribables = async () => {
+export const useCallSubscribables = () => {
   // calls useOnlineSubscribable, sets up tRPC subscriptions
   // no return value
 };
@@ -333,7 +333,7 @@ export const useCallSubscribables = async () => {
 // composables/message/subscribables/useSubscribables.ts
 export const useSubscribables = async () => {
   await useRoomSubscribables();
-  await useCallSubscribables();
+  useCallSubscribables();
   // ...
 };
 ```

@@ -3,7 +3,8 @@ import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/conf
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
-import { type RoomInMessage, RoomType, StandardMessageEntity } from "@esposter/db-schema";
+import { RoomType, StandardMessageEntity } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test } from "vitest";
 

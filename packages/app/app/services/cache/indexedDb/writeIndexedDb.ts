@@ -20,16 +20,10 @@ export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends Inde
     const existingKeys = await objectStore.index(indexName).getAllKeys(partitionKey);
     for (const key of existingKeys) await objectStore.delete(key);
     const itemsToCache = limit ? items.slice(0, limit) : items;
-    for (const item of itemsToCache) {
-      const rawItem = toRawDeep(item) as IndexedDbDatabaseSchema[T]["value"] & {
-        [CompositeKeyPropertyNames.partitionKey]: string;
-      };
+    for (const item of itemsToCache)
       await objectStore.put(
-        rawItem[CompositeKeyPropertyNames.partitionKey] !== undefined
-          ? rawItem
-          : Object.assign(structuredClone(rawItem), { [CompositeKeyPropertyNames.partitionKey]: partitionKey }),
+        Object.assign(structuredClone(toRawDeep(item)), { [CompositeKeyPropertyNames.partitionKey]: partitionKey }),
       );
-    }
     await tx.done;
   }).match(noop, console.error);
 };

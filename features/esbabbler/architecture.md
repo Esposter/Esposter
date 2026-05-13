@@ -59,6 +59,15 @@ Quick reference for AI-assisted development. Avoids re-exploring files each sess
 - Server uses NodeJS EventEmitter: `messageEventEmitter`, `roomEventEmitter`
 - Azure WebPubSub for webhook messages (separate from tRPC subscriptions)
 
+### Offline Cache
+
+Full spec: [`specs/cache.md`](specs/cache.md).
+
+- IndexedDB is a local mirror of Pinia store data, not behavior embedded in pagination helpers.
+- Prefer a feature-level `use*Cache` composable that `watchDeep`s store items and writes the current partition to IndexedDB.
+- Hydrate from IndexedDB only when offline and switching/loading a partition.
+- `ReadItemsCacheOptions` has been removed; do not reintroduce cache parameters to `readItems`.
+
 ---
 
 ## Call & Video
