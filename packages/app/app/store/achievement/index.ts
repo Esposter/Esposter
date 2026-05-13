@@ -51,7 +51,7 @@ export const useAchievementStore = defineStore("achievement", () => {
       achievementDefinitionMap.value[userAchievement.achievement.name],
     );
     const index = userAchievements.value.findIndex(
-      ({ userId, achievementId }) =>
+      ({ achievementId, userId }) =>
         userId === userAchievement.userId && achievementId === userAchievement.achievementId,
     );
     if (index === -1) userAchievements.value.push(userAchievementWithDefinition);
