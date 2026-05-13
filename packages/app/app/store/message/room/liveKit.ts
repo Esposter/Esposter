@@ -2,11 +2,21 @@ import type { LocalTrackPublication, RemoteParticipant, RemoteTrack, RemoteTrack
 
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useCallStore } from "@/store/message/room/call";
-import { Room, RoomEvent, Track } from "livekit-client";
 import { exhaustiveGuard } from "@esposter/shared";
+import { Room, RoomEvent, Track } from "livekit-client";
 
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
+  const callStore = useCallStore();
+  const {
+    leaveCall,
+    setCameraEnabled,
+    setLocalScreenShareStream,
+    setLocalVideoStream,
+    setRemoteScreenShareStream,
+    setRemoteVideoStream,
+    setScreenSharing,
+  } = callStore;
   const remoteAudioElements = new Map<string, HTMLMediaElement>();
   const selectedAudioInputDeviceId = ref("");
   const selectedAudioOutputDeviceId = ref("");
@@ -16,7 +26,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     remoteAudioElements.clear();
   };
   const setActiveSpeakers = (speakers: { identity: string }[]) => {
-    const callStore = useCallStore();
     callStore.speakingIds = speakers.map(({ identity }) => identity);
   };
   const setRemoteAudioMuted = (isDeafened: boolean) => {
@@ -45,7 +54,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (!isRemoteAudioSource(publication.source)) return;
-    const callStore = useCallStore();
     const element = track.attach();
     element.autoplay = true;
     element.muted = callStore.isDeafened;
@@ -67,7 +75,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.Camera || !track.mediaStream) return;
-    useCallStore().setRemoteVideoStream(participant.identity, track.mediaStream);
+    setRemoteVideoStream(participant.identity, track.mediaStream);
   };
   const detachRemoteCamera = (
     _track: RemoteTrack,
@@ -75,7 +83,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.Camera) return;
-    useCallStore().setRemoteVideoStream(participant.identity, null);
+    setRemoteVideoStream(participant.identity, null);
   };
   const attachRemoteScreenShare = (
     track: RemoteTrack,
@@ -83,7 +91,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.ScreenShare || !track.mediaStream) return;
-    useCallStore().setRemoteScreenShareStream(participant.identity, track.mediaStream);
+    setRemoteScreenShareStream(participant.identity, track.mediaStream);
   };
   const detachRemoteScreenShare = (
     _track: RemoteTrack,
@@ -91,28 +99,33 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.ScreenShare) return;
-    useCallStore().setRemoteScreenShareStream(participant.identity, null);
+    setRemoteScreenShareStream(participant.identity, null);
   };
-  const handleLocalTrackPublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
-    const callStore = useCallStore();
+  const onLocalTrackPublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
     if (publication.source === Track.Source.Camera) {
-      callStore.setLocalVideoStream(publication.track?.mediaStream ?? null);
-      await callStore.setCameraEnabled(true);
+      setLocalVideoStream(publication.track?.mediaStream ?? null);
+      await setCameraEnabled(true);
     } else if (publication.source === Track.Source.ScreenShare) {
-      callStore.setLocalScreenShareStream(publication.track?.mediaStream ?? null);
-      callStore.setScreenSharing(true);
+      setLocalScreenShareStream(publication.track?.mediaStream ?? null);
+      setScreenSharing(true);
     }
   });
-  const handleLocalTrackUnpublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
-    const callStore = useCallStore();
+  const onLocalTrackUnpublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
     if (publication.source === Track.Source.Camera) {
-      callStore.setLocalVideoStream(null);
-      await callStore.setCameraEnabled(false);
+      setLocalVideoStream(null);
+      await setCameraEnabled(false);
     } else if (publication.source === Track.Source.ScreenShare) {
-      callStore.setLocalScreenShareStream(null);
-      callStore.setScreenSharing(false);
+      setLocalScreenShareStream(null);
+      setScreenSharing(false);
     }
   });
+  const onDisconnected = getSynchronizedFunction(async () => {
+    await leaveCall();
+  });
+  const onAudioPlaybackStatusChanged = () => {
+    if (activeRoom && !activeRoom.canPlaybackAudio)
+      console.warn("Audio autoplay blocked — browser requires user interaction to start audio.");
+  };
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeRoom) return;
     await activeRoom.localParticipant.setCameraEnabled(isCameraEnabled);
@@ -156,19 +169,10 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     room.on(RoomEvent.TrackUnsubscribed, detachRemoteAudio);
     room.on(RoomEvent.TrackUnsubscribed, detachRemoteCamera);
     room.on(RoomEvent.TrackUnsubscribed, detachRemoteScreenShare);
-    room.on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished);
-    room.on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished);
-    room.on(
-      RoomEvent.Disconnected,
-      getSynchronizedFunction(async () => {
-        const callStore = useCallStore();
-        await callStore.leaveCall();
-      }),
-    );
-    room.on(RoomEvent.AudioPlaybackStatusChanged, () => {
-      if (!room.canPlaybackAudio)
-        console.warn("Audio autoplay blocked — browser requires user interaction to start audio.");
-    });
+    room.on(RoomEvent.LocalTrackPublished, onLocalTrackPublished);
+    room.on(RoomEvent.LocalTrackUnpublished, onLocalTrackUnpublished);
+    room.on(RoomEvent.Disconnected, onDisconnected);
+    room.on(RoomEvent.AudioPlaybackStatusChanged, onAudioPlaybackStatusChanged);
     await room.connect(livekitUrl, livekitToken);
     await room.localParticipant.setMicrophoneEnabled(true);
     syncActiveDevices(room);
