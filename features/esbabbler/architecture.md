@@ -76,7 +76,7 @@ Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md
 
 ### Key file map (v2 current — LiveKit)
 
-- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); procedures use `callSessionId`, not `roomId`; `joinCall({ id })` and `joinCallByRoomId({ roomId })` return `{ livekitUrl, livekitToken }`
+- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); procedures use `callSessionId`, not `roomId`; `joinCall({ id })` and `joinCallByRoomId({ roomId })` return `{ callSessionId, participants, livekitUrl, livekitToken }`
 - `server/services/message/call/callParticipantMap.ts` — `Map<callSessionId, Map<sessionId, CallParticipant>>` (keyed by callSessionId, not roomId)
 - `server/services/message/call/callStartTimeMap.ts` — `Map<callSessionId, Date>` for call duration calculation
 - `server/services/message/call/readCallSessionId.ts` — reads call session id for a room; returns `""` if none exists

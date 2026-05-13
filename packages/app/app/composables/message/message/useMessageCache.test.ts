@@ -91,12 +91,17 @@ describe(useMessageCache, () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [new StandardMessageEntity({ message, partitionKey, rowKey: crypto.randomUUID(), userId })],
+      partitionKey,
+    );
     await mountCache();
     items.value = [new StandardMessageEntity({ isLoading: true, message, partitionKey, rowKey, userId })];
     await flushCache();
     const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
 
-    expect(cachedMessages).toHaveLength(0);
+    expect(cachedMessages).toHaveLength(1);
   });
 
   test("does not clear cache when items become empty on room switch", async () => {
