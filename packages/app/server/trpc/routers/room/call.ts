@@ -155,9 +155,10 @@ export const callRouter = router({
     input,
     signal,
   }) {
+    const events = on(callEventEmitter, "joinCall", { signal });
     await requireCallSession(ctx.db, input);
 
-    for await (const [{ callSessionId, participant, sessionId }] of on(callEventEmitter, "joinCall", { signal })) {
+    for await (const [{ callSessionId, participant, sessionId }] of events) {
       if (callSessionId !== input || sessionId === ctx.getSessionPayload.session.id) continue;
       yield participant;
     }
@@ -167,9 +168,10 @@ export const callRouter = router({
     input,
     signal,
   }) {
+    const events = on(callEventEmitter, "leaveCall", { signal });
     await requireCallSession(ctx.db, input);
 
-    for await (const [{ callSessionId, id }] of on(callEventEmitter, "leaveCall", { signal })) {
+    for await (const [{ callSessionId, id }] of events) {
       if (callSessionId !== input || id === ctx.getSessionPayload.session.id) continue;
       yield id;
     }
@@ -179,17 +181,19 @@ export const callRouter = router({
     input,
     signal,
   }) {
+    const events = on(callEventEmitter, "signal", { signal });
     await requireCallSession(ctx.db, input);
 
-    for await (const [{ callSessionId, payload, senderId }] of on(callEventEmitter, "signal", { signal })) {
+    for await (const [{ callSessionId, payload, senderId }] of events) {
       if (callSessionId !== input || payload.targetId !== ctx.getSessionPayload.session.id) continue;
       yield { payload, senderId };
     }
   }),
   onSetMute: standardAuthedProcedure.input(onSetMuteInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    const events = on(callEventEmitter, "muteChanged", { signal });
     await requireCallSession(ctx.db, input);
 
-    for await (const [{ callSessionId, id, isMuted }] of on(callEventEmitter, "muteChanged", { signal })) {
+    for await (const [{ callSessionId, id, isMuted }] of events) {
       if (callSessionId !== input) continue;
       yield { id, isMuted };
     }

@@ -118,11 +118,11 @@ describe("call", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db, getMockSession().user);
     const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
+    const { session } = await mockSessionOnce(mockContext.db, getMockSession().user);
 
     await expect(roomCallCaller.leaveCall({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, getMockSession().session.id).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, session.id).message}]`,
     );
   });
 

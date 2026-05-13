@@ -184,6 +184,28 @@ CompositeKeyPropertyNames.partitionKey; // ✓ always for partitionKey/rowKey
 ItemMetadataPropertyNames.deletedAt; // ✓ always for metadata fields
 ```
 
+## Subscription Race Condition — Register Listener Before First `await`
+
+In tRPC subscription generators, `on(emitter, event, { signal })` from `node:events` MUST be assigned to a `const` **before** any `await`. The idiomatic `for await (const x of on(...))` form is NOT equivalent when an `await` precedes it — `on()` only gets called when the `for await` line is reached (after the `await` completes). Mutations that emit synchronously (no async ops after middleware) can fire during that `await` and be missed.
+
+```ts
+// CORRECT — listener registered synchronously before control is yielded
+async function* ({ ctx, input, signal }) {
+  const events = on(callEventEmitter, "muteChanged", { signal });
+  await requireCallSession(ctx.db, input);
+  for await (const [data] of events) { ... }
+}
+
+// WRONG — listener registered after requireCallSession resolves;
+// synchronous mutations (leaveCall, setMute, sendSignal) can fire during that await
+async function* ({ ctx, input, signal }) {
+  await requireCallSession(ctx.db, input);
+  for await (const [data] of on(callEventEmitter, "muteChanged", { signal })) { ... }
+}
+```
+
+In tests, `Promise.all([iterator.next(), mutation()])` exposes this: the mutation runs synchronously after its middleware, emitting the event while the generator is still blocked on the validation `await`. The buffered-event model in `node:events` `on()` only saves you if the listener was already registered at emit time.
+
 ## Router Test Patterns
 
 - **Always create test resources via `caller.method()`** — never insert rows directly into the DB in router tests. Direct DB insertion bypasses application logic (auth checks, business rules, cascades) and means the flow being tested is different from the real flow. If a resource belongs to a different router, create a second caller for that router using `createCallerFactory(otherRouter)`.

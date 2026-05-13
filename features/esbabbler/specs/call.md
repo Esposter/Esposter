@@ -104,6 +104,16 @@ All in `server/trpc/routers/room/call.ts`. Procedures are registered as `roomCal
 
 `requireCallSession(db, callSessionId)` — internal helper used by subscriptions; throws NOT_FOUND if session doesn't exist (guards against guessing).
 
+### Design decisions
+
+**`CallParticipant.id` is `session.id`, not `user.id`**
+
+Each WebRTC peer connection IS an auth session. `sendSignal` routes to a specific `session.id` peer — you can't signal "to a user" in a mesh, you signal to a specific connection. Two devices = two separate WebRTC peers = two separate participant map entries = correct behavior. Using `user.id` would cause last-write-wins on multi-device join and make `leaveCall` on device A evict device B's entry.
+
+`CallParticipant` already stores `userId` for UI display. The `deviceId` composite (userId + sessionId) adds no value here — `session.id` is already globally unique per device.
+
+**This does NOT change for v2 (LiveKit).** The LiveKit `AccessToken` uses `identity: session.id` — LiveKit's participant identity maps 1:1 to the auth session. The webhook-driven `callParticipantMap` updates use the same `session.id` key. Multi-device: each device gets its own LiveKit participant (separate tracks, separate mute state) which is the correct model.
+
 ### v2 (next) — LiveKit migration
 
 | Procedure              | Type             | Change from v1 | Purpose                                                                                                                  |
