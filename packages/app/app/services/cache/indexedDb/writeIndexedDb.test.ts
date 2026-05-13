@@ -1,10 +1,11 @@
+import type { RoomInMessage } from "@esposter/db-schema";
+
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { RoomType, StandardMessageEntity } from "@esposter/db-schema";
-import type { RoomInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test } from "vitest";
 

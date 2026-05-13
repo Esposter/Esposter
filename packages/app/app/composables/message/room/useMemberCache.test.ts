@@ -101,7 +101,7 @@ describe(useMemberCache, () => {
     await flushCache();
 
     expect(members.value).toHaveLength(1);
-    expect(count.value).toStrictEqual(1);
+    expect(count.value).toBe(1);
     expect(takeOne(members.value).id).toStrictEqual(user.id);
   });
 });
