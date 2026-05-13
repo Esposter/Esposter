@@ -73,10 +73,13 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
         await setCameraEnabled(false);
       }),
     );
-    room.on(RoomEvent.Disconnected, async () => {
-      const callStore = useCallStore();
-      await callStore.leaveCall();
-    });
+    room.on(
+      RoomEvent.Disconnected,
+      getSynchronizedFunction(async () => {
+        const callStore = useCallStore();
+        await callStore.leaveCall();
+      }),
+    );
     room.on(RoomEvent.AudioPlaybackStatusChanged, () => {
       if (!room.canPlaybackAudio)
         console.warn("Audio autoplay blocked — browser requires user interaction to start audio.");

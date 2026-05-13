@@ -10,7 +10,7 @@ export const createLiveKitRoom = async (callSessionId: string) => {
   await getResultAsync(() => roomServiceClient.createRoom({ emptyTimeout: 60, name: callSessionId })).match(
     noop,
     (error) => {
-      if (!/already exists/i.test(error.message)) throw error;
+      if (!/already exists/iu.test(error.message)) throw error;
     },
   );
 };

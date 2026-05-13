@@ -11,18 +11,17 @@ export const createCallSessionId = async (db: Context["db"], roomId: string): Pr
     const existing = await readCallSessionId(db, roomId);
     if (existing) return existing;
     const id = createId(CALL_ID_LENGTH);
-    const insertResult = await getResultAsync(() =>
-      db.insert(callSessionsInMessage).values({ id, roomId }).returning(),
-    );
-    const result = insertResult.orTee(console.error).unwrapOr(null);
-    if (result?.[0]) return result[0].id;
+    const callSession = await getResultAsync(() => db.insert(callSessionsInMessage).values({ id, roomId }).returning())
+      .orTee(console.error)
+      .unwrapOr(null);
+    if (callSession?.[0]) return callSession[0].id;
   }
 
-  const fallback = await db.query.callSessionsInMessage.findFirst({ where: { roomId: { eq: roomId } } });
-  if (!fallback)
+  const callSession = await db.query.callSessionsInMessage.findFirst({ where: { roomId: { eq: roomId } } });
+  if (!callSession)
     throw new TRPCError({
       code: "UNPROCESSABLE_CONTENT",
       message: new InvalidOperationError(Operation.Create, DatabaseEntityType.CallSession, roomId).message,
     });
-  return fallback.id;
+  return callSession.id;
 };
