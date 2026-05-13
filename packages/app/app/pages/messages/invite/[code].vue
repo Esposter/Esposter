@@ -8,7 +8,7 @@ definePageMeta({
   middleware: "auth",
   validate: async (route) => {
     const code = route.params.code;
-    const result = await selectInviteInMessageSchema.shape.token.safeParseAsync(code);
+    const result = await selectInviteInMessageSchema.shape.id.safeParseAsync(code);
     return result.success;
   },
 });

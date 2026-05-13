@@ -4,7 +4,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { invitesInMessage } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
-export const readInviteToken = async (
+export const readInviteId = async (
   db: Context["db"],
   userId: string,
   roomId: string,

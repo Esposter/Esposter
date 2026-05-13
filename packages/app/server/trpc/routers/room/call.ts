@@ -1,7 +1,7 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { callSignalPayloadSchema } from "#shared/models/room/call/CallSignalPayload";
-import { createToken } from "#shared/util/math/random/createToken";
+import { createId } from "#shared/util/math/random/createId";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
 import { callStartTimeMap } from "@@/server/services/message/call/callStartTimeMap";
@@ -19,7 +19,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { createMessage } from "@esposter/db";
 import {
   AzureTable,
-  CALL_TOKEN_LENGTH,
+  CALL_ID_LENGTH,
   callSessionIdSchema,
   callSessionsInMessage,
   DatabaseEntityType,
@@ -79,7 +79,7 @@ export const callRouter = router({
     else {
       let createdId: string | undefined;
       for (let i = 0; i < 3; i++) {
-        const id = createToken(CALL_TOKEN_LENGTH);
+        const id = createId(CALL_ID_LENGTH);
         const insertResult = await getResultAsync(() =>
           ctx.db.insert(callSessionsInMessage).values({ id, roomId }).returning(),
         );

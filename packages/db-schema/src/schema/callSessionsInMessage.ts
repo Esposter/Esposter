@@ -5,7 +5,7 @@ import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
-export const CALL_TOKEN_LENGTH = 12;
+export const CALL_ID_LENGTH = 12;
 
 export const callSessionsInMessage = pgTable(
   "call_sessions",
@@ -17,7 +17,7 @@ export const callSessionsInMessage = pgTable(
   },
   {
     extraConfig: ({ id }) => [
-      check("call_sessions_id_length_check", sql`LENGTH(${id}) = ${sql.raw(CALL_TOKEN_LENGTH.toString())}`),
+      check("call_sessions_id_length_check", sql`LENGTH(${id}) = ${sql.raw(CALL_ID_LENGTH.toString())}`),
     ],
     schema: messageSchema,
   },
@@ -26,5 +26,5 @@ export const callSessionsInMessage = pgTable(
 export type CallSessionInMessage = typeof callSessionsInMessage.$inferSelect;
 
 export const selectCallSessionInMessageSchema = createSelectSchema(callSessionsInMessage, {
-  id: (schema) => schema.length(CALL_TOKEN_LENGTH),
+  id: (schema) => schema.length(CALL_ID_LENGTH),
 });

@@ -11,14 +11,14 @@ import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { createToken } from "#shared/util/math/random/createToken";
+import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
-import { readInviteToken } from "@@/server/services/message/readInviteToken";
+import { readInviteId } from "@@/server/services/message/readInviteId";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -39,7 +39,7 @@ import {
   AzureContainer,
   AzureTable,
   DatabaseEntityType,
-  INVITE_TOKEN_LENGTH,
+  INVITE_ID_LENGTH,
   InviteInMessageRelations,
   invitesInMessage,
   MessageType,
@@ -126,7 +126,7 @@ const countMembersInputSchema = roomIdSchema;
 
 const readInviteInputSchema = selectInviteInMessageSchema.shape.id;
 
-const readInviteTokenInputSchema = roomIdSchema;
+const readInviteIdInputSchema = roomIdSchema;
 
 const createInviteInputSchema = roomIdSchema;
 
@@ -143,17 +143,17 @@ export const roomRouter = router({
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
     .mutation<string>(async ({ ctx, input: { roomId } }) => {
-      const inviteToken = await readInviteToken(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
-      if (inviteToken) return inviteToken;
+      const inviteId = await readInviteId(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
+      if (inviteId) return inviteId;
 
       for (let i = 0; i < 3; i++) {
-        const token = createToken(INVITE_TOKEN_LENGTH);
+        const id = createId(INVITE_ID_LENGTH);
         if (
           await getResultAsync(() =>
-            ctx.db.insert(invitesInMessage).values({ roomId, id: token, userId: ctx.getSessionPayload.user.id }),
+            ctx.db.insert(invitesInMessage).values({ id, roomId, userId: ctx.getSessionPayload.user.id }),
           ).unwrapOr(null)
         )
-          return token;
+          return id;
       }
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",
@@ -407,9 +407,9 @@ export const roomRouter = router({
     });
     return { ...invite, isMember: Boolean(isMember) };
   }),
-  readInviteToken: getMemberProcedure(readInviteTokenInputSchema, "roomId")
+  readInviteId: getMemberProcedure(readInviteIdInputSchema, "roomId")
     .use(isRoom)
-    .query<string>(({ ctx, input: { roomId } }) => readInviteToken(ctx.db, ctx.getSessionPayload.user.id, roomId)),
+    .query<string>(({ ctx, input: { roomId } }) => readInviteId(ctx.db, ctx.getSessionPayload.user.id, roomId)),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];

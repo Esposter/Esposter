@@ -6,7 +6,7 @@ import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
-export const INVITE_TOKEN_LENGTH = 8;
+export const INVITE_ID_LENGTH = 8;
 
 export const invitesInMessage = pgTable(
   "invites",
@@ -21,7 +21,7 @@ export const invitesInMessage = pgTable(
   },
   {
     extraConfig: ({ id }) => [
-      check("invites_id_length_check", sql`LENGTH(${id}) = ${sql.raw(INVITE_TOKEN_LENGTH.toString())}`),
+      check("invites_id_length_check", sql`LENGTH(${id}) = ${sql.raw(INVITE_ID_LENGTH.toString())}`),
     ],
     schema: messageSchema,
   },
@@ -30,5 +30,5 @@ export const invitesInMessage = pgTable(
 export type InviteInMessage = typeof invitesInMessage.$inferSelect;
 
 export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, {
-  id: (schema) => schema.length(INVITE_TOKEN_LENGTH),
+  id: (schema) => schema.length(INVITE_ID_LENGTH),
 });
