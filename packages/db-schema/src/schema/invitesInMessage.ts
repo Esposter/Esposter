@@ -6,13 +6,12 @@ import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
-export const CODE_LENGTH = 8;
+export const INVITE_ID_LENGTH = 8;
 
 export const invitesInMessage = pgTable(
   "invites",
   {
-    code: text().notNull().unique(),
-    id: uuid().primaryKey().defaultRandom(),
+    id: text().primaryKey(),
     roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
@@ -21,8 +20,8 @@ export const invitesInMessage = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ code }) => [
-      check("invites_code_length_check", sql`LENGTH(${code}) = ${sql.raw(CODE_LENGTH.toString())}`),
+    extraConfig: ({ id }) => [
+      check("invites_id_length_check", sql`LENGTH(${id}) = ${sql.raw(INVITE_ID_LENGTH.toString())}`),
     ],
     schema: messageSchema,
   },
@@ -31,5 +30,5 @@ export const invitesInMessage = pgTable(
 export type InviteInMessage = typeof invitesInMessage.$inferSelect;
 
 export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, {
-  code: (schema) => schema.length(CODE_LENGTH),
+  id: (schema) => schema.length(INVITE_ID_LENGTH),
 });

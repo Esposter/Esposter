@@ -4,10 +4,10 @@ import type { CallSignalPayload } from "#shared/models/room/call/CallSignalPaylo
 import { EventEmitter } from "node:events";
 
 interface CallEvents {
-  joinCall: [{ participant: CallParticipant; roomId: string; sessionId: string }];
-  leaveCall: [{ id: string; roomId: string; sessionId: string }];
-  muteChanged: [{ id: string; isMuted: boolean; roomId: string }];
-  signal: [{ payload: CallSignalPayload; roomId: string; senderId: string }];
+  joinCall: [{ callSessionId: string; participant: CallParticipant; sessionId: string }];
+  leaveCall: [{ callSessionId: string; id: string; sessionId: string }];
+  muteChanged: [{ callSessionId: string; id: string; isMuted: boolean }];
+  signal: [{ callSessionId: string; payload: CallSignalPayload; senderId: string }];
 }
 
 export const callEventEmitter = new EventEmitter<CallEvents>();

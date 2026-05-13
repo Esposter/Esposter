@@ -6,13 +6,13 @@ import { mergeProps } from "vue";
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const inviteCode = ref<null | string>(null);
-if (currentRoomId.value) inviteCode.value = await $trpc.room.readInviteCode.query({ roomId: currentRoomId.value });
+const inviteId = ref("");
+if (currentRoomId.value) inviteId.value = await $trpc.room.readInviteId.query({ roomId: currentRoomId.value });
 
 const roomName = useRoomName(currentRoomId);
 const runtimeConfig = useRuntimeConfig();
 const inviteLink = computed(() =>
-  inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(inviteCode.value)}` : "",
+  inviteId.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(inviteId.value)}` : "",
 );
 const dialog = ref(false);
 const isCopied = ref(false);
@@ -50,7 +50,7 @@ const isCopied = ref(false);
               @create="
                 async () => {
                   if (!currentRoomId) return;
-                  inviteCode = await $trpc.room.createInvite.mutate({ roomId: currentRoomId });
+                  inviteId = await $trpc.room.createInvite.mutate({ roomId: currentRoomId });
                 }
               "
             />

@@ -11,14 +11,14 @@ import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { createCode } from "#shared/util/math/random/createCode";
+import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
-import { readInviteCode } from "@@/server/services/message/readInviteCode";
+import { readInviteId } from "@@/server/services/message/readInviteId";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -38,8 +38,8 @@ import { createMessage, deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
   AzureTable,
-  CODE_LENGTH,
   DatabaseEntityType,
+  INVITE_ID_LENGTH,
   InviteInMessageRelations,
   invitesInMessage,
   MessageType,
@@ -69,7 +69,6 @@ import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomInMessageSchema.shape.id.optional();
-export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
 const createSystemRoomMessage = async (
   roomId: string,
@@ -93,7 +92,6 @@ const createSystemRoomMessage = async (
 };
 
 const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });
-export type ReadMutualRoomsInput = z.infer<typeof readMutualRoomsInputSchema>;
 
 const readRoomsInputSchema = z
   .object({
@@ -104,19 +102,13 @@ const readRoomsInputSchema = z
     filter: selectRoomInMessageSchema.pick({ name: true }).optional(),
   })
   .prefault({});
-export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
-
 const onUpdateRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnUpdateRoomInput = z.infer<typeof onUpdateRoomInputSchema>;
 
 const onDeleteRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnDeleteRoomInput = z.infer<typeof onDeleteRoomInputSchema>;
 
 const onJoinRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnJoinRoomInput = z.infer<typeof onJoinRoomInputSchema>;
 
 const onLeaveRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnLeaveRoomInput = z.infer<typeof onLeaveRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
   ...roomIdSchema.shape,
@@ -125,25 +117,18 @@ const readMembersInputSchema = z.object({
   ]).shape,
   filter: selectUserSchema.pick({ name: true }).optional(),
 });
-export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
-
 const readMembersByIdsInputSchema = z.object({
   ...roomIdSchema.shape,
   ids: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
-export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 
 const countMembersInputSchema = roomIdSchema;
-export type CountMembersInput = z.infer<typeof countMembersInputSchema>;
 
-const readInviteInputSchema = selectInviteInMessageSchema.shape.code;
-export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
+const readInviteInputSchema = selectInviteInMessageSchema.shape.id;
 
-const readInviteCodeInputSchema = roomIdSchema;
-export type ReadInviteCodeInput = z.infer<typeof readInviteCodeInputSchema>;
+const readInviteIdInputSchema = roomIdSchema;
 
 const createInviteInputSchema = roomIdSchema;
-export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 
 export const roomRouter = router({
   countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
@@ -158,17 +143,17 @@ export const roomRouter = router({
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
     .mutation<string>(async ({ ctx, input: { roomId } }) => {
-      const inviteCode = await readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
-      if (inviteCode) return inviteCode;
+      const inviteId = await readInviteId(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
+      if (inviteId) return inviteId;
 
       for (let i = 0; i < 3; i++) {
-        const code = createCode(CODE_LENGTH);
+        const id = createId(INVITE_ID_LENGTH);
         if (
           await getResultAsync(() =>
-            ctx.db.insert(invitesInMessage).values({ code, roomId, userId: ctx.getSessionPayload.user.id }),
+            ctx.db.insert(invitesInMessage).values({ id, roomId, userId: ctx.getSessionPayload.user.id }),
           ).unwrapOr(null)
         )
-          return code;
+          return id;
       }
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",
@@ -259,7 +244,7 @@ export const roomRouter = router({
           roomId: true,
         },
         where: {
-          code: {
+          id: {
             eq: input,
           },
         },
@@ -405,7 +390,7 @@ export const roomRouter = router({
   }),
   readInvite: standardAuthedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
     const invite = await ctx.db.query.invitesInMessage.findFirst({
-      where: { code: { eq: input } },
+      where: { id: { eq: input } },
       with: InviteInMessageRelations,
     });
     if (!invite) return null;
@@ -422,11 +407,9 @@ export const roomRouter = router({
     });
     return { ...invite, isMember: Boolean(isMember) };
   }),
-  readInviteCode: getMemberProcedure(readInviteCodeInputSchema, "roomId")
+  readInviteId: getMemberProcedure(readInviteIdInputSchema, "roomId")
     .use(isRoom)
-    .query<null | string>(({ ctx, input: { roomId } }) =>
-      readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId),
-    ),
+    .query<string>(({ ctx, input: { roomId } }) => readInviteId(ctx.db, ctx.getSessionPayload.user.id, roomId)),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];

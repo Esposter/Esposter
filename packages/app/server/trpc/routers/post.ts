@@ -32,7 +32,6 @@ import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
-export type ReadPostInput = z.infer<typeof readPostInputSchema>;
 
 const readPostsInputSchema = z
   .object({
@@ -40,7 +39,6 @@ const readPostsInputSchema = z
     [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null),
   })
   .prefault({});
-export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 
 export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<PostWithRelations>(

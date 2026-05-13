@@ -3,6 +3,7 @@ import { achievementsRelation } from "@/relations/achievementsRelation";
 import { appUsersInMessageRelation } from "@/relations/appUsersInMessageRelation";
 import { bansInMessageRelation } from "@/relations/bansInMessageRelation";
 import { blocksRelation } from "@/relations/blocksRelation";
+import { callSessionsInMessageRelation } from "@/relations/callSessionsInMessageRelation";
 import { friendRequestsRelation } from "@/relations/friendRequestsRelation";
 import { friendsRelation } from "@/relations/friendsRelation";
 import { invitesInMessageRelation } from "@/relations/invitesInMessageRelation";
@@ -25,6 +26,7 @@ import { webhooksInMessageRelation } from "@/relations/webhooksInMessageRelation
 
 export const relations = {
   ...accountsRelation,
+  ...callSessionsInMessageRelation,
   ...achievementsRelation,
   ...appUsersInMessageRelation,
   ...bansInMessageRelation,

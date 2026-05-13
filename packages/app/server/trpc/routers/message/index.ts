@@ -84,7 +84,6 @@ export const readMetadataInputSchema = z.object({
   messageRowKeys: standardMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomInMessageSchema.shape.id,
 });
-export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
 // As we insert our messages with a reverse-ticked timestamp as our rowKey
 // So unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
@@ -106,58 +105,44 @@ const readMessagesByRowKeysInputSchema = z.object({
   roomId: selectRoomInMessageSchema.shape.id,
   rowKeys: standardMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
-export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
-
 const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomInMessageSchema.shape.id,
 });
-export type GenerateUploadFileSasEntitiesInput = z.infer<typeof generateUploadFileSasEntitiesInputSchema>;
 
 const generateDownloadFileSasUrlsInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomInMessageSchema.shape.id,
 });
-export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
 
 const deleteFileInputSchema = z.object({
   ...standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
   id: fileEntitySchema.shape.id,
 });
-export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 
 const deleteLinkPreviewResponseInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
-export type DeleteLinkPreviewResponseInput = z.infer<typeof deleteLinkPreviewResponseInputSchema>;
 
 const onstandardCreateMessageInputSchema = z.object({
   lastEventId: z.string().nullish(),
   roomId: selectRoomInMessageSchema.shape.id,
 });
-export type OnCreateMessageInput = z.infer<typeof onstandardCreateMessageInputSchema>;
 
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
-export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
 
 const onCreateTypingInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
-export type OnCreateTypingInput = z.infer<typeof onCreateTypingInputSchema>;
 
 const onDeleteMessageInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
-export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
 export const forwardMessageInputSchema = z.object({
   ...standardMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
   roomIds: selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
-export type ForwardMessageInput = z.infer<typeof forwardMessageInputSchema>;
 
 export const pinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
-export type PinMessageInput = z.infer<typeof pinMessageInputSchema>;
 
 export const unpinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
-export type UnpinMessageInput = z.infer<typeof unpinMessageInputSchema>;
 
 const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
-export type GetWebPubSubClientAccessUrlInput = z.infer<typeof getWebPubSubClientAccessUrlInputSchema>;
 
 export const messageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(

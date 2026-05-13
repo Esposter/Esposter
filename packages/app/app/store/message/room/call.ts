@@ -21,43 +21,51 @@ export const useCallStore = defineStore("message/room/call", () => {
     setupSpeakingDetection,
     subscribeToSignals,
   } = webRtcStore;
+  // The room the user is currently in a call for — kept for admin action roomId checks.
   const callRoomId = ref("");
+  // The call session the user is actively participating in.
+  const activeCallSessionId = ref("");
+  // The call session for the room currently being viewed (set by useCallSubscribables on room enter).
+  const currentRoomCallSessionId = ref("");
   const isDeafened = ref(false);
   const isForceMuted = ref(false);
-  const callParticipantsRoomMap = ref(new Map<string, CallParticipant[]>());
+  const callSessionParticipantsMap = ref(new Map<string, CallParticipant[]>());
   const speakingIds = ref<string[]>([]);
   const sessionId = computed(() => session.value.data?.session.id);
   const roomParticipants = computed(() =>
-    roomStore.currentRoomId ? (callParticipantsRoomMap.value.get(roomStore.currentRoomId) ?? []) : [],
+    currentRoomCallSessionId.value ? (callSessionParticipantsMap.value.get(currentRoomCallSessionId.value) ?? []) : [],
   );
   const callParticipants = computed(() =>
-    callRoomId.value ? (callParticipantsRoomMap.value.get(callRoomId.value) ?? []) : [],
+    activeCallSessionId.value ? (callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? []) : [],
   );
   const isInCall = computed(() => callParticipants.value.some(({ id }) => id === sessionId.value));
   const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
 
-  const createCallParticipant = (roomId: string, participant: CallParticipant) => {
-    const participants = callParticipantsRoomMap.value.get(roomId) ?? [];
+  const createCallParticipant = (callSessionId: string, participant: CallParticipant) => {
+    const participants = callSessionParticipantsMap.value.get(callSessionId) ?? [];
     if (participants.some(({ id }) => id === participant.id)) return;
-    callParticipantsRoomMap.value.set(roomId, [...participants, participant]);
+    callSessionParticipantsMap.value.set(callSessionId, [...participants, participant]);
   };
-  const deleteCallParticipant = (roomId: string, id: string) => {
-    const participants = callParticipantsRoomMap.value.get(roomId);
+  const deleteCallParticipant = (callSessionId: string, id: string) => {
+    const participants = callSessionParticipantsMap.value.get(callSessionId);
     if (!participants) return;
-    callParticipantsRoomMap.value.set(
-      roomId,
+    callSessionParticipantsMap.value.set(
+      callSessionId,
       participants.filter((p) => p.id !== id),
     );
   };
-  const setMute = (roomId: string, id: string, isMuted: boolean) => {
-    const participants = callParticipantsRoomMap.value.get(roomId);
+  const setMute = (callSessionId: string, id: string, isMuted: boolean) => {
+    const participants = callSessionParticipantsMap.value.get(callSessionId);
     if (!participants) return;
     const participant = participants.find((p) => p.id === id);
     if (!participant) return;
     participant.isMuted = isMuted;
   };
-  const setParticipants = (roomId: string, participants: CallParticipant[]) => {
-    callParticipantsRoomMap.value.set(roomId, participants);
+  const setParticipants = (callSessionId: string, participants: CallParticipant[]) => {
+    callSessionParticipantsMap.value.set(callSessionId, participants);
+  };
+  const setCurrentRoomCallSessionId = (callSessionId: string) => {
+    currentRoomCallSessionId.value = callSessionId;
   };
   const createSpeaker = (id: string) => {
     if (speakingIds.value.includes(id)) return;
@@ -70,17 +78,47 @@ export const useCallStore = defineStore("message/room/call", () => {
     speakingIds.value = [];
   };
 
-  const joinCall = async () => {
+  const joinCall = async (id: string): Promise<string | undefined> => {
+    if (activeCallSessionId.value) return activeCallSessionId.value;
+    let isJoined = false;
+    let joinedCallSessionId: string | undefined;
+    await getResultAsync(async () => {
+      const stream = await acquireLocalStream();
+      const { callSessionId, participants } = await $trpc.roomCall.joinCall.mutate({ id });
+      subscribeToSignals(callSessionId);
+      activeCallSessionId.value = callSessionId;
+      joinedCallSessionId = callSessionId;
+      isJoined = true;
+      setParticipants(callSessionId, participants);
+      if (sessionId.value) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, sessionId.value, stream);
+    })
+      .orElse((error) =>
+        getResultAsync(async () => {
+          console.error(error);
+          if (isJoined) await leaveCall();
+          else {
+            activeCallSessionId.value = "";
+            await cleanupAll();
+          }
+        }),
+      )
+      .unwrapOr(undefined);
+    return joinedCallSessionId;
+  };
+
+  const joinCallByRoomId = async () => {
     const roomId = roomStore.currentRoomId;
-    if (!roomId || callRoomId.value) return;
+    if (!roomId || activeCallSessionId.value) return;
     callRoomId.value = roomId;
     let isJoined = false;
     await getResultAsync(async () => {
       const stream = await acquireLocalStream();
-      subscribeToSignals(roomId);
-      const participants = await $trpc.roomCall.joinCall.mutate({ roomId });
+      const { callSessionId, participants } = await $trpc.roomCall.joinCallByRoomId.mutate({ roomId });
+      currentRoomCallSessionId.value = callSessionId;
+      subscribeToSignals(callSessionId);
+      activeCallSessionId.value = callSessionId;
       isJoined = true;
-      setParticipants(roomId, participants);
+      setParticipants(callSessionId, participants);
       if (sessionId.value) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, sessionId.value, stream);
     })
       .orElse((error) =>
@@ -89,6 +127,7 @@ export const useCallStore = defineStore("message/room/call", () => {
           if (isJoined) await leaveCall();
           else {
             callRoomId.value = "";
+            activeCallSessionId.value = "";
             await cleanupAll();
           }
         }),
@@ -97,15 +136,16 @@ export const useCallStore = defineStore("message/room/call", () => {
   };
 
   const leaveCall = async () => {
-    const roomId = callRoomId.value;
-    if (!roomId) return;
+    const callSessionId = activeCallSessionId.value;
+    if (!callSessionId) return;
     await withFinalizerAsync(
       async () => {
-        if (sessionId.value) deleteCallParticipant(roomId, sessionId.value);
-        await $trpc.roomCall.leaveCall.mutate({ roomId });
+        if (sessionId.value) deleteCallParticipant(callSessionId, sessionId.value);
+        await $trpc.roomCall.leaveCall.mutate({ callSessionId });
       },
       async () => {
         callRoomId.value = "";
+        activeCallSessionId.value = "";
         isDeafened.value = false;
         isForceMuted.value = false;
         await cleanupAll();
@@ -120,24 +160,24 @@ export const useCallStore = defineStore("message/room/call", () => {
   };
 
   const toggleMute = async () => {
-    if (!callRoomId.value || !sessionId.value) return;
+    if (!activeCallSessionId.value || !sessionId.value) return;
     const newIsMuted = !isMuted.value;
-    setMute(callRoomId.value, sessionId.value, newIsMuted);
+    setMute(activeCallSessionId.value, sessionId.value, newIsMuted);
     setLocalStreamMuted(newIsMuted);
-    await $trpc.roomCall.setMute.mutate({ isMuted: newIsMuted, roomId: callRoomId.value });
+    await $trpc.roomCall.setMute.mutate({ callSessionId: activeCallSessionId.value, isMuted: newIsMuted });
   };
 
   AdminActionHookMap[AdminActionType.CreateBan].push(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();
   });
   AdminActionHookMap[AdminActionType.ForceMute].push((roomId) => {
-    if (sessionId.value) setMute(roomId, sessionId.value, true);
+    if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, true);
     if (callRoomId.value !== roomId) return;
     setLocalStreamMuted(true);
     isForceMuted.value = true;
   });
   AdminActionHookMap[AdminActionType.ForceUnmute].push((roomId) => {
-    if (sessionId.value) setMute(roomId, sessionId.value, false);
+    if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, false);
     if (callRoomId.value !== roomId) return;
     setLocalStreamMuted(false);
     isForceMuted.value = false;
@@ -153,11 +193,14 @@ export const useCallStore = defineStore("message/room/call", () => {
   });
 
   return {
-    callParticipantsRoomMap,
+    activeCallSessionId,
+    callParticipants,
     callRoomId,
+    callSessionParticipantsMap,
     clearSpeakers,
     createCallParticipant,
     createSpeaker,
+    currentRoomCallSessionId,
     deleteCallParticipant,
     deleteSpeaker,
     isDeafened,
@@ -165,8 +208,10 @@ export const useCallStore = defineStore("message/room/call", () => {
     isInCall,
     isMuted,
     joinCall,
+    joinCallByRoomId,
     leaveCall,
     roomParticipants,
+    setCurrentRoomCallSessionId,
     setMute,
     setParticipants,
     speakingIds,

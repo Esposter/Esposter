@@ -1,8 +1,8 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-import { callRoomParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 
-export const getCallParticipants = (roomId: string): CallParticipant[] => {
-  const participantMap = callRoomParticipantMap.get(roomId);
+export const getCallParticipants = (callSessionId: string): CallParticipant[] => {
+  const participantMap = callSessionParticipantMap.get(callSessionId);
   return participantMap ? [...participantMap.values()] : [];
 };

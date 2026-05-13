@@ -32,13 +32,10 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 const onCreateEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
-export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
 
 const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
-export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
 
 const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
-export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
 export const emojiRouter = router({
   createEmoji: getMemberProcedure(createEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(

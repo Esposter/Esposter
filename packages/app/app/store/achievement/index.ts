@@ -50,7 +50,10 @@ export const useAchievementStore = defineStore("achievement", () => {
       userAchievement,
       achievementDefinitionMap.value[userAchievement.achievement.name],
     );
-    const index = userAchievements.value.findIndex(({ id }) => id === userAchievement.id);
+    const index = userAchievements.value.findIndex(
+      ({ achievementId, userId }) =>
+        userId === userAchievement.userId && achievementId === userAchievement.achievementId,
+    );
     if (index === -1) userAchievements.value.push(userAchievementWithDefinition);
     else userAchievements.value[index] = userAchievementWithDefinition;
     if (userAchievementWithDefinition.unlockedAt !== null)

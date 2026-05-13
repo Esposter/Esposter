@@ -3,6 +3,7 @@ import { achievementNameEnum, achievements } from "@/schema/achievements";
 import { appUsersInMessage } from "@/schema/appUsersInMessage";
 import { bansInMessage } from "@/schema/bansInMessage";
 import { blocks } from "@/schema/blocks";
+import { callSessionsInMessage } from "@/schema/callSessionsInMessage";
 import { friendRequests } from "@/schema/friendRequests";
 import { friends } from "@/schema/friends";
 import { invitesInMessage } from "@/schema/invitesInMessage";
@@ -32,6 +33,7 @@ export const schema = {
   appUsersInMessage,
   bansInMessage,
   blocks,
+  callSessionsInMessage,
   friendRequests,
   friends,
   invitesInMessage,

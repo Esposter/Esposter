@@ -9,7 +9,7 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(useCallStore, () => {
-  const roomId = crypto.randomUUID();
+  const callSessionId = crypto.randomUUID();
   let mockContext: Context;
 
   beforeAll(async () => {
@@ -152,7 +152,7 @@ describe(useCallStore, () => {
   });
 
   describe("createCallParticipant", () => {
-    test("adds participant to room", () => {
+    test("adds participant to session", () => {
       expect.hasAssertions();
 
       const { session, user } = getMockSession();
@@ -166,13 +166,13 @@ describe(useCallStore, () => {
 
       const callStore = useCallStore();
       const { createCallParticipant } = callStore;
-      const { callParticipantsRoomMap } = storeToRefs(callStore);
-      createCallParticipant(roomId, participant);
+      const { callSessionParticipantsMap } = storeToRefs(callStore);
+      createCallParticipant(callSessionId, participant);
 
-      const roomParticipants = callParticipantsRoomMap.value.get(roomId) ?? [];
+      const sessionParticipants = callSessionParticipantsMap.value.get(callSessionId) ?? [];
 
-      expect(roomParticipants).toHaveLength(1);
-      expect(takeOne(roomParticipants)).toStrictEqual(participant);
+      expect(sessionParticipants).toHaveLength(1);
+      expect(takeOne(sessionParticipants)).toStrictEqual(participant);
     });
 
     test("deduplicates same participant", () => {
@@ -189,16 +189,16 @@ describe(useCallStore, () => {
 
       const callStore = useCallStore();
       const { createCallParticipant } = callStore;
-      const { callParticipantsRoomMap } = storeToRefs(callStore);
-      createCallParticipant(roomId, participant);
-      createCallParticipant(roomId, participant);
+      const { callSessionParticipantsMap } = storeToRefs(callStore);
+      createCallParticipant(callSessionId, participant);
+      createCallParticipant(callSessionId, participant);
 
-      expect(callParticipantsRoomMap.value.get(roomId)).toHaveLength(1);
+      expect(callSessionParticipantsMap.value.get(callSessionId)).toHaveLength(1);
     });
   });
 
   describe("deleteCallParticipant", () => {
-    test("removes participant from room", () => {
+    test("removes participant from session", () => {
       expect.hasAssertions();
 
       const { session, user } = getMockSession();
@@ -212,22 +212,22 @@ describe(useCallStore, () => {
 
       const callStore = useCallStore();
       const { createCallParticipant, deleteCallParticipant } = callStore;
-      const { callParticipantsRoomMap } = storeToRefs(callStore);
-      createCallParticipant(roomId, participant);
-      deleteCallParticipant(roomId, participant.id);
+      const { callSessionParticipantsMap } = storeToRefs(callStore);
+      createCallParticipant(callSessionId, participant);
+      deleteCallParticipant(callSessionId, participant.id);
 
-      expect(callParticipantsRoomMap.value.get(roomId)).toStrictEqual([]);
+      expect(callSessionParticipantsMap.value.get(callSessionId)).toStrictEqual([]);
     });
 
-    test("is no-op when participant not in room", () => {
+    test("is no-op when participant not in session", () => {
       expect.hasAssertions();
 
       const callStore = useCallStore();
       const { deleteCallParticipant } = callStore;
-      const { callParticipantsRoomMap } = storeToRefs(callStore);
-      deleteCallParticipant(roomId, "-1");
+      const { callSessionParticipantsMap } = storeToRefs(callStore);
+      deleteCallParticipant(callSessionId, "-1");
 
-      expect(callParticipantsRoomMap.value.get(roomId)).toBeUndefined();
+      expect(callSessionParticipantsMap.value.get(callSessionId)).toBeUndefined();
     });
   });
 
@@ -246,30 +246,30 @@ describe(useCallStore, () => {
 
       const callStore = useCallStore();
       const { createCallParticipant, setMute } = callStore;
-      const { callParticipantsRoomMap } = storeToRefs(callStore);
-      createCallParticipant(roomId, participant);
-      setMute(roomId, participant.id, true);
+      const { callSessionParticipantsMap } = storeToRefs(callStore);
+      createCallParticipant(callSessionId, participant);
+      setMute(callSessionId, participant.id, true);
 
-      const roomParticipants = callParticipantsRoomMap.value.get(roomId) ?? [];
+      const sessionParticipants = callSessionParticipantsMap.value.get(callSessionId) ?? [];
 
-      expect(takeOne(roomParticipants).isMuted).toBe(true);
+      expect(takeOne(sessionParticipants).isMuted).toBe(true);
     });
 
-    test("is no-op when participant not in room", () => {
+    test("is no-op when participant not in session", () => {
       expect.hasAssertions();
 
       const sessionId = getMockSession().session.id;
       const callStore = useCallStore();
       const { setMute } = callStore;
-      const { callParticipantsRoomMap } = storeToRefs(callStore);
-      setMute(roomId, sessionId, true);
+      const { callSessionParticipantsMap } = storeToRefs(callStore);
+      setMute(callSessionId, sessionId, true);
 
-      expect(callParticipantsRoomMap.value.get(roomId)).toBeUndefined();
+      expect(callSessionParticipantsMap.value.get(callSessionId)).toBeUndefined();
     });
   });
 
   describe("setParticipants", () => {
-    test("replaces all participants for room", async () => {
+    test("replaces all participants for session", async () => {
       expect.hasAssertions();
 
       const { session: firstSession, user: firstUser } = getMockSession();
@@ -281,10 +281,10 @@ describe(useCallStore, () => {
 
       const callStore = useCallStore();
       const { setParticipants } = callStore;
-      const { callParticipantsRoomMap } = storeToRefs(callStore);
-      setParticipants(roomId, participants);
+      const { callSessionParticipantsMap } = storeToRefs(callStore);
+      setParticipants(callSessionId, participants);
 
-      expect(callParticipantsRoomMap.value.get(roomId)).toStrictEqual(participants);
+      expect(callSessionParticipantsMap.value.get(callSessionId)).toStrictEqual(participants);
     });
   });
 });

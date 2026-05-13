@@ -36,10 +36,7 @@ const readDirectMessagesInputSchema = z
     ]).shape,
   })
   .prefault({});
-export type ReadDirectMessagesInput = z.infer<typeof readDirectMessagesInputSchema>;
-
 const readDirectMessageParticipantsInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type ReadDirectMessageParticipantsInput = z.infer<typeof readDirectMessageParticipantsInputSchema>;
 
 export const directMessageRouter = router({
   createDirectMessage: standardAuthedProcedure
