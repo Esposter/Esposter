@@ -1,8 +1,6 @@
 import type { User } from "@esposter/db-schema";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserStore } from "@/store/message/user";
@@ -23,7 +21,7 @@ export const useReadMembers = () => {
   const roleStore = useRoleStore();
   const { readMemberRoles } = roleStore;
   const readNicknames = useReadNicknames();
-  const online = useOnline();
+  const readMemberCache = useReadCursorPaginationCache(MemberIndexedDbStoreConfiguration);
   const readMetadata = (roomId: string, memberIds: User["id"][]) => {
     if (memberIds.length === 0) return Promise.resolve();
     return Promise.all([
@@ -36,27 +34,27 @@ export const useReadMembers = () => {
     const roomId = currentRoomId.value;
     if (!roomId)
       throw new InvalidOperationError(Operation.Read, readMembers.name, CompositeKeyPropertyNames.partitionKey);
-    return readItems(
-      async () => {
-        if (!online.value) {
-          const cachedData = new CursorPaginationData<User>();
-          cachedData.items = await readIndexedDb(MemberIndexedDbStoreConfiguration, roomId);
-          count.value = cachedData.items.length;
-          return cachedData;
-        }
-
-        count.value = await $trpc.room.countMembers.query({ roomId });
-        return $trpc.room.readMembers.query({ roomId });
-      },
-      async ({ items }) => {
-        storeUsers(items);
-        if (!online.value) return;
-        await readMetadata(
-          roomId,
-          items.map(({ id }) => id),
-        );
-      },
-    );
+    return readItems(async () => {
+      const data = await readMemberCache(
+        roomId,
+        async () => {
+          count.value = await $trpc.room.countMembers.query({ roomId });
+          const cursorPaginationData = await $trpc.room.readMembers.query({ roomId });
+          await readMetadata(
+            roomId,
+            cursorPaginationData.items.map(({ id }) => id),
+          );
+          return cursorPaginationData;
+        },
+        {
+          onCacheRead: (cachedMembers) => {
+            count.value = cachedMembers.length;
+          },
+        },
+      );
+      storeUsers(data.items);
+      return data;
+    });
   };
   const readMoreMembers = (onComplete: () => void) => {
     const roomId = currentRoomId.value;

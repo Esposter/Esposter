@@ -405,9 +405,9 @@ watch(
 - Always initialize the local type ref from the current model value, not a hardcoded default
 - `if (newType === oldType) return;` in a watch callback is always redundant — Vue only fires when the value changes
 
-## Offline IndexedDB Cache via Store Watchers
+## Offline IndexedDB Cache via Pagination Cache Composables
 
-Offline cache should mirror Pinia state. Prefer a feature-level `use*Cache` composable that `watchDeep`s the store items and writes the current partition to IndexedDB. Do **not** add new `readItems` cache options or push IndexedDB behavior deeper into cursor pagination helpers.
+Offline cache should mirror Pinia state. Prefer thin feature-level `use*Cache` composables that delegate to `useCursorPaginationCache` or `useOffsetPaginationCache`. Do **not** add new `readItems` cache options or push IndexedDB behavior deeper into pagination helpers.
 
 **Generic base functions** (`app/services/cache/indexedDb/`):
 
@@ -421,18 +421,32 @@ Offline cache should mirror Pinia state. Prefer a feature-level `use*Cache` comp
 - `MemberIndexedDbStoreConfiguration` — `PartitionedIdKeyPath`
 - `RoomIndexedDbStoreConfiguration` — `PartitionedIdKeyPath`
 
-**Cache composable pattern:**
+**Generic cache composables** (`app/composables/cache/indexedDb/`):
+
+- `useCursorPaginationCache` — watches cursor store items, writes IndexedDB, hydrates offline partition changes
+- `useReadCursorPaginationCache` — wraps first-page cursor reads: online query, offline IndexedDB read
+- `useOffsetPaginationCache` — offset equivalent of `useCursorPaginationCache`
+- `useReadOffsetPaginationCache` — offset equivalent of `useReadCursorPaginationCache`
+
+**Feature cache composable pattern:**
 
 - read store refs with `storeToRefs`
-- `watchDeep(items, ...)` and write the current partition to IndexedDB
-- filter transient UI-only records before writing, such as loading messages
-- watch the partition key and hydrate from IndexedDB only when offline
-- queue writes with a `pendingOperation` promise when write/read ordering matters
-- return `flush()` from cache composables that tests need to await
+- return `useCursorPaginationCache(...)` or `useOffsetPaginationCache(...)`
+- pass `configuration`, `items`, `partitionKey`, and the store initializer
+- use `getWriteItems` for feature-specific filtering, such as loading messages
+- use `onHydrate` for companion state updates, such as member counts or user maps
+- return the generic `flush()` from cache composables that tests need to await
+
+**Read composable pattern:**
+
+- create a read helper with `useReadCursorPaginationCache(configuration)` or `useReadOffsetPaginationCache(configuration)`
+- call it inside the `readItems` query callback
+- put online-only metadata reads inside the online query passed to the cache helper
+- do not call `useOnline`, `readIndexedDb`, or `writeIndexedDb` directly from feature read composables
 
 `useMessageCache`, `useMemberCache`, and `useRoomCache` are the reference shapes. Apply the same approach to future offline-backed stores.
 
-`ReadItemsCacheOptions` has been removed. `readItems` / `readMoreItems` are plain pagination helpers that know nothing about IndexedDB, online state, or cache store configuration.
+`ReadItemsCacheOptions` has been removed. `readItems` / `readMoreItems` are plain pagination helpers that know nothing about IndexedDB or cache store configuration.
 
 Architecture doc: `features/esbabbler/specs/cache.md`
 

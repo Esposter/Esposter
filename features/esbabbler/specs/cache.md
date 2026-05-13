@@ -2,9 +2,9 @@
 
 ## Overview
 
-Offline cache should be boring: the Pinia store remains the source of truth, and a small cache composable mirrors store items to IndexedDB with `watchDeep`. Fetch composables load data from tRPC when online and hydrate from IndexedDB only when offline.
+Offline cache is a local mirror of Pinia state. The stores remain the source of truth; generic IndexedDB cache composables handle online/offline branching, store-to-cache writes, and offline hydration.
 
-Avoid threading cache behavior through pagination helpers. `readItems` / `readMoreItems` should stay focused on cursor pagination and server reads; cache writes belong beside the store data they mirror.
+`readItems` / `readMoreItems` stay focused on pagination state. They should not accept cache options or call IndexedDB.
 
 ## Architecture
 
@@ -18,9 +18,9 @@ Avoid threading cache behavior through pagination helpers. `readItems` / `readMo
 | `app/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath.ts` | `[partitionKey, rowKey]` — for Azure Table entities         |
 | `app/models/cache/indexedDb/keyPaths/PartitionedIdKeyPath.ts`  | `[partitionKey, id]` — for injected-partitionKey entities   |
 
-`ReadItemsCacheOptions` has been removed. Do not reintroduce cache parameters to `readItems`; cache behavior belongs in feature-level cache composables.
+`ReadItemsCacheOptions` has been removed. Do not reintroduce cache parameters to pagination helpers.
 
-### Services
+### IndexedDB Services
 
 | File                                                                                | Purpose                                                   |
 | ----------------------------------------------------------------------------------- | --------------------------------------------------------- |
@@ -31,6 +31,18 @@ Avoid threading cache behavior through pagination helpers. `readItems` / `readMo
 | `app/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration.ts`  | Members config: PartitionedIdKeyPath                      |
 | `app/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration.ts`    | Rooms config: PartitionedIdKeyPath                        |
 
+### Cache Composables
+
+| File                                                              | Purpose                                                                          |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `app/composables/cache/indexedDb/useCursorPaginationCache.ts`     | Watches cursor-paginated store items, writes IndexedDB, hydrates offline changes |
+| `app/composables/cache/indexedDb/useReadCursorPaginationCache.ts` | Wraps first-page cursor reads: online query, offline IndexedDB read              |
+| `app/composables/cache/indexedDb/useOffsetPaginationCache.ts`     | Offset-paginated equivalent of `useCursorPaginationCache`                        |
+| `app/composables/cache/indexedDb/useReadOffsetPaginationCache.ts` | Offset-paginated equivalent of `useReadCursorPaginationCache`                    |
+| `app/composables/message/message/useMessageCache.ts`              | Message-specific wiring: room partition, loading-message filter                  |
+| `app/composables/message/room/useMemberCache.ts`                  | Member-specific wiring: room partition, count/user-store hydration               |
+| `app/composables/message/room/useRoomCache.ts`                    | Room-specific wiring: user partition                                             |
+
 ### Key Principle: partitionKey is Always Required
 
 Every store is partitioned. `readIndexedDb` / `writeIndexedDb` always take an explicit `partitionKey` string:
@@ -39,15 +51,9 @@ Every store is partitioned. `readIndexedDb` / `writeIndexedDb` always take an ex
 - **Members** -> `roomId` (IndexedDB value includes an injected `partitionKey`)
 - **Rooms** -> `userId` (IndexedDB value includes an injected `partitionKey`)
 
-## Recommended Pattern: Watch the Store
+## Recommended Pattern: Generic Cache Wrapper
 
-Each offline-backed feature gets a cache composable that:
-
-1. reads the relevant Pinia store refs with `storeToRefs`
-2. `watchDeep`s the items and writes the current partition to IndexedDB
-3. watches the partition key and hydrates the store from IndexedDB when offline
-4. filters transient UI-only records before writing, such as `isLoading` messages
-5. queues writes with a `pendingOperation` promise when ordering matters
+Feature cache composables should be thin wrappers around `useCursorPaginationCache` or `useOffsetPaginationCache`.
 
 ```typescript
 export const useFooCache = () => {
@@ -56,55 +62,54 @@ export const useFooCache = () => {
   const fooStore = useFooStore();
   const { items } = storeToRefs(fooStore);
   const { initializeCursorPaginationData } = fooStore;
-  const online = useOnline();
-  let pendingOperation: Promise<void> = Promise.resolve();
 
-  watchDeep(items, (newItems) => {
-    const roomId = currentRoomId.value;
-    if (!roomId) return;
-    const previousOperation = pendingOperation;
-    pendingOperation = getResultAsync(async () => {
-      await previousOperation;
-      await writeIndexedDb(FooIndexedDbStoreConfiguration, newItems, roomId);
-    }).match(noop, console.error);
+  return useCursorPaginationCache({
+    configuration: FooIndexedDbStoreConfiguration,
+    getWriteItems: (items) => items.filter((item) => !item.isLoading),
+    initializeCursorPaginationData,
+    items,
+    onHydrate: (cachedItems) => {
+      // Optional: update related store data or counts.
+    },
+    partitionKey: currentRoomId,
   });
-
-  watch(currentRoomId, (newRoomId) => {
-    if (!newRoomId || online.value) return;
-    const previousOperation = pendingOperation;
-    pendingOperation = getResultAsync(async () => {
-      await previousOperation;
-      const cachedItems = await readIndexedDb(FooIndexedDbStoreConfiguration, newRoomId);
-      if (currentRoomId.value !== newRoomId || cachedItems.length === 0) return;
-
-      const cachedData = new CursorPaginationData<Foo>();
-      cachedData.items = cachedItems;
-      initializeCursorPaginationData(cachedData);
-    }).match(noop, console.error);
-  });
-
-  return { flush: () => pendingOperation };
 };
 ```
 
-Messages, members, and rooms follow this shape through their `use*Cache` composables.
+Use `getWriteItems` only for feature-specific filtering or projection. Use `onHydrate` only for side effects that are not represented by the paginated store itself, such as member counts or companion user maps.
 
-## Fetch Composables
+## Recommended Pattern: Cached First Read
 
-`useReadMessages`, `useReadMembers`, and `useReadRooms` should be plain read composables:
+Fetch composables should call `useReadCursorPaginationCache` or `useReadOffsetPaginationCache` inside their `readItems` query function. That helper owns `useOnline` and returns cached pagination data offline.
 
-- online: call tRPC, initialize pagination data, and load metadata
-- offline: read cached items for the current partition and initialize the store
-- pagination: `readMoreItems` should no-op offline because IndexedDB stores the current cached window, not the full remote cursor history
+```typescript
+export const useReadFoos = () => {
+  const { $trpc } = useNuxtApp();
+  const fooStore = useFooStore();
+  const { readItems } = fooStore;
+  const readFooCache = useReadCursorPaginationCache(FooIndexedDbStoreConfiguration);
 
-Do not write IndexedDB from `readItems`, `readMoreItems`, or metadata callbacks. Once the store is initialized, the cache watcher writes the same state through one consistent path.
+  const readFoos = (roomId: string) =>
+    readItems(() =>
+      readFooCache(roomId, async () => {
+        const data = await $trpc.foo.readFoos.query({ roomId });
+        await readFooMetadata(data.items);
+        return data;
+      }),
+    );
+
+  return { readFoos };
+};
+```
+
+Online metadata reads belong inside the online query passed to the cache helper. Offline reads should only initialize from cached items unless the metadata is also locally cached.
 
 ## Why This Is Simpler
 
-- One owner writes each cache: the feature cache composable.
-- Subscription updates, optimistic updates, first-page reads, and pagination all flow through the same `watchDeep` write path.
-- Cursor pagination helpers stop knowing about IndexedDB, store names, online state, and database schema casts.
-- Offline hydration is explicit at the feature boundary, where partition keys and metadata behavior are already known.
+- One generic owner handles IndexedDB writes, offline hydration, `useOnline`, and queued cache operations.
+- Feature cache composables only supply partition keys, store refs, and feature-specific hooks.
+- `readItems` / `readMoreItems` remain plain pagination helpers.
+- Cursor and offset pagination now share the same cache convention.
 
 ## Tests
 
@@ -116,12 +121,12 @@ Keep service tests around the generic IndexedDB helpers:
 - re-write replaces existing items
 - write respects the `limit`
 
-Cache composable tests should cover the feature behavior:
+Feature cache tests should cover feature-specific behavior:
 
 - store item changes write to IndexedDB
 - transient UI-only records are not persisted
 - offline partition changes hydrate the store from IndexedDB
-- online partition changes do not overwrite fresh server reads with cached data
+- feature hydration side effects run, such as member count updates
 - `flush()` waits for queued writes
 
 `fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.

@@ -1,11 +1,9 @@
 import type { MessageEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { CompositeKeyPropertyNames, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
@@ -24,7 +22,7 @@ export const useReadMessages = () => {
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();
   const readEmojis = useReadEmojis();
-  const online = useOnline();
+  const readMessageCache = useReadCursorPaginationCache(MessageIndexedDbStoreConfiguration);
   const readMetadata = async (messages: MessageEntity[]) => {
     if (messages.length === 0) return;
 
@@ -50,40 +48,42 @@ export const useReadMessages = () => {
     const roomId = currentRoomId.value;
     if (!roomId)
       throw new InvalidOperationError(Operation.Read, readMessages.name, CompositeKeyPropertyNames.partitionKey);
-    return readItems(
-      async () => {
-        if (!online.value) {
-          const cachedData = new CursorPaginationData<MessageEntity>();
-          cachedData.items = await readIndexedDb(MessageIndexedDbStoreConfiguration, roomId);
+    return readItems(() =>
+      readMessageCache(
+        roomId,
+        async () => {
+          const rowKey = route.params.rowKey as string | undefined;
+
+          if (rowKey) {
+            const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
+            if (messagesByRowKeys.length > 0) {
+              const response = await $trpc.message.readMessages.query({
+                cursor: serialize({ rowKey: takeOne(messagesByRowKeys).rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
+                isIncludeValue: true,
+                roomId,
+              });
+              hasMoreNewer.value = true;
+              nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [
+                MESSAGE_ROWKEY_SORT_ITEM,
+              ]);
+              await readMetadata(response.items);
+              return response;
+            }
+          }
+
+          const response = await $trpc.message.readMessages.query({ roomId });
           hasMoreNewer.value = false;
           nextCursorNewer.value = "";
-          return cachedData;
-        }
-
-        const rowKey = route.params.rowKey as string | undefined;
-
-        if (rowKey) {
-          const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
-          if (messagesByRowKeys.length > 0) {
-            const response = await $trpc.message.readMessages.query({
-              cursor: serialize({ rowKey: takeOne(messagesByRowKeys).rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
-              isIncludeValue: true,
-              roomId,
-            });
-            hasMoreNewer.value = true;
-            nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [
-              MESSAGE_ROWKEY_SORT_ITEM,
-            ]);
-            return response;
-          }
-        }
-
-        const response = await $trpc.message.readMessages.query({ roomId });
-        hasMoreNewer.value = false;
-        nextCursorNewer.value = "";
-        return response;
-      },
-      ({ items }) => readMetadata(items),
+          await readMetadata(response.items);
+          return response;
+        },
+        {
+          onCacheRead: () => {
+            hasMoreNewer.value = false;
+            nextCursorNewer.value = "";
+          },
+        },
+      ),
     );
   };
 
