@@ -1,7 +1,7 @@
 # Esbabbler — Call & Video Channel Architecture
 
-Discord-style persistent per-room A/V channel. Any member can join/leave freely — no "start a call" concept.
-Screensharing: see [`specs/screenshare.md`](screenshare.md).
+Discord-style persistent per-room A/V channel plus standalone share-link calls. Room members can join/leave room calls freely; `/call` starts a roomless call for anyone with the link.
+Screensharing: implemented with LiveKit track publication; see [`specs/screenshare.md`](screenshare.md).
 
 ---
 
@@ -15,6 +15,7 @@ Screensharing: see [`specs/screenshare.md`](screenshare.md).
 - **Deafen** — stop receiving all remote audio (you are effectively deaf; others still see you)
 - **Camera** — toggle local video track on/off
 - **Screenshare** — see `specs/screenshare.md`
+- **Standalone calls** — `/call` starts a roomless call and `/call/[id]` joins by share link
 - **Speaking indicator** — ring/pulse on avatar when audio detected
 - Sidebar room list: small **🔊 N** badge on rooms with active call participants (visible to non-participants)
 
@@ -156,6 +157,7 @@ Each WebRTC peer connection IS an auth session. `sendSignal` routes to a specifi
 
 | Procedure              | Type             | Change from v1 | Purpose                                                                                                                  |
 | ---------------------- | ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `createCall`           | mutation         | **New**        | Creates a standalone, roomless call session for `/call` → `/call/[id]`                                                   |
 | `joinCall`             | mutation         | **Modified**   | Generates LiveKit token + creates room if needed; updates server participant map; returns `{ livekitUrl, livekitToken }` |
 | `leaveCall`            | mutation         | Kept           | Removes from server participant map; broadcasts leave (webhook also does this as backup)                                 |
 | `readCallParticipants` | query            | Kept           | Returns current participant list (initial load, non-participants)                                                        |
@@ -252,14 +254,16 @@ The call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute, tog
 | `isForceMuted`               | `ref`      | Set by admin ForceMute action                                                 |
 | `roomParticipants`           | `computed` | Participants in currently viewed room (from `currentRoomCallSessionId`)       |
 
-#### v2 (additions for LiveKit)
+#### v2/v3 (LiveKit + screenshare)
 
-| State                          | Kind  | Description                          |
-| ------------------------------ | ----- | ------------------------------------ |
-| `isCameraEnabled`              | `ref` | Local camera state                   |
-| `isScreenSharing`              | `ref` | Local screenshare state              |
-| `screenSharingParticipantSids` | `ref` | SIDs of participants sharing screen  |
-| `pinnedParticipantSid`         | `ref` | Pinned presenter in screenshare view |
+| State                         | Kind  | Description                          |
+| ----------------------------- | ----- | ------------------------------------ |
+| `isCameraEnabled`             | `ref` | Local camera state                   |
+| `isScreenSharing`             | `ref` | Local screenshare state              |
+| `screenSharingParticipantIds` | `ref` | Session IDs of participants sharing  |
+| `pinnedParticipantId`         | `ref` | Pinned presenter in screenshare view |
+| `localScreenShareStream`      | `ref` | Local published screen stream        |
+| `remoteScreenShareStreams`    | `ref` | Remote screen streams keyed by ID    |
 
 ### Models
 
@@ -344,19 +348,23 @@ packages/app/
         getCallParticipants.ts           # unchanged
         updateCallParticipantMute.ts     # unchanged
     trpc/routers/room/
-      call.ts                            # joinCall returns token; remove sendSignal/onSendSignal; add onVideoChanged
+      call.ts                            # createCall + joinCall return LiveKit-ready call sessions
 
   app/
     store/message/room/
-      call.ts                            # add: isDeafened, isCameraEnabled, isScreenSharing
-      liveKit.ts                         # LiveKit Room replaces RTCPeerConnection peer map
+      call.ts                            # LiveKit call/session/screen state
+      liveKit.ts                         # LiveKit Room media bridge
+    pages/call/
+      index.vue                          # standalone call lobby/start page
+      [id].vue                           # full call view
     components/Message/
       Content/
         CallButton.vue                   # unchanged UX; reads token from joinCall
-        CallPanel.vue                    # add camera toggle, deafen toggle, screenshare button
-        CallParticipant.vue              # add video tile when camera enabled
+        Call/ControlBar.vue              # single-purpose call controls
+        Call/ParticipantTile.vue         # video tile with avatar fallback
+        Call/ScreenShareStage.vue        # presenter layout
 ```
 
 ## What Does Not Change
 
-Message infrastructure, room model, auth/RBAC, the join/leave/mute tRPC subscription pattern, `callParticipantMap` server-side storage, `CallPanel.vue` outer layout, `StatusBar.vue` in-call indicator.
+Message infrastructure, room model, auth/RBAC, the join/leave/mute tRPC subscription pattern, `callParticipantMap` server-side storage, inline call panel placement, `StatusBar.vue` in-call indicator.

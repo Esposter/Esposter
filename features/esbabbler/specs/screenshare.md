@@ -1,6 +1,6 @@
 # Esbabbler — Screen Share
 
-Requires LiveKit SFU (see [`specs/call.md`](call.md)). Screen share is a LiveKit `Track.Source.ScreenShare` track published from the local participant. No new DB columns or server state needed — it is ephemeral media like audio.
+Requires LiveKit SFU (see [`specs/call.md`](call.md)). Screen share is a LiveKit `Track.Source.ScreenShare` track published from the local participant. No new DB columns or server state needed — it is ephemeral media like audio. Implemented in the shared full-screen call view with a presenter stage and participant strip.
 
 ---
 
@@ -72,13 +72,13 @@ Track events from LiveKit `Room` (already bound in `useCall`):
 ```typescript
 room.on(RoomEvent.TrackPublished, (publication, participant) => {
   if (publication.source === Track.Source.ScreenShare) {
-    callStore.setScreenSharingParticipant(participant.sid);
+    callStore.setRemoteScreenShareStream(participant.identity, publication.track?.mediaStream ?? null);
   }
 });
 
 room.on(RoomEvent.TrackUnpublished, (publication, participant) => {
   if (publication.source === Track.Source.ScreenShare) {
-    callStore.clearScreenSharingParticipant(participant.sid);
+    callStore.setRemoteScreenShareStream(participant.identity, null);
   }
 });
 ```
@@ -87,50 +87,28 @@ room.on(RoomEvent.TrackUnpublished, (publication, participant) => {
 
 ```typescript
 // new state
-const screenSharingParticipantSids = ref<string[]>([]); // SIDs of active screen sharers
+const screenSharingParticipantIds = ref<string[]>([]); // session IDs of active screen sharers
 const pinnedParticipantId = ref(""); // "" = no pin
 
 // new getters
-const hasScreenShare = computed(() => screenSharingParticipantSids.value.length > 0);
+const hasScreenShare = computed(() => screenSharingParticipantIds.value.length > 0);
 const activeScreenShare = computed(
-  () => (pinnedParticipantId.value ? pinnedParticipantId.value : (screenSharingParticipantSids.value[0] ?? "")), // auto-select first sharer
+  () => (pinnedParticipantId.value ? pinnedParticipantId.value : (screenSharingParticipantIds.value[0] ?? "")), // auto-select first sharer
 );
 ```
 
 ### Components
 
-**`Content/CallPanel.vue`** — add screenshare button:
+**`Content/Call/ScreenShareButton.vue`** — starts/stops local screenshare through the call store.
 
-```vue
-<VBtn
-  :icon="isScreenSharing ? 'mdi-monitor-off' : 'mdi-monitor-share'"
-  :color="isScreenSharing ? 'error' : undefined"
-  @click="isScreenSharing ? stopScreenShare() : startScreenShare()"
-/>
-```
-
-**`Content/CallScreenShare.vue`** (new) — presenter view:
+**`Content/Call/ScreenShareStage.vue`** — presenter view:
 
 - Renders when `hasScreenShare`
-- `<video ref="videoEl" autoplay playsinline />` — bound via `publication.track.attach(videoEl)`
-- Tab bar when `screenSharingParticipantSids.length > 1`
-- Presenter label: `remote participant name` from LiveKit participant object
-- `v-if="hasScreenShare"` inserted in `Content/Index.vue` above the message list (same as CallPanel):
+- `<video autoplay playsinline />` bound to the active screen stream
+- Presenter label resolves from `CallParticipant` by LiveKit identity/session ID
+- Participant strip remains visible below the presenter stage
 
-```vue
-<MessageContentHeader />
-<v-divider />
-<MessageContentCallPanel v-if="isInCall" />
-<MessageContentCallScreenShare v-if="hasScreenShare" />
-<MessageContentMessages />
-```
-
-**`Content/CallVideoGrid.vue`** (new) — grid of camera tiles when no screenshare:
-
-- `v-if="isInCall && !hasScreenShare && hasCameraParticipants"`
-- CSS grid, adapts columns: 1→2→3→4 as participant count grows
-- Each tile: `<video>` + name label + mute badge + speaking ring
-- Falls back to compact avatar strip when all cameras are off
+**`Content/Call/ParticipantTile.vue`** — shared camera/avatar tile for grid and strip layouts.
 
 ---
 
@@ -172,13 +150,12 @@ const canScreenShare = computed(
 
 ## File Map
 
-| Action | File                                                                                              |
-| ------ | ------------------------------------------------------------------------------------------------- |
-| New    | `Content/CallScreenShare.vue` — presenter view                                                    |
-| New    | `Content/CallVideoGrid.vue` — camera tile grid                                                    |
-| Modify | `Content/CallPanel.vue` — add screenshare + camera + deafen buttons                               |
-| Modify | `Content/Index.vue` — insert `CallScreenShare` and `CallVideoGrid`                                |
-| Modify | `store/message/room/call.ts` — add screenshare/pin state                                          |
-| Modify | `store/message/room/liveKit.ts` — add `startScreenShare`, `stopScreenShare`, track event handlers |
-| Modify | `shared/models/room/call/CallParticipant.ts` — add `isCameraEnabled` field                        |
-| Modify | `server/trpc/routers/room/moderation.ts` — add `StopScreenShare` action                           |
+| Action | File                                                                                                |
+| ------ | --------------------------------------------------------------------------------------------------- |
+| New    | `Content/Call/ScreenShareStage.vue` — presenter view                                                |
+| New    | `Content/Call/AudioSettingsButton.vue` — microphone and speaker selection                           |
+| New    | `Content/Call/VideoSettingsButton.vue` — camera selection                                           |
+| Modify | `Content/Call/ControlBar.vue` — screenshare + camera + deafen + settings buttons                    |
+| Modify | `Content/Call/View.vue` — screen stage, participant strip, invite card, join notice                 |
+| Modify | `store/message/room/call.ts` — screenshare/pin state and local/remote screen streams                |
+| Modify | `store/message/room/liveKit.ts` — `setScreenShare`, device switching, and screen track event bridge |

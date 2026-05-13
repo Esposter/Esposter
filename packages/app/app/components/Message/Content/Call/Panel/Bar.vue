@@ -3,7 +3,6 @@ import { useCallStore } from "@/store/message/room/call";
 
 const callStore = useCallStore();
 const { isCallViewOpen, roomParticipants, speakingIds } = storeToRefs(callStore);
-const callControlItems = useCallControlItems();
 </script>
 
 <template>
@@ -18,16 +17,13 @@ const callControlItems = useCallControlItems();
         :is-speaking="speakingIds.includes(participant.id)"
       />
     </div>
-    <v-tooltip
-      v-for="{ tooltip, icon, color, variant, onClick } of callControlItems"
-      :key="tooltip"
-      :text="tooltip"
-      location="bottom"
-    >
-      <template #activator="{ props }">
-        <v-btn :="props" :icon :color size="x-small" :variant :ripple="false" @click="onClick()" />
-      </template>
-    </v-tooltip>
+    <MessageContentCallMuteButton />
+    <MessageContentCallAudioSettingsButton />
+    <MessageContentCallCameraButton />
+    <MessageContentCallVideoSettingsButton />
+    <MessageContentCallDeafenButton />
+    <MessageContentCallScreenShareButton />
+    <MessageContentCallLeaveButton />
     <v-tooltip location="bottom" text="Open call view">
       <template #activator="{ props }">
         <v-btn

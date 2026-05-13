@@ -4,12 +4,14 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 interface CallParticipantTileProps {
   isDeafened: boolean;
   isSelf: boolean;
+  isScreenSharing: boolean;
   isSpeaking: boolean;
   participant: CallParticipant;
   videoStream: MediaStream | undefined;
 }
 
-const { isDeafened, isSelf, isSpeaking, participant, videoStream } = defineProps<CallParticipantTileProps>();
+const { isDeafened, isSelf, isScreenSharing, isSpeaking, participant, videoStream } =
+  defineProps<CallParticipantTileProps>();
 const displayName = computed(() => (isSelf ? `${participant.name} (You)` : participant.name));
 </script>
 
@@ -48,6 +50,7 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
       <span font-medium truncate text-body-small>
         {{ displayName }}
       </span>
+      <v-icon v-if="isScreenSharing" text-primary icon="mdi-monitor-share" size="small" />
       <v-icon v-if="participant.isCameraEnabled" text-primary icon="mdi-video" size="small" />
       <v-icon v-if="participant.isMuted" icon="mdi-microphone-off" size="small" />
       <v-icon v-if="isDeafened" icon="mdi-headphones-off" size="small" />

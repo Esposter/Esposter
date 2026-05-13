@@ -63,6 +63,18 @@ describe("call", () => {
     expect(callSessionId).toStrictEqual(readSessionId);
   });
 
+  test("creates standalone call", async () => {
+    expect.hasAssertions();
+
+    const { callSessionId } = await roomCallCaller.createCall();
+    const callSession = await mockContext.db.query.callSessionsInMessage.findFirst({
+      where: { id: { eq: callSessionId } },
+    });
+
+    expect(callSession?.id).toBe(callSessionId);
+    expect(callSession?.roomId).toBeNull();
+  });
+
   test("joining call twice keeps participant list at 1", async () => {
     expect.hasAssertions();
 

@@ -13,7 +13,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const roomStore = useRoomStore();
   const session = authClient.useSession();
   const liveKitStore = useLiveKitStore();
-  const { connect, disconnect, setCamera, setMicrophone, setRemoteAudioMuted } = liveKitStore;
+  const { connect, disconnect, setCamera, setMicrophone, setRemoteAudioMuted, setScreenShare } = liveKitStore;
   // The room the user is currently in a call for — kept for admin action roomId checks.
   const callRoomId = ref("");
   const isConnecting = ref(false);
@@ -26,10 +26,13 @@ export const useCallStore = defineStore("message/room/call", () => {
   const isCameraEnabled = ref(false);
   const isScreenSharing = ref(false);
   const isCallViewOpen = ref(false);
-  const pinnedParticipantSid = ref("");
-  const screenSharingParticipantSids = ref<string[]>([]);
+  const pinnedParticipantId = ref("");
+  const screenSharingParticipantIds = ref<string[]>([]);
   const callSessionParticipantsMap = ref(new Map<string, CallParticipant[]>());
+  const joinNoticeParticipant = ref<CallParticipant>();
+  const localScreenShareStream = ref<MediaStream | null>(null);
   const localVideoStream = ref<MediaStream | null>(null);
+  const remoteScreenShareStreams = ref(new Map<string, MediaStream>());
   const remoteVideoStreams = ref(new Map<string, MediaStream>());
   const speakingIds = ref<string[]>([]);
   const sessionId = computed(() => session.value.data?.session.id);
@@ -39,6 +42,23 @@ export const useCallStore = defineStore("message/room/call", () => {
   const callParticipants = computed(() =>
     activeCallSessionId.value ? (callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? []) : [],
   );
+  const hasScreenShare = computed(
+    () => Boolean(localScreenShareStream.value) || remoteScreenShareStreams.value.size > 0,
+  );
+  const activeScreenShareParticipantId = computed(
+    () =>
+      pinnedParticipantId.value ||
+      (localScreenShareStream.value ? sessionId.value : undefined) ||
+      screenSharingParticipantIds.value[0],
+  );
+  const activeScreenShareStream = computed(() => {
+    if (!activeScreenShareParticipantId.value) return undefined;
+    if (activeScreenShareParticipantId.value === sessionId.value) return localScreenShareStream.value ?? undefined;
+    return remoteScreenShareStreams.value.get(activeScreenShareParticipantId.value);
+  });
+  const activeScreenShareParticipant = computed(() =>
+    callParticipants.value.find(({ id }) => id === activeScreenShareParticipantId.value),
+  );
   const isInCall = computed(() => callParticipants.value.some(({ id }) => id === sessionId.value));
   const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
 
@@ -46,6 +66,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     const participants = callSessionParticipantsMap.value.get(callSessionId) ?? [];
     if (participants.some(({ id }) => id === participant.id)) return;
     callSessionParticipantsMap.value.set(callSessionId, [...participants, participant]);
+    if (participant.id !== sessionId.value) joinNoticeParticipant.value = participant;
   };
   const deleteCallParticipant = (callSessionId: string, id: string) => {
     const participants = callSessionParticipantsMap.value.get(callSessionId);
@@ -87,11 +108,46 @@ export const useCallStore = defineStore("message/room/call", () => {
   const setLocalVideoStream = (stream: MediaStream | null) => {
     localVideoStream.value = stream;
   };
+  const setLocalScreenShareStream = (stream: MediaStream | null) => {
+    localScreenShareStream.value = stream;
+    const id = sessionId.value;
+    if (!id) return;
+    if (stream)
+      screenSharingParticipantIds.value = [id, ...screenSharingParticipantIds.value.filter((value) => value !== id)];
+    else screenSharingParticipantIds.value = screenSharingParticipantIds.value.filter((value) => value !== id);
+  };
   const setRemoteVideoStream = (identity: string, stream: MediaStream | null) => {
     const newRemoteVideoStreams = new Map(remoteVideoStreams.value);
     if (stream) newRemoteVideoStreams.set(identity, stream);
     else newRemoteVideoStreams.delete(identity);
     remoteVideoStreams.value = newRemoteVideoStreams;
+  };
+  const setRemoteScreenShareStream = (identity: string, stream: MediaStream | null) => {
+    const newRemoteScreenShareStreams = new Map(remoteScreenShareStreams.value);
+    if (stream) {
+      newRemoteScreenShareStreams.set(identity, stream);
+      screenSharingParticipantIds.value = [
+        ...screenSharingParticipantIds.value.filter((participantId) => participantId !== identity),
+        identity,
+      ];
+    } else {
+      newRemoteScreenShareStreams.delete(identity);
+      screenSharingParticipantIds.value = screenSharingParticipantIds.value.filter(
+        (participantId) => participantId !== identity,
+      );
+      if (pinnedParticipantId.value === identity) pinnedParticipantId.value = "";
+    }
+
+    remoteScreenShareStreams.value = newRemoteScreenShareStreams;
+  };
+  const setScreenSharing = (newIsScreenSharing: boolean) => {
+    isScreenSharing.value = newIsScreenSharing;
+  };
+  const setPinnedParticipantId = (participantId: string) => {
+    pinnedParticipantId.value = participantId;
+  };
+  const clearJoinNotice = () => {
+    joinNoticeParticipant.value = undefined;
   };
   const createSpeaker = (id: string) => {
     if (speakingIds.value.includes(id)) return;
@@ -130,6 +186,11 @@ export const useCallStore = defineStore("message/room/call", () => {
       .unwrapOr(undefined);
     isConnecting.value = false;
     return joinedCallSessionId;
+  };
+
+  const createCall = async (): Promise<string | undefined> => {
+    const { callSessionId } = await $trpc.roomCall.createCall.mutate();
+    return callSessionId;
   };
 
   const joinCallByRoomId = async () => {
@@ -180,9 +241,12 @@ export const useCallStore = defineStore("message/room/call", () => {
         isCameraEnabled.value = false;
         isScreenSharing.value = false;
         isCallViewOpen.value = false;
-        pinnedParticipantSid.value = "";
-        screenSharingParticipantSids.value = [];
+        pinnedParticipantId.value = "";
+        screenSharingParticipantIds.value = [];
+        joinNoticeParticipant.value = undefined;
+        localScreenShareStream.value = null;
         localVideoStream.value = null;
+        remoteScreenShareStreams.value = new Map();
         remoteVideoStreams.value = new Map();
         await disconnect();
         clearSpeakers();
@@ -198,6 +262,15 @@ export const useCallStore = defineStore("message/room/call", () => {
   const toggleCamera = async () => {
     const newIsCameraEnabled = !isCameraEnabled.value;
     await setCamera(newIsCameraEnabled);
+  };
+
+  const toggleScreenShare = async () => {
+    const newIsScreenSharing = !isScreenSharing.value;
+    await getResultAsync(async () => {
+      await setScreenShare(newIsScreenSharing);
+    })
+      .orTee(console.error)
+      .unwrapOr(undefined);
   };
 
   const toggleMute = async () => {
@@ -235,15 +308,21 @@ export const useCallStore = defineStore("message/room/call", () => {
 
   return {
     activeCallSessionId,
+    activeScreenShareParticipant,
+    activeScreenShareParticipantId,
+    activeScreenShareStream,
     callParticipants,
     callRoomId,
     callSessionParticipantsMap,
     clearSpeakers,
+    clearJoinNotice,
+    createCall,
     createCallParticipant,
     createSpeaker,
     currentRoomCallSessionId,
     deleteCallParticipant,
     deleteSpeaker,
+    hasScreenShare,
     isCallViewOpen,
     isCameraEnabled,
     isConnecting,
@@ -252,24 +331,32 @@ export const useCallStore = defineStore("message/room/call", () => {
     isInCall,
     isMuted,
     isScreenSharing,
+    joinNoticeParticipant,
     joinCall,
     joinCallByRoomId,
     leaveCall,
+    localScreenShareStream,
     localVideoStream,
-    pinnedParticipantSid,
+    pinnedParticipantId,
+    remoteScreenShareStreams,
     remoteVideoStreams,
     roomParticipants,
-    screenSharingParticipantSids,
+    screenSharingParticipantIds,
     setCameraEnabled,
     setCurrentRoomCallSessionId,
+    setLocalScreenShareStream,
     setLocalVideoStream,
     setMute,
     setParticipantCamera,
     setParticipants,
+    setPinnedParticipantId,
     setRemoteVideoStream,
+    setRemoteScreenShareStream,
+    setScreenSharing,
     speakingIds,
     toggleCamera,
     toggleDeafen,
     toggleMute,
+    toggleScreenShare,
   };
 });

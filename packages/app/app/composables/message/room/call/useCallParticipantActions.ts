@@ -1,6 +1,5 @@
 import type { Item } from "@/models/shared/Item";
 
-import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { useCallStore } from "@/store/message/room/call";
 import { useRoleStore } from "@/store/message/room/role";
@@ -29,37 +28,37 @@ export const useCallParticipantActions = () => {
     if (isForceMuteable.value && !participantIsMuted)
       items.push({
         icon: "mdi-microphone-off",
-        onClick: getSynchronizedFunction(async () => {
+        onClick: async () => {
           await $trpc.moderation.executeAdminAction.mutate({
             roomId,
             targetUserId: userId,
             type: AdminActionType.ForceMute,
           });
-        }),
+        },
         title: "Force Mute",
       });
     if (isForceMuteable.value && participantIsMuted)
       items.push({
         icon: "mdi-microphone",
-        onClick: getSynchronizedFunction(async () => {
+        onClick: async () => {
           await $trpc.moderation.executeAdminAction.mutate({
             roomId,
             targetUserId: userId,
             type: AdminActionType.ForceUnmute,
           });
-        }),
+        },
         title: "Force Unmute",
       });
     if (isKickableFromCall.value)
       items.push({
         icon: "mdi-account-remove",
-        onClick: getSynchronizedFunction(async () => {
+        onClick: async () => {
           await $trpc.moderation.executeAdminAction.mutate({
             roomId,
             targetUserId: userId,
             type: AdminActionType.KickFromCall,
           });
-        }),
+        },
         title: "Kick from Call",
       });
     return items;

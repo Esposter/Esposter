@@ -308,4 +308,40 @@ describe(useCallStore, () => {
       expect(callSessionParticipantsMap.value.get(callSessionId)).toStrictEqual(participants);
     });
   });
+
+  describe("setRemoteScreenShareStream", () => {
+    test("stores remote screen share stream", () => {
+      expect.hasAssertions();
+
+      const stream = new MediaStream();
+      const participantId = getMockSession().session.id;
+      const callStore = useCallStore();
+      const { setRemoteScreenShareStream } = callStore;
+      const { hasScreenShare, remoteScreenShareStreams, screenSharingParticipantIds } = storeToRefs(callStore);
+      setRemoteScreenShareStream(participantId, stream);
+
+      expect(hasScreenShare.value).toBe(true);
+      expect(remoteScreenShareStreams.value.get(participantId)).toBe(stream);
+      expect(screenSharingParticipantIds.value).toStrictEqual([participantId]);
+    });
+
+    test("removes remote screen share stream", () => {
+      expect.hasAssertions();
+
+      const stream = new MediaStream();
+      const participantId = getMockSession().session.id;
+      const callStore = useCallStore();
+      const { setPinnedParticipantId, setRemoteScreenShareStream } = callStore;
+      const { hasScreenShare, pinnedParticipantId, remoteScreenShareStreams, screenSharingParticipantIds } =
+        storeToRefs(callStore);
+      setRemoteScreenShareStream(participantId, stream);
+      setPinnedParticipantId(participantId);
+      setRemoteScreenShareStream(participantId, null);
+
+      expect(hasScreenShare.value).toBe(false);
+      expect(remoteScreenShareStreams.value.has(participantId)).toBe(false);
+      expect(screenSharingParticipantIds.value).toStrictEqual([]);
+      expect(pinnedParticipantId.value).toBe("");
+    });
+  });
 });
