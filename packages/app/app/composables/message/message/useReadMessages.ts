@@ -64,6 +64,8 @@ export const useReadMessages = () => {
       }
 
       const response = await $trpc.message.readMessages.query({ roomId });
+      hasMoreNewer.value = false;
+      nextCursorNewer.value = "";
       await readMetadata(response.items);
       return response;
     });

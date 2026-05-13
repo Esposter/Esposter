@@ -49,11 +49,11 @@ export const useReadMembers = () => {
       throw new InvalidOperationError(Operation.Read, readMoreMembers.name, CompositeKeyPropertyNames.partitionKey);
     return readMoreItems(async (cursor) => {
       const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
-      storeUsers(cursorPaginationData.items);
       await readMetadata(
         roomId,
         cursorPaginationData.items.map(({ id }) => id),
       );
+      storeUsers(cursorPaginationData.items);
       return cursorPaginationData;
     }, onComplete);
   };
