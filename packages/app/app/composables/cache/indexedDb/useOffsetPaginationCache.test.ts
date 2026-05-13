@@ -73,26 +73,6 @@ describe(useOffsetPaginationCache, () => {
     wrapper?.unmount();
     vi.restoreAllMocks();
     await resetIndexedDb();
-    const databases = await indexedDB.databases();
-    await Promise.all(
-      databases
-        .filter((database): database is IDBDatabaseInfo & { name: string } => database.name !== undefined)
-        .map(
-          (database) =>
-            new Promise<void>((resolve, reject) => {
-              const request = indexedDB.deleteDatabase(database.name);
-              request.onsuccess = () => {
-                resolve();
-              };
-              request.onerror = () => {
-                reject(request.error);
-              };
-              request.onblocked = () => {
-                resolve();
-              };
-            }),
-        ),
-    );
   });
 
   test("persists items to cache when items change", async () => {

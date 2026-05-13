@@ -5,7 +5,7 @@ import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { openDB } from "idb";
 
 const DATABASE_NAME = "esposter";
@@ -40,6 +40,22 @@ export const openIndexedDb = (): Promise<IDBPDatabase<IndexedDbDatabaseSchema>> 
 
 export const resetIndexedDb = async () => {
   const db = await databasePromise;
-  db?.close();
+  if (db) {
+    db.close();
+    const deleteRequest = indexedDB.deleteDatabase(db.name);
+    await new Promise<void>((resolve, reject) => {
+      deleteRequest.onsuccess = () => {
+        resolve();
+      };
+      deleteRequest.onerror = () => {
+        reject(
+          deleteRequest.error ?? new InvalidOperationError(Operation.Delete, indexedDB.deleteDatabase.name, db.name),
+        );
+      };
+      deleteRequest.onblocked = () => {
+        resolve();
+      };
+    });
+  }
   databasePromise = undefined;
 };
