@@ -17,10 +17,9 @@ interface OffsetPaginationCacheOptions<
   configuration: IndexedDbStoreConfiguration<TStore, TIndex>;
   getWriteItems?: (items: TSourceItem[]) => IndexedDbDatabaseSchema[TStore]["value"][];
   initializeOffsetPaginationData: (data: OffsetPaginationData<IndexedDbDatabaseSchema[TStore]["value"]>) => void;
-  isHydrateAllowed?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => boolean;
   items: MaybeRefOrGetter<TSourceItem[]>;
   onHydrate?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => Promisable<void>;
-  partitionKey: MaybeRefOrGetter<IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> | "" | undefined>;
+  partitionKey: MaybeRefOrGetter<"" | IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> | undefined>;
 }
 
 export const useOffsetPaginationCache = <
@@ -31,7 +30,6 @@ export const useOffsetPaginationCache = <
   configuration,
   getWriteItems,
   initializeOffsetPaginationData,
-  isHydrateAllowed,
   items,
   onHydrate,
   partitionKey,
@@ -60,12 +58,7 @@ export const useOffsetPaginationCache = <
       pendingOperation = getResultAsync(async () => {
         await previousOperation;
         const cachedItems = await readIndexedDb(configuration, newPartitionKey);
-        if (
-          toValue(partitionKey) !== newPartitionKey ||
-          cachedItems.length === 0 ||
-          isHydrateAllowed?.(cachedItems) === false
-        )
-          return;
+        if (toValue(partitionKey) !== newPartitionKey || cachedItems.length === 0) return;
 
         const cachedData = new OffsetPaginationData<IndexedDbDatabaseSchema[TStore]["value"]>();
         cachedData.items = cachedItems;

@@ -12,12 +12,12 @@ import { getResultAsync, noop } from "@esposter/shared";
 interface CursorPaginationCacheOptions<
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
-  TSourceItem,
+  TItem,
 > {
   configuration: IndexedDbStoreConfiguration<TStore, TIndex>;
-  getWriteItems?: (items: TSourceItem[]) => IndexedDbDatabaseSchema[TStore]["value"][];
+  getWriteItems?: (items: TItem[]) => IndexedDbDatabaseSchema[TStore]["value"][];
   initializeCursorPaginationData: (data: CursorPaginationData<IndexedDbDatabaseSchema[TStore]["value"]>) => void;
-  items: MaybeRefOrGetter<TSourceItem[]>;
+  items: MaybeRefOrGetter<TItem[]>;
   onHydrate?: (items: IndexedDbDatabaseSchema[TStore]["value"][]) => Promisable<void>;
   partitionKey: MaybeRefOrGetter<IndexKey<IndexedDbDatabaseSchema, TStore, TIndex>>;
 }
@@ -25,7 +25,7 @@ interface CursorPaginationCacheOptions<
 export const useCursorPaginationCache = <
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
-  TSourceItem extends IndexedDbDatabaseSchema[TStore]["value"] = IndexedDbDatabaseSchema[TStore]["value"],
+  TItem extends IndexedDbDatabaseSchema[TStore]["value"] = IndexedDbDatabaseSchema[TStore]["value"],
 >({
   configuration,
   getWriteItems,
@@ -33,7 +33,7 @@ export const useCursorPaginationCache = <
   items,
   onHydrate,
   partitionKey,
-}: CursorPaginationCacheOptions<TStore, TIndex, TSourceItem>) => {
+}: CursorPaginationCacheOptions<TStore, TIndex, TItem>) => {
   const online = useOnline();
   let pendingOperation: Promise<void> = Promise.resolve();
 

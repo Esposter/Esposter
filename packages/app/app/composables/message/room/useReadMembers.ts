@@ -1,6 +1,5 @@
 import type { User } from "@esposter/db-schema";
 
-import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserStore } from "@/store/message/user";
@@ -21,7 +20,6 @@ export const useReadMembers = () => {
   const roleStore = useRoleStore();
   const { readMemberRoles } = roleStore;
   const readNicknames = useReadNicknames();
-  const readMemberCache = useReadCursorPaginationCache(MemberIndexedDbStoreConfiguration);
   const readMetadata = (roomId: string, memberIds: User["id"][]) => {
     if (memberIds.length === 0) return Promise.resolve();
     return Promise.all([
@@ -35,25 +33,14 @@ export const useReadMembers = () => {
     if (!roomId)
       throw new InvalidOperationError(Operation.Read, readMembers.name, CompositeKeyPropertyNames.partitionKey);
     return readItems(async () => {
-      const data = await readMemberCache(
+      count.value = await $trpc.room.countMembers.query({ roomId });
+      const cursorPaginationData = await $trpc.room.readMembers.query({ roomId });
+      await readMetadata(
         roomId,
-        async () => {
-          count.value = await $trpc.room.countMembers.query({ roomId });
-          const cursorPaginationData = await $trpc.room.readMembers.query({ roomId });
-          await readMetadata(
-            roomId,
-            cursorPaginationData.items.map(({ id }) => id),
-          );
-          return cursorPaginationData;
-        },
-        {
-          onCacheRead: (cachedMembers) => {
-            count.value = cachedMembers.length;
-          },
-        },
+        cursorPaginationData.items.map(({ id }) => id),
       );
-      storeUsers(data.items);
-      return data;
+      storeUsers(cursorPaginationData.items);
+      return cursorPaginationData;
     });
   };
   const readMoreMembers = (onComplete: () => void) => {

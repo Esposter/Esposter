@@ -1,5 +1,4 @@
 import { authClient } from "@/services/auth/authClient";
-import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
 import { useRoomStore } from "@/store/message/room";
 import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -13,20 +12,17 @@ export const useReadRooms = async () => {
   const readMyUsersToRooms = useReadMyUsersToRooms();
   const readMyPermissions = useReadMyPermissions();
   const readRoles = useReadRoles();
-  const readRoomCache = useReadCursorPaginationCache(RoomIndexedDbStoreConfiguration);
   const readRooms = () => {
     const userId = session.value?.user.id;
     if (!userId)
       throw new InvalidOperationError(Operation.Read, readRooms.name, CompositeKeyPropertyNames.partitionKey);
-    return readItems(() =>
-      readRoomCache(userId, async () => {
-        const data = await $trpc.room.readRooms.query({ roomId: currentRoomId.value });
-        const roomIds = data.items.map(({ id }) => id);
-        if (roomIds.length > 0)
-          await Promise.all([readMyUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
-        return data;
-      }),
-    );
+    return readItems(async () => {
+      const data = await $trpc.room.readRooms.query({ roomId: currentRoomId.value });
+      const roomIds = data.items.map(({ id }) => id);
+      if (roomIds.length > 0)
+        await Promise.all([readMyUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
+      return data;
+    });
   };
   const readMoreRooms = (onComplete: () => void) => {
     const userId = session.value?.user.id;
