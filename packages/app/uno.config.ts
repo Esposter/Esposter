@@ -37,7 +37,6 @@ export default defineConfig({
     presetAttributify(),
   ],
   rules: [
-    ["overflow-anchor-none", { "overflow-anchor": "none" }],
     [
       "elevation--1",
       {
@@ -48,6 +47,8 @@ export default defineConfig({
     ...Object.entries(elevationPresets.md3).map(
       ([level, css]) => [`elevation-${level}`, css] as [string, Record<string, string>],
     ),
+    ["overflow-anchor-none", { "overflow-anchor": "none" }],
+    ["text-medium-emphasis", { opacity: "var(--v-medium-emphasis-opacity, 0.6)" }],
   ],
   safelist: [
     ...Array.from({ length: 6 }, (_, i) => `elevation-${i}`),

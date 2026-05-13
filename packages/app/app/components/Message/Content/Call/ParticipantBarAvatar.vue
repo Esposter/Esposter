@@ -34,14 +34,14 @@ const isActionable = computed(
           :key="title"
           :prepend-icon="icon"
           :title
-          @click="(event) => onClick(event)"
+          @click="onClick"
         />
       </v-list>
     </v-menu>
     <StyledAvatar v-else :avatar-props="{ size: '1.75rem' }" :image="participant.image" :name="participant.name" />
     <div
       v-if="isSpeaking"
-      inset="[-0.1875rem]"
+      inset="-0.1875rem"
       b-2
       b-primary
       rd-full

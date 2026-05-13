@@ -41,7 +41,7 @@ const goToNext = () => {
           "
         />
         <v-text-field v-model="replaceValue" clearable density="compact" hide-details label="Replace with" max-w-52 />
-        <span text-medium-emphasis text-sm text-right w-16>
+        <span text-sm text-right w-16 text-medium-emphasis>
           <template v-if="findValue && occurrences.length === 0">No matches</template>
           <template v-else-if="occurrences.length > 0"
             >{{ currentOccurrenceIndex + 1 }} / {{ occurrences.length }}</template
