@@ -5,7 +5,7 @@ import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { openDB } from "idb";
 
 const DATABASE_NAME = "esposter";
@@ -29,11 +29,9 @@ export const openIndexedDb = (): Promise<IDBPDatabase<IndexedDbDatabaseSchema>> 
     },
   });
   getSynchronizedFunction(async () => {
-    await getResultAsync(() => promise)
-      .orTee(() => {
-        if (databasePromise === promise) databasePromise = undefined;
-      })
-      .unwrapOr(undefined);
+    await getResultAsync(() => promise).match(noop, () => {
+      if (databasePromise === promise) databasePromise = undefined;
+    });
   })();
   databasePromise = promise;
   return databasePromise;

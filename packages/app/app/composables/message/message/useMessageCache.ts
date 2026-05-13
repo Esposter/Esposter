@@ -6,7 +6,7 @@ import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const useMessageCache = () => {
   const roomStore = useRoomStore();
@@ -28,9 +28,7 @@ export const useMessageCache = () => {
         messages.filter((message) => !message.isLoading),
         roomId,
       );
-    })
-      .orTee(console.error)
-      .unwrapOr(undefined);
+    }).match(noop, console.error);
   });
 
   watch(currentRoomId, (newCurrentRoomId) => {
@@ -44,9 +42,7 @@ export const useMessageCache = () => {
       const cachedData = new CursorPaginationData<MessageEntity>();
       cachedData.items = cachedMessages;
       initializeCursorPaginationData(cachedData);
-    })
-      .orTee(console.error)
-      .unwrapOr(undefined);
+    }).match(noop, console.error);
   });
 
   const flush = () => pendingOperation;

@@ -7,21 +7,16 @@ import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shar
 import { TRPCError } from "@trpc/server";
 
 export const createCallSessionId = async (db: Context["db"], roomId: string): Promise<string> => {
-  const existingId = await readCallSessionId(db, roomId);
-  if (existingId) return existingId;
-
-  let createdId: string | undefined;
   for (let i = 0; i < 3; i++) {
+    const existing = await readCallSessionId(db, roomId);
+    if (existing) return existing;
     const id = createId(CALL_ID_LENGTH);
     const insertResult = await getResultAsync(() =>
       db.insert(callSessionsInMessage).values({ id, roomId }).returning(),
     );
     const result = insertResult.orTee(console.error).unwrapOr(null);
-    if (!result?.[0]) continue;
-    createdId = result[0].id;
-    break;
+    if (result?.[0]) return result[0].id;
   }
-  if (createdId) return createdId;
 
   const fallback = await db.query.callSessionsInMessage.findFirst({ where: { roomId: { eq: roomId } } });
   if (!fallback)

@@ -59,6 +59,7 @@ import {
   getResultAsync,
   InvalidOperationError,
   ItemMetadataPropertyNames,
+  noop,
   NotFoundError,
   Operation,
   takeOne,
@@ -86,9 +87,7 @@ const createSystemRoomMessage = async (
       userId,
     });
     messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
-  })
-    .orTee(console.error)
-    .unwrapOr(undefined);
+  }).match(noop, console.error);
 };
 
 const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });

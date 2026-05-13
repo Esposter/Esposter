@@ -4,10 +4,9 @@ import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useCallStore } from "@/store/message/room/call";
 import { RoomEvent, Track } from "livekit-client";
 
-let activeRoom: Room | undefined;
-const remoteAudioElements = new Map<string, HTMLMediaElement>();
-
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
+  let activeRoom: Room | undefined;
+  const remoteAudioElements = new Map<string, HTMLMediaElement>();
   const cleanupRemoteAudio = () => {
     for (const audio of remoteAudioElements.values()) audio.remove();
     remoteAudioElements.clear();
@@ -74,6 +73,14 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
         await setCameraEnabled(false);
       }),
     );
+    room.on(RoomEvent.Disconnected, async () => {
+      const callStore = useCallStore();
+      await callStore.leaveCall();
+    });
+    room.on(RoomEvent.AudioPlaybackStatusChanged, () => {
+      if (!room.canPlaybackAudio)
+        console.warn("Audio autoplay blocked — browser requires user interaction to start audio.");
+    });
     await room.connect(livekitUrl, livekitToken);
     await room.localParticipant.setMicrophoneEnabled(true);
   };

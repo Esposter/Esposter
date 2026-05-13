@@ -9,16 +9,17 @@ import { callEventEmitter } from "@@/server/services/message/events/callEventEmi
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { createMessage } from "@esposter/db";
 import { AzureTable, MessageType } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const joinCallAsParticipant = async (
   { id: callSessionId, roomId }: Pick<CallSessionInMessage, "id" | "roomId">,
-  participant: CallParticipant,
+  callParticipant: CallParticipant,
   sessionId: string,
   userId: string,
 ) => {
   const isFirstJoiner = getCallParticipants(callSessionId).length === 0;
-  createCallParticipant(callSessionId, { ...participant, isCameraEnabled: false });
+  const participant = { ...callParticipant, isCameraEnabled: false };
+  createCallParticipant(callSessionId, participant);
   callEventEmitter.emit("joinCall", { callSessionId, participant, sessionId });
 
   if (isFirstJoiner) {
@@ -35,9 +36,7 @@ export const joinCallAsParticipant = async (
           userId,
         });
         messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
-      })
-        .orTee(console.error)
-        .unwrapOr(undefined);
+      }).match(noop, console.error);
   }
 
   return { callSessionId, participants: getCallParticipants(callSessionId) };

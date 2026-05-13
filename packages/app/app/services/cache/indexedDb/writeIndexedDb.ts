@@ -4,7 +4,7 @@ import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStore
 import type { IndexKey, IndexNames } from "idb";
 
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { getResultAsync, toRawDeep } from "@esposter/shared";
+import { getResultAsync, noop, toRawDeep } from "@esposter/shared";
 
 export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends IndexNames<IndexedDbDatabaseSchema, T>>(
   configuration: IndexedDbStoreConfiguration<T, TIndex>,
@@ -21,7 +21,5 @@ export const writeIndexedDb = <T extends IndexedDbStoreName, TIndex extends Inde
     const itemsToCache = limit ? items.slice(0, limit) : items;
     for (const item of itemsToCache) await objectStore.put(toRawDeep(item));
     await tx.done;
-  })
-    .orTee(console.error)
-    .unwrapOr(undefined);
+  }).match(noop, console.error);
 };

@@ -8,7 +8,7 @@ import { callEventEmitter } from "@@/server/services/message/events/callEventEmi
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { createMessage } from "@esposter/db";
 import { AzureTable, MessageType } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const leaveCallAsParticipant = async (
   db: Context["db"],
@@ -44,8 +44,6 @@ export const leaveCallAsParticipant = async (
       userId,
     });
     messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
-  })
-    .orTee(console.error)
-    .unwrapOr(undefined);
+  }).match(noop, console.error);
   return true;
 };
