@@ -16,6 +16,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const { connect, disconnect, setCamera, setMicrophone, setRemoteAudioMuted } = liveKitStore;
   // The room the user is currently in a call for — kept for admin action roomId checks.
   const callRoomId = ref("");
+  const isConnecting = ref(false);
   // The call session the user is actively participating in.
   const activeCallSessionId = ref("");
   // The call session for the room currently being viewed (set by useCallSubscribables on room enter).
@@ -24,9 +25,12 @@ export const useCallStore = defineStore("message/room/call", () => {
   const isForceMuted = ref(false);
   const isCameraEnabled = ref(false);
   const isScreenSharing = ref(false);
+  const isCallViewOpen = ref(false);
   const pinnedParticipantSid = ref("");
   const screenSharingParticipantSids = ref<string[]>([]);
   const callSessionParticipantsMap = ref(new Map<string, CallParticipant[]>());
+  const localVideoStream = ref<MediaStream | null>(null);
+  const remoteVideoStreams = ref(new Map<string, MediaStream>());
   const speakingIds = ref<string[]>([]);
   const sessionId = computed(() => session.value.data?.session.id);
   const roomParticipants = computed(() =>
@@ -80,6 +84,15 @@ export const useCallStore = defineStore("message/room/call", () => {
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
     currentRoomCallSessionId.value = callSessionId;
   };
+  const setLocalVideoStream = (stream: MediaStream | null) => {
+    localVideoStream.value = stream;
+  };
+  const setRemoteVideoStream = (identity: string, stream: MediaStream | null) => {
+    const newRemoteVideoStreams = new Map(remoteVideoStreams.value);
+    if (stream) newRemoteVideoStreams.set(identity, stream);
+    else newRemoteVideoStreams.delete(identity);
+    remoteVideoStreams.value = newRemoteVideoStreams;
+  };
   const createSpeaker = (id: string) => {
     if (speakingIds.value.includes(id)) return;
     speakingIds.value = [...speakingIds.value, id];
@@ -93,6 +106,7 @@ export const useCallStore = defineStore("message/room/call", () => {
 
   const joinCall = async (id: string): Promise<string | undefined> => {
     if (activeCallSessionId.value) return activeCallSessionId.value;
+    isConnecting.value = true;
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
     await getResultAsync(async () => {
@@ -114,12 +128,14 @@ export const useCallStore = defineStore("message/room/call", () => {
         }),
       )
       .unwrapOr(undefined);
+    isConnecting.value = false;
     return joinedCallSessionId;
   };
 
   const joinCallByRoomId = async () => {
     const roomId = roomStore.currentRoomId;
     if (!roomId || activeCallSessionId.value) return;
+    isConnecting.value = true;
     callRoomId.value = roomId;
     let isJoined = false;
     await getResultAsync(async () => {
@@ -131,6 +147,7 @@ export const useCallStore = defineStore("message/room/call", () => {
       activeCallSessionId.value = callSessionId;
       isJoined = true;
       setParticipants(callSessionId, participants);
+      isCallViewOpen.value = true;
     })
       .orElse((error) =>
         getResultAsync(async () => {
@@ -144,6 +161,7 @@ export const useCallStore = defineStore("message/room/call", () => {
         }),
       )
       .unwrapOr(undefined);
+    isConnecting.value = false;
   };
 
   const leaveCall = async () => {
@@ -161,8 +179,11 @@ export const useCallStore = defineStore("message/room/call", () => {
         isForceMuted.value = false;
         isCameraEnabled.value = false;
         isScreenSharing.value = false;
+        isCallViewOpen.value = false;
         pinnedParticipantSid.value = "";
         screenSharingParticipantSids.value = [];
+        localVideoStream.value = null;
+        remoteVideoStreams.value = new Map();
         await disconnect();
         clearSpeakers();
       },
@@ -223,7 +244,9 @@ export const useCallStore = defineStore("message/room/call", () => {
     currentRoomCallSessionId,
     deleteCallParticipant,
     deleteSpeaker,
+    isCallViewOpen,
     isCameraEnabled,
+    isConnecting,
     isDeafened,
     isForceMuted,
     isInCall,
@@ -232,14 +255,18 @@ export const useCallStore = defineStore("message/room/call", () => {
     joinCall,
     joinCallByRoomId,
     leaveCall,
+    localVideoStream,
     pinnedParticipantSid,
+    remoteVideoStreams,
     roomParticipants,
     screenSharingParticipantSids,
     setCameraEnabled,
     setCurrentRoomCallSessionId,
+    setLocalVideoStream,
     setMute,
     setParticipantCamera,
     setParticipants,
+    setRemoteVideoStream,
     speakingIds,
     toggleCamera,
     toggleDeafen,

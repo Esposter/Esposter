@@ -25,7 +25,7 @@ Only use `class="..."` when technically required:
 `presetVuetify()` + `presetAttributify()` are both active in `uno.config.ts`. This means **ALL** of the following work as standalone attributify attributes:
 
 - Vuetify typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-caption`, etc.
-- Vuetify theme colours: `bg-surface`, `bg-surface-variant`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, `text-on-surface`, etc.
+- Vuetify theme colours: `bg-surface`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, `text-on-surface`, etc.
 - Custom theme colours: `bg-surfaceOpacity80`, `bg-backgroundOpacity40`, etc.
 - Vuetify border colour utility: `border-color` (when it's the Vuetify utility, not a scoped CSS class name) — use `b-1`, `b-2` etc. instead of `border-sm`, `border-b-sm` (see Abbreviated Utilities below)
 

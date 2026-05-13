@@ -1,4 +1,10 @@
-import type { RemoteParticipant, RemoteTrack, RemoteTrackPublication, Room } from "livekit-client";
+import type {
+  LocalTrackPublication,
+  RemoteParticipant,
+  RemoteTrack,
+  RemoteTrackPublication,
+  Room,
+} from "livekit-client";
 
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useCallStore } from "@/store/message/room/call";
@@ -40,6 +46,34 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     for (const element of track.detach()) element.remove();
     remoteAudioElements.delete(participant.identity);
   };
+  const attachRemoteCamera = (
+    track: RemoteTrack,
+    publication: RemoteTrackPublication,
+    participant: RemoteParticipant,
+  ) => {
+    if (publication.source !== Track.Source.Camera || !track.mediaStream) return;
+    useCallStore().setRemoteVideoStream(participant.identity, track.mediaStream);
+  };
+  const detachRemoteCamera = (
+    _track: RemoteTrack,
+    publication: RemoteTrackPublication,
+    participant: RemoteParticipant,
+  ) => {
+    if (publication.source !== Track.Source.Camera) return;
+    useCallStore().setRemoteVideoStream(participant.identity, null);
+  };
+  const handleLocalTrackPublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
+    if (publication.source !== Track.Source.Camera) return;
+    const callStore = useCallStore();
+    callStore.setLocalVideoStream(publication.track?.mediaStream ?? null);
+    await callStore.setCameraEnabled(true);
+  });
+  const handleLocalTrackUnpublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
+    if (publication.source !== Track.Source.Camera) return;
+    const callStore = useCallStore();
+    callStore.setLocalVideoStream(null);
+    await callStore.setCameraEnabled(false);
+  });
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeRoom) return;
     await activeRoom.localParticipant.setCameraEnabled(isCameraEnabled);
@@ -54,25 +88,11 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     activeRoom = room;
     room.on(RoomEvent.ActiveSpeakersChanged, setActiveSpeakers);
     room.on(RoomEvent.TrackSubscribed, attachRemoteAudio);
+    room.on(RoomEvent.TrackSubscribed, attachRemoteCamera);
     room.on(RoomEvent.TrackUnsubscribed, detachRemoteAudio);
-    room.on(
-      RoomEvent.LocalTrackPublished,
-      getSynchronizedFunction(async (publication) => {
-        if (publication.source !== Track.Source.Camera) return;
-        const callStore = useCallStore();
-        const { setCameraEnabled } = callStore;
-        await setCameraEnabled(true);
-      }),
-    );
-    room.on(
-      RoomEvent.LocalTrackUnpublished,
-      getSynchronizedFunction(async (publication) => {
-        if (publication.source !== Track.Source.Camera) return;
-        const callStore = useCallStore();
-        const { setCameraEnabled } = callStore;
-        await setCameraEnabled(false);
-      }),
-    );
+    room.on(RoomEvent.TrackUnsubscribed, detachRemoteCamera);
+    room.on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished);
+    room.on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished);
     room.on(
       RoomEvent.Disconnected,
       getSynchronizedFunction(async () => {

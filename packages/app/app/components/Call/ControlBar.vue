@@ -3,8 +3,8 @@ const callControlItems = useCallControlItems();
 </script>
 
 <template>
-  <div py-4 flex justify-center>
-    <div bg="[rgba(66,66,66,0.9)]" px-4 py-2 rd-full flex gap-2 items-center>
+  <StyledCard flex justify-center>
+    <div px-4 py-2 rd-full flex gap-2 items-center>
       <v-tooltip
         v-for="{ tooltip, icon, color, variant, onClick } of callControlItems"
         :key="tooltip"
@@ -16,5 +16,5 @@ const callControlItems = useCallControlItems();
         </template>
       </v-tooltip>
     </div>
-  </div>
+  </StyledCard>
 </template>
