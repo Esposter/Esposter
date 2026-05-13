@@ -3,8 +3,8 @@ const callControlItems = useCallControlItems();
 </script>
 
 <template>
-  <div py-4 flex justify-center>
-    <div bg="[rgba(66,66,66,0.9)]" px-4 py-2 rd-full flex gap-2 items-center>
+  <div pb-4 flex justify-center>
+    <StyledCard px-4 py-2 rd-full flex gap-x-2 items-center>
       <v-tooltip
         v-for="{ tooltip, icon, color, variant, onClick } of callControlItems"
         :key="tooltip"
@@ -12,9 +12,9 @@ const callControlItems = useCallControlItems();
         location="top"
       >
         <template #activator="{ props }">
-          <v-btn :="props" :icon :color size="default" :variant :ripple="false" @click="onClick" />
+          <v-btn :="props" :icon :color size="default" :variant :ripple="false" @click="onClick()" />
         </template>
       </v-tooltip>
-    </div>
+    </StyledCard>
   </div>
 </template>

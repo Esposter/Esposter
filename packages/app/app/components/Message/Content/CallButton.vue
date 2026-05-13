@@ -4,7 +4,7 @@ import { mergeProps } from "vue";
 
 const callStore = useCallStore();
 const { joinCallByRoomId, leaveCall } = callStore;
-const { isInCall, roomParticipants } = storeToRefs(callStore);
+const { isConnecting, isInCall, roomParticipants } = storeToRefs(callStore);
 </script>
 
 <template>
@@ -36,7 +36,7 @@ const { isInCall, roomParticipants } = storeToRefs(callStore);
   </v-menu>
   <v-tooltip v-else location="bottom" text="Start Call">
     <template #activator="{ props }">
-      <v-btn :="props" icon="mdi-phone" size="small" @click="joinCallByRoomId()" />
+      <v-btn :="props" :loading="isConnecting" icon="mdi-phone" size="small" @click="joinCallByRoomId()" />
     </template>
   </v-tooltip>
 </template>

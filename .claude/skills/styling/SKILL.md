@@ -9,6 +9,7 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - **UnoCSS attributes go first** — before Vue/component props. e.g. `<StyledAvatar mr-3 :image="image" :name="name" />`
 - Use `flex` not `d-flex`.
 - Use `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
+- Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index utilities unless the layout genuinely needs them. Do not add z-index defensively; rely on DOM order and positioning first.
 
 ## What stays in `class="..."`
 
@@ -24,20 +25,20 @@ Only use `class="..."` when technically required:
 
 `presetVuetify()` + `presetAttributify()` are both active in `uno.config.ts`. This means **ALL** of the following work as standalone attributify attributes:
 
-- Vuetify typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-caption`, etc.
-- Vuetify theme colours: `bg-surface`, `bg-surface-variant`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, `text-on-surface`, etc.
-- Custom theme colours: `bg-surfaceOpacity80`, `bg-backgroundOpacity40`, etc.
+- Vuetify MD3 typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-body-small`, etc. Do not use MD2 typography utilities such as `text-caption`; use the MD3 equivalent (`text-body-small`) instead.
+- Vuetify theme colours: `bg-surface`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, etc.
+- Custom theme colours: `bg-surface-opacity-80`, `bg-background-opacity-40`, etc.
 
 ### Custom Vuetify theme colours must be registered in `uno.config.ts`
 
-All custom colours not in the standard Vuetify palette (`primary`, `secondary`, `surface`, `background`, `error`, `warning`, `info`, `success`, `on-*`) must be added to `uno.config.ts` under `theme.colors` so UnoCSS can scan and generate them:
+All colors not explicitly defined in `vuetify.config.ts` must be added to `uno.config.ts` under `theme.colors` so UnoCSS can scan and generate them. Do not assume Vuetify default colors are supported: for example, use `text-primary` instead of `text-success`, and use `bg-surface` instead of `bg-surface-variant`.
 
 ```ts
 // uno.config.ts
 theme: {
   colors: {
     "primary-darken-1": 'rgb(var(--v-theme-primary-darken-1))',
-    surfaceOpacity80: 'rgb(var(--v-theme-surfaceOpacity80))',
+    "surface-opacity-80": 'rgb(var(--v-theme-surface-opacity-80))',
     // all custom colours from vuetify.config.ts → getBaseColorsExtension + variations
   }
 }
@@ -45,17 +46,23 @@ theme: {
 
 Check `vuetify.config.ts` for the canonical list. Standard palette colours are handled by `presetVuetify()` automatically.
 
+When reading hyphenated theme colours from `useColorsStore()`, destructure quoted keys and alias them to local camel-case variables:
+
+```ts
+const { "background-opacity-40": backgroundOpacity40 } = storeToRefs(colorsStore);
+```
+
 ## `v-bind(themeColor)` in CSS → attributify
 
 When a scoped CSS class exists _only_ to set a Vuetify theme colour with `v-bind()`, convert it to attributify and delete the class:
 
 ```diff
 - <StyledCard class="card">
-+ <StyledCard bg-surfaceOpacity80>
++ <StyledCard bg-surface-opacity-80>
 
 - <style scoped lang="scss">
 - .card {
--   background-color: v-bind(surfaceOpacity80);
+-   background-color: v-bind(surfaceOpacityColor);
 - }
 - </style>
 ```

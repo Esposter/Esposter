@@ -1,38 +1,40 @@
-import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useCallStore } from "@/store/message/room/call";
-import { useWebRtcStore } from "@/store/message/room/webRtc";
 
-export const useCallTokenSubscribables = async (id: string) => {
+export const useCallIdSubscribables = async (id: string) => {
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
-  const { createCallParticipant, deleteCallParticipant, deleteSpeaker, joinCall, leaveCall, setMute } = callStore;
-  const { isInCall } = storeToRefs(callStore);
-  const webRtcStore = useWebRtcStore();
-  const { cleanupPeer, createPeerConnectionOffer } = webRtcStore;
+  const {
+    createCallParticipant,
+    deleteCallParticipant,
+    deleteSpeaker,
+    joinCall,
+    leaveCall,
+    setMute,
+    setParticipantCamera,
+  } = callStore;
 
   const callSessionId = await joinCall(id);
   if (!callSessionId) return false;
 
   const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(callSessionId, {
-    onData: getSynchronizedFunction(async (participant) => {
+    onData: (participant) => {
       createCallParticipant(callSessionId, participant);
-      if (isInCall.value) {
-        await cleanupPeer(participant.id);
-        deleteSpeaker(participant.id);
-        await createPeerConnectionOffer(callSessionId, participant.id);
-      }
-    }),
+    },
   });
   const participantLeaveUnsubscribable = $trpc.roomCall.onLeaveCall.subscribe(callSessionId, {
-    onData: getSynchronizedFunction(async (id) => {
+    onData: (id) => {
       deleteCallParticipant(callSessionId, id);
-      await cleanupPeer(id);
       deleteSpeaker(id);
-    }),
+    },
   });
   const muteChangedUnsubscribable = $trpc.roomCall.onSetMute.subscribe(callSessionId, {
     onData: (muteChange) => {
       setMute(callSessionId, muteChange.id, muteChange.isMuted);
+    },
+  });
+  const videoChangedUnsubscribable = $trpc.roomCall.onVideoChanged.subscribe(callSessionId, {
+    onData: ({ id, isCameraEnabled }) => {
+      setParticipantCamera(callSessionId, id, isCameraEnabled);
     },
   });
 
@@ -40,6 +42,7 @@ export const useCallTokenSubscribables = async (id: string) => {
     participantJoinUnsubscribable.unsubscribe();
     participantLeaveUnsubscribable.unsubscribe();
     muteChangedUnsubscribable.unsubscribe();
+    videoChangedUnsubscribable.unsubscribe();
     await leaveCall();
   });
 

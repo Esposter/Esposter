@@ -2,7 +2,6 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { CallSignalType } from "#shared/models/room/call/CallSignalType";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { createCallerFactory } from "@@/server/trpc";
@@ -56,6 +55,7 @@ describe("call", () => {
     expect(participants).toHaveLength(1);
     expect(takeOne(participants).id).toBe(session.id);
     expect(takeOne(participants).userId).toBe(user.id);
+    expect(takeOne(participants).isCameraEnabled).toBe(false);
     expect(takeOne(participants).isMuted).toBe(false);
 
     const readSessionId = await roomCallCaller.readCallSessionId({ roomId: newRoom.id });
@@ -210,6 +210,30 @@ describe("call", () => {
     expect(data.value).toStrictEqual({ id: sessionPayload.session.id, isMuted: true });
   });
 
+  test("on video changed", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
+    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
+    const onVideoChanged = await roomCallCaller.onVideoChanged(callSessionId);
+    replayMockSession(sessionPayload);
+    const data = await withAsyncIterator(
+      () => onVideoChanged,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          roomCallCaller.setCamera({ callSessionId, isCameraEnabled: true }),
+        ]);
+        return result;
+      },
+    );
+
+    assert(!data.done);
+
+    expect(data.value).toStrictEqual({ id: sessionPayload.session.id, isCameraEnabled: true });
+  });
+
   test("fails join for non-member", async () => {
     expect.hasAssertions();
 
@@ -250,62 +274,16 @@ describe("call", () => {
     expect(participants.some(({ id }) => id === userBSession.id)).toBe(true);
   });
 
-  test("on signal delivers to target user", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newInviteToken = await roomCaller.createInvite({ roomId: newRoom.id });
-    const defaultSessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
-    replayMockSession(defaultSessionPayload);
-    const onSendSignal = await roomCallCaller.onSendSignal(callSessionId);
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInviteToken);
-    const userBSessionPayload = await mockSessionOnce(mockContext.db, user);
-    await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
-    replayMockSession(userBSessionPayload);
-    const payload = { data: "{}", targetId: defaultSessionPayload.session.id, type: CallSignalType.Offer };
-    const data = await withAsyncIterator(
-      () => onSendSignal,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), roomCallCaller.sendSignal({ callSessionId, payload })]);
-        return result;
-      },
-    );
-
-    assert(!data.done);
-
-    expect(data.value.senderId).toBe(userBSessionPayload.session.id);
-    expect(data.value.payload).toStrictEqual(payload);
-  });
-
-  test("fails sendSignal if sender is not in call", async () => {
+  test("fails setCamera if caller is not in call", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db, getMockSession().user);
     const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
-    const sessionId = getMockSession().session.id;
-    const payload = { data: "{}", targetId: sessionId, type: CallSignalType.Offer };
 
-    await expect(roomCallCaller.sendSignal({ callSessionId, payload })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new ForbiddenError("Must join call first").message}]`,
-    );
-  });
-
-  test("fails sendSignal if target is not in call", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-    const { callSessionId } = await roomCallCaller.joinCallByRoomId({ roomId: newRoom.id });
-    replayMockSession(sessionPayload);
-    const targetId = crypto.randomUUID();
-    const payload = { data: "{}", targetId, type: CallSignalType.Offer };
-
-    await expect(roomCallCaller.sendSignal({ callSessionId, payload })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError("Target participant", targetId).message}]`,
-    );
+    await expect(
+      roomCallCaller.setCamera({ callSessionId, isCameraEnabled: true }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${new ForbiddenError("Must join call first").message}]`);
   });
 
   test("joins call by id", async () => {

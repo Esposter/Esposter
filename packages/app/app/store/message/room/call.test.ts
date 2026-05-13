@@ -96,6 +96,7 @@ describe(useCallStore, () => {
       const participant: CallParticipant = {
         id: session.id,
         image: user.image,
+        isCameraEnabled: false,
         isMuted: false,
         name: user.name,
         userId: user.id,
@@ -117,6 +118,7 @@ describe(useCallStore, () => {
       const participant: CallParticipant = {
         id: session.id,
         image: user.image,
+        isCameraEnabled: false,
         isMuted: false,
         name: user.name,
         userId: user.id,
@@ -136,6 +138,7 @@ describe(useCallStore, () => {
       const participant: CallParticipant = {
         id: session.id,
         image: user.image,
+        isCameraEnabled: false,
         isMuted: false,
         name: user.name,
         userId: user.id,
@@ -159,6 +162,7 @@ describe(useCallStore, () => {
       const participant: CallParticipant = {
         id: session.id,
         image: user.image,
+        isCameraEnabled: false,
         isMuted: false,
         name: user.name,
         userId: user.id,
@@ -182,6 +186,7 @@ describe(useCallStore, () => {
       const participant: CallParticipant = {
         id: session.id,
         image: user.image,
+        isCameraEnabled: false,
         isMuted: false,
         name: user.name,
         userId: user.id,
@@ -205,6 +210,7 @@ describe(useCallStore, () => {
       const participant: CallParticipant = {
         id: session.id,
         image: user.image,
+        isCameraEnabled: false,
         isMuted: false,
         name: user.name,
         userId: user.id,
@@ -239,6 +245,7 @@ describe(useCallStore, () => {
       const participant: CallParticipant = {
         id: session.id,
         image: user.image,
+        isCameraEnabled: false,
         isMuted: false,
         name: user.name,
         userId: user.id,
@@ -275,8 +282,22 @@ describe(useCallStore, () => {
       const { session: firstSession, user: firstUser } = getMockSession();
       const { session: secondSession, user: secondUser } = await mockSessionOnce(mockContext.db);
       const participants: CallParticipant[] = [
-        { id: firstSession.id, image: firstUser.image, isMuted: false, name: firstUser.name, userId: firstUser.id },
-        { id: secondSession.id, image: secondUser.image, isMuted: false, name: secondUser.name, userId: secondUser.id },
+        {
+          id: firstSession.id,
+          image: firstUser.image,
+          isCameraEnabled: false,
+          isMuted: false,
+          name: firstUser.name,
+          userId: firstUser.id,
+        },
+        {
+          id: secondSession.id,
+          image: secondUser.image,
+          isCameraEnabled: false,
+          isMuted: false,
+          name: secondUser.name,
+          userId: secondUser.id,
+        },
       ];
 
       const callStore = useCallStore();

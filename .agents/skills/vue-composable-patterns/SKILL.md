@@ -325,7 +325,7 @@ Composables that manage tRPC subscriptions for a feature are named `use{Feature}
 
 ```typescript
 // composables/message/subscribables/useCallSubscribables.ts
-export const useCallSubscribables = async () => {
+export const useCallSubscribables = () => {
   // calls useOnlineSubscribable, sets up tRPC subscriptions
   // no return value
 };
@@ -333,7 +333,7 @@ export const useCallSubscribables = async () => {
 // composables/message/subscribables/useSubscribables.ts
 export const useSubscribables = async () => {
   await useRoomSubscribables();
-  await useCallSubscribables();
+  useCallSubscribables();
   // ...
 };
 ```
@@ -405,27 +405,9 @@ watch(
 - Always initialize the local type ref from the current model value, not a hardcoded default
 - `if (newType === oldType) return;` in a watch callback is always redundant — Vue only fires when the value changes
 
-## Offline IndexedDB Cache via `readItems` cacheOptions
+## Offline IndexedDB Cache via Pagination Cache Composables
 
-Room-switch composables (`useReadMessages`, `useReadMembers`, `useReadRooms`) pass a `ReadItemsCacheOptions<TItem>` as the third argument to `readItems`. `readItems` in `useCursorPaginationOperationData` handles the if-online/offline logic centrally — no manual `if (!online.value)` branches in composables.
-
-**`ReadItemsCacheOptions<TItem>`** (`app/models/pagination/cursor/ReadItemsCacheOptions.ts`):
-
-```typescript
-interface ReadItemsCacheOptions<TItem> {
-  cache: {
-    read: (partitionKey: string) => Promise<TItem[]>;
-    write: (items: TItem[], partitionKey: string) => Promise<void>;
-  };
-  onCacheRead?: () => void; // fires only on offline cache hit
-  partitionKey: string;
-}
-```
-
-**`readItems` behavior:**
-
-- Offline + `cacheOptions` present → read from cache, call `onCacheRead?.()`, skip tRPC query
-- Online → run tRPC query, then write results to cache
+Offline cache should mirror Pinia state. Prefer thin feature-level `use*Cache` composables that delegate to `useCursorPaginationCache` or `useOffsetPaginationCache`. Do **not** add new `readItems` cache options or push IndexedDB behavior deeper into pagination helpers.
 
 **Generic base functions** (`app/services/cache/indexedDb/`):
 
@@ -439,21 +421,34 @@ interface ReadItemsCacheOptions<TItem> {
 - `MemberIndexedDbStoreConfiguration` — `PartitionedIdKeyPath`
 - `RoomIndexedDbStoreConfiguration` — `PartitionedIdKeyPath`
 
-**partitionKey injection pattern** — when the entity type lacks a `partitionKey` field (e.g. `User`, `Room`), inject/strip it in the `cache.read/write` lambdas:
+**Generic cache composables** (`app/composables/cache/indexedDb/`):
 
-```typescript
-cache: {
-  read: (partitionKey) => readIndexedDb(MemberIndexedDbStoreConfiguration, partitionKey),
-  write: (items, partitionKey) => writeIndexedDb(MemberIndexedDbStoreConfiguration, items, partitionKey),
-},
-```
+- `useCursorPaginationCache` — watches cursor store items, writes IndexedDB, hydrates offline partition changes
+- `useReadCursorPaginationCache` — wraps first-page cursor reads: online query, offline IndexedDB read
+- `useOffsetPaginationCache` — offset equivalent of `useCursorPaginationCache`
+- `useReadOffsetPaginationCache` — offset equivalent of `useReadCursorPaginationCache`
 
-**`useMessageCache`** — additional composable for messages only, because the message component doesn't re-mount on room switch:
+**Feature cache composable pattern:**
 
-- `watchDeep(items, ...)` — writes to IndexedDB when live subscription adds messages
-- `watch(currentRoomId, ...)` — hydrates store from IndexedDB on offline room switch
+- read store refs with `storeToRefs`
+- return `useCursorPaginationCache(...)` or `useOffsetPaginationCache(...)`
+- pass `configuration`, `items`, `partitionKey`, and the store initializer
+- use `getWriteItems` for feature-specific filtering, such as loading messages
+- use `onHydrate` for companion state updates, such as member counts or user maps
+- return the generic `flush()` from cache composables that tests need to await
 
-Architecture doc: `features/esbabbler/cache.md`
+**Read composable pattern:**
+
+- create a read helper with `useReadCursorPaginationCache(configuration)` or `useReadOffsetPaginationCache(configuration)`
+- call it inside the `readItems` query callback
+- put online-only metadata reads inside the online query passed to the cache helper
+- do not call `useOnline`, `readIndexedDb`, or `writeIndexedDb` directly from feature read composables
+
+`useMessageCache`, `useMemberCache`, and `useRoomCache` are the reference shapes. Apply the same approach to future offline-backed stores.
+
+`ReadItemsCacheOptions` has been removed. `readItems` / `readMoreItems` are plain pagination helpers that know nothing about IndexedDB or cache store configuration.
+
+Architecture doc: `features/esbabbler/specs/cache.md`
 
 ## Bundle Ancillary Reads with the Primary Read
 

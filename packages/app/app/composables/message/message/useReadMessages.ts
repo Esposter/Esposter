@@ -3,7 +3,6 @@ import type { MessageEntity, StandardMessageEntity, WebhookMessageEntity } from 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { CompositeKeyPropertyNames, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
@@ -47,55 +46,40 @@ export const useReadMessages = () => {
     const roomId = currentRoomId.value;
     if (!roomId)
       throw new InvalidOperationError(Operation.Read, readMessages.name, CompositeKeyPropertyNames.partitionKey);
-    return readItems(
-      async () => {
-        const rowKey = route.params.rowKey as string | undefined;
-
-        if (rowKey) {
-          const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
-          if (messagesByRowKeys.length > 0) {
-            const response = await $trpc.message.readMessages.query({
-              cursor: serialize({ rowKey: takeOne(messagesByRowKeys).rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
-              isIncludeValue: true,
-              roomId,
-            });
-            hasMoreNewer.value = true;
-            nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [
-              MESSAGE_ROWKEY_SORT_ITEM,
-            ]);
-            return response;
-          }
+    return readItems(async () => {
+      const rowKey = route.params.rowKey as string | undefined;
+      if (rowKey) {
+        const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
+        if (messagesByRowKeys.length > 0) {
+          const response = await $trpc.message.readMessages.query({
+            cursor: serialize({ rowKey: takeOne(messagesByRowKeys).rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
+            isIncludeValue: true,
+            roomId,
+          });
+          hasMoreNewer.value = true;
+          nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
+          await readMetadata(response.items);
+          return response;
         }
+      }
 
-        const response = await $trpc.message.readMessages.query({ roomId });
-        hasMoreNewer.value = false;
-        nextCursorNewer.value = "";
-        return response;
-      },
-      ({ items }) => readMetadata(items),
-      {
-        configuration: MessageIndexedDbStoreConfiguration,
-        partitionKey: roomId,
-      },
-    );
+      const response = await $trpc.message.readMessages.query({ roomId });
+      hasMoreNewer.value = false;
+      nextCursorNewer.value = "";
+      await readMetadata(response.items);
+      return response;
+    });
   };
 
   const readMoreMessages = (onComplete: () => void) => {
     const roomId = currentRoomId.value;
     if (!roomId)
       throw new InvalidOperationError(Operation.Read, readMoreMessages.name, CompositeKeyPropertyNames.partitionKey);
-    return readMoreItems(
-      async (cursor) => {
-        const response = await $trpc.message.readMessages.query({ cursor, roomId });
-        await readMetadata(response.items);
-        return response;
-      },
-      onComplete,
-      {
-        configuration: MessageIndexedDbStoreConfiguration,
-        partitionKey: roomId,
-      },
-    );
+    return readMoreItems(async (cursor) => {
+      const response = await $trpc.message.readMessages.query({ cursor, roomId });
+      await readMetadata(response.items);
+      return response;
+    }, onComplete);
   };
 
   const readMoreNewerMessages = async (onComplete: () => void) => {

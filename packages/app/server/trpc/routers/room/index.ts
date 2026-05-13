@@ -13,10 +13,9 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
-import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
+import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { readInviteId } from "@@/server/services/message/readInviteId";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -34,15 +33,13 @@ import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfani
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { createMessage, deleteDirectory } from "@esposter/db";
+import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
-  AzureTable,
   DatabaseEntityType,
   INVITE_ID_LENGTH,
   InviteInMessageRelations,
   invitesInMessage,
-  MessageType,
   roomIdSchema,
   RoomPermission,
   roomRolesInMessage,
@@ -69,27 +66,6 @@ import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomInMessageSchema.shape.id.optional();
-
-const createSystemRoomMessage = async (
-  roomId: string,
-  userId: string,
-  message: string,
-  sessionId: string,
-): Promise<void> => {
-  await getResultAsync(async () => {
-    const messageClient = await useTableClient(AzureTable.Messages);
-    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-    const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-      message,
-      roomId,
-      type: MessageType.System,
-      userId,
-    });
-    messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
-  })
-    .orTee(console.error)
-    .unwrapOr(undefined);
-};
 
 const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });
 

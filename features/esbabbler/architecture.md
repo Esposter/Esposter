@@ -59,29 +59,64 @@ Quick reference for AI-assisted development. Avoids re-exploring files each sess
 - Server uses NodeJS EventEmitter: `messageEventEmitter`, `roomEventEmitter`
 - Azure WebPubSub for webhook messages (separate from tRPC subscriptions)
 
+### Offline Cache
+
+Full spec: [`specs/cache.md`](specs/cache.md).
+
+- IndexedDB is a local mirror of Pinia store data, not behavior embedded in pagination helpers.
+- Feature-level `use*Cache` composables should be thin wrappers around `useCursorPaginationCache` / `useOffsetPaginationCache`.
+- First-page reads should use `useReadCursorPaginationCache` / `useReadOffsetPaginationCache` for online query vs offline IndexedDB branching.
+- `ReadItemsCacheOptions` has been removed; do not reintroduce cache parameters to `readItems`.
+
 ---
 
 ## Call & Video
 
 Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md`](specs/screenshare.md).
 
-### Key file map (v1 current — mesh WebRTC)
+### Key file map (v2 current — LiveKit)
 
-- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); procedures use `callSessionId`, not `roomId`; includes `joinCall({ id })` for shareable links
+- `server/trpc/routers/room/call.ts` — registered as `roomCall` (not `call` — reserved word); procedures use `callSessionId`, not `roomId`; `joinCall({ id })` and `joinCallByRoomId({ roomId })` return `{ callSessionId, participants, livekitUrl, livekitToken }`
 - `server/services/message/call/callParticipantMap.ts` — `Map<callSessionId, Map<sessionId, CallParticipant>>` (keyed by callSessionId, not roomId)
 - `server/services/message/call/callStartTimeMap.ts` — `Map<callSessionId, Date>` for call duration calculation
 - `server/services/message/call/readCallSessionId.ts` — reads call session id for a room; returns `""` if none exists
-- `app/composables/message/subscribables/useCallSubscribables.ts` — calls `readCallSession` on room entry → sets `currentRoomCallSessionId`; all subscriptions use `callSessionId`
+- `server/api/webhooks/livekit.post.ts` — LiveKit participant joined/left backup path into `callParticipantMap` + `callEventEmitter`
+- `app/composables/message/subscribables/useCallSubscribables.ts` — room observer only: calls `readCallSessionId` on room entry → sets `currentRoomCallSessionId`; subscribes/unsubscribes to that room's call events without leaving the active call
+- `app/composables/message/room/call/useCallIdSubscribables.ts` — dedicated `/call/[id]` lifecycle; page unmount is an explicit call leave because the call page is the call surface
 - `app/store/message/room/call.ts` — `activeCallSessionId` (drives tRPC ops), `currentRoomCallSessionId` (viewed room), `callRoomId` (admin action checks), `callSessionParticipantsMap: Map<callSessionId, CallParticipant[]>`
-- `app/store/message/room/webRtc.ts` — `buildPeerConnection(callSessionId, remoteId)`, `createPeerConnectionOffer(callSessionId, remoteId)`, `subscribeToSignals(callSessionId)`
+- `app/store/message/room/liveKit.ts` — LiveKit `Room` wraps media, active speaker, remote audio, mute/deafen, and camera track logic
 
-### v2 (planned — LiveKit migration)
+### Call lifetime boundary
 
-- `server/trpc/routers/room/call.ts` — `joinCall` returns `{ livekitUrl, livekitToken }`; `sendSignal` / `onSendSignal` removed
-- `server/api/webhooks/livekit.post.ts` — receives LiveKit participant events; updates `callParticipantMap`; drives tRPC subscriptions
-- `app/composables/message/room/call/useCall.ts` — LiveKit `Room` wraps all track logic; exposes `{ join, leave, toggleMute, toggleCamera, toggleDeafen, startScreenShare, stopScreenShare }`
+Room navigation is not call membership. A user remains in a call until one of these explicit leave boundaries occurs:
 
-### Data flow: join call (v1 — mesh WebRTC)
+- They click **Leave Call** from the room call controls, call view, or status bar controls.
+- They are removed by a moderation action that semantically ejects them from the call or room (`KickFromCall`, `KickFromRoom`, `TimeoutUser`, `CreateBan`).
+- The browser tab/session actually disconnects, crashes, logs out, or loses its LiveKit connection long enough for LiveKit to emit `participant_left`.
+- The standalone `/call/[id]` page unmounts, because that route is the whole call surface rather than a room observer.
+
+Changing rooms should only change `currentRoomCallSessionId`, participant observers, and inline room UI. It must not call `leaveCall`, disconnect LiveKit, reset `activeCallSessionId`, or remove the local participant from `callParticipantMap`.
+
+Implementation shape:
+
+```text
+useCallSubscribables cleanup on room change
+  → unsubscribe onJoinCall/onLeaveCall/onSetMute/onVideoChanged for the old room session
+  → setCurrentRoomCallSessionId("")
+  → clear room-scoped speaker hints if needed
+  → do not call roomCall.leaveCall
+  → do not disconnect LiveKit
+
+explicit leave action / moderation leave
+  → callStore.leaveCall()
+  → roomCall.leaveCall({ callSessionId: activeCallSessionId })
+  → disconnect LiveKit
+  → reset active call state
+```
+
+The persistent `StatusBar.vue` in the left sidebar is the return path when the user navigates away from the call room. `callRoomId` remains the room that owns the active call; clicking the status link navigates back to that room without changing call membership.
+
+### Data flow: join call (v2 — LiveKit)
 
 ```text
 Client A (joining)                     Server (tRPC)               Client B (in room)
@@ -91,11 +126,10 @@ Client A (joining)                     Server (tRPC)               Client B (in 
         |   [set currentRoomCallSessionId]   |                              |
         |-- onJoinCall.subscribe(callSessionId)                             |
         |-- joinCallByRoomId({ roomId }) ---->|  (creates session if new)    |
-        |<-- { callSessionId, participants } -|                              |
+        |<-- { callSessionId, participants, livekitUrl, livekitToken }        |
         |   [set activeCallSessionId]         |-- onJoinCall emit --------->|
-        |-- sendSignal (offer) -------------->|-- onSendSignal emit ------->|
-        |<-- onSendSignal (answer) ------------|                             |
-        |<===================== audio flows via RTCPeerConnection ==========>|
+        |-- room.connect(livekitUrl, token) ------------------------------->|
+        |<===================== audio/video flows via LiveKit SFU ==========>|
 ```
 
 ### Data flow: join via shareable link (v1)
@@ -104,8 +138,8 @@ Client A (joining)                     Server (tRPC)               Client B (in 
 Guest (any authed user)                Server (tRPC)               Room participants
         |                                    |                              |
         |-- joinCall({ id }) ---------------->|  (no room membership check) |
-        |<-- { callSessionId, participants } -|                              |
-        |-- subscribe/signal as normal ------>|-- onJoinCall emit --------->|
+        |<-- { callSessionId, participants, livekitUrl, livekitToken }        |
+        |-- room.connect(livekitUrl, token) --|-- onJoinCall emit --------->|
 ```
 
 ### Data flow: screenshare start

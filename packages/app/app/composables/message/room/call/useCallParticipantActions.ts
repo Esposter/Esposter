@@ -12,7 +12,6 @@ export const useCallParticipantActions = () => {
   const { callRoomId } = storeToRefs(callStore);
   const roleStore = useRoleStore();
   const { getMyPermissions } = roleStore;
-
   const myPermissions = computed(() => (callRoomId.value ? getMyPermissions(callRoomId.value) : undefined));
   const isForceMuteable = computed(() => {
     if (!myPermissions.value) return false;

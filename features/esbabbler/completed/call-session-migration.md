@@ -73,9 +73,11 @@ Store methods:
 1. Room entry → `readCallSessionId({ roomId })` → returns `id` string
 2. `setCurrentRoomCallSessionId(callSessionId)` — if `""`, return early (no session yet)
 3. `readCallParticipants({ callSessionId })` → `setParticipants`
-4. If already in call: re-join via `joinCallByRoomId()` (uses `currentRoomCallSessionId` already set)
+4. If already in this same call, keep the active LiveKit connection; if already in a different room's call, keep that call active and only observe the viewed room
 5. Subscribe `onJoinCall / onLeaveCall / onSetMute` with `callSessionId`
-6. Room exit → `leaveCall.mutate({ callSessionId })`, `setCurrentRoomCallSessionId("")`, `cleanupAll()`
+6. Room exit/navigation → unsubscribe observers, `setCurrentRoomCallSessionId("")`, clear viewed-room-only state; do **not** call `leaveCall.mutate` or disconnect LiveKit
+
+Corrected boundary: call membership belongs to `activeCallSessionId`, not the viewed route. `leaveCall` should run only for an explicit leave action, moderation ejection, real session disconnect, or dedicated `/call/[id]` page unmount.
 
 ### Shareable call link
 

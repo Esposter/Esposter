@@ -4,7 +4,7 @@ import { Mention } from "@tiptap/extension-mention";
 
 export const useMentionExtension = () => {
   const colorsStore = useColorsStore();
-  const { info, infoOpacity10 } = storeToRefs(colorsStore);
+  const { info, "info-opacity-10": infoOpacity10 } = storeToRefs(colorsStore);
   return computed(() =>
     Mention.configure({
       HTMLAttributes: {

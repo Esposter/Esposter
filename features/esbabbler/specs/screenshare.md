@@ -50,7 +50,7 @@ When any participant publishes a `ScreenShare` track:
 
 ## Implementation
 
-### Client — `useCall.ts`
+### Client — `store/message/room/liveKit.ts`
 
 ```typescript
 async function startScreenShare() {
@@ -172,13 +172,13 @@ const canScreenShare = computed(
 
 ## File Map
 
-| Action | File                                                                                                                                         |
-| ------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| New    | `Content/CallScreenShare.vue` — presenter view                                                                                               |
-| New    | `Content/CallVideoGrid.vue` — camera tile grid                                                                                               |
-| Modify | `Content/CallPanel.vue` — add screenshare + camera + deafen buttons                                                                          |
-| Modify | `Content/Index.vue` — insert `CallScreenShare` and `CallVideoGrid`                                                                           |
-| Modify | `store/message/room/call.ts` — add screenshare/pin state                                                                                     |
-| Modify | `composables/message/room/call/useCall.ts` — add `startScreenShare`, `stopScreenShare`, `toggleCamera`, `toggleDeafen`, track event handlers |
-| Modify | `shared/models/room/call/CallParticipant.ts` — add `isCameraEnabled` field                                                                   |
-| Modify | `server/trpc/routers/room/moderation.ts` — add `StopScreenShare` action                                                                      |
+| Action | File                                                                                              |
+| ------ | ------------------------------------------------------------------------------------------------- |
+| New    | `Content/CallScreenShare.vue` — presenter view                                                    |
+| New    | `Content/CallVideoGrid.vue` — camera tile grid                                                    |
+| Modify | `Content/CallPanel.vue` — add screenshare + camera + deafen buttons                               |
+| Modify | `Content/Index.vue` — insert `CallScreenShare` and `CallVideoGrid`                                |
+| Modify | `store/message/room/call.ts` — add screenshare/pin state                                          |
+| Modify | `store/message/room/liveKit.ts` — add `startScreenShare`, `stopScreenShare`, track event handlers |
+| Modify | `shared/models/room/call/CallParticipant.ts` — add `isCameraEnabled` field                        |
+| Modify | `server/trpc/routers/room/moderation.ts` — add `StopScreenShare` action                           |

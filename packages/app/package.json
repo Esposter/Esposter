@@ -126,6 +126,8 @@
     "idb": "catalog:",
     "is-mobile": "catalog:",
     "js-beautify": "catalog:",
+    "livekit-client": "catalog:",
+    "livekit-server-sdk": "catalog:",
     "lodash-omitdeep": "catalog:",
     "lowlight": "catalog:",
     "marked": "catalog:",

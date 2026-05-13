@@ -161,6 +161,8 @@ catalog:
   js-beautify: ^1.15.4
   link-preview-js: ^4.0.3
   linkifyjs: ^4.3.3
+  livekit-client: ^2.18.10
+  livekit-server-sdk: ^2.15.2
   lodash-omitdeep: ^1.9.0
   lowlight: ^3.3.0
   marked: ^18.0.3
@@ -221,7 +223,7 @@ catalog:
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
-  vue-router: ^5.0.6
+  vue-router: ^5.0.7
   vue-tsc: ^3.2.8
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.0.7
@@ -241,6 +243,6 @@ overrides:
   crossws: ^0.4.5
   pdfjs-dist: ^5.7.284
   vite: ^8.0.12
-  vue-router: ^5.0.6
+  vue-router: ^5.0.7
 
 shellEmulator: true

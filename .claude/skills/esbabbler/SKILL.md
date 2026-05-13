@@ -79,19 +79,19 @@ Never use `code`, `createCode`, or `CODE_LENGTH` — those are the old names and
 1. **Room entry**: `readCallSessionId({ roomId })` → reads `callSessionsInMessage`, returns `id` string (`""` if no session yet). Called by `useCallSubscribables` whenever the viewed room changes; subscriptions are skipped when `""`.
 2. **Join via room**: `joinCallByRoomId({ roomId })` → room membership required → creates session row if none exists (3-retry upsert inline) → returns `{ callSessionId, participants }`.
 3. **Join via id**: `joinCall({ id })` → auth only (no room membership) → finds session by id → same join flow.
-4. **Subscriptions** (`onJoinCall`, `onLeaveCall`, `onSetMute`, `onSendSignal`) take `callSessionId` (not `roomId`). Auth only — caller must have obtained the `callSessionId` through an authenticated call.
+4. **Subscriptions** (`onJoinCall`, `onLeaveCall`, `onSetMute`, `onVideoChanged`) take `callSessionId` (not `roomId`). Auth only — caller must have obtained the `callSessionId` through an authenticated call.
 5. **Leave**: `leaveCall({ callSessionId })`. Throws `NOT_FOUND` if caller is not a participant. When the last participant leaves: writes call duration as `MessageType.Call` system message to the room.
 
 ### Client-side call stores
 
 `useCallStore` tracks:
 
-- `activeCallSessionId` — session ID of the call the user is **in** (drives `leaveCall`, `setMute`, `sendSignal`).
+- `activeCallSessionId` — session ID of the call the user is **in** (drives `leaveCall`, `setMute`, `setCamera`).
 - `currentRoomCallSessionId` — session ID for the **viewed** room (set by `useCallSubscribables`, drives `roomParticipants` display). Reset to `""` on room leave.
 - `callRoomId` — room ID of active call, kept **only** for admin action roomId checks (ForceMute, KickFromCall, etc.).
 - `callSessionParticipantsMap` — `Map<callSessionId, CallParticipant[]>`.
 
-`useWebRtcStore` uses `callSessionId` (not `roomId`) for all `sendSignal` mutations and subscriptions.
+`useLiveKitStore` wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`. All track/media logic lives here; `useCallStore` delegates to it.
 
 ### Shareable call link
 
@@ -102,10 +102,10 @@ Never use `code`, `createCode`, or `CODE_LENGTH` — those are the old names and
 Admin action hooks in `useCallStore` receive `roomId`. Compare against `callRoomId` (not `activeCallSessionId`) since admin actions are room-scoped:
 
 ```ts
-AdminActionHookMap[AdminActionType.ForceMute].push((roomId) => {
+AdminActionHookMap[AdminActionType.ForceMute].push(async (roomId) => {
   if (sessionId.value) setMute(currentRoomCallSessionId.value, sessionId.value, true);
   if (callRoomId.value !== roomId) return;
-  setLocalStreamMuted(true);
+  await setMicrophone(false);
   isForceMuted.value = true;
 });
 ```

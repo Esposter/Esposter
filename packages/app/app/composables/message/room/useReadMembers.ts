@@ -1,6 +1,5 @@
 import type { User } from "@esposter/db-schema";
 
-import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserStore } from "@/store/message/user";
@@ -33,44 +32,30 @@ export const useReadMembers = () => {
     const roomId = currentRoomId.value;
     if (!roomId)
       throw new InvalidOperationError(Operation.Read, readMembers.name, CompositeKeyPropertyNames.partitionKey);
-    return readItems(
-      async () => {
-        count.value = await $trpc.room.countMembers.query({ roomId });
-        return $trpc.room.readMembers.query({ roomId });
-      },
-      async ({ items }) => {
-        storeUsers(items);
-        await readMetadata(
-          roomId,
-          items.map(({ id }) => id),
-        );
-      },
-      {
-        configuration: MemberIndexedDbStoreConfiguration,
-        partitionKey: roomId,
-      },
-    );
+    return readItems(async () => {
+      count.value = await $trpc.room.countMembers.query({ roomId });
+      const cursorPaginationData = await $trpc.room.readMembers.query({ roomId });
+      await readMetadata(
+        roomId,
+        cursorPaginationData.items.map(({ id }) => id),
+      );
+      storeUsers(cursorPaginationData.items);
+      return cursorPaginationData;
+    });
   };
   const readMoreMembers = (onComplete: () => void) => {
     const roomId = currentRoomId.value;
     if (!roomId)
       throw new InvalidOperationError(Operation.Read, readMoreMembers.name, CompositeKeyPropertyNames.partitionKey);
-    return readMoreItems(
-      async (cursor) => {
-        const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
-        storeUsers(cursorPaginationData.items);
-        await readMetadata(
-          roomId,
-          cursorPaginationData.items.map(({ id }) => id),
-        );
-        return cursorPaginationData;
-      },
-      onComplete,
-      {
-        configuration: MemberIndexedDbStoreConfiguration,
-        partitionKey: roomId,
-      },
-    );
+    return readMoreItems(async (cursor) => {
+      const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
+      await readMetadata(
+        roomId,
+        cursorPaginationData.items.map(({ id }) => id),
+      );
+      storeUsers(cursorPaginationData.items);
+      return cursorPaginationData;
+    }, onComplete);
   };
   return { readMembers, readMoreMembers };
 };
