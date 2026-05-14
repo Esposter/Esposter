@@ -462,6 +462,7 @@ describe("room", () => {
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
+    vi.advanceTimersByTime(1);
     await mockSessionOnce(mockContext.db, user);
     const roomId = await roomCaller.leaveRoom(newRoom.id);
 
@@ -486,6 +487,7 @@ describe("room", () => {
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
+    vi.advanceTimersByTime(1);
     const onLeaveRoom = await roomCaller.onLeaveRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db, user);
     const data = await withAsyncIterator(
@@ -549,6 +551,7 @@ describe("room", () => {
     const invite = await roomCaller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(invite);
+    vi.advanceTimersByTime(1);
 
     await expect(roomCaller.deleteMember({ roomId: newRoom.id, userId: user.id })).resolves.toBeUndefined();
 

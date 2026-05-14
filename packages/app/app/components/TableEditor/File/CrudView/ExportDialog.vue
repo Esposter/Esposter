@@ -43,7 +43,7 @@ const displayedSelectedColumnIds = computed(() => {
 
         const { dataSource } = editedItem;
         const configuration = DataSourceConfigurationMap[dataSourceType];
-        const filteredRows = filterDataSourceRows(dataSource.rows, columnFilters.value);
+        const filteredRows = filterDataSourceRows(dataSource.rows, columnFilters);
         const exportRows =
           selectedRowIds.length > 0 ? filteredRows.filter((row) => selectedRowIds.includes(row.id)) : filteredRows;
         const { columns, rows } = filterDataSourceColumns(dataSource.columns, exportRows, displayedSelectedColumnIds);
