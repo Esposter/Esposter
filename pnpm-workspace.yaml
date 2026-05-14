@@ -82,7 +82,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^5.0.0
-  "@types/node": ^25.7.0
+  "@types/node": ^25.8.0
   "@types/pluralize": ^0.0.33
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
