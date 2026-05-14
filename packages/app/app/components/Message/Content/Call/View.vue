@@ -55,7 +55,7 @@ const getParticipantTileProps = (participant: (typeof callParticipants.value)[nu
       <MessageContentCallParticipantTile
         v-for="participant of callParticipants"
         :key="participant.id"
-        v-bind="getParticipantTileProps(participant)"
+        :="getParticipantTileProps(participant)"
         @click="pinnedParticipantId = participant.id"
       />
     </div>
@@ -64,7 +64,7 @@ const getParticipantTileProps = (participant: (typeof callParticipants.value)[nu
         v-for="participant of callParticipants"
         :key="participant.id"
         h-32
-        v-bind="getParticipantTileProps(participant)"
+        :="getParticipantTileProps(participant)"
         @click="pinnedParticipantId = participant.id"
       />
     </div>

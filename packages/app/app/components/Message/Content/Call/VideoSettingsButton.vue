@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
+import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
 import { useCallStore } from "@/store/message/room/call";
 import { useCallMediaStore } from "@/store/message/room/call/media";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
@@ -15,15 +15,22 @@ const { selectedVideoInputDeviceId } = storeToRefs(liveKitStore);
 const { readDevices, switchDevice } = liveKitStore;
 const menu = ref(false);
 const videoInputDevices = ref<MediaDeviceInfo[]>([]);
-const getDeviceTitle = (device: MediaDeviceInfo, index: number) => device.label || `Camera ${index + 1}`;
+const videoDeviceSections = computed<DeviceSection[]>(() => [
+  {
+    devices: videoInputDevices.value,
+    kind: "videoinput",
+    selectedId: selectedVideoInputDeviceId.value,
+    title: "Camera",
+  },
+]);
 const refreshDevices = async () => {
   await getResultAsync(async () => {
     videoInputDevices.value = await readDevices("videoinput");
   }).match(noop, console.error);
 };
-const selectDevice = async (deviceId: string) => {
+const selectDevice = async (kind: MediaDeviceKind, deviceId: string) => {
   await getResultAsync(async () => {
-    await switchDevice("videoinput", deviceId);
+    await switchDevice(kind, deviceId);
   }).match(noop, console.error);
 };
 watch(menu, (isOpen) => {
@@ -48,40 +55,12 @@ watch(menu, (isOpen) => {
       </v-tooltip>
     </template>
     <StyledCard py-2 min-w-72>
-      <v-list density="compact">
-        <v-list-subheader title="Camera" />
-        <v-list-item
-          v-for="(device, index) of videoInputDevices"
-          :key="device.deviceId"
-          :prepend-icon="device.deviceId === selectedVideoInputDeviceId ? 'mdi-check' : undefined"
-          :title="getDeviceTitle(device, index)"
-          @click="selectDevice(device.deviceId)"
-        />
-        <v-list-item v-if="videoInputDevices.length === 0" title="System default" />
-      </v-list>
+      <MessageContentCallDeviceSectionList :sections="videoDeviceSections" @select="selectDevice" />
       <v-divider />
-      <v-list density="compact">
-        <v-list-subheader title="Backgrounds and effects" />
-        <div px-3 pb-2 gap-2 grid grid-cols-5>
-          <button
-            v-for="{ imagePath, title } of CallVirtualBackgroundDefinitions"
-            :key="title"
-            :aria-label="title"
-            :style="{ backgroundImage: imagePath ? `url(${imagePath})` : undefined }"
-            b-2
-            rd
-            b-solid
-            bg-surface
-            aspect-square
-            bg-cover
-            bg-center
-            :class="selectedVirtualBackground === imagePath ? 'b-primary' : 'b-transparent'"
-            @click="selectVirtualBackground(imagePath)"
-          >
-            <v-icon v-if="!imagePath" icon="mdi-close" size="small" />
-          </button>
-        </div>
-      </v-list>
+      <MessageContentCallVirtualBackgroundGrid
+        :selected-virtual-background="selectedVirtualBackground"
+        @select="selectVirtualBackground"
+      />
     </StyledCard>
   </v-menu>
 </template>

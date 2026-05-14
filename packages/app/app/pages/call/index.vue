@@ -1,23 +1,38 @@
 <script setup lang="ts">
+import type { CallFeature } from "@/models/message/room/call/CallFeature";
 import { useCallStore } from "@/store/message/room/call";
-import { CALL_ID_LENGTH } from "@esposter/db-schema";
+import { CALL_ID_REGEX, selectCallSessionInMessageSchema } from "@esposter/db-schema";
 import { normalizeString, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 definePageMeta({
   middleware: "auth",
 });
 
+const callFeatures: CallFeature[] = [
+  {
+    description: "Present tabs, windows, or your display in the call.",
+    icon: "mdi-monitor-share",
+    title: "Share your screen",
+  },
+  {
+    description: "Switch microphone, speakers, and camera while connected.",
+    icon: "mdi-cellphone-link",
+    title: "Choose devices",
+  },
+  {
+    description: "Copy the call link and send it to anyone joining.",
+    icon: "mdi-link-variant",
+    title: "Invite with a link",
+  },
+];
 const router = useRouter();
 const callStore = useCallStore();
 const { createCall } = callStore;
 const callCodeOrLink = ref("");
 const isCreating = ref(false);
 const isJoining = ref(false);
-const callId = computed(
-  () =>
-    normalizeString(callCodeOrLink.value).match(new RegExp(String.raw`[A-Za-z0-9]{${CALL_ID_LENGTH}}`, "u"))?.[0] ?? "",
-);
-const canJoin = computed(() => callId.value.length === CALL_ID_LENGTH);
+const callId = computed(() => normalizeString(callCodeOrLink.value).match(CALL_ID_REGEX)?.[0] ?? "");
+const canJoin = computed(() => selectCallSessionInMessageSchema.shape.id.safeParse(callId.value).success);
 const startCall = async () => {
   isCreating.value = true;
   await withFinalizerAsync(
@@ -96,21 +111,7 @@ const joinCall = async () => {
           </div>
           <v-divider w-full />
           <div grid-cols="[repeat(auto-fit,minmax(12rem,1fr))]" gap-4 grid w-full>
-            <div p-4 rd-2 bg-surface flex flex-col gap-y-2>
-              <v-icon color="primary" icon="mdi-monitor-share" size="large" />
-              <span font-medium text-body-medium>Share your screen</span>
-              <span text-medium-emphasis text-body-small>Present tabs, windows, or your display in the call.</span>
-            </div>
-            <div p-4 rd-2 bg-surface flex flex-col gap-y-2>
-              <v-icon color="primary" icon="mdi-cellphone-link" size="large" />
-              <span font-medium text-body-medium>Choose devices</span>
-              <span text-medium-emphasis text-body-small>Switch microphone, speakers, and camera while connected.</span>
-            </div>
-            <div p-4 rd-2 bg-surface flex flex-col gap-y-2>
-              <v-icon color="primary" icon="mdi-link-variant" size="large" />
-              <span font-medium text-body-medium>Invite with a link</span>
-              <span text-medium-emphasis text-body-small>Copy the call link and send it to anyone joining.</span>
-            </div>
+            <MessageContentCallFeatureCard v-for="feature of callFeatures" :key="feature.title" :="feature" />
           </div>
         </div>
       </v-col>

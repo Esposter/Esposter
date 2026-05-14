@@ -25,9 +25,9 @@ const updateAspectRatio = () => {
       max-h-full
       max-w-full
       cursor-pointer
+      transition-shadow
       relative
       overflow-hidden
-      transition-shadow
       hover="shadow-[0_0_0_3px_rgb(var(--v-theme-primary)),0_0_16px_6px_rgba(var(--v-theme-primary),0.4)]"
       @click="stage?.requestFullscreen()"
     >
