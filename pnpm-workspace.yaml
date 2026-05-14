@@ -59,15 +59,15 @@ catalog:
   "@pinia/nuxt": ^0.11.3
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^1.1.2
-  "@tiptap/core": ^3.23.2
-  "@tiptap/extension-code-block-lowlight": ^3.23.2
-  "@tiptap/extension-file-handler": ^3.23.2
-  "@tiptap/extension-mention": ^3.23.2
-  "@tiptap/extensions": ^3.23.2
-  "@tiptap/pm": ^3.23.2
-  "@tiptap/starter-kit": ^3.23.2
-  "@tiptap/suggestion": ^3.23.2
-  "@tiptap/vue-3": ^3.23.2
+  "@tiptap/core": ^3.23.4
+  "@tiptap/extension-code-block-lowlight": ^3.23.4
+  "@tiptap/extension-file-handler": ^3.23.4
+  "@tiptap/extension-mention": ^3.23.4
+  "@tiptap/extensions": ^3.23.4
+  "@tiptap/pm": ^3.23.4
+  "@tiptap/starter-kit": ^3.23.4
+  "@tiptap/suggestion": ^3.23.4
+  "@tiptap/vue-3": ^3.23.4
   "@tresjs/cientos": ^5.7.1
   "@tresjs/core": ^5.8.1
   "@tresjs/nuxt": ^5.6.1
