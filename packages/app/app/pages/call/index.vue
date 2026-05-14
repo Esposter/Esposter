@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useCallStore } from "@/store/message/room/call";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
+import { normalizeString, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 definePageMeta({
   middleware: "auth",
@@ -17,16 +17,26 @@ const callId = computed(() => normalizeString(callCodeOrLink.value).match(/[A-Za
 const canJoin = computed(() => callId.value.length === CALL_ID_LENGTH);
 const startCall = async () => {
   isCreating.value = true;
-  const newCallSessionId = await createCall();
-  isCreating.value = false;
-  if (!newCallSessionId) return;
-  await router.push(`/call/${newCallSessionId}`);
+  await withFinalizerAsync(
+    async () => {
+      const newCallSessionId = await createCall();
+      if (!newCallSessionId) return;
+      await router.push(RoutePath.Call(newCallSessionId));
+    },
+    () => {
+      isCreating.value = false;
+    },
+  );
 };
 const joinCall = async () => {
   if (!canJoin.value) return;
   isJoining.value = true;
-  await router.push(`/call/${callId.value}`);
-  isJoining.value = false;
+  await withFinalizerAsync(
+    () => router.push(RoutePath.Call(callId.value)),
+    () => {
+      isJoining.value = false;
+    },
+  );
 };
 </script>
 
@@ -40,8 +50,8 @@ const joinCall = async () => {
         <div text-center flex flex-col gap-y-8 items-center>
           <v-img alt="Esposter" src="/icon-192x192.png" width="5rem" />
           <div flex flex-col gap-y-3>
-            <h1 text-h3>Video calls for everyone</h1>
-            <span text-h6 text-medium-emphasis>Connect and share with Esposter Calls</span>
+            <h1 text-display-small>Video calls for everyone</h1>
+            <span text-medium-emphasis text-headline-small>Connect and share with Esposter Calls</span>
           </div>
           <div flex flex-wrap gap-3 justify-center>
             <v-tooltip text="Start a new call">

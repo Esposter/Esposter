@@ -8,10 +8,14 @@ import { TRPCError } from "@trpc/server";
 export const createStandaloneCallSessionId = async (db: Context["db"]): Promise<string> => {
   for (let i = 0; i < 3; i++) {
     const id = createId(CALL_ID_LENGTH);
-    const callSession = await getResultAsync(() => db.insert(callSessionsInMessage).values({ id }).returning())
-      .orTee(console.error)
-      .unwrapOr(null);
-    if (callSession?.[0]) return callSession[0].id;
+    const result = await getResultAsync(() => db.insert(callSessionsInMessage).values({ id }).returning()).match(
+      (value) => value[0]?.id,
+      (error) => {
+        if (typeof error === "object" && error !== null && "code" in error && error.code === "23505") return null;
+        throw error;
+      },
+    );
+    if (result) return result;
   }
 
   throw new TRPCError({

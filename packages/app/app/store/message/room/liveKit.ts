@@ -107,6 +107,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   };
   const setLocalCameraTrack = async (publication: LocalTrackPublication | undefined) => {
     if (!publication?.videoTrack) {
+      await localCameraTrack?.stopProcessor();
+      virtualBackgroundProcessor = undefined;
       localCameraTrack = undefined;
       mediaStore.localVideoStream = null;
       mediaStore.isCameraEnabled = false;
@@ -126,13 +128,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     }
   });
   const onLocalTrackUnpublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
-    if (publication.source === Track.Source.Camera) {
-      await localCameraTrack?.stopProcessor();
-      virtualBackgroundProcessor = undefined;
-      localCameraTrack = undefined;
-      mediaStore.localVideoStream = null;
-      mediaStore.isCameraEnabled = false;
-    } else if (publication.source === Track.Source.ScreenShare) {
+    if (publication.source === Track.Source.Camera) await setLocalCameraTrack(undefined);
+    else if (publication.source === Track.Source.ScreenShare) {
       setLocalScreenShareStream(null);
       mediaStore.isScreenSharing = false;
     }
@@ -149,15 +146,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeRoom) return;
     const publication = await activeRoom.localParticipant.setCameraEnabled(isCameraEnabled);
-    if (isCameraEnabled) {
-      await setLocalCameraTrack(publication);
-      return;
-    }
-
-    await localCameraTrack?.stopProcessor();
-    virtualBackgroundProcessor = undefined;
-    mediaStore.localVideoStream = null;
-    mediaStore.isCameraEnabled = false;
+    await setLocalCameraTrack(isCameraEnabled ? publication : undefined);
   };
   const setMicrophone = async (isMicrophoneEnabled: boolean) => {
     if (!activeRoom) return;
@@ -175,6 +164,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     if (!isScreenSharing) setLocalScreenShareStream(null);
   };
   const setVirtualBackground = async (imagePath: string) => {
+    mediaStore.selectedVirtualBackground = imagePath;
     if (!localCameraTrack) return false;
     if (!supportsBackgroundProcessors()) {
       console.warn("Background processors are not supported in this browser.");

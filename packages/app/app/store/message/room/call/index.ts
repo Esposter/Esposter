@@ -5,7 +5,7 @@ import { useCallMediaStore } from "@/store/message/room/call/media";
 import { useCallParticipantStore } from "@/store/message/room/call/participant";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { AdminActionType } from "@esposter/db-schema";
-import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { Room } from "livekit-client";
 
 export const useCallStore = defineStore("message/room/call", () => {
@@ -37,12 +37,39 @@ export const useCallStore = defineStore("message/room/call", () => {
   const isInCall = computed(() => callParticipants.value.some(({ id }) => id === sessionId.value));
   const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
   const setCameraEnabled = async (newIsCameraEnabled: boolean) => {
-    if (!activeCallSessionId.value || !sessionId.value) return;
+    const sessionIdValue = sessionId.value;
+    if (!activeCallSessionId.value || !sessionIdValue) return;
+
+    const oldIsCameraEnabled = mediaStore.isCameraEnabled;
     mediaStore.isCameraEnabled = newIsCameraEnabled;
-    setParticipantCamera(activeCallSessionId.value, sessionId.value, newIsCameraEnabled);
-    await $trpc.roomCall.setCamera.mutate({
-      callSessionId: activeCallSessionId.value,
-      isCameraEnabled: newIsCameraEnabled,
+    setParticipantCamera(activeCallSessionId.value, sessionIdValue, newIsCameraEnabled);
+
+    await getResultAsync(() =>
+      $trpc.roomCall.setCamera.mutate({
+        callSessionId: activeCallSessionId.value,
+        isCameraEnabled: newIsCameraEnabled,
+      }),
+    ).match(noop, (error) => {
+      mediaStore.isCameraEnabled = oldIsCameraEnabled;
+      setParticipantCamera(activeCallSessionId.value, sessionIdValue, oldIsCameraEnabled);
+      throw error;
+    });
+  };
+  const setMuteEnabled = async (newIsMuted: boolean) => {
+    const sessionIdValue = sessionId.value;
+    if (!activeCallSessionId.value || !sessionIdValue) return;
+
+    const oldIsMuted = isMuted.value;
+    setMute(activeCallSessionId.value, sessionIdValue, newIsMuted);
+
+    await getResultAsync(() =>
+      $trpc.roomCall.setMute.mutate({
+        callSessionId: activeCallSessionId.value,
+        isMuted: newIsMuted,
+      }),
+    ).match(noop, (error) => {
+      setMute(activeCallSessionId.value, sessionIdValue, oldIsMuted);
+      throw error;
     });
   };
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
@@ -130,40 +157,39 @@ export const useCallStore = defineStore("message/room/call", () => {
     );
   };
   const selectVirtualBackground = async (imagePath: string) => {
-    if (!imagePath) {
-      await setVirtualBackground("");
-      mediaStore.selectedVirtualBackground = "";
-      return;
+    if (imagePath && !mediaStore.isCameraEnabled) {
+      const isEnabled = await getResultAsync(async () => {
+        await setCamera(true);
+        await setCameraEnabled(true);
+      }).match(
+        () => true,
+        (error) => {
+          console.error(error);
+          return false;
+        },
+      );
+      if (!isEnabled) return;
     }
 
-    if (!mediaStore.isCameraEnabled) {
-      await setCamera(true);
-      await setCameraEnabled(true);
-    }
-
-    const isApplied = await setVirtualBackground(imagePath);
-    if (isApplied) mediaStore.selectedVirtualBackground = imagePath;
+    await setVirtualBackground(imagePath);
   };
   const toggleCamera = async () => {
     const newIsCameraEnabled = !mediaStore.isCameraEnabled;
-    if (!newIsCameraEnabled) {
-      await setVirtualBackground("");
-      mediaStore.selectedVirtualBackground = "";
-    }
-
-    await setCamera(newIsCameraEnabled);
-    await setCameraEnabled(newIsCameraEnabled);
+    await getResultAsync(async () => {
+      await setCamera(newIsCameraEnabled);
+      await setCameraEnabled(newIsCameraEnabled);
+    }).match(noop, console.error);
   };
   const toggleDeafen = () => {
     mediaStore.isDeafened = !mediaStore.isDeafened;
     setRemoteAudioMuted(mediaStore.isDeafened);
   };
   const toggleMute = async () => {
-    if (!activeCallSessionId.value || !sessionId.value) return;
     const newIsMuted = !isMuted.value;
-    setMute(activeCallSessionId.value, sessionId.value, newIsMuted);
-    await setMicrophone(!newIsMuted);
-    await $trpc.roomCall.setMute.mutate({ callSessionId: activeCallSessionId.value, isMuted: newIsMuted });
+    await getResultAsync(async () => {
+      await setMicrophone(!newIsMuted);
+      await setMuteEnabled(newIsMuted);
+    }).match(noop, console.error);
   };
   const toggleScreenShare = async () => {
     await getResultAsync(async () => {
@@ -213,6 +239,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     selectVirtualBackground,
     setCameraEnabled,
     setCurrentRoomCallSessionId,
+    setMuteEnabled,
     toggleCamera,
     toggleDeafen,
     toggleMute,

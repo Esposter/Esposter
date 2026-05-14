@@ -23,6 +23,7 @@ export const useCallParticipantStore = defineStore("message/room/call/participan
       callSessionId,
       participants.filter((participant) => participant.id !== id),
     );
+    if (joinNoticeParticipant.value?.id === id) joinNoticeParticipant.value = undefined;
   };
   const setMute = (callSessionId: string, id: string, isMuted: boolean) => {
     const participant = getParticipants(callSessionId).find((value) => value.id === id);

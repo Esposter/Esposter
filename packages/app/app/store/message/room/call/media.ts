@@ -34,7 +34,10 @@ export const useCallMediaStore = defineStore("message/room/call/media", () => {
     if (!id) return;
     if (stream)
       screenSharingParticipantIds.value = [id, ...screenSharingParticipantIds.value.filter((value) => value !== id)];
-    else screenSharingParticipantIds.value = screenSharingParticipantIds.value.filter((value) => value !== id);
+    else {
+      screenSharingParticipantIds.value = screenSharingParticipantIds.value.filter((value) => value !== id);
+      if (pinnedParticipantId.value === id) pinnedParticipantId.value = "";
+    }
   };
   const setRemoteVideoStream = (identity: string, stream: MediaStream | null) => {
     if (stream) remoteVideoStreams.value.set(identity, stream);
