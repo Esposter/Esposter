@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useCallStore } from "@/store/message/room/call";
+import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { DatabaseEntityType, selectCallSessionInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
@@ -26,9 +27,10 @@ if (!isValid)
   });
 
 const callStore = useCallStore();
-const { activeCallSessionId, knockingCallSessionId } = storeToRefs(callStore);
+const { activeCallSessionId } = storeToRefs(callStore);
 const { joinCall } = callStore;
-
+const knockerStore = useKnockerStore();
+const { knockingCallSessionId } = storeToRefs(knockerStore);
 if (isDirect) await joinCall(id);
 
 watch(activeCallSessionId, (newActiveCallSessionId) => {

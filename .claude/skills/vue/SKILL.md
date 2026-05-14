@@ -96,11 +96,35 @@ const callRoomId = ref<string>();
 
 The same applies to other nullable-initial refs: `ref<User>()`, `ref<number>()`, etc.
 
+## defineProps — Always Use `interface Props`
+
+Always declare a named `interface Props` (or `interface Emits` for emits) and pass it to `defineProps<Props>()`. Never use the runtime object-literal syntax.
+
+```ts
+// CORRECT
+interface Props {
+  knocker: CallParticipant;
+}
+const props = defineProps<Props>();
+
+// WRONG
+const props = defineProps({ knocker: Object as PropType<CallParticipant> });
+```
+
 ## Refs & Computed
 
-- **Template refs** — always use `useTemplateRef` for both component and HTML element refs.
-  - Components: `useTemplateRef<InstanceType<typeof ComponentName>>("name")`
-  - HTML elements: `useTemplateRef("container")` — no explicit type annotation needed, Vue infers it. Use a generic semantic name like `"container"`, never the element tag name (not `"spanRef"`, not `"divRef"`).
+- **Template refs** — always use `useTemplateRef` for both component and HTML element refs. **Never add a `ref` suffix to the variable name** — the composable already implies it.
+  - Components: `const dialog = useTemplateRef<InstanceType<typeof MyDialog>>("dialog")`
+  - HTML elements: `const video = useTemplateRef<HTMLVideoElement>("video")` — type annotation is required for HTML elements (Vue cannot infer the element type from the string key alone). Use a semantic name matching the `ref="..."` attribute value, never the tag name (`"container"` not `"divRef"`, `"video"` not `"videoRef"`).
+
+  ```ts
+  // CORRECT
+  const video = useTemplateRef<HTMLVideoElement>("video");
+
+  // WRONG — spurious "ref" suffix
+  const videoRef = ref<HTMLVideoElement | null>(null);
+  ```
+
 - **Sort at display time** — apply `.toSorted()` inside the `computed` that feeds the template; never sort in store ingestion (`readX`, `setX`, mutation helpers). Stores hold data in natural order; components transform for display. **Exception**: when the sorted order must be sent to the backend (e.g. message pagination cursors), sort before the API call instead.
 - **Computed for reused expressions** — extract a `computed` (named to match the prop, e.g. `title`) when the same derived value is bound to two or more props. This enables the `:propName` shorthand for one binding and avoids repeating the expression: `const title = computed(() => ...)` → `:title :tooltip-text="title"`. No need for a computed if the value is only used in one place.
 - **Inline prop values** — inline prop values directly in the template to take advantage of Vue TypeScript inference. Only extract to a `computed` when the same logic is reused in multiple places. Single-use derived values stay inline.

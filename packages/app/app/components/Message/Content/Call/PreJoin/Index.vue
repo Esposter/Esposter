@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { useCallStore } from "@/store/message/room/call";
+import { useKnockerStore } from "@/store/message/room/call/knocker";
 
-const props = defineProps<{ callId: string }>();
+interface PreJoinProps {
+  callId: string;
+}
 
-const callStore = useCallStore();
-const { knockCall } = callStore;
-
+const props = defineProps<PreJoinProps>();
+const knockerStore = useKnockerStore();
+const { knockCall } = knockerStore;
 const cameraStream = ref<MediaStream | undefined>();
 const isCameraEnabled = ref(false);
 const isMicEnabled = ref(true);
 const isRequestingJoin = ref(false);
-
 const startCamera = async () => {
   try {
     cameraStream.value = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -19,22 +20,18 @@ const startCamera = async () => {
     isCameraEnabled.value = false;
   }
 };
-
 const stopCamera = () => {
   cameraStream.value?.getTracks().forEach((track) => track.stop());
   cameraStream.value = undefined;
   isCameraEnabled.value = false;
 };
-
 const toggleCamera = async () => {
   if (isCameraEnabled.value) stopCamera();
   else await startCamera();
 };
-
 const toggleMic = () => {
   isMicEnabled.value = !isMicEnabled.value;
 };
-
 const requestJoin = async () => {
   isRequestingJoin.value = true;
   await knockCall(props.callId);
@@ -46,8 +43,8 @@ onUnmounted(stopCamera);
 </script>
 
 <template>
-  <div bg-background flex flex-col items-center justify-center size-full gap-y-8 p-6>
-    <h2 text-headline-small font-medium>Ready to join?</h2>
+  <div p-6 bg-background flex flex-col gap-y-8 size-full items-center justify-center>
+    <h2 font-medium text-headline-small>Ready to join?</h2>
     <MessageContentCallPreJoinCameraPreview :is-camera-enabled :stream="cameraStream" />
     <MessageContentCallPreJoinMediaControls
       :is-camera-enabled

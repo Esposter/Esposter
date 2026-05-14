@@ -1,10 +1,14 @@
 <script setup lang="ts">
-const props = defineProps<{ isCameraEnabled: boolean; stream: MediaStream | undefined }>();
+interface CameraPreviewProps {
+  isCameraEnabled: boolean;
+  stream: MediaStream | undefined;
+}
 
+const { isCameraEnabled, stream } = defineProps<CameraPreviewProps>();
 const videoRef = ref<HTMLVideoElement>();
 
 watch(
-  () => props.stream,
+  () => stream,
   (newStream) => {
     if (videoRef.value) videoRef.value.srcObject = newStream ?? null;
   },

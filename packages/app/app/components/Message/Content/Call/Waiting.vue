@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useCallStore } from "@/store/message/room/call";
+import { useKnockerStore } from "@/store/message/room/call/knocker";
 
-const callStore = useCallStore();
-const { cancelKnock } = callStore;
+const knockerStore = useKnockerStore();
+const { cancelKnock } = knockerStore;
 </script>
 
 <template>
