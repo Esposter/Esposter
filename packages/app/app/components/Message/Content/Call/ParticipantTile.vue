@@ -23,11 +23,9 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
     bg-surface
     flex
     flex-col
-    aspect-video
     items-center
     justify-center
     relative
-    overflow-hidden
     elevation-3
     :class="isSpeaking ? 'b-primary' : 'b-border'"
   >
@@ -36,14 +34,13 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
       v-if="videoStream"
       autoplay
       playsinline
-      size-full
       inset-0
       absolute
       object-cover
       :srcObject.prop="videoStream"
       :muted="isSelf"
     />
-    <div v-else bg-surface-opacity-80 flex size-full items-center justify-center>
+    <div v-else bg-surface-opacity-80 flex items-center justify-center>
       <StyledAvatar :image="participant.image" :name="participant.name" :avatar-props="{ size: '6rem' }" />
     </div>
     <div m-2 px-2 py-1 rd bg-surface-opacity-80 flex gap-x-2 items-center bottom-0 left-0 absolute>

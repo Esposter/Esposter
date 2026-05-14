@@ -2,11 +2,7 @@ import type { NuxtConfig } from "nuxt/schema";
 
 import { BASE_URL } from "../app/services/desmos/constants";
 import { FONTS_BASE_URL } from "../app/services/google/constants";
-import {
-  MAX_FILE_REQUEST_SIZE,
-  MAX_REQUEST_SIZE,
-  MEDIAPIPE_TASKS_VISION_BASE_URL,
-} from "../shared/services/app/constants";
+import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE, MEDIAPIPE_TASKS_VISION_URL } from "../shared/services/app/constants";
 import { ImageSourceWhitelist } from "../shared/services/app/ImageSourceWhitelist";
 import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../shared/services/grapesjs/constants";
 
@@ -28,7 +24,7 @@ export const security: NuxtConfig["security"] = {
         // Grapesjs
         TUI_BASE_URL,
         // @livekit/track-processors
-        MEDIAPIPE_TASKS_VISION_BASE_URL,
+        MEDIAPIPE_TASKS_VISION_URL,
       ],
       "style-src-elem": [
         // Vuetify
@@ -47,13 +43,12 @@ export const security: NuxtConfig["security"] = {
         "'self'",
         // Desmos
         "blob:",
-        // @mediapipe/tasks-vision
-        MEDIAPIPE_TASKS_VISION_BASE_URL,
       ],
     },
     permissionsPolicy: {
       // Live-kit
       camera: "self",
+      "display-capture": "self",
       // @vue-pdf-viewer/viewer
       fullscreen: "self",
       microphone: "self",

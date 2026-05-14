@@ -1,7 +1,8 @@
 export const SITE_NAME = "Esposter";
 export const SITE_DESCRIPTION = `${SITE_NAME} is a nice and casual place for posting random things.`;
 export const LINKEDIN_PROFILE_URL = "https://www.linkedin.com/in/jimmy-chen-b6216820b";
-export const MEDIAPIPE_TASKS_VISION_BASE_URL = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+export const MEDIAPIPE_TASKS_VISION_URL =
+  "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm/vision_wasm_internal.js";
 
 export const APP_BAR_HEIGHT = 56;
 export const LEFT_DRAWER_WIDTH = 256;

@@ -43,7 +43,6 @@ const presenterName = computed(() => {
     <div
       v-else
       p-3
-      pb-24
       flex-1
       gap-3
       grid
@@ -64,7 +63,7 @@ const presenterName = computed(() => {
         @click="pinnedParticipantId = participant.id"
       />
     </div>
-    <div v-if="hasScreenShare" px-3 pb-24 pt-3 flex gap-x-3 overflow-x-auto>
+    <div v-if="hasScreenShare" px-3 pt-3 flex gap-x-3>
       <MessageContentCallParticipantTile
         v-for="participant of callParticipants"
         :key="participant.id"
