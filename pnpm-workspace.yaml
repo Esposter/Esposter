@@ -49,6 +49,7 @@ catalog:
   "@lerna-lite/publish": ^5.2.1
   "@lerna-lite/run": ^5.2.1
   "@lerna-lite/watch": ^5.2.1
+  "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
   "@ninoseki/eslint-plugin-neverthrow": ^0.1.1
   "@nuxt/eslint": ^1.15.2

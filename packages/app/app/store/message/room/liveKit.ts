@@ -1,12 +1,26 @@
-import type { LocalTrackPublication, RemoteParticipant, RemoteTrack, RemoteTrackPublication } from "livekit-client";
+import type {
+  LocalTrackPublication,
+  LocalVideoTrack,
+  RemoteParticipant,
+  RemoteTrack,
+  RemoteTrackPublication,
+} from "livekit-client";
 
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
-import { useCallStore } from "@/store/message/room/call";
+import { useCallMediaStore } from "@/store/message/room/call/media";
+import { useCallParticipantStore } from "@/store/message/room/call/participant";
 import { exhaustiveGuard } from "@esposter/shared";
+import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { Room, RoomEvent, Track } from "livekit-client";
 
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
+  let disconnectHandler: (() => Promise<void>) | undefined;
+  let localCameraTrack: LocalVideoTrack | undefined;
+  let virtualBackgroundProcessor: ReturnType<typeof BackgroundProcessor> | undefined;
+  const mediaStore = useCallMediaStore();
+  const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
+  const participantStore = useCallParticipantStore();
   const remoteAudioElements = new Map<string, HTMLMediaElement>();
   const selectedAudioInputDeviceId = ref("");
   const selectedAudioOutputDeviceId = ref("");
@@ -16,8 +30,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     remoteAudioElements.clear();
   };
   const setActiveSpeakers = (speakers: { identity: string }[]) => {
-    const callStore = useCallStore();
-    callStore.speakingIds = speakers.map(({ identity }) => identity);
+    participantStore.speakingIds = speakers.map(({ identity }) => identity);
   };
   const setRemoteAudioMuted = (isDeafened: boolean) => {
     for (const audio of remoteAudioElements.values()) audio.muted = isDeafened;
@@ -45,10 +58,9 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (!isRemoteAudioSource(publication.source)) return;
-    const callStore = useCallStore();
     const element = track.attach();
     element.autoplay = true;
-    element.muted = callStore.isDeafened;
+    element.muted = mediaStore.isDeafened;
     remoteAudioElements.set(`${participant.identity}:${publication.source}`, element);
     window.document.body.append(element);
   };
@@ -67,8 +79,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.Camera || !track.mediaStream) return;
-    const callStore = useCallStore();
-    const { setRemoteVideoStream } = callStore;
     setRemoteVideoStream(participant.identity, track.mediaStream);
   };
   const detachRemoteCamera = (
@@ -77,8 +87,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.Camera) return;
-    const callStore = useCallStore();
-    const { setRemoteVideoStream } = callStore;
     setRemoteVideoStream(participant.identity, null);
   };
   const attachRemoteScreenShare = (
@@ -87,8 +95,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.ScreenShare || !track.mediaStream) return;
-    const callStore = useCallStore();
-    const { setRemoteScreenShareStream } = callStore;
     setRemoteScreenShareStream(participant.identity, track.mediaStream);
   };
   const detachRemoteScreenShare = (
@@ -97,36 +103,44 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.ScreenShare) return;
-    const callStore = useCallStore();
-    const { setRemoteScreenShareStream } = callStore;
     setRemoteScreenShareStream(participant.identity, null);
   };
+  const setLocalCameraTrack = async (publication: LocalTrackPublication | undefined) => {
+    if (!publication?.videoTrack) {
+      localCameraTrack = undefined;
+      mediaStore.localVideoStream = null;
+      mediaStore.isCameraEnabled = false;
+      return;
+    }
+
+    localCameraTrack = publication.videoTrack;
+    mediaStore.localVideoStream = publication.videoTrack.mediaStream ?? null;
+    mediaStore.isCameraEnabled = true;
+    if (mediaStore.selectedVirtualBackground) await setVirtualBackground(mediaStore.selectedVirtualBackground);
+  };
   const onLocalTrackPublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
-    const callStore = useCallStore();
-    const { setCameraEnabled, setLocalScreenShareStream, setLocalVideoStream, setScreenSharing } = callStore;
-    if (publication.source === Track.Source.Camera) {
-      setLocalVideoStream(publication.track?.mediaStream ?? null);
-      await setCameraEnabled(true);
-    } else if (publication.source === Track.Source.ScreenShare) {
+    if (publication.source === Track.Source.Camera) await setLocalCameraTrack(publication);
+    else if (publication.source === Track.Source.ScreenShare) {
       setLocalScreenShareStream(publication.track?.mediaStream ?? null);
-      setScreenSharing(true);
+      mediaStore.isScreenSharing = true;
     }
   });
   const onLocalTrackUnpublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
-    const callStore = useCallStore();
-    const { setCameraEnabled, setLocalScreenShareStream, setLocalVideoStream, setScreenSharing } = callStore;
     if (publication.source === Track.Source.Camera) {
-      setLocalVideoStream(null);
-      await setCameraEnabled(false);
+      await localCameraTrack?.stopProcessor();
+      virtualBackgroundProcessor = undefined;
+      localCameraTrack = undefined;
+      mediaStore.localVideoStream = null;
+      mediaStore.isCameraEnabled = false;
     } else if (publication.source === Track.Source.ScreenShare) {
       setLocalScreenShareStream(null);
-      setScreenSharing(false);
+      mediaStore.isScreenSharing = false;
     }
   });
   const onDisconnected = getSynchronizedFunction(async () => {
-    const callStore = useCallStore();
-    const { leaveCall } = callStore;
-    await leaveCall();
+    const handler = disconnectHandler;
+    disconnectHandler = undefined;
+    await handler?.();
   });
   const onAudioPlaybackStatusChanged = () => {
     if (activeRoom && !activeRoom.canPlaybackAudio)
@@ -134,7 +148,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   };
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeRoom) return;
-    await activeRoom.localParticipant.setCameraEnabled(isCameraEnabled);
+    const publication = await activeRoom.localParticipant.setCameraEnabled(isCameraEnabled);
+    if (isCameraEnabled) await setLocalCameraTrack(publication);
   };
   const setMicrophone = async (isMicrophoneEnabled: boolean) => {
     if (!activeRoom) return;
@@ -148,6 +163,21 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       selfBrowserSurface: "exclude",
       surfaceSwitching: "include",
     });
+    mediaStore.isScreenSharing = isScreenSharing;
+  };
+  const setVirtualBackground = async (imagePath: string) => {
+    if (!localCameraTrack) return false;
+    if (!supportsBackgroundProcessors()) {
+      console.warn("Background processors are not supported in this browser.");
+      return false;
+    }
+
+    virtualBackgroundProcessor ??= BackgroundProcessor({ mode: "disabled" });
+    if (!localCameraTrack.getProcessor()) await localCameraTrack.setProcessor(virtualBackgroundProcessor);
+    await virtualBackgroundProcessor.switchTo(
+      imagePath ? { imagePath, mode: "virtual-background" } : { mode: "disabled" },
+    );
+    return true;
   };
   const readDevices = (kind: MediaDeviceKind) => Room.getLocalDevices(kind);
   const switchDevice = async (kind: MediaDeviceKind, deviceId: string) => {
@@ -163,10 +193,19 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     selectedAudioOutputDeviceId.value = room.getActiveDevice("audiooutput") ?? "";
     selectedVideoInputDeviceId.value = room.getActiveDevice("videoinput") ?? "";
   };
-  const connect = async (room: Room, livekitUrl: string, livekitToken: string) => {
-    await activeRoom?.disconnect();
+  const connect = async (
+    room: Room,
+    livekitUrl: string,
+    livekitToken: string,
+    newDisconnectHandler: () => Promise<void>,
+  ) => {
+    const previousRoom = activeRoom;
+    activeRoom = undefined;
+    disconnectHandler = undefined;
+    await previousRoom?.disconnect();
     cleanupRemoteAudio();
     activeRoom = room;
+    disconnectHandler = newDisconnectHandler;
     room.on(RoomEvent.ActiveSpeakersChanged, setActiveSpeakers);
     room.on(RoomEvent.ActiveDeviceChanged, setActiveDevice);
     room.on(RoomEvent.TrackSubscribed, attachRemoteAudio);
@@ -184,8 +223,13 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     syncActiveDevices(room);
   };
   const disconnect = async () => {
-    await activeRoom?.disconnect();
+    const room = activeRoom;
     activeRoom = undefined;
+    disconnectHandler = undefined;
+    await localCameraTrack?.stopProcessor();
+    await room?.disconnect();
+    localCameraTrack = undefined;
+    virtualBackgroundProcessor = undefined;
     cleanupRemoteAudio();
   };
   return {
@@ -199,6 +243,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     setMicrophone,
     setRemoteAudioMuted,
     setScreenShare,
+    setVirtualBackground,
     switchDevice,
   };
 });

@@ -153,8 +153,10 @@ const canScreenShare = computed(
 | Action | File                                                                                                |
 | ------ | --------------------------------------------------------------------------------------------------- |
 | New    | `Content/Call/ScreenShareStage.vue` — presenter view                                                |
+| New    | `Content/Call/AudioControlGroup.vue` — microphone button clung to up-caret audio settings           |
+| New    | `Content/Call/VideoControlGroup.vue` — camera button clung to up-caret video settings/backgrounds   |
 | New    | `Content/Call/AudioSettingsButton.vue` — microphone and speaker selection                           |
-| New    | `Content/Call/VideoSettingsButton.vue` — camera selection                                           |
+| New    | `Content/Call/VideoSettingsButton.vue` — camera selection and starter virtual backgrounds           |
 | Modify | `Content/Call/ControlBar.vue` — screenshare + camera + deafen + settings buttons                    |
 | Modify | `Content/Call/View.vue` — screen stage, participant strip, invite card, join notice                 |
 | Modify | `store/message/room/call.ts` — screenshare/pin state and local/remote screen streams                |

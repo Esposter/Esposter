@@ -17,10 +17,8 @@ const { isCallViewOpen, roomParticipants, speakingIds } = storeToRefs(callStore)
         :is-speaking="speakingIds.includes(participant.id)"
       />
     </div>
-    <MessageContentCallMuteButton />
-    <MessageContentCallAudioSettingsButton />
-    <MessageContentCallCameraButton />
-    <MessageContentCallVideoSettingsButton />
+    <MessageContentCallAudioControlGroup />
+    <MessageContentCallVideoControlGroup />
     <MessageContentCallDeafenButton />
     <MessageContentCallScreenShareButton />
     <MessageContentCallLeaveButton />

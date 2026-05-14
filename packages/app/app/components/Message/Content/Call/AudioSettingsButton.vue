@@ -44,8 +44,8 @@ watch(menu, (isOpen) => {
         <template #activator="{ props: tooltipProps }">
           <v-btn
             :="mergeProps(menuProps, tooltipProps)"
-            icon="mdi-tune-vertical"
-            size="default"
+            icon="mdi-chevron-up"
+            size="small"
             variant="plain"
             :ripple="false"
           />

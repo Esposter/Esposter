@@ -80,7 +80,7 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 ### `Call/ControlBar.vue`
 
 - Centered bottom row, translucent pill (`bg-grey-darken-4/90`)
-- Composes single-purpose controls directly: mute, audio settings, camera, video settings, deafen, screenshare, leave
+- Composes single-purpose controls directly: grouped mic + up-caret audio settings, grouped camera + up-caret video settings/backgrounds, deafen, screenshare, leave
 
 ---
 

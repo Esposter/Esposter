@@ -5,9 +5,6 @@ const callStore = useCallStore();
 const { isScreenSharing } = storeToRefs(callStore);
 const { toggleScreenShare } = callStore;
 const canScreenShare = ref(false);
-const onClick = async () => {
-  await toggleScreenShare();
-};
 
 onMounted(() => {
   canScreenShare.value = Boolean(window.navigator.mediaDevices?.getDisplayMedia);
@@ -21,6 +18,6 @@ onMounted(() => {
     :icon="isScreenSharing ? 'mdi-monitor-off' : 'mdi-monitor-share'"
     :tooltip="isScreenSharing ? 'Stop Sharing Screen' : 'Share Screen'"
     variant="plain"
-    @click="onClick()"
+    @click="toggleScreenShare()"
   />
 </template>

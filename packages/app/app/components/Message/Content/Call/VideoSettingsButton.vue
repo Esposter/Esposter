@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
+import { useCallStore } from "@/store/message/room/call";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { getResultAsync } from "@esposter/shared";
 import { mergeProps } from "vue";
 
+const callStore = useCallStore();
+const { selectedVirtualBackground } = storeToRefs(callStore);
+const { selectVirtualBackground } = callStore;
 const liveKitStore = useLiveKitStore();
 const { selectedVideoInputDeviceId } = storeToRefs(liveKitStore);
 const { readDevices, switchDevice } = liveKitStore;
@@ -23,7 +28,6 @@ const selectDevice = async (deviceId: string) => {
     .orTee(console.error)
     .unwrapOr(undefined);
 };
-
 watch(menu, (isOpen) => {
   if (!isOpen) return;
   refreshDevices();
@@ -37,8 +41,8 @@ watch(menu, (isOpen) => {
         <template #activator="{ props: tooltipProps }">
           <v-btn
             :="mergeProps(menuProps, tooltipProps)"
-            icon="mdi-video-cog"
-            size="default"
+            icon="mdi-chevron-up"
+            size="small"
             variant="plain"
             :ripple="false"
           />
@@ -56,6 +60,29 @@ watch(menu, (isOpen) => {
           @click="selectDevice(device.deviceId)"
         />
         <v-list-item v-if="videoInputDevices.length === 0" title="System default" />
+      </v-list>
+      <v-divider />
+      <v-list density="compact">
+        <v-list-subheader title="Backgrounds and effects" />
+        <div px-3 pb-2 grid gap-2 style="grid-template-columns: repeat(5, 1fr)">
+          <button
+            v-for="{ imagePath, title } of CallVirtualBackgroundDefinitions"
+            :key="title"
+            :aria-label="title"
+            :style="{ backgroundImage: imagePath ? `url(${imagePath})` : undefined }"
+            b-2
+            b-solid
+            rd
+            aspect-square
+            bg-surface
+            bg-cover
+            bg-center
+            :class="selectedVirtualBackground === imagePath ? 'b-primary' : 'b-transparent'"
+            @click="selectVirtualBackground(imagePath)"
+          >
+            <v-icon v-if="!imagePath" icon="mdi-close" size="small" />
+          </button>
+        </div>
       </v-list>
     </StyledCard>
   </v-menu>

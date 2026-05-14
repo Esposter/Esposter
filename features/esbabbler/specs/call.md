@@ -360,6 +360,8 @@ packages/app/
     components/Message/
       Content/
         CallButton.vue                   # unchanged UX; reads token from joinCall
+        Call/AudioControlGroup.vue       # mic + up-caret audio menu
+        Call/VideoControlGroup.vue       # camera + up-caret video menu/backgrounds
         Call/ControlBar.vue              # single-purpose call controls
         Call/ParticipantTile.vue         # video tile with avatar fallback
         Call/ScreenShareStage.vue        # presenter layout
