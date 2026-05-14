@@ -14,19 +14,18 @@ const { getActions, isForceMuteable, isKickableFromCall } = useCallParticipantAc
 const isActionable = computed(
   () => participant.userId !== session.value?.user.id && (isForceMuteable.value || isKickableFromCall.value),
 );
+const avatarProps = computed(() => ({
+  avatarProps: { size: "1.75rem" },
+  image: participant.image,
+  name: participant.name,
+}));
 </script>
 
 <template>
   <div relative>
     <v-menu v-if="isActionable">
       <template #activator="{ props: menuProps }">
-        <StyledAvatar
-          cursor-pointer
-          :avatar-props="{ size: '1.75rem' }"
-          :image="participant.image"
-          :name="participant.name"
-          :="menuProps"
-        />
+        <StyledAvatar cursor-pointer :="{ ...avatarProps, ...menuProps }" />
       </template>
       <v-list density="compact">
         <v-list-item
@@ -38,17 +37,14 @@ const isActionable = computed(
         />
       </v-list>
     </v-menu>
-    <StyledAvatar v-else :avatar-props="{ size: '1.75rem' }" :image="participant.image" :name="participant.name" />
+    <StyledAvatar v-else :="avatarProps" />
     <div
       v-if="isSpeaking"
       inset="-0.1875rem"
-      b-2
-      b-primary
       rd-full
-      b-solid
       pointer-events-none
       absolute
-      animate-pulse
+      shadow="[0_0_0_2px_rgb(var(--v-theme-primary)),0_0_8px_4px_rgba(var(--v-theme-primary),0.4)]"
     />
   </div>
 </template>

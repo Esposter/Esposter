@@ -20,7 +20,6 @@ const updateAspectRatio = () => {
   <div m-3 flex flex-1 min-h-0 items-center justify-center>
     <div
       ref="stage"
-      class="stage"
       :style="{ aspectRatio: videoAspectRatio }"
       rd-2
       max-h-full
@@ -28,6 +27,8 @@ const updateAspectRatio = () => {
       cursor-pointer
       relative
       overflow-hidden
+      transition-shadow
+      hover="shadow-[0_0_0_3px_rgb(var(--v-theme-primary)),0_0_16px_6px_rgba(var(--v-theme-primary),0.4)]"
       @click="stage?.requestFullscreen()"
     >
       <video ref="video" autoplay playsinline size-full :srcObject.prop="stream" @loadedmetadata="updateAspectRatio" />
@@ -37,14 +38,3 @@ const updateAspectRatio = () => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.stage {
-  transition: box-shadow 0.15s ease;
-}
-.stage:hover {
-  box-shadow:
-    0 0 0 3px rgb(var(--v-theme-primary)),
-    0 0 16px 6px rgba(var(--v-theme-primary), 0.4);
-}
-</style>

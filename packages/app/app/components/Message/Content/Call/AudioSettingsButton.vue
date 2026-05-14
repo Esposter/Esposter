@@ -9,6 +9,20 @@ const { readDevices, switchDevice } = liveKitStore;
 const menu = ref(false);
 const audioInputDevices = ref<MediaDeviceInfo[]>([]);
 const audioOutputDevices = ref<MediaDeviceInfo[]>([]);
+const audioDeviceSections = computed(() => [
+  {
+    kind: "audioinput" as MediaDeviceKind,
+    title: "Microphone",
+    devices: audioInputDevices.value,
+    selectedId: selectedAudioInputDeviceId.value,
+  },
+  {
+    kind: "audiooutput" as MediaDeviceKind,
+    title: "Speakers",
+    devices: audioOutputDevices.value,
+    selectedId: selectedAudioOutputDeviceId.value,
+  },
+]);
 const getDeviceTitle = (device: MediaDeviceInfo, index: number, title: string) =>
   device.label || `${title} ${index + 1}`;
 const refreshDevices = async () => {
@@ -49,29 +63,20 @@ watch(menu, (isOpen) => {
       </v-tooltip>
     </template>
     <StyledCard py-2 min-w-72>
-      <v-list density="compact">
-        <v-list-subheader title="Microphone" />
-        <v-list-item
-          v-for="(device, index) of audioInputDevices"
-          :key="device.deviceId"
-          :prepend-icon="device.deviceId === selectedAudioInputDeviceId ? 'mdi-check' : undefined"
-          :title="getDeviceTitle(device, index, 'Microphone')"
-          @click="selectDevice('audioinput', device.deviceId)"
-        />
-        <v-list-item v-if="audioInputDevices.length === 0" title="System default" />
-      </v-list>
-      <v-divider />
-      <v-list density="compact">
-        <v-list-subheader title="Speakers" />
-        <v-list-item
-          v-for="(device, index) of audioOutputDevices"
-          :key="device.deviceId"
-          :prepend-icon="device.deviceId === selectedAudioOutputDeviceId ? 'mdi-check' : undefined"
-          :title="getDeviceTitle(device, index, 'Speakers')"
-          @click="selectDevice('audiooutput', device.deviceId)"
-        />
-        <v-list-item v-if="audioOutputDevices.length === 0" title="System default" />
-      </v-list>
+      <template v-for="({ devices, kind, selectedId, title }, sectionIndex) of audioDeviceSections" :key="kind">
+        <v-divider v-if="sectionIndex > 0" />
+        <v-list density="compact">
+          <v-list-subheader :title />
+          <v-list-item
+            v-for="(device, index) of devices"
+            :key="device.deviceId"
+            :prepend-icon="device.deviceId === selectedId ? 'mdi-check' : undefined"
+            :title="getDeviceTitle(device, index, title)"
+            @click="selectDevice(kind, device.deviceId)"
+          />
+          <v-list-item v-if="devices.length === 0" title="System default" />
+        </v-list>
+      </template>
     </StyledCard>
   </v-menu>
 </template>

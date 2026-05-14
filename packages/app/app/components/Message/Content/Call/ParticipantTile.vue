@@ -17,7 +17,15 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
 
 <template>
   <div b-1 rd-2 b-solid bg-surface flex flex-col items-center justify-center relative elevation-3 b-border>
-    <div v-if="isSpeaking" class="speaking-overlay" rd-2 pointer-events-none inset-0 absolute z-1 />
+    <div
+      v-if="isSpeaking"
+      rd-2
+      pointer-events-none
+      inset-0
+      absolute
+      z-1
+      shadow="[inset_0_0_0_3px_rgb(var(--v-theme-primary)),0_0_0_1px_rgb(var(--v-theme-primary)),0_0_16px_6px_rgba(var(--v-theme-primary),0.4)]"
+    />
     <video
       v-if="videoStream"
       autoplay
@@ -43,12 +51,3 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
     </StyledCard>
   </div>
 </template>
-
-<style scoped>
-.speaking-overlay {
-  box-shadow:
-    inset 0 0 0 3px rgb(var(--v-theme-primary)),
-    0 0 0 1px rgb(var(--v-theme-primary)),
-    0 0 16px 6px rgba(var(--v-theme-primary), 0.4);
-}
-</style>

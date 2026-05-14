@@ -31,6 +31,17 @@ const presenterName = computed(() => {
   if (!participant) return "Someone";
   return participant.id === sessionId.value ? `${participant.name} (You)` : participant.name;
 });
+const getParticipantTileProps = (participant: (typeof callParticipants.value)[number]) => ({
+  participant,
+  isSelf: participant.id === sessionId.value,
+  isScreenSharing: screenSharingParticipantIds.value.includes(participant.id),
+  isSpeaking: speakingIds.value.includes(participant.id),
+  isDeafened: isDeafened.value && participant.id === sessionId.value,
+  videoStream:
+    participant.id === sessionId.value
+      ? (localVideoStream.value ?? undefined)
+      : remoteVideoStreams.value.get(participant.id),
+});
 </script>
 
 <template>
@@ -44,14 +55,7 @@ const presenterName = computed(() => {
       <MessageContentCallParticipantTile
         v-for="participant of callParticipants"
         :key="participant.id"
-        :participant
-        :is-self="participant.id === sessionId"
-        :is-screen-sharing="screenSharingParticipantIds.includes(participant.id)"
-        :is-speaking="speakingIds.includes(participant.id)"
-        :is-deafened="isDeafened && participant.id === sessionId"
-        :video-stream="
-          participant.id === sessionId ? (localVideoStream ?? undefined) : remoteVideoStreams.get(participant.id)
-        "
+        v-bind="getParticipantTileProps(participant)"
         @click="pinnedParticipantId = participant.id"
       />
     </div>
@@ -60,14 +64,7 @@ const presenterName = computed(() => {
         v-for="participant of callParticipants"
         :key="participant.id"
         h-32
-        :participant
-        :is-self="participant.id === sessionId"
-        :is-screen-sharing="screenSharingParticipantIds.includes(participant.id)"
-        :is-speaking="speakingIds.includes(participant.id)"
-        :is-deafened="isDeafened && participant.id === sessionId"
-        :video-stream="
-          participant.id === sessionId ? (localVideoStream ?? undefined) : remoteVideoStreams.get(participant.id)
-        "
+        v-bind="getParticipantTileProps(participant)"
         @click="pinnedParticipantId = participant.id"
       />
     </div>
