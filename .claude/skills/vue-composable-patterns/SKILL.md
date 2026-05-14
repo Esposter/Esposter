@@ -479,26 +479,3 @@ const readRooms = () =>
 Follow the `useReadUsersToRooms` pattern for batch ancillary reads — a composable that accepts an array of IDs and calls the store method for each in `Promise.all`.
 
 - Writable computed is NOT the right tool here — it requires a backing `_ref` and still needs an external sync watch when a parent can reset the model
-
-## Async `onClick` Handlers — Always Use `getSynchronizedFunction`
-
-When an `onClick` (or any event handler) calls an `async` function, **always wrap with `getSynchronizedFunction`** from `#shared/util/getSynchronizedFunction`. Never use `void fn()` or a bare `() => { fn() }`.
-
-`getSynchronizedFunction` prevents concurrent calls (re-entrancy guard) and handles floating-promise lint errors in a single pattern.
-
-```typescript
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-
-// WRONG — floating promise / no debounce
-onClick: () => { void openThread(partitionKey, rowKey) }
-
-// WRONG — swallows errors silently
-onClick: () => { openThread(partitionKey, rowKey) }
-
-// CORRECT
-onClick: getSynchronizedFunction(async () => {
-  await openThread(partitionKey, rowKey);
-}),
-```
-
-This applies everywhere an async function is used as an event handler: `onClick`, `onChange`, `onSubmit`, etc.

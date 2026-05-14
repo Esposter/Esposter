@@ -1,56 +1,53 @@
 <script setup lang="ts">
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-interface CallParticipantTileProps {
+export interface CallParticipantTileProps {
   isDeafened: boolean;
+  isScreenSharing: boolean;
   isSelf: boolean;
   isSpeaking: boolean;
   participant: CallParticipant;
   videoStream: MediaStream | undefined;
 }
 
-const { isDeafened, isSelf, isSpeaking, participant, videoStream } = defineProps<CallParticipantTileProps>();
+const { isDeafened, isScreenSharing, isSelf, isSpeaking, participant, videoStream } =
+  defineProps<CallParticipantTileProps>();
 const displayName = computed(() => (isSelf ? `${participant.name} (You)` : participant.name));
 </script>
 
 <template>
-  <div
-    b-1
-    b-border
-    rd-2
-    b-solid
-    bg-surface
-    flex
-    flex-col
-    aspect-video
-    items-center
-    justify-center
-    relative
-    overflow-hidden
-    elevation-3
-  >
-    <div v-if="isSpeaking" b-2 b-primary rd-2 b-solid pointer-events-none inset-0 absolute animate-pulse />
+  <div b-1 b-border rd-2 b-solid bg-surface flex flex-col items-center justify-center relative elevation-3>
+    <div
+      v-if="isSpeaking"
+      rd-2
+      pointer-events-none
+      inset-0
+      absolute
+      z-1
+      shadow="[inset_0_0_0_3px_rgb(var(--v-theme-primary)),0_0_0_1px_rgb(var(--v-theme-primary)),0_0_16px_6px_rgba(var(--v-theme-primary),0.4)]"
+    />
     <video
       v-if="videoStream"
       autoplay
       playsinline
+      rd-2
       size-full
-      inset-0
       absolute
       object-cover
       :srcObject.prop="videoStream"
       :muted="isSelf"
     />
-    <div v-else bg-surface flex size-full items-center justify-center>
+    <StyledCard v-else rd-2 flex size-full items-center justify-center>
       <StyledAvatar :image="participant.image" :name="participant.name" :avatar-props="{ size: '6rem' }" />
-    </div>
-    <div m-2 px-2 py-1 rd bg-surface-opacity-80 flex gap-x-2 items-center bottom-0 left-0 absolute>
+    </StyledCard>
+    <StyledCard m-2 px-2 py-1 rd-2 flex gap-x-2 items-center bottom-0 left-0 absolute>
       <span font-medium truncate text-body-small>
         {{ displayName }}
       </span>
+      <v-icon v-if="isScreenSharing" text-primary icon="mdi-monitor-share" size="small" />
       <v-icon v-if="participant.isCameraEnabled" text-primary icon="mdi-video" size="small" />
       <v-icon v-if="participant.isMuted" icon="mdi-microphone-off" size="small" />
       <v-icon v-if="isDeafened" icon="mdi-headphones-off" size="small" />
-    </div>
+    </StyledCard>
   </div>
 </template>

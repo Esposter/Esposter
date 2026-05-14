@@ -10,6 +10,11 @@ export const ProductListLinkItems = [
     title: MESSAGE_DISPLAY_NAME,
   },
   {
+    href: RoutePath.CallIndex,
+    icon: "mdi-video",
+    title: "Calls",
+  },
+  {
     href: RoutePath.TableEditor,
     icon: "mdi-table-edit",
     title: "Table Editor",

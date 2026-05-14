@@ -24,7 +24,7 @@ const tab = ref(PermissionsTab.Roles);
 
 <template>
   <div flex gap-x-6 h-full>
-    <div flex flex-shrink-0 flex-col w-56>
+    <div flex shrink-0 flex-col w-56>
       <v-tabs v-model="tab" density="compact" mb-3>
         <v-tab :value="PermissionsTab.Roles">{{ PermissionsTab.Roles }}</v-tab>
         <v-tab :value="PermissionsTab.Members">{{ PermissionsTab.Members }}</v-tab>

@@ -83,8 +83,10 @@ Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md
 - `server/api/webhooks/livekit.post.ts` — LiveKit participant joined/left backup path into `callParticipantMap` + `callEventEmitter`
 - `app/composables/message/subscribables/useCallSubscribables.ts` — room observer only: calls `readCallSessionId` on room entry → sets `currentRoomCallSessionId`; subscribes/unsubscribes to that room's call events without leaving the active call
 - `app/composables/message/room/call/useCallIdSubscribables.ts` — dedicated `/call/[id]` lifecycle; page unmount is an explicit call leave because the call page is the call surface
-- `app/store/message/room/call.ts` — `activeCallSessionId` (drives tRPC ops), `currentRoomCallSessionId` (viewed room), `callRoomId` (admin action checks), `callSessionParticipantsMap: Map<callSessionId, CallParticipant[]>`
-- `app/store/message/room/liveKit.ts` — LiveKit `Room` wraps media, active speaker, remote audio, mute/deafen, and camera track logic
+- `app/store/message/room/call/index.ts` — root call/session orchestration: `activeCallSessionId` (drives tRPC ops), `currentRoomCallSessionId` (viewed room), and `callRoomId` (admin action checks)
+- `app/store/message/room/call/participant.ts` — participant map, speaking IDs, and join notice state
+- `app/store/message/room/call/media.ts` — camera, screen share, deafen, virtual background, pin, and local/remote media stream state
+- `app/store/message/room/liveKit.ts` — LiveKit `Room` wraps media, active speaker, remote audio, screen share, device switching, and camera track processors
 
 ### Call lifetime boundary
 

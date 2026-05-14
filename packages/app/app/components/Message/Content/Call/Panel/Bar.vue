@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { useCallStore } from "@/store/message/room/call";
+import { useCallParticipantStore } from "@/store/message/room/call/participant";
 
 const callStore = useCallStore();
-const { isCallViewOpen, roomParticipants, speakingIds } = storeToRefs(callStore);
-const callControlItems = useCallControlItems();
+const { currentRoomCallSessionId, isCallViewOpen } = storeToRefs(callStore);
+const participantStore = useCallParticipantStore();
+const { getParticipants } = participantStore;
+const { speakingIds } = storeToRefs(participantStore);
+const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId.value));
 </script>
 
 <template>
@@ -18,16 +22,11 @@ const callControlItems = useCallControlItems();
         :is-speaking="speakingIds.includes(participant.id)"
       />
     </div>
-    <v-tooltip
-      v-for="{ tooltip, icon, color, variant, onClick } of callControlItems"
-      :key="tooltip"
-      :text="tooltip"
-      location="bottom"
-    >
-      <template #activator="{ props }">
-        <v-btn :="props" :icon :color size="x-small" :variant :ripple="false" @click="onClick()" />
-      </template>
-    </v-tooltip>
+    <MessageContentCallAudioControlGroup />
+    <MessageContentCallVideoControlGroup />
+    <MessageContentCallDeafenButton />
+    <MessageContentCallScreenShareButton />
+    <MessageContentCallLeaveButton />
     <v-tooltip location="bottom" text="Open call view">
       <template #activator="{ props }">
         <v-btn

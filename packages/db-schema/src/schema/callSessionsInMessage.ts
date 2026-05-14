@@ -6,6 +6,7 @@ import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 export const CALL_ID_LENGTH = 12;
+export const CALL_ID_REGEX = new RegExp(String.raw`[A-Za-z0-9]{${CALL_ID_LENGTH}}`, "u");
 
 export const callSessionsInMessage = pgTable(
   "call_sessions",
@@ -26,5 +27,5 @@ export const callSessionsInMessage = pgTable(
 export type CallSessionInMessage = typeof callSessionsInMessage.$inferSelect;
 
 export const selectCallSessionInMessageSchema = createSelectSchema(callSessionsInMessage, {
-  id: (schema) => schema.length(CALL_ID_LENGTH),
+  id: (schema) => schema.length(CALL_ID_LENGTH).regex(CALL_ID_REGEX),
 });

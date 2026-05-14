@@ -21,6 +21,11 @@ beforeAll(() => {
     url: "http://localhost:3000",
     width: 1920,
   });
+  if (!document.getElementById("__nuxt")) {
+    const nuxtElement = document.createElement("div");
+    nuxtElement.id = "__nuxt";
+    document.body.appendChild(nuxtElement);
+  }
 });
 
 afterAll(async () => {

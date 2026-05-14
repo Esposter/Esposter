@@ -287,3 +287,37 @@ const controlItems = computed<ControlItem[]>(() => [
 ```
 
 **When NOT to extract:** Items that render fundamentally different components (e.g. `StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — the template structure diverges too much for a shared shape.
+
+## Page Decomposition — Pages are Layout + Composition
+
+Pages (`pages/**/*.vue`) should be **presentation-only orchestrators**: layout structure, `<Head>`, `definePageMeta`/`defineRouteRules`, and composed sub-components. All action logic, validation, and reactive state live in the sub-components or composables they own.
+
+**Rule:** If a page contains a `ref`, `computed`, or named function that belongs to a single interactive element (a button, a form), extract that element into its own component. The page's `<script setup>` should read like a bill of materials — imports and metadata, nothing else.
+
+```vue
+<!-- WRONG: page owns startCall logic and isCreating state -->
+<script setup lang="ts">
+definePageMeta({ middleware: "auth" });
+const isCreating = ref(false);
+const startCall = async () => { ... };
+const callCodeOrLink = ref("");
+const canJoin = computed(() => ...);
+</script>
+
+<!-- CORRECT: page delegates entirely to focused sub-components -->
+<script setup lang="ts">
+import { CallFeatures } from "@/services/message/room/call/CallFeatures";
+definePageMeta({ middleware: "auth" });
+</script>
+<template>
+  <MessageContentCallStartButton />
+  <MessageContentCallJoinForm />
+  <MessageContentCallFeatureCard v-for="feature of CallFeatures" :key="feature.title" :="feature" />
+</template>
+```
+
+**Button components** — own their loading state (`isCreating`, `isDeleting`), the async action, and navigation. Template is just `v-tooltip` + `v-btn`.
+
+**Form components** — own their field refs, validation computeds, and submit handler. Template is the `v-form` block.
+
+**Constant arrays** (feature lists, nav items) — live in `services/<domain>/` (e.g. `services/message/room/call/CallFeatures.ts`), never inline in the page.

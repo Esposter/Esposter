@@ -1,6 +1,6 @@
 # Call View UI — Standalone Call Page & Reusable Call Component
 
-Full-screen call experience for `/call/[id]`. Components are shared with the future inline room call view (Phase 3+).
+Full-screen call experience for `/call/[id]`, with `/call` as the standalone call lobby/start page. Components are shared with the inline room call view.
 
 ---
 
@@ -28,11 +28,11 @@ Grid tile: `aspect-video` (16:9), dark `bg-grey-darken-4`. Avatar centered. Name
 
 Grid distributes automatically: 1 → full width centered; 2 → 2-col; 4 → 2×2; 6 → 3×2; etc.
 
-### v2 — Camera tracks (Phase 3)
+### v2 — Camera tracks
 
 Same `CallView` — replace avatar fallback with `<video>` element when camera track is available.
 
-### v3 — Screenshare (Phase 4)
+### v3 — Screenshare
 
 Switch `CallView` to presenter layout: screenshare fills main area, participant strip along bottom. See `specs/screenshare.md`.
 
@@ -41,13 +41,17 @@ Switch `CallView` to presenter layout: screenshare fills main area, participant 
 ## Component Tree
 
 ```text
-pages/call/[id].vue                        layout: false (fullscreen)
+pages/call/index.vue                       call lobby/start page
+pages/call/[id].vue                        fullscreen call route
   └── Call/View.vue                        fills h-screen, reads from store
         ├── Call/ParticipantTile.vue        one tile per participant
+        ├── Call/ScreenShareStage.vue       presenter view when a screen is shared
+        ├── Call/InviteCard.vue             bottom-left share-link panel
+        ├── Call/JoinNotice.vue             top-center join notice
         └── Call/ControlBar.vue            bottom-center overlaid controls
 
-(future Phase 3) Message/Content/Index.vue
-  └── Call/View.vue                        reused inline, replaces CallPanel when video enabled
+Message/Content/Index.vue
+  └── Call/Panel/Index.vue                 compact inline room call entry + fullscreen dialog
 ```
 
 ---
@@ -58,23 +62,26 @@ pages/call/[id].vue                        layout: false (fullscreen)
 
 - Black (`bg-black`) full-screen flex column
 - Participant grid: `auto-fit` CSS grid with `pb-24` padding so bottom row clears the control bar
-- Reads `callParticipants` (active call session, not room-viewed), `speakingIds`, `isDeafened`, `sessionId` from store
+- Presenter layout when screenshare is active: `ScreenShareStage` plus horizontal participant strip
+- Reads connection/session state from the root call store, media streams from `call/media`, and participant/speaking state from `call/participant`
 - Absolutely positioned `CallControlBar` at bottom
 
 ### `Call/ParticipantTile.vue`
 
-Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`, `isDeafened: boolean`
+Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`, `isDeafened: boolean`, `isScreenSharing: boolean`, `videoStream?: MediaStream`
 
 - `aspect-video` dark tile, rounded corners
 - Circular `StyledAvatar` centered (size 96px)
 - Speaking ring: animated green `outline` when `isSpeaking`
 - Bottom-left: name label + mute badge (`mdi-microphone-off` when `participant.isMuted`)
+- Screenshare badge (`mdi-monitor-share`) when the participant is presenting
 - Self-only deafened badge (`mdi-headphones-off` when `isDeafened`)
 
 ### `Call/ControlBar.vue`
 
 - Centered bottom row, translucent pill (`bg-grey-darken-4/90`)
-- Reuses existing `useCallControlItems()` — mute toggle, deafen toggle, leave (red)
+- Composes single-purpose controls directly: grouped mic + up-caret audio settings, grouped camera + up-caret video settings/backgrounds, deafen, screenshare, leave
+- Video backgrounds are starter image presets applied through LiveKit track processors; selecting a preset turns the camera on, and turning the camera off resets the processor/background to none
 
 ---
 
@@ -104,7 +111,7 @@ onUnmounted in useCallIdSubscribables
   → store.leaveCall()
     → $trpc.roomCall.leaveCall.mutate({ callSessionId })
     → disconnect LiveKit room
-    → reset activeCallSessionId, isDeafened, isForceMuted, local camera/screenshare state
+    → reset activeCallSessionId, isDeafened, isForceMuted, local camera/screenshare/background state
 ```
 
 This differs intentionally from room navigation cleanup. `/call/[id]` is a dedicated call surface, so leaving the page means leaving the call. A normal room route change is only an observer swap and must not call `store.leaveCall()`.

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-label="Sunrise virtual background">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f9a8d4"/>
+      <stop offset="0.48" stop-color="#fde68a"/>
+      <stop offset="1" stop-color="#93c5fd"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="64%" cy="36%" r="24%">
+      <stop offset="0" stop-color="#fff7ad"/>
+      <stop offset="1" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#sky)"/>
+  <circle cx="820" cy="250" r="210" fill="url(#sun)"/>
+  <path fill="#f97316" fill-opacity=".42" d="M0 520c160-60 280-80 430-40 150 38 250 76 420 24 150-46 290-56 430 20v196H0z"/>
+  <path fill="#7c2d12" fill-opacity=".34" d="M0 600c180-70 360-90 560-45 210 46 420 40 720-24v189H0z"/>
+</svg>

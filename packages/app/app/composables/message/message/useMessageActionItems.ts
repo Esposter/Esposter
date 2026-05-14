@@ -1,7 +1,6 @@
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { useMessageStore } from "@/store/message";
@@ -39,9 +38,7 @@ export const useMessageActionItems = (
   const runtimeConfig = useRuntimeConfig();
   const editMessageItem: Item = {
     icon: "mdi-pencil",
-    onClick: () => {
-      onUpdateMode();
-    },
+    onClick: onUpdateMode,
     shortTitle: "Edit",
     title: "Edit Message",
   };
@@ -61,19 +58,19 @@ export const useMessageActionItems = (
   };
   const copyTextItem: Item = {
     icon: "mdi-content-copy",
-    onClick: getSynchronizedFunction(async () => {
+    onClick: async () => {
       const textContent = normalizeString(parse(message.message).textContent);
       if (textContent) await copy(textContent);
-    }),
+    },
     title: "Copy Text",
   };
   const pinMessageItem = computed<Item>(() =>
     message.isPinned
       ? {
           icon: "mdi-pin-off",
-          onClick: getSynchronizedFunction(async () => {
+          onClick: async () => {
             await $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
-          }),
+          },
           title: "Unpin Message",
         }
       : {
@@ -86,18 +83,18 @@ export const useMessageActionItems = (
   );
   const viewThreadItem: Item = {
     icon: "mdi-comment-multiple-outline",
-    onClick: getSynchronizedFunction(async () => {
+    onClick: async () => {
       await openThread(message.partitionKey, message.rowKey);
-    }),
+    },
     title: "View Thread",
   };
   const copyMessageLinkItem: Item = {
     icon: "mdi-link-variant",
-    onClick: getSynchronizedFunction(async () => {
+    onClick: async () => {
       if (!currentRoomId.value) return;
       const link = `${runtimeConfig.public.baseUrl}${RoutePath.MessagesMessage(currentRoomId.value, message.rowKey)}`;
       await copy(link);
-    }),
+    },
     title: "Copy Message Link",
   };
   const updateMessageItems = computed<Item[]>(() =>
@@ -139,9 +136,7 @@ export const useMessageActionItems = (
       ? {
           color: "error",
           icon: "mdi-delete",
-          onClick: () => {
-            onDeleteMode();
-          },
+          onClick: onDeleteMode,
           title: "Delete Message",
         }
       : undefined,

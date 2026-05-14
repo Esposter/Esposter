@@ -2,6 +2,7 @@ import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSu
 
 import { useRoomStore } from "@/store/message/room";
 import { useCallStore } from "@/store/message/room/call";
+import { useCallParticipantStore } from "@/store/message/room/call/participant";
 
 export const useCallSubscribables = () => {
   const onlineSubscribableContext: OnlineSubscribableContext = {
@@ -12,16 +13,17 @@ export const useCallSubscribables = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const callStore = useCallStore();
+  const { setCurrentRoomCallSessionId } = callStore;
+  const participantStore = useCallParticipantStore();
   const {
     clearSpeakers,
     createCallParticipant,
     deleteCallParticipant,
     deleteSpeaker,
-    setCurrentRoomCallSessionId,
     setMute,
     setParticipantCamera,
     setParticipants,
-  } = callStore;
+  } = participantStore;
 
   useOnlineSubscribable(
     currentRoomId,

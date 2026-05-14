@@ -65,6 +65,7 @@
     "@fullcalendar/timegrid": "catalog:",
     "@fullcalendar/vue3": "catalog:",
     "@koumoul/vjsf": "catalog:",
+    "@livekit/track-processors": "catalog:",
     "@mdi/font": "catalog:",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-code-block-lowlight": "catalog:",

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-label="Forest virtual background">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#bae6fd"/>
+      <stop offset=".52" stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#sky)"/>
+  <path fill="#0f766e" fill-opacity=".42" d="M0 400 170 260l150 120 160-170 210 190 170-130 210 150 210-120v420H0z"/>
+  <path fill="#166534" fill-opacity=".64" d="M0 500 130 370l130 120 130-170 160 190 160-150 170 150 170-180 230 190v200H0z"/>
+  <path fill="#052e16" fill-opacity=".56" d="M0 610c220-75 410-82 610-42 230 46 424 38 670-32v184H0z"/>
+</svg>

@@ -4,6 +4,7 @@ import type { JoinCallOutput } from "@@/server/models/room/call/JoinCallOutput";
 import { on } from "@@/server/services/events/on";
 import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
+import { createStandaloneCallSessionId } from "@@/server/services/message/call/createStandaloneCallSessionId";
 import { getCallParticipants } from "@@/server/services/message/call/getCallParticipants";
 import { joinLiveKitCall } from "@@/server/services/message/call/joinLiveKitCall";
 import { leaveCallAsParticipant } from "@@/server/services/message/call/leaveCallAsParticipant";
@@ -38,6 +39,10 @@ const onSetMuteInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onVideoChangedInputSchema = selectCallSessionInMessageSchema.shape.id;
 
 export const callRouter = router({
+  createCall: standardAuthedProcedure.mutation(async ({ ctx }) => {
+    const callSessionId = await createStandaloneCallSessionId(ctx.db);
+    return { callSessionId };
+  }),
   joinCall: standardAuthedProcedure
     .input(joinCallInputSchema)
     .mutation<JoinCallOutput>(async ({ ctx, input: { id } }) => {
@@ -48,6 +53,11 @@ export const callRouter = router({
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new NotFoundError(DatabaseEntityType.CallSession, id).message,
+        });
+      else if (callSession.roomId)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Room calls must be joined via joinCallByRoomId").message,
         });
 
       const { session, user } = ctx.getSessionPayload;

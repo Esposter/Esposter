@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
+import { useCallStore } from "@/store/message/room/call";
 import { DatabaseEntityType, selectCallSessionInMessageSchema } from "@esposter/db-schema";
+import { RoutePath } from "@esposter/shared";
 
+defineRouteRules({ ssr: false });
 definePageMeta({
   middleware: "auth",
   validate: async (route) => {
@@ -20,13 +23,21 @@ if (!isJoined)
     status: 404,
     statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, id),
   });
+
+const callStore = useCallStore();
+const { activeCallSessionId } = storeToRefs(callStore);
+watch(activeCallSessionId, (newActiveCallSessionId) => {
+  if (!newActiveCallSessionId) navigateTo(RoutePath.CallIndex);
+});
 </script>
 
 <template>
-  <div size-screen overflow-hidden>
-    <Head>
-      <Title>Call</Title>
-    </Head>
-    <MessageContentCallView />
-  </div>
+  <NuxtLayout hide-global-scrollbar>
+    <div size-full overflow-hidden>
+      <Head>
+        <Title>Call</Title>
+      </Head>
+      <MessageContentCallView />
+    </div>
+  </NuxtLayout>
 </template>
