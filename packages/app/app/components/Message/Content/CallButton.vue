@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { useCallStore } from "@/store/message/room/call";
+import { useCallParticipantStore } from "@/store/message/room/call/participant";
 import { mergeProps } from "vue";
 
 const callStore = useCallStore();
 const { joinCallByRoomId, leaveCall } = callStore;
-const { isConnecting, isInCall, roomParticipants } = storeToRefs(callStore);
+const { currentRoomCallSessionId, isConnecting, isInCall } = storeToRefs(callStore);
+const participantStore = useCallParticipantStore();
+const { getParticipants } = participantStore;
+const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId.value));
 </script>
 
 <template>

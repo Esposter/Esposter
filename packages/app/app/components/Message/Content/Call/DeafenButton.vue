@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useCallStore } from "@/store/message/room/call";
+import { useCallMediaStore } from "@/store/message/room/call/media";
 
 const callStore = useCallStore();
-const { isDeafened } = storeToRefs(callStore);
 const { toggleDeafen } = callStore;
+const mediaStore = useCallMediaStore();
+const { isDeafened } = storeToRefs(mediaStore);
 </script>
 
 <template>

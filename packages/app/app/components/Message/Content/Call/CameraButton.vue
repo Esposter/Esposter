@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useCallStore } from "@/store/message/room/call";
+import { useCallMediaStore } from "@/store/message/room/call/media";
 
 const callStore = useCallStore();
-const { isCameraEnabled } = storeToRefs(callStore);
 const { toggleCamera } = callStore;
+const mediaStore = useCallMediaStore();
+const { isCameraEnabled } = storeToRefs(mediaStore);
 </script>
 
 <template>

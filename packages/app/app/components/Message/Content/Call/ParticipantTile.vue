@@ -31,7 +31,7 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
     elevation-3
     :class="isSpeaking ? 'b-primary' : 'b-border'"
   >
-    <div v-if="isSpeaking" b-2 b-primary rd-2 b-solid pointer-events-none z-1 inset-0 absolute animate-pulse />
+    <div v-if="isSpeaking" b-2 b-primary rd-2 b-solid pointer-events-none inset-0 absolute z-1 animate-pulse />
     <video
       v-if="videoStream"
       autoplay

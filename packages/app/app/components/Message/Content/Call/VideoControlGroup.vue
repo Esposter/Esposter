@@ -1,5 +1,5 @@
 <template>
-  <div bg-background rd-full flex items-center>
+  <div rd-full bg-background flex items-center>
     <MessageContentCallCameraButton />
     <MessageContentCallVideoSettingsButton />
   </div>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useCallStore } from "@/store/message/room/call";
+import { useCallParticipantStore } from "@/store/message/room/call/participant";
 
-const callStore = useCallStore();
-const { clearJoinNotice } = callStore;
-const { joinNoticeParticipant } = storeToRefs(callStore);
+const participantStore = useCallParticipantStore();
+const { clearJoinNotice } = participantStore;
+const { joinNoticeParticipant } = storeToRefs(participantStore);
 </script>
 
 <template>

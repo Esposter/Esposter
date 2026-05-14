@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useCallStore } from "@/store/message/room/call";
+import { useCallMediaStore } from "@/store/message/room/call/media";
 
 const callStore = useCallStore();
-const { isScreenSharing } = storeToRefs(callStore);
 const { toggleScreenShare } = callStore;
+const mediaStore = useCallMediaStore();
+const { isScreenSharing } = storeToRefs(mediaStore);
 const canScreenShare = ref(false);
 
 onMounted(() => {

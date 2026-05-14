@@ -149,7 +149,15 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeRoom) return;
     const publication = await activeRoom.localParticipant.setCameraEnabled(isCameraEnabled);
-    if (isCameraEnabled) await setLocalCameraTrack(publication);
+    if (isCameraEnabled) {
+      await setLocalCameraTrack(publication);
+      return;
+    }
+
+    await localCameraTrack?.stopProcessor();
+    virtualBackgroundProcessor = undefined;
+    mediaStore.localVideoStream = null;
+    mediaStore.isCameraEnabled = false;
   };
   const setMicrophone = async (isMicrophoneEnabled: boolean) => {
     if (!activeRoom) return;
@@ -164,6 +172,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       surfaceSwitching: "include",
     });
     mediaStore.isScreenSharing = isScreenSharing;
+    if (!isScreenSharing) setLocalScreenShareStream(null);
   };
   const setVirtualBackground = async (imagePath: string) => {
     if (!localCameraTrack) return false;

@@ -63,7 +63,7 @@ Message/Content/Index.vue
 - Black (`bg-black`) full-screen flex column
 - Participant grid: `auto-fit` CSS grid with `pb-24` padding so bottom row clears the control bar
 - Presenter layout when screenshare is active: `ScreenShareStage` plus horizontal participant strip
-- Reads `callParticipants` (active call session, not room-viewed), `speakingIds`, `isDeafened`, camera streams, and screen streams from the store
+- Reads connection/session state from the root call store, media streams from `call/media`, and participant/speaking state from `call/participant`
 - Absolutely positioned `CallControlBar` at bottom
 
 ### `Call/ParticipantTile.vue`
@@ -81,6 +81,7 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 
 - Centered bottom row, translucent pill (`bg-grey-darken-4/90`)
 - Composes single-purpose controls directly: grouped mic + up-caret audio settings, grouped camera + up-caret video settings/backgrounds, deafen, screenshare, leave
+- Video backgrounds are starter image presets applied through LiveKit track processors; selecting a preset turns the camera on, and turning the camera off resets the processor/background to none
 
 ---
 
@@ -110,7 +111,7 @@ onUnmounted in useCallIdSubscribables
   → store.leaveCall()
     → $trpc.roomCall.leaveCall.mutate({ callSessionId })
     → disconnect LiveKit room
-    → reset activeCallSessionId, isDeafened, isForceMuted, local camera/screenshare state
+    → reset activeCallSessionId, isDeafened, isForceMuted, local camera/screenshare/background state
 ```
 
 This differs intentionally from room navigation cleanup. `/call/[id]` is a dedicated call surface, so leaving the page means leaving the call. A normal room route change is only an observer swap and must not call `store.leaveCall()`.

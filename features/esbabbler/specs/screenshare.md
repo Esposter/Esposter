@@ -58,32 +58,32 @@ async function startScreenShare() {
     audio: true, // capture tab/system audio if user allows
     resolution: { width: 1920, height: 1080, framerate: 15 },
   });
-  callStore.setScreenSharing(true);
+  mediaStore.isScreenSharing = true;
 }
 
 async function stopScreenShare() {
   await room.localParticipant.setScreenShareEnabled(false);
-  callStore.setScreenSharing(false);
+  mediaStore.isScreenSharing = false;
 }
 ```
 
 Track events from LiveKit `Room` (already bound in `useCall`):
 
 ```typescript
-room.on(RoomEvent.TrackPublished, (publication, participant) => {
+room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
   if (publication.source === Track.Source.ScreenShare) {
-    callStore.setRemoteScreenShareStream(participant.identity, publication.track?.mediaStream ?? null);
+    mediaStore.setRemoteScreenShareStream(participant.identity, track.mediaStream ?? null);
   }
 });
 
-room.on(RoomEvent.TrackUnpublished, (publication, participant) => {
+room.on(RoomEvent.TrackUnsubscribed, (_track, publication, participant) => {
   if (publication.source === Track.Source.ScreenShare) {
-    callStore.setRemoteScreenShareStream(participant.identity, null);
+    mediaStore.setRemoteScreenShareStream(participant.identity, null);
   }
 });
 ```
 
-### Store additions (`store/message/room/call.ts`)
+### Store state (`store/message/room/call/media.ts`)
 
 ```typescript
 // new state
@@ -159,5 +159,6 @@ const canScreenShare = computed(
 | New    | `Content/Call/VideoSettingsButton.vue` — camera selection and starter virtual backgrounds           |
 | Modify | `Content/Call/ControlBar.vue` — screenshare + camera + deafen + settings buttons                    |
 | Modify | `Content/Call/View.vue` — screen stage, participant strip, invite card, join notice                 |
-| Modify | `store/message/room/call.ts` — screenshare/pin state and local/remote screen streams                |
+| Modify | `store/message/room/call/media.ts` — screenshare/pin state and local/remote screen streams          |
+| Modify | `store/message/room/call/index.ts` — root `toggleScreenShare` wrapper for UI and tRPC/SDK boundary  |
 | Modify | `store/message/room/liveKit.ts` — `setScreenShare`, device switching, and screen track event bridge |

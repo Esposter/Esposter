@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
 import { useCallStore } from "@/store/message/room/call";
+import { useCallMediaStore } from "@/store/message/room/call/media";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { getResultAsync } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 const callStore = useCallStore();
-const { selectedVirtualBackground } = storeToRefs(callStore);
 const { selectVirtualBackground } = callStore;
+const mediaStore = useCallMediaStore();
+const { selectedVirtualBackground } = storeToRefs(mediaStore);
 const liveKitStore = useLiveKitStore();
 const { selectedVideoInputDeviceId } = storeToRefs(liveKitStore);
 const { readDevices, switchDevice } = liveKitStore;
@@ -64,17 +66,17 @@ watch(menu, (isOpen) => {
       <v-divider />
       <v-list density="compact">
         <v-list-subheader title="Backgrounds and effects" />
-        <div px-3 pb-2 grid gap-2 style="grid-template-columns: repeat(5, 1fr)">
+        <div px-3 pb-2 gap-2 grid style="grid-template-columns: repeat(5, 1fr)">
           <button
             v-for="{ imagePath, title } of CallVirtualBackgroundDefinitions"
             :key="title"
             :aria-label="title"
             :style="{ backgroundImage: imagePath ? `url(${imagePath})` : undefined }"
             b-2
-            b-solid
             rd
-            aspect-square
+            b-solid
             bg-surface
+            aspect-square
             bg-cover
             bg-center
             :class="selectedVirtualBackground === imagePath ? 'b-primary' : 'b-transparent'"

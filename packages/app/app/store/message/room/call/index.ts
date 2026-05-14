@@ -1,28 +1,25 @@
-import { AdminActionType } from "@esposter/db-schema";
-import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
-import { Room } from "livekit-client";
-
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useRoomStore } from "@/store/message/room";
 import { useCallMediaStore } from "@/store/message/room/call/media";
 import { useCallParticipantStore } from "@/store/message/room/call/participant";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
+import { AdminActionType } from "@esposter/db-schema";
+import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
+import { Room } from "livekit-client";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const session = authClient.useSession();
   const mediaStore = useCallMediaStore();
-  const { resetCallMedia, setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
+  const { resetCallMedia } = mediaStore;
   const participantStore = useCallParticipantStore();
   const {
     clearJoinNotice,
     clearSpeakers,
-    createCallParticipant,
-    createSpeaker,
     deleteCallParticipant,
-    deleteSpeaker,
+    getParticipants,
     setMute,
     setParticipantCamera,
     setParticipants,
@@ -36,11 +33,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
   const sessionId = computed(() => session.value.data?.session.id);
-  const roomParticipants = computed(() => participantStore.getParticipants(currentRoomCallSessionId.value));
-  const callParticipants = computed(() => participantStore.getParticipants(activeCallSessionId.value));
-  const activeScreenShareParticipant = computed(() =>
-    callParticipants.value.find(({ id }) => id === mediaStore.activeScreenShareParticipantId),
-  );
+  const callParticipants = computed(() => getParticipants(activeCallSessionId.value));
   const isInCall = computed(() => callParticipants.value.some(({ id }) => id === sessionId.value));
   const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
   const setCameraEnabled = async (newIsCameraEnabled: boolean) => {
@@ -54,9 +47,6 @@ export const useCallStore = defineStore("message/room/call", () => {
   };
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
     currentRoomCallSessionId.value = callSessionId;
-  };
-  const setPinnedParticipantId = (participantId: string) => {
-    mediaStore.pinnedParticipantId = participantId;
   };
   const createCall = async (): Promise<string | undefined> => {
     const { callSessionId } = await $trpc.roomCall.createCall.mutate();
@@ -210,52 +200,19 @@ export const useCallStore = defineStore("message/room/call", () => {
 
   return {
     activeCallSessionId,
-    activeScreenShareParticipant,
-    activeScreenShareParticipantId: computed(() => mediaStore.activeScreenShareParticipantId),
-    activeScreenShareStream: computed(() => mediaStore.activeScreenShareStream),
-    callParticipants,
     callRoomId,
-    callSessionParticipantsMap: computed(() => participantStore.callSessionParticipantsMap),
-    clearJoinNotice,
-    clearSpeakers,
     createCall,
-    createCallParticipant,
-    createSpeaker,
     currentRoomCallSessionId,
-    deleteCallParticipant,
-    deleteSpeaker,
-    hasScreenShare: computed(() => mediaStore.hasScreenShare),
     isCallViewOpen,
-    isCameraEnabled: computed(() => mediaStore.isCameraEnabled),
     isConnecting,
-    isDeafened: computed(() => mediaStore.isDeafened),
-    isForceMuted: computed(() => mediaStore.isForceMuted),
     isInCall,
     isMuted,
-    isScreenSharing: computed(() => mediaStore.isScreenSharing),
     joinCall,
     joinCallByRoomId,
-    joinNoticeParticipant: computed(() => participantStore.joinNoticeParticipant),
     leaveCall,
-    localScreenShareStream: computed(() => mediaStore.localScreenShareStream),
-    localVideoStream: computed(() => mediaStore.localVideoStream),
-    pinnedParticipantId: computed(() => mediaStore.pinnedParticipantId),
-    remoteScreenShareStreams: computed(() => mediaStore.remoteScreenShareStreams),
-    remoteVideoStreams: computed(() => mediaStore.remoteVideoStreams),
-    roomParticipants,
-    screenSharingParticipantIds: computed(() => mediaStore.screenSharingParticipantIds),
-    selectedVirtualBackground: computed(() => mediaStore.selectedVirtualBackground),
     selectVirtualBackground,
     setCameraEnabled,
     setCurrentRoomCallSessionId,
-    setLocalScreenShareStream,
-    setMute,
-    setParticipantCamera,
-    setParticipants,
-    setPinnedParticipantId,
-    setRemoteScreenShareStream,
-    setRemoteVideoStream,
-    speakingIds: computed(() => participantStore.speakingIds),
     toggleCamera,
     toggleDeafen,
     toggleMute,

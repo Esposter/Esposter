@@ -15,6 +15,7 @@ Screensharing: implemented with LiveKit track publication; see [`specs/screensha
 - **Deafen** — stop receiving all remote audio (you are effectively deaf; others still see you)
 - **Camera** — toggle local video track on/off
 - **Screenshare** — see `specs/screenshare.md`
+- **Virtual backgrounds** — starter presets are applied to the local camera track through `@livekit/track-processors`
 - **Standalone calls** — `/call` starts a roomless call and `/call/[id]` joins by share link
 - **Speaking indicator** — ring/pulse on avatar when audio detected
 - Sidebar room list: small **🔊 N** badge on rooms with active call participants (visible to non-participants)
@@ -228,40 +229,48 @@ async function toggleCamera() {
 
 async function toggleDeafen() {
   // mute all remote audio track subscriptions
-  room.remoteParticipants.forEach((p) => p.audioTrackPublications.forEach((pub) => pub.setSubscribed(!isDeafened)));
-  callStore.setDeafened(!isDeafened);
+  liveKitStore.setRemoteAudioMuted(!mediaStore.isDeafened);
+  mediaStore.isDeafened = !mediaStore.isDeafened;
 }
 ```
 
-The call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute, toggleCamera, toggleDeafen }`; LiveKit-specific track handling stays in `liveKit.ts`.
+The root call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute, toggleCamera, toggleDeafen, toggleScreenShare, selectVirtualBackground }`; LiveKit-specific track handling stays in `liveKit.ts`.
 
 `leaveCall` is an explicit membership action, not route cleanup. Room-level subscription cleanup should unsubscribe observers and clear viewed-room state only.
 
-### State — Pinia Store (`store/message/room/call.ts`)
+### State — Pinia Stores (`store/message/room/call/`)
 
-#### v1 (current)
+`store/message/room/call/index.ts` is the orchestration root. It owns connection/session boundaries and coordinates tRPC mutations with the LiveKit SDK store. Focused state lives in smaller stores so the LiveKit bridge can update track state without importing the root call store.
 
-| State                        | Kind       | Description                                                                   |
-| ---------------------------- | ---------- | ----------------------------------------------------------------------------- |
-| `callSessionParticipantsMap` | `ref`      | `Map<callSessionId, CallParticipant[]>` — keyed by session UUID, not roomId   |
-| `activeCallSessionId`        | `ref`      | Session the user is **in** — drives `leaveCall`, `setMute`, `setCamera`       |
-| `currentRoomCallSessionId`   | `ref`      | Session for the **viewed** room — set by `useCallSubscribables` on room enter |
-| `callRoomId`                 | `ref`      | Room ID of active call — kept only for admin action room-scoped checks        |
-| `speakingIds`                | `ref`      | Session IDs currently speaking (AudioContext analysis)                        |
-| `isInCall`                   | `computed` | Derived: active participant list contains current sessionId                   |
-| `isMuted`                    | `computed` | Derived from active participant list                                          |
-| `isDeafened`                 | `ref`      | Local only — not broadcast                                                    |
-| `isForceMuted`               | `ref`      | Set by admin ForceMute action                                                 |
-| `roomParticipants`           | `computed` | Participants in currently viewed room (from `currentRoomCallSessionId`)       |
+#### Participant store: `call/participant.ts`
 
-#### v2/v3 (LiveKit + screenshare)
+| State                        | Kind  | Description                                                                 |
+| ---------------------------- | ----- | --------------------------------------------------------------------------- |
+| `callSessionParticipantsMap` | `ref` | `Map<callSessionId, CallParticipant[]>` — keyed by session UUID, not roomId |
+| `speakingIds`                | `ref` | Session IDs currently speaking (AudioContext analysis)                      |
+| `joinNoticeParticipant`      | `ref` | Last remote participant requesting/joining, shown in the top-center notice  |
+
+#### Root store: `call/index.ts`
+
+| State                      | Kind       | Description                                                                   |
+| -------------------------- | ---------- | ----------------------------------------------------------------------------- |
+| `activeCallSessionId`      | `ref`      | Session the user is **in** — drives `leaveCall`, `setMute`, `setCamera`       |
+| `currentRoomCallSessionId` | `ref`      | Session for the **viewed** room — set by `useCallSubscribables` on room enter |
+| `callRoomId`               | `ref`      | Room ID of active call — kept only for admin action room-scoped checks        |
+| `isInCall`                 | `computed` | Derived from participant store for the active session                         |
+| `isMuted`                  | `computed` | Derived from participant store for the active session                         |
+
+#### Media store: `call/media.ts`
 
 | State                         | Kind  | Description                          |
 | ----------------------------- | ----- | ------------------------------------ |
+| `isDeafened`                  | `ref` | Local only — not broadcast           |
+| `isForceMuted`                | `ref` | Set by admin ForceMute action        |
 | `isCameraEnabled`             | `ref` | Local camera state                   |
 | `isScreenSharing`             | `ref` | Local screenshare state              |
 | `screenSharingParticipantIds` | `ref` | Session IDs of participants sharing  |
 | `pinnedParticipantId`         | `ref` | Pinned presenter in screenshare view |
+| `selectedVirtualBackground`   | `ref` | Current processor image path         |
 | `localScreenShareStream`      | `ref` | Local published screen stream        |
 | `remoteScreenShareStreams`    | `ref` | Remote screen streams keyed by ID    |
 
@@ -352,7 +361,10 @@ packages/app/
 
   app/
     store/message/room/
-      call.ts                            # LiveKit call/session/screen state
+      call/
+        index.ts                         # root call/session orchestration
+        media.ts                         # camera/screen/share/deafen state
+        participant.ts                   # participant map + speaking/join notice state
       liveKit.ts                         # LiveKit Room media bridge
     pages/call/
       index.vue                          # standalone call lobby/start page

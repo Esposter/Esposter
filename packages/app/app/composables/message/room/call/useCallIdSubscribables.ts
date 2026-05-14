@@ -1,17 +1,13 @@
 import { useCallStore } from "@/store/message/room/call";
+import { useCallParticipantStore } from "@/store/message/room/call/participant";
 
 export const useCallIdSubscribables = async (id: string) => {
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
-  const {
-    createCallParticipant,
-    deleteCallParticipant,
-    deleteSpeaker,
-    joinCall,
-    leaveCall,
-    setMute,
-    setParticipantCamera,
-  } = callStore;
+  const { joinCall, leaveCall } = callStore;
+  const participantStore = useCallParticipantStore();
+  const { createCallParticipant, deleteCallParticipant, deleteSpeaker, setMute, setParticipantCamera } =
+    participantStore;
 
   const callSessionId = await joinCall(id);
   if (!callSessionId) return false;
