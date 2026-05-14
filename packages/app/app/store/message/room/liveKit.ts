@@ -7,16 +7,6 @@ import { Room, RoomEvent, Track } from "livekit-client";
 
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
-  const callStore = useCallStore();
-  const {
-    leaveCall,
-    setCameraEnabled,
-    setLocalScreenShareStream,
-    setLocalVideoStream,
-    setRemoteScreenShareStream,
-    setRemoteVideoStream,
-    setScreenSharing,
-  } = callStore;
   const remoteAudioElements = new Map<string, HTMLMediaElement>();
   const selectedAudioInputDeviceId = ref("");
   const selectedAudioOutputDeviceId = ref("");
@@ -26,6 +16,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     remoteAudioElements.clear();
   };
   const setActiveSpeakers = (speakers: { identity: string }[]) => {
+    const callStore = useCallStore();
     callStore.speakingIds = speakers.map(({ identity }) => identity);
   };
   const setRemoteAudioMuted = (isDeafened: boolean) => {
@@ -54,6 +45,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (!isRemoteAudioSource(publication.source)) return;
+    const callStore = useCallStore();
     const element = track.attach();
     element.autoplay = true;
     element.muted = callStore.isDeafened;
@@ -75,6 +67,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.Camera || !track.mediaStream) return;
+    const callStore = useCallStore();
+    const { setRemoteVideoStream } = callStore;
     setRemoteVideoStream(participant.identity, track.mediaStream);
   };
   const detachRemoteCamera = (
@@ -83,6 +77,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.Camera) return;
+    const callStore = useCallStore();
+    const { setRemoteVideoStream } = callStore;
     setRemoteVideoStream(participant.identity, null);
   };
   const attachRemoteScreenShare = (
@@ -91,6 +87,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.ScreenShare || !track.mediaStream) return;
+    const callStore = useCallStore();
+    const { setRemoteScreenShareStream } = callStore;
     setRemoteScreenShareStream(participant.identity, track.mediaStream);
   };
   const detachRemoteScreenShare = (
@@ -99,9 +97,13 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     participant: RemoteParticipant,
   ) => {
     if (publication.source !== Track.Source.ScreenShare) return;
+    const callStore = useCallStore();
+    const { setRemoteScreenShareStream } = callStore;
     setRemoteScreenShareStream(participant.identity, null);
   };
   const onLocalTrackPublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
+    const callStore = useCallStore();
+    const { setCameraEnabled, setLocalScreenShareStream, setLocalVideoStream, setScreenSharing } = callStore;
     if (publication.source === Track.Source.Camera) {
       setLocalVideoStream(publication.track?.mediaStream ?? null);
       await setCameraEnabled(true);
@@ -111,6 +113,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     }
   });
   const onLocalTrackUnpublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
+    const callStore = useCallStore();
+    const { setCameraEnabled, setLocalScreenShareStream, setLocalVideoStream, setScreenSharing } = callStore;
     if (publication.source === Track.Source.Camera) {
       setLocalVideoStream(null);
       await setCameraEnabled(false);
@@ -120,6 +124,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     }
   });
   const onDisconnected = getSynchronizedFunction(async () => {
+    const callStore = useCallStore();
+    const { leaveCall } = callStore;
     await leaveCall();
   });
   const onAudioPlaybackStatusChanged = () => {

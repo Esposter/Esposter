@@ -37,13 +37,13 @@ const joinCall = async () => {
     </Head>
     <v-row flex-1 align="center" justify="center">
       <v-col cols="12" lg="7" md="8" sm="10">
-        <div flex flex-col items-center text-center gap-y-8>
+        <div text-center flex flex-col gap-y-8 items-center>
           <v-img alt="Esposter" src="/icon-192x192.png" width="5rem" />
           <div flex flex-col gap-y-3>
             <h1 text-h3>Video calls for everyone</h1>
             <span text-h6 text-medium-emphasis>Connect and share with Esposter Calls</span>
           </div>
-          <div flex flex-wrap justify-center gap-3>
+          <div flex flex-wrap gap-3 justify-center>
             <v-tooltip text="Start a new call">
               <template #activator="{ props }">
                 <v-btn
@@ -56,15 +56,15 @@ const joinCall = async () => {
                 />
               </template>
             </v-tooltip>
-            <v-form flex flex-wrap justify-center gap-3 @submit.prevent="joinCall()">
+            <v-form flex flex-wrap gap-3 justify-center @submit.prevent="joinCall()">
               <v-text-field
                 v-model="callCodeOrLink"
-                max-w-80
-                min-w-72
                 density="compact"
                 label="Enter a code or link"
                 prepend-inner-icon="mdi-keyboard"
                 hide-details
+                max-w-80
+                min-w-72
               />
               <v-tooltip text="Join call">
                 <template #activator="{ props }">
@@ -81,21 +81,21 @@ const joinCall = async () => {
             </v-form>
           </div>
           <v-divider w-full />
-          <div grid gap-4 style="grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr))" w-full>
-            <div bg-surface rd-2 p-4 flex flex-col gap-y-2>
+          <div style="grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr))" gap-4 grid w-full>
+            <div p-4 rd-2 bg-surface flex flex-col gap-y-2>
               <v-icon color="primary" icon="mdi-monitor-share" size="large" />
-              <span text-body-medium font-medium>Share your screen</span>
-              <span text-body-small text-medium-emphasis>Present tabs, windows, or your display in the call.</span>
+              <span font-medium text-body-medium>Share your screen</span>
+              <span text-medium-emphasis text-body-small>Present tabs, windows, or your display in the call.</span>
             </div>
-            <div bg-surface rd-2 p-4 flex flex-col gap-y-2>
+            <div p-4 rd-2 bg-surface flex flex-col gap-y-2>
               <v-icon color="primary" icon="mdi-video-cog" size="large" />
-              <span text-body-medium font-medium>Choose devices</span>
-              <span text-body-small text-medium-emphasis>Switch microphone, speakers, and camera while connected.</span>
+              <span font-medium text-body-medium>Choose devices</span>
+              <span text-medium-emphasis text-body-small>Switch microphone, speakers, and camera while connected.</span>
             </div>
-            <div bg-surface rd-2 p-4 flex flex-col gap-y-2>
+            <div p-4 rd-2 bg-surface flex flex-col gap-y-2>
               <v-icon color="primary" icon="mdi-link-variant" size="large" />
-              <span text-body-medium font-medium>Invite with a link</span>
-              <span text-body-small text-medium-emphasis>Copy the call link and send it to anyone joining.</span>
+              <span font-medium text-body-medium>Invite with a link</span>
+              <span text-medium-emphasis text-body-small>Copy the call link and send it to anyone joining.</span>
             </div>
           </div>
         </div>

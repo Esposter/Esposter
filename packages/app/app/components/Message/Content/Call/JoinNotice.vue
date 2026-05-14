@@ -7,10 +7,10 @@ const { joinNoticeParticipant } = storeToRefs(callStore);
 </script>
 
 <template>
-  <StyledCard v-if="joinNoticeParticipant" mt-4 px-4 py-3 absolute left="[50%]" top-0 translate-x="[-50%]">
-    <div flex items-center gap-x-3>
+  <StyledCard v-if="joinNoticeParticipant" left="[50%]" mt-4 px-4 py-3 top-0 absolute translate-x="[-50%]">
+    <div flex gap-x-3 items-center>
       <StyledAvatar :image="joinNoticeParticipant.image" :name="joinNoticeParticipant.name" />
-      <span text-body-medium font-medium>{{ joinNoticeParticipant.name }} wants to join the call</span>
+      <span font-medium text-body-medium>{{ joinNoticeParticipant.name }} wants to join the call</span>
       <v-tooltip text="Let in">
         <template #activator="{ props }">
           <v-btn :="props" color="primary" icon="mdi-check" size="small" variant="tonal" @click="clearJoinNotice()" />

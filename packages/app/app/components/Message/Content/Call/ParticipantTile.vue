@@ -3,14 +3,14 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 interface CallParticipantTileProps {
   isDeafened: boolean;
-  isSelf: boolean;
   isScreenSharing: boolean;
+  isSelf: boolean;
   isSpeaking: boolean;
   participant: CallParticipant;
   videoStream: MediaStream | undefined;
 }
 
-const { isDeafened, isSelf, isScreenSharing, isSpeaking, participant, videoStream } =
+const { isDeafened, isScreenSharing, isSelf, isSpeaking, participant, videoStream } =
   defineProps<CallParticipantTileProps>();
 const displayName = computed(() => (isSelf ? `${participant.name} (You)` : participant.name));
 </script>

@@ -45,7 +45,7 @@ watch(menu, (isOpen) => {
         </template>
       </v-tooltip>
     </template>
-    <StyledCard min-w-72 py-2>
+    <StyledCard py-2 min-w-72>
       <v-list density="compact">
         <v-list-subheader title="Camera" />
         <v-list-item

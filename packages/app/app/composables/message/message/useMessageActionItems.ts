@@ -44,12 +44,16 @@ export const useMessageActionItems = (
   };
   const replyItem: Item = {
     icon: "mdi-reply",
-    onClick: () => onReply(message.rowKey),
+    onClick: () => {
+      onReply(message.rowKey);
+    },
     title: "Reply",
   };
   const forwardMessageItem: Item = {
     icon: "mdi-share",
-    onClick: () => onForward(message.rowKey),
+    onClick: () => {
+      onForward(message.rowKey);
+    },
     title: "Forward",
   };
   const copyTextItem: Item = {
@@ -71,7 +75,9 @@ export const useMessageActionItems = (
         }
       : {
           icon: "mdi-pin",
-          onClick: () => onPin(true),
+          onClick: () => {
+            onPin(true);
+          },
           title: "Pin Message",
         },
   );
