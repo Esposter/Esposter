@@ -1,6 +1,6 @@
 import { authClient } from "@/services/auth/authClient";
 
-export const useCallMediaStore = defineStore("message/room/call/media", () => {
+export const useMediaStore = defineStore("message/room/call/media", () => {
   const session = authClient.useSession();
   const isCameraEnabled = ref(false);
   const isDeafened = ref(false);

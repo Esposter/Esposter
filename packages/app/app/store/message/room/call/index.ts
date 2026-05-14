@@ -1,8 +1,9 @@
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useRoomStore } from "@/store/message/room";
-import { useCallMediaStore } from "@/store/message/room/call/media";
-import { useCallParticipantStore } from "@/store/message/room/call/participant";
+import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { useMediaStore } from "@/store/message/room/call/media";
+import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { AdminActionType } from "@esposter/db-schema";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
@@ -12,9 +13,10 @@ export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const session = authClient.useSession();
-  const mediaStore = useCallMediaStore();
+  const knockerStore = useKnockerStore();
+  const mediaStore = useMediaStore();
   const { resetCallMedia } = mediaStore;
-  const participantStore = useCallParticipantStore();
+  const participantStore = useParticipantStore();
   const {
     clearJoinNotice,
     clearSpeakers,
@@ -141,6 +143,7 @@ export const useCallStore = defineStore("message/room/call", () => {
         callRoomId.value = "";
         activeCallSessionId.value = "";
         isCallViewOpen.value = false;
+        knockerStore.resetKnockerState();
         resetCallMedia();
         await disconnect();
         clearJoinNotice();

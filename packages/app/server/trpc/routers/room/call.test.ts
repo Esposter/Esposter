@@ -58,9 +58,9 @@ describe("call", () => {
     expect(takeOne(participants).isCameraEnabled).toBe(false);
     expect(takeOne(participants).isMuted).toBe(false);
 
-    const readSessionId = await roomCallCaller.readCallSessionId({ roomId: newRoom.id });
+    const readCallSessionId = await roomCallCaller.readCallSessionId({ roomId: newRoom.id });
 
-    expect(callSessionId).toStrictEqual(readSessionId);
+    expect(callSessionId).toStrictEqual(readCallSessionId);
   });
 
   test("creates standalone call", async () => {

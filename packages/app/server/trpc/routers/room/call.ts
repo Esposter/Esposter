@@ -2,6 +2,8 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { JoinCallOutput } from "@@/server/models/room/call/JoinCallOutput";
 
 import { on } from "@@/server/services/events/on";
+import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { createStandaloneCallSessionId } from "@@/server/services/message/call/createStandaloneCallSessionId";
@@ -28,15 +30,22 @@ import { z } from "zod";
 
 const joinCallByRoomIdInputSchema = roomIdSchema;
 const joinCallInputSchema = z.object({ id: selectCallSessionInMessageSchema.shape.id });
+const knockCallInputSchema = z.object({ id: selectCallSessionInMessageSchema.shape.id });
+const admitKnockerInputSchema = z.object({ callSessionId: z.string(), sessionId: z.string() });
+const dismissKnockerInputSchema = z.object({ callSessionId: z.string(), sessionId: z.string() });
 const leaveCallInputSchema = callSessionIdSchema;
 const setCameraInputSchema = z.object({ ...callSessionIdSchema.shape, isCameraEnabled: z.boolean() });
 const setMuteInputSchema = z.object({ ...callSessionIdSchema.shape, isMuted: z.boolean() });
 const readCallSessionIdInputSchema = roomIdSchema;
+const readCallSessionInputSchema = z.object({ id: selectCallSessionInMessageSchema.shape.id });
 const readCallParticipantsInputSchema = callSessionIdSchema;
 const onJoinCallInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onLeaveCallInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onSetMuteInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onVideoChangedInputSchema = selectCallSessionInMessageSchema.shape.id;
+const onKnockCallInputSchema = selectCallSessionInMessageSchema.shape.id;
+const onKnockerAdmittedInputSchema = selectCallSessionInMessageSchema.shape.id;
+const onKnockerDismissedInputSchema = selectCallSessionInMessageSchema.shape.id;
 
 export const callRouter = router({
   createCall: standardAuthedProcedure.mutation(async ({ ctx }) => {
@@ -127,12 +136,133 @@ export const callRouter = router({
       yield { id, isCameraEnabled };
     }
   }),
+  admitKnocker: standardAuthedProcedure
+    .input(admitKnockerInputSchema)
+    .mutation(({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
+      const callerSessionId = ctx.getSessionPayload.session.id;
+      if (!callSessionParticipantMap.get(callSessionId)?.has(callerSessionId))
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Must be in call to admit knockers").message,
+        });
+
+      const knockerMap = callKnockerMap.get(callSessionId);
+      if (!knockerMap?.has(knockerSessionId)) return;
+      knockerMap.delete(knockerSessionId);
+
+      callEventEmitter.emit("knockerAdmitted", { callSessionId, knockerSessionId });
+    }),
+  dismissKnocker: standardAuthedProcedure
+    .input(dismissKnockerInputSchema)
+    .mutation(({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
+      const callerSessionId = ctx.getSessionPayload.session.id;
+      if (!callSessionParticipantMap.get(callSessionId)?.has(callerSessionId))
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Must be in call to dismiss knockers").message,
+        });
+
+      const knockerMap = callKnockerMap.get(callSessionId);
+      if (!knockerMap?.has(knockerSessionId)) return;
+      knockerMap.delete(knockerSessionId);
+
+      callEventEmitter.emit("knockerDismissed", { callSessionId, knockerSessionId });
+    }),
+  knockCall: standardAuthedProcedure.input(knockCallInputSchema).mutation(async ({ ctx, input: { id } }) => {
+    const callSession = await ctx.db.query.callSessionsInMessage.findFirst({
+      where: { id: { eq: id } },
+    });
+    if (!callSession)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError(DatabaseEntityType.CallSession, id).message,
+      });
+    if (callSession.roomId)
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: new ForbiddenError("Room calls cannot be knocked — join via joinCallByRoomId").message,
+      });
+
+    const { session, user } = ctx.getSessionPayload;
+    const knocker = createParticipant(session, user);
+
+    let knockerMap = callKnockerMap.get(id);
+    if (!knockerMap) {
+      knockerMap = new Map();
+      callKnockerMap.set(id, knockerMap);
+    }
+    knockerMap.set(session.id, knocker);
+
+    callEventEmitter.emit("knockCall", { callSessionId: id, knocker, knockerSessionId: session.id });
+  }),
+  onKnockCall: standardAuthedProcedure.input(onKnockCallInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    const events = on(callEventEmitter, "knockCall", { signal });
+    await requireCallSession(ctx.db, input);
+
+    const callerSessionId = ctx.getSessionPayload.session.id;
+    if (!callSessionParticipantMap.get(input)?.has(callerSessionId))
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: new ForbiddenError("Must be in call to receive knock notifications").message,
+      });
+
+    for await (const [{ callSessionId, knocker }] of events) {
+      if (callSessionId !== input) continue;
+      yield knocker;
+    }
+  }),
+  onKnockerAdmitted: standardAuthedProcedure.input(onKnockerAdmittedInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    const events = on(callEventEmitter, "knockerAdmitted", { signal });
+    await requireCallSession(ctx.db, input);
+
+    const callerSessionId = ctx.getSessionPayload.session.id;
+
+    for await (const [{ callSessionId, knockerSessionId }] of events) {
+      if (callSessionId !== input || knockerSessionId !== callerSessionId) continue;
+      yield undefined;
+    }
+  }),
+  onKnockerDismissed: standardAuthedProcedure.input(onKnockerDismissedInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    const events = on(callEventEmitter, "knockerDismissed", { signal });
+    await requireCallSession(ctx.db, input);
+
+    const callerSessionId = ctx.getSessionPayload.session.id;
+
+    for await (const [{ callSessionId, knockerSessionId }] of events) {
+      if (callSessionId !== input || knockerSessionId !== callerSessionId) continue;
+      yield undefined;
+    }
+  }),
   readCallParticipants: standardAuthedProcedure
     .input(readCallParticipantsInputSchema)
     .query<CallParticipant[]>(async ({ ctx, input: { callSessionId } }) => {
       await requireCallSession(ctx.db, callSessionId);
       return getCallParticipants(callSessionId);
     }),
+  readCallSession: standardAuthedProcedure.input(readCallSessionInputSchema).query(async ({ ctx, input: { id } }) => {
+    const callSession = await ctx.db.query.callSessionsInMessage.findFirst({
+      columns: { id: true, roomId: true },
+      where: { id: { eq: id } },
+    });
+    if (!callSession)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError(DatabaseEntityType.CallSession, id).message,
+      });
+    return callSession;
+  }),
   readCallSessionId: getMemberProcedure(readCallSessionIdInputSchema, "roomId").query<string>(
     ({ ctx, input: { roomId } }) => readCallSessionId(ctx.db, roomId),
   ),

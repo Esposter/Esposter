@@ -17,15 +17,20 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id as string;
-const isJoined = await useCallIdSubscribables(id);
-if (!isJoined)
+const isDirect = route.query.direct === "1";
+const isValid = await useCallIdSubscribables(id);
+if (!isValid)
   throw createError({
     status: 404,
     statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, id),
   });
 
 const callStore = useCallStore();
-const { activeCallSessionId } = storeToRefs(callStore);
+const { activeCallSessionId, knockingCallSessionId } = storeToRefs(callStore);
+const { joinCall } = callStore;
+
+if (isDirect) await joinCall(id);
+
 watch(activeCallSessionId, (newActiveCallSessionId) => {
   if (!newActiveCallSessionId) navigateTo(RoutePath.CallIndex);
 });
@@ -33,11 +38,13 @@ watch(activeCallSessionId, (newActiveCallSessionId) => {
 
 <template>
   <NuxtLayout hide-global-scrollbar>
-    <div size-full overflow-hidden>
-      <Head>
-        <Title>Call</Title>
-      </Head>
-      <MessageContentCallView />
+    <Head>
+      <Title>Call</Title>
+    </Head>
+    <div size-full>
+      <MessageContentCallView v-if="activeCallSessionId" />
+      <MessageContentCallWaiting v-else-if="knockingCallSessionId" />
+      <MessageContentCallPreJoin v-else :call-id="id" />
     </div>
   </NuxtLayout>
 </template>

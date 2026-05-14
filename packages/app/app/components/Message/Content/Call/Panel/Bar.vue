@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useCallStore } from "@/store/message/room/call";
-import { useCallParticipantStore } from "@/store/message/room/call/participant";
+import { useParticipantStore } from "@/store/message/room/call/participant";
 
 const callStore = useCallStore();
 const { currentRoomCallSessionId, isCallViewOpen } = storeToRefs(callStore);
-const participantStore = useCallParticipantStore();
+const participantStore = useParticipantStore();
 const { getParticipants } = participantStore;
 const { speakingIds } = storeToRefs(participantStore);
 const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId.value));

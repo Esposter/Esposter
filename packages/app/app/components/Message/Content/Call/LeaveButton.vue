@@ -3,9 +3,6 @@ import { useCallStore } from "@/store/message/room/call";
 
 const callStore = useCallStore();
 const { leaveCall } = callStore;
-const onClick = async () => {
-  await leaveCall();
-};
 </script>
 
 <template>
@@ -14,6 +11,6 @@ const onClick = async () => {
     icon="mdi-phone-hangup"
     tooltip="Leave Call"
     variant="tonal"
-    @click="onClick()"
+    @click="leaveCall()"
   />
 </template>

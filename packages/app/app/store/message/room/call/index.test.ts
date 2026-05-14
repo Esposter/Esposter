@@ -1,14 +1,14 @@
 // @vitest-environment nuxt
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-import { useCallMediaStore } from "@/store/message/room/call/media";
-import { useCallParticipantStore } from "@/store/message/room/call/participant";
+import { useMediaStore } from "@/store/message/room/call/media";
+import { useParticipantStore } from "@/store/message/room/call/participant";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe(useCallParticipantStore, () => {
+describe(useParticipantStore, () => {
   const callSessionId = crypto.randomUUID();
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe(useCallParticipantStore, () => {
     test("adds id to speakingIds", () => {
       expect.hasAssertions();
 
-      const participantStore = useCallParticipantStore();
+      const participantStore = useParticipantStore();
       const { createSpeaker } = participantStore;
       const { speakingIds } = storeToRefs(participantStore);
       const sessionId = getMockSession().session.id;
@@ -31,7 +31,7 @@ describe(useCallParticipantStore, () => {
     test("deduplicates speaking ids", () => {
       expect.hasAssertions();
 
-      const participantStore = useCallParticipantStore();
+      const participantStore = useParticipantStore();
       const { createSpeaker } = participantStore;
       const { speakingIds } = storeToRefs(participantStore);
       const sessionId = getMockSession().session.id;
@@ -46,7 +46,7 @@ describe(useCallParticipantStore, () => {
     test("removes id from speakingIds", () => {
       expect.hasAssertions();
 
-      const participantStore = useCallParticipantStore();
+      const participantStore = useParticipantStore();
       const { createSpeaker, deleteSpeaker } = participantStore;
       const { speakingIds } = storeToRefs(participantStore);
       const sessionId = getMockSession().session.id;
@@ -71,7 +71,7 @@ describe(useCallParticipantStore, () => {
         userId: user.id,
       };
 
-      const participantStore = useCallParticipantStore();
+      const participantStore = useParticipantStore();
       const { createCallParticipant } = participantStore;
       const { callSessionParticipantsMap } = storeToRefs(participantStore);
       createCallParticipant(callSessionId, participant);
@@ -95,7 +95,7 @@ describe(useCallParticipantStore, () => {
         userId: user.id,
       };
 
-      const participantStore = useCallParticipantStore();
+      const participantStore = useParticipantStore();
       const { createCallParticipant } = participantStore;
       const { callSessionParticipantsMap } = storeToRefs(participantStore);
       createCallParticipant(callSessionId, participant);
@@ -119,7 +119,7 @@ describe(useCallParticipantStore, () => {
         userId: user.id,
       };
 
-      const participantStore = useCallParticipantStore();
+      const participantStore = useParticipantStore();
       const { createCallParticipant, setMute } = participantStore;
       const { callSessionParticipantsMap } = storeToRefs(participantStore);
       createCallParticipant(callSessionId, participant);
@@ -132,7 +132,7 @@ describe(useCallParticipantStore, () => {
   });
 });
 
-describe(useCallMediaStore, () => {
+describe(useMediaStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
   });
@@ -143,7 +143,7 @@ describe(useCallMediaStore, () => {
 
       const stream = new MediaStream();
       const participantId = getMockSession().session.id;
-      const mediaStore = useCallMediaStore();
+      const mediaStore = useMediaStore();
       const { setRemoteScreenShareStream } = mediaStore;
       const { hasScreenShare, remoteScreenShareStreams, screenSharingParticipantIds } = storeToRefs(mediaStore);
       setRemoteScreenShareStream(participantId, stream);
@@ -158,7 +158,7 @@ describe(useCallMediaStore, () => {
 
       const stream = new MediaStream();
       const participantId = getMockSession().session.id;
-      const mediaStore = useCallMediaStore();
+      const mediaStore = useMediaStore();
       const { setRemoteScreenShareStream } = mediaStore;
       const { hasScreenShare, pinnedParticipantId, remoteScreenShareStreams, screenSharingParticipantIds } =
         storeToRefs(mediaStore);

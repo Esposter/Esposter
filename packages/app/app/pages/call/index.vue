@@ -8,10 +8,10 @@ definePageMeta({
 
 <template>
   <NuxtLayout>
+    <Head>
+      <Title>Esposter Calls</Title>
+    </Head>
     <v-container flex flex-col h-full>
-      <Head>
-        <Title>Esposter Calls</Title>
-      </Head>
       <v-row flex-1 align="center" justify="center">
         <v-col cols="12" lg="7" md="8" sm="10">
           <div text-center flex flex-col gap-y-8 items-center>

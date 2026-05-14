@@ -1,0 +1,60 @@
+<script setup lang="ts">
+import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+
+import { useCallStore } from "@/store/message/room/call";
+import { useKnockerStore } from "@/store/message/room/call/knocker";
+
+const props = defineProps<{ knocker: CallParticipant }>();
+
+const callStore = useCallStore();
+const { activeCallSessionId } = storeToRefs(callStore);
+const knockerStore = useKnockerStore();
+const { admitKnocker, dismissKnocker } = knockerStore;
+
+const isAdmitting = ref(false);
+const isDismissing = ref(false);
+
+const onAdmit = async () => {
+  isAdmitting.value = true;
+  await admitKnocker(activeCallSessionId.value, props.knocker.id);
+  isAdmitting.value = false;
+};
+
+const onDismiss = async () => {
+  isDismissing.value = true;
+  await dismissKnocker(activeCallSessionId.value, props.knocker.id);
+  isDismissing.value = false;
+};
+</script>
+
+<template>
+  <div flex gap-x-3 items-center>
+    <StyledAvatar :image="knocker.image" :name="knocker.name" />
+    <span flex-1 font-medium text-body-medium truncate>{{ knocker.name }} wants to join</span>
+    <v-tooltip text="Let in">
+      <template #activator="{ props: tooltipProps }">
+        <v-btn
+          :="tooltipProps"
+          :loading="isAdmitting"
+          color="primary"
+          icon="mdi-check"
+          size="small"
+          variant="tonal"
+          @click="onAdmit()"
+        />
+      </template>
+    </v-tooltip>
+    <v-tooltip text="Dismiss">
+      <template #activator="{ props: tooltipProps }">
+        <v-btn
+          :="tooltipProps"
+          :loading="isDismissing"
+          icon="mdi-close"
+          size="small"
+          variant="plain"
+          @click="onDismiss()"
+        />
+      </template>
+    </v-tooltip>
+  </div>
+</template>

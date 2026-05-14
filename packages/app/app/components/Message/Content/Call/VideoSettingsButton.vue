@@ -2,14 +2,14 @@
 import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
 
 import { useCallStore } from "@/store/message/room/call";
-import { useCallMediaStore } from "@/store/message/room/call/media";
+import { useMediaStore } from "@/store/message/room/call/media";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { getResultAsync, noop } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 const callStore = useCallStore();
 const { selectVirtualBackground } = callStore;
-const mediaStore = useCallMediaStore();
+const mediaStore = useMediaStore();
 const { selectedVirtualBackground } = storeToRefs(mediaStore);
 const liveKitStore = useLiveKitStore();
 const { selectedVideoInputDeviceId } = storeToRefs(liveKitStore);
