@@ -14,9 +14,7 @@ const cardType = ref(CardType.Marquee);
       Thanks to all these lovely people for making this possible! 💖
     </v-col>
     <v-col cols="12" flex justify-end>
-      <div>
-        <VisualCardSwitch v-model="cardType" />
-      </div>
+      <VisualCardSwitch v-model="cardType" />
     </v-col>
     <v-col cols="12">
       <VisualCardMarquee v-if="cardType === CardType.Marquee" :cards />

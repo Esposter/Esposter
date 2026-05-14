@@ -54,6 +54,11 @@ export const callRouter = router({
           code: "NOT_FOUND",
           message: new NotFoundError(DatabaseEntityType.CallSession, id).message,
         });
+      else if (callSession.roomId)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Room calls must be joined via joinCallByRoomId").message,
+        });
 
       const { session, user } = ctx.getSessionPayload;
       return joinLiveKitCall(callSession, createParticipant(session, user), user.id);

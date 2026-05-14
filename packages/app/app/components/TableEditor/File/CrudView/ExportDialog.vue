@@ -17,17 +17,15 @@ const isOpen = defineModel<boolean>({ default: false });
 const { dataSourceType, editedItem } = defineProps<ExportDialogProps>();
 const exportFile = useExportFile();
 const filterStore = useFilterStore();
+const { columnFilters } = storeToRefs(filterStore);
 const rowStore = useRowStore();
 const { selectedRowIds } = storeToRefs(rowStore);
+const availableColumnIds = computed(() => editedItem.dataSource?.columns.map(({ id }) => id) ?? []);
 const selectedColumnIds = ref<string[]>([]);
-
-watchImmediate(
-  () => editedItem.dataSource?.columns.map(({ id }) => id) ?? [],
-  (newColumnIds) => {
-    const validColumnIds = selectedColumnIds.value.filter((id) => newColumnIds.includes(id));
-    selectedColumnIds.value = validColumnIds.length > 0 ? validColumnIds : newColumnIds;
-  },
-);
+const displayedSelectedColumnIds = computed(() => {
+  const displayedSelectedColumnIds = selectedColumnIds.value.filter((id) => availableColumnIds.value.includes(id));
+  return displayedSelectedColumnIds.length > 0 ? displayedSelectedColumnIds : availableColumnIds.value;
+});
 </script>
 
 <template>
@@ -35,7 +33,7 @@ watchImmediate(
     v-model="isOpen"
     :card-props="{ title: `Export as ${dataSourceType}` }"
     :confirm-button-props="{ text: 'Export' }"
-    :confirm-button-attrs="{ disabled: selectedColumnIds.length === 0 }"
+    :confirm-button-attrs="{ disabled: displayedSelectedColumnIds.length === 0 }"
     @confirm="
       async (onComplete) => {
         if (!editedItem.dataSource) {
@@ -45,10 +43,10 @@ watchImmediate(
 
         const { dataSource } = editedItem;
         const configuration = DataSourceConfigurationMap[dataSourceType];
-        const filteredRows = filterDataSourceRows(dataSource.rows, filterStore.columnFilters);
+        const filteredRows = filterDataSourceRows(dataSource.rows, columnFilters.value);
         const exportRows =
           selectedRowIds.length > 0 ? filteredRows.filter((row) => selectedRowIds.includes(row.id)) : filteredRows;
-        const { columns, rows } = filterDataSourceColumns(dataSource.columns, exportRows, selectedColumnIds);
+        const { columns, rows } = filterDataSourceColumns(dataSource.columns, exportRows, displayedSelectedColumnIds);
         await exportFile(
           (mimeType) => configuration.serialize({ ...dataSource, columns, rows }, editedItem, mimeType),
           editedItem.name,

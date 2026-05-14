@@ -21,7 +21,7 @@ const { input } = storeToRefs(inputStore);
 const executeSlashCommand = useExecuteSlashCommand();
 const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
 
-watchImmediate(pendingSlashCommand, (newPendingSlashCommand) => {
+watch(pendingSlashCommand, (newPendingSlashCommand) => {
   if (newPendingSlashCommand) commandTitle.value = newPendingSlashCommand.type;
 });
 

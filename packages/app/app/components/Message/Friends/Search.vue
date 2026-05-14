@@ -2,6 +2,7 @@
 import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
+import { withFinalizerAsync } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const blockStore = useBlockStore();
@@ -24,8 +25,14 @@ const onSearch = async () => {
     return;
   }
   isSearching.value = true;
-  searchResults.value = await $trpc.friend.searchUsers.query(searchQuery.value);
-  isSearching.value = false;
+  await withFinalizerAsync(
+    async () => {
+      searchResults.value = await $trpc.friend.searchUsers.query(searchQuery.value);
+    },
+    () => {
+      isSearching.value = false;
+    },
+  );
 };
 </script>
 
