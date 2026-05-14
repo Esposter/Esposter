@@ -4,7 +4,11 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 
-const props = defineProps<{ knocker: CallParticipant }>();
+interface KnockerItemProps {
+  knocker: CallParticipant;
+}
+
+const props = defineProps<KnockerItemProps>();
 
 const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
@@ -30,7 +34,7 @@ const onDismiss = async () => {
 <template>
   <div flex gap-x-3 items-center>
     <StyledAvatar :image="knocker.image" :name="knocker.name" />
-    <span flex-1 font-medium text-body-medium truncate>{{ knocker.name }} wants to join</span>
+    <span font-medium flex-1 truncate text-body-medium>{{ knocker.name }} wants to join</span>
     <v-tooltip text="Let in">
       <template #activator="{ props: tooltipProps }">
         <v-btn

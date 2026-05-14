@@ -9,7 +9,7 @@ const { isCameraEnabled } = storeToRefs(mediaStore);
 </script>
 
 <template>
-  <MessageContentCallActionButton
+  <MessageContentCallControlActionButton
     :color="isCameraEnabled ? undefined : 'error'"
     :icon="isCameraEnabled ? 'mdi-video' : 'mdi-video-off'"
     :tooltip="isCameraEnabled ? 'Turn Camera Off' : 'Turn Camera On'"

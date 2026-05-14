@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
-import type StyledFormDialog from "@/components/Styled/FormDialog.vue";
 import type { z } from "zod";
 
 import deepEqual from "fast-deep-equal";
@@ -26,8 +24,8 @@ const {
   value,
 } = defineProps<EditDialogButtonProps>();
 const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
-const styledDialog = useTemplateRef<InstanceType<typeof StyledFormDialog>>("styledDialog");
-const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
+const styledDialog = useTemplateRef("styledDialog");
+const errorIcon = useTemplateRef("errorIcon");
 const isEqual = computed(() => deepEqual(value, editedValue));
 const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || (!isCreate && isEqual.value));
 </script>

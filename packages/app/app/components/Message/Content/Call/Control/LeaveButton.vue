@@ -6,7 +6,7 @@ const { leaveCall } = callStore;
 </script>
 
 <template>
-  <MessageContentCallActionButton
+  <MessageContentCallControlActionButton
     color="error"
     icon="mdi-phone-hangup"
     tooltip="Leave Call"

@@ -9,7 +9,7 @@ const { isDeafened } = storeToRefs(mediaStore);
 </script>
 
 <template>
-  <MessageContentCallActionButton
+  <MessageContentCallControlActionButton
     :color="isDeafened ? 'error' : undefined"
     :icon="isDeafened ? 'mdi-headphones-off' : 'mdi-headphones'"
     :tooltip="isDeafened ? 'Undeafen' : 'Deafen'"

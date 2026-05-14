@@ -14,7 +14,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <MessageContentCallActionButton
+  <MessageContentCallControlActionButton
     v-if="canScreenShare"
     :color="isScreenSharing ? 'error' : undefined"
     :icon="isScreenSharing ? 'mdi-monitor-off' : 'mdi-monitor-share'"

@@ -48,10 +48,42 @@ const onKnockerAdmittedInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onKnockerDismissedInputSchema = selectCallSessionInMessageSchema.shape.id;
 
 export const callRouter = router({
+  admitKnocker: standardAuthedProcedure
+    .input(admitKnockerInputSchema)
+    .mutation(({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
+      const callerSessionId = ctx.getSessionPayload.session.id;
+      if (!callSessionParticipantMap.get(callSessionId)?.has(callerSessionId))
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Must be in call to admit knockers").message,
+        });
+
+      const knockerMap = callKnockerMap.get(callSessionId);
+      if (!knockerMap?.has(knockerSessionId)) return;
+      knockerMap.delete(knockerSessionId);
+
+      callEventEmitter.emit("knockerAdmitted", { callSessionId, knockerSessionId });
+    }),
   createCall: standardAuthedProcedure.mutation(async ({ ctx }) => {
     const callSessionId = await createStandaloneCallSessionId(ctx.db);
     return { callSessionId };
   }),
+  dismissKnocker: standardAuthedProcedure
+    .input(dismissKnockerInputSchema)
+    .mutation(({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
+      const callerSessionId = ctx.getSessionPayload.session.id;
+      if (!callSessionParticipantMap.get(callSessionId)?.has(callerSessionId))
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Must be in call to dismiss knockers").message,
+        });
+
+      const knockerMap = callKnockerMap.get(callSessionId);
+      if (!knockerMap?.has(knockerSessionId)) return;
+      knockerMap.delete(knockerSessionId);
+
+      callEventEmitter.emit("knockerDismissed", { callSessionId, knockerSessionId });
+    }),
   joinCall: standardAuthedProcedure
     .input(joinCallInputSchema)
     .mutation<JoinCallOutput>(async ({ ctx, input: { id } }) => {
@@ -79,95 +111,6 @@ export const callRouter = router({
       return joinLiveKitCall({ id: callSessionId, roomId }, createParticipant(session, user), user.id);
     },
   ),
-  leaveCall: standardAuthedProcedure.input(leaveCallInputSchema).mutation(async ({ ctx, input: { callSessionId } }) => {
-    const { session, user } = ctx.getSessionPayload;
-    const isDeleted = await leaveCallAsParticipant(ctx.db, callSessionId, session.id, user.id);
-    if (!isDeleted)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.CallSession, session.id).message,
-      });
-  }),
-  onJoinCall: standardAuthedProcedure.input(onJoinCallInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = on(callEventEmitter, "joinCall", { signal });
-    await requireCallSession(ctx.db, input);
-
-    for await (const [{ callSessionId, participant, sessionId }] of events) {
-      if (callSessionId !== input || sessionId === ctx.getSessionPayload.session.id) continue;
-      yield participant;
-    }
-  }),
-  onLeaveCall: standardAuthedProcedure.input(onLeaveCallInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = on(callEventEmitter, "leaveCall", { signal });
-    await requireCallSession(ctx.db, input);
-
-    for await (const [{ callSessionId, id }] of events) {
-      if (callSessionId !== input || id === ctx.getSessionPayload.session.id) continue;
-      yield id;
-    }
-  }),
-  onSetMute: standardAuthedProcedure.input(onSetMuteInputSchema).subscription(async function* ({ ctx, input, signal }) {
-    const events = on(callEventEmitter, "muteChanged", { signal });
-    await requireCallSession(ctx.db, input);
-
-    for await (const [{ callSessionId, id, isMuted }] of events) {
-      if (callSessionId !== input) continue;
-      yield { id, isMuted };
-    }
-  }),
-  onVideoChanged: standardAuthedProcedure.input(onVideoChangedInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = on(callEventEmitter, "videoChanged", { signal });
-    await requireCallSession(ctx.db, input);
-
-    for await (const [{ callSessionId, id, isCameraEnabled }] of events) {
-      if (callSessionId !== input) continue;
-      yield { id, isCameraEnabled };
-    }
-  }),
-  admitKnocker: standardAuthedProcedure
-    .input(admitKnockerInputSchema)
-    .mutation(({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
-      const callerSessionId = ctx.getSessionPayload.session.id;
-      if (!callSessionParticipantMap.get(callSessionId)?.has(callerSessionId))
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: new ForbiddenError("Must be in call to admit knockers").message,
-        });
-
-      const knockerMap = callKnockerMap.get(callSessionId);
-      if (!knockerMap?.has(knockerSessionId)) return;
-      knockerMap.delete(knockerSessionId);
-
-      callEventEmitter.emit("knockerAdmitted", { callSessionId, knockerSessionId });
-    }),
-  dismissKnocker: standardAuthedProcedure
-    .input(dismissKnockerInputSchema)
-    .mutation(({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
-      const callerSessionId = ctx.getSessionPayload.session.id;
-      if (!callSessionParticipantMap.get(callSessionId)?.has(callerSessionId))
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: new ForbiddenError("Must be in call to dismiss knockers").message,
-        });
-
-      const knockerMap = callKnockerMap.get(callSessionId);
-      if (!knockerMap?.has(knockerSessionId)) return;
-      knockerMap.delete(knockerSessionId);
-
-      callEventEmitter.emit("knockerDismissed", { callSessionId, knockerSessionId });
-    }),
   knockCall: standardAuthedProcedure.input(knockCallInputSchema).mutation(async ({ ctx, input: { id } }) => {
     const callSession = await ctx.db.query.callSessionsInMessage.findFirst({
       where: { id: { eq: id } },
@@ -194,6 +137,28 @@ export const callRouter = router({
     knockerMap.set(session.id, knocker);
 
     callEventEmitter.emit("knockCall", { callSessionId: id, knocker, knockerSessionId: session.id });
+  }),
+  leaveCall: standardAuthedProcedure.input(leaveCallInputSchema).mutation(async ({ ctx, input: { callSessionId } }) => {
+    const { session, user } = ctx.getSessionPayload;
+    const isDeleted = await leaveCallAsParticipant(ctx.db, callSessionId, session.id, user.id);
+    if (!isDeleted)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError(DatabaseEntityType.CallSession, session.id).message,
+      });
+  }),
+  onJoinCall: standardAuthedProcedure.input(onJoinCallInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    const events = on(callEventEmitter, "joinCall", { signal });
+    await requireCallSession(ctx.db, input);
+
+    for await (const [{ callSessionId, participant, sessionId }] of events) {
+      if (callSessionId !== input || sessionId === ctx.getSessionPayload.session.id) continue;
+      yield participant;
+    }
   }),
   onKnockCall: standardAuthedProcedure.input(onKnockCallInputSchema).subscription(async function* ({
     ctx,
@@ -243,6 +208,41 @@ export const callRouter = router({
     for await (const [{ callSessionId, knockerSessionId }] of events) {
       if (callSessionId !== input || knockerSessionId !== callerSessionId) continue;
       yield undefined;
+    }
+  }),
+  onLeaveCall: standardAuthedProcedure.input(onLeaveCallInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    const events = on(callEventEmitter, "leaveCall", { signal });
+    await requireCallSession(ctx.db, input);
+
+    for await (const [{ callSessionId, id }] of events) {
+      if (callSessionId !== input || id === ctx.getSessionPayload.session.id) continue;
+      yield id;
+    }
+  }),
+  onSetMute: standardAuthedProcedure.input(onSetMuteInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    const events = on(callEventEmitter, "muteChanged", { signal });
+    await requireCallSession(ctx.db, input);
+
+    for await (const [{ callSessionId, id, isMuted }] of events) {
+      if (callSessionId !== input) continue;
+      yield { id, isMuted };
+    }
+  }),
+  onVideoChanged: standardAuthedProcedure.input(onVideoChangedInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    const events = on(callEventEmitter, "videoChanged", { signal });
+    await requireCallSession(ctx.db, input);
+
+    for await (const [{ callSessionId, id, isCameraEnabled }] of events) {
+      if (callSessionId !== input) continue;
+      yield { id, isCameraEnabled };
     }
   }),
   readCallParticipants: standardAuthedProcedure

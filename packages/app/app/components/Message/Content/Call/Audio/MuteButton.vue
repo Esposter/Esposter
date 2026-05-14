@@ -7,7 +7,7 @@ const { toggleMute } = callStore;
 </script>
 
 <template>
-  <MessageContentCallActionButton
+  <MessageContentCallControlActionButton
     :color="isMuted ? 'error' : undefined"
     :icon="isMuted ? 'mdi-microphone-off' : 'mdi-microphone'"
     :tooltip="isMuted ? 'Unmute' : 'Mute'"

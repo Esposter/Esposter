@@ -24,9 +24,9 @@ const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId
     </div>
     <MessageContentCallAudioControlGroup />
     <MessageContentCallVideoControlGroup />
-    <MessageContentCallDeafenButton />
+    <MessageContentCallAudioDeafenButton />
     <MessageContentCallScreenShareButton />
-    <MessageContentCallLeaveButton />
+    <MessageContentCallControlLeaveButton />
     <v-tooltip location="bottom" text="Open call view">
       <template #activator="{ props }">
         <v-btn

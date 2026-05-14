@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type DefaultLayout from "@/layouts/default.vue";
 import type { RenderTarget } from "three/webgpu";
 
 import { APP_BAR_HEIGHT } from "#shared/services/app/constants";
@@ -27,7 +26,7 @@ import {
   WebGPURenderer,
 } from "three/webgpu";
 
-const layout = useTemplateRef<{ layoutRef: InstanceType<typeof DefaultLayout> }>("layout");
+const layout = useTemplateRef("layout");
 const parameters = { azimuth: 180, elevation: 2, exposure: 0.5 };
 let renderer: WebGPURenderer;
 let controls: OrbitControls;

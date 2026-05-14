@@ -1,5 +1,10 @@
 <script setup lang="ts">
-const props = defineProps<{ isCameraEnabled: boolean; isMicEnabled: boolean }>();
+interface MediaControlsProps {
+  isCameraEnabled: boolean;
+  isMicEnabled: boolean;
+}
+
+const props = defineProps<MediaControlsProps>();
 const emit = defineEmits<{ toggleCamera: []; toggleMic: [] }>();
 </script>
 

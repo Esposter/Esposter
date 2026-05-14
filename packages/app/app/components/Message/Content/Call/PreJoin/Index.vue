@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { getResultAsync } from "@esposter/shared";
 
 interface PreJoinProps {
   callId: string;
@@ -8,17 +9,21 @@ interface PreJoinProps {
 const props = defineProps<PreJoinProps>();
 const knockerStore = useKnockerStore();
 const { knockCall } = knockerStore;
-const cameraStream = ref<MediaStream | undefined>();
+const cameraStream = ref<MediaStream>();
 const isCameraEnabled = ref(false);
 const isMicEnabled = ref(true);
 const isRequestingJoin = ref(false);
 const startCamera = async () => {
-  try {
-    cameraStream.value = await navigator.mediaDevices.getUserMedia({ video: true });
-    isCameraEnabled.value = true;
-  } catch {
-    isCameraEnabled.value = false;
-  }
+  const result = await getResultAsync(() => window.navigator.mediaDevices.getUserMedia({ video: true }));
+  result.match(
+    (stream) => {
+      cameraStream.value = stream;
+      isCameraEnabled.value = true;
+    },
+    () => {
+      isCameraEnabled.value = false;
+    },
+  );
 };
 const stopCamera = () => {
   cameraStream.value?.getTracks().forEach((track) => track.stop());

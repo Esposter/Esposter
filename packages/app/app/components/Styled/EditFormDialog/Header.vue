@@ -1,5 +1,4 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
-import type StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
 import type { ItemEntityType } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
 import type { z } from "zod";
@@ -22,7 +21,7 @@ defineSlots<{ "prepend-actions": () => VNode }>();
 const { editedItem, editForm, formId, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
   defineProps<HeaderProps<T>>();
 const itemType = computed(() => prettify(editedItem.type));
-const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
+const errorIcon = useTemplateRef("errorIcon");
 const isValid = computed(() => errorIcon.value?.isValid ?? true);
 const emit = defineEmits<{
   delete: [onComplete: () => void];

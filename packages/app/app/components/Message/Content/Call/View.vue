@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-import type { CallParticipantTileProps } from "@/components/Message/Content/Call/ParticipantTile.vue";
+import type { CallParticipantTileProps } from "@/components/Message/Content/Call/Participant/Tile.vue";
 
 import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
