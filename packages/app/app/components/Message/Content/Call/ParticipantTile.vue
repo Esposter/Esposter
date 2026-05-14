@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-interface CallParticipantTileProps {
+export interface CallParticipantTileProps {
   isDeafened: boolean;
   isScreenSharing: boolean;
   isSelf: boolean;

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { CallParticipantTileProps } from "@/components/Message/Content/Call/ParticipantTile.vue";
+
 import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
 import { useCallMediaStore } from "@/store/message/room/call/media";
@@ -31,7 +34,7 @@ const presenterName = computed(() => {
   if (!participant) return "Someone";
   return participant.id === sessionId.value ? `${participant.name} (You)` : participant.name;
 });
-const getParticipantTileProps = (participant: (typeof callParticipants.value)[number]) => ({
+const getParticipantTileProps = (participant: CallParticipant): CallParticipantTileProps => ({
   isDeafened: isDeafened.value && participant.id === sessionId.value,
   isScreenSharing: screenSharingParticipantIds.value.includes(participant.id),
   isSelf: participant.id === sessionId.value,
