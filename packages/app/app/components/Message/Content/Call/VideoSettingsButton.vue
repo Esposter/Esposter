@@ -66,7 +66,7 @@ watch(menu, (isOpen) => {
       <v-divider />
       <v-list density="compact">
         <v-list-subheader title="Backgrounds and effects" />
-        <div px-3 pb-2 gap-2 grid style="grid-template-columns: repeat(5, 1fr)">
+        <div px-3 pb-2 gap-2 grid grid-cols-5>
           <button
             v-for="{ imagePath, title } of CallVirtualBackgroundDefinitions"
             :key="title"

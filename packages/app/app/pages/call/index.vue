@@ -91,7 +91,7 @@ const joinCall = async () => {
             </v-form>
           </div>
           <v-divider w-full />
-          <div style="grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr))" gap-4 grid w-full>
+          <div grid-cols="[repeat(auto-fit,minmax(12rem,1fr))]" gap-4 grid w-full>
             <div p-4 rd-2 bg-surface flex flex-col gap-y-2>
               <v-icon color="primary" icon="mdi-monitor-share" size="large" />
               <span font-medium text-body-medium>Share your screen</span>

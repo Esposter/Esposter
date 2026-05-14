@@ -40,15 +40,7 @@ const presenterName = computed(() => {
       :presenter-name
       :stream="activeScreenShareStream"
     />
-    <div
-      v-else
-      p-3
-      flex-1
-      gap-3
-      grid
-      content-center
-      style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr))"
-    >
+    <div v-else p-3 flex-1 gap-3 grid grid-auto-rows-fr grid-cols="[repeat(auto-fit,minmax(240px,1fr))]">
       <MessageContentCallParticipantTile
         v-for="participant of callParticipants"
         :key="participant.id"
