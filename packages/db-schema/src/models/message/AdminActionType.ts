@@ -7,6 +7,7 @@ export enum AdminActionType {
   KickFromCall = "KickFromCall",
   KickFromRoom = "KickFromRoom",
   SoftBan = "SoftBan",
+  StopScreenShare = "StopScreenShare",
   TimeoutUser = "TimeoutUser",
   Warn = "Warn",
 }

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useCallStore } from "@/store/message/room/call";
+
+const callStore = useCallStore();
+const { callRoomId } = storeToRefs(callStore);
 const isOpen = ref(true);
 const callLink = ref("");
 
@@ -8,7 +12,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <StyledCard v-if="isOpen" m-4 p-4 max-w-80 bottom-16 left-0 absolute>
+  <StyledCard v-if="isOpen && !callRoomId" m-4 p-4 max-w-80 bottom-16 left-0 absolute>
     <div flex flex-col gap-y-3>
       <div flex items-center justify-between>
         <span font-medium text-body-medium>Your call's ready</span>
@@ -18,7 +22,7 @@ onMounted(() => {
           </template>
         </v-tooltip>
       </div>
-      <span text-medium-emphasis text-body-small> Share this call link with others you want in the call. </span>
+      <span text-medium-emphasis text-body-small>Share this call link with others you want in the call.</span>
       <div px-2 py-1 rd bg-background flex gap-x-2 items-center>
         <span truncate text-body-small>{{ callLink }}</span>
         <StyledClipboardIconButton :source="callLink" text="Copy call link" />

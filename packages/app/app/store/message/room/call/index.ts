@@ -210,6 +210,10 @@ export const useCallStore = defineStore("message/room/call", () => {
   AdminActionHookMap[AdminActionType.KickFromCall].push(async () => {
     await leaveCall();
   });
+  AdminActionHookMap[AdminActionType.StopScreenShare].push(async (roomId) => {
+    if (callRoomId.value !== roomId) return;
+    await setScreenShare(false);
+  });
   AdminActionHookMap[AdminActionType.TimeoutUser].push(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();
   });

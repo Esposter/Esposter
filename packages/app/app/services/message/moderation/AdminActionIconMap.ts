@@ -7,6 +7,7 @@ export const AdminActionIconMap = {
   [AdminActionType.KickFromCall]: "mdi-headset-off",
   [AdminActionType.KickFromRoom]: "mdi-account-remove",
   [AdminActionType.SoftBan]: "mdi-account-arrow-left",
+  [AdminActionType.StopScreenShare]: "mdi-monitor-off",
   [AdminActionType.TimeoutUser]: "mdi-clock-alert-outline",
   [AdminActionType.Warn]: "mdi-alert-circle-outline",
 } as const satisfies Record<AdminActionType, string>;
