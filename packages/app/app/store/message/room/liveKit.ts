@@ -119,7 +119,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   };
   const setLocalCameraTrack = async (publication: LocalTrackPublication | undefined) => {
     if (!publication?.videoTrack) {
-      await localCameraTrack?.stopProcessor();
+      if (localCameraTrack?.getProcessor()) await localCameraTrack.stopProcessor();
       virtualBackgroundProcessor = undefined;
       localCameraTrack = undefined;
       mediaStore.localVideoStream = null;
@@ -157,6 +157,11 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   };
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeRoom) return;
+    if (!isCameraEnabled) {
+      mediaStore.localVideoStream = null;
+      await localCameraTrack?.stopProcessor();
+      virtualBackgroundProcessor = undefined;
+    }
     const publication = await activeRoom.localParticipant.setCameraEnabled(isCameraEnabled);
     await setLocalCameraTrack(isCameraEnabled ? publication : undefined);
   };

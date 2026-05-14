@@ -16,20 +16,8 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
 </script>
 
 <template>
-  <div
-    b-1
-    rd-2
-    b-solid
-    bg-surface
-    flex
-    flex-col
-    items-center
-    justify-center
-    relative
-    elevation-3
-    :class="isSpeaking ? 'b-primary' : 'b-border'"
-  >
-    <div v-if="isSpeaking" b-2 b-primary rd-2 b-solid pointer-events-none inset-0 absolute z-1 animate-pulse />
+  <div b-1 rd-2 b-solid bg-surface flex flex-col items-center justify-center relative elevation-3 b-border>
+    <div v-if="isSpeaking" class="speaking-overlay" rd-2 pointer-events-none inset-0 absolute z-1 />
     <video
       v-if="videoStream"
       autoplay
@@ -55,3 +43,12 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
     </StyledCard>
   </div>
 </template>
+
+<style scoped>
+.speaking-overlay {
+  box-shadow:
+    inset 0 0 0 3px rgb(var(--v-theme-primary)),
+    0 0 0 1px rgb(var(--v-theme-primary)),
+    0 0 16px 6px rgba(var(--v-theme-primary), 0.4);
+}
+</style>

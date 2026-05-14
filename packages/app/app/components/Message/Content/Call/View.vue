@@ -55,11 +55,11 @@ const presenterName = computed(() => {
         @click="pinnedParticipantId = participant.id"
       />
     </div>
-    <div v-if="hasScreenShare" px-3 pt-3 flex gap-x-3>
+    <div v-if="hasScreenShare" px-3 pt-3 shrink-0 grid grid-cols="[repeat(auto-fill,minmax(14rem,1fr))]" gap-3>
       <MessageContentCallParticipantTile
         v-for="participant of callParticipants"
         :key="participant.id"
-        min-w-56
+        h-32
         :participant
         :is-self="participant.id === sessionId"
         :is-screen-sharing="screenSharingParticipantIds.includes(participant.id)"
