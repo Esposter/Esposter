@@ -1,6 +1,6 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 
 export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const { $trpc } = useNuxtApp();
@@ -23,16 +23,14 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
     knockers.value = knockers.value.filter((knocker) => knocker.id !== knockerId);
   };
   const admitKnocker = async (callSessionId: string, sessionId: string) => {
-    deleteKnocker(sessionId);
     await getResultAsync(() => $trpc.roomCall.admitKnocker.mutate({ callSessionId, sessionId })).match(
-      noop,
+      () => deleteKnocker(sessionId),
       console.error,
     );
   };
   const dismissKnocker = async (callSessionId: string, sessionId: string) => {
-    deleteKnocker(sessionId);
     await getResultAsync(() => $trpc.roomCall.dismissKnocker.mutate({ callSessionId, sessionId })).match(
-      noop,
+      () => deleteKnocker(sessionId),
       console.error,
     );
   };

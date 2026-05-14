@@ -19,12 +19,14 @@ const isAdmitting = ref(false);
 const isDismissing = ref(false);
 
 const onAdmit = async () => {
+  if (!activeCallSessionId.value) return;
   isAdmitting.value = true;
   await admitKnocker(activeCallSessionId.value, props.knocker.id);
   isAdmitting.value = false;
 };
 
 const onDismiss = async () => {
+  if (!activeCallSessionId.value) return;
   isDismissing.value = true;
   await dismissKnocker(activeCallSessionId.value, props.knocker.id);
   isDismissing.value = false;

@@ -7,8 +7,8 @@ export const RoutePath: {
   readonly Achievements: "/achievements";
   readonly Anime: "/anime";
   readonly Calendar: "/calendar";
-  readonly Call: (id: string) => string;
-  readonly CallIndex: "/call";
+  readonly Calls: (id: string) => string;
+  readonly CallsIndex: "/calls";
   readonly Clicker: "/clicker";
   readonly Dashboard: "/dashboard";
   readonly DashboardEditor: "/dashboard/editor";
@@ -39,8 +39,8 @@ export const RoutePath: {
   Achievements: "/achievements",
   Anime: "/anime",
   Calendar: "/calendar",
-  Call: (id: string) => `/call/${id}`,
-  CallIndex: "/call",
+  Calls: (id: string) => `/calls/${id}`,
+  CallsIndex: "/calls",
   Clicker: "/clicker",
   Dashboard: "/dashboard",
   DashboardEditor: "/dashboard/editor",

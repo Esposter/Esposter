@@ -10,7 +10,7 @@ export const ProductListLinkItems = [
     title: MESSAGE_DISPLAY_NAME,
   },
   {
-    href: RoutePath.CallIndex,
+    href: RoutePath.CallsIndex,
     icon: "mdi-video",
     title: "Calls",
   },

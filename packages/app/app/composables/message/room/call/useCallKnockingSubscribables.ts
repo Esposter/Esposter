@@ -31,7 +31,7 @@ export const useCallKnockingSubscribables = (callId: string) => {
       const knockerDismissedUnsubscribable = $trpc.roomCall.onKnockerDismissed.subscribe(callSessionId, {
         onData: getSynchronizedFunction(async () => {
           cancelKnock();
-          await navigateTo(RoutePath.CallIndex);
+          await navigateTo(RoutePath.CallsIndex);
         }),
       });
 

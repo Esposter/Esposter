@@ -41,7 +41,7 @@ const miniPanelTop = `${APP_BAR_HEIGHT + 60}px`;
 const getHeight = () => window.innerHeight - APP_BAR_HEIGHT;
 
 onMounted(async () => {
-  const container = layout.value?.layoutRef.container;
+  const container = layout.value?.layoutRef?.container;
   if (!container) return;
   renderer = new WebGPURenderer();
   renderer.setPixelRatio(window.devicePixelRatio);

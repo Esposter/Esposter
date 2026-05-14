@@ -119,17 +119,17 @@ Room navigation (`useCallSubscribables` cleanup) is **not** a leave boundary. It
 - `callRoomId` — room ID of active call, kept **only** for admin action roomId checks. Empty for standalone calls.
 - `isCallViewOpen` — controls the `Panel/Dialog.vue` fullscreen overlay in room calls.
 
-`useCallParticipantStore` (`call/participant.ts`): `callSessionParticipantsMap`, `speakingIds`, `joinNoticeParticipant`.
+`useParticipantStore` (`call/participant.ts`): `callSessionParticipantsMap`, `speakingIds`, `joinNoticeParticipant`.
 
-`useCallMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.
+`useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.
 
 `useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`, `setScreenShare`, `setVirtualBackground`. All track/media logic lives here; `useCallStore` delegates to it.
 
 ### Shareable call link
 
-- `/call` — standalone call lobby; calls `createCall()` to create a new session, then navigates to `/call/[id]`.
-- `/call/[id]` — full-screen standalone call; `useCallIdSubscribables(id)` joins on mount, leaves on unmount.
-- `InviteCard.vue` is only shown on the `/call/[id]` page (hidden when `callRoomId` is set). It copies `window.location.href` which is the correct `/call/[id]` URL in standalone context.
+- `/calls` — standalone call lobby; calls `createCall()` to create a new session, then navigates to `/calls/[id]`.
+- `/calls/[id]` — full-screen standalone call; `useCallIdSubscribables(id)` joins on mount, leaves on unmount.
+- `InviteCard.vue` is only shown on the `/calls/[id]` page (hidden when `callRoomId` is set). It copies `window.location.href` which is the correct `/calls/[id]` URL in standalone context.
 
 ### Admin actions and calls
 

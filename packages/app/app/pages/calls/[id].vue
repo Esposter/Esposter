@@ -34,7 +34,7 @@ const { knockingCallSessionId } = storeToRefs(knockerStore);
 if (isDirect) await joinCall(id);
 
 watch(activeCallSessionId, (newActiveCallSessionId) => {
-  if (!newActiveCallSessionId) navigateTo(RoutePath.CallIndex);
+  if (!newActiveCallSessionId) navigateTo(RoutePath.CallsIndex);
 });
 </script>
 

@@ -12,7 +12,7 @@ const startCall = async () => {
     async () => {
       const newCallSessionId = await createCall();
       if (!newCallSessionId) return;
-      await router.push({ path: RoutePath.Call(newCallSessionId), query: { direct: "1" } });
+      await router.push({ path: RoutePath.Calls(newCallSessionId), query: { direct: "1" } });
     },
     () => {
       isCreating.value = false;
