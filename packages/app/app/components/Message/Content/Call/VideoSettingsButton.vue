@@ -3,7 +3,7 @@ import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/C
 import { useCallStore } from "@/store/message/room/call";
 import { useCallMediaStore } from "@/store/message/room/call/media";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 const callStore = useCallStore();
@@ -19,16 +19,12 @@ const getDeviceTitle = (device: MediaDeviceInfo, index: number) => device.label 
 const refreshDevices = async () => {
   await getResultAsync(async () => {
     videoInputDevices.value = await readDevices("videoinput");
-  })
-    .orTee(console.error)
-    .unwrapOr(undefined);
+  }).match(noop, console.error);
 };
 const selectDevice = async (deviceId: string) => {
   await getResultAsync(async () => {
     await switchDevice("videoinput", deviceId);
-  })
-    .orTee(console.error)
-    .unwrapOr(undefined);
+  }).match(noop, console.error);
 };
 watch(menu, (isOpen) => {
   if (!isOpen) return;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useLiveKitStore } from "@/store/message/room/liveKit";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 const liveKitStore = useLiveKitStore();
@@ -19,16 +19,12 @@ const refreshDevices = async () => {
     ]);
     audioInputDevices.value = newAudioInputDevices;
     audioOutputDevices.value = newAudioOutputDevices;
-  })
-    .orTee(console.error)
-    .unwrapOr(undefined);
+  }).match(noop, console.error);
 };
 const selectDevice = async (kind: MediaDeviceKind, deviceId: string) => {
   await getResultAsync(async () => {
     await switchDevice(kind, deviceId);
-  })
-    .orTee(console.error)
-    .unwrapOr(undefined);
+  }).match(noop, console.error);
 };
 
 watch(menu, (isOpen) => {

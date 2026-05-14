@@ -13,6 +13,18 @@ import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { Room, RoomEvent, Track } from "livekit-client";
 
+const rasterizeSvg = (svgUrl: string) =>
+  new Promise<string>((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1920;
+      canvas.height = 1080;
+      canvas.getContext("2d")?.drawImage(img, 0, 0, 1920, 1080);
+      resolve(canvas.toDataURL("image/png"));
+    };
+    img.src = svgUrl;
+  });
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
   let disconnectHandler: (() => Promise<void>) | undefined;
@@ -172,9 +184,14 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     }
 
     virtualBackgroundProcessor ??= BackgroundProcessor({ mode: "disabled" });
-    if (!localCameraTrack.getProcessor()) await localCameraTrack.setProcessor(virtualBackgroundProcessor);
+    if (!localCameraTrack.getProcessor()) {
+      await localCameraTrack.setProcessor(virtualBackgroundProcessor);
+      if (virtualBackgroundProcessor.processedTrack)
+        mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
+    }
+    const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
     await virtualBackgroundProcessor.switchTo(
-      imagePath ? { imagePath, mode: "virtual-background" } : { mode: "disabled" },
+      resolvedPath ? { imagePath: resolvedPath, mode: "virtual-background" } : { mode: "disabled" },
     );
     return true;
   };

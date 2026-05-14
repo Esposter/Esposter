@@ -5,13 +5,30 @@ interface CallScreenShareStageProps {
 }
 
 const { presenterName, stream } = defineProps<CallScreenShareStageProps>();
+
+const containerRef = ref<HTMLDivElement>();
 </script>
 
 <template>
-  <div flex flex-1 min-h-0 items-center justify-center relative>
-    <video autoplay playsinline rd-2 size-full object-contain :srcObject.prop="stream" />
-    <div m-4 px-3 py-2 rd bg-surface-opacity-80 bottom-0 left-0 absolute>
+  <div
+    ref="containerRef"
+    p-3
+    b-1
+    b-transparent
+    rd-2
+    b-solid
+    flex
+    flex-1
+    cursor-pointer
+    transition-colors
+    relative
+    overflow-hidden
+    hover:b-primary
+    @click="containerRef?.requestFullscreen()"
+  >
+    <video autoplay playsinline size-full object-contain :srcObject.prop="stream" />
+    <StyledCard px-3 py-2 rd bottom-0 left-0 absolute>
       <span font-medium text-body-small>{{ presenterName }}'s screen</span>
-    </div>
+    </StyledCard>
   </div>
 </template>

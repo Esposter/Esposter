@@ -91,18 +91,14 @@ export const useCallStore = defineStore("message/room/call", () => {
       joinedCallSessionId = callSessionId;
       isJoined = true;
       setParticipants(callSessionId, participants);
-    })
-      .orElse((error) =>
-        getResultAsync(async () => {
-          console.error(error);
-          if (isJoined) await leaveCall();
-          else {
-            activeCallSessionId.value = "";
-            await disconnect();
-          }
-        }),
-      )
-      .unwrapOr(undefined);
+    }).match(noop, async (error) => {
+      console.error(error);
+      if (isJoined) await leaveCall();
+      else {
+        activeCallSessionId.value = "";
+        await disconnect();
+      }
+    });
     isConnecting.value = false;
     return joinedCallSessionId;
   };
@@ -122,19 +118,15 @@ export const useCallStore = defineStore("message/room/call", () => {
       isJoined = true;
       setParticipants(callSessionId, participants);
       isCallViewOpen.value = true;
-    })
-      .orElse((error) =>
-        getResultAsync(async () => {
-          console.error(error);
-          if (isJoined) await leaveCall();
-          else {
-            callRoomId.value = "";
-            activeCallSessionId.value = "";
-            await disconnect();
-          }
-        }),
-      )
-      .unwrapOr(undefined);
+    }).match(noop, async (error) => {
+      console.error(error);
+      if (isJoined) await leaveCall();
+      else {
+        callRoomId.value = "";
+        activeCallSessionId.value = "";
+        await disconnect();
+      }
+    });
     isConnecting.value = false;
   };
   const leaveCall = async () => {
@@ -194,9 +186,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const toggleScreenShare = async () => {
     await getResultAsync(async () => {
       await setScreenShare(!mediaStore.isScreenSharing);
-    })
-      .orTee(console.error)
-      .unwrapOr(undefined);
+    }).match(noop, console.error);
   };
 
   AdminActionHookMap[AdminActionType.CreateBan].push(async (roomId) => {
