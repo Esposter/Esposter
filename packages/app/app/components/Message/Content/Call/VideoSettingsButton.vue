@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
+
 import { useCallStore } from "@/store/message/room/call";
 import { useCallMediaStore } from "@/store/message/room/call/media";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
@@ -57,10 +58,7 @@ watch(menu, (isOpen) => {
     <StyledCard py-2 min-w-72>
       <MessageContentCallDeviceSectionList :sections="videoDeviceSections" @select="selectDevice" />
       <v-divider />
-      <MessageContentCallVirtualBackgroundGrid
-        :selected-virtual-background="selectedVirtualBackground"
-        @select="selectVirtualBackground"
-      />
+      <MessageContentCallVirtualBackgroundGrid :selected-virtual-background @select="selectVirtualBackground" />
     </StyledCard>
   </v-menu>
 </template>

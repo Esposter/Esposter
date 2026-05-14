@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
+
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { getResultAsync, noop } from "@esposter/shared";
 import { mergeProps } from "vue";

@@ -25,6 +25,7 @@ const rasterizeSvg = (svgUrl: string) =>
     };
     img.src = svgUrl;
   });
+
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
   let disconnectHandler: (() => Promise<void>) | undefined;
@@ -220,11 +221,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     livekitToken: string,
     newDisconnectHandler: () => Promise<void>,
   ) => {
-    const previousRoom = activeRoom;
-    activeRoom = undefined;
-    disconnectHandler = undefined;
-    await previousRoom?.disconnect();
-    cleanupRemoteAudio();
+    await disconnect();
     activeRoom = room;
     disconnectHandler = newDisconnectHandler;
     room.on(RoomEvent.ActiveSpeakersChanged, setActiveSpeakers);

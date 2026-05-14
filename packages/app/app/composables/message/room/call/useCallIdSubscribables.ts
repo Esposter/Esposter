@@ -8,6 +8,7 @@ export const useCallIdSubscribables = async (id: string) => {
   const participantStore = useCallParticipantStore();
   const { createCallParticipant, deleteCallParticipant, deleteSpeaker, setMute, setParticipantCamera } =
     participantStore;
+  const instance = getCurrentInstance();
 
   const callSessionId = await joinCall(id);
   if (!callSessionId) return false;
@@ -40,7 +41,7 @@ export const useCallIdSubscribables = async (id: string) => {
     muteChangedUnsubscribable.unsubscribe();
     videoChangedUnsubscribable.unsubscribe();
     await leaveCall();
-  });
+  }, instance);
 
   return true;
 };

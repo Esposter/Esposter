@@ -32,11 +32,11 @@ const presenterName = computed(() => {
   return participant.id === sessionId.value ? `${participant.name} (You)` : participant.name;
 });
 const getParticipantTileProps = (participant: (typeof callParticipants.value)[number]) => ({
-  participant,
-  isSelf: participant.id === sessionId.value,
-  isScreenSharing: screenSharingParticipantIds.value.includes(participant.id),
-  isSpeaking: speakingIds.value.includes(participant.id),
   isDeafened: isDeafened.value && participant.id === sessionId.value,
+  isScreenSharing: screenSharingParticipantIds.value.includes(participant.id),
+  isSelf: participant.id === sessionId.value,
+  isSpeaking: speakingIds.value.includes(participant.id),
+  participant,
   videoStream:
     participant.id === sessionId.value
       ? (localVideoStream.value ?? undefined)
@@ -59,7 +59,7 @@ const getParticipantTileProps = (participant: (typeof callParticipants.value)[nu
         @click="pinnedParticipantId = participant.id"
       />
     </div>
-    <div v-if="hasScreenShare" px-3 pt-3 shrink-0 grid grid-cols="[repeat(auto-fill,minmax(14rem,1fr))]" gap-3>
+    <div v-if="hasScreenShare" grid-cols="[repeat(auto-fill,minmax(14rem,1fr))]" p-3 shrink-0 gap-3 grid>
       <MessageContentCallParticipantTile
         v-for="participant of callParticipants"
         :key="participant.id"

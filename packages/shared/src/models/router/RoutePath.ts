@@ -8,6 +8,7 @@ export const RoutePath: {
   readonly Anime: "/anime";
   readonly Calendar: "/calendar";
   readonly Call: (id: string) => string;
+  readonly CallIndex: "/call";
   readonly Clicker: "/clicker";
   readonly Dashboard: "/dashboard";
   readonly DashboardEditor: "/dashboard/editor";
@@ -39,6 +40,7 @@ export const RoutePath: {
   Anime: "/anime",
   Calendar: "/calendar",
   Call: (id: string) => `/call/${id}`,
+  CallIndex: "/call",
   Clicker: "/clicker",
   Dashboard: "/dashboard",
   DashboardEditor: "/dashboard/editor",

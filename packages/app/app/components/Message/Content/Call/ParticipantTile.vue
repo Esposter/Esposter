@@ -16,7 +16,7 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
 </script>
 
 <template>
-  <div b-1 rd-2 b-solid bg-surface flex flex-col items-center justify-center relative elevation-3 b-border>
+  <div b-1 b-border rd-2 b-solid bg-surface flex flex-col items-center justify-center relative elevation-3>
     <div
       v-if="isSpeaking"
       rd-2

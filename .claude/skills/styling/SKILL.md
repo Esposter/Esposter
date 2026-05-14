@@ -172,6 +172,13 @@ Rules:
 
 Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS utilities:
 
+**Opacity (`op-` prefix):**
+
+- `op-0` not `opacity-0`
+- `op-50` not `opacity-50`
+- `op-100` not `opacity-100`
+- Works with variants: `group-hover:op-100`, `hover:op-80`, `disabled:op-30`
+
 **Border (`b-` prefix) — never use Vuetify `border="sm"` prop or `border-sm` class:**
 
 | Vuetify utility             | UnoCSS (use this) | Value |
