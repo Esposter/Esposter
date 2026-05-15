@@ -16,8 +16,29 @@ if [ -z "${LIVEKIT_API_SECRET:-}" ]; then
   exit 1
 fi
 
-REDIS_PASSWORD="$(echo "$REDIS_URL" | sed -n 's|redis://[^:]*:\([^@]*\)@.*|\1|p')"
-REDIS_HOST_PORT="$(echo "$REDIS_URL" | sed -n 's|redis://[^@]*@\(.*\)|\1|p')"
+yaml_escape() {
+  printf "%s" "$1" | sed "s/'/''/g"
+}
+
+REDIS_NO_SCHEME="${REDIS_URL#redis://}"
+REDIS_NO_SCHEME="${REDIS_NO_SCHEME#rediss://}"
+REDIS_NO_QUERY="${REDIS_NO_SCHEME%%\?*}"
+REDIS_PASSWORD=""
+
+if [[ "$REDIS_NO_QUERY" == *"@"* ]]; then
+  REDIS_AUTH="${REDIS_NO_QUERY%@*}"
+  REDIS_HOST_PORT="${REDIS_NO_QUERY#*@}"
+
+  if [[ "$REDIS_AUTH" == *":"* ]]; then
+    REDIS_PASSWORD="${REDIS_AUTH#*:}"
+  else
+    REDIS_PASSWORD="$REDIS_AUTH"
+  fi
+else
+  REDIS_HOST_PORT="$REDIS_NO_QUERY"
+fi
+
+REDIS_HOST_PORT="${REDIS_HOST_PORT%%/*}"
 
 if [ -z "$REDIS_HOST_PORT" ]; then
   echo "ERROR: Could not parse REDIS_URL"
@@ -95,7 +116,7 @@ bind_addresses:
   - "0.0.0.0"
 
 logging:
-  level: ${LOG_LEVEL}
+  level: '$(yaml_escape "${LOG_LEVEL}")'
 
 rtc:
   tcp_port: ${ICE_TCP_PORT}
@@ -107,11 +128,11 @@ rtc:
   enable_loopback_candidate: false
 
 redis:
-  address: ${REDIS_HOST_PORT}
-  password: ${REDIS_PASSWORD}
+  address: '$(yaml_escape "${REDIS_HOST_PORT}")'
+  password: '$(yaml_escape "${REDIS_PASSWORD}")'
 
 keys:
-  ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
+  '$(yaml_escape "${LIVEKIT_API_KEY}")': '$(yaml_escape "${LIVEKIT_API_SECRET}")'
 
 room:
   auto_create: true
@@ -124,9 +145,9 @@ if [ -n "$MONITOR_WEBHOOK_URL" ]; then
   cat >> /etc/livekit.yaml <<EOF
 
 webhook:
-  api_key: ${LIVEKIT_API_KEY}
+  api_key: '$(yaml_escape "${LIVEKIT_API_KEY}")'
   urls:
-    - ${MONITOR_WEBHOOK_URL}
+    - '$(yaml_escape "${MONITOR_WEBHOOK_URL}")'
 EOF
 fi
 

@@ -1,4 +1,4 @@
-FROM livekit/livekit-server:latest AS livekit
+FROM livekit/livekit-server:v1.11.0 AS livekit
 
 FROM debian:bookworm-slim
 

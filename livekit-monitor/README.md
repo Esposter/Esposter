@@ -1,6 +1,6 @@
 # livekit-monitor Railway service
 
-This folder lets Railway deploy `livekit-monitor` as a separate service from this repository. The Docker image is the upstream public image from `jossephus/livekit-monitor`.
+This folder lets Railway deploy `livekit-monitor` as a separate service from this repository. The Docker image is the upstream public `jossephus/livekit-monitor:v0.3.0` image.
 
 ## Railway settings
 
