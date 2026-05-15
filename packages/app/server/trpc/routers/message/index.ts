@@ -33,7 +33,10 @@ import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
+import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
+import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { router } from "@@/server/trpc";
+import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
@@ -144,7 +147,7 @@ export const unpinMessageInputSchema = standardMessageEntitySchema.pick({ partit
 
 const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
 
-export const messageRouter = router({
+export const baseMessageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
     async ({ ctx, input }) => {
       await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
@@ -523,3 +526,8 @@ export const messageRouter = router({
     },
   ),
 });
+
+export const messageRouter = mergeRouters(
+  baseMessageRouter,
+  router({ emoji: emojiRouter, moderation: moderationRouter }),
+);

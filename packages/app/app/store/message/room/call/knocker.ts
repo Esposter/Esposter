@@ -13,7 +13,7 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const knockers = ref<CallParticipant[]>([]);
 
   const knockCall = async (callId: string) => {
-    await getResultAsync(() => $trpc.roomCall.knockCall.mutate({ id: callId })).match(() => {
+    await getResultAsync(() => $trpc.callSession.knocker.knockCall.mutate({ id: callId })).match(() => {
       knockingCallSessionId.value = callId;
     }, console.error);
   };
@@ -28,14 +28,20 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
     knockers.value = knockers.value.filter((knocker) => knocker.id !== knockerId);
   };
   const admitKnocker = async (callSessionId: string, sessionId: string) => {
-    await getResultAsync(() => $trpc.roomCall.admitKnocker.mutate({ callSessionId, sessionId })).match(() => {
-      deleteKnocker(sessionId);
-    }, console.error);
+    await getResultAsync(() => $trpc.callSession.knocker.admitKnocker.mutate({ callSessionId, sessionId })).match(
+      () => {
+        deleteKnocker(sessionId);
+      },
+      console.error,
+    );
   };
   const dismissKnocker = async (callSessionId: string, sessionId: string) => {
-    await getResultAsync(() => $trpc.roomCall.dismissKnocker.mutate({ callSessionId, sessionId })).match(() => {
-      deleteKnocker(sessionId);
-    }, console.error);
+    await getResultAsync(() => $trpc.callSession.knocker.dismissKnocker.mutate({ callSessionId, sessionId })).match(
+      () => {
+        deleteKnocker(sessionId);
+      },
+      console.error,
+    );
   };
   const resetKnockerState = () => {
     knockingCallSessionId.value = "";

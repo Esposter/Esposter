@@ -12,7 +12,7 @@ interface WordFilterProps {
 
 const { roomId } = defineProps<WordFilterProps>();
 const { $trpc } = useNuxtApp();
-const initialWords = ref<string[]>(await $trpc.roomFilter.readRoomFilter.query({ roomId }));
+const initialWords = ref<string[]>(await $trpc.room.filter.readRoomFilter.query({ roomId }));
 const words = ref([...initialWords.value]);
 const newWord = ref("");
 const isDirty = computed(() => !deepEqual(words.value, initialWords.value));
@@ -64,7 +64,7 @@ const deleteWord = (word: string) => {
             :button-props="{ disabled: !isDirty, text: 'Save Changes', variant: 'tonal' }"
             @click="
               async () => {
-                initialWords = (await $trpc.roomFilter.upsertRoomFilter.mutate({ roomId, words })).words;
+                initialWords = (await $trpc.room.filter.upsertRoomFilter.mutate({ roomId, words })).words;
               }
             "
           />

@@ -23,14 +23,14 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   });
 
   const createDirectMessage = async (userIds: string[]) => {
-    const room = await $trpc.directMessage.createDirectMessage.mutate(userIds);
+    const room = await $trpc.room.directMessage.createDirectMessage.mutate(userIds);
     const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
     if (!existingDirectMessage) storeCreateDirectMessage(room, true);
     await navigateTo(RoutePath.Messages(room.id));
   };
 
   const hideDirectMessage = async (input: HideDirectMessageInput) => {
-    await $trpc.directMessage.hideDirectMessage.mutate(input);
+    await $trpc.room.directMessage.hideDirectMessage.mutate(input);
     storeDeleteDirectMessage({ id: input });
     if (currentDirectMessageId.value === input) {
       const remainingDirectMessages = directMessages.value.filter(({ id }) => id !== input);

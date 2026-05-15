@@ -22,7 +22,7 @@ export const useCallKnockingSubscribables = (callId: string) => {
     (callSessionId) => {
       if (!callSessionId) return undefined;
 
-      const knockerAdmittedUnsubscribable = $trpc.roomCall.onKnockerAdmitted.subscribe(callSessionId, {
+      const knockerAdmittedUnsubscribable = $trpc.callSession.knocker.onKnockerAdmitted.subscribe(callSessionId, {
         onData: getSynchronizedFunction(async () => {
           await getResultAsync(async () => {
             cancelKnock();
@@ -30,7 +30,7 @@ export const useCallKnockingSubscribables = (callId: string) => {
           }).match(noop, console.error);
         }),
       });
-      const knockerDismissedUnsubscribable = $trpc.roomCall.onKnockerDismissed.subscribe(callSessionId, {
+      const knockerDismissedUnsubscribable = $trpc.callSession.knocker.onKnockerDismissed.subscribe(callSessionId, {
         onData: getSynchronizedFunction(async () => {
           await getResultAsync(async () => {
             cancelKnock();

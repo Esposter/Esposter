@@ -6,7 +6,7 @@ import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermis
 import { DatabaseEntityType, roomFiltersInMessage, roomIdSchema, RoomPermission } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
-export const roomFilterRouter = router({
+export const filterRouter = router({
   readRoomFilter: getMemberProcedure(roomIdSchema, "roomId").query(async ({ ctx, input: { roomId } }) => {
     const filter = await ctx.db.query.roomFiltersInMessage.findFirst({
       where: { roomId: { eq: roomId } },

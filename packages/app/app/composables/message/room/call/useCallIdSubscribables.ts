@@ -10,7 +10,7 @@ export const useCallIdSubscribables = async (callId: string) => {
   const knockerStore = useKnockerStore();
   const { knockingCallSessionId } = storeToRefs(knockerStore);
   const { cancelKnock } = knockerStore;
-  const callSession = await getResultAsync(() => $trpc.roomCall.readCallSession.query({ id: callId })).match(
+  const callSession = await getResultAsync(() => $trpc.callSession.readCallSession.query({ id: callId })).match(
     (result) => result,
     () => undefined,
   );

@@ -23,7 +23,11 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
+import { categoryRouter } from "@@/server/trpc/routers/room/category";
+import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
+import { filterRouter } from "@@/server/trpc/routers/room/filter";
 import { router } from "@@/server/trpc";
+import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
@@ -106,7 +110,7 @@ const readInviteIdInputSchema = roomIdSchema;
 
 const createInviteInputSchema = roomIdSchema;
 
-export const roomRouter = router({
+export const baseRoomRouter = router({
   countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
     async ({ ctx, input: { roomId } }) =>
       takeOne(
@@ -533,3 +537,8 @@ export const roomRouter = router({
     return updatedRoom;
   }),
 });
+
+export const roomRouter = mergeRouters(
+  baseRoomRouter,
+  router({ category: categoryRouter, directMessage: directMessageRouter, filter: filterRouter }),
+);

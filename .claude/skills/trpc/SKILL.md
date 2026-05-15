@@ -52,6 +52,37 @@ description: Esposter tRPC conventions — procedure typing with generics, route
 
 - **If a utility function is also needed by a Pinia store (frontend), put it in `shared/services/<feature>/` instead** — this makes it importable on both server and client without duplication.
 
+## Router Key Naming
+
+- **Never use `call` as a tRPC router key** — `call` is a method on `Function.prototype`. tRPC clients use a `Proxy` to build procedure paths; accessing `.call` on a callable proxy returns `Function.prototype.call` instead of descending into the router, silently breaking all procedures in that namespace. The same applies to `apply`, `bind`, `then`, and `catch`.
+- Use a descriptive compound name instead: `callSession`, `videoCall`, `roomCall`, etc.
+
+## Sub-router Composition Pattern
+
+When a feature router has sub-routers, export a `base*Router` with the feature's own procedures, then compose with `mergeRouters`:
+
+```ts
+// routers/call/index.ts
+export const baseCallRouter = router({
+  createCall: ...,
+  joinCall: ...,
+  // ... all feature procedures
+});
+
+export const callRouter = mergeRouters(baseCallRouter, router({ knocker: knockerRouter }));
+```
+
+The feature's `index.ts` becomes the composition root. The main `routers/index.ts` only imports the composed router.
+
+```ts
+// routers/index.ts
+import { callRouter } from "@@/server/trpc/routers/call";
+// callRouter already has knocker nested — no sub-router imports needed here
+router({ callSession: callRouter, ... })
+```
+
+This pattern mirrors the existing achievement split (`trpcRouterWithoutAchievements` + `mergeRouters`) but at the feature level.
+
 ## Router and Store Structure
 
 - **One router + one Pinia store per DB table** — each table in `packages/db-schema/src/schema/` gets its own router file and its own Pinia store file. Never bundle multiple tables into one router or store.

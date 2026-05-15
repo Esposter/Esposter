@@ -95,12 +95,37 @@ When adding a new feature, use Postgres for anything relational/queryable and Az
 
 Root merger: `packages/app/server/trpc/routers/index.ts`
 
-All feature routers are flat-merged at the root (`message`, `room`, `moderation`, `call`, `directMessage`, etc. — all top-level keys, even logically nested ones). The only exception is `achievement`, which is merged separately to avoid a circular dependency with the router that fires achievement events.
+Routers are nested by domain. Top-level keys and their sub-keys:
+
+| Client path                  | Router file                     |
+| ---------------------------- | ------------------------------- |
+| `trpc.callSession.*`         | `routers/call/index.ts`         |
+| `trpc.callSession.knocker.*` | `routers/call/knocker.ts`       |
+| `trpc.message.*`             | `routers/message/index.ts`      |
+| `trpc.message.emoji.*`       | `routers/message/emoji.ts`      |
+| `trpc.message.moderation.*`  | `routers/message/moderation.ts` |
+| `trpc.room.*`                | `routers/room/index.ts`         |
+| `trpc.room.category.*`       | `routers/room/category.ts`      |
+| `trpc.room.directMessage.*`  | `routers/room/directMessage.ts` |
+| `trpc.room.filter.*`         | `routers/room/filter.ts`        |
+
+The only exception is `achievement`, which is merged separately to avoid a circular dependency with the router that fires achievement events.
+
+Sub-router composition uses the `baseXRouter + mergeRouters` pattern:
+
+```typescript
+export const baseXRouter = router({
+  /* own procedures */
+});
+export const xRouter = mergeRouters(baseXRouter, router({ sub: subRouter }));
+```
+
+**Router key naming**: Never use `call`, `apply`, `bind`, `then`, or `catch` as router keys — they conflict with `Function.prototype` methods in tRPC's Proxy client. Use descriptive alternatives (e.g. `callSession` instead of `call`).
 
 To add a new router:
 
 1. Create `server/trpc/routers/myFeature.ts` exporting `myFeatureRouter`
-2. Import and register it in `server/trpc/routers/index.ts`
+2. If it belongs under an existing domain, nest it using `mergeRouters` in that domain's `index.ts`; otherwise add it as a top-level key in `server/trpc/routers/index.ts`
 
 ### tRPC Procedure Helpers
 

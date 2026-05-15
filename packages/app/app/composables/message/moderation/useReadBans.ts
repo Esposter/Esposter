@@ -6,8 +6,8 @@ export const useReadBans = (roomId: RoomInMessage["id"]) => {
   const { $trpc } = useNuxtApp();
   const banStore = useBanStore();
   const { readItems, readMoreItems } = banStore;
-  const readBans = () => readItems(() => $trpc.moderation.readBans.query({ roomId }));
+  const readBans = () => readItems(() => $trpc.message.moderation.readBans.query({ roomId }));
   const readMoreBans = (onComplete: () => void) =>
-    readMoreItems((cursor) => $trpc.moderation.readBans.query({ cursor, roomId }), onComplete);
+    readMoreItems((cursor) => $trpc.message.moderation.readBans.query({ cursor, roomId }), onComplete);
   return { readBans, readMoreBans };
 };

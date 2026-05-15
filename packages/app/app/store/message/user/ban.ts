@@ -14,7 +14,7 @@ export const useBanStore = defineStore("message/user/ban", () => {
   const { deleteBan: storeDeleteBan } = createOperationData(items, ["roomId", "userId"], DatabaseEntityType.Ban);
 
   const deleteBan = async (input: DeleteBanInput) => {
-    await $trpc.moderation.deleteBan.mutate(input);
+    await $trpc.message.moderation.deleteBan.mutate(input);
     storeDeleteBan(input);
   };
 

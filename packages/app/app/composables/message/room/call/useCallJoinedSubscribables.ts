@@ -23,28 +23,28 @@ export const useCallJoinedSubscribables = () => {
     (callSessionId) => {
       if (!callSessionId) return undefined;
 
-      const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(callSessionId, {
+      const participantJoinUnsubscribable = $trpc.callSession.onJoinCall.subscribe(callSessionId, {
         onData: (participant) => {
           createCallParticipant(callSessionId, participant);
         },
       });
-      const participantLeaveUnsubscribable = $trpc.roomCall.onLeaveCall.subscribe(callSessionId, {
+      const participantLeaveUnsubscribable = $trpc.callSession.onLeaveCall.subscribe(callSessionId, {
         onData: (participantId) => {
           deleteCallParticipant(callSessionId, participantId);
           deleteSpeaker(participantId);
         },
       });
-      const muteChangedUnsubscribable = $trpc.roomCall.onSetMute.subscribe(callSessionId, {
+      const muteChangedUnsubscribable = $trpc.callSession.onSetMute.subscribe(callSessionId, {
         onData: ({ id: participantId, isMuted }) => {
           setMute(callSessionId, participantId, isMuted);
         },
       });
-      const videoChangedUnsubscribable = $trpc.roomCall.onVideoChanged.subscribe(callSessionId, {
+      const videoChangedUnsubscribable = $trpc.callSession.onVideoChanged.subscribe(callSessionId, {
         onData: ({ id: participantId, isCameraEnabled }) => {
           setParticipantCamera(callSessionId, participantId, isCameraEnabled);
         },
       });
-      const knockCallUnsubscribable = $trpc.roomCall.onKnockCall.subscribe(callSessionId, {
+      const knockCallUnsubscribable = $trpc.callSession.knocker.onKnockCall.subscribe(callSessionId, {
         onData: (knocker) => {
           createKnocker(knocker);
         },

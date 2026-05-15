@@ -27,7 +27,7 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
       async (_event, onComplete) => {
         await withFinalizerAsync(async () => {
           if (!currentRoom) return;
-          await $trpc.moderation.executeAdminAction.mutate({
+          await $trpc.message.moderation.executeAdminAction.mutate({
             durationMs: selectedTimeoutDurationMs,
             roomId: currentRoom.id,
             targetUserId: user.id,

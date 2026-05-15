@@ -30,30 +30,30 @@ export const useCallSubscribables = () => {
     async (roomId) => {
       if (!roomId) return undefined;
 
-      const callSessionId = await $trpc.roomCall.readCallSessionId.query({ roomId });
+      const callSessionId = await $trpc.callSession.readCallSessionId.query({ roomId });
       setCurrentRoomCallSessionId(callSessionId);
       if (!callSessionId) return undefined;
 
-      const participants = await $trpc.roomCall.readCallParticipants.query({ callSessionId });
+      const participants = await $trpc.callSession.readCallParticipants.query({ callSessionId });
       setParticipants(callSessionId, participants);
 
-      const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(callSessionId, {
+      const participantJoinUnsubscribable = $trpc.callSession.onJoinCall.subscribe(callSessionId, {
         onData: (participant) => {
           createCallParticipant(callSessionId, participant);
         },
       });
-      const participantLeaveUnsubscribable = $trpc.roomCall.onLeaveCall.subscribe(callSessionId, {
+      const participantLeaveUnsubscribable = $trpc.callSession.onLeaveCall.subscribe(callSessionId, {
         onData: (id) => {
           deleteCallParticipant(callSessionId, id);
           deleteSpeaker(id);
         },
       });
-      const muteChangedUnsubscribable = $trpc.roomCall.onSetMute.subscribe(callSessionId, {
+      const muteChangedUnsubscribable = $trpc.callSession.onSetMute.subscribe(callSessionId, {
         onData: (muteChange) => {
           setMute(callSessionId, muteChange.id, muteChange.isMuted);
         },
       });
-      const videoChangedUnsubscribable = $trpc.roomCall.onVideoChanged.subscribe(callSessionId, {
+      const videoChangedUnsubscribable = $trpc.callSession.onVideoChanged.subscribe(callSessionId, {
         onData: ({ id, isCameraEnabled }) => {
           setParticipantCamera(callSessionId, id, isCameraEnabled);
         },

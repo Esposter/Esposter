@@ -47,7 +47,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     setParticipantCamera(activeCallSessionId.value, sessionIdValue, newIsCameraEnabled);
 
     await getResultAsync(() =>
-      $trpc.roomCall.setCamera.mutate({
+      $trpc.callSession.setCamera.mutate({
         callSessionId: activeCallSessionId.value,
         isCameraEnabled: newIsCameraEnabled,
       }),
@@ -65,7 +65,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     setMute(activeCallSessionId.value, sessionIdValue, newIsMuted);
 
     await getResultAsync(() =>
-      $trpc.roomCall.setMute.mutate({
+      $trpc.callSession.setMute.mutate({
         callSessionId: activeCallSessionId.value,
         isMuted: newIsMuted,
       }),
@@ -78,7 +78,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     currentRoomCallSessionId.value = callSessionId;
   };
   const createCall = async (): Promise<string | undefined> => {
-    const { callSessionId } = await $trpc.roomCall.createCall.mutate();
+    const { callSessionId } = await $trpc.callSession.createCall.mutate();
     return callSessionId;
   };
   const joinCall = async (id: string): Promise<string | undefined> => {
@@ -87,7 +87,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
     await getResultAsync(async () => {
-      const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.roomCall.joinCall.mutate({ id });
+      const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.callSession.joinCall.mutate({ id });
       const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
       await connect(
         new Room({ adaptiveStream: true, dynacast: true }),
@@ -123,9 +123,11 @@ export const useCallStore = defineStore("message/room/call", () => {
     callRoomId.value = roomId;
     let isJoined = false;
     await getResultAsync(async () => {
-      const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.roomCall.joinCallByRoomId.mutate({
-        roomId,
-      });
+      const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.callSession.joinCallByRoomId.mutate(
+        {
+          roomId,
+        },
+      );
       await connect(new Room({ adaptiveStream: true, dynacast: true }), livekitUrl, livekitToken, leaveCall, true);
       currentRoomCallSessionId.value = callSessionId;
       activeCallSessionId.value = callSessionId;
@@ -149,7 +151,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     await withFinalizerAsync(
       async () => {
         if (sessionId.value) deleteCallParticipant(callSessionId, sessionId.value);
-        await $trpc.roomCall.leaveCall.mutate({ callSessionId });
+        await $trpc.callSession.leaveCall.mutate({ callSessionId });
       },
       async () => {
         callRoomId.value = "";

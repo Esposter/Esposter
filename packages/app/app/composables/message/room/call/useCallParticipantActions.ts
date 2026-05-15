@@ -29,7 +29,7 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-microphone-off",
         onClick: async () => {
-          await $trpc.moderation.executeAdminAction.mutate({
+          await $trpc.message.moderation.executeAdminAction.mutate({
             roomId,
             targetUserId: userId,
             type: AdminActionType.ForceMute,
@@ -41,7 +41,7 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-microphone",
         onClick: async () => {
-          await $trpc.moderation.executeAdminAction.mutate({
+          await $trpc.message.moderation.executeAdminAction.mutate({
             roomId,
             targetUserId: userId,
             type: AdminActionType.ForceUnmute,
@@ -53,7 +53,7 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-account-remove",
         onClick: async () => {
-          await $trpc.moderation.executeAdminAction.mutate({
+          await $trpc.message.moderation.executeAdminAction.mutate({
             roomId,
             targetUserId: userId,
             type: AdminActionType.KickFromCall,

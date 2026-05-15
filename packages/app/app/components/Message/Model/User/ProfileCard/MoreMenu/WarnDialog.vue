@@ -25,7 +25,7 @@ const warnReason = ref("");
       async (_event, onComplete) => {
         await withFinalizerAsync(async () => {
           if (!currentRoom) return;
-          await $trpc.moderation.executeAdminAction.mutate({
+          await $trpc.message.moderation.executeAdminAction.mutate({
             reason: normalizeString(warnReason) || undefined,
             roomId: currentRoom.id,
             targetUserId: user.id,
