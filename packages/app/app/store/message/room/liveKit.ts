@@ -206,10 +206,10 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   };
   const setVirtualBackground = async (imagePath: string) => {
     mediaStore.selectedVirtualBackground = imagePath;
-    if (!localCameraTrack) return false;
+    if (!localCameraTrack) return;
     else if (!supportsBackgroundProcessors()) {
       console.warn("Background processors are not supported in this browser.");
-      return false;
+      return;
     }
 
     virtualBackgroundProcessor ??= BackgroundProcessor({ mode: "disabled" });
@@ -220,13 +220,12 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     }
     if (!imagePath) {
       await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
-      return true;
+      return;
     }
 
     const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
-    if (!resolvedPath) return false;
+    if (!resolvedPath) return;
     await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
-    return true;
   };
   const readDevices = (kind: MediaDeviceKind) => Room.getLocalDevices(kind);
   const switchDevice = async (kind: MediaDeviceKind, deviceId: string) => {
