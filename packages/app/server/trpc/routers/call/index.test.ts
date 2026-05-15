@@ -31,7 +31,7 @@ describe("call", () => {
     callSessionParticipantMap.clear();
     await mockContext.db.delete(callSessionsInMessage);
     await mockContext.db.delete(roomsInMessage);
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   test("creates standalone call", async () => {

@@ -76,6 +76,11 @@ The default mock session is always the **base user** (inserted by `createMockCon
   - Service-layer unit tests (`server/services/**`) where using router callers creates upward coupling
 - **Never `mockContext.db.select`** — read state via callers (e.g. `caller.readRoles`), not raw DB queries.
 
+## Mock Cleanup
+
+- **Use `vi.restoreAllMocks()` in cleanup** — prefer `restoreAllMocks` over `clearAllMocks`. `restoreAllMocks` restores spied/mocked implementations and clears mock state; `clearAllMocks` only clears usage data and can leak mock implementations between tests.
+- **Do not use `vi.resetAllMocks()` as routine cleanup** — it resets mock implementations to empty functions, which can erase intentional `vi.mock` defaults and make tests less explicit.
+
 ## Error Assertions
 
 - **Never `.rejects.toThrow()`** — always assert the specific error: `.rejects.toThrowErrorMatchingInlineSnapshot(...)` or `.rejects.toBeInstanceOf(ErrorClass)`.

@@ -35,7 +35,7 @@ describe("call/knocker", () => {
     callSessionParticipantMap.clear();
     await mockContext.db.delete(callSessionsInMessage);
     await mockContext.db.delete(roomsInMessage);
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe("knockCall", () => {

@@ -59,6 +59,11 @@ Vue convention notes:
 - `watch`, `onMounted`, `onUnmounted`, and related Vue hooks may use async callbacks directly. Do not wrap Vue hook/watch callbacks in `getSynchronizedFunction`.
 - Always destructure props from `defineProps` (`const { id } = defineProps<Props>()`) so the props reactivity transform is used; avoid `props.id` unless there is a specific reason.
 
+Testing convention notes:
+
+- Prefer `vi.restoreAllMocks()` in cleanup. It restores spied/mocked implementations and clears mock state; `vi.clearAllMocks()` only clears usage data and can leak mock implementations between tests.
+- Do not use `vi.resetAllMocks()` as routine cleanup because it erases mock implementations.
+
 DB migrations (run from `packages/db-schema/`):
 
 ```bash
