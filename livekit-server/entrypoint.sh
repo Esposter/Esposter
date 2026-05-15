@@ -115,7 +115,7 @@ rtc:
   port_range_start: 0
   port_range_end: 0
   use_external_ip: ${USE_EXTERNAL_IP}
-  force_tcp: false
+  allow_tcp_fallback: true
   use_ice_lite: false
   enable_loopback_candidate: false
 

@@ -2,7 +2,7 @@
 
 This service wraps the official `livekit/livekit-server:v1.11.0` image with a Railway-specific entrypoint that requires all deployment variables to be present at startup.
 
-Railway does not expose UDP publicly, so this runs LiveKit in a TCP-friendly mode and uses a Railway TCP proxy for WebRTC ICE media. Redis remains a separate Railway Redis service for room state and future horizontal scaling.
+Railway does not expose UDP publicly, so this configures LiveKit's ICE/TCP listener behind a Railway TCP proxy. Redis remains a separate Railway Redis service for room state and future horizontal scaling.
 
 ## Railway settings
 
