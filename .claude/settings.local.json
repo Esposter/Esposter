@@ -92,19 +92,20 @@
       "PowerShell(read f:plugins/**)",
       "PowerShell(wait)",
       "PowerShell(xargs:*)",
+      "Skill(dependency-updates)",
+      "Skill(styling)",
       "WebFetch(domain:bundlephobia.com)",
       "WebFetch(domain:mathjs.org)",
       "WebFetch(domain:nuxt.com)",
       "WebFetch(domain:orm.drizzle.team)",
+      "WebFetch(domain:vuetifyjs.com)",
       "WebFetch(domain:vueuse.org)",
       "WebFetch(domain:www.npmjs.com)",
       "mcp__vuetify-mcp__get_component_api_by_version",
       "mcp__vuetify-mcp__get_exposed_exports",
       "mcp__vuetify-mcp__get_feature_guide",
       "mcp__vuetify-mcp__get_installation_guide",
-      "mcp__vuetify-mcp__get_v4_breaking_changes",
-      "WebFetch(domain:vuetifyjs.com)",
-      "Skill(styling)"
+      "mcp__vuetify-mcp__get_v4_breaking_changes"
     ]
   }
 }
