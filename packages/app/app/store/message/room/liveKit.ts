@@ -218,11 +218,14 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       if (virtualBackgroundProcessor.processedTrack)
         mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
     }
+    if (!imagePath) {
+      await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
+      return true;
+    }
+
     const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
-    if (resolvedPath === null) return false;
-    await virtualBackgroundProcessor.switchTo(
-      imagePath ? { imagePath: resolvedPath, mode: "virtual-background" } : { mode: "disabled" },
-    );
+    if (!resolvedPath) return false;
+    await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
     return true;
   };
   const readDevices = (kind: MediaDeviceKind) => Room.getLocalDevices(kind);
