@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { authClient } from "@/services/auth/authClient";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useCallStore } from "@/store/message/room/call";
+import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { DatabaseEntityType, selectCallSessionInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
@@ -17,8 +19,8 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id as string;
-const isJoined = await useCallIdSubscribables(id);
-if (!isJoined)
+const callSession = await useCallIdSubscribables(id);
+if (!callSession)
   throw createError({
     status: 404,
     statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, id),
@@ -26,18 +28,27 @@ if (!isJoined)
 
 const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
-watch(activeCallSessionId, (newActiveCallSessionId) => {
-  if (!newActiveCallSessionId) navigateTo(RoutePath.CallIndex);
+const { joinCall } = callStore;
+const knockerStore = useKnockerStore();
+const { knockingCallSessionId } = storeToRefs(knockerStore);
+const { data: session } = await authClient.useSession(useFetch);
+const isCreator = computed(() => callSession.userId === session.value?.user.id);
+if (isCreator.value) await joinCall(id);
+
+watch(activeCallSessionId, async (newActiveCallSessionId) => {
+  if (!newActiveCallSessionId) await navigateTo(RoutePath.CallsIndex);
 });
 </script>
 
 <template>
   <NuxtLayout hide-global-scrollbar>
-    <div size-full overflow-hidden>
-      <Head>
-        <Title>Call</Title>
-      </Head>
-      <MessageContentCallView />
+    <Head>
+      <Title>Call</Title>
+    </Head>
+    <div size-full>
+      <MessageContentCallView v-if="activeCallSessionId" />
+      <MessageContentCallWaiting v-else-if="knockingCallSessionId" />
+      <MessageContentCallPreJoin v-else :call-id="id" />
     </div>
   </NuxtLayout>
 </template>

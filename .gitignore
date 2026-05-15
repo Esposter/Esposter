@@ -46,3 +46,5 @@ logs
 .env.*
 !.env.example
 
+# Claude
+scheduled_tasks.lock

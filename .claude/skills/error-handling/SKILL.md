@@ -2,6 +2,10 @@
 
 Esposter uses **neverthrow** for explicit error handling. No silent swallows — every error is either propagated, logged, or shown to the user.
 
+## `try` / `catch` Are BANNED
+
+**Never write `try { ... } catch { ... }` anywhere in this codebase.** The `try` keyword is forbidden. Always use `getResult`/`getResultAsync` (and their chain methods) instead. This applies to all code — components, composables, stores, server routes, and tRPC routers alike.
+
 ## Core Utility
 
 ```typescript

@@ -28,6 +28,7 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 - **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places (e.g. called from both a button click AND a keydown handler). Single-use handlers must always be inlined, no exceptions.
 - **IME composition guard** — when handling `@keydown.enter` on text inputs, guard inline against IME composition so that confirming a CJK candidate doesn't prematurely commit: `@keydown.enter.stop="!$event.isComposing && commitEdit()"`.
 - **`defineModel`**: always type explicitly. For booleans, you must pass `{ default: false }` so the type does not implicitly include `undefined` (`defineModel<boolean>({ default: false })`).
+- **`defineProps`**: always destructure props at declaration time (`const { id, name } = defineProps<Props>()`). This preserves the props reactivity transform and avoids `props.foo` / `.value` ceremony in script and template. Use defaults in the destructure when needed.
 - **`defineSlots`**: only assign to a variable when `slots` is actually referenced in script — `const slots = defineSlots<{ ... }>()`. If `slots` is not used in script (e.g. the template uses `<slot>` tags directly), call `defineSlots<...>()` without assignment.
 - **Never destructure event parameters** — always use `(event: KeyboardEvent) => { event.key ... }` not `({ key }: KeyboardEvent) => { key ... }`. Destructuring event methods (e.g. `preventDefault`, `stopPropagation`) causes "Illegal invocation" because they lose their `this` binding. Keep the full `event` object for consistency even when only accessing properties.
 - **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
@@ -319,6 +320,7 @@ For a prop dependency, wrap it in a getter: `() => isActive`.
 - Always place `watch`, `onMounted`, `onUnmounted`, and other Vue lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments.
 - Always put a blank line before them to visually separate them from regular `const` assignments.
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly. This avoids scope/binding issues and prevents accidental argument forwarding: `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
+- Vue `watch`, `onMounted`, `onUnmounted`, and related lifecycle hooks support async callbacks in this codebase. Use `async () => { await ... }` directly for hook/watch work; do not wrap Vue hook/watch callbacks in `getSynchronizedFunction`.
 - This applies everywhere — `.map()`, `.filter()`, lifecycle hooks, JS event listeners, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`. Vue template `@event` bindings are handled separately in Template Conventions: use `@click="fn()"` (call expression), not `@click="fn"` (bare reference).
 
 ## Browser Globals — Always Use `window.` Prefix

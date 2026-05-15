@@ -96,11 +96,47 @@ const callRoomId = ref<string>();
 
 The same applies to other nullable-initial refs: `ref<User>()`, `ref<number>()`, etc.
 
+## defineProps — Always Use Named `interface <ComponentName>Props`
+
+Always declare a named interface suffixed with `Props` and named after the component, then pass it to `defineProps<...>()`. Never use the inline object-literal type or a plain `interface Props`.
+
+```ts
+// CORRECT — name reflects the component
+interface KnockerItemProps {
+  knocker: CallParticipant;
+}
+const props = defineProps<KnockerItemProps>();
+
+// WRONG — anonymous type
+const props = defineProps<{ knocker: CallParticipant }>();
+
+// WRONG — generic name loses component identity
+interface Props {
+  knocker: CallParticipant;
+}
+const props = defineProps<Props>();
+```
+
+Name the interface after the component's meaningful identity (file/folder name, stripping `Index`). For `PreJoin/Index.vue` → `interface PreJoinProps`. For `JoinNotice/KnockerItem.vue` → `interface KnockerItemProps`.
+
 ## Refs & Computed
 
-- **Template refs** — always use `useTemplateRef` for both component and HTML element refs.
-  - Components: `useTemplateRef<InstanceType<typeof ComponentName>>("name")`
-  - HTML elements: `useTemplateRef("container")` — no explicit type annotation needed, Vue infers it. Use a generic semantic name like `"container"`, never the element tag name (not `"spanRef"`, not `"divRef"`).
+- **Template refs** — always use `useTemplateRef` for both component and HTML element refs. **Never annotate with a generic type argument** — Vue 3.5+ infers the type from the template automatically. **Never add a `Ref` suffix to the variable name.**
+
+  ```ts
+  // CORRECT — no generic, no "Ref" suffix, matches the ref="video" attribute
+  const video = useTemplateRef("video");
+
+  // WRONG — spurious type annotation
+  const video = useTemplateRef<HTMLVideoElement>("video");
+
+  // WRONG — spurious import + "Ref" suffix
+  import type MyDialog from "@/components/MyDialog.vue";
+  const dialogRef = useTemplateRef<InstanceType<typeof MyDialog>>("dialogRef");
+  ```
+
+  Use a semantic name matching the `ref="..."` attribute value (e.g. `"video"`, `"container"`, `"dialog"` — never `"videoRef"`, `"divRef"`). If a component type was only imported for the `useTemplateRef` generic, remove that import entirely.
+
 - **Sort at display time** — apply `.toSorted()` inside the `computed` that feeds the template; never sort in store ingestion (`readX`, `setX`, mutation helpers). Stores hold data in natural order; components transform for display. **Exception**: when the sorted order must be sent to the backend (e.g. message pagination cursors), sort before the API call instead.
 - **Computed for reused expressions** — extract a `computed` (named to match the prop, e.g. `title`) when the same derived value is bound to two or more props. This enables the `:propName` shorthand for one binding and avoids repeating the expression: `const title = computed(() => ...)` → `:title :tooltip-text="title"`. No need for a computed if the value is only used in one place.
 - **Inline prop values** — inline prop values directly in the template to take advantage of Vue TypeScript inference. Only extract to a `computed` when the same logic is reused in multiple places. Single-use derived values stay inline.

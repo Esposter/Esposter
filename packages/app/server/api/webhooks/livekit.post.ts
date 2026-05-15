@@ -1,6 +1,7 @@
 import { db } from "@@/server/db";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { createCallParticipant } from "@@/server/services/message/call/createCallParticipant";
-import { deleteCallParticipant } from "@@/server/services/message/call/deleteCallParticipant";
+import { leaveCallAsParticipant } from "@@/server/services/message/call/leaveCallAsParticipant";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { getResultAsync } from "@esposter/shared";
 import { WebhookReceiver } from "livekit-server-sdk";
@@ -22,8 +23,8 @@ export default defineEventHandler(async (event) => {
       if (!callSessionId || !sessionId) return { ok: true };
 
       if (webhookEvent.event === "participant_left") {
-        deleteCallParticipant(callSessionId, sessionId);
-        callEventEmitter.emit("leaveCall", { callSessionId, id: sessionId, sessionId });
+        const userId = callSessionParticipantMap.get(callSessionId)?.get(sessionId)?.userId ?? "";
+        await leaveCallAsParticipant(db, callSessionId, sessionId, userId);
         return { ok: true };
       }
 

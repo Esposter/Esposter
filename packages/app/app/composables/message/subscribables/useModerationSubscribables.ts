@@ -9,7 +9,7 @@ export const useModerationSubscribables = () => {
   useOnlineSubscribable(currentRoomId, (roomId) => {
     if (!roomId) return undefined;
 
-    const adminActionUnsubscribable = $trpc.moderation.onAdminAction.subscribe(
+    const adminActionUnsubscribable = $trpc.message.moderation.onAdminAction.subscribe(
       { roomId },
       {
         onData: getSynchronizedFunction(async ({ durationMs, type }) => {

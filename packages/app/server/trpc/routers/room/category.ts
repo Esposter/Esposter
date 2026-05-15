@@ -10,7 +10,7 @@ import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema
 import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
-export const roomCategoryRouter = router({
+export const categoryRouter = router({
   createRoomCategory: standardAuthedProcedure
     .input(createRoomCategoryInputSchema)
     .mutation<RoomCategoryInMessage>(async ({ ctx, input }) => {

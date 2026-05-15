@@ -2,6 +2,7 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { JoinCallOutput } from "@@/server/models/room/call/JoinCallOutput";
 
 import { on } from "@@/server/services/events/on";
+import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { createStandaloneCallSessionId } from "@@/server/services/message/call/createStandaloneCallSessionId";
@@ -16,6 +17,7 @@ import { callEventEmitter } from "@@/server/services/message/events/callEventEmi
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
 import {
   callSessionIdSchema,
   DatabaseEntityType,
@@ -24,6 +26,7 @@ import {
 } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { z } from "zod";
 
 const joinCallByRoomIdInputSchema = roomIdSchema;
@@ -32,15 +35,16 @@ const leaveCallInputSchema = callSessionIdSchema;
 const setCameraInputSchema = z.object({ ...callSessionIdSchema.shape, isCameraEnabled: z.boolean() });
 const setMuteInputSchema = z.object({ ...callSessionIdSchema.shape, isMuted: z.boolean() });
 const readCallSessionIdInputSchema = roomIdSchema;
+const readCallSessionInputSchema = z.object({ id: selectCallSessionInMessageSchema.shape.id });
 const readCallParticipantsInputSchema = callSessionIdSchema;
 const onJoinCallInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onLeaveCallInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onSetMuteInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onVideoChangedInputSchema = selectCallSessionInMessageSchema.shape.id;
 
-export const callRouter = router({
+export const baseCallRouter = router({
   createCall: standardAuthedProcedure.mutation(async ({ ctx }) => {
-    const callSessionId = await createStandaloneCallSessionId(ctx.db);
+    const callSessionId = await createStandaloneCallSessionId(ctx.db, ctx.getSessionPayload.user.id);
     return { callSessionId };
   }),
   joinCall: standardAuthedProcedure
@@ -61,12 +65,20 @@ export const callRouter = router({
         });
 
       const { session, user } = ctx.getSessionPayload;
+      const isCreator = callSession.userId === user.id;
+      const isAdmitted = callAdmittedParticipantMap.get(id)?.has(session.id) ?? false;
+      if (!isCreator && !isAdmitted)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Must be admitted to join this call").message,
+        });
+      callAdmittedParticipantMap.get(id)?.delete(session.id);
       return joinLiveKitCall(callSession, createParticipant(session, user), user.id);
     }),
   joinCallByRoomId: getMemberProcedure(joinCallByRoomIdInputSchema, "roomId").mutation<JoinCallOutput>(
     async ({ ctx, input: { roomId } }) => {
       const { session, user } = ctx.getSessionPayload;
-      const callSessionId = await createCallSessionId(ctx.db, roomId);
+      const callSessionId = await createCallSessionId(ctx.db, roomId, user.id);
       return joinLiveKitCall({ id: callSessionId, roomId }, createParticipant(session, user), user.id);
     },
   ),
@@ -133,6 +145,18 @@ export const callRouter = router({
       await requireCallSession(ctx.db, callSessionId);
       return getCallParticipants(callSessionId);
     }),
+  readCallSession: standardAuthedProcedure.input(readCallSessionInputSchema).query(async ({ ctx, input: { id } }) => {
+    const callSession = await ctx.db.query.callSessionsInMessage.findFirst({
+      columns: { id: true, roomId: true, userId: true },
+      where: { id: { eq: id } },
+    });
+    if (!callSession)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError(DatabaseEntityType.CallSession, id).message,
+      });
+    return callSession;
+  }),
   readCallSessionId: getMemberProcedure(readCallSessionIdInputSchema, "roomId").query<string>(
     ({ ctx, input: { roomId } }) => readCallSessionId(ctx.db, roomId),
   ),
@@ -159,3 +183,5 @@ export const callRouter = router({
     callEventEmitter.emit("muteChanged", { callSessionId, id: sessionId, isMuted });
   }),
 });
+
+export const callRouter = mergeRouters(baseCallRouter, router({ knocker: knockerRouter }));

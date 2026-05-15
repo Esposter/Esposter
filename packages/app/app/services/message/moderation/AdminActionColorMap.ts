@@ -7,6 +7,7 @@ export const AdminActionColorMap = {
   [AdminActionType.KickFromCall]: "warning",
   [AdminActionType.KickFromRoom]: "error",
   [AdminActionType.SoftBan]: "error",
+  [AdminActionType.StopScreenShare]: "warning",
   [AdminActionType.TimeoutUser]: "warning",
   [AdminActionType.Warn]: "warning",
 } as const satisfies Record<AdminActionType, string>;

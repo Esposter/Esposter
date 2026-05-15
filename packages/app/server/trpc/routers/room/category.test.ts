@@ -4,20 +4,20 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
-import { roomCategoryRouter } from "@@/server/trpc/routers/roomCategory";
+import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { roomCategoriesInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-describe("roomCategory", () => {
+describe("room/category", () => {
   let mockContext: Context;
-  let caller: DecorateRouterRecord<TRPCRouter["roomCategory"]>;
+  let roomCategoryCaller: DecorateRouterRecord<TRPCRouter["room"]["category"]>;
   const name = "name";
   const updatedName = "updatedName";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    caller = createCallerFactory(roomCategoryRouter)(mockContext);
+    roomCategoryCaller = createCallerFactory(categoryRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -27,7 +27,7 @@ describe("roomCategory", () => {
   test("reads empty room categories", async () => {
     expect.hasAssertions();
 
-    const readRoomCategories = await caller.readRoomCategories();
+    const readRoomCategories = await roomCategoryCaller.readRoomCategories();
 
     expect(readRoomCategories).toHaveLength(0);
   });
@@ -35,8 +35,8 @@ describe("roomCategory", () => {
   test("reads room categories", async () => {
     expect.hasAssertions();
 
-    const newRoomCategory = await caller.createRoomCategory({ name });
-    const readRoomCategories = await caller.readRoomCategories();
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
+    const readRoomCategories = await roomCategoryCaller.readRoomCategories();
 
     expect(readRoomCategories).toHaveLength(1);
     expect(takeOne(readRoomCategories).id).toBe(newRoomCategory.id);
@@ -46,7 +46,7 @@ describe("roomCategory", () => {
   test("creates", async () => {
     expect.hasAssertions();
 
-    const newRoomCategory = await caller.createRoomCategory({ name });
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
 
     expect(newRoomCategory.name).toBe(name);
   });
@@ -54,8 +54,8 @@ describe("roomCategory", () => {
   test("updates", async () => {
     expect.hasAssertions();
 
-    const newRoomCategory = await caller.createRoomCategory({ name });
-    const updatedRoomCategory = await caller.updateRoomCategory({
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
+    const updatedRoomCategory = await roomCategoryCaller.updateRoomCategory({
       id: newRoomCategory.id,
       name: updatedName,
       position: 1,
@@ -69,8 +69,8 @@ describe("roomCategory", () => {
   test("deletes", async () => {
     expect.hasAssertions();
 
-    const newRoomCategory = await caller.createRoomCategory({ name });
-    const deletedRoomCategory = await caller.deleteRoomCategory(newRoomCategory.id);
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
+    const deletedRoomCategory = await roomCategoryCaller.deleteRoomCategory(newRoomCategory.id);
 
     expect(deletedRoomCategory.id).toBe(newRoomCategory.id);
   });

@@ -10,7 +10,7 @@ export const useReadEmojis = () => {
   return async (messageRowKeys: string[]) => {
     if (!currentRoomId.value || messageRowKeys.length === 0) return;
 
-    const emojis = await $trpc.emoji.readEmojis.query({ messageRowKeys, roomId: currentRoomId.value });
+    const emojis = await $trpc.message.emoji.readEmojis.query({ messageRowKeys, roomId: currentRoomId.value });
     for (const messageRowKey of messageRowKeys)
       setEmojis(
         messageRowKey,

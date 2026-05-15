@@ -11,7 +11,7 @@ const joinCall = async () => {
   if (!canJoin.value) return;
   isJoining.value = true;
   await withFinalizerAsync(
-    () => router.push(RoutePath.Call(callId.value)),
+    () => router.push(RoutePath.Calls(callId.value)),
     () => {
       isJoining.value = false;
     },

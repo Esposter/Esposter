@@ -12,7 +12,7 @@ const startCall = async () => {
     async () => {
       const newCallSessionId = await createCall();
       if (!newCallSessionId) return;
-      await router.push(RoutePath.Call(newCallSessionId));
+      await router.push(RoutePath.Calls(newCallSessionId));
     },
     () => {
       isCreating.value = false;
@@ -24,13 +24,9 @@ const startCall = async () => {
 <template>
   <v-tooltip text="Start a new call">
     <template #activator="{ props }">
-      <v-btn
+      <StyledButton
         :="props"
-        :loading="isCreating"
-        color="primary"
-        prepend-icon="mdi-video-plus"
-        text="New call"
-        variant="tonal"
+        :button-props="{ loading: isCreating, prependIcon: 'mdi-video-plus', text: 'New call' }"
         @click="startCall()"
       />
     </template>

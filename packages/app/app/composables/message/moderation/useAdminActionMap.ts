@@ -26,6 +26,9 @@ export const useAdminActionMap = () => {
       await storeDeleteRoom({ id: roomId });
       notify("You have been soft-banned from this room.");
     },
+    [AdminActionType.StopScreenShare]: () => {
+      notify("Your screen share has been stopped by a moderator.");
+    },
     [AdminActionType.TimeoutUser]: (_roomId: string, durationMs?: number) => {
       const minutes = durationMs ? Math.max(1, Math.ceil(durationMs / 60000)) : 0;
       notify(`You have been timed out for ${minutes} minute${minutes === 1 ? "" : "s"}.`);

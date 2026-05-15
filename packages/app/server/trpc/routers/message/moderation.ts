@@ -11,6 +11,9 @@ import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants"
 import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
+import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
+import { getCallParticipants } from "@@/server/services/message/call/getCallParticipants";
+import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
 import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
@@ -132,6 +135,14 @@ export const moderationRouter = router({
                 messageEventEmitter.emit("deleteMessage", { partitionKey, rowKey });
             }
 
+          break;
+        }
+        case AdminActionType.StopScreenShare: {
+          const callSessionId = await readCallSessionId(ctx.db, roomId);
+          if (!callSessionId) break;
+
+          const targetParticipants = getCallParticipants(callSessionId).filter(({ userId }) => userId === targetUserId);
+          await stopLiveKitScreenShare(callSessionId, targetParticipants);
           break;
         }
         case AdminActionType.TimeoutUser:

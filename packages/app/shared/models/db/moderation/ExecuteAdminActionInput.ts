@@ -29,6 +29,7 @@ export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
       AdminActionType.ForceUnmute,
       AdminActionType.KickFromRoom,
       AdminActionType.KickFromCall,
+      AdminActionType.StopScreenShare,
     ]),
   }),
 ]);

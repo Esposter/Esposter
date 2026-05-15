@@ -676,10 +676,6 @@ overrides:
 importers:
 
   .:
-    dependencies:
-      neverthrow:
-        specifier: 'catalog:'
-        version: 8.2.0
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -1174,6 +1170,9 @@ importers:
         specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
       '@esposter/db-mock':
         specifier: workspace:*
         version: link:../db-mock
@@ -1334,6 +1333,9 @@ importers:
         specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
       '@types/web-push':
         specifier: 'catalog:'
         version: 3.6.4
@@ -1380,6 +1382,9 @@ importers:
       '@azure/web-pubsub':
         specifier: 'catalog:'
         version: 1.2.0
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
 
   packages/configuration:
     devDependencies:
@@ -1480,6 +1485,9 @@ importers:
       '@azure/search-documents':
         specifier: 'catalog:'
         version: 13.0.0
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
       '@esposter/db-mock':
         specifier: workspace:*
         version: link:../db-mock
@@ -1501,6 +1509,10 @@ importers:
       drizzle-orm:
         specifier: 'catalog:'
         version: 1.0.0-rc.2(@electric-sql/pglite@0.4.5)(postgres@3.4.9)(valibot@1.4.0(typescript@5.9.3))(zod@4.4.3)
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
 
   packages/db-schema:
     dependencies:
@@ -1520,6 +1532,9 @@ importers:
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.31.0
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
       '@trpc/server':
         specifier: 'catalog:'
         version: 11.17.0(typescript@5.9.3)
@@ -1542,6 +1557,9 @@ importers:
         specifier: 'catalog:'
         version: 1.11.20
     devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
       '@types/data-urls':
         specifier: 'catalog:'
         version: 3.0.5
@@ -1554,6 +1572,9 @@ importers:
       '@vueuse/core':
         specifier: 'catalog:'
         version: 14.3.0(vue@3.5.34(typescript@5.9.3))
+      neverthrow:
+        specifier: 'catalog:'
+        version: 8.2.0
       node-html-parser:
         specifier: 'catalog:'
         version: 7.1.0
@@ -1567,6 +1588,9 @@ importers:
       '@azure/data-tables':
         specifier: 'catalog:'
         version: 13.3.2
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
 
   packages/vue-phaserjs:
     dependencies:
@@ -1588,6 +1612,10 @@ importers:
       vue:
         specifier: 'catalog:'
         version: 3.5.34(typescript@5.9.3)
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
 
   packages/xml2js:
     dependencies:
@@ -1601,6 +1629,9 @@ importers:
         specifier: 'catalog:'
         version: 4.0.3
     devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
       '@types/sax':
         specifier: 'catalog:'
         version: 1.2.7

@@ -40,6 +40,9 @@
     "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "tsgo"
   },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*"
+  },
   "peerDependencies": {
     "@electric-sql/pglite": "catalog:",
     "@esposter/db-schema": "workspace:*",

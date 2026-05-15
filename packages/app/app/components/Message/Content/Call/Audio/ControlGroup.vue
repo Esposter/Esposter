@@ -1,6 +1,6 @@
 <template>
   <div rd-full bg-background flex items-center>
-    <MessageContentCallMuteButton />
+    <MessageContentCallAudioMuteButton />
     <MessageContentCallAudioSettingsButton />
   </div>
 </template>

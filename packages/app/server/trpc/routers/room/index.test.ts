@@ -23,7 +23,7 @@ const expectedUsersToRoomsInsertError = (roomId: string, userId: string) =>
 describe("room", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let directMessageCaller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
+  let directMessageCaller: DecorateRouterRecord<TRPCRouter["room"]["directMessage"]>;
   let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
   const roomId = crypto.randomUUID();
   const name = "name";

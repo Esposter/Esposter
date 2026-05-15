@@ -33,6 +33,9 @@ import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfani
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { categoryRouter } from "@@/server/trpc/routers/room/category";
+import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
+import { filterRouter } from "@@/server/trpc/routers/room/filter";
 import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
@@ -61,6 +64,7 @@ import {
   takeOne,
 } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { and, count, desc, eq, getColumns, ilike, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
@@ -106,7 +110,7 @@ const readInviteIdInputSchema = roomIdSchema;
 
 const createInviteInputSchema = roomIdSchema;
 
-export const roomRouter = router({
+export const baseRoomRouter = router({
   countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
     async ({ ctx, input: { roomId } }) =>
       takeOne(
@@ -533,3 +537,8 @@ export const roomRouter = router({
     return updatedRoom;
   }),
 });
+
+export const roomRouter = mergeRouters(
+  baseRoomRouter,
+  router({ category: categoryRouter, directMessage: directMessageRouter, filter: filterRouter }),
+);

@@ -44,7 +44,7 @@ When any participant publishes a `ScreenShare` track:
 ### Spotlight / pin
 
 - Click any participant tile (camera or screenshare) to pin it to the main area
-- Pinned state: `ref<string>` (participant SID) in the call store — local only, not broadcast
+- Pinned state: `pinnedParticipantId: ref<string>` in `call/media.ts`; values are LiveKit identities, which match Esposter auth session IDs. This is local only and not broadcast.
 
 ---
 
@@ -99,16 +99,16 @@ const activeScreenShare = computed(
 
 ### Components
 
-**`Content/Call/ScreenShareButton.vue`** — starts/stops local screenshare through the call store.
+**`Content/Call/ScreenShare/Button.vue`** — starts/stops local screenshare through the call store.
 
-**`Content/Call/ScreenShareStage.vue`** — presenter view:
+**`Content/Call/ScreenShare/Stage.vue`** — presenter view:
 
 - Renders when `hasScreenShare`
 - `<video autoplay playsinline />` bound to the active screen stream
 - Presenter label resolves from `CallParticipant` by LiveKit identity/session ID
 - Participant strip remains visible below the presenter stage
 
-**`Content/Call/ParticipantTile.vue`** — shared camera/avatar tile for grid and strip layouts.
+**`Content/Call/Participant/Tile.vue`** — shared camera/avatar tile for grid and strip layouts.
 
 ---
 
@@ -120,14 +120,15 @@ const activeScreenShare = computed(
 
 ## Moderation: Stop Others' Screenshare
 
-New `AdminActionType.StopScreenShare`:
+Implemented as `AdminActionType.StopScreenShare`:
 
-1. Add to `AdminActionType` enum
-2. Add arm to `ExecuteAdminActionInput` discriminated union
+1. `AdminActionType.StopScreenShare`
+2. Arm in `ExecuteAdminActionInput`
 3. Permission: `RoomPermission.MuteMembers` (reuse existing — conceptually the same gate)
-4. `AdminActionPermissionMap`: map to `RoomPermission.MuteMembers`
-5. Client handler (`useAdminActionMap`): calls `stopScreenShare()` on the target participant via LiveKit `room.localParticipant` (only works if you ARE the target; for remote stop, use LiveKit Admin API: `DELETE /twirp/livekit.RoomService/RemoveParticipant` or `MutePublishedTrack`)
-6. Via LiveKit Admin API (server-side, from the moderation tRPC action): `roomService.mutePublishedTrack(roomId, participantSid, trackSid, true)` — mutes the screenshare track on the SFU level
+4. `AdminActionPermissionMap`: maps to `RoomPermission.MuteMembers`
+5. Client notification in `useAdminActionMap`
+6. Server-side LiveKit enforcement in `executeAdminAction`: find the active room call session, find the target user's active call participants, revoke screen-share publish sources for those LiveKit identities, and mute any active `ScreenShare` / `ScreenShareAudio` tracks
+7. Target-client hook in `useCallStore`: call `setScreenShare(false)` through the call store hook and show a snackbar
 
 ---
 
@@ -152,12 +153,12 @@ const canScreenShare = computed(
 
 | Action | File                                                                                                |
 | ------ | --------------------------------------------------------------------------------------------------- |
-| New    | `Content/Call/ScreenShareStage.vue` — presenter view                                                |
-| New    | `Content/Call/AudioControlGroup.vue` — microphone button clung to up-caret audio settings           |
-| New    | `Content/Call/VideoControlGroup.vue` — camera button clung to up-caret video settings/backgrounds   |
-| New    | `Content/Call/AudioSettingsButton.vue` — microphone and speaker selection                           |
-| New    | `Content/Call/VideoSettingsButton.vue` — camera selection and starter virtual backgrounds           |
-| Modify | `Content/Call/ControlBar.vue` — screenshare + camera + deafen + settings buttons                    |
+| New    | `Content/Call/ScreenShare/Stage.vue` — presenter view                                               |
+| New    | `Content/Call/Audio/ControlGroup.vue` — microphone button clung to up-caret audio settings          |
+| New    | `Content/Call/Video/ControlGroup.vue` — camera button clung to up-caret video settings/backgrounds  |
+| New    | `Content/Call/Audio/SettingsButton.vue` — microphone and speaker selection                          |
+| New    | `Content/Call/Video/SettingsButton.vue` — camera selection and starter virtual backgrounds          |
+| Modify | `Content/Call/Control/Bar.vue` — screenshare + camera + deafen + settings buttons                   |
 | Modify | `Content/Call/View.vue` — screen stage, participant strip, invite card, join notice                 |
 | Modify | `store/message/room/call/media.ts` — screenshare/pin state and local/remote screen streams          |
 | Modify | `store/message/room/call/index.ts` — root `toggleScreenShare` wrapper for UI and tRPC/SDK boundary  |

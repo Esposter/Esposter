@@ -1,12 +1,12 @@
 # Call View UI — Standalone Call Page & Reusable Call Component
 
-Full-screen call experience for `/call/[id]`, with `/call` as the standalone call lobby/start page. Components are shared with the inline room call view.
+Full-screen call experience for `/calls/[id]`, with `/calls` as the standalone call lobby/start page. Components are shared with the inline room call view.
 
 ---
 
 ## Layout
 
-### v1 — Audio only (current)
+### Current — Audio, camera, and screenshare
 
 ```text
 ┌─────────────────────────────────────────────────────────┐  bg-black, h-screen, layout: false
@@ -24,15 +24,15 @@ Full-screen call experience for `/call/[id]`, with `/call` as the standalone cal
 └─────────────────────────────────────────────────────────┘
 ```
 
-Grid tile: `aspect-video` (16:9), dark `bg-grey-darken-4`. Avatar centered. Name + badges bottom-left.
+Grid tile: `aspect-video` (16:9), dark `bg-grey-darken-4`. Camera stream renders when available; otherwise the avatar is centered. Name + badges sit bottom-left.
 
 Grid distributes automatically: 1 → full width centered; 2 → 2-col; 4 → 2×2; 6 → 3×2; etc.
 
-### v2 — Camera tracks
+### Camera tracks
 
 Same `CallView` — replace avatar fallback with `<video>` element when camera track is available.
 
-### v3 — Screenshare
+### Screenshare
 
 Switch `CallView` to presenter layout: screenshare fills main area, participant strip along bottom. See `specs/screenshare.md`.
 
@@ -41,14 +41,14 @@ Switch `CallView` to presenter layout: screenshare fills main area, participant 
 ## Component Tree
 
 ```text
-pages/call/index.vue                       call lobby/start page
-pages/call/[id].vue                        fullscreen call route
+pages/calls/index.vue                      call lobby/start page
+pages/calls/[id].vue                       fullscreen call route
   └── Call/View.vue                        fills h-screen, reads from store
-        ├── Call/ParticipantTile.vue        one tile per participant
-        ├── Call/ScreenShareStage.vue       presenter view when a screen is shared
+        ├── Call/Participant/Tile.vue       one tile per participant
+        ├── Call/ScreenShare/Stage.vue      presenter view when a screen is shared
         ├── Call/InviteCard.vue             bottom-left share-link panel
-        ├── Call/JoinNotice.vue             top-center join notice
-        └── Call/ControlBar.vue            bottom-center overlaid controls
+        ├── Call/JoinNotice/Index.vue       top-center join notice / knocker queue
+        └── Call/Control/Bar.vue            bottom-center overlaid controls
 
 Message/Content/Index.vue
   └── Call/Panel/Index.vue                 compact inline room call entry + fullscreen dialog
@@ -66,7 +66,7 @@ Message/Content/Index.vue
 - Reads connection/session state from the root call store, media streams from `call/media`, and participant/speaking state from `call/participant`
 - Absolutely positioned `CallControlBar` at bottom
 
-### `Call/ParticipantTile.vue`
+### `Call/Participant/Tile.vue`
 
 Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`, `isDeafened: boolean`, `isScreenSharing: boolean`, `videoStream?: MediaStream`
 
@@ -77,7 +77,7 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 - Screenshare badge (`mdi-monitor-share`) when the participant is presenting
 - Self-only deafened badge (`mdi-headphones-off` when `isDeafened`)
 
-### `Call/ControlBar.vue`
+### `Call/Control/Bar.vue`
 
 - Centered bottom row, translucent pill (`bg-grey-darken-4/90`)
 - Composes single-purpose controls directly: grouped mic + up-caret audio settings, grouped camera + up-caret video settings/backgrounds, deafen, screenshare, leave
@@ -90,12 +90,14 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 ### Id join path
 
 ```text
-/call/[id]
-  → useCallIdSubscribables(id)                composable handles full lifecycle
-    → store.joinCall(id)
+/calls/[id]
+  → useCallIdSubscribables(id)                validates call and wires joined/knocking subscriptions
+    → useCallJoinedSubscribables()            subscribes when activeCallSessionId is set
+    → useCallKnockingSubscribables(id)        subscribes when knockingCallSessionId is set
+    → store.joinCall(id)                      creator joins immediately; knockers join after admission
       → $trpc.roomCall.joinCall.mutate({ id })
       → LiveKit room.connect(livekitUrl, livekitToken)
-      → LiveKit enables microphone
+      → LiveKit applies microphone/camera preferences from call/knocker.ts
       → activeCallSessionId.value = callSessionId
       → setParticipants(callSessionId, participants)
       → return callSessionId
@@ -107,14 +109,16 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 
 ```text
 onUnmounted in useCallIdSubscribables
+  → cancelKnock() if the user is waiting but not joined
   → participantJoin/Leave/MuteChanged/VideoChanged.unsubscribe()
+  → knockerAdmitted/KnockerDismissed.unsubscribe()
   → store.leaveCall()
     → $trpc.roomCall.leaveCall.mutate({ callSessionId })
     → disconnect LiveKit room
     → reset activeCallSessionId, isDeafened, isForceMuted, local camera/screenshare/background state
 ```
 
-This differs intentionally from room navigation cleanup. `/call/[id]` is a dedicated call surface, so leaving the page means leaving the call. A normal room route change is only an observer swap and must not call `store.leaveCall()`.
+This differs intentionally from room navigation cleanup. `/calls/[id]` is a dedicated call surface, so leaving the page means leaving the call. A normal room route change is only an observer swap and must not call `store.leaveCall()`.
 
 ---
 
@@ -122,7 +126,7 @@ This differs intentionally from room navigation cleanup. `/call/[id]` is a dedic
 
 | Aspect                     | Room call (`useCallSubscribables`)        | Id call (`useCallIdSubscribables`)       |
 | -------------------------- | ----------------------------------------- | ---------------------------------------- |
-| Entry procedure            | `readCallSessionId({ roomId })` then join | `joinCall({ id })` directly              |
+| Entry procedure            | `readCallSessionId({ roomId })` then join | Creator/admitted `joinCall({ id })`      |
 | `callRoomId`               | Set (enables admin action room checks)    | Not set (no room membership)             |
 | `currentRoomCallSessionId` | Set for the viewed room only              | Not set                                  |
 | Component reads            | `roomParticipants` in `CallPanel`         | `callParticipants` in `CallView`         |

@@ -27,7 +27,7 @@ const { currentRoom } = storeToRefs(roomStore);
       async (onComplete) => {
         await withFinalizerAsync(async () => {
           if (!currentRoom) return;
-          await $trpc.moderation.executeAdminAction.mutate({
+          await $trpc.message.moderation.executeAdminAction.mutate({
             roomId: currentRoom.id,
             targetUserId: user.id,
             type: AdminActionType.SoftBan,

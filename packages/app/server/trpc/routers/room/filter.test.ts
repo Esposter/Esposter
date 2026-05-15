@@ -6,13 +6,13 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { roomFilterRouter } from "@@/server/trpc/routers/roomFilter";
+import { filterRouter } from "@@/server/trpc/routers/room/filter";
 import { RoomPermission, roomsInMessage } from "@esposter/db-schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-describe("roomFilter", () => {
+describe("room/filter", () => {
   let mockContext: Context;
-  let roomFilterCaller: DecorateRouterRecord<TRPCRouter["roomFilter"]>;
+  let roomFilterCaller: DecorateRouterRecord<TRPCRouter["room"]["filter"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomId: string;
@@ -22,7 +22,7 @@ describe("roomFilter", () => {
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    roomFilterCaller = createCallerFactory(roomFilterRouter)(mockContext);
+    roomFilterCaller = createCallerFactory(filterRouter)(mockContext);
     roomCaller = createCallerFactory(roomRouter)(mockContext);
     roleCaller = createCallerFactory(roleRouter)(mockContext);
   });

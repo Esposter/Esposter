@@ -9,6 +9,7 @@ export interface AdminActionHookMap {
   [AdminActionType.KickFromCall]: AdminActionHook[];
   [AdminActionType.KickFromRoom]: AdminActionHook[];
   [AdminActionType.SoftBan]: AdminActionHook[];
+  [AdminActionType.StopScreenShare]: AdminActionHook[];
   [AdminActionType.TimeoutUser]: AdminActionHook[];
   [AdminActionType.Warn]: AdminActionHook[];
 }
@@ -22,6 +23,7 @@ export const AdminActionHookMap: AdminActionHookMap = {
   [AdminActionType.KickFromCall]: [],
   [AdminActionType.KickFromRoom]: [],
   [AdminActionType.SoftBan]: [],
+  [AdminActionType.StopScreenShare]: [],
   [AdminActionType.TimeoutUser]: [],
   [AdminActionType.Warn]: [],
 };

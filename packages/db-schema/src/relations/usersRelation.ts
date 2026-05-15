@@ -20,6 +20,10 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
       from: r.users.id,
       to: r.blocks.blockerId,
     }),
+    callSessionsInMessages: r.many.callSessionsInMessage({
+      from: r.users.id,
+      to: r.callSessionsInMessage.userId,
+    }),
     friendRequests: r.many.friendRequests({
       from: r.users.id,
       to: r.friendRequests.senderId,

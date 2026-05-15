@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { useCallStore } from "@/store/message/room/call";
-import { useCallMediaStore } from "@/store/message/room/call/media";
+import { useMediaStore } from "@/store/message/room/call/media";
 
 const callStore = useCallStore();
 const { toggleCamera } = callStore;
-const mediaStore = useCallMediaStore();
+const mediaStore = useMediaStore();
 const { isCameraEnabled } = storeToRefs(mediaStore);
 </script>
 
 <template>
-  <MessageContentCallActionButton
+  <MessageContentCallControlActionButton
     :color="isCameraEnabled ? undefined : 'error'"
     :icon="isCameraEnabled ? 'mdi-video' : 'mdi-video-off'"
     :tooltip="isCameraEnabled ? 'Turn Camera Off' : 'Turn Camera On'"

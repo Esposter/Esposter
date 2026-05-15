@@ -1,47 +1,27 @@
 import { useCallStore } from "@/store/message/room/call";
-import { useCallParticipantStore } from "@/store/message/room/call/participant";
+import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { getResultAsync } from "@esposter/shared";
 
-export const useCallIdSubscribables = async (id: string) => {
+export const useCallIdSubscribables = async (callId: string) => {
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
-  const { joinCall, leaveCall } = callStore;
-  const participantStore = useCallParticipantStore();
-  const { createCallParticipant, deleteCallParticipant, deleteSpeaker, setMute, setParticipantCamera } =
-    participantStore;
-  const instance = getCurrentInstance();
+  const { activeCallSessionId } = storeToRefs(callStore);
+  const { leaveCall } = callStore;
+  const knockerStore = useKnockerStore();
+  const { knockingCallSessionId } = storeToRefs(knockerStore);
+  const { cancelKnock } = knockerStore;
+  const callSession = await getResultAsync(() => $trpc.callSession.readCallSession.query({ id: callId })).match(
+    (result) => result,
+    () => undefined,
+  );
+  if (!callSession) return undefined;
 
-  const callSessionId = await joinCall(id);
-  if (!callSessionId) return false;
-
-  const participantJoinUnsubscribable = $trpc.roomCall.onJoinCall.subscribe(callSessionId, {
-    onData: (participant) => {
-      createCallParticipant(callSessionId, participant);
-    },
-  });
-  const participantLeaveUnsubscribable = $trpc.roomCall.onLeaveCall.subscribe(callSessionId, {
-    onData: (id) => {
-      deleteCallParticipant(callSessionId, id);
-      deleteSpeaker(id);
-    },
-  });
-  const muteChangedUnsubscribable = $trpc.roomCall.onSetMute.subscribe(callSessionId, {
-    onData: (muteChange) => {
-      setMute(callSessionId, muteChange.id, muteChange.isMuted);
-    },
-  });
-  const videoChangedUnsubscribable = $trpc.roomCall.onVideoChanged.subscribe(callSessionId, {
-    onData: ({ id, isCameraEnabled }) => {
-      setParticipantCamera(callSessionId, id, isCameraEnabled);
-    },
-  });
+  useCallJoinedSubscribables();
+  useCallKnockingSubscribables(callId);
 
   onUnmounted(async () => {
-    participantJoinUnsubscribable.unsubscribe();
-    participantLeaveUnsubscribable.unsubscribe();
-    muteChangedUnsubscribable.unsubscribe();
-    videoChangedUnsubscribable.unsubscribe();
+    if (!activeCallSessionId.value && knockingCallSessionId.value === callId) cancelKnock();
     await leaveCall();
-  }, instance);
-
-  return true;
+  });
+  return callSession;
 };

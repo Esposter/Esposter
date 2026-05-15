@@ -39,6 +39,8 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
+import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import {
   cloneFiles,
   createMessage,
@@ -77,13 +79,9 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
+import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-
-export const readMetadataInputSchema = z.object({
-  messageRowKeys: standardMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomInMessageSchema.shape.id,
-});
 // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
 // As we insert our messages with a reverse-ticked timestamp as our rowKey
 // So unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
@@ -144,7 +142,7 @@ export const unpinMessageInputSchema = standardMessageEntitySchema.pick({ partit
 
 const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
 
-export const messageRouter = router({
+export const baseMessageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
     async ({ ctx, input }) => {
       await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
@@ -523,3 +521,8 @@ export const messageRouter = router({
     },
   ),
 });
+
+export const messageRouter = mergeRouters(
+  baseMessageRouter,
+  router({ emoji: emojiRouter, moderation: moderationRouter }),
+);

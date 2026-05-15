@@ -7,6 +7,7 @@ export const AdminActionPermissionMap = {
   [AdminActionType.KickFromCall]: RoomPermission.MoveMembers,
   [AdminActionType.KickFromRoom]: RoomPermission.KickMembers,
   [AdminActionType.SoftBan]: RoomPermission.BanMembers,
+  [AdminActionType.StopScreenShare]: RoomPermission.MuteMembers,
   [AdminActionType.TimeoutUser]: RoomPermission.KickMembers,
   [AdminActionType.Warn]: RoomPermission.ManageMessages,
 } as const satisfies Record<AdminActionType, RoomPermission>;

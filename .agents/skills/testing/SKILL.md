@@ -92,7 +92,7 @@ The default mock session is always the **base user** (inserted by `createMockCon
 
 ## Running Tests
 
-- **Do not run tests on Windows** — known Vitest crash: `TypeError: The argument 'filename' must be a file URL object...` with UnoCSS + happy-dom. Write tests; user runs them manually.
+- **Do not run tests on Windows** — known Vitest startup failures include `spawn EPERM` from Vite config loading and `TypeError: The argument 'filename' must be a file URL object...` with UnoCSS + happy-dom. Write tests; user runs them manually.
 - **Always use `run_in_background: true`** for `pnpm lint`, `pnpm typecheck`, and test commands.
 
 ## Testing Composables with Lifecycle Hooks

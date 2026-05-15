@@ -5,6 +5,10 @@ description: Esposter Vuetify 3 conventions — v-btn tooltips, typed SelectItem
 
 # Vuetify Conventions
 
+## Primary Buttons
+
+- Use `StyledButton` for primary call-to-action buttons such as create, save, accept, request, and start actions. Pass Vuetify props through `:button-props="{ ... }"` rather than using a raw primary `v-btn`.
+
 ## Auto-Imported Composables — `v` Prefix
 
 Vuetify composables are auto-imported with a `v` prefix. **Never import them from `"vuetify"` directly** — they are already globally available:

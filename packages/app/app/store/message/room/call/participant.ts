@@ -2,7 +2,7 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { authClient } from "@/services/auth/authClient";
 
-export const useCallParticipantStore = defineStore("message/room/call/participant", () => {
+export const useParticipantStore = defineStore("message/room/call/participant", () => {
   const session = authClient.useSession();
   const callSessionParticipantsMap = ref(new Map<string, CallParticipant[]>());
   const joinNoticeParticipant = ref<CallParticipant>();

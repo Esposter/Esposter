@@ -7,8 +7,8 @@ import type {
 } from "livekit-client";
 
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
-import { useCallMediaStore } from "@/store/message/room/call/media";
-import { useCallParticipantStore } from "@/store/message/room/call/participant";
+import { useMediaStore } from "@/store/message/room/call/media";
+import { useParticipantStore } from "@/store/message/room/call/participant";
 import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { Room, RoomEvent, Track } from "livekit-client";
@@ -31,9 +31,9 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let disconnectHandler: (() => Promise<void>) | undefined;
   let localCameraTrack: LocalVideoTrack | undefined;
   let virtualBackgroundProcessor: ReturnType<typeof BackgroundProcessor> | undefined;
-  const mediaStore = useCallMediaStore();
+  const mediaStore = useMediaStore();
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
-  const participantStore = useCallParticipantStore();
+  const participantStore = useParticipantStore();
   const remoteAudioElements = new Map<string, HTMLMediaElement>();
   const selectedAudioInputDeviceId = ref("");
   const selectedAudioOutputDeviceId = ref("");
@@ -220,6 +220,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     livekitUrl: string,
     livekitToken: string,
     newDisconnectHandler: () => Promise<void>,
+    isMicrophoneEnabled: boolean,
   ) => {
     await disconnect();
     activeRoom = room;
@@ -237,7 +238,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     room.on(RoomEvent.Disconnected, onDisconnected);
     room.on(RoomEvent.AudioPlaybackStatusChanged, onAudioPlaybackStatusChanged);
     await room.connect(livekitUrl, livekitToken);
-    await room.localParticipant.setMicrophoneEnabled(true);
+    await room.localParticipant.setMicrophoneEnabled(isMicrophoneEnabled);
     syncActiveDevices(room);
   };
   const disconnect = async () => {

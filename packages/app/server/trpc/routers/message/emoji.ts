@@ -7,6 +7,7 @@ import {
   MessageEmojiMetadataEntityPropertyNames,
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
+import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -17,7 +18,6 @@ import { isRoomId } from "@@/server/services/message/isRoomId";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
 import { createEntity, deleteEntity, getEntity, getTopNEntities, serializeClauses, updateEntity } from "@esposter/db";
 import {
   AZURE_MAX_PAGE_SIZE,

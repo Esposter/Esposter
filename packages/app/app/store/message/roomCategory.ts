@@ -16,18 +16,18 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   } = createOperationData(categories, ["id"], DatabaseEntityType.RoomCategory);
 
   const createRoomCategory = async (input: CreateRoomCategoryInput) => {
-    const newCategory = await $trpc.roomCategory.createRoomCategory.mutate(input);
+    const newCategory = await $trpc.room.category.createRoomCategory.mutate(input);
     storeCreateRoomCategory(newCategory);
     return newCategory;
   };
 
   const deleteRoomCategory = async (id: DeleteRoomCategoryInput) => {
-    await $trpc.roomCategory.deleteRoomCategory.mutate(id);
+    await $trpc.room.category.deleteRoomCategory.mutate(id);
     storeDeleteRoomCategory({ id });
   };
 
   const updateRoomCategory = async (input: UpdateRoomCategoryInput) => {
-    const updatedCategory = await $trpc.roomCategory.updateRoomCategory.mutate(input);
+    const updatedCategory = await $trpc.room.category.updateRoomCategory.mutate(input);
     storeUpdateRoomCategory(updatedCategory);
     return updatedCategory;
   };

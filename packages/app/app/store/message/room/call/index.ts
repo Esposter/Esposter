@@ -1,8 +1,9 @@
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useRoomStore } from "@/store/message/room";
-import { useCallMediaStore } from "@/store/message/room/call/media";
-import { useCallParticipantStore } from "@/store/message/room/call/participant";
+import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { useMediaStore } from "@/store/message/room/call/media";
+import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { AdminActionType } from "@esposter/db-schema";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
@@ -12,9 +13,10 @@ export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const session = authClient.useSession();
-  const mediaStore = useCallMediaStore();
+  const knockerStore = useKnockerStore();
+  const mediaStore = useMediaStore();
   const { resetCallMedia } = mediaStore;
-  const participantStore = useCallParticipantStore();
+  const participantStore = useParticipantStore();
   const {
     clearJoinNotice,
     clearSpeakers,
@@ -45,7 +47,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     setParticipantCamera(activeCallSessionId.value, sessionIdValue, newIsCameraEnabled);
 
     await getResultAsync(() =>
-      $trpc.roomCall.setCamera.mutate({
+      $trpc.callSession.setCamera.mutate({
         callSessionId: activeCallSessionId.value,
         isCameraEnabled: newIsCameraEnabled,
       }),
@@ -63,7 +65,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     setMute(activeCallSessionId.value, sessionIdValue, newIsMuted);
 
     await getResultAsync(() =>
-      $trpc.roomCall.setMute.mutate({
+      $trpc.callSession.setMute.mutate({
         callSessionId: activeCallSessionId.value,
         isMuted: newIsMuted,
       }),
@@ -76,7 +78,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     currentRoomCallSessionId.value = callSessionId;
   };
   const createCall = async (): Promise<string | undefined> => {
-    const { callSessionId } = await $trpc.roomCall.createCall.mutate();
+    const { callSessionId } = await $trpc.callSession.createCall.mutate();
     return callSessionId;
   };
   const joinCall = async (id: string): Promise<string | undefined> => {
@@ -85,12 +87,24 @@ export const useCallStore = defineStore("message/room/call", () => {
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
     await getResultAsync(async () => {
-      const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.roomCall.joinCall.mutate({ id });
-      await connect(new Room({ adaptiveStream: true, dynacast: true }), livekitUrl, livekitToken, leaveCall);
+      const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.callSession.joinCall.mutate({ id });
+      const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
+      await connect(
+        new Room({ adaptiveStream: true, dynacast: true }),
+        livekitUrl,
+        livekitToken,
+        leaveCall,
+        isMicrophoneEnabled,
+      );
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
       isJoined = true;
       setParticipants(callSessionId, participants);
+      if (!isMicrophoneEnabled) await setMuteEnabled(true);
+      if (isCameraEnabled) {
+        await setCamera(true);
+        await setCameraEnabled(true);
+      }
     }).match(noop, async (error) => {
       console.error(error);
       if (isJoined) await leaveCall();
@@ -109,10 +123,12 @@ export const useCallStore = defineStore("message/room/call", () => {
     callRoomId.value = roomId;
     let isJoined = false;
     await getResultAsync(async () => {
-      const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.roomCall.joinCallByRoomId.mutate({
-        roomId,
-      });
-      await connect(new Room({ adaptiveStream: true, dynacast: true }), livekitUrl, livekitToken, leaveCall);
+      const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.callSession.joinCallByRoomId.mutate(
+        {
+          roomId,
+        },
+      );
+      await connect(new Room({ adaptiveStream: true, dynacast: true }), livekitUrl, livekitToken, leaveCall, true);
       currentRoomCallSessionId.value = callSessionId;
       activeCallSessionId.value = callSessionId;
       isJoined = true;
@@ -135,12 +151,13 @@ export const useCallStore = defineStore("message/room/call", () => {
     await withFinalizerAsync(
       async () => {
         if (sessionId.value) deleteCallParticipant(callSessionId, sessionId.value);
-        await $trpc.roomCall.leaveCall.mutate({ callSessionId });
+        await $trpc.callSession.leaveCall.mutate({ callSessionId });
       },
       async () => {
         callRoomId.value = "";
         activeCallSessionId.value = "";
         isCallViewOpen.value = false;
+        knockerStore.resetKnockerState();
         resetCallMedia();
         await disconnect();
         clearJoinNotice();
@@ -209,6 +226,10 @@ export const useCallStore = defineStore("message/room/call", () => {
   });
   AdminActionHookMap[AdminActionType.KickFromCall].push(async () => {
     await leaveCall();
+  });
+  AdminActionHookMap[AdminActionType.StopScreenShare].push(async (roomId) => {
+    if (callRoomId.value !== roomId) return;
+    await setScreenShare(false);
   });
   AdminActionHookMap[AdminActionType.TimeoutUser].push(async (roomId) => {
     if (callRoomId.value === roomId) await leaveCall();

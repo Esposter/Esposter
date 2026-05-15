@@ -13,7 +13,7 @@ watch(copied, (newCopied) => {
 </script>
 
 <template>
-  <v-btn v-if="copied" color="primary" text="Copied" />
+  <StyledButton v-if="copied" :button-props="{ text: 'Copied' }" />
   <StyledButton v-else-if="source" :button-props="{ text: 'Copy' }" @click="copy(source)" />
   <StyledButton v-else :button-props="{ text: 'Create' }" @click="emit('create')" />
 </template>

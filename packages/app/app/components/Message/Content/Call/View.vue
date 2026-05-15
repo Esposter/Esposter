@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-import type { CallParticipantTileProps } from "@/components/Message/Content/Call/ParticipantTile.vue";
+import type { CallParticipantTileProps } from "@/components/Message/Content/Call/Participant/Tile.vue";
 
 import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
-import { useCallMediaStore } from "@/store/message/room/call/media";
-import { useCallParticipantStore } from "@/store/message/room/call/participant";
+import { useMediaStore } from "@/store/message/room/call/media";
+import { useParticipantStore } from "@/store/message/room/call/participant";
 
 const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
-const mediaStore = useCallMediaStore();
+const mediaStore = useMediaStore();
 const {
   activeScreenShareParticipantId,
   activeScreenShareStream,
@@ -20,7 +20,7 @@ const {
   remoteVideoStreams,
   screenSharingParticipantIds,
 } = storeToRefs(mediaStore);
-const participantStore = useCallParticipantStore();
+const participantStore = useParticipantStore();
 const { getParticipants } = participantStore;
 const { speakingIds } = storeToRefs(participantStore);
 const { data: session } = await authClient.useSession(useFetch);

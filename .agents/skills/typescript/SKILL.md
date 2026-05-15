@@ -72,7 +72,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 - Every `Result` / `ResultAsync` must be consumed with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`; `.orTee(...)` by itself is not enough.
 - Use the shared `withFinalizer(...)` helper for cleanup that must run after both success and failure.
 - When fire-and-forgetting an async operation, extract to a named `async` function and call it without `await`.
-- **Never use `void asyncFn()`** — when passing an async function to a sync callback slot (e.g. `onScopeDispose`, event listeners, Phaser callbacks), wrap it with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction` instead. This satisfies `@typescript-eslint/no-misused-promises` without suppressing the lint rule.
+- **Never use `void asyncFn()`** — when passing an async function to a sync callback slot (e.g. non-Vue event listeners, Phaser callbacks), wrap it with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction` instead. Vue `watch` and lifecycle hooks support async callbacks directly; do not wrap those in `getSynchronizedFunction`.
 
 ## Error Handling
 
