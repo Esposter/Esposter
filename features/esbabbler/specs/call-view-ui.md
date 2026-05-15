@@ -92,7 +92,7 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 ```text
 /calls/[id]
   → useCallIdSubscribables(id)                composable handles full lifecycle
-    → store.joinCall(id, options?)            direct creator joins immediately; knockers join after admission
+    → store.joinCall(id, options?)            creator joins immediately; knockers join after admission
       → $trpc.roomCall.joinCall.mutate({ id })
       → LiveKit room.connect(livekitUrl, livekitToken)
       → LiveKit applies microphone/camera preferences

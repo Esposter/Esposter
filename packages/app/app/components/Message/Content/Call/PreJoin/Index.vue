@@ -9,32 +9,29 @@ const props = defineProps<PreJoinProps>();
 const knockerStore = useKnockerStore();
 const { knockCall } = knockerStore;
 const isRequestingJoin = ref(false);
-const { cameraStream, isCameraEnabled, isMicrophoneEnabled, joinCallOptions, toggleCamera, toggleMicrophone } =
-  useCallPreJoinMedia();
+const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggleMicrophone } = useCallPreJoinMedia();
 const requestJoin = async () => {
   isRequestingJoin.value = true;
-  await knockCall(props.callId, joinCallOptions.value);
+  await knockCall(props.callId);
   isRequestingJoin.value = false;
 };
 </script>
 
 <template>
   <div p-6 bg-background flex flex-col gap-y-8 size-full items-center justify-center>
-    <h2 font-medium text-headline-small>Ready to join?</h2>
-    <MessageContentCallPreJoinCameraPreview :is-camera-enabled :stream="cameraStream" />
-    <MessageContentCallPreJoinMediaControls
-      :is-camera-enabled
-      :is-microphone-enabled
-      @toggle-camera="toggleCamera()"
-      @toggle-microphone="toggleMicrophone()"
-    />
-    <v-btn
-      :loading="isRequestingJoin"
-      color="primary"
-      size="large"
-      text="Request to join"
-      variant="elevated"
-      @click="requestJoin()"
-    />
+    <StyledCard p-6 flex flex-col gap-y-8 max-w-xl w-full items-center>
+      <h2 font-medium text-headline-small>Ready to join?</h2>
+      <MessageContentCallPreJoinCameraPreview :is-camera-enabled :stream="cameraStream" />
+      <MessageContentCallPreJoinMediaControls
+        :is-camera-enabled
+        :is-microphone-enabled
+        @toggle-camera="toggleCamera()"
+        @toggle-microphone="toggleMicrophone()"
+      />
+      <StyledButton
+        :button-props="{ loading: isRequestingJoin, size: 'large', text: 'Request to join' }"
+        @click="requestJoin()"
+      />
+    </StyledCard>
   </div>
 </template>

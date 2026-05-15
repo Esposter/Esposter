@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { authClient } from "@/services/auth/authClient";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
@@ -18,9 +19,8 @@ definePageMeta({
 
 const route = useRoute();
 const id = route.params.id as string;
-const isDirect = route.query.direct === "1";
-const isValid = await useCallIdSubscribables(id);
-if (!isValid)
+const callSession = await useCallIdSubscribables(id);
+if (!callSession)
   throw createError({
     status: 404,
     statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.CallSession, id),
@@ -31,7 +31,9 @@ const { activeCallSessionId } = storeToRefs(callStore);
 const { joinCall } = callStore;
 const knockerStore = useKnockerStore();
 const { knockingCallSessionId } = storeToRefs(knockerStore);
-if (isDirect) await joinCall(id);
+const { data: session } = await authClient.useSession(useFetch);
+const isCreator = computed(() => callSession.userId === session.value?.user.id);
+if (isCreator.value) await joinCall(id);
 
 watch(activeCallSessionId, (newActiveCallSessionId) => {
   if (!newActiveCallSessionId) navigateTo(RoutePath.CallsIndex);

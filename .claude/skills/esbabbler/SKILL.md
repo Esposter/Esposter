@@ -58,11 +58,12 @@ Calls are built on top of `callSessionsInMessage` (Postgres) + ephemeral in-memo
 
 ### Key entities
 
-| Entity                                  | Role                                                                                                                                                      |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `callSessionsInMessage`                 | One persistent row per room. `id` (12-char alphanumeric) is both the session key and the shareable join code. Created lazily on first `joinCallByRoomId`. |
-| `callSessionParticipantMap` (in-memory) | `Map<callSessionId, Map<sessionId, CallParticipant>>`. Lost on server restart.                                                                            |
-| `callStartTimeMap` (in-memory)          | `Map<callSessionId, Date>`. Tracks call start for duration calculation.                                                                                   |
+| Entity                                   | Role                                                                                                                                                                                                                                 |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `callSessionsInMessage`                  | Persistent call row. `id` (12-char alphanumeric) is both the session key and the shareable join code. `userId` is the creator who can join a standalone call directly. Room sessions are created lazily on first `joinCallByRoomId`. |
+| `callSessionParticipantMap` (in-memory)  | `Map<callSessionId, Map<sessionId, CallParticipant>>`. Lost on server restart.                                                                                                                                                       |
+| `callAdmittedParticipantMap` (in-memory) | `Map<callSessionId, Set<sessionId>>`. One-time standalone waiting-room admissions. Consumed by `joinCall({ id })`.                                                                                                                   |
+| `callStartTimeMap` (in-memory)           | `Map<callSessionId, Date>`. Tracks call start for duration calculation.                                                                                                                                                              |
 
 ### Token vs code terminology
 
@@ -87,15 +88,15 @@ Two distinct call entry points with different auth semantics:
 | InviteCard shown      | No (hidden when `callRoomId` is set)       | Yes — shares `window.location.href`                  |
 | RBAC / moderation     | Full room RBAC applies                     | No room — any participant can admit/dismiss knockers |
 
-**`joinCall({ id })`** only works for standalone sessions (`callSession.roomId === null`). It throws `FORBIDDEN` if called with a room session ID. Room calls must be joined via `joinCallByRoomId`.
+**`joinCall({ id })`** only works for standalone sessions (`callSession.roomId === null`). It throws `FORBIDDEN` if called with a room session ID. Room calls must be joined via `joinCallByRoomId`. For standalone calls, it only succeeds for the creator (`callSessionsInMessage.userId`) or for a session ID that was just admitted via `admitKnocker`.
 
-**`createCall()`** creates a new standalone (roomless) call session and returns its `callSessionId`. The `/calls` page calls this to start a new call, then navigates to `/calls/[callSessionId]`.
+**`createCall()`** creates a new standalone (roomless) call session with `userId = ctx.getSessionPayload.user.id` and returns its `callSessionId`. The `/calls` page calls this to start a new call, then navigates to `/calls/[callSessionId]`.
 
 ### Call session lifecycle
 
 1. **Room entry**: `readCallSessionId({ roomId })` → reads `callSessionsInMessage`, returns `id` string (`""` if no session yet). Called by `useCallSubscribables` whenever the viewed room changes; subscriptions are skipped when `""`.
 2. **Join via room**: `joinCallByRoomId({ roomId })` → room membership required → creates session row if none exists (3-retry upsert inline) → returns `{ callSessionId, participants, livekitUrl, livekitToken }`.
-3. **Join via id**: `joinCall({ id })` → auth only (no room membership) → finds **standalone** session by id → same join flow.
+3. **Join via id**: `joinCall({ id })` → auth only (no room membership) → finds **standalone** session by id → allows creator or admitted session → same join flow.
 4. **Subscriptions** (`onJoinCall`, `onLeaveCall`, `onSetMute`, `onVideoChanged`) take `callSessionId` (not `roomId`). Auth only — caller must have obtained the `callSessionId` through an authenticated call.
 5. **Leave**: `leaveCall({ callSessionId })`. Throws `NOT_FOUND` if caller is not a participant. When the last participant leaves: writes call duration as `MessageType.Call` system message to the room.
 
@@ -128,7 +129,7 @@ Room navigation (`useCallSubscribables` cleanup) is **not** a leave boundary. It
 ### Shareable call link
 
 - `/calls` — standalone call lobby; calls `createCall()` to create a new session, then navigates to `/calls/[id]`.
-- `/calls/[id]` — full-screen standalone call; `useCallIdSubscribables(id)` joins on mount, leaves on unmount.
+- `/calls/[id]` — full-screen standalone call; creator auto-joins by persisted `callSessionsInMessage.userId`, everyone else sees pre-join and must knock.
 - `InviteCard.vue` is only shown on the `/calls/[id]` page (hidden when `callRoomId` is set). It copies `window.location.href` which is the correct `/calls/[id]` URL in standalone context.
 
 ### Admin actions and calls
@@ -192,14 +193,14 @@ enum AdminActionType {
 
 `StopScreenShare` permission: `MuteMembers`. Client hook calls `setScreenShare(false)` when `callRoomId` matches. Notification: "Your screen share has been stopped by a moderator."
 
-### Pending: Phase 5 — Knock/Admit (lobby/waiting room)
+### Knock/Admit (lobby/waiting room)
 
-Scope: standalone calls only. Any authed user can currently join a standalone call immediately. Phase 5 adds:
+Scope: standalone calls only. Room calls stay gated by room membership/RBAC.
 
 - `knockCall({ id })` — adds caller to `callKnockerMap`; emits `onKnockCall` to participants.
-- `admitKnocker` / `dismissKnocker` — called by any participant; emits `onKnockerAdmitted` / `onKnockerDismissed` to the knocker.
+- `admitKnocker` / `dismissKnocker` — called by any participant; `admitKnocker` adds a one-time session admission in `callAdmittedParticipantMap`, then emits `onKnockerAdmitted` to the knocker.
 - `/calls/[id]` page states: `idle` (pre-join) → `knocking` (waiting overlay) → `joined` (full CallView).
-- First joiner (creator) always skips straight to `joined`.
+- Creator (`callSessionsInMessage.userId`) skips straight to `joined`; everyone else must be admitted.
 - `JoinNotice.vue` upgraded to show "Let In" / "Dismiss" per knocker.
 
 Full spec in `features/esbabbler/v5.md` → Phase 5.

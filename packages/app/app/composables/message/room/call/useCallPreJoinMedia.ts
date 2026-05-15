@@ -1,15 +1,22 @@
-import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
-
+import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { getResultAsync } from "@esposter/shared";
 
 export const useCallPreJoinMedia = () => {
+  const knockerStore = useKnockerStore();
+  const { joinCallOptions } = storeToRefs(knockerStore);
   const cameraStream = ref<MediaStream>();
-  const isCameraEnabled = ref(false);
-  const isMicrophoneEnabled = ref(true);
-  const joinCallOptions = computed<JoinCallOptions>(() => ({
-    isCameraEnabled: isCameraEnabled.value,
-    isMicrophoneEnabled: isMicrophoneEnabled.value,
-  }));
+  const isCameraEnabled = computed({
+    get: () => joinCallOptions.value.isCameraEnabled,
+    set: (value) => {
+      joinCallOptions.value = { ...joinCallOptions.value, isCameraEnabled: value };
+    },
+  });
+  const isMicrophoneEnabled = computed({
+    get: () => joinCallOptions.value.isMicrophoneEnabled,
+    set: (value) => {
+      joinCallOptions.value = { ...joinCallOptions.value, isMicrophoneEnabled: value };
+    },
+  });
   const startCamera = async () => {
     await getResultAsync(() => window.navigator.mediaDevices.getUserMedia({ video: true })).match(
       (stream) => {
@@ -47,7 +54,6 @@ export const useCallPreJoinMedia = () => {
     cameraStream,
     isCameraEnabled,
     isMicrophoneEnabled,
-    joinCallOptions,
     toggleCamera,
     toggleMicrophone,
   };

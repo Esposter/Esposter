@@ -5,11 +5,11 @@ export const useCallIdSubscribables = async (callId: string) => {
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
   const { leaveCall } = callStore;
-  const isCallSessionValid = await getResultAsync(() => $trpc.roomCall.readCallSession.query({ id: callId })).match(
-    () => true,
-    () => false,
+  const callSession = await getResultAsync(() => $trpc.roomCall.readCallSession.query({ id: callId })).match(
+    (result) => result,
+    () => undefined,
   );
-  if (!isCallSessionValid) return false;
+  if (!callSession) return undefined;
 
   useCallJoinedSubscribables();
   useCallKnockingSubscribables(callId);
@@ -17,5 +17,5 @@ export const useCallIdSubscribables = async (callId: string) => {
   onUnmounted(async () => {
     await leaveCall();
   });
-  return true;
+  return callSession;
 };

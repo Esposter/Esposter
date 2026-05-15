@@ -1,5 +1,3 @@
-import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
-
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useRoomStore } from "@/store/message/room";
@@ -10,11 +8,6 @@ import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { AdminActionType } from "@esposter/db-schema";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { Room } from "livekit-client";
-
-const defaultJoinCallOptions: JoinCallOptions = {
-  isCameraEnabled: false,
-  isMicrophoneEnabled: true,
-};
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
@@ -88,16 +81,14 @@ export const useCallStore = defineStore("message/room/call", () => {
     const { callSessionId } = await $trpc.roomCall.createCall.mutate();
     return callSessionId;
   };
-  const joinCall = async (
-    id: string,
-    { isCameraEnabled, isMicrophoneEnabled }: JoinCallOptions = defaultJoinCallOptions,
-  ): Promise<string | undefined> => {
+  const joinCall = async (id: string): Promise<string | undefined> => {
     if (activeCallSessionId.value) return activeCallSessionId.value;
     isConnecting.value = true;
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
     await getResultAsync(async () => {
       const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.roomCall.joinCall.mutate({ id });
+      const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
       await connect(
         new Room({ adaptiveStream: true, dynacast: true }),
         livekitUrl,

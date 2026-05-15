@@ -2,6 +2,7 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { JoinCallOutput } from "@@/server/models/room/call/JoinCallOutput";
 
 import { on } from "@@/server/services/events/on";
+import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
@@ -61,11 +62,17 @@ export const callRouter = router({
       const knockerMap = callKnockerMap.get(callSessionId);
       if (!knockerMap?.has(knockerSessionId)) return;
       knockerMap.delete(knockerSessionId);
+      let admittedParticipantIds = callAdmittedParticipantMap.get(callSessionId);
+      if (!admittedParticipantIds) {
+        admittedParticipantIds = new Set();
+        callAdmittedParticipantMap.set(callSessionId, admittedParticipantIds);
+      }
+      admittedParticipantIds.add(knockerSessionId);
 
       callEventEmitter.emit("knockerAdmitted", { callSessionId, knockerSessionId });
     }),
   createCall: standardAuthedProcedure.mutation(async ({ ctx }) => {
-    const callSessionId = await createStandaloneCallSessionId(ctx.db);
+    const callSessionId = await createStandaloneCallSessionId(ctx.db, ctx.getSessionPayload.user.id);
     return { callSessionId };
   }),
   dismissKnocker: standardAuthedProcedure
@@ -102,12 +109,20 @@ export const callRouter = router({
         });
 
       const { session, user } = ctx.getSessionPayload;
+      const isCreator = callSession.userId === user.id;
+      const isAdmitted = callAdmittedParticipantMap.get(id)?.has(session.id) ?? false;
+      if (!isCreator && !isAdmitted)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Must be admitted to join this call").message,
+        });
+      callAdmittedParticipantMap.get(id)?.delete(session.id);
       return joinLiveKitCall(callSession, createParticipant(session, user), user.id);
     }),
   joinCallByRoomId: getMemberProcedure(joinCallByRoomIdInputSchema, "roomId").mutation<JoinCallOutput>(
     async ({ ctx, input: { roomId } }) => {
       const { session, user } = ctx.getSessionPayload;
-      const callSessionId = await createCallSessionId(ctx.db, roomId);
+      const callSessionId = await createCallSessionId(ctx.db, roomId, user.id);
       return joinLiveKitCall({ id: callSessionId, roomId }, createParticipant(session, user), user.id);
     },
   ),
@@ -253,7 +268,7 @@ export const callRouter = router({
     }),
   readCallSession: standardAuthedProcedure.input(readCallSessionInputSchema).query(async ({ ctx, input: { id } }) => {
     const callSession = await ctx.db.query.callSessionsInMessage.findFirst({
-      columns: { id: true, roomId: true },
+      columns: { id: true, roomId: true, userId: true },
       where: { id: { eq: id } },
     });
     if (!callSession)

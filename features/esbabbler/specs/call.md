@@ -156,19 +156,19 @@ Each WebRTC peer connection IS an auth session. `sendSignal` routes to a specifi
 
 ### v2 (current) — LiveKit migration
 
-| Procedure              | Type             | Change from v1 | Purpose                                                                                                                  |
-| ---------------------- | ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `createCall`           | mutation         | **New**        | Creates a standalone, roomless call session for `/calls` -> `/calls/[id]`                                                |
-| `joinCall`             | mutation         | **Modified**   | Generates LiveKit token + creates room if needed; updates server participant map; returns `{ livekitUrl, livekitToken }` |
-| `leaveCall`            | mutation         | Kept           | Removes from server participant map; broadcasts leave (webhook also does this as backup)                                 |
-| `readCallParticipants` | query            | Kept           | Returns current participant list (initial load, non-participants)                                                        |
-| `setMute`              | mutation         | Kept           | Syncs muted state to server map; broadcasts `onSetMute`                                                                  |
-| ~~`sendSignal`~~       | ~~mutation~~     | **Removed**    | LiveKit handles signaling internally                                                                                     |
-| ~~`onSendSignal`~~     | ~~subscription~~ | **Removed**    | LiveKit handles signaling internally                                                                                     |
-| `onJoinCall`           | subscription     | Kept           | Fires when participant joins (driven by webhook or `joinCall`)                                                           |
-| `onLeaveCall`          | subscription     | Kept           | Fires when participant leaves                                                                                            |
-| `onSetMute`            | subscription     | Kept           | Fires on mute toggle                                                                                                     |
-| `onVideoChanged`       | subscription     | **New**        | Fires when camera on/off state changes                                                                                   |
+| Procedure              | Type             | Change from v1 | Purpose                                                                                                                                       |
+| ---------------------- | ---------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createCall`           | mutation         | **New**        | Creates a standalone, roomless call session for `/calls` -> `/calls/[id]`                                                                     |
+| `joinCall`             | mutation         | **Modified**   | Standalone only; allows the `call_sessions.userId` creator or an admitted knocker; generates LiveKit token and updates server participant map |
+| `leaveCall`            | mutation         | Kept           | Removes from server participant map; broadcasts leave (webhook also does this as backup)                                                      |
+| `readCallParticipants` | query            | Kept           | Returns current participant list (initial load, non-participants)                                                                             |
+| `setMute`              | mutation         | Kept           | Syncs muted state to server map; broadcasts `onSetMute`                                                                                       |
+| ~~`sendSignal`~~       | ~~mutation~~     | **Removed**    | LiveKit handles signaling internally                                                                                                          |
+| ~~`onSendSignal`~~     | ~~subscription~~ | **Removed**    | LiveKit handles signaling internally                                                                                                          |
+| `onJoinCall`           | subscription     | Kept           | Fires when participant joins (driven by webhook or `joinCall`)                                                                                |
+| `onLeaveCall`          | subscription     | Kept           | Fires when participant leaves                                                                                                                 |
+| `onSetMute`            | subscription     | Kept           | Fires on mute toggle                                                                                                                          |
+| `onVideoChanged`       | subscription     | **New**        | Fires when camera on/off state changes                                                                                                        |
 
 ### Token generation (server)
 
@@ -267,6 +267,8 @@ The root call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute
 | `knockingCallSessionId` | `ref` | Standalone call ID the current user is waiting to be admitted into             |
 | `joinCallOptions`       | `ref` | Pre-join microphone/camera preferences applied when the knocker is admitted    |
 | `knockers`              | `ref` | `CallParticipant[]` queue shown to participants who can admit/dismiss knockers |
+
+Standalone call ownership is persisted on `callSessionsInMessage.userId`. The `/calls/[id]` page auto-joins only when the authenticated user matches that creator. There is no `direct` query parameter; all non-creators must knock and receive a one-time admission in `callAdmittedParticipantMap` before `joinCall({ id })` succeeds.
 
 #### Media store: `call/media.ts`
 

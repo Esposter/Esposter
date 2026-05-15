@@ -1,6 +1,7 @@
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
+import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
@@ -12,6 +13,9 @@ export const callSessionsInMessage = pgTable(
   "call_sessions",
   {
     id: text().primaryKey(),
+    userId: text()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     roomId: uuid()
       .unique()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),

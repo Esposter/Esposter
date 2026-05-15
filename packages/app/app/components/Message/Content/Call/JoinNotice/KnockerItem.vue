@@ -39,13 +39,9 @@ const onDismiss = async () => {
     <span font-medium flex-1 truncate text-body-medium>{{ knocker.name }} wants to join</span>
     <v-tooltip text="Let in">
       <template #activator="{ props: tooltipProps }">
-        <v-btn
+        <StyledButton
           :="tooltipProps"
-          :loading="isAdmitting"
-          color="primary"
-          icon="mdi-check"
-          size="small"
-          variant="tonal"
+          :button-props="{ icon: 'mdi-check', loading: isAdmitting, size: 'small', variant: 'tonal' }"
           @click="onAdmit()"
         />
       </template>

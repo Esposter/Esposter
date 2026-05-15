@@ -60,18 +60,14 @@ const deleteWord = (word: string) => {
           <span text-xs text-medium-emphasis>
             Messages containing these words will be blocked. Comparisons are case-insensitive.
           </span>
-          <v-btn
-            :disabled="!isDirty"
-            color="primary"
-            variant="tonal"
+          <StyledButton
+            :button-props="{ disabled: !isDirty, text: 'Save Changes', variant: 'tonal' }"
             @click="
               async () => {
                 initialWords = (await $trpc.roomFilter.upsertRoomFilter.mutate({ roomId, words })).words;
               }
             "
-          >
-            Save Changes
-          </v-btn>
+          />
         </div>
       </v-col>
     </v-row>

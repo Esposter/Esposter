@@ -207,7 +207,7 @@ getPushSubscriptionsForMessage(db, { message, partitionKey, userId })
 | ----------------------- | ------------------------------------------------------------------------------------------ |
 | `rooms`                 | `id`, `userId` (owner), `type` (Room/DM), `categoryId`, `participantKey`                   |
 | `usersToRooms`          | `userId`, `roomId` (PK), `notificationType` (All/DM/Never), `isHidden`, `timeoutUntil`     |
-| `callSessionsInMessage` | `id` (12-char text PK, shareable code), `roomId` (unique FK → rooms)                       |
+| `callSessionsInMessage` | `id` (12-char text PK, shareable code), `userId` (creator), `roomId` (unique FK → rooms)   |
 | `invitesInMessage`      | `id`, `roomId`, `userId`, `token` (8-char, unique invite link code)                        |
 | `roomRoles`             | `id`, `roomId`, `name`, `color`, `position`, `permissions` (bigint bitfield), `isEveryone` |
 | `usersToRoomRoles`      | `userId`, `roomId`, `roleId` (composite PK)                                                |

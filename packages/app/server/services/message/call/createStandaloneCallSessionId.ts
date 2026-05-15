@@ -5,10 +5,12 @@ import { CALL_ID_LENGTH, callSessionsInMessage, DatabaseEntityType } from "@espo
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
-export const createStandaloneCallSessionId = async (db: Context["db"]): Promise<string> => {
+export const createStandaloneCallSessionId = async (db: Context["db"], userId: string): Promise<string> => {
   for (let i = 0; i < 3; i++) {
     const id = createId(CALL_ID_LENGTH);
-    const result = await getResultAsync(() => db.insert(callSessionsInMessage).values({ id }).returning()).match(
+    const result = await getResultAsync(() =>
+      db.insert(callSessionsInMessage).values({ id, userId }).returning(),
+    ).match(
       (value) => value[0]?.id,
       (error) => {
         if (typeof error === "object" && error !== null && "code" in error && error.code === "23505") return null;

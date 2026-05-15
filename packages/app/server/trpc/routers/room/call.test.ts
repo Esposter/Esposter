@@ -2,6 +2,8 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
+import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { createCallerFactory } from "@@/server/trpc";
@@ -26,6 +28,8 @@ describe("call", () => {
   });
 
   afterEach(async () => {
+    callAdmittedParticipantMap.clear();
+    callKnockerMap.clear();
     callSessionParticipantMap.clear();
     await mockContext.db.delete(callSessionsInMessage);
     await mockContext.db.delete(roomsInMessage);
@@ -73,6 +77,7 @@ describe("call", () => {
 
     expect(callSession?.id).toBe(callSessionId);
     expect(callSession?.roomId).toBeNull();
+    expect(callSession?.userId).toBe(getMockSession().user.id);
   });
 
   test("joining call twice keeps participant list at 1", async () => {
@@ -307,6 +312,17 @@ describe("call", () => {
     expect(participants).toHaveLength(1);
     expect(callSessionId).toBe(expectedCallSessionId);
     expect(takeOne(participants).isMuted).toBe(false);
+  });
+
+  test("prevents non-creator from directly joining standalone call", async () => {
+    expect.hasAssertions();
+
+    const { callSessionId } = await roomCallCaller.createCall();
+    await mockSessionOnce(mockContext.db);
+
+    await expect(roomCallCaller.joinCall({ id: callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new ForbiddenError("Must be admitted to join this call").message}]`,
+    );
   });
 
   test("fails joinCall for room call session", async () => {

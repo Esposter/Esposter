@@ -3,20 +3,17 @@ import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions
 
 import { getResultAsync } from "@esposter/shared";
 
-const defaultJoinCallOptions: JoinCallOptions = {
-  isCameraEnabled: false,
-  isMicrophoneEnabled: true,
-};
-
 export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const { $trpc } = useNuxtApp();
   const knockingCallSessionId = ref("");
-  const joinCallOptions = ref<JoinCallOptions>(defaultJoinCallOptions);
+  const joinCallOptions = ref<JoinCallOptions>({
+    isCameraEnabled: false,
+    isMicrophoneEnabled: true,
+  });
   const knockers = ref<CallParticipant[]>([]);
 
-  const knockCall = async (callId: string, newJoinCallOptions: JoinCallOptions) => {
+  const knockCall = async (callId: string) => {
     await getResultAsync(() => $trpc.roomCall.knockCall.mutate({ id: callId })).match(() => {
-      joinCallOptions.value = newJoinCallOptions;
       knockingCallSessionId.value = callId;
     }, console.error);
   };
@@ -42,7 +39,10 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   };
   const resetKnockerState = () => {
     knockingCallSessionId.value = "";
-    joinCallOptions.value = defaultJoinCallOptions;
+    joinCallOptions.value = {
+      isCameraEnabled: false,
+      isMicrophoneEnabled: true,
+    };
     knockers.value = [];
   };
 
