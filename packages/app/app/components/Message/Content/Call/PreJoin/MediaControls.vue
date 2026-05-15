@@ -1,24 +1,24 @@
 <script setup lang="ts">
 interface MediaControlsProps {
   isCameraEnabled: boolean;
-  isMicEnabled: boolean;
+  isMicrophoneEnabled: boolean;
 }
 
 const props = defineProps<MediaControlsProps>();
-const emit = defineEmits<{ toggleCamera: []; toggleMic: [] }>();
+const emit = defineEmits<{ toggleCamera: []; toggleMicrophone: [] }>();
 </script>
 
 <template>
   <div flex gap-x-3>
-    <v-tooltip :text="isMicEnabled ? 'Mute microphone' : 'Unmute microphone'">
+    <v-tooltip :text="isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'">
       <template #activator="{ props: tooltipProps }">
         <v-btn
           :="tooltipProps"
-          :color="isMicEnabled ? undefined : 'error'"
-          :icon="isMicEnabled ? 'mdi-microphone' : 'mdi-microphone-off'"
+          :color="isMicrophoneEnabled ? undefined : 'error'"
+          :icon="isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off'"
           size="large"
           variant="tonal"
-          @click="emit('toggleMic')"
+          @click="emit('toggleMicrophone')"
         />
       </template>
     </v-tooltip>

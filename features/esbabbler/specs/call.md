@@ -1,6 +1,6 @@
 # Esbabbler — Call & Video Channel Architecture
 
-Discord-style persistent per-room A/V channel plus standalone share-link calls. Room members can join/leave room calls freely; `/call` starts a roomless call for anyone with the link.
+Discord-style persistent per-room A/V channel plus standalone share-link calls. Room members can join/leave room calls freely; `/calls` starts a roomless call for anyone with the link.
 Screensharing: implemented with LiveKit track publication; see [`specs/screenshare.md`](screenshare.md).
 
 ---
@@ -16,7 +16,7 @@ Screensharing: implemented with LiveKit track publication; see [`specs/screensha
 - **Camera** — toggle local video track on/off
 - **Screenshare** — see `specs/screenshare.md`
 - **Virtual backgrounds** — starter presets are applied to the local camera track through `@livekit/track-processors`
-- **Standalone calls** — `/call` starts a roomless call and `/call/[id]` joins by share link
+- **Standalone calls** — `/calls` starts a roomless call and `/calls/[id]` joins by share link
 - **Speaking indicator** — ring/pulse on avatar when audio detected
 - Sidebar room list: small **🔊 N** badge on rooms with active call participants (visible to non-participants)
 
@@ -69,7 +69,7 @@ Only these actions remove the local participant:
 - User intent: clicking **Leave Call** in room controls, call view controls, or any persistent call status control.
 - Moderation intent: `KickFromCall`, `KickFromRoom`, `TimeoutUser`, or `CreateBan` when the active call belongs to the affected room.
 - Session loss: logout, tab close, browser crash, or LiveKit disconnect that produces a `participant_left` webhook.
-- Standalone call-route unmount: leaving `/call/[id]` because that page is the full call context.
+- Standalone call-route unmount: leaving `/calls/[id]` because that page is the full call context.
 
 ### Non-leave transitions
 
@@ -84,12 +84,12 @@ These must keep the active call connected:
 
 Keep one owner for media membership and one owner for room observation:
 
-| Owner                                | Responsibility                                                                                                | Must not do                                               |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `callStore.leaveCall()`              | The only normal client path that calls `roomCall.leaveCall`, disconnects LiveKit, and resets active state     | Run implicitly during ordinary room navigation            |
-| `useCallSubscribables()`             | Observes the currently viewed room's call session and updates `currentRoomCallSessionId` / `roomParticipants` | Remove the active participant or disconnect LiveKit       |
-| `useCallIdSubscribables()`           | Owns `/call/[id]` page membership; joins on mount, leaves on unmount                                          | Reuse room-navigation cleanup semantics                   |
-| `StatusBar.vue` / persistent call UI | Shows the active call and links back to `callRoomId` after navigation                                         | Depend on `currentRoomCallSessionId` to decide membership |
+| Owner                                | Responsibility                                                                                                      | Must not do                                               |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `callStore.leaveCall()`              | The only normal client path that calls `roomCall.leaveCall`, disconnects LiveKit, and resets active state           | Run implicitly during ordinary room navigation            |
+| `useCallSubscribables()`             | Observes the currently viewed room's call session and updates `currentRoomCallSessionId` / `roomParticipants`       | Remove the active participant or disconnect LiveKit       |
+| `useCallIdSubscribables()`           | Owns `/calls/[id]` page membership; validates call session, subscribes to joined/knocking events, leaves on unmount | Reuse room-navigation cleanup semantics                   |
+| `StatusBar.vue` / persistent call UI | Shows the active call and links back to `callRoomId` after navigation                                               | Depend on `currentRoomCallSessionId` to decide membership |
 
 `activeCallSessionId` answers "what call am I in?" while `currentRoomCallSessionId` answers "what call belongs to the room I am looking at?" They can be different, and that is valid.
 
@@ -158,7 +158,7 @@ Each WebRTC peer connection IS an auth session. `sendSignal` routes to a specifi
 
 | Procedure              | Type             | Change from v1 | Purpose                                                                                                                  |
 | ---------------------- | ---------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `createCall`           | mutation         | **New**        | Creates a standalone, roomless call session for `/call` → `/call/[id]`                                                   |
+| `createCall`           | mutation         | **New**        | Creates a standalone, roomless call session for `/calls` -> `/calls/[id]`                                                |
 | `joinCall`             | mutation         | **Modified**   | Generates LiveKit token + creates room if needed; updates server participant map; returns `{ livekitUrl, livekitToken }` |
 | `leaveCall`            | mutation         | Kept           | Removes from server participant map; broadcasts leave (webhook also does this as backup)                                 |
 | `readCallParticipants` | query            | Kept           | Returns current participant list (initial load, non-participants)                                                        |
@@ -234,7 +234,7 @@ async function toggleDeafen() {
 }
 ```
 
-The root call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute, toggleCamera, toggleDeafen, toggleScreenShare, selectVirtualBackground }`; LiveKit-specific track handling stays in `liveKit.ts`.
+The root call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute, toggleCamera, toggleDeafen, toggleScreenShare, selectVirtualBackground }`; LiveKit-specific track handling stays in `liveKit.ts`. Standalone `joinCall(id, options)` accepts pre-join camera/microphone preferences from the waiting-room flow.
 
 `leaveCall` is an explicit membership action, not route cleanup. Room-level subscription cleanup should unsubscribe observers and clear viewed-room state only.
 
@@ -259,6 +259,14 @@ The root call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute
 | `callRoomId`               | `ref`      | Room ID of active call — kept only for admin action room-scoped checks        |
 | `isInCall`                 | `computed` | Derived from participant store for the active session                         |
 | `isMuted`                  | `computed` | Derived from participant store for the active session                         |
+
+#### Knocker store: `call/knocker.ts`
+
+| State                   | Kind  | Description                                                                    |
+| ----------------------- | ----- | ------------------------------------------------------------------------------ |
+| `knockingCallSessionId` | `ref` | Standalone call ID the current user is waiting to be admitted into             |
+| `joinCallOptions`       | `ref` | Pre-join microphone/camera preferences applied when the knocker is admitted    |
+| `knockers`              | `ref` | `CallParticipant[]` queue shown to participants who can admit/dismiss knockers |
 
 #### Media store: `call/media.ts`
 
@@ -366,17 +374,19 @@ packages/app/
         media.ts                         # camera/screen/share/deafen state
         participant.ts                   # participant map + speaking/join notice state
       liveKit.ts                         # LiveKit Room media bridge
-    pages/call/
+    pages/calls/
       index.vue                          # standalone call lobby/start page
-      [id].vue                           # full call view
+      [id].vue                           # full call view / pre-join / waiting room
     components/Message/
       Content/
         CallButton.vue                   # unchanged UX; reads token from joinCall
-        Call/AudioControlGroup.vue       # mic + up-caret audio menu
-        Call/VideoControlGroup.vue       # camera + up-caret video menu/backgrounds
-        Call/ControlBar.vue              # single-purpose call controls
-        Call/ParticipantTile.vue         # video tile with avatar fallback
-        Call/ScreenShareStage.vue        # presenter layout
+        Call/Audio/ControlGroup.vue      # mic + up-caret audio menu
+        Call/Video/ControlGroup.vue      # camera + up-caret video menu/backgrounds
+        Call/Control/Bar.vue             # single-purpose call controls
+        Call/Participant/Tile.vue        # video tile with avatar fallback
+        Call/ScreenShare/Stage.vue       # presenter layout
+        Call/PreJoin/Index.vue           # camera/microphone preview before knocking
+        Call/Waiting.vue                 # waiting room state after knocking
 ```
 
 ## What Does Not Change

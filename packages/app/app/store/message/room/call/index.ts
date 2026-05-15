@@ -1,3 +1,5 @@
+import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
+
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useRoomStore } from "@/store/message/room";
@@ -8,6 +10,11 @@ import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { AdminActionType } from "@esposter/db-schema";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { Room } from "livekit-client";
+
+const defaultJoinCallOptions: JoinCallOptions = {
+  isCameraEnabled: false,
+  isMicrophoneEnabled: true,
+};
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
@@ -81,18 +88,32 @@ export const useCallStore = defineStore("message/room/call", () => {
     const { callSessionId } = await $trpc.roomCall.createCall.mutate();
     return callSessionId;
   };
-  const joinCall = async (id: string): Promise<string | undefined> => {
+  const joinCall = async (
+    id: string,
+    { isCameraEnabled, isMicrophoneEnabled }: JoinCallOptions = defaultJoinCallOptions,
+  ): Promise<string | undefined> => {
     if (activeCallSessionId.value) return activeCallSessionId.value;
     isConnecting.value = true;
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
     await getResultAsync(async () => {
       const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.roomCall.joinCall.mutate({ id });
-      await connect(new Room({ adaptiveStream: true, dynacast: true }), livekitUrl, livekitToken, leaveCall);
+      await connect(
+        new Room({ adaptiveStream: true, dynacast: true }),
+        livekitUrl,
+        livekitToken,
+        leaveCall,
+        isMicrophoneEnabled,
+      );
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
       isJoined = true;
       setParticipants(callSessionId, participants);
+      if (!isMicrophoneEnabled) await setMuteEnabled(true);
+      if (isCameraEnabled) {
+        await setCamera(true);
+        await setCameraEnabled(true);
+      }
     }).match(noop, async (error) => {
       console.error(error);
       if (isJoined) await leaveCall();
@@ -114,7 +135,7 @@ export const useCallStore = defineStore("message/room/call", () => {
       const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.roomCall.joinCallByRoomId.mutate({
         roomId,
       });
-      await connect(new Room({ adaptiveStream: true, dynacast: true }), livekitUrl, livekitToken, leaveCall);
+      await connect(new Room({ adaptiveStream: true, dynacast: true }), livekitUrl, livekitToken, leaveCall, true);
       currentRoomCallSessionId.value = callSessionId;
       activeCallSessionId.value = callSessionId;
       isJoined = true;

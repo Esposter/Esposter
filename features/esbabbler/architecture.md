@@ -82,7 +82,7 @@ Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md
 - `server/services/message/call/readCallSessionId.ts` — reads call session id for a room; returns `""` if none exists
 - `server/api/webhooks/livekit.post.ts` — LiveKit participant joined/left backup path into `callParticipantMap` + `callEventEmitter`
 - `app/composables/message/subscribables/useCallSubscribables.ts` — room observer only: calls `readCallSessionId` on room entry → sets `currentRoomCallSessionId`; subscribes/unsubscribes to that room's call events without leaving the active call
-- `app/composables/message/room/call/useCallIdSubscribables.ts` — dedicated `/call/[id]` lifecycle; page unmount is an explicit call leave because the call page is the call surface
+- `app/composables/message/room/call/useCallIdSubscribables.ts` — dedicated `/calls/[id]` lifecycle; page unmount is an explicit call leave because the call page is the call surface
 - `app/store/message/room/call/index.ts` — root call/session orchestration: `activeCallSessionId` (drives tRPC ops), `currentRoomCallSessionId` (viewed room), and `callRoomId` (admin action checks)
 - `app/store/message/room/call/participant.ts` — participant map, speaking IDs, and join notice state
 - `app/store/message/room/call/media.ts` — camera, screen share, deafen, virtual background, pin, and local/remote media stream state
@@ -95,7 +95,7 @@ Room navigation is not call membership. A user remains in a call until one of th
 - They click **Leave Call** from the room call controls, call view, or status bar controls.
 - They are removed by a moderation action that semantically ejects them from the call or room (`KickFromCall`, `KickFromRoom`, `TimeoutUser`, `CreateBan`).
 - The browser tab/session actually disconnects, crashes, logs out, or loses its LiveKit connection long enough for LiveKit to emit `participant_left`.
-- The standalone `/call/[id]` page unmounts, because that route is the whole call surface rather than a room observer.
+- The standalone `/calls/[id]` page unmounts, because that route is the whole call surface rather than a room observer.
 
 Changing rooms should only change `currentRoomCallSessionId`, participant observers, and inline room UI. It must not call `leaveCall`, disconnect LiveKit, reset `activeCallSessionId`, or remove the local participant from `callParticipantMap`.
 

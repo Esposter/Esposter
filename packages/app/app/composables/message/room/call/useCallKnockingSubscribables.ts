@@ -14,7 +14,7 @@ export const useCallKnockingSubscribables = (callId: string) => {
   const callStore = useCallStore();
   const { joinCall } = callStore;
   const knockerStore = useKnockerStore();
-  const { knockingCallSessionId } = storeToRefs(knockerStore);
+  const { joinCallOptions, knockingCallSessionId } = storeToRefs(knockerStore);
   const { cancelKnock } = knockerStore;
 
   useOnlineSubscribable(
@@ -26,7 +26,7 @@ export const useCallKnockingSubscribables = (callId: string) => {
         onData: getSynchronizedFunction(async () => {
           await getResultAsync(async () => {
             cancelKnock();
-            await joinCall(callId);
+            await joinCall(callId, joinCallOptions.value);
           }).match(noop, console.error);
         }),
       });

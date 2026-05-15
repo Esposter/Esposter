@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useKnockerStore } from "@/store/message/room/call/knocker";
-import { getResultAsync } from "@esposter/shared";
 
 interface PreJoinProps {
   callId: string;
@@ -9,42 +8,14 @@ interface PreJoinProps {
 const props = defineProps<PreJoinProps>();
 const knockerStore = useKnockerStore();
 const { knockCall } = knockerStore;
-const cameraStream = ref<MediaStream>();
-const isCameraEnabled = ref(false);
-const isMicEnabled = ref(true);
 const isRequestingJoin = ref(false);
-const startCamera = async () => {
-  const result = await getResultAsync(() => window.navigator.mediaDevices.getUserMedia({ video: true }));
-  result.match(
-    (stream) => {
-      cameraStream.value = stream;
-      isCameraEnabled.value = true;
-    },
-    () => {
-      isCameraEnabled.value = false;
-    },
-  );
-};
-const stopCamera = () => {
-  cameraStream.value?.getTracks().forEach((track) => track.stop());
-  cameraStream.value = undefined;
-  isCameraEnabled.value = false;
-};
-const toggleCamera = async () => {
-  if (isCameraEnabled.value) stopCamera();
-  else await startCamera();
-};
-const toggleMic = () => {
-  isMicEnabled.value = !isMicEnabled.value;
-};
+const { cameraStream, isCameraEnabled, isMicrophoneEnabled, joinCallOptions, toggleCamera, toggleMicrophone } =
+  useCallPreJoinMedia();
 const requestJoin = async () => {
   isRequestingJoin.value = true;
-  await knockCall(props.callId);
+  await knockCall(props.callId, joinCallOptions.value);
   isRequestingJoin.value = false;
 };
-
-onMounted(startCamera);
-onUnmounted(stopCamera);
 </script>
 
 <template>
@@ -53,9 +24,9 @@ onUnmounted(stopCamera);
     <MessageContentCallPreJoinCameraPreview :is-camera-enabled :stream="cameraStream" />
     <MessageContentCallPreJoinMediaControls
       :is-camera-enabled
-      :is-mic-enabled
+      :is-microphone-enabled
       @toggle-camera="toggleCamera()"
-      @toggle-mic="toggleMic()"
+      @toggle-microphone="toggleMicrophone()"
     />
     <v-btn
       :loading="isRequestingJoin"

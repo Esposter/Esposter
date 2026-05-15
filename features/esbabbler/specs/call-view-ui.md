@@ -1,6 +1,6 @@
 # Call View UI — Standalone Call Page & Reusable Call Component
 
-Full-screen call experience for `/call/[id]`, with `/call` as the standalone call lobby/start page. Components are shared with the inline room call view.
+Full-screen call experience for `/calls/[id]`, with `/calls` as the standalone call lobby/start page. Components are shared with the inline room call view.
 
 ---
 
@@ -41,14 +41,14 @@ Switch `CallView` to presenter layout: screenshare fills main area, participant 
 ## Component Tree
 
 ```text
-pages/call/index.vue                       call lobby/start page
-pages/call/[id].vue                        fullscreen call route
+pages/calls/index.vue                      call lobby/start page
+pages/calls/[id].vue                       fullscreen call route
   └── Call/View.vue                        fills h-screen, reads from store
-        ├── Call/ParticipantTile.vue        one tile per participant
-        ├── Call/ScreenShareStage.vue       presenter view when a screen is shared
+        ├── Call/Participant/Tile.vue       one tile per participant
+        ├── Call/ScreenShare/Stage.vue      presenter view when a screen is shared
         ├── Call/InviteCard.vue             bottom-left share-link panel
-        ├── Call/JoinNotice.vue             top-center join notice
-        └── Call/ControlBar.vue            bottom-center overlaid controls
+        ├── Call/JoinNotice/Index.vue       top-center join notice / knocker queue
+        └── Call/Control/Bar.vue            bottom-center overlaid controls
 
 Message/Content/Index.vue
   └── Call/Panel/Index.vue                 compact inline room call entry + fullscreen dialog
@@ -66,7 +66,7 @@ Message/Content/Index.vue
 - Reads connection/session state from the root call store, media streams from `call/media`, and participant/speaking state from `call/participant`
 - Absolutely positioned `CallControlBar` at bottom
 
-### `Call/ParticipantTile.vue`
+### `Call/Participant/Tile.vue`
 
 Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`, `isDeafened: boolean`, `isScreenSharing: boolean`, `videoStream?: MediaStream`
 
@@ -77,7 +77,7 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 - Screenshare badge (`mdi-monitor-share`) when the participant is presenting
 - Self-only deafened badge (`mdi-headphones-off` when `isDeafened`)
 
-### `Call/ControlBar.vue`
+### `Call/Control/Bar.vue`
 
 - Centered bottom row, translucent pill (`bg-grey-darken-4/90`)
 - Composes single-purpose controls directly: grouped mic + up-caret audio settings, grouped camera + up-caret video settings/backgrounds, deafen, screenshare, leave
@@ -90,12 +90,12 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 ### Id join path
 
 ```text
-/call/[id]
+/calls/[id]
   → useCallIdSubscribables(id)                composable handles full lifecycle
-    → store.joinCall(id)
+    → store.joinCall(id, options?)            direct creator joins immediately; knockers join after admission
       → $trpc.roomCall.joinCall.mutate({ id })
       → LiveKit room.connect(livekitUrl, livekitToken)
-      → LiveKit enables microphone
+      → LiveKit applies microphone/camera preferences
       → activeCallSessionId.value = callSessionId
       → setParticipants(callSessionId, participants)
       → return callSessionId
@@ -114,7 +114,7 @@ onUnmounted in useCallIdSubscribables
     → reset activeCallSessionId, isDeafened, isForceMuted, local camera/screenshare/background state
 ```
 
-This differs intentionally from room navigation cleanup. `/call/[id]` is a dedicated call surface, so leaving the page means leaving the call. A normal room route change is only an observer swap and must not call `store.leaveCall()`.
+This differs intentionally from room navigation cleanup. `/calls/[id]` is a dedicated call surface, so leaving the page means leaving the call. A normal room route change is only an observer swap and must not call `store.leaveCall()`.
 
 ---
 

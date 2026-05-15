@@ -220,6 +220,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     livekitUrl: string,
     livekitToken: string,
     newDisconnectHandler: () => Promise<void>,
+    isMicrophoneEnabled: boolean,
   ) => {
     await disconnect();
     activeRoom = room;
@@ -237,7 +238,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     room.on(RoomEvent.Disconnected, onDisconnected);
     room.on(RoomEvent.AudioPlaybackStatusChanged, onAudioPlaybackStatusChanged);
     await room.connect(livekitUrl, livekitToken);
-    await room.localParticipant.setMicrophoneEnabled(true);
+    await room.localParticipant.setMicrophoneEnabled(isMicrophoneEnabled);
     syncActiveDevices(room);
   };
   const disconnect = async () => {
