@@ -9,22 +9,45 @@ import type {
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { Room, RoomEvent, Track } from "livekit-client";
 
+const rasterizedSvgCache = new Map<string, string>();
+
 const rasterizeSvg = (svgUrl: string) =>
-  new Promise<string>((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = 1920;
-      canvas.height = 1080;
-      canvas.getContext("2d")?.drawImage(img, 0, 0, 1920, 1080);
-      resolve(canvas.toDataURL("image/png"));
-    };
-    img.src = svgUrl;
-  });
+  getResultAsync(async () => {
+    const cachedRasterizedSvgUrl = rasterizedSvgCache.get(svgUrl);
+    if (cachedRasterizedSvgUrl) return cachedRasterizedSvgUrl;
+
+    const svgResponse = await fetch(svgUrl);
+    const svgBlob = await svgResponse.blob();
+    const svgImageBitmap = await createImageBitmap(svgBlob);
+    const rasterizationCanvas = document.createElement("canvas");
+    rasterizationCanvas.width = 1920;
+    rasterizationCanvas.height = 1080;
+    rasterizationCanvas.getContext("2d")?.drawImage(svgImageBitmap, 0, 0, 1920, 1080);
+    svgImageBitmap.close();
+
+    const rasterizedSvgBlobUrl = await new Promise<string>((resolve, reject) => {
+      rasterizationCanvas.toBlob((rasterizedSvgBlob) => {
+        if (!rasterizedSvgBlob) {
+          reject(new InvalidOperationError(Operation.Create, svgUrl, "Canvas toBlob returned null"));
+          return;
+        }
+        resolve(URL.createObjectURL(rasterizedSvgBlob));
+      }, "image/png");
+    });
+
+    rasterizedSvgCache.set(svgUrl, rasterizedSvgBlobUrl);
+    return rasterizedSvgBlobUrl;
+  }).match(
+    (rasterizedSvgBlobUrl) => rasterizedSvgBlobUrl,
+    (error) => {
+      console.error(error);
+      return null;
+    },
+  );
 
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
@@ -184,7 +207,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const setVirtualBackground = async (imagePath: string) => {
     mediaStore.selectedVirtualBackground = imagePath;
     if (!localCameraTrack) return false;
-    if (!supportsBackgroundProcessors()) {
+    else if (!supportsBackgroundProcessors()) {
       console.warn("Background processors are not supported in this browser.");
       return false;
     }
@@ -196,8 +219,9 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
         mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
     }
     const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
+    if (resolvedPath === null) return false;
     await virtualBackgroundProcessor.switchTo(
-      resolvedPath ? { imagePath: resolvedPath, mode: "virtual-background" } : { mode: "disabled" },
+      imagePath ? { imagePath: resolvedPath, mode: "virtual-background" } : { mode: "disabled" },
     );
     return true;
   };
