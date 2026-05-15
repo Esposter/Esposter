@@ -11,6 +11,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { callRouter } from "@@/server/trpc/routers/call";
 import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
+import { createId } from "#shared/util/math/random/createId";
 import { CALL_ID_LENGTH, callSessionsInMessage, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -19,7 +20,7 @@ describe("call/knocker", () => {
   let mockContext: Context;
   let callSessionCaller: DecorateRouterRecord<TRPCRouter["callSession"]>;
   let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
-  const nonExistentCallSessionId = "a".repeat(CALL_ID_LENGTH);
+  const nonExistentCallSessionId = createId(CALL_ID_LENGTH);
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -93,17 +94,16 @@ describe("call/knocker", () => {
       expect.hasAssertions();
 
       const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-      const fakeCallSessionId = crypto.randomUUID();
       callSessionParticipantMap.set(
-        fakeCallSessionId,
+        nonExistentCallSessionId,
         new Map([[sessionPayload.session.id, createParticipant(sessionPayload.session, sessionPayload.user)]]),
       );
       replayMockSession(sessionPayload);
 
       await expect(
-        knockerCaller.admitKnocker({ callSessionId: fakeCallSessionId, sessionId: crypto.randomUUID() }),
+        knockerCaller.admitKnocker({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, fakeCallSessionId).message}]`,
+        `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, nonExistentCallSessionId).message}]`,
       );
     });
   });
@@ -128,17 +128,16 @@ describe("call/knocker", () => {
       expect.hasAssertions();
 
       const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
-      const fakeCallSessionId = crypto.randomUUID();
       callSessionParticipantMap.set(
-        fakeCallSessionId,
+        nonExistentCallSessionId,
         new Map([[sessionPayload.session.id, createParticipant(sessionPayload.session, sessionPayload.user)]]),
       );
       replayMockSession(sessionPayload);
 
       await expect(
-        knockerCaller.dismissKnocker({ callSessionId: fakeCallSessionId, sessionId: crypto.randomUUID() }),
+        knockerCaller.dismissKnocker({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, fakeCallSessionId).message}]`,
+        `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, nonExistentCallSessionId).message}]`,
       );
     });
   });
