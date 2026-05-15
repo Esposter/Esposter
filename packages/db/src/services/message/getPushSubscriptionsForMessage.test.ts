@@ -23,6 +23,8 @@ import {
 import { beforeAll, describe, expect, test } from "vitest";
 
 const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
+const getMentionMessage = (id: string) =>
+  `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}" />`;
 
 describe(getPushSubscriptionsForMessage, () => {
   let db: PostgresJsDatabase<typeof relations>;
@@ -35,8 +37,6 @@ describe(getPushSubscriptionsForMessage, () => {
   const directMessageOfflineUserId = crypto.randomUUID();
   const neverUserId = crypto.randomUUID();
   const senderUserId = crypto.randomUUID();
-  const getMentionMessage = (id: string) =>
-    `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}" />`;
 
   beforeAll(async () => {
     db = await createMockDb();

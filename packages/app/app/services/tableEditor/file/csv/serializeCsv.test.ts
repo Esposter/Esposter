@@ -10,19 +10,19 @@ import { serializeCsv } from "@/services/tableEditor/file/csv/serializeCsv";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { describe, expect, test } from "vitest";
 
+const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
+  columns,
+  metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
+  rows,
+  statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
+});
+
+const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
+
+const createRow = (data: Record<string, number>): Row => new Row({ data });
+
 describe(serializeCsv, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Csv].mimeType;
-
-  const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
-    columns,
-    metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
-    rows,
-    statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
-  });
-
-  const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
-
-  const createRow = (data: Record<string, number>): Row => new Row({ data });
 
   test("serializes columns and rows to CSV with comma delimiter", async () => {
     expect.hasAssertions();

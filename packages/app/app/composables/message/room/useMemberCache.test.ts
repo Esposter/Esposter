@@ -14,6 +14,11 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+const goOffline = () => {
+  vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+  window.dispatchEvent(new Event("offline"));
+};
+
 describe(useMemberCache, () => {
   let router: Router;
   let wrapper: VueWrapper;
@@ -34,10 +39,6 @@ describe(useMemberCache, () => {
     name: "name",
     updatedAt: new Date(),
   } satisfies User;
-  const goOffline = () => {
-    vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-    window.dispatchEvent(new Event("offline"));
-  };
   const flushCache = async () => {
     await flushPromises();
     await flush();

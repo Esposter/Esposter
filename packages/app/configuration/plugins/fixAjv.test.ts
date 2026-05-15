@@ -2,13 +2,14 @@ import { describe, expect, test } from "vitest";
 
 import { fixAjv } from "./fixAjv";
 
+const transform = (code: string, id: string) => fixAjv.transform(code, id);
+
 describe("fixAjv", () => {
   const AJV_ID = "/node_modules/ajv/dist/compile/util.js";
   const AJV_FORMATS_ID = "/node_modules/ajv-formats/dist/formats.js";
   const JSON_SCHEMA_TRAVERSE_ID = "/node_modules/json-schema-traverse/index.js";
   const BROWSER_JS_ID = "/node_modules/debug/src/browser.js";
   const COMMON_JS_ID = "/node_modules/debug/src/common.js";
-  const transform = (code: string, id: string) => fixAjv.transform(code, id);
 
   describe("filter", () => {
     test("returns undefined for non-matching paths", () => {

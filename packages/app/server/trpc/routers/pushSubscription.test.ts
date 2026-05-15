@@ -14,6 +14,9 @@ import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, takeOne } f
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
+const getMessage = (userId: string) =>
+  `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
+
 describe("pushSubscription", () => {
   let mockContext: Context;
   let pushSubscriptionCaller: DecorateRouterRecord<TRPCRouter["pushSubscription"]>;
@@ -22,8 +25,6 @@ describe("pushSubscription", () => {
   let userToRoomCaller: DecorateRouterRecord<TRPCRouter["userToRoom"]>;
   const name = "name";
   const message = "message";
-  const getMessage = (userId: string) =>
-    `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
   const endpoint = "https://.";
   const auth = "auth";
   const updatedAuth = "updatedAuth";

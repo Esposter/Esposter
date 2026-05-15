@@ -4,6 +4,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { isUpdateThemeModeSetting } from "@/services/dungeons/settings/isUpdateThemeModeSetting";
 import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
@@ -24,7 +25,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const volumeStore = useVolumeStore();
   const { isUpdateVolume, updateVolume } = volumeStore;
   const colorPickerStore = useColorPickerStore();
-  const { isUpdateThemeModeSetting, updateThemeModeSetting } = colorPickerStore;
+  const { updateThemeModeSetting } = colorPickerStore;
   const selectedSettingsOption = computed(
     () => SettingsOptionGrid.getValue({ x: 0, y: SettingsOptionGrid.position.value.y }) as SettingsOption,
   );

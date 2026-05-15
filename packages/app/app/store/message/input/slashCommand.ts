@@ -1,7 +1,7 @@
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
-import type { SlashCommandParameter } from "@/models/message/slashCommands/SlashCommandParameter";
 import type { SlashCommandParameterError } from "@/models/message/slashCommands/SlashCommandParameterError";
 
+import { parseTextAndParameters } from "@/services/message/slashCommands/parseTextAndParameters";
 import { useRoomStore } from "@/store/message/room";
 import { ID_SEPARATOR, normalizeString, takeOne, toRawDeep } from "@esposter/shared";
 
@@ -29,42 +29,6 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   const createParameter = (name: string) => {
     lastAddedParameterName.value = name;
     activeParameterNames.value = [...activeParameterNames.value, name];
-  };
-
-  const parseTextAndParameters = (
-    text: string,
-    parameters: SlashCommandParameter[],
-  ): { parameterValues: Record<string, string>; trailingMessage: string } => {
-    const result: Record<string, string> = {};
-    let remainingText = normalizeString(text);
-
-    while (remainingText.length > 0) {
-      const currentText = remainingText;
-      const parameter = parameters.find(({ name }) => currentText.startsWith(`${name}${ID_SEPARATOR}`));
-      if (!parameter) break;
-
-      const { name } = parameter;
-      remainingText = remainingText.slice(name.length + ID_SEPARATOR.length);
-
-      let nextParameterStartIndex = -1;
-      for (const { name: nextName } of parameters) {
-        if (nextName === name) continue;
-        const index = remainingText.indexOf(` ${nextName}${ID_SEPARATOR}`);
-        if (index !== -1 && (nextParameterStartIndex === -1 || index < nextParameterStartIndex))
-          nextParameterStartIndex = index;
-      }
-
-      if (nextParameterStartIndex === -1) {
-        result[name] = remainingText;
-        remainingText = "";
-        break;
-      } else {
-        result[name] = remainingText.slice(0, nextParameterStartIndex);
-        remainingText = remainingText.slice(nextParameterStartIndex + 1).trimStart();
-      }
-    }
-
-    return { parameterValues: result, trailingMessage: remainingText };
   };
 
   const setPendingSlashCommand = (slashCommand: SlashCommand, remainingText = "") => {

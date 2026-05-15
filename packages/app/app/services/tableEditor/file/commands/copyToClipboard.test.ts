@@ -79,7 +79,7 @@ describe(copyToClipboard, () => {
     beforeEach(() => {
       capturedItems.length = 0;
       writeMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
-      vi.stubGlobal("ClipboardItem", function (items: { "text/html": Blob; "text/plain": Blob }) {
+      vi.stubGlobal("ClipboardItem", (items: { "text/html": Blob; "text/plain": Blob }) => {
         capturedItems.push(items);
       });
       vi.stubGlobal("navigator", { clipboard: { write: writeMock } });

@@ -4,61 +4,61 @@ import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { computeColumnChartData } from "@/services/tableEditor/file/column/computeColumnChartData";
 import { describe, expect, test } from "vitest";
 
+const makeNumberStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
+  average: 1,
+  columnName: "",
+  columnType: ColumnType.Number,
+  falseCount: null,
+  maximum: 2,
+  minimum: 0,
+  mostFrequentValue: null,
+  nullCount: 0,
+  nullPercent: null,
+  standardDeviation: 1,
+  summation: 0,
+  topFrequencies: null,
+  trueCount: null,
+  uniqueCount: 3,
+  ...overrides,
+});
+
+const makeBooleanStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
+  average: null,
+  columnName: "",
+  columnType: ColumnType.Boolean,
+  falseCount: 1,
+  maximum: null,
+  minimum: null,
+  mostFrequentValue: null,
+  nullCount: 1,
+  nullPercent: null,
+  standardDeviation: null,
+  summation: null,
+  topFrequencies: null,
+  trueCount: 2,
+  uniqueCount: null,
+  ...overrides,
+});
+
+const makeStringStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
+  average: null,
+  columnName: "",
+  columnType: ColumnType.String,
+  falseCount: null,
+  maximum: null,
+  minimum: null,
+  mostFrequentValue: null,
+  nullCount: 0,
+  nullPercent: 0,
+  standardDeviation: null,
+  summation: null,
+  topFrequencies: null,
+  trueCount: null,
+  uniqueCount: 1,
+  ...overrides,
+});
+
 describe(computeColumnChartData, () => {
-  const makeNumberStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
-    average: 1,
-    columnName: "",
-    columnType: ColumnType.Number,
-    falseCount: null,
-    maximum: 2,
-    minimum: 0,
-    mostFrequentValue: null,
-    nullCount: 0,
-    nullPercent: null,
-    standardDeviation: 1,
-    summation: 0,
-    topFrequencies: null,
-    trueCount: null,
-    uniqueCount: 3,
-    ...overrides,
-  });
-
-  const makeBooleanStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
-    average: null,
-    columnName: "",
-    columnType: ColumnType.Boolean,
-    falseCount: 1,
-    maximum: null,
-    minimum: null,
-    mostFrequentValue: null,
-    nullCount: 1,
-    nullPercent: null,
-    standardDeviation: null,
-    summation: null,
-    topFrequencies: null,
-    trueCount: 2,
-    uniqueCount: null,
-    ...overrides,
-  });
-
-  const makeStringStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
-    average: null,
-    columnName: "",
-    columnType: ColumnType.String,
-    falseCount: null,
-    maximum: null,
-    minimum: null,
-    mostFrequentValue: null,
-    nullCount: 0,
-    nullPercent: 0,
-    standardDeviation: null,
-    summation: null,
-    topFrequencies: null,
-    trueCount: null,
-    uniqueCount: 1,
-    ...overrides,
-  });
-
   test(`number column returns bar chart with minimum, average, maximum`, () => {
     expect.hasAssertions();
 

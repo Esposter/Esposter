@@ -14,6 +14,11 @@ import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
+const selectAnchor = (rowIndex: number, columnIndex: number) => {
+  const { startCellSelection } = useCellStore();
+  startCellSelection(rowIndex, columnIndex);
+};
+
 describe(usePasteRangeFromClipboard, () => {
   let readTextMock: ReturnType<typeof vi.fn<() => Promise<string>>>;
 
@@ -28,11 +33,6 @@ describe(usePasteRangeFromClipboard, () => {
     const fileHistoryStore = useFileHistoryStore();
     fileHistoryStore.clear();
   });
-
-  const selectAnchor = (rowIndex: number, columnIndex: number) => {
-    const { startCellSelection } = useCellStore();
-    startCellSelection(rowIndex, columnIndex);
-  };
 
   describe("overwrite mode", () => {
     test("overwrites cells at selection anchor", async () => {

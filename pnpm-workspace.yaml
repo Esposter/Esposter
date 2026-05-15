@@ -112,7 +112,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.11.0
+  apexcharts: ^5.12.0
   better-auth: ^1.6.11
   codemirror: ^6.0.2
   crossws: ^0.4.5
@@ -126,9 +126,9 @@ catalog:
   drizzle-kit: 1.0.0-rc.2
   drizzle-orm: 1.0.0-rc.2
   emoji-mart-vue-fast: ^15.0.5
-  eslint: ^10.3.0
+  eslint: ^10.4.0
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.64.0
+  eslint-plugin-oxlint: ^1.65.0
   eslint-plugin-perfectionist: ^5.9.0
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
@@ -176,8 +176,8 @@ catalog:
   node-html-parser: ^7.1.0
   nuxt: ^4.4.5
   nuxt-security: ^2.6.0
-  oxfmt: ^0.49.0
-  oxlint: ^1.64.0
+  oxfmt: ^0.50.0
+  oxlint: ^1.65.0
   oxlint-tsgolint: ^0.22.1
   p-progress: ^1.0.0
   pathe: ^2.0.3
