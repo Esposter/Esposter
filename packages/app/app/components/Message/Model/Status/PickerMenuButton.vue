@@ -25,10 +25,6 @@ const save = async () => {
   statusMap.value.set(userId, rest);
   menu.value = false;
 };
-const onStatusClick = (clickedStatus: UserStatus) => {
-  if (clickedStatus === selectedStatus.value) save();
-  else selectedStatus.value = clickedStatus;
-};
 </script>
 
 <template>
@@ -45,7 +41,12 @@ const onStatusClick = (clickedStatus: UserStatus) => {
           :active="selectableStatus === selectedStatus"
           :subtitle
           rd
-          @click="onStatusClick(selectableStatus)"
+          @click="
+            () => {
+              if (selectableStatus === selectedStatus) save();
+              else selectedStatus = selectableStatus;
+            }
+          "
         >
           <template #prepend>
             <v-icon

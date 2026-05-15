@@ -7,20 +7,28 @@ const callCodeOrLink = ref("");
 const isJoining = ref(false);
 const callId = computed(() => normalizeString(callCodeOrLink.value).match(CALL_ID_REGEX)?.[0] ?? "");
 const canJoin = computed(() => selectCallSessionInMessageSchema.shape.id.safeParse(callId.value).success);
-const joinCall = async () => {
-  if (!canJoin.value) return;
-  isJoining.value = true;
-  await withFinalizerAsync(
-    () => router.push(RoutePath.Calls(callId.value)),
-    () => {
-      isJoining.value = false;
-    },
-  );
-};
 </script>
 
 <template>
-  <v-form flex flex-wrap gap-3 items-center justify-center @submit.prevent="joinCall()">
+  <v-form
+    flex
+    flex-wrap
+    gap-3
+    items-center
+    justify-center
+    @submit.prevent="
+      async () => {
+        if (!canJoin) return;
+        isJoining = true;
+        await withFinalizerAsync(
+          () => router.push(RoutePath.Calls(callId)),
+          () => {
+            isJoining = false;
+          },
+        );
+      }
+    "
+  >
     <v-text-field
       v-model="callCodeOrLink"
       density="compact"

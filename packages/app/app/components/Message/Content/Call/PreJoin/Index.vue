@@ -11,17 +11,6 @@ const knockerStore = useKnockerStore();
 const { knockCall } = knockerStore;
 const isRequestingJoin = ref(false);
 const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggleMicrophone } = useCallPreJoinMedia();
-const requestJoin = async () => {
-  isRequestingJoin.value = true;
-  await withFinalizerAsync(
-    async () => {
-      await knockCall(callId);
-    },
-    () => {
-      isRequestingJoin.value = false;
-    },
-  );
-};
 </script>
 
 <template>
@@ -37,7 +26,19 @@ const requestJoin = async () => {
       />
       <StyledButton
         :button-props="{ loading: isRequestingJoin, size: 'large', text: 'Request to join' }"
-        @click="requestJoin()"
+        @click="
+          async () => {
+            isRequestingJoin = true;
+            await withFinalizerAsync(
+              async () => {
+                await knockCall(callId);
+              },
+              () => {
+                isRequestingJoin = false;
+              },
+            );
+          }
+        "
       />
     </StyledCard>
   </div>
