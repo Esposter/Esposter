@@ -83,13 +83,13 @@ Two distinct call entry points with different auth semantics:
 | Procedure             | `joinCallByRoomId({ roomId })`             | `createCall()` then `joinCall({ id })`               |
 | Auth requirement      | Room membership (via `getMemberProcedure`) | Auth only — no room membership                       |
 | `callRoomId` in store | Set to the room ID                         | Empty `""`                                           |
-| Page                  | Room's message view + `Panel/Dialog`       | `/call/[id]`                                         |
+| Page                  | Room's message view + `Panel/Dialog`       | `/calls/[id]`                                        |
 | InviteCard shown      | No (hidden when `callRoomId` is set)       | Yes — shares `window.location.href`                  |
 | RBAC / moderation     | Full room RBAC applies                     | No room — any participant can admit/dismiss knockers |
 
 **`joinCall({ id })`** only works for standalone sessions (`callSession.roomId === null`). It throws `FORBIDDEN` if called with a room session ID. Room calls must be joined via `joinCallByRoomId`.
 
-**`createCall()`** creates a new standalone (roomless) call session and returns its `callSessionId`. The `/call` page calls this to start a new call, then navigates to `/call/[callSessionId]`.
+**`createCall()`** creates a new standalone (roomless) call session and returns its `callSessionId`. The `/calls` page calls this to start a new call, then navigates to `/calls/[callSessionId]`.
 
 ### Call session lifecycle
 
@@ -106,7 +106,7 @@ Only these actions remove the local participant:
 - **User intent**: clicking **Leave Call** in room controls, call view, or status bar.
 - **Moderation**: `KickFromCall`, `KickFromRoom`, `TimeoutUser`, `CreateBan` when `callRoomId` matches.
 - **Session loss**: logout, tab close, browser crash, or LiveKit disconnect (`participant_left` webhook).
-- **`/call/[id]` unmount**: the standalone call page is the whole call surface; leaving the route leaves the call.
+- **`/calls/[id]` unmount**: the standalone call page is the whole call surface; leaving the route leaves the call.
 
 Room navigation (`useCallSubscribables` cleanup) is **not** a leave boundary. It only clears `currentRoomCallSessionId` and unsubscribes room observers — it never calls `leaveCall` or disconnects LiveKit.
 
@@ -198,7 +198,7 @@ Scope: standalone calls only. Any authed user can currently join a standalone ca
 
 - `knockCall({ id })` — adds caller to `callKnockerMap`; emits `onKnockCall` to participants.
 - `admitKnocker` / `dismissKnocker` — called by any participant; emits `onKnockerAdmitted` / `onKnockerDismissed` to the knocker.
-- `/call/[id]` page states: `idle` (pre-join) → `knocking` (waiting overlay) → `joined` (full CallView).
+- `/calls/[id]` page states: `idle` (pre-join) → `knocking` (waiting overlay) → `joined` (full CallView).
 - First joiner (creator) always skips straight to `joined`.
 - `JoinNotice.vue` upgraded to show "Let In" / "Dismiss" per knocker.
 

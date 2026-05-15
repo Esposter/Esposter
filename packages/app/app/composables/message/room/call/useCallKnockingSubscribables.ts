@@ -3,7 +3,7 @@ import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSu
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
-import { RoutePath } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 
 export const useCallKnockingSubscribables = (callId: string) => {
   const onlineSubscribableContext: OnlineSubscribableContext = {
@@ -24,14 +24,18 @@ export const useCallKnockingSubscribables = (callId: string) => {
 
       const knockerAdmittedUnsubscribable = $trpc.roomCall.onKnockerAdmitted.subscribe(callSessionId, {
         onData: getSynchronizedFunction(async () => {
-          cancelKnock();
-          await joinCall(callId);
+          await getResultAsync(async () => {
+            cancelKnock();
+            await joinCall(callId);
+          }).match(noop, console.error);
         }),
       });
       const knockerDismissedUnsubscribable = $trpc.roomCall.onKnockerDismissed.subscribe(callSessionId, {
         onData: getSynchronizedFunction(async () => {
-          cancelKnock();
-          await navigateTo(RoutePath.CallsIndex);
+          await getResultAsync(async () => {
+            cancelKnock();
+            await navigateTo(RoutePath.CallsIndex);
+          }).match(noop, console.error);
         }),
       });
 
