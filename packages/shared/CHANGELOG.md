@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
+
+### Bug Fixes
+
+* camera issues ([3668328](https://github.com/Esposter/Esposter/commit/3668328ec554170d7fa26821e53d9bf12086a4af))
+* code review comments ([326e1d4](https://github.com/Esposter/Esposter/commit/326e1d481d10e83c876eabbaaeffe4538ecf5644))
+* lint ([d2f3a99](https://github.com/Esposter/Esposter/commit/d2f3a991715c49af54d2b043ed84d4c68295fb3c))
+* lint ([92cce33](https://github.com/Esposter/Esposter/commit/92cce33cbe510ba04dbdf152a0091b231b5e05b3))
+* typechecking and code review comments ([2a85e3f](https://github.com/Esposter/Esposter/commit/2a85e3fe2652b11a563b91e1749a6f1ce38be6dc))
+
+### Features
+
+* add call token page ([1428174](https://github.com/Esposter/Esposter/commit/14281742d516d8da6b93d866780fa5e44a6f9102))
+
 # [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
 
 ### Bug Fixes

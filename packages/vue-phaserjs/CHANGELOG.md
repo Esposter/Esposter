@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
+
+### Bug Fixes
+
+* code review comments ([f759f5d](https://github.com/Esposter/Esposter/commit/f759f5d5b42e5596495f51f0cf07c1b3091ec3ce))
+* grid engine referencing phaser globally ([71ac015](https://github.com/Esposter/Esposter/commit/71ac0155000532f6e946ba6a281859b8b4ef7db5))
+* types ([3a9486a](https://github.com/Esposter/Esposter/commit/3a9486a5b9cc2242edae2d069c51fa7cd2678998))
+* types ([a4d6e9b](https://github.com/Esposter/Esposter/commit/a4d6e9bf7b8fedd9eb904a58e8b56797fe03d66d))
+
 # [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
 
 ### Bug Fixes

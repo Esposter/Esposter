@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
+
+### Bug Fixes
+
+* calls and cleanup things ([37e883e](https://github.com/Esposter/Esposter/commit/37e883ed639746dd92874586ece2bd2c4686bcef))
+* code review comments ([bd48985](https://github.com/Esposter/Esposter/commit/bd48985d5b7be7b293ffacbde1ae72c73bb7b6ef))
+* code review comments ([5e9378c](https://github.com/Esposter/Esposter/commit/5e9378c1e7829e24b0bcd522a102834025eff67a))
+* code review comments ([67911c7](https://github.com/Esposter/Esposter/commit/67911c7d9edc28d080151799faccaaa53a949ebc))
+* lint ([6acddc6](https://github.com/Esposter/Esposter/commit/6acddc6ef48c5d63d2c3ba93e078491fa79dcfc4))
+* lint ([32ba662](https://github.com/Esposter/Esposter/commit/32ba662e213f7f784ada82b2badeebed294d4cbe))
+* lint ([21f7754](https://github.com/Esposter/Esposter/commit/21f775451c6975f87c6cd7a244053a34abba0f05))
+* remove redundant primary keys ([cc08d6d](https://github.com/Esposter/Esposter/commit/cc08d6d31c6ac36f9bc32155e7d65437e9f491b3))
+* tests ([ef2fa28](https://github.com/Esposter/Esposter/commit/ef2fa288910a7e5b53651e92a368b411fbbdfe82))
+* typechecking and code review comments ([2a85e3f](https://github.com/Esposter/Esposter/commit/2a85e3fe2652b11a563b91e1749a6f1ce38be6dc))
+
+### Features
+
+* add nickname ([074449a](https://github.com/Esposter/Esposter/commit/074449a3d2a8ee58bcd32edb361abde4c19e0fc4))
+
 # [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
 
 ### Bug Fixes
