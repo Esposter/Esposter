@@ -92,10 +92,10 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 ```text
 /calls/[id]
   → useCallIdSubscribables(id)                composable handles full lifecycle
-    → store.joinCall(id, options?)            creator joins immediately; knockers join after admission
+    → store.joinCall(id)                      creator joins immediately; knockers join after admission
       → $trpc.roomCall.joinCall.mutate({ id })
       → LiveKit room.connect(livekitUrl, livekitToken)
-      → LiveKit applies microphone/camera preferences
+      → LiveKit applies microphone/camera preferences from call/knocker.ts
       → activeCallSessionId.value = callSessionId
       → setParticipants(callSessionId, participants)
       → return callSessionId
@@ -122,7 +122,7 @@ This differs intentionally from room navigation cleanup. `/calls/[id]` is a dedi
 
 | Aspect                     | Room call (`useCallSubscribables`)        | Id call (`useCallIdSubscribables`)       |
 | -------------------------- | ----------------------------------------- | ---------------------------------------- |
-| Entry procedure            | `readCallSessionId({ roomId })` then join | `joinCall({ id })` directly              |
+| Entry procedure            | `readCallSessionId({ roomId })` then join | Creator/admitted `joinCall({ id })`      |
 | `callRoomId`               | Set (enables admin action room checks)    | Not set (no room membership)             |
 | `currentRoomCallSessionId` | Set for the viewed room only              | Not set                                  |
 | Component reads            | `roomParticipants` in `CallPanel`         | `callParticipants` in `CallView`         |

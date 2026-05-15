@@ -28,11 +28,14 @@ export const useCallPreJoinMedia = () => {
       },
     );
   };
-  const stopCamera = () => {
+  const stopCameraStream = () => {
     const stream = cameraStream.value;
     if (stream) for (const track of stream.getTracks()) track.stop();
 
     cameraStream.value = undefined;
+  };
+  const stopCamera = () => {
+    stopCameraStream();
     isCameraEnabled.value = false;
   };
   const toggleCamera = async () => {
@@ -47,7 +50,7 @@ export const useCallPreJoinMedia = () => {
     await startCamera();
   });
   onUnmounted(() => {
-    stopCamera();
+    stopCameraStream();
   });
 
   return {

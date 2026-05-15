@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface PreJoinProps {
   callId: string;
@@ -12,8 +13,14 @@ const isRequestingJoin = ref(false);
 const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggleMicrophone } = useCallPreJoinMedia();
 const requestJoin = async () => {
   isRequestingJoin.value = true;
-  await knockCall(props.callId);
-  isRequestingJoin.value = false;
+  await withFinalizerAsync(
+    async () => {
+      await knockCall(props.callId);
+    },
+    () => {
+      isRequestingJoin.value = false;
+    },
+  );
 };
 </script>
 

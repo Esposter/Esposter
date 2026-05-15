@@ -34,5 +34,6 @@ All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `
 ## Key Rules
 
 - **Lint errors**: always run `pnpm lint:fix` — never manually edit to satisfy ESLint/oxlint
-- **Do not run lint proactively**: `pnpm lint`, `pnpm lint:all`, and lint fix commands are slow; only run them when the user explicitly asks. Prefer `pnpm format` plus targeted typecheck/tests, and tell the user when lint was left for them.
+- **Do not run lint proactively**: `pnpm lint`, `pnpm lint:all`, and lint fix commands are slow; only run them when the user explicitly asks. Prefer `pnpm format` plus targeted typecheck, and tell the user when lint was left for them.
+- **Do not run tests on Windows**: Vitest currently fails during config startup on Windows (`spawn EPERM`). Do not run `pnpm test`, targeted Vitest files, or coverage unless the user explicitly asks and acknowledges the Windows limitation.
 - **Long-running commands** (`dev`, `build`, `test`, `typecheck`): run with `run_in_background: true` on the Bash tool — they can take 2+ minutes

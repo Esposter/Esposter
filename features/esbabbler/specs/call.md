@@ -234,7 +234,7 @@ async function toggleDeafen() {
 }
 ```
 
-The root call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute, toggleCamera, toggleDeafen, toggleScreenShare, selectVirtualBackground }`; LiveKit-specific track handling stays in `liveKit.ts`. Standalone `joinCall(id, options)` accepts pre-join camera/microphone preferences from the waiting-room flow.
+The root call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute, toggleCamera, toggleDeafen, toggleScreenShare, selectVirtualBackground }`; LiveKit-specific track handling stays in `liveKit.ts`. Standalone `joinCall(id)` reads pre-join camera/microphone preferences from `call/knocker.ts` so the waiting-room flow has one source of truth.
 
 `leaveCall` is an explicit membership action, not route cleanup. Room-level subscription cleanup should unsubscribe observers and clear viewed-room state only.
 
