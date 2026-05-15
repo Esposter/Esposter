@@ -677,6 +677,9 @@ importers:
 
   .:
     devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:packages/configuration
       '@lerna-lite/cli':
         specifier: 'catalog:'
         version: 5.2.1(@lerna-lite/publish@5.2.1)(@lerna-lite/run@5.2.1)(@lerna-lite/version@5.2.1(@lerna-lite/publish@5.2.1)(@lerna-lite/run@5.2.1)(@lerna-lite/watch@5.2.1)(@types/node@25.7.0)(conventional-commits-filter@5.0.0))(@lerna-lite/watch@5.2.1)(@types/node@25.7.0)
@@ -1167,6 +1170,9 @@ importers:
         specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
       '@esposter/db-mock':
         specifier: workspace:*
         version: link:../db-mock
@@ -1606,6 +1612,10 @@ importers:
       vue:
         specifier: 'catalog:'
         version: 3.5.34(typescript@5.9.3)
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
 
   packages/xml2js:
     dependencies:

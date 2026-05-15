@@ -38,6 +38,7 @@
     "watch:packages": "lerna watch --ignore @esposter/app -- pnpm build:packages"
   },
   "devDependencies": {
+    "@esposter/configuration": "workspace:*",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
     "@lerna-lite/run": "catalog:",

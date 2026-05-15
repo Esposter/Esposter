@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type DefaultLayout from "@/layouts/default.vue";
 import type { RenderTarget } from "three/webgpu";
 
 import { APP_BAR_HEIGHT } from "#shared/services/app/constants";
@@ -26,7 +27,7 @@ import {
   WebGPURenderer,
 } from "three/webgpu";
 
-const layout = useTemplateRef("layout");
+const layout = useTemplateRef<{ layoutRef: InstanceType<typeof DefaultLayout> }>("layout");
 const parameters = { azimuth: 180, elevation: 2, exposure: 0.5 };
 let renderer: WebGPURenderer;
 let controls: OrbitControls;
@@ -41,7 +42,7 @@ const miniPanelTop = `${APP_BAR_HEIGHT + 60}px`;
 const getHeight = () => window.innerHeight - APP_BAR_HEIGHT;
 
 onMounted(async () => {
-  const container = layout.value?.layoutRef?.container;
+  const container = layout.value?.layoutRef.container;
   if (!container) return;
   renderer = new WebGPURenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
