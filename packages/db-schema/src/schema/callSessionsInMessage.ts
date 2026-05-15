@@ -13,12 +13,12 @@ export const callSessionsInMessage = pgTable(
   "call_sessions",
   {
     id: text().primaryKey(),
-    userId: text()
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
     roomId: uuid()
       .unique()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
+    userId: text()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   {
     extraConfig: ({ id }) => [
