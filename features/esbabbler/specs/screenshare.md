@@ -128,7 +128,7 @@ Implemented as `AdminActionType.StopScreenShare`:
 4. `AdminActionPermissionMap`: maps to `RoomPermission.MuteMembers`
 5. Client notification in `useAdminActionMap`
 6. Server-side LiveKit enforcement in `executeAdminAction`: find the active room call session, find the target user's active call participants, revoke screen-share publish sources for those LiveKit identities, and mute any active `ScreenShare` / `ScreenShareAudio` tracks
-7. Target-client hook in `useCallStore`: when `callRoomId` matches, call `setScreenShare(false)` for immediate local cleanup
+7. Target-client hook in `useCallStore`: call `setScreenShare(false)` through the call store hook and show a snackbar
 
 ---
 
