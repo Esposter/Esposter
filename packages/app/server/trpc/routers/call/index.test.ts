@@ -5,6 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { callRouter } from "@@/server/trpc/routers/call";
@@ -63,6 +64,21 @@ describe("call", () => {
 
     const { callSessionId } = await callCaller.createCall();
     await mockSessionOnce(mockContext.db);
+
+    await expect(callCaller.readCallParticipants({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new ForbiddenError("Must be in call").message}]`,
+    );
+  });
+
+  test("prevents room member from reading room call participants before joining call", async () => {
+    expect.hasAssertions();
+
+    const room = await roomCaller.createRoom({ name });
+    const callSessionId = await createCallSessionId(mockContext.db, room.id, getMockSession().user.id);
+    const inviteCode = await roomCaller.createInvite({ roomId: room.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(inviteCode);
+    await mockSessionOnce(mockContext.db, user);
 
     await expect(callCaller.readCallParticipants({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new ForbiddenError("Must be in call").message}]`,

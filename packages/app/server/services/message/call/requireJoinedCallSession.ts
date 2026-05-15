@@ -13,7 +13,6 @@ export const requireJoinedCallSession = async (
 ) => {
   const callSession = await requireReadableCallSession(db, sessionPayload, callSessionId);
   if (
-    callSession.roomId ||
     callSession.userId === sessionPayload.user.id ||
     callSessionParticipantMap.get(callSessionId)?.has(sessionPayload.session.id)
   )
