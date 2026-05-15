@@ -43,7 +43,7 @@ watch(activeCallSessionId, async (newActiveCallSessionId) => {
 <template>
   <NuxtLayout hide-global-scrollbar>
     <Head>
-      <Title>Call</Title>
+      <Title>Calls</Title>
     </Head>
     <div size-full>
       <MessageContentCallView v-if="activeCallSessionId" />
