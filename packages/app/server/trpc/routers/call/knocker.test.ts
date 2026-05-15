@@ -7,6 +7,7 @@ import { callAdmittedParticipantMap } from "@@/server/services/message/call/call
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
+import { deleteCallParticipant } from "@@/server/services/message/call/deleteCallParticipant";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
@@ -71,6 +72,25 @@ describe("call/knocker", () => {
       await knockerCaller.knockCall({ id: callSessionId });
 
       expect(callKnockerMap.get(callSessionId)?.size).toBe(1);
+    });
+
+    test("last participant leaving dismisses pending knockers", async () => {
+      expect.hasAssertions();
+
+      const owner = getMockSession();
+      const { callSessionId } = await callSessionCaller.createCall();
+      await mockSessionOnce(mockContext.db);
+      await knockerCaller.knockCall({ id: callSessionId });
+      callSessionParticipantMap.set(
+        callSessionId,
+        new Map([[owner.session.id, createParticipant(owner.session, owner.user)]]),
+      );
+      const emitSpy = vi.spyOn(callEventEmitter, "emit");
+
+      deleteCallParticipant(callSessionId, owner.session.id);
+
+      expect(callKnockerMap.has(callSessionId)).toBe(false);
+      expect(emitSpy).toHaveBeenCalledWith("knockerDismissed", expect.objectContaining({ callSessionId }));
     });
   });
 

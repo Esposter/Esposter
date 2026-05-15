@@ -58,6 +58,17 @@ describe("call", () => {
     );
   });
 
+  test("prevents non-participant from reading standalone call participants", async () => {
+    expect.hasAssertions();
+
+    const { callSessionId } = await callCaller.createCall();
+    await mockSessionOnce(mockContext.db);
+
+    await expect(callCaller.readCallParticipants({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new ForbiddenError("Must be in call").message}]`,
+    );
+  });
+
   test("fails join for non-member", async () => {
     expect.hasAssertions();
 
