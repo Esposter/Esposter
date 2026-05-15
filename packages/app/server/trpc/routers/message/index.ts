@@ -82,11 +82,6 @@ import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-
-export const readMetadataInputSchema = z.object({
-  messageRowKeys: standardMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomInMessageSchema.shape.id,
-});
 // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
 // As we insert our messages with a reverse-ticked timestamp as our rowKey
 // So unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
