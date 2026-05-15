@@ -18,7 +18,6 @@ import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
-import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import {
   callSessionIdSchema,
   DatabaseEntityType,
@@ -27,6 +26,7 @@ import {
 } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { z } from "zod";
 
 const joinCallByRoomIdInputSchema = roomIdSchema;

@@ -104,7 +104,7 @@ describe("call/knocker", () => {
 
       await knockerCaller.admitKnocker({ callSessionId, sessionId: knockerSession.id });
 
-      expect(callKnockerMap.get(callSessionId)?.has(knockerSession.id)).toBeFalsy();
+      expect(callKnockerMap.get(callSessionId)?.has(knockerSession.id)).toBe(false);
       expect(callAdmittedParticipantMap.get(callSessionId)?.has(knockerSession.id)).toBe(true);
       expect(emitSpy).toHaveBeenCalledWith(
         "knockerAdmitted",
@@ -197,7 +197,7 @@ describe("call/knocker", () => {
 
       await knockerCaller.dismissKnocker({ callSessionId, sessionId: knockerSession.id });
 
-      expect(callKnockerMap.get(callSessionId)?.has(knockerSession.id)).toBeFalsy();
+      expect(callKnockerMap.get(callSessionId)?.has(knockerSession.id)).toBe(false);
       expect(emitSpy).toHaveBeenCalledWith(
         "knockerDismissed",
         expect.objectContaining({ callSessionId, knockerSessionId: knockerSession.id }),
@@ -319,6 +319,7 @@ describe("call/knocker", () => {
 
       const iterator = onKnockCall[Symbol.asyncIterator]();
       const returnResult = await iterator.return?.();
+
       expect(returnResult?.done).toBe(true);
     });
 
@@ -334,6 +335,7 @@ describe("call/knocker", () => {
 
       const iterator = onKnockCall[Symbol.asyncIterator]();
       const returnResult = await iterator.return?.();
+
       expect(returnResult?.done).toBe(true);
     });
 
@@ -356,6 +358,7 @@ describe("call/knocker", () => {
 
       const iterator = onKnockCallA[Symbol.asyncIterator]();
       const returnResult = await iterator.return?.();
+
       expect(returnResult?.done).toBe(true);
     });
   });
@@ -385,6 +388,7 @@ describe("call/knocker", () => {
       );
 
       assert(!data.done);
+
       expect(data.value).toBeUndefined();
     });
 
@@ -412,6 +416,7 @@ describe("call/knocker", () => {
 
       const iterator = onKnockerAdmitted[Symbol.asyncIterator]();
       const returnResult = await iterator.return?.();
+
       expect(returnResult?.done).toBe(true);
     });
   });
@@ -441,6 +446,7 @@ describe("call/knocker", () => {
       );
 
       assert(!data.done);
+
       expect(data.value).toBeUndefined();
     });
 
@@ -468,6 +474,7 @@ describe("call/knocker", () => {
 
       const iterator = onKnockerDismissed[Symbol.asyncIterator]();
       const returnResult = await iterator.return?.();
+
       expect(returnResult?.done).toBe(true);
     });
   });
@@ -502,7 +509,7 @@ describe("call/knocker", () => {
       replayMockSession(creatorSessionPayload);
       await knockerCaller.dismissKnocker({ callSessionId, sessionId: knockerSession.id });
 
-      expect(callKnockerMap.get(callSessionId)?.has(knockerSession.id)).toBeFalsy();
+      expect(callKnockerMap.get(callSessionId)?.has(knockerSession.id)).toBe(false);
 
       replayMockSession({ session: knockerSession, user: getMockSession().user });
       await knockerCaller.knockCall({ id: callSessionId });
