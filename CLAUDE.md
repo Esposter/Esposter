@@ -116,28 +116,6 @@ Two parallel real-time systems:
 
 When a message is created: `createMessage` → Azure Table write → `messageEventEmitter.emit` → tRPC subscription delivers to connected clients → `getPushSubscriptionsForMessage` → EventGrid → `ProcessPushNotification` Azure Function → web-push to offline users.
 
-### Slash Command Registry
-
-To add a new slash command:
-
-1. Add the new value to `SlashCommandType` enum (`app/models/message/slashCommands/SlashCommandType.ts`)
-2. Add the definition to `SlashCommandDefinitionMap` (`app/services/message/slashCommands/SlashCommandDefinitionMap.ts`) — object with `icon`, `title`, `description`, `parameters[]`, `type`
-3. Add execution logic to `useExecuteSlashCommand` composable (`app/composables/message/slashCommand/useExecuteSlashCommand.ts`)
-
-### AdminActionType / Moderation
-
-`AdminActionType` enum lives in `packages/db-schema/src/models/message/AdminActionType.ts`. Adding a new action type requires:
-
-1. Add enum value to `AdminActionType`
-2. Add arm to the discriminated union in `ExecuteAdminActionInput` (`app/shared/models/db/moderation/ExecuteAdminActionInput.ts`)
-3. Add permission mapping in `AdminActionPermissionMap` (`server/services/message/moderation/AdminActionPermissionMap.ts`)
-4. Add client-side handler in `useAdminActionMap` (`app/composables/message/moderation/useAdminActionMap.ts`)
-5. Add icon/color/label maps in `app/services/message/moderation/`
-
-### MessageType Enum
-
-`MessageType` lives in `packages/db-schema/src/models/message/MessageType.ts`. Adding a new type also requires updating `MessageEntityMap` (maps type → entity class) and `MessageComponentMap` in the app (maps type → Vue component for rendering).
-
 ### Azure Functions
 
 Triggered by EventGrid events, not called directly from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid`; Azure Functions consume them for async work (push notifications, friend request notifications, webhook delivery). No HTTP triggers are exposed to clients.
