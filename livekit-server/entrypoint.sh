@@ -25,9 +25,18 @@ require_numeric_env() {
   fi
 }
 
-require_numeric_env PORT
-require_numeric_env RAILWAY_TCP_PROXY_PORT
-require_numeric_env RAILWAY_TCP_APPLICATION_PORT
+require_port_env() {
+  require_numeric_env "$1"
+  local v="${!1}"
+  if [ "$v" -lt 1 ] || [ "$v" -gt 65535 ]; then
+    echo "ERROR: $1 must be between 1 and 65535"
+    exit 1
+  fi
+}
+
+require_port_env PORT
+require_port_env RAILWAY_TCP_PROXY_PORT
+require_port_env RAILWAY_TCP_APPLICATION_PORT
 
 if [ "$LIVEKIT_NODE_IP_MODE" != "auto" ] && [ "$LIVEKIT_NODE_IP_MODE" != "proxy" ]; then
   echo "ERROR: LIVEKIT_NODE_IP_MODE must be either auto or proxy"
