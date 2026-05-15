@@ -24,9 +24,6 @@ const createWord = () => {
   words.value = [...words.value, normalizedWord];
   newWord.value = "";
 };
-const deleteWord = (word: string) => {
-  words.value = words.value.filter((w) => w !== word);
-};
 </script>
 
 <template>
@@ -53,7 +50,13 @@ const deleteWord = (word: string) => {
             </template>
           </v-text-field>
           <div v-if="words.length > 0" mt-1 flex flex-wrap gap-2>
-            <v-chip v-for="word of words" :key="word" closable size="small" @click:close="deleteWord(word)">
+            <v-chip
+              v-for="word of words"
+              :key="word"
+              closable
+              size="small"
+              @click:close="words = words.filter((w) => w !== word)"
+            >
               {{ word }}
             </v-chip>
           </div>

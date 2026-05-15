@@ -36,13 +36,13 @@ watch(
     :value="row"
     :edited-value="editedRow"
     :schema="rowSchema"
+    @reset="resetForm()"
     @submit="
       (onComplete) => {
         updateRow(editedRow);
         onComplete();
       }
     "
-    @reset="resetForm()"
   >
     <v-row v-for="column of editableColumns.filter((column) => !column.hidden)" :key="column.id">
       <v-col cols="12">

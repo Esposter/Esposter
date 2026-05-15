@@ -16,32 +16,6 @@ const knockerStore = useKnockerStore();
 const { admitKnocker, dismissKnocker } = knockerStore;
 const isAdmitting = ref(false);
 const isDismissing = ref(false);
-const onAdmit = async () => {
-  const callSessionId = activeCallSessionId.value;
-  if (!callSessionId) return;
-  isAdmitting.value = true;
-  await withFinalizerAsync(
-    async () => {
-      await admitKnocker(callSessionId, knocker.id);
-    },
-    () => {
-      isAdmitting.value = false;
-    },
-  );
-};
-const onDismiss = async () => {
-  const callSessionId = activeCallSessionId.value;
-  if (!callSessionId) return;
-  isDismissing.value = true;
-  await withFinalizerAsync(
-    async () => {
-      await dismissKnocker(callSessionId, knocker.id);
-    },
-    () => {
-      isDismissing.value = false;
-    },
-  );
-};
 </script>
 
 <template>
@@ -53,7 +27,21 @@ const onDismiss = async () => {
         <StyledButton
           :="tooltipProps"
           :button-props="{ icon: 'mdi-check', loading: isAdmitting, size: 'small', variant: 'tonal' }"
-          @click="onAdmit()"
+          @click="
+            async () => {
+              const callSessionId = activeCallSessionId;
+              if (!callSessionId) return;
+              isAdmitting = true;
+              await withFinalizerAsync(
+                async () => {
+                  await admitKnocker(callSessionId, knocker.id);
+                },
+                () => {
+                  isAdmitting = false;
+                },
+              );
+            }
+          "
         />
       </template>
     </v-tooltip>
@@ -65,7 +53,21 @@ const onDismiss = async () => {
           icon="mdi-close"
           size="small"
           variant="plain"
-          @click="onDismiss()"
+          @click="
+            async () => {
+              const callSessionId = activeCallSessionId;
+              if (!callSessionId) return;
+              isDismissing = true;
+              await withFinalizerAsync(
+                async () => {
+                  await dismissKnocker(callSessionId, knocker.id);
+                },
+                () => {
+                  isDismissing = false;
+                },
+              );
+            }
+          "
         />
       </template>
     </v-tooltip>

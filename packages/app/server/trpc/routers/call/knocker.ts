@@ -4,6 +4,7 @@ import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { requireCallSession } from "@@/server/services/message/call/requireCallSession";
+import { requireKnockerCallSession } from "@@/server/services/message/call/requireKnockerCallSession";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
@@ -125,7 +126,7 @@ export const knockerRouter = router({
     signal,
   }) {
     const events = on(callEventEmitter, "knockerAdmitted", { signal });
-    await requireCallSession(ctx.db, input);
+    await requireKnockerCallSession(ctx.db, ctx.getSessionPayload, input);
 
     const callerSessionId = ctx.getSessionPayload.session.id;
 
@@ -140,7 +141,7 @@ export const knockerRouter = router({
     signal,
   }) {
     const events = on(callEventEmitter, "knockerDismissed", { signal });
-    await requireCallSession(ctx.db, input);
+    await requireKnockerCallSession(ctx.db, ctx.getSessionPayload, input);
 
     const callerSessionId = ctx.getSessionPayload.session.id;
 

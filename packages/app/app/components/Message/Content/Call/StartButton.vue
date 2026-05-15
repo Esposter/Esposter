@@ -6,19 +6,6 @@ const router = useRouter();
 const callStore = useCallStore();
 const { createCall } = callStore;
 const isCreating = ref(false);
-const startCall = async () => {
-  isCreating.value = true;
-  await withFinalizerAsync(
-    async () => {
-      const newCallSessionId = await createCall();
-      if (!newCallSessionId) return;
-      await router.push(RoutePath.Calls(newCallSessionId));
-    },
-    () => {
-      isCreating.value = false;
-    },
-  );
-};
 </script>
 
 <template>
@@ -27,7 +14,21 @@ const startCall = async () => {
       <StyledButton
         :="props"
         :button-props="{ loading: isCreating, prependIcon: 'mdi-video-plus', text: 'New call' }"
-        @click="startCall()"
+        @click="
+          async () => {
+            isCreating = true;
+            await withFinalizerAsync(
+              async () => {
+                const newCallSessionId = await createCall();
+                if (!newCallSessionId) return;
+                await router.push(RoutePath.Calls(newCallSessionId));
+              },
+              () => {
+                isCreating = false;
+              },
+            );
+          }
+        "
       />
     </template>
   </v-tooltip>

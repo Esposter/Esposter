@@ -20,10 +20,6 @@ const isRoleManageable = (role: RoomRoleInMessage) => {
   if (!myPermissions) return false;
   return isManageable(myPermissions.topRolePosition, role.position, myPermissions.isRoomOwner);
 };
-const toggleRole = async (role: RoomRoleInMessage) => {
-  if (hasRole(role.id)) await revokeRole({ roleId: role.id, roomId, userId: member.id });
-  else await assignRole({ roleId: role.id, roomId, userId: member.id });
-};
 
 await readMemberRoles({ roomId, userIds: [member.id] });
 </script>
@@ -47,7 +43,12 @@ await readMemberRoles({ roomId, userIds: [member.id] });
             color="primary"
             density="compact"
             hide-details
-            @update:model-value="toggleRole(role)"
+            @update:model-value="
+              async () => {
+                if (hasRole(role.id)) await revokeRole({ roleId: role.id, roomId, userId: member.id });
+                else await assignRole({ roleId: role.id, roomId, userId: member.id });
+              }
+            "
           />
         </template>
       </v-list-item>

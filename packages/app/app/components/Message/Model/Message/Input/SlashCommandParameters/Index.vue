@@ -61,9 +61,6 @@ const selectCommand = (slashCommand: SlashCommand) => {
 const navigatePrevious = (index: number) => {
   focusedIndex.value = index - 1;
 };
-const navigateNext = (index: number) => {
-  focusedIndex.value = index + 1;
-};
 const focus = (index: number) => {
   focusedIndex.value = index;
 };
@@ -135,7 +132,7 @@ onKeyStroke("Backspace", () => {
             @delete="deleteParameter(index)"
             @submit="submit"
             @navigate:previous="navigatePrevious(index)"
-            @navigate:next="navigateNext(index)"
+            @navigate:next="focusedIndex = index + 1"
             @focus="focus(index)"
             @blur="blur(index)"
           />

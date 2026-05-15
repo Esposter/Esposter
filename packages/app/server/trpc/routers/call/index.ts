@@ -10,7 +10,8 @@ import { getCallParticipants } from "@@/server/services/message/call/getCallPart
 import { joinLiveKitCall } from "@@/server/services/message/call/joinLiveKitCall";
 import { leaveCallAsParticipant } from "@@/server/services/message/call/leaveCallAsParticipant";
 import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
-import { requireCallSession } from "@@/server/services/message/call/requireCallSession";
+import { requireJoinedCallSession } from "@@/server/services/message/call/requireJoinedCallSession";
+import { requireReadableCallSession } from "@@/server/services/message/call/requireReadableCallSession";
 import { setParticipantCamera } from "@@/server/services/message/call/setParticipantCamera";
 import { updateCallParticipantMute } from "@@/server/services/message/call/updateCallParticipantMute";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
@@ -97,7 +98,7 @@ export const baseCallRouter = router({
     signal,
   }) {
     const events = on(callEventEmitter, "joinCall", { signal });
-    await requireCallSession(ctx.db, input);
+    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ callSessionId, participant, sessionId }] of events) {
       if (callSessionId !== input || sessionId === ctx.getSessionPayload.session.id) continue;
@@ -110,7 +111,7 @@ export const baseCallRouter = router({
     signal,
   }) {
     const events = on(callEventEmitter, "leaveCall", { signal });
-    await requireCallSession(ctx.db, input);
+    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ callSessionId, id }] of events) {
       if (callSessionId !== input || id === ctx.getSessionPayload.session.id) continue;
@@ -119,7 +120,7 @@ export const baseCallRouter = router({
   }),
   onSetMute: standardAuthedProcedure.input(onSetMuteInputSchema).subscription(async function* ({ ctx, input, signal }) {
     const events = on(callEventEmitter, "muteChanged", { signal });
-    await requireCallSession(ctx.db, input);
+    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ callSessionId, id, isMuted }] of events) {
       if (callSessionId !== input) continue;
@@ -132,7 +133,7 @@ export const baseCallRouter = router({
     signal,
   }) {
     const events = on(callEventEmitter, "videoChanged", { signal });
-    await requireCallSession(ctx.db, input);
+    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ callSessionId, id, isCameraEnabled }] of events) {
       if (callSessionId !== input) continue;
@@ -142,20 +143,12 @@ export const baseCallRouter = router({
   readCallParticipants: standardAuthedProcedure
     .input(readCallParticipantsInputSchema)
     .query<CallParticipant[]>(async ({ ctx, input: { callSessionId } }) => {
-      await requireCallSession(ctx.db, callSessionId);
+      await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, callSessionId);
       return getCallParticipants(callSessionId);
     }),
   readCallSession: standardAuthedProcedure.input(readCallSessionInputSchema).query(async ({ ctx, input: { id } }) => {
-    const callSession = await ctx.db.query.callSessionsInMessage.findFirst({
-      columns: { id: true, roomId: true, userId: true },
-      where: { id: { eq: id } },
-    });
-    if (!callSession)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.CallSession, id).message,
-      });
-    return callSession;
+    const callSession = await requireReadableCallSession(ctx.db, ctx.getSessionPayload, id);
+    return { id: callSession.id, roomId: callSession.roomId, userId: callSession.userId };
   }),
   readCallSessionId: getMemberProcedure(readCallSessionIdInputSchema, "roomId").query<string>(
     ({ ctx, input: { roomId } }) => readCallSessionId(ctx.db, roomId),

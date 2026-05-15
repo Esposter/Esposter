@@ -14,10 +14,6 @@ const headers = [
   { key: "columnType", sortable: false, title: "Type" },
   ...Array.from(ColumnStatisticsDefinitions, ({ key, sortable, title }) => ({ key, sortable, title })),
 ];
-const openChart = (statistics: ColumnStatistics) => {
-  selectedStatistics.value = statistics;
-  isChartOpen.value = true;
-};
 </script>
 
 <template>
@@ -26,7 +22,18 @@ const openChart = (statistics: ColumnStatistics) => {
       <template #[`item.chart`]="{ item }">
         <v-tooltip v-if="ChartableColumnTypes.has(item.columnType)" text="View Chart">
           <template #activator="{ props }">
-            <v-btn density="compact" icon="mdi-chart-bar" variant="text" :="props" @click.stop="openChart(item)" />
+            <v-btn
+              density="compact"
+              icon="mdi-chart-bar"
+              variant="text"
+              :="props"
+              @click.stop="
+                () => {
+                  selectedStatistics = item;
+                  isChartOpen = true;
+                }
+              "
+            />
           </template>
         </v-tooltip>
       </template>
