@@ -4,7 +4,7 @@ interface MediaControlsProps {
   isMicrophoneEnabled: boolean;
 }
 
-const props = defineProps<MediaControlsProps>();
+const { isCameraEnabled, isMicrophoneEnabled } = defineProps<MediaControlsProps>();
 const emit = defineEmits<{ toggleCamera: []; toggleMicrophone: [] }>();
 </script>
 

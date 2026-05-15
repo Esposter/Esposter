@@ -1,7 +1,6 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { AccessToken, TrackSource } from "livekit-server-sdk";
-import { useRuntimeConfig } from "nitropack/runtime";
 
 export const createLiveKitToken = async (callSessionId: string, participant: CallParticipant) => {
   const { livekit } = useRuntimeConfig();

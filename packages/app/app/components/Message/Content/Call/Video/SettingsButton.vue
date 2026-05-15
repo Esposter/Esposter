@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
-
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
-import { getResultAsync, noop } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 const callStore = useCallStore();
@@ -13,30 +10,22 @@ const mediaStore = useMediaStore();
 const { selectedVirtualBackground } = storeToRefs(mediaStore);
 const liveKitStore = useLiveKitStore();
 const { selectedVideoInputDeviceId } = storeToRefs(liveKitStore);
-const { readDevices, switchDevice } = liveKitStore;
 const menu = ref(false);
-const videoInputDevices = ref<MediaDeviceInfo[]>([]);
-const videoDeviceSections = computed<DeviceSection[]>(() => [
+const {
+  deviceSections: videoDeviceSections,
+  refreshDevices,
+  selectDevice,
+} = useCallDeviceSettings([
   {
-    devices: videoInputDevices.value,
     kind: "videoinput",
-    selectedId: selectedVideoInputDeviceId.value,
+    selectedId: selectedVideoInputDeviceId,
     title: "Camera",
   },
 ]);
-const refreshDevices = async () => {
-  await getResultAsync(async () => {
-    videoInputDevices.value = await readDevices("videoinput");
-  }).match(noop, console.error);
-};
-const selectDevice = async (kind: MediaDeviceKind, deviceId: string) => {
-  await getResultAsync(async () => {
-    await switchDevice(kind, deviceId);
-  }).match(noop, console.error);
-};
-watch(menu, (isOpen) => {
+
+watch(menu, async (isOpen) => {
   if (!isOpen) return;
-  refreshDevices();
+  await refreshDevices();
 });
 </script>
 

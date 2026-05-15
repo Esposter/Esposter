@@ -10,6 +10,9 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
+import { getCallParticipants } from "@@/server/services/message/call/getCallParticipants";
+import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
 import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
@@ -94,8 +97,15 @@ export const moderationRouter = router({
         case AdminActionType.ForceMute:
         case AdminActionType.ForceUnmute:
         case AdminActionType.KickFromCall:
-        case AdminActionType.StopScreenShare:
           break;
+        case AdminActionType.StopScreenShare: {
+          const callSessionId = await readCallSessionId(ctx.db, roomId);
+          if (!callSessionId) break;
+
+          const targetParticipants = getCallParticipants(callSessionId).filter(({ userId }) => userId === targetUserId);
+          await stopLiveKitScreenShare(callSessionId, targetParticipants);
+          break;
+        }
         case AdminActionType.KickFromRoom:
           await ctx.db
             .delete(usersToRoomsInMessage)

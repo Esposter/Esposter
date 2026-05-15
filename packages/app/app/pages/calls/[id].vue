@@ -35,8 +35,8 @@ const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => callSession.userId === session.value?.user.id);
 if (isCreator.value) await joinCall(id);
 
-watch(activeCallSessionId, (newActiveCallSessionId) => {
-  if (!newActiveCallSessionId) navigateTo(RoutePath.CallsIndex);
+watch(activeCallSessionId, async (newActiveCallSessionId) => {
+  if (!newActiveCallSessionId) await navigateTo(RoutePath.CallsIndex);
 });
 </script>
 

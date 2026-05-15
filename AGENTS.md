@@ -52,6 +52,13 @@ pnpm test -t "test description"         # run single test by name
 pnpm coverage         # vitest run --coverage
 ```
 
+Do not run Vitest on Windows in this repository unless explicitly requested. Known Windows startup failures include Vite/Rolldown `spawn EPERM` during config loading and UnoCSS/happy-dom path issues; write tests when useful and let the user run them in a supported environment.
+
+Vue convention notes:
+
+- `watch`, `onMounted`, `onUnmounted`, and related Vue hooks may use async callbacks directly. Do not wrap Vue hook/watch callbacks in `getSynchronizedFunction`.
+- Always destructure props from `defineProps` (`const { id } = defineProps<Props>()`) so the props reactivity transform is used; avoid `props.id` unless there is a specific reason.
+
 DB migrations (run from `packages/db-schema/`):
 
 ```bash

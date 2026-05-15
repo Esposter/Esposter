@@ -44,7 +44,7 @@ When any participant publishes a `ScreenShare` track:
 ### Spotlight / pin
 
 - Click any participant tile (camera or screenshare) to pin it to the main area
-- Pinned state: `ref<string>` (participant SID) in the call store — local only, not broadcast
+- Pinned state: `pinnedParticipantId: ref<string>` in `call/media.ts`; values are LiveKit identities, which match Esposter auth session IDs. This is local only and not broadcast.
 
 ---
 
@@ -120,14 +120,15 @@ const activeScreenShare = computed(
 
 ## Moderation: Stop Others' Screenshare
 
-New `AdminActionType.StopScreenShare`:
+Implemented as `AdminActionType.StopScreenShare`:
 
-1. Add to `AdminActionType` enum
-2. Add arm to `ExecuteAdminActionInput` discriminated union
+1. `AdminActionType.StopScreenShare`
+2. Arm in `ExecuteAdminActionInput`
 3. Permission: `RoomPermission.MuteMembers` (reuse existing — conceptually the same gate)
-4. `AdminActionPermissionMap`: map to `RoomPermission.MuteMembers`
-5. Client handler (`useAdminActionMap`): calls `stopScreenShare()` on the target participant via LiveKit `room.localParticipant` (only works if you ARE the target; for remote stop, use LiveKit Admin API: `DELETE /twirp/livekit.RoomService/RemoveParticipant` or `MutePublishedTrack`)
-6. Via LiveKit Admin API (server-side, from the moderation tRPC action): `roomService.mutePublishedTrack(roomId, participantSid, trackSid, true)` — mutes the screenshare track on the SFU level
+4. `AdminActionPermissionMap`: maps to `RoomPermission.MuteMembers`
+5. Client notification in `useAdminActionMap`
+6. Server-side LiveKit enforcement in `executeAdminAction`: find the active room call session, find the target user's active call participants, revoke screen-share publish sources for those LiveKit identities, and mute any active `ScreenShare` / `ScreenShareAudio` tracks
+7. Target-client hook in `useCallStore`: when `callRoomId` matches, call `setScreenShare(false)` for immediate local cleanup
 
 ---
 

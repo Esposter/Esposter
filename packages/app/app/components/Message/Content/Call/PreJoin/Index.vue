@@ -6,7 +6,7 @@ interface PreJoinProps {
   callId: string;
 }
 
-const props = defineProps<PreJoinProps>();
+const { callId } = defineProps<PreJoinProps>();
 const knockerStore = useKnockerStore();
 const { knockCall } = knockerStore;
 const isRequestingJoin = ref(false);
@@ -15,7 +15,7 @@ const requestJoin = async () => {
   isRequestingJoin.value = true;
   await withFinalizerAsync(
     async () => {
-      await knockCall(props.callId);
+      await knockCall(callId);
     },
     () => {
       isRequestingJoin.value = false;

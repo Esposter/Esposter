@@ -51,12 +51,19 @@ const onKnockerDismissedInputSchema = selectCallSessionInMessageSchema.shape.id;
 export const callRouter = router({
   admitKnocker: standardAuthedProcedure
     .input(admitKnockerInputSchema)
-    .mutation(({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
-      const callerSessionId = ctx.getSessionPayload.session.id;
+    .mutation(async ({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
+      const { session: callerSession, user: callerUser } = ctx.getSessionPayload;
+      const callerSessionId = callerSession.id;
       if (!callSessionParticipantMap.get(callSessionId)?.has(callerSessionId))
         throw new TRPCError({
           code: "FORBIDDEN",
           message: new ForbiddenError("Must be in call to admit knockers").message,
+        });
+      const callSession = await requireCallSession(ctx.db, callSessionId);
+      if (callSession.userId !== callerUser.id)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Must be call creator to admit knockers").message,
         });
 
       const knockerMap = callKnockerMap.get(callSessionId);
@@ -77,12 +84,19 @@ export const callRouter = router({
   }),
   dismissKnocker: standardAuthedProcedure
     .input(dismissKnockerInputSchema)
-    .mutation(({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
-      const callerSessionId = ctx.getSessionPayload.session.id;
+    .mutation(async ({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
+      const { session: callerSession, user: callerUser } = ctx.getSessionPayload;
+      const callerSessionId = callerSession.id;
       if (!callSessionParticipantMap.get(callSessionId)?.has(callerSessionId))
         throw new TRPCError({
           code: "FORBIDDEN",
           message: new ForbiddenError("Must be in call to dismiss knockers").message,
+        });
+      const callSession = await requireCallSession(ctx.db, callSessionId);
+      if (callSession.userId !== callerUser.id)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Must be call creator to dismiss knockers").message,
         });
 
       const knockerMap = callKnockerMap.get(callSessionId);
@@ -181,14 +195,14 @@ export const callRouter = router({
     signal,
   }) {
     const events = on(callEventEmitter, "knockCall", { signal });
-    await requireCallSession(ctx.db, input);
+    const callSession = await requireCallSession(ctx.db, input);
 
     const callerSessionId = ctx.getSessionPayload.session.id;
-    if (!callSessionParticipantMap.get(input)?.has(callerSessionId))
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: new ForbiddenError("Must be in call to receive knock notifications").message,
-      });
+    if (
+      !callSessionParticipantMap.get(input)?.has(callerSessionId) ||
+      callSession.userId !== ctx.getSessionPayload.user.id
+    )
+      return;
 
     for await (const [{ callSessionId, knocker }] of events) {
       if (callSessionId !== input) continue;

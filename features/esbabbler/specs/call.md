@@ -53,7 +53,7 @@ Each participant sends audio directly to every other participant (N² upload). N
 
 **Server keeps:**
 
-- Participant map (`callParticipantMap`) — updated via LiveKit webhooks (participant joined/left) so non-participants see who's in the channel via tRPC subscriptions
+- Participant map (`callSessionParticipantMap`) — keyed by `callSessionId`, updated by the explicit tRPC join/leave path and backed up by LiveKit webhooks so non-participants see who's in the channel via tRPC subscriptions
 - Token generation — `joinCall` mutation returns `{ livekitUrl, livekitToken }` which the client uses to connect
 
 ---
@@ -84,12 +84,12 @@ These must keep the active call connected:
 
 Keep one owner for media membership and one owner for room observation:
 
-| Owner                                | Responsibility                                                                                                      | Must not do                                               |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `callStore.leaveCall()`              | The only normal client path that calls `roomCall.leaveCall`, disconnects LiveKit, and resets active state           | Run implicitly during ordinary room navigation            |
-| `useCallSubscribables()`             | Observes the currently viewed room's call session and updates `currentRoomCallSessionId` / `roomParticipants`       | Remove the active participant or disconnect LiveKit       |
-| `useCallIdSubscribables()`           | Owns `/calls/[id]` page membership; validates call session, subscribes to joined/knocking events, leaves on unmount | Reuse room-navigation cleanup semantics                   |
-| `StatusBar.vue` / persistent call UI | Shows the active call and links back to `callRoomId` after navigation                                               | Depend on `currentRoomCallSessionId` to decide membership |
+| Owner                                              | Responsibility                                                                                                      | Must not do                                               |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `callStore.leaveCall()`                            | The only normal client path that calls `roomCall.leaveCall`, disconnects LiveKit, and resets active state           | Run implicitly during ordinary room navigation            |
+| `useCallSubscribables()`                           | Observes the currently viewed room's call session and updates `currentRoomCallSessionId` / `roomParticipants`       | Remove the active participant or disconnect LiveKit       |
+| `useCallIdSubscribables()`                         | Owns `/calls/[id]` page membership; validates call session, subscribes to joined/knocking events, leaves on unmount | Reuse room-navigation cleanup semantics                   |
+| `MessageLeftSideBarStatusBar` / persistent call UI | Shows the active room call and links back to `callRoomId` after navigation                                          | Depend on `currentRoomCallSessionId` to decide membership |
 
 `activeCallSessionId` answers "what call am I in?" while `currentRoomCallSessionId` answers "what call belongs to the room I am looking at?" They can be different, and that is valid.
 
@@ -130,7 +130,7 @@ All in `server/trpc/routers/room/call.ts`. Procedures are registered as `roomCal
 
 | Procedure              | Type         | Auth             | Input                        | Purpose                                                                                |
 | ---------------------- | ------------ | ---------------- | ---------------------------- | -------------------------------------------------------------------------------------- |
-| `readCallSession`      | query        | member           | `{ roomId }`                 | Reads `callSessionsInMessage` row; returns session `id` string (`""` if none exists)   |
+| `readCallSessionId`    | query        | member           | `{ roomId }`                 | Reads the active room call session ID; returns `""` if none exists                     |
 | `joinCallByRoomId`     | mutation     | member           | `{ roomId }`                 | Creates session if needed; adds participant; returns `{ callSessionId, participants }` |
 | `joinCall`             | mutation     | authed (no room) | `{ id }`                     | Join by shareable 12-char id — no room membership required                             |
 | `leaveCall`            | mutation     | authed (no room) | `{ callSessionId }`          | Removes participant; on last leaver writes `MessageType.Call` system message           |
@@ -152,41 +152,57 @@ Each WebRTC peer connection IS an auth session. `sendSignal` routes to a specifi
 
 `CallParticipant` already stores `userId` for UI display. The `deviceId` composite (userId + sessionId) adds no value here — `session.id` is already globally unique per device.
 
-**This does NOT change for v2 (LiveKit).** The LiveKit `AccessToken` uses `identity: session.id` — LiveKit's participant identity maps 1:1 to the auth session. The webhook-driven `callParticipantMap` updates use the same `session.id` key. Multi-device: each device gets its own LiveKit participant (separate tracks, separate mute state) which is the correct model.
+**This does NOT change for v2 (LiveKit).** The LiveKit `AccessToken` uses `identity: session.id` — LiveKit's participant identity maps 1:1 to the auth session. The server-side `callSessionParticipantMap` uses the same `session.id` participant key. Multi-device: each device gets its own LiveKit participant (separate tracks, separate mute state) which is the correct model.
 
 ### v2 (current) — LiveKit migration
 
 | Procedure              | Type             | Change from v1 | Purpose                                                                                                                                       |
 | ---------------------- | ---------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `createCall`           | mutation         | **New**        | Creates a standalone, roomless call session for `/calls` -> `/calls/[id]`                                                                     |
+| `readCallSessionId`    | query            | Renamed        | Room observer entry point; reads the active room call session ID                                                                              |
+| `readCallSession`      | query            | **New**        | Standalone call validation for `/calls/[id]`; returns `{ id, roomId, userId }`                                                                |
 | `joinCall`             | mutation         | **Modified**   | Standalone only; allows the `call_sessions.userId` creator or an admitted knocker; generates LiveKit token and updates server participant map |
+| `joinCallByRoomId`     | mutation         | **New split**  | Room call entry point; requires room membership, creates/reuses the room call session, and returns LiveKit connection data                    |
 | `leaveCall`            | mutation         | Kept           | Removes from server participant map; broadcasts leave (webhook also does this as backup)                                                      |
 | `readCallParticipants` | query            | Kept           | Returns current participant list (initial load, non-participants)                                                                             |
 | `setMute`              | mutation         | Kept           | Syncs muted state to server map; broadcasts `onSetMute`                                                                                       |
+| `setCamera`            | mutation         | **New**        | Syncs camera on/off state to server map; broadcasts `onVideoChanged`                                                                          |
+| `knockCall`            | mutation         | **New**        | Standalone waiting-room request; adds caller to `callKnockerMap` and emits `onKnockCall`                                                      |
+| `admitKnocker`         | mutation         | **New**        | Standalone call creator admits a knocker with one-time access                                                                                 |
+| `dismissKnocker`       | mutation         | **New**        | Standalone call creator dismisses a knocker                                                                                                   |
 | ~~`sendSignal`~~       | ~~mutation~~     | **Removed**    | LiveKit handles signaling internally                                                                                                          |
 | ~~`onSendSignal`~~     | ~~subscription~~ | **Removed**    | LiveKit handles signaling internally                                                                                                          |
 | `onJoinCall`           | subscription     | Kept           | Fires when participant joins (driven by webhook or `joinCall`)                                                                                |
 | `onLeaveCall`          | subscription     | Kept           | Fires when participant leaves                                                                                                                 |
 | `onSetMute`            | subscription     | Kept           | Fires on mute toggle                                                                                                                          |
 | `onVideoChanged`       | subscription     | **New**        | Fires when camera on/off state changes                                                                                                        |
+| `onKnockCall`          | subscription     | **New**        | Standalone call creator receives knocker requests                                                                                             |
+| `onKnockerAdmitted`    | subscription     | **New**        | Waiting caller is notified they can now join                                                                                                  |
+| `onKnockerDismissed`   | subscription     | **New**        | Waiting caller is notified they were dismissed                                                                                                |
 
 ### Token generation (server)
 
 ```typescript
-import { AccessToken } from "livekit-server-sdk";
+import { AccessToken, TrackSource } from "livekit-server-sdk";
 
-const token = new AccessToken(env.LIVEKIT_API_KEY, env.LIVEKIT_API_SECRET, {
-  identity: session.id,
-  name: session.user.name,
+const token = new AccessToken(livekit.apiKey, livekit.apiSecret, {
+  identity: participant.id,
+  metadata: JSON.stringify({ userId: participant.userId }),
+  name: participant.name,
 });
 token.addGrant({
   roomJoin: true,
-  room: roomId,
+  room: callSessionId,
   canPublish: true,
   canSubscribe: true,
-  canPublishSources: ["microphone", "camera", "screen_share", "screen_share_audio"],
+  canPublishSources: [
+    TrackSource.MICROPHONE,
+    TrackSource.CAMERA,
+    TrackSource.SCREEN_SHARE,
+    TrackSource.SCREEN_SHARE_AUDIO,
+  ],
 });
-return { livekitUrl: env.LIVEKIT_URL, livekitToken: await token.toJwt() };
+return { livekitUrl: livekit.url, livekitToken: await token.toJwt() };
 ```
 
 ---
@@ -224,7 +240,7 @@ async function toggleMute() {
 
 async function toggleCamera() {
   await room.localParticipant.setCameraEnabled(!isCameraEnabled);
-  // broadcasts via onVideoChanged
+  await $trpc.roomCall.setCamera.mutate({ callSessionId, isCameraEnabled: !isCameraEnabled });
 }
 
 async function toggleDeafen() {
@@ -244,11 +260,11 @@ The root call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute
 
 #### Participant store: `call/participant.ts`
 
-| State                        | Kind  | Description                                                                 |
-| ---------------------------- | ----- | --------------------------------------------------------------------------- |
-| `callSessionParticipantsMap` | `ref` | `Map<callSessionId, CallParticipant[]>` — keyed by session UUID, not roomId |
-| `speakingIds`                | `ref` | Session IDs currently speaking (AudioContext analysis)                      |
-| `joinNoticeParticipant`      | `ref` | Last remote participant requesting/joining, shown in the top-center notice  |
+| State                        | Kind  | Description                                                                                 |
+| ---------------------------- | ----- | ------------------------------------------------------------------------------------------- |
+| `callSessionParticipantsMap` | `ref` | `Map<callSessionId, CallParticipant[]>` — keyed by 12-character call session ID, not roomId |
+| `speakingIds`                | `ref` | Session IDs currently speaking (AudioContext analysis)                                      |
+| `joinNoticeParticipant`      | `ref` | Last remote participant requesting/joining, shown in the top-center notice                  |
 
 #### Root store: `call/index.ts`
 
@@ -262,11 +278,11 @@ The root call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute
 
 #### Knocker store: `call/knocker.ts`
 
-| State                   | Kind  | Description                                                                    |
-| ----------------------- | ----- | ------------------------------------------------------------------------------ |
-| `knockingCallSessionId` | `ref` | Standalone call ID the current user is waiting to be admitted into             |
-| `joinCallOptions`       | `ref` | Pre-join microphone/camera preferences applied when the knocker is admitted    |
-| `knockers`              | `ref` | `CallParticipant[]` queue shown to participants who can admit/dismiss knockers |
+| State                   | Kind  | Description                                                                              |
+| ----------------------- | ----- | ---------------------------------------------------------------------------------------- |
+| `knockingCallSessionId` | `ref` | Standalone call ID the current user is waiting to be admitted into                       |
+| `joinCallOptions`       | `ref` | Pre-join microphone/camera preferences applied when the knocker is admitted              |
+| `knockers`              | `ref` | `CallParticipant[]` queue shown to the standalone call creator for admit/dismiss actions |
 
 Standalone call ownership is persisted on `callSessionsInMessage.userId`. The `/calls/[id]` page auto-joins only when the authenticated user matches that creator. There is no `direct` query parameter; all non-creators must knock and receive a one-time admission in `callAdmittedParticipantMap` before `joinCall({ id })` succeeds.
 
@@ -356,16 +372,19 @@ packages/app/
 
   server/
     api/webhooks/
-      livekit.post.ts                    # new — webhook receiver
+      livekit.post.ts                    # webhook receiver
     services/message/
       events/
         callEventEmitter.ts              # app-level tRPC observer bridge
       call/
-        callParticipantMap.ts            # unchanged
-        createCallParticipant.ts         # unchanged
-        deleteCallParticipant.ts         # unchanged
-        getCallParticipants.ts           # unchanged
-        updateCallParticipantMute.ts     # unchanged
+        callParticipantMap.ts            # exports callSessionParticipantMap
+        callKnockerMap.ts                # standalone waiting room queue
+        callAdmittedParticipantMap.ts    # one-time standalone admission map
+        createCallParticipant.ts
+        deleteCallParticipant.ts
+        getCallParticipants.ts
+        setParticipantCamera.ts
+        updateCallParticipantMute.ts
     trpc/routers/room/
       call.ts                            # createCall + joinCall return LiveKit-ready call sessions
 
@@ -381,7 +400,7 @@ packages/app/
       [id].vue                           # full call view / pre-join / waiting room
     components/Message/
       Content/
-        CallButton.vue                   # unchanged UX; reads token from joinCall
+        CallButton.vue                   # unchanged UX; joins room calls via joinCallByRoomId
         Call/Audio/ControlGroup.vue      # mic + up-caret audio menu
         Call/Video/ControlGroup.vue      # camera + up-caret video menu/backgrounds
         Call/Control/Bar.vue             # single-purpose call controls
@@ -393,4 +412,4 @@ packages/app/
 
 ## What Does Not Change
 
-Message infrastructure, room model, auth/RBAC, the join/leave/mute tRPC subscription pattern, `callParticipantMap` server-side storage, inline call panel placement, `StatusBar.vue` in-call indicator.
+Message infrastructure, room model, auth/RBAC, the join/leave/mute tRPC subscription pattern, `callSessionParticipantMap` server-side storage, inline call panel placement, `MessageLeftSideBarStatusBar` in-call indicator.

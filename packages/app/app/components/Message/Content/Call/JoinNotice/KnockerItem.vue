@@ -3,33 +3,44 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface KnockerItemProps {
   knocker: CallParticipant;
 }
 
-const props = defineProps<KnockerItemProps>();
-
+const { knocker } = defineProps<KnockerItemProps>();
 const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
 const knockerStore = useKnockerStore();
 const { admitKnocker, dismissKnocker } = knockerStore;
-
 const isAdmitting = ref(false);
 const isDismissing = ref(false);
-
 const onAdmit = async () => {
-  if (!activeCallSessionId.value) return;
+  const callSessionId = activeCallSessionId.value;
+  if (!callSessionId) return;
   isAdmitting.value = true;
-  await admitKnocker(activeCallSessionId.value, props.knocker.id);
-  isAdmitting.value = false;
+  await withFinalizerAsync(
+    async () => {
+      await admitKnocker(callSessionId, knocker.id);
+    },
+    () => {
+      isAdmitting.value = false;
+    },
+  );
 };
-
 const onDismiss = async () => {
-  if (!activeCallSessionId.value) return;
+  const callSessionId = activeCallSessionId.value;
+  if (!callSessionId) return;
   isDismissing.value = true;
-  await dismissKnocker(activeCallSessionId.value, props.knocker.id);
-  isDismissing.value = false;
+  await withFinalizerAsync(
+    async () => {
+      await dismissKnocker(callSessionId, knocker.id);
+    },
+    () => {
+      isDismissing.value = false;
+    },
+  );
 };
 </script>
 

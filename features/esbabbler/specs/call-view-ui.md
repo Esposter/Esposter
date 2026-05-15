@@ -6,7 +6,7 @@ Full-screen call experience for `/calls/[id]`, with `/calls` as the standalone c
 
 ## Layout
 
-### v1 — Audio only (current)
+### Current — Audio, camera, and screenshare
 
 ```text
 ┌─────────────────────────────────────────────────────────┐  bg-black, h-screen, layout: false
@@ -24,15 +24,15 @@ Full-screen call experience for `/calls/[id]`, with `/calls` as the standalone c
 └─────────────────────────────────────────────────────────┘
 ```
 
-Grid tile: `aspect-video` (16:9), dark `bg-grey-darken-4`. Avatar centered. Name + badges bottom-left.
+Grid tile: `aspect-video` (16:9), dark `bg-grey-darken-4`. Camera stream renders when available; otherwise the avatar is centered. Name + badges sit bottom-left.
 
 Grid distributes automatically: 1 → full width centered; 2 → 2-col; 4 → 2×2; 6 → 3×2; etc.
 
-### v2 — Camera tracks
+### Camera tracks
 
 Same `CallView` — replace avatar fallback with `<video>` element when camera track is available.
 
-### v3 — Screenshare
+### Screenshare
 
 Switch `CallView` to presenter layout: screenshare fills main area, participant strip along bottom. See `specs/screenshare.md`.
 
@@ -91,7 +91,9 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 
 ```text
 /calls/[id]
-  → useCallIdSubscribables(id)                composable handles full lifecycle
+  → useCallIdSubscribables(id)                validates call and wires joined/knocking subscriptions
+    → useCallJoinedSubscribables()            subscribes when activeCallSessionId is set
+    → useCallKnockingSubscribables(id)        subscribes when knockingCallSessionId is set
     → store.joinCall(id)                      creator joins immediately; knockers join after admission
       → $trpc.roomCall.joinCall.mutate({ id })
       → LiveKit room.connect(livekitUrl, livekitToken)
@@ -107,7 +109,9 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 
 ```text
 onUnmounted in useCallIdSubscribables
+  → cancelKnock() if the user is waiting but not joined
   → participantJoin/Leave/MuteChanged/VideoChanged.unsubscribe()
+  → knockerAdmitted/KnockerDismissed.unsubscribe()
   → store.leaveCall()
     → $trpc.roomCall.leaveCall.mutate({ callSessionId })
     → disconnect LiveKit room
