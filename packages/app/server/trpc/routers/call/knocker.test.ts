@@ -142,7 +142,6 @@ describe("call/knocker", () => {
         callSessionId,
         new Map([[nonCreatorPayload.session.id, createParticipant(nonCreatorPayload.session, nonCreatorPayload.user)]]),
       );
-      replayMockSession(nonCreatorPayload);
 
       await expect(
         knockerCaller.admitKnocker({ callSessionId, sessionId: knockerSession.id }),
@@ -159,7 +158,6 @@ describe("call/knocker", () => {
         nonExistentCallSessionId,
         new Map([[sessionPayload.session.id, createParticipant(sessionPayload.session, sessionPayload.user)]]),
       );
-      replayMockSession(sessionPayload);
 
       await expect(
         knockerCaller.admitKnocker({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),
@@ -216,7 +214,6 @@ describe("call/knocker", () => {
         callSessionId,
         new Map([[nonCreatorPayload.session.id, createParticipant(nonCreatorPayload.session, nonCreatorPayload.user)]]),
       );
-      replayMockSession(nonCreatorPayload);
 
       await expect(
         knockerCaller.dismissKnocker({ callSessionId, sessionId: knockerSession.id }),
@@ -233,7 +230,6 @@ describe("call/knocker", () => {
         nonExistentCallSessionId,
         new Map([[sessionPayload.session.id, createParticipant(sessionPayload.session, sessionPayload.user)]]),
       );
-      replayMockSession(sessionPayload);
 
       await expect(
         knockerCaller.dismissKnocker({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),
