@@ -3,7 +3,6 @@ import type { JoinCallOutput } from "@@/server/models/room/call/JoinCallOutput";
 
 import { on } from "@@/server/services/events/on";
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
-import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { createStandaloneCallSessionId } from "@@/server/services/message/call/createStandaloneCallSessionId";

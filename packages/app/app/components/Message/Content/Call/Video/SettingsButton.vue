@@ -11,11 +11,7 @@ const { selectedVirtualBackground } = storeToRefs(mediaStore);
 const liveKitStore = useLiveKitStore();
 const { selectedVideoInputDeviceId } = storeToRefs(liveKitStore);
 const menu = ref(false);
-const {
-  deviceSections: videoDeviceSections,
-  refreshDevices,
-  selectDevice,
-} = useCallDeviceSettings([
+const { deviceSections, refreshDevices, selectDevice } = useCallDeviceSettings([
   {
     kind: "videoinput",
     selectedId: selectedVideoInputDeviceId,
@@ -45,7 +41,7 @@ watch(menu, async (isOpen) => {
       </v-tooltip>
     </template>
     <StyledCard py-2 min-w-72>
-      <MessageContentCallDeviceSectionList :sections="videoDeviceSections" @select="selectDevice" />
+      <MessageContentCallDeviceSectionList :sections="deviceSections" @select="selectDevice" />
       <v-divider />
       <MessageContentCallVirtualBackgroundGrid :selected-virtual-background @select="selectVirtualBackground" />
     </StyledCard>

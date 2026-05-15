@@ -1,4 +1,5 @@
 import type { Context } from "@@/server/trpc/context";
+import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
@@ -10,7 +11,7 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("room/category", () => {
   let mockContext: Context;
-  let roomCategoryCaller: DecorateRouterRecord<typeof categoryRouter>;
+  let roomCategoryCaller: DecorateRouterRecord<TRPCRouter["room"]["category"]>;
   const name = "name";
   const updatedName = "updatedName";
 

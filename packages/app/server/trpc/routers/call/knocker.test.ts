@@ -5,6 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
@@ -19,7 +20,7 @@ import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest
 describe("call/knocker", () => {
   let mockContext: Context;
   let callSessionCaller: DecorateRouterRecord<TRPCRouter["callSession"]>;
-  let knockerCaller: DecorateRouterRecord<typeof knockerRouter>;
+  let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   const name = "name";
 
@@ -167,7 +168,10 @@ describe("call/knocker", () => {
 
       const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
       const fakeCallSessionId = crypto.randomUUID();
-      callSessionParticipantMap.set(fakeCallSessionId, new Set([sessionPayload.session.id]));
+      callSessionParticipantMap.set(
+        fakeCallSessionId,
+        new Map([[sessionPayload.session.id, createParticipant(sessionPayload.session, sessionPayload.user)]]),
+      );
       replayMockSession(sessionPayload);
 
       await expect(
@@ -256,7 +260,10 @@ describe("call/knocker", () => {
 
       const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
       const fakeCallSessionId = crypto.randomUUID();
-      callSessionParticipantMap.set(fakeCallSessionId, new Set([sessionPayload.session.id]));
+      callSessionParticipantMap.set(
+        fakeCallSessionId,
+        new Map([[sessionPayload.session.id, createParticipant(sessionPayload.session, sessionPayload.user)]]),
+      );
       replayMockSession(sessionPayload);
 
       await expect(

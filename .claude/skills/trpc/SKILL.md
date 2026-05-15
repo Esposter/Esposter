@@ -52,9 +52,27 @@ description: Esposter tRPC conventions — procedure typing with generics, route
 
 - **If a utility function is also needed by a Pinia store (frontend), put it in `shared/services/<feature>/` instead** — this makes it importable on both server and client without duplication.
 
+## Router Structure
+
+Routers nested by domain. Root merger: `server/trpc/routers/index.ts`.
+
+| Client path                  | Router file                     |
+| ---------------------------- | ------------------------------- |
+| `trpc.callSession.*`         | `routers/call/index.ts`         |
+| `trpc.callSession.knocker.*` | `routers/call/knocker.ts`       |
+| `trpc.message.*`             | `routers/message/index.ts`      |
+| `trpc.message.emoji.*`       | `routers/message/emoji.ts`      |
+| `trpc.message.moderation.*`  | `routers/message/moderation.ts` |
+| `trpc.room.*`                | `routers/room/index.ts`         |
+| `trpc.room.category.*`       | `routers/room/category.ts`      |
+| `trpc.room.directMessage.*`  | `routers/room/directMessage.ts` |
+| `trpc.room.filter.*`         | `routers/room/filter.ts`        |
+
+Exception: `achievement` merged separately to avoid circular dep with the router that fires achievement events.
+
 ## Router Key Naming
 
-- **Never use `call` as a tRPC router key** — `call` is a method on `Function.prototype`. tRPC clients use a `Proxy` to build procedure paths; accessing `.call` on a callable proxy returns `Function.prototype.call` instead of descending into the router, silently breaking all procedures in that namespace. The same applies to `apply`, `bind`, `then`, and `catch`.
+- **Never use `call`, `apply`, `bind`, `then`, `catch` as tRPC router keys** — they are `Function.prototype` methods. tRPC clients use a `Proxy`; accessing `.call` returns `Function.prototype.call` instead of descending the router, silently breaking all procedures in that namespace.
 - Use a descriptive compound name instead: `callSession`, `videoCall`, `roomCall`, etc.
 
 ## Sub-router Composition Pattern
@@ -72,16 +90,22 @@ export const baseCallRouter = router({
 export const callRouter = mergeRouters(baseCallRouter, router({ knocker: knockerRouter }));
 ```
 
-The feature's `index.ts` becomes the composition root. The main `routers/index.ts` only imports the composed router.
+The feature's `index.ts` is the composition root. `routers/index.ts` only imports the composed router — never sub-routers directly.
 
 ```ts
 // routers/index.ts
 import { callRouter } from "@@/server/trpc/routers/call";
-// callRouter already has knocker nested — no sub-router imports needed here
 router({ callSession: callRouter, ... })
+// knocker is already nested inside callRouter — no separate import needed
 ```
 
-This pattern mirrors the existing achievement split (`trpcRouterWithoutAchievements` + `mergeRouters`) but at the feature level.
+## Procedure Helpers (Room RBAC)
+
+Three builders in `server/trpc/procedure/room/`:
+
+- `getMemberProcedure(schema, roomIdKey)` — verifies caller is a room member; use for standard message/room operations
+- `getPermissionsProcedure(permission, schema, roomIdKey)` — verifies caller has a specific `RoomPermission`; most common for moderation/admin actions
+- `getOwnerProcedure` — verifies caller owns the room; use for destructive room operations
 
 ## Router and Store Structure
 
@@ -238,6 +262,20 @@ async function* ({ ctx, input, signal }) {
 In tests, `Promise.all([iterator.next(), mutation()])` exposes this: the mutation runs synchronously after its middleware, emitting the event while the generator is still blocked on the validation `await`. The buffered-event model in `node:events` `on()` only saves you if the listener was already registered at emit time.
 
 ## Router Test Patterns
+
+- **Caller types always use `TRPCRouter` path notation** — never `typeof subRouter`. Use `TRPCRouter["domain"]` for top-level, `TRPCRouter["domain"]["sub"]` for nested:
+
+  ```ts
+  // CORRECT
+  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
+  let roomFilterCaller: DecorateRouterRecord<TRPCRouter["room"]["filter"]>;
+  let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
+
+  // WRONG
+  let roomFilterCaller: DecorateRouterRecord<typeof filterRouter>;
+  ```
+
+- **Name callers with domain prefix when multiple callers exist** — always `roomCaller`, `callSessionCaller`, `knockerCaller`; never generic `caller`.
 
 - **Always create test resources via `caller.method()`** — never insert rows directly into the DB in router tests. Direct DB insertion bypasses application logic (auth checks, business rules, cascades) and means the flow being tested is different from the real flow. If a resource belongs to a different router, create a second caller for that router using `createCallerFactory(otherRouter)`.
 - **Name callers after their router** — when a test file has multiple callers, name each one after its router: `roomCaller`, `directMessageCaller`. Never use a generic `caller`.

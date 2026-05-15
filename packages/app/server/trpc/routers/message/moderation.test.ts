@@ -25,7 +25,7 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 
 describe("moderation", () => {
   let mockContext: Context;
-  let moderationCaller: DecorateRouterRecord<TRPCRouter["moderation"]>;
+  let moderationCaller: DecorateRouterRecord<TRPCRouter["message"]["moderation"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;

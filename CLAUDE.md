@@ -93,49 +93,9 @@ When adding a new feature, use Postgres for anything relational/queryable and Az
 
 ### tRPC Router Organization
 
-Root merger: `packages/app/server/trpc/routers/index.ts`
+Root merger: `packages/app/server/trpc/routers/index.ts`. Routers nested by domain — see `.claude/skills/trpc/SKILL.md` for full conventions (structure, naming rules, test patterns, procedure helpers).
 
-Routers are nested by domain. Top-level keys and their sub-keys:
-
-| Client path                  | Router file                     |
-| ---------------------------- | ------------------------------- |
-| `trpc.callSession.*`         | `routers/call/index.ts`         |
-| `trpc.callSession.knocker.*` | `routers/call/knocker.ts`       |
-| `trpc.message.*`             | `routers/message/index.ts`      |
-| `trpc.message.emoji.*`       | `routers/message/emoji.ts`      |
-| `trpc.message.moderation.*`  | `routers/message/moderation.ts` |
-| `trpc.room.*`                | `routers/room/index.ts`         |
-| `trpc.room.category.*`       | `routers/room/category.ts`      |
-| `trpc.room.directMessage.*`  | `routers/room/directMessage.ts` |
-| `trpc.room.filter.*`         | `routers/room/filter.ts`        |
-
-The only exception is `achievement`, which is merged separately to avoid a circular dependency with the router that fires achievement events.
-
-Sub-router composition uses the `baseXRouter + mergeRouters` pattern:
-
-```typescript
-export const baseXRouter = router({
-  /* own procedures */
-});
-export const xRouter = mergeRouters(baseXRouter, router({ sub: subRouter }));
-```
-
-**Router key naming**: Never use `call`, `apply`, `bind`, `then`, or `catch` as router keys — they conflict with `Function.prototype` methods in tRPC's Proxy client. Use descriptive alternatives (e.g. `callSession` instead of `call`).
-
-To add a new router:
-
-1. Create `server/trpc/routers/myFeature.ts` exporting `myFeatureRouter`
-2. If it belongs under an existing domain, nest it using `mergeRouters` in that domain's `index.ts`; otherwise add it as a top-level key in `server/trpc/routers/index.ts`
-
-### tRPC Procedure Helpers
-
-Three RBAC-aware procedure builders in `server/trpc/procedure/room/`:
-
-- `getMemberProcedure` — verifies the caller is a member of the room; use for standard message/room operations
-- `getPermissionsProcedure(permission, schema, roomIdKey)` — verifies the caller has a specific `RoomPermission`; use for moderation/admin actions
-- `getOwnerProcedure` — verifies the caller owns the room; use for destructive room operations
-
-`getPermissionsProcedure` is the most common for moderation features — it accepts a `RoomPermission` enum value and a Zod input schema, and handles the RBAC check as middleware.
+Key domains: `callSession` → `call/`, `message` → `message/`, `room` → `room/`. Exception: `achievement` merged separately (circular dep).
 
 ### RBAC System
 

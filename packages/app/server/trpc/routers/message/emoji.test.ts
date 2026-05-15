@@ -15,7 +15,7 @@ import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("emoji", () => {
   let mockContext: Context;
-  let emojiCaller: DecorateRouterRecord<TRPCRouter["emoji"]>;
+  let emojiCaller: DecorateRouterRecord<TRPCRouter["message"]["emoji"]>;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   const name = "name";

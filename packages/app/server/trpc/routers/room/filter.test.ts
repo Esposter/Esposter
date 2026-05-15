@@ -1,4 +1,5 @@
 import type { Context } from "@@/server/trpc/context";
+import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
@@ -11,9 +12,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest
 
 describe("room/filter", () => {
   let mockContext: Context;
-  let roomFilterCaller: DecorateRouterRecord<typeof filterRouter>;
-  let roomCaller: DecorateRouterRecord<typeof roomRouter>;
-  let roleCaller: DecorateRouterRecord<typeof roleRouter>;
+  let roomFilterCaller: DecorateRouterRecord<TRPCRouter["room"]["filter"]>;
+  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
+  let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomId: string;
   const name = "name";
   const words = ["word"];
