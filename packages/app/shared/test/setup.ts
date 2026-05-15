@@ -2,6 +2,10 @@ import { Environment } from "#shared/models/environment/Environment";
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { afterAll, beforeAll, vi } from "vitest";
 
+vi.mock("@@/server/composables/useIsProduction", () => ({
+  useIsProduction: () => false,
+}));
+
 vi.mock("nitropack/runtime", () => ({
   useRuntimeConfig: () => ({
     public: {
