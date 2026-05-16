@@ -11,6 +11,7 @@ require_env() {
 require_env REDIS_URL
 require_env LIVEKIT_API_KEY
 require_env LIVEKIT_API_SECRET
+require_env LIVEKIT_APP_WEBHOOK_URL
 require_env LIVEKIT_LOG_LEVEL
 require_env LIVEKIT_MONITOR_WEBHOOK_URL
 require_env RAILWAY_TCP_PROXY_DOMAIN
@@ -145,6 +146,7 @@ cat >> /etc/livekit.yaml <<EOF
 webhook:
   api_key: '$(yaml_escape "${LIVEKIT_API_KEY}")'
   urls:
+    - '$(yaml_escape "${LIVEKIT_APP_WEBHOOK_URL}")'
     - '$(yaml_escape "${LIVEKIT_MONITOR_WEBHOOK_URL}")'
 EOF
 
@@ -153,5 +155,7 @@ echo "  signaling port: ${PORT}"
 echo "  ICE TCP port: ${ICE_TCP_PORT}"
 echo "  TCP proxy: ${TCP_PROXY_DOMAIN}:${TCP_PROXY_PORT} -> container:${TCP_APP_PORT}"
 echo "  advertised node IP: ${RESOLVED_PROXY_IP}"
+echo "  app webhook: ${LIVEKIT_APP_WEBHOOK_URL}"
+echo "  monitor webhook: ${LIVEKIT_MONITOR_WEBHOOK_URL}"
 
 exec livekit-server --config /etc/livekit.yaml

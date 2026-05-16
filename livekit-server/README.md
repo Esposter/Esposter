@@ -21,6 +21,7 @@ Variables:
 ```text
 LIVEKIT_API_KEY=
 LIVEKIT_API_SECRET=
+LIVEKIT_APP_WEBHOOK_URL=https://your-app.example.com/api/webhooks/livekit
 PORT=8080
 LIVEKIT_LOG_LEVEL=info
 LIVEKIT_MONITOR_WEBHOOK_URL=http://livekit-monitor.railway.internal:3001/api/webhook
@@ -42,4 +43,6 @@ wss://your-livekit-server.up.railway.app
 - The entrypoint resolves `RAILWAY_TCP_PROXY_DOMAIN`, advertises that IP through LiveKit `rtc.node_ip`, and forwards Railway's container TCP proxy port to LiveKit's advertised ICE/TCP port.
 - LiveKit does not document an `external_tcp_port` setting, so `rtc.tcp_port` is set to Railway's external TCP proxy port and the container application port forwards to it.
 - The generated config omits LiveKit defaults such as disabled TURN, room auto-create, ICE Lite, loopback candidates, and UDP port range `0..0`.
+- `LIVEKIT_APP_WEBHOOK_URL` should point at the Esposter app's `/api/webhooks/livekit` route so participant leave and aborted connection events clean up app call state.
+- `LIVEKIT_MONITOR_WEBHOOK_URL` should point at the livekit-monitor service so the monitor records room and participant events.
 - If the browser logs `could not establish pc connection` after `signal connected`, signaling and tokens are working but the advertised ICE media endpoint is unreachable. Confirm the TCP proxy exists on application port `7882` and redeploy the LiveKit service after creating the proxy.

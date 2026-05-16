@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
       const sessionId = participant?.identity ?? "";
       if (!callSessionId || !sessionId) return { ok: true };
 
-      if (webhookEvent.event === "participant_left") {
+      if (["participant_connection_aborted", "participant_left"].includes(webhookEvent.event)) {
         const userId = callSessionParticipantMap.get(callSessionId)?.get(sessionId)?.userId ?? "";
         await leaveCallAsParticipant(db, callSessionId, sessionId, userId);
         return { ok: true };
