@@ -79,6 +79,7 @@ describe(copyToClipboard, () => {
     beforeEach(() => {
       capturedItems.length = 0;
       writeMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
+      // oxlint-disable-next-line prefer-arrow-callback
       vi.stubGlobal("ClipboardItem", function (items: { "text/html": Blob; "text/plain": Blob }) {
         capturedItems.push(items);
       });
