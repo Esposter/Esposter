@@ -1,6 +1,3 @@
 {
-  "extends": "../configuration/tsconfig.node.json",
-  "compilerOptions": {
-    "noEmit": true
-  }
+  "extends": "../configuration/tsconfig.node.json"
 }

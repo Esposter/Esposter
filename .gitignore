@@ -43,8 +43,8 @@ logs
 .env.*
 !.env.example
 
-# Pulumi migration output with live Azure callback URLs
-packages/infra/generated/importedResources.ts
+# Pulumi migration output
+packages/infra/generated/
 
 # Claude
 scheduled_tasks.lock

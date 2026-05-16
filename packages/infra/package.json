@@ -22,17 +22,18 @@
   },
   "type": "module",
   "scripts": {
-    "build": "pnpm typecheck",
+    "build": "pnpm export:gen && pnpm typecheck",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts && tsx src/scripts/fixGeneratedIndexExtensions.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "import": "pulumi import --file generated/azure-import-manifest.json",
+    "import": "pnpm export:gen && pulumi import --file generated/azure-import-manifest.json",
     "inventory:build": "tsx src/scripts/buildAzureImportManifest.ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "preview": "pulumi preview",
-    "refresh": "pulumi refresh",
+    "preview": "pnpm export:gen && pulumi preview",
+    "refresh": "pnpm export:gen && pulumi refresh",
     "typecheck": "tsgo",
-    "up": "pulumi up"
+    "up": "pnpm export:gen && pulumi up"
   },
   "dependencies": {
     "@pulumi/azure-native": "catalog:",

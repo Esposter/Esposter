@@ -39,6 +39,10 @@ const AssetImportMappingByAssetTypeMap: Readonly<Record<string, AzureAssetMappin
     providerPath: "Microsoft.EventGrid/topics",
     type: "azure-native:eventgrid:Topic",
   },
+  "Analytics and IoT: Event Grid Topic Subscription": {
+    providerPath: "Microsoft.EventGrid/eventSubscriptions",
+    type: "azure-native:eventgrid:EventSubscription",
+  },
   "Compute and Web: Function app": {
     providerPath: "Microsoft.Web/sites",
     type: "azure-native:web:WebApp",
@@ -63,6 +67,10 @@ const AssetImportMappingByAssetTypeMap: Readonly<Record<string, AzureAssetMappin
     providerPath: "Microsoft.Insights/actionGroups",
     type: "azure-native:monitor:ActionGroup",
   },
+  "Management and governance: Budget": {
+    providerPath: "Microsoft.Consumption/budgets",
+    type: "azure-native:consumption:Budget",
+  },
   "Management and governance: Log Analytics workspace": {
     providerPath: "Microsoft.OperationalInsights/workspaces",
     type: "azure-native:operationalinsights:Workspace",
@@ -76,6 +84,18 @@ const AssetImportMappingByAssetTypeMap: Readonly<Record<string, AzureAssetMappin
     type: "azure-native:storage:StorageAccount",
   },
 } as const;
+
+const EventGridTopicNameBySubscriptionNameMap: Readonly<Record<string, string>> = {
+  "d-shp-evgts-esposter-auea-001": "d-shp-evgt-esposter-auea-001",
+  "d-shp-evgts-esposter-auea-002": "d-shp-evgt-esposter-auea-001",
+  "p-shp-evgts-esposter-auea-001": "p-shp-evgt-esposter-auea-001",
+  "p-shp-evgts-esposter-auea-002": "p-shp-evgt-esposter-auea-001",
+};
+
+const ReviewReasonByAssetTypeMap: Readonly<Record<string, string>> = {
+  "Management and governance: Azure Monitor action":
+    "No standalone Azure resource was discovered; these are represented by the imported Azure Monitor action groups as Logic App receivers.",
+};
 
 const ApiConnectionLiveNameByResourceNameMap: Readonly<Record<string, string>> = {
   "d-shp-apicn-esposter-auea-001": "azureappservice-1",
@@ -157,6 +177,12 @@ const getResourceId = (assetRow: AzureAssetRow, mapping: AzureAssetMapping) => {
   if (mapping.providerPath.length === 0)
     return `/subscriptions/${subscriptionId}/resourceGroups/${assetRow.resourceName}`;
 
+  if (assetRow.assetType === "Analytics and IoT: Event Grid Topic Subscription") {
+    const topicName = EventGridTopicNameBySubscriptionNameMap[assetRow.resourceName] ?? assetRow.resourceName;
+
+    return `/subscriptions/${subscriptionId}/resourceGroups/${assetRow.resourceGroup}/providers/Microsoft.EventGrid/topics/${topicName}/providers/Microsoft.EventGrid/eventSubscriptions/${assetRow.resourceName}`;
+  }
+
   const liveResourceName =
     assetRow.assetType === "Networking: API connection"
       ? (ApiConnectionLiveNameByResourceNameMap[assetRow.resourceName] ?? assetRow.resourceName)
@@ -173,7 +199,10 @@ const getImportResources = (assetRows: readonly AzureAssetRow[]) => {
     const mapping = AssetImportMappingByAssetTypeMap[assetRow.assetType];
 
     if (mapping === undefined) {
-      reviewItems.push({ ...assetRow, reason: "No Pulumi token mapping yet." });
+      reviewItems.push({
+        ...assetRow,
+        reason: ReviewReasonByAssetTypeMap[assetRow.assetType] ?? "No Pulumi token mapping yet.",
+      });
       continue;
     }
 
