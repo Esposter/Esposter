@@ -20,20 +20,25 @@
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "pnpm export:gen && pnpm typecheck",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts && tsx src/scripts/fixGeneratedIndexExtensions.ts",
+    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "import": "pnpm export:gen && pulumi import --file generated/azure-import-manifest.json",
+    "import": "pnpm build && pulumi import --file generated/azure-import-manifest.json",
     "inventory:build": "tsx src/scripts/buildAzureImportManifest.ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "preview": "pnpm export:gen && pulumi preview",
-    "refresh": "pnpm export:gen && pulumi refresh",
+    "preview": "pnpm build && pulumi preview",
+    "refresh": "pnpm build && pulumi refresh",
     "typecheck": "tsgo",
-    "up": "pnpm export:gen && pulumi up"
+    "up": "pnpm build && pulumi up"
   },
   "dependencies": {
     "@pulumi/azure-native": "catalog:",

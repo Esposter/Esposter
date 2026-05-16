@@ -60,7 +60,7 @@ The assets export currently contains 51 resource rows plus the spreadsheet stop 
    pnpm import
    ```
 
-7. Move generated resource declarations into tracked one-resource-per-file source files under `src/resources/`, run `pnpm export:gen`, then run:
+7. Move generated resource declarations into tracked one-resource-per-file source files under Azure-shaped folders in `src/resources/<ProviderNamespace>/<resourceTypes>/`, then run:
 
    ```powershell
    pnpm preview
@@ -85,6 +85,8 @@ After the imported code is refactored into stable Pulumi components:
 - Delete `packages/infra/src/scripts/buildAzureImportManifest.ts`.
 - Remove `pnpm inventory:build` from `packages/infra/package.json`.
 - Remove `pnpm import` if imports are complete and the manifest no longer exists.
-- Keep generated `src/index.ts` as the Pulumi entrypoint.
+- Keep generated `src/index.ts` as the source barrel.
+- Keep compiled `dist/index.js` as the Pulumi entrypoint.
 - Keep one Azure resource declaration per tracked source file.
+- Keep source paths aligned with Azure ARM resource IDs, for example `Microsoft.Web/sites/<resourceName>.ts`.
 - Keep `generated/` ignored; it may contain live Azure callback URLs and other import output.

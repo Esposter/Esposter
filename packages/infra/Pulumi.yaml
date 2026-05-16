@@ -4,4 +4,4 @@ runtime:
   name: nodejs
   options:
     packagemanager: pnpm
-main: src/index.ts
+main: dist/index.js
