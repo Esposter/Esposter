@@ -24,7 +24,9 @@ TURN_REALM=esposter
 LIVEKIT_TURN_SECRET=${{secret(64)}}
 ```
 
-4. Add a TCP proxy on application port `3478`.
+4. Add a TCP proxy with application port `3478`.
+
+The TCP proxy's application port must be `3478`.
 
 5. Copy the TCP proxy domain and port to the LiveKit service:
 
@@ -34,4 +36,4 @@ LIVEKIT_TURN_PORT=
 LIVEKIT_TURN_SECRET=${{livekit-turn.LIVEKIT_TURN_SECRET}}
 ```
 
-`LIVEKIT_TURN_DOMAIN` and `LIVEKIT_TURN_PORT` come from the `livekit-turn` TCP proxy.
+`3478` is the application port entered in Railway's TCP proxy settings. `LIVEKIT_TURN_PORT` is the public port Railway assigns.
