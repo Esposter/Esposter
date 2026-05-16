@@ -82,7 +82,10 @@ describe(copyToClipboard, () => {
       vi.stubGlobal(
         "ClipboardItem",
         class {
+          items: { "text/html": Blob; "text/plain": Blob };
+
           constructor(items: { "text/html": Blob; "text/plain": Blob }) {
+            this.items = items;
             capturedItems.push(items);
           }
         },

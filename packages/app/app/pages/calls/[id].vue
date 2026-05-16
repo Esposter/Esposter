@@ -4,7 +4,7 @@ import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntit
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { DatabaseEntityType, selectCallSessionInMessageSchema } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 
 defineRouteRules({ ssr: false });
 definePageMeta({
@@ -28,12 +28,20 @@ if (!callSession)
 
 const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
-const { joinCall } = callStore;
+const { joinCallOrThrow } = callStore;
 const knockerStore = useKnockerStore();
 const { knockingCallSessionId } = storeToRefs(knockerStore);
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => callSession.userId === session.value?.user.id);
-if (isCreator.value) await joinCall(id);
+if (isCreator.value)
+  await getResultAsync(() => joinCallOrThrow(id)).match(noop, (error) => {
+    const message = `Unable to join call: ${error.message}`;
+    throw createError({
+      message,
+      status: 500,
+      statusText: message,
+    });
+  });
 
 watch(activeCallSessionId, async (newActiveCallSessionId) => {
   if (!newActiveCallSessionId) await navigateTo(RoutePath.CallsIndex);
