@@ -132,6 +132,8 @@ logging:
 rtc:
   tcp_port: ${ICE_TCP_PORT}
   node_ip: '$(yaml_escape "${RESOLVED_PROXY_IP}")'
+  port_range_start: 0
+  port_range_end: 0
 
 redis:
   address: '$(yaml_escape "${REDIS_HOST_PORT}")'

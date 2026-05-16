@@ -42,6 +42,6 @@ wss://your-livekit-server.up.railway.app
 - UDP LiveKit on a VM or Kubernetes host with open UDP ports is still faster. This setup is the best fit for Railway's networking model.
 - The entrypoint resolves `RAILWAY_TCP_PROXY_DOMAIN`, advertises that IP through LiveKit `rtc.node_ip`, and forwards Railway's container TCP proxy port to LiveKit's advertised ICE/TCP port.
 - LiveKit does not document an `external_tcp_port` setting, so `rtc.tcp_port` is set to Railway's external TCP proxy port and the container application port forwards to it.
-- The generated config omits LiveKit defaults such as disabled TURN, room auto-create, ICE Lite, loopback candidates, and UDP port range `0..0`.
+- The generated config sets the UDP port range to `0..0` so Railway clients only receive TCP ICE candidates.
 - `LIVEKIT_APP_WEBHOOK_URL` should point at the Esposter app's `/api/webhooks/livekit` route so participant leave and aborted connection events clean up app call state.
 - `LIVEKIT_MONITOR_WEBHOOK_URL` should point at the livekit-monitor service so the monitor records room and participant events.
