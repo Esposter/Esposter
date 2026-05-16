@@ -4,11 +4,7 @@ import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 
-export const useCallJoinedSubscribables = () => {
-  const onlineSubscribableContext: OnlineSubscribableContext = {
-    instance: getCurrentInstance(),
-    scope: getCurrentScope(),
-  };
+export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubscribableContext) => {
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
   const { activeCallSessionId } = storeToRefs(callStore);

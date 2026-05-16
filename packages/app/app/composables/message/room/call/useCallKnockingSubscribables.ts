@@ -5,11 +5,7 @@ import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 
-export const useCallKnockingSubscribables = (callId: string) => {
-  const onlineSubscribableContext: OnlineSubscribableContext = {
-    instance: getCurrentInstance(),
-    scope: getCurrentScope(),
-  };
+export const useCallKnockingSubscribables = (callId: string, onlineSubscribableContext: OnlineSubscribableContext) => {
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
   const { joinCall } = callStore;

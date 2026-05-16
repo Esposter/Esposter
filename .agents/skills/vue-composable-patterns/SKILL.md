@@ -344,6 +344,7 @@ Rules:
 - Location: `composables/{domain}/subscribables/`
 - No return value — composables that manage subscriptions are self-registering side effects
 - Always call `useOnlineSubscribable` (not raw `watch`) so subscriptions are reconnected after going offline
+- When a subscribable must be registered after an `await`, capture `OnlineSubscribableContext` before the first `await` and require it as a parameter in downstream helpers. Do not make the context optional unless there is a real synchronous call site that needs the helper to capture its own context.
 
 ## Composable Rules
 
