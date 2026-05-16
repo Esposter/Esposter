@@ -12,4 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=livekit /livekit-server /usr/local/bin/livekit-server
 COPY --chmod=755 entrypoint.sh /entrypoint.sh
 
+EXPOSE 8080
+EXPOSE 7882
+
 ENTRYPOINT ["/entrypoint.sh"]
