@@ -14,9 +14,9 @@ Create a Railway service from this repo with:
 Variables:
 
 ```text
-LIVEKIT_URL=http://livekit-server.railway.internal:8080
-LIVEKIT_API_KEY=
-LIVEKIT_API_SECRET=
+LIVEKIT_URL=http://${{livekit-server.RAILWAY_PRIVATE_DOMAIN}}
+LIVEKIT_API_KEY=${{livekit-server.LIVEKIT_API_KEY}}
+LIVEKIT_API_SECRET=${{livekit-server.LIVEKIT_API_SECRET}}
 PORT=3001
 SQLITE_PATH=/data/monitor.db
 ```
