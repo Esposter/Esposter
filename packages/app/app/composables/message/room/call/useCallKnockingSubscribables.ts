@@ -12,7 +12,7 @@ export const useCallKnockingSubscribables = (callId: string) => {
   };
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
-  const { joinCallOrThrow } = callStore;
+  const { joinCall } = callStore;
   const knockerStore = useKnockerStore();
   const { knockingCallSessionId } = storeToRefs(knockerStore);
   const { cancelKnock } = knockerStore;
@@ -26,7 +26,7 @@ export const useCallKnockingSubscribables = (callId: string) => {
         onData: getSynchronizedFunction(async () => {
           await getResultAsync(async () => {
             cancelKnock();
-            await joinCallOrThrow(callId);
+            await joinCall(callId);
           }).match(noop, (error) => {
             const message = `Unable to join call: ${error.message}`;
             showError(

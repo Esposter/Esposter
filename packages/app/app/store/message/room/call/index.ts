@@ -81,45 +81,50 @@ export const useCallStore = defineStore("message/room/call", () => {
     const { callSessionId } = await $trpc.callSession.createCall.mutate();
     return callSessionId;
   };
-  const joinCallInternal = async (id: string, isErrorThrown: boolean): Promise<string | undefined> => {
+  const joinCall = async (id: string): Promise<string | undefined> => {
     if (activeCallSessionId.value) return activeCallSessionId.value;
     isConnecting.value = true;
     let isJoined = false;
     let joinedCallSessionId: string | undefined;
-    const joinError = await getResultAsync(async () => {
-      const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.callSession.joinCall.mutate({ id });
-      const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
-      await connect(
-        new Room({ adaptiveStream: true, dynacast: true }),
-        livekitUrl,
-        livekitToken,
-        leaveCall,
-        isMicrophoneEnabled,
-      );
-      activeCallSessionId.value = callSessionId;
-      joinedCallSessionId = callSessionId;
-      isJoined = true;
-      setParticipants(callSessionId, participants);
-      if (!isMicrophoneEnabled) await setMuteEnabled(true);
-      if (isCameraEnabled) {
-        await setCamera(true);
-        await setCameraEnabled(true);
-      }
-    }).match(noop, async (error) => {
-      console.error(error);
-      if (isJoined) await leaveCall();
-      else {
-        activeCallSessionId.value = "";
-        await disconnect();
-      }
-      return error;
-    });
-    isConnecting.value = false;
-    if (joinError && isErrorThrown) throw joinError;
+    await withFinalizerAsync(
+      async () => {
+        await getResultAsync(async () => {
+          const { callSessionId, livekitToken, livekitUrl, participants } = await $trpc.callSession.joinCall.mutate({
+            id,
+          });
+          const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
+          await connect(
+            new Room({ adaptiveStream: true, dynacast: true }),
+            livekitUrl,
+            livekitToken,
+            leaveCall,
+            isMicrophoneEnabled,
+          );
+          activeCallSessionId.value = callSessionId;
+          joinedCallSessionId = callSessionId;
+          isJoined = true;
+          setParticipants(callSessionId, participants);
+          if (!isMicrophoneEnabled) await setMuteEnabled(true);
+          if (isCameraEnabled) {
+            await setCamera(true);
+            await setCameraEnabled(true);
+          }
+        }).match(noop, async (error) => {
+          console.error(error);
+          if (isJoined) await leaveCall();
+          else {
+            activeCallSessionId.value = "";
+            await disconnect();
+          }
+          throw error;
+        });
+      },
+      () => {
+        isConnecting.value = false;
+      },
+    );
     return joinedCallSessionId;
   };
-  const joinCall = async (id: string): Promise<string | undefined> => joinCallInternal(id, false);
-  const joinCallOrThrow = async (id: string): Promise<string | undefined> => joinCallInternal(id, true);
   const joinCallByRoomId = async () => {
     const roomId = roomStore.currentRoomId;
     if (!roomId || activeCallSessionId.value) return;
@@ -250,7 +255,6 @@ export const useCallStore = defineStore("message/room/call", () => {
     isMuted,
     joinCall,
     joinCallByRoomId,
-    joinCallOrThrow,
     leaveCall,
     selectVirtualBackground,
     setCameraEnabled,
