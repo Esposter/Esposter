@@ -26,7 +26,7 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "import": "pulumi import --file generated/azure-import-manifest.json",
-    "inventory:build": "tsx scripts/buildAzureImportManifest.ts",
+    "inventory:build": "tsx src/scripts/buildAzureImportManifest.ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "preview": "pulumi preview",

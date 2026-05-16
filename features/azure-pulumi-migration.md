@@ -82,7 +82,7 @@ After the imported code is refactored into stable Pulumi components:
 
 - Delete `packages/infra/data/`.
 - Delete `packages/infra/generated/`.
-- Delete `packages/infra/scripts/buildAzureImportManifest.ts`.
+- Delete `packages/infra/src/scripts/buildAzureImportManifest.ts`.
 - Remove `pnpm inventory:build` from `packages/infra/package.json`.
 - Remove `pnpm import` if imports are complete and the manifest no longer exists.
 - Keep `src/main.ts` as the Pulumi entrypoint.

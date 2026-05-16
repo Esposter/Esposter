@@ -62,7 +62,7 @@ Use `prod` instead of `dev` when preparing the production stack.
 - `src/main.ts` is the Pulumi program entrypoint.
 - `Pulumi.yaml` defines the Pulumi project.
 - `Pulumi.dev.yaml` and `Pulumi.prod.yaml` hold stack-specific configuration.
-- `scripts/` contains temporary migration helpers until the imported Azure resources are fully represented in Pulumi code.
+- `src/scripts/` contains temporary migration helpers until the imported Azure resources are fully represented in Pulumi code.
 - `data/` and `generated/` are temporary migration folders and should be removed after the import phase.
 
 Migration details live in [features/azure-pulumi-migration.md](../../features/azure-pulumi-migration.md).
