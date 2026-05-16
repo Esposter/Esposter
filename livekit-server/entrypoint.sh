@@ -14,8 +14,6 @@ require_env LIVEKIT_API_SECRET
 require_env LIVEKIT_APP_WEBHOOK_URL
 require_env LIVEKIT_LOG_LEVEL
 require_env LIVEKIT_MONITOR_WEBHOOK_URL
-require_env LIVEKIT_TURN_DOMAIN
-require_env LIVEKIT_TURN_SECRET
 require_env RAILWAY_TCP_PROXY_DOMAIN
 
 require_numeric_env() {
@@ -39,7 +37,6 @@ require_port_env() {
 require_port_env PORT
 require_port_env RAILWAY_TCP_PROXY_PORT
 require_port_env RAILWAY_TCP_APPLICATION_PORT
-require_port_env LIVEKIT_TURN_PORT
 
 if [ "$PORT" = "$RAILWAY_TCP_PROXY_PORT" ] || [ "$PORT" = "$RAILWAY_TCP_APPLICATION_PORT" ]; then
   echo "ERROR: PORT must be distinct from Railway TCP proxy ports"
@@ -135,14 +132,7 @@ logging:
 rtc:
   tcp_port: ${ICE_TCP_PORT}
   node_ip: '$(yaml_escape "${RESOLVED_PROXY_IP}")'
-  port_range_start: 0
-  port_range_end: 0
-  turn_servers:
-    - host: '$(yaml_escape "${LIVEKIT_TURN_DOMAIN}")'
-      port: ${LIVEKIT_TURN_PORT}
-      protocol: tcp
-      secret: '$(yaml_escape "${LIVEKIT_TURN_SECRET}")'
-      ttl: 300
+  force_tcp: true
 EOF
 
 cat >> /etc/livekit.yaml <<EOF
@@ -171,6 +161,5 @@ echo "  TCP proxy: ${TCP_PROXY_DOMAIN}:${TCP_PROXY_PORT} -> container:${TCP_APP_
 echo "  advertised node IP: ${RESOLVED_PROXY_IP}"
 echo "  app webhook: ${LIVEKIT_APP_WEBHOOK_URL}"
 echo "  monitor webhook: ${LIVEKIT_MONITOR_WEBHOOK_URL}"
-echo "  TURN/TCP server: ${LIVEKIT_TURN_DOMAIN}:${LIVEKIT_TURN_PORT}"
 
 exec livekit-server --config /etc/livekit.yaml

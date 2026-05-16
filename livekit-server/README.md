@@ -1,8 +1,8 @@
 # LiveKit Railway service
 
-This service wraps the official `livekit/livekit-server:v1.11.0` image with a Railway-specific entrypoint that requires all deployment variables to be present at startup.
+This service wraps the official `livekit/livekit-server:v1.11.0` image with a Railway-specific entrypoint.
 
-Railway does not expose UDP publicly, so this configures LiveKit's ICE/TCP listener behind a Railway TCP proxy. Redis remains a separate Railway Redis service for room state and future horizontal scaling.
+Railway does not expose UDP publicly, so this follows the TCP-only Railway template pattern: LiveKit advertises one ICE/TCP endpoint through Railway's TCP proxy, and the container forwards Railway's application port to the advertised ICE port. Redis remains a separate Railway Redis service for room state.
 
 ## Railway Setup
 
@@ -30,9 +30,6 @@ LIVEKIT_API_SECRET=${{secret(64)}}
 LIVEKIT_APP_WEBHOOK_URL=${{shared.BASE_URL}}/api/webhooks/livekit
 LIVEKIT_LOG_LEVEL=info
 LIVEKIT_MONITOR_WEBHOOK_URL=https://${{livekit-monitor.RAILWAY_PUBLIC_DOMAIN}}/api/webhook
-LIVEKIT_TURN_DOMAIN=${{livekit-turn.RAILWAY_TCP_PROXY_DOMAIN}}
-LIVEKIT_TURN_PORT=${{livekit-turn.RAILWAY_TCP_PROXY_PORT}}
-LIVEKIT_TURN_SECRET=${{livekit-turn.LIVEKIT_TURN_SECRET}}
 PORT=8080
 REDIS_URL=${{Redis.REDIS_URL}}
 ```
@@ -54,7 +51,6 @@ Use the LiveKit service's public Railway/custom domain for `LIVEKIT_URL`.
 - UDP LiveKit on a VM or Kubernetes host with open UDP ports is still faster. This setup is the best fit for Railway's networking model.
 - The entrypoint resolves `RAILWAY_TCP_PROXY_DOMAIN`, advertises that IP through LiveKit `rtc.node_ip`, and forwards Railway's container TCP proxy port to LiveKit's advertised ICE/TCP port.
 - LiveKit does not document an `external_tcp_port` setting, so `rtc.tcp_port` is set to Railway's external TCP proxy port and the container application port forwards to it.
-- The generated config sets the UDP port range to `0..0` so Railway clients only receive TCP ICE candidates.
+- The generated config sets `rtc.force_tcp: true` so clients receive TCP ICE candidates instead of unreachable Railway UDP candidates.
 - `LIVEKIT_APP_WEBHOOK_URL` should point at the Esposter app's `/api/webhooks/livekit` route so participant leave and aborted connection events clean up app call state.
 - `LIVEKIT_MONITOR_WEBHOOK_URL` should point at the livekit-monitor service so the monitor records room and participant events.
-- `LIVEKIT_TURN_DOMAIN`, `LIVEKIT_TURN_PORT`, and `LIVEKIT_TURN_SECRET` advertise the Railway coturn TCP service as a TURN fallback.
