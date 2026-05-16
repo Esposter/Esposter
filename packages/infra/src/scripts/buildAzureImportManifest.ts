@@ -1,6 +1,11 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { basename, dirname, resolve } from "node:path";
 
+interface AzureAssetMapping {
+  readonly providerPath: string;
+  readonly type: string;
+}
+
 interface AzureAssetRow {
   readonly assetType: string;
   readonly environment: string;
@@ -9,11 +14,6 @@ interface AzureAssetRow {
   readonly resourceName: string;
   readonly scope: string;
   readonly subscription: string;
-}
-
-interface AzureAssetMapping {
-  readonly providerPath: string;
-  readonly type: string;
 }
 
 interface ImportResource {
