@@ -21,10 +21,10 @@ Variables:
 ```text
 LIVEKIT_API_KEY=
 LIVEKIT_API_SECRET=
-LIVEKIT_APP_WEBHOOK_URL=https://your-app.example.com/api/webhooks/livekit
+LIVEKIT_APP_WEBHOOK_URL=
 PORT=8080
 LIVEKIT_LOG_LEVEL=info
-LIVEKIT_MONITOR_WEBHOOK_URL=http://livekit-monitor.railway.internal:3001/api/webhook
+LIVEKIT_MONITOR_WEBHOOK_URL=
 REDIS_URL=${{Redis.REDIS_URL}}
 ```
 
@@ -45,4 +45,3 @@ wss://your-livekit-server.up.railway.app
 - The generated config omits LiveKit defaults such as disabled TURN, room auto-create, ICE Lite, loopback candidates, and UDP port range `0..0`.
 - `LIVEKIT_APP_WEBHOOK_URL` should point at the Esposter app's `/api/webhooks/livekit` route so participant leave and aborted connection events clean up app call state.
 - `LIVEKIT_MONITOR_WEBHOOK_URL` should point at the livekit-monitor service so the monitor records room and participant events.
-- If the browser logs `could not establish pc connection` after `signal connected`, signaling and tokens are working but the advertised ICE media endpoint is unreachable. Confirm the TCP proxy exists on application port `7882` and redeploy the LiveKit service after creating the proxy.
