@@ -65,7 +65,7 @@ Use `prod` instead of `dev` when preparing the production stack.
 - `src/scripts/` contains temporary migration helpers until the imported Azure resources are fully represented in Pulumi code.
 - `data/` and `generated/` are temporary migration folders and should be removed after the import phase.
 
-Migration details live in [features/azure-pulumi-migration.md](../../features/azure-pulumi-migration.md).
+Migration details live in [azure-pulumi-migration.md](azure-pulumi-migration.md).
 
 ### Commands
 
@@ -86,7 +86,7 @@ pnpm typecheck         # type check
 
 The current repository still includes temporary migration files generated from the previous Azure asset spreadsheet. After the live Azure resources are imported and refactored into first-class Pulumi code, remove the migration-only CSV, manifest, review, and generator files.
 
-See [features/azure-pulumi-migration.md](../../features/azure-pulumi-migration.md) for the phase-1 import workflow and remaining manual-review items.
+See [azure-pulumi-migration.md](azure-pulumi-migration.md) for the phase-1 import workflow and remaining manual-review items.
 
 ### References
 

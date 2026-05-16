@@ -57,11 +57,11 @@ const AssetImportMappingByAssetTypeMap: Readonly<Record<string, AzureAssetMappin
   },
   "Management and governance: Application Insights": {
     providerPath: "Microsoft.Insights/components",
-    type: "azure-native:insights:Component",
+    type: "azure-native:applicationinsights:Component",
   },
   "Management and governance: Azure Monitor action group": {
     providerPath: "Microsoft.Insights/actionGroups",
-    type: "azure-native:insights:ActionGroup",
+    type: "azure-native:monitor:ActionGroup",
   },
   "Management and governance: Log Analytics workspace": {
     providerPath: "Microsoft.OperationalInsights/workspaces",
@@ -76,6 +76,17 @@ const AssetImportMappingByAssetTypeMap: Readonly<Record<string, AzureAssetMappin
     type: "azure-native:storage:StorageAccount",
   },
 } as const;
+
+const ApiConnectionLiveNameByResourceNameMap: Readonly<Record<string, string>> = {
+  "d-shp-apicn-esposter-auea-001": "azureappservice-1",
+  "d-shp-apicn-esposter-auea-002": "azureappservice-2",
+  "d-shp-apicn-esposter-auea-003": "arm",
+  "d-shp-apicn-esposter-auea-004": "arm-1",
+  "p-shp-apicn-esposter-auea-001": "azureappservice-1",
+  "p-shp-apicn-esposter-auea-002": "azureappservice-2",
+  "p-shp-apicn-esposter-auea-003": "arm",
+  "p-shp-apicn-esposter-auea-004": "arm-1",
+} as const satisfies Record<string, string>;
 
 const inputFilePath = resolve(process.argv[2] ?? "data/Azure Assets - Assets.csv");
 const subscriptionId = process.env.AZURE_SUBSCRIPTION_ID ?? process.argv[3] ?? "<subscription-id>";
@@ -146,7 +157,12 @@ const getResourceId = (assetRow: AzureAssetRow, mapping: AzureAssetMapping) => {
   if (mapping.providerPath.length === 0)
     return `/subscriptions/${subscriptionId}/resourceGroups/${assetRow.resourceName}`;
 
-  return `/subscriptions/${subscriptionId}/resourceGroups/${assetRow.resourceGroup}/providers/${mapping.providerPath}/${assetRow.resourceName}`;
+  const liveResourceName =
+    assetRow.assetType === "Networking: API connection"
+      ? (ApiConnectionLiveNameByResourceNameMap[assetRow.resourceName] ?? assetRow.resourceName)
+      : assetRow.resourceName;
+
+  return `/subscriptions/${subscriptionId}/resourceGroups/${assetRow.resourceGroup}/providers/${mapping.providerPath}/${liveResourceName}`;
 };
 
 const getImportResources = (assetRows: readonly AzureAssetRow[]) => {
