@@ -1,0 +1,17 @@
+{
+  "name": "@esposter/infra",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/main.ts",
+  "scripts": {
+    "import": "pulumi import --file generated/azure-import-manifest.json",
+    "inventory:build": "tsx scripts/buildAzureImportManifest.ts",
+    "preview": "pulumi preview",
+    "refresh": "pulumi refresh"
+  },
+  "dependencies": {
+    "@pulumi/azure-native": "catalog:",
+    "@pulumi/pulumi": "catalog:"
+  }
+}

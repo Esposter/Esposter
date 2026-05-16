@@ -1,0 +1,7 @@
+name: esposter-infra
+description: Esposter Azure infrastructure migration and management.
+runtime:
+  name: nodejs
+  options:
+    packagemanager: pnpm
+main: src/main.ts
