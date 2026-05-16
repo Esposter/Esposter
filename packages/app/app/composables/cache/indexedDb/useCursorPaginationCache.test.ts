@@ -16,6 +16,16 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+const goOffline = () => {
+  vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+  window.dispatchEvent(new Event("offline"));
+};
+
+const goOnline = () => {
+  vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
+  window.dispatchEvent(new Event("online"));
+};
+
 describe(useCursorPaginationCache, () => {
   let wrapper: VueWrapper;
   let flush: () => Promise<void>;
@@ -33,14 +43,6 @@ describe(useCursorPaginationCache, () => {
   ) => {
     cursorPaginationData.value = data;
     items.value = data.items;
-  };
-  const goOffline = () => {
-    vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-    window.dispatchEvent(new Event("offline"));
-  };
-  const goOnline = () => {
-    vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
-    window.dispatchEvent(new Event("online"));
   };
   const flushCache = async () => {
     await flushPromises();

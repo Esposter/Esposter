@@ -6,6 +6,7 @@ import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
+import { isUpdateThemeModeSetting } from "@/services/dungeons/settings/isUpdateThemeModeSetting";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { useDungeonsStore } from "@/store/dungeons";
 import { useSettingsStore } from "@/store/dungeons/settings";
@@ -24,7 +25,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const volumeStore = useVolumeStore();
   const { isUpdateVolume, updateVolume } = volumeStore;
   const colorPickerStore = useColorPickerStore();
-  const { isUpdateThemeModeSetting, updateThemeModeSetting } = colorPickerStore;
+  const { updateThemeModeSetting } = colorPickerStore;
   const selectedSettingsOption = computed(
     () => SettingsOptionGrid.getValue({ x: 0, y: SettingsOptionGrid.position.value.y }) as SettingsOption,
   );

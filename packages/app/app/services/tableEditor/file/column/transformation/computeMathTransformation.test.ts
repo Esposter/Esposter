@@ -4,16 +4,16 @@ import { ColumnTransformationType } from "#shared/models/tableEditor/file/column
 import { computeMathTransformation } from "@/services/tableEditor/file/column/transformation/computeMathTransformation";
 import { describe, expect, test } from "vitest";
 
-describe(computeMathTransformation, () => {
-  const makeTransformation = (
-    expression: string,
-    variables: { name: string; sourceColumnId: string }[],
-  ): MathTransformation => ({
-    expression,
-    type: ColumnTransformationType.Math,
-    variables,
-  });
+const makeTransformation = (
+  expression: string,
+  variables: { name: string; sourceColumnId: string }[],
+): MathTransformation => ({
+  expression,
+  type: ColumnTransformationType.Math,
+  variables,
+});
 
+describe(computeMathTransformation, () => {
   test("evaluates a basic expression with column variables", () => {
     expect.hasAssertions();
 

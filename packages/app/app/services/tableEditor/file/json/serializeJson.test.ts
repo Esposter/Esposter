@@ -10,19 +10,19 @@ import { serializeJson } from "@/services/tableEditor/file/json/serializeJson";
 import { jsonDateParse } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
+  columns,
+  metadata: { dataSourceType: DataSourceType.Json, importedAt: new Date(0), name: "", size: 0 },
+  rows,
+  statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
+});
+
+const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
+
+const createRow = (data: Record<string, number>): Row => new Row({ data });
+
 describe(serializeJson, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Json].mimeType;
-
-  const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
-    columns,
-    metadata: { dataSourceType: DataSourceType.Json, importedAt: new Date(0), name: "", size: 0 },
-    rows,
-    statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
-  });
-
-  const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
-
-  const createRow = (data: Record<string, number>): Row => new Row({ data });
 
   test("serializes rows to JSON array with column names as keys", async () => {
     expect.hasAssertions();

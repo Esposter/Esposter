@@ -3,6 +3,9 @@
 **/src/components/index.ts
 **/public/docs
 
+# Docker Build Artifacts
+.dockerignore
+
 # Testing
 coverage
 vitest.config.*.timestamp*
@@ -21,7 +24,6 @@ vitest.config.*.timestamp*
 .nitro
 .cache
 dist
-nuxt-build.cpuprofile
 
 # Dependencies
 node_modules
@@ -35,6 +37,7 @@ logs
 
 # Misc
 .DS_Store
+.git
 .fleet
 .idea
 
@@ -42,6 +45,3 @@ logs
 .env
 .env.*
 !.env.example
-
-# Claude
-scheduled_tasks.lock

@@ -15,6 +15,16 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+const goOffline = () => {
+  vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+  window.dispatchEvent(new Event("offline"));
+};
+
+const goOnline = () => {
+  vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
+  window.dispatchEvent(new Event("online"));
+};
+
 describe(useMessageCache, () => {
   let router: Router;
   let wrapper: VueWrapper;
@@ -24,14 +34,6 @@ describe(useMessageCache, () => {
   const secondPartitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const message = "message";
-  const goOffline = () => {
-    vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-    window.dispatchEvent(new Event("offline"));
-  };
-  const goOnline = () => {
-    vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
-    window.dispatchEvent(new Event("online"));
-  };
   const flushCache = async () => {
     await flushPromises();
     await flush();

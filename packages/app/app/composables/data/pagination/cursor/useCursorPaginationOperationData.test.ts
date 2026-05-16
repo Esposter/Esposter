@@ -6,17 +6,19 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+const goOffline = () => {
+  vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+  window.dispatchEvent(new Event("offline"));
+};
+
+const goOnline = () => {
+  vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
+  window.dispatchEvent(new Event("online"));
+};
+
 describe(useCursorPaginationOperationData, () => {
   let wrapper: VueWrapper;
   let readMoreItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readMoreItems"];
-  const goOffline = () => {
-    vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-    window.dispatchEvent(new Event("offline"));
-  };
-  const goOnline = () => {
-    vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
-    window.dispatchEvent(new Event("online"));
-  };
 
   beforeEach(() => {
     goOnline();

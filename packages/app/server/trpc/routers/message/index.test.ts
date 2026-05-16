@@ -34,6 +34,9 @@ import {
 import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+const getMessage = (userId: string) =>
+  `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
+
 describe("message", () => {
   let mockContext: Context;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
@@ -43,8 +46,6 @@ describe("message", () => {
   const mimetype = "image/jpeg";
   const size = 1000;
   const name = "name";
-  const getMessage = (userId: string) =>
-    `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
   const updatedMessage = "updatedMessage";
 
   beforeAll(async () => {

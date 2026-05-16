@@ -14,13 +14,13 @@ export const withAsyncIterator = <T, R>(
   );
 };
 
-describe(withAsyncIterator, () => {
-  const makeIterator = (returnFn: () => Promise<IteratorResult<unknown>>) => () => ({
-    [Symbol.asyncIterator]() {
-      return { next: vi.fn<() => Promise<IteratorResult<unknown>>>(), return: returnFn };
-    },
-  });
+const makeIterator = (returnFn: () => Promise<IteratorResult<unknown>>) => () => ({
+  [Symbol.asyncIterator]() {
+    return { next: vi.fn<() => Promise<IteratorResult<unknown>>>(), return: returnFn };
+  },
+});
 
+describe(withAsyncIterator, () => {
   test("calls iterator.return() when fn resolves", async () => {
     expect.hasAssertions();
 

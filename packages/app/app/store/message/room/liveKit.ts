@@ -7,6 +7,7 @@ import type {
 } from "livekit-client";
 
 import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
+import { isRemoteAudioSource } from "@/services/message/room/liveKit/isRemoteAudioSource";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { exhaustiveGuard, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
@@ -86,8 +87,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
         exhaustiveGuard(kind);
     }
   };
-  const isRemoteAudioSource = (source: Track.Source) =>
-    [Track.Source.Microphone, Track.Source.ScreenShareAudio].includes(source);
   const attachRemoteAudio = (
     track: RemoteTrack,
     publication: RemoteTrackPublication,
@@ -227,7 +226,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     if (!resolvedPath) return;
     await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
   };
-  const readDevices = (kind: MediaDeviceKind) => Room.getLocalDevices(kind);
   const switchDevice = async (kind: MediaDeviceKind, deviceId: string) => {
     if (!activeRoom) {
       setActiveDevice(kind, deviceId);
@@ -280,7 +278,6 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   return {
     connect,
     disconnect,
-    readDevices,
     selectedAudioInputDeviceId,
     selectedAudioOutputDeviceId,
     selectedVideoInputDeviceId,

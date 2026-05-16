@@ -11,13 +11,42 @@ require_env() {
 require_env REDIS_URL
 require_env LIVEKIT_API_KEY
 require_env LIVEKIT_API_SECRET
-require_env PORT
 require_env LIVEKIT_NODE_IP_MODE
 require_env LIVEKIT_LOG_LEVEL
 require_env LIVEKIT_MONITOR_WEBHOOK_URL
 require_env RAILWAY_TCP_PROXY_DOMAIN
-require_env RAILWAY_TCP_PROXY_PORT
-require_env RAILWAY_TCP_APPLICATION_PORT
+
+require_numeric_env() {
+  require_env "$1"
+
+  if [[ "${!1}" == *[!0-9]* ]]; then
+    echo "ERROR: $1 must be numeric"
+    exit 1
+  fi
+}
+
+require_port_env() {
+  require_numeric_env "$1"
+  local v="${!1}"
+  if [ "$v" -lt 1 ] || [ "$v" -gt 65535 ]; then
+    echo "ERROR: $1 must be between 1 and 65535"
+    exit 1
+  fi
+}
+
+require_port_env PORT
+require_port_env RAILWAY_TCP_PROXY_PORT
+require_port_env RAILWAY_TCP_APPLICATION_PORT
+
+if [ "$LIVEKIT_NODE_IP_MODE" != "auto" ] && [ "$LIVEKIT_NODE_IP_MODE" != "proxy" ]; then
+  echo "ERROR: LIVEKIT_NODE_IP_MODE must be either auto or proxy"
+  exit 1
+fi
+
+if [ "$PORT" = "$RAILWAY_TCP_PROXY_PORT" ] || [ "$PORT" = "$RAILWAY_TCP_APPLICATION_PORT" ]; then
+  echo "ERROR: PORT must be distinct from Railway TCP proxy ports"
+  exit 1
+fi
 
 yaml_escape() {
   printf "%s" "$1" | sed "s/'/''/g"
@@ -88,8 +117,8 @@ global
 defaults
   mode tcp
   timeout connect 5s
-  timeout client 300s
-  timeout server 300s
+  timeout client 1h
+  timeout server 1h
   log global
   option tcplog
 
@@ -115,7 +144,6 @@ rtc:
   port_range_start: 0
   port_range_end: 0
   use_external_ip: ${USE_EXTERNAL_IP}
-  allow_tcp_fallback: true
   use_ice_lite: false
   enable_loopback_candidate: false
 

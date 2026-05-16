@@ -12,6 +12,12 @@ import { useRowStore } from "@/store/tableEditor/file/row";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+const selectRange = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number) => {
+  const { extendCellSelection, startCellSelection } = useCellStore();
+  startCellSelection(rowStart, columnStart);
+  extendCellSelection(rowEnd, columnEnd);
+};
+
 describe(useCopyRangeToClipboard, () => {
   let writeTextMock: ReturnType<typeof vi.fn<() => Promise<void>>>;
 
@@ -25,12 +31,6 @@ describe(useCopyRangeToClipboard, () => {
   afterEach(() => {
     vi.unstubAllGlobals();
   });
-
-  const selectRange = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number) => {
-    const { extendCellSelection, startCellSelection } = useCellStore();
-    startCellSelection(rowStart, columnStart);
-    extendCellSelection(rowEnd, columnEnd);
-  };
 
   test("writes selected range as TSV with headers", async () => {
     expect.hasAssertions();

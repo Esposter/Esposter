@@ -1,5 +1,4 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Save } from "#shared/models/dungeons/data/Save";
@@ -18,7 +17,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
-    else onPlayerDirectionInput(justDownInput);
+    else PlayerTitleMenuOptionGrid.move(justDownInput);
   };
 
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
@@ -38,10 +37,6 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
         default:
           exhaustiveGuard(PlayerTitleMenuOptionGrid.value);
       }
-  };
-
-  const onPlayerDirectionInput = (direction: Direction) => {
-    PlayerTitleMenuOptionGrid.move(direction);
   };
 
   return { isContinueEnabled, onPlayerInput };
