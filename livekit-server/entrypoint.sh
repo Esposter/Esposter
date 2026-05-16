@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# https://github.com/yuting1214/LiveKit-Template/blob/main/livekit-server/entrypoint.sh
 set -euo pipefail
 
 require_env() {
@@ -78,37 +79,19 @@ TCP_APP_PORT="$RAILWAY_TCP_APPLICATION_PORT"
 ICE_TCP_PORT="$TCP_PROXY_PORT"
 
 echo "TCP proxy: ${TCP_PROXY_DOMAIN}:${TCP_PROXY_PORT} -> container:${TCP_APP_PORT}"
-
-RESOLVED_PROXY_IP="$(getent ahostsv4 "$TCP_PROXY_DOMAIN" 2>/dev/null | awk 'NR==1 {print $1}' || true)"
-
-if [ -z "$RESOLVED_PROXY_IP" ]; then
-  RESOLVED_PROXY_IP="$(getent hosts "$TCP_PROXY_DOMAIN" 2>/dev/null | awk 'NR==1 {print $1}' || true)"
-fi
-
-if [ -z "$RESOLVED_PROXY_IP" ]; then
-  echo "ERROR: Could not resolve ${TCP_PROXY_DOMAIN}"
-  exit 1
-fi
-
-echo "Resolved TCP proxy IP: ${RESOLVED_PROXY_IP}"
+echo "Node IP mode: auto (use_external_ip=true)"
 
 if [ "$TCP_APP_PORT" != "$ICE_TCP_PORT" ]; then
-  echo "Forwarding TCP application port ${TCP_APP_PORT} to LiveKit ICE port ${ICE_TCP_PORT}"
-
-  if iptables -t nat -A PREROUTING -p tcp --dport "${TCP_APP_PORT}" -j REDIRECT --to-port "${ICE_TCP_PORT}" 2>/dev/null; then
-    echo "iptables redirect configured"
-  else
-    echo "iptables redirect unavailable; starting haproxy TCP forwarder"
-
-    cat > /tmp/haproxy.cfg <<EOF
+  echo "Starting HAProxy TCP forwarder: 0.0.0.0:${TCP_APP_PORT} -> 127.0.0.1:${ICE_TCP_PORT}"
+  cat > /tmp/haproxy.cfg <<EOF
 global
   log stdout format raw local0 info
 
 defaults
   mode tcp
   timeout connect 5s
-  timeout client 1h
-  timeout server 1h
+  timeout client 300s
+  timeout server 300s
   log global
   option tcplog
 
@@ -117,8 +100,7 @@ listen ice_forwarder
   server livekit 127.0.0.1:${ICE_TCP_PORT}
 EOF
 
-    haproxy -f /tmp/haproxy.cfg -D
-  fi
+  haproxy -f /tmp/haproxy.cfg -D
 fi
 
 cat > /etc/livekit.yaml <<EOF
@@ -131,8 +113,9 @@ logging:
 
 rtc:
   tcp_port: ${ICE_TCP_PORT}
-  node_ip: '$(yaml_escape "${RESOLVED_PROXY_IP}")'
-  force_tcp: true
+  port_range_start: 0
+  port_range_end: 0
+  use_external_ip: true
 EOF
 
 cat >> /etc/livekit.yaml <<EOF
@@ -158,7 +141,7 @@ echo "Starting LiveKit"
 echo "  signaling port: ${PORT}"
 echo "  ICE TCP port: ${ICE_TCP_PORT}"
 echo "  TCP proxy: ${TCP_PROXY_DOMAIN}:${TCP_PROXY_PORT} -> container:${TCP_APP_PORT}"
-echo "  advertised node IP: ${RESOLVED_PROXY_IP}"
+echo "  node IP mode: auto"
 echo "  app webhook: ${LIVEKIT_APP_WEBHOOK_URL}"
 echo "  monitor webhook: ${LIVEKIT_MONITOR_WEBHOOK_URL}"
 
