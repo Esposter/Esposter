@@ -292,6 +292,7 @@ Packages are used directly by the nuxt application via `workspace:*`.
 | [`packages/db`](packages/db)                           | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub |     —     |
 | [`packages/db-mock`](packages/db-mock)                 | In-memory PGlite database factory for unit and integration tests                |     —     |
 | [`packages/db-schema`](packages/db-schema)             | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                 |     —     |
+| [`packages/infra`](packages/infra)                     | Pulumi infrastructure code and migration tools for Azure resources              |     —     |
 | [`packages/parse-tmx`](packages/parse-tmx)             | Parser for Tiled Map Editor `.tmx` files                                        |     ✓     |
 | [`packages/shared`](packages/shared)                   | Shared TypeScript types, utilities, and error classes                           |     ✓     |
 | [`packages/vue-phaserjs`](packages/vue-phaserjs)       | Phaser 4 game engine integration for Vue 3                                      |     ✓     |

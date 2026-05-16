@@ -1,73 +1,102 @@
 # Esposter Infrastructure
 
-This folder owns the Pulumi migration for the existing Azure infrastructure that was previously tracked in spreadsheets.
+[![Apache-2.0 licensed][badge-license]][url-license]
 
-Phase 1 is an adoption pass: preserve the spreadsheet exports, generate a Pulumi bulk import manifest, import the live Azure resources into Pulumi state, paste the generated resource code into `src/importedResources.ts`, then iterate until `pulumi preview` reports no changes.
+Pulumi infrastructure code and migration tooling for Esposter Azure resources.
 
-## Source Data
+### Table of Contents
 
-The current spreadsheet exports live in `data/`:
+- 📖 [Documentation](#documentation)
+- ⚖️ [License](#license)
 
-- `Azure Assets - Assets.csv` is the resource inventory.
-- `Azure Assets - Reference.csv` is the naming convention and asset type reference.
-- `Azure Assets - Regions.csv` maps display regions to Azure location names and short codes.
+---
 
-The assets export currently contains 51 resource rows plus the spreadsheet stop marker, including development and production resource groups, storage accounts, Function Apps, Web PubSub, Event Grid topics/subscriptions, Logic Apps, API connections, budgets, action groups, alert actions, Application Insights, Log Analytics, Cognitive Search, and Speech.
+## <a name="documentation">📖 Documentation</a>
 
-## Workflow
+This private package contains Esposter's Azure infrastructure-as-code project. It uses [Pulumi](https://github.com/pulumi/pulumi) with the Azure Native provider to manage Azure resources from TypeScript.
 
-1. Authenticate Azure locally:
+### Tooling
 
-   ```powershell
-   az login
-   az account set --subscription "<subscription-id>"
-   ```
+Install the Pulumi CLI before running stack commands. The `@pulumi/pulumi` dependency is the Node.js SDK used by the Pulumi program; it does not install the `pulumi` command.
 
-2. Select or create the Pulumi stack:
+```powershell
+winget install Pulumi.Pulumi
+# Or, if you use Chocolatey:
+choco install pulumi
+pulumi version
+```
 
-   ```powershell
-   cd packages/infra
-   pulumi stack select dev
-   pulumi config set azure-native:subscriptionId "<subscription-id>"
-   ```
+Install workspace dependencies from the repository root:
 
-3. Generate the import files from the CSV:
+```powershell
+pnpm i
+```
 
-   ```powershell
-   $env:AZURE_SUBSCRIPTION_ID = "<subscription-id>"
-   pnpm inventory:build
-   ```
+### Stack Setup
 
-4. Review `generated/azure-import-review.md`. Anything listed there needs a hand-filled Pulumi token, parent resource ID, or Azure-specific scope before import.
+Authenticate Azure locally:
 
-5. Import the ready resources:
+```powershell
+az login
+az account set --subscription "<subscription-id>"
+```
 
-   ```powershell
-   pnpm import
-   ```
+Create or select a stack explicitly so Pulumi does not open the interactive stack picker:
 
-6. Copy the resource code printed by Pulumi into `src/importedResources.ts`, import it from `src/main.ts`, then run:
+```powershell
+cd packages/infra
+pulumi stack init dev
+pulumi config set azure-native:subscriptionId "<subscription-id>"
+```
 
-   ```powershell
-   pnpm preview
-   ```
+If the stack already exists:
 
-The target for phase 1 is a clean preview with no create, update, replace, or delete operations.
+```powershell
+pulumi stack select dev
+```
 
-## Import Notes
+Use `prod` instead of `dev` when preparing the production stack.
 
-Pulumi's Azure Native provider is the default here because it is Pulumi's ARM-backed Azure provider and the Pulumi registry currently lists Azure Native v3.18.0 as the latest version. Pulumi's import docs support bulk imports using a JSON file with `type`, `name`, and `id` fields, which is exactly what `scripts/buildAzureImportManifest.ts` emits.
+### Project Layout
 
-Some resource categories need extra care:
+- `src/main.ts` is the Pulumi program entrypoint.
+- `Pulumi.yaml` defines the Pulumi project.
+- `Pulumi.dev.yaml` and `Pulumi.prod.yaml` hold stack-specific configuration.
+- `scripts/` contains temporary migration helpers until the imported Azure resources are fully represented in Pulumi code.
+- `data/` and `generated/` are temporary migration folders and should be removed after the import phase.
 
-- Budgets may be subscription-scoped or resource-group-scoped. Confirm the exact Azure resource ID before importing.
-- Event Grid subscriptions are children of a topic, domain, storage account, or another event source. The CSV name alone is not enough to infer the parent.
-- Azure Monitor "actions" need classification. They may be metric alerts, scheduled query rules, processing rules, or another Insights resource.
-- Logic Apps and API connections should be imported before any refactor. Their workflow definitions and connection parameters should be copied from Azure exactly during phase 1.
-- Update repository and package README files once phase 1 settles so the infra workflow is visible from the root docs and not only from this package.
+Migration details live in [features/azure-pulumi-migration.md](../../features/azure-pulumi-migration.md).
 
-## References
+### Commands
+
+Run from `packages/infra/`:
+
+```bash
+pnpm build             # type check the Pulumi project
+pnpm inventory:build   # generate migration import files from CSV exports
+pnpm import            # import resources from generated/azure-import-manifest.json
+pnpm preview           # preview Pulumi changes
+pnpm refresh           # refresh Pulumi state from Azure
+pnpm up                # apply Pulumi changes
+pnpm lint:fix          # auto-fix lint issues
+pnpm typecheck         # type check
+```
+
+### Migration
+
+The current repository still includes temporary migration files generated from the previous Azure asset spreadsheet. After the live Azure resources are imported and refactored into first-class Pulumi code, remove the migration-only CSV, manifest, review, and generator files.
+
+See [features/azure-pulumi-migration.md](../../features/azure-pulumi-migration.md) for the phase-1 import workflow and remaining manual-review items.
+
+### References
 
 - [Pulumi import docs](https://www.pulumi.com/docs/iac/guides/migration/import/)
 - [Pulumi Azure Native provider docs](https://www.pulumi.com/registry/packages/azure-native/)
 - [Azure Native installation and authentication](https://www.pulumi.com/registry/packages/azure-native/installation-configuration/)
+
+## <a name="license">⚖️ License</a>
+
+This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
+
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
+[url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE

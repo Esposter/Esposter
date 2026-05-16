@@ -87,16 +87,12 @@ const parseCsvLine = (line: string): string[] => {
   let value = "";
   let isInsideQuotes = false;
 
-  for (const character of line) {
-    if (character === '"') {
-      isInsideQuotes = !isInsideQuotes;
-    } else if (character === "," && !isInsideQuotes) {
+  for (const character of line)
+    if (character === '"') isInsideQuotes = !isInsideQuotes;
+    else if (character === "," && !isInsideQuotes) {
       values.push(value);
       value = "";
-    } else {
-      value += character;
-    }
-  }
+    } else value += character;
 
   values.push(value);
   return values.map((csvValue) => csvValue.trim());
@@ -192,15 +188,13 @@ const getReviewMarkdown = (
     "",
   ];
 
-  if (reviewItems.length === 0) {
-    lines.push("No manual review items.");
-  } else {
+  if (reviewItems.length === 0) lines.push("No manual review items.");
+  else {
     lines.push("| Resource | Asset type | Reason |");
     lines.push("| --- | --- | --- |");
 
-    for (const reviewItem of reviewItems) {
+    for (const reviewItem of reviewItems)
       lines.push(`| ${reviewItem.resourceName} | ${reviewItem.assetType} | ${reviewItem.reason} |`);
-    }
   }
 
   return `${lines.join("\n")}\n`;

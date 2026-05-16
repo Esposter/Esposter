@@ -1,17 +1,44 @@
 {
   "name": "@esposter/infra",
-  "version": "1.0.0",
+  "version": "2.24.0",
   "private": true,
+  "description": "Pulumi infrastructure code and migration tools for Esposter Azure resources.",
+  "keywords": [
+    "azure",
+    "iac",
+    "infrastructure",
+    "pulumi",
+    "typescript"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/infra#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
   "type": "module",
-  "main": "src/main.ts",
   "scripts": {
+    "build": "pnpm typecheck",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "import": "pulumi import --file generated/azure-import-manifest.json",
     "inventory:build": "tsx scripts/buildAzureImportManifest.ts",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
     "preview": "pulumi preview",
-    "refresh": "pulumi refresh"
+    "refresh": "pulumi refresh",
+    "typecheck": "tsgo",
+    "up": "pulumi up"
   },
   "dependencies": {
     "@pulumi/azure-native": "catalog:",
     "@pulumi/pulumi": "catalog:"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*"
   }
 }
