@@ -39,3 +39,7 @@ wss://your-livekit-server.up.railway.app
 
 - Keep the first Railway deployment to a single LiveKit replica. Railway's TCP proxy assigns one public proxy port, and WebRTC ICE candidates need a stable endpoint.
 - UDP LiveKit on a VM or Kubernetes host with open UDP ports is still faster. This setup is the best fit for Railway's networking model.
+- The entrypoint resolves `RAILWAY_TCP_PROXY_DOMAIN`, advertises that IP through LiveKit `rtc.node_ip`, and forwards Railway's container TCP proxy port to LiveKit's advertised ICE/TCP port.
+- LiveKit does not document an `external_tcp_port` setting, so `rtc.tcp_port` is set to Railway's external TCP proxy port and the container application port forwards to it.
+- The generated config omits LiveKit defaults such as disabled TURN, room auto-create, ICE Lite, loopback candidates, and UDP port range `0..0`.
+- If the browser logs `could not establish pc connection` after `signal connected`, signaling and tokens are working but the advertised ICE media endpoint is unreachable. Confirm the TCP proxy exists on application port `7882` and redeploy the LiveKit service after creating the proxy.

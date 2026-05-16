@@ -78,6 +78,19 @@ ICE_TCP_PORT="$TCP_PROXY_PORT"
 
 echo "TCP proxy: ${TCP_PROXY_DOMAIN}:${TCP_PROXY_PORT} -> container:${TCP_APP_PORT}"
 
+RESOLVED_PROXY_IP="$(getent ahostsv4 "$TCP_PROXY_DOMAIN" 2>/dev/null | awk 'NR==1 {print $1}' || true)"
+
+if [ -z "$RESOLVED_PROXY_IP" ]; then
+  RESOLVED_PROXY_IP="$(getent hosts "$TCP_PROXY_DOMAIN" 2>/dev/null | awk 'NR==1 {print $1}' || true)"
+fi
+
+if [ -z "$RESOLVED_PROXY_IP" ]; then
+  echo "ERROR: Could not resolve ${TCP_PROXY_DOMAIN}"
+  exit 1
+fi
+
+echo "Resolved TCP proxy IP: ${RESOLVED_PROXY_IP}"
+
 if [ "$TCP_APP_PORT" != "$ICE_TCP_PORT" ]; then
   echo "Forwarding TCP application port ${TCP_APP_PORT} to LiveKit ICE port ${ICE_TCP_PORT}"
 
@@ -117,11 +130,7 @@ logging:
 
 rtc:
   tcp_port: ${ICE_TCP_PORT}
-  port_range_start: 0
-  port_range_end: 0
-  use_external_ip: true
-  use_ice_lite: false
-  enable_loopback_candidate: false
+  node_ip: '$(yaml_escape "${RESOLVED_PROXY_IP}")'
 
 redis:
   address: '$(yaml_escape "${REDIS_HOST_PORT}")'
@@ -129,12 +138,6 @@ redis:
 
 keys:
   '$(yaml_escape "${LIVEKIT_API_KEY}")': '$(yaml_escape "${LIVEKIT_API_SECRET}")'
-
-room:
-  auto_create: true
-
-turn:
-  enabled: false
 EOF
 
 cat >> /etc/livekit.yaml <<EOF
@@ -149,5 +152,6 @@ echo "Starting LiveKit"
 echo "  signaling port: ${PORT}"
 echo "  ICE TCP port: ${ICE_TCP_PORT}"
 echo "  TCP proxy: ${TCP_PROXY_DOMAIN}:${TCP_PROXY_PORT} -> container:${TCP_APP_PORT}"
+echo "  advertised node IP: ${RESOLVED_PROXY_IP}"
 
 exec livekit-server --config /etc/livekit.yaml
