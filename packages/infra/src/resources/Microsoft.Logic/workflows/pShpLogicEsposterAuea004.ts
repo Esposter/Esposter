@@ -113,7 +113,7 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "get",
-            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('p-shp-rg-esposter-auea-001')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/d-shp-evgt-esposter-auea-001/eventSubscriptions/d-shp-evgts-esposter-auea-002')}",
+            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('p-shp-rg-esposter-auea-001')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-002')}",
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
