@@ -66,7 +66,7 @@ Use `prod` instead of `dev` when preparing the production stack.
 - `docs/` contains durable architecture, naming, inventory, stack, and roadmap notes.
 - `src/resources/` contains Pulumi resource declarations grouped by Azure ARM provider namespace and resource type.
 
-Architecture and migration details:
+Architecture details:
 
 - [docs/overview.md](docs/overview.md)
 - [docs/naming-conventions.md](docs/naming-conventions.md)

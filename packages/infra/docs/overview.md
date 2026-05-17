@@ -1,18 +1,14 @@
 # Infrastructure Overview
 
-This document captures the phase-1 imported Azure resource set.
-
-Pulumi currently has 52 tracked source files under `src/resources/`. The original spreadsheet contained 51 rows. The four Azure Monitor action rows are not standalone imported resources; they are represented by the imported action groups and their receivers. One subscription-scoped policy assignment is also represented. Storage blob-service settings and lifecycle management policies were imported during v2 because they are real Azure child resources that control cost and recovery behavior.
+Pulumi currently has 78 tracked source files under `src/resources/`. Both development and production resources are declared in one unified stack.
 
 ## Summary By Environment
 
-| Environment  | Prefix | Spreadsheet Rows |
-| ------------ | ------ | ---------------: |
-| Development  | `d`    |               26 |
-| Production   | `p`    |               25 |
-| Subscription | none   |                1 |
-
-The current Pulumi program declares both development and production resources.
+| Environment  | Prefix | Resource Count |
+| ------------ | ------ | -------------: |
+| Development  | `d`    |             41 |
+| Production   | `p`    |             36 |
+| Subscription | none   |              1 |
 
 ## Summary By Asset Type
 
@@ -22,7 +18,6 @@ The current Pulumi program declares both development and production resources.
 | Application Insights            |     2 |
 | Azure Cognitive Search          |     2 |
 | Azure Cognitive Speech Services |     1 |
-| Azure Monitor action            |     4 |
 | Azure Monitor action group      |     6 |
 | Budget                          |     4 |
 | Event Grid Topic                |     2 |
@@ -31,6 +26,7 @@ The current Pulumi program declares both development and production resources.
 | Log Analytics workspace         |     2 |
 | Logic apps                      |     8 |
 | Policy assignment               |     1 |
+| Role assignment                 |    26 |
 | Resource group                  |     2 |
 | Storage account                 |     2 |
 | Storage blob service            |     2 |
@@ -44,6 +40,7 @@ Resource files are grouped by Azure ARM provider namespace and resource type:
 | Azure ARM Type                                         | Source Folder                                                         |
 | ------------------------------------------------------ | --------------------------------------------------------------------- |
 | `Microsoft.Authorization/policyAssignments`            | `src/resources/Microsoft.Authorization/policyAssignments/`            |
+| `Microsoft.Authorization/roleAssignments`              | `src/resources/Microsoft.Authorization/roleAssignments/`              |
 | `Microsoft.CognitiveServices/accounts`                 | `src/resources/Microsoft.CognitiveServices/accounts/`                 |
 | `Microsoft.Consumption/budgets`                        | `src/resources/Microsoft.Consumption/budgets/`                        |
 | `Microsoft.EventGrid/eventSubscriptions`               | `src/resources/Microsoft.EventGrid/eventSubscriptions/`               |
