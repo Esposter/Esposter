@@ -4,14 +4,11 @@ import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { SceneKeyMap } from "@/services/dungeons/scene/SceneKeyMap";
 import { GridEngine } from "grid-engine";
 import isMobile from "is-mobile";
-import * as PhaserLib from "phaser";
 import { AUTO, Scale } from "phaser";
 import ClickOutsidePlugin from "phaser4-rex-plugins/plugins/clickoutside-plugin.js";
 import SliderPlugin from "phaser4-rex-plugins/plugins/slider-plugin";
 import VirtualJoystickPlugin from "phaser4-rex-plugins/plugins/virtualjoystick-plugin";
 import { Game, usePhaserStore, useTextStore } from "vue-phaserjs";
-// @TODO: grid-engine references the global Phaser object; Phaser 4 ESM doesn't set it automatically
-(globalThis as Record<string, unknown>).Phaser = PhaserLib;
 
 defineRouteRules({ ssr: false });
 

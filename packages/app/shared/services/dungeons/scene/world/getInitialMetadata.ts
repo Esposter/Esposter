@@ -2,8 +2,8 @@ import type { Position } from "grid-engine";
 import type { SetOptional } from "type-fest";
 
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
+import { Direction } from "#shared/models/dungeons/data/player/Direction";
 import { NotFoundError } from "@esposter/shared";
-import { Direction } from "grid-engine";
 
 interface InitialMetadata {
   direction: Direction;
