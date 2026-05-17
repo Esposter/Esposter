@@ -209,7 +209,7 @@ catalog:
   three: ^0.184.0
   three-globe: ^2.45.2
   trpc-nuxt: ^2.0.2
-  tsx: ^4.22.0
+  tsx: ^4.22.1
   type-fest: ^5.6.0
   typedoc: ^0.28.19
   typescript: 5.9.3
