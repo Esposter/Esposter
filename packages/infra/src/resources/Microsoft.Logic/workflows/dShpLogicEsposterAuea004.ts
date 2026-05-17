@@ -1,4 +1,5 @@
 import * as azure_native from "@pulumi/azure-native";
+
 import { dShpApicnEsposterAuea003 } from "../../Microsoft.Web/connections/dShpApicnEsposterAuea003";
 
 export const dShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_native.logic.Workflow(
@@ -259,6 +260,11 @@ export const dShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
           arm: {
             connectionId: dShpApicnEsposterAuea003.id,
             connectionName: "arm",
+            connectionProperties: {
+              authentication: {
+                type: "ManagedServiceIdentity",
+              },
+            },
             id: "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/providers/Microsoft.Web/locations/australiaeast/managedApis/arm",
           },
         },

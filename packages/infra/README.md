@@ -100,9 +100,9 @@ pnpm build             # generate exports and compile the Pulumi program to dist
 pnpm export:gen        # regenerate src/index.ts via ctix
 pnpm inventory:build   # generate migration import files from CSV exports
 pnpm import            # import resources from generated/azure-import-manifest.json
-pnpm preview           # preview Pulumi changes
-pnpm refresh           # refresh Pulumi state from Azure
-pnpm up                # apply Pulumi changes
+pnpm infra:preview     # preview Pulumi changes
+pnpm infra:refresh     # refresh Pulumi state from Azure
+pnpm infra:up          # apply Pulumi changes
 pnpm lint:fix          # auto-fix lint issues
 pnpm typecheck         # type check
 ```
