@@ -24,7 +24,6 @@ export const pShpPubsubEsposterAuea001: azure_native.webpubsub.WebPubSub = new a
           azure_native.webpubsub.WebPubSubRequestType.ServerConnection,
           azure_native.webpubsub.WebPubSubRequestType.ClientConnection,
           azure_native.webpubsub.WebPubSubRequestType.RESTAPI,
-          azure_native.webpubsub.WebPubSubRequestType.Trace,
         ],
       },
     },

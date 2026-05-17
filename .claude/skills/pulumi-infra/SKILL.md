@@ -46,9 +46,11 @@ Apply when modifying `packages/infra`.
 ## Security Constraints
 
 - Do not disable storage shared key access until app blob clients and SAS generation no longer use connection-string/shared-key auth.
+- Do not disable storage blob public access until public blob containers in `AzureContainerPropertiesMap` are migrated.
 - Do not disable Azure Search local auth until `packages/app` no longer uses `AzureKeyCredential` for Search.
 - Do not disable Event Grid topic local auth until the main app Event Grid publisher no longer uses `AzureKeyCredential`. Azure Functions already use `DefaultAzureCredential`, but the app path is still key-based.
 - Do not restrict Web PubSub to static IP allowlists while browser clients connect directly from arbitrary public IPs.
+- Do not disable Web PubSub local auth or public REST API access while app/functions use Web PubSub connection-string service clients over public endpoints.
 - Do not set storage network default action to `Deny` without a complete allowlist, private endpoint, or equivalent migration.
 
 ## Azure Native Imports

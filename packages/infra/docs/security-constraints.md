@@ -29,6 +29,25 @@ Migration direction:
 - Replace service SAS generation with user delegation SAS where appropriate.
 - Verify all containers used by message and survey assets still support upload, read, clone, delete, and publish flows.
 
+## Storage Blob Public Access
+
+Do not set `allowBlobPublicAccess` to `false` yet.
+
+Current dependency:
+
+- `packages/db-schema/src/models/azure/container/AzureContainerPropertiesMap.ts` creates some containers with `{ access: "blob" }`.
+- Current public blob containers are `AppAssets`, `DungeonsAssets`, and `PublicUserAssets`.
+
+Why this blocks the setting:
+
+- Disabling account-level blob public access would break anonymous blob reads from containers intentionally configured for public asset delivery.
+
+Migration direction:
+
+- Confirm which public containers are still product requirements.
+- Move public assets behind signed URLs, CDN rules, or app-mediated delivery before disabling account-level public blob access.
+- Keep message and survey asset SAS flows separate from public asset container behavior.
+
 ## Azure Search Local Authentication
 
 Do not set Search local authentication to disabled yet.
@@ -94,6 +113,28 @@ Migration direction:
 - Keep public client connection support while the product needs browser-to-WebPubSub connections.
 - Review request types separately; trace and REST API exposure may be reducible without blocking browser clients.
 - Consider private networking only if clients connect through an app-controlled relay or a supported private access design.
+
+## Web PubSub Local Authentication And REST API
+
+Do not disable Web PubSub local authentication or public REST API access yet.
+
+Current dependency:
+
+- `packages/app/server/composables/azure/webPubSub/useWebPubSubServiceClient.ts` reads the Web PubSub connection string from runtime config.
+- `packages/db/src/services/azure/webPubSub/getWebPubSubServiceClient.ts` creates `WebPubSubServiceClient` from that connection string.
+- `packages/app/server/trpc/routers/message/index.ts` uses the service client to create browser client access tokens.
+- `packages/azure-functions/src/functions/processWebhook.ts` uses the service client for server-side message fan-out.
+
+Why this blocks the setting:
+
+- Connection-string authentication depends on local keys.
+- Public REST API access is required while the app server and Azure Functions call Web PubSub service APIs over the public endpoint.
+
+Migration direction:
+
+- Move app and functions Web PubSub service access to managed identity or another supported non-key flow.
+- Confirm whether private networking is possible for server-to-service calls.
+- Keep browser client public access separate from server REST API hardening.
 
 ## Storage Network Deny Rules
 

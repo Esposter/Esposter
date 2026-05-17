@@ -21,7 +21,7 @@ export const dShpSpchEsposterAuea001: azure_native.cognitiveservices.Account =
         name: "F0",
       },
       tags: {
-        Application: "Eslife",
+        Application: "Esposter",
       },
     },
     {

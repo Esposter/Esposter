@@ -14,19 +14,19 @@ Do not apply cost, network, identity, or retention changes in bulk. Change one r
 
 ## Priority Findings
 
-| Priority | Area                         | Finding                                                                                                 | Candidate Action                                                                                                                                                 |
-| -------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| High     | Storage accounts             | Blob public access and shared key access are enabled. Public network access is enabled.                 | Do not disable shared key or deny network by default yet; see [security-constraints.md](security-constraints.md). Review blob public access separately.          |
-| High     | Web PubSub                   | Public network is enabled and ACLs allow `0.0.0.0/0` and `::/0` for all request types including trace.  | Do not use static IP allowlists for browser clients; see [security-constraints.md](security-constraints.md). Review trace and REST API request types separately. |
-| High     | Logic Apps and action groups | Action groups depend on secret callback URLs and Logic Apps perform control-plane operations.           | Verify callback URL rotation, secret storage, managed identity permissions, and least-privilege RBAC.                                                            |
-| High     | Function Apps                | Public network access is enabled. App has system-assigned identity, but storage is marked not required. | Confirm hosting model, inbound requirements, managed identity permissions, and whether access restrictions are possible.                                         |
-| Medium   | Log Analytics                | Retention is 30 days, but daily quota is unlimited (`-1`).                                              | Add a daily cap after measuring normal ingestion.                                                                                                                |
-| Medium   | Application Insights         | Retention is 90 days and linked to Log Analytics. Public ingestion/query are enabled.                   | Confirm retention requirements and whether query/ingestion restrictions are viable.                                                                              |
-| Medium   | Event Grid subscriptions     | Retry policy allows 30 delivery attempts and 24-hour TTL.                                               | Confirm retry tolerance and dead-letter strategy for webhook and push events.                                                                                    |
-| Medium   | Event Grid topic             | Topic local auth is enabled.                                                                            | Do not disable local auth until the main app Event Grid publisher no longer uses `AzureKeyCredential`; see [security-constraints.md](security-constraints.md).   |
-| Medium   | Budgets                      | Budget amount is `0.01` with automated action groups.                                                   | Confirm whether budgets are real guards, tests, or placeholders before relying on them operationally.                                                            |
-| Low      | Cognitive Search             | Free SKU, one replica, one partition, public network enabled, local auth enabled.                       | Keep SKU if free is enough. Do not disable local auth until app Search moves off `AzureKeyCredential`; see [security-constraints.md](security-constraints.md).   |
-| Low      | Speech Services              | Free SKU, public network enabled, tag uses `Application: Eslife`.                                       | Confirm whether the resource is still used and fix tag alignment if retained.                                                                                    |
+| Priority | Area                         | Finding                                                                                                 | Candidate Action                                                                                                                                                                       |
+| -------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| High     | Storage accounts             | Blob public access and shared key access are enabled. Public network access is enabled.                 | Do not disable blob public access, shared key, or deny network by default yet; see [security-constraints.md](security-constraints.md).                                                 |
+| High     | Web PubSub                   | Public network is enabled and ACLs allow `0.0.0.0/0` and `::/0`. Trace access was imported as public.   | Removed public Trace access in first pass. Do not use static IP allowlists, disable local auth, or remove REST API access yet; see [security-constraints.md](security-constraints.md). |
+| High     | Logic Apps and action groups | Action groups depend on secret callback URLs and Logic Apps perform control-plane operations.           | Verify callback URL rotation, secret storage, managed identity permissions, and least-privilege RBAC.                                                                                  |
+| High     | Function Apps                | Public network access is enabled. App has system-assigned identity, but storage is marked not required. | Confirm hosting model, inbound requirements, managed identity permissions, and whether access restrictions are possible.                                                               |
+| Medium   | Log Analytics                | Retention is 30 days, but daily quota is unlimited (`-1`).                                              | Add a daily cap after measuring normal ingestion.                                                                                                                                      |
+| Medium   | Application Insights         | Retention is 90 days and linked to Log Analytics. Public ingestion/query are enabled.                   | Confirm retention requirements and whether query/ingestion restrictions are viable.                                                                                                    |
+| Medium   | Event Grid subscriptions     | Retry policy allows 30 delivery attempts and 24-hour TTL.                                               | Confirm retry tolerance and dead-letter strategy for webhook and push events.                                                                                                          |
+| Medium   | Event Grid topic             | Topic local auth is enabled.                                                                            | Do not disable local auth until the main app Event Grid publisher no longer uses `AzureKeyCredential`; see [security-constraints.md](security-constraints.md).                         |
+| Medium   | Budgets                      | Budget amount is `0.01` with automated action groups.                                                   | Confirm whether budgets are real guards, tests, or placeholders before relying on them operationally.                                                                                  |
+| Low      | Cognitive Search             | Free SKU, one replica, one partition, public network enabled, local auth enabled.                       | Keep SKU if free is enough. Do not disable local auth until app Search moves off `AzureKeyCredential`; see [security-constraints.md](security-constraints.md).                         |
+| Low      | Speech Services              | Free SKU, public network enabled, tag uses `Application: Eslife`.                                       | Confirm whether the resource is still used and fix tag alignment if retained.                                                                                                          |
 
 ## Current Security Constraints
 
@@ -35,9 +35,11 @@ Some hardening suggestions are valid end goals but unsafe as immediate Pulumi ch
 Recorded constraints:
 
 - Storage shared key access must stay enabled until blob clients and SAS generation migrate away from connection-string/shared-key auth.
+- Storage account blob public access must stay enabled until public blob containers are migrated.
 - Azure Search local auth must stay enabled until the app replaces `AzureKeyCredential` with managed identity.
 - Event Grid local auth must stay enabled for the app path until the app publisher replaces `AzureKeyCredential` with managed identity. Azure Functions already use `DefaultAzureCredential`.
 - Web PubSub must keep public browser client access while clients connect directly from arbitrary IPs.
+- Web PubSub local auth and REST API access must stay enabled while app and function service clients use connection-string access over public endpoints.
 - Storage network default deny must wait for a complete allowlist, private endpoint, or identity/network migration.
 
 See [security-constraints.md](security-constraints.md) for code paths and migration direction.
@@ -46,7 +48,7 @@ See [security-constraints.md](security-constraints.md) for code paths and migrat
 
 ### Storage
 
-- [ ] Check whether blob public access is required.
+- [x] Check whether blob public access is required. Current public asset containers use blob-level anonymous access.
 - [x] Check whether shared key access is required by app or functions. Current app blob and SAS flows require it.
 - [ ] Check whether `defaultToOAuthAuthentication` can be enabled.
 - [x] Check whether public network access can be restricted. Do not switch storage to deny-by-default until production has a complete allowlist or private access path.
@@ -56,9 +58,9 @@ See [security-constraints.md](security-constraints.md) for code paths and migrat
 ### Web PubSub
 
 - [ ] Confirm whether Free F1 is sufficient for both environments.
-- [ ] Check if trace access should be removed from public ACLs.
-- [ ] Check if REST API access can be limited.
-- [ ] Confirm whether local auth can be disabled.
+- [x] Check if trace access should be removed from public ACLs. Removed in first pass.
+- [x] Check if REST API access can be limited. Keep for now because app/functions use service clients over public endpoint.
+- [x] Confirm whether local auth can be disabled. Keep for now because app/functions use Web PubSub connection strings.
 - [x] Confirm whether client and server connection access can be narrowed. Browser clients require public client access; request types still need review.
 
 ### Function Apps
@@ -101,6 +103,11 @@ See [security-constraints.md](security-constraints.md) for code paths and migrat
 - [ ] Confirm public query and ingestion access posture.
 - [ ] Review Application Insights sampling and ingestion volume.
 - [ ] Check whether diagnostic settings are missing for key resources.
+
+### Low-Hanging First Pass
+
+- [x] Remove public Web PubSub Trace access.
+- [x] Correct Speech Services `Application` tag from `Eslife` to `Esposter`.
 
 ## Change Order
 

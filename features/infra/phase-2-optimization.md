@@ -22,10 +22,12 @@ This feature plan tracks infrastructure cost, security, and operational optimiza
 ## Work Items
 
 - [ ] Capture a clean baseline with `pnpm infra:preview`.
-- [x] Document current blockers for storage shared key access, Search local auth, Event Grid local auth, Web PubSub public client access, and storage deny-by-default network rules.
-- [ ] Review storage account blob public access, lifecycle, and redundancy.
+- [x] Document current blockers for storage shared key access, storage blob public access, Search local auth, Event Grid local auth, Web PubSub public client access, Web PubSub local auth/REST API, and storage deny-by-default network rules.
+- [x] Remove public Web PubSub Trace access.
+- [x] Fix Speech Services `Application` tag alignment.
+- [ ] Review storage account lifecycle and redundancy.
 - [ ] Plan storage migration away from shared-key SAS generation before disabling shared key access.
-- [ ] Review Web PubSub public ACL request types, local auth, and SKU without blocking browser client access.
+- [x] Review Web PubSub public ACL request types, local auth, and SKU without blocking browser client access.
 - [ ] Review Function App hosting plans, inbound access, runtime settings, and managed identity permissions.
 - [ ] Review Logic Apps, API connections, action groups, callback URL handling, and control-plane permissions.
 - [ ] Review budgets, notification thresholds, and automated stop/delete actions.
