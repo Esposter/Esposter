@@ -19,7 +19,7 @@ This private package contains Esposter's Azure infrastructure-as-code project. I
 
 Install the Pulumi CLI before running stack commands. The `@pulumi/pulumi` dependency is the Node.js SDK used by the Pulumi program; it does not install the `pulumi` command.
 
-```powershell
+```bash
 winget install Pulumi.Pulumi
 # Or, if you use Chocolatey:
 choco install pulumi
@@ -28,7 +28,7 @@ pulumi version
 
 Install workspace dependencies from the repository root:
 
-```powershell
+```bash
 pnpm i
 ```
 
@@ -36,14 +36,14 @@ pnpm i
 
 Authenticate Azure locally:
 
-```powershell
+```bash
 az login
 az account set --subscription "<subscription-id>"
 ```
 
 Select the stack:
 
-```powershell
+```bash
 cd packages/infra
 pulumi stack select prod
 ```

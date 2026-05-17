@@ -219,6 +219,7 @@
     "type-fest": "catalog:",
     "unocss": "catalog:",
     "unocss-preset-vuetify": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:",
     "vuetify-nuxt-module": "catalog:"
   }
