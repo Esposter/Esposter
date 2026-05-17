@@ -283,20 +283,20 @@ Packages are used directly by the nuxt application via `workspace:*`.
 
 ## <a name="packages">📦 Packages</a>
 
-| Package                                                | Description                                                                     | Published |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------- | :-------: |
-| [`packages/app`](packages/app)                         | Main Nuxt 4 web application — frontend, server routes, tRPC API                 |     —     |
-| [`packages/azure-functions`](packages/azure-functions) | Serverless Azure Functions backend — push notifications, webhooks, EventGrid    |     —     |
-| [`packages/azure-mock`](packages/azure-mock)           | Mock Azure service classes for local dev and testing                            |     ✓     |
-| [`packages/configuration`](packages/configuration)     | Shared ESLint, TSConfig, and Rolldown build configurations                      |     —     |
-| [`packages/db`](packages/db)                           | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub |     —     |
-| [`packages/db-mock`](packages/db-mock)                 | In-memory PGlite database factory for unit and integration tests                |     —     |
-| [`packages/db-schema`](packages/db-schema)             | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                 |     —     |
-| [`packages/infra`](packages/infra)                     | Pulumi infrastructure code and migration tools for Azure resources              |     —     |
-| [`packages/parse-tmx`](packages/parse-tmx)             | Parser for Tiled Map Editor `.tmx` files                                        |     ✓     |
-| [`packages/shared`](packages/shared)                   | Shared TypeScript types, utilities, and error classes                           |     ✓     |
-| [`packages/vue-phaserjs`](packages/vue-phaserjs)       | Phaser 4 game engine integration for Vue 3                                      |     ✓     |
-| [`packages/xml2js`](packages/xml2js)                   | TypeScript rewrite of xml2js — XML ↔ JSON conversion                            |     ✓     |
+| Package                                                                                               | Description                                                                     | Published |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | :-------: |
+| [`packages/app`](https://github.com/Esposter/Esposter/tree/main/packages/app)                         | Main Nuxt 4 web application — frontend, server routes, tRPC API                 |     —     |
+| [`packages/azure-functions`](https://github.com/Esposter/Esposter/tree/main/packages/azure-functions) | Serverless Azure Functions backend — push notifications, webhooks, EventGrid    |     —     |
+| [`packages/azure-mock`](https://github.com/Esposter/Esposter/tree/main/packages/azure-mock)           | Mock Azure service classes for local dev and testing                            |     ✓     |
+| [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration)     | Shared ESLint, TSConfig, and Rolldown build configurations                      |     —     |
+| [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                           | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub |     —     |
+| [`packages/db-mock`](https://github.com/Esposter/Esposter/tree/main/packages/db-mock)                 | In-memory PGlite database factory for unit and integration tests                |     —     |
+| [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)             | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                 |     —     |
+| [`packages/infra`](https://github.com/Esposter/Esposter/tree/main/packages/infra)                     | Pulumi infrastructure code and migration tools for Azure resources              |     —     |
+| [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)             | Parser for Tiled Map Editor `.tmx` files                                        |     ✓     |
+| [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                   | Shared TypeScript types, utilities, and error classes                           |     ✓     |
+| [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)       | Phaser 4 game engine integration for Vue 3                                      |     ✓     |
+| [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)                   | TypeScript rewrite of xml2js — XML ↔ JSON conversion                            |     ✓     |
 
 ## <a name="community">🤝 Community</a>
 
