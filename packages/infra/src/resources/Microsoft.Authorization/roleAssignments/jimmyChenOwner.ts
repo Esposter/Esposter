@@ -14,8 +14,6 @@ export const jimmyChenOwner: azure_native.authorization.RoleAssignment = new azu
     scope: `subscriptions/${AzureSubscriptionId}`,
   },
   {
-    import:
-      "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/providers/Microsoft.Authorization/roleAssignments/e8e46111-7529-43b9-92af-5a8173601051",
     protect: true,
   },
 );

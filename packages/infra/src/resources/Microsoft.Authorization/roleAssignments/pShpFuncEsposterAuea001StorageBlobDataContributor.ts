@@ -19,8 +19,6 @@ export const pShpFuncEsposterAuea001StorageBlobDataContributor: azure_native.aut
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${pShpRgEsposterAuea001.name}/providers/Microsoft.Storage/storageAccounts/${pshpstespauea001.name}`,
     },
     {
-      import:
-        "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.Storage/storageAccounts/pshpstespauea001/providers/Microsoft.Authorization/roleAssignments/552a624f-7b08-43d6-a49e-8eeda4df30b9",
       protect: true,
     },
   );

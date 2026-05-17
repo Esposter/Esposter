@@ -19,8 +19,6 @@ export const dShpLogicEsposterAuea004WebsiteContributor: azure_native.authorizat
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${dShpRgEsposterAuea001.name}/providers/Microsoft.Web/sites/${dShpFuncEsposterAuea001.name}`,
     },
     {
-      import:
-        "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/d-shp-rg-esposter-auea-001/providers/Microsoft.Web/sites/d-shp-func-esposter-auea-001/providers/Microsoft.Authorization/roleAssignments/a8329a86-1982-4a10-bc5b-78dee70c1df0",
       protect: true,
     },
   );

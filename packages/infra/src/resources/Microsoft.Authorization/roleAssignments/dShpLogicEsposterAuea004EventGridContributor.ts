@@ -19,8 +19,6 @@ export const dShpLogicEsposterAuea004EventGridContributor: azure_native.authoriz
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${dShpRgEsposterAuea001.name}/providers/Microsoft.EventGrid/topics/${dShpEvgtEsposterAuea001.name}`,
     },
     {
-      import:
-        "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/d-shp-rg-esposter-auea-001/providers/Microsoft.EventGrid/topics/d-shp-evgt-esposter-auea-001/providers/Microsoft.Authorization/roleAssignments/05e07a08-21ed-4a41-b1c9-5becf0830825",
       protect: true,
     },
   );

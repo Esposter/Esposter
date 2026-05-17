@@ -18,8 +18,6 @@ export const dshpstespauea001ContainerBlobDataContributor: azure_native.authoriz
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourcegroups/${dShpRgEsposterAuea001.name}/providers/Microsoft.Storage/storageAccounts/${Dshpstespauea001Name}/blobServices/default/containers/${Dshpstespauea001Name}`,
     },
     {
-      import:
-        "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourcegroups/d-shp-rg-esposter-auea-001/providers/Microsoft.Storage/storageAccounts/dshpstespauea001/blobServices/default/containers/dshpstespauea001/providers/Microsoft.Authorization/roleAssignments/150a1bfa-b400-5558-985a-2623d85da5da",
       protect: true,
     },
   );
