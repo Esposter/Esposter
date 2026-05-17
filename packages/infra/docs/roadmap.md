@@ -53,6 +53,14 @@ Candidate review areas:
 - budgets and notification thresholds;
 - storage account redundancy, public access, TLS, lifecycle rules, and soft-delete settings.
 
+Completed storage cleanup:
+
+- imported blob service properties and lifecycle management policies for both storage accounts;
+- kept 7-day blob and container soft delete;
+- disabled blob versioning because the app does not use blob versions and previous versions can add storage cost;
+- kept `Standard_LRS` as the current minimal storage redundancy posture;
+- deferred shared-key, public blob access, and network deny changes until app migrations remove the current blockers.
+
 ## Phase 3: Naming And Structure Refactor
 
 Goals:

@@ -18,7 +18,7 @@ Do not apply cost, network, identity, or retention changes in bulk. Change one r
 
 | Priority | Area                         | Finding                                                                                                 | Candidate Action                                                                                                                                                                                                         |
 | -------- | ---------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| High     | Storage accounts             | Blob public access and shared key access are enabled. Public network access is enabled.                 | Do not disable blob public access, shared key, or deny network by default yet; see [security-constraints.md](security-constraints.md).                                                                                   |
+| High     | Storage accounts             | Blob public access and shared key access are enabled. Public network access is enabled.                 | Keep these until app migrations remove the blockers; see [security-constraints.md](security-constraints.md). Blob versioning is disabled and 7-day soft delete is tracked in Pulumi.                                     |
 | High     | Web PubSub                   | Public network is enabled and ACLs allow `0.0.0.0/0` and `::/0`. Trace access was imported as public.   | Keep unchanged on `Free_F1`; Azure rejects network ACL changes for that SKU. Do not use static IP allowlists, disable local auth, or remove REST API access yet; see [security-constraints.md](security-constraints.md). |
 | High     | Logic Apps and action groups | Action groups depend on secret callback URLs and Logic Apps perform control-plane operations.           | Verify callback URL rotation, secret storage, managed identity permissions, and least-privilege RBAC.                                                                                                                    |
 | High     | Function Apps                | Public network access is enabled. App has system-assigned identity, but storage is marked not required. | Confirm hosting model, inbound requirements, managed identity permissions, and whether access restrictions are possible.                                                                                                 |
@@ -52,10 +52,12 @@ See [security-constraints.md](security-constraints.md) for code paths and migrat
 
 - [x] Check whether blob public access is required. Current public asset containers use blob-level anonymous access.
 - [x] Check whether shared key access is required by app or functions. Current app blob and SAS flows require it.
+- [x] Check whether blob and container soft delete are tracked. Both are enabled for 7 days and now managed in Pulumi.
+- [x] Check whether blob versioning can be disabled. Disabled because app code does not use blob versions and previous versions can add storage cost.
 - [ ] Check whether `defaultToOAuthAuthentication` can be enabled.
 - [x] Check whether public network access can be restricted. Do not switch storage to deny-by-default until production has a complete allowlist or private access path.
-- [ ] Confirm lifecycle management, soft delete, versioning, and backup expectations.
-- [ ] Confirm `Standard_LRS` is acceptable for production recovery requirements.
+- [x] Confirm lifecycle management, soft delete, versioning, and backup expectations for the minimal pass.
+- [x] Confirm `Standard_LRS` is acceptable for the current minimal production posture.
 
 ### Web PubSub
 
