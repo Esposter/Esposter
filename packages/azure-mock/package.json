@@ -48,6 +48,11 @@
     "@azure/storage-blob": "catalog:",
     "@azure/storage-queue": "catalog:",
     "@azure/web-pubsub": "catalog:",
-    "@esposter/configuration": "workspace:*"
+    "@esposter/configuration": "workspace:*",
+    "@vitest/coverage-v8": "catalog:",
+    "ctix": "catalog:",
+    "rolldown": "catalog:",
+    "type-fest": "catalog:",
+    "vitest": "catalog:"
   }
 }

@@ -1,10 +1,7 @@
-import { InvalidOperationError } from "@esposter/shared";
-import { Operation } from "@esposter/shared";
-import * as pulumi from "@pulumi/pulumi";
+import type { IdentityLike } from "@/models/IdentityLike";
 
-interface IdentityLike {
-  principalId?: string;
-}
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import * as pulumi from "@pulumi/pulumi";
 
 export const applyPrincipalId = (
   identity: pulumi.Output<IdentityLike | undefined>,

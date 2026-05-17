@@ -1,6 +1,6 @@
-import type { UserConfig } from "vite";
+import type { ViteUserConfig } from "vitest/config";
 
-const vitestConfiguration: UserConfig = {
+const vitestConfiguration: ViteUserConfig = {
   resolve: {
     tsconfigPaths: true,
   },

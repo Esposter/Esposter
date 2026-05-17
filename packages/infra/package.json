@@ -44,6 +44,8 @@
     "@pulumi/pulumi": "catalog:"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*"
+    "@esposter/configuration": "workspace:*",
+    "ctix": "catalog:",
+    "rolldown": "catalog:"
   }
 }

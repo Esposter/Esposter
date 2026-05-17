@@ -11,8 +11,8 @@ body:
         👉 https://nuxt.com/docs/community/reporting-bugs
 
         Please use a template below to create a minimal reproduction
-        👉 https://stackblitz.com/github/nuxt/starter/tree/v3
-        👉 https://codesandbox.io/s/github/nuxt/starter/tree/v3
+        👉 https://stackblitz.com/github/nuxt/starter/tree/v4
+        👉 https://codesandbox.io/s/github/nuxt/starter/tree/v4
   - type: textarea
     id: bug-env
     attributes:

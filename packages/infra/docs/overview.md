@@ -1,18 +1,16 @@
 # Infrastructure Overview
 
-This document captures the phase-1 imported Azure resource set.
+Pulumi currently has 77 tracked source files under `src/resources/`. Both development and production resources are declared in one unified stack.
 
-Pulumi currently has 52 tracked source files under `src/resources/`. The original spreadsheet contained 51 rows. The four Azure Monitor action rows are not standalone imported resources; they are represented by the imported action groups and their receivers. One subscription-scoped policy assignment is also represented. Storage blob-service settings and lifecycle management policies were imported during v2 because they are real Azure child resources that control cost and recovery behavior.
+`pulumi stack` reports 79 total resources: 77 source-file resources plus two Pulumi meta-resources that require no TypeScript declarations — `pulumi:pulumi:Stack` (the stack record itself) and `pulumi:providers:azure-native` (the provider instance). Both are auto-managed by Pulumi.
 
 ## Summary By Environment
 
-| Environment  | Prefix | Spreadsheet Rows |
-| ------------ | ------ | ---------------: |
-| Development  | `d`    |               26 |
-| Production   | `p`    |               25 |
-| Subscription | none   |                1 |
-
-The current Pulumi program declares both development and production resources.
+| Environment           | Scope                                            | Resource Count |
+| --------------------- | ------------------------------------------------ | -------------: |
+| Development           | `d-*` Azure resources and their role assignments |             36 |
+| Production            | `p-*` Azure resources and their role assignments |             35 |
+| Shared / Subscription | deployment principal grants, owner, policy       |              6 |
 
 ## Summary By Asset Type
 
@@ -22,7 +20,6 @@ The current Pulumi program declares both development and production resources.
 | Application Insights            |     2 |
 | Azure Cognitive Search          |     2 |
 | Azure Cognitive Speech Services |     1 |
-| Azure Monitor action            |     4 |
 | Azure Monitor action group      |     6 |
 | Budget                          |     4 |
 | Event Grid Topic                |     2 |
@@ -31,6 +28,7 @@ The current Pulumi program declares both development and production resources.
 | Log Analytics workspace         |     2 |
 | Logic apps                      |     8 |
 | Policy assignment               |     1 |
+| Role assignment                 |    25 |
 | Resource group                  |     2 |
 | Storage account                 |     2 |
 | Storage blob service            |     2 |
@@ -44,6 +42,7 @@ Resource files are grouped by Azure ARM provider namespace and resource type:
 | Azure ARM Type                                         | Source Folder                                                         |
 | ------------------------------------------------------ | --------------------------------------------------------------------- |
 | `Microsoft.Authorization/policyAssignments`            | `src/resources/Microsoft.Authorization/policyAssignments/`            |
+| `Microsoft.Authorization/roleAssignments`              | `src/resources/Microsoft.Authorization/roleAssignments/`              |
 | `Microsoft.CognitiveServices/accounts`                 | `src/resources/Microsoft.CognitiveServices/accounts/`                 |
 | `Microsoft.Consumption/budgets`                        | `src/resources/Microsoft.Consumption/budgets/`                        |
 | `Microsoft.EventGrid/eventSubscriptions`               | `src/resources/Microsoft.EventGrid/eventSubscriptions/`               |
@@ -64,9 +63,3 @@ Resource files are grouped by Azure ARM provider namespace and resource type:
 ## Protection
 
 Imported resources keep `protect: true`. Remove protection only as part of an explicit lifecycle change after a clean preview confirms Pulumi state and Azure reality match.
-
-## Migration Archive
-
-The spreadsheet CSVs, generated import manifests, and import generator script have been removed from `packages/infra`.
-
-The phase-1 migration record is archived at `features/infra/completed/azure-pulumi-migration.md`.

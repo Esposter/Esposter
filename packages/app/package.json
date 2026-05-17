@@ -203,9 +203,12 @@
     "@types/ws": "catalog:",
     "@unocss/nuxt": "catalog:",
     "@vite-pwa/nuxt": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",
     "crossws": "catalog:",
+    "dotenv": "catalog:",
     "fake-indexeddb": "catalog:",
     "fs-extra": "catalog:",
     "h3": "catalog:",
@@ -213,9 +216,12 @@
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",
     "sass-embedded": "catalog:",
+    "type-fest": "catalog:",
     "unocss": "catalog:",
     "unocss-preset-vuetify": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:",
+    "vue-tsc": "catalog:",
     "vuetify-nuxt-module": "catalog:"
   }
 }

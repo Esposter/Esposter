@@ -40,15 +40,22 @@
     "@ninoseki/eslint-plugin-neverthrow": "catalog:",
     "@rolldown/plugin-node-polyfills": "catalog:",
     "@unocss/eslint-config": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
     "@vue/language-core": "catalog:",
+    "ctix": "catalog:",
     "eslint-plugin-depend": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
+    "rolldown": "catalog:",
     "rolldown-plugin-dts": "catalog:",
+    "type-fest": "catalog:",
     "typescript-eslint": "catalog:",
+    "unplugin-auto-import": "catalog:",
     "unplugin-dts": "catalog:",
-    "vite-plugin-mkcert": "catalog:"
+    "vite": "catalog:",
+    "vite-plugin-mkcert": "catalog:",
+    "vitest": "catalog:"
   }
 }

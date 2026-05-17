@@ -57,7 +57,12 @@
     "@azure/storage-blob": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@trpc/server": "catalog:",
-    "drizzle-kit": "catalog:"
+    "@vitest/coverage-v8": "catalog:",
+    "ctix": "catalog:",
+    "drizzle-kit": "catalog:",
+    "rolldown": "catalog:",
+    "type-fest": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "@esposter/shared": "workspace:*",

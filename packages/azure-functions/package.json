@@ -50,6 +50,8 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@types/web-push": "catalog:"
+    "@types/web-push": "catalog:",
+    "ctix": "catalog:",
+    "rolldown": "catalog:"
   }
 }

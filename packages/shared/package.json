@@ -41,6 +41,12 @@
   },
   "devDependencies": {
     "@azure/data-tables": "catalog:",
-    "@esposter/configuration": "workspace:*"
+    "@esposter/configuration": "workspace:*",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "ctix": "catalog:",
+    "rolldown": "catalog:",
+    "type-fest": "catalog:",
+    "vitest": "catalog:"
   }
 }
