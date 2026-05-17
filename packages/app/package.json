@@ -221,6 +221,7 @@
     "unocss-preset-vuetify": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
+    "vue-tsc": "catalog:",
     "vuetify-nuxt-module": "catalog:"
   }
 }
