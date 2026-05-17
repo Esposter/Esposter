@@ -45,6 +45,6 @@ features/
 | ------------------ | ----------------- | --------------------------------------------------------------- |
 | `esbabbler/`       | `v5.md`           | Messaging, calls, rooms, moderation, DMs                        |
 | `fileTableEditor/` | —                 | CSV/JSON/XLSX table editor with computed columns                |
-| `infra/`           | `v1.md`           | Azure Pulumi infrastructure, cost, security, and stack planning |
+| `infra/`           | `v2.md`           | Azure Pulumi infrastructure, cost, security, and stack planning |
 | `vue-phaserjs/`    | —                 | Phaser game engine Vue integration                              |
 | `refactors/`       | `null-removal.md` | Cross-cutting code quality migrations                           |

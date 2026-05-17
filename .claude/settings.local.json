@@ -106,7 +106,9 @@
       "mcp__vuetify-mcp__get_feature_guide",
       "mcp__vuetify-mcp__get_installation_guide",
       "mcp__vuetify-mcp__get_v4_breaking_changes",
-      "Bash(pnpm infra:preview)"
+      "Bash(pnpm infra:preview)",
+      "Bash(az policy definition list *)",
+      "Bash(az policy assignment show *)"
     ]
   }
 }
