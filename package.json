@@ -45,6 +45,7 @@
     "@lerna-lite/watch": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
+    "dotenv": "catalog:",
     "eslint": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

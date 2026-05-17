@@ -701,6 +701,9 @@ importers:
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20260516.1
+      dotenv:
+        specifier: 'catalog:'
+        version: 17.4.2
       eslint:
         specifier: 'catalog:'
         version: 10.4.0(jiti@2.7.0)

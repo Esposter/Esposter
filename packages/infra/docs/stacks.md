@@ -6,7 +6,7 @@ Pulumi stacks are isolated state and configuration records for the same Pulumi p
 
 One unified stack owns all Azure resources in the subscription. Both development (`d-*`) and production (`p-*`) resources are declared together in the Pulumi program.
 
-The stack was renamed from `dev` to `prod` as part of v6. See [features/infra/v6.md](../../../features/infra/v6.md) for the decision record.
+The stack is named `prod`.
 
 ## Rule Of Thumb
 

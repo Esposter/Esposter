@@ -1,14 +1,16 @@
 # Infrastructure Overview
 
-Pulumi currently has 78 tracked source files under `src/resources/`. Both development and production resources are declared in one unified stack.
+Pulumi currently has 77 tracked source files under `src/resources/`. Both development and production resources are declared in one unified stack.
+
+`pulumi stack` reports 79 total resources: 77 source-file resources plus two Pulumi meta-resources that require no TypeScript declarations — `pulumi:pulumi:Stack` (the stack record itself) and `pulumi:providers:azure-native` (the provider instance). Both are auto-managed by Pulumi.
 
 ## Summary By Environment
 
-| Environment  | Prefix | Resource Count |
-| ------------ | ------ | -------------: |
-| Development  | `d`    |             41 |
-| Production   | `p`    |             36 |
-| Subscription | none   |              1 |
+| Environment           | Scope                                            | Resource Count |
+| --------------------- | ------------------------------------------------ | -------------: |
+| Development           | `d-*` Azure resources and their role assignments |             36 |
+| Production            | `p-*` Azure resources and their role assignments |             35 |
+| Shared / Subscription | deployment principal grants, owner, policy       |              6 |
 
 ## Summary By Asset Type
 
@@ -26,7 +28,7 @@ Pulumi currently has 78 tracked source files under `src/resources/`. Both develo
 | Log Analytics workspace         |     2 |
 | Logic apps                      |     8 |
 | Policy assignment               |     1 |
-| Role assignment                 |    26 |
+| Role assignment                 |    25 |
 | Resource group                  |     2 |
 | Storage account                 |     2 |
 | Storage blob service            |     2 |

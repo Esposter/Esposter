@@ -224,7 +224,7 @@ These tokens came from the spreadsheet reference tab and are preserved for later
 
 ## Source File Names
 
-Pulumi source files use camelCase derived from the Azure resource name. The export constant name must match the file name (minus `.ts`):
+One resource declaration per file. Pulumi source files use camelCase derived from the Azure resource name. The export constant name must match the file name (minus `.ts`):
 
 | Azure Resource Name            | Source File                  | Export Constant           |
 | ------------------------------ | ---------------------------- | ------------------------- |
