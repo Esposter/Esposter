@@ -63,11 +63,18 @@ Use `prod` instead of `dev` when preparing the production stack.
 - `dist/index.js` is the compiled Pulumi runtime entrypoint used by `Pulumi.yaml`.
 - `Pulumi.yaml` defines the Pulumi project.
 - `Pulumi.dev.yaml` and `Pulumi.prod.yaml` hold stack-specific configuration.
+- `docs/` contains durable architecture, naming, resource inventory, stack, and roadmap notes.
 - `src/resources/` contains Pulumi resource declarations grouped by Azure ARM provider namespace and resource type.
 - `src/scripts/` contains temporary migration helpers until the imported Azure resources are fully represented in Pulumi code.
 - `data/` and `generated/` are temporary migration folders and should be removed after the import phase.
 
-Migration details live in [azure-pulumi-migration.md](azure-pulumi-migration.md).
+Architecture and migration details:
+
+- [docs/naming-conventions.md](docs/naming-conventions.md)
+- [docs/current-resources.md](docs/current-resources.md)
+- [docs/stacks-and-environments.md](docs/stacks-and-environments.md)
+- [docs/roadmap.md](docs/roadmap.md)
+- [azure-pulumi-migration.md](azure-pulumi-migration.md)
 
 ### Architecture
 
@@ -111,7 +118,7 @@ pnpm typecheck         # type check
 
 The current repository still includes temporary migration files generated from the previous Azure asset spreadsheet. After the live Azure resources are imported and refactored into first-class Pulumi code, remove the migration-only CSV, manifest, review, and generator files.
 
-See [azure-pulumi-migration.md](azure-pulumi-migration.md) for the phase-1 import workflow and remaining manual-review items.
+See [docs/roadmap.md](docs/roadmap.md) for the cleanup and optimization phases.
 
 ### References
 

@@ -25,6 +25,15 @@ Apply when modifying `packages/infra`.
 - Export exactly one resource constant per resource file.
 - Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
 
+## Docs
+
+- Durable infrastructure docs live in `packages/infra/docs/`.
+- Keep Azure naming rules in `docs/naming-conventions.md`.
+- Keep the imported resource inventory in `docs/current-resources.md`.
+- Keep stack/environment policy in `docs/stacks-and-environments.md`.
+- Keep cleanup, optimization, naming-refactor, and production-stack phases in `docs/roadmap.md`.
+- Move completed one-off migration notes out of the package after their durable content is represented in `docs/`.
+
 ## Generated And Migration Files
 
 - `generated/` is ignored and must not be committed.
