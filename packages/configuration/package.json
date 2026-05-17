@@ -55,6 +55,7 @@
     "unplugin-auto-import": "catalog:",
     "unplugin-dts": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-mkcert": "catalog:"
+    "vite-plugin-mkcert": "catalog:",
+    "vitest": "catalog:"
   }
 }
