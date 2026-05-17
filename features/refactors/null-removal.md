@@ -51,7 +51,7 @@ Enable as a **warning** first so the existing violations are visible without blo
   rules: {
     "@typescript-eslint/no-restricted-syntax": ["warn", {
       selector: "TSNullKeyword",
-      message: "Use undefined instead of null (see features/null-removal.md).",
+      message: "Use undefined instead of null (see features/refactors/null-removal.md).",
     }],
   },
 }

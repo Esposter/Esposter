@@ -1,0 +1,160 @@
+Purpose Full,Subscription,Resource Group,Env Full,Env,Scope Full,Scope,Asset Type Full,Asset Type,Region Full,Region,Index,TagName,TagValue,Classification,,,,
+Web-hosting,Azure Basic Subscription,p-shp-rg-esposter-auea-001,Production,p,Esposter - Company Wide,esp,General: Management group,mg,South Africa North,sfno,#001,,,,,General,Management group,mg
+,,d-shp-rg-esposter-auea-001,Test,t,Tenant-focused,tnt,General: Resource group,rg,South Africa West,sfwe,#002,,,,,General,Resource group,rg
+,,,Development,d,Shared Platform,shp,General: Policy definition,policy,East Asia,asea,#003,,,,,General,Policy definition,policy
+,,,,,,,General: API management service instance,apim,Southeast Asia,assoea,#004,,,,,General,API management service instance,apim
+,,,,,,,General: Managed Identity,id,Japan West,jawe,#005,,,,,General,Managed Identity,id
+,,,,,,,Networking: Private Link,pl,Japan East,jaea,#006,,,,,Networking,Private Link,pl
+,,,,,,,Networking: Private Endpoint,pep,South India,inso,#007,,,,,Networking,Private Endpoint,pep
+,,,,,,,Networking: Virtual network,vnet,Central India,incn,#008,,,,,Networking,Virtual network,vnet
+,,,,,,,Networking: Subnet,snet,West India,inwe,#009,,,,,Networking,Subnet,snet
+,,,,,,,Networking: Virtual network peering,peer,Korea Central,krcn,#010,,,,,Networking,Virtual network peering,peer
+,,,,,,,Networking: Network interface (NIC),nic,Korea South,krso,#011,,,,,Networking,Network interface (NIC),nic
+,,,,,,,Networking: Public IP address,pip,UAE Central,aecn,#012,,,,,Networking,Public IP address,pip
+,,,,,,,Networking: Load balancer (internal),lbi,UAE North,aeno,#013,,,,,Networking,Load balancer (internal),lbi
+,,,,,,,Networking: Load balancer (external),lbe,Australia East,auea,#014,,,,,Networking,Load balancer (external),lbe
+,,,,,,,Networking: Network security group (NSG),nsg,Australia Southeast,ause,#015,,,,,Networking,Network security group (NSG),nsg
+,,,,,,,Networking: Application security group (ASG),asg,Australia Central,aucn,#016,,,,,Networking,Application security group (ASG),asg
+,,,,,,,Networking: Local network gateway,lgw,Australia Central 2,aucn3,#017,,,,,Networking,Local network gateway,lgw
+,,,,,,,Networking: Virtual network gateway,vgw,North Europe,euno,#018,,,,,Networking,Virtual network gateway,vgw
+,,,,,,,Networking: VPN connection,cn,West Europe,euwe,#019,,,,,Networking,VPN connection,cn
+,,,,,,,Networking: API connection,apicn,UK South,ukso,#020,,,,,Networking,API connection,apicn
+,,,,,,,Networking: ExpressRoute circuit,erc,UK West,ukwe,#021,,,,,Networking,ExpressRoute circuit,erc
+,,,,,,,Networking: Application gateway,agw,France Central,frcn,#022,,,,,Networking,Application gateway,agw
+,,,,,,,Networking: Route table,route,France South,frso,#023,,,,,Networking,Route table,route
+,,,,,,,Networking: User defined route (UDR),udr,Switzerland North,chno,#024,,,,,Networking,User defined route (UDR),udr
+,,,,,,,Networking: Traffic Manager profile,traf,Switzerland West,chwe,#025,,,,,Networking,Traffic Manager profile,traf
+,,,,,,,Networking: Front door,fd,Germany North,deno,,,,,,Networking,Front door,fd
+,,,,,,,Networking: CDN profile,cdnp,Germany West Central,dewecn,,,,,,Networking,CDN profile,cdnp
+,,,,,,,Networking: CDN endpoint,cdne,Norway West,nowe,,,,,,Networking,CDN endpoint,cdne
+,,,,,,,Networking: Web Application Firewall (WAF) policy,waf,Norway East,noea,,,,,,Networking,Web Application Firewall (WAF) policy,waf
+,,,,,,,Compute and Web: Virtual machine,vm,Central US,uscn,,,,,,Compute and Web,Virtual machine,vm
+,,,,,,,Compute and Web: Virtual machine scale set,vmss,East US,usea,,,,,,Compute and Web,Virtual machine scale set,vmss
+,,,,,,,Compute and Web: Availability set,avail,East US 2,usea2,,,,,,Compute and Web,Availability set,avail
+,,,,,,,Compute and Web: Managed disk (OS),osdisk,West US,uswe,,,,,,Compute and Web,Managed disk (OS),osdisk
+,,,,,,,Compute and Web: Managed disk (data),disk,North Central US,usnocn,,,,,,Compute and Web,Managed disk (data),disk
+,,,,,,,Compute and Web: VM storage account,stvm,South Central US,ussocn,,,,,,Compute and Web,VM storage account,stvm
+,,,,,,,Compute and Web: Azure Arc enabled server,arcs,Canada Central,cacn,,,,,,Compute and Web,Azure Arc enabled server,arcs
+,,,,,,,Compute and Web: Azure Arc enabled Kubernetes cluster,arck,Canada East,caea,,,,,,Compute and Web,Azure Arc enabled Kubernetes cluster,arck
+,,,,,,,Compute and Web: Container registry,cr,West Central US,uswecn,,,,,,Compute and Web,Container registry,cr
+,,,,,,,Compute and Web: Container instance,ci,West US 2,uswe2,,,,,,Compute and Web,Container instance,ci
+,,,,,,,Compute and Web: AKS cluster,aks,Brazil South,brso,,,,,,Compute and Web,AKS cluster,aks
+,,,,,,,Compute and Web: Service Fabric cluster,sf,,,,,,,,Compute and Web,Service Fabric cluster,sf
+,,,,,,,Compute and Web: App Service environment,ase,,,,,,,,Compute and Web,App Service environment,ase
+,,,,,,,Compute and Web: App Service plan,plan,,,,,,,,Compute and Web,App Service plan,plan
+,,,,,,,Compute and Web: Web app,app,,,,,,,,Compute and Web,Web app,app
+,,,,,,,Compute and Web: Function app,func,,,,,,,,Compute and Web,Function app,func
+,,,,,,,Compute and Web: Cloud service,cld,,,,,,,,Compute and Web,Cloud service,cld
+,,,,,,,Compute and Web: Notification Hubs,ntf,,,,,,,,Compute and Web,Notification Hubs,ntf
+,,,,,,,Compute and Web: Notification Hubs namespace,ntfns,,,,,,,,Compute and Web,Notification Hubs namespace,ntfns
+,,,,,,,Compute and Web: Web PubSub,pubsub,,,,,,,,Compute and Web,Web PubSub,pubsub
+,,,,,,,Databases: Azure SQL Database server,sql,,,,,,,,Databases,Azure SQL Database server,sql
+,,,,,,,Databases: Azure SQL database,sqldb,,,,,,,,Databases,Azure SQL database,sqldb
+,,,,,,,Databases: Azure Cosmos DB database for table,cmstb,,,,,,,,Databases,Azure Cosmos DB database for table,cmstb
+,,,,,,,Databases: Azure Cache for Redis instance,redis,,,,,,,,Databases,Azure Cache for Redis instance,redis
+,,,,,,,Databases: MySQL database,mysql,,,,,,,,Databases,MySQL database,mysql
+,,,,,,,Databases: PostgreSQL database,psql,,,,,,,,Databases,PostgreSQL database,psql
+,,,,,,,Databases: Azure SQL Data Warehouse,sqldw,,,,,,,,Databases,Azure SQL Data Warehouse,sqldw
+,,,,,,,Databases: Azure Synapse Analytics,syn,,,,,,,,Databases,Azure Synapse Analytics,syn
+,,,,,,,Databases: SQL Server Stretch Database,sqlstrdb,,,,,,,,Databases,SQL Server Stretch Database,sqlstrdb
+,,,,,,,Databases: SQL Managed Instance,sqlmi,,,,,,,,Databases,SQL Managed Instance,sqlmi
+,,,,,,,Databases: SQL Elastic database pool,sqledp,,,,,,,,Databases,SQL Elastic database pool,sqledp
+,,,,,,,Storage: Storage account,st,,,,,,,,Storage,Storage account,st
+,,,,,,,Storage: Storage account (Classic),stc,,,,,,,,Storage,Storage account (Classic),stc
+,,,,,,,Storage: Azure StorSimple,ssimp,,,,,,,,Storage,Azure StorSimple,ssimp
+,,,,,,,Storage: Azure Container Registry,acr,,,,,,,,Storage,Azure Container Registry,acr
+,,,,,,,AI and Machine Learning: Azure Cognitive Search,srch,,,,,,,,AI and Machine Learning,Azure Cognitive Search,srch
+,,,,,,,AI and Machine Learning: Azure Cognitive Services,cog,,,,,,,,AI and Machine Learning,Azure Cognitive Services,cog
+,,,,,,,AI and Machine Learning: Azure Cognitive Speech Services,spch,,,,,,,,AI and Machine Learning,Azure Cognitive Speech Services,spch
+,,,,,,,AI and Machine Learning: Azure Machine Learning workspace,mlw,,,,,,,,AI and Machine Learning,Azure Machine Learning workspace,mlw
+,,,,,,,Analytics and IoT: Azure Analysis Services server,as,,,,,,,,Analytics and IoT,Azure Analysis Services server,as
+,,,,,,,Analytics and IoT: Azure Databricks workspace,dbw,,,,,,,,Analytics and IoT,Azure Databricks workspace,dbw
+,,,,,,,Analytics and IoT: Azure Stream Analytics,asa,,,,,,,,Analytics and IoT,Azure Stream Analytics,asa
+,,,,,,,Analytics and IoT: Azure Data Explorer cluster,dec,,,,,,,,Analytics and IoT,Azure Data Explorer cluster,dec
+,,,,,,,Analytics and IoT: Azure Data Factory,adf,,,,,,,,Analytics and IoT,Azure Data Factory,adf
+,,,,,,,Analytics and IoT: Data Lake Store account,dls,,,,,,,,Analytics and IoT,Data Lake Store account,dls
+,,,,,,,Analytics and IoT: Data Lake Analytics account,dla,,,,,,,,Analytics and IoT,Data Lake Analytics account,dla
+,,,,,,,Analytics and IoT: Event Hub,evh,,,,,,,,Analytics and IoT,Event Hub,evh
+,,,,,,,Analytics and IoT: Event Grid Topic,evgt,,,,,,,,Analytics and IoT,Event Grid Topic,evgt
+,,,,,,,Analytics and IoT: Event Grid Topic Subscription,evgts,,,,,,,,Analytics and IoT,Event Grid Topic Subscription,evgts
+,,,,,,,Analytics and IoT: HDInsight - Hadoop cluster,hadoop,,,,,,,,Analytics and IoT,HDInsight - Hadoop cluster,hadoop
+,,,,,,,Analytics and IoT: HDInsight - HBase cluster,hbase,,,,,,,,Analytics and IoT,HDInsight - HBase cluster,hbase
+,,,,,,,Analytics and IoT: HDInsight - Kafka cluster,kafka,,,,,,,,Analytics and IoT,HDInsight - Kafka cluster,kafka
+,,,,,,,Analytics and IoT: HDInsight - Spark cluster,spark,,,,,,,,Analytics and IoT,HDInsight - Spark cluster,spark
+,,,,,,,Analytics and IoT: HDInsight - Storm cluster,storm,,,,,,,,Analytics and IoT,HDInsight - Storm cluster,storm
+,,,,,,,Analytics and IoT: HDInsight - ML Services cluster,mls,,,,,,,,Analytics and IoT,HDInsight - ML Services cluster,mls
+,,,,,,,Analytics and IoT: IoT hub,iot,,,,,,,,Analytics and IoT,IoT hub,iot
+,,,,,,,Analytics and IoT: Power BI Embedded,pbi,,,,,,,,Analytics and IoT,Power BI Embedded,pbi
+,,,,,,,Analytics and IoT: Time Series Insights environment,tsi,,,,,,,,Analytics and IoT,Time Series Insights environment,tsi
+,,,,,,,Developer tools: App Configuration store,appcs,,,,,,,,Developer tools,App Configuration store,appcs
+,,,,,,,Integration: Integration account,ia,,,,,,,,Integration,Integration account,ia
+,,,,,,,Integration: Logic apps,logic,,,,,,,,Integration,Logic apps,logic
+,,,,,,,Integration: Service Bus,sb,,,,,,,,Integration,Service Bus,sb
+,,,,,,,Integration: Service Bus queue,sbq,,,,,,,,Integration,Service Bus queue,sbq
+,,,,,,,Integration: Service Bus topic,sbt,,,,,,,,Integration,Service Bus topic,sbt
+,,,,,,,Management and governance: Automation account,aa,,,,,,,,Management and governance,Automation account,aa
+,,,,,,,Management and governance: Azure Monitor action group,ag,,,,,,,,Management and governance,Azure Monitor action group,ag
+,,,,,,,Management and governance: Azure Monitor action,a,,,,,,,,Management and governance,Azure Monitor action,a
+,,,,,,,Management and governance: Blueprint,bp,,,,,,,,Management and governance,Blueprint,bp
+,,,,,,,Management and governance: Blueprint assignment,bpa,,,,,,,,Management and governance,Blueprint assignment,bpa
+,,,,,,,Management and governance: Budget,bdg,,,,,,,,Management and governance,Budget,bdg
+,,,,,,,Management and governance: Key vault,kv,,,,,,,,Management and governance,Key vault,kv
+,,,,,,,Management and governance: Log Analytics workspace,log,,,,,,,,Management and governance,Log Analytics workspace,log
+,,,,,,,Management and governance: Application Insights,appi,,,,,,,,Management and governance,Application Insights,appi
+,,,,,,,Management and governance: Recovery Services vault,rsv,,,,,,,,Management and governance,Recovery Services vault,rsv
+,,,,,,,Migration: Azure Migrate project,migr,,,,,,,,Migration,Azure Migrate project,migr
+,,,,,,,Migration: Database Migration Service instance,dms,,,,,,,,Migration,Database Migration Service instance,dms
+,,,,,,,Migration: Recovery Services vault,rsv,,,,,,,,Migration,Recovery Services vault,rsv
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,STOP,,STOP,,,,STOP,STOP,STOP,STOP,STOP,STOP,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,STOP,,

@@ -12,6 +12,9 @@ export const rolldownConfigurationBrowser: RolldownOptions = {
     "@esposter/db-schema",
     // Most packages depend on @esposter/shared
     "@esposter/shared",
+    // @esposter/infra
+    "@pulumi/azure-native",
+    "@pulumi/pulumi",
     // @esposter/db-schema
     "zod",
     // @esposter/db-mock

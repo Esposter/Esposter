@@ -43,5 +43,8 @@ logs
 .env.*
 !.env.example
 
+# Pulumi migration output
+packages/infra/generated/
+
 # Claude
 scheduled_tasks.lock
