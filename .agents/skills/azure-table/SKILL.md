@@ -74,6 +74,22 @@ const filter = serializeClauses([
 ] as Clause<StandardMessageEntity>[]);
 ```
 
+## Entity Class Constructors
+
+`deserializeEntity` calls `new cls()` with **no arguments** to create an empty instance before populating it. Therefore, all Azure entity class constructors must declare `init` as optional (`init?:`), and any property access on `init` inside the constructor must use optional chaining (`init?.foo`):
+
+```typescript
+export class MyEntity extends AzureEntity {
+  myField!: string;
+
+  constructor(init?: Partial<MyEntity> & ToData<CompositeKeyEntity>) {
+    super();
+    Object.assign(this, init);
+    this.myField = init?.myField ?? "default"; // use ?. not just .
+  }
+}
+```
+
 ## Soft-Delete
 
 Set `deletedAt` and `updatedAt` together via `serializeEntity`:

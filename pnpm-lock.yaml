@@ -1550,6 +1550,9 @@ importers:
 
   packages/infra:
     dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@pulumi/azure-native':
         specifier: 'catalog:'
         version: 3.18.0(typescript@5.9.3)
@@ -19831,7 +19834,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@25.8.0)(@vitest/coverage-v8@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.27.7)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.0)(yaml@2.9.0))
+      vitest: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@25.8.0)(@vitest/coverage-v8@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.0)(yaml@2.9.0))
 
   '@vitest/eslint-plugin@1.6.17(@typescript-eslint/eslint-plugin@8.59.3(@typescript-eslint/parser@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3)(vitest@4.1.6)':
     dependencies:

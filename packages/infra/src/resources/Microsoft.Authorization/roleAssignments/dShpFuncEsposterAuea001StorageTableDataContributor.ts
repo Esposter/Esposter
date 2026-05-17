@@ -1,8 +1,9 @@
-import AzureStorageTableDataContributorRoleDefinitionId from "@/constants/AzureStorageTableDataContributorRoleDefinitionId";
+﻿import AzureStorageTableDataContributorRoleDefinitionId from "@/constants/AzureStorageTableDataContributorRoleDefinitionId";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import { dshpstespauea001 } from "@/resources/Microsoft.Storage/storageAccounts/dshpstespauea001";
 import { dShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/dShpFuncEsposterAuea001";
+import { applyPrincipalId } from "@/services/applyPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -12,7 +13,7 @@ export const dShpFuncEsposterAuea001StorageTableDataContributor: azure_native.au
   new azure_native.authorization.RoleAssignment(
     "d-shp-func-esposter-auea-001-storage-table-data-contributor",
     {
-      principalId: dShpFuncEsposterAuea001.identity.apply((identity) => identity?.principalId ?? ""),
+      principalId: applyPrincipalId(dShpFuncEsposterAuea001.identity, dShpFuncEsposterAuea001.name),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleAssignmentName,
       roleDefinitionId: AzureStorageTableDataContributorRoleDefinitionId,

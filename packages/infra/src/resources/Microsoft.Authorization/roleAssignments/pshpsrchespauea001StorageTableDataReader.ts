@@ -1,8 +1,9 @@
-import AzureStorageTableDataReaderRoleDefinitionId from "@/constants/AzureStorageTableDataReaderRoleDefinitionId";
+﻿import AzureStorageTableDataReaderRoleDefinitionId from "@/constants/AzureStorageTableDataReaderRoleDefinitionId";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import { pshpsrchespauea001 } from "@/resources/Microsoft.Search/searchServices/pshpsrchespauea001";
 import { pshpstespauea001 } from "@/resources/Microsoft.Storage/storageAccounts/pshpstespauea001";
+import { applyPrincipalId } from "@/services/applyPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -12,7 +13,7 @@ export const pshpsrchespauea001StorageTableDataReader: azure_native.authorizatio
   new azure_native.authorization.RoleAssignment(
     "pshpsrchespauea001-storage-table-data-reader",
     {
-      principalId: pshpsrchespauea001.identity.apply((identity) => identity?.principalId ?? ""),
+      principalId: applyPrincipalId(pshpsrchespauea001.identity, pshpsrchespauea001.name),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleAssignmentName,
       roleDefinitionId: AzureStorageTableDataReaderRoleDefinitionId,

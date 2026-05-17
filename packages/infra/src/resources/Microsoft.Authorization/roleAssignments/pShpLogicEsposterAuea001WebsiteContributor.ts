@@ -1,8 +1,9 @@
-import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
+﻿import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import AzureWebsiteContributorRoleDefinitionId from "@/constants/AzureWebsiteContributorRoleDefinitionId";
 import { pShpLogicEsposterAuea001 } from "@/resources/Microsoft.Logic/workflows/pShpLogicEsposterAuea001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import { pShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/pShpFuncEsposterAuea001";
+import { applyPrincipalId } from "@/services/applyPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -12,7 +13,7 @@ export const pShpLogicEsposterAuea001WebsiteContributor: azure_native.authorizat
   new azure_native.authorization.RoleAssignment(
     "p-shp-logic-esposter-auea-001-website-contributor",
     {
-      principalId: pShpLogicEsposterAuea001.identity.apply((identity) => identity?.principalId ?? ""),
+      principalId: applyPrincipalId(pShpLogicEsposterAuea001.identity, pShpLogicEsposterAuea001.name),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleAssignmentName,
       roleDefinitionId: AzureWebsiteContributorRoleDefinitionId,

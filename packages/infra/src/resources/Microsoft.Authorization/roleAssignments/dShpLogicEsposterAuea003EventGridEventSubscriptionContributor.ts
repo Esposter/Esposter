@@ -1,8 +1,9 @@
-import AzureEventGridEventSubscriptionContributorRoleDefinitionId from "@/constants/AzureEventGridEventSubscriptionContributorRoleDefinitionId";
+﻿import AzureEventGridEventSubscriptionContributorRoleDefinitionId from "@/constants/AzureEventGridEventSubscriptionContributorRoleDefinitionId";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import { dShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/dShpEvgtEsposterAuea001";
 import { dShpLogicEsposterAuea003 } from "@/resources/Microsoft.Logic/workflows/dShpLogicEsposterAuea003";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
+import { applyPrincipalId } from "@/services/applyPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -12,7 +13,7 @@ export const dShpLogicEsposterAuea003EventGridEventSubscriptionContributor: azur
   new azure_native.authorization.RoleAssignment(
     "d-shp-logic-esposter-auea-003-event-grid-event-subscription-contributor",
     {
-      principalId: dShpLogicEsposterAuea003.identity.apply((identity) => identity?.principalId ?? ""),
+      principalId: applyPrincipalId(dShpLogicEsposterAuea003.identity, dShpLogicEsposterAuea003.name),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleAssignmentName,
       roleDefinitionId: AzureEventGridEventSubscriptionContributorRoleDefinitionId,
