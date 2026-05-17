@@ -45,27 +45,14 @@
     "@lerna-lite/watch": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
-    "@vitejs/plugin-vue": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
-    "@vue/test-utils": "catalog:",
-    "ctix": "catalog:",
-    "dotenv": "catalog:",
     "eslint": "catalog:",
-    "happy-dom": "catalog:",
     "nano-staged": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
-    "rolldown": "catalog:",
-    "rolldown-plugin-dts": "catalog:",
     "tsx": "catalog:",
-    "type-fest": "catalog:",
     "typedoc": "catalog:",
-    "typescript": "catalog:",
-    "unplugin-auto-import": "catalog:",
-    "vite": "catalog:",
-    "vitest": "catalog:",
-    "vue-tsc": "catalog:"
+    "typescript": "catalog:"
   },
   "nano-staged": {
     "*": "oxfmt"

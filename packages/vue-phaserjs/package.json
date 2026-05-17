@@ -40,7 +40,15 @@
     "parse-tmx": "workspace:*"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*"
+    "@esposter/configuration": "workspace:*",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "ctix": "catalog:",
+    "type-fest": "catalog:",
+    "unplugin-auto-import": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vue-tsc": "catalog:"
   },
   "peerDependencies": {
     "phaser": "catalog:",

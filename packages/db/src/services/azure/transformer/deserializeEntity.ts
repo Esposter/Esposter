@@ -1,12 +1,11 @@
 import type { CompositeKey } from "@esposter/db-schema";
-import type { Class } from "type-fest";
 
 import { getIsSerializable } from "@/services/azure/transformer/getIsSerializable";
 import { jsonDateParse } from "@esposter/shared";
 
 export const deserializeEntity = <TEntity extends CompositeKey>(
   entity: Record<string, unknown>,
-  cls: Class<TEntity>,
+  cls: new () => TEntity,
 ): TEntity => {
   const instance = new cls();
   // Azure Table Storage already deserializes Date properties for us C:

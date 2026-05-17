@@ -45,6 +45,11 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@types/data-urls": "catalog:",
-    "@types/xml2js": "catalog:"
+    "@types/xml2js": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "ctix": "catalog:",
+    "rolldown": "catalog:",
+    "type-fest": "catalog:",
+    "vitest": "catalog:"
   }
 }

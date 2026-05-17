@@ -41,7 +41,9 @@
     "typecheck": "tsgo"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*"
+    "@esposter/configuration": "workspace:*",
+    "ctix": "catalog:",
+    "rolldown": "catalog:"
   },
   "peerDependencies": {
     "@electric-sql/pglite": "catalog:",

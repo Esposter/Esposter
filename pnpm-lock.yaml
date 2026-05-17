@@ -704,27 +704,9 @@ importers:
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20260516.1
-      '@vitejs/plugin-vue':
-        specifier: 'catalog:'
-        version: 6.0.7(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))(vue@3.5.34(typescript@5.9.3))
-      '@vitest/coverage-v8':
-        specifier: 'catalog:'
-        version: 4.1.6(vitest@4.1.6)
-      '@vue/test-utils':
-        specifier: 'catalog:'
-        version: 2.4.10(@vue/compiler-dom@3.5.34)(@vue/server-renderer@3.5.34(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))
-      ctix:
-        specifier: 'catalog:'
-        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
-      dotenv:
-        specifier: 'catalog:'
-        version: 17.4.2
       eslint:
         specifier: 'catalog:'
         version: 10.4.0(jiti@2.7.0)
-      happy-dom:
-        specifier: 'catalog:'
-        version: 20.9.0
       nano-staged:
         specifier: 'catalog:'
         version: 1.0.2
@@ -737,36 +719,15 @@ importers:
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 0.22.1
-      rolldown:
-        specifier: 'catalog:'
-        version: 1.0.1
-      rolldown-plugin-dts:
-        specifier: 'catalog:'
-        version: 0.25.1(@typescript/native-preview@7.0.0-dev.20260516.1)(rolldown@1.0.1)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3))
       tsx:
         specifier: 'catalog:'
         version: 4.22.1
-      type-fest:
-        specifier: 'catalog:'
-        version: 5.6.0
       typedoc:
         specifier: 'catalog:'
         version: 0.28.19(typescript@5.9.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-auto-import:
-        specifier: 'catalog:'
-        version: 21.0.0(@nuxt/kit@4.4.5(magicast@0.5.3))(@vueuse/core@14.3.0(vue@3.5.34(typescript@5.9.3)))
-      vite:
-        specifier: ^8.0.13
-        version: 8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0)
-      vitest:
-        specifier: 'catalog:'
-        version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@25.8.0)(@vitest/coverage-v8@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))
-      vue-tsc:
-        specifier: 'catalog:'
-        version: 3.2.9(typescript@5.9.3)
 
   packages/app:
     dependencies:
@@ -1251,6 +1212,12 @@ importers:
       '@vite-pwa/nuxt':
         specifier: 'catalog:'
         version: 1.1.1(magicast@0.5.3)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.27.7)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))(workbox-build@7.4.1)(workbox-window@7.4.1)
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.6(vitest@4.1.6)
+      '@vue/test-utils':
+        specifier: 'catalog:'
+        version: 2.4.10(@vue/compiler-dom@3.5.34)(@vue/server-renderer@3.5.34(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))
       '@vueuse/nuxt':
         specifier: 'catalog:'
         version: 14.3.0(magicast@0.5.3)(nuxt@4.4.5(08bcd942f1b7ef6357769ecb285f4481))(vue@3.5.34(typescript@5.9.3))
@@ -1260,6 +1227,9 @@ importers:
       crossws:
         specifier: ^0.4.5
         version: 0.4.5(srvx@0.11.15)
+      dotenv:
+        specifier: 'catalog:'
+        version: 17.4.2
       fake-indexeddb:
         specifier: 'catalog:'
         version: 6.2.5
@@ -1281,6 +1251,9 @@ importers:
       sass-embedded:
         specifier: 'catalog:'
         version: 1.99.0
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.6.0
       unocss:
         specifier: 'catalog:'
         version: 66.6.8(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@unocss/webpack@66.6.8(webpack@5.106.2(esbuild@0.27.7)(lightningcss@1.32.0)(postcss@8.5.14)))(vite@8.0.13(@types/node@25.8.0)(esbuild@0.27.7)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))
@@ -1345,6 +1318,12 @@ importers:
       '@types/web-push':
         specifier: 'catalog:'
         version: 3.6.4
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.0.1
 
   packages/azure-mock:
     dependencies:
@@ -1391,6 +1370,21 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.6(vitest@4.1.6)
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.0.1
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.6.0
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@25.8.0)(@vitest/coverage-v8@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))
 
   packages/configuration:
     devDependencies:
@@ -1415,12 +1409,18 @@ importers:
       '@unocss/eslint-config':
         specifier: 'catalog:'
         version: 66.6.8(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3)
+      '@vitejs/plugin-vue':
+        specifier: 'catalog:'
+        version: 6.0.7(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))(vue@3.5.34(typescript@5.9.3))
       '@vitest/eslint-plugin':
         specifier: 'catalog:'
         version: 1.6.17(@typescript-eslint/eslint-plugin@8.59.3(@typescript-eslint/parser@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3)(vitest@4.1.6)
       '@vue/language-core':
         specifier: 'catalog:'
         version: 3.2.9
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
       eslint-plugin-depend:
         specifier: 'catalog:'
         version: 1.5.0(eslint@10.4.0(jiti@2.7.0))
@@ -1433,15 +1433,27 @@ importers:
       eslint-plugin-pinia:
         specifier: 'catalog:'
         version: 0.4.2(@typescript-eslint/utils@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.0.1
       rolldown-plugin-dts:
         specifier: 'catalog:'
         version: 0.25.1(@typescript/native-preview@7.0.0-dev.20260516.1)(rolldown@1.0.1)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3))
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.6.0
       typescript-eslint:
         specifier: 'catalog:'
         version: 8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3)
+      unplugin-auto-import:
+        specifier: 'catalog:'
+        version: 21.0.0(@nuxt/kit@4.4.5(magicast@0.5.3))(@vueuse/core@14.3.0(vue@3.5.34(typescript@5.9.3)))
       unplugin-dts:
         specifier: 'catalog:'
         version: 1.0.0-beta.6(@vue/language-core@3.2.9)(esbuild@0.28.0)(rolldown@1.0.1)(rollup@4.60.4)(typescript@5.9.3)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.0))
+      vite:
+        specifier: ^8.0.13
+        version: 8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0)
       vite-plugin-mkcert:
         specifier: 'catalog:'
         version: 2.0.0(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))
@@ -1500,6 +1512,21 @@ importers:
       '@types/mime-types':
         specifier: 'catalog:'
         version: 3.0.1
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.6(vitest@4.1.6)
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.0.1
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.6.0
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@25.8.0)(@vitest/coverage-v8@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))
 
   packages/db-mock:
     dependencies:
@@ -1519,6 +1546,12 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.0.1
 
   packages/db-schema:
     dependencies:
@@ -1544,9 +1577,24 @@ importers:
       '@trpc/server':
         specifier: 'catalog:'
         version: 11.17.0(typescript@5.9.3)
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.6(vitest@4.1.6)
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
       drizzle-kit:
         specifier: 'catalog:'
         version: 1.0.0-rc.2
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.0.1
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.6.0
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@25.8.0)(@vitest/coverage-v8@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))
 
   packages/infra:
     dependencies:
@@ -1563,6 +1611,12 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.0.1
 
   packages/parse-tmx:
     dependencies:
@@ -1588,6 +1642,21 @@ importers:
       '@types/xml2js':
         specifier: 'catalog:'
         version: 0.4.14
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.6(vitest@4.1.6)
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.0.1
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.6.0
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@25.8.0)(@vitest/coverage-v8@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))
 
   packages/shared:
     dependencies:
@@ -1613,6 +1682,21 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.6(vitest@4.1.6)
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.0.1
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.6.0
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@25.8.0)(@vitest/coverage-v8@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))
 
   packages/vue-phaserjs:
     dependencies:
@@ -1638,6 +1722,30 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@vitejs/plugin-vue':
+        specifier: 'catalog:'
+        version: 6.0.7(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))(vue@3.5.34(typescript@5.9.3))
+      '@vue/test-utils':
+        specifier: 'catalog:'
+        version: 2.4.10(@vue/compiler-dom@3.5.34)(@vue/server-renderer@3.5.34(vue@3.5.34(typescript@5.9.3)))(vue@3.5.34(typescript@5.9.3))
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.6.0
+      unplugin-auto-import:
+        specifier: 'catalog:'
+        version: 21.0.0(@nuxt/kit@4.4.5(magicast@0.5.3))(@vueuse/core@14.3.0(vue@3.5.34(typescript@5.9.3)))
+      vite:
+        specifier: ^8.0.13
+        version: 8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0)
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@25.8.0)(@vitest/coverage-v8@4.1.6)(happy-dom@20.9.0)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))
+      vue-tsc:
+        specifier: 'catalog:'
+        version: 3.2.9(typescript@5.9.3)
 
   packages/xml2js:
     dependencies:
@@ -1660,6 +1768,15 @@ importers:
       '@types/xml2js':
         specifier: 'catalog:'
         version: 0.4.14
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.0.1
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.6.0
 
 packages:
 
