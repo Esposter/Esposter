@@ -1,5 +1,4 @@
-import { InvalidOperationError } from "@esposter/shared";
-import { Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import * as pulumi from "@pulumi/pulumi";
 
 interface IdentityLike {
