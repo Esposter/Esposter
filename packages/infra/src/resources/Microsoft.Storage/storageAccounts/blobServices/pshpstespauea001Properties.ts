@@ -1,14 +1,11 @@
 import * as azure_native from "@pulumi/azure-native";
 
-export const dshpstespauea001Default: azure_native.storage.BlobServiceProperties =
+export const pshpstespauea001Properties: azure_native.storage.BlobServiceProperties =
   new azure_native.storage.BlobServiceProperties(
-    "dshpstespauea001/default",
+    "pshpstespauea001/default",
     {
-      accountName: "dshpstespauea001",
+      accountName: "pshpstespauea001",
       blobServicesName: "default",
-      changeFeed: {
-        enabled: false,
-      },
       containerDeleteRetentionPolicy: {
         days: 7,
         enabled: true,
@@ -18,7 +15,7 @@ export const dshpstespauea001Default: azure_native.storage.BlobServiceProperties
           {
             allowedHeaders: ["*"],
             allowedMethods: ["PUT"],
-            allowedOrigins: ["http://localhost:3000"],
+            allowedOrigins: ["https://esposter.com"],
             exposedHeaders: [""],
             maxAgeInSeconds: 86400,
           },
@@ -30,10 +27,7 @@ export const dshpstespauea001Default: azure_native.storage.BlobServiceProperties
         enabled: true,
       },
       isVersioningEnabled: false,
-      resourceGroupName: "d-shp-rg-esposter-auea-001",
-      restorePolicy: {
-        enabled: false,
-      },
+      resourceGroupName: "p-shp-rg-esposter-auea-001",
     },
     {
       protect: true,

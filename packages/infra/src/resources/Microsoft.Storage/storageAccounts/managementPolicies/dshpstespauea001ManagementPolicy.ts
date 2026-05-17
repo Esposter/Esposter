@@ -1,10 +1,10 @@
 import * as azure_native from "@pulumi/azure-native";
 
-export const pshpstespauea001DefaultManagementPolicy: azure_native.storage.ManagementPolicy =
+export const dshpstespauea001ManagementPolicy: azure_native.storage.ManagementPolicy =
   new azure_native.storage.ManagementPolicy(
-    "pshpstespauea001/default-management-policy",
+    "dshpstespauea001/default-management-policy",
     {
-      accountName: "pshpstespauea001",
+      accountName: "dshpstespauea001",
       managementPolicyName: "default",
       policy: {
         rules: [
@@ -27,7 +27,7 @@ export const pshpstespauea001DefaultManagementPolicy: azure_native.storage.Manag
           },
         ],
       },
-      resourceGroupName: "p-shp-rg-esposter-auea-001",
+      resourceGroupName: "d-shp-rg-esposter-auea-001",
     },
     {
       protect: true,

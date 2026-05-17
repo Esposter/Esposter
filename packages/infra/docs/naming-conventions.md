@@ -224,16 +224,27 @@ These tokens came from the spreadsheet reference tab and are preserved for later
 
 ## Source File Names
 
-Pulumi source files use camelCase derived from the Azure resource name:
+Pulumi source files use camelCase derived from the Azure resource name. The export constant name must match the file name (minus `.ts`):
 
-| Azure Resource Name            | Source File                  |
-| ------------------------------ | ---------------------------- |
-| `d-shp-rg-esposter-auea-001`   | `dShpRgEsposterAuea001.ts`   |
-| `dshpstespauea001`             | `dshpstespauea001.ts`        |
-| `p-shp-func-esposter-auea-001` | `pShpFuncEsposterAuea001.ts` |
+| Azure Resource Name            | Source File                  | Export Constant           |
+| ------------------------------ | ---------------------------- | ------------------------- |
+| `d-shp-rg-esposter-auea-001`   | `dShpRgEsposterAuea001.ts`   | `dShpRgEsposterAuea001`   |
+| `dshpstespauea001`             | `dshpstespauea001.ts`        | `dshpstespauea001`        |
+| `p-shp-func-esposter-auea-001` | `pShpFuncEsposterAuea001.ts` | `pShpFuncEsposterAuea001` |
 
 Resource folders mirror Azure ARM provider paths:
 
 ```text
 src/resources/<ProviderNamespace>/<resourceTypes>/<resourceName>.ts
 ```
+
+## Child Resource File Names
+
+Child resources append the Pulumi resource type name as a suffix. When the Azure child name is a mandatory singleton (such as `default`), it is omitted from the file and export name because it carries no information:
+
+| Azure Child Resource                          | Pulumi Type             | Source File                           | Export Constant                    |
+| --------------------------------------------- | ----------------------- | ------------------------------------- | ---------------------------------- |
+| `dshpstespauea001/blobServices/default`       | `BlobServiceProperties` | `dshpstespauea001Properties.ts`       | `dshpstespauea001Properties`       |
+| `dshpstespauea001/managementPolicies/default` | `ManagementPolicy`      | `dshpstespauea001ManagementPolicy.ts` | `dshpstespauea001ManagementPolicy` |
+
+The suffix is the full Pulumi resource type name (`BlobServiceProperties`, `ManagementPolicy`, etc.), not abbreviated.
