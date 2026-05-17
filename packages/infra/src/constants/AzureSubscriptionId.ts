@@ -1,3 +1,6 @@
-const AzureSubscriptionId = "764658ba-01da-43fa-9f26-ffa4ada33ebb";
+import { Config } from "@pulumi/pulumi";
+
+const azureNativeConfig = new Config("azure-native");
+const AzureSubscriptionId: string = azureNativeConfig.require("subscriptionId");
 
 export default AzureSubscriptionId;

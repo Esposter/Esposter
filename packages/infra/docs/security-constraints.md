@@ -4,6 +4,8 @@ This document records current application dependencies that block otherwise reas
 
 Do not remove these constraints from the optimization plan until the referenced code paths have been migrated and verified with Pulumi preview plus application smoke testing.
 
+Pulumi is the source of truth for Azure resources in this subscription. Existing RBAC grants should be imported as `Microsoft.Authorization/roleAssignments` resources with their live assignment GUIDs rather than recreated.
+
 ## Storage Shared Key Access
 
 Do not set `allowSharedKeyAccess` to `false` yet.
@@ -22,11 +24,12 @@ Why this blocks the setting:
 - Connection-string authentication depends on storage account keys.
 - Service SAS generation from these clients depends on shared key credentials.
 - Disabling shared key access before moving to managed identity or user delegation SAS would break message and survey asset upload/download flows.
+- User delegation SAS still expires and cannot preserve the current long-lived read URL behavior without changing product flows.
 
 Migration direction:
 
-- Move server blob access to managed identity.
-- Replace service SAS generation with user delegation SAS where appropriate.
+- Move server blob access to a non-key credential only after the hosting identity model is clear.
+- Replace service SAS generation only when the replacement preserves existing expiry requirements or the consuming flows are redesigned.
 - Verify all containers used by message and survey assets still support upload, read, clone, delete, and publish flows.
 
 ## Storage Blob Public Access
@@ -60,13 +63,13 @@ Current dependency:
 Why this blocks the setting:
 
 - Disabling local authentication makes key-based `AzureKeyCredential` requests fail.
-- The app must migrate Search access to Entra ID before local auth can be disabled.
+- The main app is hosted on Railway and does not currently have an Azure managed identity.
 
 Migration direction:
 
-- Move server Search access to managed identity.
-- Assign the app identity the least-privilege Search role needed for query/index operations.
-- Replace `AzureKeyCredential` with an identity credential.
+- Keep Search local authentication enabled while the Railway app uses `AzureKeyCredential`.
+- If Search moves away from keys, use an explicit Railway-compatible Entra credential path or move the call behind an Azure-hosted component with managed identity.
+- Assign the chosen identity the least-privilege Search role needed for query/index operations only after that code path exists.
 
 ## Event Grid Topic Local Authentication
 
@@ -81,16 +84,19 @@ Current dependency:
 Important nuance:
 
 - `packages/azure-functions/src/services/eventGridPublisherClient.ts` already uses `DefaultAzureCredential`.
+- The Azure Function identity already has EventGrid Data Sender grants in Azure; Pulumi should adopt those grants.
 - The blocker is the main app server path, not the Azure Functions publisher path.
 
 Why this blocks the setting:
 
 - Disabling local auth on the Event Grid topic would break the app's key-based publishing until the app uses managed identity.
+- The main app is hosted on Railway and does not currently have an Azure managed identity.
 
 Migration direction:
 
-- Move the app server Event Grid publisher to managed identity.
-- Assign the app identity the least-privilege Event Grid sender role.
+- Keep Event Grid local authentication enabled while the Railway app publishes with `AzureKeyCredential`.
+- If app publishing moves away from keys, use an explicit Railway-compatible Entra credential path or route publishing through an Azure-hosted component with managed identity.
+- Assign EventGrid Data Sender only to identities that actually publish events.
 - Remove key-based topic config only after app publishing is verified.
 
 ## Web PubSub Public Client Access
@@ -129,10 +135,11 @@ Why this blocks the setting:
 
 - Connection-string authentication depends on local keys.
 - Public REST API access is required while the app server and Azure Functions call Web PubSub service APIs over the public endpoint.
+- The main app is hosted on Railway and does not currently have an Azure managed identity.
 
 Migration direction:
 
-- Move app and functions Web PubSub service access to managed identity or another supported non-key flow.
+- Move app and functions Web PubSub service access to a supported non-key flow only after the Railway app identity story is explicit.
 - Confirm whether private networking is possible for server-to-service calls.
 - Keep browser client public access separate from server REST API hardening.
 

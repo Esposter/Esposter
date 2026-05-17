@@ -30,7 +30,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 - **Server-only**: this package must not be imported in browser code.
 - Depends on `@esposter/db-schema` for Drizzle relation and schema definitions.
-- Azure clients are instantiated with `DefaultAzureCredential` — no hardcoded secrets.
+- Azure clients currently use the credential form required by each caller. Some app-facing paths still use connection strings or keys because the main app is hosted outside Azure and does not have managed identity.
 
 ### Commands
 
