@@ -1,3 +1,4 @@
+import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import * as azure_native from "@pulumi/azure-native";
 
 export const paRequireApplicationTag: azure_native.authorization.PolicyAssignment =
@@ -19,7 +20,7 @@ export const paRequireApplicationTag: azure_native.authorization.PolicyAssignmen
       },
       policyAssignmentName: "7b87693e9a494c838ffac3d7",
       policyDefinitionId: "/providers/Microsoft.Authorization/policyDefinitions/871b6d14-10aa-478d-b590-94f262ecfa99",
-      scope: "subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb",
+      scope: `subscriptions/${AzureSubscriptionId}`,
     },
     {
       protect: true,

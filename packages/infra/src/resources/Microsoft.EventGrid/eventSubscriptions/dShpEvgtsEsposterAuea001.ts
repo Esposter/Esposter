@@ -1,4 +1,9 @@
+import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
+import { dShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/dShpEvgtEsposterAuea001";
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
+import { dShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/dShpFuncEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
+import * as pulumi from "@pulumi/pulumi";
 
 export const dShpEvgtsEsposterAuea001: azure_native.eventgrid.EventSubscription =
   new azure_native.eventgrid.EventSubscription(
@@ -8,8 +13,7 @@ export const dShpEvgtsEsposterAuea001: azure_native.eventgrid.EventSubscription 
         endpointType: "AzureFunction",
         maxEventsPerBatch: 1,
         preferredBatchSizeInKilobytes: 64,
-        resourceId:
-          "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/d-shp-rg-esposter-auea-001/providers/Microsoft.Web/sites/d-shp-func-esposter-auea-001/functions/ProcessWebhook",
+        resourceId: pulumi.interpolate`${dShpFuncEsposterAuea001.id}/functions/ProcessWebhook`,
       },
       eventDeliverySchema: azure_native.eventgrid.EventDeliverySchema.EventGridSchema,
       eventSubscriptionName: "d-shp-evgts-esposter-auea-001",
@@ -23,8 +27,7 @@ export const dShpEvgtsEsposterAuea001: azure_native.eventgrid.EventSubscription 
         eventTimeToLiveInMinutes: 1440,
         maxDeliveryAttempts: 30,
       },
-      scope:
-        "subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/d-shp-rg-esposter-auea-001/providers/Microsoft.EventGrid/topics/d-shp-evgt-esposter-auea-001",
+      scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${dShpRgEsposterAuea001.name}/providers/Microsoft.EventGrid/topics/${dShpEvgtEsposterAuea001.name}`,
     },
     {
       protect: true,

@@ -1,3 +1,4 @@
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
 export const dShpAgEsposterAuea002: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
@@ -19,7 +20,7 @@ export const dShpAgEsposterAuea002: azure_native.monitor.ActionGroup = new azure
     enabled: true,
     groupShortName: "SmartDetect",
     location: "Global",
-    resourceGroupName: "d-shp-rg-esposter-auea-001",
+    resourceGroupName: dShpRgEsposterAuea001.name,
     tags: {
       Application: "Esposter",
     },

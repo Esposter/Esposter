@@ -1,3 +1,4 @@
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
 export const dShpSpchEsposterAuea001: azure_native.cognitiveservices.Account =
@@ -16,7 +17,7 @@ export const dShpSpchEsposterAuea001: azure_native.cognitiveservices.Account =
         },
         publicNetworkAccess: azure_native.cognitiveservices.PublicNetworkAccess.Enabled,
       },
-      resourceGroupName: "d-shp-rg-esposter-auea-001",
+      resourceGroupName: dShpRgEsposterAuea001.name,
       sku: {
         name: "F0",
       },

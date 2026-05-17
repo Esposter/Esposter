@@ -1,3 +1,5 @@
+import { pShpLogicEsposterAuea001 } from "@/resources/Microsoft.Logic/workflows/pShpLogicEsposterAuea001";
+import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -14,12 +16,11 @@ export const pShpAgEsposterAuea001: azure_native.monitor.ActionGroup = new azure
       {
         callbackUrl: config.requireSecret("pShpAgEsposterAuea001CallbackUrl"),
         name: "p-shp-a-esposter-auea-001",
-        resourceId:
-          "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.Logic/workflows/p-shp-logic-esposter-auea-001",
+        resourceId: pShpLogicEsposterAuea001.id,
         useCommonAlertSchema: true,
       },
     ],
-    resourceGroupName: "p-shp-rg-esposter-auea-001",
+    resourceGroupName: pShpRgEsposterAuea001.name,
     tags: {
       Application: "Esposter",
     },

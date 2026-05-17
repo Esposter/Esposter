@@ -1,7 +1,9 @@
+import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
+import { dShpAgEsposterAuea001 } from "@/resources/Microsoft.Insights/actionGroups/dShpAgEsposterAuea001";
+import { dShpAgEsposterAuea003 } from "@/resources/Microsoft.Insights/actionGroups/dShpAgEsposterAuea003";
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
-
-import { dShpAgEsposterAuea001 } from "../../Microsoft.Insights/actionGroups/dShpAgEsposterAuea001";
-import { dShpAgEsposterAuea003 } from "../../Microsoft.Insights/actionGroups/dShpAgEsposterAuea003";
+import * as pulumi from "@pulumi/pulumi";
 
 export const dShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure_native.consumption.Budget(
   "d-shp-bdg-esposter-auea-001",
@@ -36,7 +38,7 @@ export const dShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure
         thresholdType: "Actual",
       },
     },
-    scope: "subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/d-shp-rg-esposter-auea-001",
+    scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${dShpRgEsposterAuea001.name}`,
     timeGrain: azure_native.consumption.TimeGrainType.Monthly,
     timePeriod: {
       endDate: "2035-12-31T00:00:00Z",

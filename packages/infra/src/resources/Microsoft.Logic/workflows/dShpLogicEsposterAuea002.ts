@@ -1,6 +1,6 @@
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
+import { dShpApicnEsposterAuea002 } from "@/resources/Microsoft.Web/connections/dShpApicnEsposterAuea002";
 import * as azure_native from "@pulumi/azure-native";
-
-import { dShpApicnEsposterAuea001 } from "../../Microsoft.Web/connections/dShpApicnEsposterAuea001";
 
 export const dShpLogicEsposterAuea002: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   "d-shp-logic-esposter-auea-002",
@@ -13,7 +13,7 @@ export const dShpLogicEsposterAuea002: azure_native.logic.Workflow = new azure_n
           inputs: {
             host: {
               connection: {
-                name: "@parameters('$connections')['azureappservice-1']['connectionId']",
+                name: "@parameters('$connections')['azureappservice-2']['connectionId']",
               },
             },
             method: "post",
@@ -146,9 +146,9 @@ export const dShpLogicEsposterAuea002: azure_native.logic.Workflow = new azure_n
     parameters: {
       $connections: {
         value: {
-          "azureappservice-1": {
-            connectionId: dShpApicnEsposterAuea001.id,
-            connectionName: "azureappservice-1",
+          "azureappservice-2": {
+            connectionId: dShpApicnEsposterAuea002.id,
+            connectionName: "azureappservice-2",
             connectionProperties: {
               authentication: {
                 type: "ManagedServiceIdentity",
@@ -159,7 +159,7 @@ export const dShpLogicEsposterAuea002: azure_native.logic.Workflow = new azure_n
         },
       },
     },
-    resourceGroupName: "d-shp-rg-esposter-auea-001",
+    resourceGroupName: dShpRgEsposterAuea001.name,
     state: azure_native.logic.WorkflowState.Enabled,
     tags: {
       Application: "Esposter",

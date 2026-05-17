@@ -2,7 +2,7 @@
 
 This document captures the phase-1 imported Azure resource set.
 
-Pulumi currently has 48 tracked source files under `src/resources/`. The original spreadsheet contained 51 rows. The four Azure Monitor action rows are not standalone imported resources; they are represented by the imported action groups and their receivers. One subscription-scoped policy assignment is also represented.
+Pulumi currently has 52 tracked source files under `src/resources/`. The original spreadsheet contained 51 rows. The four Azure Monitor action rows are not standalone imported resources; they are represented by the imported action groups and their receivers. One subscription-scoped policy assignment is also represented. Storage blob-service settings and lifecycle management policies were imported during v2 because they are real Azure child resources that control cost and recovery behavior.
 
 ## Summary By Environment
 
@@ -33,29 +33,33 @@ The current Pulumi program declares both development and production resources.
 | Policy assignment               |     1 |
 | Resource group                  |     2 |
 | Storage account                 |     2 |
+| Storage blob service            |     2 |
+| Storage lifecycle policy        |     2 |
 | Web PubSub                      |     2 |
 
 ## Source Tree
 
 Resource files are grouped by Azure ARM provider namespace and resource type:
 
-| Azure ARM Type                              | Source Folder                                              |
-| ------------------------------------------- | ---------------------------------------------------------- |
-| `Microsoft.Authorization/policyAssignments` | `src/resources/Microsoft.Authorization/policyAssignments/` |
-| `Microsoft.CognitiveServices/accounts`      | `src/resources/Microsoft.CognitiveServices/accounts/`      |
-| `Microsoft.Consumption/budgets`             | `src/resources/Microsoft.Consumption/budgets/`             |
-| `Microsoft.EventGrid/eventSubscriptions`    | `src/resources/Microsoft.EventGrid/eventSubscriptions/`    |
-| `Microsoft.EventGrid/topics`                | `src/resources/Microsoft.EventGrid/topics/`                |
-| `Microsoft.Insights/actionGroups`           | `src/resources/Microsoft.Insights/actionGroups/`           |
-| `Microsoft.Insights/components`             | `src/resources/Microsoft.Insights/components/`             |
-| `Microsoft.Logic/workflows`                 | `src/resources/Microsoft.Logic/workflows/`                 |
-| `Microsoft.OperationalInsights/workspaces`  | `src/resources/Microsoft.OperationalInsights/workspaces/`  |
-| `Microsoft.Resources/resourceGroups`        | `src/resources/Microsoft.Resources/resourceGroups/`        |
-| `Microsoft.Search/searchServices`           | `src/resources/Microsoft.Search/searchServices/`           |
-| `Microsoft.SignalRService/webPubSub`        | `src/resources/Microsoft.SignalRService/webPubSub/`        |
-| `Microsoft.Storage/storageAccounts`         | `src/resources/Microsoft.Storage/storageAccounts/`         |
-| `Microsoft.Web/connections`                 | `src/resources/Microsoft.Web/connections/`                 |
-| `Microsoft.Web/sites`                       | `src/resources/Microsoft.Web/sites/`                       |
+| Azure ARM Type                                         | Source Folder                                                         |
+| ------------------------------------------------------ | --------------------------------------------------------------------- |
+| `Microsoft.Authorization/policyAssignments`            | `src/resources/Microsoft.Authorization/policyAssignments/`            |
+| `Microsoft.CognitiveServices/accounts`                 | `src/resources/Microsoft.CognitiveServices/accounts/`                 |
+| `Microsoft.Consumption/budgets`                        | `src/resources/Microsoft.Consumption/budgets/`                        |
+| `Microsoft.EventGrid/eventSubscriptions`               | `src/resources/Microsoft.EventGrid/eventSubscriptions/`               |
+| `Microsoft.EventGrid/topics`                           | `src/resources/Microsoft.EventGrid/topics/`                           |
+| `Microsoft.Insights/actionGroups`                      | `src/resources/Microsoft.Insights/actionGroups/`                      |
+| `Microsoft.Insights/components`                        | `src/resources/Microsoft.Insights/components/`                        |
+| `Microsoft.Logic/workflows`                            | `src/resources/Microsoft.Logic/workflows/`                            |
+| `Microsoft.OperationalInsights/workspaces`             | `src/resources/Microsoft.OperationalInsights/workspaces/`             |
+| `Microsoft.Resources/resourceGroups`                   | `src/resources/Microsoft.Resources/resourceGroups/`                   |
+| `Microsoft.Search/searchServices`                      | `src/resources/Microsoft.Search/searchServices/`                      |
+| `Microsoft.SignalRService/webPubSub`                   | `src/resources/Microsoft.SignalRService/webPubSub/`                   |
+| `Microsoft.Storage/storageAccounts`                    | `src/resources/Microsoft.Storage/storageAccounts/`                    |
+| `Microsoft.Storage/storageAccounts/blobServices`       | `src/resources/Microsoft.Storage/storageAccounts/blobServices/`       |
+| `Microsoft.Storage/storageAccounts/managementPolicies` | `src/resources/Microsoft.Storage/storageAccounts/managementPolicies/` |
+| `Microsoft.Web/connections`                            | `src/resources/Microsoft.Web/connections/`                            |
+| `Microsoft.Web/sites`                                  | `src/resources/Microsoft.Web/sites/`                                  |
 
 ## Protection
 

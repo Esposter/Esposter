@@ -108,7 +108,9 @@
       "mcp__vuetify-mcp__get_v4_breaking_changes",
       "Bash(pnpm infra:preview)",
       "Bash(az policy definition list *)",
-      "Bash(az policy assignment show *)"
+      "Bash(az policy assignment show *)",
+      "Skill(pulumi-infra)",
+      "Bash(az role definition list *)"
     ]
   }
 }
