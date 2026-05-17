@@ -25,13 +25,34 @@ Apply when modifying `packages/infra`.
 - Export exactly one resource constant per resource file.
 - Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
 
+## Docs
+
+- Durable infrastructure docs live in `packages/infra/docs/`.
+- Ordered infrastructure roadmap files live in `features/infra/v*.md`; completed roadmaps move to `features/infra/completed/`.
+- Keep Azure naming rules in `docs/naming-conventions.md`.
+- Keep the package overview and imported resource inventory in `docs/overview.md`.
+- Keep phase-2 cost/security findings in `features/infra/optimization-review.md`.
+- Keep security hardening blockers and app code references in `docs/security-constraints.md`.
+- Keep stack policy in `docs/stacks.md`.
+- Keep cleanup, optimization, naming-refactor, and production-stack phases in `docs/roadmap.md`.
+- Move completed one-off migration notes out of the package after their durable content is represented in `docs/`.
+
 ## Generated And Migration Files
 
 - `generated/` is ignored and must not be committed.
 - Import output may contain live Logic App callback URLs/signatures.
-- Migration CSVs and manifest generation are temporary. Remove them after Pulumi source fully owns the infrastructure.
 - Do not manually edit generated `src/index.ts`; regenerate it with `pnpm export:gen`.
 - Do not manually edit `dist/`; rebuild it with `pnpm build`.
+
+## Security Constraints
+
+- Do not disable storage shared key access until app blob clients and SAS generation no longer use connection-string/shared-key auth.
+- Do not disable storage blob public access until public blob containers in `AzureContainerPropertiesMap` are migrated.
+- Do not disable Azure Search local auth until `packages/app` no longer uses `AzureKeyCredential` for Search.
+- Do not disable Event Grid topic local auth until the main app Event Grid publisher no longer uses `AzureKeyCredential`. Azure Functions already use `DefaultAzureCredential`, but the app path is still key-based.
+- Do not restrict Web PubSub to static IP allowlists while browser clients connect directly from arbitrary public IPs.
+- Do not disable Web PubSub local auth or public REST API access while app/functions use Web PubSub connection-string service clients over public endpoints.
+- Do not set storage network default action to `Deny` without a complete allowlist, private endpoint, or equivalent migration.
 
 ## Azure Native Imports
 
@@ -48,3 +69,7 @@ Apply when modifying `packages/infra`.
 - Run `pnpm --filter @esposter/infra build`.
 - Run `pnpm --filter @esposter/infra lint`.
 - Run Pulumi preview only when the user allows Azure/Pulumi access.
+- Always run `pnpm infra:preview` before every `pnpm infra:up` or direct `pulumi up`.
+- Never use `pulumi up --skip-preview`.
+- Before applying, confirm the preview contains only the intended resources and properties for the active roadmap item.
+- If `pulumi up` partially succeeds or fails, stop and run `pnpm infra:preview` again before any follow-up apply.

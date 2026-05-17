@@ -21,11 +21,11 @@ features/
 
 ### Folders
 
-| Folder       | Purpose                                                                                      |
-| ------------ | -------------------------------------------------------------------------------------------- |
-| `specs/`     | Detailed specs for planned, not-yet-started features. Each file covers one cohesive feature. |
-| `completed/` | Frozen roadmap or spec files. Move here when every item is shipped. Do not edit.             |
-| `refactors/` | Cross-cutting technical changes (migrations, style enforcement). Not feature-facing.         |
+| Folder              | Purpose                                                                                      |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| `specs/`            | Detailed specs for planned, not-yet-started features. Each file covers one cohesive feature. |
+| `<area>/completed/` | Frozen roadmap or spec files inside a feature area. Move here when every item is shipped.    |
+| `refactors/`        | Cross-cutting technical changes (migrations, style enforcement). Not feature-facing.         |
 
 ---
 
@@ -41,9 +41,10 @@ features/
 
 ## Feature Areas
 
-| Area               | Active Roadmap    | Description                                      |
-| ------------------ | ----------------- | ------------------------------------------------ |
-| `esbabbler/`       | `v5.md`           | Messaging, calls, rooms, moderation, DMs         |
-| `fileTableEditor/` | —                 | CSV/JSON/XLSX table editor with computed columns |
-| `vue-phaserjs/`    | —                 | Phaser game engine Vue integration               |
-| `refactors/`       | `null-removal.md` | Cross-cutting code quality migrations            |
+| Area               | Active Roadmap    | Description                                                     |
+| ------------------ | ----------------- | --------------------------------------------------------------- |
+| `esbabbler/`       | `v5.md`           | Messaging, calls, rooms, moderation, DMs                        |
+| `fileTableEditor/` | —                 | CSV/JSON/XLSX table editor with computed columns                |
+| `infra/`           | `v2.md`           | Azure Pulumi infrastructure, cost, security, and stack planning |
+| `vue-phaserjs/`    | —                 | Phaser game engine Vue integration                              |
+| `refactors/`       | `null-removal.md` | Cross-cutting code quality migrations                           |
