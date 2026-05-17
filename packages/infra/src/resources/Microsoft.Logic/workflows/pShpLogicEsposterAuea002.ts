@@ -1,6 +1,6 @@
 import * as azure_native from "@pulumi/azure-native";
 
-import { pShpApicnEsposterAuea001 } from "../../Microsoft.Web/connections/pShpApicnEsposterAuea001";
+import { pShpApicnEsposterAuea002 } from "../../Microsoft.Web/connections/pShpApicnEsposterAuea002";
 
 export const pShpLogicEsposterAuea002: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   "p-shp-logic-esposter-auea-002",
@@ -13,7 +13,7 @@ export const pShpLogicEsposterAuea002: azure_native.logic.Workflow = new azure_n
           inputs: {
             host: {
               connection: {
-                name: "@parameters('$connections')['azureappservice-1']['connectionId']",
+                name: "@parameters('$connections')['azureappservice-2']['connectionId']",
               },
             },
             method: "post",
@@ -146,9 +146,9 @@ export const pShpLogicEsposterAuea002: azure_native.logic.Workflow = new azure_n
     parameters: {
       $connections: {
         value: {
-          "azureappservice-1": {
-            connectionId: pShpApicnEsposterAuea001.id,
-            connectionName: "azureappservice-1",
+          "azureappservice-2": {
+            connectionId: pShpApicnEsposterAuea002.id,
+            connectionName: "azureappservice-2",
             connectionProperties: {
               authentication: {
                 type: "ManagedServiceIdentity",

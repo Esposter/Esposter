@@ -1,6 +1,6 @@
 import * as azure_native from "@pulumi/azure-native";
 
-import { dShpApicnEsposterAuea003 } from "../../Microsoft.Web/connections/dShpApicnEsposterAuea003";
+import { dShpApicnEsposterAuea004 } from "../../Microsoft.Web/connections/dShpApicnEsposterAuea004";
 
 export const dShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   "d-shp-logic-esposter-auea-004",
@@ -43,7 +43,7 @@ export const dShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
             },
             host: {
               connection: {
-                name: "@parameters('$connections')['arm']['connectionId']",
+                name: "@parameters('$connections')['arm-1']['connectionId']",
               },
             },
             method: "put",
@@ -91,7 +91,7 @@ export const dShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
             },
             host: {
               connection: {
-                name: "@parameters('$connections')['arm']['connectionId']",
+                name: "@parameters('$connections')['arm-1']['connectionId']",
               },
             },
             method: "put",
@@ -109,7 +109,7 @@ export const dShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
           inputs: {
             host: {
               connection: {
-                name: "@parameters('$connections')['arm']['connectionId']",
+                name: "@parameters('$connections')['arm-1']['connectionId']",
               },
             },
             method: "get",
@@ -124,7 +124,7 @@ export const dShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
           inputs: {
             host: {
               connection: {
-                name: "@parameters('$connections')['arm']['connectionId']",
+                name: "@parameters('$connections')['arm-1']['connectionId']",
               },
             },
             method: "get",
@@ -257,9 +257,9 @@ export const dShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
     parameters: {
       $connections: {
         value: {
-          arm: {
-            connectionId: dShpApicnEsposterAuea003.id,
-            connectionName: "arm",
+          "arm-1": {
+            connectionId: dShpApicnEsposterAuea004.id,
+            connectionName: "arm-1",
             connectionProperties: {
               authentication: {
                 type: "ManagedServiceIdentity",
