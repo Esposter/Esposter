@@ -32,6 +32,8 @@ export const pshpstespauea001: azure_native.storage.StorageAccount = new azure_n
     networkRuleSet: {
       bypass: azure_native.storage.Bypass.AzureServices,
       defaultAction: azure_native.storage.DefaultAction.Allow,
+      ipRules: [],
+      virtualNetworkRules: [],
     },
     publicNetworkAccess: azure_native.storage.PublicNetworkAccess.Enabled,
     resourceGroupName: "p-shp-rg-esposter-auea-001",

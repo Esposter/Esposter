@@ -37,6 +37,7 @@ export const dshpstespauea001: azure_native.storage.StorageAccount = new azure_n
           iPAddressOrRange: "172.212.169.145",
         },
       ],
+      virtualNetworkRules: [],
     },
     publicNetworkAccess: azure_native.storage.PublicNetworkAccess.Enabled,
     resourceGroupName: "d-shp-rg-esposter-auea-001",
