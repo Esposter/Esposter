@@ -6,23 +6,6 @@ This roadmap replaces the temporary spreadsheet-driven migration notes as the du
 
 Status: complete.
 
-Goals:
-
-- import existing manually-created Azure resources into Pulumi state;
-- keep resource declarations one-per-file;
-- preserve current Azure names exactly;
-- keep `protect: true` on imported resources;
-- produce clean `pnpm infra:preview` output before behavior changes.
-
-Completed cleanup:
-
-- moved the phase-1 migration record to `features/infra/completed/azure-pulumi-migration.md`;
-- deleted `packages/infra/data/`;
-- deleted `packages/infra/generated/`;
-- deleted `packages/infra/src/scripts/buildAzureImportManifest.ts`;
-- removed `inventory:build` and import-manifest-only scripts from `packages/infra/package.json`;
-- kept `src/resources/`, `src/index.ts`, `dist/`, and the docs in this folder.
-
 ## Phase 2: Optimize Infrastructure
 
 Goals:

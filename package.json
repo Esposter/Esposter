@@ -46,16 +46,12 @@
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "eslint": "catalog:",
-    "nano-staged": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "tsx": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:"
-  },
-  "nano-staged": {
-    "*": "oxfmt"
   },
   "engines": {
     "node": "^24.15.0"

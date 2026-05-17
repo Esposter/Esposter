@@ -61,7 +61,7 @@ Current imported resources use Australia East:
 | ------ | --------------- | -------------- |
 | `auea` | `australiaeast` | Australia East |
 
-Other historical spreadsheet region tokens:
+Other available region tokens:
 
 | Token    | Azure Location       | Display Name         |
 | -------- | -------------------- | -------------------- |
@@ -70,7 +70,7 @@ Other historical spreadsheet region tokens:
 | `asea`   | `eastasia`           | East Asia            |
 | `assoea` | `southeastasia`      | Southeast Asia       |
 | `aucn`   | `australiacentral`   | Australia Central    |
-| `aucn3`  | `australiacentral2`  | Australia Central 2  |
+| `aucn2`  | `australiacentral2`  | Australia Central 2  |
 | `ause`   | `australiasoutheast` | Australia Southeast  |
 | `brso`   | `brazilsouth`        | Brazil South         |
 | `cacn`   | `canadacentral`      | Canada Central       |

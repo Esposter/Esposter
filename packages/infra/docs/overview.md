@@ -64,9 +64,3 @@ Resource files are grouped by Azure ARM provider namespace and resource type:
 ## Protection
 
 Imported resources keep `protect: true`. Remove protection only as part of an explicit lifecycle change after a clean preview confirms Pulumi state and Azure reality match.
-
-## Migration Archive
-
-The spreadsheet CSVs, generated import manifests, and import generator script have been removed from `packages/infra`.
-
-The phase-1 migration record is archived at `features/infra/completed/azure-pulumi-migration.md`.
