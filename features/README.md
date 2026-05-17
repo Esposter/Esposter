@@ -41,10 +41,10 @@ features/
 
 ## Feature Areas
 
-| Area               | Active Roadmap            | Description                                                     |
-| ------------------ | ------------------------- | --------------------------------------------------------------- |
-| `esbabbler/`       | `v5.md`                   | Messaging, calls, rooms, moderation, DMs                        |
-| `fileTableEditor/` | —                         | CSV/JSON/XLSX table editor with computed columns                |
-| `infra/`           | `phase-2-optimization.md` | Azure Pulumi infrastructure, cost, security, and stack planning |
-| `vue-phaserjs/`    | —                         | Phaser game engine Vue integration                              |
-| `refactors/`       | `null-removal.md`         | Cross-cutting code quality migrations                           |
+| Area               | Active Roadmap    | Description                                                     |
+| ------------------ | ----------------- | --------------------------------------------------------------- |
+| `esbabbler/`       | `v5.md`           | Messaging, calls, rooms, moderation, DMs                        |
+| `fileTableEditor/` | —                 | CSV/JSON/XLSX table editor with computed columns                |
+| `infra/`           | `v1.md`           | Azure Pulumi infrastructure, cost, security, and stack planning |
+| `vue-phaserjs/`    | —                 | Phaser game engine Vue integration                              |
+| `refactors/`       | `null-removal.md` | Cross-cutting code quality migrations                           |

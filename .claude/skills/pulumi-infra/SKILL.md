@@ -28,9 +28,10 @@ Apply when modifying `packages/infra`.
 ## Docs
 
 - Durable infrastructure docs live in `packages/infra/docs/`.
+- Ordered infrastructure roadmap files live in `features/infra/v*.md`; completed roadmaps move to `features/infra/completed/`.
 - Keep Azure naming rules in `docs/naming-conventions.md`.
 - Keep the package overview and imported resource inventory in `docs/overview.md`.
-- Keep phase-2 cost/security findings in `docs/optimization-review.md`.
+- Keep phase-2 cost/security findings in `features/infra/optimization-review.md`.
 - Keep security hardening blockers and app code references in `docs/security-constraints.md`.
 - Keep stack policy in `docs/stacks.md`.
 - Keep cleanup, optimization, naming-refactor, and production-stack phases in `docs/roadmap.md`.
@@ -68,3 +69,7 @@ Apply when modifying `packages/infra`.
 - Run `pnpm --filter @esposter/infra build`.
 - Run `pnpm --filter @esposter/infra lint`.
 - Run Pulumi preview only when the user allows Azure/Pulumi access.
+- Always run `pnpm infra:preview` before every `pnpm infra:up` or direct `pulumi up`.
+- Never use `pulumi up --skip-preview`.
+- Before applying, confirm the preview contains only the intended resources and properties for the active roadmap item.
+- If `pulumi up` partially succeeds or fails, stop and run `pnpm infra:preview` again before any follow-up apply.

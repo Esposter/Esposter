@@ -35,6 +35,12 @@ Goals:
 - verify least-privilege access for identities, connections, keys, and callback URLs;
 - convert imported literal settings into maintainable constants or components where that reduces risk.
 
+Operational rule:
+
+- run `pnpm infra:preview` before every apply;
+- never use `pulumi up --skip-preview`;
+- after any partial or failed update, rerun preview before the next apply.
+
 Candidate review areas:
 
 - Function App hosting plan, scaling, and idle behavior;

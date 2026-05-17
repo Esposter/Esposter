@@ -69,3 +69,5 @@ For Esposter, the safer order is:
 ## Rule Of Thumb
 
 Only run `pulumi up` after reading the preview and confirming the selected stack owns exactly the resources you intend to change.
+
+Never use `pulumi up --skip-preview`. If an update partially succeeds or fails, run `pnpm infra:preview` again before any follow-up apply.

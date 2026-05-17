@@ -2,6 +2,8 @@
 
 This document tracks phase-2 infrastructure optimization candidates found in the imported Pulumi declarations.
 
+Ordered implementation roadmaps live in `v1.md`, `v2.md`, `v3.md`, `v4.md`, `v5.md`, and `v6.md`.
+
 Do not apply cost, network, identity, or retention changes in bulk. Change one resource category at a time and require a clean `pnpm infra:preview` before `pnpm infra:up`.
 
 ## Review Principles
