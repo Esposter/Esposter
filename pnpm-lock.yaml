@@ -430,8 +430,8 @@ catalogs:
       specifier: ^2.0.1
       version: 2.0.1
     grid-engine:
-      specifier: ^2.52.0
-      version: 2.52.0
+      specifier: ^2.52.1
+      version: 2.52.1
     grid-layout-plus:
       specifier: ^1.1.1
       version: 1.1.1
@@ -1009,7 +1009,7 @@ importers:
         version: 2.0.1
       grid-engine:
         specifier: 'catalog:'
-        version: 2.52.0(phaser@4.1.0)
+        version: 2.52.1(phaser@4.1.0)
       grid-layout-plus:
         specifier: 'catalog:'
         version: 1.1.1(vue@3.5.34(typescript@5.9.3))
@@ -9615,8 +9615,8 @@ packages:
   grapick@0.1.13:
     resolution: {integrity: sha512-2v7DdmXKbl9+GsL2ZRl2qEMD+PeczYJBSifwx+5SGbaSh0pZ+b6GLya87cBfN953wwXsZqyzuSVPBzqRz8F12g==}
 
-  grid-engine@2.52.0:
-    resolution: {integrity: sha512-hBN6kbhYe1q0+IpB/qa0BHU3Ya/4wJNwJKUQjb4o+VdotUC/H5uHWLs0m/SQcSKbp07UeCFtlDwF27OdPm7H5Q==}
+  grid-engine@2.52.1:
+    resolution: {integrity: sha512-+EAYI/L6g6wtHW0/gFRD1jnry20zeD6KOlCqKYEuilyrfbX2KF4UPnwRKsSynfzlRuvxkNsG/kmoViir6xxDuA==}
     peerDependencies:
       phaser: ~4.0.0
 
@@ -22511,7 +22511,7 @@ snapshots:
 
   grapick@0.1.13: {}
 
-  grid-engine@2.52.0(phaser@4.1.0):
+  grid-engine@2.52.1(phaser@4.1.0):
     dependencies:
       mnemonist: 0.40.4
       phaser: 4.1.0

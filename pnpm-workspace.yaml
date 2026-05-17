@@ -154,7 +154,7 @@ catalog:
   grapesjs-touch: ^0.1.1
   grapesjs-tui-image-editor: ^1.0.2
   grapesjs-typed: ^2.0.1
-  grid-engine: ^2.52.0
+  grid-engine: ^2.52.1
   grid-layout-plus: ^1.1.1
   gsap: ^3.15.0
   h3: ^1.15.11
