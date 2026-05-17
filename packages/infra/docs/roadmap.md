@@ -16,7 +16,7 @@ Goals:
 
 Completed cleanup:
 
-- moved the phase-1 migration record to `features/completed/azure-pulumi-migration.md`;
+- moved the phase-1 migration record to `features/infra/completed/azure-pulumi-migration.md`;
 - deleted `packages/infra/data/`;
 - deleted `packages/infra/generated/`;
 - deleted `packages/infra/src/scripts/buildAzureImportManifest.ts`;

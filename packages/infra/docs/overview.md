@@ -62,4 +62,4 @@ Imported resources keep `protect: true`. Remove protection only as part of an ex
 
 The spreadsheet CSVs, generated import manifests, and import generator script have been removed from `packages/infra`.
 
-The phase-1 migration record is archived at `features/completed/azure-pulumi-migration.md`.
+The phase-1 migration record is archived at `features/infra/completed/azure-pulumi-migration.md`.

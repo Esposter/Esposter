@@ -30,6 +30,8 @@ Apply when modifying `packages/infra`.
 - Durable infrastructure docs live in `packages/infra/docs/`.
 - Keep Azure naming rules in `docs/naming-conventions.md`.
 - Keep the package overview and imported resource inventory in `docs/overview.md`.
+- Keep phase-2 cost/security findings in `docs/optimization-review.md`.
+- Keep security hardening blockers and app code references in `docs/security-constraints.md`.
 - Keep stack policy in `docs/stacks.md`.
 - Keep cleanup, optimization, naming-refactor, and production-stack phases in `docs/roadmap.md`.
 - Move completed one-off migration notes out of the package after their durable content is represented in `docs/`.
@@ -40,6 +42,14 @@ Apply when modifying `packages/infra`.
 - Import output may contain live Logic App callback URLs/signatures.
 - Do not manually edit generated `src/index.ts`; regenerate it with `pnpm export:gen`.
 - Do not manually edit `dist/`; rebuild it with `pnpm build`.
+
+## Security Constraints
+
+- Do not disable storage shared key access until app blob clients and SAS generation no longer use connection-string/shared-key auth.
+- Do not disable Azure Search local auth until `packages/app` no longer uses `AzureKeyCredential` for Search.
+- Do not disable Event Grid topic local auth until the main app Event Grid publisher no longer uses `AzureKeyCredential`. Azure Functions already use `DefaultAzureCredential`, but the app path is still key-based.
+- Do not restrict Web PubSub to static IP allowlists while browser clients connect directly from arbitrary public IPs.
+- Do not set storage network default action to `Deny` without a complete allowlist, private endpoint, or equivalent migration.
 
 ## Azure Native Imports
 

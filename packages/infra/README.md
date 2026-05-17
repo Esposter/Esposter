@@ -70,6 +70,8 @@ Architecture and migration details:
 
 - [docs/overview.md](docs/overview.md)
 - [docs/naming-conventions.md](docs/naming-conventions.md)
+- [docs/optimization-review.md](docs/optimization-review.md)
+- [docs/security-constraints.md](docs/security-constraints.md)
 - [docs/stacks.md](docs/stacks.md)
 - [docs/roadmap.md](docs/roadmap.md)
 
@@ -111,7 +113,7 @@ pnpm typecheck         # type check
 
 ### Roadmap
 
-The phase-1 spreadsheet migration record has been archived at `features/completed/azure-pulumi-migration.md`. See [docs/roadmap.md](docs/roadmap.md) for the remaining optimization, naming, and stack-alignment phases.
+The phase-1 spreadsheet migration record has been archived at `features/infra/completed/azure-pulumi-migration.md`. See [docs/roadmap.md](docs/roadmap.md) for the remaining optimization, naming, and stack-alignment phases.
 
 ### References
 

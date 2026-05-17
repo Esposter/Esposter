@@ -8,8 +8,6 @@ Planning and spec documents for Esposter features, refactors, and roadmaps.
 
 ```
 features/
-  completed/
-    <name>.md              ← frozen cross-area record once all items are shipped
   <feature-area>/
     architecture.md        ← optional: key file map, data flows, DB schema (reference)
     <active-roadmap>.md    ← current version roadmap with pending items
@@ -23,12 +21,11 @@ features/
 
 ### Folders
 
-| Folder                | Purpose                                                                                      |
-| --------------------- | -------------------------------------------------------------------------------------------- |
-| `features/completed/` | Frozen cross-area records that do not belong to one feature area. Do not edit.               |
-| `specs/`              | Detailed specs for planned, not-yet-started features. Each file covers one cohesive feature. |
-| `<area>/completed/`   | Frozen roadmap or spec files inside a feature area. Move here when every item is shipped.    |
-| `refactors/`          | Cross-cutting technical changes (migrations, style enforcement). Not feature-facing.         |
+| Folder              | Purpose                                                                                      |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| `specs/`            | Detailed specs for planned, not-yet-started features. Each file covers one cohesive feature. |
+| `<area>/completed/` | Frozen roadmap or spec files inside a feature area. Move here when every item is shipped.    |
+| `refactors/`        | Cross-cutting technical changes (migrations, style enforcement). Not feature-facing.         |
 
 ---
 
@@ -44,9 +41,10 @@ features/
 
 ## Feature Areas
 
-| Area               | Active Roadmap    | Description                                      |
-| ------------------ | ----------------- | ------------------------------------------------ |
-| `esbabbler/`       | `v5.md`           | Messaging, calls, rooms, moderation, DMs         |
-| `fileTableEditor/` | —                 | CSV/JSON/XLSX table editor with computed columns |
-| `vue-phaserjs/`    | —                 | Phaser game engine Vue integration               |
-| `refactors/`       | `null-removal.md` | Cross-cutting code quality migrations            |
+| Area               | Active Roadmap            | Description                                                     |
+| ------------------ | ------------------------- | --------------------------------------------------------------- |
+| `esbabbler/`       | `v5.md`                   | Messaging, calls, rooms, moderation, DMs                        |
+| `fileTableEditor/` | —                         | CSV/JSON/XLSX table editor with computed columns                |
+| `infra/`           | `phase-2-optimization.md` | Azure Pulumi infrastructure, cost, security, and stack planning |
+| `vue-phaserjs/`    | —                         | Phaser game engine Vue integration                              |
+| `refactors/`       | `null-removal.md`         | Cross-cutting code quality migrations                           |
