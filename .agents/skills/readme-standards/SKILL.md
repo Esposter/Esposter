@@ -96,4 +96,5 @@ Badge ref format (bottom of file):
 4. **Commands** — list the `pnpm` scripts relevant to that package (build, test, lint:fix, typecheck). Use the package's own scripts, not root scripts.
 5. **No filler** — skip "we are excited to…", lengthy prose, or content that duplicates CLAUDE.md. READMEs are reference docs.
 6. **Private packages** — no "Getting Started / install" section. Add an Architecture or How It Works section instead.
-7. **Root README** — always keep the Packages table in sync when adding or removing packages. Table columns: Package (link), Description, Published (✓ or —).
+7. **Root README** — always keep the Packages table in sync when adding or removing packages. Table columns: Package (link), Description, Published (✓ or —). Package links use absolute GitHub URLs with `tree/main` (directories); file links use `blob/main`. Example: `https://github.com/Esposter/Esposter/tree/main/packages/shared` vs `https://github.com/Esposter/Esposter/blob/main/LICENSE`.
+8. **GitHub URL convention** — `blob/main` for files, `tree/main` for directories. Never use relative paths for GitHub links — typedoc resolves them as local media and warns if they resolve to directories.
