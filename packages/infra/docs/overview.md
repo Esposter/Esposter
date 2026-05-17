@@ -1,4 +1,4 @@
-# Current Azure Resources
+# Infrastructure Overview
 
 This document captures the phase-1 imported Azure resource set.
 
@@ -58,6 +58,8 @@ Resource files are grouped by Azure ARM provider namespace and resource type:
 
 Imported resources keep `protect: true`. Remove protection only as part of an explicit lifecycle change after a clean preview confirms Pulumi state and Azure reality match.
 
-## Temporary Migration Evidence
+## Migration Archive
 
-The CSV files under `data/`, generated import files under `generated/`, and import generator under `src/scripts/` are temporary. They should be removed only after the durable docs and Pulumi source are enough to understand the system without the spreadsheet.
+The spreadsheet CSVs, generated import manifests, and import generator script have been removed from `packages/infra`.
+
+The phase-1 migration record is archived at `features/completed/azure-pulumi-migration.md`.

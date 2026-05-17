@@ -1,4 +1,4 @@
-# Pulumi Stacks And Environments
+# Pulumi Stacks
 
 Pulumi stacks are isolated state and configuration records for the same Pulumi program. A stack name does not automatically filter which Azure resources are managed.
 

@@ -29,8 +29,8 @@ Apply when modifying `packages/infra`.
 
 - Durable infrastructure docs live in `packages/infra/docs/`.
 - Keep Azure naming rules in `docs/naming-conventions.md`.
-- Keep the imported resource inventory in `docs/current-resources.md`.
-- Keep stack/environment policy in `docs/stacks-and-environments.md`.
+- Keep the package overview and imported resource inventory in `docs/overview.md`.
+- Keep stack policy in `docs/stacks.md`.
 - Keep cleanup, optimization, naming-refactor, and production-stack phases in `docs/roadmap.md`.
 - Move completed one-off migration notes out of the package after their durable content is represented in `docs/`.
 
@@ -38,7 +38,6 @@ Apply when modifying `packages/infra`.
 
 - `generated/` is ignored and must not be committed.
 - Import output may contain live Logic App callback URLs/signatures.
-- Migration CSVs and manifest generation are temporary. Remove them after Pulumi source fully owns the infrastructure.
 - Do not manually edit generated `src/index.ts`; regenerate it with `pnpm export:gen`.
 - Do not manually edit `dist/`; rebuild it with `pnpm build`.
 

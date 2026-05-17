@@ -2,7 +2,7 @@
   "name": "@esposter/infra",
   "version": "2.24.0",
   "private": true,
-  "description": "Pulumi infrastructure code and migration tools for Esposter Azure resources.",
+  "description": "Pulumi infrastructure code for Esposter Azure resources.",
   "keywords": [
     "azure",
     "iac",
@@ -31,8 +31,6 @@
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "import": "pnpm build && pulumi import --file generated/azure-import-manifest.json",
-    "inventory:build": "tsx src/scripts/buildAzureImportManifest.ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "infra:preview": "pnpm build && pulumi preview",

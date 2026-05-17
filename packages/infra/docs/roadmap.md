@@ -4,7 +4,7 @@ This roadmap replaces the temporary spreadsheet-driven migration notes as the du
 
 ## Phase 1: Adopt Existing Azure Resources
 
-Status: mostly complete.
+Status: complete.
 
 Goals:
 
@@ -14,14 +14,14 @@ Goals:
 - keep `protect: true` on imported resources;
 - produce clean `pnpm infra:preview` output before behavior changes.
 
-Cleanup after phase 1:
+Completed cleanup:
 
-- move the phase-1 migration record to the root completed features folder;
-- delete `packages/infra/data/`;
-- delete `packages/infra/generated/`;
-- delete `packages/infra/src/scripts/buildAzureImportManifest.ts`;
-- remove `inventory:build` and import-manifest-only scripts from `packages/infra/package.json`;
-- keep `src/resources/`, `src/index.ts`, `dist/`, and the docs in this folder.
+- moved the phase-1 migration record to `features/completed/azure-pulumi-migration.md`;
+- deleted `packages/infra/data/`;
+- deleted `packages/infra/generated/`;
+- deleted `packages/infra/src/scripts/buildAzureImportManifest.ts`;
+- removed `inventory:build` and import-manifest-only scripts from `packages/infra/package.json`;
+- kept `src/resources/`, `src/index.ts`, `dist/`, and the docs in this folder.
 
 ## Phase 2: Optimize Infrastructure
 
@@ -67,4 +67,4 @@ Goals:
 - if using one stack, rename the current imported stack to `prod` or `main`;
 - if using separate stacks, gate resources by environment and import each environment into the matching stack;
 - run a clean preview before any update;
-- document the final stack policy in `docs/stacks-and-environments.md`.
+- document the final stack policy in `docs/stacks.md`.

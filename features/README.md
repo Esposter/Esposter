@@ -8,6 +8,8 @@ Planning and spec documents for Esposter features, refactors, and roadmaps.
 
 ```
 features/
+  completed/
+    <name>.md              ← frozen cross-area record once all items are shipped
   <feature-area>/
     architecture.md        ← optional: key file map, data flows, DB schema (reference)
     <active-roadmap>.md    ← current version roadmap with pending items
@@ -21,11 +23,12 @@ features/
 
 ### Folders
 
-| Folder       | Purpose                                                                                      |
-| ------------ | -------------------------------------------------------------------------------------------- |
-| `specs/`     | Detailed specs for planned, not-yet-started features. Each file covers one cohesive feature. |
-| `completed/` | Frozen roadmap or spec files. Move here when every item is shipped. Do not edit.             |
-| `refactors/` | Cross-cutting technical changes (migrations, style enforcement). Not feature-facing.         |
+| Folder                | Purpose                                                                                      |
+| --------------------- | -------------------------------------------------------------------------------------------- |
+| `features/completed/` | Frozen cross-area records that do not belong to one feature area. Do not edit.               |
+| `specs/`              | Detailed specs for planned, not-yet-started features. Each file covers one cohesive feature. |
+| `<area>/completed/`   | Frozen roadmap or spec files inside a feature area. Move here when every item is shipped.    |
+| `refactors/`          | Cross-cutting technical changes (migrations, style enforcement). Not feature-facing.         |
 
 ---
 

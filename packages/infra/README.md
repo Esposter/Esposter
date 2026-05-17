@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Pulumi infrastructure code and migration tooling for Esposter Azure resources.
+Pulumi infrastructure code for Esposter Azure resources.
 
 ## Table of Contents
 
@@ -63,18 +63,15 @@ Use `prod` instead of `dev` when preparing the production stack.
 - `dist/index.js` is the compiled Pulumi runtime entrypoint used by `Pulumi.yaml`.
 - `Pulumi.yaml` defines the Pulumi project.
 - `Pulumi.dev.yaml` and `Pulumi.prod.yaml` hold stack-specific configuration.
-- `docs/` contains durable architecture, naming, resource inventory, stack, and roadmap notes.
+- `docs/` contains durable architecture, naming, inventory, stack, and roadmap notes.
 - `src/resources/` contains Pulumi resource declarations grouped by Azure ARM provider namespace and resource type.
-- `src/scripts/` contains temporary migration helpers until the imported Azure resources are fully represented in Pulumi code.
-- `data/` and `generated/` are temporary migration folders and should be removed after the import phase.
 
 Architecture and migration details:
 
+- [docs/overview.md](docs/overview.md)
 - [docs/naming-conventions.md](docs/naming-conventions.md)
-- [docs/current-resources.md](docs/current-resources.md)
-- [docs/stacks-and-environments.md](docs/stacks-and-environments.md)
+- [docs/stacks.md](docs/stacks.md)
 - [docs/roadmap.md](docs/roadmap.md)
-- [azure-pulumi-migration.md](azure-pulumi-migration.md)
 
 ### Architecture
 
@@ -105,8 +102,6 @@ Run from `packages/infra/`:
 ```bash
 pnpm build             # generate exports and compile the Pulumi program to dist/
 pnpm export:gen        # regenerate src/index.ts via ctix
-pnpm inventory:build   # generate migration import files from CSV exports
-pnpm import            # import resources from generated/azure-import-manifest.json
 pnpm infra:preview     # preview Pulumi changes
 pnpm infra:refresh     # refresh Pulumi state from Azure
 pnpm infra:up          # apply Pulumi changes
@@ -114,11 +109,9 @@ pnpm lint:fix          # auto-fix lint issues
 pnpm typecheck         # type check
 ```
 
-### Migration
+### Roadmap
 
-The current repository still includes temporary migration files generated from the previous Azure asset spreadsheet. After the live Azure resources are imported and refactored into first-class Pulumi code, remove the migration-only CSV, manifest, review, and generator files.
-
-See [docs/roadmap.md](docs/roadmap.md) for the cleanup and optimization phases.
+The phase-1 spreadsheet migration record has been archived at `features/completed/azure-pulumi-migration.md`. See [docs/roadmap.md](docs/roadmap.md) for the remaining optimization, naming, and stack-alignment phases.
 
 ### References
 
