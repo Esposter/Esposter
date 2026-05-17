@@ -4,7 +4,7 @@
 
 Pulumi infrastructure code and migration tooling for Esposter Azure resources.
 
-### Table of Contents
+## Table of Contents
 
 - 📖 [Documentation](#documentation)
 - ⚖️ [License](#license)
