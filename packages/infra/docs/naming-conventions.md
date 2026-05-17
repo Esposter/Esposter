@@ -109,22 +109,23 @@ Other historical spreadsheet region tokens:
 
 These tokens are used by the currently imported Esposter resources.
 
-| Token    | Asset Type                    | Azure ARM Type                             |
-| -------- | ----------------------------- | ------------------------------------------ |
-| `ag`     | Azure Monitor action group    | `Microsoft.Insights/actionGroups`          |
-| `apicn`  | API connection                | `Microsoft.Web/connections`                |
-| `appi`   | Application Insights          | `Microsoft.Insights/components`            |
-| `bdg`    | Budget                        | `Microsoft.Consumption/budgets`            |
-| `evgt`   | Event Grid Topic              | `Microsoft.EventGrid/topics`               |
-| `evgts`  | Event Grid Topic Subscription | `Microsoft.EventGrid/eventSubscriptions`   |
-| `func`   | Function app                  | `Microsoft.Web/sites`                      |
-| `log`    | Log Analytics workspace       | `Microsoft.OperationalInsights/workspaces` |
-| `logic`  | Logic apps                    | `Microsoft.Logic/workflows`                |
-| `pubsub` | Web PubSub                    | `Microsoft.SignalRService/webPubSub`       |
-| `rg`     | Resource group                | `Microsoft.Resources/resourceGroups`       |
-| `spch`   | Cognitive Speech Services     | `Microsoft.CognitiveServices/accounts`     |
-| `srch`   | Azure Cognitive Search        | `Microsoft.Search/searchServices`          |
-| `st`     | Storage account               | `Microsoft.Storage/storageAccounts`        |
+| Token    | Asset Type                    | Azure ARM Type                              |
+| -------- | ----------------------------- | ------------------------------------------- |
+| `ag`     | Azure Monitor action group    | `Microsoft.Insights/actionGroups`           |
+| `apicn`  | API connection                | `Microsoft.Web/connections`                 |
+| `appi`   | Application Insights          | `Microsoft.Insights/components`             |
+| `bdg`    | Budget                        | `Microsoft.Consumption/budgets`             |
+| `evgt`   | Event Grid Topic              | `Microsoft.EventGrid/topics`                |
+| `evgts`  | Event Grid Topic Subscription | `Microsoft.EventGrid/eventSubscriptions`    |
+| `func`   | Function app                  | `Microsoft.Web/sites`                       |
+| `log`    | Log Analytics workspace       | `Microsoft.OperationalInsights/workspaces`  |
+| `logic`  | Logic apps                    | `Microsoft.Logic/workflows`                 |
+| `pa`     | Policy assignment             | `Microsoft.Authorization/policyAssignments` |
+| `pubsub` | Web PubSub                    | `Microsoft.SignalRService/webPubSub`        |
+| `rg`     | Resource group                | `Microsoft.Resources/resourceGroups`        |
+| `spch`   | Cognitive Speech Services     | `Microsoft.CognitiveServices/accounts`      |
+| `srch`   | Azure Cognitive Search        | `Microsoft.Search/searchServices`           |
+| `st`     | Storage account               | `Microsoft.Storage/storageAccounts`         |
 
 Historical spreadsheet rows also included `a` for Azure Monitor actions. Those rows did not import as standalone Azure resources; the behavior is represented through action group receivers.
 
