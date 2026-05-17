@@ -1,19 +1,23 @@
+import AzureReaderRoleDefinitionId from "@/constants/AzureReaderRoleDefinitionId";
+import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
+import { dShpLogicEsposterAuea002 } from "@/resources/Microsoft.Logic/workflows/dShpLogicEsposterAuea002";
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
+import * as pulumi from "@pulumi/pulumi";
+
+const roleAssignmentName = "9963c0ed-36bc-468f-8b87-952a4e89bdda";
 
 export const dShpLogicEsposterAuea002Reader: azure_native.authorization.RoleAssignment =
   new azure_native.authorization.RoleAssignment(
     "d-shp-logic-esposter-auea-002-reader",
     {
-      principalId: "c22c79d5-66df-4ae9-9395-5657876464dc",
+      principalId: dShpLogicEsposterAuea002.identity.apply((identity) => identity?.principalId ?? ""),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
-      roleAssignmentName: "9963c0ed-36bc-468f-8b87-952a4e89bdda",
-      roleDefinitionId:
-        "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7",
-      scope: "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/d-shp-rg-esposter-auea-001",
+      roleAssignmentName,
+      roleDefinitionId: AzureReaderRoleDefinitionId,
+      scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${dShpRgEsposterAuea001.name}`,
     },
     {
-      import:
-        "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/d-shp-rg-esposter-auea-001/providers/Microsoft.Authorization/roleAssignments/9963c0ed-36bc-468f-8b87-952a4e89bdda",
       protect: true,
     },
   );

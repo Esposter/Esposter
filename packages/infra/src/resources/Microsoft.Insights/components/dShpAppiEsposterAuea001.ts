@@ -1,6 +1,6 @@
+import { dShpLogEsposterAuea001 } from "@/resources/Microsoft.OperationalInsights/workspaces/dShpLogEsposterAuea001";
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
-
-import { dShpLogEsposterAuea001 } from "../../Microsoft.OperationalInsights/workspaces/dShpLogEsposterAuea001";
 
 export const dShpAppiEsposterAuea001: azure_native.applicationinsights.Component =
   new azure_native.applicationinsights.Component(
@@ -14,7 +14,7 @@ export const dShpAppiEsposterAuea001: azure_native.applicationinsights.Component
       publicNetworkAccessForIngestion: azure_native.applicationinsights.PublicNetworkAccessType.Enabled,
       publicNetworkAccessForQuery: azure_native.applicationinsights.PublicNetworkAccessType.Enabled,
       requestSource: "IbizaAIExtension",
-      resourceGroupName: "d-shp-rg-esposter-auea-001",
+      resourceGroupName: dShpRgEsposterAuea001.name,
       resourceName: "d-shp-appi-esposter-auea-001",
       retentionInDays: 90,
       tags: {

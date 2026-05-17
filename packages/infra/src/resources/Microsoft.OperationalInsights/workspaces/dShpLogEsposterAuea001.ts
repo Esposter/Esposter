@@ -1,3 +1,4 @@
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
 export const dShpLogEsposterAuea001: azure_native.operationalinsights.Workspace =
@@ -10,7 +11,7 @@ export const dShpLogEsposterAuea001: azure_native.operationalinsights.Workspace 
       location: "australiaeast",
       publicNetworkAccessForIngestion: azure_native.operationalinsights.PublicNetworkAccessType.Enabled,
       publicNetworkAccessForQuery: azure_native.operationalinsights.PublicNetworkAccessType.Enabled,
-      resourceGroupName: "d-shp-rg-esposter-auea-001",
+      resourceGroupName: dShpRgEsposterAuea001.name,
       retentionInDays: 30,
       sku: {
         name: "pergb2018",

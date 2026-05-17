@@ -1,3 +1,5 @@
+import { dShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/dShpAppiEsposterAuea001";
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
 export const dShpFuncEsposterAuea001: azure_native.web.WebApp = new azure_native.web.WebApp(
@@ -46,15 +48,14 @@ export const dShpFuncEsposterAuea001: azure_native.web.WebApp = new azure_native
     publicNetworkAccess: "Enabled",
     redundancyMode: azure_native.web.RedundancyMode.None,
     reserved: false,
-    resourceGroupName: "d-shp-rg-esposter-auea-001",
+    resourceGroupName: dShpRgEsposterAuea001.name,
     scmSiteAlsoStopped: false,
     serverFarmId:
       "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/d-shp-rg-esposter-auea-001/providers/Microsoft.Web/serverfarms/ASP-dshprgesposterauea001-94fb",
     storageAccountRequired: false,
     tags: {
       Application: "Esposter",
-      "hidden-link: /app-insights-resource-id":
-        "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/d-shp-rg-esposter-auea-001/providers/microsoft.insights/components/d-shp-appi-esposter-auea-001",
+      "hidden-link: /app-insights-resource-id": dShpAppiEsposterAuea001.id,
     },
   },
   {

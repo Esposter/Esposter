@@ -1,3 +1,4 @@
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
 export const dshpsrchespauea001: azure_native.search.Service = new azure_native.search.Service(
@@ -20,7 +21,7 @@ export const dshpsrchespauea001: azure_native.search.Service = new azure_native.
     partitionCount: 1,
     publicNetworkAccess: azure_native.search.PublicNetworkAccess.Enabled,
     replicaCount: 1,
-    resourceGroupName: "d-shp-rg-esposter-auea-001",
+    resourceGroupName: dShpRgEsposterAuea001.name,
     searchServiceName: "dshpsrchespauea001",
     semanticSearch: azure_native.search.SearchSemanticSearch.Disabled,
     sku: {

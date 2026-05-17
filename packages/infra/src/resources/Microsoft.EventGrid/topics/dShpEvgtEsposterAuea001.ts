@@ -1,3 +1,4 @@
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
 export const dShpEvgtEsposterAuea001: azure_native.eventgrid.Topic = new azure_native.eventgrid.Topic(
@@ -12,7 +13,7 @@ export const dShpEvgtEsposterAuea001: azure_native.eventgrid.Topic = new azure_n
     location: "australiaeast",
     minimumTlsVersionAllowed: azure_native.eventgrid.TlsVersion.TlsVersion_1_2,
     publicNetworkAccess: azure_native.eventgrid.PublicNetworkAccess.Enabled,
-    resourceGroupName: "d-shp-rg-esposter-auea-001",
+    resourceGroupName: dShpRgEsposterAuea001.name,
     tags: {
       Application: "Esposter",
     },

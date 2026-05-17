@@ -1,3 +1,4 @@
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
 export const dShpApicnEsposterAuea002: azure_native.web.Connection = new azure_native.web.Connection(
@@ -19,7 +20,7 @@ export const dShpApicnEsposterAuea002: azure_native.web.Connection = new azure_n
       },
       displayName: "d-shp-apicn-esposter-auea-002",
     },
-    resourceGroupName: "d-shp-rg-esposter-auea-001",
+    resourceGroupName: dShpRgEsposterAuea001.name,
     tags: {
       Application: "Esposter",
     },

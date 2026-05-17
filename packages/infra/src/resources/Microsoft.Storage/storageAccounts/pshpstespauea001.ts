@@ -1,10 +1,12 @@
+import Pshpstespauea001Name from "@/constants/Pshpstespauea001Name";
+import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
 export const pshpstespauea001: azure_native.storage.StorageAccount = new azure_native.storage.StorageAccount(
-  "pshpstespauea001",
+  Pshpstespauea001Name,
   {
     accessTier: azure_native.storage.AccessTier.Hot,
-    accountName: "pshpstespauea001",
+    accountName: Pshpstespauea001Name,
     allowBlobPublicAccess: true,
     allowCrossTenantReplication: false,
     allowSharedKeyAccess: true,
@@ -36,7 +38,7 @@ export const pshpstespauea001: azure_native.storage.StorageAccount = new azure_n
       virtualNetworkRules: [],
     },
     publicNetworkAccess: azure_native.storage.PublicNetworkAccess.Enabled,
-    resourceGroupName: "p-shp-rg-esposter-auea-001",
+    resourceGroupName: pShpRgEsposterAuea001.name,
     sku: {
       name: azure_native.storage.SkuName.Standard_LRS,
     },

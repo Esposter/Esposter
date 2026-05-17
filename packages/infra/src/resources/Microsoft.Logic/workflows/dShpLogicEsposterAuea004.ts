@@ -1,6 +1,6 @@
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
+import { dShpApicnEsposterAuea004 } from "@/resources/Microsoft.Web/connections/dShpApicnEsposterAuea004";
 import * as azure_native from "@pulumi/azure-native";
-
-import { dShpApicnEsposterAuea004 } from "../../Microsoft.Web/connections/dShpApicnEsposterAuea004";
 
 export const dShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   "d-shp-logic-esposter-auea-004",
@@ -270,7 +270,7 @@ export const dShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
         },
       },
     },
-    resourceGroupName: "d-shp-rg-esposter-auea-001",
+    resourceGroupName: dShpRgEsposterAuea001.name,
     state: azure_native.logic.WorkflowState.Enabled,
     tags: {
       Application: "Esposter",

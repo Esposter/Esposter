@@ -1,3 +1,4 @@
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
 export const dShpPubsubEsposterAuea001: azure_native.webpubsub.WebPubSub = new azure_native.webpubsub.WebPubSub(
@@ -30,7 +31,7 @@ export const dShpPubsubEsposterAuea001: azure_native.webpubsub.WebPubSub = new a
     },
     publicNetworkAccess: "Enabled",
     regionEndpointEnabled: "Enabled",
-    resourceGroupName: "d-shp-rg-esposter-auea-001",
+    resourceGroupName: dShpRgEsposterAuea001.name,
     resourceName: "d-shp-pubsub-esposter-auea-001",
     resourceStopped: "false",
     sku: {

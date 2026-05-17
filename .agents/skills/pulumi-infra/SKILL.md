@@ -24,6 +24,26 @@ Apply when modifying `packages/infra`.
 - File names use camelCase derived from the Azure resource name, e.g. `d-shp-rg-esposter-auea-001` -> `dShpRgEsposterAuea001.ts`.
 - Export exactly one resource constant per resource file.
 - Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
+- Use `@/` absolute imports from `packages/infra/src`; do not add new relative imports between infra source files.
+
+## Resource References And Dependencies
+
+- Prefer existing Pulumi resource outputs over repeated Azure identifier string literals when one managed resource refers to another.
+- For resources inside a resource group, pass `resourceGroupName: <resourceGroup>.name` instead of repeating the resource group name string.
+- For storage child resources such as `BlobServiceProperties` and `ManagementPolicy`, pass `accountName: <storageAccount>.name` and `resourceGroupName: <resourceGroup>.name`.
+- For extension resources with a `scope` argument, prefer the scoped resource's `.id` when the API accepts an ARM ID. Preserve APIs that intentionally require the no-leading-slash scope format by composing the scope from constants and resource outputs.
+- Use Pulumi string composition consistently:
+  - Use the resource output directly when the entire value is an output, e.g. `scope: eventGridTopic.id`.
+  - Use `pulumi.interpolate` when composing a string from one or more Pulumi outputs, e.g. ``pulumi.interpolate`${webApp.id}/functions/ProcessWebhook` ``.
+  - Use a normal template string for constants-only values, e.g. `` `/subscriptions/${AzureSubscriptionId}` ``.
+  - Preserve the exact Azure string shape from imported state. In this package, `RoleAssignment.scope`, `EventSubscription.scope`, and consumption budget resource-group scopes use `subscriptions/...` without a leading slash, so compose those with `pulumi.interpolate` instead of using `.id`.
+- For role assignments to managed identities, derive `principalId` from the owning resource's identity output when the identity resource is managed in Pulumi. Keep the live Azure role assignment GUID as `roleAssignmentName`.
+- Use Pulumi `import` only for the first adoption apply, then remove it from code after the resource is imported into state. If an imported role assignment needs `ignoreChanges: ["principalId"]` only to get through the adoption preview, remove that with the `import` option after adoption succeeds.
+- Keep Pulumi `import` option values as literal Azure IDs unless the provider type accepts outputs there; this package currently typechecks `import` as a plain string.
+- Store shared Azure constants, such as subscription IDs and built-in role definition IDs, in `src/constants/` instead of repeating them in resource files.
+- Store canonical resource names in `src/constants/` when the same name must be used both to declare the resource and to compose plain-string import IDs or other non-`Input` values.
+- Internal Pulumi constants must be default exports, not named exports, when they live under `src/`; ctix uses `export *`, which would otherwise expose constants as Pulumi stack outputs.
+- Be careful with the Pulumi `parent` option on existing tracked resources: adding or changing `parent` changes the Pulumi URN and can require aliases or an import/state migration. Use input/output references for dependency edges unless the resource is new or you are deliberately migrating URNs.
 
 ## Docs
 

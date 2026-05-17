@@ -1,10 +1,11 @@
+import PShpRgEsposterAuea001Name from "@/constants/PShpRgEsposterAuea001Name";
 import * as azure_native from "@pulumi/azure-native";
 
 export const pShpRgEsposterAuea001: azure_native.resources.ResourceGroup = new azure_native.resources.ResourceGroup(
-  "p-shp-rg-esposter-auea-001",
+  PShpRgEsposterAuea001Name,
   {
     location: "australiaeast",
-    resourceGroupName: "p-shp-rg-esposter-auea-001",
+    resourceGroupName: PShpRgEsposterAuea001Name,
     tags: {
       Application: "Esposter",
     },
