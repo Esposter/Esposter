@@ -1,4 +1,5 @@
 import * as azure_native from "@pulumi/azure-native";
+import { pShpApicnEsposterAuea004 } from "../../Microsoft.Web/connections/pShpApicnEsposterAuea004";
 
 export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   "p-shp-logic-esposter-auea-004",
@@ -252,7 +253,17 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
       type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned,
     },
     location: "australiaeast",
-    parameters: {},
+    parameters: {
+      $connections: {
+        value: {
+          "arm-1": {
+            connectionId: pShpApicnEsposterAuea004.id,
+            connectionName: "arm-1",
+            id: "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/providers/Microsoft.Web/locations/australiaeast/managedApis/arm",
+          },
+        },
+      },
+    },
     resourceGroupName: "p-shp-rg-esposter-auea-001",
     state: azure_native.logic.WorkflowState.Enabled,
     tags: {

@@ -35,10 +35,10 @@
     "inventory:build": "tsx src/scripts/buildAzureImportManifest.ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "preview": "pnpm build && pulumi preview",
-    "refresh": "pnpm build && pulumi refresh",
-    "typecheck": "tsgo",
-    "up": "pnpm build && pulumi up"
+    "infra:preview": "pnpm build && pulumi preview",
+    "infra:refresh": "pnpm build && pulumi refresh",
+    "infra:up": "pnpm build && pulumi up",
+    "typecheck": "tsgo"
   },
   "dependencies": {
     "@pulumi/azure-native": "catalog:",

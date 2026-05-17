@@ -6,7 +6,7 @@ Apply when creating, updating, or referencing files in the `features/` directory
 
 ## Directory Layout
 
-```
+```text
 features/
   <area>/
     architecture.md        ← AI reference: key files, data flows, DB tables

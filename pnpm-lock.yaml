@@ -1556,6 +1556,10 @@ importers:
       '@pulumi/pulumi':
         specifier: 'catalog:'
         version: 3.239.0(typescript@5.9.3)
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
 
   packages/parse-tmx:
     dependencies:

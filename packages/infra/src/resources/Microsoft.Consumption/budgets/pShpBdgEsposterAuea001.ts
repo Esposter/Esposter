@@ -6,7 +6,6 @@ export const pShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure
     amount: 0.01,
     budgetName: "p-shp-bdg-esposter-auea-001",
     category: azure_native.consumption.CategoryType.Cost,
-    eTag: '"1dc3f63815d1a57"',
     filter: {
       dimensions: {
         name: "ResourceId",
@@ -16,8 +15,16 @@ export const pShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure
         ],
       },
     },
-    notifications: {},
-    scope: "subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001",
+    notifications: {
+      ActualCost_100: {
+        contactEmails: ["jimmychen12138@gmail.com"],
+        enabled: true,
+        operator: azure_native.consumption.BudgetOperatorType.GreaterThanOrEqualTo,
+        threshold: 100,
+        thresholdType: azure_native.consumption.ThresholdType.Actual,
+      },
+    },
+    scope: "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001",
     timeGrain: azure_native.consumption.TimeGrainType.Monthly,
     timePeriod: {
       endDate: "2035-12-31T00:00:00Z",

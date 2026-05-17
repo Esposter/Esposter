@@ -1,5 +1,7 @@
 import * as azure_native from "@pulumi/azure-native";
 
+import { pShpLogEsposterAuea001 } from "../../Microsoft.OperationalInsights/workspaces/pShpLogEsposterAuea001";
+
 export const pShpAppiEsposterAuea001: azure_native.applicationinsights.Component =
   new azure_native.applicationinsights.Component(
     "p-shp-appi-esposter-auea-001",
@@ -18,8 +20,7 @@ export const pShpAppiEsposterAuea001: azure_native.applicationinsights.Component
       tags: {
         Application: "Esposter",
       },
-      workspaceResourceId:
-        "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.OperationalInsights/workspaces/p-shp-log-esposter-auea-001",
+      workspaceResourceId: pShpLogEsposterAuea001.id,
     },
     {
       protect: true,

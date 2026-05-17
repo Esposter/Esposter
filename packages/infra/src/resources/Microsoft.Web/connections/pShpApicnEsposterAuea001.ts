@@ -17,14 +17,7 @@ export const pShpApicnEsposterAuea001: azure_native.web.Connection = new azure_n
         name: "azureappservice",
         type: "Microsoft.Web/locations/managedApis",
       },
-      changedTime: "2025-10-19T09:22:57.1882321Z",
-      createdTime: "2025-10-17T11:05:51.7643137Z",
       displayName: "p-shp-apicn-esposter-auea-001",
-      statuses: [
-        {
-          status: "Ready",
-        },
-      ],
     },
     resourceGroupName: "p-shp-rg-esposter-auea-001",
     tags: {

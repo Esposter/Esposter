@@ -24,7 +24,7 @@ export const pShpEvgtsEsposterAuea002: azure_native.eventgrid.EventSubscription 
         maxDeliveryAttempts: 30,
       },
       scope:
-        "subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.EventGrid/topics/p-shp-evgt-esposter-auea-001",
+        "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.EventGrid/topics/p-shp-evgt-esposter-auea-001",
     },
     {
       protect: true,
