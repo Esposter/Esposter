@@ -44,8 +44,8 @@ All commands run from `packages/app/` unless noted.
 ```bash
 pnpm dev              # start dev server
 pnpm typecheck        # vue-tsc type check
-pnpm lint             # oxlint + eslint (check only)
-pnpm lint:fix         # oxlint + eslint --fix (always use this; never fix lint manually)
+pnpm lint             # oxlint + eslint (CI/check-only; avoid locally unless requested)
+pnpm lint:fix         # oxlint + eslint --fix (use this for local lint verification)
 pnpm test             # vitest watch mode
 pnpm test path/to/file.test.ts          # run single test file
 pnpm test -t "test description"         # run single test by name
@@ -53,6 +53,8 @@ pnpm coverage         # vitest run --coverage
 ```
 
 Do not run Vitest on Windows in this repository unless explicitly requested. Known Windows startup failures include Vite/Rolldown `spawn EPERM` during config loading and UnoCSS/happy-dom path issues; write tests when useful and let the user run them in a supported environment.
+
+When linting locally, run `pnpm lint:fix` directly. `pnpm lint` is mainly for CI/CD check-only verification.
 
 Vue convention notes:
 

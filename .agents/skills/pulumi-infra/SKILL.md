@@ -125,7 +125,7 @@ Azure role assignments are immutable: the role cannot be changed, only deleted a
 ## Verification
 
 - Run `pnpm --filter @esposter/infra build`.
-- Run `pnpm --filter @esposter/infra lint`.
+- Run `pnpm --filter @esposter/infra lint:fix`; use `lint` only for CI/check-only verification or when explicitly requested.
 - Run Pulumi preview only when the user allows Azure/Pulumi access.
 - Always run `pnpm infra:preview` before every `pnpm infra:up` or direct `pulumi up`.
 - Never use `pulumi up --skip-preview`.

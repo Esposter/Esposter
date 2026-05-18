@@ -7,12 +7,15 @@ import { applyPrincipalId } from "@/services/applyPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
+const roleAssignmentName = "46d16073-bc6c-a66a-99d3-4badf1da1438";
+
 export const devLogicEsposterAuea001WebsiteContributor: azure_native.authorization.RoleAssignment =
   new azure_native.authorization.RoleAssignment(
     "dev-logic-esposter-auea-001-website-contributor",
     {
       principalId: applyPrincipalId(devLogicEsposterAuea001.identity, devLogicEsposterAuea001.name),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
+      roleAssignmentName,
       roleDefinitionId: AzureWebsiteContributorRoleDefinitionId,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${dShpRgEsposterAuea001.name}/providers/Microsoft.Web/sites/${dShpFuncEsposterAuea001.name}`,
     },

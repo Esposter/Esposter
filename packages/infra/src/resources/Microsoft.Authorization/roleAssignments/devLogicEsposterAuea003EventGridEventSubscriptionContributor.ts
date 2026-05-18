@@ -7,12 +7,15 @@ import { applyPrincipalId } from "@/services/applyPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
+const roleAssignmentName = "bca9794c-1ad0-012c-2c6b-c4442a06b3b3";
+
 export const devLogicEsposterAuea003EventGridEventSubscriptionContributor: azure_native.authorization.RoleAssignment =
   new azure_native.authorization.RoleAssignment(
     "dev-logic-esposter-auea-003-event-grid-event-subscription-contributor",
     {
       principalId: applyPrincipalId(devLogicEsposterAuea003.identity, devLogicEsposterAuea003.name),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
+      roleAssignmentName,
       roleDefinitionId: AzureEventGridEventSubscriptionContributorRoleDefinitionId,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${dShpRgEsposterAuea001.name}/providers/Microsoft.EventGrid/topics/${dShpEvgtEsposterAuea001.name}`,
     },
