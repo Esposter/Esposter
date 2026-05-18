@@ -289,8 +289,8 @@ catalogs:
       specifier: ^4.2.0
       version: 4.2.0
     '@vue/language-core':
-      specifier: ^3.2.9
-      version: 3.2.9
+      specifier: ^3.3.0
+      version: 3.3.0
     '@vue/test-utils':
       specifier: ^2.4.10
       version: 2.4.10
@@ -1420,7 +1420,7 @@ importers:
         version: 1.6.17(@typescript-eslint/eslint-plugin@8.59.3(@typescript-eslint/parser@8.59.3(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.4.0(jiti@2.7.0))(typescript@5.9.3)(vitest@4.1.6)
       '@vue/language-core':
         specifier: 'catalog:'
-        version: 3.2.9
+        version: 3.3.0
       ctix:
         specifier: 'catalog:'
         version: 2.8.0(@types/node@25.8.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
@@ -1453,7 +1453,7 @@ importers:
         version: 21.0.0(@nuxt/kit@4.4.6(magicast@0.5.3))(@vueuse/core@14.3.0(vue@3.5.34(typescript@5.9.3)))
       unplugin-dts:
         specifier: 'catalog:'
-        version: 1.0.0-beta.6(@vue/language-core@3.2.9)(esbuild@0.28.0)(rolldown@1.0.1)(rollup@4.60.4)(typescript@5.9.3)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.0))
+        version: 1.0.0-beta.6(@vue/language-core@3.3.0)(esbuild@0.28.0)(rolldown@1.0.1)(rollup@4.60.4)(typescript@5.9.3)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.0))
       vite:
         specifier: ^8.0.13
         version: 8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0)
@@ -7572,6 +7572,9 @@ packages:
 
   '@vue/language-core@3.2.9':
     resolution: {integrity: sha512-ie0ojt/0fU/GfIogh+zgHbaYRPlt9S+cLOxcWwF7nTSFh897BVgnFKL2byT4kpp1mlqYWZ2psGwSniyE2xsxYw==}
+
+  '@vue/language-core@3.3.0':
+    resolution: {integrity: sha512-EyUxq1b8Yoxk6hQ6X33BIRnfFLb9Rbm9w/8G8y6uMxlQu7CW7yy9JS/z54xSpIvBvVWX6Lt5v1aBGwmrqD4aJw==}
 
   '@vue/reactivity@3.5.34':
     resolution: {integrity: sha512-y9XDjCEuBp+98k+UL5dbYkh57AHU4o6cxZedOPXw3bmrZZYLQsVHguGurq7hVrPCSrQtrnz1f9dssyFr+dMXfQ==}
@@ -20396,6 +20399,16 @@ snapshots:
       path-browserify: 1.0.1
       picomatch: 4.0.4
 
+  '@vue/language-core@3.3.0':
+    dependencies:
+      '@volar/language-core': 2.4.28
+      '@vue/compiler-dom': 3.5.34
+      '@vue/shared': 3.5.34
+      alien-signals: 3.2.1
+      muggle-string: 0.4.1
+      path-browserify: 1.0.1
+      picomatch: 4.0.4
+
   '@vue/reactivity@3.5.34':
     dependencies:
       '@vue/shared': 3.5.34
@@ -27206,7 +27219,7 @@ snapshots:
       '@nuxt/kit': 4.4.6(magicast@0.5.3)
       '@vueuse/core': 14.3.0(vue@3.5.34(typescript@5.9.3))
 
-  unplugin-dts@1.0.0-beta.6(@vue/language-core@3.2.9)(esbuild@0.28.0)(rolldown@1.0.1)(rollup@4.60.4)(typescript@5.9.3)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.0)):
+  unplugin-dts@1.0.0-beta.6(@vue/language-core@3.3.0)(esbuild@0.28.0)(rolldown@1.0.1)(rollup@4.60.4)(typescript@5.9.3)(vite@8.0.13(@types/node@25.8.0)(esbuild@0.28.0)(jiti@2.7.0)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.47.1)(tsx@4.22.1)(yaml@2.9.0))(webpack@5.106.2(esbuild@0.28.0)):
     dependencies:
       '@rollup/pluginutils': 5.3.0(rollup@4.60.4)
       '@volar/typescript': 2.4.28
@@ -27218,7 +27231,7 @@ snapshots:
       typescript: 5.9.3
       unplugin: 2.3.11
     optionalDependencies:
-      '@vue/language-core': 3.2.9
+      '@vue/language-core': 3.3.0
       esbuild: 0.28.0
       rolldown: 1.0.1
       rollup: 4.60.4
