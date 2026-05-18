@@ -39,6 +39,7 @@
     "typecheck": "tsgo"
   },
   "dependencies": {
+    "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "@pulumi/azure-native": "catalog:",
     "@pulumi/pulumi": "catalog:"

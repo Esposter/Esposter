@@ -1,14 +1,15 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
-import Pshpstespauea001Name from "@/constants/Pshpstespauea001Name";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
+const accountName = "pshpstespauea001";
+
 export const pshpstespauea001: azure_native.storage.StorageAccount = new azure_native.storage.StorageAccount(
-  Pshpstespauea001Name,
+  accountName,
   {
     accessTier: azure_native.storage.AccessTier.Hot,
-    accountName: Pshpstespauea001Name,
+    accountName,
     allowBlobPublicAccess: true,
     allowCrossTenantReplication: false,
     allowSharedKeyAccess: true,

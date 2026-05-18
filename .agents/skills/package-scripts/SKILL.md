@@ -7,19 +7,19 @@ description: Esposter pnpm script reference for packages/app — lint, typecheck
 
 All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `npx`.
 
-| Command             | Runs                                                             | When to use                                               |
-| ------------------- | ---------------------------------------------------------------- | --------------------------------------------------------- |
-| `pnpm lint`         | `oxlint && eslint --config eslint.light.config.js .`             | Check for lint errors                                     |
-| `pnpm lint:fix`     | `oxlint --fix && eslint --config eslint.light.config.js --fix .` | **Fix lint errors** — always use this, never fix manually |
-| `pnpm lint:all`     | full ESLint (no `light` config)                                  | Full lint pass (slower)                                   |
-| `pnpm lint:all:fix` | full ESLint fix                                                  | Fix all lint errors (full pass)                           |
-| `pnpm typecheck`    | `nuxt typecheck`                                                 | TypeScript type checking                                  |
-| `pnpm test`         | `vitest` (watch mode)                                            | Run tests in watch mode                                   |
-| `pnpm coverage`     | `vitest run --coverage`                                          | Run tests with coverage report                            |
-| `pnpm format`       | `oxfmt`                                                          | Format code                                               |
-| `pnpm format:check` | `oxfmt --check`                                                  | Check formatting without writing                          |
-| `pnpm dev`          | `nuxt dev`                                                       | Start dev server                                          |
-| `pnpm build`        | `nuxt build`                                                     | Build for production                                      |
+| Command             | Runs                                                             | When to use                                     |
+| ------------------- | ---------------------------------------------------------------- | ----------------------------------------------- |
+| `pnpm lint`         | `oxlint && eslint --config eslint.light.config.js .`             | CI/check-only lint verification                 |
+| `pnpm lint:fix`     | `oxlint --fix && eslint --config eslint.light.config.js --fix .` | **Local lint verification** — use this directly |
+| `pnpm lint:all`     | full ESLint (no `light` config)                                  | Full lint pass (slower)                         |
+| `pnpm lint:all:fix` | full ESLint fix                                                  | Fix all lint errors (full pass)                 |
+| `pnpm typecheck`    | `nuxt typecheck`                                                 | TypeScript type checking                        |
+| `pnpm test`         | `vitest` (watch mode)                                            | Run tests in watch mode                         |
+| `pnpm coverage`     | `vitest run --coverage`                                          | Run tests with coverage report                  |
+| `pnpm format`       | `oxfmt`                                                          | Format code                                     |
+| `pnpm format:check` | `oxfmt --check`                                                  | Check formatting without writing                |
+| `pnpm dev`          | `nuxt dev`                                                       | Start dev server                                |
+| `pnpm build`        | `nuxt build`                                                     | Build for production                            |
 
 ## Package Registry Commands
 
@@ -33,7 +33,7 @@ All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `
 
 ## Key Rules
 
-- **Lint errors**: always run `pnpm lint:fix` — never manually edit to satisfy ESLint/oxlint
-- **Do not run lint proactively**: `pnpm lint`, `pnpm lint:all`, and lint fix commands are slow; only run them when the user explicitly asks. Prefer `pnpm format` plus targeted typecheck, and tell the user when lint was left for them.
+- **Local linting**: run `pnpm lint:fix` directly — never manually edit to satisfy ESLint/oxlint
+- **Check-only linting**: reserve `pnpm lint` and `pnpm lint:all` for CI/CD-style verification or when explicitly requested.
 - **Do not run tests on Windows**: Vitest currently fails during config startup on Windows (`spawn EPERM`). Do not run `pnpm test`, targeted Vitest files, or coverage unless the user explicitly asks and acknowledges the Windows limitation.
 - **Long-running commands** (`dev`, `build`, `test`, `typecheck`): run with `run_in_background: true` on the Bash tool — they can take 2+ minutes

@@ -110,7 +110,8 @@
       "Bash(az policy definition list *)",
       "Bash(az policy assignment show *)",
       "Skill(pulumi-infra)",
-      "Bash(az role definition list *)"
+      "Bash(az role definition list *)",
+      "Bash(pnpm preview *)"
     ]
   }
 }

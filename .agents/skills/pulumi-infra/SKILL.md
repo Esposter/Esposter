@@ -29,6 +29,9 @@ Apply when modifying `packages/infra`.
 ## Resource References And Dependencies
 
 - Prefer existing Pulumi resource outputs over repeated Azure identifier string literals when one managed resource refers to another.
+- If Pulumi already owns an Azure resource, use that resource's output properties (`.name`, `.id`, etc.) as the source of truth instead of adding a separate constant for the same value.
+- Add constants only for values that are external to managed resources, required as plain strings in Pulumi options/import IDs, or shared built-in/static identifiers such as role definition IDs.
+- External principal IDs that are not represented by managed Azure resources should live in named constants instead of being repeated in role assignment files.
 - For resources inside a resource group, pass `resourceGroupName: <resourceGroup>.name` instead of repeating the resource group name string.
 - For storage child resources such as `BlobServiceProperties` and `ManagementPolicy`, pass `accountName: <storageAccount>.name` and `resourceGroupName: <resourceGroup>.name`.
 - For extension resources with a `scope` argument, prefer the scoped resource's `.id` when the API accepts an ARM ID. Preserve APIs that intentionally require the no-leading-slash scope format by composing the scope from constants and resource outputs.
@@ -82,6 +85,7 @@ Azure role assignments are immutable: the role cannot be changed, only deleted a
 - Store canonical resource names in `src/constants/` when the same name must be used both to declare the resource and to compose plain-string import IDs or other non-`Input` values.
 - Internal Pulumi constants must be default exports, not named exports, when they live under `src/`; ctix uses `export *`, which would otherwise expose constants as Pulumi stack outputs.
 - Be careful with the Pulumi `parent` option on existing tracked resources: adding or changing `parent` changes the Pulumi URN and can require aliases or an import/state migration. Use input/output references for dependency edges unless the resource is new or you are deliberately migrating URNs.
+- During naming migration waves, prefer create/cutover/delete over aliases for resources whose final shape should also gain a `parent` option. New target resources should include the best parent from the start whenever the Azure hierarchy makes that natural.
 
 ## Docs
 
@@ -125,9 +129,10 @@ Azure role assignments are immutable: the role cannot be changed, only deleted a
 ## Verification
 
 - Run `pnpm --filter @esposter/infra build`.
-- Run `pnpm --filter @esposter/infra lint`.
+- Run `pnpm --filter @esposter/infra lint:fix`; use `lint` only for CI/check-only verification or when explicitly requested.
 - Run Pulumi preview only when the user allows Azure/Pulumi access.
-- Always run `pnpm infra:preview` before every `pnpm infra:up` or direct `pulumi up`.
+- Prefer `pnpm infra:preview --suppress-outputs` and `pnpm infra:up --yes --suppress-outputs` so previews and applies stay readable.
+- Always run `pnpm infra:preview --suppress-outputs` before every `pnpm infra:up` or direct `pulumi up`.
 - Never use `pulumi up --skip-preview`.
 - Before applying, confirm the preview contains only the intended resources and properties for the active roadmap item.
 - If `pulumi up` partially succeeds or fails, stop and run `pnpm infra:preview` again before any follow-up apply.

@@ -1604,6 +1604,9 @@ importers:
 
   packages/infra:
     dependencies:
+      '@esposter/db-schema':
+        specifier: workspace:*
+        version: link:../db-schema
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
