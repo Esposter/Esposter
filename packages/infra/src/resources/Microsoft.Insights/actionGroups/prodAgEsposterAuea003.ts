@@ -7,10 +7,12 @@ import * as pulumi from "@pulumi/pulumi";
 
 const config = new pulumi.Config();
 
+const actionGroupName = "prod-ag-esposter-auea-003";
+
 export const prodAgEsposterAuea003: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
-  "prod-ag-esposter-auea-003",
+  actionGroupName,
   {
-    actionGroupName: "prod-ag-esposter-auea-003",
+    actionGroupName,
     enabled: true,
     groupShortName: "DeleteSub",
     location: AzureGlobalDisplayLocation,

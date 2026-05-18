@@ -1,5 +1,4 @@
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
-import DevEvgsEsposterAuea001Name from "@/constants/DevEvgsEsposterAuea001Name";
 import { dShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/dShpEvgtEsposterAuea001";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import { dShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/dShpFuncEsposterAuea001";
@@ -7,9 +6,11 @@ import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
+const eventSubscriptionName = "dev-evgs-esposter-auea-001";
+
 export const devEvgsEsposterAuea001: azure_native.eventgrid.EventSubscription =
   new azure_native.eventgrid.EventSubscription(
-    DevEvgsEsposterAuea001Name,
+    eventSubscriptionName,
     {
       destination: {
         endpointType: "AzureFunction",
@@ -18,7 +19,7 @@ export const devEvgsEsposterAuea001: azure_native.eventgrid.EventSubscription =
         resourceId: pulumi.interpolate`${dShpFuncEsposterAuea001.id}/functions/${AzureFunction.ProcessWebhook}`,
       },
       eventDeliverySchema: azure_native.eventgrid.EventDeliverySchema.EventGridSchema,
-      eventSubscriptionName: DevEvgsEsposterAuea001Name,
+      eventSubscriptionName,
       filter: {
         enableAdvancedFilteringOnArrays: true,
         includedEventTypes: [AzureFunction.ProcessWebhook],

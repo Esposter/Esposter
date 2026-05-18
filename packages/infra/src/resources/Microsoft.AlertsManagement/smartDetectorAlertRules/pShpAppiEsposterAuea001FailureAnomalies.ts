@@ -1,8 +1,9 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import ProdAgEsposterAuea002SmartDetectorResourceId from "@/constants/ProdAgEsposterAuea002SmartDetectorResourceId";
-import PShpAppiEsposterAuea001SmartDetectorResourceId from "@/constants/PShpAppiEsposterAuea001SmartDetectorResourceId";
+import { prodAgEsposterAuea002 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposterAuea002";
+import { pShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/pShpAppiEsposterAuea001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
+import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
 
 export const pShpAppiEsposterAuea001FailureAnomalies: azure_native.alertsmanagement.SmartDetectorAlertRule =
@@ -10,7 +11,14 @@ export const pShpAppiEsposterAuea001FailureAnomalies: azure_native.alertsmanagem
     "Failure Anomalies - p-shp-appi-esposter-auea-001",
     {
       actionGroups: {
-        groupIds: [ProdAgEsposterAuea002SmartDetectorResourceId],
+        groupIds: [
+          getSmartDetectorResourceId(
+            pShpRgEsposterAuea001.name,
+            "microsoft.insights",
+            "actiongroups",
+            prodAgEsposterAuea002.name,
+          ),
+        ],
       },
       alertRuleName: "Failure Anomalies - p-shp-appi-esposter-auea-001",
       description:
@@ -21,7 +29,14 @@ export const pShpAppiEsposterAuea001FailureAnomalies: azure_native.alertsmanagem
       frequency: "PT1M",
       location: AzureGlobalLocation,
       resourceGroupName: pShpRgEsposterAuea001.name,
-      scope: [PShpAppiEsposterAuea001SmartDetectorResourceId],
+      scope: [
+        getSmartDetectorResourceId(
+          pShpRgEsposterAuea001.name,
+          "microsoft.insights",
+          "components",
+          pShpAppiEsposterAuea001.name,
+        ),
+      ],
       severity: azure_native.alertsmanagement.Severity.Sev3,
       state: azure_native.alertsmanagement.AlertRuleState.Enabled,
       tags: {

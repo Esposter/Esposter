@@ -29,6 +29,8 @@ Apply when modifying `packages/infra`.
 ## Resource References And Dependencies
 
 - Prefer existing Pulumi resource outputs over repeated Azure identifier string literals when one managed resource refers to another.
+- If Pulumi already owns an Azure resource, use that resource's output properties (`.name`, `.id`, etc.) as the source of truth instead of adding a separate constant for the same value.
+- Add constants only for values that are external to managed resources, required as plain strings in Pulumi options/import IDs, or shared built-in/static identifiers such as role definition IDs.
 - For resources inside a resource group, pass `resourceGroupName: <resourceGroup>.name` instead of repeating the resource group name string.
 - For storage child resources such as `BlobServiceProperties` and `ManagementPolicy`, pass `accountName: <storageAccount>.name` and `resourceGroupName: <resourceGroup>.name`.
 - For extension resources with a `scope` argument, prefer the scoped resource's `.id` when the API accepts an ARM ID. Preserve APIs that intentionally require the no-leading-slash scope format by composing the scope from constants and resource outputs.

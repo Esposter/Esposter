@@ -3,7 +3,7 @@ import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import { pShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/pShpEvgtEsposterAuea001";
 import { prodLogicEsposterAuea003 } from "@/resources/Microsoft.Logic/workflows/prodLogicEsposterAuea003";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
-import { applyPrincipalId } from "@/services/applyPrincipalId";
+import { getWorkflowPrincipalId } from "@/services/getWorkflowPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -13,7 +13,7 @@ export const prodLogicEsposterAuea003EventGridEventSubscriptionContributor: azur
   new azure_native.authorization.RoleAssignment(
     "prod-logic-esposter-auea-003-event-grid-event-subscription-contributor",
     {
-      principalId: applyPrincipalId(prodLogicEsposterAuea003.identity, prodLogicEsposterAuea003.name),
+      principalId: getWorkflowPrincipalId(pShpRgEsposterAuea001.name, prodLogicEsposterAuea003.name),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleAssignmentName,
       roleDefinitionId: AzureEventGridEventSubscriptionContributorRoleDefinitionId,

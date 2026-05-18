@@ -2,11 +2,14 @@ import ApplicationTags from "@/constants/ApplicationTags";
 import AzureAppServiceManagedApiId from "@/constants/AzureAppServiceManagedApiId";
 import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
-import { devApicnEsposterAuea001 } from "@/resources/Microsoft.Web/connections/devApicnEsposterAuea001";
+import { devApicEsposterAuea001 } from "@/resources/Microsoft.Web/connections/devApicEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
+const connectionKey = "dev-apic-esposter-auea-001";
+const workflowName = "dev-logic-esposter-auea-001";
+
 export const devLogicEsposterAuea001: azure_native.logic.Workflow = new azure_native.logic.Workflow(
-  "dev-logic-esposter-auea-001",
+  workflowName,
   {
     definition: {
       $schema:
@@ -16,7 +19,7 @@ export const devLogicEsposterAuea001: azure_native.logic.Workflow = new azure_na
           inputs: {
             host: {
               connection: {
-                name: "@parameters('$connections')['dev-apicn-esposter-auea-001']['connectionId']",
+                name: `@parameters('$connections')['${connectionKey}']['connectionId']`,
               },
             },
             method: "post",
@@ -242,9 +245,9 @@ export const devLogicEsposterAuea001: azure_native.logic.Workflow = new azure_na
     parameters: {
       $connections: {
         value: {
-          "dev-apicn-esposter-auea-001": {
-            connectionId: devApicnEsposterAuea001.id,
-            connectionName: "dev-apicn-esposter-auea-001",
+          [connectionKey]: {
+            connectionId: devApicEsposterAuea001.id,
+            connectionName: devApicEsposterAuea001.name,
             connectionProperties: {
               authentication: {
                 type: "ManagedServiceIdentity",
@@ -260,7 +263,7 @@ export const devLogicEsposterAuea001: azure_native.logic.Workflow = new azure_na
     tags: {
       ...ApplicationTags,
     },
-    workflowName: "dev-logic-esposter-auea-001",
+    workflowName,
   },
   {
     protect: true,

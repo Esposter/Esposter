@@ -5,10 +5,12 @@ import AzureManagedApiType from "@/constants/AzureManagedApiType";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
-export const prodApicnEsposterAuea001: azure_native.web.Connection = new azure_native.web.Connection(
-  "prod-apicn-esposter-auea-001",
+const connectionName = "prod-apic-esposter-auea-002";
+
+export const prodApicEsposterAuea002: azure_native.web.Connection = new azure_native.web.Connection(
+  connectionName,
   {
-    connectionName: "prod-apicn-esposter-auea-001",
+    connectionName,
     location: AzureAustraliaEastLocation,
     properties: {
       api: {
@@ -22,7 +24,7 @@ export const prodApicnEsposterAuea001: azure_native.web.Connection = new azure_n
         name: "azureappservice",
         type: AzureManagedApiType,
       },
-      displayName: "prod-apicn-esposter-auea-001",
+      displayName: connectionName,
     },
     resourceGroupName: pShpRgEsposterAuea001.name,
     tags: {
@@ -30,6 +32,7 @@ export const prodApicnEsposterAuea001: azure_native.web.Connection = new azure_n
     },
   },
   {
+    parent: pShpRgEsposterAuea001,
     protect: true,
   },
 );

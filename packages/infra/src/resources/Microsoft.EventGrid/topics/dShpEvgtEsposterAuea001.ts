@@ -3,8 +3,10 @@ import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
+const topicName = "d-shp-evgt-esposter-auea-001";
+
 export const dShpEvgtEsposterAuea001: azure_native.eventgrid.Topic = new azure_native.eventgrid.Topic(
-  "d-shp-evgt-esposter-auea-001",
+  topicName,
   {
     dataResidencyBoundary: azure_native.eventgrid.DataResidencyBoundary.WithinRegion,
     disableLocalAuth: false,
@@ -19,7 +21,7 @@ export const dShpEvgtEsposterAuea001: azure_native.eventgrid.Topic = new azure_n
     tags: {
       ...ApplicationTags,
     },
-    topicName: "d-shp-evgt-esposter-auea-001",
+    topicName,
   },
   {
     protect: true,

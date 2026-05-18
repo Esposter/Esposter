@@ -3,10 +3,12 @@ import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
+const actionGroupName = "prod-ag-esposter-auea-002";
+
 export const prodAgEsposterAuea002: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
-  "prod-ag-esposter-auea-002",
+  actionGroupName,
   {
-    actionGroupName: "prod-ag-esposter-auea-002",
+    actionGroupName,
     armRoleReceivers: [
       {
         name: "Monitoring Contributor",

@@ -7,10 +7,12 @@ import * as pulumi from "@pulumi/pulumi";
 
 const config = new pulumi.Config();
 
+const actionGroupName = "prod-ag-esposter-auea-001";
+
 export const prodAgEsposterAuea001: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
-  "prod-ag-esposter-auea-001",
+  actionGroupName,
   {
-    actionGroupName: "prod-ag-esposter-auea-001",
+    actionGroupName,
     enabled: true,
     groupShortName: "StopFunction",
     location: AzureGlobalDisplayLocation,

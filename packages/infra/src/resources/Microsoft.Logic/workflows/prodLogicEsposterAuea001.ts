@@ -2,11 +2,14 @@ import ApplicationTags from "@/constants/ApplicationTags";
 import AzureAppServiceManagedApiId from "@/constants/AzureAppServiceManagedApiId";
 import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
-import { prodApicnEsposterAuea001 } from "@/resources/Microsoft.Web/connections/prodApicnEsposterAuea001";
+import { prodApicEsposterAuea001 } from "@/resources/Microsoft.Web/connections/prodApicEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
+const connectionKey = "prod-apic-esposter-auea-001";
+const workflowName = "prod-logic-esposter-auea-001";
+
 export const prodLogicEsposterAuea001: azure_native.logic.Workflow = new azure_native.logic.Workflow(
-  "prod-logic-esposter-auea-001",
+  workflowName,
   {
     definition: {
       $schema:
@@ -16,7 +19,7 @@ export const prodLogicEsposterAuea001: azure_native.logic.Workflow = new azure_n
           inputs: {
             host: {
               connection: {
-                name: "@parameters('$connections')['prod-apicn-esposter-auea-001']['connectionId']",
+                name: `@parameters('$connections')['${connectionKey}']['connectionId']`,
               },
             },
             method: "post",
@@ -242,9 +245,9 @@ export const prodLogicEsposterAuea001: azure_native.logic.Workflow = new azure_n
     parameters: {
       $connections: {
         value: {
-          "prod-apicn-esposter-auea-001": {
-            connectionId: prodApicnEsposterAuea001.id,
-            connectionName: "prod-apicn-esposter-auea-001",
+          [connectionKey]: {
+            connectionId: prodApicEsposterAuea001.id,
+            connectionName: prodApicEsposterAuea001.name,
             connectionProperties: {
               authentication: {
                 type: "ManagedServiceIdentity",
@@ -260,7 +263,7 @@ export const prodLogicEsposterAuea001: azure_native.logic.Workflow = new azure_n
     tags: {
       ...ApplicationTags,
     },
-    workflowName: "prod-logic-esposter-auea-001",
+    workflowName,
   },
   {
     protect: true,

@@ -27,6 +27,12 @@ Apply when modifying `packages/infra`.
 - Export exactly one resource constant per resource file.
 - Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
 
+## Resource References And Dependencies
+
+- Prefer existing Pulumi resource outputs over repeated Azure identifier string literals when one managed resource refers to another.
+- If Pulumi already owns an Azure resource, use that resource's output properties (`.name`, `.id`, etc.) as the source of truth instead of adding a separate constant for the same value.
+- Add constants only for values that are external to managed resources, required as plain strings in Pulumi options/import IDs, or shared built-in/static identifiers such as role definition IDs.
+
 ## Docs
 
 - Durable infrastructure docs live in `packages/infra/docs/`.

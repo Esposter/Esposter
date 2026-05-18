@@ -3,7 +3,7 @@ import AzureWebsiteContributorRoleDefinitionId from "@/constants/AzureWebsiteCon
 import { devLogicEsposterAuea004 } from "@/resources/Microsoft.Logic/workflows/devLogicEsposterAuea004";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import { dShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/dShpFuncEsposterAuea001";
-import { applyPrincipalId } from "@/services/applyPrincipalId";
+import { getWorkflowPrincipalId } from "@/services/getWorkflowPrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -13,7 +13,7 @@ export const devLogicEsposterAuea004WebsiteContributor: azure_native.authorizati
   new azure_native.authorization.RoleAssignment(
     "dev-logic-esposter-auea-004-website-contributor",
     {
-      principalId: applyPrincipalId(devLogicEsposterAuea004.identity, devLogicEsposterAuea004.name),
+      principalId: getWorkflowPrincipalId(dShpRgEsposterAuea001.name, devLogicEsposterAuea004.name),
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleAssignmentName,
       roleDefinitionId: AzureWebsiteContributorRoleDefinitionId,

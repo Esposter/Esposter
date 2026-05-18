@@ -2,13 +2,15 @@ import ApplicationTags from "@/constants/ApplicationTags";
 import AzureAppServiceManagedApiId from "@/constants/AzureAppServiceManagedApiId";
 import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import AzureManagedApiType from "@/constants/AzureManagedApiType";
-import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
-export const prodApicnEsposterAuea002: azure_native.web.Connection = new azure_native.web.Connection(
-  "prod-apicn-esposter-auea-002",
+const connectionName = "dev-apic-esposter-auea-001";
+
+export const devApicEsposterAuea001: azure_native.web.Connection = new azure_native.web.Connection(
+  connectionName,
   {
-    connectionName: "prod-apicn-esposter-auea-002",
+    connectionName,
     location: AzureAustraliaEastLocation,
     properties: {
       api: {
@@ -22,14 +24,15 @@ export const prodApicnEsposterAuea002: azure_native.web.Connection = new azure_n
         name: "azureappservice",
         type: AzureManagedApiType,
       },
-      displayName: "prod-apicn-esposter-auea-002",
+      displayName: connectionName,
     },
-    resourceGroupName: pShpRgEsposterAuea001.name,
+    resourceGroupName: dShpRgEsposterAuea001.name,
     tags: {
       ...ApplicationTags,
     },
   },
   {
+    parent: dShpRgEsposterAuea001,
     protect: true,
   },
 );

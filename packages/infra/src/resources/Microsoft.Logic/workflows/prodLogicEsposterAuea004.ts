@@ -2,19 +2,21 @@ import ApplicationTags from "@/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import AzureResourceManagerManagedApiId from "@/constants/AzureResourceManagerManagedApiId";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
-import PShpRgEsposterAuea001Name from "@/constants/PShpRgEsposterAuea001Name";
 import { prodEvgsEsposterAuea001 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAuea001";
 import { prodEvgsEsposterAuea002 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAuea002";
 import { pShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/pShpEvgtEsposterAuea001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
-import { prodApicnEsposterAuea004 } from "@/resources/Microsoft.Web/connections/prodApicnEsposterAuea004";
+import { prodApicEsposterAuea004 } from "@/resources/Microsoft.Web/connections/prodApicEsposterAuea004";
 import { pShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/pShpFuncEsposterAuea001";
 import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
+const connectionKey = "prod-apic-esposter-auea-004";
+const workflowName = "prod-logic-esposter-auea-004";
+
 export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_native.logic.Workflow(
-  "prod-logic-esposter-auea-004",
+  workflowName,
   {
     definition: {
       $schema:
@@ -41,7 +43,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                 },
                 id: prodEvgsEsposterAuea002.id,
                 name: prodEvgsEsposterAuea002.name,
-                resourceGroup: PShpRgEsposterAuea001Name,
+                resourceGroup: pShpRgEsposterAuea001.name,
                 retryPolicy: {
                   eventTimeToLiveInMinutes: 1440,
                   maxDeliveryAttempts: 30,
@@ -52,11 +54,11 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
             },
             host: {
               connection: {
-                name: "@parameters('$connections')['prod-apicn-esposter-auea-004']['connectionId']",
+                name: `@parameters('$connections')['${connectionKey}']['connectionId']`,
               },
             },
             method: "put",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea002.name}')}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${pShpRgEsposterAuea001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea002.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -87,7 +89,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                 },
                 id: prodEvgsEsposterAuea001.id,
                 name: prodEvgsEsposterAuea001.name,
-                resourceGroup: PShpRgEsposterAuea001Name,
+                resourceGroup: pShpRgEsposterAuea001.name,
                 retryPolicy: {
                   eventTimeToLiveInMinutes: 1440,
                   maxDeliveryAttempts: 30,
@@ -98,11 +100,11 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
             },
             host: {
               connection: {
-                name: "@parameters('$connections')['prod-apicn-esposter-auea-004']['connectionId']",
+                name: `@parameters('$connections')['${connectionKey}']['connectionId']`,
               },
             },
             method: "put",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea001.name}')}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${pShpRgEsposterAuea001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea001.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -116,11 +118,11 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
           inputs: {
             host: {
               connection: {
-                name: "@parameters('$connections')['prod-apicn-esposter-auea-004']['connectionId']",
+                name: `@parameters('$connections')['${connectionKey}']['connectionId']`,
               },
             },
             method: "get",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea002.name}')}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${pShpRgEsposterAuea001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea002.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -131,11 +133,11 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
           inputs: {
             host: {
               connection: {
-                name: "@parameters('$connections')['prod-apicn-esposter-auea-004']['connectionId']",
+                name: `@parameters('$connections')['${connectionKey}']['connectionId']`,
               },
             },
             method: "get",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea001.name}')}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${pShpRgEsposterAuea001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea001.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -264,9 +266,9 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
     parameters: {
       $connections: {
         value: {
-          "prod-apicn-esposter-auea-004": {
-            connectionId: prodApicnEsposterAuea004.id,
-            connectionName: "prod-apicn-esposter-auea-004",
+          [connectionKey]: {
+            connectionId: prodApicEsposterAuea004.id,
+            connectionName: prodApicEsposterAuea004.name,
             connectionProperties: {
               authentication: {
                 type: "ManagedServiceIdentity",
@@ -282,7 +284,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
     tags: {
       ...ApplicationTags,
     },
-    workflowName: "prod-logic-esposter-auea-004",
+    workflowName,
   },
   {
     protect: true,

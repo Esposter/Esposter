@@ -3,9 +3,11 @@ import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
+const workspaceName = "p-shp-log-esposter-auea-001";
+
 export const pShpLogEsposterAuea001: azure_native.operationalinsights.Workspace =
   new azure_native.operationalinsights.Workspace(
-    "p-shp-log-esposter-auea-001",
+    workspaceName,
     {
       features: {
         enableLogAccessUsingOnlyResourcePermissions: true,
@@ -24,7 +26,7 @@ export const pShpLogEsposterAuea001: azure_native.operationalinsights.Workspace 
       workspaceCapping: {
         dailyQuotaGb: -1,
       },
-      workspaceName: "p-shp-log-esposter-auea-001",
+      workspaceName,
     },
     {
       protect: true,
