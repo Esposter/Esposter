@@ -16,7 +16,7 @@
   "type": "module",
   "scripts": {
     "analyze": "nuxt analyze",
-    "build": "nuxt build",
+    "build": "NODE_OPTIONS=--max-old-space-size=8192 nuxt build",
     "cleanup": "nuxt cleanup",
     "coverage": "vitest run --coverage",
     "dev": "nuxt dev",
