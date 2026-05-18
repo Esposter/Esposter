@@ -4,9 +4,11 @@ import { dShpLogEsposterAuea001 } from "@/resources/Microsoft.OperationalInsight
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
+const resourceName = "d-shp-appi-esposter-auea-001";
+
 export const dShpAppiEsposterAuea001: azure_native.applicationinsights.Component =
   new azure_native.applicationinsights.Component(
-    "d-shp-appi-esposter-auea-001",
+    resourceName,
     {
       applicationType: azure_native.applicationinsights.ApplicationType.Web,
       flowType: "Redfield",
@@ -17,7 +19,7 @@ export const dShpAppiEsposterAuea001: azure_native.applicationinsights.Component
       publicNetworkAccessForQuery: azure_native.applicationinsights.PublicNetworkAccessType.Enabled,
       requestSource: "IbizaAIExtension",
       resourceGroupName: dShpRgEsposterAuea001.name,
-      resourceName: "d-shp-appi-esposter-auea-001",
+      resourceName: resourceName,
       retentionInDays: 90,
       tags: {
         ...ApplicationTags,

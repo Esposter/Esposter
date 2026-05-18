@@ -6,9 +6,11 @@ import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceG
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
 
+const alertRuleName = "Response Latency Degradation - d-shp-appi-esposter-auea-001";
+
 export const dShpAppiEsposterAuea001ResponseLatencyDegradation: azure_native.alertsmanagement.SmartDetectorAlertRule =
   new azure_native.alertsmanagement.SmartDetectorAlertRule(
-    "Response Latency Degradation - d-shp-appi-esposter-auea-001",
+    alertRuleName,
     {
       actionGroups: {
         groupIds: [
@@ -20,7 +22,7 @@ export const dShpAppiEsposterAuea001ResponseLatencyDegradation: azure_native.ale
           ),
         ],
       },
-      alertRuleName: "Response Latency Degradation - d-shp-appi-esposter-auea-001",
+      alertRuleName,
       description:
         "Response Latency Degradation notifies you of an unusual increase in latency in your app response to requests.",
       detector: {

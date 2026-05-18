@@ -6,9 +6,11 @@ import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceG
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
 
+const alertRuleName = "Potential Memory Leak - p-shp-appi-esposter-auea-001";
+
 export const pShpAppiEsposterAuea001PotentialMemoryLeak: azure_native.alertsmanagement.SmartDetectorAlertRule =
   new azure_native.alertsmanagement.SmartDetectorAlertRule(
-    "Potential Memory Leak - p-shp-appi-esposter-auea-001",
+    alertRuleName,
     {
       actionGroups: {
         groupIds: [
@@ -20,7 +22,7 @@ export const pShpAppiEsposterAuea001PotentialMemoryLeak: azure_native.alertsmana
           ),
         ],
       },
-      alertRuleName: "Potential Memory Leak - p-shp-appi-esposter-auea-001",
+      alertRuleName,
       description:
         "Potential Memory Leak notifies you of increased memory consumption pattern by your app which may indicate a potential memory leak.",
       detector: {

@@ -6,11 +6,13 @@ import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceG
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
+const budgetName = "p-shp-bdg-esposter-auea-002";
+
 export const pShpBdgEsposterAuea002: azure_native.consumption.Budget = new azure_native.consumption.Budget(
-  "p-shp-bdg-esposter-auea-002",
+  budgetName,
   {
     amount: 0.01,
-    budgetName: "p-shp-bdg-esposter-auea-002",
+    budgetName,
     category: azure_native.consumption.CategoryType.Cost,
     filter: {
       dimensions: {

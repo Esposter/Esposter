@@ -6,11 +6,13 @@ import { dShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/dShpFun
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
+const budgetName = "d-shp-bdg-esposter-auea-001";
+
 export const dShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure_native.consumption.Budget(
-  "d-shp-bdg-esposter-auea-001",
+  budgetName,
   {
     amount: 0.01,
-    budgetName: "d-shp-bdg-esposter-auea-001",
+    budgetName,
     category: azure_native.consumption.CategoryType.Cost,
     filter: {
       dimensions: {

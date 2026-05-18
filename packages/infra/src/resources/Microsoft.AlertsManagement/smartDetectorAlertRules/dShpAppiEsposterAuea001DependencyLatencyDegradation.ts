@@ -6,9 +6,11 @@ import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceG
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
 
+const alertRuleName = "Dependency Latency Degradation - d-shp-appi-esposter-auea-001";
+
 export const dShpAppiEsposterAuea001DependencyLatencyDegradation: azure_native.alertsmanagement.SmartDetectorAlertRule =
   new azure_native.alertsmanagement.SmartDetectorAlertRule(
-    "Dependency Latency Degradation - d-shp-appi-esposter-auea-001",
+    alertRuleName,
     {
       actionGroups: {
         groupIds: [
@@ -20,7 +22,7 @@ export const dShpAppiEsposterAuea001DependencyLatencyDegradation: azure_native.a
           ),
         ],
       },
-      alertRuleName: "Dependency Latency Degradation - d-shp-appi-esposter-auea-001",
+      alertRuleName,
       description:
         "Dependency Latency Degradation notifies you of an unusual increase in response by a dependency your app is calling (e.g. REST API or database)",
       detector: {

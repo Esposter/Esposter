@@ -32,6 +32,8 @@ Apply when modifying `packages/infra`.
 - Prefer existing Pulumi resource outputs over repeated Azure identifier string literals when one managed resource refers to another.
 - If Pulumi already owns an Azure resource, use that resource's output properties (`.name`, `.id`, etc.) as the source of truth instead of adding a separate constant for the same value.
 - Add constants only for values that are external to managed resources, required as plain strings in Pulumi options/import IDs, or shared built-in/static identifiers such as role definition IDs.
+- External principal IDs that are not represented by managed Azure resources should live in named constants instead of being repeated in role assignment files.
+- During naming migration waves, prefer create/cutover/delete over aliases for resources whose final shape should also gain a `parent` option. New target resources should include the best parent from the start whenever the Azure hierarchy makes that natural.
 
 ## Docs
 
@@ -77,7 +79,8 @@ Apply when modifying `packages/infra`.
 - Run `pnpm --filter @esposter/infra build`.
 - Run `pnpm --filter @esposter/infra lint:fix`; use `lint` only for CI/check-only verification or when explicitly requested.
 - Run Pulumi preview only when the user allows Azure/Pulumi access.
-- Always run `pnpm infra:preview` before every `pnpm infra:up` or direct `pulumi up`.
+- Prefer `pnpm infra:preview --suppress-outputs` and `pnpm infra:up --yes --suppress-outputs` so previews and applies stay readable.
+- Always run `pnpm infra:preview --suppress-outputs` before every `pnpm infra:up` or direct `pulumi up`.
 - Never use `pulumi up --skip-preview`.
 - Before applying, confirm the preview contains only the intended resources and properties for the active roadmap item.
 - If `pulumi up` partially succeeds or fails, stop and run `pnpm infra:preview` again before any follow-up apply.

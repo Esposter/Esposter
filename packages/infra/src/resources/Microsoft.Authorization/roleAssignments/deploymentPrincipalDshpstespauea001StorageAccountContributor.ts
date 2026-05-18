@@ -1,5 +1,6 @@
 import AzureStorageAccountContributorRoleDefinitionId from "@/constants/AzureStorageAccountContributorRoleDefinitionId";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
+import DeploymentPrincipalId from "@/constants/DeploymentPrincipalId";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import { dshpstespauea001 } from "@/resources/Microsoft.Storage/storageAccounts/dshpstespauea001";
 import * as azure_native from "@pulumi/azure-native";
@@ -11,7 +12,7 @@ export const deploymentPrincipalDshpstespauea001StorageAccountContributor: azure
   new azure_native.authorization.RoleAssignment(
     "deployment-principal-dshpstespauea001-storage-account-contributor",
     {
-      principalId: "b456c265-3d0b-47f5-b728-dcfb87e5d554",
+      principalId: DeploymentPrincipalId,
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleAssignmentName,
       roleDefinitionId: AzureStorageAccountContributorRoleDefinitionId,

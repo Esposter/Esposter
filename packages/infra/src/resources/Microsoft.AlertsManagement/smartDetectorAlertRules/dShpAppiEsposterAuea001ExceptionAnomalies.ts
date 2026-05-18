@@ -6,9 +6,11 @@ import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceG
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
 
+const alertRuleName = "Exception Anomalies - d-shp-appi-esposter-auea-001";
+
 export const dShpAppiEsposterAuea001ExceptionAnomalies: azure_native.alertsmanagement.SmartDetectorAlertRule =
   new azure_native.alertsmanagement.SmartDetectorAlertRule(
-    "Exception Anomalies - d-shp-appi-esposter-auea-001",
+    alertRuleName,
     {
       actionGroups: {
         groupIds: [
@@ -20,7 +22,7 @@ export const dShpAppiEsposterAuea001ExceptionAnomalies: azure_native.alertsmanag
           ),
         ],
       },
-      alertRuleName: "Exception Anomalies - d-shp-appi-esposter-auea-001",
+      alertRuleName,
       description: "Exception Anomalies notifies you of an unusual rise in the rate of exceptions thrown by your app.",
       detector: {
         id: "ExceptionVolumeChangedDetector",

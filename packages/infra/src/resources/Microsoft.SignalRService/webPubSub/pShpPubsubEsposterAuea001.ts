@@ -3,8 +3,10 @@ import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
+const resourceName = "p-shp-pubsub-esposter-auea-001";
+
 export const pShpPubsubEsposterAuea001: azure_native.webpubsub.WebPubSub = new azure_native.webpubsub.WebPubSub(
-  "p-shp-pubsub-esposter-auea-001",
+  resourceName,
   {
     disableAadAuth: false,
     disableLocalAuth: false,
@@ -34,7 +36,7 @@ export const pShpPubsubEsposterAuea001: azure_native.webpubsub.WebPubSub = new a
     publicNetworkAccess: "Enabled",
     regionEndpointEnabled: "Enabled",
     resourceGroupName: pShpRgEsposterAuea001.name,
-    resourceName: "p-shp-pubsub-esposter-auea-001",
+    resourceName: resourceName,
     resourceStopped: "false",
     sku: {
       capacity: 1,

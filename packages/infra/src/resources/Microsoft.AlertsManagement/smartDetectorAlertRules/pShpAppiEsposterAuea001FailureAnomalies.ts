@@ -6,9 +6,11 @@ import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceG
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
 
+const alertRuleName = "Failure Anomalies - p-shp-appi-esposter-auea-001";
+
 export const pShpAppiEsposterAuea001FailureAnomalies: azure_native.alertsmanagement.SmartDetectorAlertRule =
   new azure_native.alertsmanagement.SmartDetectorAlertRule(
-    "Failure Anomalies - p-shp-appi-esposter-auea-001",
+    alertRuleName,
     {
       actionGroups: {
         groupIds: [
@@ -20,7 +22,7 @@ export const pShpAppiEsposterAuea001FailureAnomalies: azure_native.alertsmanagem
           ),
         ],
       },
-      alertRuleName: "Failure Anomalies - p-shp-appi-esposter-auea-001",
+      alertRuleName,
       description:
         "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.",
       detector: {
