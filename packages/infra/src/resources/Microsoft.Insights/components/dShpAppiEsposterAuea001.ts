@@ -19,7 +19,7 @@ export const dShpAppiEsposterAuea001: azure_native.applicationinsights.Component
       publicNetworkAccessForQuery: azure_native.applicationinsights.PublicNetworkAccessType.Enabled,
       requestSource: "IbizaAIExtension",
       resourceGroupName: dShpRgEsposterAuea001.name,
-      resourceName: resourceName,
+      resourceName,
       retentionInDays: 90,
       tags: {
         ...ApplicationTags,

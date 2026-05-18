@@ -36,7 +36,7 @@ export const pShpPubsubEsposterAuea001: azure_native.webpubsub.WebPubSub = new a
     publicNetworkAccess: "Enabled",
     regionEndpointEnabled: "Enabled",
     resourceGroupName: pShpRgEsposterAuea001.name,
-    resourceName: resourceName,
+    resourceName,
     resourceStopped: "false",
     sku: {
       capacity: 1,
