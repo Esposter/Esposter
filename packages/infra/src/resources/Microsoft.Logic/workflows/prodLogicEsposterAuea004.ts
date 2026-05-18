@@ -40,7 +40,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                   subjectEndsWith: "",
                 },
                 id: prodEvgsEsposterAuea002.id,
-                name: prodEvgsEsposterAuea002.eventSubscriptionName,
+                name: prodEvgsEsposterAuea002.name,
                 resourceGroup: PShpRgEsposterAuea001Name,
                 retryPolicy: {
                   eventTimeToLiveInMinutes: 1440,
@@ -56,7 +56,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "put",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea002.eventSubscriptionName}\`)}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea002.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -86,7 +86,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                   subjectEndsWith: "",
                 },
                 id: prodEvgsEsposterAuea001.id,
-                name: prodEvgsEsposterAuea001.eventSubscriptionName,
+                name: prodEvgsEsposterAuea001.name,
                 resourceGroup: PShpRgEsposterAuea001Name,
                 retryPolicy: {
                   eventTimeToLiveInMinutes: 1440,
@@ -102,7 +102,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "put",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea001.eventSubscriptionName}\`)}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea001.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -120,7 +120,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "get",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea002.eventSubscriptionName}\`)}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea002.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -135,7 +135,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "get",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea001.eventSubscriptionName}\`)}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea001.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },

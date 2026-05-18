@@ -27,7 +27,7 @@ export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_na
               },
             },
             method: "delete",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${DShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${dShpEvgtEsposterAuea001.name}/eventSubscriptions/${devEvgsEsposterAuea002.eventSubscriptionName}\`)}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${DShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${dShpEvgtEsposterAuea001.name}/eventSubscriptions/${devEvgsEsposterAuea002.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -42,7 +42,7 @@ export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_na
               },
             },
             method: "delete",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${DShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${dShpEvgtEsposterAuea001.name}/eventSubscriptions/${devEvgsEsposterAuea001.eventSubscriptionName}\`)}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${DShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${dShpEvgtEsposterAuea001.name}/eventSubscriptions/${devEvgsEsposterAuea001.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },

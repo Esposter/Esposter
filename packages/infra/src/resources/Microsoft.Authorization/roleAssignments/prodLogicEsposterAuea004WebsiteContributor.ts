@@ -20,7 +20,6 @@ export const prodLogicEsposterAuea004WebsiteContributor: azure_native.authorizat
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${pShpRgEsposterAuea001.name}/providers/Microsoft.Web/sites/${pShpFuncEsposterAuea001.name}`,
     },
     {
-      ignoreChanges: ["principalId"],
       protect: true,
     },
   );

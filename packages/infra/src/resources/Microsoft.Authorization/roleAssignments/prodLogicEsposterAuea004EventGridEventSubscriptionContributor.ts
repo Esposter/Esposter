@@ -20,7 +20,6 @@ export const prodLogicEsposterAuea004EventGridEventSubscriptionContributor: azur
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${pShpRgEsposterAuea001.name}/providers/Microsoft.EventGrid/topics/${pShpEvgtEsposterAuea001.name}`,
     },
     {
-      ignoreChanges: ["principalId"],
       protect: true,
     },
   );
