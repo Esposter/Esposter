@@ -7,8 +7,8 @@ import { pShpEvgtsEsposterAuea001 } from "@/resources/Microsoft.EventGrid/eventS
 import { pShpEvgtsEsposterAuea002 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/pShpEvgtsEsposterAuea002";
 import { pShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/pShpEvgtEsposterAuea001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
-import { pShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/pShpFuncEsposterAuea001";
 import { prodApicnEsposterAuea004 } from "@/resources/Microsoft.Web/connections/prodApicnEsposterAuea004";
+import { pShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/pShpFuncEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
