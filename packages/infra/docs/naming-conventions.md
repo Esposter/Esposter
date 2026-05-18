@@ -59,55 +59,55 @@ Do not include scope tokens in target resource names. The legacy `shp` token mea
 
 ## Region Tokens
 
-Use compact region tokens consistently. Current resources are in Australia East:
+Use the official Azure geo codes (lowercase) as region tokens. Source: [Azure Backup geo-code list](https://learn.microsoft.com/en-us/azure/backup/scripts/geo-code-list). Current resources are in Australia East:
 
-| Token  | Azure Location  | Display Name   |
-| ------ | --------------- | -------------- |
-| `auea` | `australiaeast` | Australia East |
+| Token | Azure Location  | Display Name   | Geo Code |
+| ----- | --------------- | -------------- | -------- |
+| `ae`  | `australiaeast` | Australia East | `AE`     |
 
 Other approved region tokens:
 
-| Token    | Azure Location       | Display Name         |
-| -------- | -------------------- | -------------------- |
-| `aecn`   | `uaecentral`         | UAE Central          |
-| `aeno`   | `uaenorth`           | UAE North            |
-| `asea`   | `eastasia`           | East Asia            |
-| `assoea` | `southeastasia`      | Southeast Asia       |
-| `aucn`   | `australiacentral`   | Australia Central    |
-| `aucn2`  | `australiacentral2`  | Australia Central 2  |
-| `ause`   | `australiasoutheast` | Australia Southeast  |
-| `brso`   | `brazilsouth`        | Brazil South         |
-| `cacn`   | `canadacentral`      | Canada Central       |
-| `caea`   | `canadaeast`         | Canada East          |
-| `chno`   | `switzerlandnorth`   | Switzerland North    |
-| `chwe`   | `switzerlandwest`    | Switzerland West     |
-| `deno`   | `germanynorth`       | Germany North        |
-| `dewecn` | `germanywestcentral` | Germany West Central |
-| `euno`   | `northeurope`        | North Europe         |
-| `euwe`   | `westeurope`         | West Europe          |
-| `frcn`   | `francecentral`      | France Central       |
-| `frso`   | `francesouth`        | France South         |
-| `incn`   | `centralindia`       | Central India        |
-| `inso`   | `southindia`         | South India          |
-| `inwe`   | `westindia`          | West India           |
-| `jaea`   | `japaneast`          | Japan East           |
-| `jawe`   | `japanwest`          | Japan West           |
-| `krcn`   | `koreacentral`       | Korea Central        |
-| `krso`   | `koreasouth`         | Korea South          |
-| `noea`   | `norwayeast`         | Norway East          |
-| `nowe`   | `norwaywest`         | Norway West          |
-| `sfno`   | `southafricanorth`   | South Africa North   |
-| `sfwe`   | `southafricawest`    | South Africa West    |
-| `ukso`   | `uksouth`            | UK South             |
-| `ukwe`   | `ukwest`             | UK West              |
-| `uscn`   | `centralus`          | Central US           |
-| `usea`   | `eastus`             | East US              |
-| `usea2`  | `eastus2`            | East US 2            |
-| `usnocn` | `northcentralus`     | North Central US     |
-| `ussocn` | `southcentralus`     | South Central US     |
-| `uswe`   | `westus`             | West US              |
-| `uswe2`  | `westus2`            | West US 2            |
-| `uswecn` | `westcentralus`      | West Central US      |
+| Token  | Azure Location       | Display Name         | Geo Code |
+| ------ | -------------------- | -------------------- | -------- |
+| `acl`  | `australiacentral`   | Australia Central    | `ACL`    |
+| `acl2` | `australiacentral2`  | Australia Central 2  | `ACL2`   |
+| `ase`  | `australiasoutheast` | Australia Southeast  | `ASE`    |
+| `brs`  | `brazilsouth`        | Brazil South         | `BRS`    |
+| `cnc`  | `canadacentral`      | Canada Central       | `CNC`    |
+| `cne`  | `canadaeast`         | Canada East          | `CNE`    |
+| `cus`  | `centralus`          | Central US           | `CUS`    |
+| `ea`   | `eastasia`           | East Asia            | `EA`     |
+| `eus`  | `eastus`             | East US              | `EUS`    |
+| `eus2` | `eastus2`            | East US 2            | `EUS2`   |
+| `frc`  | `francecentral`      | France Central       | `FRC`    |
+| `frs`  | `francesouth`        | France South         | `FRS`    |
+| `gn`   | `germanynorth`       | Germany North        | `GN`     |
+| `gwc`  | `germanywestcentral` | Germany West Central | `GWC`    |
+| `inc`  | `centralindia`       | Central India        | `INC`    |
+| `ins`  | `southindia`         | South India          | `INS`    |
+| `inw`  | `westindia`          | West India           | `INW`    |
+| `jpe`  | `japaneast`          | Japan East           | `JPE`    |
+| `jpw`  | `japanwest`          | Japan West           | `JPW`    |
+| `krc`  | `koreacentral`       | Korea Central        | `KRC`    |
+| `krs`  | `koreasouth`         | Korea South          | `KRS`    |
+| `ncus` | `northcentralus`     | North Central US     | `NCUS`   |
+| `ne`   | `northeurope`        | North Europe         | `NE`     |
+| `nwe`  | `norwayeast`         | Norway East          | `NWE`    |
+| `nww`  | `norwaywest`         | Norway West          | `NWW`    |
+| `san`  | `southafricanorth`   | South Africa North   | `SAN`    |
+| `saw`  | `southafricawest`    | South Africa West    | `SAW`    |
+| `scus` | `southcentralus`     | South Central US     | `SCUS`   |
+| `sea`  | `southeastasia`      | Southeast Asia       | `SEA`    |
+| `szn`  | `switzerlandnorth`   | Switzerland North    | `SZN`    |
+| `szw`  | `switzerlandwest`    | Switzerland West     | `SZW`    |
+| `uac`  | `uaecentral`         | UAE Central          | `UAC`    |
+| `uan`  | `uaenorth`           | UAE North            | `UAN`    |
+| `uks`  | `uksouth`            | UK South             | `UKS`    |
+| `ukw`  | `ukwest`             | UK West              | `UKW`    |
+| `wcus` | `westcentralus`      | West Central US      | `WCUS`   |
+| `we`   | `westeurope`         | West Europe          | `WE`     |
+| `wus`  | `westus`             | West US              | `WUS`    |
+| `wus2` | `westus2`            | West US 2            | `WUS2`   |
 
 ## Asset Type Tokens
 
@@ -417,14 +417,14 @@ These tokens are the complete set of CAF abbreviations plus Esposter-specific ad
 
 ## Examples
 
-| Resource Type           | Legacy Name                      | Target Name                   |
-| ----------------------- | -------------------------------- | ----------------------------- |
-| Resource group          | `p-shp-rg-esposter-auea-001`     | `prod-rg-esposter-auea-001`   |
-| Function app            | `p-shp-func-esposter-auea-001`   | `prod-func-esposter-001`      |
-| Storage account         | `pshpstespauea001`               | `prodstesposter001`           |
-| Azure AI Search         | `pshpsrchespauea001`             | `prod-srch-esposter-001`      |
-| Event Grid subscription | `p-shp-evgts-esposter-auea-001`  | `prod-evgs-esposter-auea-001` |
-| Web PubSub              | `p-shp-pubsub-esposter-auea-001` | `prod-wps-esposter-001`       |
+| Resource Type           | Legacy Name                      | Target Name                 |
+| ----------------------- | -------------------------------- | --------------------------- |
+| Resource group          | `p-shp-rg-esposter-auea-001`     | `prod-rg-esposter-ae-001`   |
+| Function app            | `p-shp-func-esposter-auea-001`   | `prod-func-esposter-001`    |
+| Storage account         | `pshpstespauea001`               | `prodstesposter001`         |
+| Azure AI Search         | `pshpsrchespauea001`             | `prod-srch-esposter-001`    |
+| Event Grid subscription | `p-shp-evgts-esposter-auea-001`  | `prod-evgs-esposter-ae-001` |
+| Web PubSub              | `p-shp-pubsub-esposter-auea-001` | `prod-wps-esposter-001`     |
 
 ## Source File Names
 
@@ -434,12 +434,12 @@ The export constant name must match the file name minus `.ts`.
 
 Target examples:
 
-| Azure Resource Name         | Naming Components                       | Source File                | Export Constant         |
-| --------------------------- | --------------------------------------- | -------------------------- | ----------------------- |
-| `prod-rg-esposter-auea-001` | `prod`, `rg`, `esposter`, `Auea`, `001` | `prodRgEsposterAuea001.ts` | `prodRgEsposterAuea001` |
-| `prod-func-esposter-001`    | `prod`, `func`, `esposter`, `001`       | `prodFuncEsposter001.ts`   | `prodFuncEsposter001`   |
-| `prodstesposter001`         | `prod`, `st`, `esposter`, `001`         | `prodStEsposter001.ts`     | `prodStEsposter001`     |
-| `prod-srch-esposter-001`    | `prod`, `srch`, `esposter`, `001`       | `prodSrchEsposter001.ts`   | `prodSrchEsposter001`   |
+| Azure Resource Name       | Naming Components                     | Source File              | Export Constant       |
+| ------------------------- | ------------------------------------- | ------------------------ | --------------------- |
+| `prod-rg-esposter-ae-001` | `prod`, `rg`, `esposter`, `Ae`, `001` | `prodRgEsposterAe001.ts` | `prodRgEsposterAe001` |
+| `prod-func-esposter-001`  | `prod`, `func`, `esposter`, `001`     | `prodFuncEsposter001.ts` | `prodFuncEsposter001` |
+| `prodstesposter001`       | `prod`, `st`, `esposter`, `001`       | `prodStEsposter001.ts`   | `prodStEsposter001`   |
+| `prod-srch-esposter-001`  | `prod`, `srch`, `esposter`, `001`     | `prodSrchEsposter001.ts` | `prodSrchEsposter001` |
 
 Legacy examples:
 

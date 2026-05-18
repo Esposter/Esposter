@@ -15,7 +15,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",
-    "build:app": "NODE_OPTIONS=--max-old-space-size=8192 lerna run build --scope=@esposter/app",
+    "build:app": "lerna run build --scope=@esposter/app",
     "build:docker": "pnpm crossOS copyfiles .gitignore .dockerignore && docker compose -f docker-compose.dev.yaml build",
     "build:docs": "typedoc",
     "build:packages": "lerna run build --ignore @esposter/app",
