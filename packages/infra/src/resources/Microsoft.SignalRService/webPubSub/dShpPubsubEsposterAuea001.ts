@@ -1,3 +1,5 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
@@ -7,7 +9,7 @@ export const dShpPubsubEsposterAuea001: azure_native.webpubsub.WebPubSub = new a
     disableAadAuth: false,
     disableLocalAuth: false,
     kind: azure_native.webpubsub.ServiceKind.WebPubSub,
-    location: "australiaeast",
+    location: AzureAustraliaEastLocation,
     networkACLs: {
       defaultAction: azure_native.webpubsub.ACLAction.Deny,
       ipRules: [
@@ -40,7 +42,7 @@ export const dShpPubsubEsposterAuea001: azure_native.webpubsub.WebPubSub = new a
       tier: azure_native.webpubsub.WebPubSubSkuTier.Free,
     },
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
     tls: {
       clientCertEnabled: false,

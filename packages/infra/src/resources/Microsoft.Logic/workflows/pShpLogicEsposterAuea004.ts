@@ -1,6 +1,16 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
+import AzureResourceManagerManagedApiId from "@/constants/AzureResourceManagerManagedApiId";
+import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
+import PShpRgEsposterAuea001Name from "@/constants/PShpRgEsposterAuea001Name";
+import { pShpEvgtsEsposterAuea001 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/pShpEvgtsEsposterAuea001";
+import { pShpEvgtsEsposterAuea002 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/pShpEvgtsEsposterAuea002";
+import { pShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/pShpEvgtEsposterAuea001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import { pShpApicnEsposterAuea004 } from "@/resources/Microsoft.Web/connections/pShpApicnEsposterAuea004";
+import { pShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/pShpFuncEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
+import * as pulumi from "@pulumi/pulumi";
 
 export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   "p-shp-logic-esposter-auea-004",
@@ -18,8 +28,7 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                   properties: {
                     maxEventsPerBatch: 1,
                     preferredBatchSizeInKilobytes: 64,
-                    resourceId:
-                      "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.Web/sites/p-shp-func-esposter-auea-001/functions/ProcessPushNotification",
+                    resourceId: pulumi.interpolate`${pShpFuncEsposterAuea001.id}/functions/ProcessPushNotification`,
                   },
                 },
                 eventDeliverySchema: "EventGridSchema",
@@ -29,15 +38,14 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                   subjectBeginsWith: "",
                   subjectEndsWith: "",
                 },
-                id: "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.EventGrid/topics/p-shp-evgt-esposter-auea-001/providers/Microsoft.EventGrid/eventSubscriptions/p-shp-evgts-esposter-auea-002",
+                id: pShpEvgtsEsposterAuea002.id,
                 name: "p-shp-evgts-esposter-auea-002",
-                resourceGroup: "p-shp-rg-esposter-auea-001",
+                resourceGroup: PShpRgEsposterAuea001Name,
                 retryPolicy: {
                   eventTimeToLiveInMinutes: 1440,
                   maxDeliveryAttempts: 30,
                 },
-                topic:
-                  "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.EventGrid/topics/p-shp-evgt-esposter-auea-001",
+                topic: pShpEvgtEsposterAuea001.id,
                 type: "Microsoft.EventGrid/eventSubscriptions",
               },
             },
@@ -47,7 +55,7 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "put",
-            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('p-shp-rg-esposter-auea-001')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-002')}",
+            path: `/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-002')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -66,8 +74,7 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                   properties: {
                     maxEventsPerBatch: 1,
                     preferredBatchSizeInKilobytes: 64,
-                    resourceId:
-                      "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.Web/sites/p-shp-func-esposter-auea-001/functions/ProcessWebhook",
+                    resourceId: pulumi.interpolate`${pShpFuncEsposterAuea001.id}/functions/ProcessWebhook`,
                   },
                 },
                 eventDeliverySchema: "EventGridSchema",
@@ -77,15 +84,14 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                   subjectBeginsWith: "",
                   subjectEndsWith: "",
                 },
-                id: "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.EventGrid/topics/p-shp-evgt-esposter-auea-001/providers/Microsoft.EventGrid/eventSubscriptions/p-shp-evgts-esposter-auea-001",
+                id: pShpEvgtsEsposterAuea001.id,
                 name: "p-shp-evgts-esposter-auea-001",
-                resourceGroup: "p-shp-rg-esposter-auea-001",
+                resourceGroup: PShpRgEsposterAuea001Name,
                 retryPolicy: {
                   eventTimeToLiveInMinutes: 1440,
                   maxDeliveryAttempts: 30,
                 },
-                topic:
-                  "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/p-shp-rg-esposter-auea-001/providers/Microsoft.EventGrid/topics/p-shp-evgt-esposter-auea-001",
+                topic: pShpEvgtEsposterAuea001.id,
                 type: "Microsoft.EventGrid/eventSubscriptions",
               },
             },
@@ -95,7 +101,7 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "put",
-            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('p-shp-rg-esposter-auea-001')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-001')}",
+            path: `/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-001')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -113,7 +119,7 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "get",
-            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('p-shp-rg-esposter-auea-001')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-002')}",
+            path: `/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-002')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -128,7 +134,7 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "get",
-            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('p-shp-rg-esposter-auea-001')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-001')}",
+            path: `/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-001')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -253,7 +259,7 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
     identity: {
       type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned,
     },
-    location: "australiaeast",
+    location: AzureAustraliaEastLocation,
     parameters: {
       $connections: {
         value: {
@@ -265,7 +271,7 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                 type: "ManagedServiceIdentity",
               },
             },
-            id: "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/providers/Microsoft.Web/locations/australiaeast/managedApis/arm",
+            id: AzureResourceManagerManagedApiId,
           },
         },
       },
@@ -273,7 +279,7 @@ export const pShpLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
     resourceGroupName: pShpRgEsposterAuea001.name,
     state: azure_native.logic.WorkflowState.Enabled,
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
     workflowName: "p-shp-logic-esposter-auea-004",
   },

@@ -1,8 +1,12 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAustraliaEastDisplayLocation from "@/constants/AzureAustraliaEastDisplayLocation";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
+const appServicePlanName = "ASP-pshprgesposterauea001-b082";
+
 export const aspPshprgesposterauea001B082: azure_native.web.AppServicePlan = new azure_native.web.AppServicePlan(
-  "ASP-pshprgesposterauea001-b082",
+  appServicePlanName,
   {
     asyncScalingEnabled: false,
     elasticScaleEnabled: false,
@@ -10,9 +14,9 @@ export const aspPshprgesposterauea001B082: azure_native.web.AppServicePlan = new
     isSpot: false,
     isXenon: false,
     kind: "functionapp",
-    location: "Australia East",
+    location: AzureAustraliaEastDisplayLocation,
     maximumElasticWorkerCount: 1,
-    name: "ASP-pshprgesposterauea001-b082",
+    name: appServicePlanName,
     perSiteScaling: false,
     reserved: false,
     resourceGroupName: pShpRgEsposterAuea001.name,
@@ -24,7 +28,7 @@ export const aspPshprgesposterauea001B082: azure_native.web.AppServicePlan = new
       tier: "Dynamic",
     },
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
     targetWorkerCount: 0,
     targetWorkerSizeId: 0,

@@ -1,3 +1,5 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
@@ -10,7 +12,7 @@ export const dShpSpchEsposterAuea001: azure_native.cognitiveservices.Account =
         type: azure_native.cognitiveservices.ResourceIdentityType.None,
       },
       kind: "SpeechServices",
-      location: "australiaeast",
+      location: AzureAustraliaEastLocation,
       properties: {
         networkAcls: {
           defaultAction: azure_native.cognitiveservices.NetworkRuleAction.Allow,
@@ -22,7 +24,7 @@ export const dShpSpchEsposterAuea001: azure_native.cognitiveservices.Account =
         name: "F0",
       },
       tags: {
-        Application: "Esposter",
+        ...ApplicationTags,
       },
     },
     {

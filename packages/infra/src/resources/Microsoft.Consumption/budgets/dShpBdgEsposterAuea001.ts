@@ -2,6 +2,7 @@ import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import { dShpAgEsposterAuea001 } from "@/resources/Microsoft.Insights/actionGroups/dShpAgEsposterAuea001";
 import { dShpAgEsposterAuea003 } from "@/resources/Microsoft.Insights/actionGroups/dShpAgEsposterAuea003";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
+import { dShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/dShpFuncEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -15,9 +16,7 @@ export const dShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure
       dimensions: {
         name: "ResourceId",
         operator: azure_native.consumption.BudgetOperatorType.In,
-        values: [
-          "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourcegroups/d-shp-rg-esposter-auea-001/providers/microsoft.web/sites/d-shp-func-esposter-auea-001",
-        ],
+        values: [dShpFuncEsposterAuea001.id],
       },
     },
     notifications: {

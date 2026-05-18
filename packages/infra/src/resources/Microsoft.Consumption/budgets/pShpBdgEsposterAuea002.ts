@@ -1,4 +1,5 @@
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
+import { pShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/pShpEvgtEsposterAuea001";
 import { pShpAgEsposterAuea001 } from "@/resources/Microsoft.Insights/actionGroups/pShpAgEsposterAuea001";
 import { pShpAgEsposterAuea003 } from "@/resources/Microsoft.Insights/actionGroups/pShpAgEsposterAuea003";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
@@ -15,9 +16,7 @@ export const pShpBdgEsposterAuea002: azure_native.consumption.Budget = new azure
       dimensions: {
         name: "ResourceId",
         operator: azure_native.consumption.BudgetOperatorType.In,
-        values: [
-          "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourcegroups/p-shp-rg-esposter-auea-001/providers/microsoft.eventgrid/topics/p-shp-evgt-esposter-auea-001",
-        ],
+        values: [pShpEvgtEsposterAuea001.id],
       },
     },
     notifications: {

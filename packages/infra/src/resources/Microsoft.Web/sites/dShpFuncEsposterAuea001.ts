@@ -1,5 +1,8 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAustraliaEastDisplayLocation from "@/constants/AzureAustraliaEastDisplayLocation";
 import { dShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/dShpAppiEsposterAuea001";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
+import { aspDshprgesposterauea00194fb } from "@/resources/Microsoft.Web/serverFarms/aspDshprgesposterauea00194fb";
 import * as azure_native from "@pulumi/azure-native";
 
 export const dShpFuncEsposterAuea001: azure_native.web.WebApp = new azure_native.web.WebApp(
@@ -36,7 +39,7 @@ export const dShpFuncEsposterAuea001: azure_native.web.WebApp = new azure_native
     isXenon: false,
     keyVaultReferenceIdentity: "SystemAssigned",
     kind: "functionapp",
-    location: "Australia East",
+    location: AzureAustraliaEastDisplayLocation,
     name: "d-shp-func-esposter-auea-001",
     outboundVnetRouting: {
       allTraffic: false,
@@ -50,11 +53,10 @@ export const dShpFuncEsposterAuea001: azure_native.web.WebApp = new azure_native
     reserved: false,
     resourceGroupName: dShpRgEsposterAuea001.name,
     scmSiteAlsoStopped: false,
-    serverFarmId:
-      "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/resourceGroups/d-shp-rg-esposter-auea-001/providers/Microsoft.Web/serverfarms/ASP-dshprgesposterauea001-94fb",
+    serverFarmId: aspDshprgesposterauea00194fb.id,
     storageAccountRequired: false,
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
       "hidden-link: /app-insights-resource-id": dShpAppiEsposterAuea001.id,
     },
   },

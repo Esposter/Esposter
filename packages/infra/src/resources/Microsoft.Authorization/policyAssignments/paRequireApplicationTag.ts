@@ -1,3 +1,4 @@
+import ApplicationTagName from "@/constants/ApplicationTagName";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import * as azure_native from "@pulumi/azure-native";
 
@@ -15,7 +16,7 @@ export const paRequireApplicationTag: azure_native.authorization.PolicyAssignmen
       },
       parameters: {
         tagName: {
-          value: "Application",
+          value: ApplicationTagName,
         },
       },
       policyAssignmentName: "7b87693e9a494c838ffac3d7",

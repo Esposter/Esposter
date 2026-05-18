@@ -1,3 +1,5 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
@@ -19,10 +21,10 @@ export const pShpAgEsposterAuea002: azure_native.monitor.ActionGroup = new azure
     ],
     enabled: true,
     groupShortName: "SmartDetect",
-    location: "Global",
+    location: AzureGlobalDisplayLocation,
     resourceGroupName: pShpRgEsposterAuea001.name,
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
   },
   {

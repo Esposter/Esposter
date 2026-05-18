@@ -1,3 +1,5 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import Pshpstespauea001Name from "@/constants/Pshpstespauea001Name";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
@@ -29,7 +31,7 @@ export const pshpstespauea001: azure_native.storage.StorageAccount = new azure_n
     },
     kind: azure_native.storage.Kind.StorageV2,
     largeFileSharesState: azure_native.storage.LargeFileSharesState.Enabled,
-    location: "australiaeast",
+    location: AzureAustraliaEastLocation,
     minimumTlsVersion: azure_native.storage.MinimumTlsVersion.TLS1_2,
     networkRuleSet: {
       bypass: azure_native.storage.Bypass.AzureServices,
@@ -43,7 +45,7 @@ export const pshpstespauea001: azure_native.storage.StorageAccount = new azure_n
       name: azure_native.storage.SkuName.Standard_LRS,
     },
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
   },
   {

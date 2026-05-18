@@ -1,3 +1,5 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
@@ -8,7 +10,7 @@ export const dShpLogEsposterAuea001: azure_native.operationalinsights.Workspace 
       features: {
         enableLogAccessUsingOnlyResourcePermissions: true,
       },
-      location: "australiaeast",
+      location: AzureAustraliaEastLocation,
       publicNetworkAccessForIngestion: azure_native.operationalinsights.PublicNetworkAccessType.Enabled,
       publicNetworkAccessForQuery: azure_native.operationalinsights.PublicNetworkAccessType.Enabled,
       resourceGroupName: dShpRgEsposterAuea001.name,
@@ -17,7 +19,7 @@ export const dShpLogEsposterAuea001: azure_native.operationalinsights.Workspace 
         name: "pergb2018",
       },
       tags: {
-        Application: "Esposter",
+        ...ApplicationTags,
       },
       workspaceCapping: {
         dailyQuotaGb: -1,
