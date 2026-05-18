@@ -1,6 +1,6 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import DShpAgEsposterAuea002SmartDetectorResourceId from "@/constants/DShpAgEsposterAuea002SmartDetectorResourceId";
+import DevAgEsposterAuea002SmartDetectorResourceId from "@/constants/DevAgEsposterAuea002SmartDetectorResourceId";
 import DShpAppiEsposterAuea001SmartDetectorResourceId from "@/constants/DShpAppiEsposterAuea001SmartDetectorResourceId";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
@@ -10,7 +10,7 @@ export const dShpAppiEsposterAuea001ResponseLatencyDegradation: azure_native.ale
     "Response Latency Degradation - d-shp-appi-esposter-auea-001",
     {
       actionGroups: {
-        groupIds: [DShpAgEsposterAuea002SmartDetectorResourceId],
+        groupIds: [DevAgEsposterAuea002SmartDetectorResourceId],
       },
       alertRuleName: "Response Latency Degradation - d-shp-appi-esposter-auea-001",
       description:

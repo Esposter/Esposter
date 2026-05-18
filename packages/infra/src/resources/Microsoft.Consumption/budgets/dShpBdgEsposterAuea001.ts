@@ -1,6 +1,6 @@
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
-import { dShpAgEsposterAuea001 } from "@/resources/Microsoft.Insights/actionGroups/dShpAgEsposterAuea001";
-import { dShpAgEsposterAuea003 } from "@/resources/Microsoft.Insights/actionGroups/dShpAgEsposterAuea003";
+import { devAgEsposterAuea001 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposterAuea001";
+import { devAgEsposterAuea003 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposterAuea003";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import { dShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/dShpFuncEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
@@ -22,7 +22,7 @@ export const dShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure
     notifications: {
       ActualCost_100_DeleteSub: {
         contactEmails: [],
-        contactGroups: [dShpAgEsposterAuea003.id],
+        contactGroups: [devAgEsposterAuea003.id],
         enabled: true,
         operator: "GreaterThanOrEqualTo",
         threshold: 100,
@@ -30,7 +30,7 @@ export const dShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure
       },
       ActualCost_100_StopFunction: {
         contactEmails: [],
-        contactGroups: [dShpAgEsposterAuea001.id],
+        contactGroups: [devAgEsposterAuea001.id],
         enabled: true,
         operator: "GreaterThanOrEqualTo",
         threshold: 100,

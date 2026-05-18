@@ -1,6 +1,6 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import PShpAgEsposterAuea002SmartDetectorResourceId from "@/constants/PShpAgEsposterAuea002SmartDetectorResourceId";
+import ProdAgEsposterAuea002SmartDetectorResourceId from "@/constants/ProdAgEsposterAuea002SmartDetectorResourceId";
 import PShpAppiEsposterAuea001SmartDetectorResourceId from "@/constants/PShpAppiEsposterAuea001SmartDetectorResourceId";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
@@ -10,7 +10,7 @@ export const pShpAppiEsposterAuea001DependencyLatencyDegradation: azure_native.a
     "Dependency Latency Degradation - p-shp-appi-esposter-auea-001",
     {
       actionGroups: {
-        groupIds: [PShpAgEsposterAuea002SmartDetectorResourceId],
+        groupIds: [ProdAgEsposterAuea002SmartDetectorResourceId],
       },
       alertRuleName: "Dependency Latency Degradation - p-shp-appi-esposter-auea-001",
       description:

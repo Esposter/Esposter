@@ -1,0 +1,33 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
+import { dShpLogicEsposterAuea003 } from "@/resources/Microsoft.Logic/workflows/dShpLogicEsposterAuea003";
+import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
+import * as azure_native from "@pulumi/azure-native";
+import * as pulumi from "@pulumi/pulumi";
+
+const config = new pulumi.Config();
+
+export const devAgEsposterAuea003: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
+  "dev-ag-esposter-auea-003",
+  {
+    actionGroupName: "dev-ag-esposter-auea-003",
+    enabled: true,
+    groupShortName: "DeleteSub",
+    location: AzureGlobalDisplayLocation,
+    logicAppReceivers: [
+      {
+        callbackUrl: config.requireSecret("dShpAgEsposterAuea003CallbackUrl"),
+        name: "dev-delete-sub",
+        resourceId: dShpLogicEsposterAuea003.id,
+        useCommonAlertSchema: true,
+      },
+    ],
+    resourceGroupName: dShpRgEsposterAuea001.name,
+    tags: {
+      ...ApplicationTags,
+    },
+  },
+  {
+    protect: true,
+  },
+);
