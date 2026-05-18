@@ -3,12 +3,13 @@ import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import AzureResourceManagerManagedApiId from "@/constants/AzureResourceManagerManagedApiId";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import PShpRgEsposterAuea001Name from "@/constants/PShpRgEsposterAuea001Name";
-import { pShpEvgtsEsposterAuea001 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/pShpEvgtsEsposterAuea001";
-import { pShpEvgtsEsposterAuea002 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/pShpEvgtsEsposterAuea002";
+import { prodEvgsEsposterAuea001 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAuea001";
+import { prodEvgsEsposterAuea002 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAuea002";
 import { pShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/pShpEvgtEsposterAuea001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import { prodApicnEsposterAuea004 } from "@/resources/Microsoft.Web/connections/prodApicnEsposterAuea004";
 import { pShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/pShpFuncEsposterAuea001";
+import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -19,7 +20,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
       $schema:
         "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
       actions: {
-        Create_ProcessPushNotification_Event_Subscription: {
+        [`Create_${AzureFunction.ProcessPushNotification}_Event_Subscription`]: {
           inputs: {
             body: {
               properties: {
@@ -28,18 +29,18 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                   properties: {
                     maxEventsPerBatch: 1,
                     preferredBatchSizeInKilobytes: 64,
-                    resourceId: pulumi.interpolate`${pShpFuncEsposterAuea001.id}/functions/ProcessPushNotification`,
+                    resourceId: pulumi.interpolate`${pShpFuncEsposterAuea001.id}/functions/${AzureFunction.ProcessPushNotification}`,
                   },
                 },
                 eventDeliverySchema: "EventGridSchema",
                 filter: {
                   enableAdvancedFilteringOnArrays: true,
-                  includedEventTypes: ["ProcessPushNotification"],
+                  includedEventTypes: [AzureFunction.ProcessPushNotification],
                   subjectBeginsWith: "",
                   subjectEndsWith: "",
                 },
-                id: pShpEvgtsEsposterAuea002.id,
-                name: "p-shp-evgts-esposter-auea-002",
+                id: prodEvgsEsposterAuea002.id,
+                name: prodEvgsEsposterAuea002.eventSubscriptionName,
                 resourceGroup: PShpRgEsposterAuea001Name,
                 retryPolicy: {
                   eventTimeToLiveInMinutes: 1440,
@@ -55,17 +56,17 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "put",
-            path: `/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-002')}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea002.eventSubscriptionName}\`)}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
           },
           runAfter: {
-            Read_ProcessPushNotification_Event_Subscription: ["Failed"],
+            [`Read_${AzureFunction.ProcessPushNotification}_Event_Subscription`]: ["Failed"],
           },
           type: "ApiConnection",
         },
-        Create_ProcessWebhook_Event_Subscription: {
+        [`Create_${AzureFunction.ProcessWebhook}_Event_Subscription`]: {
           inputs: {
             body: {
               properties: {
@@ -74,18 +75,18 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
                   properties: {
                     maxEventsPerBatch: 1,
                     preferredBatchSizeInKilobytes: 64,
-                    resourceId: pulumi.interpolate`${pShpFuncEsposterAuea001.id}/functions/ProcessWebhook`,
+                    resourceId: pulumi.interpolate`${pShpFuncEsposterAuea001.id}/functions/${AzureFunction.ProcessWebhook}`,
                   },
                 },
                 eventDeliverySchema: "EventGridSchema",
                 filter: {
                   enableAdvancedFilteringOnArrays: true,
-                  includedEventTypes: ["ProcessWebhook"],
+                  includedEventTypes: [AzureFunction.ProcessWebhook],
                   subjectBeginsWith: "",
                   subjectEndsWith: "",
                 },
-                id: pShpEvgtsEsposterAuea001.id,
-                name: "p-shp-evgts-esposter-auea-001",
+                id: prodEvgsEsposterAuea001.id,
+                name: prodEvgsEsposterAuea001.eventSubscriptionName,
                 resourceGroup: PShpRgEsposterAuea001Name,
                 retryPolicy: {
                   eventTimeToLiveInMinutes: 1440,
@@ -101,17 +102,17 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "put",
-            path: `/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-001')}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea001.eventSubscriptionName}\`)}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
           },
           runAfter: {
-            Read_ProcessWebhook_Event_Subscription: ["Failed"],
+            [`Read_${AzureFunction.ProcessWebhook}_Event_Subscription`]: ["Failed"],
           },
           type: "ApiConnection",
         },
-        Read_ProcessPushNotification_Event_Subscription: {
+        [`Read_${AzureFunction.ProcessPushNotification}_Event_Subscription`]: {
           inputs: {
             host: {
               connection: {
@@ -119,14 +120,14 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "get",
-            path: `/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-002')}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea002.eventSubscriptionName}\`)}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
           },
           type: "ApiConnection",
         },
-        Read_ProcessWebhook_Event_Subscription: {
+        [`Read_${AzureFunction.ProcessWebhook}_Event_Subscription`]: {
           inputs: {
             host: {
               connection: {
@@ -134,7 +135,7 @@ export const prodLogicEsposterAuea004: azure_native.logic.Workflow = new azure_n
               },
             },
             method: "get",
-            path: `/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/p-shp-evgt-esposter-auea-001/eventSubscriptions/p-shp-evgts-esposter-auea-001')}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${PShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAuea001.eventSubscriptionName}\`)}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },

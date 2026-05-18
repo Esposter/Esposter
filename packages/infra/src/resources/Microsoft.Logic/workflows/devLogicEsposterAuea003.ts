@@ -1,9 +1,16 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import AzureResourceManagerManagedApiId from "@/constants/AzureResourceManagerManagedApiId";
+import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
+import DShpRgEsposterAuea001Name from "@/constants/DShpRgEsposterAuea001Name";
+import { devEvgsEsposterAuea001 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/devEvgsEsposterAuea001";
+import { devEvgsEsposterAuea002 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/devEvgsEsposterAuea002";
+import { dShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/dShpEvgtEsposterAuea001";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import { devApicnEsposterAuea003 } from "@/resources/Microsoft.Web/connections/devApicnEsposterAuea003";
+import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
+import * as pulumi from "@pulumi/pulumi";
 
 export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   "dev-logic-esposter-auea-003",
@@ -12,7 +19,7 @@ export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_na
       $schema:
         "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
       actions: {
-        Delete_ProcessPushNotification_Event_Subscription: {
+        [`Delete_${AzureFunction.ProcessPushNotification}_Event_Subscription`]: {
           inputs: {
             host: {
               connection: {
@@ -20,14 +27,14 @@ export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_na
               },
             },
             method: "delete",
-            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('d-shp-rg-esposter-auea-001')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/d-shp-evgt-esposter-auea-001/eventSubscriptions/d-shp-evgts-esposter-auea-002')}",
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${DShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${dShpEvgtEsposterAuea001.name}/eventSubscriptions/${devEvgsEsposterAuea002.eventSubscriptionName}\`)}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
           },
           type: "ApiConnection",
         },
-        Delete_ProcessWebhook_Event_Subscription: {
+        [`Delete_${AzureFunction.ProcessWebhook}_Event_Subscription`]: {
           inputs: {
             host: {
               connection: {
@@ -35,7 +42,7 @@ export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_na
               },
             },
             method: "delete",
-            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('d-shp-rg-esposter-auea-001')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/d-shp-evgt-esposter-auea-001/eventSubscriptions/d-shp-evgts-esposter-auea-001')}",
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${DShpRgEsposterAuea001Name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent(\`topics/${dShpEvgtEsposterAuea001.name}/eventSubscriptions/${devEvgsEsposterAuea001.eventSubscriptionName}\`)}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
