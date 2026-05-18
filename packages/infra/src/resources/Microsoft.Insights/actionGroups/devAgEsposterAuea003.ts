@@ -1,6 +1,6 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
-import { dShpLogicEsposterAuea003 } from "@/resources/Microsoft.Logic/workflows/dShpLogicEsposterAuea003";
+import { devLogicEsposterAuea003 } from "@/resources/Microsoft.Logic/workflows/devLogicEsposterAuea003";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
@@ -16,9 +16,9 @@ export const devAgEsposterAuea003: azure_native.monitor.ActionGroup = new azure_
     location: AzureGlobalDisplayLocation,
     logicAppReceivers: [
       {
-        callbackUrl: config.requireSecret("dShpAgEsposterAuea003CallbackUrl"),
+        callbackUrl: config.requireSecret("devAgEsposterAuea003CallbackUrl"),
         name: "dev-delete-sub",
-        resourceId: dShpLogicEsposterAuea003.id,
+        resourceId: devLogicEsposterAuea003.id,
         useCommonAlertSchema: true,
       },
     ],

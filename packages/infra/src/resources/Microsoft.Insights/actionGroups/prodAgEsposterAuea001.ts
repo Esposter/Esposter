@@ -1,6 +1,6 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
-import { pShpLogicEsposterAuea001 } from "@/resources/Microsoft.Logic/workflows/pShpLogicEsposterAuea001";
+import { prodLogicEsposterAuea001 } from "@/resources/Microsoft.Logic/workflows/prodLogicEsposterAuea001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
@@ -16,9 +16,9 @@ export const prodAgEsposterAuea001: azure_native.monitor.ActionGroup = new azure
     location: AzureGlobalDisplayLocation,
     logicAppReceivers: [
       {
-        callbackUrl: config.requireSecret("pShpAgEsposterAuea001CallbackUrl"),
+        callbackUrl: config.requireSecret("prodAgEsposterAuea001CallbackUrl"),
         name: "prod-stop-function",
-        resourceId: pShpLogicEsposterAuea001.id,
+        resourceId: prodLogicEsposterAuea001.id,
         useCommonAlertSchema: true,
       },
     ],

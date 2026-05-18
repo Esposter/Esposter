@@ -1,6 +1,6 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
-import { dShpLogicEsposterAuea001 } from "@/resources/Microsoft.Logic/workflows/dShpLogicEsposterAuea001";
+import { devLogicEsposterAuea001 } from "@/resources/Microsoft.Logic/workflows/devLogicEsposterAuea001";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
@@ -16,9 +16,9 @@ export const devAgEsposterAuea001: azure_native.monitor.ActionGroup = new azure_
     location: AzureGlobalDisplayLocation,
     logicAppReceivers: [
       {
-        callbackUrl: config.requireSecret("dShpAgEsposterAuea001CallbackUrl"),
+        callbackUrl: config.requireSecret("devAgEsposterAuea001CallbackUrl"),
         name: "dev-stop-function",
-        resourceId: dShpLogicEsposterAuea001.id,
+        resourceId: devLogicEsposterAuea001.id,
         useCommonAlertSchema: true,
       },
     ],
