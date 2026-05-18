@@ -1,8 +1,4 @@
-import { useIsProduction } from "@@/server/composables/useIsProduction";
-
 export const useSearchBaseUrl = () => {
-  const isProduction = useIsProduction();
-  return isProduction
-    ? "https://pshpsrchespauea001.search.windows.net"
-    : "https://dshpsrchespauea001.search.windows.net";
+  const runtimeConfig = useRuntimeConfig();
+  return runtimeConfig.azure.search.baseUrl;
 };

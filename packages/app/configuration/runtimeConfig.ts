@@ -15,6 +15,7 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     },
     search: {
       apiKey: process.env.AZURE_SEARCH_API_KEY,
+      baseUrl: process.env.AZURE_SEARCH_BASE_URL,
     },
     storageAccountConnectionString: process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
     webPubSub: {
