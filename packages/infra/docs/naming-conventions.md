@@ -115,128 +115,305 @@ Use Microsoft Cloud Adoption Framework abbreviations when one exists. Esposter-s
 
 These tokens are official for Esposter infrastructure. If a new Azure resource type is introduced and no token exists here, add the token in the same change as the resource. Unused tokens do not require migration.
 
-| Token   | Asset Type                 | Azure ARM Type                              | Source         |
-| ------- | -------------------------- | ------------------------------------------- | -------------- |
-| `ag`    | Azure Monitor action group | `Microsoft.Insights/actionGroups`           | CAF            |
-| `apicn` | API connection             | `Microsoft.Web/connections`                 | Esposter       |
-| `appi`  | Application Insights       | `Microsoft.Insights/components`             | CAF            |
-| `bdg`   | Budget                     | `Microsoft.Consumption/budgets`             | Esposter       |
-| `evgs`  | Event Grid subscription    | `Microsoft.EventGrid/eventSubscriptions`    | CAF            |
-| `evgt`  | Event Grid topic           | `Microsoft.EventGrid/topics`                | CAF-compatible |
-| `func`  | Function app               | `Microsoft.Web/sites`                       | CAF            |
-| `log`   | Log Analytics workspace    | `Microsoft.OperationalInsights/workspaces`  | CAF            |
-| `logic` | Logic app                  | `Microsoft.Logic/workflows`                 | CAF            |
-| `pa`    | Policy assignment          | `Microsoft.Authorization/policyAssignments` | Esposter       |
-| `rg`    | Resource group             | `Microsoft.Resources/resourceGroups`        | CAF            |
-| `spch`  | Speech service             | `Microsoft.CognitiveServices/accounts`      | CAF            |
-| `srch`  | Azure AI Search            | `Microsoft.Search/searchServices`           | CAF            |
-| `st`    | Storage account            | `Microsoft.Storage/storageAccounts`         | CAF            |
-| `wps`   | Web PubSub                 | `Microsoft.SignalRService/webPubSub`        | CAF            |
+| Token   | Asset Type                 | Azure ARM Type                              | Source   |
+| ------- | -------------------------- | ------------------------------------------- | -------- |
+| `ag`    | Azure Monitor action group | `Microsoft.Insights/actionGroups`           | CAF      |
+| `apic`  | API connection             | `Microsoft.Web/connections`                 | Esposter |
+| `appi`  | Application Insights       | `Microsoft.Insights/components`             | CAF      |
+| `bgt`   | Budget                     | `Microsoft.Consumption/budgets`             | Esposter |
+| `evgs`  | Event Grid subscription    | `Microsoft.EventGrid/eventSubscriptions`    | CAF      |
+| `evgt`  | Event Grid topic           | `Microsoft.EventGrid/topics`                | CAF      |
+| `func`  | Function app               | `Microsoft.Web/sites`                       | CAF      |
+| `log`   | Log Analytics workspace    | `Microsoft.OperationalInsights/workspaces`  | CAF      |
+| `logic` | Logic app                  | `Microsoft.Logic/workflows`                 | CAF      |
+| `pa`    | Policy assignment          | `Microsoft.Authorization/policyAssignments` | Esposter |
+| `rg`    | Resource group             | `Microsoft.Resources/resourceGroups`        | CAF      |
+| `spch`  | Speech service             | `Microsoft.CognitiveServices/accounts`      | CAF      |
+| `srch`  | Azure AI Search            | `Microsoft.Search/searchServices`           | CAF      |
+| `st`    | Storage account            | `Microsoft.Storage/storageAccounts`         | CAF      |
+| `wps`   | Web PubSub                 | `Microsoft.SignalRService/webPubSub`        | CAF      |
 
 Do not use `a` for Azure Monitor actions. Action behavior belongs inside the owning action group resource.
 
 Legacy imported resources use `evgts` for Event Grid subscriptions and `pubsub` for Web PubSub. Target names use `evgs` and `wps`.
 
+Legacy resources created in v8 use `apicn` for API connections and `bdg` for budgets. Target names use `apic` and `bgt`.
+
 ## Reserved Asset Type Tokens
 
-These tokens are approved for future resource types. They include the unused spreadsheet tokens plus useful CAF-aligned additions. They are not migration work unless a live resource currently uses a different token.
+These tokens are the complete set of CAF abbreviations plus Esposter-specific additions, all approved for future use. Source column indicates whether the token comes from the [CAF abbreviations list](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations) or is Esposter-defined. They are not migration work unless a live resource currently uses a different token.
 
-| Token      | Asset Type                           | Azure ARM Type / Notes                                               |
-| ---------- | ------------------------------------ | -------------------------------------------------------------------- |
-| `aa`       | Automation account                   | `Microsoft.Automation/automationAccounts`                            |
-| `a`        | Azure Monitor action                 | Action group receiver, not a standalone Azure resource               |
-| `acr`      | Azure Container Registry             | `Microsoft.ContainerRegistry/registries`                             |
-| `adf`      | Azure Data Factory                   | `Microsoft.DataFactory/factories`                                    |
-| `agw`      | Application gateway                  | `Microsoft.Network/applicationGateways`                              |
-| `ais`      | Azure AI services                    | `Microsoft.CognitiveServices/accounts`                               |
-| `aks`      | AKS cluster                          | `Microsoft.ContainerService/managedClusters`                         |
-| `apim`     | API Management service               | `Microsoft.ApiManagement/service`                                    |
-| `app`      | Web app                              | `Microsoft.Web/sites`                                                |
-| `appcs`    | App Configuration store              | `Microsoft.AppConfiguration/configurationStores`                     |
-| `arck`     | Azure Arc enabled Kubernetes cluster | `Microsoft.Kubernetes/connectedClusters`                             |
-| `arcs`     | Azure Arc enabled server             | `Microsoft.HybridCompute/machines`                                   |
-| `asa`      | Azure Stream Analytics job           | `Microsoft.StreamAnalytics/streamingJobs`                            |
-| `as`       | Azure Analysis Services server       | `Microsoft.AnalysisServices/servers`                                 |
-| `asg`      | Application security group           | `Microsoft.Network/applicationSecurityGroups`                        |
-| `asp`      | App Service plan                     | `Microsoft.Web/serverFarms`                                          |
-| `avail`    | Availability set                     | `Microsoft.Compute/availabilitySets`                                 |
-| `bp`       | Blueprint                            | `Microsoft.Blueprint/blueprints`                                     |
-| `bpa`      | Blueprint assignment                 | `Microsoft.Blueprint/blueprintAssignments`                           |
-| `ca`       | Container app                        | `Microsoft.App/containerApps`                                        |
-| `cae`      | Container Apps environment           | `Microsoft.App/managedEnvironments`                                  |
-| `ci`       | Container instance                   | `Microsoft.ContainerInstance/containerGroups`                        |
-| `cld`      | Cloud service                        | `Microsoft.Compute/cloudServices`                                    |
-| `cmstb`    | Azure Cosmos DB database for table   | `Microsoft.DocumentDB/databaseAccounts`                              |
-| `cn`       | VPN connection                       | `Microsoft.Network/connections`                                      |
-| `cog`      | Azure Cognitive Services             | `Microsoft.CognitiveServices/accounts`                               |
-| `cr`       | Container registry                   | `Microsoft.ContainerRegistry/registries`                             |
-| `dbw`      | Azure Databricks workspace           | `Microsoft.Databricks/workspaces`                                    |
-| `dec`      | Azure Data Explorer cluster          | `Microsoft.Kusto/clusters`                                           |
-| `disk`     | Managed disk data                    | `Microsoft.Compute/disks`                                            |
-| `dla`      | Data Lake Analytics account          | `Microsoft.DataLakeAnalytics/accounts`                               |
-| `dls`      | Data Lake Store account              | `Microsoft.DataLakeStore/accounts`                                   |
-| `dms`      | Database Migration Service instance  | `Microsoft.DataMigration/services`                                   |
-| `erc`      | ExpressRoute circuit                 | `Microsoft.Network/expressRouteCircuits`                             |
-| `fd`       | Front Door                           | `Microsoft.Network/frontDoors`                                       |
-| `hadoop`   | HDInsight Hadoop cluster             | `Microsoft.HDInsight/clusters`                                       |
-| `hbase`    | HDInsight HBase cluster              | `Microsoft.HDInsight/clusters`                                       |
-| `ia`       | Integration account                  | `Microsoft.Logic/integrationAccounts`                                |
-| `id`       | Managed identity                     | `Microsoft.ManagedIdentity/userAssignedIdentities`                   |
-| `iot`      | IoT Hub                              | `Microsoft.Devices/IotHubs`                                          |
-| `kafka`    | HDInsight Kafka cluster              | `Microsoft.HDInsight/clusters`                                       |
-| `kv`       | Key vault                            | `Microsoft.KeyVault/vaults`                                          |
-| `lbe`      | Load balancer external               | `Microsoft.Network/loadBalancers`                                    |
-| `lbi`      | Load balancer internal               | `Microsoft.Network/loadBalancers`                                    |
-| `lgw`      | Local network gateway                | `Microsoft.Network/localNetworkGateways`                             |
-| `mg`       | Management group                     | `Microsoft.Management/managementGroups`                              |
-| `migr`     | Azure Migrate project                | `Microsoft.Migrate/migrateProjects`                                  |
-| `mls`      | HDInsight ML Services cluster        | `Microsoft.HDInsight/clusters`                                       |
-| `mlw`      | Azure Machine Learning workspace     | `Microsoft.MachineLearningServices/workspaces`                       |
-| `mysql`    | MySQL database                       | `Microsoft.DBforMySQL/flexibleServers`                               |
-| `nic`      | Network interface                    | `Microsoft.Network/networkInterfaces`                                |
-| `nsg`      | Network security group               | `Microsoft.Network/networkSecurityGroups`                            |
-| `ntf`      | Notification Hubs                    | `Microsoft.NotificationHubs/namespaces/notificationHubs`             |
-| `ntfns`    | Notification Hubs namespace          | `Microsoft.NotificationHubs/namespaces`                              |
-| `oai`      | Azure OpenAI Service                 | `Microsoft.CognitiveServices/accounts`                               |
-| `osdisk`   | Managed disk OS                      | `Microsoft.Compute/disks`                                            |
-| `pbi`      | Power BI Embedded                    | `Microsoft.PowerBIDedicated/capacities`                              |
-| `peer`     | Virtual network peering              | `Microsoft.Network/virtualNetworks/virtualNetworkPeerings`           |
-| `pep`      | Private endpoint                     | `Microsoft.Network/privateEndpoints`                                 |
-| `pip`      | Public IP address                    | `Microsoft.Network/publicIPAddresses`                                |
-| `plan`     | App Service plan                     | `Microsoft.Web/serverFarms`                                          |
-| `pl`       | Private Link                         | Private Link resources                                               |
-| `policy`   | Policy definition                    | `Microsoft.Authorization/policyDefinitions`                          |
-| `psql`     | PostgreSQL database                  | `Microsoft.DBforPostgreSQL/flexibleServers`                          |
-| `redis`    | Azure Cache for Redis instance       | `Microsoft.Cache/redis`                                              |
-| `route`    | Route table                          | `Microsoft.Network/routeTables`                                      |
-| `rsv`      | Recovery Services vault              | `Microsoft.RecoveryServices/vaults`                                  |
-| `sb`       | Service Bus                          | `Microsoft.ServiceBus/namespaces`                                    |
-| `sbns`     | Service Bus namespace                | `Microsoft.ServiceBus/namespaces`                                    |
-| `sbq`      | Service Bus queue                    | `Microsoft.ServiceBus/namespaces/queues`                             |
-| `sbt`      | Service Bus topic                    | `Microsoft.ServiceBus/namespaces/topics`                             |
-| `sbts`     | Service Bus topic subscription       | `Microsoft.ServiceBus/namespaces/topics/subscriptions`               |
-| `sf`       | Service Fabric cluster               | `Microsoft.ServiceFabric/clusters`                                   |
-| `snet`     | Subnet                               | `Microsoft.Network/virtualNetworks/subnets`                          |
-| `spark`    | HDInsight Spark cluster              | `Microsoft.HDInsight/clusters`                                       |
-| `sql`      | Azure SQL Database server            | `Microsoft.Sql/servers`                                              |
-| `sqldb`    | Azure SQL database                   | `Microsoft.Sql/servers/databases`                                    |
-| `sqldw`    | Azure SQL Data Warehouse             | `Microsoft.Sql/servers/databases`                                    |
-| `sqledp`   | SQL Elastic database pool            | `Microsoft.Sql/servers/elasticPools`                                 |
-| `sqlmi`    | SQL Managed Instance                 | `Microsoft.Sql/managedInstances`                                     |
-| `sqlstrdb` | SQL Server Stretch Database          | `Microsoft.Sql/servers/databases`                                    |
-| `ssimp`    | Azure StorSimple                     | `Microsoft.StorSimple/managers`                                      |
-| `stc`      | Storage account classic              | `Microsoft.ClassicStorage/storageAccounts`                           |
-| `storm`    | HDInsight Storm cluster              | `Microsoft.HDInsight/clusters`                                       |
-| `stvm`     | VM storage account                   | `Microsoft.Storage/storageAccounts`                                  |
-| `syn`      | Azure Synapse Analytics              | `Microsoft.Synapse/workspaces`                                       |
-| `traf`     | Traffic Manager profile              | `Microsoft.Network/trafficManagerProfiles`                           |
-| `tsi`      | Time Series Insights environment     | `Microsoft.TimeSeriesInsights/environments`                          |
-| `udr`      | User defined route                   | `Microsoft.Network/routeTables/routes`                               |
-| `vgw`      | Virtual network gateway              | `Microsoft.Network/virtualNetworkGateways`                           |
-| `vm`       | Virtual machine                      | `Microsoft.Compute/virtualMachines`                                  |
-| `vmss`     | Virtual machine scale set            | `Microsoft.Compute/virtualMachineScaleSets`                          |
-| `vnet`     | Virtual network                      | `Microsoft.Network/virtualNetworks`                                  |
-| `waf`      | Web Application Firewall policy      | `Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies` |
+### AI and machine learning
+
+| Token   | Asset Type                       | Azure ARM Type                                  | Source |
+| ------- | -------------------------------- | ----------------------------------------------- | ------ |
+| `aif`   | Foundry account                  | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `ais`   | Foundry Tools (multi-service)    | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `avi`   | Azure AI Video Indexer           | `Microsoft.VideoIndexer/accounts`               | CAF    |
+| `bot`   | Bot service                      | `Microsoft.BotService/botServices`              | CAF    |
+| `cm`    | Content moderator                | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `cs`    | Content safety                   | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `cstv`  | Custom vision (prediction)       | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `cstvt` | Custom vision (training)         | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `cv`    | Computer vision                  | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `di`    | Document intelligence            | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `face`  | Face API                         | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `hi`    | Health Insights                  | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `hub`   | Foundry hub                      | `Microsoft.MachineLearningServices/workspaces`  | CAF    |
+| `ir`    | Immersive reader                 | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `lang`  | Language service                 | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `mlw`   | Azure Machine Learning workspace | `Microsoft.MachineLearningServices/workspaces`  | CAF    |
+| `oai`   | Azure OpenAI Service             | `Microsoft.CognitiveServices/accounts`          | CAF    |
+| `proj`  | Foundry project                  | `Microsoft.CognitiveServices/accounts/projects` | CAF    |
+| `trsl`  | Translator                       | `Microsoft.CognitiveServices/accounts`          | CAF    |
+
+### Analytics and IoT
+
+| Token    | Asset Type                           | Azure ARM Type                                        | Source |
+| -------- | ------------------------------------ | ----------------------------------------------------- | ------ |
+| `adf`    | Azure Data Factory                   | `Microsoft.DataFactory/factories`                     | CAF    |
+| `as`     | Azure Analysis Services server       | `Microsoft.AnalysisServices/servers`                  | CAF    |
+| `asa`    | Azure Stream Analytics               | `Microsoft.StreamAnalytics/cluster`                   | CAF    |
+| `dbac`   | Azure Databricks Access Connector    | `Microsoft.Databricks/workspaces/accessConnectors`    | CAF    |
+| `dbw`    | Azure Databricks workspace           | `Microsoft.Databricks/workspaces`                     | CAF    |
+| `dec`    | Azure Data Explorer cluster          | `Microsoft.Kusto/clusters`                            | CAF    |
+| `dedb`   | Azure Data Explorer cluster database | `Microsoft.Kusto/clusters/databases`                  | CAF    |
+| `dls`    | Data Lake Store account              | `Microsoft.DataLakeStore/accounts`                    | CAF    |
+| `dt`     | Azure Digital Twin instance          | `Microsoft.DigitalTwins/digitalTwinsInstances`        | CAF    |
+| `egst`   | Event Grid system topic              | `Microsoft.EventGrid/systemTopics`                    | CAF    |
+| `evgd`   | Event Grid domain                    | `Microsoft.EventGrid/domains`                         | CAF    |
+| `evgns`  | Event Grid namespace                 | `Microsoft.EventGrid/namespaces`                      | CAF    |
+| `evh`    | Event hub                            | `Microsoft.EventHub/namespaces/eventHubs`             | CAF    |
+| `evhns`  | Event Hubs namespace                 | `Microsoft.EventHub/namespaces`                       | CAF    |
+| `fc`     | Fabric Capacity                      | `Microsoft.Fabric/capacities`                         | CAF    |
+| `hadoop` | HDInsight Hadoop cluster             | `Microsoft.HDInsight/clusters`                        | CAF    |
+| `hbase`  | HDInsight HBase cluster              | `Microsoft.HDInsight/clusters`                        | CAF    |
+| `iot`    | IoT Hub                              | `Microsoft.Devices/IotHubs`                           | CAF    |
+| `kafka`  | HDInsight Kafka cluster              | `Microsoft.HDInsight/clusters`                        | CAF    |
+| `mls`    | HDInsight ML Services cluster        | `Microsoft.HDInsight/clusters`                        | CAF    |
+| `pbi`    | Power BI Embedded                    | `Microsoft.PowerBIDedicated/capacities`               | CAF    |
+| `pcert`  | Provisioning services certificate    | `Microsoft.Devices/provisioningServices/certificates` | CAF    |
+| `provs`  | Provisioning services                | `Microsoft.Devices/provisioningServices`              | CAF    |
+| `spark`  | HDInsight Spark cluster              | `Microsoft.HDInsight/clusters`                        | CAF    |
+| `storm`  | HDInsight Storm cluster              | `Microsoft.HDInsight/clusters`                        | CAF    |
+| `tsi`    | Time Series Insights environment     | `Microsoft.TimeSeriesInsights/environments`           | CAF    |
+
+### Compute and web
+
+| Token    | Asset Type                           | Azure ARM Type                                           | Source |
+| -------- | ------------------------------------ | -------------------------------------------------------- | ------ |
+| `acs`    | Communication Services               | `Microsoft.Communication/communicationServices`          | CAF    |
+| `app`    | Web app                              | `Microsoft.Web/sites`                                    | CAF    |
+| `arcgw`  | Azure Arc gateway                    | `Microsoft.HybridCompute/gateways`                       | CAF    |
+| `arck`   | Azure Arc enabled Kubernetes cluster | `Microsoft.Kubernetes/connectedClusters`                 | CAF    |
+| `arcs`   | Azure Arc enabled server             | `Microsoft.HybridCompute/machines`                       | CAF    |
+| `ase`    | App Service environment              | `Microsoft.Web/hostingEnvironments`                      | CAF    |
+| `asp`    | App Service plan                     | `Microsoft.Web/serverFarms`                              | CAF    |
+| `avail`  | Availability set                     | `Microsoft.Compute/availabilitySets`                     | CAF    |
+| `ba`     | Batch accounts                       | `Microsoft.Batch/batchAccounts`                          | CAF    |
+| `cld`    | Cloud service                        | `Microsoft.Compute/cloudServices`                        | CAF    |
+| `des`    | Disk encryption set                  | `Microsoft.Compute/diskEncryptionSets`                   | CAF    |
+| `disk`   | Managed disk (data)                  | `Microsoft.Compute/disks`                                | CAF    |
+| `gal`    | Gallery                              | `Microsoft.Compute/galleries`                            | CAF    |
+| `it`     | Image template                       | `Microsoft.VirtualMachineImages/imageTemplates`          | CAF    |
+| `lt`     | Azure Load Testing instance          | `Microsoft.LoadTestService/loadTests`                    | CAF    |
+| `mc`     | VM maintenance configuration         | `Microsoft.Maintenance/maintenanceConfigurations`        | CAF    |
+| `ntf`    | Notification Hubs                    | `Microsoft.NotificationHubs/namespaces/notificationHubs` | CAF    |
+| `ntfns`  | Notification Hubs namespace          | `Microsoft.NotificationHubs/namespaces`                  | CAF    |
+| `osdisk` | Managed disk (OS)                    | `Microsoft.Compute/disks`                                | CAF    |
+| `ppg`    | Proximity placement group            | `Microsoft.Compute/proximityPlacementGroups`             | CAF    |
+| `rpc`    | Restore point collection             | `Microsoft.Compute/restorePointCollections`              | CAF    |
+| `snap`   | Snapshot                             | `Microsoft.Compute/snapshots`                            | CAF    |
+| `stapp`  | Static web app                       | `Microsoft.Web/staticSites`                              | CAF    |
+| `stvm`   | VM storage account                   | `Microsoft.Storage/storageAccounts`                      | CAF    |
+| `vm`     | Virtual machine                      | `Microsoft.Compute/virtualMachines`                      | CAF    |
+| `vmss`   | Virtual machine scale set            | `Microsoft.Compute/virtualMachineScaleSets`              | CAF    |
+
+### Containers
+
+| Token      | Asset Type                     | Azure ARM Type                                          | Source |
+| ---------- | ------------------------------ | ------------------------------------------------------- | ------ |
+| `aks`      | AKS cluster                    | `Microsoft.ContainerService/managedClusters`            | CAF    |
+| `ca`       | Container app                  | `Microsoft.App/containerApps`                           | CAF    |
+| `cae`      | Container Apps environment     | `Microsoft.App/managedEnvironments`                     | CAF    |
+| `caj`      | Container apps job             | `Microsoft.App/jobs`                                    | CAF    |
+| `ci`       | Container instance             | `Microsoft.ContainerInstance/containerGroups`           | CAF    |
+| `cr`       | Container registry             | `Microsoft.ContainerRegistry/registries`                | CAF    |
+| `np`       | AKS user node pool             | `Microsoft.ContainerService/managedClusters/agentPools` | CAF    |
+| `npsystem` | AKS system node pool           | `Microsoft.ContainerService/managedClusters/agentPools` | CAF    |
+| `sf`       | Service Fabric cluster         | `Microsoft.ServiceFabric/clusters`                      | CAF    |
+| `sfmc`     | Service Fabric managed cluster | `Microsoft.ServiceFabric/managedClusters`               | CAF    |
+
+### Databases
+
+| Token    | Asset Type                          | Azure ARM Type                                       | Source   |
+| -------- | ----------------------------------- | ---------------------------------------------------- | -------- |
+| `amr`    | Azure Managed Redis                 | `Microsoft.Cache/RedisEnterprise`                    | CAF      |
+| `cosmos` | Azure Cosmos DB database            | `Microsoft.DocumentDB/databaseAccounts/sqlDatabases` | CAF      |
+| `coscas` | Azure Cosmos DB for Cassandra       | `Microsoft.DocumentDB/databaseAccounts`              | CAF      |
+| `cosgrm` | Azure Cosmos DB for Gremlin         | `Microsoft.DocumentDB/databaseAccounts`              | CAF      |
+| `cosmon` | Azure Cosmos DB for MongoDB         | `Microsoft.DocumentDB/databaseAccounts`              | CAF      |
+| `cosno`  | Azure Cosmos DB for NoSQL           | `Microsoft.DocumentDB/databaseAccounts`              | CAF      |
+| `cospos` | Azure Cosmos DB PostgreSQL cluster  | `Microsoft.DBforPostgreSQL/serverGroupsv2`           | CAF      |
+| `costab` | Azure Cosmos DB for Table           | `Microsoft.DocumentDB/databaseAccounts`              | CAF      |
+| `dms`    | Database Migration Service instance | `Microsoft.DataMigration/services`                   | CAF      |
+| `mysql`  | MySQL database                      | `Microsoft.DBforMySQL/servers`                       | CAF      |
+| `psql`   | PostgreSQL database                 | `Microsoft.DBforPostgreSQL/servers`                  | CAF      |
+| `redis`  | Azure Cache for Redis               | `Microsoft.Cache/redis`                              | Esposter |
+| `sql`    | Azure SQL Database server           | `Microsoft.Sql/servers`                              | CAF      |
+| `sqldb`  | Azure SQL database                  | `Microsoft.Sql/servers/databases`                    | CAF      |
+| `sqlep`  | SQL Elastic Pool                    | `Microsoft.Sql/servers/elasticpool`                  | CAF      |
+| `sqlja`  | SQL Elastic Job agent               | `Microsoft.Sql/servers/jobAgents`                    | CAF      |
+| `sqlmi`  | SQL Managed Instance                | `Microsoft.Sql/managedInstances`                     | CAF      |
+
+### Developer tools
+
+| Token   | Asset Type              | Azure ARM Type                                   | Source |
+| ------- | ----------------------- | ------------------------------------------------ | ------ |
+| `appcs` | App Configuration store | `Microsoft.AppConfiguration/configurationStores` | CAF    |
+| `ia`    | Integration account     | `Microsoft.Logic/integrationAccounts`            | CAF    |
+| `map`   | Maps account            | `Microsoft.Maps/accounts`                        | CAF    |
+| `sigr`  | SignalR                 | `Microsoft.SignalRService/SignalR`               | CAF    |
+
+### DevOps
+
+| Token | Asset Type            | Azure ARM Type                         | Source |
+| ----- | --------------------- | -------------------------------------- | ------ |
+| `amg` | Azure Managed Grafana | `Microsoft.Dashboard/grafana`          | CAF    |
+| `mdp` | Managed DevOps Pools  | `Microsoft.DevOpsInfrastructure/pools` | CAF    |
+
+### Integration
+
+| Token  | Asset Type                     | Azure ARM Type                                         | Source |
+| ------ | ------------------------------ | ------------------------------------------------------ | ------ |
+| `apim` | API Management service         | `Microsoft.ApiManagement/service`                      | CAF    |
+| `sbns` | Service Bus namespace          | `Microsoft.ServiceBus/namespaces`                      | CAF    |
+| `sbq`  | Service Bus queue              | `Microsoft.ServiceBus/namespaces/queues`               | CAF    |
+| `sbt`  | Service Bus topic              | `Microsoft.ServiceBus/namespaces/topics`               | CAF    |
+| `sbts` | Service Bus topic subscription | `Microsoft.ServiceBus/namespaces/topics/subscriptions` | CAF    |
+
+### Management and governance
+
+| Token    | Asset Type                          | Azure ARM Type                                   | Source   |
+| -------- | ----------------------------------- | ------------------------------------------------ | -------- |
+| `a`      | Azure Monitor action                | Action group receiver, not a standalone resource | Esposter |
+| `aa`     | Automation account                  | `Microsoft.Automation/automationAccounts`        | CAF      |
+| `apr`    | Azure Monitor alert processing rule | `Microsoft.AlertsManagement/actionRules`         | CAF      |
+| `bp`     | Blueprint                           | `Microsoft.Blueprint/blueprints`                 | Esposter |
+| `bpa`    | Blueprint assignment                | `Microsoft.Blueprint/blueprintAssignments`       | Esposter |
+| `dce`    | Data collection endpoint            | `Microsoft.Insights/dataCollectionEndpoints`     | CAF      |
+| `dcr`    | Azure Monitor data collection rule  | `Microsoft.Insights/dataCollectionRules`         | CAF      |
+| `mg`     | Management group                    | `Microsoft.Management/managementGroups`          | CAF      |
+| `pack`   | Log Analytics query packs           | `Microsoft.OperationalInsights/querypacks`       | CAF      |
+| `policy` | Policy definition                   | `Microsoft.Authorization/policyDefinitions`      | Esposter |
+| `pview`  | Microsoft Purview instance          | `Microsoft.Purview/accounts`                     | CAF      |
+| `script` | Deployment scripts                  | `Microsoft.Resources/deploymentScripts`          | CAF      |
+| `ts`     | Template specs                      | `Microsoft.Resources/templateSpecs`              | CAF      |
+
+### Migration
+
+| Token  | Asset Type              | Azure ARM Type                         | Source |
+| ------ | ----------------------- | -------------------------------------- | ------ |
+| `migr` | Azure Migrate project   | `Microsoft.Migrate/assessmentProjects` | CAF    |
+| `rsv`  | Recovery Services vault | `Microsoft.RecoveryServices/vaults`    | CAF    |
+
+### Networking
+
+| Token    | Asset Type                             | Azure ARM Type                                              | Source |
+| -------- | -------------------------------------- | ----------------------------------------------------------- | ------ |
+| `afd`    | Front Door (Standard/Premium/classic)  | `Microsoft.Cdn/profiles`                                    | CAF    |
+| `afwp`   | Azure Firewall policy                  | `Microsoft.Network/firewallPolicies`                        | CAF    |
+| `agw`    | Application gateway                    | `Microsoft.Network/applicationGateways`                     | CAF    |
+| `asg`    | Application security group             | `Microsoft.Network/applicationSecurityGroups`               | CAF    |
+| `bas`    | Azure Bastion                          | `Microsoft.Network/bastionHosts`                            | CAF    |
+| `cdne`   | CDN endpoint                           | `Microsoft.Cdn/profiles/endpoints`                          | CAF    |
+| `cdnp`   | CDN profile                            | `Microsoft.Cdn/profiles`                                    | CAF    |
+| `con`    | Connection                             | `Microsoft.Network/connections`                             | CAF    |
+| `erc`    | ExpressRoute circuit                   | `Microsoft.Network/expressRouteCircuits`                    | CAF    |
+| `erd`    | ExpressRoute direct                    | `Microsoft.Network/expressRoutePorts`                       | CAF    |
+| `ergw`   | ExpressRoute gateway                   | `Microsoft.Network/virtualNetworkGateways`                  | CAF    |
+| `fde`    | Front Door endpoint                    | `Microsoft.Cdn/profiles/afdEndpoints`                       | CAF    |
+| `fdfp`   | Front Door firewall policy             | `Microsoft.Network/frontdoorWebApplicationFirewallPolicies` | CAF    |
+| `in`     | DNS private resolver inbound endpoint  | `Microsoft.Network/dnsResolvers/inboundEndpoints`           | CAF    |
+| `ipg`    | IP group                               | `Microsoft.Network/ipGroups`                                | CAF    |
+| `lbe`    | Load balancer (external)               | `Microsoft.Network/loadBalancers`                           | CAF    |
+| `lbi`    | Load balancer (internal)               | `Microsoft.Network/loadBalancers`                           | CAF    |
+| `lgw`    | Local network gateway                  | `Microsoft.Network/localNetworkGateways`                    | CAF    |
+| `ng`     | NAT gateway                            | `Microsoft.Network/natGateways`                             | CAF    |
+| `nic`    | Network interface                      | `Microsoft.Network/networkInterfaces`                       | CAF    |
+| `nsg`    | Network security group                 | `Microsoft.Network/networkSecurityGroups`                   | CAF    |
+| `nsgsr`  | NSG security rules                     | `Microsoft.Network/networkSecurityGroups/securityRules`     | CAF    |
+| `nsp`    | Network security perimeter             | `Microsoft.Network/networkSecurityPerimeters`               | CAF    |
+| `nw`     | Network Watcher                        | `Microsoft.Network/networkWatchers`                         | CAF    |
+| `out`    | DNS private resolver outbound endpoint | `Microsoft.Network/dnsResolvers/outboundEndpoints`          | CAF    |
+| `pep`    | Private endpoint                       | `Microsoft.Network/privateEndpoints`                        | CAF    |
+| `peer`   | Virtual network peering                | `Microsoft.Network/virtualNetworks/virtualNetworkPeerings`  | CAF    |
+| `pip`    | Public IP address                      | `Microsoft.Network/publicIPAddresses`                       | CAF    |
+| `pl`     | Private Link                           | `Microsoft.Network/privateLinkServices`                     | CAF    |
+| `pls`    | Azure Arc private link scope           | `Microsoft.HybridCompute/privateLinkScopes`                 | CAF    |
+| `rf`     | Route filter                           | `Microsoft.Network/routeFilters`                            | CAF    |
+| `rt`     | Route table                            | `Microsoft.Network/routeTables`                             | CAF    |
+| `rtserv` | Route server                           | `Microsoft.Network/virtualHubs`                             | CAF    |
+| `se`     | Service endpoint policy                | `Microsoft.Network/serviceEndPointPolicies`                 | CAF    |
+| `snet`   | Subnet                                 | `Microsoft.Network/virtualNetworks/subnets`                 | CAF    |
+| `traf`   | Traffic Manager profile                | `Microsoft.Network/trafficManagerProfiles`                  | CAF    |
+| `udr`    | User defined route                     | `Microsoft.Network/routeTables/routes`                      | CAF    |
+| `vcn`    | VPN connection                         | `Microsoft.Network/vpnGateways/vpnConnections`              | CAF    |
+| `vgw`    | Virtual network gateway                | `Microsoft.Network/virtualNetworkGateways`                  | CAF    |
+| `vhub`   | Virtual WAN Hub                        | `Microsoft.Network/virtualHubs`                             | CAF    |
+| `vnet`   | Virtual network                        | `Microsoft.Network/virtualNetworks`                         | CAF    |
+| `vnm`    | Virtual network manager                | `Microsoft.Network/networkManagers`                         | CAF    |
+| `vpng`   | VPN Gateway                            | `Microsoft.Network/vpnGateways`                             | CAF    |
+| `vst`    | VPN site                               | `Microsoft.Network/vpnGateways/vpnSites`                    | CAF    |
+| `vwan`   | Virtual WAN                            | `Microsoft.Network/virtualWans`                             | CAF    |
+| `waf`    | Web Application Firewall policy        | `Microsoft.Network/firewallPolicies`                        | CAF    |
+| `wafrg`  | WAF policy rule group                  | `Microsoft.Network/firewallPolicies/ruleGroups`             | CAF    |
+
+### Security
+
+| Token    | Asset Type            | Azure ARM Type                                     | Source |
+| -------- | --------------------- | -------------------------------------------------- | ------ |
+| `id`     | Managed identity      | `Microsoft.ManagedIdentity/userAssignedIdentities` | CAF    |
+| `kv`     | Key vault             | `Microsoft.KeyVault/vaults`                        | CAF    |
+| `kvmhsm` | Key Vault Managed HSM | `Microsoft.KeyVault/managedHSMs`                   | CAF    |
+| `sshkey` | SSH key               | `Microsoft.Compute/sshPublicKeys`                  | CAF    |
+
+### Storage
+
+| Token    | Asset Type                  | Azure ARM Type                                          | Source |
+| -------- | --------------------------- | ------------------------------------------------------- | ------ |
+| `bkpol`  | Backup Vault policy         | `Microsoft.DataProtection/backupVaults/backupPolicies`  | CAF    |
+| `bvault` | Backup Vault                | `Microsoft.DataProtection/backupVaults`                 | CAF    |
+| `rgd`    | Azure Backup Resource Guard | `Microsoft.DataProtection/resourceGuards`               | CAF    |
+| `share`  | File share                  | `Microsoft.Storage/storageAccounts/fileServices/shares` | CAF    |
+| `sss`    | Storage Sync Service        | `Microsoft.StorageSync/storageSyncServices`             | CAF    |
+
+### Synapse Analytics
+
+| Token    | Asset Type                        | Azure ARM Type                              | Source |
+| -------- | --------------------------------- | ------------------------------------------- | ------ |
+| `syndp`  | Azure Synapse SQL Dedicated Pool  | `Microsoft.Synapse/workspaces/sqlPools`     | CAF    |
+| `synplh` | Azure Synapse private link hub    | `Microsoft.Synapse/privateLinkHubs`         | CAF    |
+| `synsp`  | Azure Synapse Spark Pool          | `Microsoft.Synapse/workspaces/bigDataPools` | CAF    |
+| `synw`   | Azure Synapse Analytics workspace | `Microsoft.Synapse/workspaces`              | CAF    |
+
+### Virtual desktop infrastructure
+
+| Token       | Asset Type                        | Azure ARM Type                                      | Source |
+| ----------- | --------------------------------- | --------------------------------------------------- | ------ |
+| `vdag`      | Virtual desktop application group | `Microsoft.DesktopVirtualization/applicationGroups` | CAF    |
+| `vdpool`    | Virtual desktop host pool         | `Microsoft.DesktopVirtualization/hostPools`         | CAF    |
+| `vdscaling` | Virtual desktop scaling plan      | `Microsoft.DesktopVirtualization/scalingPlans`      | CAF    |
+| `vdws`      | Virtual desktop workspace         | `Microsoft.DesktopVirtualization/workspaces`        | CAF    |
+
+### Notes
+
+- `a` (Azure Monitor action) — concept token, not a standalone Azure resource; behavior belongs inside the owning action group
+- `amr` vs `redis` — CAF defines `amr` for Azure Managed Redis (`Microsoft.Cache/RedisEnterprise`); `redis` is an Esposter token for standard Azure Cache for Redis (`Microsoft.Cache/redis`) which CAF does not currently abbreviate
+- `bp` / `bpa` — Azure Blueprints is deprecated; use Template Specs (`ts`) for new work
+- `policy` — CAF recommends descriptive names for policy definitions rather than a fixed abbreviation; `policy` is Esposter-defined for cases where a short token is needed
+- `ergw` vs `vgw` — both map to `Microsoft.Network/virtualNetworkGateways`; `ergw` is the CAF token for ExpressRoute gateways specifically, `vgw` is for VPN/general virtual network gateways
+- `afwp` vs `waf` — both map to `Microsoft.Network/firewallPolicies`; `afwp` is for Azure Firewall policies, `waf` is for Web Application Firewall policies
 
 ## Examples
 
