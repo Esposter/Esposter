@@ -1,22 +1,30 @@
 # Azure Naming Conventions
 
-This document preserves the current Esposter Azure naming rules that were previously tracked in the asset spreadsheet.
+This document defines the target Esposter Azure naming rules.
 
-The current names are intentionally documented before phase-2 optimization. Phase 2 may simplify, rename, or replace some tokens after the imported resources are safely represented in Pulumi.
+The existing imported resources mostly use the legacy spreadsheet shape. Renaming those resources requires explicit replacement or migration work, so existing names can remain until a resource is deliberately replaced. New resources and intentional renames should use the target convention below.
 
 ## Resource Name Shape
 
-Most Azure resources use this shape:
+Most Azure resources should use this shape:
 
 ```text
-<environment>-<scope>-<assetType>-<workload>-<region>-<index>
+<environment>-<assetType>-<workload>-<region>-<index>
 ```
 
-For storage accounts and search services, Azure naming rules do not allow hyphens, so the compact shape is used:
+For globally named resources that do not allow hyphens, use the compact shape:
 
 ```text
-<environment><scope><assetType><workload><region><index>
+<environment><assetType><workload><index>
 ```
+
+For globally named resources that allow hyphens, omit the region unless a second instance in another Azure region is planned:
+
+```text
+<environment>-<assetType>-<workload>-<index>
+```
+
+The target shape is intentionally ordered by scanning priority: environment first, resource type second, workload third, then region and index. It does not include the legacy `shp` scope token; ownership and platform scope are better represented by resource groups and tags.
 
 Current workload:
 
@@ -35,33 +43,29 @@ Current index format:
 
 ## Environment Tokens
 
-| Token | Environment |
-| ----- | ----------- |
-| `d`   | Development |
-| `p`   | Production  |
-| `t`   | Test        |
+Target names use readable environment tokens:
 
-Only `d` and `p` are currently represented by imported Pulumi resources.
+| Token  | Environment |
+| ------ | ----------- |
+| `dev`  | Development |
+| `prod` | Production  |
+| `test` | Test        |
+
+Legacy imported names use `d` and `p`. Do not use single-letter environment tokens for new names.
 
 ## Scope Tokens
 
-| Token | Scope                 |
-| ----- | --------------------- |
-| `esp` | Esposter company-wide |
-| `shp` | Shared platform       |
-| `tnt` | Tenant-focused        |
-
-Current imported resources use `shp`.
+Do not include scope tokens in target resource names. The legacy `shp` token meant "shared platform", but every imported resource uses it, so it does not distinguish resources in practice. Use resource group placement and tags for scope, ownership, and lifecycle metadata.
 
 ## Region Tokens
 
-Current imported resources use Australia East:
+Use compact region tokens consistently. Current resources are in Australia East:
 
 | Token  | Azure Location  | Display Name   |
 | ------ | --------------- | -------------- |
 | `auea` | `australiaeast` | Australia East |
 
-Other available region tokens:
+Other approved region tokens:
 
 | Token    | Azure Location       | Display Name         |
 | -------- | -------------------- | -------------------- |
@@ -105,126 +109,162 @@ Other available region tokens:
 | `uswe2`  | `westus2`            | West US 2            |
 | `uswecn` | `westcentralus`      | West Central US      |
 
-## Current Asset Type Tokens
+## Asset Type Tokens
 
-These tokens are used by the currently imported Esposter resources.
+Use Microsoft Cloud Adoption Framework abbreviations when one exists. Esposter-specific tokens are allowed only where CAF does not define a resource-type abbreviation.
 
-| Token    | Asset Type                    | Azure ARM Type                              |
-| -------- | ----------------------------- | ------------------------------------------- |
-| `ag`     | Azure Monitor action group    | `Microsoft.Insights/actionGroups`           |
-| `apicn`  | API connection                | `Microsoft.Web/connections`                 |
-| `appi`   | Application Insights          | `Microsoft.Insights/components`             |
-| `bdg`    | Budget                        | `Microsoft.Consumption/budgets`             |
-| `evgt`   | Event Grid Topic              | `Microsoft.EventGrid/topics`                |
-| `evgts`  | Event Grid Topic Subscription | `Microsoft.EventGrid/eventSubscriptions`    |
-| `func`   | Function app                  | `Microsoft.Web/sites`                       |
-| `log`    | Log Analytics workspace       | `Microsoft.OperationalInsights/workspaces`  |
-| `logic`  | Logic apps                    | `Microsoft.Logic/workflows`                 |
-| `pa`     | Policy assignment             | `Microsoft.Authorization/policyAssignments` |
-| `pubsub` | Web PubSub                    | `Microsoft.SignalRService/webPubSub`        |
-| `rg`     | Resource group                | `Microsoft.Resources/resourceGroups`        |
-| `spch`   | Cognitive Speech Services     | `Microsoft.CognitiveServices/accounts`      |
-| `srch`   | Azure Cognitive Search        | `Microsoft.Search/searchServices`           |
-| `st`     | Storage account               | `Microsoft.Storage/storageAccounts`         |
+These tokens are official for Esposter infrastructure. If a new Azure resource type is introduced and no token exists here, add the token in the same change as the resource. Unused tokens do not require migration.
 
-Historical spreadsheet rows also included `a` for Azure Monitor actions. Those rows did not import as standalone Azure resources; the behavior is represented through action group receivers.
+| Token   | Asset Type                 | Azure ARM Type                              | Source         |
+| ------- | -------------------------- | ------------------------------------------- | -------------- |
+| `ag`    | Azure Monitor action group | `Microsoft.Insights/actionGroups`           | CAF            |
+| `apicn` | API connection             | `Microsoft.Web/connections`                 | Esposter       |
+| `appi`  | Application Insights       | `Microsoft.Insights/components`             | CAF            |
+| `bdg`   | Budget                     | `Microsoft.Consumption/budgets`             | Esposter       |
+| `evgs`  | Event Grid subscription    | `Microsoft.EventGrid/eventSubscriptions`    | CAF            |
+| `evgt`  | Event Grid topic           | `Microsoft.EventGrid/topics`                | CAF-compatible |
+| `func`  | Function app               | `Microsoft.Web/sites`                       | CAF            |
+| `log`   | Log Analytics workspace    | `Microsoft.OperationalInsights/workspaces`  | CAF            |
+| `logic` | Logic app                  | `Microsoft.Logic/workflows`                 | CAF            |
+| `pa`    | Policy assignment          | `Microsoft.Authorization/policyAssignments` | Esposter       |
+| `rg`    | Resource group             | `Microsoft.Resources/resourceGroups`        | CAF            |
+| `spch`  | Speech service             | `Microsoft.CognitiveServices/accounts`      | CAF            |
+| `srch`  | Azure AI Search            | `Microsoft.Search/searchServices`           | CAF            |
+| `st`    | Storage account            | `Microsoft.Storage/storageAccounts`         | CAF            |
+| `wps`   | Web PubSub                 | `Microsoft.SignalRService/webPubSub`        | CAF            |
 
-## Historical Asset Type Catalogue
+Do not use `a` for Azure Monitor actions. Action behavior belongs inside the owning action group resource.
 
-These tokens came from the spreadsheet reference tab and are preserved for later review.
+Legacy imported resources use `evgts` for Event Grid subscriptions and `pubsub` for Web PubSub. Target names use `evgs` and `wps`.
 
-| Token      | Asset Type                           |
-| ---------- | ------------------------------------ |
-| `aa`       | Automation account                   |
-| `acr`      | Azure Container Registry             |
-| `adf`      | Azure Data Factory                   |
-| `agw`      | Application gateway                  |
-| `aks`      | AKS cluster                          |
-| `apim`     | API management service instance      |
-| `app`      | Web app                              |
-| `appcs`    | App Configuration store              |
-| `arck`     | Azure Arc enabled Kubernetes cluster |
-| `arcs`     | Azure Arc enabled server             |
-| `asg`      | Application security group           |
-| `asa`      | Azure Stream Analytics               |
-| `as`       | Azure Analysis Services server       |
-| `avail`    | Availability set                     |
-| `bp`       | Blueprint                            |
-| `bpa`      | Blueprint assignment                 |
-| `ci`       | Container instance                   |
-| `cld`      | Cloud service                        |
-| `cmstb`    | Azure Cosmos DB database for table   |
-| `cn`       | VPN connection                       |
-| `cog`      | Azure Cognitive Services             |
-| `cr`       | Container registry                   |
-| `dbw`      | Azure Databricks workspace           |
-| `dec`      | Azure Data Explorer cluster          |
-| `disk`     | Managed disk data                    |
-| `dla`      | Data Lake Analytics account          |
-| `dls`      | Data Lake Store account              |
-| `dms`      | Database Migration Service instance  |
-| `erc`      | ExpressRoute circuit                 |
-| `fd`       | Front door                           |
-| `hadoop`   | HDInsight Hadoop cluster             |
-| `hbase`    | HDInsight HBase cluster              |
-| `ia`       | Integration account                  |
-| `id`       | Managed Identity                     |
-| `iot`      | IoT hub                              |
-| `kafka`    | HDInsight Kafka cluster              |
-| `kv`       | Key vault                            |
-| `lbe`      | Load balancer external               |
-| `lbi`      | Load balancer internal               |
-| `lgw`      | Local network gateway                |
-| `mg`       | Management group                     |
-| `migr`     | Azure Migrate project                |
-| `mls`      | HDInsight ML Services cluster        |
-| `mlw`      | Azure Machine Learning workspace     |
-| `mysql`    | MySQL database                       |
-| `nic`      | Network interface                    |
-| `nsg`      | Network security group               |
-| `ntf`      | Notification Hubs                    |
-| `ntfns`    | Notification Hubs namespace          |
-| `osdisk`   | Managed disk OS                      |
-| `pbi`      | Power BI Embedded                    |
-| `peer`     | Virtual network peering              |
-| `pep`      | Private Endpoint                     |
-| `pip`      | Public IP address                    |
-| `plan`     | App Service plan                     |
-| `pl`       | Private Link                         |
-| `policy`   | Policy definition                    |
-| `psql`     | PostgreSQL database                  |
-| `redis`    | Azure Cache for Redis instance       |
-| `route`    | Route table                          |
-| `rsv`      | Recovery Services vault              |
-| `sb`       | Service Bus                          |
-| `sbq`      | Service Bus queue                    |
-| `sbt`      | Service Bus topic                    |
-| `sf`       | Service Fabric cluster               |
-| `snet`     | Subnet                               |
-| `spark`    | HDInsight Spark cluster              |
-| `sqldb`    | Azure SQL database                   |
-| `sqldw`    | Azure SQL Data Warehouse             |
-| `sqledp`   | SQL Elastic database pool            |
-| `sqlmi`    | SQL Managed Instance                 |
-| `sqlstrdb` | SQL Server Stretch Database          |
-| `sql`      | Azure SQL Database server            |
-| `ssimp`    | Azure StorSimple                     |
-| `stc`      | Storage account classic              |
-| `storm`    | HDInsight Storm cluster              |
-| `stvm`     | VM storage account                   |
-| `syn`      | Azure Synapse Analytics              |
-| `traf`     | Traffic Manager profile              |
-| `tsi`      | Time Series Insights environment     |
-| `udr`      | User defined route                   |
-| `vgw`      | Virtual network gateway              |
-| `vm`       | Virtual machine                      |
-| `vmss`     | Virtual machine scale set            |
-| `vnet`     | Virtual network                      |
-| `waf`      | Web Application Firewall policy      |
+## Reserved Asset Type Tokens
+
+These tokens are approved for future resource types. They include the unused spreadsheet tokens plus useful CAF-aligned additions. They are not migration work unless a live resource currently uses a different token.
+
+| Token      | Asset Type                           | Azure ARM Type / Notes                                               |
+| ---------- | ------------------------------------ | -------------------------------------------------------------------- |
+| `aa`       | Automation account                   | `Microsoft.Automation/automationAccounts`                            |
+| `a`        | Azure Monitor action                 | Action group receiver, not a standalone Azure resource               |
+| `acr`      | Azure Container Registry             | `Microsoft.ContainerRegistry/registries`                             |
+| `adf`      | Azure Data Factory                   | `Microsoft.DataFactory/factories`                                    |
+| `agw`      | Application gateway                  | `Microsoft.Network/applicationGateways`                              |
+| `ais`      | Azure AI services                    | `Microsoft.CognitiveServices/accounts`                               |
+| `aks`      | AKS cluster                          | `Microsoft.ContainerService/managedClusters`                         |
+| `apim`     | API Management service               | `Microsoft.ApiManagement/service`                                    |
+| `app`      | Web app                              | `Microsoft.Web/sites`                                                |
+| `appcs`    | App Configuration store              | `Microsoft.AppConfiguration/configurationStores`                     |
+| `arck`     | Azure Arc enabled Kubernetes cluster | `Microsoft.Kubernetes/connectedClusters`                             |
+| `arcs`     | Azure Arc enabled server             | `Microsoft.HybridCompute/machines`                                   |
+| `asa`      | Azure Stream Analytics job           | `Microsoft.StreamAnalytics/streamingJobs`                            |
+| `as`       | Azure Analysis Services server       | `Microsoft.AnalysisServices/servers`                                 |
+| `asg`      | Application security group           | `Microsoft.Network/applicationSecurityGroups`                        |
+| `asp`      | App Service plan                     | `Microsoft.Web/serverFarms`                                          |
+| `avail`    | Availability set                     | `Microsoft.Compute/availabilitySets`                                 |
+| `bp`       | Blueprint                            | `Microsoft.Blueprint/blueprints`                                     |
+| `bpa`      | Blueprint assignment                 | `Microsoft.Blueprint/blueprintAssignments`                           |
+| `ca`       | Container app                        | `Microsoft.App/containerApps`                                        |
+| `cae`      | Container Apps environment           | `Microsoft.App/managedEnvironments`                                  |
+| `ci`       | Container instance                   | `Microsoft.ContainerInstance/containerGroups`                        |
+| `cld`      | Cloud service                        | `Microsoft.Compute/cloudServices`                                    |
+| `cmstb`    | Azure Cosmos DB database for table   | `Microsoft.DocumentDB/databaseAccounts`                              |
+| `cn`       | VPN connection                       | `Microsoft.Network/connections`                                      |
+| `cog`      | Azure Cognitive Services             | `Microsoft.CognitiveServices/accounts`                               |
+| `cr`       | Container registry                   | `Microsoft.ContainerRegistry/registries`                             |
+| `dbw`      | Azure Databricks workspace           | `Microsoft.Databricks/workspaces`                                    |
+| `dec`      | Azure Data Explorer cluster          | `Microsoft.Kusto/clusters`                                           |
+| `disk`     | Managed disk data                    | `Microsoft.Compute/disks`                                            |
+| `dla`      | Data Lake Analytics account          | `Microsoft.DataLakeAnalytics/accounts`                               |
+| `dls`      | Data Lake Store account              | `Microsoft.DataLakeStore/accounts`                                   |
+| `dms`      | Database Migration Service instance  | `Microsoft.DataMigration/services`                                   |
+| `erc`      | ExpressRoute circuit                 | `Microsoft.Network/expressRouteCircuits`                             |
+| `fd`       | Front Door                           | `Microsoft.Network/frontDoors`                                       |
+| `hadoop`   | HDInsight Hadoop cluster             | `Microsoft.HDInsight/clusters`                                       |
+| `hbase`    | HDInsight HBase cluster              | `Microsoft.HDInsight/clusters`                                       |
+| `ia`       | Integration account                  | `Microsoft.Logic/integrationAccounts`                                |
+| `id`       | Managed identity                     | `Microsoft.ManagedIdentity/userAssignedIdentities`                   |
+| `iot`      | IoT Hub                              | `Microsoft.Devices/IotHubs`                                          |
+| `kafka`    | HDInsight Kafka cluster              | `Microsoft.HDInsight/clusters`                                       |
+| `kv`       | Key vault                            | `Microsoft.KeyVault/vaults`                                          |
+| `lbe`      | Load balancer external               | `Microsoft.Network/loadBalancers`                                    |
+| `lbi`      | Load balancer internal               | `Microsoft.Network/loadBalancers`                                    |
+| `lgw`      | Local network gateway                | `Microsoft.Network/localNetworkGateways`                             |
+| `mg`       | Management group                     | `Microsoft.Management/managementGroups`                              |
+| `migr`     | Azure Migrate project                | `Microsoft.Migrate/migrateProjects`                                  |
+| `mls`      | HDInsight ML Services cluster        | `Microsoft.HDInsight/clusters`                                       |
+| `mlw`      | Azure Machine Learning workspace     | `Microsoft.MachineLearningServices/workspaces`                       |
+| `mysql`    | MySQL database                       | `Microsoft.DBforMySQL/flexibleServers`                               |
+| `nic`      | Network interface                    | `Microsoft.Network/networkInterfaces`                                |
+| `nsg`      | Network security group               | `Microsoft.Network/networkSecurityGroups`                            |
+| `ntf`      | Notification Hubs                    | `Microsoft.NotificationHubs/namespaces/notificationHubs`             |
+| `ntfns`    | Notification Hubs namespace          | `Microsoft.NotificationHubs/namespaces`                              |
+| `oai`      | Azure OpenAI Service                 | `Microsoft.CognitiveServices/accounts`                               |
+| `osdisk`   | Managed disk OS                      | `Microsoft.Compute/disks`                                            |
+| `pbi`      | Power BI Embedded                    | `Microsoft.PowerBIDedicated/capacities`                              |
+| `peer`     | Virtual network peering              | `Microsoft.Network/virtualNetworks/virtualNetworkPeerings`           |
+| `pep`      | Private endpoint                     | `Microsoft.Network/privateEndpoints`                                 |
+| `pip`      | Public IP address                    | `Microsoft.Network/publicIPAddresses`                                |
+| `plan`     | App Service plan                     | `Microsoft.Web/serverFarms`                                          |
+| `pl`       | Private Link                         | Private Link resources                                               |
+| `policy`   | Policy definition                    | `Microsoft.Authorization/policyDefinitions`                          |
+| `psql`     | PostgreSQL database                  | `Microsoft.DBforPostgreSQL/flexibleServers`                          |
+| `redis`    | Azure Cache for Redis instance       | `Microsoft.Cache/redis`                                              |
+| `route`    | Route table                          | `Microsoft.Network/routeTables`                                      |
+| `rsv`      | Recovery Services vault              | `Microsoft.RecoveryServices/vaults`                                  |
+| `sb`       | Service Bus                          | `Microsoft.ServiceBus/namespaces`                                    |
+| `sbns`     | Service Bus namespace                | `Microsoft.ServiceBus/namespaces`                                    |
+| `sbq`      | Service Bus queue                    | `Microsoft.ServiceBus/namespaces/queues`                             |
+| `sbt`      | Service Bus topic                    | `Microsoft.ServiceBus/namespaces/topics`                             |
+| `sbts`     | Service Bus topic subscription       | `Microsoft.ServiceBus/namespaces/topics/subscriptions`               |
+| `sf`       | Service Fabric cluster               | `Microsoft.ServiceFabric/clusters`                                   |
+| `snet`     | Subnet                               | `Microsoft.Network/virtualNetworks/subnets`                          |
+| `spark`    | HDInsight Spark cluster              | `Microsoft.HDInsight/clusters`                                       |
+| `sql`      | Azure SQL Database server            | `Microsoft.Sql/servers`                                              |
+| `sqldb`    | Azure SQL database                   | `Microsoft.Sql/servers/databases`                                    |
+| `sqldw`    | Azure SQL Data Warehouse             | `Microsoft.Sql/servers/databases`                                    |
+| `sqledp`   | SQL Elastic database pool            | `Microsoft.Sql/servers/elasticPools`                                 |
+| `sqlmi`    | SQL Managed Instance                 | `Microsoft.Sql/managedInstances`                                     |
+| `sqlstrdb` | SQL Server Stretch Database          | `Microsoft.Sql/servers/databases`                                    |
+| `ssimp`    | Azure StorSimple                     | `Microsoft.StorSimple/managers`                                      |
+| `stc`      | Storage account classic              | `Microsoft.ClassicStorage/storageAccounts`                           |
+| `storm`    | HDInsight Storm cluster              | `Microsoft.HDInsight/clusters`                                       |
+| `stvm`     | VM storage account                   | `Microsoft.Storage/storageAccounts`                                  |
+| `syn`      | Azure Synapse Analytics              | `Microsoft.Synapse/workspaces`                                       |
+| `traf`     | Traffic Manager profile              | `Microsoft.Network/trafficManagerProfiles`                           |
+| `tsi`      | Time Series Insights environment     | `Microsoft.TimeSeriesInsights/environments`                          |
+| `udr`      | User defined route                   | `Microsoft.Network/routeTables/routes`                               |
+| `vgw`      | Virtual network gateway              | `Microsoft.Network/virtualNetworkGateways`                           |
+| `vm`       | Virtual machine                      | `Microsoft.Compute/virtualMachines`                                  |
+| `vmss`     | Virtual machine scale set            | `Microsoft.Compute/virtualMachineScaleSets`                          |
+| `vnet`     | Virtual network                      | `Microsoft.Network/virtualNetworks`                                  |
+| `waf`      | Web Application Firewall policy      | `Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies` |
+
+## Examples
+
+| Resource Type           | Legacy Name                      | Target Name                   |
+| ----------------------- | -------------------------------- | ----------------------------- |
+| Resource group          | `p-shp-rg-esposter-auea-001`     | `prod-rg-esposter-auea-001`   |
+| Function app            | `p-shp-func-esposter-auea-001`   | `prod-func-esposter-001`      |
+| Storage account         | `pshpstespauea001`               | `prodstesposter001`           |
+| Azure AI Search         | `pshpsrchespauea001`             | `prod-srch-esposter-001`      |
+| Event Grid subscription | `p-shp-evgts-esposter-auea-001`  | `prod-evgs-esposter-auea-001` |
+| Web PubSub              | `p-shp-pubsub-esposter-auea-001` | `prod-wps-esposter-001`       |
 
 ## Source File Names
 
-One resource declaration per file. Pulumi source files use camelCase derived from the Azure resource name. The export constant name must match the file name (minus `.ts`):
+One resource declaration per file. Pulumi source files use lower camel case derived from the naming components, not a character-for-character copy of the Azure resource name. This keeps compact Azure names readable in TypeScript.
+
+The export constant name must match the file name minus `.ts`.
+
+Target examples:
+
+| Azure Resource Name         | Naming Components                       | Source File                | Export Constant         |
+| --------------------------- | --------------------------------------- | -------------------------- | ----------------------- |
+| `prod-rg-esposter-auea-001` | `prod`, `rg`, `esposter`, `Auea`, `001` | `prodRgEsposterAuea001.ts` | `prodRgEsposterAuea001` |
+| `prod-func-esposter-001`    | `prod`, `func`, `esposter`, `001`       | `prodFuncEsposter001.ts`   | `prodFuncEsposter001`   |
+| `prodstesposter001`         | `prod`, `st`, `esposter`, `001`         | `prodStEsposter001.ts`     | `prodStEsposter001`     |
+| `prod-srch-esposter-001`    | `prod`, `srch`, `esposter`, `001`       | `prodSrchEsposter001.ts`   | `prodSrchEsposter001`   |
+
+Legacy examples:
 
 | Azure Resource Name            | Source File                  | Export Constant           |
 | ------------------------------ | ---------------------------- | ------------------------- |
