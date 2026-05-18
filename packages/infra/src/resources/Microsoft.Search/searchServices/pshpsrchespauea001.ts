@@ -1,3 +1,5 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAustraliaEastDisplayLocation from "@/constants/AzureAustraliaEastDisplayLocation";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
@@ -14,7 +16,7 @@ export const pshpsrchespauea001: azure_native.search.Service = new azure_native.
     identity: {
       type: azure_native.search.IdentityType.SystemAssigned,
     },
-    location: "Australia East",
+    location: AzureAustraliaEastDisplayLocation,
     networkRuleSet: {
       bypass: azure_native.search.SearchBypass.None,
     },
@@ -28,7 +30,7 @@ export const pshpsrchespauea001: azure_native.search.Service = new azure_native.
       name: azure_native.search.SkuName.Free,
     },
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
     upgradeAvailable: azure_native.search.UpgradeAvailable.NotAvailable,
   },

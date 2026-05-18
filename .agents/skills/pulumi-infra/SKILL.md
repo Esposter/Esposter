@@ -21,7 +21,7 @@ Apply when modifying `packages/infra`.
 - Keep one Azure resource declaration per tracked source file.
 - Put resource declarations under `src/resources/<ProviderNamespace>/<resourceTypes>/` using Azure ARM provider namespaces and resource type segments.
 - Resource folders should mirror Azure resource IDs after `/providers/`, e.g. `Microsoft.Web/sites`, `Microsoft.Insights/actionGroups`, and `Microsoft.EventGrid/eventSubscriptions`.
-- File names use camelCase derived from the Azure resource name, e.g. `d-shp-rg-esposter-auea-001` -> `dShpRgEsposterAuea001.ts`.
+- File names use lower camel case derived from the resource naming components, not a character-for-character copy of compact Azure names. For legacy resources, `d-shp-rg-esposter-auea-001` -> `dShpRgEsposterAuea001.ts`. For target compact names, `prodstesposter001` -> `prodStEsposter001.ts`.
 - Export exactly one resource constant per resource file.
 - Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
 - Use `@/` absolute imports from `packages/infra/src`; do not add new relative imports between infra source files.

@@ -1,3 +1,5 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
 import { pShpLogicEsposterAuea003 } from "@/resources/Microsoft.Logic/workflows/pShpLogicEsposterAuea003";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
@@ -11,7 +13,7 @@ export const pShpAgEsposterAuea003: azure_native.monitor.ActionGroup = new azure
     actionGroupName: "p-shp-ag-esposter-auea-003",
     enabled: true,
     groupShortName: "DeleteSub",
-    location: "Global",
+    location: AzureGlobalDisplayLocation,
     logicAppReceivers: [
       {
         callbackUrl: config.requireSecret("pShpAgEsposterAuea003CallbackUrl"),
@@ -22,7 +24,7 @@ export const pShpAgEsposterAuea003: azure_native.monitor.ActionGroup = new azure
     ],
     resourceGroupName: pShpRgEsposterAuea001.name,
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
   },
   {

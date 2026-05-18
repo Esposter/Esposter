@@ -1,3 +1,6 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAppServiceManagedApiId from "@/constants/AzureAppServiceManagedApiId";
+import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import { pShpApicnEsposterAuea001 } from "@/resources/Microsoft.Web/connections/pShpApicnEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
@@ -229,7 +232,7 @@ export const pShpLogicEsposterAuea001: azure_native.logic.Workflow = new azure_n
     identity: {
       type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned,
     },
-    location: "australiaeast",
+    location: AzureAustraliaEastLocation,
     parameters: {
       $connections: {
         value: {
@@ -241,7 +244,7 @@ export const pShpLogicEsposterAuea001: azure_native.logic.Workflow = new azure_n
                 type: "ManagedServiceIdentity",
               },
             },
-            id: "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/providers/Microsoft.Web/locations/australiaeast/managedApis/azureappservice",
+            id: AzureAppServiceManagedApiId,
           },
         },
       },
@@ -249,7 +252,7 @@ export const pShpLogicEsposterAuea001: azure_native.logic.Workflow = new azure_n
     resourceGroupName: pShpRgEsposterAuea001.name,
     state: azure_native.logic.WorkflowState.Enabled,
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
     workflowName: "p-shp-logic-esposter-auea-001",
   },

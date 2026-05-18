@@ -1,3 +1,7 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAppServiceManagedApiId from "@/constants/AzureAppServiceManagedApiId";
+import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
+import AzureManagedApiType from "@/constants/AzureManagedApiType";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
@@ -5,7 +9,7 @@ export const pShpApicnEsposterAuea002: azure_native.web.Connection = new azure_n
   "p-shp-apicn-esposter-auea-002",
   {
     connectionName: "azureappservice-2",
-    location: "australiaeast",
+    location: AzureAustraliaEastLocation,
     properties: {
       api: {
         brandColor: "#FFFFFF",
@@ -14,15 +18,15 @@ export const pShpApicnEsposterAuea002: azure_native.web.Connection = new azure_n
         displayName: "Azure App Service",
         iconUri:
           "https://conn-afd-prod-endpoint-bmc9bqahasf3grgk.b01.azurefd.net/releases/v1.0.1679/1.0.1679.3643/azureappservice/icon.png",
-        id: "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/providers/Microsoft.Web/locations/australiaeast/managedApis/azureappservice",
+        id: AzureAppServiceManagedApiId,
         name: "azureappservice",
-        type: "Microsoft.Web/locations/managedApis",
+        type: AzureManagedApiType,
       },
       displayName: "p-shp-apicn-esposter-auea-002",
     },
     resourceGroupName: pShpRgEsposterAuea001.name,
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
   },
   {

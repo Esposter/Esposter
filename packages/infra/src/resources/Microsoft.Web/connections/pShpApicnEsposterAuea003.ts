@@ -1,3 +1,7 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
+import AzureManagedApiType from "@/constants/AzureManagedApiType";
+import AzureResourceManagerManagedApiId from "@/constants/AzureResourceManagerManagedApiId";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 
@@ -5,22 +9,22 @@ export const pShpApicnEsposterAuea003: azure_native.web.Connection = new azure_n
   "p-shp-apicn-esposter-auea-003",
   {
     connectionName: "arm",
-    location: "australiaeast",
+    location: AzureAustraliaEastLocation,
     properties: {
       api: {
         brandColor: "",
         description: "Azure Resource Manager exposes the APIs to manage all of your Azure resources.",
         displayName: "Azure Resource Manager",
         iconUri: "https://conn-afd-prod-endpoint-bmc9bqahasf3grgk.b01.azurefd.net/v1.0.1751/1.0.1751.4207/arm/icon.png",
-        id: "/subscriptions/764658ba-01da-43fa-9f26-ffa4ada33ebb/providers/Microsoft.Web/locations/australiaeast/managedApis/arm",
+        id: AzureResourceManagerManagedApiId,
         name: "arm",
-        type: "Microsoft.Web/locations/managedApis",
+        type: AzureManagedApiType,
       },
       displayName: "p-shp-apicn-esposter-auea-003",
     },
     resourceGroupName: pShpRgEsposterAuea001.name,
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
   },
   {

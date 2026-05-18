@@ -1,3 +1,5 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
 import { pShpLogicEsposterAuea001 } from "@/resources/Microsoft.Logic/workflows/pShpLogicEsposterAuea001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
@@ -11,7 +13,7 @@ export const pShpAgEsposterAuea001: azure_native.monitor.ActionGroup = new azure
     actionGroupName: "p-shp-ag-esposter-auea-001",
     enabled: true,
     groupShortName: "StopFunction",
-    location: "Global",
+    location: AzureGlobalDisplayLocation,
     logicAppReceivers: [
       {
         callbackUrl: config.requireSecret("pShpAgEsposterAuea001CallbackUrl"),
@@ -22,7 +24,7 @@ export const pShpAgEsposterAuea001: azure_native.monitor.ActionGroup = new azure
     ],
     resourceGroupName: pShpRgEsposterAuea001.name,
     tags: {
-      Application: "Esposter",
+      ...ApplicationTags,
     },
   },
   {
