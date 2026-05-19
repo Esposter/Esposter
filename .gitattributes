@@ -26,7 +26,7 @@
 *.inc text
 *.ini text
 *.js text eol=lf
-*.json text
+*.json text eol=lf
 *.jsx text
 *.less text
 *.ls text
@@ -114,8 +114,8 @@ package.json text eol=lf
 package-lock.json text eol=lf -diff
 yarn.lock text -diff
 *.toml text
-*.yaml text
-*.yml text
+*.yaml text eol=lf
+*.yml text eol=lf
 browserslist text
 Makefile text
 makefile text

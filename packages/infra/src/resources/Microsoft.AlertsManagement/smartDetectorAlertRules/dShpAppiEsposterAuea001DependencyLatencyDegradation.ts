@@ -1,7 +1,8 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import { devAgEsposterAuea002 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposterAuea002";
+import { devAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposter002";
 import { dShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/dShpAppiEsposterAuea001";
+import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
@@ -15,10 +16,10 @@ export const dShpAppiEsposterAuea001DependencyLatencyDegradation: azure_native.a
       actionGroups: {
         groupIds: [
           getSmartDetectorResourceId(
-            dShpRgEsposterAuea001.name,
+            devRgEsposterAe001.name,
             "microsoft.insights",
             "actiongroups",
-            devAgEsposterAuea002.name,
+            devAgEsposter002.name,
           ),
         ],
       },

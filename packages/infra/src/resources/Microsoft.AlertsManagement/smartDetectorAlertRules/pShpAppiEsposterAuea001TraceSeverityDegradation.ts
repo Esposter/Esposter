@@ -1,7 +1,8 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import { prodAgEsposterAuea002 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposterAuea002";
+import { prodAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposter002";
 import { pShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/pShpAppiEsposterAuea001";
+import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
@@ -15,10 +16,10 @@ export const pShpAppiEsposterAuea001TraceSeverityDegradation: azure_native.alert
       actionGroups: {
         groupIds: [
           getSmartDetectorResourceId(
-            pShpRgEsposterAuea001.name,
+            prodRgEsposterAe001.name,
             "microsoft.insights",
             "actiongroups",
-            prodAgEsposterAuea002.name,
+            prodAgEsposter002.name,
           ),
         ],
       },
