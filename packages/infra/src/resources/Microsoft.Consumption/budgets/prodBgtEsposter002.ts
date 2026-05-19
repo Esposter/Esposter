@@ -1,14 +1,14 @@
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
-import { devAgEsposterAuea001 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposterAuea001";
-import { devAgEsposterAuea003 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposterAuea003";
-import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
-import { dShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/dShpFuncEsposterAuea001";
+import { pShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/pShpEvgtEsposterAuea001";
+import { prodAgEsposter001 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposter001";
+import { prodAgEsposter003 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposter003";
+import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
-const budgetName = "d-shp-bdg-esposter-auea-001";
+const budgetName = "prod-bgt-esposter-002";
 
-export const dShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure_native.consumption.Budget(
+export const prodBgtEsposter002: azure_native.consumption.Budget = new azure_native.consumption.Budget(
   budgetName,
   {
     amount: 0.01,
@@ -18,13 +18,13 @@ export const dShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure
       dimensions: {
         name: "ResourceId",
         operator: azure_native.consumption.BudgetOperatorType.In,
-        values: [dShpFuncEsposterAuea001.id],
+        values: [pShpEvgtEsposterAuea001.id],
       },
     },
     notifications: {
       ActualCost_100_DeleteSub: {
         contactEmails: [],
-        contactGroups: [devAgEsposterAuea003.id],
+        contactGroups: [prodAgEsposter003.id],
         enabled: true,
         operator: "GreaterThanOrEqualTo",
         threshold: 100,
@@ -32,18 +32,18 @@ export const dShpBdgEsposterAuea001: azure_native.consumption.Budget = new azure
       },
       ActualCost_100_StopFunction: {
         contactEmails: [],
-        contactGroups: [devAgEsposterAuea001.id],
+        contactGroups: [prodAgEsposter001.id],
         enabled: true,
         operator: "GreaterThanOrEqualTo",
         threshold: 100,
         thresholdType: "Actual",
       },
     },
-    scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${dShpRgEsposterAuea001.name}`,
+    scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${pShpRgEsposterAuea001.name}`,
     timeGrain: azure_native.consumption.TimeGrainType.Monthly,
     timePeriod: {
       endDate: "2035-12-31T00:00:00Z",
-      startDate: "2025-10-01T00:00:00Z",
+      startDate: "2026-05-01T00:00:00Z",
     },
   },
   {

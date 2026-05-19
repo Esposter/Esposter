@@ -1,6 +1,6 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import { prodAgEsposterAuea002 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposterAuea002";
+import { prodAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposter002";
 import { pShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/pShpAppiEsposterAuea001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
@@ -18,7 +18,7 @@ export const pShpAppiEsposterAuea001PotentialMemoryLeak: azure_native.alertsmana
             pShpRgEsposterAuea001.name,
             "microsoft.insights",
             "actiongroups",
-            prodAgEsposterAuea002.name,
+            prodAgEsposter002.name,
           ),
         ],
       },
