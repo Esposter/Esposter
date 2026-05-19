@@ -1,6 +1,6 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import { prodAgEsposter002InProdRg } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposter002InProdRg";
+import { prodAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposter002";
 import { pShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/pShpAppiEsposterAuea001";
 import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
@@ -19,7 +19,7 @@ export const pShpAppiEsposterAuea001FailureAnomalies: azure_native.alertsmanagem
             prodRgEsposterAe001.name,
             "microsoft.insights",
             "actiongroups",
-            prodAgEsposter002InProdRg.name,
+            prodAgEsposter002.name,
           ),
         ],
       },

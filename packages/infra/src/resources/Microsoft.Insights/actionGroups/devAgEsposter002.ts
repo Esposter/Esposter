@@ -5,8 +5,8 @@ import * as azure_native from "@pulumi/azure-native";
 
 const actionGroupName = "dev-ag-esposter-002";
 
-export const devAgEsposter002InDevRg: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
-  "dev-ag-esposter-002-in-dev-rg",
+export const devAgEsposter002: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
+  actionGroupName,
   {
     actionGroupName,
     armRoleReceivers: [

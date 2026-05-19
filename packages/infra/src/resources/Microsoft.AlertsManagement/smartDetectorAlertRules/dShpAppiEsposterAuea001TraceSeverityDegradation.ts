@@ -1,6 +1,6 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import { devAgEsposter002InDevRg } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposter002InDevRg";
+import { devAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposter002";
 import { dShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/dShpAppiEsposterAuea001";
 import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
@@ -19,7 +19,7 @@ export const dShpAppiEsposterAuea001TraceSeverityDegradation: azure_native.alert
             devRgEsposterAe001.name,
             "microsoft.insights",
             "actiongroups",
-            devAgEsposter002InDevRg.name,
+            devAgEsposter002.name,
           ),
         ],
       },

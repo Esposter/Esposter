@@ -9,8 +9,8 @@ const config = new pulumi.Config();
 
 const actionGroupName = "dev-ag-esposter-001";
 
-export const devAgEsposter001InDevRg: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
-  "dev-ag-esposter-001-in-dev-rg",
+export const devAgEsposter001: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
+  actionGroupName,
   {
     actionGroupName,
     enabled: true,
