@@ -1,6 +1,7 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import { devAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposter002";
+import { devAgEsposter002InDevRg } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposter002InDevRg";
+import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/devAppiEsposterAuea001";
 import { devRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAuea001";
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
@@ -15,10 +16,10 @@ export const devAppiEsposterAuea001ExceptionAnomalies: azure_native.alertsmanage
       actionGroups: {
         groupIds: [
           getSmartDetectorResourceId(
-            devRgEsposterAuea001.name,
+            devRgEsposterAe001.name,
             "microsoft.insights",
             "actiongroups",
-            devAgEsposter002.name,
+            devAgEsposter002InDevRg.name,
           ),
         ],
       },

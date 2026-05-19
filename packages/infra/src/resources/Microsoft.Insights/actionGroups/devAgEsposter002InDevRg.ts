@@ -1,12 +1,12 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
-import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
+import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
 
-const actionGroupName = "prod-ag-esposter-002";
+const actionGroupName = "dev-ag-esposter-002";
 
-export const prodAgEsposter002: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
-  actionGroupName,
+export const devAgEsposter002InDevRg: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
+  "dev-ag-esposter-002-in-dev-rg",
   {
     actionGroupName,
     armRoleReceivers: [
@@ -24,12 +24,13 @@ export const prodAgEsposter002: azure_native.monitor.ActionGroup = new azure_nat
     enabled: true,
     groupShortName: "SmartDetect",
     location: AzureGlobalDisplayLocation,
-    resourceGroupName: pShpRgEsposterAuea001.name,
+    resourceGroupName: devRgEsposterAe001.name,
     tags: {
       ...ApplicationTags,
     },
   },
   {
+    parent: devRgEsposterAe001,
     protect: true,
   },
 );

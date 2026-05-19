@@ -1,7 +1,7 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
 import { devLogicEsposterAuea001 } from "@/resources/Microsoft.Logic/workflows/devLogicEsposterAuea001";
-import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
+import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -9,8 +9,8 @@ const config = new pulumi.Config();
 
 const actionGroupName = "dev-ag-esposter-001";
 
-export const devAgEsposter001: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
-  actionGroupName,
+export const devAgEsposter001InDevRg: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
+  "dev-ag-esposter-001-in-dev-rg",
   {
     actionGroupName,
     enabled: true,
@@ -24,12 +24,13 @@ export const devAgEsposter001: azure_native.monitor.ActionGroup = new azure_nati
         useCommonAlertSchema: true,
       },
     ],
-    resourceGroupName: dShpRgEsposterAuea001.name,
+    resourceGroupName: devRgEsposterAe001.name,
     tags: {
       ...ApplicationTags,
     },
   },
   {
+    parent: devRgEsposterAe001,
     protect: true,
   },
 );
