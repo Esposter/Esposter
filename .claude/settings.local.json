@@ -114,7 +114,8 @@
       "Bash(pnpm preview *)",
       "Bash(pnpm infra:preview --suppress-outputs)",
       "Bash(pulumi preview *)",
-      "Bash(az resource show *)"
+      "Bash(az resource show *)",
+      "Bash(ncu -w)"
     ]
   }
 }

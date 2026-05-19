@@ -12,8 +12,10 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 1. **Check what's outdated** (run from repo root):
 
    ```bash
-   pnpm outdated -r
+   ncu -w
    ```
+
+   `ncu` (npm-check-updates) reads the workspace catalog and writes updated versions directly. Review the diff before committing.
 
 2. **Update versions** in `pnpm-workspace.yaml` — all non-pinned packages must have a `^` caret prefix.
 

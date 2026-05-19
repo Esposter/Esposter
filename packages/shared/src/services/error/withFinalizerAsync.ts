@@ -8,7 +8,6 @@ export const withFinalizerAsync = async <T>(
   fn: () => Promisable<T>,
   finalizer?: () => Promisable<void>,
 ): Promise<T> => {
-  // eslint-disable-next-line neverthrow/must-use-result -- result.isOk() is checked in finalizer before result.match() consumes it
   const result = await getResultAsync(async () => fn());
   if (finalizer)
     await getResultAsync(async () => finalizer()).match(noop, (error) => {
