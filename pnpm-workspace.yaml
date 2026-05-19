@@ -2,6 +2,7 @@ packages:
   - packages/*
 
 allowBuilds:
+  "@esposter/app": true
   "@parcel/watcher": true
   better-sqlite3: true
   core-js: true

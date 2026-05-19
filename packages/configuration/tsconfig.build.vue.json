@@ -7,5 +7,10 @@
       "@/*": ["*"]
     }
   },
-  "exclude": ["${configDir}/node_modules", "${configDir}/**/*.test.ts", "${configDir}/**/*.bench.ts"]
+  "exclude": [
+    "${configDir}/node_modules",
+    "${configDir}/*.config.ts",
+    "${configDir}/**/*.test.ts",
+    "${configDir}/**/*.bench.ts"
+  ]
 }
