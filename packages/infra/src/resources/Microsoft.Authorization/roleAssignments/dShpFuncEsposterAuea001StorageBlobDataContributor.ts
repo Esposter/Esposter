@@ -1,8 +1,8 @@
 import AzureStorageBlobDataContributorRoleDefinitionId from "@/constants/AzureStorageBlobDataContributorRoleDefinitionId";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
+import DShpFuncEsposterAuea001PrincipalId from "@/constants/DShpFuncEsposterAuea001PrincipalId";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import { dshpstespauea001 } from "@/resources/Microsoft.Storage/storageAccounts/dshpstespauea001";
-import DShpFuncEsposterAuea001PrincipalId from "@/constants/DShpFuncEsposterAuea001PrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
