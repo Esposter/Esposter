@@ -6,15 +6,13 @@ import { pshpstespauea001 } from "@/resources/Microsoft.Storage/storageAccounts/
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
-const roleAssignmentName = "5f0c6147-5cf5-4590-8a43-64d01c22f613";
-
 export const pShpFuncEsposterAuea001StorageTableDataContributor: azure_native.authorization.RoleAssignment =
   new azure_native.authorization.RoleAssignment(
     "p-shp-func-esposter-auea-001-storage-table-data-contributor",
     {
       principalId: PShpFuncEsposterAuea001PrincipalId,
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
-      roleAssignmentName,
+      roleAssignmentName: "5f0c6147-5cf5-4590-8a43-64d01c22f613",
       roleDefinitionId: AzureStorageTableDataContributorRoleDefinitionId,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourcegroups/${pShpRgEsposterAuea001.name}/providers/Microsoft.Storage/storageAccounts/${pshpstespauea001.name}`,
     },

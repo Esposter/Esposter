@@ -6,15 +6,13 @@ import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceG
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
-const roleAssignmentName = "c59fcff5-321e-4ef9-b9be-b9ade50bd2ea";
-
 export const dShpFuncEsposterAuea001EventGridDataSender: azure_native.authorization.RoleAssignment =
   new azure_native.authorization.RoleAssignment(
     "d-shp-func-esposter-auea-001-event-grid-data-sender",
     {
       principalId: DShpFuncEsposterAuea001PrincipalId,
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
-      roleAssignmentName,
+      roleAssignmentName: "c59fcff5-321e-4ef9-b9be-b9ade50bd2ea",
       roleDefinitionId: AzureEventGridDataSenderRoleDefinitionId,
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${dShpRgEsposterAuea001.name}/providers/Microsoft.EventGrid/topics/${dShpEvgtEsposterAuea001.name}`,
     },
