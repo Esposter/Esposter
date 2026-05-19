@@ -8,7 +8,7 @@
 Inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
 A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files.
 
-### Table of Contents
+## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)

@@ -5,7 +5,7 @@ import type {
 } from "#shared/services/achievement/achievementDefinitions";
 import type { AchievementName, UserAchievementWithRelations } from "@esposter/db-schema";
 
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { mapToUserAchievementWithDefinition } from "@/services/achievement/mapToUserAchievementWithDefinition";
 
 export const useAchievementStore = defineStore("achievement", () => {

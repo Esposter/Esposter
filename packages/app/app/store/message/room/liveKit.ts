@@ -6,7 +6,7 @@ import type {
   RemoteTrackPublication,
 } from "livekit-client";
 
-import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { isRemoteAudioSource } from "@/services/message/room/liveKit/isRemoteAudioSource";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";

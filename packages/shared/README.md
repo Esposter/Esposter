@@ -7,7 +7,7 @@
 
 Shared TypeScript utilities, types, and error classes for the Esposter platform. Works in both browser and server environments.
 
-### Table of Contents
+## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)

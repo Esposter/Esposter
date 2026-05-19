@@ -1,6 +1,6 @@
 import type { Types } from "phaser";
 
-import { trimFileExtension } from "@/util/trimFileExtension";
+import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { ContentTypePhaserMethodMap } from "@@/scripts/phaser/constants";
 import { outputFile } from "@@/scripts/phaser/util/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";

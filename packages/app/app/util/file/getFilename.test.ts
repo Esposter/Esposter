@@ -1,4 +1,4 @@
-import { getFilename } from "@/util/getFilename";
+import { getFilename } from "@/util/file/getFilename";
 import { describe, expect, test } from "vitest";
 
 describe(getFilename, () => {

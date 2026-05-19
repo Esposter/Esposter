@@ -3,7 +3,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/datasource/Data
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
-import { trimFileExtension } from "@/util/trimFileExtension";
+import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { takeOne } from "@esposter/shared";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });

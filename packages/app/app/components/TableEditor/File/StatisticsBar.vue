@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DataSourceStatistics } from "#shared/models/tableEditor/file/datasource/DataSourceStatistics";
 
-import { formatSize } from "@/util/formatSize";
+import { formatSize } from "@/util/text/formatSize";
 
 interface StatisticsBarProps {
   filteredRowCount?: number;

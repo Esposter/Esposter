@@ -3,7 +3,7 @@ import type { Except } from "type-fest";
 
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { VuetifyComponentItemType } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { prettify } from "@/util/text/prettify";
 import { ItemEntityTypePropertyNames } from "@esposter/shared";
 

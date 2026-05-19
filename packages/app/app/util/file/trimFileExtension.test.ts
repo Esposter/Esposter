@@ -1,4 +1,4 @@
-import { trimFileExtension } from "@/util/trimFileExtension";
+import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { describe, expect, test } from "vitest";
 
 describe(trimFileExtension, () => {

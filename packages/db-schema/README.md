@@ -4,7 +4,7 @@
 
 Drizzle ORM schemas, relations, and migrations for Esposter's PostgreSQL database. The source of truth for all relational data — usable in both browser and server environments.
 
-### Table of Contents
+## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)

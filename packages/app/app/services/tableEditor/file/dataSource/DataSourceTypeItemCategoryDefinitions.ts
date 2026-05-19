@@ -6,7 +6,7 @@ import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSo
 import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { ItemEntityTypePropertyNames } from "@esposter/shared";
 
 const DataSourceTypeItemCategoryDefinitionMap = {
