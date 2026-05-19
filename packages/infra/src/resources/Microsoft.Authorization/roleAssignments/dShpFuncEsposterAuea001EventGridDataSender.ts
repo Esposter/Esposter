@@ -1,9 +1,8 @@
-﻿import AzureEventGridDataSenderRoleDefinitionId from "@/constants/AzureEventGridDataSenderRoleDefinitionId";
+import AzureEventGridDataSenderRoleDefinitionId from "@/constants/AzureEventGridDataSenderRoleDefinitionId";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import { dShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/dShpEvgtEsposterAuea001";
 import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
-import { dShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/dShpFuncEsposterAuea001";
-import { applyPrincipalId } from "@/services/applyPrincipalId";
+import DShpFuncEsposterAuea001PrincipalId from "@/constants/DShpFuncEsposterAuea001PrincipalId";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -13,7 +12,7 @@ export const dShpFuncEsposterAuea001EventGridDataSender: azure_native.authorizat
   new azure_native.authorization.RoleAssignment(
     "d-shp-func-esposter-auea-001-event-grid-data-sender",
     {
-      principalId: applyPrincipalId(dShpFuncEsposterAuea001.identity, dShpFuncEsposterAuea001.name),
+      principalId: DShpFuncEsposterAuea001PrincipalId,
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleAssignmentName,
       roleDefinitionId: AzureEventGridDataSenderRoleDefinitionId,
