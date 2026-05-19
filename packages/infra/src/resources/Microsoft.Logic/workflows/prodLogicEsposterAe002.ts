@@ -1,14 +1,14 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureAppServiceManagedApiId from "@/constants/AzureAppServiceManagedApiId";
 import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
-import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
-import { prodApicEsposterAuea002 } from "@/resources/Microsoft.Web/connections/prodApicEsposterAuea002";
+import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import { prodApicEsposterAe002 } from "@/resources/Microsoft.Web/connections/prodApicEsposterAe002";
 import * as azure_native from "@pulumi/azure-native";
+import * as pulumi from "@pulumi/pulumi";
 
-const connectionKey = "prod-apic-esposter-auea-002";
-const workflowName = "prod-logic-esposter-auea-002";
+const workflowName = "prod-logic-esposter-ae-002";
 
-export const prodLogicEsposterAuea002: azure_native.logic.Workflow = new azure_native.logic.Workflow(
+export const prodLogicEsposterAe002: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   workflowName,
   {
     definition: {
@@ -19,7 +19,7 @@ export const prodLogicEsposterAuea002: azure_native.logic.Workflow = new azure_n
           inputs: {
             host: {
               connection: {
-                name: `@parameters('$connections')['${connectionKey}']['connectionId']`,
+                name: pulumi.interpolate`@parameters('$connections')['${prodApicEsposterAe002.name}']['connectionId']`,
               },
             },
             method: "post",
@@ -149,23 +149,25 @@ export const prodLogicEsposterAuea002: azure_native.logic.Workflow = new azure_n
       type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned,
     },
     location: AzureAustraliaEastLocation,
-    parameters: {
-      $connections: {
-        value: {
-          [connectionKey]: {
-            connectionId: prodApicEsposterAuea002.id,
-            connectionName: prodApicEsposterAuea002.name,
-            connectionProperties: {
-              authentication: {
-                type: "ManagedServiceIdentity",
+    parameters: pulumi
+      .all([prodApicEsposterAe002.name, prodApicEsposterAe002.id])
+      .apply(([connectionName, connectionId]) => ({
+        $connections: {
+          value: {
+            [connectionName]: {
+              connectionId,
+              connectionName,
+              connectionProperties: {
+                authentication: {
+                  type: "ManagedServiceIdentity",
+                },
               },
+              id: AzureAppServiceManagedApiId,
             },
-            id: AzureAppServiceManagedApiId,
           },
         },
-      },
-    },
-    resourceGroupName: pShpRgEsposterAuea001.name,
+      })),
+    resourceGroupName: prodRgEsposterAe001.name,
     state: azure_native.logic.WorkflowState.Enabled,
     tags: {
       ...ApplicationTags,
@@ -173,6 +175,7 @@ export const prodLogicEsposterAuea002: azure_native.logic.Workflow = new azure_n
     workflowName,
   },
   {
+    parent: prodRgEsposterAe001,
     protect: true,
   },
 );

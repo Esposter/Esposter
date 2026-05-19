@@ -6,9 +6,9 @@ import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
-const eventSubscriptionName = "dev-evgs-esposter-auea-002";
+const eventSubscriptionName = "dev-evgs-esposter-ae-002";
 
-export const devEvgsEsposterAuea002: azure_native.eventgrid.EventSubscription =
+export const devEvgsEsposterAe002: azure_native.eventgrid.EventSubscription =
   new azure_native.eventgrid.EventSubscription(
     eventSubscriptionName,
     {

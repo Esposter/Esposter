@@ -2,19 +2,19 @@ import ApplicationTags from "@/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
 import AzureResourceManagerManagedApiId from "@/constants/AzureResourceManagerManagedApiId";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
-import { devEvgsEsposterAuea001 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/devEvgsEsposterAuea001";
-import { devEvgsEsposterAuea002 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/devEvgsEsposterAuea002";
-import { dShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/dShpEvgtEsposterAuea001";
-import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
-import { devApicEsposterAuea003 } from "@/resources/Microsoft.Web/connections/devApicEsposterAuea003";
+import { prodEvgsEsposterAe001 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe001";
+import { prodEvgsEsposterAe002 } from "@/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe002";
+import { pShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/pShpEvgtEsposterAuea001";
+import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
+import { prodApicEsposterAe003 } from "@/resources/Microsoft.Web/connections/prodApicEsposterAe003";
 import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
-const connectionKey = "dev-apic-esposter-auea-003";
-const workflowName = "dev-logic-esposter-auea-003";
+const workflowName = "prod-logic-esposter-ae-003";
 
-export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_native.logic.Workflow(
+export const prodLogicEsposterAe003: azure_native.logic.Workflow = new azure_native.logic.Workflow(
   workflowName,
   {
     definition: {
@@ -25,11 +25,11 @@ export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_na
           inputs: {
             host: {
               connection: {
-                name: `@parameters('$connections')['${connectionKey}']['connectionId']`,
+                name: pulumi.interpolate`@parameters('$connections')['${prodApicEsposterAe003.name}']['connectionId']`,
               },
             },
             method: "delete",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${dShpRgEsposterAuea001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${dShpEvgtEsposterAuea001.name}/eventSubscriptions/${devEvgsEsposterAuea002.name}')}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${pShpRgEsposterAuea001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAe002.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -40,11 +40,11 @@ export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_na
           inputs: {
             host: {
               connection: {
-                name: `@parameters('$connections')['${connectionKey}']['connectionId']`,
+                name: pulumi.interpolate`@parameters('$connections')['${prodApicEsposterAe003.name}']['connectionId']`,
               },
             },
             method: "delete",
-            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${dShpRgEsposterAuea001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${dShpEvgtEsposterAuea001.name}/eventSubscriptions/${devEvgsEsposterAuea001.name}')}`,
+            path: pulumi.interpolate`/subscriptions/@{encodeURIComponent('${AzureSubscriptionId}')}/resourcegroups/@{encodeURIComponent('${pShpRgEsposterAuea001.name}')}/providers/@{encodeURIComponent('Microsoft.EventGrid')}/@{encodeURIComponent('topics/${pShpEvgtEsposterAuea001.name}/eventSubscriptions/${prodEvgsEsposterAe001.name}')}`,
             queries: {
               "x-ms-api-version": "2025-02-15",
             },
@@ -257,23 +257,25 @@ export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_na
       type: azure_native.logic.ManagedServiceIdentityType.SystemAssigned,
     },
     location: AzureAustraliaEastLocation,
-    parameters: {
-      $connections: {
-        value: {
-          [connectionKey]: {
-            connectionId: devApicEsposterAuea003.id,
-            connectionName: devApicEsposterAuea003.name,
-            connectionProperties: {
-              authentication: {
-                type: "ManagedServiceIdentity",
+    parameters: pulumi
+      .all([prodApicEsposterAe003.name, prodApicEsposterAe003.id])
+      .apply(([connectionName, connectionId]) => ({
+        $connections: {
+          value: {
+            [connectionName]: {
+              connectionId,
+              connectionName,
+              connectionProperties: {
+                authentication: {
+                  type: "ManagedServiceIdentity",
+                },
               },
+              id: AzureResourceManagerManagedApiId,
             },
-            id: AzureResourceManagerManagedApiId,
           },
         },
-      },
-    },
-    resourceGroupName: dShpRgEsposterAuea001.name,
+      })),
+    resourceGroupName: prodRgEsposterAe001.name,
     state: azure_native.logic.WorkflowState.Enabled,
     tags: {
       ...ApplicationTags,
@@ -281,6 +283,7 @@ export const devLogicEsposterAuea003: azure_native.logic.Workflow = new azure_na
     workflowName,
   },
   {
+    parent: prodRgEsposterAe001,
     protect: true,
   },
 );

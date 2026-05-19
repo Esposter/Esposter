@@ -6,9 +6,9 @@ import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
-const eventSubscriptionName = "prod-evgs-esposter-auea-002";
+const eventSubscriptionName = "prod-evgs-esposter-ae-001";
 
-export const prodEvgsEsposterAuea002: azure_native.eventgrid.EventSubscription =
+export const prodEvgsEsposterAe001: azure_native.eventgrid.EventSubscription =
   new azure_native.eventgrid.EventSubscription(
     eventSubscriptionName,
     {
@@ -16,13 +16,13 @@ export const prodEvgsEsposterAuea002: azure_native.eventgrid.EventSubscription =
         endpointType: "AzureFunction",
         maxEventsPerBatch: 1,
         preferredBatchSizeInKilobytes: 64,
-        resourceId: pulumi.interpolate`${pShpFuncEsposterAuea001.id}/functions/${AzureFunction.ProcessPushNotification}`,
+        resourceId: pulumi.interpolate`${pShpFuncEsposterAuea001.id}/functions/${AzureFunction.ProcessWebhook}`,
       },
       eventDeliverySchema: azure_native.eventgrid.EventDeliverySchema.EventGridSchema,
       eventSubscriptionName,
       filter: {
         enableAdvancedFilteringOnArrays: true,
-        includedEventTypes: [AzureFunction.ProcessPushNotification],
+        includedEventTypes: [AzureFunction.ProcessWebhook],
         subjectBeginsWith: "",
         subjectEndsWith: "",
       },
