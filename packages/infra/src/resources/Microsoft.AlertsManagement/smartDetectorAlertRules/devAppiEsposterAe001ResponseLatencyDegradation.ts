@@ -1,15 +1,14 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
 import { devAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposter002";
-import { dShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/dShpAppiEsposterAuea001";
+import { devAppiEsposterAe001 } from "@/resources/Microsoft.Insights/components/devAppiEsposterAe001";
 import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
-import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
 
-const alertRuleName = "Dependency Latency Degradation - d-shp-appi-esposter-auea-001";
+const alertRuleName = "Response Latency Degradation - dev-appi-esposter-ae-001";
 
-export const dShpAppiEsposterAuea001DependencyLatencyDegradation: azure_native.alertsmanagement.SmartDetectorAlertRule =
+export const devAppiEsposterAe001ResponseLatencyDegradation: azure_native.alertsmanagement.SmartDetectorAlertRule =
   new azure_native.alertsmanagement.SmartDetectorAlertRule(
     alertRuleName,
     {
@@ -25,19 +24,19 @@ export const dShpAppiEsposterAuea001DependencyLatencyDegradation: azure_native.a
       },
       alertRuleName,
       description:
-        "Dependency Latency Degradation notifies you of an unusual increase in response by a dependency your app is calling (e.g. REST API or database)",
+        "Response Latency Degradation notifies you of an unusual increase in latency in your app response to requests.",
       detector: {
-        id: "DependencyPerformanceDegradationDetector",
+        id: "RequestPerformanceDegradationDetector",
       },
       frequency: "P1D",
       location: AzureGlobalLocation,
-      resourceGroupName: dShpRgEsposterAuea001.name,
+      resourceGroupName: devRgEsposterAe001.name,
       scope: [
         getSmartDetectorResourceId(
-          dShpRgEsposterAuea001.name,
+          devRgEsposterAe001.name,
           "microsoft.insights",
           "components",
-          dShpAppiEsposterAuea001.name,
+          devAppiEsposterAe001.name,
         ),
       ],
       severity: azure_native.alertsmanagement.Severity.Sev3,
@@ -47,6 +46,7 @@ export const dShpAppiEsposterAuea001DependencyLatencyDegradation: azure_native.a
       },
     },
     {
+      parent: devRgEsposterAe001,
       protect: true,
     },
   );

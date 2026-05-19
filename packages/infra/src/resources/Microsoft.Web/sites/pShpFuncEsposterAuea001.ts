@@ -1,6 +1,5 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureAustraliaEastDisplayLocation from "@/constants/AzureAustraliaEastDisplayLocation";
-import { pShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/pShpAppiEsposterAuea001";
 import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
 import { aspPshprgesposterauea001B082 } from "@/resources/Microsoft.Web/serverFarms/aspPshprgesposterauea001B082";
 import * as azure_native from "@pulumi/azure-native";
@@ -57,7 +56,6 @@ export const pShpFuncEsposterAuea001: azure_native.web.WebApp = new azure_native
     storageAccountRequired: false,
     tags: {
       ...ApplicationTags,
-      "hidden-link: /app-insights-resource-id": pShpAppiEsposterAuea001.id,
     },
   },
   {

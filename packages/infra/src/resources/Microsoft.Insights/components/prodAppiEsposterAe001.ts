@@ -1,12 +1,12 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureAustraliaEastLocation from "@/constants/AzureAustraliaEastLocation";
-import { dShpLogEsposterAuea001 } from "@/resources/Microsoft.OperationalInsights/workspaces/dShpLogEsposterAuea001";
-import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
+import { prodLogEsposterAe001 } from "@/resources/Microsoft.OperationalInsights/workspaces/prodLogEsposterAe001";
+import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
 
-const resourceName = "d-shp-appi-esposter-auea-001";
+const resourceName = "prod-appi-esposter-ae-001";
 
-export const dShpAppiEsposterAuea001: azure_native.applicationinsights.Component =
+export const prodAppiEsposterAe001: azure_native.applicationinsights.Component =
   new azure_native.applicationinsights.Component(
     resourceName,
     {
@@ -18,15 +18,16 @@ export const dShpAppiEsposterAuea001: azure_native.applicationinsights.Component
       publicNetworkAccessForIngestion: azure_native.applicationinsights.PublicNetworkAccessType.Enabled,
       publicNetworkAccessForQuery: azure_native.applicationinsights.PublicNetworkAccessType.Enabled,
       requestSource: "IbizaAIExtension",
-      resourceGroupName: dShpRgEsposterAuea001.name,
+      resourceGroupName: prodRgEsposterAe001.name,
       resourceName,
       retentionInDays: 90,
       tags: {
         ...ApplicationTags,
       },
-      workspaceResourceId: dShpLogEsposterAuea001.id,
+      workspaceResourceId: prodLogEsposterAe001.id,
     },
     {
+      parent: prodRgEsposterAe001,
       protect: true,
     },
   );

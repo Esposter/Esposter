@@ -1,25 +1,24 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import { prodAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposter002";
-import { pShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/pShpAppiEsposterAuea001";
-import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
-import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
+import { devAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposter002";
+import { devAppiEsposterAe001 } from "@/resources/Microsoft.Insights/components/devAppiEsposterAe001";
+import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
 
-const alertRuleName = "Exception Anomalies - p-shp-appi-esposter-auea-001";
+const alertRuleName = "Exception Anomalies - dev-appi-esposter-ae-001";
 
-export const pShpAppiEsposterAuea001ExceptionAnomalies: azure_native.alertsmanagement.SmartDetectorAlertRule =
+export const devAppiEsposterAe001ExceptionAnomalies: azure_native.alertsmanagement.SmartDetectorAlertRule =
   new azure_native.alertsmanagement.SmartDetectorAlertRule(
     alertRuleName,
     {
       actionGroups: {
         groupIds: [
           getSmartDetectorResourceId(
-            prodRgEsposterAe001.name,
+            devRgEsposterAe001.name,
             "microsoft.insights",
             "actiongroups",
-            prodAgEsposter002.name,
+            devAgEsposter002.name,
           ),
         ],
       },
@@ -30,13 +29,13 @@ export const pShpAppiEsposterAuea001ExceptionAnomalies: azure_native.alertsmanag
       },
       frequency: "P1D",
       location: AzureGlobalLocation,
-      resourceGroupName: pShpRgEsposterAuea001.name,
+      resourceGroupName: devRgEsposterAe001.name,
       scope: [
         getSmartDetectorResourceId(
-          pShpRgEsposterAuea001.name,
+          devRgEsposterAe001.name,
           "microsoft.insights",
           "components",
-          pShpAppiEsposterAuea001.name,
+          devAppiEsposterAe001.name,
         ),
       ],
       severity: azure_native.alertsmanagement.Severity.Sev3,
@@ -46,6 +45,7 @@ export const pShpAppiEsposterAuea001ExceptionAnomalies: azure_native.alertsmanag
       },
     },
     {
+      parent: devRgEsposterAe001,
       protect: true,
     },
   );

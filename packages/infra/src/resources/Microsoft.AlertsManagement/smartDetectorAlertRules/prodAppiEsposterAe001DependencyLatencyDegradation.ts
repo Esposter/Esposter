@@ -1,43 +1,42 @@
 import ApplicationTags from "@/constants/ApplicationTags";
 import AzureGlobalLocation from "@/constants/AzureGlobalLocation";
-import { devAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/devAgEsposter002";
-import { dShpAppiEsposterAuea001 } from "@/resources/Microsoft.Insights/components/dShpAppiEsposterAuea001";
-import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
-import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
+import { prodAgEsposter002 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposter002";
+import { prodAppiEsposterAe001 } from "@/resources/Microsoft.Insights/components/prodAppiEsposterAe001";
+import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { getSmartDetectorResourceId } from "@/services/getSmartDetectorResourceId";
 import * as azure_native from "@pulumi/azure-native";
 
-const alertRuleName = "Response Latency Degradation - d-shp-appi-esposter-auea-001";
+const alertRuleName = "Dependency Latency Degradation - prod-appi-esposter-ae-001";
 
-export const dShpAppiEsposterAuea001ResponseLatencyDegradation: azure_native.alertsmanagement.SmartDetectorAlertRule =
+export const prodAppiEsposterAe001DependencyLatencyDegradation: azure_native.alertsmanagement.SmartDetectorAlertRule =
   new azure_native.alertsmanagement.SmartDetectorAlertRule(
     alertRuleName,
     {
       actionGroups: {
         groupIds: [
           getSmartDetectorResourceId(
-            devRgEsposterAe001.name,
+            prodRgEsposterAe001.name,
             "microsoft.insights",
             "actiongroups",
-            devAgEsposter002.name,
+            prodAgEsposter002.name,
           ),
         ],
       },
       alertRuleName,
       description:
-        "Response Latency Degradation notifies you of an unusual increase in latency in your app response to requests.",
+        "Dependency Latency Degradation notifies you of an unusual increase in response by a dependency your app is calling (e.g. REST API or database)",
       detector: {
-        id: "RequestPerformanceDegradationDetector",
+        id: "DependencyPerformanceDegradationDetector",
       },
       frequency: "P1D",
       location: AzureGlobalLocation,
-      resourceGroupName: dShpRgEsposterAuea001.name,
+      resourceGroupName: prodRgEsposterAe001.name,
       scope: [
         getSmartDetectorResourceId(
-          dShpRgEsposterAuea001.name,
+          prodRgEsposterAe001.name,
           "microsoft.insights",
           "components",
-          dShpAppiEsposterAuea001.name,
+          prodAppiEsposterAe001.name,
         ),
       ],
       severity: azure_native.alertsmanagement.Severity.Sev3,
@@ -47,6 +46,7 @@ export const dShpAppiEsposterAuea001ResponseLatencyDegradation: azure_native.ale
       },
     },
     {
+      parent: prodRgEsposterAe001,
       protect: true,
     },
   );

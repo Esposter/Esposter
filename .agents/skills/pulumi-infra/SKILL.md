@@ -32,7 +32,9 @@ Apply when modifying `packages/infra`.
 - If Pulumi already owns an Azure resource, use that resource's output properties (`.name`, `.id`, etc.) as the source of truth instead of adding a separate constant for the same value.
 - Add constants only for values that are external to managed resources, required as plain strings in Pulumi options/import IDs, or shared built-in/static identifiers such as role definition IDs.
 - A local `const` within a file is fine when it is the **source of truth** for that name and is reused more than once in the same file (e.g. `const workflowName = "dev-logic-esposter-ae-001"` used as the Pulumi resource name and as the Azure property). Do not introduce a local const that merely duplicates a name already owned by another resource file.
-- External principal IDs that are not represented by managed Azure resources should live in named constants instead of being repeated in role assignment files.
+- **Single-use UUIDs inline directly** — do not declare `const roleAssignmentName = "uuid"` if it is only used once in the same file. Inline the UUID as the property value: `roleAssignmentName: "uuid"`. This applies to any UUID or identifier that appears exactly once with no benefit from naming.
+- **Named constants only for cross-file reuse** — create a constant file (e.g. `DShpFuncEsposterAuea001PrincipalId.ts`) only when the same value is referenced in ≥2 resource files. Single-file values are always inlined.
+- External principal IDs that are not represented by managed Azure resources should live in named constants instead of being repeated in role assignment files — but only when used across multiple files.
 - During naming migration waves, prefer create/cutover/delete over aliases for resources whose final shape should also gain a `parent` option. New target resources should include the best parent from the start whenever the Azure hierarchy makes that natural.
 
 ## Pulumi Output vs Plain String
