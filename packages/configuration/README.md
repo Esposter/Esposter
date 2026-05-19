@@ -4,7 +4,7 @@
 
 Shared build and lint configuration for all Esposter packages. Provides ESLint configs, TSConfig bases, and Rolldown build configurations for browser, isomorphic, and Node.js targets.
 
-### Table of Contents
+## Table of Contents
 
 - 📖 [Documentation](#documentation)
 - ⚖️ [License](#license)

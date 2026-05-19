@@ -3,7 +3,7 @@ import type { ColumnStatisticsDefinition } from "@/models/tableEditor/file/colum
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { defineColumnStatistics } from "@/services/tableEditor/file/column/defineColumnStatistics";
-import { formatNullable } from "@/util/formatNullable";
+import { formatNullable } from "@/util/text/formatNullable";
 
 export const ColumnStatisticsDefinitionMap = {
   average: defineColumnStatistics({

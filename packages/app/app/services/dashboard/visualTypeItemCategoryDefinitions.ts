@@ -2,7 +2,7 @@ import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCa
 import type { Except } from "type-fest";
 
 import { VisualType, VisualTypes } from "#shared/models/dashboard/data/VisualType";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { prettify } from "@/util/text/prettify";
 
 const VisualTypeItemCategoryDefinitionMap = Object.fromEntries(

@@ -3,7 +3,7 @@ import type { Except } from "type-fest";
 
 import { AttackId } from "#shared/models/dungeons/attack/AttackId";
 import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 const AttackMap = {
   [AttackId.Slash]: {

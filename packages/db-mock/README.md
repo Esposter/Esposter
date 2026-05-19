@@ -4,7 +4,7 @@
 
 In-memory PostgreSQL database factory for testing — server environment only. Uses [PGlite](https://github.com/electric-sql/pglite) to spin up a real Drizzle ORM database with the full Esposter schema applied, without needing a running Postgres instance.
 
-### Table of Contents
+## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)

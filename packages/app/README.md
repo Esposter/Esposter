@@ -93,7 +93,7 @@ packages/app/
 │   ├── components/       # Vue components
 │   ├── composables/      # Vue composables
 │   ├── layouts/          # Nuxt layouts
-│   ├── middleware/        # Nuxt route middleware
+│   ├── middleware/       # Nuxt route middleware
 │   ├── models/           # Client-side models
 │   ├── pages/            # Nuxt file-based routes
 │   ├── plugins/          # Nuxt plugins

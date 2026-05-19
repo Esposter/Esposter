@@ -7,7 +7,7 @@
 
 Mock Azure service classes for local development and testing. Provides in-memory implementations of Azure Table Storage, Blob Storage, Queue Storage, and EventGrid clients that mirror the real Azure SDK interfaces.
 
-### Table of Contents
+## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)

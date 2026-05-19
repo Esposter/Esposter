@@ -1,4 +1,4 @@
-import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { describe, expect, test, vi } from "vitest";
 
 describe(getSynchronizedFunction, () => {

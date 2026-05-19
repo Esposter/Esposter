@@ -2,7 +2,7 @@ import type { Npc } from "@/models/dungeons/npc/Npc";
 import type { Except, SetOptional } from "type-fest";
 
 import { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
 import { MovementPattern } from "@/models/dungeons/npc/MovementPattern";
 

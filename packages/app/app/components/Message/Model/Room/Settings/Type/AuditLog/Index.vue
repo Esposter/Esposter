@@ -4,7 +4,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
 import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
 import { useModerationLogStore } from "@/store/message/moderation/log";
-import { formatDuration } from "@/util/formatDuration";
+import { formatDuration } from "@/util/text/formatDuration";
 
 interface AuditLogProps {
   roomId: RoomInMessage["id"];

@@ -1,4 +1,4 @@
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { describe, expect, test } from "vitest";
 
 describe(parseDictionaryToArray, () => {

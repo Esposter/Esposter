@@ -15,7 +15,7 @@ Every package README follows this structure:
 
 One-sentence description (from package.json `description`, expanded for clarity).
 
-### Table of Contents
+## Table of Contents
 
 - 🚀 [Getting Started](#getting-started) ← omit for private packages with no install step
 - 📖 [Documentation](#documentation)
@@ -92,7 +92,7 @@ Badge ref format (bottom of file):
 
 1. **Description** — lead with what it does, not what it is. "Drizzle ORM schemas and migrations" beats "A library of database schemas".
 2. **Getting Started** — show the install command + one minimal working example. Omit for packages that are never installed externally (app, azure-functions, configuration).
-3. **Documentation** — always link `https://esposter.com/docs/modules/<slug>.html`. Add a key-exports table or an architecture notes section so the README is useful without visiting the docs site.
+3. **Documentation** — always link `https://esposter.com/docs/modules/<slug>.html` with the phrase "We highly recommend you take a look at the [documentation](...) to level up." Add a key-exports table or an architecture notes section so the README is useful without visiting the docs site.
 4. **Commands** — list the `pnpm` scripts relevant to that package (build, test, lint:fix, typecheck). Use the package's own scripts, not root scripts.
 5. **No filler** — skip "we are excited to…", lengthy prose, or content that duplicates CLAUDE.md. READMEs are reference docs.
 6. **Private packages** — no "Getting Started / install" section. Add an Architecture or How It Works section instead.

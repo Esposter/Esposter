@@ -2,7 +2,7 @@ import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCa
 import type { Except } from "type-fest";
 
 import { CsvDelimiter } from "#shared/models/tableEditor/file/csv/CsvDelimiter";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 const CsvDelimiterItemCategoryDefinitionMap = {
   [CsvDelimiter.Comma]: { title: "Comma (,)" },

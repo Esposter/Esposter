@@ -1,6 +1,6 @@
 import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
 
-import { getSynchronizedFunction } from "#shared/error/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { getResultAsync, noop, RoutePath } from "@esposter/shared";
