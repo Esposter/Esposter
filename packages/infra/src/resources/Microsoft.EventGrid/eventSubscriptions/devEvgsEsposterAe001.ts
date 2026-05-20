@@ -1,7 +1,7 @@
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
-import { dShpEvgtEsposterAuea001 } from "@/resources/Microsoft.EventGrid/topics/dShpEvgtEsposterAuea001";
-import { dShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/dShpRgEsposterAuea001";
-import { dShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/dShpFuncEsposterAuea001";
+import { devEvgtEsposterAe001 } from "@/resources/Microsoft.EventGrid/topics/devEvgtEsposterAe001";
+import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { devFuncEsposter001 } from "@/resources/Microsoft.Web/sites/devFuncEsposter001";
 import { AzureFunction } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
@@ -16,7 +16,7 @@ export const devEvgsEsposterAe001: azure_native.eventgrid.EventSubscription =
         endpointType: "AzureFunction",
         maxEventsPerBatch: 1,
         preferredBatchSizeInKilobytes: 64,
-        resourceId: pulumi.interpolate`${dShpFuncEsposterAuea001.id}/functions/${AzureFunction.ProcessWebhook}`,
+        resourceId: pulumi.interpolate`${devFuncEsposter001.id}/functions/${AzureFunction.ProcessWebhook}`,
       },
       eventDeliverySchema: azure_native.eventgrid.EventDeliverySchema.EventGridSchema,
       eventSubscriptionName,
@@ -30,9 +30,10 @@ export const devEvgsEsposterAe001: azure_native.eventgrid.EventSubscription =
         eventTimeToLiveInMinutes: 1440,
         maxDeliveryAttempts: 30,
       },
-      scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${dShpRgEsposterAuea001.name}/providers/Microsoft.EventGrid/topics/${dShpEvgtEsposterAuea001.name}`,
+      scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${devRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${devEvgtEsposterAe001.name}`,
     },
     {
+      parent: devEvgtEsposterAe001,
       protect: true,
     },
   );

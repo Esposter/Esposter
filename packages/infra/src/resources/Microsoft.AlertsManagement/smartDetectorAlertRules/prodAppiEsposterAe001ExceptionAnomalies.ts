@@ -45,7 +45,7 @@ export const prodAppiEsposterAe001ExceptionAnomalies: azure_native.alertsmanagem
       },
     },
     {
-      parent: prodRgEsposterAe001,
+      parent: prodAppiEsposterAe001,
       protect: true,
     },
   );

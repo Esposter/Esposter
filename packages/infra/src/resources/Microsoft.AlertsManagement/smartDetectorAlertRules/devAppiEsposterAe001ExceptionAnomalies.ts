@@ -45,7 +45,7 @@ export const devAppiEsposterAe001ExceptionAnomalies: azure_native.alertsmanageme
       },
     },
     {
-      parent: devRgEsposterAe001,
+      parent: devAppiEsposterAe001,
       protect: true,
     },
   );

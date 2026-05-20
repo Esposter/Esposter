@@ -31,7 +31,7 @@ export const logicAppsManagementDevLogEsposterAe001: azure_native.operationsmana
       },
     },
     {
-      parent: devRgEsposterAe001,
+      parent: devLogEsposterAe001,
       protect: true,
     },
   );

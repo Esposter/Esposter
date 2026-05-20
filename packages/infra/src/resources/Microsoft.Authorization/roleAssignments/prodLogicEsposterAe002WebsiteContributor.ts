@@ -1,10 +1,8 @@
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import AzureWebsiteContributorRoleDefinitionId from "@/constants/AzureWebsiteContributorRoleDefinitionId";
-import { prodLogicEsposterAe002 } from "@/resources/Microsoft.Logic/workflows/prodLogicEsposterAe002";
+import ProdLogicEsposterAe002PrincipalId from "@/constants/ProdLogicEsposterAe002PrincipalId";
 import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
-import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
-import { pShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/pShpFuncEsposterAuea001";
-import { getWorkflowPrincipalId } from "@/services/getWorkflowPrincipalId";
+import { prodFuncEsposter001 } from "@/resources/Microsoft.Web/sites/prodFuncEsposter001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -12,13 +10,13 @@ export const prodLogicEsposterAe002WebsiteContributor: azure_native.authorizatio
   new azure_native.authorization.RoleAssignment(
     "prod-logic-esposter-ae-002-website-contributor",
     {
-      principalId: getWorkflowPrincipalId(prodRgEsposterAe001.name, prodLogicEsposterAe002.name),
+      principalId: ProdLogicEsposterAe002PrincipalId,
       principalType: azure_native.authorization.PrincipalType.ServicePrincipal,
       roleDefinitionId: AzureWebsiteContributorRoleDefinitionId,
-      scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${pShpRgEsposterAuea001.name}/providers/Microsoft.Web/sites/${pShpFuncEsposterAuea001.name}`,
+      scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.Web/sites/${prodFuncEsposter001.name}`,
     },
     {
-      parent: prodLogicEsposterAe002,
+      parent: prodFuncEsposter001,
       protect: true,
     },
   );

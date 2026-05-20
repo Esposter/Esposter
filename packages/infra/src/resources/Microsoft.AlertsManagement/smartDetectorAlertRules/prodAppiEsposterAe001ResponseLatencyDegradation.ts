@@ -46,7 +46,7 @@ export const prodAppiEsposterAe001ResponseLatencyDegradation: azure_native.alert
       },
     },
     {
-      parent: prodRgEsposterAe001,
+      parent: prodAppiEsposterAe001,
       protect: true,
     },
   );

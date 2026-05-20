@@ -115,7 +115,21 @@
       "Bash(pnpm infra:preview --suppress-outputs)",
       "Bash(pulumi preview *)",
       "Bash(az resource show *)",
-      "Bash(ncu -w)"
+      "Bash(ncu -w)",
+      "PowerShell(az search index list *)",
+      "Bash(az search service list *)",
+      "Bash(az resource list *)",
+      "PowerShell(az storage container list *)",
+      "PowerShell(az account show *)",
+      "PowerShell(az functionapp function list *)",
+      "PowerShell(az functionapp list *)",
+      "PowerShell(az functionapp config appsettings *)",
+      "PowerShell(az functionapp identity show *)",
+      "PowerShell(az role assignment list *)",
+      "Bash(az storage container list *)",
+      "Bash(az functionapp identity show *)",
+      "Bash(az role assignment list *)",
+      "Bash(az storage account show *)"
     ]
   }
 }
