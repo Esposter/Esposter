@@ -51,8 +51,6 @@ Target names use readable environment tokens:
 | `prod` | Production  |
 | `test` | Test        |
 
-Legacy imported names use `d` and `p`. Do not use single-letter environment tokens for new names.
-
 ## Scope Tokens
 
 Do not include scope tokens in target resource names. The legacy `shp` token meant "shared platform", but every imported resource uses it, so it does not distinguish resources in practice. Use resource group placement and tags for scope, ownership, and lifecycle metadata.
@@ -134,10 +132,6 @@ These tokens are official for Esposter infrastructure. If a new Azure resource t
 | `wps`   | Web PubSub                 | `Microsoft.SignalRService/webPubSub`        | CAF      |
 
 Do not use `a` for Azure Monitor actions. Action behavior belongs inside the owning action group resource.
-
-Legacy imported resources use `evgts` for Event Grid subscriptions and `pubsub` for Web PubSub. Target names use `evgs` and `wps`.
-
-Legacy resources created in v8 use `apicn` for API connections and `bdg` for budgets. Target names use `apic` and `bgt`.
 
 ## Reserved Asset Type Tokens
 
@@ -417,14 +411,14 @@ These tokens are the complete set of CAF abbreviations plus Esposter-specific ad
 
 ## Examples
 
-| Resource Type           | Legacy Name                      | Target Name                 |
-| ----------------------- | -------------------------------- | --------------------------- |
-| Resource group          | `p-shp-rg-esposter-auea-001`     | `prod-rg-esposter-ae-001`   |
-| Function app            | `p-shp-func-esposter-auea-001`   | `prod-func-esposter-001`    |
-| Storage account         | `pshpstespauea001`               | `prodstesposter001`         |
-| Azure AI Search         | `pshpsrchespauea001`             | `prod-srch-esposter-001`    |
-| Event Grid subscription | `p-shp-evgts-esposter-auea-001`  | `prod-evgs-esposter-ae-001` |
-| Web PubSub              | `p-shp-pubsub-esposter-auea-001` | `prod-wps-esposter-001`     |
+| Resource Type           | Azure Resource Name         |
+| ----------------------- | --------------------------- |
+| Resource group          | `prod-rg-esposter-ae-001`   |
+| Function app            | `prod-func-esposter-001`    |
+| Storage account         | `prodstesposter001`         |
+| Azure AI Search         | `prod-srch-esposter-001`    |
+| Event Grid subscription | `prod-evgs-esposter-ae-001` |
+| Web PubSub              | `prod-wps-esposter-001`     |
 
 ## Source File Names
 
@@ -432,22 +426,12 @@ One resource declaration per file. Pulumi source files use lower camel case deri
 
 The export constant name must match the file name minus `.ts`.
 
-Target examples:
-
 | Azure Resource Name       | Naming Components                     | Source File              | Export Constant       |
 | ------------------------- | ------------------------------------- | ------------------------ | --------------------- |
 | `prod-rg-esposter-ae-001` | `prod`, `rg`, `esposter`, `Ae`, `001` | `prodRgEsposterAe001.ts` | `prodRgEsposterAe001` |
 | `prod-func-esposter-001`  | `prod`, `func`, `esposter`, `001`     | `prodFuncEsposter001.ts` | `prodFuncEsposter001` |
-| `prodstesposter001`       | `prod`, `st`, `esposter`, `001`       | `prodStEsposter001.ts`   | `prodStEsposter001`   |
+| `prodstesposter001`       | `prod`, `st`, `esposter`, `001`       | `prodstesposter001.ts`   | `prodstesposter001`   |
 | `prod-srch-esposter-001`  | `prod`, `srch`, `esposter`, `001`     | `prodSrchEsposter001.ts` | `prodSrchEsposter001` |
-
-Legacy examples:
-
-| Azure Resource Name            | Source File                  | Export Constant           |
-| ------------------------------ | ---------------------------- | ------------------------- |
-| `d-shp-rg-esposter-auea-001`   | `dShpRgEsposterAuea001.ts`   | `dShpRgEsposterAuea001`   |
-| `dshpstespauea001`             | `dshpstespauea001.ts`        | `dshpstespauea001`        |
-| `p-shp-func-esposter-auea-001` | `pShpFuncEsposterAuea001.ts` | `pShpFuncEsposterAuea001` |
 
 Resource folders mirror Azure ARM provider paths:
 
@@ -461,7 +445,7 @@ Child resources append the Pulumi resource type name as a suffix. When the Azure
 
 | Azure Child Resource                          | Pulumi Type             | Source File                           | Export Constant                    |
 | --------------------------------------------- | ----------------------- | ------------------------------------- | ---------------------------------- |
-| `dshpstespauea001/blobServices/default`       | `BlobServiceProperties` | `dshpstespauea001Properties.ts`       | `dshpstespauea001Properties`       |
-| `dshpstespauea001/managementPolicies/default` | `ManagementPolicy`      | `dshpstespauea001ManagementPolicy.ts` | `dshpstespauea001ManagementPolicy` |
+| `devstesposter001/blobServices/default`       | `BlobServiceProperties` | `devstesposter001Properties.ts`       | `devstesposter001Properties`       |
+| `devstesposter001/managementPolicies/default` | `ManagementPolicy`      | `devstesposter001ManagementPolicy.ts` | `devstesposter001ManagementPolicy` |
 
 The suffix is the full Pulumi resource type name (`BlobServiceProperties`, `ManagementPolicy`, etc.), not abbreviated.
