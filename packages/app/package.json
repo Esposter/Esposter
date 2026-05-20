@@ -22,7 +22,7 @@
     "dev": "nuxt dev",
     "env:gen": "pnpx gen-env-types .env -o shared/types/env.d.ts -e .",
     "generate": "nuxt generate",
-    "generate-pwa-assets": "pnpx pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
+    "generate-pwa-assets": "pnpx pwa-asset-generator https://prodstesposter001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint && NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --config eslint.light.config.js .",

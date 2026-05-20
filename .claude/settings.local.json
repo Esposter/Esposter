@@ -129,7 +129,9 @@
       "Bash(az storage container list *)",
       "Bash(az functionapp identity show *)",
       "Bash(az role assignment list *)",
-      "Bash(az storage account show *)"
+      "Bash(az storage account show *)",
+      "Bash(az functionapp show *)",
+      "Bash(az storage container show *)"
     ]
   }
 }
