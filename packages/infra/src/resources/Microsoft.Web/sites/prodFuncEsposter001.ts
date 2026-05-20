@@ -53,6 +53,10 @@ export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web
     resourceGroupName: prodRgEsposterAe001.name,
     scmSiteAlsoStopped: false,
     serverFarmId: prodAspEsposterAe001.id,
+    siteConfig: {
+      nodeVersion: "~24",
+      use32BitWorkerProcess: false,
+    },
     storageAccountRequired: false,
     tags: {
       ...ApplicationTags,

@@ -5,7 +5,7 @@ import { rolldownConfigurationNode } from "@esposter/configuration";
 // @ts-ignore TS2321: Excessive stack depth
 const rolldownConfiguration: RolldownOptions = {
   ...rolldownConfigurationNode,
-  external: [],
+  external: ["@azure/functions"],
   plugins: [
     (rolldownConfigurationNode.plugins as RolldownPluginOption[]).filter(
       (plugins) =>
