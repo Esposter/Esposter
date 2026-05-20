@@ -1,7 +1,6 @@
 import AzureStorageTableDataReaderRoleDefinitionId from "@/constants/AzureStorageTableDataReaderRoleDefinitionId";
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
-import { prodSrchEsposter001 } from "@/resources/Microsoft.Search/searchServices/prodSrchEsposter001";
 import { prodstesposter001 } from "@/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
@@ -17,7 +16,7 @@ export const prodSrchEsposter001StorageTableDataReader: azure_native.authorizati
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.Storage/storageAccounts/${prodstesposter001.name}`,
     },
     {
-      parent: prodSrchEsposter001,
+      parent: prodstesposter001,
       protect: true,
     },
   );

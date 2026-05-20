@@ -1,7 +1,6 @@
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import AzureWebsiteContributorRoleDefinitionId from "@/constants/AzureWebsiteContributorRoleDefinitionId";
 import DevLogicEsposterAe002PrincipalId from "@/constants/DevLogicEsposterAe002PrincipalId";
-import { devLogicEsposterAe002 } from "@/resources/Microsoft.Logic/workflows/devLogicEsposterAe002";
 import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devFuncEsposter001 } from "@/resources/Microsoft.Web/sites/devFuncEsposter001";
 import * as azure_native from "@pulumi/azure-native";
@@ -17,7 +16,7 @@ export const devLogicEsposterAe002WebsiteContributor: azure_native.authorization
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${devRgEsposterAe001.name}/providers/Microsoft.Web/sites/${devFuncEsposter001.name}`,
     },
     {
-      parent: devLogicEsposterAe002,
+      parent: devFuncEsposter001,
       protect: true,
     },
   );

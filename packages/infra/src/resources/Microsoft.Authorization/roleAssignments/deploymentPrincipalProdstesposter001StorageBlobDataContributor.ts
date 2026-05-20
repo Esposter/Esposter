@@ -17,6 +17,7 @@ export const deploymentPrincipalProdstesposter001StorageBlobDataContributor: azu
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.Storage/storageAccounts/${prodstesposter001.name}`,
     },
     {
+      parent: prodstesposter001,
       protect: true,
     },
   );

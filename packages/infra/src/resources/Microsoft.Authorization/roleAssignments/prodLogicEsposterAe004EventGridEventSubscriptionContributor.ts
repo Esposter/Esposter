@@ -2,7 +2,6 @@ import AzureEventGridEventSubscriptionContributorRoleDefinitionId from "@/consta
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import ProdLogicEsposterAe004PrincipalId from "@/constants/ProdLogicEsposterAe004PrincipalId";
 import { prodEvgtEsposterAe001 } from "@/resources/Microsoft.EventGrid/topics/prodEvgtEsposterAe001";
-import { prodLogicEsposterAe004 } from "@/resources/Microsoft.Logic/workflows/prodLogicEsposterAe004";
 import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
@@ -17,7 +16,7 @@ export const prodLogicEsposterAe004EventGridEventSubscriptionContributor: azure_
       scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.EventGrid/topics/${prodEvgtEsposterAe001.name}`,
     },
     {
-      parent: prodLogicEsposterAe004,
+      parent: prodEvgtEsposterAe001,
       protect: true,
     },
   );
