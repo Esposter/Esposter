@@ -26,6 +26,31 @@ Apply when modifying `packages/infra`.
 - Export exactly one resource constant per resource file.
 - Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
 
+## Resource Parent Hierarchy
+
+Every new resource must set the `parent` Pulumi option. Use the **nearest final Azure containment/extension parent**:
+
+| Resource category                                                                                                                                                                                                                 | Correct `parent`                                                    |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Top-level RG-scoped resources (Logic Apps, API connections, Function Apps, App Service Plans, storage accounts, search services, Web PubSub, Event Grid topics, Log Analytics workspaces, App Insights components, action groups) | Final resource group (`devRgEsposterAe001` / `prodRgEsposterAe001`) |
+| Child/extension of storage account (blob service properties, management policies)                                                                                                                                                 | The storage account resource                                        |
+| Child/extension of App Insights (Smart Detector alert rules)                                                                                                                                                                      | The App Insights component                                          |
+| Child/extension of Log Analytics workspace (Operations Management solutions)                                                                                                                                                      | The Log Analytics workspace                                         |
+| Child/extension of Event Grid topic (event subscriptions)                                                                                                                                                                         | The Event Grid topic (once the topic has a final name)              |
+| Role assignments scoped to a specific managed resource (Logic App website contributor, EventGrid contributor)                                                                                                                     | That scoped resource                                                |
+| Subscription-scoped resources (budgets, policy assignments, subscription-level role assignments)                                                                                                                                  | No parent                                                           |
+
+**Deferral rule:** if the natural parent is still a legacy resource scheduled for rename/deletion, defer setting `parent` until the migration wave that creates the final parent. Create the child directly under the final parent in that same wave — never under the legacy parent.
+
+**Legacy resources:** existing resources with legacy names (`dShp*`, `pShp*`, `dshp*`, `pshp*`, `asp[Dd]shp*`) are being phased out and do not need `parent` retrofitted. Only newly created target resources follow this rule.
+
+**Re-parenting already-deployed resources:** changing `parent` in code changes the Pulumi URN. Pulumi treats the old URN as a delete and the new URN as a create. `protect: true` blocks the delete, so the preview will error. The correct migration sequence is:
+
+1. Update `parent` in code to the correct final parent (already done).
+2. `pulumi state unprotect "<old-urn>"` for each affected resource — this allows Pulumi to delete the old state entry.
+3. Run `pnpm infra:preview` — confirm the plan shows delete (old URN) + create (new URN) for each affected resource, plus any net-new creates.
+4. Run `pnpm infra:up` — Pulumi deletes the old state entries and creates the resources under the new parent URN. Azure resources themselves are not deleted; only the Pulumi state tree changes unless the resource properties also changed.
+
 ## Resource References And Dependencies
 
 - Prefer existing Pulumi resource outputs over repeated Azure identifier string literals when one managed resource refers to another.
@@ -36,13 +61,16 @@ Apply when modifying `packages/infra`.
 - **Named constants only for cross-file reuse** — create a constant file (e.g. `DShpFuncEsposterAuea001PrincipalId.ts`) only when the same value is referenced in ≥2 resource files. Single-file values are always inlined.
 - External principal IDs that are not represented by managed Azure resources should live in named constants instead of being repeated in role assignment files — but only when used across multiple files.
 - During naming migration waves, prefer create/cutover/delete over aliases for resources whose final shape should also gain a `parent` option. New target resources should include the best parent from the start whenever the Azure hierarchy makes that natural.
+- **Renaming a resource whose final Azure name matches the legacy name** (e.g. event subscriptions reused under a new topic): there is no `New` suffix in the final code. The correct sequence depends on whether the resource holds data that must be migrated:
+  - **No external data to migrate** (event subscriptions, role assignments): unprotect old resource → delete old file → create new file with the final name → single `pulumi up` deletes old + creates new. The old Azure resource is deleted automatically by Pulumi when the file is removed.
+  - **External data to migrate** (storage accounts, search indexes): use a two-phase create/cutover/delete approach: (1) create new resource under a temporary name, migrate data, cut app over to new resource, then (2) delete old resource → rename new resource to final name → second cutover. Never leave a `New`-suffixed resource file permanently in the codebase.
 
 ## Pulumi Output vs Plain String
 
 `resource.name` and `resource.id` are `Output<string>`, not plain strings. This matters in two specific situations:
 
 - **As a property value** — use dot notation directly. Pulumi accepts `Input<T>` (which includes `Output<T>`) for all resource properties: `connectionId: conn.id` ✓
-- **In a template literal** — plain backtick interpolation silently produces `"[object Object]"`. Use `pulumi.interpolate` instead: `` pulumi.interpolate`prefix-${conn.name}-suffix` `` ✓
+- **In a template literal** — plain backtick interpolation silently produces `"[object Object]"`. Use `pulumi.interpolate` instead: `pulumi.interpolate\`prefix-${conn.name}-suffix\`` ✓
 - **As a computed object key** — `[conn.name]` evaluates to `"[object Object]"` at JS runtime because JS calls `.toString()` on the Output eagerly.
 
 **Preferred fix for object keys:** if the name is used as a key and also in template literals within the same file, define a `const connectionKey = "the-name"` as the local source of truth. Use the Pulumi Output (`.id`, `.name`) only for property _values_ inside that keyed object. This avoids `pulumi.all().apply()` entirely and keeps the code readable.

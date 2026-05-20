@@ -46,7 +46,7 @@ export const devAppiEsposterAe001DependencyLatencyDegradation: azure_native.aler
       },
     },
     {
-      parent: devRgEsposterAe001,
+      parent: devAppiEsposterAe001,
       protect: true,
     },
   );

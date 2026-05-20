@@ -115,7 +115,10 @@
       "Bash(pnpm infra:preview --suppress-outputs)",
       "Bash(pulumi preview *)",
       "Bash(az resource show *)",
-      "Bash(ncu -w)"
+      "Bash(ncu -w)",
+      "PowerShell(az search index list *)",
+      "Bash(az search service list *)",
+      "Bash(az resource list *)"
     ]
   }
 }

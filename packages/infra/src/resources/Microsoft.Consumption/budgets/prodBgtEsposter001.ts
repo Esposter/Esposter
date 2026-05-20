@@ -1,8 +1,8 @@
 import AzureSubscriptionId from "@/constants/AzureSubscriptionId";
 import { prodAgEsposter001 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposter001";
 import { prodAgEsposter003 } from "@/resources/Microsoft.Insights/actionGroups/prodAgEsposter003";
-import { pShpRgEsposterAuea001 } from "@/resources/Microsoft.Resources/resourceGroups/pShpRgEsposterAuea001";
-import { pShpFuncEsposterAuea001 } from "@/resources/Microsoft.Web/sites/pShpFuncEsposterAuea001";
+import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import { prodFuncEsposter001 } from "@/resources/Microsoft.Web/sites/prodFuncEsposter001";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -18,7 +18,7 @@ export const prodBgtEsposter001: azure_native.consumption.Budget = new azure_nat
       dimensions: {
         name: "ResourceId",
         operator: azure_native.consumption.BudgetOperatorType.In,
-        values: [pShpFuncEsposterAuea001.id],
+        values: [prodFuncEsposter001.id],
       },
     },
     notifications: {
@@ -39,14 +39,12 @@ export const prodBgtEsposter001: azure_native.consumption.Budget = new azure_nat
         thresholdType: "Actual",
       },
     },
-    scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${pShpRgEsposterAuea001.name}`,
+    scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}`,
     timeGrain: azure_native.consumption.TimeGrainType.Monthly,
     timePeriod: {
       endDate: "2035-12-31T00:00:00Z",
       startDate: "2026-05-01T00:00:00Z",
     },
   },
-  {
-    protect: true,
-  },
+  { protect: true },
 );

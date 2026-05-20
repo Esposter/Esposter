@@ -46,7 +46,7 @@ export const devAppiEsposterAe001PotentialMemoryLeak: azure_native.alertsmanagem
       },
     },
     {
-      parent: devRgEsposterAe001,
+      parent: devAppiEsposterAe001,
       protect: true,
     },
   );

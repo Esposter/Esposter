@@ -46,7 +46,7 @@ export const devAppiEsposterAe001TraceSeverityDegradation: azure_native.alertsma
       },
     },
     {
-      parent: devRgEsposterAe001,
+      parent: devAppiEsposterAe001,
       protect: true,
     },
   );
