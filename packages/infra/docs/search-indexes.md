@@ -62,11 +62,11 @@ SERVICE=dev-srch-esposter-001
 KEY=$(az search admin-key show --service-name $SERVICE --resource-group dev-rg-esposter-ae-001 --query primaryKey -o tsv)
 CONN="<devstesposter001 connection string>"
 
-curl -X POST "https://$SERVICE.search.windows.net/datasources?api-version=2024-07-01" \
+curl -X PUT "https://$SERVICE.search.windows.net/datasources/messages-datasource?api-version=2024-07-01" \
   -H "api-key: $KEY" -H "Content-Type: application/json" \
   -d "{\"name\":\"messages-datasource\",\"type\":\"azuretable\",\"credentials\":{\"connectionString\":\"$CONN\"},\"container\":{\"name\":\"Messages\"}}"
 
-curl -X POST "https://$SERVICE.search.windows.net/indexers?api-version=2024-07-01" \
+curl -X PUT "https://$SERVICE.search.windows.net/indexers/messages-indexer?api-version=2024-07-01" \
   -H "api-key: $KEY" -H "Content-Type: application/json" \
   -d "{\"name\":\"messages-indexer\",\"dataSourceName\":\"messages-datasource\",\"targetIndexName\":\"messages-index\",\"schedule\":{\"interval\":\"PT5M\"}}"
 ```
