@@ -54,7 +54,6 @@ export const prodFuncEsposter001: azure_native.web.WebApp = new azure_native.web
     scmSiteAlsoStopped: false,
     serverFarmId: prodAspEsposterAe001.id,
     siteConfig: {
-      nodeVersion: "~24",
       use32BitWorkerProcess: false,
     },
     storageAccountRequired: false,
