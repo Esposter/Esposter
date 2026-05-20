@@ -125,7 +125,11 @@
       "PowerShell(az functionapp list *)",
       "PowerShell(az functionapp config appsettings *)",
       "PowerShell(az functionapp identity show *)",
-      "PowerShell(az role assignment list *)"
+      "PowerShell(az role assignment list *)",
+      "Bash(az storage container list *)",
+      "Bash(az functionapp identity show *)",
+      "Bash(az role assignment list *)",
+      "Bash(az storage account show *)"
     ]
   }
 }
