@@ -1,19 +1,19 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js project to Azure Function App - d-shp-func-esposter-auea-001
+name: Build and deploy Node.js project to Azure Function App - prod-func-esposter-001
 
 on:
   push:
     branches:
-      - develop
+      - main
 
 env:
-  FUNCTION_APP_NAME: d-shp-func-esposter-auea-001
+  FUNCTION_APP_NAME: prod-func-esposter-001
   OUTPUT_DIRECTORY: dist
   PACKAGE_PATH: packages/azure-functions
-  RESOURCE_GROUP_NAME: d-shp-rg-esposter-auea-001
-  STORAGE_ACCOUNT_NAME: dshpstespauea001
+  RESOURCE_GROUP_NAME: prod-rg-esposter-ae-001
+  STORAGE_ACCOUNT_NAME: prodstesposter001
   ZIP_FILE_NAME: release.zip
 
 jobs:
@@ -62,6 +62,7 @@ jobs:
 
       - name: 🚀 Upload Package to Blob Storage
         run: |
+          az storage container create --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --name ${{ env.FUNCTION_APP_NAME }} --auth-mode login --public-access off || true
           az storage blob upload --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --container-name ${{ env.FUNCTION_APP_NAME }} --name ${{ env.ZIP_FILE_NAME }} --file ${{ env.ZIP_FILE_NAME }} --auth-mode login --overwrite
 
       - name: 📡 Remove Runner IP from Storage Account Firewall
