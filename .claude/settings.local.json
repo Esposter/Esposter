@@ -118,7 +118,14 @@
       "Bash(ncu -w)",
       "PowerShell(az search index list *)",
       "Bash(az search service list *)",
-      "Bash(az resource list *)"
+      "Bash(az resource list *)",
+      "PowerShell(az storage container list *)",
+      "PowerShell(az account show *)",
+      "PowerShell(az functionapp function list *)",
+      "PowerShell(az functionapp list *)",
+      "PowerShell(az functionapp config appsettings *)",
+      "PowerShell(az functionapp identity show *)",
+      "PowerShell(az role assignment list *)"
     ]
   }
 }
