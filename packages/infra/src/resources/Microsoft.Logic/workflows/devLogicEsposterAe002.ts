@@ -23,7 +23,7 @@ export const devLogicEsposterAe002: azure_native.logic.Workflow = new azure_nati
               },
             },
             method: "post",
-            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('d-shp-rg-esposter-auea-001')}/providers/Microsoft.Web/sites/@{encodeURIComponent('d-shp-func-esposter-auea-001')}/start",
+            path: "/subscriptions/@{encodeURIComponent('764658ba-01da-43fa-9f26-ffa4ada33ebb')}/resourcegroups/@{encodeURIComponent('dev-rg-esposter-ae-001')}/providers/Microsoft.Web/sites/@{encodeURIComponent('dev-func-esposter-001')}/start",
             queries: {
               "api-version": "2019-08-01",
             },

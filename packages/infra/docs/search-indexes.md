@@ -48,6 +48,34 @@ Add files under `src/resources/Microsoft.Authorization/roleAssignments/` pointin
 
 ---
 
-## Post-migration: Reindex messages
+## Indexer and data source
 
-After index creation and role assignment, re-push all message data from Azure Table Storage into the index. This is an application-level operation (Azure Search indexer or a one-off script in `packages/azure-functions`).
+Each search service has a pull indexer reading from the `Messages` Azure Table every 5 minutes.
+
+### Recreate data source + indexer after migration
+
+Replace `$CONN` with the storage account connection string.
+
+```bash
+# Dev
+SERVICE=dev-srch-esposter-001
+KEY=$(az search admin-key show --service-name $SERVICE --resource-group dev-rg-esposter-ae-001 --query primaryKey -o tsv)
+CONN="<devstesposter001 connection string>"
+
+curl -X PUT "https://$SERVICE.search.windows.net/datasources/messages-datasource?api-version=2024-07-01" \
+  -H "api-key: $KEY" -H "Content-Type: application/json" \
+  -d "{\"name\":\"messages-datasource\",\"type\":\"azuretable\",\"credentials\":{\"connectionString\":\"$CONN\"},\"container\":{\"name\":\"Messages\"}}"
+
+curl -X PUT "https://$SERVICE.search.windows.net/indexers/messages-indexer?api-version=2024-07-01" \
+  -H "api-key: $KEY" -H "Content-Type: application/json" \
+  -d "{\"name\":\"messages-indexer\",\"dataSourceName\":\"messages-datasource\",\"targetIndexName\":\"messages-index\",\"schedule\":{\"interval\":\"PT5M\"}}"
+```
+
+For prod: use `prod-srch-esposter-001` / `prod-rg-esposter-ae-001` / `prodstesposter001` connection string.
+
+### Trigger immediate backfill
+
+```bash
+curl -X POST "https://$SERVICE.search.windows.net/indexers/messages-indexer/run?api-version=2024-07-01" \
+  -H "api-key: $KEY" -H "Content-Type: application/json" -d "{}"
+```

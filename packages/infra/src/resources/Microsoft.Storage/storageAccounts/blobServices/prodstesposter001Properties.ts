@@ -8,6 +8,9 @@ export const prodstesposter001Properties: azure_native.storage.BlobServiceProper
     {
       accountName: prodstesposter001.name,
       blobServicesName: "default",
+      changeFeed: {
+        enabled: false,
+      },
       containerDeleteRetentionPolicy: {
         days: 7,
         enabled: true,

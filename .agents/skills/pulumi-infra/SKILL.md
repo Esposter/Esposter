@@ -20,9 +20,9 @@ Apply when modifying `packages/infra`.
 - Keep one Azure resource declaration per tracked source file.
 - Put resource declarations under `src/resources/<ProviderNamespace>/<resourceTypes>/` using Azure ARM provider namespaces and resource type segments.
 - Resource folders should mirror Azure resource IDs after `/providers/`, e.g. `Microsoft.Web/sites`, `Microsoft.Insights/actionGroups`, and `Microsoft.EventGrid/eventSubscriptions`.
-- File names use camelCase derived from the Azure resource name, e.g. `d-shp-rg-esposter-auea-001` -> `dShpRgEsposterAuea001.ts`.
+- File names use camelCase derived from the Azure resource name, e.g. `dev-rg-esposter-ae-001` -> `devRgEsposterAe001.ts`.
 - The export constant name must match the file name (minus `.ts`).
-- Child resources append the Pulumi resource type name as a suffix. Mandatory singleton Azure names like `default` are omitted — they add no information: `dshpstespauea001Properties.ts` (exports `dshpstespauea001Properties`), `dshpstespauea001ManagementPolicy.ts` (exports `dshpstespauea001ManagementPolicy`).
+- Child resources append the Pulumi resource type name as a suffix. Mandatory singleton Azure names like `default` are omitted — they add no information: `devstesposter001Properties.ts` (exports `devstesposter001Properties`), `devstesposter001ManagementPolicy.ts` (exports `devstesposter001ManagementPolicy`).
 - Export exactly one resource constant per resource file.
 - Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
 
