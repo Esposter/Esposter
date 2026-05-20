@@ -19,7 +19,7 @@ catalog:
   "@azure/core-rest-pipeline": ^1.23.0
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
-  "@azure/functions": ^4.14.0
+  "@azure/functions": ^4.15.0
   "@azure/identity": ^4.13.1
   "@azure/search-documents": ^13.0.0
   "@azure/storage-blob": ^12.31.0
@@ -53,7 +53,7 @@ catalog:
   "@lerna-lite/watch": ^5.2.1
   "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
-  "@ninoseki/eslint-plugin-neverthrow": ^0.1.2
+  "@ninoseki/eslint-plugin-neverthrow": ^0.2.0
   "@nuxt/eslint": ^1.15.2
   "@nuxt/fonts": ^0.14.0
   "@nuxt/scripts": ^1.1.0
@@ -61,18 +61,18 @@ catalog:
   "@nuxtjs/seo": ^5.1.3
   "@pinia/nuxt": ^0.11.3
   "@pulumi/azure-native": ^3.18.0
-  "@pulumi/pulumi": ^3.241.0
+  "@pulumi/pulumi": ^3.242.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^1.3.0
-  "@tiptap/core": ^3.23.4
-  "@tiptap/extension-code-block-lowlight": ^3.23.4
-  "@tiptap/extension-file-handler": ^3.23.4
-  "@tiptap/extension-mention": ^3.23.4
-  "@tiptap/extensions": ^3.23.4
-  "@tiptap/pm": ^3.23.4
-  "@tiptap/starter-kit": ^3.23.4
-  "@tiptap/suggestion": ^3.23.4
-  "@tiptap/vue-3": ^3.23.4
+  "@tiptap/core": ^3.23.5
+  "@tiptap/extension-code-block-lowlight": ^3.23.5
+  "@tiptap/extension-file-handler": ^3.23.5
+  "@tiptap/extension-mention": ^3.23.5
+  "@tiptap/extensions": ^3.23.5
+  "@tiptap/pm": ^3.23.5
+  "@tiptap/starter-kit": ^3.23.5
+  "@tiptap/suggestion": ^3.23.5
+  "@tiptap/vue-3": ^3.23.5
   "@tresjs/cientos": ^5.7.1
   "@tresjs/core": ^5.8.1
   "@tresjs/nuxt": ^5.6.1
@@ -86,7 +86,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^5.0.0
-  "@types/node": ^25.9.0
+  "@types/node": ^25.9.1
   "@types/pluralize": ^0.0.33
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
@@ -99,7 +99,7 @@ catalog:
   "@unocss/nuxt": ^66.6.8
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.7
-  "@vitest/coverage-v8": ^4.1.6
+  "@vitest/coverage-v8": ^4.1.7
   "@vitest/eslint-plugin": ^1.6.17
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.3
@@ -107,7 +107,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^4.2.0
-  "@vue/language-core": ^3.3.0
+  "@vue/language-core": ^3.3.1
   "@vue/test-utils": ^2.4.10
   "@vuepic/vue-datepicker": ^12.1.0
   "@vueuse/core": ^14.3.0
@@ -193,7 +193,7 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.1.0
   read-excel-file: ^9.0.9
-  rolldown: ^1.0.1
+  rolldown: ^1.0.2
   rolldown-plugin-dts: ^0.25.1
   rxjs: ^7.8.2
   sanitize-html: ^2.17.4
@@ -222,13 +222,13 @@ catalog:
   viewerjs: ^1.11.7
   vite: ^8.0.13
   vite-plugin-mkcert: ^2.0.0
-  vitest: ^4.1.6
+  vitest: ^4.1.7
   vue: ^3.5.34
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
   vue-router: ^5.0.7
-  vue-tsc: ^3.3.0
+  vue-tsc: ^3.3.1
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.0.7
   vuetify-nuxt-module: ^1.0.0-beta.4
