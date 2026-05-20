@@ -1,8 +1,6 @@
 # Azure Naming Conventions
 
-This document defines the target Esposter Azure naming rules.
-
-The existing imported resources mostly use the legacy spreadsheet shape. Renaming those resources requires explicit replacement or migration work, so existing names can remain until a resource is deliberately replaced. New resources and intentional renames should use the target convention below.
+This document defines the Esposter Azure naming rules.
 
 ## Resource Name Shape
 
