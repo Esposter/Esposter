@@ -347,6 +347,24 @@ window.cancelAnimationFrame(frame);
 
 Standard built-ins available in all environments (Node.js + browser) do **not** need the `window.` prefix: `Uint8Array`, `Map`, `Set`, `JSON`, `Promise`, `crypto`, etc.
 
+## SSR Guards — Always Use `getIsServer()`
+
+Always use `getIsServer()` from `@esposter/shared` to guard browser-only code. Never use `import.meta.client` or `typeof window !== "undefined"` — `getIsServer()` is consistent across Nuxt app code, shared packages, and Azure Functions.
+
+```typescript
+// WRONG
+if (import.meta.client) { ... }
+if (typeof window !== "undefined") { ... }
+
+// CORRECT
+if (!getIsServer()) { ... }
+
+// Example: useScript use callback
+useScript<typeof Desmos>(API_URL, {
+  use: () => (getIsServer() ? undefined : window.Desmos) as typeof Desmos,
+});
+```
+
 ## Routing
 
 - **`useRouter()` for reactive contexts** — use when reading route data inside a `computed` or `watch` (e.g. `router.currentRoute.value.params.id` in a `computed`), or when calling navigation methods (`router.push`, `router.replace`).
