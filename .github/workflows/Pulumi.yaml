@@ -26,6 +26,9 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm --filter @esposter/infra... i
 
+      - name: 🏗️ Build
+        run: pnpm --filter @esposter/infra build
+
       - name: 🔍 Pulumi Preview
         uses: pulumi/actions@v6
         with:
