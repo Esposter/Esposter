@@ -1,0 +1,44 @@
+name: 🏗️ Pulumi
+
+on:
+  pull_request:
+    paths:
+      - "packages/infra/**"
+      - ".github/workflows/Pulumi.yaml"
+      - ".github/actions/setup-project-dependencies/**"
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  preview:
+    name: Preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v6
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install dependencies
+        run: pnpm --filter @esposter/infra... i
+
+      - name: 🏗️ Build
+        run: pnpm --filter @esposter/infra... build
+
+      - name: 🔍 Pulumi Preview
+        uses: pulumi/actions@v7
+        with:
+          command: preview
+          stack-name: prod
+          work-dir: packages/infra
+          comment-on-pr: true
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          ARM_USE_OIDC: true
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
