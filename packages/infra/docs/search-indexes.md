@@ -11,8 +11,39 @@ Azure Search indexes are **data-plane resources** — not managed by Pulumi (no 
 ### `messages-index` summary
 
 - **Key field**: `RowKey` (Edm.String)
-- **Searchable fields** (analyzer: `standard.lucene`): `message`, `files/filename`, `appUser/name`
-- **Similarity**: BM25 (default)
+- **Searchable fields**: `message` (analyzer: `en.lucene`), `files/filename` (analyzer: `standard.lucene`), `appUser/name` (analyzer: `standard.lucene`)
+- **Similarity**: BM25
+- **Scoring profile**: `messageBoost` — `message` weight 3×, `appUser/name` weight 1.5×
+
+---
+
+## Update an existing index
+
+Azure AI Search does not support modifying field attributes in-place. To apply schema changes, delete and recreate the index. The indexer and data source are unaffected by index deletion and resume automatically after recreation.
+
+```bash
+SERVICE=dev-srch-esposter-001
+RG=dev-rg-esposter-ae-001
+KEY=$(az search admin-key show --service-name $SERVICE --resource-group $RG --query primaryKey -o tsv)
+
+# 1. Delete existing index (indexer + data source survive)
+az rest --method delete \
+  --url "https://${SERVICE}.search.windows.net/indexes/messages-index?api-version=2024-07-01" \
+  --headers "api-key=$KEY"
+
+# 2. Recreate with updated schema
+az rest --method put \
+  --url "https://${SERVICE}.search.windows.net/indexes/messages-index?api-version=2024-07-01" \
+  --headers "api-key=$KEY" "Content-Type=application/json" \
+  --body @data/searchIndexes/messages-index.json
+
+# 3. Trigger immediate reindex
+az rest --method post \
+  --url "https://${SERVICE}.search.windows.net/indexers/messages-indexer/run?api-version=2024-07-01" \
+  --headers "api-key=$KEY"
+```
+
+For prod: `SERVICE=prod-srch-esposter-001`, `RG=prod-rg-esposter-ae-001`.
 
 ---
 

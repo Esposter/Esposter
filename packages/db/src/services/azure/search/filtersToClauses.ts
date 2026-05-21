@@ -85,7 +85,7 @@ export const filtersToClauses = (
               clauses.push({
                 key: StandardMessageEntityPropertyNames.isForward,
                 operator: BinaryOperator.eq,
-                value: String(true),
+                value: true,
               });
               break;
             default:
