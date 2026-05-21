@@ -55,7 +55,7 @@ catalog:
   "@ninoseki/eslint-plugin-neverthrow": ^0.2.0
   "@nuxt/eslint": ^1.15.2
   "@nuxt/fonts": ^0.14.0
-  "@nuxt/scripts": ^1.1.0
+  "@nuxt/scripts": ^1.1.1
   "@nuxt/test-utils": ^4.0.3
   "@nuxtjs/seo": ^5.1.3
   "@pinia/nuxt": ^0.11.3
@@ -93,9 +93,9 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260519.1
-  "@unocss/eslint-config": ^66.6.8
-  "@unocss/nuxt": ^66.6.8
+  "@typescript/native-preview": ^7.0.0-dev.20260521.1
+  "@unocss/eslint-config": ^66.7.0
+  "@unocss/nuxt": ^66.7.0
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.7
   "@vitest/coverage-v8": ^4.1.7
@@ -213,13 +213,13 @@ catalog:
   typedoc: ^0.28.19
   typescript: 5.9.3
   typescript-eslint: ^8.59.4
-  unocss: ^66.6.8
+  unocss: ^66.7.0
   unocss-preset-vuetify: ^0.3.0
   unplugin-auto-import: ^21.0.0
   unplugin-dts: 1.0.0-beta.6
   v-viewer: ^3.0.23
   viewerjs: ^1.11.7
-  vite: ^8.0.13
+  vite: ^8.0.14
   vite-plugin-mkcert: ^2.0.0
   vitest: ^4.1.7
   vue: ^3.5.34
@@ -247,7 +247,7 @@ minimumReleaseAge: 0
 overrides:
   crossws: ^0.4.5
   pdfjs-dist: ^5.7.284
-  vite: ^8.0.13
+  vite: ^8.0.14
   vue-router: ^5.0.7
 
 shellEmulator: true
