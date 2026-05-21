@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.25.0](https://github.com/Esposter/Esposter/compare/v2.24.0...v2.25.0) (2026-05-21)
+
+### Bug Fixes
+
+* externalize @azure/functions to include Worker.js in deployment ([2461160](https://github.com/Esposter/Esposter/commit/2461160677af3f5f2c47a7cdaf41212fb063a7ca))
+* remove unnecessary env ([35eeaea](https://github.com/Esposter/Esposter/commit/35eeaea785c03a5922b053a9557767ac8f2f4a98))
+
 # [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
 
 ### Bug Fixes

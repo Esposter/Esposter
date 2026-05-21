@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.25.0](https://github.com/Esposter/Esposter/compare/v2.24.0...v2.25.0) (2026-05-21)
+
+### Bug Fixes
+
+* lint + optimize some docker ([e110ea9](https://github.com/Esposter/Esposter/commit/e110ea9ae5f2bad6dc45429741a540b517598b10))
+* search index ([4e6e0fe](https://github.com/Esposter/Esposter/commit/4e6e0fece59f0920d6e0122c0f59fb2035ef42c5))
+
+### Features
+
+* Add role assignments ([dc0c2a9](https://github.com/Esposter/Esposter/commit/dc0c2a97af93c127bf2cbd978a58ebf677ccff9a))
+
 # [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
 
 ### Bug Fixes

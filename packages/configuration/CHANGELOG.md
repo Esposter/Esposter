@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.25.0](https://github.com/Esposter/Esposter/compare/v2.24.0...v2.25.0) (2026-05-21)
+
+### Bug Fixes
+
+* allow own app builds and remove unnecessary config ts files ([e2e55a9](https://github.com/Esposter/Esposter/commit/e2e55a971775bce3c53418342a0ccb2ebf9c6537))
+* types ([f628133](https://github.com/Esposter/Esposter/commit/f62813395668127f7e2cde48093bb1021a5f2d89))
+
 # [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
 
 ### Bug Fixes

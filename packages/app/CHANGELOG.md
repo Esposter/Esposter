@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.25.0](https://github.com/Esposter/Esposter/compare/v2.24.0...v2.25.0) (2026-05-21)
+
+### Bug Fixes
+
+* add app webhooks ([14e534e](https://github.com/Esposter/Esposter/commit/14e534e17c13611b88eb0d84b3e71fc315318b6e))
+* add back vue-tsc ([94915d0](https://github.com/Esposter/Esposter/commit/94915d0471b8b8e6f03d839abc20a17c4a0d92e7))
+* add oxlint disable ([a351d87](https://github.com/Esposter/Esposter/commit/a351d87e8281d337a321c192b72fa8c5d817b211))
+* desmos to be undefined on server ([51d44d9](https://github.com/Esposter/Esposter/commit/51d44d9cf8d8599284c71002df76b9d55d628515))
+* instance ([56bab96](https://github.com/Esposter/Esposter/commit/56bab9669984edee71223c18f23ae962dd6b820a))
+* lint ([4e1b640](https://github.com/Esposter/Esposter/commit/4e1b640788e95a388361a407e5b315f80d1c42bd))
+* lint ([e2dda0a](https://github.com/Esposter/Esposter/commit/e2dda0a603f895b04ee670ea9b23af5bd3e19548))
+* lint + optimize some docker ([e110ea9](https://github.com/Esposter/Esposter/commit/e110ea9ae5f2bad6dc45429741a540b517598b10))
+* node memory + update naming conventions ([3ed843a](https://github.com/Esposter/Esposter/commit/3ed843ae7b0b29e11f060484ae922629490d252b))
+* rip pnpm v11 doesn't let us npmrc memory anymore :c ([04bf6b7](https://github.com/Esposter/Esposter/commit/04bf6b7e0cc5247fab3c0da2e6600d6ec749f950))
+* throw error ([fb55e04](https://github.com/Esposter/Esposter/commit/fb55e04c2247950a4b3ab3ab35c1b9aa06b3e455))
+* title ([7be091c](https://github.com/Esposter/Esposter/commit/7be091c9a2a7c2ded12093b706dc07829aa95143))
+* types and build docs warnings ([e1e70e2](https://github.com/Esposter/Esposter/commit/e1e70e2e21e7c4c70cdb0b4e73c1c2a4f6db3d09))
+* upgrade grid-engine ([6cf6345](https://github.com/Esposter/Esposter/commit/6cf634564eaa6b14e613203d95c25e036d1b7882))
+* use class expression ([aa75ee5](https://github.com/Esposter/Esposter/commit/aa75ee5f44159b8e3d5bab9503b54088547bbeae))
+* use function keyword ([210ccc9](https://github.com/Esposter/Esposter/commit/210ccc9481554ab4bdd721c014f906da1542111a))
+
 # [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
 
 ### Bug Fixes
