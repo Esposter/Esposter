@@ -31,7 +31,7 @@ jobs:
 
       - name: 🔧 Resolve Project Dependencies
         run: |
-          pnpm --filter @esposter/azure-functions... i --no-frozen-lockfile
+          pnpm --filter @esposter/azure-functions... i
           pnpm --filter @esposter/configuration build
           pnpm --filter @esposter/azure-functions... build
           pnpm --filter @esposter/azure-functions deploy --prod ${{ env.OUTPUT_DIRECTORY }} --config.inject-workspace-packages=true --config.node-linker=hoisted
