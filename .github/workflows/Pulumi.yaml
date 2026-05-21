@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - "packages/infra/**"
+      - ".github/workflows/Pulumi.yaml"
+      - ".github/actions/setup-project-dependencies/**"
 
 permissions:
   id-token: write
