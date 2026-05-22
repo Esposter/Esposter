@@ -3,7 +3,6 @@ import type { StandardCreateMessageInput } from "@esposter/db-schema";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { parseDuration } from "@/services/message/slashCommands/parseDuration";
-import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useReplyStore } from "@/store/message/input/reply";
@@ -86,9 +85,7 @@ export const useExecuteSlashCommand = () => {
 
     await storeSendMessage({
       ...createMessageInput,
-      message: createMessageInput.message
-        ? marked.parse(sanitizeHtml(createMessageInput.message), { async: false })
-        : undefined,
+      message: createMessageInput.message ? marked.parse(createMessageInput.message, { async: false }) : undefined,
       replyRowKey: replyRowKey.value,
     });
   };
