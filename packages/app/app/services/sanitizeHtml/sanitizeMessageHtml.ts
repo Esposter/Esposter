@@ -12,12 +12,12 @@ export const sanitizeMessageHtml = (html: string) =>
     allowedStyles: {
       span: {
         "background-color": [
-          /^#[\da-fA-F]{3,8}$/,
-          /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}(?:,\s*[\d.]+)?\)$/,
-          /^[a-z]+$/i,
+          /^#[\da-fA-F]{3,8}$/u,
+          /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}(?:,\s*[\d.]+)?\)$/u,
+          /^[a-z]+$/iu,
         ],
-        "border-radius": [/^[\d.]+(px|em|rem|%)$/],
-        color: [/^#[\da-fA-F]{3,8}$/, /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}(?:,\s*[\d.]+)?\)$/, /^[a-z]+$/i],
+        "border-radius": [/^[\d.]+(px|em|rem|%)$/u],
+        color: [/^#[\da-fA-F]{3,8}$/u, /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}(?:,\s*[\d.]+)?\)$/u, /^[a-z]+$/iu],
       },
     },
   });
