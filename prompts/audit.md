@@ -39,7 +39,7 @@ Read these files fully:
 
 Group by **Security** / **Performance** / **Config**. For each finding:
 
-```
+```text
 [SEVERITY] File:line — problem — exact fix
 ```
 
