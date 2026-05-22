@@ -7,6 +7,7 @@ import type { Editor } from "@tiptap/core";
 
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
+import { sanitizeMessageHtml } from "@/services/sanitizeHtml/sanitizeMessageHtml";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
@@ -38,13 +39,19 @@ export const useDataStore = defineStore("message/data", () => {
   const createMessage = async (input: StandardCreateMessageInput) => {
     if (!session.value.data) return;
 
-    const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
+    const sanitizedInput = { ...input, message: input.message ? sanitizeMessageHtml(input.message) : input.message };
+    const newMessage = reactive(
+      createMessageEntity({ ...sanitizedInput, isLoading: true, userId: session.value.data.user.id }),
+    );
     await storeCreateMessage(newMessage);
-    Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
+    Object.assign(newMessage, await $trpc.message.createMessage.mutate(sanitizedInput));
     delete newMessage.isLoading;
   };
   const updateMessage = async (input: UpdateMessageInput) => {
-    await $trpc.message.updateMessage.mutate(input);
+    await $trpc.message.updateMessage.mutate({
+      ...input,
+      message: input.message ? sanitizeMessageHtml(input.message) : input.message,
+    });
   };
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => Promise.resolve(fn(message))));
