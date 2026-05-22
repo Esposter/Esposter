@@ -15,11 +15,11 @@ const list = useTemplateRef("list");
 
 watch(
   () => selectedIndex,
-  async (newSelectedIndex) => {
+  (newSelectedIndex) => {
     if (newSelectedIndex === undefined) return;
-    await nextTick();
     list.value?.$el.children[newSelectedIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   },
+  { flush: "post" },
 );
 </script>
 
