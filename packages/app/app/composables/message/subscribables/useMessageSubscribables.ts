@@ -55,8 +55,8 @@ export const useMessageSubscribables = () => {
     webPubSubClient.on(
       "group-message",
       getSynchronizedFunction(async ({ message: { data } }) => {
-        // data arrives as a pre-parsed object (dataType: "json") from WebPubSub — re-stringify so
-        // jsonDateParse can revive ISO date strings back to Date instances
+        // Data arrives as a pre-parsed object (dataType: "json") from WebPubSub — re-stringify so
+        // JsonDateParse can revive ISO date strings back to Date instances
         const entity = new WebhookMessageEntity(jsonDateParse(JSON.stringify(data)));
         await storeCreateMessage(entity);
       }),
