@@ -7,6 +7,6 @@ const distFile = resolve(import.meta.dirname, "../dist/index.js");
 describe("parse-tmx", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(statSync(distFile).size).toMatchInlineSnapshot(`1909625`);
+    expect(statSync(distFile).size).toMatchInlineSnapshot(`834954`);
   });
 });

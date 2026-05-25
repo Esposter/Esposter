@@ -1,3 +1,3 @@
-import { rolldownConfigurationBrowser } from "@esposter/configuration";
+import { rolldownConfigurationIsomorphic } from "@esposter/configuration";
 
-export default rolldownConfigurationBrowser;
+export default rolldownConfigurationIsomorphic;
