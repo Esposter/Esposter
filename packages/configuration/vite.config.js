@@ -3,6 +3,8 @@ import AutoImport from "unplugin-auto-import/rolldown";
 import dts from "unplugin-dts/vite";
 import { defineConfig } from "vite";
 import mkcert from "vite-plugin-mkcert";
+
+import { external } from "./src/external.ts";
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
@@ -13,8 +15,7 @@ export default defineConfig({
       formats: ["es"],
     },
     rolldownOptions: {
-      // Vue-phaserjs
-      external: ["phaser", /^phaser4-rex-plugins/u, "pinia", "vue"],
+      external: ["phaser", /^phaser4-rex-plugins/u, "pinia", "vue", ...external],
     },
   },
   plugins: [

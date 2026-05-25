@@ -7,6 +7,6 @@ const distFile = resolve(import.meta.dirname, "../dist/index.js");
 describe("vue-phaserjs", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(statSync(distFile).size).toMatchInlineSnapshot(`1624785`);
+    expect(statSync(distFile).size).toMatchInlineSnapshot(`34762`);
   });
 });

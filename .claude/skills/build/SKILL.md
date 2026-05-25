@@ -19,34 +19,30 @@ All extend `rolldownConfigurationBrowser`. Node adds `platform: "node"`. Isomorp
 
 ## Global External List
 
-Defined in `rolldownConfigurationBrowser.ts`. Controls what is NOT bundled into each package's dist:
+Defined in `packages/configuration/src/external.ts`, exported as `external`. Used by `rolldownConfigurationBrowser` (which all rolldown configs extend) and by `packages/configuration/vite.config.js` (shared Vite config for `vue-phaserjs`).
 
 ```ts
-external: [
-  // All workspace packages — regex covers every @esposter/* automatically
+// packages/configuration/src/external.ts
+export const external: (RegExp | string)[] = [
+  // All workspace packages with @esposter/ prefix
   /@esposter\//u,
+  // Workspace packages without @esposter/ prefix — must be listed explicitly
+  "azure-mock",
+  "parse-tmx",
+  "vue-phaserjs",
   // @esposter/db — Azure SDKs are peer deps
   "@azure/data-tables",
-  "@azure/search-documents",
-  "@azure/storage-blob",
-  "@azure/web-pubsub",
-  // @esposter/infra — Pulumi is a peer dep
-  "@pulumi/azure-native",
-  "@pulumi/pulumi",
-  // @esposter/db-schema
-  "zod",
-  // @esposter/db-mock
-  /^drizzle-kit/u,
-  /^drizzle-orm/u,
-  "@electric-sql/pglite",
+  // ... etc
 ];
 ```
 
 ### Key rules
 
-- **`/@esposter\//u` covers all workspace packages** — never add individual `@esposter/foo` strings; the regex handles them all automatically.
+- **`/@esposter\//u` covers all `@esposter/*` workspace packages automatically** — never add individual `@esposter/foo` strings.
+- **Non-`@esposter/` workspace packages must be listed explicitly** — `azure-mock`, `parse-tmx`, `vue-phaserjs` are not covered by the regex.
 - **All peer dependencies must be in the external list** — if a package has a `peerDependency`, that dep MUST appear in the external list (or be covered by a regex). Otherwise it gets bundled.
 - **`dependencies` vs `peerDependencies`** — `dependencies` get bundled unless externalized; `peerDependencies` signal that the consumer provides them (and must be externalized to avoid duplicate copies).
+- **Vite builds**: `vite.config.js` (in `packages/configuration/`, symlinked to `packages/vue-phaserjs/`) spreads `external` into its `rolldownOptions.external` alongside its own peer deps (`phaser`, `pinia`, `vue`).
 
 ## Azure Functions Special Case
 
@@ -70,7 +66,7 @@ This is **intentional** — the Azure Functions bundle must be self-contained fo
 | `@esposter/azure-mock`      | ~1.1MB  | Includes pglite peer         |
 | `@esposter/xml2js`          | ~1.1MB  | Bundles sax + xmlbuilder2    |
 | `@esposter/configuration`   | ~1.56MB | ESLint plugins + build tools |
-| `@esposter/vue-phaserjs`    | ~1.6MB  | Bundles Phaser               |
+| `vue-phaserjs`              | ~35KB   | shared + parse-tmx external  |
 | `@esposter/parse-tmx`       | ~800KB  | xml2js now external          |
 | `@esposter/azure-functions` | ~4.4MB  | Intentionally self-contained |
 

@@ -35,10 +35,6 @@
     "test": "vitest",
     "typecheck": "vue-tsc"
   },
-  "dependencies": {
-    "@esposter/shared": "workspace:*",
-    "parse-tmx": "workspace:*"
-  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@vitejs/plugin-vue": "catalog:",
@@ -51,6 +47,8 @@
     "vue-tsc": "catalog:"
   },
   "peerDependencies": {
+    "@esposter/shared": "workspace:*",
+    "parse-tmx": "workspace:*",
     "phaser": "catalog:",
     "phaser4-rex-plugins": "catalog:",
     "pinia": "catalog:",

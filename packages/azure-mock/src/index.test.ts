@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 const distFile = resolve(import.meta.dirname, "../dist/index.js");
 
-describe("@esposter/azure-mock", () => {
+describe("azure-mock", () => {
   test("bundle size", () => {
     expect.hasAssertions();
     expect(statSync(distFile).size).toMatchInlineSnapshot(`1134097`);

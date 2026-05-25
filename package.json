@@ -27,6 +27,7 @@
     "lint": "oxlint --disable-nested-config && eslint . && lerna run lint",
     "lint:fix": "oxlint --disable-nested-config --fix && eslint --fix . && lerna run lint:fix",
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
+    "lint:packages": "pnpm lint --ignore @esposter/app",
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
