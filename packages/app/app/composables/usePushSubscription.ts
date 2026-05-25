@@ -30,7 +30,11 @@ export const usePushSubscription = () => {
     await trigger();
   });
 
-  onUnmounted(async () => {
-    await unsubscribe();
+  onUnmounted(() => {
+    // Only clear the local ref — do NOT browser-unsubscribe here.
+    // Browser push subscriptions are tied to the service worker, not component lifecycle.
+    // Unsubscribing here forces a new endpoint on the next mount, which leaks stale DB rows
+    // and can cause duplicate notifications. Full cleanup happens when permissionGranted → false.
+    pushSubscription.value = undefined;
   });
 };

@@ -2,7 +2,7 @@ import type { InvocationContext } from "@azure/functions";
 
 import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@/services/constants";
 import { getResult, normalizeString, truncate } from "@esposter/shared";
-import parse from "node-html-parser";
+import { parse } from "node-html-parser";
 
 export const getCreateMessageNotificationPayload = (
   context: InvocationContext,
