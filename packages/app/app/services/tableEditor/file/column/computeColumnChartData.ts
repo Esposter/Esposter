@@ -1,5 +1,5 @@
-import type { ColumnChartData } from "@/models/tableEditor/file/column/ColumnChartData";
 import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
+import type { ColumnChartData } from "@/models/tableEditor/file/column/ColumnChartData";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 

@@ -4,7 +4,7 @@ import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedC
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import {
-  createColumn,
+  createColumn as baseCreateColumn,
   createDataSource,
   createRow,
   setupEditedItem,
@@ -136,7 +136,7 @@ describe(useCreateColumn, () => {
   test("adds a computed column to the data source", () => {
     expect.hasAssertions();
 
-    const sourceColumn = createColumn(SOURCE_COLUMN_NAME);
+    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
     const { editedItem } = setupWithDataSource(createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]));
     const createColumn = useCreateColumn();
     const newColumn = new ComputedColumn({
@@ -159,7 +159,7 @@ describe(useCreateColumn, () => {
   test("does not write to row.data for computed column", () => {
     expect.hasAssertions();
 
-    const sourceColumn = createColumn(SOURCE_COLUMN_NAME);
+    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
     const { editedItem } = setupWithDataSource(createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]));
     const createColumn = useCreateColumn();
     const newColumn = new ComputedColumn({
@@ -181,7 +181,7 @@ describe(useCreateColumn, () => {
   test("undo removes the computed column", () => {
     expect.hasAssertions();
 
-    const sourceColumn = createColumn(SOURCE_COLUMN_NAME);
+    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
     const { editedItem } = setupWithDataSource(createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]));
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
@@ -206,7 +206,7 @@ describe(useCreateColumn, () => {
   test("redo re-adds the computed column after undo", () => {
     expect.hasAssertions();
 
-    const sourceColumn = createColumn(SOURCE_COLUMN_NAME);
+    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
     const { editedItem } = setupWithDataSource(createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]));
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
