@@ -1,7 +1,6 @@
+import { TEXT_FILE_EXTENSIONS } from "@/constants";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, extname, join, resolve } from "node:path";
-
-const TEXT_FILE_EXTENSIONS = new Set([".cjs", ".css", ".html", ".js", ".json", ".map", ".mjs", ".svg", ".txt", ".xml"]);
 
 export const getCrossPlatformDirectorySize = (targetPath: string): string => {
   const absolutePath = resolve(targetPath);
