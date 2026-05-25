@@ -1,10 +1,11 @@
-import baseConfig from "@esposter/configuration/vitest.config";
 import vue from "@vitejs/plugin-vue";
 import { join } from "node:path";
 import AutoImport from "unplugin-auto-import/vite";
 import { mergeConfig } from "vitest/config";
 
-export default mergeConfig(baseConfig, {
+import viteConfiguration from "./vite.config";
+
+export default mergeConfig(viteConfiguration, {
   plugins: [AutoImport({ imports: ["pinia", "vue"] }), vue()],
   resolve: {
     alias: {

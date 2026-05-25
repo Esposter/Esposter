@@ -3,12 +3,11 @@ import type { UserConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/rolldown";
 import dts from "unplugin-dts/vite";
-import { defineConfig } from "vite";
 import mkcert from "vite-plugin-mkcert";
 
 import { external } from "./external/external";
 
-export const viteConfiguration: UserConfig = defineConfig({
+export const getViteConfiguration = (): UserConfig => ({
   build: {
     lib: {
       // @TODO: https://github.com/qmhc/unplugin-dts/issues/446
