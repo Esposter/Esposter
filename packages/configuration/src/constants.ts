@@ -1,4 +1,5 @@
-export const TEXT_FILE_EXTENSIONS: Set<string> = new Set([
+// oxlint-disable-next-line @typescript-eslint/no-inferrable-types
+export const TEXT_FILE_EXTENSIONS: Set<string> = new Set<string>([
   ".cjs",
   ".css",
   ".html",

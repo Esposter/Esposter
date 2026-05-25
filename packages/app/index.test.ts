@@ -16,7 +16,7 @@ describe("@esposter/app", () => {
 
   test("server total bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(`"server: 78651.21 KB (80538837 bytes)"`);
+    expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(`"server: 25763.14 KB (26381452 bytes)"`);
   });
 
   test("client js bundle size", () => {
