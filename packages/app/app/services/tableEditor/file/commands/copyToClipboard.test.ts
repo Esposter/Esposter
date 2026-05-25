@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { makeColumn, makeDataSource, makeRow } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { createColumn, createDataSource, createRow } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { takeOne } from "@esposter/shared";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -30,7 +30,7 @@ describe(copyToClipboard, () => {
   test("copies all rows when no rowIds passed", async () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")], [makeRow({ a: "0", b: "1" })]);
+    const dataSource = createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "0", b: "1" })]);
     await copyToClipboard(dataSource);
     const lines = writtenText.split("\n");
 
@@ -41,7 +41,7 @@ describe(copyToClipboard, () => {
   test("copies empty rows when rowIds is empty array", async () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "0" })]);
+    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "0" })]);
     await copyToClipboard(dataSource, { rowIds: [] });
     const lines = writtenText.split("\n");
 
@@ -52,8 +52,8 @@ describe(copyToClipboard, () => {
   test("copies only selected rows when rowIds passed", async () => {
     expect.hasAssertions();
 
-    const row = makeRow({ a: "0" });
-    const dataSource = makeDataSource([makeColumn("a")], [row, makeRow({ a: "1" })]);
+    const row = createRow({ a: "0" });
+    const dataSource = createDataSource([createColumn("a")], [row, createRow({ a: "1" })]);
     await copyToClipboard(dataSource, { rowIds: [row.id] });
     const lines = writtenText.split("\n");
 
@@ -64,7 +64,7 @@ describe(copyToClipboard, () => {
   test("omits header row when includeHeaders is false", async () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "42" })]);
+    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "42" })]);
     await copyToClipboard(dataSource, { includeHeaders: false });
     const lines = writtenText.split("\n");
 
@@ -107,7 +107,7 @@ describe(copyToClipboard, () => {
     test("omits header row from HTML and TSV when includeHeaders is false", async () => {
       expect.hasAssertions();
 
-      const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "42" })]);
+      const dataSource = createDataSource([createColumn("a")], [createRow({ a: "42" })]);
       await copyToClipboard(dataSource, { includeHeaders: false });
       const items = takeOne(capturedItems);
       assert.exists(items);

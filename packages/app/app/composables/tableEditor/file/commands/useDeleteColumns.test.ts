@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import {
-  makeColumn,
-  makeDataSource,
-  makeRow,
+  createColumn,
+  createDataSource,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -171,7 +171,7 @@ describe(useDeleteColumns, () => {
   test("undo preserves row.data key order matching restored column order", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("a"), makeColumn("b"), makeColumn("c")], [makeRow({ a: 1, b: 2, c: 3 })]);
+    const ds = createDataSource([createColumn("a"), createColumn("b"), createColumn("c")], [createRow({ a: 1, b: 2, c: 3 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteColumns = useDeleteColumns();
     const fileHistoryStore = useFileHistoryStore();
@@ -189,9 +189,9 @@ describe(useDeleteColumns, () => {
   test("undo preserves row.data key order when restoring multiple deleted columns", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn("a"), makeColumn("b"), makeColumn("c"), makeColumn("d")],
-      [makeRow({ a: 1, b: 2, c: 3, d: 4 })],
+    const ds = createDataSource(
+      [createColumn("a"), createColumn("b"), createColumn("c"), createColumn("d")],
+      [createRow({ a: 1, b: 2, c: 3, d: 4 })],
     );
     const { editedItem } = setupWithDataSource(ds);
     const deleteColumns = useDeleteColumns();

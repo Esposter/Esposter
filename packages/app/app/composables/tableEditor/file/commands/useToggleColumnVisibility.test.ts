@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
-  makeDataSource,
-  makeRow,
+  createDataSource,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -40,7 +40,7 @@ describe(useToggleColumnVisibility, () => {
     expect.hasAssertions();
 
     const hiddenColumn = new StringColumn({ hidden: true, name: "" });
-    const { editedItem } = setupWithDataSource(makeDataSource([hiddenColumn], [makeRow({ "": 0 })]));
+    const { editedItem } = setupWithDataSource(createDataSource([hiddenColumn], [createRow({ "": 0 })]));
     const toggleColumnVisibility = useToggleColumnVisibility();
     toggleColumnVisibility(hiddenColumn.id);
     const dataSource = editedItem.value?.dataSource;

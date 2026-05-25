@@ -31,7 +31,7 @@ describe("directMessage", () => {
     await mockContext.db.delete(roomsInMessage);
   });
 
-  const makeFriends = async (userA: User, userB: User) => {
+  const createFriends = async (userA: User, userB: User) => {
     await mockSessionOnce(mockContext.db, userA);
     await friendRequestCaller.sendFriendRequest(userB.id);
     await mockSessionOnce(mockContext.db, userB);
@@ -44,7 +44,7 @@ describe("directMessage", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     expect(directMessage.type).toBe("DirectMessage");
@@ -58,7 +58,7 @@ describe("directMessage", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage1 = await directMessageCaller.createDirectMessage([user.id]);
     const directMessage2 = await directMessageCaller.createDirectMessage([user.id]);
 
@@ -71,7 +71,7 @@ describe("directMessage", () => {
     const initialUser = getMockSession().user;
     const { user: userB } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(initialUser, userB);
+    await createFriends(initialUser, userB);
     await mockSessionOnce(mockContext.db, userB);
     const directMessage1 = await directMessageCaller.createDirectMessage([initialUser.id]);
     const directMessage2 = await directMessageCaller.createDirectMessage([userB.id]);
@@ -85,7 +85,7 @@ describe("directMessage", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
     const readDirectMessages = await directMessageCaller.readDirectMessages();
 
@@ -99,7 +99,7 @@ describe("directMessage", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
     await directMessageCaller.hideDirectMessage(directMessage.id);
     const readDirectMessages = await directMessageCaller.readDirectMessages();
@@ -113,7 +113,7 @@ describe("directMessage", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(directMessageCaller.hideDirectMessage(directMessage.id)).resolves.toBeUndefined();
@@ -125,7 +125,7 @@ describe("directMessage", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
     await mockSessionOnce(mockContext.db);
 
@@ -140,7 +140,7 @@ describe("directMessage", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
     await directMessageCaller.hideDirectMessage(directMessage.id);
     await directMessageCaller.createDirectMessage([user.id]);
@@ -156,7 +156,7 @@ describe("directMessage", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
 
@@ -175,7 +175,7 @@ describe("directMessage", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
     await mockSessionOnce(mockContext.db);
 

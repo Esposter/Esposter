@@ -18,6 +18,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **`toStrictEqual` always** — never `toEqual`, never `toMatchObject`. Assert exact counts: no `.toBeGreaterThan(0)` on collections.
 - **Minimize per-test setup** — shared mutable state as `let` inside `describe`, init in `beforeEach`. Mount helpers take no arguments when state is pre-initialized.
 - **Reuse utilities** — check `testUtils.test.ts` for existing helpers before writing local equivalents.
+- **`create*` prefix for test helpers** — all test factory/builder functions use the `create*` prefix (`createRow`, `createColumn`, `createMention`). Never `make*` (`makeRow`, `makeColumn`).
 
 ## Canonical Test Values
 

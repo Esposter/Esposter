@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
-  makeColumn,
-  makeDataSource,
-  makeNumberColumn,
-  makeRow,
+  createColumn,
+  createDataSource,
+  createNumberColumn,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -28,7 +28,7 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.ReplaceWithNA} replaces null in string columns with "N/A"`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": null })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": null })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     nullStrategy(NullStrategy.ReplaceWithNA);
@@ -42,7 +42,7 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.ReplaceWithNA} replaces empty string in string columns with "N/A"`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": "" })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": "" })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     nullStrategy(NullStrategy.ReplaceWithNA);
@@ -56,7 +56,7 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.ReplaceWithNA} skips non-string columns`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeNumberColumn("")], [makeRow({ "": null })]);
+    const ds = createDataSource([createNumberColumn("")], [createRow({ "": null })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     const fileHistoryStore = useFileHistoryStore();
@@ -74,7 +74,7 @@ describe(useNullStrategy, () => {
     expect.hasAssertions();
 
     const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
-    const ds = makeDataSource([hiddenColumn], [makeRow({ "": null })]);
+    const ds = createDataSource([hiddenColumn], [createRow({ "": null })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     const fileHistoryStore = useFileHistoryStore();
@@ -91,9 +91,9 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.DropRow} drops rows with null cells`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn(""), makeColumn(" ")],
-      [makeRow({ "": null, " ": " " }), makeRow({ "": " ", " ": " " })],
+    const ds = createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": null, " ": " " }), createRow({ "": " ", " ": " " })],
     );
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
@@ -109,7 +109,7 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.DropRow} drops rows with empty string cells`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": "" }), makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": "" }), createRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     nullStrategy(NullStrategy.DropRow);
@@ -125,7 +125,7 @@ describe(useNullStrategy, () => {
     expect.hasAssertions();
 
     const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
-    const ds = makeDataSource([hiddenColumn], [makeRow({ "": null })]);
+    const ds = createDataSource([hiddenColumn], [createRow({ "": null })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     const fileHistoryStore = useFileHistoryStore();
@@ -142,7 +142,7 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.ReplaceWithNA} undo restores original values`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": null }), makeRow({ "": "" })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": "" })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     const fileHistoryStore = useFileHistoryStore();
@@ -164,7 +164,7 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.DropRow} undo restores deleted rows in original positions`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": null }), makeRow({ "": " " }), makeRow({ "": "" })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": " " }), createRow({ "": "" })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     const fileHistoryStore = useFileHistoryStore();
@@ -188,7 +188,7 @@ describe(useNullStrategy, () => {
   test("redo re-applies after undo", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": null })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": null })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     const fileHistoryStore = useFileHistoryStore();
@@ -233,7 +233,7 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.ReplaceWithNA} no-op when no null or empty string cells`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
     setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     const fileHistoryStore = useFileHistoryStore();
@@ -246,7 +246,7 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.DropRow} no-op when no rows have null or empty string cells`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
     setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     const fileHistoryStore = useFileHistoryStore();
@@ -259,7 +259,7 @@ describe(useNullStrategy, () => {
   test("description includes the strategy", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": null })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": null })]);
     setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     const fileHistoryStore = useFileHistoryStore();

@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import {
-  makeColumn,
-  makeDataSource,
-  makeRow,
+  createColumn,
+  createDataSource,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -77,7 +77,7 @@ describe(useDeleteColumn, () => {
   test("undo preserves row.data key order after restore", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("a"), makeColumn("b"), makeColumn("c")], [makeRow({ a: 1, b: 2, c: 3 })]);
+    const ds = createDataSource([createColumn("a"), createColumn("b"), createColumn("c")], [createRow({ a: 1, b: 2, c: 3 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteColumn = useDeleteColumn();
     const fileHistoryStore = useFileHistoryStore();

@@ -18,6 +18,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **`toStrictEqual` always** — never `toEqual`, never `toMatchObject`. Assert exact counts: no `.toBeGreaterThan(0)` on collections.
 - **Minimize per-test setup** — shared mutable state as `let` inside `describe`, init in `beforeEach`. Mount helpers take no arguments when state is pre-initialized.
 - **Reuse utilities** — check `testUtils.test.ts` for existing helpers before writing local equivalents.
+- **`create*` prefix for test helpers** — all test factory/builder functions use the `create*` prefix (`createRow`, `createColumn`, `createMention`). Never `make*` (`makeRow`, `makeColumn`).
 
 ## Canonical Test Values
 
@@ -85,6 +86,23 @@ The default mock session is always the **base user** (inserted by `createMockCon
 
 - **Never `.rejects.toThrow()`** — always assert the specific error: `.rejects.toThrowErrorMatchingInlineSnapshot(...)` or `.rejects.toBeInstanceOf(ErrorClass)`.
 
+## Mocking Globals (navigator, window, etc.)
+
+- **Use `vi.stubGlobal`** — never `Object.defineProperty` for globals; `stubGlobal` integrates with Vitest's stub tracking.
+- **`vi.unstubAllGlobals()` in `afterEach`** — when stubs are set per-test in `beforeEach`. When set once in `beforeAll`, clean up in `afterAll`.
+- **`vi.restoreAllMocks()` ≠ `vi.unstubAllGlobals()`** — `restoreAllMocks` only restores `vi.spyOn()` mocks; it does NOT clean up `vi.stubGlobal()` stubs.
+
+```ts
+beforeEach(() => {
+  writeTextMock = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
+  vi.stubGlobal("navigator", { clipboard: { writeText: writeTextMock } });
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+```
+
 ## Reactive Effects and Timers
 
 - **No `nextTick`** — no DOM, sync effects fire immediately. Use `flushPromises()` from `@vue/test-utils` for async watch callbacks.
@@ -97,7 +115,7 @@ The default mock session is always the **base user** (inserted by `createMockCon
 
 ## Running Tests
 
-- **Do not run tests on Windows** — known Vitest startup failures include `spawn EPERM` from Vite config loading and `TypeError: The argument 'filename' must be a file URL object...` with UnoCSS + happy-dom. Write tests; user runs them manually.
+- **Do not run tests on Windows** — known Vitest crash: `TypeError: The argument 'filename' must be a file URL object...` with UnoCSS + happy-dom. Write tests; user runs them manually.
 - **Always use `run_in_background: true`** for `pnpm lint`, `pnpm typecheck`, and test commands.
 
 ## Testing Composables with Lifecycle Hooks

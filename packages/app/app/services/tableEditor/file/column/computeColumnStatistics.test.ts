@@ -3,10 +3,10 @@ import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { DateFormats } from "#shared/models/tableEditor/file/column/DateFormat";
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
-  makeDataSource,
-  makeDateColumn,
-  makeNumberColumn,
-  makeRow,
+  createDataSource,
+  createDateColumn,
+  createNumberColumn,
+  createRow,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { computeColumnStatistics } from "@/services/tableEditor/file/column/computeColumnStatistics";
 import { takeOne } from "@esposter/shared";
@@ -16,9 +16,9 @@ describe(computeColumnStatistics, () => {
   test(`number column computes minimum, maximum, average, standardDeviation, uniqueCount, nullCount`, () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource(
-      [makeNumberColumn("")],
-      [makeRow({ "": 0 }), makeRow({ "": 2 }), makeRow({ "": 2 }), makeRow({ "": null })],
+    const dataSource = createDataSource(
+      [createNumberColumn("")],
+      [createRow({ "": 0 }), createRow({ "": 2 }), createRow({ "": 2 }), createRow({ "": null })],
     );
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
@@ -44,9 +44,9 @@ describe(computeColumnStatistics, () => {
 
     // Mean = 1/3 (repeating decimal); variance = 2/9 ≈ 0.2222; std = √(2/9) ≈ 0.4714
     // Using raw mean avoids rounding error accumulation in the variance sum
-    const dataSource = makeDataSource(
-      [makeNumberColumn("")],
-      [makeRow({ "": 0 }), makeRow({ "": 0 }), makeRow({ "": 1 })],
+    const dataSource = createDataSource(
+      [createNumberColumn("")],
+      [createRow({ "": 0 }), createRow({ "": 0 }), createRow({ "": 1 })],
     );
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
@@ -70,7 +70,7 @@ describe(computeColumnStatistics, () => {
   test(`number column with single value has standardDeviation of 0`, () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource([makeNumberColumn("")], [makeRow({ "": 1 })]);
+    const dataSource = createDataSource([createNumberColumn("")], [createRow({ "": 1 })]);
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: 1,
@@ -93,9 +93,9 @@ describe(computeColumnStatistics, () => {
   test(`boolean column computes trueCount, falseCount, nullCount`, () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource(
+    const dataSource = createDataSource(
       [new BooleanColumn({ name: "" })],
-      [makeRow({ "": true }), makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
+      [createRow({ "": true }), createRow({ "": true }), createRow({ "": false }), createRow({ "": null })],
     );
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
@@ -119,9 +119,9 @@ describe(computeColumnStatistics, () => {
   test(`string column computes uniqueCount, nullCount, nullPercent, mostFrequentValue`, () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource(
+    const dataSource = createDataSource(
       [new StringColumn({ name: "" })],
-      [makeRow({ "": "" }), makeRow({ "": " " }), makeRow({ "": "" }), makeRow({ "": null })],
+      [createRow({ "": "" }), createRow({ "": " " }), createRow({ "": "" }), createRow({ "": null })],
     );
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
@@ -148,13 +148,13 @@ describe(computeColumnStatistics, () => {
   test(`date column computes uniqueCount, nullCount, nullPercent, mostFrequentValue`, () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource(
-      [makeDateColumn("", takeOne([...DateFormats]))],
+    const dataSource = createDataSource(
+      [createDateColumn("", takeOne([...DateFormats]))],
       [
-        makeRow({ "": "1970-01-01" }),
-        makeRow({ "": "1970-01-02" }),
-        makeRow({ "": "1970-01-01" }),
-        makeRow({ "": null }),
+        createRow({ "": "1970-01-01" }),
+        createRow({ "": "1970-01-02" }),
+        createRow({ "": "1970-01-01" }),
+        createRow({ "": null }),
       ],
     );
 
@@ -179,7 +179,7 @@ describe(computeColumnStatistics, () => {
   test("all null number column returns null statistics", () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource([makeNumberColumn("")], [makeRow({ "": null })]);
+    const dataSource = createDataSource([createNumberColumn("")], [createRow({ "": null })]);
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
@@ -202,7 +202,7 @@ describe(computeColumnStatistics, () => {
   test("empty rows returns zero counts and null statistics", () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource([makeNumberColumn("")], []);
+    const dataSource = createDataSource([createNumberColumn("")], []);
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
@@ -225,7 +225,7 @@ describe(computeColumnStatistics, () => {
   test("string column with all null values returns null mostFrequentValue and 100 nullPercent", () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource([new StringColumn({ name: "" })], [makeRow({ "": null }), makeRow({ "": null })]);
+    const dataSource = createDataSource([new StringColumn({ name: "" })], [createRow({ "": null }), createRow({ "": null })]);
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
@@ -248,7 +248,7 @@ describe(computeColumnStatistics, () => {
   test("string column with no rows returns null nullPercent", () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource([new StringColumn({ name: "" })], []);
+    const dataSource = createDataSource([new StringColumn({ name: "" })], []);
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
@@ -271,9 +271,9 @@ describe(computeColumnStatistics, () => {
   test("string column with all unique values returns first-encountered mostFrequentValue with count 1", () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource(
+    const dataSource = createDataSource(
       [new StringColumn({ name: "" })],
-      [makeRow({ "": "a" }), makeRow({ "": "b" }), makeRow({ "": "c" })],
+      [createRow({ "": "a" }), createRow({ "": "b" }), createRow({ "": "c" })],
     );
 
     const result = takeOne(computeColumnStatistics(dataSource));

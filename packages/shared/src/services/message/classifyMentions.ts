@@ -1,14 +1,10 @@
+import type { ClassifiedMentions } from "@/models/message/ClassifiedMentions";
+
 import { MentionType } from "@/models/message/MentionType";
 import { MENTION_EVERYONE_ID, MENTION_HERE_ID, MENTION_ID_ATTRIBUTE, MENTION_ITEM_TYPE_ATTRIBUTE } from "@/services/message/constants";
 import { getMentions } from "@/services/message/getMentions";
 
 const BROADCAST_MENTION_IDS = new Set([MENTION_EVERYONE_ID, MENTION_HERE_ID]);
-
-export interface ClassifiedMentions {
-  broadcastIds: string[];
-  regularUserIds: string[];
-  roleIds: string[];
-}
 
 export const classifyMentions = (message: string): ClassifiedMentions => {
   const mentions = getMentions(message)

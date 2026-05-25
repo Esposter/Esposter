@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import {
-  makeColumn,
-  makeDataSource,
-  makeNumberColumn,
-  makeRow,
+  createColumn,
+  createDataSource,
+  createNumberColumn,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -26,9 +26,9 @@ describe(useFindReplace, () => {
   test("replaces all matching cells across rows and columns", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn(""), makeColumn(" ")],
-      [makeRow({ "": " ", " ": " " }), makeRow({ "": " ", " ": 0 })],
+    const ds = createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": " ", " ": " " }), createRow({ "": " ", " ": 0 })],
     );
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
@@ -46,7 +46,7 @@ describe(useFindReplace, () => {
   test("replaces substrings within cell values", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": "a " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": "a " })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     findReplace(" ", "");
@@ -60,7 +60,7 @@ describe(useFindReplace, () => {
   test("undo restores all original values", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     const fileHistoryStore = useFileHistoryStore();
@@ -82,7 +82,7 @@ describe(useFindReplace, () => {
   test("redo re-applies replacements after undo", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     const fileHistoryStore = useFileHistoryStore();
@@ -104,7 +104,7 @@ describe(useFindReplace, () => {
   test("replaces only the specific cell when specificCell is provided", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn(""), makeColumn(" ")], [makeRow({ "": " ", " ": " " })]);
+    const ds = createDataSource([createColumn(""), createColumn(" ")], [createRow({ "": " ", " ": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     findReplace(" ", "", { columnName: "", rowIndex: 0 });
@@ -119,7 +119,7 @@ describe(useFindReplace, () => {
   test("no-op when find value equals replace value", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     const fileHistoryStore = useFileHistoryStore();
@@ -136,7 +136,7 @@ describe(useFindReplace, () => {
   test("preserves number type after replace", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeNumberColumn("")], [makeRow({ "": 1 })]);
+    const ds = createDataSource([createNumberColumn("")], [createRow({ "": 1 })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     findReplace("1", "2");
@@ -150,7 +150,7 @@ describe(useFindReplace, () => {
   test("no-op when find value is empty", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     const fileHistoryStore = useFileHistoryStore();
@@ -202,7 +202,7 @@ describe(useFindReplace, () => {
   test("description shows row number when replacing a single occurrence", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": 0 })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": 0 })]);
     setupWithDataSource(ds);
     const findReplace = useFindReplace();
     const fileHistoryStore = useFileHistoryStore();
@@ -215,7 +215,7 @@ describe(useFindReplace, () => {
   test("description shows all when replacing across multiple rows", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
     setupWithDataSource(ds);
     const findReplace = useFindReplace();
     const fileHistoryStore = useFileHistoryStore();

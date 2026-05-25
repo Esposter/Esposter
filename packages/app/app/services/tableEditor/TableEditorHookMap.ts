@@ -1,9 +1,5 @@
-import type { Promisable } from "type-fest";
+import type { TableEditorHookMap as TableEditorHookMapType } from "@/models/tableEditor/TableEditorHookMap";
 
-export interface TableEditorHookMap {
-  Close: (() => Promisable<void>)[];
-}
-
-export const TableEditorHookMap: TableEditorHookMap = {
+export const TableEditorHookMap: TableEditorHookMapType = {
   Close: [],
 };

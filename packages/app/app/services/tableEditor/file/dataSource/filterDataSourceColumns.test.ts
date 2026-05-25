@@ -1,8 +1,8 @@
 import {
-  makeComputedColumn,
-  makeDataSource,
-  makeNumberColumn,
-  makeRow,
+  createComputedColumn,
+  createDataSource,
+  createNumberColumn,
+  createRow,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { filterDataSourceColumns } from "@/services/tableEditor/file/dataSource/filterDataSourceColumns";
 import { takeOne } from "@esposter/shared";
@@ -12,9 +12,9 @@ describe(filterDataSourceColumns, () => {
   test(`computed column value is included in filtered rows`, () => {
     expect.hasAssertions();
 
-    const sourceColumn = makeNumberColumn("price");
-    const computedColumn = makeComputedColumn("priceStr", sourceColumn.id);
-    const dataSource = makeDataSource([sourceColumn, computedColumn], [makeRow({ price: 42 })]);
+    const sourceColumn = createNumberColumn("price");
+    const computedColumn = createComputedColumn("priceStr", sourceColumn.id);
+    const dataSource = createDataSource([sourceColumn, computedColumn], [createRow({ price: 42 })]);
 
     const { rows } = filterDataSourceColumns(dataSource.columns, dataSource.rows, [sourceColumn.id, computedColumn.id]);
 
@@ -24,9 +24,9 @@ describe(filterDataSourceColumns, () => {
   test(`non-exported columns are excluded from rows`, () => {
     expect.hasAssertions();
 
-    const colA = makeNumberColumn("a");
-    const colB = makeNumberColumn("b");
-    const dataSource = makeDataSource([colA, colB], [makeRow({ a: 1, b: 2 })]);
+    const colA = createNumberColumn("a");
+    const colB = createNumberColumn("b");
+    const dataSource = createDataSource([colA, colB], [createRow({ a: 1, b: 2 })]);
 
     const { columns, rows } = filterDataSourceColumns(dataSource.columns, dataSource.rows, [colA.id]);
 

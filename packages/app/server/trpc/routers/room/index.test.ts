@@ -48,7 +48,7 @@ describe("room", () => {
     await mockContext.db.delete(roomsInMessage);
   });
 
-  const makeFriends = async (userA: User, userB: User) => {
+  const createFriends = async (userA: User, userB: User) => {
     await mockSessionOnce(mockContext.db, userA);
     await friendRequestCaller.sendFriendRequest(userB.id);
     await mockSessionOnce(mockContext.db, userB);
@@ -167,7 +167,7 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     await directMessageCaller.createDirectMessage([user.id]);
     const readRoom = await roomCaller.readRoom();
 
@@ -342,7 +342,7 @@ describe("room", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(roomCaller.createInvite({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -356,7 +356,7 @@ describe("room", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(roomCaller.readInviteId({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -370,7 +370,7 @@ describe("room", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(roomCaller.leaveRoom(directMessage.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -384,7 +384,7 @@ describe("room", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(
@@ -401,7 +401,7 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     await directMessageCaller.createDirectMessage([user.id]);
     const readRooms = await roomCaller.readRooms();
 
@@ -415,7 +415,7 @@ describe("room", () => {
     const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
-    await makeFriends(mainUser, user);
+    await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(roomCaller.readRooms({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(

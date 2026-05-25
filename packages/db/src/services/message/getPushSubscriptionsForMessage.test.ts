@@ -41,7 +41,7 @@ describe(getPushSubscriptionsForMessage, () => {
   beforeAll(async () => {
     db = await createMockDb();
     const createdAt = new Date();
-    const makeUser = (id: string) => ({
+    const createUser = (id: string) => ({
       createdAt,
       email: id,
       emailVerified: true,
@@ -54,13 +54,13 @@ describe(getPushSubscriptionsForMessage, () => {
     await db
       .insert(users)
       .values([
-        makeUser(allOnlineUserId),
-        makeUser(allOfflineUserId),
-        makeUser(allNullStatusUserId),
-        makeUser(directMessageOnlineUserId),
-        makeUser(directMessageOfflineUserId),
-        makeUser(neverUserId),
-        makeUser(senderUserId),
+        createUser(allOnlineUserId),
+        createUser(allOfflineUserId),
+        createUser(allNullStatusUserId),
+        createUser(directMessageOnlineUserId),
+        createUser(directMessageOfflineUserId),
+        createUser(neverUserId),
+        createUser(senderUserId),
       ]);
 
     await db.insert(roomsInMessage).values({
