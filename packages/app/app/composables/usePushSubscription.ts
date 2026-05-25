@@ -5,10 +5,8 @@ export const usePushSubscription = () => {
   const runtimeConfig = useRuntimeConfig();
   const pushSubscription = ref<PushSubscription>();
   const { permissionGranted } = useWebNotification();
-
   const { trigger } = watchTriggerable(permissionGranted, async (newPermissionGranted) => {
     const registration = await window.navigator.serviceWorker.ready;
-
     if (!newPermissionGranted) {
       // Fall back to getSubscription() in case permission was revoked before onMounted completed
       const subscription = pushSubscription.value ?? (await registration.pushManager.getSubscription());
@@ -19,7 +17,6 @@ export const usePushSubscription = () => {
       pushSubscription.value = undefined;
       return;
     }
-
     // getSubscription() returns the existing subscription if one exists, avoiding a new
     // endpoint being created (and a redundant network call to the push service)
     pushSubscription.value =
