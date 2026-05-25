@@ -29,6 +29,7 @@
       "Bash(for f:*)",
       "Bash(Get-ChildItem *)",
       "Bash(Get-Content *)",
+      "Bash(Get-Item *)",
       "Bash(git diff *)",
       "Bash(git log:*)",
       "Bash(git ls-tree *)",
@@ -45,6 +46,7 @@
       "Bash(pnpm infra:preview*)",
       "Bash(pnpm install:*)",
       "Bash(pnpm lint:*)",
+      "Bash(pnpm lint:fix)",
       "Bash(pnpm list:*)",
       "Bash(pnpm ls *)",
       "Bash(pnpm outdated:*)",
@@ -96,6 +98,7 @@
       "PowerShell(for f:*)",
       "PowerShell(Get-ChildItem *)",
       "PowerShell(Get-Content *)",
+      "PowerShell(Get-Item *)",
       "PowerShell(git diff *)",
       "PowerShell(git log:*)",
       "PowerShell(git ls-tree *)",
@@ -112,6 +115,7 @@
       "PowerShell(pnpm infra:preview*)",
       "PowerShell(pnpm install:*)",
       "PowerShell(pnpm lint:*)",
+      "PowerShell(pnpm lint:fix)",
       "PowerShell(pnpm list:*)",
       "PowerShell(pnpm ls *)",
       "PowerShell(pnpm outdated:*)",
@@ -139,9 +143,7 @@
       "WebFetch(domain:orm.drizzle.team)",
       "WebFetch(domain:vuetifyjs.com)",
       "WebFetch(domain:vueuse.org)",
-      "WebFetch(domain:www.npmjs.com)",
-      "PowerShell(Get-Item *)",
-      "Bash(pnpm lint:fix)"
+      "WebFetch(domain:www.npmjs.com)"
     ]
   }
 }
