@@ -19,6 +19,7 @@ export interface PhaserEvents extends SceneEvents {
   unuseItem: () => void;
   useItem: (scene: SceneWithPlugins, item: Item, monster: Monster, onComplete: () => Promise<void>) => void;
 }
+
 type SceneEventKeys = `${NpcId}${typeof EFFECT_COMPLETE_EVENT_KEY_SUFFIX}` | `${SceneEventKey}${keyof typeof SceneKey}`;
 
 type SceneEvents = Record<SceneEventKeys, () => void>;

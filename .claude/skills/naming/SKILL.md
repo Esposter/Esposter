@@ -16,6 +16,7 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 ## Functions
 
 - `get*` for derivation/display functions: `getVisibilityTooltip`, `getRowTitle`
+- `read*` for async data-fetching functions — never `fetch*`: `readMemberMentionItems`, `readRoles`. `fetch` is reserved for the Web API, not app-level naming
 - CRUD prefixes (`create*`, `update*`, `delete*`) for data/store operations
 - `store*` prefix for subscription-driven state-update counterparts of async user actions: `deleteFriend` (user action) + `storeDeleteFriend` (subscription state update). Never add `store` prefix to unpaired methods
 - `on*` prefix for handler functions **only when wrapping an existing named store/service fn**: `onUpdateMessage` wraps `updateMessage`. Direct actions use the action name: `submit`, `save`, `delete` — never `onSubmit`, `onSave`, `onDelete`
@@ -28,6 +29,10 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - `userId` for the session user's ID — never `me`, `myId`, `self`
 - `new{PropName}` for `onUpdate:*` handler parameters: `(newItemsPerPage) =>`, `(newModelValue) =>`
 - `display*` for presentation-layer computed that sorts/filters raw store data: `displayFriends`, `displayReceivedFriendRequests`. Never `sorted*` or `filtered*`
+
+## Import Aliases
+
+- **No `_` prefix for import aliases** — use `base*` prefix when renaming an import to avoid a name clash: `import { getMentions as baseMentions }`. Never `import { getMentions as _getMentions }`
 
 ## TypeScript & Interfaces
 

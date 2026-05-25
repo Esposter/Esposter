@@ -2,7 +2,9 @@ import type { Promisable } from "type-fest";
 
 import { AdminActionType } from "@esposter/db-schema";
 
-export interface AdminActionHookMap {
+type AdminActionHook = (roomId: string) => Promisable<void>;
+
+interface AdminActionHookMap {
   [AdminActionType.CreateBan]: AdminActionHook[];
   [AdminActionType.ForceMute]: AdminActionHook[];
   [AdminActionType.ForceUnmute]: AdminActionHook[];
@@ -13,8 +15,6 @@ export interface AdminActionHookMap {
   [AdminActionType.TimeoutUser]: AdminActionHook[];
   [AdminActionType.Warn]: AdminActionHook[];
 }
-
-type AdminActionHook = (roomId: string) => Promisable<void>;
 
 export const AdminActionHookMap: AdminActionHookMap = {
   [AdminActionType.CreateBan]: [],

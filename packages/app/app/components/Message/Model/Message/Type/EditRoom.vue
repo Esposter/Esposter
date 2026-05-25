@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
+import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { useDialogStore } from "@/store/message/room/dialog";

@@ -2,7 +2,7 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import {
-  makeDataSource,
+  createDataSource,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -28,7 +28,7 @@ describe(useSetDataSource, () => {
 
     const { editedItem } = setupEditedItem();
     const setDataSource = useSetDataSource();
-    const dataSource = makeDataSource();
+    const dataSource = createDataSource();
     setDataSource(dataSource);
     const editedItemValue = editedItem.value;
 
@@ -54,7 +54,7 @@ describe(useSetDataSource, () => {
 
     expect(isRedoable.value).toBe(true);
 
-    setDataSource(makeDataSource());
+    setDataSource(createDataSource());
 
     expect(isUndoable.value).toBe(false);
     expect(isRedoable.value).toBe(false);
@@ -64,7 +64,7 @@ describe(useSetDataSource, () => {
     expect.hasAssertions();
 
     const setDataSource = useSetDataSource();
-    setDataSource(makeDataSource());
+    setDataSource(createDataSource());
 
     const tableEditorStore = useTableEditorStore<DataSourceItem>();
     const { editedItem } = storeToRefs(tableEditorStore);

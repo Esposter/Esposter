@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import {
-  makeColumn,
-  makeDataSource,
-  makeRow,
+  createColumn,
+  createDataSource,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -26,9 +26,9 @@ describe(useDeleteDuplicateRows, () => {
   test("removes duplicate rows keeping first occurrence", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn(""), makeColumn(" ")],
-      [makeRow({ "": 0, " ": 1 }), makeRow({ "": 0, " ": 1 }), makeRow({ "": 0, " ": 1 })],
+    const ds = createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": 0, " ": 1 }), createRow({ "": 0, " ": 1 }), createRow({ "": 0, " ": 1 })],
     );
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
@@ -44,7 +44,7 @@ describe(useDeleteDuplicateRows, () => {
   test("removes duplicate rows keeping last occurrence", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("a")], [makeRow({ a: 1 }), makeRow({ a: 2 }), makeRow({ a: 1 })]);
+    const ds = createDataSource([createColumn("a")], [createRow({ a: 1 }), createRow({ a: 2 }), createRow({ a: 1 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     deleteDuplicateRows(KeepDuplicateMode.Last);
@@ -60,9 +60,9 @@ describe(useDeleteDuplicateRows, () => {
   test("keeps rows that differ in at least one column", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn(""), makeColumn(" ")],
-      [makeRow({ "": 0, " ": 1 }), makeRow({ "": 0, " ": 2 })],
+    const ds = createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": 0, " ": 1 }), createRow({ "": 0, " ": 2 })],
     );
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
@@ -80,7 +80,7 @@ describe(useDeleteDuplicateRows, () => {
   test("undo restores deleted duplicate rows", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 0 })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     const fileHistoryStore = useFileHistoryStore();
@@ -101,7 +101,7 @@ describe(useDeleteDuplicateRows, () => {
   test("redo re-applies after undo", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 0 })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     const fileHistoryStore = useFileHistoryStore();
@@ -146,7 +146,7 @@ describe(useDeleteDuplicateRows, () => {
   test("no-op when no duplicates exist", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 1 })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 1 })]);
     setupWithDataSource(ds);
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);

@@ -1,6 +1,6 @@
 import type { Promisable } from "type-fest";
 
-export interface TableEditorHookMap {
+interface TableEditorHookMap {
   Close: (() => Promisable<void>)[];
 }
 

@@ -17,24 +17,24 @@ import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { describe } from "vitest";
 
-export const makeDataSource = (columns: Column[] = [], rows: Row[] = []): DataSource => ({
+export const createDataSource = (columns: Column[] = [], rows: Row[] = []): DataSource => ({
   columns,
   metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
   rows,
   statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
 });
 
-export const makeColumn = (name: string): StringColumn => new StringColumn({ name, size: 0, sourceName: name });
+export const createColumn = (name: string): StringColumn => new StringColumn({ name, size: 0, sourceName: name });
 
-export const makeNumberColumn = (name: string): NumberColumn => new NumberColumn({ name, size: 0, sourceName: name });
+export const createNumberColumn = (name: string): NumberColumn => new NumberColumn({ name, size: 0, sourceName: name });
 
-export const makeBooleanColumn = (name: string): BooleanColumn =>
+export const createBooleanColumn = (name: string): BooleanColumn =>
   new BooleanColumn({ name, size: 0, sourceName: name });
 
-export const makeDateColumn = (name: string, format: DateColumn["format"]): DateColumn =>
+export const createDateColumn = (name: string, format: DateColumn["format"]): DateColumn =>
   new DateColumn({ format, name, size: 0, sourceName: name });
 
-export const makeComputedColumn = (
+export const createComputedColumn = (
   name: string,
   sourceColumnId: string,
   transformation: ColumnTransformation = {
@@ -44,7 +44,7 @@ export const makeComputedColumn = (
   },
 ): ComputedColumn => new ComputedColumn({ name, size: 0, sourceName: name, transformation });
 
-export const makeRow = (data: Record<string, boolean | null | number | string>): Row => new Row({ data });
+export const createRow = (data: Record<string, boolean | null | number | string>): Row => new Row({ data });
 
 export const setupEditedItem = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItem>();
@@ -61,7 +61,10 @@ export const setupWithDataSource = (dataSource?: DataSource) => {
   const { editedItem, item } = setupEditedItem();
   const ds =
     dataSource ??
-    makeDataSource([makeColumn(""), makeColumn(" ")], [makeRow({ "": 0, " ": 1 }), makeRow({ "": 2, " ": 3 })]);
+    createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": 0, " ": 1 }), createRow({ "": 2, " ": 3 })],
+    );
   const setDataSource = useSetDataSource();
   setDataSource(ds);
   return { editedItem, item };

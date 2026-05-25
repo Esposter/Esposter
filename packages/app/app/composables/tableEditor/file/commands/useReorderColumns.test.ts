@@ -2,9 +2,9 @@
 import type { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 
 import {
-  makeColumn,
-  makeDataSource,
-  makeRow,
+  createColumn,
+  createDataSource,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -82,9 +82,9 @@ describe(useReorderColumns, () => {
   test("moves column backward (index 1 to 0) with three columns", () => {
     expect.hasAssertions();
 
-    const threeColumnDs = makeDataSource(
-      [makeColumn("a"), makeColumn("b"), makeColumn("c")],
-      [makeRow({ a: 0, b: 1, c: 2 })],
+    const threeColumnDs = createDataSource(
+      [createColumn("a"), createColumn("b"), createColumn("c")],
+      [createRow({ a: 0, b: 1, c: 2 })],
     );
     const { editedItem } = setupWithDataSource(threeColumnDs);
     const reorderColumns = useReorderColumns();
@@ -103,9 +103,9 @@ describe(useReorderColumns, () => {
   test("moves column forward non-adjacent (index 0 to 2) with three columns", () => {
     expect.hasAssertions();
 
-    const threeColumnDs = makeDataSource(
-      [makeColumn("a"), makeColumn("b"), makeColumn("c")],
-      [makeRow({ a: 0, b: 1, c: 2 })],
+    const threeColumnDs = createDataSource(
+      [createColumn("a"), createColumn("b"), createColumn("c")],
+      [createRow({ a: 0, b: 1, c: 2 })],
     );
     const { editedItem } = setupWithDataSource(threeColumnDs);
     const reorderColumns = useReorderColumns();

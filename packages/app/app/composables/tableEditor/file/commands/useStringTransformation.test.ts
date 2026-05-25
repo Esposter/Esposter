@@ -3,9 +3,9 @@ import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColum
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/StringTransformationType";
 import {
-  makeColumn,
-  makeDataSource,
-  makeRow,
+  createColumn,
+  createDataSource,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -28,9 +28,9 @@ describe(useStringTransformation, () => {
   test(`${StringTransformationType.Trim} strips whitespace from all string cells`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn(""), makeColumn(" ")],
-      [makeRow({ "": " ", " ": " " }), makeRow({ "": " ", " ": " " })],
+    const ds = createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": " ", " ": " " }), createRow({ "": " ", " ": " " })],
     );
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
@@ -48,7 +48,7 @@ describe(useStringTransformation, () => {
   test(`${StringTransformationType.LowerCase} lowercases all string cells`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": "A" })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": "A" })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     stringTransformation(StringTransformationType.LowerCase);
@@ -62,7 +62,7 @@ describe(useStringTransformation, () => {
   test(`${StringTransformationType.UpperCase} uppercases all string cells`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": "a" })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": "a" })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     stringTransformation(StringTransformationType.UpperCase);
@@ -76,7 +76,7 @@ describe(useStringTransformation, () => {
   test(`${StringTransformationType.TitleCase} title-cases all string cells`, () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": "hello world" })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": "hello world" })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     stringTransformation(StringTransformationType.TitleCase);
@@ -91,7 +91,7 @@ describe(useStringTransformation, () => {
     expect.hasAssertions();
 
     const numberColumn = new NumberColumn({ name: "", size: 0, sourceName: "" });
-    const ds = makeDataSource([numberColumn], [makeRow({ "": 0 })]);
+    const ds = createDataSource([numberColumn], [createRow({ "": 0 })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
@@ -109,7 +109,7 @@ describe(useStringTransformation, () => {
     expect.hasAssertions();
 
     const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
-    const ds = makeDataSource([hiddenColumn], [makeRow({ "": " " })]);
+    const ds = createDataSource([hiddenColumn], [createRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
@@ -126,7 +126,7 @@ describe(useStringTransformation, () => {
   test("undo restores all original values", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
@@ -148,7 +148,7 @@ describe(useStringTransformation, () => {
   test("redo re-applies after undo", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
@@ -193,7 +193,7 @@ describe(useStringTransformation, () => {
   test("description includes the transform", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
     setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();

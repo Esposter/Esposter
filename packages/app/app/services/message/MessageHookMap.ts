@@ -6,7 +6,7 @@ import type { Promisable } from "type-fest";
 
 import { Operation } from "@esposter/shared";
 
-export interface MessageHookMap {
+interface MessageHookMap {
   [Operation.Create]: ((message: MessageEntity) => Promisable<void>)[];
   [Operation.Delete]: ((input: DeleteMessageInput) => Promisable<void>)[];
   [Operation.Update]: ((input: MessageEvents["updateMessage"][number]) => Promisable<void>)[];

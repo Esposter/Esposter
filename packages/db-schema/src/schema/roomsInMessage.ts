@@ -25,7 +25,7 @@ export const roomsInMessage = pgTable(
   {
     categoryId: uuid().references(() => roomCategoriesInMessage.id, { onDelete: "set null" }),
     id: uuid().primaryKey().defaultRandom(),
-    image: text(),
+    image: text().notNull().default(""),
     isReadOnly: boolean().notNull().default(false),
     name: text(),
     participantKey: text().unique(),

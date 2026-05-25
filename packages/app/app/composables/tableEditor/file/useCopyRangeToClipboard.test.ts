@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import {
-  makeColumn,
-  makeDataSource,
-  makeRow,
+  createColumn,
+  createDataSource,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -38,7 +38,10 @@ describe(useCopyRangeToClipboard, () => {
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
     setupWithDataSource(
-      makeDataSource([makeColumn("a"), makeColumn("b")], [makeRow({ a: "1", b: "2" }), makeRow({ a: "3", b: "4" })]),
+      createDataSource(
+        [createColumn("a"), createColumn("b")],
+        [createRow({ a: "1", b: "2" }), createRow({ a: "3", b: "4" })],
+      ),
     );
     selectRange(0, 0, 0, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
@@ -52,7 +55,7 @@ describe(useCopyRangeToClipboard, () => {
 
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = false;
-    setupWithDataSource(makeDataSource([makeColumn("a"), makeColumn("b")], [makeRow({ a: "1", b: "2" })]));
+    setupWithDataSource(createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]));
     selectRange(0, 0, 0, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
     await copyRangeToClipboard();
@@ -66,7 +69,10 @@ describe(useCopyRangeToClipboard, () => {
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
     setupWithDataSource(
-      makeDataSource([makeColumn("a"), makeColumn("b"), makeColumn("c")], [makeRow({ a: "1", b: "2", c: "3" })]),
+      createDataSource(
+        [createColumn("a"), createColumn("b"), createColumn("c")],
+        [createRow({ a: "1", b: "2", c: "3" })],
+      ),
     );
     selectRange(0, 0, 1, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
@@ -81,7 +87,7 @@ describe(useCopyRangeToClipboard, () => {
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
     setupWithDataSource(
-      makeDataSource([makeColumn("a")], [makeRow({ a: "1" }), makeRow({ a: "2" }), makeRow({ a: "3" })]),
+      createDataSource([createColumn("a")], [createRow({ a: "1" }), createRow({ a: "2" }), createRow({ a: "3" })]),
     );
     selectRange(1, 2, 0, 0);
     const copyRangeToClipboard = useCopyRangeToClipboard();

@@ -1,15 +1,4 @@
-import type { Creator } from "@/models/message/Creator";
-import type { MessageEntity } from "@esposter/db-schema";
-
 import { MessageType } from "@esposter/db-schema";
-
-export interface MessageComponentProps<T extends MessageEntity = MessageEntity> {
-  active?: boolean;
-  creator: Creator;
-  isPreview?: boolean;
-  isSameBatch?: boolean;
-  message: T;
-}
 
 export const MessageComponentMap = {
   [MessageType.Call]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Call.vue")),

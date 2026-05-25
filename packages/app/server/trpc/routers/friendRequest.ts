@@ -52,7 +52,7 @@ export const friendRequestRouter = router({
         ...ctx.getSessionPayload.user,
         biography: ctx.getSessionPayload.user.biography,
         deletedAt: null,
-        image: ctx.getSessionPayload.user.image ?? null,
+        image: ctx.getSessionPayload.user.image ?? "",
       };
       friendEventEmitter.emit("acceptFriendRequest", { receiverUser, senderId });
       return senderUser;
@@ -129,7 +129,7 @@ export const friendRequestRouter = router({
         ...ctx.getSessionPayload.user,
         biography: ctx.getSessionPayload.user.biography,
         deletedAt: null,
-        image: ctx.getSessionPayload.user.image ?? null,
+        image: ctx.getSessionPayload.user.image ?? "",
       };
       const [newRequest] = await ctx.db.transaction(async (tx) => {
         const existingBlock = await tx.query.blocks.findFirst({
