@@ -6,13 +6,13 @@ export const getCrossPlatformSize = (targetPath: string): string => {
   const absolutePath = resolve(targetPath);
   const sizeInBytes = TEXT_FILE_EXTENSIONS.has(extname(absolutePath))
     ? Buffer.byteLength(
-        readFileSync(absolutePath)
+        `${readFileSync(absolutePath)
           .toString("utf8")
           .replaceAll("\r\n", "\n") // Windows to Unix
           .replaceAll("\r", "\n") // Old Mac to Unix
-          .replaceAll(/\n+$/g, "\n") // Normalize trailing newlines
-          .replaceAll(/\t/g, "  ") // Normalize tabs to spaces (if needed)
-          .trimEnd() + "\n", // Ensure single trailing newline
+          .replaceAll(/\n+$/gu, "\n") // Normalize trailing newlines
+          .replaceAll("	", "  ") // Normalize tabs to spaces (if needed)
+          .trimEnd()}\n`, // Ensure single trailing newline
         "utf8",
       )
     : statSync(absolutePath).size;

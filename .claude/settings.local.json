@@ -140,7 +140,8 @@
       "WebFetch(domain:vuetifyjs.com)",
       "WebFetch(domain:vueuse.org)",
       "WebFetch(domain:www.npmjs.com)",
-      "PowerShell(Get-Item *)"
+      "PowerShell(Get-Item *)",
+      "Bash(pnpm lint:fix)"
     ]
   }
 }
