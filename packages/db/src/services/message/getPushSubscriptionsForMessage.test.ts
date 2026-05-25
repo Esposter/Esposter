@@ -46,7 +46,7 @@ describe(getPushSubscriptionsForMessage, () => {
       email: id,
       emailVerified: true,
       id,
-      image: null,
+      image: "",
       name,
       updatedAt: createdAt,
     });
