@@ -6,6 +6,11 @@ export const external: (RegExp | string)[] = [
   "azure-mock",
   "parse-tmx",
   "vue-phaserjs",
+  // @esposter/azure-mock
+  "@azure/core-http-compat",
+  "@azure/core-rest-pipeline",
+  "@azure/eventgrid",
+  "@azure/storage-queue",
   // @esposter/configuration
   "@rolldown/plugin-node-polyfills",
   "@vitejs/plugin-vue",

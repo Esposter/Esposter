@@ -54,8 +54,12 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@azure/core-http-compat": "catalog:",
+    "@azure/core-rest-pipeline": "catalog:",
     "@azure/data-tables": "catalog:",
+    "@azure/eventgrid": "catalog:",
     "@azure/storage-blob": "catalog:",
+    "@azure/storage-queue": "catalog:",
     "drizzle-orm": "catalog:",
     "zod": "catalog:"
   }

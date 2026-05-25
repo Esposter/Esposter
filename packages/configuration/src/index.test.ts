@@ -1,12 +1,13 @@
-import { statSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
+
+import { getCrossPlatformSize } from "./getCrossPlatformSize";
 
 const distFile = resolve(import.meta.dirname, "../dist/index.js");
 
 describe("@esposter/configuration", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(statSync(distFile).size).toMatchInlineSnapshot(`1563472`);
+    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 4.02 KB (4117 bytes)"`);
   });
 });

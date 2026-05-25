@@ -43,7 +43,6 @@
     "typecheck": "tsgo"
   },
   "dependencies": {
-    "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "dayjs": "catalog:",
     "link-preview-js": "catalog:",

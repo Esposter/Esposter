@@ -28,6 +28,11 @@ external: [
   "azure-mock",
   "parse-tmx",
   "vue-phaserjs",
+  // @esposter/azure-mock
+  "@azure/core-http-compat",
+  "@azure/core-rest-pipeline",
+  "@azure/eventgrid",
+  "@azure/storage-queue",
   // @esposter/configuration
   "@rolldown/plugin-node-polyfills",
   "@vitejs/plugin-vue",
@@ -81,8 +86,12 @@ const fs = require("fs"),
   path = require("path");
 const externalStrings = [
   "@azure/data-tables",
+  "@azure/core-http-compat",
+  "@azure/core-rest-pipeline",
+  "@azure/eventgrid",
   "@azure/search-documents",
   "@azure/storage-blob",
+  "@azure/storage-queue",
   "@azure/web-pubsub",
   "@rolldown/plugin-node-polyfills",
   "@electric-sql/pglite",
@@ -136,17 +145,17 @@ external: [...externalVueFramework, "@azure/functions"],
 
 | Package                     | Size    | Notes                        |
 | --------------------------- | ------- | ---------------------------- |
-| `@esposter/infra`           | ~124KB  | Pulumi resources, external   |
-| `@esposter/db-schema`       | ~66KB   | Schema only                  |
+| `@esposter/azure-functions` | ~4.23MB | Intentionally self-contained |
+| `@esposter/azure-mock`      | ~35.8KB | Azure SDKs external          |
+| `@esposter/configuration`   | ~4KB    | Build toolchain external     |
+| `@esposter/db`              | ~1.09MB | Azure SDKs external          |
 | `@esposter/db-mock`         | ~886B   | Re-exports                   |
-| `@esposter/shared`          | ~461KB  | Utilities                    |
-| `@esposter/db`              | ~1.1MB  | Azure SDKs external          |
-| `@esposter/azure-mock`      | ~1.1MB  | Includes pglite peer         |
-| `@esposter/xml2js`          | ~1.1MB  | Bundles sax + xmlbuilder2    |
-| `@esposter/configuration`   | ~1.56MB | ESLint plugins + build tools |
-| `@esposter/vue-phaserjs`    | ~1.6MB  | Bundles Phaser               |
-| `@esposter/parse-tmx`       | ~800KB  | xml2js now external          |
-| `@esposter/azure-functions` | ~4.4MB  | Intentionally self-contained |
+| `@esposter/db-schema`       | ~64.4KB | Schema only                  |
+| `@esposter/infra`           | ~121KB  | Pulumi resources external    |
+| `@esposter/parse-tmx`       | ~815KB  | xml2js external              |
+| `@esposter/shared`          | ~384KB  | Vue/Zod external             |
+| `@esposter/xml2js`          | ~1.12MB | Bundles sax + xmlbuilder2    |
+| `vue-phaserjs`              | ~34KB   | Phaser/parse-tmx external    |
 
 ## Adding a New Package
 

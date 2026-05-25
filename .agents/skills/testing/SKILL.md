@@ -119,8 +119,8 @@ afterEach(() => {
 Every library package (`packages/*` except `app`) has `src/index.test.ts` with a bundle size snapshot:
 
 ```ts
-import { statSync } from "fs";
-import { resolve } from "path";
+import { getCrossPlatformSize } from "@esposter/configuration";
+import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const distFile = resolve(import.meta.dirname, "../dist/index.js");
@@ -128,16 +128,17 @@ const distFile = resolve(import.meta.dirname, "../dist/index.js");
 describe("@esposter/my-package", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(statSync(distFile).size).toMatchInlineSnapshot(`12345`);
+    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 12.06 KB (12345 bytes)"`);
   });
 });
 ```
 
 - Run `pnpm build` in the package first — the test reads the compiled `dist/index.js`.
 - Run `pnpm test --run -u` to update the snapshot value after a build change.
-- `app` is excluded — it's a Nuxt app with no single-file dist.
+- Use `getCrossPlatformSize` so CRLF/LF differences do not change snapshots across Windows and Linux/macOS.
+- `app` is different — its root `index.test.ts` snapshots the Nuxt server entry and normalized output directory sizes with `getCrossPlatformSize` / `getCrossPlatformDirectorySize`.
 
-To add a bundle size test to a new package: add `test`/`coverage` scripts, add `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`, create `src/index.test.ts`.
+To add a bundle size test to a new library package: add `test`/`coverage` scripts, add `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`, create `src/index.test.ts`.
 
 ## Running Tests
 
