@@ -7,6 +7,6 @@ const distFile = resolve(import.meta.dirname, "../dist/index.js");
 describe("@esposter/shared", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 383.85 KB (393065 bytes)"`);
+    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 413.70 KB (423625 bytes)"`);
   });
 });

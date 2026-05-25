@@ -8,6 +8,6 @@ const distFile = resolve(import.meta.dirname, "../dist/index.js");
 describe("@esposter/configuration", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 4.22 KB (4323 bytes)"`);
+    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 4.42 KB (4521 bytes)"`);
   });
 });

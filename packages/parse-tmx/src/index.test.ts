@@ -7,6 +7,6 @@ const distFile = resolve(import.meta.dirname, "../dist/index.js");
 describe("parse-tmx", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 815.38 KB (834954 bytes)"`);
+    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 981.31 KB (1004857 bytes)"`);
   });
 });

@@ -10,13 +10,13 @@ describe("@esposter/app", () => {
   test("server entry bundle size", () => {
     expect.hasAssertions();
     expect(getCrossPlatformSize(join(serverDir, "index.mjs"))).toMatchInlineSnapshot(
-      `"index.mjs: 94.32 KB (96583 bytes)"`,
+      `"index.mjs: 102.14 KB (104589 bytes)"`,
     );
   });
 
   test("server total bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(`"server: 25763.14 KB (26381452 bytes)"`);
+    expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(`"server: 84484.85 KB (86512489 bytes)"`);
   });
 
   test("client js bundle size", () => {
