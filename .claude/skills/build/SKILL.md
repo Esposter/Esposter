@@ -19,20 +19,28 @@ All extend `rolldownConfigurationBrowser`. Node adds `platform: "node"`. Isomorp
 
 ## Global External List
 
-Defined in `packages/configuration/src/external.ts`, exported as `external`. Used by `rolldownConfigurationBrowser` (which all rolldown configs extend) and by `packages/configuration/vite.config.js` (shared Vite config for `vue-phaserjs`).
+Defined in `packages/configuration/src/external/external.ts`, exported as `external`. Used by `rolldownConfigurationBrowser` (which all rolldown configs extend) and by `viteConfiguration`.
 
 ```ts
-// packages/configuration/src/external.ts
+// packages/configuration/src/external/external.ts
 export const external: (RegExp | string)[] = [
-  // All workspace packages with @esposter/ prefix
+  // Workspace packages — never bundle sibling packages
   /@esposter\//u,
-  // Workspace packages without @esposter/ prefix — must be listed explicitly
   "azure-mock",
   "parse-tmx",
   "vue-phaserjs",
-  // @esposter/db — Azure SDKs are peer deps
+  // @esposter/configuration
+  "@rolldown/plugin-node-polyfills",
+  "@vitejs/plugin-vue",
+  "rolldown",
+  "rolldown-plugin-dts",
+  /^unplugin-auto-import/u,
+  /^unplugin-dts/u,
+  "vite",
+  "vite-plugin-mkcert",
+  // @esposter/db
   "@azure/data-tables",
-  // ... etc
+  // ... (grouped by owning @esposter package, alphabetical package order, alphabetical entries within)
 ];
 ```
 
@@ -40,19 +48,75 @@ export const external: (RegExp | string)[] = [
 
 - **`/@esposter\//u` covers all `@esposter/*` workspace packages automatically** — never add individual `@esposter/foo` strings.
 - **Non-`@esposter/` workspace packages must be listed explicitly** — `azure-mock`, `parse-tmx`, `vue-phaserjs` are not covered by the regex.
-- **All peer dependencies must be in the external list** — if a package has a `peerDependency`, that dep MUST appear in the external list (or be covered by a regex). Otherwise it gets bundled.
-- **`dependencies` vs `peerDependencies`** — `dependencies` get bundled unless externalized; `peerDependencies` signal that the consumer provides them (and must be externalized to avoid duplicate copies).
-- **Vite builds**: `vite.config.js` (in `packages/configuration/`, symlinked to `packages/vue-phaserjs/`) spreads `external` into its `rolldownOptions.external` alongside its own peer deps (`phaser`, `pinia`, `vue`).
+- **Everything in the external list (except workspace packages) must be a `peerDependency`** — if a non-workspace dep is externalized, it must be in `peerDependencies`, not `dependencies`, in the owning package's `package.json`. Exceptions: `@esposter/app` (root consumer, not a library) and `@esposter/azure-functions` (overrides external list to bundle everything).
+- **`dependencies` get bundled; `peerDependencies` are externalized** — the two must stay in sync with the shared external list. Never add a dep to `external` without also moving it to `peerDependencies` in the package that owns it.
+- **Vite builds**: `viteConfiguration` lives in `packages/configuration/src/viteConfiguration.ts`. `packages/configuration/vite.config.js` imports it directly from source; package consumers such as `vue-phaserjs` import it from `@esposter/configuration`.
+
+### Ordering convention
+
+Entries are grouped by **owning `@esposter` package**, sections in alphabetical package-name order, entries alphabetical within each section. One exception: a final "Vue framework" group for deps that are always consumer-provided and not owned by a single package (`@vueuse/core`, `pinia`, `vue`). Each section header comment is the bare package name: `// @esposter/db`, `// @esposter/db-mock`, etc.
+
+### Auditing external vs peerDependencies alignment
+
+Run this from the repo root to find any `dependencies` entry that should be a `peerDependency`:
+
+```js
+// node -e "..." or save as a script
+const fs = require("fs"),
+  path = require("path");
+const externalStrings = [
+  "@azure/data-tables",
+  "@azure/search-documents",
+  "@azure/storage-blob",
+  "@azure/web-pubsub",
+  "@rolldown/plugin-node-polyfills",
+  "@electric-sql/pglite",
+  "@pulumi/azure-native",
+  "@pulumi/pulumi",
+  "@vitejs/plugin-vue",
+  "@vueuse/core",
+  "pinia",
+  "rolldown",
+  "rolldown-plugin-dts",
+  "vue",
+  "phaser",
+  "vite",
+  "vite-plugin-mkcert",
+  "zod",
+];
+const externalPatterns = [
+  /^drizzle-kit/,
+  /^drizzle-orm/,
+  /^phaser4-rex-plugins/,
+  /^unplugin-auto-import/,
+  /^unplugin-dts/,
+];
+const skip = new Set(["@esposter/app", "@esposter/azure-functions"]); // intentional exceptions
+const pkgsDir = "packages";
+for (const dir of fs.readdirSync(pkgsDir)) {
+  const p = path.join(pkgsDir, dir, "package.json");
+  if (!fs.existsSync(p)) continue;
+  const pkg = JSON.parse(fs.readFileSync(p, "utf8"));
+  if (skip.has(pkg.name)) continue;
+  const peers = new Set(Object.keys(pkg.peerDependencies || {}));
+  for (const dep of Object.keys(pkg.dependencies || {})) {
+    const isExt = externalStrings.includes(dep) || externalPatterns.some((r) => r.test(dep));
+    if (isExt && !peers.has(dep)) console.log(`${pkg.name}: ${dep} should be peerDependency`);
+  }
+}
+```
 
 ## Azure Functions Special Case
 
-`packages/azure-functions/rolldown.config.ts` replaces the external list entirely:
+`packages/azure-functions/rolldown.config.ts` uses a targeted external list instead of the full global one:
 
 ```ts
-external: ["@azure/functions"],
+external: [...externalVueFramework, "@azure/functions"],
 ```
 
-This is **intentional** — the Azure Functions bundle must be self-contained for deployment (Azure Functions runtime provides only `@azure/functions`). Everything else is bundled, resulting in a ~4.4MB output. Do not change this without verifying the deployment strategy.
+- **`externalVueFramework`** (`vue`, `@vueuse/core`, `pinia`) — peer deps of `@esposter/shared`/`@esposter/vue-phaserjs`; azure-functions doesn't use Vue so rolldown tree-shakes these out safely.
+- **Everything else is bundled** — the Azure Functions runtime provides only `@azure/functions`; all other deps (Azure SDKs, drizzle-orm, zod, postgres, @esposter/\* packages) must be in the bundle.
+- Do not spread the full `external` list here — it includes `/@esposter\//u` which would externalize `@esposter/db`, `@esposter/shared`, etc., breaking runtime.
 
 ## Bundle Sizes (Baselines)
 

@@ -43,18 +43,13 @@
     "typecheck": "tsgo"
   },
   "dependencies": {
-    "@azure/data-tables": "catalog:",
-    "@azure/storage-blob": "catalog:",
-    "@azure/web-pubsub": "catalog:",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "dayjs": "catalog:",
-    "drizzle-orm": "catalog:",
     "link-preview-js": "catalog:",
     "linkifyjs": "catalog:",
     "mime-types": "catalog:",
-    "node-html-parser": "catalog:",
-    "zod": "catalog:"
+    "node-html-parser": "catalog:"
   },
   "devDependencies": {
     "@azure/core-client": "catalog:",
@@ -70,8 +65,11 @@
   },
   "peerDependencies": {
     "@azure/data-tables": "catalog:",
+    "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@azure/web-pubsub": "catalog:",
-    "@esposter/db-schema": "workspace:*"
+    "@esposter/db-schema": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "zod": "catalog:"
   }
 }

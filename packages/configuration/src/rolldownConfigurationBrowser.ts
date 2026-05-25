@@ -2,7 +2,7 @@ import type { RolldownOptions } from "rolldown";
 
 import { dts } from "rolldown-plugin-dts";
 
-import { external } from "./external";
+import { external } from "./external/external";
 
 export const rolldownConfigurationBrowser: RolldownOptions = {
   external,

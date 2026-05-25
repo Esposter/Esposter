@@ -42,9 +42,7 @@
   },
   "dependencies": {
     "@esposter/db-schema": "workspace:*",
-    "@esposter/shared": "workspace:*",
-    "@pulumi/azure-native": "catalog:",
-    "@pulumi/pulumi": "catalog:"
+    "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
@@ -53,5 +51,9 @@
     "ctix": "catalog:",
     "rolldown": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@pulumi/azure-native": "catalog:",
+    "@pulumi/pulumi": "catalog:"
   }
 }

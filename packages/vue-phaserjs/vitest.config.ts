@@ -1,6 +1,6 @@
 import baseConfig from "@esposter/configuration/vitest.config";
 import vue from "@vitejs/plugin-vue";
-import { join } from "path";
+import { join } from "node:path";
 import AutoImport from "unplugin-auto-import/vite";
 import { mergeConfig } from "vitest/config";
 

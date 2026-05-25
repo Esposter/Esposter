@@ -36,9 +36,7 @@
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
-    "drizzle-orm": "catalog:",
-    "fast-deep-equal": "catalog:",
-    "zod": "catalog:"
+    "fast-deep-equal": "catalog:"
   },
   "devDependencies": {
     "@azure/core-http-compat": "catalog:",
@@ -54,5 +52,11 @@
     "rolldown": "catalog:",
     "type-fest": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@azure/data-tables": "catalog:",
+    "@azure/storage-blob": "catalog:",
+    "drizzle-orm": "catalog:",
+    "zod": "catalog:"
   }
 }

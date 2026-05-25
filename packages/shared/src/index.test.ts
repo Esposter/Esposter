@@ -1,5 +1,5 @@
-import { statSync } from "fs";
-import { resolve } from "path";
+import { statSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const distFile = resolve(import.meta.dirname, "../dist/index.js");
