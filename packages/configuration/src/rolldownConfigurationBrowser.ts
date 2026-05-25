@@ -4,14 +4,14 @@ import { dts } from "rolldown-plugin-dts";
 
 export const rolldownConfigurationBrowser: RolldownOptions = {
   external: [
+    // All workspace packages — regex covers @esposter/shared, @esposter/db-schema,
+    // @esposter/xml2js, @esposter/parse-tmx, etc. so new packages are external automatically
+    /@esposter\//u,
     // @esposter/db
     "@azure/data-tables",
     "@azure/search-documents",
     "@azure/storage-blob",
     "@azure/web-pubsub",
-    "@esposter/db-schema",
-    // Most packages depend on @esposter/shared
-    "@esposter/shared",
     // @esposter/infra
     "@pulumi/azure-native",
     "@pulumi/pulumi",

@@ -114,6 +114,31 @@ afterEach(() => {
 - **tRPC router tests** (`server/trpc/routers/**/*.test.ts`) — no `// @vitest-environment` directive (Nuxt env required).
 - **All other server-side tests** — add `// @vitest-environment node` as first line.
 
+## Bundle Size Snapshot Tests
+
+Every library package (`packages/*` except `app`) has `src/index.test.ts` with a bundle size snapshot:
+
+```ts
+import { statSync } from "fs";
+import { resolve } from "path";
+import { describe, expect, test } from "vitest";
+
+const distFile = resolve(import.meta.dirname, "../dist/index.js");
+
+describe("@esposter/my-package", () => {
+  test("bundle size", () => {
+    expect.hasAssertions();
+    expect(statSync(distFile).size).toMatchInlineSnapshot(`12345`);
+  });
+});
+```
+
+- Run `pnpm build` in the package first — the test reads the compiled `dist/index.js`.
+- Run `pnpm test --run -u` to update the snapshot value after a build change.
+- `app` is excluded — it's a Nuxt app with no single-file dist.
+
+To add a bundle size test to a new package: add `test`/`coverage` scripts, add `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`, create `src/index.test.ts`.
+
 ## Running Tests
 
 - **Do not run tests on Windows** — known Vitest crash: `TypeError: The argument 'filename' must be a file URL object...` with UnoCSS + happy-dom. Write tests; user runs them manually.
