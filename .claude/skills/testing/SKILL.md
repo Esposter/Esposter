@@ -7,6 +7,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 ## Structure
 
+- **`test` not `it`** — always use `test(...)`. Never use `it(...)`.
 - **`describe(functionRef, ...)`** — pass the function reference directly; use a string only when no importable reference exists.
 - **Declare `const` inside `describe`** — all shared test constants must be scoped inside the `describe` callback.
 - **`createCallerFactory` double-call** — always inline: `caller = createCallerFactory(router)(mockContext)`. No intermediate variable.
