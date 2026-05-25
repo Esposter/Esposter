@@ -171,7 +171,10 @@ describe(useDeleteColumns, () => {
   test("undo preserves row.data key order matching restored column order", () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("a"), createColumn("b"), createColumn("c")], [createRow({ a: 1, b: 2, c: 3 })]);
+    const ds = createDataSource(
+      [createColumn("a"), createColumn("b"), createColumn("c")],
+      [createRow({ a: 1, b: 2, c: 3 })],
+    );
     const { editedItem } = setupWithDataSource(ds);
     const deleteColumns = useDeleteColumns();
     const fileHistoryStore = useFileHistoryStore();

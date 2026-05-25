@@ -164,7 +164,10 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.DropRow} undo restores deleted rows in original positions`, () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": " " }), createRow({ "": "" })]);
+    const ds = createDataSource(
+      [createColumn("")],
+      [createRow({ "": null }), createRow({ "": " " }), createRow({ "": "" })],
+    );
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
     const fileHistoryStore = useFileHistoryStore();

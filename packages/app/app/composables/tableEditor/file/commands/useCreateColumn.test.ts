@@ -137,7 +137,9 @@ describe(useCreateColumn, () => {
     expect.hasAssertions();
 
     const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]));
+    const { editedItem } = setupWithDataSource(
+      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
+    );
     const createColumn = useCreateColumn();
     const newColumn = new ComputedColumn({
       name: " ",
@@ -160,7 +162,9 @@ describe(useCreateColumn, () => {
     expect.hasAssertions();
 
     const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]));
+    const { editedItem } = setupWithDataSource(
+      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
+    );
     const createColumn = useCreateColumn();
     const newColumn = new ComputedColumn({
       name: " ",
@@ -182,7 +186,9 @@ describe(useCreateColumn, () => {
     expect.hasAssertions();
 
     const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]));
+    const { editedItem } = setupWithDataSource(
+      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
+    );
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
@@ -207,7 +213,9 @@ describe(useCreateColumn, () => {
     expect.hasAssertions();
 
     const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]));
+    const { editedItem } = setupWithDataSource(
+      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
+    );
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;

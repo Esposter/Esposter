@@ -61,7 +61,10 @@ export const setupWithDataSource = (dataSource?: DataSource) => {
   const { editedItem, item } = setupEditedItem();
   const ds =
     dataSource ??
-    createDataSource([createColumn(""), createColumn(" ")], [createRow({ "": 0, " ": 1 }), createRow({ "": 2, " ": 3 })]);
+    createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": 0, " ": 1 }), createRow({ "": 2, " ": 3 })],
+    );
   const setDataSource = useSetDataSource();
   setDataSource(ds);
   return { editedItem, item };

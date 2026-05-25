@@ -2,7 +2,11 @@ import type { AggregationTransformation } from "#shared/models/tableEditor/file/
 
 import { AggregationTransformationType } from "#shared/models/tableEditor/file/column/transformation/AggregationTransformationType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { createDataSource, createNumberColumn, createRow } from "@/composables/tableEditor/file/commands/testUtils.test";
+import {
+  createDataSource,
+  createNumberColumn,
+  createRow,
+} from "@/composables/tableEditor/file/commands/testUtils.test";
 import { computeAggregationValue } from "@/services/tableEditor/file/column/computeAggregationValue";
 import { describe, expect, test } from "vitest";
 

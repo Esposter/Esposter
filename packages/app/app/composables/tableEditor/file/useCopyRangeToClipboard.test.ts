@@ -38,7 +38,10 @@ describe(useCopyRangeToClipboard, () => {
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
     setupWithDataSource(
-      createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" }), createRow({ a: "3", b: "4" })]),
+      createDataSource(
+        [createColumn("a"), createColumn("b")],
+        [createRow({ a: "1", b: "2" }), createRow({ a: "3", b: "4" })],
+      ),
     );
     selectRange(0, 0, 0, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();
@@ -66,7 +69,10 @@ describe(useCopyRangeToClipboard, () => {
     const rowStore = useRowStore();
     rowStore.copyIncludesHeaders = true;
     setupWithDataSource(
-      createDataSource([createColumn("a"), createColumn("b"), createColumn("c")], [createRow({ a: "1", b: "2", c: "3" })]),
+      createDataSource(
+        [createColumn("a"), createColumn("b"), createColumn("c")],
+        [createRow({ a: "1", b: "2", c: "3" })],
+      ),
     );
     selectRange(0, 0, 1, 1);
     const copyRangeToClipboard = useCopyRangeToClipboard();

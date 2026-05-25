@@ -225,7 +225,10 @@ describe(computeColumnStatistics, () => {
   test("string column with all null values returns null mostFrequentValue and 100 nullPercent", () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource([new StringColumn({ name: "" })], [createRow({ "": null }), createRow({ "": null })]);
+    const dataSource = createDataSource(
+      [new StringColumn({ name: "" })],
+      [createRow({ "": null }), createRow({ "": null })],
+    );
 
     expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,

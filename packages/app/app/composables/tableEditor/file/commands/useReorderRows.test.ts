@@ -81,7 +81,10 @@ describe(useReorderRows, () => {
   test("moves row backward (index 2 to 0) with three rows", () => {
     expect.hasAssertions();
 
-    const threeRowDs = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 1 }), createRow({ "": 2 })]);
+    const threeRowDs = createDataSource(
+      [createColumn("")],
+      [createRow({ "": 0 }), createRow({ "": 1 }), createRow({ "": 2 })],
+    );
     const { editedItem } = setupWithDataSource(threeRowDs);
     const reorderRows = useReorderRows();
     const rows = editedItem.value?.dataSource?.rows ?? [];
@@ -99,7 +102,10 @@ describe(useReorderRows, () => {
   test("moves row forward non-adjacent (index 0 to 2) with three rows", () => {
     expect.hasAssertions();
 
-    const threeRowDs = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 1 }), createRow({ "": 2 })]);
+    const threeRowDs = createDataSource(
+      [createColumn("")],
+      [createRow({ "": 0 }), createRow({ "": 1 }), createRow({ "": 2 })],
+    );
     const { editedItem } = setupWithDataSource(threeRowDs);
     const reorderRows = useReorderRows();
     const rows = editedItem.value?.dataSource?.rows ?? [];

@@ -70,7 +70,11 @@ describe(filterDataSourceRows, () => {
 
     const dataSource = createDataSource(
       [createColumn(""), createColumn(" ")],
-      [createRow({ "": "abc", " ": "xyz" }), createRow({ "": "abc", " ": "def" }), createRow({ "": "ghi", " ": "xyz" })],
+      [
+        createRow({ "": "abc", " ": "xyz" }),
+        createRow({ "": "abc", " ": "def" }),
+        createRow({ "": "ghi", " ": "xyz" }),
+      ],
     );
 
     const result = filterDataSourceRows(dataSource.rows, {
