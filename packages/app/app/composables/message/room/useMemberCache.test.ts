@@ -35,7 +35,7 @@ describe(useMemberCache, () => {
     email: "email@example.com",
     emailVerified: true,
     id: crypto.randomUUID(),
-    image: null,
+    image: "",
     name: "name",
     updatedAt: new Date(),
   } satisfies User;

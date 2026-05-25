@@ -19,7 +19,7 @@ describe(writeIndexedDb, () => {
     createdAt: new Date(),
     deletedAt: null,
     id: crypto.randomUUID(),
-    image: null,
+    image: "",
     isReadOnly: false,
     name: "",
     participantKey: null,

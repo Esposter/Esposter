@@ -10,7 +10,7 @@ export const appUsersInMessage = pgTable(
   "appUsers",
   {
     id: uuid().primaryKey().defaultRandom(),
-    image: text(),
+    image: text().notNull().default(""),
     name: text().notNull(),
   },
   {

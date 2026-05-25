@@ -1,3 +1,5 @@
+import type { SQL } from "drizzle-orm";
+
 import { NotificationType, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, inArray } from "drizzle-orm";
 

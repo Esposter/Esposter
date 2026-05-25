@@ -18,7 +18,7 @@ describe(getCursorWhere, () => {
     email: "",
     emailVerified: false,
     id: crypto.randomUUID(),
-    image: null,
+    image: "",
     name: "",
     updatedAt: createdAt,
   };

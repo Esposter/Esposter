@@ -111,7 +111,8 @@ export const createMockContext = async (): Promise<Context> => {
 
 const createMockDb = async () => {
   const db = await baseCreateMockDb();
-  await db.insert(users).values(mocks.getSession().user);
+  const { user } = mocks.getSession();
+  await db.insert(users).values({ ...user, image: user.image ?? "" });
   return db as Context["db"];
 };
 
