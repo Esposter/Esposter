@@ -20,6 +20,7 @@ export const external: (RegExp | string)[] = [
   /^unplugin-dts/u,
   "vite",
   "vite-plugin-mkcert",
+  "vitest/config",
   // @esposter/db
   "@azure/data-tables",
   "@azure/search-documents",
