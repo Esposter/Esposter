@@ -8,6 +8,7 @@
 
 - 📖 [Documentation](#documentation)
 - 🏠 [Local Development](#local-development)
+- 🧱 [Architecture](#architecture)
 - 📦 [Packages](#packages)
 - 🤝 [Community](#community)
 - ⚖️ [License](#license)
