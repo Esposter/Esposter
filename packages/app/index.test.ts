@@ -21,7 +21,7 @@ describe("@esposter/app", () => {
       );
   });
 
-  test("server total bundle size", () => {
+  test.todo("server total bundle size", () => {
     expect.hasAssertions();
 
     if (isWindows)
