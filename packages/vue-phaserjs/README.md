@@ -20,7 +20,7 @@ Vue 3 integration for the [Phaser 4](https://phaser.io) game engine. Provides Vu
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i vue-phaserjs vue phaser phaser4-rex-plugins pinia
+pnpm i vue-phaserjs @esposter/shared parse-tmx vue phaser phaser4-rex-plugins pinia
 ```
 
 Add the type declaration files so scene key types and custom plugins get proper intellisense:

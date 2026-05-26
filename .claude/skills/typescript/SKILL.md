@@ -21,6 +21,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
   - `arr.with(index, value)` instead of `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`
 - **Only use `new Set` when deduplication is needed** — use `.some()` for unique arrays. `Set` only when: (a) deduplication is the goal, or (b) collection large enough that O(n) `.some()` hurts perf.
 - Always use named imports from libraries — only when not already auto-imported by Nuxt or Nuxt modules (e.g. `ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; VueUse composables are all auto-imported and must not be manually imported).
+- **Always use the `node:` protocol for Node.js built-in imports** — `import { readFileSync } from "node:fs"`, `import { resolve } from "node:path"`, `import { Buffer } from "node:buffer"`. Never bare `"fs"`, `"path"`, `"crypto"`, etc. Enforced by `unicorn/prefer-node-protocol: error`.
 - Explicitly type variables with proper types.
 - **Never use generic variable names like `parsed`** — always use a descriptive name that includes the type: `parsedDate`, `parsedResult`, `parsedConfig`, etc.
 - **No `current*` variable caching of `.value`** — don't assign `const currentX = x.value` just to use it once. If TypeScript narrowing is needed after a guard, assign with a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source value is already non-reactive (e.g. a `readonly` prop field).

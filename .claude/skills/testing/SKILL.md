@@ -7,6 +7,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 ## Structure
 
+- **`test` not `it`** — always use `test(...)`. Never use `it(...)`.
 - **`describe(functionRef, ...)`** — pass the function reference directly; use a string only when no importable reference exists.
 - **Declare `const` inside `describe`** — all shared test constants must be scoped inside the `describe` callback.
 - **`createCallerFactory` double-call** — always inline: `caller = createCallerFactory(router)(mockContext)`. No intermediate variable.
@@ -112,6 +113,32 @@ afterEach(() => {
 
 - **tRPC router tests** (`server/trpc/routers/**/*.test.ts`) — no `// @vitest-environment` directive (Nuxt env required).
 - **All other server-side tests** — add `// @vitest-environment node` as first line.
+
+## Bundle Size Snapshot Tests
+
+Every library package (`packages/*` except `app`) has `src/index.test.ts` with a bundle size snapshot:
+
+```ts
+import { getCrossPlatformSize } from "@esposter/configuration";
+import { resolve } from "node:path";
+import { describe, expect, test } from "vitest";
+
+const distFile = resolve(import.meta.dirname, "../dist/index.js");
+
+describe("@esposter/my-package", () => {
+  test("bundle size", () => {
+    expect.hasAssertions();
+    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 12.06 KB (12345 bytes)"`);
+  });
+});
+```
+
+- Run `pnpm build` in the package first — the test reads the compiled `dist/index.js`.
+- Run `pnpm test --run -u` to update the snapshot value after a build change.
+- Use `getCrossPlatformSize` so CRLF/LF differences do not change snapshots across Windows and Linux/macOS.
+- `app` is different — its root `index.test.ts` snapshots the Nuxt server entry and normalized output directory sizes with `getCrossPlatformSize` / `getCrossPlatformDirectorySize`.
+
+To add a bundle size test to a new library package: add `test`/`coverage` scripts, add `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`, create `src/index.test.ts`.
 
 ## Running Tests
 

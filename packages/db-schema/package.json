@@ -65,6 +65,8 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@azure/data-tables": "catalog:",
+    "@azure/storage-blob": "catalog:",
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "zod": "catalog:"

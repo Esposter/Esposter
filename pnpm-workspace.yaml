@@ -46,10 +46,10 @@ catalog:
   "@happy-dom/global-registrator": ^20.9.0
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.1
-  "@lerna-lite/cli": ^5.2.1
-  "@lerna-lite/publish": ^5.2.1
-  "@lerna-lite/run": ^5.2.1
-  "@lerna-lite/watch": ^5.2.1
+  "@lerna-lite/cli": ^5.2.2
+  "@lerna-lite/publish": ^5.2.2
+  "@lerna-lite/run": ^5.2.2
+  "@lerna-lite/watch": ^5.2.2
   "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
   "@ninoseki/eslint-plugin-neverthrow": ^0.2.0
@@ -62,7 +62,7 @@ catalog:
   "@pulumi/azure-native": ^3.18.0
   "@pulumi/pulumi": ^3.243.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^1.5.0
+  "@takumi-rs/core": ^1.5.1
   "@tiptap/core": ^3.23.5
   "@tiptap/extension-code-block-lowlight": ^3.23.5
   "@tiptap/extension-file-handler": ^3.23.5
@@ -93,7 +93,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260524.1
+  "@typescript/native-preview": ^7.0.0-dev.20260525.1
   "@unocss/eslint-config": ^66.7.0
   "@unocss/nuxt": ^66.7.0
   "@vite-pwa/nuxt": ^1.1.1
@@ -106,7 +106,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^4.2.0
-  "@vue/language-core": ^3.3.1
+  "@vue/language-core": ^3.3.2
   "@vue/test-utils": ^2.4.10
   "@vuepic/vue-datepicker": ^13.0.0
   "@vueuse/core": ^14.3.0
@@ -212,7 +212,7 @@ catalog:
   type-fest: ^5.6.0
   typedoc: ^0.28.19
   typescript: 5.9.3
-  typescript-eslint: ^8.59.4
+  typescript-eslint: ^8.60.0
   unocss: ^66.7.0
   unocss-preset-vuetify: ^0.3.0
   unplugin-auto-import: ^21.0.0
@@ -227,7 +227,7 @@ catalog:
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
   vue-router: ^5.0.7
-  vue-tsc: ^3.3.1
+  vue-tsc: ^3.3.2
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.0.7
   vuetify-nuxt-module: ^1.0.0-beta.4
