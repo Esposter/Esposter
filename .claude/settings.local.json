@@ -143,7 +143,9 @@
       "WebFetch(domain:orm.drizzle.team)",
       "WebFetch(domain:vuetifyjs.com)",
       "WebFetch(domain:vueuse.org)",
-      "WebFetch(domain:www.npmjs.com)"
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(pnpm test:packages *)",
+      "Bash(npm list *)"
     ]
   }
 }

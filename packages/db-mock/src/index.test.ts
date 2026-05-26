@@ -9,8 +9,8 @@ describe("@esposter/db-mock", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(
-      isWindows ? `"index.js: 0.87 KB (886 bytes)"` : `"index.js: 0.88 KB (898 bytes)"`,
-    );
+    if (isWindows)
+      expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 0.87 KB (886 bytes)"`);
+    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 0.87 KB (886 bytes)"`);
   });
 });

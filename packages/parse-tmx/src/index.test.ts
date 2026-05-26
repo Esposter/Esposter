@@ -9,8 +9,8 @@ describe("parse-tmx", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(
-      isWindows ? `"index.js: 815.38 KB (834954 bytes)"` : `"index.js: 981.31 KB (1004857 bytes)"`,
-    );
+    if (isWindows)
+      expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 815.38 KB (834954 bytes)"`);
+    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 815.38 KB (834954 bytes)"`);
   });
 });

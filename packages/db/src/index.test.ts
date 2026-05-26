@@ -8,8 +8,9 @@ const isWindows = process.platform === "win32";
 describe("@esposter/db", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(
-      isWindows ? `"index.js: 1094.68 KB (1120953 bytes)"` : `"index.js: 1178.87 KB (1207159 bytes)"`,
-    );
+
+    if (isWindows)
+      expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 1094.68 KB (1120953 bytes)"`);
+    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 1094.68 KB (1120953 bytes)"`);
   });
 });

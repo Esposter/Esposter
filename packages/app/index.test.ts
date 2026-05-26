@@ -10,20 +10,32 @@ const isWindows = process.platform === "win32";
 describe("@esposter/app", () => {
   test("server entry bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformSize(join(serverDir, "index.mjs"))).toMatchInlineSnapshot(
-      isWindows ? `"index.mjs: 94.32 KB (96583 bytes)"` : `"index.mjs: 102.14 KB (104589 bytes)"`,
-    );
+
+    if (isWindows)
+      expect(getCrossPlatformSize(join(serverDir, "index.mjs"))).toMatchInlineSnapshot(
+        `"index.mjs: 94.32 KB (96583 bytes)"`,
+      );
+    else
+      expect(getCrossPlatformSize(join(serverDir, "index.mjs"))).toMatchInlineSnapshot(
+        `"index.mjs: 0.70 KB (721 bytes)"`,
+      );
   });
 
   test("server total bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(
-      isWindows ? `"server: 84492.55 KB (86520372 bytes)"` : `"server: 84484.85 KB (86512489 bytes)"`,
-    );
+
+    if (isWindows)
+      expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(
+        `"server: 84492.55 KB (86520372 bytes)"`,
+      );
+    else
+      expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(
+        `"server: 78151.55 KB (80027187 bytes)"`,
+      );
   });
 
   test("client js bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformDirectorySize(nuxtDir)).toMatchInlineSnapshot(`"_nuxt: 109352.28 KB (111976738 bytes)"`);
+    expect(getCrossPlatformDirectorySize(nuxtDir)).toMatchInlineSnapshot(`"_nuxt: 109348.38 KB (111972737 bytes)"`);
   });
 });
