@@ -25,13 +25,9 @@ describe("@esposter/app", () => {
     expect.hasAssertions();
 
     if (isWindows)
-      expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(
-        `"server: 84492.55 KB (86520372 bytes)"`,
-      );
+      expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(`"server: 84492.55 KB (86520372 bytes)"`);
     else
-      expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(
-        `"server: 78151.55 KB (80027187 bytes)"`,
-      );
+      expect(getCrossPlatformDirectorySize(serverDir)).toMatchInlineSnapshot(`"server: 78151.55 KB (80027187 bytes)"`);
   });
 
   test("client js bundle size", () => {
