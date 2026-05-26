@@ -31,6 +31,15 @@ All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `
 | `pnpm outdated`         | List outdated dependencies                         |
 | `pnpm list`             | List installed packages                            |
 
+## Root Scripts
+
+| Command                | Notes                                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `pnpm i`               | Refresh dependencies/lockfile after manifest changes; use this exact command.                   |
+| `pnpm depcruise:graph` | Generate `dependency-graph.svg` directly from dependency-cruiser DOT output via `graphviz-cli`. |
+
+Do not use `pnpm install --config.confirmModulesPurge=false`; it can create a local `.pnpm-store/`.
+
 ## Key Rules
 
 - **Local linting**: run `pnpm lint:fix` directly — never manually edit to satisfy ESLint/oxlint

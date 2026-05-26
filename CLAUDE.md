@@ -80,6 +80,17 @@ Barrel files (run in the package where you added/removed exports):
 pnpm export:gen       # regenerate index.ts barrel via ctix
 ```
 
+Dependency installs and graph generation (run from repo root):
+
+```bash
+pnpm i                # refresh dependencies/lockfile after package.json changes
+pnpm depcruise:graph  # generate dependency-graph.svg from package entrypoints
+```
+
+Use plain `pnpm i` for dependency installs. Do not use `pnpm install --config.confirmModulesPurge=false` or similar store overrides; they can create a local `.pnpm-store/` that is annoying to clean up.
+
+`pnpm depcruise:graph` should pipe dependency-cruiser DOT output directly into `graphviz-cli` to produce `dependency-graph.svg`. Avoid committing intermediate DOT/Mermaid files unless explicitly needed for debugging.
+
 ## Architecture
 
 ### Data Storage Split

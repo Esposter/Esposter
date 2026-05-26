@@ -8,6 +8,7 @@
 
 - 📖 [Documentation](#documentation)
 - 🏠 [Local Development](#local-development)
+- 🧱 [Architecture](#architecture)
 - 📦 [Packages](#packages)
 - 🤝 [Community](#community)
 - ⚖️ [License](#license)
@@ -280,6 +281,16 @@ pnpm preview
 
 Esposter is a lerna + pnpm workspaces monorepo.
 Packages are used directly by the nuxt application via `workspace:*`.
+
+### Workspace Graph
+
+![Workspace dependency graph](./dependency-graph.svg)
+
+Regenerate this graph from the repo root with:
+
+```bash
+pnpm depcruise:graph
+```
 
 ## <a name="packages">📦 Packages</a>
 

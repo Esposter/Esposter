@@ -51,8 +51,6 @@
     "node-html-parser": "catalog:"
   },
   "devDependencies": {
-    "@azure/core-client": "catalog:",
-    "@azure/search-documents": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@types/mime-types": "catalog:",
@@ -63,6 +61,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@azure/core-client": "catalog:",
     "@azure/data-tables": "catalog:",
     "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",

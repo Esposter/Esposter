@@ -22,6 +22,7 @@ export const external: (RegExp | string)[] = [
   "vite-plugin-mkcert",
   "vitest/config",
   // @esposter/db
+  "@azure/core-client",
   "@azure/data-tables",
   "@azure/search-documents",
   "@azure/storage-blob",
@@ -29,8 +30,8 @@ export const external: (RegExp | string)[] = [
   // @esposter/db-mock
   "@electric-sql/pglite",
   /^drizzle-kit/u,
-  /^drizzle-orm/u,
   // @esposter/db-schema
+  /^drizzle-orm/u,
   "zod",
   // @esposter/infra
   "@pulumi/azure-native",

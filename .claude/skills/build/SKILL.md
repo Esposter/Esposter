@@ -150,4 +150,15 @@ external: [...externalVueFramework, "@azure/functions"],
 3. For any dep that the consumer should provide, add it to `peerDependencies` AND verify it's covered by the global external list (or add it there).
 4. Add `src/index.test.ts` bundle size snapshot (see testing skill).
 5. Add `test`/`coverage` scripts + `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`.
-6. Run `pnpm install` from workspace root after editing `package.json`.
+6. Run `pnpm i` from the workspace root after editing `package.json`.
+
+## Dependency Installs
+
+- Use plain `pnpm i` from the repo root when package manifests change.
+- Do not use `pnpm install --config.confirmModulesPurge=false` or other store override workarounds; they can create a local `.pnpm-store/` in the repo.
+- If `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.
+
+## Workspace Graph
+
+- Use `pnpm depcruise:graph` to generate `dependency-graph.svg`.
+- The command should pipe dependency-cruiser DOT output directly into `graphviz-cli`; avoid keeping intermediate `MODULES.dot`, `MODULES.mmd`, or generated Markdown wrapper files unless explicitly requested.
