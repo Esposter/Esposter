@@ -28,7 +28,7 @@ describe(useParticipantStore, () => {
       expect(speakingIds.value).toStrictEqual([sessionId]);
     });
 
-    test("deduplicates speaking ids", () => {
+    test("createSpeaker is idempotent", () => {
       expect.hasAssertions();
 
       const participantStore = useParticipantStore();
@@ -70,7 +70,6 @@ describe(useParticipantStore, () => {
         name: user.name,
         userId: user.id,
       };
-
       const participantStore = useParticipantStore();
       const { createCallParticipant } = participantStore;
       const { callSessionParticipantsMap } = storeToRefs(participantStore);
@@ -82,7 +81,7 @@ describe(useParticipantStore, () => {
       expect(takeOne(sessionParticipants)).toStrictEqual(participant);
     });
 
-    test("deduplicates same participant", () => {
+    test("createCallParticipant is idempotent", () => {
       expect.hasAssertions();
 
       const { session, user } = getMockSession();
@@ -94,7 +93,6 @@ describe(useParticipantStore, () => {
         name: user.name,
         userId: user.id,
       };
-
       const participantStore = useParticipantStore();
       const { createCallParticipant } = participantStore;
       const { callSessionParticipantsMap } = storeToRefs(participantStore);
@@ -118,7 +116,6 @@ describe(useParticipantStore, () => {
         name: user.name,
         userId: user.id,
       };
-
       const participantStore = useParticipantStore();
       const { createCallParticipant, setMute } = participantStore;
       const { callSessionParticipantsMap } = storeToRefs(participantStore);

@@ -39,6 +39,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 - **Date format tests** — `for...of` inside a single test using `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never `test.each`.
 - **Interpolated descriptions** — `` `${AdminActionType.BanUser}: owner bans member — ban inserted` ``. **Never write enum values as string literals** in describe/test titles; always use template literals with the enum reference. Plain English names for non-enum cases: "integer", "decimal", "epoch date".
+- **Idempotency** — always `"[functionName] is idempotent"` when calling the same operation multiple times produces the same result (e.g. `"createSpeaker is idempotent"`, `"creates is idempotent"`). Never use `"deduplicates [thing]"`, `"does not create duplicate"`, or `"skips duplicate"`.
 
 ## Array / Type Utilities
 
