@@ -125,6 +125,7 @@ catalog:
   debug: ^4.4.3
   dedent: ^1.7.2
   defu: ^6.1.7
+  dependency-cruiser: ^17.4.2
   dotenv: ^17.4.2
   drizzle-kit: 1.0.0-rc.2
   drizzle-orm: 1.0.0-rc.2
@@ -155,6 +156,7 @@ catalog:
   grapesjs-tui-image-editor: ^1.0.2
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.52.1
+  graphviz-cli: ^2.0.0
   grid-layout-plus: ^1.1.1
   gsap: ^3.15.0
   h3: ^1.15.11

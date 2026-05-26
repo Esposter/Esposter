@@ -63,6 +63,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@azure/core-client": "catalog:",
     "@azure/data-tables": "catalog:",
     "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",
