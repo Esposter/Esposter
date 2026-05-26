@@ -11,6 +11,6 @@ describe("@esposter/db", () => {
 
     if (isWindows)
       expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 1094.68 KB (1120954 bytes)"`);
-    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 1094.68 KB (1120953 bytes)"`);
+    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 1094.68 KB (1120954 bytes)"`);
   });
 });
