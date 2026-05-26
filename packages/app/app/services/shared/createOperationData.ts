@@ -23,7 +23,7 @@ export const createOperationData = <
   };
   const createItem = (newItem: TItem, isReversed?: true) => {
     // Guard against duplicate delivery from transport reconnections (e.g. SSE Last-Event-ID
-    // catch-up re-yielding events already present in the store, WebPubSub reconnect buffering).
+    // Catch-up re-yielding events already present in the store, WebPubSub reconnect buffering).
     if (items.value.some(getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], newItem))) return;
     else if (isReversed) items.value.unshift(newItem);
     else items.value.push(newItem);
