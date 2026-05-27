@@ -22,6 +22,7 @@ export const getViteConfiguration = (): UserConfig => ({
   plugins: [
     AutoImport({ imports: ["pinia", "vue"] }),
     vue(),
+    // @TODO: Can remove after upgrade https://github.com/qmhc/unplugin-dts/commit/802d24346bb2d7e67f173ff7000d4955b7f30a7d
     dts({ processor: "vue", tsconfigPath: "tsconfig.build.json" }),
     mkcert(),
   ],
