@@ -81,12 +81,12 @@ Every new resource must set the `parent` Pulumi option. Use the **nearest final 
 
 - Durable infrastructure docs live in `packages/infra/docs/`.
 - Ordered infrastructure roadmap files live in `features/infra/v*.md`; completed roadmaps move to `features/infra/completed/`.
-- Keep Azure naming rules in `docs/naming-conventions.md`.
-- Keep the package overview and imported resource inventory in `docs/overview.md`.
+- Keep Azure naming rules in `packages/infra/docs/naming-conventions.md`.
+- Keep the package overview and imported resource inventory in `packages/infra/docs/overview.md`.
 - Keep phase-2 cost/security findings in `features/infra/optimization-review.md`.
-- Keep security hardening blockers and app code references in `docs/security-constraints.md`.
-- Keep stack policy in `docs/stacks.md`.
-- Keep cleanup, optimization, naming-refactor, and production-stack phases in `docs/roadmap.md`.
+- Keep security hardening blockers and app code references in `packages/infra/docs/security-constraints.md`.
+- Keep stack policy in `packages/infra/docs/stacks.md`.
+- Keep cleanup, optimization, naming-refactor, and production-stack phases in `packages/infra/docs/roadmap.md`.
 - Move completed one-off migration notes out of the package after their durable content is represented in `docs/`.
 
 ## Generated And Migration Files

@@ -2,7 +2,7 @@
 
 This document tracks phase-2 infrastructure optimization candidates found in the imported Pulumi declarations.
 
-Completed roadmaps live in `completed/`. Active roadmap: `v6.md`.
+Completed roadmaps live in `completed/`. This file remains active while any resource category checklist items are still open.
 
 Do not apply cost, network, identity, or retention changes in bulk. Change one resource category at a time and require a clean `pnpm infra:preview` before `pnpm infra:up`.
 

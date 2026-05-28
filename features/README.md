@@ -8,6 +8,7 @@ Planning and spec documents for Esposter features, refactors, and roadmaps.
 
 ```
 features/
+  README.md
   <feature-area>/
     architecture.md        ← optional: key file map, data flows, DB schema (reference)
     <active-roadmap>.md    ← current version roadmap with pending items
@@ -29,6 +30,19 @@ features/
 
 ---
 
+## Cross-Cutting Architecture
+
+Design decisions that span multiple feature areas live in [`/architecture/`](../architecture/) at the repo root, not in any single feature area's `architecture.md`.
+
+| File                | What it covers                                                                                           |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| `azure-services.md` | All Azure services (Blob, Table, Functions, EventGrid, WebPubSub, LiveKit) and the real-time layer model |
+| `file-uploads.md`   | Two-step SAS pattern, all upload procedures, why `octetInputParser` was removed                          |
+
+Feature-area `architecture.md` files cover only that area's specific file maps, data flows, and DB schema.
+
+---
+
 ## Adding a New Feature
 
 1. **One spec file per feature** — `features/<area>/specs/<feature-name>.md`. Kebab-case names.
@@ -41,10 +55,10 @@ features/
 
 ## Feature Areas
 
-| Area               | Active Roadmap    | Description                                                     |
-| ------------------ | ----------------- | --------------------------------------------------------------- |
-| `esbabbler/`       | `v5.md`           | Messaging, calls, rooms, moderation, DMs                        |
-| `fileTableEditor/` | —                 | CSV/JSON/XLSX table editor with computed columns                |
-| `infra/`           | `v3.md`           | Azure Pulumi infrastructure, cost, security, and stack planning |
-| `vue-phaserjs/`    | —                 | Phaser game engine Vue integration                              |
-| `refactors/`       | `null-removal.md` | Cross-cutting code quality migrations                           |
+| Area               | Active Roadmap           | Description                                                     |
+| ------------------ | ------------------------ | --------------------------------------------------------------- |
+| `esbabbler/`       | `v6.md`                  | Messaging, calls, rooms, moderation, DMs                        |
+| `fileTableEditor/` | —                        | CSV/JSON/XLSX table editor with computed columns                |
+| `infra/`           | `optimization-review.md` | Azure Pulumi infrastructure, cost, security, and stack planning |
+| `vue-phaserjs/`    | —                        | Phaser game engine Vue integration                              |
+| `refactors/`       | `null-removal.md`        | Cross-cutting code quality migrations                           |
