@@ -13,7 +13,6 @@ interface OverviewImageFieldProps {
 const { roomId } = defineProps<OverviewImageFieldProps>();
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
-const { storeUpdateRoom } = roomStore;
 const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));
 const fileInputRef = ref<HTMLInputElement>();
@@ -27,8 +26,7 @@ const upload = async (event: Event) => {
     async () => {
       const { publicUrl, sasUrl } = await $trpc.room.generateProfileImageUploadUrl.mutate({ roomId });
       await uploadBlocks(file, sasUrl);
-      const updatedRoom = await $trpc.room.updateRoom.mutate({ id: roomId, image: publicUrl });
-      storeUpdateRoom(updatedRoom);
+      await $trpc.room.updateRoom.mutate({ id: roomId, image: publicUrl });
     },
     () => {
       isLoading.value = false;
