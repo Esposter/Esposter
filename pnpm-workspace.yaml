@@ -248,6 +248,7 @@ minimumReleaseAge: 0
 
 overrides:
   crossws: ^0.4.5
+  h3: ^1.15.11
   pdfjs-dist: ^5.7.284
   vite: ^8.0.14
   vue-router: ^5.0.7
