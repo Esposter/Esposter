@@ -10,6 +10,7 @@ import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { dayjs } from "#shared/services/dayjs";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -36,6 +37,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
+import { ContainerSASPermissions } from "@azure/storage-blob";
 import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
@@ -217,6 +219,18 @@ export const baseRoomRouter = router({
     await deleteDirectory(containerClient, input, true);
     return deletedRoom;
   }),
+  generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
+    async ({ input: { roomId } }) => {
+      const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+      const blobName = `${roomId}/ProfileImage`;
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      const sasUrl = await blockBlobClient.generateSasUrl({
+        expiresOn: dayjs().add(1, "hour").toDate(),
+        permissions: ContainerSASPermissions.from({ write: true }),
+      });
+      return { publicUrl: blockBlobClient.url, sasUrl };
+    },
+  ),
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const { roomId, roomInMessage, user } = await ctx.db.transaction(async (tx) => {
       const invite = await tx.query.invitesInMessage.findFirst({

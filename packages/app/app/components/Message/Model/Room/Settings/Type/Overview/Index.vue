@@ -57,6 +57,11 @@ const save = async () => {
       </v-col>
     </v-row>
     <v-row>
+      <v-col cols="12">
+        <MessageModelRoomSettingsTypeOverviewImageField :room-id />
+      </v-col>
+    </v-row>
+    <v-row>
       <v-col cols="12" md="6" sm="8">
         <MessageModelRoomSettingsTypeOverviewCategoryField
           v-model="selectedCategoryId"

@@ -1,5 +1,6 @@
 import { Environment } from "#shared/models/environment/Environment";
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
+import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, beforeAll, vi } from "vitest";
 
 vi.mock("@@/server/composables/useIsProduction", () => ({
@@ -7,7 +8,7 @@ vi.mock("@@/server/composables/useIsProduction", () => ({
 }));
 
 vi.mock("@@/server/composables/azure/container/useContainerBaseUrl", () => ({
-  useContainerBaseUrl: () => "https://mockaccount.blob.core.windows.net",
+  useContainerBaseUrl: () => MOCK_BLOB_BASE_URL,
 }));
 
 vi.mock("nitropack/runtime", () => ({
@@ -16,7 +17,7 @@ vi.mock("nitropack/runtime", () => ({
       appEnv: Environment.development,
       azure: {
         container: {
-          baseUrl: "https://mockaccount.blob.core.windows.net",
+          baseUrl: MOCK_BLOB_BASE_URL,
         },
       },
     },

@@ -2,6 +2,7 @@
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
+import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { formRules } from "@/services/vuetify/formRules";
 import { takeOne, withFinalizerAsync } from "@esposter/shared";
 
@@ -43,7 +44,9 @@ const isLoading = ref(false);
 
             await withFinalizerAsync(
               async () => {
-                modelValue = await $trpc.user.uploadProfileImage.mutate(file);
+                const { publicUrl, sasUrl } = await $trpc.user.generateProfileImageUploadUrl.mutate();
+                await uploadBlocks(file, sasUrl);
+                modelValue = publicUrl;
               },
               () => {
                 isLoading = false;

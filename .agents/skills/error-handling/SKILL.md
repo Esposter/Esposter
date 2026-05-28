@@ -161,7 +161,12 @@ const updated = requireMutation(
 
 ## Finalizers
 
-Two variants — both live in `@esposter/shared`. Both run the finalizer regardless of success/failure, log finalizer errors silently, then unwrap the original result (throwing on Err). No terminal consumer (`.unwrapOr`, `.match`) needed.
+Two variants — both live in `@esposter/shared`. Both run the finalizer regardless of success/failure, then unwrap the original result (throwing on Err). No terminal consumer (`.unwrapOr`, `.match`) needed.
+
+Finalizer error handling differs between variants:
+
+- **`withFinalizer`**: finalizer errors are always rethrown.
+- **`withFinalizerAsync`**: finalizer errors are rethrown if the original operation succeeded; silently logged via `console.error` if the original operation failed (to preserve and rethrow the original error).
 
 ### `withFinalizer` — sync
 
