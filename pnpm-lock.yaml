@@ -1,79 +1,3 @@
----
-lockfileVersion: '9.0'
-
-importers:
-
-  .:
-    configDependencies:
-      '@pnpm/pacquet':
-        specifier: ^0.2.2-13
-        version: 0.2.2-13
-
-packages:
-
-  '@pacquet/darwin-arm64@0.2.2-13':
-    resolution: {integrity: sha512-AVZojGhyUOXh1qG3pgLa4/LnbCIWvcpBn8oUZcpXZMGZ64nO+ANCDz7nOOCrGZs3RaS182m5lJ/o42a6CV1vDA==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@pacquet/darwin-x64@0.2.2-13':
-    resolution: {integrity: sha512-xaMMRXqy5duCcnKQzK/xWOWVhPAaNHvyNI33I0uad95TfW+hZxxKfDnKAfMenmaxSRLyHWdSA8KpPH8YZPs21w==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@pacquet/linux-arm64@0.2.2-13':
-    resolution: {integrity: sha512-Baoe/Z+DjngGci7cH9lDOKctmJewpz3H6wO5LEUUHpNpdgPbEB9WCBkeOAsdJGi6X6YF1LtrpzJSl2UivwYu3g==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@pacquet/linux-x64@0.2.2-13':
-    resolution: {integrity: sha512-yJT4YB6DbDlQe2rV95v67YoIXMbkdH1XyS1rvPmybSzvf/0UER7swJ1hHPTmOSLiZdB0tJNQ1H2ZGrwXz5JrhA==}
-    cpu: [x64]
-    os: [linux]
-
-  '@pacquet/win32-arm64@0.2.2-13':
-    resolution: {integrity: sha512-/xeBrzilXKR6l/0iwtrAjKWByf3DMaAp2gGOWiNDgPw1W/a2e4rPV1gHOrghQS6mBc4Va0LchC9Cj/pqJKtxvg==}
-    cpu: [arm64]
-    os: [win32]
-
-  '@pacquet/win32-x64@0.2.2-13':
-    resolution: {integrity: sha512-QSXv7sxo+CKG9Fi4k520Az49C44VQpgtm28IkfR6b6uRIpzkt+lttWo9an0Cig1oPt0m7W2A4tqxOtLNrZvNEw==}
-    cpu: [x64]
-    os: [win32]
-
-  '@pnpm/pacquet@0.2.2-13':
-    resolution: {integrity: sha512-4bDoophw5QOyM980sZshzysdRX+5mvsb9j3nf8eQoThvgIPbHc2i8k5IrWwW5YGL9CJ9v3gWWW3Iq2sq2cUqZA==}
-
-snapshots:
-
-  '@pacquet/darwin-arm64@0.2.2-13':
-    optional: true
-
-  '@pacquet/darwin-x64@0.2.2-13':
-    optional: true
-
-  '@pacquet/linux-arm64@0.2.2-13':
-    optional: true
-
-  '@pacquet/linux-x64@0.2.2-13':
-    optional: true
-
-  '@pacquet/win32-arm64@0.2.2-13':
-    optional: true
-
-  '@pacquet/win32-x64@0.2.2-13':
-    optional: true
-
-  '@pnpm/pacquet@0.2.2-13':
-    optionalDependencies:
-      '@pacquet/darwin-arm64': 0.2.2-13
-      '@pacquet/darwin-x64': 0.2.2-13
-      '@pacquet/linux-arm64': 0.2.2-13
-      '@pacquet/linux-x64': 0.2.2-13
-      '@pacquet/win32-arm64': 0.2.2-13
-      '@pacquet/win32-x64': 0.2.2-13
-
----
 lockfileVersion: '9.0'
 
 settings:
@@ -7082,8 +7006,8 @@ packages:
     peerDependencies:
       valibot: ^1.4.0
 
-  '@vercel/nft@1.10.0':
-    resolution: {integrity: sha512-iLOW4fcsgkipfOh2Bw3wB38YDfxTlxr7+j4uFeui2OswkNT28jIitS/aMce7tS0mef1YPQ8zLIDYr3a0aahNrA==}
+  '@vercel/nft@1.10.2':
+    resolution: {integrity: sha512-w+WyX5Ulmj4dtTZrxaulqrjaLZHSbnPzx75SJsTNYmotKsqn1JlLnDJa+lz5hn90HJofhl/2MAtw0mCrgM3qYw==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -19598,7 +19522,7 @@ snapshots:
     dependencies:
       valibot: 1.4.1(typescript@5.9.3)
 
-  '@vercel/nft@1.10.0(rollup@4.60.4)':
+  '@vercel/nft@1.10.2(rollup@4.60.4)':
     dependencies:
       '@mapbox/node-pre-gyp': 2.0.3
       '@rollup/pluginutils': 5.3.0(rollup@4.60.4)
@@ -23637,7 +23561,7 @@ snapshots:
       '@rollup/plugin-node-resolve': 16.0.3(rollup@4.60.4)
       '@rollup/plugin-replace': 6.0.3(rollup@4.60.4)
       '@rollup/plugin-terser': 1.0.0(rollup@4.60.4)
-      '@vercel/nft': 1.10.0(rollup@4.60.4)
+      '@vercel/nft': 1.10.2(rollup@4.60.4)
       archiver: 7.0.1
       c12: 3.3.4(magicast@0.5.3)
       chokidar: 5.0.0
