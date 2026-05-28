@@ -40,7 +40,7 @@ const isLoading = ref(false);
         @change="
           async (event) => {
             const file = (event.target as HTMLInputElement).files?.[0];
-            if (!file || file.size >= MAX_FILE_REQUEST_SIZE) return;
+            if (!file || file.size > MAX_FILE_REQUEST_SIZE) return;
             isLoading = true;
             await withFinalizerAsync(
               async () => {
