@@ -181,10 +181,10 @@ describe("room", () => {
     const { publicUrl, sasUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
 
     expect(publicUrl).toBe(
-      `https://mockaccount.blob.core.windows.net/${AzureContainer.PublicUserAssets}/rooms/${newRoom.id}/ProfileImage`,
+      `https://mockaccount.blob.core.windows.net/${AzureContainer.PublicUserAssets}/${newRoom.id}/ProfileImage`,
     );
     expect(sasUrl).toBe(
-      `https://mockaccount.blob.core.windows.net/${AzureContainer.PublicUserAssets}/rooms/${newRoom.id}/ProfileImage?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=r`,
+      `https://mockaccount.blob.core.windows.net/${AzureContainer.PublicUserAssets}/${newRoom.id}/ProfileImage?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=r`,
     );
   });
 
