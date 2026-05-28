@@ -203,4 +203,4 @@ Scope: standalone calls only. Room calls stay gated by room membership/RBAC.
 - Creator (`callSessionsInMessage.userId`) skips straight to `joined`; everyone else must be admitted.
 - `JoinNotice.vue` upgraded to show "Let In" / "Dismiss" per knocker.
 
-Full spec in `features/esbabbler/v5.md` → Phase 5.
+Full spec in `features/esbabbler/completed/v5.md` → Phase 5.

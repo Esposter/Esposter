@@ -2,6 +2,8 @@
 
 Quick reference for AI-assisted development. Avoids re-exploring files each session.
 
+Cross-cutting architecture (file uploads, Azure services, real-time layers): [`/architecture/`](../../architecture/)
+
 ---
 
 ## Key File Map

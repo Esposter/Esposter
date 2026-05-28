@@ -29,6 +29,19 @@ features/
 
 ---
 
+## Cross-Cutting Architecture
+
+Design decisions that span multiple feature areas live in [`/architecture/`](../architecture/) at the repo root — not in any single feature area's `architecture.md`. Currently:
+
+| File                | What it covers                                                                                           |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| `file-uploads.md`   | Two-step SAS pattern, all upload procedures, why `octetInputParser` was removed                          |
+| `azure-services.md` | All Azure services (Blob, Table, Functions, EventGrid, WebPubSub, LiveKit) and the real-time layer model |
+
+Feature-area `architecture.md` files cover only that area's specific file maps, data flows, and DB schema.
+
+---
+
 ## Adding a New Feature
 
 1. **One spec file per feature** — `features/<area>/specs/<feature-name>.md`. Kebab-case names.
@@ -43,7 +56,7 @@ features/
 
 | Area               | Active Roadmap    | Description                                                     |
 | ------------------ | ----------------- | --------------------------------------------------------------- |
-| `esbabbler/`       | `v5.md`           | Messaging, calls, rooms, moderation, DMs                        |
+| `esbabbler/`       | `v6.md`           | Messaging, calls, rooms, moderation, DMs                        |
 | `fileTableEditor/` | —                 | CSV/JSON/XLSX table editor with computed columns                |
 | `infra/`           | `v3.md`           | Azure Pulumi infrastructure, cost, security, and stack planning |
 | `vue-phaserjs/`    | —                 | Phaser game engine Vue integration                              |

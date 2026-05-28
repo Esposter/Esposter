@@ -96,13 +96,19 @@ Omit any section that has nothing to say — empty sections add noise.
 
 ## Architecture Files
 
-`architecture.md` is an AI-assisted development reference — not user docs. Include:
+### Feature-area `architecture.md`
+
+An AI-assisted development reference for that feature only — not user docs. Include:
 
 - Key file map (component → file path → one-line role)
 - Data flows (sequence diagrams or arrow notation)
 - DB schema table (key fields only; link to full schema in db-schema package)
 
 Keep it current. Stale architecture files mislead AI assistants more than no file at all.
+
+### Root `/architecture/` folder
+
+Design decisions that span multiple feature areas go here instead of any single feature's `architecture.md`. Currently covers file uploads (SAS pattern) and Azure services (all service roles and real-time layers). When a design decision would be copy-pasted into multiple `architecture.md` files, extract it here instead.
 
 ---
 
