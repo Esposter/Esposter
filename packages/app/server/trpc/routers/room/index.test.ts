@@ -14,7 +14,7 @@ import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { AzureContainer, DatabaseEntityType, friends, INVITE_ID_LENGTH, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
+import { MOCK_BLOB_BASE_URL, MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const expectedUsersToRoomsInsertError = (roomId: string, userId: string) =>
@@ -180,11 +180,9 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { publicUrl, sasUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
 
-    expect(publicUrl).toBe(
-      `https://mockaccount.blob.core.windows.net/${AzureContainer.PublicUserAssets}/${newRoom.id}/ProfileImage`,
-    );
+    expect(publicUrl).toBe(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${newRoom.id}/ProfileImage`);
     expect(sasUrl).toBe(
-      `https://mockaccount.blob.core.windows.net/${AzureContainer.PublicUserAssets}/${newRoom.id}/ProfileImage?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=r`,
+      `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${newRoom.id}/ProfileImage?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=w`,
     );
   });
 
