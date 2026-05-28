@@ -1,12 +1,16 @@
 # Feature Specs — Esposter Conventions
 
-Apply when creating, updating, or referencing files in the `features/` directory.
+Apply when creating, updating, or referencing files in the `features/` directory or root `architecture/` directory.
 
 ---
 
 ## Directory Layout
 
 ```text
+architecture/
+  README.md                ← index for global architecture decisions
+  <topic>.md               ← cross-cutting architecture shared by multiple areas
+
 features/
   <area>/
     architecture.md        ← AI reference: key files, data flows, DB tables
@@ -108,7 +112,7 @@ Keep it current. Stale architecture files mislead AI assistants more than no fil
 
 ### Root `/architecture/` folder
 
-Design decisions that span multiple feature areas go here instead of any single feature's `architecture.md`. Currently covers file uploads (SAS pattern) and Azure services (all service roles and real-time layers). When a design decision would be copy-pasted into multiple `architecture.md` files, extract it here instead.
+Design decisions that span multiple feature areas go here instead of any single feature's `architecture.md`. Current examples are Azure services and the file upload SAS pattern. When a decision would be copy-pasted into multiple feature architecture files, extract it here instead.
 
 ---
 

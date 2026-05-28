@@ -90,72 +90,12 @@ Full spec: [`specs/call.md`](specs/call.md). Screenshare: [`specs/screenshare.md
 - `app/store/message/room/call/media.ts` — camera, screen share, deafen, virtual background, pin, and local/remote media stream state
 - `app/store/message/room/liveKit.ts` — LiveKit `Room` wraps media, active speaker, remote audio, screen share, device switching, and camera track processors
 
-### Call lifetime boundary
+### Boundaries
 
-Room navigation is not call membership. A user remains in a call until one of these explicit leave boundaries occurs:
-
-- They click **Leave Call** from the room call controls, call view, or status bar controls.
-- They are removed by a moderation action that semantically ejects them from the call or room (`KickFromCall`, `KickFromRoom`, `TimeoutUser`, `CreateBan`).
-- The browser tab/session actually disconnects, crashes, logs out, or loses its LiveKit connection long enough for LiveKit to emit `participant_left`.
-- The standalone `/calls/[id]` page unmounts, because that route is the whole call surface rather than a room observer.
-
-Changing rooms should only change `currentRoomCallSessionId`, participant observers, and inline room UI. It must not call `leaveCall`, disconnect LiveKit, reset `activeCallSessionId`, or remove the local participant from `callParticipantMap`.
-
-Implementation shape:
-
-```text
-useCallSubscribables cleanup on room change
-  → unsubscribe onJoinCall/onLeaveCall/onSetMute/onVideoChanged for the old room session
-  → setCurrentRoomCallSessionId("")
-  → clear room-scoped speaker hints if needed
-  → do not call roomCall.leaveCall
-  → do not disconnect LiveKit
-
-explicit leave action / moderation leave
-  → callStore.leaveCall()
-  → roomCall.leaveCall({ callSessionId: activeCallSessionId })
-  → disconnect LiveKit
-  → reset active call state
-```
-
-The persistent `StatusBar.vue` in the left sidebar is the return path when the user navigates away from the call room. `callRoomId` remains the room that owns the active call; clicking the status link navigates back to that room without changing call membership.
-
-### Data flow: join call (v2 — LiveKit)
-
-```text
-Client A (joining)                     Server (tRPC)               Client B (in room)
-        |                                    |                              |
-        |-- readCallSession({ roomId }) ----->|                              |
-        |<-- callSessionId (string) ---------|  (reads callSessionsInMessage)
-        |   [set currentRoomCallSessionId]   |                              |
-        |-- onJoinCall.subscribe(callSessionId)                             |
-        |-- joinCallByRoomId({ roomId }) ---->|  (creates session if new)    |
-        |<-- { callSessionId, participants, livekitUrl, livekitToken }        |
-        |   [set activeCallSessionId]         |-- onJoinCall emit --------->|
-        |-- room.connect(livekitUrl, token) ------------------------------->|
-        |<===================== audio/video flows via LiveKit SFU ==========>|
-```
-
-### Data flow: join via shareable link (v1)
-
-```text
-Guest (any authed user)                Server (tRPC)               Room participants
-        |                                    |                              |
-        |-- joinCall({ id }) ---------------->|  (no room membership check) |
-        |<-- { callSessionId, participants, livekitUrl, livekitToken }        |
-        |-- room.connect(livekitUrl, token) --|-- onJoinCall emit --------->|
-```
-
-### Data flow: screenshare start
-
-```text
-Sharer                          LiveKit SFU              Viewers
-   |-- getDisplayMedia() --------|                          |
-   |-- publishTrack(screenShare)->|                         |
-   |                             |-- TrackPublished ------->|
-   |                             |   (LiveKit Room event)   |
-   |                             |       [attach video to <video> el, switch to presenter layout]
-```
+- `activeCallSessionId` is the call the user is in; `currentRoomCallSessionId` is the call attached to the room currently being viewed.
+- Room navigation updates observers and inline room UI only. It must not leave the active call or disconnect LiveKit.
+- Explicit leave actions, moderation ejection, LiveKit disconnects, and `/calls/[id]` page unmounts are the call membership boundaries.
+- Detailed join, leave, screenshare, and route-lifetime flows live in [`specs/call.md`](specs/call.md) and [`specs/screenshare.md`](specs/screenshare.md).
 
 ---
 
