@@ -2,7 +2,7 @@ import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
 import type { TextFieldValue } from "@/models/vuetify/TextFieldValue";
 import type { ValidationRule } from "vuetify";
 
-import { MAX_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
+import { MAX_FILE_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
 import { profanity } from "@2toad/profanity";
 
 export const formRules: {
@@ -16,11 +16,9 @@ export const formRules: {
     !value || !profanity.exists(value) || `This field cannot contain profanity`,
   requireAtLeastN: (n) => (value: TextFieldValue) => !value || Number(value) >= n || `Must be at least ${n}`,
   requireAtMostMaxFileSize: (value: FileFieldValue) =>
-    // @TODO: Right now trpc uses application/octet-stream for uploading files which uses the same namespace as normal requests
-    // Compared to using multipart/form-data, so we'll apply the same frontend validation for now for simplicity
     !value ||
-    value.size < MAX_REQUEST_SIZE ||
-    `This field's file size should be less than ${MAX_REQUEST_SIZE / MEGABYTE} MB`,
+    value.size < MAX_FILE_REQUEST_SIZE ||
+    `This field's file size should be less than ${MAX_FILE_REQUEST_SIZE / MEGABYTE} MB`,
   requireAtMostNCharacters: (n) => (value: TextFieldValue) =>
     (value !== null && value.length <= n) || `You must enter a maximum of ${n} characters`,
   required: (value: TextFieldValue) => (value && value.length > 0) || "This field is required",

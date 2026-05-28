@@ -11,7 +11,9 @@ import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { dayjs } from "#shared/services/dayjs";
 import { createId } from "#shared/util/math/random/createId";
+import { ContainerSASPermissions } from "@azure/storage-blob";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
@@ -521,6 +523,18 @@ export const baseRoomRouter = router({
       const cursorPaginationData = getCursorPaginationData(readRooms, limit, sortBy);
       if (room) cursorPaginationData.items.push(room);
       return cursorPaginationData;
+    },
+  ),
+  generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
+    async ({ ctx, input: { roomId } }) => {
+      const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+      const blobName = `rooms/${roomId}/ProfileImage`;
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      const sasUrl = await blockBlobClient.generateSasUrl({
+        expiresOn: dayjs().add(1, "hour").toDate(),
+        permissions: ContainerSASPermissions.from({ write: true }),
+      });
+      return { publicUrl: blockBlobClient.url, sasUrl };
     },
   ),
   updateRoom: addProfanityFilterMiddleware(

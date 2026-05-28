@@ -12,7 +12,7 @@ import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { DatabaseEntityType, friends, INVITE_ID_LENGTH, roomsInMessage } from "@esposter/db-schema";
+import { AzureContainer, DatabaseEntityType, friends, INVITE_ID_LENGTH, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -172,6 +172,31 @@ describe("room", () => {
     const readRoom = await roomCaller.readRoom();
 
     expect(readRoom).toStrictEqual(newRoom);
+  });
+
+  test("generates profile image upload url", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { publicUrl, sasUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+
+    expect(publicUrl).toBe(
+      `https://mockaccount.blob.core.windows.net/${AzureContainer.PublicUserAssets}/rooms/${newRoom.id}/ProfileImage`,
+    );
+    expect(sasUrl).toBe(
+      `https://mockaccount.blob.core.windows.net/${AzureContainer.PublicUserAssets}/rooms/${newRoom.id}/ProfileImage?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=r`,
+    );
+  });
+
+  test("fails generate profile image upload url without permission", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("updates", async () => {

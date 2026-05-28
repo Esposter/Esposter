@@ -17,6 +17,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **`expect.hasAssertions()`** — top of every test body.
 - **Assertions after all assignments** — put all `expect` calls after all operations and local assignments for that phase, separated by a blank line.
 - **`toStrictEqual` always** — never `toEqual`, never `toMatchObject`. Assert exact counts: no `.toBeGreaterThan(0)` on collections.
+- **`.toBe` for deterministic values** — when the full expected value is knowable (URL, ID, enum string), always `.toBe(fullValue)`. Never `.toContain` or `.toMatch` when the complete value can be constructed. Inline the expected value directly in the `expect` call — never assign it to an intermediate `const expected*` variable.
 - **Minimize per-test setup** — shared mutable state as `let` inside `describe`, init in `beforeEach`. Mount helpers take no arguments when state is pre-initialized.
 - **Reuse utilities** — check `testUtils.test.ts` for existing helpers before writing local equivalents.
 - **`create*` prefix for test helpers** — all test factory/builder functions use the `create*` prefix (`createRow`, `createColumn`, `createMention`). Never `make*` (`makeRow`, `makeColumn`).
