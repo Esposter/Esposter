@@ -32,6 +32,6 @@ describe("@esposter/app", () => {
 
   test("client js bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformDirectorySize(nuxtDir)).toMatchInlineSnapshot(`"_nuxt: 109381.13 KB (112006272 bytes)"`);
+    expect(getCrossPlatformDirectorySize(nuxtDir)).toMatchInlineSnapshot(`"_nuxt: 109380.74 KB (112005875 bytes)"`);
   });
 });
