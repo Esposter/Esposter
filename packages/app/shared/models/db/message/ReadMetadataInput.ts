@@ -1,5 +1,5 @@
-import { MAX_READ_LIMIT } from "@esposter/shared";
 import { roomIdSchema, standardMessageEntitySchema } from "@esposter/db-schema";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
