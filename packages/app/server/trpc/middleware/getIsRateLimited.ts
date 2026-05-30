@@ -1,6 +1,7 @@
+import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
+
 import { auth } from "@@/server/auth";
 import { useIsProduction } from "@@/server/composables/useIsProduction";
-import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { middleware } from "@@/server/trpc";
