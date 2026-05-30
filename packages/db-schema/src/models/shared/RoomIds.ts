@@ -1,5 +1,5 @@
-import { MAX_READ_LIMIT } from "@esposter/shared";
 import { selectRoomInMessageSchema } from "@/schema/roomsInMessage";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
 export const roomIdsSchema = z.object({

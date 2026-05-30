@@ -7,7 +7,6 @@ import { deleteDirectMessageParticipantInputSchema } from "#shared/models/db/roo
 import { hideDirectMessageInputSchema } from "#shared/models/db/room/HideDirectMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MAX_READ_LIMIT } from "@esposter/shared";
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -34,7 +33,7 @@ import {
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, Operation } from "@esposter/shared";
+import { InvalidOperationError, ItemMetadataPropertyNames, MAX_READ_LIMIT, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -110,7 +109,7 @@ export const directMessageRouter = router({
     const actorUser = ctx.getSessionPayload.user;
     const { targetUsers, updatedRoom } = await ctx.db.transaction(async (tx) => {
       await assertIsRoom(tx, roomId, RoomType.DirectMessage);
-      let participantIds = await readDirectMessageParticipantIds(tx, roomId);
+      const participantIds = await readDirectMessageParticipantIds(tx, roomId);
       const targetUsers: User[] = [];
 
       for (const userId of userIds) {
@@ -140,7 +139,7 @@ export const directMessageRouter = router({
           DatabaseEntityType.UserToRoom,
           JSON.stringify({ roomId, userId }),
         );
-        participantIds = [...participantIds, userId];
+        participantIds.push(userId);
         targetUsers.push(targetUser);
       }
 

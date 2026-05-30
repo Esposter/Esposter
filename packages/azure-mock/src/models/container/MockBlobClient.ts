@@ -128,13 +128,13 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     const succeeded = this.container.has(this.name);
     if (succeeded) this.container.delete(this.name);
     return Promise.resolve({
-      succeeded,
       _response: {
         headers: toHttpHeadersLike(createHttpHeaders()),
         parsedHeaders: {},
         request: toWebResourceLike(createPipelineRequest({ url: "" })),
         status: succeeded ? 200 : 404,
       },
+      succeeded,
     });
   }
 

@@ -249,7 +249,11 @@ myError.issues.push({ code: "custom", message: "..." });
   });
   ```
 
-- **Shared ID field schemas** — always use named ID schemas for object fields that match their canonical name. Use `z.object({ ...roomIdSchema.shape, ...userIdSchema.shape, otherField: ... })`, never `z.object({ roomId: selectRoomSchema.shape.id, userId: selectUserSchema.shape.id })`. For differently named fields such as `targetUserId`, `actorUserId`, or arrays such as `userIds`, use the specific field schema if one exists; otherwise use `selectUserSchema.shape.id`.
+- **Shared ID field schemas** — always use named ID schemas for object fields that match their canonical name:
+  - If the entire schema is just an ID field, use the schema directly: `const onUpdateSchema = roomIdSchema` not `z.object({ roomId: selectRoomInMessageSchema.shape.id })`
+  - For multi-field objects, spread the shape: `z.object({ ...roomIdSchema.shape, ...userIdSchema.shape, otherField: ... })`, never `z.object({ roomId: selectRoomInMessageSchema.shape.id })`
+  - For constrained variants (e.g. adding `.min(1)` to `userIds`), chain from the shape field: `userIds: userIdsSchema.shape.userIds.min(1)` — not `selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT)`
+  - Named schemas: `roomIdSchema`, `userIdSchema`, `userIdsSchema` (all from `@esposter/db-schema`). For differently-named fields like `targetUserId` or `actorUserId`, use `selectUserSchema.shape.id` directly.
 
 - **Record maps over switch statements** — when a switch on an enum drives different async operations, prefer `const actionMap: Record<EnumType, (args) => Promise<void>> = { [Enum.A]: ..., [Enum.B]: ... }` and call `await actionMap[type](args)`. Exhaustiveness is enforced by the Record key type; no `default: exhaustiveGuard(type)` needed.
 

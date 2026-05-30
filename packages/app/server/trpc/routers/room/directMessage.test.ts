@@ -180,7 +180,7 @@ describe("directMessage", () => {
     const { user: addedUser } = await mockSessionOnce(mockContext.db);
     getMockSession();
     await createFriends(mainUser, addedUser);
-    await directMessageCaller.createDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id });
+    await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
     const readDirectMessages = await directMessageCaller.readDirectMessages();
 
@@ -203,7 +203,7 @@ describe("directMessage", () => {
     const { user: addedUser } = await mockSessionOnce(mockContext.db);
     getMockSession();
     await createFriends(mainUser, addedUser);
-    await directMessageCaller.createDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id });
+    await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
     await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id });
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
     const readDirectMessages = await directMessageCaller.readDirectMessages();
@@ -238,7 +238,7 @@ describe("directMessage", () => {
     getMockSession();
 
     await expect(
-      directMessageCaller.createDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id }),
+      directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, addedUser.id).message}]`,
     );

@@ -5,7 +5,7 @@ import {
   createMessageMetadataEntitySchema,
   MessageMetadataEntity,
   MessageMetadataType,
-  selectUserSchema,
+  userIdsSchema,
 } from "@esposter/db-schema";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
@@ -25,5 +25,5 @@ export const MessageEmojiMetadataEntityPropertyNames = getPropertyNames<MessageE
 export const messageEmojiMetadataEntitySchema = z.object({
   ...createMessageMetadataEntitySchema(z.literal(MessageMetadataType.Emoji)).shape,
   emojiTag: z.string(),
-  userIds: selectUserSchema.shape.id.array(),
+  ...userIdsSchema.shape,
 }) satisfies z.ZodType<ToData<MessageEmojiMetadataEntity>>;

@@ -1,15 +1,17 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="TMultiple extends boolean = false">
 import type { User } from "@esposter/db-schema";
 
 import { useFriendStore } from "@/store/message/user/friend";
 
 interface DirectMessageFriendPickerProps {
   excludedUserIds?: User["id"][];
-  isMultiple?: boolean;
+  isMultiple?: TMultiple;
 }
 
-const modelValue = defineModel<User["id"][]>({ default: [] });
-const { excludedUserIds = [], isMultiple = false } = defineProps<DirectMessageFriendPickerProps>();
+type ModelValue = TMultiple extends true ? string[] : string | undefined;
+
+const modelValue = defineModel<ModelValue>();
+const { excludedUserIds = [], isMultiple } = defineProps<DirectMessageFriendPickerProps>();
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const search = ref("");
@@ -20,6 +22,7 @@ const displayFriends = computed(() =>
       !excludedUserIdSet.value.has(id) && (!search.value || name.toLowerCase().includes(search.value.toLowerCase())),
   ),
 );
+
 const reset = () => {
   search.value = "";
 };
@@ -39,18 +42,24 @@ await readFriends();
         :key="id"
         :title="name"
         @click="
-          modelValue = modelValue.includes(id)
-            ? modelValue.filter((userId) => userId !== id)
-            : isMultiple
-              ? [...modelValue, id]
-              : [id]
+          isMultiple
+            ? (modelValue = (
+                (modelValue as string[] | undefined)?.includes(id)
+                  ? (modelValue as string[]).filter((userId: string) => userId !== id)
+                  : [...((modelValue as string[] | undefined) ?? []), id]
+              ) as ModelValue)
+            : (modelValue = (modelValue === id ? undefined : id) as ModelValue)
         "
       >
         <template #prepend>
           <StyledAvatar mr-3 :image :name :avatar-props="{ size: '2.25rem' }" />
         </template>
         <template #append>
-          <v-checkbox-btn :model-value="modelValue.includes(id)" />
+          <v-checkbox-btn
+            :model-value="
+              isMultiple ? ((modelValue as string[] | undefined)?.includes(id) ?? false) : modelValue === id
+            "
+          />
         </template>
       </v-list-item>
       <v-list-item v-if="displayFriends.length === 0" title="No friends found" />

@@ -1,5 +1,5 @@
-import { MAX_READ_LIMIT } from "@esposter/shared";
 import { selectUserSchema } from "@/schema/users";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
 export const userIdsSchema = z.object({

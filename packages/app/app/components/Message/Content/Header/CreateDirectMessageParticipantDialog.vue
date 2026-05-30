@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type MessageModelRoomDirectMessageFriendPicker from "@/components/Message/Model/Room/DirectMessageFriendPicker.vue";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
@@ -14,7 +13,7 @@ const { roomId } = defineProps<CreateDirectMessageParticipantDialogProps>();
 const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
 const { directMessageParticipantsMap } = storeToRefs(useDirectMessageStore());
-const friendPicker = useTemplateRef<InstanceType<typeof MessageModelRoomDirectMessageFriendPicker>>("friendPicker");
+const friendPicker = useTemplateRef("friendPicker");
 const selectedUserIds = ref<string[]>([]);
 const excludedUserIds = computed(() => {
   const excludedUserIds: string[] = [];

@@ -11,7 +11,6 @@ import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
-import { MAX_READ_LIMIT } from "@esposter/shared";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
@@ -63,6 +62,7 @@ import {
   getResultAsync,
   InvalidOperationError,
   ItemMetadataPropertyNames,
+  MAX_READ_LIMIT,
   NotFoundError,
   Operation,
   takeOne,
