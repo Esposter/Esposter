@@ -11,10 +11,9 @@ interface CreateDirectMessageParticipantDialogProps {
 
 const isOpen = defineModel<boolean>({ default: false });
 const { roomId } = defineProps<CreateDirectMessageParticipantDialogProps>();
+const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
-const directMessageStore = useDirectMessageStore();
-const { createDirectMessageParticipant } = directMessageStore;
-const { directMessageParticipantsMap } = storeToRefs(directMessageStore);
+const { directMessageParticipantsMap } = storeToRefs(useDirectMessageStore());
 const friendPicker = useTemplateRef<InstanceType<typeof MessageModelRoomDirectMessageFriendPicker>>("friendPicker");
 const selectedUserIds = ref<string[]>([]);
 const excludedUserIds = computed(() => {
@@ -33,9 +32,10 @@ const excludedUserIds = computed(() => {
     :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
     @submit="
       async (_event, onComplete) => {
-        const [selectedUserId] = selectedUserIds;
-        if (!selectedUserId) return;
-        await createDirectMessageParticipant({ roomId, userId: selectedUserId });
+        await $trpc.room.directMessage.createDirectMessageParticipant.mutate({
+          roomId,
+          userId: takeOne(selectedUserIds),
+        });
         selectedUserIds = [];
         friendPicker?.reset();
         onComplete();

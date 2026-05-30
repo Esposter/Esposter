@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 
+const { $trpc } = useNuxtApp();
 const directMessageStore = useDirectMessageStore();
-const { deleteDirectMessageParticipant } = directMessageStore;
 const { currentDirectMessage, directMessageParticipantsMap } = storeToRefs(directMessageStore);
 const directMessageName = useDirectMessageName(currentDirectMessage);
 const participants = computed(() =>
@@ -23,7 +23,12 @@ const participants = computed(() =>
           density="compact"
           size="small"
           closable
-          @click:close="deleteDirectMessageParticipant({ roomId: currentDirectMessage.id, userId: id })"
+          @click:close="
+            $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({
+              roomId: currentDirectMessage.id,
+              userId: id,
+            })
+          "
         >
           <StyledAvatar mr-1 :image :name :avatar-props="{ size: '1rem' }" />
           {{ name }}

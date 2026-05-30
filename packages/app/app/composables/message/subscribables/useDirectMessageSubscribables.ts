@@ -1,7 +1,7 @@
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, takeOne } from "@esposter/shared";
 
 export const useDirectMessageSubscribables = () => {
   const { $trpc } = useNuxtApp();
@@ -40,10 +40,15 @@ export const useDirectMessageSubscribables = () => {
           onData: getSynchronizedFunction(async (userId) => {
             if (userId === session.value.data?.user.id) {
               storeDeleteDirectMessage({ id: roomId });
-              await router.push({ path: RoutePath.MessagesIndex, replace: true });
+              await router.push({
+                path:
+                  directMessages.value.length > 0
+                    ? RoutePath.Messages(takeOne(directMessages.value).id)
+                    : RoutePath.MessagesIndex,
+                replace: true,
+              });
               return;
             }
-
             const participants = directMessageParticipantsMap.value.get(roomId) ?? [];
             directMessageParticipantsMap.value.set(
               roomId,
