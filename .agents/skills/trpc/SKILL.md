@@ -191,16 +191,16 @@ const readMetadata = (memberIds: User["id"][]) => {
 Every `read*` procedure that may be called for multiple items **must** accept an array of IDs, not a single ID:
 
 ```ts
-// CORRECT — one request for N items
+// CORRECT — one request for N items; use userIdsSchema/roomIdsSchema (max already baked in); add .min(1) at use site if required
 export const readMemberRolesInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  ...roomIdSchema.shape,
+  userIds: userIdsSchema.shape.userIds.min(1),
 });
 
 // WRONG — forces N requests for N items
 export const readMemberRolesInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-  userId: selectUserSchema.shape.id,
+  ...roomIdSchema.shape,
+  userId: userIdSchema.shape.userId,
 });
 ```
 

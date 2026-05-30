@@ -3,7 +3,7 @@ import type { SetNonNullable } from "type-fest";
 
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { dayjs } from "#shared/services/dayjs";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";

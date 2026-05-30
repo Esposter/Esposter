@@ -5,7 +5,7 @@ import { deleteWebhookInputSchema } from "#shared/models/db/webhook/DeleteWebhoo
 import { rotateTokenInputSchema } from "#shared/models/db/webhook/RotateTokenInput";
 import { updateWebhookInputSchema } from "#shared/models/db/webhook/UpdateWebhookInput";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { generateToken } from "@@/server/services/auth/generateToken";
 import { router } from "@@/server/trpc";

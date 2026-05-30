@@ -1,5 +1,5 @@
 import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { on } from "@@/server/services/events/on";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";

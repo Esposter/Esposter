@@ -32,9 +32,9 @@ const excludedUserIds = computed(() => {
     :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
     @submit="
       async (_event, onComplete) => {
-        await $trpc.room.directMessage.createDirectMessageParticipant.mutate({
+        await $trpc.room.directMessage.createDirectMessageParticipants.mutate({
           roomId,
-          userId: takeOne(selectedUserIds),
+          userIds: selectedUserIds,
         });
         selectedUserIds = [];
         friendPicker?.reset();
@@ -42,6 +42,11 @@ const excludedUserIds = computed(() => {
       }
     "
   >
-    <MessageModelRoomDirectMessageFriendPicker ref="friendPicker" v-model="selectedUserIds" :excluded-user-ids />
+    <MessageModelRoomDirectMessageFriendPicker
+      ref="friendPicker"
+      v-model="selectedUserIds"
+      :excluded-user-ids
+      is-multiple
+    />
   </StyledFormDialog>
 </template>

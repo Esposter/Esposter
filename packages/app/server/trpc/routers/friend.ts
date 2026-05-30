@@ -2,7 +2,7 @@ import type { User } from "@esposter/db-schema";
 
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { searchUsersInputSchema } from "#shared/models/db/friend/SearchUsersInput";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";

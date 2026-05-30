@@ -5,7 +5,7 @@ import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyIn
 import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
 import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";

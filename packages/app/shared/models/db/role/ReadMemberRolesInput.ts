@@ -1,4 +1,4 @@
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { roomIdSchema, selectUserSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
