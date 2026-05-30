@@ -14,7 +14,7 @@ const participants = computed(() =>
   <v-toolbar v-if="currentDirectMessage" density="comfortable">
     <MessageContentShowRoomListButton />
     <StyledAvatar :name="directMessageName" :avatar-props="{ size: 'x-small' }" />
-    <div min-w-0 pl-2 flex flex-col>
+    <div pl-2 flex flex-col min-w-0>
       <span truncate>{{ directMessageName }}</span>
       <div flex gap-x-1 overflow-x-auto>
         <v-chip
