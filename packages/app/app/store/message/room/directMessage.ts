@@ -12,6 +12,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const {
     createDirectMessage: storeCreateDirectMessage,
     deleteDirectMessage: storeDeleteDirectMessage,
+    updateDirectMessage: storeUpdateDirectMessage,
     ...restOperationData
   } = createOperationData(items, ["id"], DerivedDatabaseEntityType.DirectMessage);
   const directMessages = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
@@ -21,14 +22,15 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
     const roomId = router.currentRoute.value.params.id;
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
   });
-
+  const currentDirectMessage = computed(() =>
+    directMessages.value.find(({ id }) => id === currentDirectMessageId.value),
+  );
   const createDirectMessage = async (userIds: string[]) => {
     const room = await $trpc.room.directMessage.createDirectMessage.mutate(userIds);
     const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
     if (!existingDirectMessage) storeCreateDirectMessage(room, true);
     await navigateTo(RoutePath.Messages(room.id));
   };
-
   const hideDirectMessage = async (input: HideDirectMessageInput) => {
     await $trpc.room.directMessage.hideDirectMessage.mutate(input);
     storeDeleteDirectMessage({ id: input });
@@ -46,11 +48,13 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
 
   return {
     createDirectMessage,
+    currentDirectMessage,
     currentDirectMessageId,
     directMessageParticipantsMap,
     directMessages,
     hideDirectMessage,
     storeDeleteDirectMessage,
+    storeUpdateDirectMessage,
     ...restOperationData,
     ...restData,
   };

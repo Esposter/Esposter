@@ -25,17 +25,16 @@ import {
   BinaryOperator,
   CompositeKeyPropertyNames,
   MessageMetadataType,
-  selectRoomInMessageSchema,
+  roomIdSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
 
-const onCreateEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const onCreateEmojiInputSchema = roomIdSchema;
 
-const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const onUpdateEmojiInputSchema = roomIdSchema;
 
-const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const onDeleteEmojiInputSchema = roomIdSchema;
 
 export const emojiRouter = router({
   createEmoji: getMemberProcedure(createEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(

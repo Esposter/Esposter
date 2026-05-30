@@ -169,6 +169,81 @@ describe("directMessage", () => {
     expect(takeOne(entry.participants).id).toBe(user.id);
   });
 
+  test("creates direct message participant", async () => {
+    expect.hasAssertions();
+
+    const mainUser = getMockSession().user;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await createFriends(mainUser, user);
+    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { user: addedUser } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await createFriends(mainUser, addedUser);
+    await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
+    const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
+    const readDirectMessages = await directMessageCaller.readDirectMessages();
+
+    expect(
+      takeOne(participantsData)
+        .participants.map(({ id }) => id)
+        .toSorted(),
+    ).toStrictEqual([addedUser.id, user.id].toSorted());
+    expect(takeOne(readDirectMessages.items).participantKey).toContain(addedUser.id);
+  });
+
+  test("deletes direct message participant", async () => {
+    expect.hasAssertions();
+
+    const mainUser = getMockSession().user;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await createFriends(mainUser, user);
+    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { user: addedUser } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await createFriends(mainUser, addedUser);
+    await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
+    await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id });
+    const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
+    const readDirectMessages = await directMessageCaller.readDirectMessages();
+
+    expect(takeOne(participantsData).participants.map(({ id }) => id)).toStrictEqual([user.id]);
+    expect(takeOne(readDirectMessages.items).participantKey).not.toContain(addedUser.id);
+  });
+
+  test("deletes self as direct message participant", async () => {
+    expect.hasAssertions();
+
+    const mainUser = getMockSession().user;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await createFriends(mainUser, user);
+    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: mainUser.id });
+    const readDirectMessages = await directMessageCaller.readDirectMessages();
+
+    expect(readDirectMessages.items).toHaveLength(0);
+  });
+
+  test("fails create direct message participant with non-friend", async () => {
+    expect.hasAssertions();
+
+    const mainUser = getMockSession().user;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await createFriends(mainUser, user);
+    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const { user: addedUser } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+
+    await expect(
+      directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, addedUser.id).message}]`,
+    );
+  });
+
   test("fails read direct message participants with non-member room", async () => {
     expect.hasAssertions();
 

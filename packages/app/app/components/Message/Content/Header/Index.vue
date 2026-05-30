@@ -60,4 +60,5 @@ const { smAndDown } = useVDisplay();
       <MessageContentHeaderOverflowMenu v-if="smAndDown" />
     </template>
   </v-toolbar>
+  <MessageContentHeaderDirectMessage v-else />
 </template>
