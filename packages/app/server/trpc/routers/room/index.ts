@@ -24,6 +24,7 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
+import { getRoomProfileImageBlobName } from "@@/server/services/room/getRoomProfileImageBlobName";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -213,6 +214,23 @@ export const baseRoomRouter = router({
           ctx.getSessionPayload.session.id,
         );
     }),
+  deleteProfileImage: getPermissionsProcedure(
+    RoomPermission.ManageRoom,
+    roomIdSchema,
+    "roomId",
+  ).mutation<RoomInMessage>(async ({ ctx, input: { roomId } }) => {
+    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    const blockBlobClient = containerClient.getBlockBlobClient(getRoomProfileImageBlobName(roomId));
+    await blockBlobClient.deleteIfExists();
+    const updatedRoom = requireMutation(
+      (await ctx.db.update(roomsInMessage).set({ image: "" }).where(eq(roomsInMessage.id, roomId)).returning())[0],
+      Operation.Update,
+      DatabaseEntityType.Room,
+      roomId,
+    );
+    roomEventEmitter.emit("updateRoom", updatedRoom);
+    return updatedRoom;
+  }),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
@@ -222,7 +240,7 @@ export const baseRoomRouter = router({
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
     async ({ input: { roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-      const blobName = `${roomId}/ProfileImage`;
+      const blobName = getRoomProfileImageBlobName(roomId);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const sasUrl = await blockBlobClient.generateSasUrl({
         expiresOn: dayjs().add(1, "hour").toDate(),

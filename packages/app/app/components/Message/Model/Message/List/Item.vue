@@ -63,7 +63,7 @@ watch(optionsMenu, (newOptionsMenu) => {
         :mt="isSameBatch ? undefined : 4"
         py-1
         min-h-auto
-        :op="message.isLoading ? 50 : undefined"
+        :op-loading="message.isLoading ? '' : undefined"
         :active="(isActive || activeReplyRowKey === message.rowKey) && !isOpen"
         :creator
         :is-same-batch

@@ -22,7 +22,7 @@ onMounted(() => {
           </template>
         </v-tooltip>
       </div>
-      <span text-medium-emphasis text-body-small>Share this call link with others you want in the call.</span>
+      <span op-medium-emphasis text-body-small>Share this call link with others you want in the call.</span>
       <div px-2 py-1 rd bg-background flex gap-x-2 items-center>
         <span truncate text-body-small>{{ callLink }}</span>
         <StyledClipboardIconButton :source="callLink" text="Copy call link" />

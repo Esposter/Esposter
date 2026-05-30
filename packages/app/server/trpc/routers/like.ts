@@ -32,7 +32,6 @@ export const likeRouter = router({
         DatabaseEntityType.Post,
         input.postId,
       );
-
       const newLike = requireMutation(
         (
           await tx
@@ -44,7 +43,6 @@ export const likeRouter = router({
         DatabaseEntityType.Like,
         JSON.stringify(input),
       );
-
       const noLikesNew = post.noLikes + newLike.value;
       await tx
         .update(posts)
@@ -75,7 +73,6 @@ export const likeRouter = router({
         DatabaseEntityType.Post,
         input,
       );
-
       const deletedLike = requireMutation(
         (
           await tx
@@ -87,7 +84,6 @@ export const likeRouter = router({
         DatabaseEntityType.Like,
         input,
       );
-
       const noLikesNew = post.noLikes - deletedLike.value;
       await tx
         .update(posts)
@@ -125,7 +121,6 @@ export const likeRouter = router({
           },
         }),
       ]);
-
       if (!post)
         throw new TRPCError({
           code: "NOT_FOUND",

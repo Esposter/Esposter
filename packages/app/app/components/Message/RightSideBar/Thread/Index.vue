@@ -15,8 +15,8 @@ const { activeRootRowKey, threadMessages } = storeToRefs(threadStore);
   <MessageModelMessageSearchList :messages="threadMessages">
     <template #no-data>
       <v-container text-center>
-        <span v-if="activeRootRowKey" text-medium-emphasis>No replies yet.</span>
-        <span v-else text-medium-emphasis>No thread selected.</span>
+        <span v-if="activeRootRowKey" op-medium-emphasis>No replies yet.</span>
+        <span v-else op-medium-emphasis>No thread selected.</span>
       </v-container>
     </template>
   </MessageModelMessageSearchList>

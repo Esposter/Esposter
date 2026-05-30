@@ -10,7 +10,7 @@ const { cancelKnock } = knockerStore;
     <v-progress-circular color="primary" indeterminate size="64" />
     <div text-center flex flex-col gap-y-2 items-center>
       <h2 font-medium text-headline-small>Waiting to be admitted</h2>
-      <span text-medium-emphasis text-body-medium>Someone in the call will let you in soon.</span>
+      <span op-medium-emphasis text-body-medium>Someone in the call will let you in soon.</span>
     </div>
     <v-btn text="Cancel" variant="outlined" @click="cancelKnock()" />
   </div>

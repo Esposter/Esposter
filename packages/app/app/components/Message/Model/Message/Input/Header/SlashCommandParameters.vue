@@ -32,7 +32,7 @@ const error = computed(() => errors.value.find((error) => error.id === focusedPa
             <span font-bold>{{ name }}</span>
           </template>
           <template #append>
-            <span text-sm ml-4 op-50>Your {{ name }}</span>
+            <span text-sm ml-4 op-medium-emphasis>Your {{ name }}</span>
           </template>
         </v-list-item>
         <template v-if="optionalHiddenParameters.length > 0">
@@ -47,7 +47,7 @@ const error = computed(() => errors.value.find((error) => error.id === focusedPa
               <span font-bold>{{ name }}</span>
             </template>
             <template #append>
-              <span text-sm ml-4 op-50>Your {{ name }}</span>
+              <span text-sm ml-4 op-medium-emphasis>Your {{ name }}</span>
             </template>
           </v-list-item>
         </template>
@@ -57,11 +57,11 @@ const error = computed(() => errors.value.find((error) => error.id === focusedPa
       <template v-if="focusedParameter">
         <span font-bold>{{ focusedParameter.name }}</span>
         <span v-if="error" text-error>{{ error }}</span>
-        <span v-else op-60>Your {{ focusedParameter.name }}</span>
+        <span v-else op-medium-emphasis>Your {{ focusedParameter.name }}</span>
       </template>
       <template v-else>
         <span font-bold>/{{ pendingSlashCommand.title }}</span>
-        <span op-60>{{ pendingSlashCommand.description }}</span>
+        <span op-medium-emphasis>{{ pendingSlashCommand.description }}</span>
       </template>
     </MessageModelMessageInputHeader>
   </template>
