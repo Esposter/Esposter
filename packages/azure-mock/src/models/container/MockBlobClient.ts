@@ -125,7 +125,17 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   deleteIfExists(): Promise<BlobDeleteIfExistsResponse> {
-    throw new Error("Method not implemented.");
+    const succeeded = this.container.has(this.name);
+    if (succeeded) this.container.delete(this.name);
+    return Promise.resolve({
+      succeeded,
+      _response: {
+        headers: toHttpHeadersLike(createHttpHeaders()),
+        parsedHeaders: {},
+        request: toWebResourceLike(createPipelineRequest({ url: "" })),
+        status: succeeded ? 200 : 404,
+      },
+    });
   }
 
   deleteImmutabilityPolicy(): Promise<BlobDeleteImmutabilityPolicyResponse> {

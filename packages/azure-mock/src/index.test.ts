@@ -10,6 +10,6 @@ describe("azure-mock", () => {
     expect.hasAssertions();
 
     if (isWindows) expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 36.26 KB (37127 bytes)"`);
-    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 36.26 KB (37127 bytes)"`);
+    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 36.55 KB (37429 bytes)"`);
   });
 });
