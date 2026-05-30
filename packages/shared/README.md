@@ -18,7 +18,7 @@ Shared TypeScript utilities, types, and error classes for the Esposter platform.
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i @esposter/shared
+pnpm i @esposter/shared @vueuse/core vue zod
 ```
 
 ## <a name="documentation">📖 Documentation</a>

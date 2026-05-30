@@ -146,7 +146,8 @@
       "WebFetch(domain:www.npmjs.com)",
       "Bash(pnpm test:packages *)",
       "Bash(npm list *)",
-      "Bash(npm info *)"
+      "Bash(npm info *)",
+      "Bash(npm view *)"
     ]
   }
 }
