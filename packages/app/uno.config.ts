@@ -18,6 +18,12 @@ for (const color of variations?.colors ?? []) {
 }
 
 const allColorKeys = [...Object.keys(firstThemeColors), ...variationKeys];
+const opacityUtilities = {
+  "op-disabled": { opacity: "var(--v-disabled-opacity, 0.38)" },
+  "op-high-emphasis": { opacity: "var(--v-high-emphasis-opacity, 0.87)" },
+  "op-loading": { opacity: "var(--v-loading-opacity, 0.5)" },
+  "op-medium-emphasis": { opacity: "var(--v-medium-emphasis-opacity, 0.6)" },
+} as const satisfies Record<string, Record<string, string>>;
 const toKebabCase = (str: string) => str.replaceAll(/[A-Z]/gu, (m) => `-${m.toLowerCase()}`);
 
 export default defineConfig({
@@ -48,11 +54,12 @@ export default defineConfig({
       ([level, css]) => [`elevation-${level}`, css] as [string, Record<string, string>],
     ),
     ["overflow-anchor-none", { "overflow-anchor": "none" }],
-    ["text-medium-emphasis", { opacity: "var(--v-medium-emphasis-opacity, 0.6)" }],
+    ...Object.entries(opacityUtilities),
   ],
   safelist: [
     ...Array.from({ length: 6 }, (_, i) => `elevation-${i}`),
     ...allColorKeys.flatMap((key) => [`bg-${key}`, `text-${key}`]),
+    ...Object.keys(opacityUtilities),
   ],
   shortcuts: Object.fromEntries(
     Object.entries(typographyPresets.md3).map(([name, styles]) => [

@@ -60,7 +60,7 @@ const createWord = () => {
               {{ word }}
             </v-chip>
           </div>
-          <span text-xs text-medium-emphasis>
+          <span text-xs op-medium-emphasis>
             Messages containing these words will be blocked. Comparisons are case-insensitive.
           </span>
           <StyledButton
