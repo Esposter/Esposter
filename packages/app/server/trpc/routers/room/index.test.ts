@@ -466,18 +466,19 @@ describe("room", () => {
     expect(takeOne(readRooms.items).id).toBe(newRoom.id);
   });
 
-  test("fails read multiple with direct message roomId", async () => {
+  test("reads rooms with direct message roomId", async () => {
     expect.hasAssertions();
 
     const mainUser = getMockSession().user;
+    const newRoom = await roomCaller.createRoom({ name });
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
     await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const readRooms = await roomCaller.readRooms({ roomId: directMessage.id });
 
-    await expect(roomCaller.readRooms({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, directMessage.id).message}]`,
-    );
+    expect(readRooms.items).toHaveLength(1);
+    expect(takeOne(readRooms.items).id).toBe(newRoom.id);
   });
 
   test("fails join with joined room", async () => {

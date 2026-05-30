@@ -249,7 +249,7 @@ myError.issues.push({ code: "custom", message: "..." });
   });
   ```
 
-- **Shared ID field schemas** — when `z.object({ roomId: selectRoomSchema.shape.id })` or `z.object({ userId: selectUserSchema.shape.id })` appears in more than one file, extract into a named schema (`roomIdSchema`, `userIdSchema`) and spread its shape: `z.object({ ...roomIdSchema.shape, otherField: ... })`. Keeps the UUID type in sync and documents intent.
+- **Shared ID field schemas** — always use named ID schemas for object fields that match their canonical name. Use `z.object({ ...roomIdSchema.shape, ...userIdSchema.shape, otherField: ... })`, never `z.object({ roomId: selectRoomSchema.shape.id, userId: selectUserSchema.shape.id })`. For differently named fields such as `targetUserId`, `actorUserId`, or arrays such as `userIds`, use the specific field schema if one exists; otherwise use `selectUserSchema.shape.id`.
 
 - **Record maps over switch statements** — when a switch on an enum drives different async operations, prefer `const actionMap: Record<EnumType, (args) => Promise<void>> = { [Enum.A]: ..., [Enum.B]: ... }` and call `await actionMap[type](args)`. Exhaustiveness is enforced by the Record key type; no `default: exhaustiveGuard(type)` needed.
 
