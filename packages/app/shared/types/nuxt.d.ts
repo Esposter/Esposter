@@ -1,5 +1,5 @@
 // @TODO: Remove this file when nuxt fixes its types
-/// <reference types="nitropack/types" />
+/// <reference types="nitro/types" />
 import type { ModuleOptions as SitemapModuleOptions } from "@nuxtjs/sitemap";
 import type { UnocssNuxtOptions } from "@unocss/nuxt";
 import type { PwaModuleOptions } from "@vite-pwa/nuxt";
@@ -26,7 +26,7 @@ declare global {
 }
 
 // Note: Keep in sync with packages/nuxt/src/core/templates.ts
-declare module "nitropack" {
+declare module "nitro" {
   interface NitroRouteConfig {
     /** @deprecated Use `noScripts` instead */
     experimentalNoScripts?: boolean;
@@ -43,7 +43,7 @@ declare module "nitropack" {
     ) => Promise<void> | void;
   }
 }
-declare module "nitropack/types" {
+declare module "nitro/types" {
   interface NitroRouteConfig {
     /** @deprecated Use `noScripts` instead */
     experimentalNoScripts?: boolean;

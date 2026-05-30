@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, caret prefix rules, pinned packages (nuxt, h3, ctix), and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, caret prefix rules, pinned packages (nuxt, ctix), and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -21,8 +21,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Pinned packages (do not update)
 
-- **`nuxt`** — no `^`, manually managed (infrastructure, coordinates with `h3` and Nuxt modules).
-- **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
+- **`nuxt`** — no `^`, manually managed; uses the `npm:nuxt-nightly@5x` alias while on Nuxt 5 / Nitro v3, coordinating with `h3` (v2 RC, updates normally) and Nuxt modules.
 - **`ctix`** — pinned (no `^`) due to open issue https://github.com/imjuni/ctix/issues/192.
 - **`typescript`** — skip; user manages manually (major version bumps need explicit review).
 

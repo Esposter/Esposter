@@ -10,7 +10,7 @@ const t = initTRPC.context<AuthedContext>().create();
 
 export const userActivityPlugin = t.procedure.use(async ({ ctx, next, path, type }) => {
   const result = await next();
-  if (!result.ok) return result;
+  if (!result.ok || !ctx.req) return result;
 
   const userActivitiesTableClient = await useTableClient(AzureTable.UserActivities);
   await upsertEntity(

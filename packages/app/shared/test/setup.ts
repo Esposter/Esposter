@@ -11,7 +11,7 @@ vi.mock("@@/server/composables/azure/container/useContainerBaseUrl", () => ({
   useContainerBaseUrl: () => MOCK_BLOB_BASE_URL,
 }));
 
-vi.mock("nitropack/runtime", () => ({
+vi.mock("nitro/runtime", () => ({
   useRuntimeConfig: () => ({
     public: {
       appEnv: Environment.development,

@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, caret prefix rules, pinned packages (h3, unplugin-dts), and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, caret prefix rules, pinned packages (nuxt, unplugin-dts), and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -21,7 +21,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Pinned packages (do not update)
 
-- **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
+- **`nuxt`** — uses the `npm:nuxt-nightly@5x` alias (no `^`) while on Nuxt 5 / Nitro v3; tracks the latest v5 nightly. `h3` follows it (v2 RC) and updates normally.
 - **`unplugin-dts`** — pinned (no `^`); stable `1.0.0` release is broken, stays on `1.0.0-beta.6`.
 - **`typescript`** — skip; user manages manually (major version bumps need explicit review).
 

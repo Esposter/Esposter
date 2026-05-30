@@ -5,15 +5,13 @@ import { db } from "@@/server/db";
 
 type Contexts = CreateWSSContextFnOptions | H3Event;
 
-const isH3Event = (value: Contexts): value is H3Event => "node" in value;
+const isH3Event = (value: Contexts): value is H3Event => "runtime" in value;
 
 export const createContext = (opts: Contexts) => {
   if (isH3Event(opts)) {
-    const {
-      headers,
-      node: { req, res },
-    } = opts;
-    return { db, headers, req, res };
+    const req = opts.runtime?.node?.req;
+    const res = opts.runtime?.node?.res;
+    return { db, headers: opts.req.headers, req, res };
   }
 
   const { req, res } = opts;

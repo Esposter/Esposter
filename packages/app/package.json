@@ -213,6 +213,7 @@
     "fs-extra": "catalog:",
     "h3": "catalog:",
     "happy-dom": "catalog:",
+    "nitro": "catalog:",
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",
     "sass-embedded": "catalog:",

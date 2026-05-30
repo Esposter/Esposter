@@ -14,7 +14,7 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     const isProduction = useIsProduction();
     if (!isProduction) return next({ ctx: { getSessionPayload } });
 
-    const ipAddress = getIpAddress(ctx.req);
+    const ipAddress = ctx.req ? getIpAddress(ctx.req) : undefined;
     if (!ipAddress) {
       console.warn(
         "[RateLimiter] Could not determine IP address. Bypassing middleware... This is expected for local production builds.",
