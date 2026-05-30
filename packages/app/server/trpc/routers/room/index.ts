@@ -221,7 +221,7 @@ export const baseRoomRouter = router({
   ).mutation<RoomInMessage>(async ({ ctx, input: { roomId } }) => {
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
     const blockBlobClient = containerClient.getBlockBlobClient(getRoomProfileImageBlobName(roomId));
-    await blockBlobClient.delete();
+    await blockBlobClient.deleteIfExists();
     const updatedRoom = requireMutation(
       (await ctx.db.update(roomsInMessage).set({ image: "" }).where(eq(roomsInMessage.id, roomId)).returning())[0],
       Operation.Update,

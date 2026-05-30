@@ -121,7 +121,7 @@ export const surveyRouter = router({
       const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
       const blobName = `${surveyId}/${blobPath}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      await blockBlobClient.delete();
+      await blockBlobClient.deleteIfExists();
     },
   ),
   deleteSurvey: standardAuthedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {

@@ -23,7 +23,7 @@ const isLoading = ref(false);
     <div flex justify-center>
       <v-hover>
         <template #default="{ isHovering, props: hoverProps }">
-          <v-tooltip text="Upload Room Image">
+          <v-tooltip text="Upload Image">
             <template #activator="{ props: tooltipProps }">
               <button
                 p-0
@@ -100,7 +100,7 @@ const isLoading = ref(false);
         }
       "
     >
-      Remove Icon
+      Remove Image
     </button>
   </div>
 </template>
