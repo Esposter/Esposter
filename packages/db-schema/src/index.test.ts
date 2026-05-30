@@ -10,6 +10,6 @@ describe("@esposter/db-schema", () => {
     expect.hasAssertions();
 
     if (isWindows) expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 64.42 KB (65963 bytes)"`);
-    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 64.39 KB (65939 bytes)"`);
+    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 64.59 KB (66142 bytes)"`);
   });
 });

@@ -11,6 +11,6 @@ describe("@esposter/azure-functions", () => {
 
     if (isWindows)
       expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 4228.16 KB (4329632 bytes)"`);
-    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 4234.07 KB (4335689 bytes)"`);
+    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 4234.19 KB (4335813 bytes)"`);
   });
 });
