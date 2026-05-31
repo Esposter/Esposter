@@ -9,13 +9,12 @@ description: Esposter rolldown build conventions — shared rolldown configs, ex
 
 Located in `packages/configuration/src/`. All library packages import one of:
 
-| Config                            | Platform                 | Use for                                |
-| --------------------------------- | ------------------------ | -------------------------------------- |
-| `rolldownConfigurationBrowser`    | browser                  | `db-schema`, `shared`                  |
-| `rolldownConfigurationNode`       | node                     | `db`, `azure-mock`, `infra`, `db-mock` |
-| `rolldownConfigurationIsomorphic` | browser + node polyfills | `xml2js`, `parse-tmx`                  |
+| Config                         | Platform | Use for                                      |
+| ------------------------------ | -------- | -------------------------------------------- |
+| `rolldownConfigurationBrowser` | browser  | `db-schema`, `parse-tmx`, `shared`, `xml2js` |
+| `rolldownConfigurationNode`    | node     | `db`, `azure-mock`, `infra`, `db-mock`       |
 
-All extend `rolldownConfigurationBrowser`. Node adds `platform: "node"`. Isomorphic adds `@rolldown/plugin-node-polyfills`. Use `{ external }` shorthand when no extra entries needed; spread `[...external, "extra"]` only if the package requires additional externals.
+Node extends `rolldownConfigurationBrowser` and adds `platform: "node"`. Use `{ external }` shorthand when no extra entries needed; spread `[...external, "extra"]` only if the package requires additional externals.
 
 ## Global External List
 
@@ -34,7 +33,6 @@ external: [
   "@azure/eventgrid",
   "@azure/storage-queue",
   // @esposter/configuration
-  "@rolldown/plugin-node-polyfills",
   "@vitejs/plugin-vue",
   "rolldown",
   "rolldown-plugin-dts",
@@ -101,7 +99,6 @@ const externalStrings = [
   "@azure/storage-blob",
   "@azure/storage-queue",
   "@azure/web-pubsub",
-  "@rolldown/plugin-node-polyfills",
   "@electric-sql/pglite",
   "@pulumi/azure-native",
   "@pulumi/pulumi",

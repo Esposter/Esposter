@@ -61,7 +61,6 @@ catalog:
   "@pinia/nuxt": ^0.11.3
   "@pulumi/azure-native": ^3.18.0
   "@pulumi/pulumi": ^3.244.0
-  "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^1.6.0
   "@tiptap/core": ^3.23.5
   "@tiptap/extension-code-block-lowlight": ^3.23.5
