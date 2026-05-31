@@ -5,7 +5,8 @@
     "baseUrl": "${configDir}/src",
     "paths": {
       "@/*": ["*"]
-    }
+    },
+    "types": []
   },
   "exclude": ["${configDir}/node_modules", "${configDir}/*.config.ts", "${configDir}/**/*.test.ts"]
 }

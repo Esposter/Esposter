@@ -43,7 +43,6 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@types/node": "catalog:",
     "@types/sax": "catalog:",
     "@types/xml2js": "catalog:",
     "@vitest/coverage-v8": "catalog:",
