@@ -153,6 +153,9 @@ catalogs:
     '@pulumi/pulumi':
       specifier: ^3.244.0
       version: 3.244.0
+    '@rolldown/plugin-node-polyfills':
+      specifier: ^1.0.3
+      version: 1.0.3
     '@takumi-rs/core':
       specifier: ^1.6.0
       version: 1.6.0
@@ -1413,6 +1416,9 @@ importers:
       '@ninoseki/eslint-plugin-neverthrow':
         specifier: 'catalog:'
         version: 0.2.0(eslint@10.4.1(jiti@2.7.0))(typescript@5.9.3)
+      '@rolldown/plugin-node-polyfills':
+        specifier: 'catalog:'
+        version: 1.0.3
       '@types/node':
         specifier: 'catalog:'
         version: 25.9.1
@@ -5600,6 +5606,9 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [win32]
+
+  '@rolldown/plugin-node-polyfills@1.0.3':
+    resolution: {integrity: sha512-V7iWE6UI+InppK51NfuHlaCpep7Rzv4w92pZif6BtRP3ULDHfQjU6HNyIS41Plrx1tqzcANcAsnjDS6ye+1kFQ==}
 
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
@@ -18052,6 +18061,8 @@ snapshots:
 
   '@rolldown/binding-win32-x64-msvc@1.0.3':
     optional: true
+
+  '@rolldown/plugin-node-polyfills@1.0.3': {}
 
   '@rolldown/pluginutils@1.0.1': {}
 

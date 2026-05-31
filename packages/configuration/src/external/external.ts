@@ -12,6 +12,7 @@ export const external: (RegExp | string)[] = [
   "@azure/eventgrid",
   "@azure/storage-queue",
   // @esposter/configuration
+  "@rolldown/plugin-node-polyfills",
   "@vitejs/plugin-vue",
   "rolldown",
   "rolldown-plugin-dts",

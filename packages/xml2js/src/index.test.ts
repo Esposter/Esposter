@@ -10,7 +10,7 @@ describe("@esposter/xml2js", () => {
     expect.hasAssertions();
 
     if (isWindows)
-      expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 994.52 KB (1018388 bytes)"`);
+      expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 1117.27 KB (1144087 bytes)"`);
     else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 994.52 KB (1018388 bytes)"`);
   });
 });

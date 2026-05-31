@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Shared build and lint configuration for all Esposter packages. Provides ESLint configs, TSConfig bases, and Rolldown build configurations for browser and Node.js targets.
+Shared build and lint configuration for all Esposter packages. Provides ESLint configs, TSConfig bases, and Rolldown build configurations for browser, isomorphic, and Node.js targets.
 
 ## Table of Contents
 
@@ -17,12 +17,13 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### What's Included
 
-| Config             | File                           | Purpose                                                          |
-| ------------------ | ------------------------------ | ---------------------------------------------------------------- |
-| ESLint             | `eslint/`                      | Shared ESLint rules (oxlint + typescript-eslint + perfectionist) |
-| Rolldown (browser) | `rolldownConfigurationBrowser` | Vite-compatible browser bundle config                            |
-| Rolldown (Node)    | `rolldownConfigurationNode`    | Server-only package bundle config                                |
-| ctix               | `.ctirc-ts`                    | Barrel file generation config for `packages/*/src/index.ts`      |
+| Config                | File                              | Purpose                                                          |
+| --------------------- | --------------------------------- | ---------------------------------------------------------------- |
+| ESLint                | `eslint/`                         | Shared ESLint rules (oxlint + typescript-eslint + perfectionist) |
+| Rolldown (browser)    | `rolldownConfigurationBrowser`    | Vite-compatible browser bundle config                            |
+| Rolldown (isomorphic) | `rolldownConfigurationIsomorphic` | Browser bundle config with Node built-in polyfills               |
+| Rolldown (Node)       | `rolldownConfigurationNode`       | Server-only package bundle config                                |
+| ctix                  | `.ctirc-ts`                       | Barrel file generation config for `packages/*/src/index.ts`      |
 
 ### Usage in other packages
 

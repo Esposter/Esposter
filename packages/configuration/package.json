@@ -40,6 +40,7 @@
     "@eslint/core": "catalog:",
     "@eslint/json": "catalog:",
     "@ninoseki/eslint-plugin-neverthrow": "catalog:",
+    "@rolldown/plugin-node-polyfills": "catalog:",
     "@types/node": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
