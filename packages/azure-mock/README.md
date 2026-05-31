@@ -18,7 +18,7 @@ Mock Azure service classes for local development and testing. Provides in-memory
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/storage-blob @azure/storage-queue drizzle-orm zod
+pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/storage-blob @azure/storage-queue
 ```
 
 ## <a name="documentation">📖 Documentation</a>

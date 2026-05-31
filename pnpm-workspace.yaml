@@ -106,7 +106,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^4.2.0
-  "@vue/language-core": ^3.3.2
+  "@vue/language-core": ^3.3.3
   "@vue/test-utils": ^2.4.10
   "@vuepic/vue-datepicker": ^13.0.0
   "@vueuse/core": ^14.3.0
@@ -185,7 +185,7 @@ catalog:
   oxlint-tsgolint: ^0.23.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
-  pdfjs-dist: ^5.7.284
+  pdfjs-dist: ^6.0.227
   phaser: ^4.1.0
   phaser4-rex-plugins: ^4.0.6
   pinia: ^3.0.4
@@ -209,7 +209,7 @@ catalog:
   survey-vue3-ui: 3.0.0-beta.0
   three: ^0.184.0
   three-globe: ^2.45.2
-  trpc-nuxt: ^2.1.0
+  trpc-nuxt: ^2.1.1
   tsx: ^4.22.3
   type-fest: ^5.6.0
   typedoc: ^0.28.19
@@ -229,7 +229,7 @@ catalog:
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
   vue-router: ^5.1.0
-  vue-tsc: ^3.3.2
+  vue-tsc: ^3.3.3
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.0.8
   vuetify-nuxt-module: ^1.0.0-beta.4
@@ -249,7 +249,7 @@ minimumReleaseAge: 0
 overrides:
   crossws: ^0.4.5
   h3: ^1.15.11
-  pdfjs-dist: ^5.7.284
+  pdfjs-dist: ^6.0.227
   vite: ^8.0.14
   vue-router: ^5.1.0
 
