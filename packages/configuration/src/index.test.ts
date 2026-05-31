@@ -10,7 +10,7 @@ describe("@esposter/configuration", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    if (isWindows) expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 3.64 KB (3725 bytes)"`);
-    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 3.64 KB (3725 bytes)"`);
+    if (isWindows) expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 3.20 KB (3281 bytes)"`);
+    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 3.20 KB (3281 bytes)"`);
   });
 });
