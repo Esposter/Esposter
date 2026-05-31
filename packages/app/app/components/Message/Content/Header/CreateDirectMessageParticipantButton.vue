@@ -10,7 +10,7 @@ const isOpen = ref(false);
 </script>
 
 <template>
-  <v-tooltip text="Add People">
+  <v-tooltip location="bottom" text="Add People">
     <template #activator="{ props }">
       <v-btn icon="mdi-account-plus" size="small" :="props" @click="isOpen = true" />
     </template>

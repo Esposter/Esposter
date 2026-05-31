@@ -4,13 +4,14 @@ import { useDataStore } from "@/store/message/data";
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const route = useRoute();
+const roomId = route.params.id as string;
 const rowKey = route.params.rowKey as string;
 
 if (rowKey) {
   const scrollToMessage = useScrollToMessage();
 
   onMounted(() => {
-    scrollToMessage(rowKey);
+    scrollToMessage(roomId, rowKey);
   });
 }
 </script>

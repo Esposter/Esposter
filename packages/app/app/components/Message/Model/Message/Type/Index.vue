@@ -25,7 +25,14 @@ const messageHtml = useMessageWithMentions(
   <MessageModelMessageTypeListItem :active :is-preview>
     <template #prepend>
       <div v-if="message.replyRowKey" flex flex-col items-center relative>
-        <MessageModelMessageReplySpine ml-7.5 mt-2.5 top-0 absolute :reply-row-key="message.replyRowKey" />
+        <MessageModelMessageReplySpine
+          ml-7.5
+          mt-2.5
+          top-0
+          absolute
+          :reply-row-key="message.replyRowKey"
+          :room-id="message.partitionKey"
+        />
         <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
         <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" pl-2 />
       </div>

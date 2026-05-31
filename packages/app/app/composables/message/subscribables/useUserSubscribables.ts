@@ -17,11 +17,18 @@ export const useUserSubscribables = async () => {
   const { statusMap } = storeToRefs(statusStore);
 
   useOnlineSubscribable(
-    [members, session],
-    ([newMembers, newSession]) => {
+    [
+      () =>
+        members.value
+          .map(({ id }) => id)
+          .toSorted()
+          .join(","),
+      session,
+    ],
+    ([memberIdsString, newSession]) => {
       if (!newSession) return undefined;
 
-      const newMemberIds = newMembers.filter(({ id }) => id !== newSession.user.id).map(({ id }) => id);
+      const newMemberIds = memberIdsString.split(",").filter((id) => id && id !== newSession.user.id);
       if (newMemberIds.length === 0) return undefined;
 
       const upsertStatusUnsubscribable = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {

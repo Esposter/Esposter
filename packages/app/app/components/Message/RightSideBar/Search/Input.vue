@@ -11,11 +11,17 @@ const { activeSelectedFilter, isSearchQueryEmpty, menu, searchQuery, selectedFil
   storeToRefs(searchMessageStore);
 const searchQueryOnFocus = ref("");
 const filterTypes = [...FilterTypes];
-const blur = () => (document.activeElement as HTMLElement | null)?.blur();
+const searchInput = useTemplateRef("searchInput");
+const blur = () => {
+  const input = searchInput.value?.$el.querySelector("input");
+  if (!(input instanceof HTMLInputElement)) return;
+  input.blur();
+};
 </script>
 
 <template>
   <v-autocomplete
+    ref="searchInput"
     v-model="selectedFilters"
     autocomplete="suppress"
     density="compact"
@@ -39,6 +45,7 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
           activeSelectedFilter.value = value;
           searchQuery = '';
         } else if (!isSearchQueryEmpty) {
+          menu = false;
           blur();
           await readSearchedMessages();
         }
@@ -64,6 +71,7 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
       (value: string) => {
         // Ignore internal clear value callback on blur event
         if (!value && !menu) return;
+        if (value) menu = true;
 
         if (value[value.length - 1] === ':') {
           const normalizedValue = normalizeString(value);
