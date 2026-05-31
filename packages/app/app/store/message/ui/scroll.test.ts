@@ -1,10 +1,12 @@
 // @vitest-environment nuxt
+import { dayjs } from "#shared/services/dayjs";
 import { useScrollStore } from "@/store/message/ui/scroll";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useScrollStore, () => {
   const rowKey = crypto.randomUUID();
+  const highlightMs = dayjs.duration(2, "seconds").asMilliseconds();
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -25,7 +27,11 @@ describe(useScrollStore, () => {
 
     expect(activeRowKey.value).toBe(rowKey);
 
-    vi.runAllTimers();
+    vi.advanceTimersByTime(highlightMs - 1);
+
+    expect(activeRowKey.value).toBe(rowKey);
+
+    vi.advanceTimersByTime(1);
 
     expect(activeRowKey.value).toBe("");
   });
