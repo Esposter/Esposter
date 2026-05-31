@@ -7,8 +7,7 @@ export const getDecompressedBytes: (
 ) => Promise<Uint8Array> = async (bytes, compression) => {
   const format = compression === Compression.Gzip ? "gzip" : "deflate";
   const compressedTileStream = new Response(bytes).body;
-  if (!compressedTileStream)
-    throw new InvalidOperationError(Operation.Read, getDecompressedBytes.name, "compressed tile data");
+  if (!compressedTileStream) throw new InvalidOperationError(Operation.Read, getDecompressedBytes.name, compression);
 
   const decompressedTileStream = compressedTileStream.pipeThrough(new DecompressionStream(format));
   return new Uint8Array(await new Response(decompressedTileStream).arrayBuffer());
