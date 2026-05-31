@@ -50,12 +50,14 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
     <template v-if="isPending">
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
+    <template v-else-if="items.length === 0 && currentRoom">
+      <MessageContentRoomWelcome :room="currentRoom" />
+    </template>
     <template v-else>
       <StyledWaypoint :is-active="hasMoreNewer" @change="readMoreNewerMessages">
         <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>
-      <MessageContentRoomWelcome v-if="currentRoom && items.length === 0" :room="currentRoom" />
-      <MessageModelMessageListContainer v-else />
+      <MessageModelMessageListContainer />
       <StyledWaypoint :is-active="hasMore" @change="readMoreMessages">
         <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>

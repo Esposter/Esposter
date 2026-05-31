@@ -2,8 +2,8 @@
 import { useReplyStore } from "@/store/message/input/reply";
 
 interface ReplySpineProps {
-  roomId: string;
   replyRowKey: string;
+  roomId: string;
 }
 
 const { replyRowKey, roomId } = defineProps<ReplySpineProps>();

@@ -22,7 +22,7 @@ const notificationType = computed({
 <template>
   <v-menu location="bottom" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
-      <v-tooltip text="Notification Settings">
+      <v-tooltip location="bottom" text="Notification Settings">
         <template #activator="{ props: tooltipProps }">
           <v-btn
             :="mergeProps(menuProps, tooltipProps)"
