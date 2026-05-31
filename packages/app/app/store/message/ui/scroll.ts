@@ -12,6 +12,13 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
   const isViewingOlderMessages = computed(() => y.value < -2000);
   const activeRowKey = ref("");
   const roomStore = useRoomStore();
+  const { start: startClearActiveRowKey } = useTimeoutFn(
+    () => {
+      activeRowKey.value = "";
+    },
+    dayjs.duration(2, "seconds").asMilliseconds(),
+    { immediate: false },
+  );
   const jumpToPresent = async () => {
     if (!roomStore.currentRoomId) return;
     else if (route.params.rowKey) await navigateTo(RoutePath.Messages(roomStore.currentRoomId));
@@ -19,9 +26,7 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
   };
   const setActiveRowKey = (rowKey: string) => {
     activeRowKey.value = rowKey;
-    useTimeoutFn(() => {
-      activeRowKey.value = "";
-    }, dayjs.duration(2, "seconds").asMilliseconds());
+    startClearActiveRowKey();
   };
   return {
     activeRowKey,
