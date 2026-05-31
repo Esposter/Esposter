@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const distFile = resolve(import.meta.dirname, "../dist/index.js");
+const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
 const isWindows = process.platform === "win32";
 
 describe("vue-phaserjs", () => {
@@ -11,5 +12,13 @@ describe("vue-phaserjs", () => {
 
     if (isWindows) expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 33.95 KB (34762 bytes)"`);
     else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 33.95 KB (34762 bytes)"`);
+  });
+
+  test("types size", () => {
+    expect.hasAssertions();
+
+    if (isWindows)
+      expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 10.46 KB (10712 bytes)"`);
+    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 10.46 KB (10712 bytes)"`);
   });
 });
