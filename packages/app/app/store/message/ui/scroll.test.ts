@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import { dayjs } from "#shared/services/dayjs";
 import { useScrollStore } from "@/store/message/ui/scroll";
 import { createPinia, setActivePinia } from "pinia";
