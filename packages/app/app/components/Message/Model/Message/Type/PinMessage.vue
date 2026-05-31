@@ -19,7 +19,7 @@ const scrollToMessage = useScrollToMessage();
       font-bold
       cursor-pointer
       hover:underline
-      @click="message.replyRowKey && scrollToMessage({ roomId: message.partitionKey, rowKey: message.replyRowKey })"
+      @click="message.replyRowKey && scrollToMessage(message.partitionKey, message.replyRowKey)"
     >
       a message
     </span>

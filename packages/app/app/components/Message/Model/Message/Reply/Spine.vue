@@ -2,10 +2,11 @@
 import { useReplyStore } from "@/store/message/input/reply";
 
 interface ReplySpineProps {
+  roomId: string;
   replyRowKey: string;
 }
 
-const { replyRowKey } = defineProps<ReplySpineProps>();
+const { replyRowKey, roomId } = defineProps<ReplySpineProps>();
 const replyStore = useReplyStore();
 const { isIndicatorActive } = storeToRefs(replyStore);
 const scrollToMessage = useScrollToMessage();
@@ -26,6 +27,6 @@ const scrollToMessage = useScrollToMessage();
     duration="[--transition-duration]"
     @mouseenter="isIndicatorActive = true"
     @mouseleave="isIndicatorActive = false"
-    @click="scrollToMessage(replyRowKey)"
+    @click="scrollToMessage(roomId, replyRowKey)"
   />
 </template>

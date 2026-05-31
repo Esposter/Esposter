@@ -11,7 +11,7 @@ if (rowKey) {
   const scrollToMessage = useScrollToMessage();
 
   onMounted(() => {
-    scrollToMessage({ roomId, rowKey });
+    scrollToMessage(roomId, rowKey);
   });
 }
 </script>

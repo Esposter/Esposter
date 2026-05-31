@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useDataStore } from "@/store/message/data";
+import { useRoomStore } from "@/store/message/room";
 import { useScrollStore } from "@/store/message/ui/scroll";
 
 const { readMessages, readMoreMessages, readMoreNewerMessages: baseReadMoreNewerMessages } = useReadMessages();
 const { isPending } = await readMessages();
 const dataStore = useDataStore();
-const { hasMore, hasMoreNewer } = storeToRefs(dataStore);
+const { hasMore, hasMoreNewer, items } = storeToRefs(dataStore);
+const roomStore = useRoomStore();
+const { currentRoom } = storeToRefs(roomStore);
 const scrollStore = useScrollStore();
 const { isScrolling, messageContainer, messageContainerElement } = storeToRefs(scrollStore);
 const bottomSentinel = useTemplateRef("bottomSentinel");
@@ -51,7 +54,8 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
       <StyledWaypoint :is-active="hasMoreNewer" @change="readMoreNewerMessages">
         <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>
-      <MessageModelMessageListContainer />
+      <MessageContentRoomWelcome v-if="currentRoom && items.length === 0" :room="currentRoom" />
+      <MessageModelMessageListContainer v-else />
       <StyledWaypoint :is-active="hasMore" @change="readMoreMessages">
         <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>
