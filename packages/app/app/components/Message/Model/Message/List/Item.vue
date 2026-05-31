@@ -7,6 +7,7 @@ import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
 import { useForwardStore } from "@/store/message/input/forward";
 import { useReplyStore } from "@/store/message/input/reply";
+import { useScrollStore } from "@/store/message/ui/scroll";
 import { MessageType } from "@esposter/db-schema";
 
 interface MessageListItemProps {
@@ -28,7 +29,9 @@ const isSameBatch = computed(
 const messageStore = useMessageStore();
 const { editingRowKey, optionsMenu } = storeToRefs(messageStore);
 const replyStore = useReplyStore();
-const { activeRowKey: activeReplyRowKey, rowKey: replyRowKey } = storeToRefs(replyStore);
+const { rowKey: replyRowKey } = storeToRefs(replyStore);
+const scrollStore = useScrollStore();
+const { activeRowKey } = storeToRefs(scrollStore);
 const forwardStore = useForwardStore();
 const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
 const isUpdateMode = computed({
@@ -64,7 +67,7 @@ watch(optionsMenu, (newOptionsMenu) => {
         py-1
         min-h-auto
         :op-loading="message.isLoading ? '' : undefined"
-        :active="(isActive || activeReplyRowKey === message.rowKey) && !isOpen"
+        :active="(isActive || activeRowKey === message.rowKey) && !isOpen"
         :creator
         :is-same-batch
         :message

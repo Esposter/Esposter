@@ -36,7 +36,7 @@ const scrollToMessage = useScrollToMessage();
           italic
           @mouseenter="isIndicatorActive = true"
           @mouseleave="isIndicatorActive = false"
-          @click="scrollToMessage(reply.rowKey)"
+          @click="scrollToMessage({ roomId: reply.partitionKey, rowKey: reply.rowKey })"
         >
           Click to see attachment
         </span>

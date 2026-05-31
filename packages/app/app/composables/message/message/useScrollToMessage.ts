@@ -1,34 +1,41 @@
-import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
-import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
+import { useScrollStore } from "@/store/message/ui/scroll";
 import { RoutePath } from "@esposter/shared";
+
+interface MessageScrollTarget {
+  roomId?: string;
+  rowKey: string;
+}
 
 export const useScrollToMessage = () => {
   const { $trpc } = useNuxtApp();
-  const replyStore = useReplyStore();
-  const { activeRowKey } = storeToRefs(replyStore);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
+  const scrollStore = useScrollStore();
+  const { setActiveRowKey } = scrollStore;
   const dataStore = useDataStore();
   const { items } = storeToRefs(dataStore);
-  return async (rowKey: string) => {
-    if (!currentRoomId.value) return;
-    else if (!items.value.some((m) => m.rowKey === rowKey)) {
-      const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({
-        roomId: currentRoomId.value,
-        rowKeys: [rowKey],
-      });
-      if (messagesByRowKeys.length === 0) return;
+  const readTargetMessage = async (roomId: string, rowKey: string) => {
+    const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({
+      roomId,
+      rowKeys: [rowKey],
+    });
+    return messagesByRowKeys.length > 0;
+  };
+  return async (target: string | MessageScrollTarget) => {
+    const rowKey = typeof target === "string" ? target : target.rowKey;
+    const roomId = typeof target === "string" ? currentRoomId.value : (target.roomId ?? currentRoomId.value);
+    if (!roomId) return;
+    else if (roomId !== currentRoomId.value || !items.value.some((message) => message.rowKey === rowKey)) {
+      const doesMessageExist = await readTargetMessage(roomId, rowKey);
+      if (!doesMessageExist) return;
 
-      await navigateTo(RoutePath.MessagesMessage(currentRoomId.value, rowKey));
+      await navigateTo(RoutePath.MessagesMessage(roomId, rowKey));
       return;
     }
 
-    activeRowKey.value = rowKey;
-    document.getElementById(rowKey)?.scrollIntoView();
-    useTimeoutFn(() => {
-      activeRowKey.value = "";
-    }, dayjs.duration(2, "seconds").asMilliseconds());
+    setActiveRowKey(rowKey);
+    window.document.getElementById(rowKey)?.scrollIntoView({ block: "center" });
   };
 };

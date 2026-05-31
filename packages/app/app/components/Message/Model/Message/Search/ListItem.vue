@@ -19,6 +19,6 @@ const scrollToMessage = useScrollToMessage();
     :creator
     :message
     is-preview
-    @click="scrollToMessage(message.rowKey)"
+    @click="scrollToMessage({ roomId: message.partitionKey, rowKey: message.rowKey })"
   />
 </template>
