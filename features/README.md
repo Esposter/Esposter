@@ -57,7 +57,7 @@ Feature-area `architecture.md` files cover only that area's specific file maps, 
 
 | Area               | Active Roadmap           | Description                                                     |
 | ------------------ | ------------------------ | --------------------------------------------------------------- |
-| `esbabbler/`       | `v6.md`                  | Messaging, calls, rooms, moderation, DMs                        |
+| `esbabbler/`       | `v7.md`                  | Messaging, calls, rooms, moderation, DMs                        |
 | `fileTableEditor/` | —                        | CSV/JSON/XLSX table editor with computed columns                |
 | `infra/`           | `optimization-review.md` | Azure Pulumi infrastructure, cost, security, and stack planning |
 | `vue-phaserjs/`    | —                        | Phaser game engine Vue integration                              |
