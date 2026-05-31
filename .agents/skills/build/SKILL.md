@@ -70,12 +70,20 @@ external: [
 
 - **`/@esposter\//u` covers all `@esposter/*` workspace packages automatically** — never add individual `@esposter/foo` strings.
 - **Non-`@esposter/` workspace packages must be listed explicitly** — `azure-mock`, `parse-tmx`, `vue-phaserjs` are not covered by the regex.
-- **Everything in the external list (except workspace packages) must be a `peerDependency`** — if a non-workspace dep is externalized, it must be in `peerDependencies`, not `dependencies`, in the owning package's `package.json`. Exceptions: `@esposter/app` (root consumer) and `@esposter/azure-functions` (overrides external list to bundle everything).
-- **`dependencies` get bundled; `peerDependencies` are externalized** — the two must stay in sync with the shared external list. Never add a dep to `external` without also moving it to `peerDependencies` in the package that owns it.
+- **External list entries are a build superset, not a peer-dependency checklist for every package** — a package declares only the externalized packages it directly imports at runtime or exposes through its generated `.d.ts` surface.
+- **Do not duplicate transitive peers** — if `azure-mock` imports `@esposter/db-schema`, and `@esposter/db-schema` imports `zod`, then `zod` belongs to `@esposter/db-schema`'s peer dependencies, not `azure-mock`'s. The package that directly imports the dependency owns the contract.
+- **`dependencies` normally get bundled; `peerDependencies` are externalized** — when a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and make sure it is covered by the shared external list. Exceptions: `@esposter/app` (root consumer) and `@esposter/azure-functions` (overrides external list to bundle almost everything).
 
 ### Ordering convention
 
 Entries are grouped by **owning `@esposter` package**, sections in alphabetical package-name order, entries alphabetical within each section. One exception: a final "Vue framework" group for deps that are always consumer-provided and not owned by a single package (`@vueuse/core`, `pinia`, `vue`). Each section header comment is the bare package name: `// @esposter/db`, `// @esposter/db-mock`, etc.
+
+### Dependency declaration convention
+
+- `dependencies`: direct runtime imports that should be bundled or automatically installed for consumers. Workspace packages that are imported at runtime usually go here even though the shared external list keeps their code out of the package bundle.
+- `peerDependencies`: direct runtime imports or generated declaration-surface imports that are externalized and must be supplied by the consumer, especially framework/runtime singletons (`vue`, `pinia`), SDKs mirrored in public APIs, Drizzle/Pulumi runtimes, and package-plugin ecosystems.
+- `devDependencies`: build, lint, test, codegen, and typecheck tools; packages used only by tests; packages used only by source types that do not appear in generated declarations.
+- If a package only needs a dependency because an imported workspace package needs it, do not redeclare it as a peer. Let the directly importing workspace package own that peer dependency.
 
 ### Auditing external vs peerDependencies alignment
 
@@ -161,7 +169,7 @@ external: [...externalVueFramework, "@azure/functions"],
 
 1. Create `rolldown.config.ts` importing the appropriate base config.
 2. Add to `package.json`: `"build": "pnpm export:gen && rolldown --config rolldown.config.ts"`.
-3. For any dep that the consumer should provide, add it to `peerDependencies` AND verify it's covered by the global external list (or add it there).
+3. For any direct dep that the consumer should provide, add it to `peerDependencies` AND verify it's covered by the global external list (or add it there). Do not add transitive-only peers from imported workspace packages.
 4. Add `src/index.test.ts` bundle size snapshot (see testing skill).
 5. Add `test`/`coverage` scripts + `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`.
 6. Run `pnpm i` from the workspace root after editing `package.json`.

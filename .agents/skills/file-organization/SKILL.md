@@ -132,10 +132,11 @@ After adding to the shared config, rebuild `packages/configuration` (`pnpm build
 
 Use `peerDependencies` for packages that:
 
-- Are heavy/complex (e.g. `drizzle-kit`, `@electric-sql/pglite`) and should not be bundled into the dist.
-- Are already present in every consumer's package (e.g. `drizzle-orm`, `zod`).
+- Are direct runtime imports or generated `.d.ts` imports that should not be bundled into the dist.
+- Are framework/runtime singletons, SDKs mirrored in public APIs, or heavy/plugin runtimes that the consumer must provide (e.g. `vue`, `pinia`, Azure SDKs, `drizzle-orm`, `zod`, `drizzle-kit`, `@electric-sql/pglite`).
+- Are owned by the package that directly imports them. Do not redeclare transitive-only peers from imported workspace packages.
 
-Use `dependencies` for packages that are not installed elsewhere and must be bundled or auto-installed.
+Use `dependencies` for direct runtime imports that are not consumer-provided and must be bundled or auto-installed. Workspace packages imported at runtime usually stay in `dependencies`; their own package manifests declare their direct peer contracts.
 
 ### Example: `packages/db-mock`
 
