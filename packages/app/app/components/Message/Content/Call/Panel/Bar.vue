@@ -6,7 +6,7 @@ const callStore = useCallStore();
 const { currentRoomCallSessionId, isCallViewOpen } = storeToRefs(callStore);
 const participantStore = useParticipantStore();
 const { getParticipants } = participantStore;
-const { speakingIds } = storeToRefs(participantStore);
+const { handRaisedIdsMap, speakingIds } = storeToRefs(participantStore);
 const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId.value));
 </script>
 
@@ -19,6 +19,7 @@ const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId
         v-for="participant of roomParticipants"
         :key="participant.id"
         :participant
+        :is-hand-raised="(handRaisedIdsMap.get(currentRoomCallSessionId) ?? []).includes(participant.id)"
         :is-speaking="speakingIds.includes(participant.id)"
       />
     </div>
@@ -26,6 +27,7 @@ const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId
     <MessageContentCallVideoControlGroup />
     <MessageContentCallAudioDeafenButton />
     <MessageContentCallScreenShareButton />
+    <MessageContentCallControlHandButton />
     <MessageContentCallControlLeaveButton />
     <v-tooltip location="bottom" text="Open call view">
       <template #activator="{ props }">
