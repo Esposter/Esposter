@@ -3,6 +3,7 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { EventEmitter } from "node:events";
 
 interface CallEvents {
+  handRaisedChanged: [{ callSessionId: string; id: string; isHandRaised: boolean }];
   joinCall: [{ callSessionId: string; participant: CallParticipant; sessionId: string }];
   knockCall: [{ callSessionId: string; knocker: CallParticipant; knockerSessionId: string }];
   knockerAdmitted: [{ callSessionId: string; knockerSessionId: string }];

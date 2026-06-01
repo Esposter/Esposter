@@ -57,6 +57,46 @@ describe(useParticipantStore, () => {
     });
   });
 
+  describe("setHandRaised", () => {
+    test("sets raised hand state", () => {
+      expect.hasAssertions();
+
+      const participantStore = useParticipantStore();
+      const { getHandRaisedIds, setHandRaised } = participantStore;
+      const sessionId = getMockSession().session.id;
+      setHandRaised(callSessionId, sessionId, true);
+      const handRaisedIds = getHandRaisedIds(callSessionId);
+
+      expect(handRaisedIds).toStrictEqual([sessionId]);
+    });
+
+    test("setHandRaised is idempotent", () => {
+      expect.hasAssertions();
+
+      const participantStore = useParticipantStore();
+      const { getHandRaisedIds, setHandRaised } = participantStore;
+      const sessionId = getMockSession().session.id;
+      setHandRaised(callSessionId, sessionId, true);
+      setHandRaised(callSessionId, sessionId, true);
+      const handRaisedIds = getHandRaisedIds(callSessionId);
+
+      expect(handRaisedIds).toStrictEqual([sessionId]);
+    });
+
+    test("clears raised hand state", () => {
+      expect.hasAssertions();
+
+      const participantStore = useParticipantStore();
+      const { getHandRaisedIds, setHandRaised } = participantStore;
+      const sessionId = getMockSession().session.id;
+      setHandRaised(callSessionId, sessionId, true);
+      setHandRaised(callSessionId, sessionId, false);
+      const handRaisedIds = getHandRaisedIds(callSessionId);
+
+      expect(handRaisedIds).toStrictEqual([]);
+    });
+  });
+
   describe("createCallParticipant", () => {
     test("adds participant to session", () => {
       expect.hasAssertions();

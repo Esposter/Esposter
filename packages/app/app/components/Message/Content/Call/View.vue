@@ -22,7 +22,7 @@ const {
 } = storeToRefs(mediaStore);
 const participantStore = useParticipantStore();
 const { getParticipants } = participantStore;
-const { speakingIds } = storeToRefs(participantStore);
+const { handRaisedIdsMap, speakingIds } = storeToRefs(participantStore);
 const { data: session } = await authClient.useSession(useFetch);
 const sessionId = computed(() => session.value?.session.id);
 const callParticipants = computed(() => getParticipants(activeCallSessionId.value));
@@ -36,6 +36,7 @@ const presenterName = computed(() => {
 });
 const getParticipantTileProps = (participant: CallParticipant): CallParticipantTileProps => ({
   isDeafened: isDeafened.value && participant.id === sessionId.value,
+  isHandRaised: (handRaisedIdsMap.value.get(activeCallSessionId.value) ?? []).includes(participant.id),
   isScreenSharing: screenSharingParticipantIds.value.includes(participant.id),
   isSelf: participant.id === sessionId.value,
   isSpeaking: speakingIds.value.includes(participant.id),

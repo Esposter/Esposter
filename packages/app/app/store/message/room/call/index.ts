@@ -21,7 +21,9 @@ export const useCallStore = defineStore("message/room/call", () => {
     clearJoinNotice,
     clearSpeakers,
     deleteCallParticipant,
+    getHandRaisedIds,
     getParticipants,
+    setHandRaised,
     setMute,
     setParticipantCamera,
     setParticipants,
@@ -37,7 +39,29 @@ export const useCallStore = defineStore("message/room/call", () => {
   const sessionId = computed(() => session.value.data?.session.id);
   const callParticipants = computed(() => getParticipants(activeCallSessionId.value));
   const isInCall = computed(() => callParticipants.value.some(({ id }) => id === sessionId.value));
+  const isHandRaised = computed(() =>
+    sessionId.value ? getHandRaisedIds(activeCallSessionId.value).includes(sessionId.value) : false,
+  );
   const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
+  const setHandRaisedEnabled = async (newIsHandRaised: boolean, targetSessionId?: string) => {
+    const sessionIdValue = sessionId.value;
+    const participantSessionId = targetSessionId ?? sessionIdValue;
+    if (!activeCallSessionId.value || !sessionIdValue || !participantSessionId) return;
+
+    const oldIsHandRaised = getHandRaisedIds(activeCallSessionId.value).includes(participantSessionId);
+    setHandRaised(activeCallSessionId.value, participantSessionId, newIsHandRaised);
+
+    await getResultAsync(() =>
+      $trpc.callSession.setHandRaised.mutate({
+        callSessionId: activeCallSessionId.value,
+        isHandRaised: newIsHandRaised,
+        participantId: participantSessionId,
+      }),
+    ).match(noop, (error) => {
+      setHandRaised(activeCallSessionId.value, participantSessionId, oldIsHandRaised);
+      throw error;
+    });
+  };
   const setCameraEnabled = async (newIsCameraEnabled: boolean) => {
     const sessionIdValue = sessionId.value;
     if (!activeCallSessionId.value || !sessionIdValue) return;
@@ -209,6 +233,11 @@ export const useCallStore = defineStore("message/room/call", () => {
       await setMuteEnabled(newIsMuted);
     }).match(noop, console.error);
   };
+  const toggleHandRaised = async () => {
+    await getResultAsync(async () => {
+      await setHandRaisedEnabled(!isHandRaised.value);
+    }).match(noop, console.error);
+  };
   const toggleScreenShare = async () => {
     await getResultAsync(async () => {
       await setScreenShare(!mediaStore.isScreenSharing);
@@ -251,6 +280,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     currentRoomCallSessionId,
     isCallViewOpen,
     isConnecting,
+    isHandRaised,
     isInCall,
     isMuted,
     joinCall,
@@ -259,9 +289,11 @@ export const useCallStore = defineStore("message/room/call", () => {
     selectVirtualBackground,
     setCameraEnabled,
     setCurrentRoomCallSessionId,
+    setHandRaisedEnabled,
     setMuteEnabled,
     toggleCamera,
     toggleDeafen,
+    toggleHandRaised,
     toggleMute,
     toggleScreenShare,
   };

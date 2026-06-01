@@ -5,11 +5,13 @@ import { authClient } from "@/services/auth/authClient";
 export const useParticipantStore = defineStore("message/room/call/participant", () => {
   const session = authClient.useSession();
   const callSessionParticipantsMap = ref(new Map<string, CallParticipant[]>());
+  const handRaisedIdsMap = ref(new Map<string, string[]>());
   const joinNoticeParticipant = ref<CallParticipant>();
   const speakingIds = ref<string[]>([]);
   const sessionId = computed(() => session.value.data?.session.id);
   const getParticipants = (callSessionId: string) =>
     callSessionId ? (callSessionParticipantsMap.value.get(callSessionId) ?? []) : [];
+  const getHandRaisedIds = (callSessionId: string) => handRaisedIdsMap.value.get(callSessionId) ?? [];
   const createCallParticipant = (callSessionId: string, participant: CallParticipant) => {
     const participants = getParticipants(callSessionId);
     if (participants.some(({ id }) => id === participant.id)) return;
@@ -23,6 +25,7 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
       callSessionId,
       participants.filter((participant) => participant.id !== id),
     );
+    setHandRaised(callSessionId, id, false);
     if (joinNoticeParticipant.value?.id === id) joinNoticeParticipant.value = undefined;
   };
   const setMute = (callSessionId: string, id: string, isMuted: boolean) => {
@@ -38,6 +41,15 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
   const setParticipants = (callSessionId: string, participants: CallParticipant[]) => {
     callSessionParticipantsMap.value.set(callSessionId, participants);
   };
+  const setHandRaised = (callSessionId: string, id: string, isHandRaised: boolean) => {
+    const handRaisedIds = getHandRaisedIds(callSessionId);
+    handRaisedIdsMap.value.set(
+      callSessionId,
+      isHandRaised
+        ? [id, ...handRaisedIds.filter((handRaisedId) => handRaisedId !== id)]
+        : handRaisedIds.filter((handRaisedId) => handRaisedId !== id),
+    );
+  };
   const createSpeaker = (id: string) => {
     if (speakingIds.value.includes(id)) return;
     speakingIds.value = [...speakingIds.value, id];
@@ -48,21 +60,28 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
   const clearSpeakers = () => {
     speakingIds.value = [];
   };
+  const clearHandRaisedIds = (callSessionId: string) => {
+    handRaisedIdsMap.value.delete(callSessionId);
+  };
   const clearJoinNotice = () => {
     joinNoticeParticipant.value = undefined;
   };
 
   return {
     callSessionParticipantsMap,
+    clearHandRaisedIds,
     clearJoinNotice,
     clearSpeakers,
     createCallParticipant,
     createSpeaker,
     deleteCallParticipant,
     deleteSpeaker,
+    getHandRaisedIds,
     getParticipants,
+    handRaisedIdsMap,
     joinNoticeParticipant,
     sessionId,
+    setHandRaised,
     setMute,
     setParticipantCamera,
     setParticipants,
