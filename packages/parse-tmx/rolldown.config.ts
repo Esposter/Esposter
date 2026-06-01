@@ -1,7 +1,7 @@
 import type { RolldownOptions } from "rolldown";
 
-import { getRolldownConfigurationIsomorphic } from "@esposter/configuration";
+import { getRolldownConfigurationBrowser } from "@esposter/configuration";
 
-const rolldownConfigurationIsomorphic: RolldownOptions = getRolldownConfigurationIsomorphic();
+const rolldownConfigurationBrowser: RolldownOptions = getRolldownConfigurationBrowser();
 
-export default rolldownConfigurationIsomorphic;
+export default rolldownConfigurationBrowser;

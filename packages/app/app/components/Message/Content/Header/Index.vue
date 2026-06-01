@@ -9,6 +9,7 @@ const { $trpc } = useNuxtApp();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
+const { storeUpdateRoom } = roomStore;
 const { currentRoom, isCreator } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
@@ -37,15 +38,18 @@ const { smAndDown } = useVDisplay();
       @submit="
         async (name) => {
           if (!currentRoom) return;
-          await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name });
+          storeUpdateRoom(await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name }));
           await createMessage({ roomId: currentRoom.id, type: MessageType.EditRoom, message: name });
         }
       "
     >
+      <template #prepend-content>
+        <MessageContentHeaderEditRoomImageField :image="currentRoom.image" :name="roomName" :room-id="currentRoom.id" />
+      </template>
       <StyledAvatar :image="currentRoom.image" :name="roomName" :avatar-props="{ size: 'x-small' }" />
       <div pl-2 flex flex-col>
         <span>{{ roomName }}</span>
-        <span v-if="currentRoom.topic" text-xs truncate text-medium-emphasis>{{ currentRoom.topic }}</span>
+        <span v-if="currentRoom.topic" text-xs truncate op-medium-emphasis>{{ currentRoom.topic }}</span>
       </div>
     </StyledEditableNameDialogButton>
     <template #append>
@@ -56,4 +60,5 @@ const { smAndDown } = useVDisplay();
       <MessageContentHeaderOverflowMenu v-if="smAndDown" />
     </template>
   </v-toolbar>
+  <MessageContentHeaderDirectMessage v-else />
 </template>

@@ -1,5 +1,4 @@
 import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { on } from "@@/server/services/events/on";
 import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
@@ -7,11 +6,12 @@ import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { selectRoomInMessageSchema } from "@esposter/db-schema";
+import { roomIdSchema, selectRoomInMessageSchema } from "@esposter/db-schema";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
 const readNicknamesInputSchema = z.object({
-  roomId: selectRoomInMessageSchema.shape.id,
+  ...roomIdSchema.shape,
   userIds: z.string().array().min(1).max(MAX_READ_LIMIT),
 });
 

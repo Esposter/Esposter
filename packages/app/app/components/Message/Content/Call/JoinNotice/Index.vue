@@ -23,7 +23,7 @@ const { joinNoticeParticipant } = storeToRefs(participantStore);
     absolute
   >
     <div flex flex-col gap-y-3>
-      <span text-medium-emphasis text-body-small>Waiting to join</span>
+      <span op-medium-emphasis text-body-small>Waiting to join</span>
       <MessageContentCallJoinNoticeKnockerItem v-for="knocker of knockers" :key="knocker.id" :knocker />
     </div>
   </StyledCard>

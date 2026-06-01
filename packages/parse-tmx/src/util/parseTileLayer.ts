@@ -3,13 +3,13 @@ import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
 
 import { Compression } from "@/models/Compression";
 import { Encoding } from "@/models/Encoding";
+import { getDecompressedBytes } from "@/util/getDecompressedBytes";
 import { isTMXEmbeddedTilesetNode } from "@/util/isTMXEmbeddedTilesetNode";
 import { parseFlips } from "@/util/parseFlips";
 import { parseProperties } from "@/util/parseProperties";
 import { parseTileId } from "@/util/parseTileId";
 import { unpackTileBytes } from "@/util/unpackTileBytes";
-import { exhaustiveGuard, takeOne } from "@esposter/shared";
-import { gunzip, inflate } from "node:zlib";
+import { exhaustiveGuard, normalizeString, takeOne } from "@esposter/shared";
 
 export const parseTileLayer = async (
   node: TMXLayerNode,
@@ -30,29 +30,18 @@ export const parseTileLayer = async (
     // Base64, Csv
     const { $, _ } = nodeData;
     const { compression, encoding } = $;
-    const layerData = _.trim();
+    const layerData = normalizeString(_);
 
     switch (encoding) {
       case Encoding.Base64: {
-        const buffer = Buffer.from(layerData, encoding);
+        const bytes = Uint8Array.fromBase64(layerData);
         switch (compression) {
           case Compression.Gzip:
-          case Compression.Zlib: {
-            const decompress = compression === Compression.Gzip ? gunzip : inflate;
-            layer.data = await new Promise((resolve, reject) => {
-              decompress(buffer, (err, buf) => {
-                if (err) {
-                  reject(err);
-                  return;
-                }
-
-                resolve(unpackTileBytes(buf, expectedCount));
-              });
-            });
+          case Compression.Zlib:
+            layer.data = unpackTileBytes(await getDecompressedBytes(bytes, compression), expectedCount);
             break;
-          }
           case undefined:
-            layer.data = unpackTileBytes(buffer, expectedCount);
+            layer.data = unpackTileBytes(bytes, expectedCount);
             break;
           default:
             exhaustiveGuard(compression);

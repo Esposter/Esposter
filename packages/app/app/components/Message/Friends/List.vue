@@ -29,6 +29,6 @@ const displayFriends = computed(() => friends.value.toSorted((a, b) => b.created
         </template>
       </v-list-item>
     </v-list>
-    <span v-else text-medium-emphasis>No friends yet. Search for users above to add them.</span>
+    <span v-else op-medium-emphasis>No friends yet. Search for users above to add them.</span>
   </div>
 </template>

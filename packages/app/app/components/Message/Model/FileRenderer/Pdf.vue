@@ -20,7 +20,7 @@ watch(isDark, (newIsDark) => {
   <VuePdfEmbed
     :style="isPreview ? { maxHeight: PREVIEW_MAX_HEIGHT } : { cursor: 'pointer' }"
     :page="1"
-    :source="url"
+    :source="{ url }"
     annotation-layer
     text-layer
     @="

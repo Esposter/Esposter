@@ -16,7 +16,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { PinnableMessageTypes } from "#shared/services/message/PinnableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
-import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
@@ -70,6 +70,7 @@ import {
   getReverseTickedTimestamp,
   MessageEntityMap,
   MessageType,
+  roomIdSchema,
   roomsInMessage,
   selectRoomInMessageSchema,
   standardCreateMessageInputSchema,
@@ -77,7 +78,14 @@ import {
   StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import {
+  InvalidOperationError,
+  ItemMetadataPropertyNames,
+  MAX_READ_LIMIT,
+  NotFoundError,
+  Operation,
+  takeOne,
+} from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { eq } from "drizzle-orm";
@@ -94,23 +102,23 @@ const readMessagesInputSchema = z
     filter: standardMessageEntitySchema.pick({ isPinned: true }).optional(),
     isIncludeValue: z.literal(true).optional(),
     order: z.literal(SortOrder.Asc).optional(),
-    roomId: selectRoomInMessageSchema.shape.id,
+    ...roomIdSchema.shape,
   })
   .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const readMessagesByRowKeysInputSchema = z.object({
-  roomId: selectRoomInMessageSchema.shape.id,
+  ...roomIdSchema.shape,
   rowKeys: standardMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
 const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomInMessageSchema.shape.id,
+  ...roomIdSchema.shape,
 });
 
 const generateDownloadFileSasUrlsInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomInMessageSchema.shape.id,
+  ...roomIdSchema.shape,
 });
 
 const deleteFileInputSchema = z.object({
@@ -122,14 +130,14 @@ const deleteLinkPreviewResponseInputSchema = standardMessageEntitySchema.pick({ 
 
 const onstandardCreateMessageInputSchema = z.object({
   lastEventId: z.string().nullish(),
-  roomId: selectRoomInMessageSchema.shape.id,
+  ...roomIdSchema.shape,
 });
 
-const onUpdateMessageInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const onUpdateMessageInputSchema = roomIdSchema;
 
-const onCreateTypingInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const onCreateTypingInputSchema = roomIdSchema;
 
-const onDeleteMessageInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const onDeleteMessageInputSchema = roomIdSchema;
 
 export const forwardMessageInputSchema = z.object({
   ...standardMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
@@ -140,7 +148,7 @@ export const pinMessageInputSchema = standardMessageEntitySchema.pick({ partitio
 
 export const unpinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
 
-const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const getWebPubSubClientAccessUrlInputSchema = roomIdSchema;
 
 export const baseMessageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(

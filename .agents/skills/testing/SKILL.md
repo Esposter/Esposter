@@ -109,6 +109,7 @@ afterEach(() => {
 
 - **No `nextTick`** — no DOM, sync effects fire immediately. Use `flushPromises()` from `@vue/test-utils` for async watch callbacks.
 - **Fake timers** — `vi.useFakeTimers()` in `beforeEach`, `vi.useRealTimers()` in `afterEach`. Never inside individual tests.
+- **Timer assertions must be exact** — prefer `vi.advanceTimersByTime(...)` with boundary assertions over `vi.runAllTimers()`. For delayed behavior, assert the state before the delay elapses, then advance the remaining time and assert the final state.
 
 ## Vitest Environment
 

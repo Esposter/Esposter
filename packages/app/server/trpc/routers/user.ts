@@ -3,7 +3,6 @@ import type { SetNonNullable } from "type-fest";
 
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { dayjs } from "#shared/services/dayjs";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
@@ -22,7 +21,7 @@ import {
   UserStatus,
   userStatusesInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, MAX_READ_LIMIT, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { eq, inArray } from "drizzle-orm";
 

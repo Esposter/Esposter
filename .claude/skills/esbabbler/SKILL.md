@@ -204,3 +204,64 @@ Scope: standalone calls only. Room calls stay gated by room membership/RBAC.
 - `JoinNotice.vue` upgraded to show "Let In" / "Dismiss" per knocker.
 
 Full spec in `features/esbabbler/completed/v5.md` → Phase 5.
+
+## Store Mutation Pattern — Subscriptions as Source of Truth
+
+Subscriptions handle state updates for **all** clients including the caller. Don't duplicate subscription work in a store wrapper.
+
+**Default**: call `$trpc` directly from the component. Add a store function only when it does something subscriptions cannot:
+
+1. Genuine optimistic update (local state before server responds)
+2. Navigation or side effects not covered by any subscription
+3. Combines multiple mutations or concerns
+
+```ts
+// WRONG — wrapper that duplicates subscription work
+const deleteDirectMessageParticipant = async (input) => {
+  await $trpc.room.directMessage.deleteDirectMessageParticipant.mutate(input);
+  // ❌ onLeaveRoom subscription already handles participant removal on all clients
+  const participants = directMessageParticipantsMap.value.get(input.roomId) ?? [];
+  directMessageParticipantsMap.value.set(input.roomId, participants.filter(...));
+};
+
+// CORRECT — call tRPC directly in the component; subscription owns state
+$trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId });
+```
+
+### Genuine optimistic update — `createMessage` is the canonical example
+
+- Create a reactive entity locally with `isLoading: true` **before** the tRPC call so it renders immediately
+- After the call, `Object.assign` the server response onto the same reactive object (same reference, no re-render flicker)
+- Delete the `isLoading` flag — subscription receives the real event but the message is already in the list; deduplication happens by composite key
+
+```ts
+const createMessage = async (input: StandardCreateMessageInput) => {
+  const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.data.user.id }));
+  await storeCreateMessage(newMessage); // renders immediately with loading state
+  Object.assign(newMessage, await $trpc.message.createMessage.mutate(input)); // server response fills real data in-place
+  delete newMessage.isLoading;
+};
+```
+
+Use this pattern only when the delay would be visibly jarring (message send). For participant join/leave, hide/delete DM, and similar actions a subscription round-trip is imperceptible and the simplicity is worth it.
+
+## Stable Watch Sources for `useOnlineSubscribable`
+
+When subscriptions only need to react to **membership changes** (rooms added or removed), watch a stable primitive instead of the full reactive array. A sorted array returned by `toSorted()` produces a new reference on every `updatedAt` change, causing unnecessary subscription teardown and rebuild on every incoming message.
+
+```ts
+// WRONG — re-subscribes on every updatedAt bump (every incoming message)
+useOnlineSubscribable(directMessages, (newDirectMessages) => { ... });
+
+// CORRECT — stable string; only changes when the set of IDs changes
+useOnlineSubscribable(
+  () => directMessages.value.map(({ id }) => id).toSorted().join(","),
+  (roomIdsString) => {
+    if (!roomIdsString) return undefined;
+    const roomIds = roomIdsString.split(",");
+    // set up subscriptions…
+  },
+);
+```
+
+A plain getter `() => expr` is equivalent to `computed(() => expr)` as a watch source and is preferred — no extra ref allocation.

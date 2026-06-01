@@ -1,4 +1,5 @@
-import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
+import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
+
 import { getIsRateLimited } from "@@/server/trpc/middleware/getIsRateLimited";
 import { TRPCError } from "@trpc/server";
 

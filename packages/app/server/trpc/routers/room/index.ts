@@ -11,7 +11,6 @@ import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
@@ -24,6 +23,7 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
+import { getRoomProfileImageBlobName } from "@@/server/services/room/getRoomProfileImageBlobName";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
@@ -53,6 +53,7 @@ import {
   selectInviteInMessageSchema,
   selectRoomInMessageSchema,
   selectUserSchema,
+  userIdSchema,
   users,
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
@@ -61,6 +62,7 @@ import {
   getResultAsync,
   InvalidOperationError,
   ItemMetadataPropertyNames,
+  MAX_READ_LIMIT,
   NotFoundError,
   Operation,
   takeOne,
@@ -72,8 +74,6 @@ import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomInMessageSchema.shape.id.optional();
-
-const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });
 
 const readRoomsInputSchema = z
   .object({
@@ -213,6 +213,23 @@ export const baseRoomRouter = router({
           ctx.getSessionPayload.session.id,
         );
     }),
+  deleteProfileImage: getPermissionsProcedure(
+    RoomPermission.ManageRoom,
+    roomIdSchema,
+    "roomId",
+  ).mutation<RoomInMessage>(async ({ ctx, input: { roomId } }) => {
+    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    const blockBlobClient = containerClient.getBlockBlobClient(getRoomProfileImageBlobName(roomId));
+    await blockBlobClient.deleteIfExists();
+    const updatedRoom = requireMutation(
+      (await ctx.db.update(roomsInMessage).set({ image: "" }).where(eq(roomsInMessage.id, roomId)).returning())[0],
+      Operation.Update,
+      DatabaseEntityType.Room,
+      roomId,
+    );
+    roomEventEmitter.emit("updateRoom", updatedRoom);
+    return updatedRoom;
+  }),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
@@ -222,7 +239,7 @@ export const baseRoomRouter = router({
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation(
     async ({ input: { roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-      const blobName = `${roomId}/ProfileImage`;
+      const blobName = getRoomProfileImageBlobName(roomId);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const sasUrl = await blockBlobClient.generateSasUrl({
         expiresOn: dayjs().add(1, "hour").toDate(),
@@ -272,7 +289,6 @@ export const baseRoomRouter = router({
         DatabaseEntityType.UserToRoom,
         JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id }),
       );
-
       const userToRoomWithRelations = await requireEntity(
         tx.query.usersToRoomsInMessage.findFirst({
           where: { roomId: { eq: userToRoom.roomId }, userId: { eq: userToRoom.userId } },
@@ -281,7 +297,6 @@ export const baseRoomRouter = router({
         DatabaseEntityType.UserToRoom,
         JSON.stringify(userToRoom),
       );
-
       const { roomId, roomInMessage, user } = userToRoomWithRelations;
       return { roomId, roomInMessage, user };
     });
@@ -427,29 +442,27 @@ export const baseRoomRouter = router({
       .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, ids))),
   ),
-  readMutualRooms: standardAuthedProcedure
-    .input(readMutualRoomsInputSchema)
-    .query<RoomInMessage[]>(({ ctx, input }) => {
-      const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
-      const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
-      return ctx.db
-        .select(getColumns(roomsInMessage))
-        .from(roomsInMessage)
-        .innerJoin(
-          usersToRoomsInMessage1,
-          and(
-            eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
-            eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
-          ),
-        )
-        .innerJoin(
-          usersToRoomsInMessage2,
-          and(eq(usersToRoomsInMessage2.roomId, roomsInMessage.id), eq(usersToRoomsInMessage2.userId, input.userId)),
-        )
-        .where(eq(roomsInMessage.type, RoomType.Room))
-        .orderBy(desc(roomsInMessage.updatedAt))
-        .limit(MAX_READ_LIMIT);
-    }),
+  readMutualRooms: standardAuthedProcedure.input(userIdSchema).query<RoomInMessage[]>(({ ctx, input }) => {
+    const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
+    const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
+    return ctx.db
+      .select(getColumns(roomsInMessage))
+      .from(roomsInMessage)
+      .innerJoin(
+        usersToRoomsInMessage1,
+        and(
+          eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
+          eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
+        ),
+      )
+      .innerJoin(
+        usersToRoomsInMessage2,
+        and(eq(usersToRoomsInMessage2.roomId, roomsInMessage.id), eq(usersToRoomsInMessage2.userId, input.userId)),
+      )
+      .where(eq(roomsInMessage.type, RoomType.Room))
+      .orderBy(desc(roomsInMessage.updatedAt))
+      .limit(MAX_READ_LIMIT);
+  }),
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | RoomInMessage>(async ({ ctx, input }) => {
     if (input) {
       const room = await ctx.db.query.roomsInMessage.findFirst({
@@ -506,18 +519,19 @@ export const baseRoomRouter = router({
       let room: RoomInMessage | undefined;
 
       if (roomId) {
-        room = (
+        const routeRoom = (
           await ctx.db
             .select(getColumns(roomsInMessage))
             .from(roomsInMessage)
             .innerJoin(usersToRoomsInMessage, innerJoinCondition)
-            .where(and(eq(roomsInMessage.id, roomId), eq(roomsInMessage.type, RoomType.Room)))
+            .where(eq(roomsInMessage.id, roomId))
         )[0];
-        if (!room)
+        if (!routeRoom)
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: new NotFoundError(DatabaseEntityType.Room, roomId).message,
           });
+        if (routeRoom.type === RoomType.Room) room = routeRoom;
       }
 
       const wheres: (SQL | undefined)[] = [eq(roomsInMessage.type, RoomType.Room)];

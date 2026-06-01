@@ -14,6 +14,6 @@ const emit = defineEmits<{ save: [] }>();
   <div flex flex-col gap-2>
     <div font-semibold>Category</div>
     <v-select v-model="modelValue" :items density="compact" hide-details @update:model-value="emit('save')" />
-    <span text-xs text-medium-emphasis>Assign this room to a category to group it in the sidebar.</span>
+    <span text-xs op-medium-emphasis>Assign this room to a category to group it in the sidebar.</span>
   </div>
 </template>

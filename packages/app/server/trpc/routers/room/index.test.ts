@@ -197,6 +197,40 @@ describe("room", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
+  test("deletes profile image", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const blobName = `${newRoom.id}/ProfileImage`;
+    const publicUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${blobName}`;
+    MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
+    await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
+    const onUpdateRoom = await roomCaller.onUpdateRoom([newRoom.id]);
+    const data = await withAsyncIterator(
+      () => onUpdateRoom,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), roomCaller.deleteProfileImage({ roomId: newRoom.id })]);
+        return result;
+      },
+    );
+
+    assert(!data.done);
+
+    expect(data.value.image).toBe("");
+    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(false);
+  });
+
+  test("fails delete profile image without permission", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(roomCaller.deleteProfileImage({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
+  });
+
   test("updates", async () => {
     expect.hasAssertions();
 
@@ -432,18 +466,19 @@ describe("room", () => {
     expect(takeOne(readRooms.items).id).toBe(newRoom.id);
   });
 
-  test("fails read multiple with direct message roomId", async () => {
+  test("reads rooms with direct message roomId", async () => {
     expect.hasAssertions();
 
     const mainUser = getMockSession().user;
+    const newRoom = await roomCaller.createRoom({ name });
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
     await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+    const readRooms = await roomCaller.readRooms({ roomId: directMessage.id });
 
-    await expect(roomCaller.readRooms({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, directMessage.id).message}]`,
-    );
+    expect(readRooms.items).toHaveLength(1);
+    expect(takeOne(readRooms.items).id).toBe(newRoom.id);
   });
 
   test("fails join with joined room", async () => {

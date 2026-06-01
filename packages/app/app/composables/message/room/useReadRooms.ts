@@ -17,7 +17,7 @@ export const useReadRooms = async () => {
     if (!userId)
       throw new InvalidOperationError(Operation.Read, readRooms.name, CompositeKeyPropertyNames.partitionKey);
     return readItems(async () => {
-      const data = await $trpc.room.readRooms.query({ roomId: currentRoomId.value });
+      const data = await $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {});
       const roomIds = data.items.map(({ id }) => id);
       if (roomIds.length > 0)
         await Promise.all([readMyUsersToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);

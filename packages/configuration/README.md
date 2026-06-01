@@ -21,7 +21,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | --------------------- | --------------------------------- | ---------------------------------------------------------------- |
 | ESLint                | `eslint/`                         | Shared ESLint rules (oxlint + typescript-eslint + perfectionist) |
 | Rolldown (browser)    | `rolldownConfigurationBrowser`    | Vite-compatible browser bundle config                            |
-| Rolldown (isomorphic) | `rolldownConfigurationIsomorphic` | Bundle for packages that run in both environments                |
+| Rolldown (isomorphic) | `rolldownConfigurationIsomorphic` | Browser bundle config with Node built-in polyfills               |
 | Rolldown (Node)       | `rolldownConfigurationNode`       | Server-only package bundle config                                |
 | ctix                  | `.ctirc-ts`                       | Barrel file generation config for `packages/*/src/index.ts`      |
 
@@ -29,8 +29,9 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ```ts
 // rolldown.config.ts
-import { rolldownConfigurationIsomorphic } from "@esposter/configuration";
-export default rolldownConfigurationIsomorphic;
+import { rolldownConfigurationBrowser } from "@esposter/configuration";
+
+export default rolldownConfigurationBrowser;
 ```
 
 ```json
