@@ -77,6 +77,7 @@ When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use 
 
 ## Vuetify Selects and List Items
 
+- For `v-list-item` icon placement: use `prepend-icon` for decorative/category icons (shown before the title), use `append-icon` for action/severity icons (shown after the title, e.g. moderation actions). Action icon color and icon value should come from the relevant `AdminAction*Map` constants — never hardcode them inline.
 - When building items for `v-autocomplete`, `v-select`, or `v-list-item` (in a `v-menu` / `v-list`), always type them as `SelectItemCategoryDefinition<T>[]` (`{ title: string, value: T }`) from `@/models/vuetify/SelectItemCategoryDefinition`. Never inline untyped `{ title, value }` arrays — always extract to a typed constant.
 - **Never specify `item-title` or `item-value` props** — Vuetify's defaults are already `"title"` and `"value"`, which match `SelectItemCategoryDefinition` exactly. If your source data has different field names (e.g. `{ id, name }`), map it to `{ title, value }` at the call site — never pass the raw shape and compensate with `item-title`/`item-value`.
 
@@ -176,6 +177,49 @@ Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navi
     <span v-else>{{ name[0] }}</span>
   </v-avatar>
   ```
+
+## CSS Custom Properties — No SASS Variables in Component Styles
+
+**Never use Vuetify SASS variables (`$border-width-root` etc.) in component `<style>` blocks.** These are build-time SASS variables; they require `additionalData` injection which creates conflicts with Vuetify's compilation pipeline.
+
+All shared values live as CSS custom properties in the `:root` block in `globals.scss`. Use `var(--name)` in component styles.
+
+| Purpose                       | CSS custom property          | Value                                               |
+| ----------------------------- | ---------------------------- | --------------------------------------------------- |
+| App bar height                | `--app-bar-height`           | `56px`                                              |
+| Vuetify avatar width          | `--avatar-width`             | `40px`                                              |
+| Vuetify border width          | `--border-width`             | `thin`                                              |
+| Vuetify border style          | `--border-style`             | `solid`                                             |
+| Vuetify border radius         | `--border-radius`            | `4px`                                               |
+| Vuetify transition speed      | `--transition-duration`      | `0.3s`                                              |
+| Vuetify move transition speed | `--transition-move-duration` | `0.5s`                                              |
+| Vue gradient                  | `--vue-gradient`             | `linear-gradient(45deg, #42d392 25%, #647eff)`      |
+| Midnight bloom                | `--midnight-bloom`           | `linear-gradient(-20deg, #2b5876 0%, #4e4376 100%)` |
+
+```vue
+<!-- WRONG — uses SASS variable, requires additionalData injection -->
+<style scoped lang="scss">
+.panel {
+  border: $border-width-root $border-style-root v-bind(border);
+  top: $app-bar-height;
+}
+</style>
+
+<!-- ALSO WRONG — scoped CSS class when attributify can do this directly -->
+<style scoped>
+.panel {
+  border: var(--border-width) var(--border-style) v-bind(border);
+  top: var(--app-bar-height);
+}
+</style>
+
+<!-- CORRECT — attributify; no style block needed -->
+<div b-1 b-border top="[var(--app-bar-height)]" />
+```
+
+The goal is always attributify. The CSS custom-property form (`var(--border-width)` etc.) is only acceptable when a style block is genuinely required (e.g. `:deep()` selectors, `@keyframes`, element selectors). When the styles can be expressed as UnoCSS utilities, always prefer inline attributes and delete the style block entirely.
+
+Only add `lang="scss"` when you actually need SCSS-specific features: `@mixin`/`@include`, or `#{...}` interpolation. Simple styles with `v-bind()` and `:deep()` do not need `lang="scss"`.
 
 ## Keyboard Shortcut Components
 

@@ -6,7 +6,7 @@ Apply when creating, updating, or referencing files in the `features/` directory
 
 ## Directory Layout
 
-```
+```text
 architecture/
   README.md                ← index for global architecture decisions
   <topic>.md               ← cross-cutting architecture shared by multiple areas
