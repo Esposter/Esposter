@@ -17,6 +17,7 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
+import { MOCK_TABLE_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
 import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
@@ -45,7 +46,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
 
   constructor(_url: string, tableName: string) {
     this.tableName = tableName;
-    this.url = `https://mockaccount.table.core.windows.net/${this.tableName}`;
+    this.url = `${MOCK_TABLE_BASE_URL}/${this.tableName}`;
   }
 
   createEntity<T extends object>(entity: TableEntity<T>): Promise<CreateTableEntityResponse> {

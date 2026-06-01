@@ -8,6 +8,7 @@
 
 - 📖 [Documentation](#documentation)
 - 🏠 [Local Development](#local-development)
+- 🧱 [Architecture](#architecture)
 - 📦 [Packages](#packages)
 - 🤝 [Community](#community)
 - ⚖️ [License](#license)
@@ -201,6 +202,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | Name                       | Link                                                                           |
 | -------------------------- | ------------------------------------------------------------------------------ |
 | Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                  |
+| UnoCSS                     | https://marketplace.visualstudio.com/items?itemName=antfu.unocss               |
 | ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint     |
 | Oxfmt - Code formatter     | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode             |
 | GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens            |
@@ -280,6 +282,16 @@ pnpm preview
 
 Esposter is a lerna + pnpm workspaces monorepo.
 Packages are used directly by the nuxt application via `workspace:*`.
+
+### Workspace Graph
+
+![Workspace dependency graph](./dependency-graph.svg)
+
+Regenerate this graph from the repo root with:
+
+```bash
+pnpm depcruise:graph
+```
 
 ## <a name="packages">📦 Packages</a>
 

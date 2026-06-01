@@ -8,19 +8,26 @@ export const useUserToRoomSubscribables = () => {
   const userToRoomStore = useUserToRoomStore();
   const { setMyUserToRoom, setNickname } = userToRoomStore;
 
-  useOnlineSubscribable(rooms, (newRooms) => {
-    if (newRooms.length === 0) return undefined;
+  useOnlineSubscribable(
+    () =>
+      rooms.value
+        .map(({ id }) => id)
+        .toSorted()
+        .join(","),
+    (roomIdsString) => {
+      if (!roomIdsString) return undefined;
 
-    const newRoomIds = newRooms.map(({ id }) => id);
-    const updateUserToRoomUnsubscribable = $trpc.userToRoom.onUpdateUserToRoom.subscribe(newRoomIds, {
-      onData: (userToRoom) => {
-        setMyUserToRoom(userToRoom.roomId, userToRoom);
-        setNickname(userToRoom.roomId, userToRoom.userId, userToRoom.nickname);
-      },
-    });
+      const newRoomIds = roomIdsString.split(",");
+      const updateUserToRoomUnsubscribable = $trpc.userToRoom.onUpdateUserToRoom.subscribe(newRoomIds, {
+        onData: (userToRoom) => {
+          setMyUserToRoom(userToRoom.roomId, userToRoom);
+          setNickname(userToRoom.roomId, userToRoom.userId, userToRoom.nickname);
+        },
+      });
 
-    return () => {
-      updateUserToRoomUnsubscribable.unsubscribe();
-    };
-  });
+      return () => {
+        updateUserToRoomUnsubscribable.unsubscribe();
+      };
+    },
+  );
 };

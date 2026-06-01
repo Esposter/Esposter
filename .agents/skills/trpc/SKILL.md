@@ -52,6 +52,26 @@ description: Esposter tRPC conventions — procedure typing with generics, route
 
 - **If a utility function is also needed by a Pinia store (frontend), put it in `shared/services/<feature>/` instead** — this makes it importable on both server and client without duplication.
 
+## Client-Side Calling Conventions
+
+- **Omit optional UUID fields instead of passing `undefined`** — when a tRPC input has an optional UUID field and the value comes from a ref that defaults to `""` (e.g. `currentRoomId`), use a conditional spread instead of `|| undefined`:
+
+  ```ts
+  // CORRECT — key is absent when empty
+  $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {});
+
+  // WRONG — passes undefined as a value
+  $trpc.room.readRooms.query({ roomId: currentRoomId.value || undefined });
+  ```
+
+- **Guard required UUID fields with an early return** — when `roomId` (or similar) is required by the schema, add `if (!currentRoomId.value) return;` before the call rather than letting an empty string reach the UUID validator:
+
+  ```ts
+  // CORRECT
+  if (!currentRoomId.value) return;
+  const result = await $trpc.room.readMembersByIds.query({ ids, roomId: currentRoomId.value });
+  ```
+
 ## Router Structure
 
 Routers nested by domain. Root merger: `server/trpc/routers/index.ts`.
@@ -146,6 +166,10 @@ Three builders in `server/trpc/procedure/room/`:
   if (inFilterRoomIds.length > 0) await isMember(...);
   ```
 
+## Blob Storage Mutations
+
+- **Delete blobs idempotently** — use Azure Blob `deleteIfExists()` for user-triggered cleanup such as removing profile images or survey assets. Avoid `delete()` unless the caller explicitly needs a missing blob to fail the whole mutation.
+
 ## Metadata Loading in useRead\* Composables
 
 When a `useRead*` composable fetches a list of entities, load all per-item metadata in a single `readMetadata` helper that fires concurrently via `Promise.all`. Callers (`readItems` callback and `readMoreItems` callback) both call the same `readMetadata` so the logic is never duplicated.
@@ -167,16 +191,16 @@ const readMetadata = (memberIds: User["id"][]) => {
 Every `read*` procedure that may be called for multiple items **must** accept an array of IDs, not a single ID:
 
 ```ts
-// CORRECT — one request for N items
+// CORRECT — one request for N items; spread userIdsSchema/roomIdsSchema (max already baked in); chain .min(1) when required
 export const readMemberRolesInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  ...roomIdSchema.shape,
+  userIds: userIdsSchema.shape.userIds.min(1),
 });
 
 // WRONG — forces N requests for N items
 export const readMemberRolesInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-  userId: selectUserSchema.shape.id,
+  ...roomIdSchema.shape,
+  ...userIdSchema.shape,
 });
 ```
 

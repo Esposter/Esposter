@@ -15,7 +15,7 @@ interface EditableNameDialogButtonProps {
   tooltipProps: VTooltip["$props"];
 }
 
-defineSlots<{ default?: () => VNode }>();
+defineSlots<{ default?: () => VNode; "prepend-content"?: () => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
 const {
   buttonProps = {},
@@ -77,6 +77,11 @@ watch(
       </v-tooltip>
     </template>
     <v-container fluid px-6>
+      <v-row v-if="$slots['prepend-content']">
+        <v-col cols="12">
+          <slot name="prepend-content" />
+        </v-col>
+      </v-row>
       <v-row>
         <v-col cols="12">
           <v-text-field

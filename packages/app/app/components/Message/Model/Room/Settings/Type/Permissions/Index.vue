@@ -47,7 +47,7 @@ const tab = ref(PermissionsTab.Roles);
     <div v-else-if="selectedMember && tab === PermissionsTab.Members" flex-1 overflow-y-auto>
       <MessageModelRoomSettingsTypePermissionsMemberEditor :key="selectedMember.id" :member="selectedMember" :room-id />
     </div>
-    <div v-else flex flex-1 items-center justify-center text-medium-emphasis>
+    <div v-else flex flex-1 items-center justify-center op-medium-emphasis>
       {{
         tab === PermissionsTab.Roles
           ? "Select a role to edit its permissions."

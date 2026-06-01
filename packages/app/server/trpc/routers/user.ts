@@ -1,9 +1,8 @@
 import type { UserStatusInMessage } from "@esposter/db-schema";
-import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
 
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { dayjs } from "#shared/services/dayjs";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
@@ -12,6 +11,7 @@ import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUse
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { ContainerSASPermissions } from "@azure/storage-blob";
 import {
   AzureContainer,
   DatabaseEntityType,
@@ -21,11 +21,9 @@ import {
   UserStatus,
   userStatusesInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, MAX_READ_LIMIT, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { octetInputParser } from "@trpc/server/http";
 import { eq, inArray } from "drizzle-orm";
-import { Readable } from "node:stream";
 
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 
@@ -74,6 +72,16 @@ export const userRouter = router({
     );
 
     userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
+  }),
+  generateProfileImageUploadUrl: standardAuthedProcedure.mutation(async ({ ctx }) => {
+    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const sasUrl = await blockBlobClient.generateSasUrl({
+      expiresOn: dayjs().add(1, "hour").toDate(),
+      permissions: ContainerSASPermissions.from({ write: true }),
+    });
+    return { publicUrl: blockBlobClient.url, sasUrl };
   }),
   onUpsertStatus: standardAuthedProcedure.input(onUpsertStatusInputSchema).subscription(async function* ({
     ctx,
@@ -131,15 +139,6 @@ export const userRouter = router({
       ctx.getSessionPayload.user.id,
     );
     return updatedUser;
-  }),
-  uploadProfileImage: standardAuthedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
-    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-    const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    // @TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/65542
-    const readable = Readable.fromWeb(input as ReadableStream);
-    await blockBlobClient.uploadStream(readable);
-    return blockBlobClient.url;
   }),
   upsertStatus: standardAuthedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
     const upsertedStatus = requireMutation(

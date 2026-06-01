@@ -7,6 +7,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 ## Structure
 
+- **`test` not `it`** — always use `test(...)`. Never use `it(...)`.
 - **`describe(functionRef, ...)`** — pass the function reference directly; use a string only when no importable reference exists.
 - **Declare `const` inside `describe`** — all shared test constants must be scoped inside the `describe` callback.
 - **`createCallerFactory` double-call** — always inline: `caller = createCallerFactory(router)(mockContext)`. No intermediate variable.
@@ -16,6 +17,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **`expect.hasAssertions()`** — top of every test body.
 - **Assertions after all assignments** — put all `expect` calls after all operations and local assignments for that phase, separated by a blank line.
 - **`toStrictEqual` always** — never `toEqual`, never `toMatchObject`. Assert exact counts: no `.toBeGreaterThan(0)` on collections.
+- **`.toBe` for deterministic values** — when the full expected value is knowable (URL, ID, enum string), always `.toBe(fullValue)`. Never `.toContain` or `.toMatch` when the complete value can be constructed. Inline the expected value directly in the `expect` call — never assign it to an intermediate `const expected*` variable.
 - **Minimize per-test setup** — shared mutable state as `let` inside `describe`, init in `beforeEach`. Mount helpers take no arguments when state is pre-initialized.
 - **Reuse utilities** — check `testUtils.test.ts` for existing helpers before writing local equivalents.
 - **`create*` prefix for test helpers** — all test factory/builder functions use the `create*` prefix (`createRow`, `createColumn`, `createMention`). Never `make*` (`makeRow`, `makeColumn`).
@@ -38,6 +40,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 - **Date format tests** — `for...of` inside a single test using `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never `test.each`.
 - **Interpolated descriptions** — `` `${AdminActionType.BanUser}: owner bans member — ban inserted` ``. **Never write enum values as string literals** in describe/test titles; always use template literals with the enum reference. Plain English names for non-enum cases: "integer", "decimal", "epoch date".
+- **Idempotency** — always `"[functionName] is idempotent"` when calling the same operation multiple times produces the same result (e.g. `"createSpeaker is idempotent"`, `"creates is idempotent"`). Never use `"deduplicates [thing]"`, `"does not create duplicate"`, or `"skips duplicate"`.
 
 ## Array / Type Utilities
 
@@ -112,6 +115,32 @@ afterEach(() => {
 
 - **tRPC router tests** (`server/trpc/routers/**/*.test.ts`) — no `// @vitest-environment` directive (Nuxt env required).
 - **All other server-side tests** — add `// @vitest-environment node` as first line.
+
+## Bundle Size Snapshot Tests
+
+Every library package (`packages/*` except `app`) has `src/index.test.ts` with a bundle size snapshot:
+
+```ts
+import { getCrossPlatformSize } from "@esposter/configuration";
+import { resolve } from "node:path";
+import { describe, expect, test } from "vitest";
+
+const distFile = resolve(import.meta.dirname, "../dist/index.js");
+
+describe("@esposter/my-package", () => {
+  test("bundle size", () => {
+    expect.hasAssertions();
+    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 12.06 KB (12345 bytes)"`);
+  });
+});
+```
+
+- Run `pnpm build` in the package first — the test reads the compiled `dist/index.js`.
+- Run `pnpm test --run -u` to update the snapshot value after a build change.
+- Use `getCrossPlatformSize` so CRLF/LF differences do not change snapshots across Windows and Linux/macOS.
+- `app` is different — its root `index.test.ts` snapshots the Nuxt server entry and normalized output directory sizes with `getCrossPlatformSize` / `getCrossPlatformDirectorySize`.
+
+To add a bundle size test to a new library package: add `test`/`coverage` scripts, add `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`, create `src/index.test.ts`.
 
 ## Running Tests
 

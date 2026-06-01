@@ -15,6 +15,7 @@ import type {
   ContainerDeleteIfExistsResponse,
   ContainerDeleteResponse,
   ContainerFindBlobsByTagsSegmentResponse,
+  ContainerGenerateSasUrlOptions,
   ContainerGetAccessPolicyResponse,
   ContainerGetAccountInfoResponse,
   ContainerGetPropertiesResponse,
@@ -30,6 +31,7 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
+import { MOCK_BLOB_BASE_URL } from "@/constants";
 import { MockBlobBatchClient } from "@/models/container/MockBlobBatchClient";
 import { MockBlockBlobClient } from "@/models/container/MockBlockBlobClient";
 import { MockRestError } from "@/models/MockRestError";
@@ -69,7 +71,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   constructor(connectionString: string, containerName: string) {
     this.connectionString = connectionString;
     this.containerName = containerName;
-    this.url = `https://mockaccount.blob.core.windows.net/${this.containerName}`;
+    this.url = `${MOCK_BLOB_BASE_URL}/${this.containerName}`;
   }
 
   create(): Promise<ContainerCreateResponse> {
@@ -113,9 +115,10 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     throw new Error("Method not implemented.");
   }
 
-  generateSasUrl(): Promise<string> {
+  generateSasUrl(options: ContainerGenerateSasUrlOptions): Promise<string> {
+    const sp = options.permissions?.toString() ?? "r";
     return Promise.resolve(
-      `https://mockaccount.blob.core.windows.net/${this.containerName}?sv=2025-11-05&sr=c&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=rw`,
+      `${MOCK_BLOB_BASE_URL}/${this.containerName}?sv=2025-11-05&sr=c&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=${sp}`,
     );
   }
 

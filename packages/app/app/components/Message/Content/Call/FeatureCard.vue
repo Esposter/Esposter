@@ -10,6 +10,6 @@ const { description, icon, title } = defineProps<CallFeatureCardProps>();
   <div p-4 rd-2 bg-surface flex flex-col gap-y-2>
     <v-icon color="primary" :icon size="large" />
     <span font-medium text-body-medium>{{ title }}</span>
-    <span text-medium-emphasis text-body-small>{{ description }}</span>
+    <span op-medium-emphasis text-body-small>{{ description }}</span>
   </div>
 </template>

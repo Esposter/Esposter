@@ -24,18 +24,17 @@ import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermis
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
   DatabaseEntityType,
+  roomIdSchema,
   RoomPermission,
   roomRolesInMessage,
-  selectRoomInMessageSchema,
   usersToRoomRolesInMessage,
   UserToRoomRoleInMessageRelations,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
-import { z } from "zod";
 
-const onRoleInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const onRoleInputSchema = roomIdSchema;
 
 export const roleRouter = router({
   assignRole: getPermissionsProcedure(

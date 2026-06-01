@@ -4,6 +4,7 @@ export const useSubscribables = async () => {
   if (getIsServer()) return;
 
   useCallSubscribables();
+  useDirectMessageSubscribables();
   useEmojiSubscribables();
   useMemberCache();
   useMessageCache();

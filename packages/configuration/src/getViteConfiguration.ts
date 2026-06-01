@@ -1,10 +1,13 @@
+import type { UserConfig } from "vite";
+
 import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/rolldown";
 import dts from "unplugin-dts/vite";
-import { defineConfig } from "vite";
 import mkcert from "vite-plugin-mkcert";
-// https://vitejs.dev/config/
-export default defineConfig({
+
+import { external } from "./external/external";
+
+export const getViteConfiguration = (): UserConfig => ({
   build: {
     lib: {
       // @TODO: https://github.com/qmhc/unplugin-dts/issues/446
@@ -13,13 +16,13 @@ export default defineConfig({
       formats: ["es"],
     },
     rolldownOptions: {
-      // Vue-phaserjs
-      external: ["phaser", /^phaser4-rex-plugins/u, "pinia", "vue"],
+      external,
     },
   },
   plugins: [
     AutoImport({ imports: ["pinia", "vue"] }),
     vue(),
+    // @TODO: Can remove after upgrade https://github.com/qmhc/unplugin-dts/commit/802d24346bb2d7e67f173ff7000d4955b7f30a7d
     dts({ processor: "vue", tsconfigPath: "tsconfig.build.json" }),
     mkcert(),
   ],

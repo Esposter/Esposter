@@ -36,23 +36,22 @@
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
-    "drizzle-orm": "catalog:",
-    "fast-deep-equal": "catalog:",
-    "zod": "catalog:"
+    "fast-deep-equal": "catalog:"
   },
   "devDependencies": {
-    "@azure/core-http-compat": "catalog:",
-    "@azure/core-rest-pipeline": "catalog:",
-    "@azure/data-tables": "catalog:",
-    "@azure/eventgrid": "catalog:",
-    "@azure/storage-blob": "catalog:",
-    "@azure/storage-queue": "catalog:",
-    "@azure/web-pubsub": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:",
     "type-fest": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@azure/core-http-compat": "catalog:",
+    "@azure/core-rest-pipeline": "catalog:",
+    "@azure/data-tables": "catalog:",
+    "@azure/eventgrid": "catalog:",
+    "@azure/storage-blob": "catalog:",
+    "@azure/storage-queue": "catalog:"
   }
 }

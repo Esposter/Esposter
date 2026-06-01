@@ -18,7 +18,7 @@ definePageMeta({
             <AppLogo width="5rem" />
             <div flex flex-col gap-y-3>
               <h1 text-display-small>Video calls for everyone</h1>
-              <span text-medium-emphasis text-headline-small>Connect and share with Esposter Calls</span>
+              <span op-medium-emphasis text-headline-small>Connect and share with Esposter Calls</span>
             </div>
             <div flex flex-wrap gap-3 items-center justify-center>
               <MessageContentCallStartButton />

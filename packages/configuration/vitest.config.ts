@@ -1,9 +1,7 @@
 import type { ViteUserConfig } from "vitest/config";
 
-const vitestConfiguration: ViteUserConfig = {
-  resolve: {
-    tsconfigPaths: true,
-  },
-};
+import { getVitestConfiguration } from "./src/getVitestConfiguration";
+
+const vitestConfiguration: ViteUserConfig = getVitestConfiguration();
 
 export default vitestConfiguration;

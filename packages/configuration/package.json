@@ -25,11 +25,13 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "coverage": "vitest run --coverage",
     "export:gen": "ctix build --config .ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
+    "test": "vitest",
     "typecheck": "tsgo"
   },
   "devDependencies": {
@@ -39,8 +41,10 @@
     "@eslint/json": "catalog:",
     "@ninoseki/eslint-plugin-neverthrow": "catalog:",
     "@rolldown/plugin-node-polyfills": "catalog:",
+    "@types/node": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
     "@vue/language-core": "catalog:",
     "ctix": "catalog:",

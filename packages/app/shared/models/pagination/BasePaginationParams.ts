@@ -1,7 +1,8 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { createSortItemSchema } from "#shared/models/pagination/sorting/SortItem";
-import { DEFAULT_READ_LIMIT, MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
 export interface BasePaginationParams<T extends string> {

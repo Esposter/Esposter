@@ -10,6 +10,7 @@ import type {
   QueueDeleteIfExistsResponse,
   QueueDeleteMessageResponse,
   QueueDeleteResponse,
+  QueueGenerateSasUrlOptions,
   QueueGetAccessPolicyResponse,
   QueueGetPropertiesResponse,
   QueueItem,
@@ -28,6 +29,7 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
+import { MOCK_QUEUE_BASE_URL } from "@/constants";
 import { toWebResourceLike } from "@/services/container/toWebResourceLike";
 import { MockQueueDatabase } from "@/store/MockQueueDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
@@ -59,7 +61,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   constructor(connectionString: string, queueName: string) {
     this.connectionString = connectionString;
     this.name = queueName;
-    this.url = `https://mockaccount.queue.core.windows.net/${this.name}`;
+    this.url = `${MOCK_QUEUE_BASE_URL}/${this.name}`;
   }
 
   clearMessages(): Promise<QueueClearMessagesResponse> {
@@ -94,8 +96,9 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
     throw new Error("Method not implemented.");
   }
 
-  generateSasUrl(): string {
-    throw new Error("Method not implemented.");
+  generateSasUrl(options: QueueGenerateSasUrlOptions): string {
+    const sp = options.permissions?.toString() ?? "r";
+    return `${MOCK_QUEUE_BASE_URL}/${this.name}?sv=2025-11-05&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=${sp}`;
   }
 
   generateUserDelegationSasUrl(): string {

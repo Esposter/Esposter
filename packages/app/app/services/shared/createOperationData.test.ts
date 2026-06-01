@@ -44,6 +44,17 @@ describe(createOperationData, () => {
     expect(items.value[0]).toStrictEqual(newItem);
   });
 
+  test("creates is idempotent", () => {
+    expect.hasAssertions();
+
+    const { createItem } = operationData;
+    const newItem = new TodoListItem();
+    createItem(newItem);
+    createItem(newItem);
+
+    expect(items.value).toHaveLength(1);
+  });
+
   test("updates", () => {
     expect.hasAssertions();
 

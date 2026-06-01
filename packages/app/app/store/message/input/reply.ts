@@ -25,11 +25,9 @@ export const useReplyStore = defineStore("message/input/reply", () => {
     replyMap.value.delete(rowKey);
   });
 
-  const activeRowKey = ref("");
   const isIndicatorActive = ref(false);
 
   return {
-    activeRowKey,
     isIndicatorActive,
     replyMap,
     rowKey,

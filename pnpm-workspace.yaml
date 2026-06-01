@@ -25,7 +25,7 @@ catalog:
   "@azure/storage-queue": ^12.29.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.0.4
-  "@better-auth/drizzle-adapter": ^1.6.11
+  "@better-auth/drizzle-adapter": ^1.6.12
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.3
   "@codemirror/language-data": ^6.5.2
@@ -36,7 +36,7 @@ catalog:
   "@dxup/unimport": ^0.1.2
   "@electric-sql/pglite": ^0.4.5
   "@eslint/core": ^1.2.1
-  "@eslint/json": ^1.2.0
+  "@eslint/json": ^2.0.0
   "@floating-ui/dom": ^1.7.6
   "@fullcalendar/core": ^6.1.20
   "@fullcalendar/daygrid": ^6.1.20
@@ -46,10 +46,10 @@ catalog:
   "@happy-dom/global-registrator": ^20.9.0
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.1
-  "@lerna-lite/cli": ^5.2.1
-  "@lerna-lite/publish": ^5.2.1
-  "@lerna-lite/run": ^5.2.1
-  "@lerna-lite/watch": ^5.2.1
+  "@lerna-lite/cli": ^5.2.2
+  "@lerna-lite/publish": ^5.2.2
+  "@lerna-lite/run": ^5.2.2
+  "@lerna-lite/watch": ^5.2.2
   "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
   "@ninoseki/eslint-plugin-neverthrow": ^0.2.0
@@ -60,19 +60,19 @@ catalog:
   "@nuxtjs/seo": ^5.1.3
   "@pinia/nuxt": ^0.11.3
   "@pulumi/azure-native": ^3.18.0
-  "@pulumi/pulumi": ^3.243.0
+  "@pulumi/pulumi": ^3.244.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^1.5.0
-  "@tiptap/core": ^3.23.5
-  "@tiptap/extension-code-block-lowlight": ^3.23.5
-  "@tiptap/extension-file-handler": ^3.23.5
-  "@tiptap/extension-mention": ^3.23.5
-  "@tiptap/extensions": ^3.23.5
-  "@tiptap/pm": ^3.23.5
-  "@tiptap/starter-kit": ^3.23.5
-  "@tiptap/suggestion": ^3.23.5
-  "@tiptap/vue-3": ^3.23.5
-  "@tresjs/cientos": ^5.7.1
+  "@takumi-rs/core": ^1.6.0
+  "@tiptap/core": ^3.24.0
+  "@tiptap/extension-code-block-lowlight": ^3.24.0
+  "@tiptap/extension-file-handler": ^3.24.0
+  "@tiptap/extension-mention": ^3.24.0
+  "@tiptap/extensions": ^3.24.0
+  "@tiptap/pm": ^3.24.0
+  "@tiptap/starter-kit": ^3.24.0
+  "@tiptap/suggestion": ^3.24.0
+  "@tiptap/vue-3": ^3.24.0
+  "@tresjs/cientos": ^5.7.2
   "@tresjs/core": ^5.8.1
   "@tresjs/nuxt": ^5.6.1
   "@trpc/client": ^11.17.0
@@ -93,7 +93,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260524.1
+  "@typescript/native-preview": ^7.0.0-dev.20260527.2
   "@unocss/eslint-config": ^66.7.0
   "@unocss/nuxt": ^66.7.0
   "@vite-pwa/nuxt": ^1.1.1
@@ -106,7 +106,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^4.2.0
-  "@vue/language-core": ^3.3.1
+  "@vue/language-core": ^3.3.3
   "@vue/test-utils": ^2.4.10
   "@vuepic/vue-datepicker": ^13.0.0
   "@vueuse/core": ^14.3.0
@@ -116,22 +116,23 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.13.0
-  better-auth: ^1.6.11
+  better-auth: ^1.6.12
   codemirror: ^6.0.2
   crossws: ^0.4.5
   ctix: ^2.8.0
   data-urls: ^7.0.0
-  dayjs: ^1.11.20
+  dayjs: ^1.11.21
   debug: ^4.4.3
   dedent: ^1.7.2
   defu: ^6.1.7
+  dependency-cruiser: ^17.4.3
   dotenv: ^17.4.2
   drizzle-kit: 1.0.0-rc.2
   drizzle-orm: 1.0.0-rc.2
   emoji-mart-vue-fast: ^15.0.5
-  eslint: ^10.4.0
+  eslint: ^10.4.1
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.66.0
+  eslint-plugin-oxlint: ^1.67.0
   eslint-plugin-perfectionist: ^5.9.0
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
@@ -139,7 +140,7 @@ catalog:
   fast-deep-equal: ^3.1.3
   filesize: ^11.0.17
   fs-extra: ^11.3.5
-  grapesjs: ^0.22.16
+  grapesjs: ^0.23.1
   grapesjs-blocks-basic: ^1.0.2
   grapesjs-component-countdown: ^1.0.2
   grapesjs-custom-code: ^1.0.2
@@ -155,6 +156,7 @@ catalog:
   grapesjs-tui-image-editor: ^1.0.2
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.52.1
+  graphviz-cli: ^2.0.0
   grid-layout-plus: ^1.1.1
   gsap: ^3.15.0
   h3: ^1.15.11
@@ -165,25 +167,25 @@ catalog:
   js-beautify: ^1.15.4
   link-preview-js: ^4.0.3
   linkifyjs: ^4.3.3
-  livekit-client: ^2.19.0
-  livekit-server-sdk: ^2.15.3
-  lodash-omitdeep: ^1.9.0
+  livekit-client: ^2.19.1
+  livekit-server-sdk: ^2.15.4
+  lodash-omitdeep: ^1.10.0
   lowlight: ^3.3.0
   marked: ^18.0.4
   mathjs: ^15.2.0
   mime-types: ^3.0.2
-  mjml-browser: ^5.2.2
+  mjml-browser: ^5.3.0
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
   node-html-parser: ^7.1.0
   nuxt: ^4.4.6
   nuxt-security: ^2.6.0
-  oxfmt: ^0.51.0
-  oxlint: ^1.66.0
+  oxfmt: ^0.52.0
+  oxlint: ^1.67.0
   oxlint-tsgolint: ^0.23.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
-  pdfjs-dist: ^5.7.284
+  pdfjs-dist: ^6.0.227
   phaser: ^4.1.0
   phaser4-rex-plugins: ^4.0.6
   pinia: ^3.0.4
@@ -192,8 +194,8 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.1.0
   read-excel-file: ^9.0.10
-  rolldown: ^1.0.2
-  rolldown-plugin-dts: ^0.25.1
+  rolldown: ^1.0.3
+  rolldown-plugin-dts: ^0.25.2
   rxjs: ^7.8.2
   sanitize-html: ^2.17.4
   sass-embedded: ^1.100.0
@@ -207,12 +209,12 @@ catalog:
   survey-vue3-ui: 3.0.0-beta.0
   three: ^0.184.0
   three-globe: ^2.45.2
-  trpc-nuxt: ^2.0.2
+  trpc-nuxt: ^2.1.1
   tsx: ^4.22.3
   type-fest: ^5.6.0
   typedoc: ^0.28.19
   typescript: 5.9.3
-  typescript-eslint: ^8.59.4
+  typescript-eslint: ^8.60.0
   unocss: ^66.7.0
   unocss-preset-vuetify: ^0.3.0
   unplugin-auto-import: ^21.0.0
@@ -222,14 +224,14 @@ catalog:
   vite: ^8.0.14
   vite-plugin-mkcert: ^2.0.0
   vitest: ^4.1.7
-  vue: ^3.5.34
+  vue: ^3.5.35
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
-  vue-router: ^5.0.7
-  vue-tsc: ^3.3.1
+  vue-router: ^5.1.0
+  vue-tsc: ^3.3.3
   vue3-apexcharts: ^1.11.1
-  vuetify: ^4.0.7
+  vuetify: ^4.0.8
   vuetify-nuxt-module: ^1.0.0-beta.4
   web-push: ^3.6.7
   worker-timers: ^8.0.31
@@ -246,8 +248,9 @@ minimumReleaseAge: 0
 
 overrides:
   crossws: ^0.4.5
-  pdfjs-dist: ^5.7.284
+  h3: ^1.15.11
+  pdfjs-dist: ^6.0.227
   vite: ^8.0.14
-  vue-router: ^5.0.7
+  vue-router: ^5.1.0
 
 shellEmulator: true

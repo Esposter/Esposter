@@ -26,7 +26,8 @@ Only use `class="..."` when technically required:
 `presetVuetify()` + `presetAttributify()` are both active in `uno.config.ts`. This means **ALL** of the following work as standalone attributify attributes:
 
 - Vuetify MD3 typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-body-small`, etc. Do not use MD2 typography utilities such as `text-caption`; use the MD3 equivalent (`text-body-small`) instead.
-- Vuetify theme colours: `bg-surface`, `bg-background`, `bg-border`, `text-medium-emphasis`, `text-error`, `text-info`, etc.
+- Vuetify theme colours: `bg-surface`, `bg-background`, `bg-border`, `text-error`, `text-info`, etc.
+- Opacity emphasis utilities: use `op-medium-emphasis` / `op-high-emphasis`, not `text-medium-emphasis`.
 - Custom theme colours: `bg-surface-opacity-80`, `bg-background-opacity-40`, etc.
 - Vuetify border colour utility: `border-color` (when it's the Vuetify utility, not a scoped CSS class name) — use `b-1`, `b-2` etc. instead of `border-sm`, `border-b-sm` (see Abbreviated Utilities below)
 
@@ -154,6 +155,31 @@ Rules:
 ## Abbreviated Utilities
 
 Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS utilities:
+
+**Opacity (`op-` prefix):**
+
+- `op-0` not `opacity-0`
+- `op-50` not `opacity-50`
+- `op-100` not `opacity-100`
+- Works with variants: `group-hover:op-100`, `hover:op-80`, `disabled:op-30`
+- Prefer semantic opacity utilities for non-obvious values:
+  - `op-medium-emphasis` → `var(--v-medium-emphasis-opacity)`
+  - `op-high-emphasis` → `var(--v-high-emphasis-opacity)`
+- Define semantic opacity utilities in `uno.config.ts` via the shared `opacityUtilities` map and safelist them from the same map. Do not add one-off opacity rules without updating the safelist source.
+- Use boolean bindings for conditional semantic opacity utilities:
+
+  ```html
+  <button :op-loading="isLoading ? '' : undefined" :op-high-emphasis="!isLoading && !isHovering ? '' : undefined" />
+  <v-icon :op-disabled="disabled ? '' : undefined" />
+  ```
+
+- Reserve raw numeric opacity values for obvious visibility states like `0`, `0!`, `op-0`, `op-100`, and `group-hover:op-100`. Avoid raw non-obvious values like `op-40`, `op-50`, `op-60`, `op-70`, or `:op="80"` in application UI; use semantic utilities or CSS variables instead.
+
+**Spacing/position scale values:**
+
+- Use UnoCSS scale tokens instead of explicit rem values when the value is on the spacing scale. `1` is `0.25rem`, `2` is `0.5rem`, etc.
+- For negative values in attributify syntax, put the double hyphen in the attribute name: `right--1`, `top--1`, `ml--2`. Do not write `right="-0.25rem"` and do not use `-right-1` in Vue templates.
+- Use arbitrary values only when the value is not on the scale or must be computed, e.g. `top="[calc(100dvh_-_--app-bar-height)]"`.
 
 **Border (`b-` prefix) — never use Vuetify `border="sm"` prop or `border-sm` class:**
 

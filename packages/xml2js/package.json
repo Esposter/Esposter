@@ -27,11 +27,13 @@
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "coverage": "vitest run --coverage",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
+    "test": "vitest",
     "typecheck": "tsgo"
   },
   "dependencies": {
@@ -43,8 +45,10 @@
     "@esposter/configuration": "workspace:*",
     "@types/sax": "catalog:",
     "@types/xml2js": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:",
-    "type-fest": "catalog:"
+    "type-fest": "catalog:",
+    "vitest": "catalog:"
   }
 }
