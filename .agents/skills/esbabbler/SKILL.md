@@ -120,7 +120,36 @@ Room navigation (`useCallSubscribables` cleanup) is **not** a leave boundary. It
 - `callRoomId` — room ID of active call, kept **only** for admin action roomId checks. Empty for standalone calls.
 - `isCallViewOpen` — controls the `Panel/Dialog.vue` fullscreen overlay in room calls.
 
-`useParticipantStore` (`call/participant.ts`): `callSessionParticipantsMap`, `speakingIds`, `joinNoticeParticipant`.
+`useParticipantStore` (`call/participant.ts`): `callSessionParticipantsMap` (`Map<callSessionId, Map<sessionId, CallParticipant>>`), `speakingIds`, `joinNoticeParticipant`.
+
+### Call participant state — Map-based design
+
+The client `callSessionParticipantsMap` mirrors the server-side structure: `Map<callSessionId, Map<sessionId, CallParticipant>>`. This gives O(1) lookups for all participant mutations (`setMute`, `setHandRaised`, `setParticipantCamera`, `deleteCallParticipant`) without scanning arrays.
+
+**Key rules:**
+
+- **Don't add a separate tracking collection** for state that already lives on `CallParticipant`. `isHandRaised` on the participant object replaces any external `handRaisedIdsMap`. Before adding a new parallel state map, check if the field belongs on `CallParticipant` itself.
+- **tRPC boundary stays as `CallParticipant[]`** — JSON can't represent Maps. The server returns an array; `setParticipants` converts it to a Map on the client. Don't change the tRPC return type.
+- **Iteration in Vue templates** — iterate participant values with `v-for="participant of myMap.values()"`, not by converting to an array first. Use `.size` instead of `.length`.
+- **Mutation through the reactive chain** — always obtain a participant via `callSessionParticipantsMap.value.get(callSessionId)?.get(sessionId)` (not via a local variable captured before the reactive lookup) so Vue's proxy intercepts the property assignment and triggers re-renders.
+- **`selfParticipant` computed** — derive `isInCall`, `isMuted`, `isHandRaised` for the current session from one `computed(() => sessionId.value ? callParticipants.value.get(sessionId.value) : undefined)` rather than calling `.find()` or `.includes()` per derived value.
+
+```ts
+// WRONG — redundant tracking array, O(n) lookups, wasteful spread
+const handRaisedIdsMap = ref(new Map<string, string[]>());
+const isHandRaised = computed(() => getHandRaisedIds(callSessionId).includes(sessionId));
+const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
+
+// CORRECT — Map-based, O(1), state on the entity
+// callSessionParticipantsMap: Map<callSessionId, Map<sessionId, CallParticipant>>
+const selfParticipant = computed(() => sessionId.value ? callParticipants.value.get(sessionId.value) : undefined);
+const isInCall = computed(() => !!selfParticipant.value);
+const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
+const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
+
+// template iteration
+v-for="participant of callParticipants.values()"
+```
 
 `useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.
 

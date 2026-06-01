@@ -16,7 +16,6 @@ export const useCallSubscribables = () => {
   const { setCurrentRoomCallSessionId } = callStore;
   const participantStore = useParticipantStore();
   const {
-    clearHandRaisedIds,
     clearSpeakers,
     createCallParticipant,
     deleteCallParticipant,
@@ -68,7 +67,6 @@ export const useCallSubscribables = () => {
 
       return () => {
         setCurrentRoomCallSessionId("");
-        clearHandRaisedIds(callSessionId);
         clearSpeakers();
         participantJoinUnsubscribable.unsubscribe();
         participantLeaveUnsubscribable.unsubscribe();

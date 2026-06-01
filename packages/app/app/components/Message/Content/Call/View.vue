@@ -22,13 +22,11 @@ const {
 } = storeToRefs(mediaStore);
 const participantStore = useParticipantStore();
 const { getParticipants } = participantStore;
-const { handRaisedIdsMap, speakingIds } = storeToRefs(participantStore);
+const { speakingIds } = storeToRefs(participantStore);
 const { data: session } = await authClient.useSession(useFetch);
 const sessionId = computed(() => session.value?.session.id);
 const callParticipants = computed(() => getParticipants(activeCallSessionId.value));
-const activeScreenShareParticipant = computed(() =>
-  callParticipants.value.find(({ id }) => id === activeScreenShareParticipantId.value),
-);
+const activeScreenShareParticipant = computed(() => callParticipants.value.get(activeScreenShareParticipantId.value));
 const presenterName = computed(() => {
   const participant = activeScreenShareParticipant.value;
   if (!participant) return "Someone";
@@ -36,7 +34,7 @@ const presenterName = computed(() => {
 });
 const getParticipantTileProps = (participant: CallParticipant): CallParticipantTileProps => ({
   isDeafened: isDeafened.value && participant.id === sessionId.value,
-  isHandRaised: (handRaisedIdsMap.value.get(activeCallSessionId.value) ?? []).includes(participant.id),
+  isHandRaised: participant.isHandRaised,
   isScreenSharing: screenSharingParticipantIds.value.includes(participant.id),
   isSelf: participant.id === sessionId.value,
   isSpeaking: speakingIds.value.includes(participant.id),
@@ -57,7 +55,7 @@ const getParticipantTileProps = (participant: CallParticipant): CallParticipantT
     />
     <div v-else p-3 flex-1 gap-3 grid grid-auto-rows-fr grid-cols="[repeat(auto-fit,minmax(240px,1fr))]">
       <MessageContentCallParticipantTile
-        v-for="participant of callParticipants"
+        v-for="participant of callParticipants.values()"
         :key="participant.id"
         :="getParticipantTileProps(participant)"
         @click="pinnedParticipantId = participant.id"
@@ -65,7 +63,7 @@ const getParticipantTileProps = (participant: CallParticipant): CallParticipantT
     </div>
     <div v-if="hasScreenShare" grid-cols="[repeat(auto-fill,minmax(14rem,1fr))]" p-3 shrink-0 gap-3 grid>
       <MessageContentCallParticipantTile
-        v-for="participant of callParticipants"
+        v-for="participant of callParticipants.values()"
         :key="participant.id"
         h-32
         :="getParticipantTileProps(participant)"

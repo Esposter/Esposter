@@ -18,14 +18,14 @@ const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId
         <template #activator="{ props: tooltipProps }">
           <v-btn :="mergeProps(menuProps, tooltipProps)" size="small" color="success" variant="text">
             <v-icon icon="mdi-phone" />
-            <span ml-1>{{ roomParticipants.length }}</span>
+            <span ml-1>{{ roomParticipants.size }}</span>
           </v-btn>
         </template>
       </v-tooltip>
     </template>
     <StyledCard>
       <v-list density="compact" min-w-40>
-        <v-list-item v-for="{ id, image, isMuted, name } of roomParticipants" :key="id" :title="name">
+        <v-list-item v-for="{ id, image, isMuted, name } of roomParticipants.values()" :key="id" :title="name">
           <template #prepend>
             <StyledAvatar :image :name mr-2 />
           </template>

@@ -21,7 +21,6 @@ export const useCallStore = defineStore("message/room/call", () => {
     clearJoinNotice,
     clearSpeakers,
     deleteCallParticipant,
-    getHandRaisedIds,
     getParticipants,
     setHandRaised,
     setMute,
@@ -38,18 +37,17 @@ export const useCallStore = defineStore("message/room/call", () => {
   const isConnecting = ref(false);
   const sessionId = computed(() => session.value.data?.session.id);
   const callParticipants = computed(() => getParticipants(activeCallSessionId.value));
-  const isInCall = computed(() => callParticipants.value.some(({ id }) => id === sessionId.value));
-  const isHandRaised = computed(() =>
-    sessionId.value ? getHandRaisedIds(activeCallSessionId.value).includes(sessionId.value) : false,
-  );
-  const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
+  const selfParticipant = computed(() => (sessionId.value ? callParticipants.value.get(sessionId.value) : undefined));
+  const isInCall = computed(() => Boolean(selfParticipant.value));
+  const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
+  const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
   const setHandRaisedEnabled = async (newIsHandRaised: boolean, targetSessionId?: string) => {
     const callSessionId = activeCallSessionId.value;
     const sessionIdValue = sessionId.value;
     const participantSessionId = targetSessionId ?? sessionIdValue;
     if (!callSessionId || !sessionIdValue || !participantSessionId) return;
 
-    const oldIsHandRaised = getHandRaisedIds(callSessionId).includes(participantSessionId);
+    const oldIsHandRaised = getParticipants(callSessionId).get(participantSessionId)?.isHandRaised ?? false;
     setHandRaised(callSessionId, participantSessionId, newIsHandRaised);
 
     await getResultAsync(() =>

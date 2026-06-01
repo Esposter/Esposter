@@ -4,7 +4,6 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { getMockSession } from "@@/server/trpc/context.test";
-import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -61,39 +60,69 @@ describe(useParticipantStore, () => {
     test("sets raised hand state", () => {
       expect.hasAssertions();
 
+      const { session, user } = getMockSession();
+      const participant: CallParticipant = {
+        id: session.id,
+        image: user.image,
+        isCameraEnabled: false,
+        isHandRaised: false,
+        isMuted: false,
+        name: user.name,
+        userId: user.id,
+      };
       const participantStore = useParticipantStore();
-      const { getHandRaisedIds, setHandRaised } = participantStore;
-      const sessionId = getMockSession().session.id;
-      setHandRaised(callSessionId, sessionId, true);
-      const handRaisedIds = getHandRaisedIds(callSessionId);
+      const { createCallParticipant, setHandRaised } = participantStore;
+      const { callSessionParticipantsMap } = storeToRefs(participantStore);
+      createCallParticipant(callSessionId, participant);
+      setHandRaised(callSessionId, session.id, true);
 
-      expect(handRaisedIds).toStrictEqual([sessionId]);
+      expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isHandRaised).toBe(true);
     });
 
     test("setHandRaised is idempotent", () => {
       expect.hasAssertions();
 
+      const { session, user } = getMockSession();
+      const participant: CallParticipant = {
+        id: session.id,
+        image: user.image,
+        isCameraEnabled: false,
+        isHandRaised: false,
+        isMuted: false,
+        name: user.name,
+        userId: user.id,
+      };
       const participantStore = useParticipantStore();
-      const { getHandRaisedIds, setHandRaised } = participantStore;
-      const sessionId = getMockSession().session.id;
-      setHandRaised(callSessionId, sessionId, true);
-      setHandRaised(callSessionId, sessionId, true);
-      const handRaisedIds = getHandRaisedIds(callSessionId);
+      const { createCallParticipant, setHandRaised } = participantStore;
+      const { callSessionParticipantsMap } = storeToRefs(participantStore);
+      createCallParticipant(callSessionId, participant);
+      setHandRaised(callSessionId, session.id, true);
+      setHandRaised(callSessionId, session.id, true);
 
-      expect(handRaisedIds).toStrictEqual([sessionId]);
+      expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isHandRaised).toBe(true);
     });
 
     test("clears raised hand state", () => {
       expect.hasAssertions();
 
+      const { session, user } = getMockSession();
+      const participant: CallParticipant = {
+        id: session.id,
+        image: user.image,
+        isCameraEnabled: false,
+        isHandRaised: false,
+        isMuted: false,
+        name: user.name,
+        userId: user.id,
+      };
       const participantStore = useParticipantStore();
-      const { getHandRaisedIds, setHandRaised } = participantStore;
-      const sessionId = getMockSession().session.id;
-      setHandRaised(callSessionId, sessionId, true);
-      setHandRaised(callSessionId, sessionId, false);
-      const handRaisedIds = getHandRaisedIds(callSessionId);
+      const { createCallParticipant, setHandRaised } = participantStore;
+      const { callSessionParticipantsMap } = storeToRefs(participantStore);
+      createCallParticipant(callSessionId, participant);
+      setHandRaised(callSessionId, session.id, true);
+      setHandRaised(callSessionId, session.id, false);
 
-      expect(handRaisedIds).toStrictEqual([]);
+      expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isHandRaised).toBe(false);
     });
   });
 
@@ -106,6 +135,7 @@ describe(useParticipantStore, () => {
         id: session.id,
         image: user.image,
         isCameraEnabled: false,
+        isHandRaised: false,
         isMuted: false,
         name: user.name,
         userId: user.id,
@@ -115,10 +145,10 @@ describe(useParticipantStore, () => {
       const { callSessionParticipantsMap } = storeToRefs(participantStore);
       createCallParticipant(callSessionId, participant);
 
-      const sessionParticipants = callSessionParticipantsMap.value.get(callSessionId) ?? [];
+      const sessionMap = callSessionParticipantsMap.value.get(callSessionId);
 
-      expect(sessionParticipants).toHaveLength(1);
-      expect(takeOne(sessionParticipants)).toStrictEqual(participant);
+      expect(sessionMap?.size).toBe(1);
+      expect(sessionMap?.get(participant.id)).toStrictEqual(participant);
     });
 
     test("createCallParticipant is idempotent", () => {
@@ -129,6 +159,7 @@ describe(useParticipantStore, () => {
         id: session.id,
         image: user.image,
         isCameraEnabled: false,
+        isHandRaised: false,
         isMuted: false,
         name: user.name,
         userId: user.id,
@@ -139,7 +170,7 @@ describe(useParticipantStore, () => {
       createCallParticipant(callSessionId, participant);
       createCallParticipant(callSessionId, participant);
 
-      expect(callSessionParticipantsMap.value.get(callSessionId)).toHaveLength(1);
+      expect(callSessionParticipantsMap.value.get(callSessionId)?.size).toBe(1);
     });
   });
 
@@ -152,6 +183,7 @@ describe(useParticipantStore, () => {
         id: session.id,
         image: user.image,
         isCameraEnabled: false,
+        isHandRaised: false,
         isMuted: false,
         name: user.name,
         userId: user.id,
@@ -162,9 +194,7 @@ describe(useParticipantStore, () => {
       createCallParticipant(callSessionId, participant);
       setMute(callSessionId, participant.id, true);
 
-      const sessionParticipants = callSessionParticipantsMap.value.get(callSessionId) ?? [];
-
-      expect(takeOne(sessionParticipants).isMuted).toBe(true);
+      expect(callSessionParticipantsMap.value.get(callSessionId)?.get(participant.id)?.isMuted).toBe(true);
     });
   });
 });
