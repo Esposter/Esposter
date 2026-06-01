@@ -21,11 +21,19 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
   - `arr.with(index, value)` instead of `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`
 - **Only use `new Set` when deduplication is needed** — use `.some()` for unique arrays. `Set` only when: (a) deduplication is the goal, or (b) collection large enough that O(n) `.some()` hurts perf.
 - Always use named imports from libraries — only when not already auto-imported by Nuxt or Nuxt modules (e.g. `ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; VueUse composables are all auto-imported and must not be manually imported).
+- **Always use the `node:` protocol for Node.js built-in imports** — `import { readFileSync } from "node:fs"`, `import { resolve } from "node:path"`, `import { Buffer } from "node:buffer"`. Never bare `"fs"`, `"path"`, `"crypto"`, etc. Enforced by `unicorn/prefer-node-protocol: error`.
 - Explicitly type variables with proper types.
 - **Never use generic variable names like `parsed`** — always use a descriptive name that includes the type: `parsedDate`, `parsedResult`, `parsedConfig`, etc.
 - **No `current*` variable caching of `.value`** — don't assign `const currentX = x.value` just to use it once. If TypeScript narrowing is needed after a guard, assign with a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source value is already non-reactive (e.g. a `readonly` prop field).
 - **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype. **Exception**: `structuredClone(new ClassName(...))` is intentional when a plain object is explicitly required (e.g. Vjsf does not accept class instances — must use `structuredClone` to strip the prototype). Always add a comment explaining why.
 - **Boolean casting** — never use `!!` to cast to boolean. Always use `Boolean(value)`.
+
+## Regex
+
+- **Always use regex literals** `/pattern/flags` for static patterns — `prefer-regex-literals` ESLint rule enforces this.
+- **Always include the `u` flag** (Unicode-aware mode). Use `/pattern/u` for standard; `/pattern/gu` for global+unicode; `/pattern/gmu` for global+multiline+unicode.
+- **Dynamic patterns only**: use `new RegExp(template, flags)` when the pattern contains variable interpolation — `new RegExp(\`\\b${escaped}\\s\*\\(\`, "u")`.
+- **Named constants use `_REGEX` suffix** — `EMPTY_TEXT_REGEX`, `DURATION_REGEX`. Never `_RE`, `_PATTERN`.
 
 ## Function Syntax
 
@@ -67,12 +75,11 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 ## Promise Style
 
-- **Always use `async`/`await` with neverthrow for fallible work** — never use `.catch()` promise chains or `try`/`catch` blocks. Wrap rejecting promises with `ResultAsync.fromPromise(...)`, throwing sync functions with `fromThrowable(...)`, and throwing async functions with `ResultAsync.fromThrowable(...)`.
+- **Always use `async`/`await` with neverthrow for fallible work** — `try`/`catch` is **BANNED**. Never use `.catch()` promise chains. Use shared wrappers: `getResult(() => ...)` for sync throwing operations and `getResultAsync(() => ...)` for async/rejecting operations. Do not call `fromThrowable(...)` / `ResultAsync.fromPromise(...)` / `ResultAsync.fromThrowable(...)` directly. For cleanup that must run after both success and failure, use `withFinalizer(...)` / `withFinalizerAsync(...)`. **Exception**: `try`/`finally` (no `catch`) is allowed only when the function must stay synchronous and using `withFinalizer` would force an undesirable async cascade (e.g. `ignoreWarn`).
   - **Exception**: `.then()` is acceptable only for building a **promise queue** (serialising sequential async operations in a sync context, e.g. `chain = chain.then(async () => {...})`). This pattern cannot be expressed with `await` inside a synchronous watcher/event callback. All other `.then()`/`.catch()` usages must be converted.
 - Every `Result` / `ResultAsync` must be consumed with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`; `.orTee(...)` by itself is not enough.
-- Use the shared `withFinalizer(...)` helper for cleanup that must run after both success and failure.
 - When fire-and-forgetting an async operation, extract to a named `async` function and call it without `await`.
-- **Never use `void asyncFn()`** — when passing an async function to a sync callback slot (e.g. non-Vue event listeners, Phaser callbacks), wrap it with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction` instead. Vue `watch` and lifecycle hooks support async callbacks directly; do not wrap those in `getSynchronizedFunction`.
+- **Never use `void asyncFn()`** — when passing an async function to a sync callback slot (e.g. `onScopeDispose`, event listeners, Phaser callbacks), wrap it with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction` instead. This satisfies `@typescript-eslint/no-misused-promises` without suppressing the lint rule.
 
 ## Error Handling
 
@@ -232,13 +239,31 @@ export const stringTransformationTypeSchema = z.enum(
 - **Never use `ref<EnumType | null>(null)`** — always default to a sensible first enum value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`, etc.
 - **Never write `ref<EnumType>(EnumValue)`** — TypeScript infers the enum type from the value. Write `ref(ColumnType.String)`, not `ref<ColumnType>(ColumnType.String)`.
 
+## `string` — Always Use `""` as Empty Sentinel
+
+Prefer `string` with `""` as the "absent/empty" sentinel over `string | undefined`. Do not use `string | undefined` for any app-owned string value.
+
+- **`ref<string>()` is BANNED** — always `ref("")`. TypeScript infers `Ref<string>`.
+- **`useDataMap<string | undefined>(..., undefined)` is BANNED** — use `useDataMap(..., "")`.
+- **`MaybeRefOrGetter<string | undefined>` is BANNED for currentId params** — always `MaybeRefOrGetter<string>`; internal `if (!currentIdValue)` guards handle `""` correctly.
+- **`cursor?: string` is BANNED** — always `cursor: string` with `z.string().default("")` in Zod schemas; server checks `if (cursor)` so `""` means "no cursor".
+- **`nextCursor = ""`** — `CursorPaginationData.nextCursor` is always `string`; `""` means no next page.
+- **Resetting**: assign `""` not `undefined`. Never use `value || undefined` to coerce before passing to an API — pass `""` directly.
+- **`currentRoomId`** and similar route-derived IDs return `""` (not `undefined`) when absent.
+
+**Legitimate `string | undefined` exceptions (third-party boundaries only):**
+
+- Browser API properties that are genuinely optional with no meaningful default (e.g. `MediaRecorder.mimeType`)
+- Type assertions on Vue Router params: `route.params.x as string | undefined` — normalise at the boundary, guard with `if (x)` immediately after
+- Node.js `req.socket.remoteAddress` and similar network properties
+
 ## `null` vs `undefined`
 
 Prefer `undefined` for all absent/optional values in app-owned code. `null` is only permitted at the external system boundary.
 
 **App-owned code — always use `undefined`:**
 
-- `ref<T>()` (no argument) already infers `T | undefined` — never write `ref<T | null>(null)`.
+- For string refs, use `ref("")` (see `string` section above) — not `ref<string>()`.
 - Optional interface fields use `?:` (which implies `| undefined`), not `| null`.
 - Uninitialised state, optional function parameters, and absent return values are all `undefined`.
 - Never assign `?? null` — if the left side is already `T | undefined`, drop the fallback entirely.

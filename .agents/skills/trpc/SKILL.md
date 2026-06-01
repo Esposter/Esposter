@@ -265,7 +265,7 @@ ItemMetadataPropertyNames.deletedAt; // ✓ always for metadata fields
 
 ## Subscription Race Condition — Register Listener Before First `await`
 
-In tRPC subscription generators, `on(emitter, event, { signal })` from `node:events` MUST be assigned to a `const` **before** any `await`. The idiomatic `for await (const x of on(...))` form is NOT equivalent when an `await` precedes it — `on()` only gets called when the `for await` line is reached (after the `await` completes). Mutations that emit immediately after middleware completes (before yielding to the event loop) can fire during that `await` and be missed.
+In tRPC subscription generators, `on(emitter, event, { signal })` from `node:events` MUST be assigned to a `const` **before** any `await`. The idiomatic `for await (const x of on(...))` form is NOT equivalent when an `await` precedes it — `on()` only gets called when the `for await` line is reached (after the `await` completes). Mutations that emit synchronously (no async ops after middleware) can fire during that `await` and be missed.
 
 ```ts
 // CORRECT — listener registered synchronously before control is yielded

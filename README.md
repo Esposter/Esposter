@@ -322,6 +322,6 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yaml?query=event%3Apush+branch%3Amain
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-score]: https://img.shields.io/badge/score-91%2F100-33c854
+[badge-score]: https://img.shields.io/badge/score-92%2F100-33c854
 [url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest

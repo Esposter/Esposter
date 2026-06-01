@@ -38,6 +38,38 @@ const { selectedRole, selectedRoleId } = useSelectedRole(roles);
 
 **Fix:** extract the lower-level block into a composable (`use*`) or a child component, then call it at the same level as everything else.
 
+## Async Data: Wrapper + Pure Child Pattern
+
+When a component needs async/reactive data (e.g. from a store that populates after mount), split into:
+
+- **`Index.vue` (wrapper)** — owns data lookup + `v-if` guard; pure orchestration
+- **`Form.vue` (pure child)** — receives the data as a required prop; initializes local state once synchronously; no store access for the guarded data
+
+This avoids async race conditions where a `ref` is initialized once at setup time before the store is populated, silently overwriting real data with `""`.
+
+```vue
+<!-- Index.vue — wrapper owns the lookup and v-if guard -->
+<script setup lang="ts">
+const { roomId } = defineProps<{ roomId: string }>();
+const { data: session } = await authClient.useSession(useFetch);
+const userId = computed(() => session.value?.user.id);
+const { getUserToRoomMap } = useUserToRoomStore();
+const userToRoom = computed(() => (userId.value ? getUserToRoomMap(roomId)?.get(userId.value) : undefined));
+</script>
+<template>
+  <FeatureForm v-if="userToRoom" :room-id :user-to-room="userToRoom" />
+</template>
+
+<!-- Form.vue — pure: prop is guaranteed non-undefined, ref init is safe -->
+<script setup lang="ts">
+const { roomId, userToRoom } = defineProps<{ roomId: string; userToRoom: UserToRoom }>();
+const { updateUserToRoom } = useUserToRoomStore();
+const nickname = ref(userToRoom.nickname);
+</script>
+```
+
+**When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data — if the store can be empty at component creation time, the wrapper + `v-if` pattern is required.
+
 ## Generic SFC Components
 
 When a component's model value type (or other prop type) depends on an enum/discriminant key, make the component generic:
@@ -114,7 +146,7 @@ This keeps the parent component lean and makes each slot independently readable 
 
 The array lives in `services/` (co-located with the component's feature folder), not inline in the component. **Constant arrays use PascalCase names.**
 
-```txt
+```text
 services/permission/PermissionItems.ts   ← array defined here
 components/Permission/List.vue           ← imports and v-for renders
 ```
@@ -255,3 +287,37 @@ const controlItems = computed<ControlItem[]>(() => [
 ```
 
 **When NOT to extract:** Items that render fundamentally different components (e.g. `StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — the template structure diverges too much for a shared shape.
+
+## Page Decomposition — Pages are Layout + Composition
+
+Pages (`pages/**/*.vue`) should be **presentation-only orchestrators**: layout structure, `<Head>`, `definePageMeta`/`defineRouteRules`, and composed sub-components. All action logic, validation, and reactive state live in the sub-components or composables they own.
+
+**Rule:** If a page contains a `ref`, `computed`, or named function that belongs to a single interactive element (a button, a form), extract that element into its own component. The page's `<script setup>` should read like a bill of materials — imports and metadata, nothing else.
+
+```vue
+<!-- WRONG: page owns startCall logic and isCreating state -->
+<script setup lang="ts">
+definePageMeta({ middleware: "auth" });
+const isCreating = ref(false);
+const startCall = async () => { ... };
+const callCodeOrLink = ref("");
+const canJoin = computed(() => ...);
+</script>
+
+<!-- CORRECT: page delegates entirely to focused sub-components -->
+<script setup lang="ts">
+import { CallFeatures } from "@/services/message/room/call/CallFeatures";
+definePageMeta({ middleware: "auth" });
+</script>
+<template>
+  <MessageContentCallStartButton />
+  <MessageContentCallJoinForm />
+  <MessageContentCallFeatureCard v-for="feature of CallFeatures" :key="feature.title" :="feature" />
+</template>
+```
+
+**Button components** — own their loading state (`isCreating`, `isDeleting`), the async action, and navigation. Template is just `v-tooltip` + `v-btn`.
+
+**Form components** — own their field refs, validation computeds, and submit handler. Template is the `v-form` block.
+
+**Constant arrays** (feature lists, nav items) — live in `services/<domain>/` (e.g. `services/message/room/call/CallFeatures.ts`), never inline in the page.

@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.26.0](https://github.com/Esposter/Esposter/compare/v2.25.0...v2.26.0) (2026-06-01)
+
+### Bug Fixes
+
+* add isWindows check ([2b101a5](https://github.com/Esposter/Esposter/commit/2b101a5b8d67bb0751d1c7ef01b0253e6aef8190))
+* isomorphic bring back ([438b35c](https://github.com/Esposter/Esposter/commit/438b35cbb37ad558f014d9161d83e4e83e46c8cf))
+* lint and test snapshots to include linux ([2389fbc](https://github.com/Esposter/Esposter/commit/2389fbc9f692c65fcff37f5e4e766af6b3e3f722))
+* remove node and plugins and use web native APIs ([a7d80a2](https://github.com/Esposter/Esposter/commit/a7d80a2d535231e8c989b82db25329817eca43fe))
+* tests ([6b3c0e9](https://github.com/Esposter/Esposter/commit/6b3c0e99f921fa7e7528d83e9f89772b40127765))
+* tsconfig ([3f0f079](https://github.com/Esposter/Esposter/commit/3f0f0792781048f769967d9eced7dd7300293320))
+* wip tests ([87dcb4d](https://github.com/Esposter/Esposter/commit/87dcb4db2a8b0b2d3de7d9eca87d6daab9a47056))
+
+### Features
+
+* Add dts bundle size tests ([dfc255a](https://github.com/Esposter/Esposter/commit/dfc255a50259cc6364b6edd97dcd5403c775aa1d))
+* Add remaining bundle tests ([d9b0f1a](https://github.com/Esposter/Esposter/commit/d9b0f1a0cd27ac92e8921bc23e0ed0ddcf337a1d))
+
 # [2.25.0](https://github.com/Esposter/Esposter/compare/v2.24.0...v2.25.0) (2026-05-21)
 
 **Note:** Version bump only for package @esposter/xml2js
