@@ -10,7 +10,7 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
   const { activeCallSessionId } = storeToRefs(callStore);
   const knockerStore = useKnockerStore();
   const participantStore = useParticipantStore();
-  const { createCallParticipant, deleteCallParticipant, deleteSpeaker, setMute, setParticipantCamera } =
+  const { createCallParticipant, deleteCallParticipant, deleteSpeaker, setHandRaised, setMute, setParticipantCamera } =
     participantStore;
   const { createKnocker } = knockerStore;
 
@@ -28,6 +28,11 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
         onData: (participantId) => {
           deleteCallParticipant(callSessionId, participantId);
           deleteSpeaker(participantId);
+        },
+      });
+      const handRaisedChangedUnsubscribable = $trpc.callSession.onHandRaisedChanged.subscribe(callSessionId, {
+        onData: ({ id: participantId, isHandRaised }) => {
+          setHandRaised(callSessionId, participantId, isHandRaised);
         },
       });
       const muteChangedUnsubscribable = $trpc.callSession.onSetMute.subscribe(callSessionId, {
@@ -49,6 +54,7 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
       return () => {
         participantJoinUnsubscribable.unsubscribe();
         participantLeaveUnsubscribable.unsubscribe();
+        handRaisedChangedUnsubscribable.unsubscribe();
         muteChangedUnsubscribable.unsubscribe();
         videoChangedUnsubscribable.unsubscribe();
         knockCallUnsubscribable.unsubscribe();

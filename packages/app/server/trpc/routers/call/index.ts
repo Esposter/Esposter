@@ -3,18 +3,17 @@ import type { JoinCallOutput } from "@@/server/models/room/call/JoinCallOutput";
 
 import { on } from "@@/server/services/events/on";
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { createStandaloneCallSessionId } from "@@/server/services/message/call/createStandaloneCallSessionId";
-import { getCallParticipants } from "@@/server/services/message/call/getCallParticipants";
 import { joinLiveKitCall } from "@@/server/services/message/call/joinLiveKitCall";
 import { leaveCallAsParticipant } from "@@/server/services/message/call/leaveCallAsParticipant";
 import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
 import { requireJoinedCallSession } from "@@/server/services/message/call/requireJoinedCallSession";
 import { requireReadableCallSession } from "@@/server/services/message/call/requireReadableCallSession";
-import { setParticipantCamera } from "@@/server/services/message/call/setParticipantCamera";
-import { updateCallParticipantMute } from "@@/server/services/message/call/updateCallParticipantMute";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
+import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
@@ -23,6 +22,7 @@ import {
   callSessionIdSchema,
   DatabaseEntityType,
   roomIdSchema,
+  RoomPermission,
   selectCallSessionInMessageSchema,
 } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
@@ -34,12 +34,18 @@ const joinCallByRoomIdInputSchema = roomIdSchema;
 const joinCallInputSchema = z.object({ id: selectCallSessionInMessageSchema.shape.id });
 const leaveCallInputSchema = callSessionIdSchema;
 const setCameraInputSchema = z.object({ ...callSessionIdSchema.shape, isCameraEnabled: z.boolean() });
+const setHandRaisedInputSchema = z.object({
+  ...callSessionIdSchema.shape,
+  isHandRaised: z.boolean(),
+  participantId: z.string(),
+});
 const setMuteInputSchema = z.object({ ...callSessionIdSchema.shape, isMuted: z.boolean() });
 const readCallSessionIdInputSchema = roomIdSchema;
 const readCallSessionInputSchema = z.object({ id: selectCallSessionInMessageSchema.shape.id });
-const readCallParticipantsInputSchema = callSessionIdSchema;
+const readCallParticipantMapInputSchema = callSessionIdSchema;
 const onJoinCallInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onLeaveCallInputSchema = selectCallSessionInMessageSchema.shape.id;
+const onHandRaisedChangedInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onSetMuteInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onVideoChangedInputSchema = selectCallSessionInMessageSchema.shape.id;
 
@@ -92,6 +98,19 @@ export const baseCallRouter = router({
         message: new NotFoundError(DatabaseEntityType.CallSession, session.id).message,
       });
   }),
+  onHandRaisedChanged: standardAuthedProcedure.input(onHandRaisedChangedInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    const events = on(callEventEmitter, "handRaisedChanged", { signal });
+    await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, input);
+
+    for await (const [{ callSessionId, id, isHandRaised }] of events) {
+      if (callSessionId !== input) continue;
+      yield { id, isHandRaised };
+    }
+  }),
   onJoinCall: standardAuthedProcedure.input(onJoinCallInputSchema).subscription(async function* ({
     ctx,
     input,
@@ -140,11 +159,11 @@ export const baseCallRouter = router({
       yield { id, isCameraEnabled };
     }
   }),
-  readCallParticipants: standardAuthedProcedure
-    .input(readCallParticipantsInputSchema)
-    .query<CallParticipant[]>(async ({ ctx, input: { callSessionId } }) => {
+  readCallParticipantMap: standardAuthedProcedure
+    .input(readCallParticipantMapInputSchema)
+    .query<Map<string, CallParticipant>>(async ({ ctx, input: { callSessionId } }) => {
       await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, callSessionId);
-      return getCallParticipants(callSessionId);
+      return callSessionParticipantMap.get(callSessionId) ?? new Map();
     }),
   readCallSession: standardAuthedProcedure.input(readCallSessionInputSchema).query(async ({ ctx, input: { id } }) => {
     const callSession = await requireReadableCallSession(ctx.db, ctx.getSessionPayload, id);
@@ -157,21 +176,67 @@ export const baseCallRouter = router({
     .input(setCameraInputSchema)
     .mutation(({ ctx, input: { callSessionId, isCameraEnabled } }) => {
       const sessionId = ctx.getSessionPayload.session.id;
-      if (!setParticipantCamera(callSessionId, sessionId, isCameraEnabled))
+      const cameraParticipant = callSessionParticipantMap.get(callSessionId)?.get(sessionId);
+      if (!cameraParticipant)
         throw new TRPCError({
           code: "FORBIDDEN",
           message: new ForbiddenError("Must join call first").message,
         });
+      cameraParticipant.isCameraEnabled = isCameraEnabled;
 
       callEventEmitter.emit("videoChanged", { callSessionId, id: sessionId, isCameraEnabled });
     }),
+  setHandRaised: standardAuthedProcedure
+    .input(setHandRaisedInputSchema)
+    .mutation(async ({ ctx, input: { callSessionId, isHandRaised, participantId } }) => {
+      const callSession = await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, callSessionId);
+      const sessionId = ctx.getSessionPayload.session.id;
+      const targetSessionId = participantId;
+      if (targetSessionId !== sessionId) {
+        if (isHandRaised)
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: new ForbiddenError("Cannot raise another hand").message,
+          });
+
+        if (!callSession.roomId)
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: new ForbiddenError("Only room call moderators can lower another hand").message,
+          });
+
+        const hasMuteMembersPermission = await hasPermission(
+          ctx.db,
+          ctx.getSessionPayload.user.id,
+          callSession.roomId,
+          RoomPermission.MuteMembers,
+        );
+        if (!hasMuteMembersPermission)
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: new ForbiddenError("Missing permission to lower another hand").message,
+          });
+      }
+
+      const targetParticipant = callSessionParticipantMap.get(callSessionId)?.get(targetSessionId);
+      if (!targetParticipant)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: new ForbiddenError("Must join call first").message,
+        });
+      targetParticipant.isHandRaised = isHandRaised;
+
+      callEventEmitter.emit("handRaisedChanged", { callSessionId, id: targetSessionId, isHandRaised });
+    }),
   setMute: standardAuthedProcedure.input(setMuteInputSchema).mutation(({ ctx, input: { callSessionId, isMuted } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
-    if (!updateCallParticipantMute(callSessionId, sessionId, isMuted))
+    const muteParticipant = callSessionParticipantMap.get(callSessionId)?.get(sessionId);
+    if (!muteParticipant)
       throw new TRPCError({
         code: "FORBIDDEN",
         message: new ForbiddenError("Must join call first").message,
       });
+    muteParticipant.isMuted = isMuted;
 
     callEventEmitter.emit("muteChanged", { callSessionId, id: sessionId, isMuted });
   }),

@@ -6,8 +6,9 @@ import { callAdmittedParticipantMap } from "@@/server/services/message/call/call
 import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
+import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { callRouter } from "@@/server/trpc/routers/call";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { callSessionsInMessage, roomsInMessage } from "@esposter/db-schema";
@@ -65,7 +66,7 @@ describe("call", () => {
     const { callSessionId } = await callCaller.createCall();
     await mockSessionOnce(mockContext.db);
 
-    await expect(callCaller.readCallParticipants({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(callCaller.readCallParticipantMap({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new ForbiddenError("Must be in call").message}]`,
     );
   });
@@ -80,9 +81,47 @@ describe("call", () => {
     await roomCaller.joinRoom(inviteCode);
     await mockSessionOnce(mockContext.db, user);
 
-    await expect(callCaller.readCallParticipants({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(callCaller.readCallParticipantMap({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new ForbiddenError("Must be in call").message}]`,
     );
+  });
+
+  test("sets raised hand state", async () => {
+    expect.hasAssertions();
+
+    const getSessionPayload = getMockSession();
+    replayMockSession(getSessionPayload);
+    const { callSessionId } = await callCaller.createCall();
+    callSessionParticipantMap.set(
+      callSessionId,
+      new Map([
+        [
+          getSessionPayload.session.id,
+          {
+            id: getSessionPayload.session.id,
+            image: getSessionPayload.user.image,
+            isCameraEnabled: false,
+            isHandRaised: false,
+            isMuted: false,
+            name: getSessionPayload.user.name,
+            userId: getSessionPayload.user.id,
+          },
+        ],
+      ]),
+    );
+    const emitSpy = vi.spyOn(callEventEmitter, "emit");
+    replayMockSession(getSessionPayload);
+    await callCaller.setHandRaised({
+      callSessionId,
+      isHandRaised: true,
+      participantId: getSessionPayload.session.id,
+    });
+
+    expect(emitSpy).toHaveBeenCalledWith("handRaisedChanged", {
+      callSessionId,
+      id: getSessionPayload.session.id,
+      isHandRaised: true,
+    });
   });
 
   test("fails join for non-member", async () => {

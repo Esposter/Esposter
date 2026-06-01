@@ -4,12 +4,17 @@ import { createLiveKitRoomServiceClient } from "@@/server/services/livekit/creat
 import { getResultAsync, noop } from "@esposter/shared";
 import { TrackSource } from "livekit-server-sdk";
 
-export const stopLiveKitScreenShare = async (callSessionId: string, participants: CallParticipant[]) => {
+export const stopLiveKitScreenShare = async (
+  callSessionId: string,
+  participantMap: Map<string, CallParticipant>,
+  targetUserId: string,
+) => {
   const roomServiceClient = createLiveKitRoomServiceClient();
   if (!roomServiceClient) return;
 
   await Promise.all(
-    participants.map(async ({ id }) => {
+    Array.from(participantMap, async ([id, { userId }]) => {
+      if (userId !== targetUserId) return;
       await getResultAsync(async () => {
         await roomServiceClient.updateParticipant(callSessionId, id, {
           permission: {

@@ -5,6 +5,7 @@
       <MessageContentCallVideoControlGroup />
       <MessageContentCallAudioDeafenButton />
       <MessageContentCallScreenShareButton />
+      <MessageContentCallControlHandButton />
       <MessageContentCallControlLeaveButton />
     </StyledCard>
   </div>
