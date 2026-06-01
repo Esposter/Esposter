@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-05-11 · Nuxt `compatibilityDate`: `2026-05-06` · Overall: **91 / 100**
+> Last reviewed: 2026-06-01 · Nuxt `compatibilityDate`: `2026-05-06` · Overall: **92 / 100**
 
 A well-engineered, TypeScript-strict monorepo with strong architectural discipline and comprehensive linting. The approach deliberately delegates heavy lifting to well-maintained libraries (Vite, nuxt-security, pnpm actions, Drizzle) rather than rolling custom solutions. Primary remaining drag is the set of pre-release production dependencies.
 
@@ -49,24 +49,23 @@ Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.1
 
 ---
 
-## Dependencies — 7 / 10
+## Dependencies — 8 / 10
 
-Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents version drift. Core tools pinned. `better-auth` 1.6.10, Nuxt 4.4.4, Phaser 4.1.0 all on stable releases. Drizzle graduated from beta to RC (`1.0.0-rc.2`) — the v1 API is stable in practice, schema/query migration complete. `rolldown` reached stable (`^1.0.0`) and is no longer a pre-release concern.
+Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents version drift. Core tools pinned. `better-auth` 1.6.10, Nuxt 4.4.4, Phaser 4.1.0 all on stable releases. Drizzle graduated from beta to RC (`1.0.0-rc.2`) — the v1 API is stable in practice, schema/query migration complete. `rolldown` reached stable (`^1.0.0`) and `unplugin-dts` graduated to `^1.0.2` — both no longer a pre-release concern. TypeScript upgraded to v6 (`^6.0.3`).
 
-**8 pre-release packages in production paths** (down from 9):
+**7 pre-release packages in production paths** (down from 8):
 
-| Package               | Version       | Change from last review | Role                        |
-| --------------------- | ------------- | ----------------------- | --------------------------- |
-| `drizzle-orm`         | 1.0.0-rc.2    | ↑ promoted from beta.23 | Core ORM — all DB access    |
-| `drizzle-kit`         | 1.0.0-rc.2    | ↑ promoted from beta.23 | Migrations toolchain        |
-| `vuetify-nuxt-module` | ^1.0.0-beta.4 | beta.3 → beta.4         | Primary UI integration      |
-| `unplugin-dts`        | 1.0.0-beta.6  | unchanged               | Type declaration build step |
-| `survey-core`         | 3.0.0-beta.0  | unchanged               | Survey feature              |
-| `survey-creator-core` | 3.0.0-beta.0  | unchanged               | Survey feature              |
-| `survey-creator-vue`  | 3.0.0-beta.0  | unchanged               | Survey feature              |
-| `survey-vue3-ui`      | 3.0.0-beta.0  | unchanged               | Survey feature              |
+| Package               | Version       | Change from last review | Role                     |
+| --------------------- | ------------- | ----------------------- | ------------------------ |
+| `drizzle-orm`         | 1.0.0-rc.2    | ↑ promoted from beta.23 | Core ORM — all DB access |
+| `drizzle-kit`         | 1.0.0-rc.2    | ↑ promoted from beta.23 | Migrations toolchain     |
+| `vuetify-nuxt-module` | ^1.0.0-beta.4 | beta.3 → beta.4         | Primary UI integration   |
+| `survey-core`         | 3.0.0-beta.0  | unchanged               | Survey feature           |
+| `survey-creator-core` | 3.0.0-beta.0  | unchanged               | Survey feature           |
+| `survey-creator-vue`  | 3.0.0-beta.0  | unchanged               | Survey feature           |
+| `survey-vue3-ui`      | 3.0.0-beta.0  | unchanged               | Survey feature           |
 
-`rolldown` (`^1.0.0`) graduated to stable since last review — removed from the list. `eslint-plugin-depend` is configured and will surface new issues here over time.
+`unplugin-dts` (`^1.0.2`) graduated to stable since last review — removed from the list. `eslint-plugin-depend` is configured and will surface new issues here over time.
 
 ---
 
@@ -108,8 +107,8 @@ Four workflows: CI (all branches), Release (tags), and two Azure Functions deplo
 | Code Quality         | 10 / 10      | Guard clauses, `InvalidOperationError`, clean patterns                           |
 | Testing              | 10 / 10      | All logic-bearing stores tested; game/glue gaps documented                       |
 | Security             | 8 / 10       | CSP trade-offs documented; xssValidator pending upstream                         |
-| Dependencies         | 7 / 10       | 8 pre-release packages; rolldown stable, drizzle at RC                           |
+| Dependencies         | 8 / 10       | 7 pre-release packages; unplugin-dts stable, TypeScript v6                       |
 | Styling              | 9 / 10       | Attributify enforced; Vuetify token bridge; visual regression accepted trade-off |
 | CI / CD              | 9 / 10       | Sequential by design; caching and thresholds handled                             |
 | Bundle & Performance | 8 / 10       | Vite auto-splits; ~65 MB known footprint; Nuxt build provides visible baseline   |
-| **Total**            | **91 / 100** |                                                                                  |
+| **Total**            | **92 / 100** |                                                                                  |
