@@ -1,6 +1,9 @@
 {
   "extends": "./tsconfig.vue.json",
   "compilerOptions": {
+    // @TODO: Remove after upgrading to unplugin-dts with TS 6.0 rootDir fix
+    // https://github.com/qmhc/unplugin-dts/blob/main/packages/unplugin-dts/src/core/runtime.ts
+    "rootDir": "${configDir}/src",
     "types": []
   },
   "exclude": [
