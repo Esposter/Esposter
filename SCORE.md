@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-06-01 · Nuxt `compatibilityDate`: `2026-05-06` · Overall: **92 / 100**
+> Last reviewed: 2026-06-01 · Nuxt `compatibilityDate`: `2026-06-01` · Overall: **92 / 100**
 
 A well-engineered, TypeScript-strict monorepo with strong architectural discipline and comprehensive linting. The approach deliberately delegates heavy lifting to well-maintained libraries (Vite, nuxt-security, pnpm actions, Drizzle) rather than rolling custom solutions. Primary remaining drag is the set of pre-release production dependencies.
 
