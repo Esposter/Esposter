@@ -5,9 +5,9 @@ import { useParticipantStore } from "@/store/message/room/call/participant";
 const callStore = useCallStore();
 const { currentRoomCallSessionId, isCallViewOpen } = storeToRefs(callStore);
 const participantStore = useParticipantStore();
-const { getParticipants } = participantStore;
+const { getParticipantMap } = participantStore;
 const { speakingIds } = storeToRefs(participantStore);
-const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId.value));
+const roomParticipantMap = computed(() => getParticipantMap(currentRoomCallSessionId.value));
 </script>
 
 <template>
@@ -16,7 +16,7 @@ const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId
     <span text-sm font-medium flex-1>Call</span>
     <div flex gap-x-2 items-center>
       <MessageContentCallParticipantBarAvatar
-        v-for="participant of roomParticipants.values()"
+        v-for="participant of roomParticipantMap.values()"
         :key="participant.id"
         :participant
         :is-hand-raised="participant.isHandRaised"

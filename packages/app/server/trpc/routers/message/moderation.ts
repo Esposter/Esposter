@@ -141,10 +141,8 @@ export const moderationRouter = router({
           const callSessionId = await readCallSessionId(ctx.db, roomId);
           if (!callSessionId) break;
 
-          const targetParticipants = [...(callSessionParticipantMap.get(callSessionId)?.values() ?? [])].filter(
-            ({ userId }) => userId === targetUserId,
-          );
-          await stopLiveKitScreenShare(callSessionId, targetParticipants);
+          const sessionMap = callSessionParticipantMap.get(callSessionId);
+          if (sessionMap) await stopLiveKitScreenShare(callSessionId, sessionMap, targetUserId);
           break;
         }
         case AdminActionType.TimeoutUser:

@@ -66,7 +66,7 @@ describe("call", () => {
     const { callSessionId } = await callCaller.createCall();
     await mockSessionOnce(mockContext.db);
 
-    await expect(callCaller.readCallParticipants({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(callCaller.readCallParticipantMap({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new ForbiddenError("Must be in call").message}]`,
     );
   });
@@ -81,7 +81,7 @@ describe("call", () => {
     await roomCaller.joinRoom(inviteCode);
     await mockSessionOnce(mockContext.db, user);
 
-    await expect(callCaller.readCallParticipants({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(callCaller.readCallParticipantMap({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new ForbiddenError("Must be in call").message}]`,
     );
   });
@@ -101,6 +101,7 @@ describe("call", () => {
             id: getSessionPayload.session.id,
             image: getSessionPayload.user.image,
             isCameraEnabled: false,
+            isHandRaised: false,
             isMuted: false,
             name: getSessionPayload.user.name,
             userId: getSessionPayload.user.id,

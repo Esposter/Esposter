@@ -42,7 +42,7 @@ const setHandRaisedInputSchema = z.object({
 const setMuteInputSchema = z.object({ ...callSessionIdSchema.shape, isMuted: z.boolean() });
 const readCallSessionIdInputSchema = roomIdSchema;
 const readCallSessionInputSchema = z.object({ id: selectCallSessionInMessageSchema.shape.id });
-const readCallParticipantsInputSchema = callSessionIdSchema;
+const readCallParticipantMapInputSchema = callSessionIdSchema;
 const onJoinCallInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onLeaveCallInputSchema = selectCallSessionInMessageSchema.shape.id;
 const onHandRaisedChangedInputSchema = selectCallSessionInMessageSchema.shape.id;
@@ -159,11 +159,11 @@ export const baseCallRouter = router({
       yield { id, isCameraEnabled };
     }
   }),
-  readCallParticipants: standardAuthedProcedure
-    .input(readCallParticipantsInputSchema)
-    .query<CallParticipant[]>(async ({ ctx, input: { callSessionId } }) => {
+  readCallParticipantMap: standardAuthedProcedure
+    .input(readCallParticipantMapInputSchema)
+    .query<Map<string, CallParticipant>>(async ({ ctx, input: { callSessionId } }) => {
       await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, callSessionId);
-      return [...(callSessionParticipantMap.get(callSessionId)?.values() ?? [])];
+      return callSessionParticipantMap.get(callSessionId) ?? new Map();
     }),
   readCallSession: standardAuthedProcedure.input(readCallSessionInputSchema).query(async ({ ctx, input: { id } }) => {
     const callSession = await requireReadableCallSession(ctx.db, ctx.getSessionPayload, id);

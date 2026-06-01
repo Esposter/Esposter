@@ -8,7 +8,7 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
   const joinNoticeParticipant = ref<CallParticipant>();
   const speakingIds = ref<string[]>([]);
   const sessionId = computed(() => session.value.data?.session.id);
-  const getParticipants = (callSessionId: string) =>
+  const getParticipantMap = (callSessionId: string) =>
     callSessionId
       ? (callSessionParticipantsMap.value.get(callSessionId) ?? new Map<string, CallParticipant>())
       : new Map<string, CallParticipant>();
@@ -36,8 +36,8 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
     if (!participant) return;
     participant.isCameraEnabled = isCameraEnabled;
   };
-  const setParticipants = (callSessionId: string, participants: CallParticipant[]) => {
-    callSessionParticipantsMap.value.set(callSessionId, new Map(participants.map((p) => [p.id, p])));
+  const setParticipantMap = (callSessionId: string, participants: Map<string, CallParticipant>) => {
+    callSessionParticipantsMap.value.set(callSessionId, participants);
   };
   const setHandRaised = (callSessionId: string, id: string, isHandRaised: boolean) => {
     const participant = callSessionParticipantsMap.value.get(callSessionId)?.get(id);
@@ -66,13 +66,13 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
     createSpeaker,
     deleteCallParticipant,
     deleteSpeaker,
-    getParticipants,
+    getParticipantMap,
     joinNoticeParticipant,
     sessionId,
     setHandRaised,
     setMute,
     setParticipantCamera,
-    setParticipants,
+    setParticipantMap,
     speakingIds,
   };
 });

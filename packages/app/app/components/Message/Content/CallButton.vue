@@ -7,8 +7,8 @@ const callStore = useCallStore();
 const { joinCallByRoomId, leaveCall } = callStore;
 const { currentRoomCallSessionId, isConnecting, isInCall } = storeToRefs(callStore);
 const participantStore = useParticipantStore();
-const { getParticipants } = participantStore;
-const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId.value));
+const { getParticipantMap } = participantStore;
+const roomParticipantMap = computed(() => getParticipantMap(currentRoomCallSessionId.value));
 </script>
 
 <template>
@@ -18,14 +18,14 @@ const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId
         <template #activator="{ props: tooltipProps }">
           <v-btn :="mergeProps(menuProps, tooltipProps)" size="small" color="success" variant="text">
             <v-icon icon="mdi-phone" />
-            <span ml-1>{{ roomParticipants.size }}</span>
+            <span ml-1>{{ roomParticipantMap.size }}</span>
           </v-btn>
         </template>
       </v-tooltip>
     </template>
     <StyledCard>
       <v-list density="compact" min-w-40>
-        <v-list-item v-for="{ id, image, isMuted, name } of roomParticipants.values()" :key="id" :title="name">
+        <v-list-item v-for="{ id, image, isMuted, name } of roomParticipantMap.values()" :key="id" :title="name">
           <template #prepend>
             <StyledAvatar :image :name mr-2 />
           </template>

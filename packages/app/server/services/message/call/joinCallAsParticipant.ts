@@ -39,5 +39,5 @@ export const joinCallAsParticipant = async (
       }).match(noop, console.error);
   }
 
-  return { callSessionId, participants: [...(callSessionParticipantMap.get(callSessionId)?.values() ?? [])] };
+  return { callSessionId, participantMap: callSessionParticipantMap.get(callSessionId) ?? new Map() };
 };
