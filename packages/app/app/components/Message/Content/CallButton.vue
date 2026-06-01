@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { mergeProps } from "vue";
@@ -7,8 +9,10 @@ const callStore = useCallStore();
 const { joinCallByRoomId, leaveCall } = callStore;
 const { currentRoomCallSessionId, isConnecting, isInCall } = storeToRefs(callStore);
 const participantStore = useParticipantStore();
-const { getParticipantMap } = participantStore;
-const roomParticipantMap = computed(() => getParticipantMap(currentRoomCallSessionId.value));
+const { callSessionParticipantsMap } = storeToRefs(participantStore);
+const roomParticipantMap = computed(
+  () => callSessionParticipantsMap.value.get(currentRoomCallSessionId.value) ?? new Map<string, CallParticipant>(),
+);
 </script>
 
 <template>

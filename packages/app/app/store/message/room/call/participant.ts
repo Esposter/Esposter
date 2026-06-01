@@ -8,10 +8,6 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
   const joinNoticeParticipant = ref<CallParticipant>();
   const speakingIds = ref<string[]>([]);
   const sessionId = computed(() => session.value.data?.session.id);
-  const getParticipantMap = (callSessionId: string) =>
-    callSessionId
-      ? (callSessionParticipantsMap.value.get(callSessionId) ?? new Map<string, CallParticipant>())
-      : new Map<string, CallParticipant>();
   const createCallParticipant = (callSessionId: string, participant: CallParticipant) => {
     const existing = callSessionParticipantsMap.value.get(callSessionId);
     if (existing?.has(participant.id)) return;
@@ -66,7 +62,6 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
     createSpeaker,
     deleteCallParticipant,
     deleteSpeaker,
-    getParticipantMap,
     joinNoticeParticipant,
     sessionId,
     setHandRaised,

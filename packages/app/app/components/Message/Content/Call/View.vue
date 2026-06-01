@@ -21,11 +21,12 @@ const {
   screenSharingParticipantIds,
 } = storeToRefs(mediaStore);
 const participantStore = useParticipantStore();
-const { getParticipantMap } = participantStore;
-const { speakingIds } = storeToRefs(participantStore);
+const { callSessionParticipantsMap, speakingIds } = storeToRefs(participantStore);
 const { data: session } = await authClient.useSession(useFetch);
 const sessionId = computed(() => session.value?.session.id);
-const callParticipantMap = computed(() => getParticipantMap(activeCallSessionId.value));
+const callParticipantMap = computed(
+  () => callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
+);
 const activeScreenShareParticipant = computed(() =>
   activeScreenShareParticipantId.value ? callParticipantMap.value.get(activeScreenShareParticipantId.value) : undefined,
 );

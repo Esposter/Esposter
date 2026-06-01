@@ -129,10 +129,11 @@ The client `callSessionParticipantsMap` mirrors the server-side structure: `Map<
 **Key rules:**
 
 - **Don't add a separate tracking collection** for state that already lives on `CallParticipant`. `isHandRaised` on the participant object replaces any external `handRaisedIdsMap`. Before adding a new parallel state map, check if the field belongs on `CallParticipant` itself.
-- **tRPC boundary stays as `CallParticipant[]`** — JSON can't represent Maps. The server returns an array; `setParticipants` converts it to a Map on the client. Don't change the tRPC return type.
+- **tRPC boundary uses `Map<string, CallParticipant>` directly** — the project uses SuperJSON as the tRPC transformer, which natively serializes Maps. Procedures return `Map<string, CallParticipant>` and `setParticipantMap` stores it as-is. Never convert to/from arrays at the tRPC boundary.
 - **Iteration in Vue templates** — iterate participant values with `v-for="participant of myMap.values()"`, not by converting to an array first. Use `.size` instead of `.length`.
 - **Mutation through the reactive chain** — always obtain a participant via `callSessionParticipantsMap.value.get(callSessionId)?.get(sessionId)` (not via a local variable captured before the reactive lookup) so Vue's proxy intercepts the property assignment and triggers re-renders.
-- **`selfParticipant` computed** — derive `isInCall`, `isMuted`, `isHandRaised` for the current session from one `computed(() => sessionId.value ? callParticipants.value.get(sessionId.value) : undefined)` rather than calling `.find()` or `.includes()` per derived value.
+- **`selfParticipant` computed** — derive `isInCall`, `isMuted`, `isHandRaised` for the current session from one `computed(() => sessionId.value ? callSessionParticipantsMap.value.get(activeCallSessionId.value)?.get(sessionId.value) : undefined)` rather than calling `.find()` or `.includes()` per derived value.
+- **Never wrap raw store state in a getter function for read-only access** — expose `callSessionParticipantsMap` directly via `storeToRefs` (in components) or dot access (in stores), and let each consumer inline the guard within its own reactive context. A wrapper like `getParticipantMap(id)` hides which reactive dependencies are tracked, can silently break reactivity when the reference escapes the reactive context, and returns a new empty `Map` reference each call (breaking computed caching). Inline `participantStore.callSessionParticipantsMap.get(id) ?? new Map<string, CallParticipant>()` instead.
 
 ```ts
 // WRONG — redundant tracking array, O(n) lookups, wasteful spread
@@ -140,15 +141,29 @@ const handRaisedIdsMap = ref(new Map<string, string[]>());
 const isHandRaised = computed(() => getHandRaisedIds(callSessionId).includes(sessionId));
 const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
 
-// CORRECT — Map-based, O(1), state on the entity
-// callSessionParticipantsMap: Map<callSessionId, Map<sessionId, CallParticipant>>
-const selfParticipant = computed(() => sessionId.value ? callParticipants.value.get(sessionId.value) : undefined);
-const isInCall = computed(() => !!selfParticipant.value);
+// WRONG — getter wrapper obscures reactive deps, breaks computed caching with new Map() each call
+const getParticipantMap = (callSessionId: string) =>
+  callSessionId ? (callSessionParticipantsMap.value.get(callSessionId) ?? new Map<string, CallParticipant>()) : new Map<string, CallParticipant>();
+const callParticipantMap = computed(() => getParticipantMap(activeCallSessionId.value));
+
+// CORRECT — Map-based, O(1), state on entity, reactive deps visible at the call site
+// In stores (dot access on store instance):
+const callParticipantMap = computed(
+  () => participantStore.callSessionParticipantsMap.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
+);
+const selfParticipant = computed(() => sessionId.value ? callParticipantMap.value.get(sessionId.value) : undefined);
+const isInCall = computed(() => Boolean(selfParticipant.value));
 const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
 const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
 
+// In components (storeToRefs):
+const { callSessionParticipantsMap, speakingIds } = storeToRefs(participantStore);
+const callParticipantMap = computed(
+  () => callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
+);
+
 // template iteration
-v-for="participant of callParticipants.values()"
+v-for="participant of callParticipantMap.values()"
 ```
 
 `useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.

@@ -1,3 +1,5 @@
+import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useRoomStore } from "@/store/message/room";
@@ -21,7 +23,6 @@ export const useCallStore = defineStore("message/room/call", () => {
     clearJoinNotice,
     clearSpeakers,
     deleteCallParticipant,
-    getParticipantMap,
     setHandRaised,
     setMute,
     setParticipantCamera,
@@ -36,7 +37,10 @@ export const useCallStore = defineStore("message/room/call", () => {
   const isCallViewOpen = ref(false);
   const isConnecting = ref(false);
   const sessionId = computed(() => session.value.data?.session.id);
-  const callParticipantMap = computed(() => getParticipantMap(activeCallSessionId.value));
+  const callParticipantMap = computed(
+    () =>
+      participantStore.callSessionParticipantsMap.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
+  );
   const selfParticipant = computed(() => (sessionId.value ? callParticipantMap.value.get(sessionId.value) : undefined));
   const isInCall = computed(() => Boolean(selfParticipant.value));
   const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
@@ -47,7 +51,8 @@ export const useCallStore = defineStore("message/room/call", () => {
     const participantSessionId = targetSessionId ?? sessionIdValue;
     if (!callSessionId || !sessionIdValue || !participantSessionId) return;
 
-    const oldIsHandRaised = getParticipantMap(callSessionId).get(participantSessionId)?.isHandRaised ?? false;
+    const oldIsHandRaised =
+      participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantSessionId)?.isHandRaised ?? false;
     setHandRaised(callSessionId, participantSessionId, newIsHandRaised);
 
     await getResultAsync(() =>

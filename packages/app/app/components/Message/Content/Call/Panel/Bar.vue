@@ -1,13 +1,16 @@
 <script setup lang="ts">
+import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 
 const callStore = useCallStore();
 const { currentRoomCallSessionId, isCallViewOpen } = storeToRefs(callStore);
 const participantStore = useParticipantStore();
-const { getParticipantMap } = participantStore;
-const { speakingIds } = storeToRefs(participantStore);
-const roomParticipantMap = computed(() => getParticipantMap(currentRoomCallSessionId.value));
+const { callSessionParticipantsMap, speakingIds } = storeToRefs(participantStore);
+const roomParticipantMap = computed(
+  () => callSessionParticipantsMap.value.get(currentRoomCallSessionId.value) ?? new Map<string, CallParticipant>(),
+);
 </script>
 
 <template>
