@@ -11,9 +11,9 @@ Located in `packages/configuration/src/`. All library packages import one of:
 
 | Config                            | Platform                 | Use for                                |
 | --------------------------------- | ------------------------ | -------------------------------------- |
-| `rolldownConfigurationBrowser`    | browser                  | `db-schema`, `shared`                  |
+| `rolldownConfigurationBrowser`    | browser                  | `db-schema`, `parse-tmx`, `shared`     |
 | `rolldownConfigurationNode`       | node                     | `db`, `azure-mock`, `infra`, `db-mock` |
-| `rolldownConfigurationIsomorphic` | browser + node polyfills | `xml2js`, `parse-tmx`                  |
+| `rolldownConfigurationIsomorphic` | browser + node polyfills | `xml2js`                               |
 
 All extend `rolldownConfigurationBrowser`. Node adds `platform: "node"`. Isomorphic adds `@rolldown/plugin-node-polyfills`. Use `{ external }` shorthand when no extra entries needed; spread `[...external, "extra"]` only if the package requires additional externals.
 

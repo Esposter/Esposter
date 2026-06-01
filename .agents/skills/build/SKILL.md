@@ -19,10 +19,11 @@ All extend `rolldownConfigurationBrowser`. Node adds `platform: "node"`. Isomorp
 
 ## Global External List
 
-Defined in `packages/configuration/src/external/external.ts`. Controls what is NOT bundled into each package's dist:
+Defined in `packages/configuration/src/external/external.ts`, exported as `external`. Used by `rolldownConfigurationBrowser` (which all rolldown configs extend) and by `viteConfiguration`.
 
 ```ts
-external: [
+// packages/configuration/src/external/external.ts
+export const external: (RegExp | string)[] = [
   // Workspace packages — never bundle sibling packages
   /@esposter\//u,
   "azure-mock",
@@ -44,25 +45,7 @@ external: [
   "vite-plugin-mkcert",
   // @esposter/db
   "@azure/data-tables",
-  "@azure/search-documents",
-  "@azure/storage-blob",
-  "@azure/web-pubsub",
-  // @esposter/db-mock
-  "@electric-sql/pglite",
-  /^drizzle-kit/u,
-  /^drizzle-orm/u,
-  // @esposter/db-schema
-  "zod",
-  // @esposter/infra
-  "@pulumi/azure-native",
-  "@pulumi/pulumi",
-  // @esposter/vue-phaserjs
-  "phaser",
-  /^phaser4-rex-plugins/u,
-  // Vue framework — always provided by the consumer (Nuxt app / Vue SPA)
-  "@vueuse/core",
-  "pinia",
-  "vue",
+  // ... (grouped by owning @esposter package, alphabetical package order, alphabetical entries within)
 ];
 ```
 
@@ -72,7 +55,8 @@ external: [
 - **Non-`@esposter/` workspace packages must be listed explicitly** — `azure-mock`, `parse-tmx`, `vue-phaserjs` are not covered by the regex.
 - **External list entries are a build superset, not a peer-dependency checklist for every package** — a package declares only the externalized packages it directly imports at runtime or exposes through its generated `.d.ts` surface.
 - **Do not duplicate transitive peers** — if `azure-mock` imports `@esposter/db-schema`, and `@esposter/db-schema` imports `zod`, then `zod` belongs to `@esposter/db-schema`'s peer dependencies, not `azure-mock`'s. The package that directly imports the dependency owns the contract.
-- **`dependencies` normally get bundled; `peerDependencies` are externalized** — when a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and make sure it is covered by the shared external list. Exceptions: `@esposter/app` (root consumer) and `@esposter/azure-functions` (overrides external list to bundle almost everything).
+- **`dependencies` normally get bundled; `peerDependencies` are externalized** — when a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and make sure it is covered by the shared external list. Exceptions: `@esposter/app` (root consumer, not a library) and `@esposter/azure-functions` (overrides external list to bundle almost everything).
+- **Vite builds**: `viteConfiguration` lives in `packages/configuration/src/viteConfiguration.ts`. `packages/configuration/vite.config.js` imports it directly from source; package consumers such as `vue-phaserjs` import it from `@esposter/configuration`.
 
 ### Ordering convention
 
@@ -90,6 +74,7 @@ Entries are grouped by **owning `@esposter` package**, sections in alphabetical 
 Run this from the repo root to find any `dependencies` entry that should be a `peerDependency`:
 
 ```js
+// node -e "..." or save as a script
 const fs = require("fs"),
   path = require("path");
 const externalStrings = [
@@ -123,9 +108,10 @@ const externalPatterns = [
   /^unplugin-auto-import/,
   /^unplugin-dts/,
 ];
-const skip = new Set(["@esposter/app", "@esposter/azure-functions"]);
-for (const dir of fs.readdirSync("packages")) {
-  const p = path.join("packages", dir, "package.json");
+const skip = new Set(["@esposter/app", "@esposter/azure-functions"]); // intentional exceptions
+const pkgsDir = "packages";
+for (const dir of fs.readdirSync(pkgsDir)) {
+  const p = path.join(pkgsDir, dir, "package.json");
   if (!fs.existsSync(p)) continue;
   const pkg = JSON.parse(fs.readFileSync(p, "utf8"));
   if (skip.has(pkg.name)) continue;

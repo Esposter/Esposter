@@ -16,6 +16,7 @@ description: Esposter file and folder organisation — one export per file, no e
 ## Files and Exports
 
 - **One export per file** — each exported function, class, or interface lives in its own file. Exception: Zod schemas may be co-located with their interface/type since they are tightly coupled.
+- **Co-locate single-use event/hook map types** — when an event/hook map interface (e.g. `AdminActionHookMap`, `MessageHookMap`, `TableEditorHookMap`) is imported only by its own service file (which creates the singleton instance), define the interface directly in the service file rather than in a separate `models/` file. The service exports the instance; consumers import the instance, not the type. Do **not** apply this to general type maps (`ColumnTypeColumnMap`, `DataSourceConfigurationTypeMap`, etc.) — those stay in `models/` regardless of consumer count.
 - **Interfaces go in `models/`** — never define an exported interface inline inside a `.vue` component. Extract it to `app/models/<feature>/InterfaceName.ts` (app-local) or `shared/models/<feature>/InterfaceName.ts` (cross-package). This makes it reusable (e.g. a Vjsf context interface shared between create and edit dialogs lives in `app/models/tableEditor/file/column/ColumnFormVjsfContext.ts`, not inside either component).
 - **One class per file** — classes belong in a `models/` folder (e.g., `app/models/`, `shared/models/`).
 - **Never use `export { }` syntax** — always use `export const`, `export class`, `export interface`, `export type`, or `export function` at the declaration site. The only valid exceptions are empty `export {}` in `.d.ts` files (to mark them as a module) and `ctix`-generated barrel files (pinned package). If you see `export { ... }` in a hand-written `.ts` file, it is wrong — inline the `export` keyword at each declaration instead.
@@ -31,7 +32,7 @@ description: Esposter file and folder organisation — one export per file, no e
 ## Constant Maps
 
 - **Constant maps and arrays use PascalCase** matching the filename with `as const satisfies` — e.g. `export const DataSourceConfigurationMap = { ... } as const satisfies Record<...>` and `export const ColumnStatisticsDefinitions = [ ... ] as const satisfies readonly ColumnStatisticsDefinition[]`.
-  - **Exception**: for generic definition arrays where the `format` (or similar) callback is contravariant over the union of entry types, `satisfies` will fail with a type error. In that case, use `as const` alone and cast at the call site with `as never`. See `.Codex/skills/typescript/SKILL.md` — "Generic Definition Arrays".
+  - **Exception**: for generic definition arrays where the `format` (or similar) callback is contravariant over the union of entry types, `satisfies` will fail with a type error. In that case, use `as const` alone and cast at the call site with `as never`. See `.claude/skills/typescript/SKILL.md` — "Generic Definition Arrays".
 - **Destructure in `v-for` unless passing the base item as component props** — `v-for="{ key, format } of ColumnStatisticsDefinitions"` is preferred over `v-for="def of ColumnStatisticsDefinitions"` when you only need specific fields. Exception: if the item itself must be passed as a prop to a child component (e.g. `<SomeCard :item="def" />`), do not destructure.
 - **One constant map per file, named after the constant** — `ColumnTypeFormSchemaMap.ts` exports only `ColumnTypeFormSchemaMap`. Never co-locate multiple maps in one file. When a map is a transformation of another (e.g. omitting a key), derive it directly rather than repeating the source values: `[ColumnType.Boolean]: ColumnTypeFormSchemaMap[ColumnType.Boolean].omit({ name: true })`.
 - **Generic type maps for polymorphic dispatch** — when a constant map needs to associate a discriminant key (e.g. `DataSourceType`) with a type-parameterised generic (e.g. `DataSourceConfiguration<TItem>`), define an explicit type map first, then use a mapped type in `satisfies` to get per-entry type safety without any `as` casts:
@@ -141,6 +142,16 @@ Use `dependencies` for direct runtime imports that are not consumer-provided and
 ### Example: `packages/db-mock`
 
 A test-only node package. `drizzle-kit` and `@electric-sql/pglite` are peers (heavy, not bundled). Both are listed in `rolldownConfigurationBrowser.external`. `eslint.config.js` is a symlink to `../configuration/eslint/index.typescript.js`.
+
+## Refactoring — No Alias Re-exports
+
+When renaming a file (e.g. `createCode.ts` → `createToken.ts`, `readInviteCode.ts` → `readInviteToken.ts`):
+
+- **Delete the old file** — never leave a re-export alias (e.g. `export { createToken as createCode } from "./createToken"`) in the old file's place.
+- Update all import sites to the new file path and name directly.
+- If a barrel (`index.ts`) exported the old name, update it too.
+
+The alias pattern looks helpful but creates confusion: the old name stays discoverable, callers assume it's the canonical name, and the rename never fully propagates.
 
 ## Line Endings
 

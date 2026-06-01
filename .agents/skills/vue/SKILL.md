@@ -25,10 +25,9 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 ## Inline Functions & Macros
 
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
-- **Vue event handlers** — write single-use handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically and avoids component-local names that add no reuse. Inline single-statement calls directly (`@click="save(id)"`) and inline short multi-statement async handlers when they are only used once. Extract to a named `const myHandler = async () => { ... }` only when the logic is reused, exposed, passed to non-template APIs (timers, listeners, lifecycle hooks, third-party callbacks), depends on globals that Vue templates do not expose or type well (for example `structuredClone`, `Promise`, or browser/file picker APIs), uses syntax that Vue template expressions do not handle well (for example `instanceof`), or is long enough that inlining would make the template harder to scan.
+- **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places (e.g. called from both a button click AND a keydown handler). Single-use handlers must always be inlined, no exceptions.
 - **IME composition guard** — when handling `@keydown.enter` on text inputs, guard inline against IME composition so that confirming a CJK candidate doesn't prematurely commit: `@keydown.enter.stop="!$event.isComposing && commitEdit()"`.
 - **`defineModel`**: always type explicitly. For booleans, you must pass `{ default: false }` so the type does not implicitly include `undefined` (`defineModel<boolean>({ default: false })`).
-- **`defineProps`**: always destructure props at declaration time (`const { id, name } = defineProps<Props>()`). This preserves the props reactivity transform and avoids `props.foo` / `.value` ceremony in script and template. Use defaults in the destructure when needed.
 - **`defineSlots`**: only assign to a variable when `slots` is actually referenced in script — `const slots = defineSlots<{ ... }>()`. If `slots` is not used in script (e.g. the template uses `<slot>` tags directly), call `defineSlots<...>()` without assignment.
 - **Never destructure event parameters** — always use `(event: KeyboardEvent) => { event.key ... }` not `({ key }: KeyboardEvent) => { key ... }`. Destructuring event methods (e.g. `preventDefault`, `stopPropagation`) causes "Illegal invocation" because they lose their `this` binding. Keep the full `event` object for consistency even when only accessing properties.
 - **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
@@ -97,11 +96,47 @@ const callRoomId = ref<string>();
 
 The same applies to other nullable-initial refs: `ref<User>()`, `ref<number>()`, etc.
 
+## defineProps — Always Use Named `interface <ComponentName>Props`
+
+Always declare a named interface suffixed with `Props` and named after the component, then pass it to `defineProps<...>()`. Never use the inline object-literal type or a plain `interface Props`.
+
+```ts
+// CORRECT — name reflects the component
+interface KnockerItemProps {
+  knocker: CallParticipant;
+}
+const props = defineProps<KnockerItemProps>();
+
+// WRONG — anonymous type
+const props = defineProps<{ knocker: CallParticipant }>();
+
+// WRONG — generic name loses component identity
+interface Props {
+  knocker: CallParticipant;
+}
+const props = defineProps<Props>();
+```
+
+Name the interface after the component's meaningful identity (file/folder name, stripping `Index`). For `PreJoin/Index.vue` → `interface PreJoinProps`. For `JoinNotice/KnockerItem.vue` → `interface KnockerItemProps`.
+
 ## Refs & Computed
 
-- **Template refs** — always use `useTemplateRef` for both component and HTML element refs.
-  - Components: `useTemplateRef<InstanceType<typeof ComponentName>>("name")`
-  - HTML elements: `useTemplateRef("container")` — no explicit type annotation needed, Vue infers it. Use a generic semantic name like `"container"`, never the element tag name (not `"spanRef"`, not `"divRef"`).
+- **Template refs** — always use `useTemplateRef` for both component and HTML element refs. **Never annotate with a generic type argument** — Vue 3.5+ infers the type from the template automatically. **Never add a `Ref` suffix to the variable name.**
+
+  ```ts
+  // CORRECT — no generic, no "Ref" suffix, matches the ref="video" attribute
+  const video = useTemplateRef("video");
+
+  // WRONG — spurious type annotation
+  const video = useTemplateRef<HTMLVideoElement>("video");
+
+  // WRONG — spurious import + "Ref" suffix
+  import type MyDialog from "@/components/MyDialog.vue";
+  const dialogRef = useTemplateRef<InstanceType<typeof MyDialog>>("dialogRef");
+  ```
+
+  Use a semantic name matching the `ref="..."` attribute value (e.g. `"video"`, `"container"`, `"dialog"` — never `"videoRef"`, `"divRef"`). If a component type was only imported for the `useTemplateRef` generic, remove that import entirely.
+
 - **Sort at display time** — apply `.toSorted()` inside the `computed` that feeds the template; never sort in store ingestion (`readX`, `setX`, mutation helpers). Stores hold data in natural order; components transform for display. **Exception**: when the sorted order must be sent to the backend (e.g. message pagination cursors), sort before the API call instead.
 - **Computed for reused expressions** — extract a `computed` (named to match the prop, e.g. `title`) when the same derived value is bound to two or more props. This enables the `:propName` shorthand for one binding and avoids repeating the expression: `const title = computed(() => ...)` → `:title :tooltip-text="title"`. No need for a computed if the value is only used in one place.
 - **Inline prop values** — inline prop values directly in the template to take advantage of Vue TypeScript inference. Only extract to a `computed` when the same logic is reused in multiple places. Single-use derived values stay inline.
@@ -320,7 +355,6 @@ For a prop dependency, wrap it in a getter: `() => isActive`.
 - Always place `watch`, `onMounted`, `onUnmounted`, and other Vue lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments.
 - Always put a blank line before them to visually separate them from regular `const` assignments.
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly. This avoids scope/binding issues and prevents accidental argument forwarding: `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
-- Vue `watch`, `onMounted`, `onUnmounted`, and related lifecycle hooks support async callbacks in this codebase. Use `async () => { await ... }` directly for hook/watch work; do not wrap Vue hook/watch callbacks in `getSynchronizedFunction`.
 - This applies everywhere — `.map()`, `.filter()`, lifecycle hooks, JS event listeners, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`. Vue template `@event` bindings are handled separately in Template Conventions: use `@click="fn()"` (call expression), not `@click="fn"` (bare reference).
 
 ## Browser Globals — Always Use `window.` Prefix
