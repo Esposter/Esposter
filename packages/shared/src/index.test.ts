@@ -19,6 +19,6 @@ describe("@esposter/shared", () => {
 
     if (isWindows)
       expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 109.98 KB (112623 bytes)"`);
-    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 109.98 KB (112623 bytes)"`);
+    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 106.14 KB (108686 bytes)"`);
   });
 });

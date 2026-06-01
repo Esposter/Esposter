@@ -19,6 +19,6 @@ describe("azure-mock", () => {
 
     if (isWindows)
       expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 42.49 KB (43506 bytes)"`);
-    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 42.49 KB (43506 bytes)"`);
+    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 43.78 KB (44833 bytes)"`);
   });
 });

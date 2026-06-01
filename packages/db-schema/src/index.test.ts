@@ -19,6 +19,6 @@ describe("@esposter/db-schema", () => {
 
     if (isWindows)
       expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3632.85 KB (3720037 bytes)"`);
-    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3632.85 KB (3720037 bytes)"`);
+    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3634.14 KB (3721364 bytes)"`);
   });
 });
