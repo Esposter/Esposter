@@ -3,17 +3,15 @@ import type { JoinCallOutput } from "@@/server/models/room/call/JoinCallOutput";
 
 import { on } from "@@/server/services/events/on";
 import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
 import { createParticipant } from "@@/server/services/message/call/createParticipant";
 import { createStandaloneCallSessionId } from "@@/server/services/message/call/createStandaloneCallSessionId";
-import { getCallParticipants } from "@@/server/services/message/call/getCallParticipants";
 import { joinLiveKitCall } from "@@/server/services/message/call/joinLiveKitCall";
 import { leaveCallAsParticipant } from "@@/server/services/message/call/leaveCallAsParticipant";
 import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
 import { requireJoinedCallSession } from "@@/server/services/message/call/requireJoinedCallSession";
 import { requireReadableCallSession } from "@@/server/services/message/call/requireReadableCallSession";
-import { setParticipantCamera } from "@@/server/services/message/call/setParticipantCamera";
-import { updateCallParticipantMute } from "@@/server/services/message/call/updateCallParticipantMute";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { router } from "@@/server/trpc";
@@ -165,7 +163,7 @@ export const baseCallRouter = router({
     .input(readCallParticipantsInputSchema)
     .query<CallParticipant[]>(async ({ ctx, input: { callSessionId } }) => {
       await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, callSessionId);
-      return getCallParticipants(callSessionId);
+      return [...(callSessionParticipantMap.get(callSessionId)?.values() ?? [])];
     }),
   readCallSession: standardAuthedProcedure.input(readCallSessionInputSchema).query(async ({ ctx, input: { id } }) => {
     const callSession = await requireReadableCallSession(ctx.db, ctx.getSessionPayload, id);
@@ -178,11 +176,13 @@ export const baseCallRouter = router({
     .input(setCameraInputSchema)
     .mutation(({ ctx, input: { callSessionId, isCameraEnabled } }) => {
       const sessionId = ctx.getSessionPayload.session.id;
-      if (!setParticipantCamera(callSessionId, sessionId, isCameraEnabled))
+      const cameraParticipant = callSessionParticipantMap.get(callSessionId)?.get(sessionId);
+      if (!cameraParticipant)
         throw new TRPCError({
           code: "FORBIDDEN",
           message: new ForbiddenError("Must join call first").message,
         });
+      cameraParticipant.isCameraEnabled = isCameraEnabled;
 
       callEventEmitter.emit("videoChanged", { callSessionId, id: sessionId, isCameraEnabled });
     }),
@@ -218,21 +218,25 @@ export const baseCallRouter = router({
           });
       }
 
-      if (!getCallParticipants(callSessionId).some((participant) => participant.id === targetSessionId))
+      const targetParticipant = callSessionParticipantMap.get(callSessionId)?.get(targetSessionId);
+      if (!targetParticipant)
         throw new TRPCError({
           code: "FORBIDDEN",
           message: new ForbiddenError("Must join call first").message,
         });
+      targetParticipant.isHandRaised = isHandRaised;
 
       callEventEmitter.emit("handRaisedChanged", { callSessionId, id: targetSessionId, isHandRaised });
     }),
   setMute: standardAuthedProcedure.input(setMuteInputSchema).mutation(({ ctx, input: { callSessionId, isMuted } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
-    if (!updateCallParticipantMute(callSessionId, sessionId, isMuted))
+    const muteParticipant = callSessionParticipantMap.get(callSessionId)?.get(sessionId);
+    if (!muteParticipant)
       throw new TRPCError({
         code: "FORBIDDEN",
         message: new ForbiddenError("Must join call first").message,
       });
+    muteParticipant.isMuted = isMuted;
 
     callEventEmitter.emit("muteChanged", { callSessionId, id: sessionId, isMuted });
   }),

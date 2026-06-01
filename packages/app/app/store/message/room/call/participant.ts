@@ -40,6 +40,8 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
   };
   const setParticipants = (callSessionId: string, participants: CallParticipant[]) => {
     callSessionParticipantsMap.value.set(callSessionId, participants);
+    const initialHandRaisedIds = participants.filter((p) => p.isHandRaised).map((p) => p.id);
+    if (initialHandRaisedIds.length > 0) handRaisedIdsMap.value.set(callSessionId, initialHandRaisedIds);
   };
   const setHandRaised = (callSessionId: string, id: string, isHandRaised: boolean) => {
     const handRaisedIds = getHandRaisedIds(callSessionId);
@@ -49,6 +51,8 @@ export const useParticipantStore = defineStore("message/room/call/participant", 
         ? [id, ...handRaisedIds.filter((handRaisedId) => handRaisedId !== id)]
         : handRaisedIds.filter((handRaisedId) => handRaisedId !== id),
     );
+    const participant = getParticipants(callSessionId).find((value) => value.id === id);
+    if (participant) participant.isHandRaised = isHandRaised;
   };
   const createSpeaker = (id: string) => {
     if (speakingIds.value.includes(id)) return;

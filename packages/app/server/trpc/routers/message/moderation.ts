@@ -12,7 +12,7 @@ import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
 import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
-import { getCallParticipants } from "@@/server/services/message/call/getCallParticipants";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
@@ -141,7 +141,9 @@ export const moderationRouter = router({
           const callSessionId = await readCallSessionId(ctx.db, roomId);
           if (!callSessionId) break;
 
-          const targetParticipants = getCallParticipants(callSessionId).filter(({ userId }) => userId === targetUserId);
+          const targetParticipants = [...(callSessionParticipantMap.get(callSessionId)?.values() ?? [])].filter(
+            ({ userId }) => userId === targetUserId,
+          );
           await stopLiveKitScreenShare(callSessionId, targetParticipants);
           break;
         }

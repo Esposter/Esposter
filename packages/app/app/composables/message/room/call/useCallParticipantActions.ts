@@ -28,14 +28,15 @@ export const useCallParticipantActions = () => {
     isHandRaised: boolean,
   ): Item[] => {
     const roomId = callRoomId.value;
-    if (!roomId) return [];
+    const callSessionId = activeCallSessionId.value;
+    if (!roomId || !callSessionId) return [];
     const items: Item[] = [];
     if (isForceMuteable.value && isHandRaised)
       items.push({
         icon: "mdi-hand-back-right-off",
         onClick: async () => {
           await $trpc.callSession.setHandRaised.mutate({
-            callSessionId: activeCallSessionId.value,
+            callSessionId,
             isHandRaised: false,
             participantId,
           });

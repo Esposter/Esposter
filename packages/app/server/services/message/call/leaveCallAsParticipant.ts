@@ -2,8 +2,8 @@ import type { Context } from "@@/server/trpc/context";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { callStartTimeMap } from "@@/server/services/message/call/callStartTimeMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { deleteCallParticipant } from "@@/server/services/message/call/deleteCallParticipant";
-import { getCallParticipants } from "@@/server/services/message/call/getCallParticipants";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { createMessage } from "@esposter/db";
@@ -20,7 +20,7 @@ export const leaveCallAsParticipant = async (
   if (!isDeleted) return false;
   callEventEmitter.emit("leaveCall", { callSessionId, id: sessionId, sessionId });
 
-  if (getCallParticipants(callSessionId).length > 0) return true;
+  if (callSessionParticipantMap.has(callSessionId)) return true;
 
   const callSession = await db.query.callSessionsInMessage.findFirst({
     columns: { roomId: true },

@@ -2,9 +2,9 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import type { CallSessionInMessage } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { callStartTimeMap } from "@@/server/services/message/call/callStartTimeMap";
 import { createCallParticipant } from "@@/server/services/message/call/createCallParticipant";
-import { getCallParticipants } from "@@/server/services/message/call/getCallParticipants";
 import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { createMessage } from "@esposter/db";
@@ -17,7 +17,7 @@ export const joinCallAsParticipant = async (
   sessionId: string,
   userId: string,
 ) => {
-  const isFirstJoiner = getCallParticipants(callSessionId).length === 0;
+  const isFirstJoiner = !callSessionParticipantMap.has(callSessionId);
   const participant = { ...callParticipant, isCameraEnabled: false };
   createCallParticipant(callSessionId, participant);
   callEventEmitter.emit("joinCall", { callSessionId, participant, sessionId });
@@ -39,5 +39,5 @@ export const joinCallAsParticipant = async (
       }).match(noop, console.error);
   }
 
-  return { callSessionId, participants: getCallParticipants(callSessionId) };
+  return { callSessionId, participants: [...(callSessionParticipantMap.get(callSessionId)?.values() ?? [])] };
 };

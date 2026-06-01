@@ -44,21 +44,22 @@ export const useCallStore = defineStore("message/room/call", () => {
   );
   const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
   const setHandRaisedEnabled = async (newIsHandRaised: boolean, targetSessionId?: string) => {
+    const callSessionId = activeCallSessionId.value;
     const sessionIdValue = sessionId.value;
     const participantSessionId = targetSessionId ?? sessionIdValue;
-    if (!activeCallSessionId.value || !sessionIdValue || !participantSessionId) return;
+    if (!callSessionId || !sessionIdValue || !participantSessionId) return;
 
-    const oldIsHandRaised = getHandRaisedIds(activeCallSessionId.value).includes(participantSessionId);
-    setHandRaised(activeCallSessionId.value, participantSessionId, newIsHandRaised);
+    const oldIsHandRaised = getHandRaisedIds(callSessionId).includes(participantSessionId);
+    setHandRaised(callSessionId, participantSessionId, newIsHandRaised);
 
     await getResultAsync(() =>
       $trpc.callSession.setHandRaised.mutate({
-        callSessionId: activeCallSessionId.value,
+        callSessionId,
         isHandRaised: newIsHandRaised,
         participantId: participantSessionId,
       }),
     ).match(noop, (error) => {
-      setHandRaised(activeCallSessionId.value, participantSessionId, oldIsHandRaised);
+      setHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
       throw error;
     });
   };
@@ -287,10 +288,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     joinCallByRoomId,
     leaveCall,
     selectVirtualBackground,
-    setCameraEnabled,
     setCurrentRoomCallSessionId,
-    setHandRaisedEnabled,
-    setMuteEnabled,
     toggleCamera,
     toggleDeafen,
     toggleHandRaised,
