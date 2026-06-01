@@ -19,6 +19,6 @@ describe("parse-tmx", () => {
 
     if (isWindows)
       expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 12.25 KB (12545 bytes)"`);
-    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 12.25 KB (12545 bytes)"`);
+    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 12.25 KB (12544 bytes)"`);
   });
 });
