@@ -62,38 +62,40 @@ export const useCallStore = defineStore("message/room/call", () => {
     });
   };
   const setCameraEnabled = async (newIsCameraEnabled: boolean) => {
+    const callSessionId = activeCallSessionId.value;
     const sessionIdValue = sessionId.value;
-    if (!activeCallSessionId.value || !sessionIdValue) return;
+    if (!callSessionId || !sessionIdValue) return;
 
     const oldIsCameraEnabled = mediaStore.isCameraEnabled;
     mediaStore.isCameraEnabled = newIsCameraEnabled;
-    setParticipantCamera(activeCallSessionId.value, sessionIdValue, newIsCameraEnabled);
+    setParticipantCamera(callSessionId, sessionIdValue, newIsCameraEnabled);
 
     await getResultAsync(() =>
       $trpc.callSession.setCamera.mutate({
-        callSessionId: activeCallSessionId.value,
+        callSessionId,
         isCameraEnabled: newIsCameraEnabled,
       }),
     ).match(noop, (error) => {
       mediaStore.isCameraEnabled = oldIsCameraEnabled;
-      setParticipantCamera(activeCallSessionId.value, sessionIdValue, oldIsCameraEnabled);
+      setParticipantCamera(callSessionId, sessionIdValue, oldIsCameraEnabled);
       throw error;
     });
   };
   const setMuteEnabled = async (newIsMuted: boolean) => {
+    const callSessionId = activeCallSessionId.value;
     const sessionIdValue = sessionId.value;
-    if (!activeCallSessionId.value || !sessionIdValue) return;
+    if (!callSessionId || !sessionIdValue) return;
 
     const oldIsMuted = isMuted.value;
-    setMute(activeCallSessionId.value, sessionIdValue, newIsMuted);
+    setMute(callSessionId, sessionIdValue, newIsMuted);
 
     await getResultAsync(() =>
       $trpc.callSession.setMute.mutate({
-        callSessionId: activeCallSessionId.value,
+        callSessionId,
         isMuted: newIsMuted,
       }),
     ).match(noop, (error) => {
-      setMute(activeCallSessionId.value, sessionIdValue, oldIsMuted);
+      setMute(callSessionId, sessionIdValue, oldIsMuted);
       throw error;
     });
   };
