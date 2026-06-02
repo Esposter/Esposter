@@ -22,7 +22,9 @@ export const rasterizeSvg = (svgUrl: string) =>
           img.onerror = reject;
           img.src = svgObjectUrl;
         }),
-      () => URL.revokeObjectURL(svgObjectUrl),
+      () => {
+        URL.revokeObjectURL(svgObjectUrl);
+      },
     );
     const rasterizationCanvas = document.createElement("canvas");
     rasterizationCanvas.width = width;
