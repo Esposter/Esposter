@@ -6,7 +6,7 @@ import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
-import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { useDungeonsStore } from "@/store/dungeons";
 import { exhaustiveGuard, takeOne } from "@esposter/shared";
 
@@ -16,7 +16,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const isContinueEnabled = computed(() => dungeonsStore.dungeons.saves.length > 0);
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
+    if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
     else PlayerTitleMenuOptionGrid.move(justDownInput);
   };
 

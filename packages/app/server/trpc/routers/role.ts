@@ -8,7 +8,7 @@ import { readMyPermissionsInputSchema } from "#shared/models/db/role/ReadMyPermi
 import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
-import { isManageable } from "#shared/services/room/rbac/isManageable";
+import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
 import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
@@ -69,10 +69,11 @@ export const roleRouter = router({
       });
 
     const { actorTopPosition, isOwner } = actorContext;
-    if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!checkIsManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
     const targetTopRolePosition = await getTopRolePosition(ctx.db, userId, roomId);
-    if (!isManageable(actorTopPosition, targetTopRolePosition, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!checkIsManageable(actorTopPosition, targetTopRolePosition, isOwner))
+      throw new TRPCError({ code: "UNAUTHORIZED" });
 
     const device = { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId };
     const [userToRoomRole] = await ctx.db
@@ -91,7 +92,7 @@ export const roleRouter = router({
     const actorUserId = ctx.getSessionPayload.user.id;
     const { actorTopPosition, isOwner } = await getActorContext(ctx.db, actorUserId, roomId);
 
-    if (!isManageable(actorTopPosition, position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!checkIsManageable(actorTopPosition, position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
     if (!isOwner) {
       const actorPermissions = await getPermissions(ctx.db, actorUserId, roomId);
@@ -137,7 +138,7 @@ export const roleRouter = router({
       });
 
     const { actorTopPosition, isOwner } = actorContext;
-    if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
+    if (!checkIsManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
     const deletedRole = requireMutation(
       (
@@ -250,10 +251,10 @@ export const roleRouter = router({
       ]);
 
       const { actorTopPosition, isOwner } = actorContext;
-      if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!checkIsManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const targetTopRolePosition = await getTopRolePosition(ctx.db, userId, roomId);
-      if (!isManageable(actorTopPosition, targetTopRolePosition, isOwner))
+      if (!checkIsManageable(actorTopPosition, targetTopRolePosition, isOwner))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await ctx.db
@@ -291,8 +292,8 @@ export const roleRouter = router({
 
     const { actorTopPosition, isOwner } = actorContext;
     if (
-      !isManageable(actorTopPosition, role.position, isOwner) ||
-      (rest.position !== undefined && !isManageable(actorTopPosition, rest.position, isOwner))
+      !checkIsManageable(actorTopPosition, role.position, isOwner) ||
+      (rest.position !== undefined && !checkIsManageable(actorTopPosition, rest.position, isOwner))
     )
       throw new TRPCError({ code: "UNAUTHORIZED" });
     else if (rest.permissions !== undefined && !isOwner) {

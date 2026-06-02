@@ -8,7 +8,7 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { PlayerBattleMenuOptionGrid } from "@/services/dungeons/scene/battle/menu/PlayerBattleMenuOptionGrid";
-import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { useExperienceBarStore } from "@/store/dungeons/UI/experienceBar";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -22,7 +22,7 @@ export const useBattleSceneStore = defineStore("dungeons/battle/scene", () => {
 
   const onPlayerInput = async (scene: SceneWithPlugins, input: PlayerInput) => {
     if (await handleShowMessageInput(scene, input)) return;
-    else if (isPlayerSpecialInput(input)) await onPlayerSpecialInput(input);
+    else if (checkIsPlayerSpecialInput(input)) await onPlayerSpecialInput(input);
     else onPlayerDirectionInput(input);
   };
 

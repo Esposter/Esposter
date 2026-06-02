@@ -5,7 +5,7 @@ import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/scene/world/MenuOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
-import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
+import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
 import { useDungeonsStore } from "@/store/dungeons";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -47,7 +47,7 @@ export const useMenuStore = defineStore("dungeons/world/menu", () => {
       }
     else if (justDownInput === PlayerSpecialInput.Enter || justDownInput === PlayerSpecialInput.Cancel)
       isMenuVisible.value = false;
-    else if (isMovingDirection(justDownInput)) WorldMenuOptionGrid.move(justDownInput);
+    else if (checkIsMovingDirection(justDownInput)) WorldMenuOptionGrid.move(justDownInput);
 
     return true;
   };

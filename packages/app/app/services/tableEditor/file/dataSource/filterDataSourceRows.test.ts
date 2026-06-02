@@ -7,7 +7,7 @@ import {
   createNumberColumn,
   createRow,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
-import { isActiveColumnFilter } from "@/services/tableEditor/file/column/isActiveColumnFilter";
+import { checkIsActiveColumnFilter } from "@/services/tableEditor/file/column/checkIsActiveColumnFilter";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -233,39 +233,39 @@ describe(filterDataSourceRows, () => {
   });
 });
 
-describe(isActiveColumnFilter, () => {
+describe(checkIsActiveColumnFilter, () => {
   test("string filter with non-empty value is active", () => {
     expect.hasAssertions();
-    expect(isActiveColumnFilter({ type: ColumnType.String, value: "abc" })).toBe(true);
+    expect(checkIsActiveColumnFilter({ type: ColumnType.String, value: "abc" })).toBe(true);
   });
 
   test("string filter with empty value is inactive", () => {
     expect.hasAssertions();
-    expect(isActiveColumnFilter({ type: ColumnType.String, value: "" })).toBe(false);
+    expect(checkIsActiveColumnFilter({ type: ColumnType.String, value: "" })).toBe(false);
   });
 
   test("boolean filter with non-empty value is active", () => {
     expect.hasAssertions();
-    expect(isActiveColumnFilter({ type: ColumnType.Boolean, value: BooleanValue.True })).toBe(true);
+    expect(checkIsActiveColumnFilter({ type: ColumnType.Boolean, value: BooleanValue.True })).toBe(true);
   });
 
   test("boolean filter with empty value is inactive", () => {
     expect.hasAssertions();
-    expect(isActiveColumnFilter({ type: ColumnType.Boolean, value: "" })).toBe(false);
+    expect(checkIsActiveColumnFilter({ type: ColumnType.Boolean, value: "" })).toBe(false);
   });
 
   test("number filter with minimum is active", () => {
     expect.hasAssertions();
-    expect(isActiveColumnFilter({ maximum: "", minimum: "0", type: ColumnType.Number })).toBe(true);
+    expect(checkIsActiveColumnFilter({ maximum: "", minimum: "0", type: ColumnType.Number })).toBe(true);
   });
 
   test("number filter with maximum is active", () => {
     expect.hasAssertions();
-    expect(isActiveColumnFilter({ maximum: "10", minimum: "", type: ColumnType.Number })).toBe(true);
+    expect(checkIsActiveColumnFilter({ maximum: "10", minimum: "", type: ColumnType.Number })).toBe(true);
   });
 
   test("number filter with both empty is inactive", () => {
     expect.hasAssertions();
-    expect(isActiveColumnFilter({ maximum: "", minimum: "", type: ColumnType.Number })).toBe(false);
+    expect(checkIsActiveColumnFilter({ maximum: "", minimum: "", type: ColumnType.Number })).toBe(false);
   });
 });

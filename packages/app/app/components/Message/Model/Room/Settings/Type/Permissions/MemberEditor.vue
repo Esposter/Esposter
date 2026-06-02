@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage, RoomRoleInMessage, User } from "@esposter/db-schema";
 
-import { isManageable } from "#shared/services/room/rbac/isManageable";
+import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { useRoleStore } from "@/store/message/room/role";
 
 interface MemberEditorProps {
@@ -18,7 +18,7 @@ const hasRole = (roleId: string) => memberRoles.value.some(({ id }) => id === ro
 const isRoleManageable = (role: RoomRoleInMessage) => {
   const myPermissions = getMyPermissions(roomId);
   if (!myPermissions) return false;
-  return isManageable(myPermissions.topRolePosition, role.position, myPermissions.isRoomOwner);
+  return checkIsManageable(myPermissions.topRolePosition, role.position, myPermissions.isRoomOwner);
 };
 
 await readMemberRoles({ roomId, userIds: [member.id] });

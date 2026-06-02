@@ -8,7 +8,7 @@ import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadM
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
-import { isManageable } from "#shared/services/room/rbac/isManageable";
+import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
 import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
@@ -79,7 +79,7 @@ export const moderationRouter = router({
         getTopRolePosition(ctx.db, targetUserId, roomId),
       ]);
 
-      if (!isPermitted || !isManageable(actorContext.actorTopPosition, targetTopPosition, actorContext.isOwner))
+      if (!isPermitted || !checkIsManageable(actorContext.actorTopPosition, targetTopPosition, actorContext.isOwner))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
       switch (input.type) {
