@@ -28,7 +28,7 @@ export const sanitizeMessageHtml = (html: string) =>
           /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}(?:,\s*[\d.]+)?\)$/u,
           /^[a-z]+$/iu,
         ],
-        "border-radius": [/^[\d.]+(px|em|rem|%)$/u],
+        "border-radius": [/^[\d.]+(?<unit>px|em|rem|%)$/u],
         color: [/^#[\da-fA-F]{3,8}$/u, /^rgba?\(\d{1,3},\s*\d{1,3},\s*\d{1,3}(?:,\s*[\d.]+)?\)$/u, /^[a-z]+$/iu],
       },
     },

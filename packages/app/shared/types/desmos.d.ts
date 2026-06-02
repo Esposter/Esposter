@@ -1,4 +1,5 @@
 // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/desmos/index.d.ts
+/* oxlint-disable typescript/method-signature-style -- third-party declaration file with overloaded method signatures */
 declare namespace Desmos {
   interface BasicCalculator extends Pick<
     Calculator,

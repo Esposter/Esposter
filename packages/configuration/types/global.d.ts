@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/method-signature-style -- method signatures required for generic overloads on built-in interfaces */
 import type { Entries } from "type-fest";
 
 declare global {

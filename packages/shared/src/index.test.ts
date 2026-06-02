@@ -11,7 +11,7 @@ describe("@esposter/shared", () => {
     expect.hasAssertions();
 
     if (isWindows) expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 383.91 KB (393119 bytes)"`);
-    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 383.75 KB (392958 bytes)"`);
+    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 383.82 KB (393035 bytes)"`);
   });
 
   test("types size", () => {
