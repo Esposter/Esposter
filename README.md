@@ -143,13 +143,40 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://www.postgresql.org">
-          <img src="./.github/assets/postgresql/logo.png" />
+          <img src="./.github/assets/postgresql/logo.svg" />
         </a>
       </td>
       <td valign="top">
         <h3>PostgreSQL</h3>
         <p>
           PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance. We highly recommend you take a look at <a href="https://www.postgresql.org/docs">the PostgreSQL documentation</a> to level up.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Infrastructure
+
+<table>
+  <thead>
+    <tr>
+      <th width="2000" colspan="2">
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://www.pulumi.com">
+          <img src="./.github/assets/pulumi/logo.svg" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3>Pulumi</h3>
+        <p>
+          Infrastructure as Code in any programming language. We highly recommend you take a look at <a href="https://www.pulumi.com/docs">the Pulumi documentation</a> to level up.
         </p>
       </td>
     </tr>
