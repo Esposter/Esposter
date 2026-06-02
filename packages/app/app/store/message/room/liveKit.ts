@@ -8,47 +8,12 @@ import type {
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { isRemoteAudioSource } from "@/services/message/room/liveKit/isRemoteAudioSource";
+import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
-import { exhaustiveGuard, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { Room, RoomEvent, Track } from "livekit-client";
-
-const rasterizedSvgCache = new Map<string, string>();
-
-const rasterizeSvg = (svgUrl: string) =>
-  getResultAsync(async () => {
-    const cachedRasterizedSvgUrl = rasterizedSvgCache.get(svgUrl);
-    if (cachedRasterizedSvgUrl) return cachedRasterizedSvgUrl;
-
-    const svgResponse = await fetch(svgUrl);
-    const svgBlob = await svgResponse.blob();
-    const svgImageBitmap = await createImageBitmap(svgBlob);
-    const rasterizationCanvas = document.createElement("canvas");
-    rasterizationCanvas.width = 1920;
-    rasterizationCanvas.height = 1080;
-    rasterizationCanvas.getContext("2d")?.drawImage(svgImageBitmap, 0, 0, 1920, 1080);
-    svgImageBitmap.close();
-
-    const rasterizedSvgBlobUrl = await new Promise<string>((resolve, reject) => {
-      rasterizationCanvas.toBlob((rasterizedSvgBlob) => {
-        if (!rasterizedSvgBlob) {
-          reject(new InvalidOperationError(Operation.Create, svgUrl, "Canvas toBlob returned null"));
-          return;
-        }
-        resolve(URL.createObjectURL(rasterizedSvgBlob));
-      }, "image/png");
-    });
-
-    rasterizedSvgCache.set(svgUrl, rasterizedSvgBlobUrl);
-    return rasterizedSvgBlobUrl;
-  }).match(
-    (rasterizedSvgBlobUrl) => rasterizedSvgBlobUrl,
-    (error) => {
-      console.error(error);
-      return null;
-    },
-  );
 
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
