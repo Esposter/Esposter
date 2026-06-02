@@ -103,7 +103,7 @@ m?.[1]; // positional index
 
 **Non-capturing groups** — `(?:...)` is already non-capturing and doesn't need a name. Only plain `(...)` must be named.
 
-**Lookahead groups** — groups inside lookaheads (`(?=...)`, `(?!...)`) still need naming even though they don't capture:
+**Lookahead groups** — plain capturing groups inside lookaheads (`(?=...)`, `(?!...)`) still need naming:
 
 ```ts
 // ✓
