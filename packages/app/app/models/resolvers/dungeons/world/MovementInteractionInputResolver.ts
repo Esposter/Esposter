@@ -4,7 +4,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
-import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
+import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 
 export class MovementInteractionInputResolver extends AInputResolver {
@@ -18,7 +18,7 @@ export class MovementInteractionInputResolver extends AInputResolver {
     else if (justDownInput === PlayerSpecialInput.Confirm) {
       await useInteractions(scene);
       return true;
-    } else if (isMovingDirection(input)) {
+    } else if (checkIsMovingDirection(input)) {
       scene.gridEngine.move(CharacterId.Player, input);
       return true;
     }

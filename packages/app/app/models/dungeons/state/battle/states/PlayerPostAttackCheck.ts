@@ -1,7 +1,7 @@
 import type { State } from "@/models/dungeons/state/State";
 
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
+import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
@@ -18,7 +18,7 @@ export const PlayerPostAttackCheck: State<StateName> = {
     const actionStore = useActionStore();
     const { attackStatePriorityMap } = storeToRefs(actionStore);
 
-    if (isMonsterFainted(activeMonster.value)) {
+    if (checkIsMonsterFainted(activeMonster.value)) {
       await useMonsterDeathTween(true);
       await showMessages(scene, [`Wild ${prettify(activeMonster.value.key)} has fainted!`]);
       await battleStateMachine.setState(StateName.GainExperience);

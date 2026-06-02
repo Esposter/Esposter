@@ -5,7 +5,7 @@ import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
-import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
+import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";
@@ -45,7 +45,7 @@ export class MoveInputResolver extends AInputResolver {
       monsterIdToMove.value = "";
       infoDialogMessage.value.text = DEFAULT_INFO_DIALOG_MESSAGE;
     } else if (justDownInput === PlayerSpecialInput.Cancel) onCancel();
-    else if (isMovingDirection(justDownInput)) monsterPartyOptionGrid.move(justDownInput);
+    else if (checkIsMovingDirection(justDownInput)) monsterPartyOptionGrid.move(justDownInput);
 
     return true;
   }

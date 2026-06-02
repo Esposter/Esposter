@@ -8,8 +8,8 @@ import type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 import type { RoomRoleInMessage } from "@esposter/db-schema";
 
+import { checkIsManageable as checkIsManageableByPosition } from "#shared/services/room/rbac/checkIsManageable";
 import { MANAGEMENT_PERMISSIONS } from "#shared/services/room/rbac/constants";
-import { isManageable as isManageableByPosition } from "#shared/services/room/rbac/isManageable";
 import { useRoomStore } from "@/store/message/room";
 
 export const useRoleStore = defineStore("message/room/role", () => {
@@ -46,11 +46,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const selectMember = (id: string) => {
     selectedMemberId.value = id;
   };
-  const isManageable = (roomId: string) => {
+  const checkIsManageable = (roomId: string) => {
     const myPermissions = getMyPermissions(roomId);
     if (!myPermissions) return false;
     return (
-      isManageableByPosition(myPermissions.topRolePosition, 0, myPermissions.isRoomOwner) ||
+      checkIsManageableByPosition(myPermissions.topRolePosition, 0, myPermissions.isRoomOwner) ||
       Boolean(myPermissions.permissions & MANAGEMENT_PERMISSIONS)
     );
   };
@@ -135,13 +135,13 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   return {
     assignRole,
+    checkIsManageable,
     createRole,
     deleteRole,
     getMemberRoleMap,
     getMemberRoles,
     getMyPermissions,
     getRoles,
-    isManageable,
     memberRoleMap,
     myPermissions,
     readMemberRoles,

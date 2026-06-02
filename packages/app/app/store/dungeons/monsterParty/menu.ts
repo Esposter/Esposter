@@ -5,7 +5,7 @@ import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/scene/monsterParty/MenuOption";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
+import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
 import { useMonsterDetailsSceneStore } from "@/store/dungeons/monsterDetails/scene";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
@@ -56,7 +56,7 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
           exhaustiveGuard(monsterPartyMenuOptionGrid.value);
       }
     else if (justDownInput === PlayerSpecialInput.Enter || justDownInput === PlayerSpecialInput.Cancel) onCancel();
-    else if (isMovingDirection(justDownInput)) monsterPartyMenuOptionGrid.move(justDownInput);
+    else if (checkIsMovingDirection(justDownInput)) monsterPartyMenuOptionGrid.move(justDownInput);
 
     return true;
   };

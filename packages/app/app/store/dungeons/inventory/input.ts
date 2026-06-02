@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -16,7 +16,7 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    if (isPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
+    if (checkIsPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
     else onPlayerDirectionInput(justDownInput);
   };
 

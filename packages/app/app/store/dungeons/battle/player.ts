@@ -3,13 +3,13 @@ import type { Position } from "grid-engine";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
 import { getAttack } from "@/services/dungeons/attack/getAttack";
-import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
+import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { takeOne } from "@esposter/shared";
 
 export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
-  const activeMonsterIndex = ref(monsterPartySceneStore.monsters.findIndex((m) => !isMonsterFainted(m)));
+  const activeMonsterIndex = ref(monsterPartySceneStore.monsters.findIndex((m) => !checkIsMonsterFainted(m)));
   const activeMonster = computed({
     get: () => takeOne(monsterPartySceneStore.monsters, activeMonsterIndex.value),
     set: (newActiveMonster) => {

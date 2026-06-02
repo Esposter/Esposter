@@ -6,8 +6,9 @@ import type {
   RemoteTrackPublication,
 } from "livekit-client";
 
+import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { isRemoteAudioSource } from "@/services/message/room/liveKit/isRemoteAudioSource";
+import { checkIsRemoteAudioSource } from "@/services/message/room/liveKit/checkIsRemoteAudioSource";
 import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
@@ -57,7 +58,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) => {
-    if (!isRemoteAudioSource(publication.source)) return;
+    if (!checkIsRemoteAudioSource(publication.source)) return;
     const element = track.attach();
     element.autoplay = true;
     element.muted = mediaStore.isDeafened;
@@ -69,7 +70,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) => {
-    if (!isRemoteAudioSource(publication.source)) return;
+    if (!checkIsRemoteAudioSource(publication.source)) return;
     for (const element of track.detach()) element.remove();
     remoteAudioElements.delete(`${participant.identity}:${publication.source}`);
   };
@@ -168,7 +169,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     mediaStore.isScreenSharing = isScreenSharing;
     if (!isScreenSharing) setLocalScreenShareStream(null);
   };
-  const setVirtualBackground = async (imagePath: string) => {
+  const setVirtualBackground = getConcurrentFunction(async (checkIsStale, imagePath: string) => {
     mediaStore.selectedVirtualBackground = imagePath;
     if (!localCameraTrack) return;
     else if (!supportsBackgroundProcessors()) {
@@ -179,18 +180,20 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     virtualBackgroundProcessor ??= BackgroundProcessor({ mode: "disabled" });
     if (!localCameraTrack.getProcessor()) {
       await localCameraTrack.setProcessor(virtualBackgroundProcessor);
+      if (checkIsStale()) return;
       if (virtualBackgroundProcessor.processedTrack)
         mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
     }
     if (!imagePath) {
+      if (checkIsStale()) return;
       await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
       return;
     }
 
     const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
-    if (!resolvedPath) return;
+    if (checkIsStale() || !resolvedPath) return;
     await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
-  };
+  });
   const switchDevice = async (kind: MediaDeviceKind, deviceId: string) => {
     if (!activeRoom) {
       setActiveDevice(kind, deviceId);

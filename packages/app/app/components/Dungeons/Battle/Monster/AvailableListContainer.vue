@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AssetKey } from "#shared/models/dungeons/keys/AssetKey";
-import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
+import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { Container, Image, onCreate } from "vue-phaserjs";
 
@@ -32,7 +32,7 @@ onUnmounted(() => {
         x: -30 * index,
         texture: AssetKey.CosmoBall,
         scale: 0.8,
-        alpha: isMonsterFainted(monster) ? 0.4 : 1,
+        alpha: checkIsMonsterFainted(monster) ? 0.4 : 1,
       }"
     />
   </Container>

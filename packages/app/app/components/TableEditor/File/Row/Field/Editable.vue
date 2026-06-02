@@ -4,7 +4,7 @@ import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnV
 import type { EditableColumnValue } from "#shared/models/tableEditor/file/column/EditableColumnValue";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
-import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
+import { checkIsEditableColumnValue } from "@/services/tableEditor/file/column/checkIsEditableColumnValue";
 import { useCellStore } from "@/store/tableEditor/file/cell";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
@@ -20,7 +20,7 @@ const { column, columns, item, rowIndex, rows } = defineProps<EditableProps>();
 const updateRow = useUpdateRow();
 const cellStore = useCellStore();
 const { clearFocus, requestFocus } = cellStore;
-const editableColumns = computed(() => columns.filter((column) => isEditableColumnValue(column)));
+const editableColumns = computed(() => columns.filter((column) => checkIsEditableColumnValue(column)));
 const localValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
 let isSubmitted = false;
 

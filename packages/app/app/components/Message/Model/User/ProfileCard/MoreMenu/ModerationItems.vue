@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
 
+import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
-import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useRoleStore } from "@/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 
@@ -25,7 +25,11 @@ const manageablePermissions = computed(() => {
   if (
     !manageablePermissions ||
     targetTopPosition.value === undefined ||
-    !isManageable(manageablePermissions.topRolePosition, targetTopPosition.value, manageablePermissions.isRoomOwner)
+    !checkIsManageable(
+      manageablePermissions.topRolePosition,
+      targetTopPosition.value,
+      manageablePermissions.isRoomOwner,
+    )
   )
     return null;
   return manageablePermissions;

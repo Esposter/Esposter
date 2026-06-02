@@ -14,7 +14,9 @@ export const rasterizeSvg = (svgUrl: string) =>
     const svgObjectUrl = URL.createObjectURL(svgBlob);
     const svgImage = await new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image();
-      img.onload = () => resolve(img);
+      img.onload = () => {
+        resolve(img);
+      };
       img.onerror = reject;
       img.src = svgObjectUrl;
     });
@@ -22,7 +24,9 @@ export const rasterizeSvg = (svgUrl: string) =>
     const rasterizationCanvas = document.createElement("canvas");
     rasterizationCanvas.width = width;
     rasterizationCanvas.height = height;
-    rasterizationCanvas.getContext("2d")?.drawImage(svgImage, 0, 0, width, height);
+    const rasterizationContext = rasterizationCanvas.getContext("2d");
+    if (!rasterizationContext) throw new InvalidOperationError(Operation.Create, rasterizeSvg.name, svgUrl);
+    rasterizationContext.drawImage(svgImage, 0, 0, width, height);
 
     const rasterizedSvgBlobUrl = await new Promise<string>((resolve, reject) => {
       rasterizationCanvas.toBlob((rasterizedSvgBlob) => {
