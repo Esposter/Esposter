@@ -143,7 +143,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://www.postgresql.org">
-          <img src="./.github/assets/postgresql/logo.png" />
+          <img src="./.github/assets/postgresql/logo.svg" />
         </a>
       </td>
       <td valign="top">

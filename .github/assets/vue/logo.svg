@@ -1,13 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <style>
-    .st0 {
-      fill: #42B883;
-    }
-
-    .st1 {
-      fill: #35495E;
-    }
-  </style>
-  <path class="st0" d="M78.8,10L64,35.4L49.2,10H0l64,110l64-110C128,10,78.8,10,78.8,10z" />
-  <path class="st1" d="M78.8,10L64,35.4L49.2,10H25.6L64,76l38.4-66H78.8z" />
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 96 96" id="Vue--Streamline-Svg-Logos">
+  <desc>
+    Vue Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="#41b883" d="M76.2 7.46289H95L48 88.5379 1 7.46289h35.955L48 26.2629 58.81 7.46289H76.2Z" stroke-width="1"></path>
+  <path fill="#41b883" d="M1 7.46289 48 88.5379 95 7.46289H76.2L48 56.1079 19.565 7.46289H1Z" stroke-width="1"></path>
+  <path fill="#35495e" d="m19.5654 7.46289 28.435 48.88001 28.2 -48.88001h-17.39l-10.81 18.80001 -11.045 -18.80001h-17.39Z" stroke-width="1"></path>
 </svg>
