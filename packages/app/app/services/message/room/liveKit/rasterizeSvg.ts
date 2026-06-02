@@ -1,4 +1,4 @@
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 
 const width = 1920;
 const height = 1080;
@@ -12,15 +12,20 @@ export const rasterizeSvg = (svgUrl: string) =>
     const svgResponse = await fetch(svgUrl);
     const svgBlob = await svgResponse.blob();
     const svgObjectUrl = URL.createObjectURL(svgBlob);
-    const svgImage = await new Promise<HTMLImageElement>((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        resolve(img);
-      };
-      img.onerror = reject;
-      img.src = svgObjectUrl;
-    });
-    URL.revokeObjectURL(svgObjectUrl);
+    const svgImage = await withFinalizerAsync(
+      () =>
+        new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => {
+            resolve(img);
+          };
+          img.onerror = reject;
+          img.src = svgObjectUrl;
+        }),
+      () => {
+        URL.revokeObjectURL(svgObjectUrl);
+      },
+    );
     const rasterizationCanvas = document.createElement("canvas");
     rasterizationCanvas.width = width;
     rasterizationCanvas.height = height;
