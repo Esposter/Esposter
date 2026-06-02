@@ -74,13 +74,16 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
 - Circular `StyledAvatar` centered (size 96px)
 - Speaking ring: animated green `outline` when `isSpeaking`
 - Bottom-left: name label + mute badge (`mdi-microphone-off` when `participant.isMuted`)
+- Raise-hand badge (`mdi-hand-back-right`) when `participant.isHandRaised`; shown on the tile regardless of who raised it
 - Screenshare badge (`mdi-monitor-share`) when the participant is presenting
 - Self-only deafened badge (`mdi-headphones-off` when `isDeafened`)
 
 ### `Call/Control/Bar.vue`
 
 - Centered bottom row, translucent pill (`bg-grey-darken-4/90`)
-- Composes single-purpose controls directly: grouped mic + up-caret audio settings, grouped camera + up-caret video settings/backgrounds, deafen, screenshare, leave
+- Composes single-purpose controls directly: grouped mic + up-caret audio settings, grouped camera + up-caret video settings/backgrounds, deafen, raise hand, screenshare, leave
+- Raise hand button (`mdi-hand-back-right`) toggles `isHandRaised` via `callStore.toggleHandRaised()`; highlighted when active
+- Moderators (users with `MuteMembers` permission) see a "Lower Hand" option in each participant's action menu when that participant's hand is raised
 - Video backgrounds are starter image presets applied through LiveKit track processors; selecting a preset turns the camera on, and turning the camera off resets the processor/background to none
 
 ---
@@ -101,7 +104,7 @@ Props: `participant: CallParticipant`, `isSelf: boolean`, `isSpeaking: boolean`,
       → activeCallSessionId.value = callSessionId
       → setParticipants(callSessionId, participants)
       → return callSessionId
-    → subscribe onJoinCall / onLeaveCall / onSetMute / onVideoChanged (callSessionId)
+    → subscribe onJoinCall / onLeaveCall / onHandRaisedChanged / onSetMute / onVideoChanged (callSessionId)
   → <CallView />                              reads callParticipants from store
 ```
 

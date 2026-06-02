@@ -10,8 +10,7 @@ import { external } from "./external/external";
 export const getViteConfiguration = (): UserConfig => ({
   build: {
     lib: {
-      // @TODO: https://github.com/qmhc/unplugin-dts/issues/446
-      entry: ["src/index.ts", "auto-imports.d.ts"],
+      entry: "src/index.ts",
       fileName: "index",
       formats: ["es"],
     },
@@ -19,13 +18,7 @@ export const getViteConfiguration = (): UserConfig => ({
       external,
     },
   },
-  plugins: [
-    AutoImport({ imports: ["pinia", "vue"] }),
-    vue(),
-    // @TODO: Can remove after upgrade https://github.com/qmhc/unplugin-dts/commit/802d24346bb2d7e67f173ff7000d4955b7f30a7d
-    dts({ processor: "vue", tsconfigPath: "tsconfig.build.json" }),
-    mkcert(),
-  ],
+  plugins: [AutoImport({ imports: ["pinia", "vue"] }), vue(), dts({ tsconfigPath: "tsconfig.build.json" }), mkcert()],
   resolve: {
     tsconfigPaths: true,
   },

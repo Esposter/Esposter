@@ -40,6 +40,7 @@ export default defineEventHandler(async (event) => {
         id: session.id,
         image: session.user.image,
         isCameraEnabled: false,
+        isHandRaised: false,
         isMuted: false,
         name: session.user.name,
         userId: session.userId,

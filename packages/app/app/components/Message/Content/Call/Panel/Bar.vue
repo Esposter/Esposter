@@ -1,13 +1,16 @@
 <script setup lang="ts">
+import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 
 const callStore = useCallStore();
 const { currentRoomCallSessionId, isCallViewOpen } = storeToRefs(callStore);
 const participantStore = useParticipantStore();
-const { getParticipants } = participantStore;
-const { speakingIds } = storeToRefs(participantStore);
-const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId.value));
+const { callSessionParticipantsMap, speakingIds } = storeToRefs(participantStore);
+const roomParticipantMap = computed(
+  () => callSessionParticipantsMap.value.get(currentRoomCallSessionId.value) ?? new Map<string, CallParticipant>(),
+);
 </script>
 
 <template>
@@ -16,9 +19,10 @@ const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId
     <span text-sm font-medium flex-1>Call</span>
     <div flex gap-x-2 items-center>
       <MessageContentCallParticipantBarAvatar
-        v-for="participant of roomParticipants"
+        v-for="participant of roomParticipantMap.values()"
         :key="participant.id"
         :participant
+        :is-hand-raised="participant.isHandRaised"
         :is-speaking="speakingIds.includes(participant.id)"
       />
     </div>
@@ -26,6 +30,7 @@ const roomParticipants = computed(() => getParticipants(currentRoomCallSessionId
     <MessageContentCallVideoControlGroup />
     <MessageContentCallAudioDeafenButton />
     <MessageContentCallScreenShareButton />
+    <MessageContentCallControlHandButton />
     <MessageContentCallControlLeaveButton />
     <v-tooltip location="bottom" text="Open call view">
       <template #activator="{ props }">

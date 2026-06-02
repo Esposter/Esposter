@@ -1,4 +1,4 @@
-const NUMBER_REGEX = /^[+-]?\d+(\.\d+)?$/u;
+const NUMBER_REGEX = /^[+-]?\d+(?<decimal>\.\d+)?$/u;
 
 export const parseXmlValue = (value: string): boolean | number | string => {
   if (value === "true") return true;

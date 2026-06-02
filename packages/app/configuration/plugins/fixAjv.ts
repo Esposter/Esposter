@@ -30,10 +30,10 @@ import type { Plugin } from "vite";
 //   Introduces `const _exports = {};`, remaps all `exports.*` to `_exports.*`,
 //   Then emits `const _debug = common(_exports); export default _debug;`.
 const ESM_FLAG_REGEX = /Object\.defineProperty\(exports, "__esModule", \{[^}]*\}\);\n/gu;
-const REQUIRE_REGEX = /^(const|var) (\w+) = require\("([^"]+)"\);\n/gmu;
-const INLINE_REQUIRE_REGEX = /\brequire\(["']([^"']+)["']\)/gu;
+const REQUIRE_REGEX = /^(?<keyword>const|var) (?<varName>\w+) = require\("(?<modPath>[^"]+)"\);\n/gmu;
+const INLINE_REQUIRE_REGEX = /\brequire\(["'](?<path>[^"']+)["']\)/gu;
 const ODP_REEXPORT_REGEX =
-  /^Object\.defineProperty\(exports, "([\w$]+)", \{ enumerable: true, get: function \(\) \{ return (\w+)\.([\w$]+); \} \}\);\n/gmu;
+  /^Object\.defineProperty\(exports, "(?<exportName>[\w$]+)", \{ enumerable: true, get: function \(\) \{ return (?<varName>\w+)\.(?<propName>[\w$]+); \} \}\);\n/gmu;
 
 export const fixAjv = {
   enforce: "pre",
@@ -58,7 +58,7 @@ export const fixAjv = {
         })
         // Remap `exports.X` → `_exports.X` (negative lookbehind avoids touching `module.exports`)
         .replaceAll(/(?<!module\.)\bexports\b/gu, "_exports")
-        .replaceAll(/^module\.exports = (.+);\n/gmu, "const _debug = $1;\nexport default _debug;\n")
+        .replaceAll(/^module\.exports = (?<body>.+);\n/gmu, "const _debug = $1;\nexport default _debug;\n")
         .replaceAll(/\bmodule\.exports\b/gu, "_debug");
       const imports = [...inlineRequireMap.entries()]
         .map(([path, varName]) => `import * as ${varName} from "${path}";\n`)
@@ -78,7 +78,7 @@ export const fixAjv = {
           const vn = pkgRequireMap.get(path);
           return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
         })
-        .replace(/^module\.exports = ([\w$]+);?\n/mu, (_, x) => `${x}.default = ${x};\nexport default ${x};\n`);
+        .replace(/^module\.exports = (?<id>[\w$]+);?\n/mu, (_, x) => `${x}.default = ${x};\nexport default ${x};\n`);
       const imports = Array.from(pkgRequireMap, ([path, vn]) => `import * as ${vn} from "${path}";\n`).join("");
       return `${imports}${result}`;
     }
@@ -148,21 +148,21 @@ export const fixAjv = {
       })
       // Steps 6–8: module.exports assignments
       .replaceAll(/^module\.exports = exports = [\w$]+;?\n/gmu, "")
-      .replaceAll(/^module\.exports = ([\w$]+);?\n/gmu, (_, x) =>
+      .replaceAll(/^module\.exports = (?<id>[\w$]+);?\n/gmu, (_, x) =>
         // If the file uses `exports.default = X` (__esModule style), skip — step 11 handles it.
         /^exports\.default = /mu.test(code) ? "" : `export default ${x};\n`,
       )
       .replaceAll(/^module\.exports\.[\w$]+ = [\w$]+;?\n/gmu, "")
       // Step 9: `var X = module.exports = function...{}` chained assignment (e.g. json-schema-traverse)
       .replaceAll(
-        /^var ([\w$]+) = module\.exports = ((?:function\b)[\s\S]*?^\});?\n/gmu,
+        /^var (?<varId>[\w$]+) = module\.exports = (?<body>(?:function\b)[\s\S]*?^\});?\n/gmu,
         "const $1 = $2;\nexport default $1;\n",
       )
       // Step 10: multiline module.exports = { ... } or function...{}
-      .replaceAll(/^module\.exports = ((?:\{|function\b)[\s\S]*?^\});?\n/gmu, "export default $1;\n")
+      .replaceAll(/^module\.exports = (?<body>(?:\{|function\b)[\s\S]*?^\});?\n/gmu, "export default $1;\n")
       // Steps 11–14: exports.X → named exports
-      .replace(/^exports\.default = ([\w$]+);\n/mu, "export default $1;\n")
-      .replaceAll(/^exports\.([\w$]+) = \1;\n/gmu, "export { $1 };\n")
+      .replace(/^exports\.default = (?<id>[\w$]+);\n/mu, "export default $1;\n")
+      .replaceAll(/^exports\.(?<name>[\w$]+) = \1;\n/gmu, "export { $1 };\n")
       .replace(ODP_REEXPORT_REGEX, (_, exportName: string, varName: string, propName: string) => {
         const modPath = requireMap.get(varName);
         if (!modPath) return "";
@@ -170,17 +170,17 @@ export const fixAjv = {
         if (propName === "default") return `export { default as ${exportName} } from "${modPath}";\n`;
         return `export { ${propName} as ${exportName} } from "${modPath}";\n`;
       })
-      .replaceAll(/^exports\.([\w$]+) = (.+);\n/gmu, "export const $1 = $2;\n")
-      .replaceAll(/^exports\.([\w$]+) = (\{[\s\S]*?^\});\n/gmu, "export const $1 = $2;\n")
-      .replaceAll(/^exports\.([\w$]+) = (\[[\s\S]*?^\]);\n/gmu, "export const $1 = $2;\n")
+      .replaceAll(/^exports\.(?<name>[\w$]+) = (?<value>.+);\n/gmu, "export const $1 = $2;\n")
+      .replaceAll(/^exports\.(?<name>[\w$]+) = (?<value>\{[\s\S]*?^\});\n/gmu, "export const $1 = $2;\n")
+      .replaceAll(/^exports\.(?<name>[\w$]+) = (?<value>\[[\s\S]*?^\]);\n/gmu, "export const $1 = $2;\n")
       // Step 15: TypeScript enum IIFEs — `})(NAME || (exports.NAME = NAME = {}));`
       // Exports.NAME is inside the IIFE call so all top-level exports.X transforms miss it.
       .replaceAll(
-        /\}\)\(([\w$]+) \|\| \(exports\.\1 = \1 = \{\}\)\);\n/gu,
+        /\}\)\((?<name>[\w$]+) \|\| \(exports\.\1 = \1 = \{\}\)\);\n/gu,
         "})($1 || ($1 = $1 = {}));\nexport { $1 };\n",
       )
       // Step 16: clean up remaining exports.X reads (internal references after step 14)
-      .replaceAll(/\bexports\.([\w$]+)\b/gu, "$1");
+      .replaceAll(/\bexports\.(?<name>[\w$]+)\b/gu, "$1");
     // Prepend imports for inline requires extracted in step 5.
     if (inlineRequireMap.size > 0) {
       const imports = [...inlineRequireMap.entries()]
@@ -191,7 +191,7 @@ export const fixAjv = {
     // Set `.default = self` on default-exported identifiers so consumers that call `X.default(...)`
     // (expecting old CJS interop wrapping) continue to work alongside `X(...)` callers.
     result = result.replace(
-      /^export default ([\w$]+);\n/mu,
+      /^export default (?<name>[\w$]+);\n/mu,
       (_, name) => `${name}.default = ${name};\nexport default ${name};\n`,
     );
     return result;

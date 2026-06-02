@@ -7,6 +7,7 @@ export const createParticipant = (
   id: session.id,
   image: user.image ?? null,
   isCameraEnabled: false,
+  isHandRaised: false,
   isMuted: false,
   name: user.name,
   userId: user.id,

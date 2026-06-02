@@ -147,7 +147,8 @@
       "Bash(pnpm test:packages *)",
       "Bash(npm list *)",
       "Bash(npm info *)",
-      "Bash(npm view *)"
+      "Bash(npm view *)",
+      "Bash(echo \"Exit: $?\")"
     ]
   }
 }

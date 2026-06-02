@@ -8,7 +8,7 @@ import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
-  const { callRoomId } = storeToRefs(callStore);
+  const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
   const roleStore = useRoleStore();
   const { getMyPermissions } = roleStore;
   const myPermissions = computed(() => (callRoomId.value ? getMyPermissions(callRoomId.value) : undefined));
@@ -21,10 +21,28 @@ export const useCallParticipantActions = () => {
     return hasPermission(myPermissions.value.permissions, RoomPermission.MoveMembers, myPermissions.value.isRoomOwner);
   });
 
-  const getActions = (userId: string, participantIsMuted: boolean): Item[] => {
+  const getActions = (
+    participantId: string,
+    userId: string,
+    participantIsMuted: boolean,
+    isHandRaised: boolean,
+  ): Item[] => {
     const roomId = callRoomId.value;
-    if (!roomId) return [];
+    const callSessionId = activeCallSessionId.value;
+    if (!roomId || !callSessionId) return [];
     const items: Item[] = [];
+    if (isForceMuteable.value && isHandRaised)
+      items.push({
+        icon: "mdi-hand-back-right-off",
+        onClick: async () => {
+          await $trpc.callSession.setHandRaised.mutate({
+            callSessionId,
+            isHandRaised: false,
+            participantId,
+          });
+        },
+        title: "Lower Hand",
+      });
     if (isForceMuteable.value && !participantIsMuted)
       items.push({
         icon: "mdi-microphone-off",

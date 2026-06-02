@@ -4,5 +4,5 @@ export interface JoinCallOutput {
   callSessionId: string;
   livekitToken: string;
   livekitUrl: string;
-  participants: CallParticipant[];
+  participantMap: Map<string, CallParticipant>;
 }

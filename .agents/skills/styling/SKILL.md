@@ -29,7 +29,6 @@ Only use `class="..."` when technically required:
 - Vuetify theme colours: `bg-surface`, `bg-background`, `bg-border`, `text-error`, `text-info`, etc.
 - Opacity emphasis utilities: use `op-medium-emphasis` / `op-high-emphasis`, not `text-medium-emphasis`.
 - Custom theme colours: `bg-surface-opacity-80`, `bg-background-opacity-40`, etc.
-- Vuetify border colour utility: `border-color` (when it's the Vuetify utility, not a scoped CSS class name) — use `b-1`, `b-2` etc. instead of `border-sm`, `border-b-sm` (see Abbreviated Utilities below)
 
 ### Custom Vuetify theme colours must be registered in `uno.config.ts`
 
@@ -77,7 +76,7 @@ Also remove the `storeToRefs` destructure (and `useColorsStore()` call if nothin
 
 ```diff
 - <NuxtInvisibleLink class="author" ...>
-+ <NuxtInvisibleLink text-primary hover:text-primary-darken-1 transition-colors duration-[var(--transition-duration)] ...>
++ <NuxtInvisibleLink text-primary hover:text-primary-darken-1 transition-colors duration-[--transition-duration] ...>
 ```
 
 Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in Vue templates — only a leading `:` triggers `v-bind`.
@@ -92,11 +91,11 @@ Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in 
 
 ## `!important` Variant
 
-Prefix an attribute name with `!` to generate `!important` CSS:
+Append `!` inside the attribute value to generate `!important` CSS:
 
 ```html
 <!-- top: var(--app-bar-height) !important; z-index: 1500 !important -->
-<NuxtLoadingIndicator !top="[var(--app-bar-height)]" !z="[1500]" />
+<NuxtLoadingIndicator top="[--app-bar-height]!" z="[1500]!" />
 ```
 
 Use only when overriding third-party component styles that can't be targeted otherwise.
@@ -120,16 +119,34 @@ Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and
 
 ```html
 <!-- Instead of a scoped .sidebar { top: calc(1rem + var(--app-bar-height)) } -->
-<UserSideBar sticky top="[calc(1rem+var(--app-bar-height))]" />
+<UserSideBar sticky top="[calc(1rem+--app-bar-height)]" />
 
 <!-- Fixed height with viewport calc -->
-<div h="[calc(100vh-3rem)]" overflow-y-auto />
+<div h="[calc(100dvh_-_--app-bar-height)]" overflow-y-auto />
 
 <!-- Arbitrary colour via hex -->
 <div bg="[#f0f0f0]" />
 ```
 
-Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+var(--x))` not `calc(1rem + var(--x))`.
+Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+--x)` not `calc(1rem + var(--x))`.
+
+### CSS Variables in Arbitrary Values
+
+**Never use `var()` inside UnoCSS arbitrary value brackets.** UnoCSS automatically wraps `--variable` names with `var()`:
+
+```html
+<!-- WRONG — var() keyword in template -->
+<div duration="[var(--transition-duration)]" />
+<div top="[var(--app-bar-height)]!" />
+<div shadow="[0_0_5px_rgb(var(--v-theme-primary-lighten-1))]" />
+
+<!-- CORRECT — --variable reference only -->
+<div duration="[--transition-duration]" />
+<div top="[--app-bar-height]!" />
+<div shadow="[0_0_5px_rgb(--v-theme-primary-lighten-1)]" />
+```
+
+Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects stays as-is — only the UnoCSS arbitrary value syntax gets the `--variable` shorthand.
 
 When converting a scoped CSS class that only contains arbitrary-value properties, delete the class name and the `<style scoped>` block entirely.
 
@@ -139,7 +156,7 @@ Split the CSS `transition` shorthand into separate UnoCSS attributes — one for
 
 ```html
 <!-- Single property + CSS-variable duration: split into two attributes -->
-<NuxtInvisibleLink transition-colors duration-[var(--transition-duration)] ...>
+<NuxtInvisibleLink transition-colors duration-[--transition-duration] ...>
   <!-- Multi-property with same static duration: use single arbitrary value (no clean split) -->
   <button transition="[box-shadow_0.2s,transform_0.2s]" ...></button>
 </NuxtInvisibleLink>
@@ -148,7 +165,7 @@ Split the CSS `transition` shorthand into separate UnoCSS attributes — one for
 Rules:
 
 - Single known property → use the UnoCSS shorthand (`transition-colors`, `transition-shadow`, `transition-transform`, `transition-opacity`, etc.)
-- Override the default duration with a separate `duration-{n}` or `duration-[var(--x)]` attribute
+- Override the default duration with a separate `duration-{n}` or `duration-[--x]` attribute (no `var()` wrapper)
 - Multi-property transitions (e.g. `box-shadow` + `transform`) must stay as a single `transition="[...]"` arbitrary value — splitting them would cause the second `transition-property` to override the first
 - Spaces in arbitrary `transition` values become `_`
 
@@ -196,25 +213,69 @@ Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS ut
 - `b-t-2` not `border-top-2`
 - `b-x-1` not `border-x-1`
 
-Note: `b-1` sets `border-width: 1px`. Always add `b-solid` explicitly — border style is not automatic. For arbitrary widths use `b="[1.5px]"`. For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. For the Vuetify overlay border use `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`.
+Note: `b-1` sets `border-width: 1px`. **`b-solid` is NOT applied automatically — always add it explicitly whenever you use a border-color utility.** For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. For the Vuetify overlay border use `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`.
+
+**Border-color + border-style must always appear together:**
+
+```html
+<!-- WRONG — border won't render without b-solid -->
+<div b-1 b-text>
+  <!-- CORRECT -->
+  <div b-solid b-1 b-text>
+    <!-- CORRECT — dynamic color, static style -->
+    <div b-solid b-1 :class="isError ? 'b-error' : 'b-border'"></div>
+  </div>
+</div>
+```
+
+This applies to all border-color utilities: `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, `b-primary`, etc. — including those in dynamic `:class` bindings (put `b-solid` as a static attribute).
 
 **`custom-border` / `border-color` scoped-class pattern → attributify:**
 
 ```diff
 - <div class="custom-border" ...>
-+ <div b-1 b-solid b-text ...>
++ <div b-solid b-1 b-text ...>
 
 - <style scoped>
 - .custom-border { border: var(--border-width) var(--border-style) v-bind(text); }
 - </style>
 ```
 
-`--border-width: thin` = 1px → `b-1`. `--border-style: solid` → `b-solid`. The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
+`--border-width: thin` = 1px → `b-1`. `--border-style: solid` → `b-solid` (must be explicit — not automatic). The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
 
-**Border-radius (`rd` prefix):**
+**BEM border class with focus/error variants (e.g. `parameter-chip`):**
+
+```diff
+- <div class="parameter-chip" :class="{ 'parameter-chip--error': isError }">
++ <div
++   :class="isError ? ['b-error'] : ['b-[rgba(var(--v-border-color),var(--v-border-opacity))]', 'focus-within:b-info']"
++   b-solid
++   b-w="[1.5px]"
++ >
+
+- <style scoped lang="scss">
+- .parameter-chip {
+-   border: 1.5px solid rgba(var(--v-border-color), var(--v-border-opacity));
+-   &:focus-within { border-color: rgb(var(--v-theme-info)); }
+-   &--error { border-color: rgb(var(--v-theme-error)); }
+- }
+- </style>
+```
+
+When error and focus-within are mutually exclusive states, put both colours in the `:class` conditional so only the active state's colour class is present at any time.
+
+**Border-radius (`rd` prefix) — never use Vuetify `rounded="sm"` prop or `rounded-sm` class:**
+
+| Vuetify utility                           | UnoCSS (use this) | Value  |
+| ----------------------------------------- | ----------------- | ------ |
+| `rounded-sm` / `rounded="sm"`             | `rd-sm`           | 2px    |
+| `rounded` / `rounded-md` / `rounded="md"` | `rd`              | 4px    |
+| `rounded-lg` / `rounded="lg"`             | `rd-lg`           | 8px    |
+| `rounded-xl` / `rounded="xl"`             | `rd-3xl`          | 24px   |
+| `rounded-pill` / `rounded="pill"`         | `rd-full`         | 9999px |
+| `rounded-circle` / `rounded="circle"`     | `rd="50%"`        | 50%    |
 
 - `rd` not `rounded`
-- `rd-1` not `rounded-1`
 - `rd-t-2` not `rounded-t-2`
 - `rd-full` not `rounded-full`
 
@@ -266,7 +327,7 @@ Prefer this over manual margin/padding tricks when element should float independ
 
 ## Units
 
-- **Always use `rem` instead of `px`** in custom authored CSS values (font sizes, spacing, widths, heights, etc.). Exception: UnoCSS/Vuetify utility scale tokens (`b-1` = 1px, `b-2` = 2px, etc.) are px-mapped by framework design — do not convert them.
+- **Always use `rem` instead of `px`** for all CSS values (font sizes, spacing, widths, heights, borders, etc.).
 
 ## Style Block
 

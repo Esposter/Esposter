@@ -1,6 +1,6 @@
 import { normalizeString } from "@esposter/shared";
 
-const DURATION_REGEX = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/iu;
+const DURATION_REGEX = /^(?:(?<hours>\d+)h)?(?:(?<minutes>\d+)m)?(?:(?<seconds>\d+)s)?$/iu;
 
 export const parseDuration = (input: string): null | number => {
   const match = DURATION_REGEX.exec(normalizeString(input));

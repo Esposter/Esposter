@@ -4,11 +4,12 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 import { authClient } from "@/services/auth/authClient";
 
 interface MessageContentCallParticipantBarAvatarProps {
+  isHandRaised: boolean;
   isSpeaking: boolean;
   participant: CallParticipant;
 }
 
-const { isSpeaking, participant } = defineProps<MessageContentCallParticipantBarAvatarProps>();
+const { isHandRaised, isSpeaking, participant } = defineProps<MessageContentCallParticipantBarAvatarProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const { getActions, isForceMuteable, isKickableFromCall } = useCallParticipantActions();
 const isActionable = computed(
@@ -29,7 +30,12 @@ const avatarProps = computed(() => ({
       </template>
       <v-list density="compact">
         <v-list-item
-          v-for="{ icon, title, onClick } of getActions(participant.userId, participant.isMuted)"
+          v-for="{ icon, title, onClick } of getActions(
+            participant.id,
+            participant.userId,
+            participant.isMuted,
+            isHandRaised,
+          )"
           :key="title"
           :prepend-icon="icon"
           :title
@@ -38,6 +44,21 @@ const avatarProps = computed(() => ({
       </v-list>
     </v-menu>
     <StyledAvatar v-else :="avatarProps" />
+    <div
+      v-if="isHandRaised"
+      bg-warning
+      text-black
+      rd-full
+      flex
+      size-4
+      items-center
+      right--1
+      top--1
+      justify-center
+      absolute
+    >
+      <v-icon icon="mdi-hand-back-right" size="x-small" />
+    </div>
     <div
       v-if="isSpeaking"
       inset="-0.1875rem"
