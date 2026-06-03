@@ -86,7 +86,7 @@ const { optionsMenu } = storeToRefs(messageStore);
         <v-list-item
           v-for="{ title, color, icon, onClick } of updateMessageItems"
           :key="title"
-          @click="(event: MouseEvent) => onClick?.(event)"
+          @click="onClick?.($event)"
         >
           <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
           <template #append>
@@ -101,7 +101,7 @@ const { optionsMenu } = storeToRefs(messageStore);
         <v-list-item
           v-for="{ title, color, icon, onClick } of actionMessageItems"
           :key="title"
-          @click="(event: MouseEvent) => onClick?.(event)"
+          @click="onClick?.($event)"
         >
           <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
           <template #append>
@@ -113,7 +113,7 @@ const { optionsMenu } = storeToRefs(messageStore);
         <v-list-item py-2 min-height="auto">
           <v-divider />
         </v-list-item>
-        <v-list-item @click="(event: MouseEvent) => deleteMessageItem.onClick?.(event)">
+        <v-list-item @click="deleteMessageItem.onClick?.($event)">
           <span :class="`text-${deleteMessageItem.color}`">{{ deleteMessageItem.title }}</span>
           <template #append>
             <v-icon size="small" :color="deleteMessageItem.color" :icon="deleteMessageItem.icon" />
