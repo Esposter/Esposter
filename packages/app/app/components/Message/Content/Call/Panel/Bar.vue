@@ -31,6 +31,7 @@ const roomParticipantMap = computed(
     <MessageContentCallAudioDeafenButton />
     <MessageContentCallScreenShareButton />
     <MessageContentCallControlHandButton />
+    <MessageContentCallControlHealthButton />
     <MessageContentCallControlLeaveButton />
     <v-tooltip location="bottom" text="Open call view">
       <template #activator="{ props }">
