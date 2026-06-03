@@ -40,8 +40,8 @@ const menuItems: Item[] = [
           </v-tooltip>
         </div>
       </v-card-title>
-      <v-card-text pb-0 flex-none>
-        <v-card rd-4 h-32 overflow-hidden>
+      <v-card-text pb-0 h-full>
+        <v-card rd-4 h-full>
           <MessageModelFileRenderer :file :url="uploadFileUrl.url" is-preview />
         </v-card>
       </v-card-text>
