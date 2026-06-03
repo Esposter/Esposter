@@ -14,6 +14,16 @@ const emit = defineEmits<{ delete: [number] }>();
 const progressPercentage = computed(() => uploadFileUrl.progress * 100);
 const menuItems: Item[] = [
   {
+    icon: "mdi-download",
+    onClick: () => {
+      const anchor = document.createElement("a");
+      anchor.href = uploadFileUrl.url;
+      anchor.download = file.filename;
+      anchor.click();
+    },
+    title: "Download",
+  },
+  {
     color: "error",
     icon: "mdi-delete",
     onClick: () => {
@@ -40,8 +50,8 @@ const menuItems: Item[] = [
           </v-tooltip>
         </div>
       </v-card-title>
-      <v-card-text pb-0>
-        <v-card rd-4 h-full>
+      <v-card-text pb-0 flex-none>
+        <v-card rd-4 h-32 overflow-hidden>
           <MessageModelFileRenderer :file :url="uploadFileUrl.url" is-preview />
         </v-card>
       </v-card-text>
@@ -52,9 +62,9 @@ const menuItems: Item[] = [
           </template>
         </v-progress-linear>
       </v-card>
-      <v-card-actions text-sm px-4>
+      <v-card-text text-sm px-4 min-w-0 whitespace-normal break-all>
         {{ file.filename }}
-      </v-card-actions>
+      </v-card-text>
     </StyledCard>
   </v-col>
 </template>
