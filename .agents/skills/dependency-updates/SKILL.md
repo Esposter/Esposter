@@ -24,6 +24,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
 - **`unplugin-dts`** — pinned (no `^`); stable `1.0.0` release is broken, stays on `1.0.0-beta.6`.
 - **`typescript`** — skip; user manages manually (major version bumps need explicit review).
+- **`vuetify`** — pinned to `4.0.8` (no `^`); cannot upgrade to 4.1.0 due to https://github.com/koumoul-dev/vuetify-jsonschema-form/issues/571.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 

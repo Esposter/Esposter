@@ -25,7 +25,7 @@ catalog:
   "@azure/storage-queue": ^12.29.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.0.4
-  "@better-auth/drizzle-adapter": ^1.6.13
+  "@better-auth/drizzle-adapter": ^1.6.14
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.3
   "@codemirror/language-data": ^6.5.2
@@ -55,7 +55,7 @@ catalog:
   "@ninoseki/eslint-plugin-neverthrow": ^0.2.0
   "@nuxt/eslint": ^1.15.2
   "@nuxt/fonts": ^0.14.0
-  "@nuxt/scripts": ^1.2.0
+  "@nuxt/scripts": ^1.2.1
   "@nuxt/test-utils": ^4.0.3
   "@nuxtjs/seo": ^5.1.3
   "@pinia/nuxt": ^0.11.3
@@ -108,7 +108,7 @@ catalog:
   "@vue-pdf-viewer/viewer": ^4.2.0
   "@vue/language-core": ^3.3.3
   "@vue/test-utils": ^2.4.10
-  "@vuepic/vue-datepicker": ^13.0.0
+  "@vuepic/vue-datepicker": ^14.0.0
   "@vueuse/core": ^14.3.0
   "@vueuse/nuxt": ^14.3.0
   ajv: ^8.20.0
@@ -116,7 +116,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.13.0
-  better-auth: ^1.6.13
+  better-auth: ^1.6.14
   codemirror: ^6.0.2
   crossws: ^0.4.5
   ctix: ^2.8.1
@@ -169,7 +169,7 @@ catalog:
   linkifyjs: ^4.3.3
   livekit-client: ^2.19.1
   livekit-server-sdk: ^2.15.4
-  lodash-omitdeep: ^1.10.0
+  lodash-omitdeep: ^1.10.1
   lowlight: ^3.3.0
   marked: ^18.0.4
   mathjs: ^15.2.0
@@ -178,7 +178,7 @@ catalog:
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
   node-html-parser: ^7.1.0
-  nuxt: ^4.4.6
+  nuxt: ^4.4.7
   nuxt-security: ^2.6.0
   oxfmt: ^0.53.0
   oxlint: ^1.68.0
@@ -187,7 +187,7 @@ catalog:
   pathe: ^2.0.3
   pdfjs-dist: ^6.0.227
   phaser: ^4.1.0
-  phaser4-rex-plugins: ^4.0.6
+  phaser4-rex-plugins: ^4.0.7
   pinia: ^3.0.4
   pluralize: ^8.0.0
   postgres: ^3.4.9
@@ -231,7 +231,7 @@ catalog:
   vue-router: ^5.1.0
   vue-tsc: ^3.3.3
   vue3-apexcharts: ^1.11.1
-  vuetify: ^4.0.8
+  vuetify: 4.0.8
   vuetify-nuxt-module: ^1.0.0-beta.4
   web-push: ^3.6.7
   worker-timers: ^8.0.31
