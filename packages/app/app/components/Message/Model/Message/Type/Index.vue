@@ -64,7 +64,7 @@ const messageHtml = useMessageWithMentions(
     </div>
     <div v-else flex flex-col gap-y-1>
       <slot>
-        <div flex gap-x-1 items-end>
+        <div v-if="!EMPTY_TEXT_REGEX.test(messageHtml) || message.isEdited" flex gap-x-1 items-end>
           <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100 v-html="messageHtml" />
           <span v-if="message.isEdited" text-2.4 text-gray line-height-3.2>(edited)</span>
         </div>

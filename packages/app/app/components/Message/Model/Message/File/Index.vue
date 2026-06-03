@@ -23,7 +23,6 @@ const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
 const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
 const viewableFileIndex = computed(() => viewableFiles.value.findIndex(({ id }) => id === file.id));
 const isActive = ref(false);
-const showFileActions = computed(() => isActive.value && Boolean(url.value));
 </script>
 
 <template>
@@ -43,22 +42,6 @@ const showFileActions = computed(() => isActive.value && Boolean(url.value));
     @mouseleave="isActive = false"
   >
     <MessageModelFileRenderer :file :is-preview :url />
-    <div v-show="showFileActions" bottom-2 right-2 absolute>
-      <v-tooltip text="Download">
-        <template #activator="{ props }">
-          <v-btn
-            :download="file.filename"
-            :href="url"
-            icon="mdi-download"
-            size="small"
-            tile
-            m-0
-            :="props"
-            @click.stop
-          />
-        </template>
-      </v-tooltip>
-    </div>
     <div
       v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
       v-show="isActive"
@@ -68,8 +51,10 @@ const showFileActions = computed(() => isActive.value && Boolean(url.value));
     >
       <v-hover #default="{ isHovering, props: hoverProps }">
         <MessageModelMessageFileOptionsMenu
+          :filename="file.filename"
           :is-hovering
           :hover-props
+          :url
           @delete="
             $trpc.message.deleteFile.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey, id: file.id })
           "

@@ -14,16 +14,6 @@ const emit = defineEmits<{ delete: [number] }>();
 const progressPercentage = computed(() => uploadFileUrl.progress * 100);
 const menuItems: Item[] = [
   {
-    icon: "mdi-download",
-    onClick: () => {
-      const anchor = document.createElement("a");
-      anchor.href = uploadFileUrl.url;
-      anchor.download = file.filename;
-      anchor.click();
-    },
-    title: "Download",
-  },
-  {
     color: "error",
     icon: "mdi-delete",
     onClick: () => {
