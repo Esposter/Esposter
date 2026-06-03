@@ -9,12 +9,12 @@ const filesize = computed(() => getFilesize(file.size));
 
 <template>
   <NuxtInvisibleLink :to="url">
-    <StyledCard display p-2 flex flex-col h-full items-center justify-center>
+    <StyledCard p-2 flex flex-col size-full items-center justify-center>
       <v-icon icon="mdi-file" :size="isPreview ? '6rem' : 'large'" />
-      <v-card-actions v-if="!isPreview">
+      <span v-if="!isPreview">
         {{ file.filename }}
         ({{ filesize }})
-      </v-card-actions>
+      </span>
     </StyledCard>
   </NuxtInvisibleLink>
 </template>
