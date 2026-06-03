@@ -28,7 +28,6 @@ export const MessageAchievementDefinitionMap = {
       operator: BinaryOperator.ne,
       path: "replyRowKey",
       type: AchievementConditionType.Property,
-      value: undefined,
     },
     description: "Reply to 50 messages",
     icon: "mdi-reply",

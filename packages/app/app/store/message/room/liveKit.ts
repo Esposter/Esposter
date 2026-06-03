@@ -1,6 +1,7 @@
 import type {
   LocalTrackPublication,
   LocalVideoTrack,
+  Participant,
   RemoteParticipant,
   RemoteTrack,
   RemoteTrackPublication,
@@ -14,7 +15,7 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
-import { Room, RoomEvent, Track } from "livekit-client";
+import { ConnectionQuality, ConnectionState, Room, RoomEvent, Track } from "livekit-client";
 
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
@@ -25,6 +26,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
   const participantStore = useParticipantStore();
   const remoteAudioElements = new Map<string, HTMLMediaElement>();
+  const connectionQuality = ref(ConnectionQuality.Unknown);
+  const connectionState = ref(ConnectionState.Disconnected);
   const selectedAudioInputDeviceId = ref("");
   const selectedAudioOutputDeviceId = ref("");
   const selectedVideoInputDeviceId = ref("");
@@ -52,6 +55,13 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
       default:
         exhaustiveGuard(kind);
     }
+  };
+  const setConnectionQuality = (quality: ConnectionQuality, participant: Participant) => {
+    if (participant.identity !== activeRoom?.localParticipant.identity) return;
+    connectionQuality.value = quality;
+  };
+  const setConnectionState = (state: ConnectionState) => {
+    connectionState.value = state;
   };
   const attachRemoteAudio = (
     track: RemoteTrack,
@@ -217,8 +227,11 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     await disconnect();
     activeRoom = room;
     disconnectHandler = newDisconnectHandler;
+    connectionState.value = room.state;
     room.on(RoomEvent.ActiveSpeakersChanged, setActiveSpeakers);
     room.on(RoomEvent.ActiveDeviceChanged, setActiveDevice);
+    room.on(RoomEvent.ConnectionQualityChanged, setConnectionQuality);
+    room.on(RoomEvent.ConnectionStateChanged, setConnectionState);
     room.on(RoomEvent.TrackSubscribed, attachRemoteAudio);
     room.on(RoomEvent.TrackSubscribed, attachRemoteCamera);
     room.on(RoomEvent.TrackSubscribed, attachRemoteScreenShare);
@@ -230,6 +243,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     room.on(RoomEvent.Disconnected, onDisconnected);
     room.on(RoomEvent.AudioPlaybackStatusChanged, onAudioPlaybackStatusChanged);
     await room.connect(livekitUrl, livekitToken);
+    connectionQuality.value = room.localParticipant.connectionQuality;
+    connectionState.value = room.state;
     await room.localParticipant.setMicrophoneEnabled(isMicrophoneEnabled);
     syncActiveDevices(room);
   };
@@ -241,10 +256,14 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     await room?.disconnect();
     localCameraTrack = undefined;
     virtualBackgroundProcessor = undefined;
+    connectionQuality.value = ConnectionQuality.Unknown;
+    connectionState.value = ConnectionState.Disconnected;
     cleanupRemoteAudio();
   };
   return {
     connect,
+    connectionQuality,
+    connectionState,
     disconnect,
     selectedAudioInputDeviceId,
     selectedAudioOutputDeviceId,
