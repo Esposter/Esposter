@@ -3,7 +3,7 @@ import type { Promisable } from "type-fest";
 export interface Item {
   [key: string]: unknown;
   active?: boolean;
-  color?: string | undefined;
+  color?: string;
   icon: string;
   onClick?: (event: KeyboardEvent | MouseEvent) => Promisable<void>;
   shortTitle?: string;

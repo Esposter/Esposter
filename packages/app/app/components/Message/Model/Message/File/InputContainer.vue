@@ -8,7 +8,7 @@ const { files, fileUrlMap } = storeToRefs(uploadFileStore);
 </script>
 
 <template>
-  <v-container v-if="files.length > 0" fluid pb-2>
+  <v-container v-if="files.length > 0" fluid pb-0>
     <v-row m-0 flex-nowrap overflow-x-auto>
       <MessageModelMessageFileInput
         v-for="(file, index) of files"
