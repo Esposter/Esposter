@@ -64,7 +64,7 @@ let animationFrameId: number;
 let intervalId: number;
 
 onMounted(async () => {
-  const canvas = document.getElementById(id) as HTMLCanvasElement;
+  const canvas = window.document.getElementById(id) as HTMLCanvasElement;
   renderer = new WebGLRenderer({ antialias: true, canvas });
   renderer.setClearColor(0x000, 0);
   renderer.setSize(width.value, height.value);

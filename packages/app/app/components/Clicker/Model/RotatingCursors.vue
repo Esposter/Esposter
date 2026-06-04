@@ -25,7 +25,7 @@ const animateCursors = (amount: number) => {
   for (let i = 0; i < amount; i++) {
     const rotationOffset = takeOne(initialRotationOffsets, i);
     const rotatingDivId = takeOne(rotatingDivIds.value, i);
-    const rotatingDiv = document.getElementById(rotatingDivId);
+    const rotatingDiv = window.document.getElementById(rotatingDivId);
     if (!rotatingDiv) continue;
 
     rotatingDiv.animate(

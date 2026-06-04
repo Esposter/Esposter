@@ -80,7 +80,7 @@ const cellProps: CellPropsFunction<Row> = ({ column: headerColumn, item }) => {
 };
 
 const getIsInputFocused = () => {
-  const activeElement = document.activeElement;
+  const activeElement = window.document.activeElement;
   return activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement;
 };
 

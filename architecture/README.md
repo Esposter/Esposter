@@ -4,10 +4,11 @@ Cross-cutting implementation decisions for Esposter.
 
 Use this folder for architecture that applies to multiple packages or feature areas. Keep feature-specific file maps, workflows, and schemas in `features/<area>/architecture.md`; keep planned work and checklists in `features/`.
 
-| File                | Purpose                                                                                |
-| ------------------- | -------------------------------------------------------------------------------------- |
-| `azure-services.md` | Azure service ownership, storage split, EventGrid push flow, and real-time layer model |
-| `file-uploads.md`   | Two-step Azure Blob SAS upload pattern and upload procedure inventory                  |
+| File                | Purpose                                                                                 |
+| ------------------- | --------------------------------------------------------------------------------------- |
+| `azure-services.md` | Azure service ownership, storage split, EventGrid push flow, and real-time layer model  |
+| `file-uploads.md`   | Two-step Azure Blob SAS upload pattern and upload procedure inventory                   |
+| `serialization.md`  | How class instances survive the three transport paths (Azure Table, Nuxt payload, tRPC) |
 
 ## What Belongs Here
 

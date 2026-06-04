@@ -21,10 +21,10 @@ const toggleTheme = async () => {
   const bottom = window.innerHeight - top;
   const maxRadius = Math.hypot(Math.max(left, right), Math.max(top, bottom));
 
-  await document.startViewTransition(() => {
+  await window.document.startViewTransition(() => {
     baseToggleTheme();
   }).ready;
-  document.documentElement.animate(
+  window.document.documentElement.animate(
     {
       clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${maxRadius}px at ${x}px ${y}px)`],
     },

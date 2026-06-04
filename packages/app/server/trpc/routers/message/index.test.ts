@@ -262,6 +262,36 @@ describe("message", () => {
     expect(takeOne(data).message).toBe(message);
   });
 
+  test("on creates replays missed messages in ascending order", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
+    const firstMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const secondMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const thirdMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const onCreateMessage = await messageCaller.onCreateMessage({
+      lastEventId: firstMessage.rowKey,
+      roomId: newRoom.id,
+    });
+    const trackedData = await withAsyncIterator(
+      () => onCreateMessage,
+      (iterator) => iterator.next(),
+    );
+
+    assert(!trackedData.done);
+
+    expect(trackedData.value).toHaveLength(3);
+
+    const [id, data] = trackedData.value as unknown as TrackedEnvelope<MessageEntity[]>;
+
+    expect(id).toBe(thirdMessage.rowKey);
+    expect(data).toHaveLength(2);
+    expect(takeOne(data).rowKey).toBe(secondMessage.rowKey);
+    expect(takeOne(data, 1).rowKey).toBe(thirdMessage.rowKey);
+  });
+
   test("creates typing", async () => {
     expect.hasAssertions();
 
