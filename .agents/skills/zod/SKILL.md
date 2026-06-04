@@ -24,7 +24,7 @@ The shared helpers `createNormalizedStringSchema(maxLength)` and `createNameSche
 
 ## Arrays — Always Use `createUniqueArraySchema`
 
-**Never call `.array()` directly.** Always use `createUniqueArraySchema(schema)` from `@esposter/shared` instead. It wraps `.array()` with a uniqueness refine so duplicate items are rejected at the Zod boundary:
+**Never call `.array()` directly** unless duplicates are genuinely valid for that field. Always use `createUniqueArraySchema(schema)` from `@esposter/shared` instead. It wraps `.array()` with a uniqueness refine so duplicate items are rejected at the Zod boundary:
 
 ```typescript
 // WRONG — bare .array() skips uniqueness enforcement
@@ -36,8 +36,6 @@ createUniqueArraySchema(z.string()).max(MAX_READ_LIMIT);
 
 All chaining (`.min()`, `.max()`, `.nullable()`, `.optional()`, `.default()`) works identically after `createUniqueArraySchema` — Zod 4's `.refine()` returns the same `ZodArray` type, preserving the full method surface.
 
-The generic parameter `T` is the **item type** (not the schema type) — `schema` is typed as `z.ZodType<T>`. This means `key` is simply `keyof T & string` with no conditional, and the implementation accesses `item[key]` directly without casts.
-
 For object arrays, always pass the field name that uniquely identifies each item as the second argument:
 
 ```typescript
@@ -46,7 +44,9 @@ createUniqueArraySchema(embedFieldSchema, "name").max(25).optional();
 createUniqueArraySchema(createSortItemSchema(sortKeySchema), "key").min(0).default([]);
 ```
 
-TypeScript infers `T` from the schema argument, so `key` is automatically constrained to `keyof T & string` — passing a non-existent property name is a type error.
+TypeScript infers `T` from the schema argument, so `key` is automatically constrained to `keyof T & string` — passing a non-existent property name is a type error. The function uses interface call-signature overloads (per the TypeScript conventions): the first overload (`T extends Record<string, unknown>`) requires a key and gives autocomplete; the second overload accepts any schema without a key.
+
+**Exception — duplicates are valid**: Use plain `.array()` when the array semantically allows duplicate items (e.g. `handleElementSchema` — positional DOM bounds on a node, `effectSchema` — same effect config at different values, `embedSchema` — ordered content blocks). Do not use `createUniqueArraySchema` for these; do not add an artificial `id` field just to force uniqueness.
 
 ## Imports
 

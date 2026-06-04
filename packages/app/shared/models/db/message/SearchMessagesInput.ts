@@ -16,7 +16,7 @@ export const searchMessagesInputSchema = z
     ...createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), 0, [
       { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
     ]).shape,
-    filters: createUniqueArraySchema(filterSchema).max(MAX_READ_LIMIT).default([]),
+    filters: createUniqueArraySchema(filterSchema, "type").max(MAX_READ_LIMIT).default([]),
     query: selectSearchHistoryInMessageSchema.shape.query,
   })
   .refine(({ filters, query }) => !getIsSearchQueryEmpty(query, filters));
