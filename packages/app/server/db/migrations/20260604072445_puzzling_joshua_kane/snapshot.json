@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "9186da5a-844f-4161-932d-ea05fb88b516",
+  "id": "de17b131-df04-402b-a256-79f0f114831a",
   "prevIds": [
     "f4863f32-211e-4728-9ee2-e70249c7864a"
   ],
@@ -251,15 +251,15 @@
     },
     {
       "isRlsEnabled": false,
-      "name": "users",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
       "name": "userStatuses",
       "entityType": "tables",
       "schema": "message"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "users",
+      "entityType": "tables",
+      "schema": "public"
     },
     {
       "isRlsEnabled": false,
@@ -2414,6 +2414,110 @@
       "identity": null,
       "name": "createdAt",
       "entityType": "columns",
+      "schema": "message",
+      "table": "userStatuses"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "userStatuses"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "userStatuses"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expiresAt",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "userStatuses"
+    },
+    {
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "true",
+      "generated": null,
+      "identity": null,
+      "name": "isConnected",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "userStatuses"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "name": "message",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "userStatuses"
+    },
+    {
+      "type": "user_status",
+      "typeSchema": "public",
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "status",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "userStatuses"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "entityType": "columns",
+      "schema": "message",
+      "table": "userStatuses"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "entityType": "columns",
       "schema": "public",
       "table": "users"
     },
@@ -2520,110 +2624,6 @@
       "entityType": "columns",
       "schema": "public",
       "table": "users"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "entityType": "columns",
-      "schema": "message",
-      "table": "userStatuses"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "entityType": "columns",
-      "schema": "message",
-      "table": "userStatuses"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "entityType": "columns",
-      "schema": "message",
-      "table": "userStatuses"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "expiresAt",
-      "entityType": "columns",
-      "schema": "message",
-      "table": "userStatuses"
-    },
-    {
-      "type": "boolean",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "true",
-      "generated": null,
-      "identity": null,
-      "name": "isConnected",
-      "entityType": "columns",
-      "schema": "message",
-      "table": "userStatuses"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "message",
-      "entityType": "columns",
-      "schema": "message",
-      "table": "userStatuses"
-    },
-    {
-      "type": "user_status",
-      "typeSchema": "public",
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "status",
-      "entityType": "columns",
-      "schema": "message",
-      "table": "userStatuses"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "entityType": "columns",
-      "schema": "message",
-      "table": "userStatuses"
     },
     {
       "type": "timestamp",
@@ -4175,22 +4175,22 @@
     },
     {
       "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "users_pkey",
-      "schema": "public",
-      "table": "users",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
         "userId"
       ],
       "nameExplicit": false,
       "name": "user_statuses_pkey",
       "schema": "message",
       "table": "userStatuses",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "users_pkey",
+      "schema": "public",
+      "table": "users",
       "entityType": "pks"
     },
     {
@@ -4397,7 +4397,7 @@
       "table": "roomRoles"
     },
     {
-      "value": "LENGTH(TRIM(\"name\")) = 0 OR LENGTH(TRIM(\"name\")) BETWEEN 1 AND 100",
+      "value": "(\"type\" = 'DirectMessage' AND LENGTH(TRIM(\"name\")) = 0) OR (\"type\" = 'Room' AND LENGTH(TRIM(\"name\")) BETWEEN 1 AND 100)",
       "name": "rooms_name_check",
       "entityType": "checks",
       "schema": "message",
@@ -4453,6 +4453,13 @@
       "table": "userAchievements"
     },
     {
+      "value": "LENGTH(\"message\") <= 64",
+      "name": "user_statuses_message_length_check",
+      "entityType": "checks",
+      "schema": "message",
+      "table": "userStatuses"
+    },
+    {
       "value": "LENGTH(\"biography\") <= 160",
       "name": "users_biography_length_check",
       "entityType": "checks",
@@ -4465,13 +4472,6 @@
       "entityType": "checks",
       "schema": "public",
       "table": "users"
-    },
-    {
-      "value": "LENGTH(\"message\") <= 64",
-      "name": "user_statuses_message_length_check",
-      "entityType": "checks",
-      "schema": "message",
-      "table": "userStatuses"
     },
     {
       "value": "LENGTH(\"nickname\") <= 32",

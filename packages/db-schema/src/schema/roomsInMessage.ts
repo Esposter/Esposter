@@ -1,4 +1,4 @@
-import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
+import { createNameCheckSql } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
@@ -39,7 +39,10 @@ export const roomsInMessage = pgTable(
   },
   {
     extraConfig: ({ name, participantKey, slowmodeMs, topic, type }) => [
-      check("rooms_name_check", sql`LENGTH(TRIM(${name})) = 0 OR ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)}`),
+      check(
+        "rooms_name_check",
+        sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND LENGTH(TRIM(${name})) = 0) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)})`,
+      ),
       check(
         "participant_key_type",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${participantKey} IS NOT NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${participantKey} IS NULL)`,
@@ -54,7 +57,7 @@ export const roomsInMessage = pgTable(
 export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
-  name: (schema) => createNameSchema(ROOM_NAME_MAX_LENGTH, schema),
+  name: (schema) => createNormalizedStringSchema(ROOM_NAME_MAX_LENGTH, schema),
   slowmodeMs: (schema) => schema.min(1),
   topic: (schema) => createNormalizedStringSchema(ROOM_TOPIC_MAX_LENGTH, schema),
 });

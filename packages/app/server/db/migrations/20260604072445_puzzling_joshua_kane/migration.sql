@@ -1,0 +1,3 @@
+ALTER TABLE "message"."rooms" ALTER COLUMN "name" SET DEFAULT '';--> statement-breakpoint
+ALTER TABLE "message"."rooms" ALTER COLUMN "name" SET NOT NULL;--> statement-breakpoint
+ALTER TABLE "message"."rooms" DROP CONSTRAINT "rooms_name_check", ADD CONSTRAINT "rooms_name_check" CHECK (("type" = 'DirectMessage' AND LENGTH(TRIM("name")) = 0) OR ("type" = 'Room' AND LENGTH(TRIM("name")) BETWEEN 1 AND 100));

@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { sanitizeMessageHtml } from "@/services/sanitizeHtml/sanitizeMessageHtml";
 import {
   getMentions,

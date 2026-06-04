@@ -10,14 +10,14 @@ describe("@esposter/db-schema", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    if (isWindows) expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 64.59 KB (66142 bytes)"`);
-    else expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 64.45 KB (66001 bytes)"`);
+    if (isWindows) expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 65.22 KB (66786 bytes)"`);
+    else expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 65.22 KB (66786 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    if (isWindows) expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3632.85 KB (3720037 bytes)"`);
-    else expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3636.03 KB (3723293 bytes)"`);
+    if (isWindows) expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3638.18 KB (3725493 bytes)"`);
+    else expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3638.18 KB (3725493 bytes)"`);
   });
 });

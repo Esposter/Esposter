@@ -22,9 +22,27 @@ z.string().overwrite(normalizeString).min(1);
 
 The shared helpers `createNormalizedStringSchema(maxLength)` and `createNameSchema(maxLength)` in `@esposter/db-schema` follow this pattern and should be used for standard name/text fields.
 
+### `.pipe()` chaining and `z.toJSONSchema` — never nest pipes when JSON schema output matters
+
+`z.toJSONSchema` (and `zodToJsonSchema`) runs with `io = "output"` by default. For any `ZodPipe(A, B)`, it uses `B` (the output schema) for JSON schema generation. **Constraints on `A` are silently dropped.** This becomes a bug when you chain `.pipe()` calls:
+
+```typescript
+// BUG — maxLength is on an intermediate pipe output (A), never reaches the JSON schema
+const schema = createNormalizedStringSchema(maxLength, base).pipe(z.string().min(1));
+// z.toJSONSchema sees only z.string().min(1) → { minLength: 1 }  ← maxLength missing!
+
+// CORRECT — all constraints on the single outermost output
+const schema = base.transform(normalizeString).pipe(z.string().min(1).max(maxLength));
+// z.toJSONSchema sees z.string().min(1).max(maxLength) → { minLength: 1, maxLength: N } ✓
+```
+
+**Rule**: when a `.transform().pipe()` schema is itself passed to another `.pipe()`, the intermediate output constraints are invisible to `z.toJSONSchema`. Always consolidate all string constraints (`min`, `max`, `regex`, etc.) on the **single final `.pipe()` output**, not spread across intermediate layers.
+
+This was the root cause of `name` missing `maxLength` in the `ColumnForm` JSON schema — `createNameSchema` was doing `createNormalizedStringSchema(maxLength).pipe(z.string().min(1))`, nesting three pipe layers and losing `max`.
+
 ## Arrays — Always Use `createUniqueArraySchema`
 
-**Never call `.array()` directly.** Always use `createUniqueArraySchema(schema)` from `@esposter/shared` instead. It wraps `.array()` with a uniqueness refine so duplicate items are rejected at the Zod boundary:
+**Never call `.array()` directly** unless duplicates are genuinely valid for that field. Always use `createUniqueArraySchema(schema)` from `@esposter/shared` instead. It wraps `.array()` with a uniqueness refine so duplicate items are rejected at the Zod boundary:
 
 ```typescript
 // WRONG — bare .array() skips uniqueness enforcement
@@ -36,14 +54,17 @@ createUniqueArraySchema(z.string()).max(MAX_READ_LIMIT);
 
 All chaining (`.min()`, `.max()`, `.nullable()`, `.optional()`, `.default()`) works identically after `createUniqueArraySchema` — Zod 4's `.refine()` returns the same `ZodArray` type, preserving the full method surface.
 
-For object arrays where you need uniqueness by a specific property rather than by reference, pass the key as a second argument:
+For object arrays, always pass the field name that uniquely identifies each item as the second argument:
 
 ```typescript
-// Check uniqueness by the "id" field
-createUniqueArraySchema(embedFieldSchema, "id").max(25).optional();
+createUniqueArraySchema(fileEntitySchema, "id").max(FILE_MAX_LENGTH).default([]);
+createUniqueArraySchema(embedFieldSchema, "name").max(25).optional();
+createUniqueArraySchema(createSortItemSchema(sortKeySchema), "key").min(0).default([]);
 ```
 
-For primitive arrays (strings, UUIDs) no key is needed and the type system enforces this — passing a key for a primitive schema is a type error.
+TypeScript infers `T` from the schema argument, so `key` is automatically constrained to `keyof T & string` — passing a non-existent property name is a type error. The function uses interface call-signature overloads (per the TypeScript conventions): the first overload (`T extends Record<string, unknown>`) requires a key and gives autocomplete; the second overload accepts any schema without a key.
+
+**Exception — duplicates are valid**: Use plain `.array()` when the array semantically allows duplicate items (e.g. `handleElementSchema` — positional DOM bounds on a node, `effectSchema` — same effect config at different values, `embedSchema` — ordered content blocks). Do not use `createUniqueArraySchema` for these; do not add an artificial `id` field just to force uniqueness.
 
 ## Imports
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Survey } from "@esposter/db-schema";
 
-import { selectSurveySchema } from "@esposter/db-schema";
 import { useSurveyStore } from "@/store/survey";
+import { selectSurveySchema } from "@esposter/db-schema";
 
 interface ChangeGroupDialogButtonProps {
   survey: Survey;

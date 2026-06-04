@@ -7,7 +7,7 @@ import { ClickerType, clickerTypeSchema } from "#shared/models/clicker/data/Clic
 import { createUpgradeSchema } from "#shared/models/clicker/data/upgrade/Upgrade";
 import { upgradeIdSchema } from "#shared/models/clicker/data/upgrade/UpgradeId";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
-import { createItemEntityTypeSchema } from "@esposter/shared";
+import { createItemEntityTypeSchema, createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class Clicker extends AItemEntity implements ItemEntityType<ClickerType> {
@@ -25,8 +25,8 @@ export class Clicker extends AItemEntity implements ItemEntityType<ClickerType> 
 export const clickerSchema = z.object({
   ...aItemEntitySchema.shape,
   ...createItemEntityTypeSchema(clickerTypeSchema).shape,
-  boughtBuildings: buildingWithStatsSchema.array(),
-  boughtUpgrades: createUpgradeSchema(upgradeIdSchema).array(),
+  boughtBuildings: createUniqueArraySchema(buildingWithStatsSchema, "id"),
+  boughtUpgrades: createUniqueArraySchema(createUpgradeSchema(upgradeIdSchema), "id"),
   id: z.uuid(),
   noPoints: z.number(),
 }) satisfies z.ZodType<ToData<Clicker>>;
