@@ -13,7 +13,7 @@ import { z } from "zod";
 export const searchMessagesInputSchema = z
   .object({
     ...roomIdSchema.shape,
-    ...createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), 0, [
+    ...createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
       { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
     ]).shape,
     filters: createUniqueArraySchema(filterSchema, "type").max(MAX_READ_LIMIT).default([]),

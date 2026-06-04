@@ -186,6 +186,33 @@ const readMetadata = (memberIds: User["id"][]) => {
 - Guard `memberIds.length === 0` to avoid unnecessary requests.
 - Every call inside `Promise.all` must be a **single batch request** — never spread N individual calls (no `...ids.map((id) => readX({ id }))`). If the endpoint only accepts one ID, make it accept an array first.
 
+## Pagination Params Schemas
+
+Two factory functions in `shared/models/pagination/`:
+
+- **`createCursorPaginationParamsSchema(sortKeySchema, defaultSortBy)`** — cursor-based pagination; `minimumSortBy` is hard-coded to `1` (needs a primary cursor key). `defaultSortBy` is typed `[SortItem<T>, ...SortItem<T>[]]` (non-empty tuple) — TypeScript enforces at least 1 item matches the `min(1)` runtime constraint. Spread `.shape` into a `z.object({...})` and chain `.prefault({})` on the outer object for optional-input procedures.
+
+- **`createOffsetPaginationParamsSchema(sortKeySchema, defaultSortBy?)`** — offset-based pagination; `minimumSortBy` is hard-coded to `0` (offset skips N rows without needing a stable sort key); `defaultSortBy` defaults to `[]`.
+
+Both use `.prefault(defaultSortBy)` (not `.default()`) on the `sortBy` field — `prefault` applies the default _before_ inner validation, so the default array is itself validated against `.min(minimumSortBy)`. The `defaultSortBy` must therefore satisfy the minimum constraint.
+
+```ts
+// CORRECT — cursor: non-empty defaultSortBy, .prefault({}) on outer object
+const readRoomsInputSchema = z
+  .object({
+    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [
+      { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
+    ]).shape,
+  })
+  .prefault({});
+
+// CORRECT — offset: minimumSortBy=0, empty default is fine
+const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).prefault({});
+
+// WRONG — passing [] as defaultSortBy to cursor schema (TS error: non-empty tuple required)
+createCursorPaginationParamsSchema(sortKeySchema, []);
+```
+
 ## Read Endpoints Must Accept Arrays (No N+1)
 
 Every `read*` procedure that may be called for multiple items **must** accept an array of IDs, not a single ID:
