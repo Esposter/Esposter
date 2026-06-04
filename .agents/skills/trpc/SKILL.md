@@ -263,6 +263,28 @@ CompositeKeyPropertyNames.partitionKey; // ✓ always for partitionKey/rowKey
 ItemMetadataPropertyNames.deletedAt; // ✓ always for metadata fields
 ```
 
+## No Redundant Store Updates After Mutations That Emit to a Subscription
+
+When a mutation emits to an event emitter and the corresponding subscription fires for **all** connected clients (including the caller — i.e. no `getIsSameDevice` filter), the subscription's `onData` handler is the single source of truth for updating the store. Do **not** also call the `store*` action explicitly after the mutation returns.
+
+```ts
+// WRONG — onUpdateRoom subscription fires for caller too; store updated twice
+const updatedRoom = await $trpc.room.updateRoom.mutate(input);
+storeUpdateRoom(updatedRoom); // ❌ subscription onData already calls this
+
+// CORRECT — let the subscription handle it
+await $trpc.room.updateRoom.mutate(input);
+```
+
+The two patterns are:
+
+| Subscription filters caller?                  | After-mutation store call needed?           |
+| --------------------------------------------- | ------------------------------------------- |
+| No (`onUpdateRoom` style)                     | ❌ Remove — subscription handles it         |
+| Yes (`getIsSameDevice`, `onDeleteRoom` style) | ✅ Required — subscription skips the caller |
+
+When adding a new subscription: decide once which pattern it uses, then be consistent — never mix both.
+
 ## Subscription Race Condition — Register Listener Before First `await`
 
 In tRPC subscription generators, `on(emitter, event, { signal })` from `node:events` MUST be assigned to a `const` **before** any `await`. The idiomatic `for await (const x of on(...))` form is NOT equivalent when an `await` precedes it — `on()` only gets called when the `for await` line is reached (after the `await` completes). Mutations that emit synchronously (no async ops after middleware) can fire during that `await` and be missed.

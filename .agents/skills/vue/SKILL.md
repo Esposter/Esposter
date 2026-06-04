@@ -90,7 +90,7 @@ topicSchema.safeParse(editedTopic).data !== storedTopic;
 
 `normalizeString` remains valid in non-Vue, non-form contexts within the codebase (text-parsing utilities, CSV/XLSX deserialization, slash-command parsing, etc.) — places that don't go through a tRPC Zod boundary.
 
-**Don't add client-side Zod validation guards in submit or mutation handlers.** Trust the server schema — just pass raw values to the API and let tRPC's Zod boundary handle normalization and validation. No `safeParse` guards, no emptiness checks, no local normalization before mutating local state in submit paths:
+**Don't add client-side Zod validation guards in submit or mutation handlers.** Trust the server schema — just pass raw values to the API and let tRPC's Zod boundary handle normalization and validation. In these handlers, avoid `safeParse` guards, emptiness checks, and local normalization before mutating local state:
 
 ```typescript
 // WRONG — second-guessing the server schema

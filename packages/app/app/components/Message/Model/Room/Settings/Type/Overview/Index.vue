@@ -2,9 +2,8 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { selectRoomInMessageSchema } from "@esposter/db-schema";
-import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
+import { selectRoomInMessageSchema } from "@esposter/db-schema";
 
 interface OverviewProps {
   room: RoomInMessage;
@@ -17,7 +16,6 @@ await readRoomCategories();
 
 const roomCategoryStore = useRoomCategoryStore();
 const { categories } = storeToRefs(roomCategoryStore);
-const { storeUpdateRoom } = useRoomStore();
 const selectedCategoryId = ref(room.categoryId);
 const isReadOnly = ref(room.isReadOnly);
 const slowmodeMs = ref(room.slowmodeMs);
@@ -35,14 +33,13 @@ const isDirty = computed(
 );
 const save = async () => {
   if (!isDirty.value) return;
-  const updatedRoom = await $trpc.room.updateRoom.mutate({
+  await $trpc.room.updateRoom.mutate({
     categoryId: selectedCategoryId.value,
     id: room.id,
     isReadOnly: isReadOnly.value,
     slowmodeMs: slowmodeMs.value,
     topic: topic.value,
   });
-  storeUpdateRoom(updatedRoom);
 };
 </script>
 

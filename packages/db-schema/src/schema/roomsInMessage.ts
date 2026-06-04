@@ -28,7 +28,7 @@ export const roomsInMessage = pgTable(
     id: uuid().primaryKey().defaultRandom(),
     image: text().notNull().default(""),
     isReadOnly: boolean().notNull().default(false),
-    name: text(),
+    name: text().notNull().default(""),
     participantKey: text().unique(),
     slowmodeMs: integer(),
     topic: text().notNull().default(""),
@@ -39,10 +39,7 @@ export const roomsInMessage = pgTable(
   },
   {
     extraConfig: ({ name, participantKey, slowmodeMs, topic, type }) => [
-      check(
-        "rooms_name_check",
-        sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${name} IS NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${name} IS NOT NULL AND ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)})`,
-      ),
+      check("rooms_name_check", sql`LENGTH(TRIM(${name})) = 0 OR ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)}`),
       check(
         "participant_key_type",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${participantKey} IS NOT NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${participantKey} IS NULL)`,

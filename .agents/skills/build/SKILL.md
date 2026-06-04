@@ -17,6 +17,8 @@ Located in `packages/configuration/src/`. All library packages import one of:
 
 All extend `rolldownConfigurationBrowser`. Node adds `platform: "node"`. Isomorphic adds `@rolldown/plugin-node-polyfills`. Use `{ external }` shorthand when no extra entries needed; spread `[...external, "extra"]` only if the package requires additional externals.
 
+The base browser config enables `tsgo: true` in the `dts()` call — this uses `@typescript/native-preview` for fast DTS generation. `@typescript/native-preview` is already in the catalog; do not remove it.
+
 ## Global External List
 
 Defined in `packages/configuration/src/external/external.ts`, exported as `external`. Used by `rolldownConfigurationBrowser` (which all rolldown configs extend) and by `viteConfiguration`.
