@@ -2,6 +2,7 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { selectRoomInMessageSchema } from "@esposter/db-schema";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 
@@ -30,7 +31,7 @@ const isDirty = computed(
     selectedCategoryId.value !== room.categoryId ||
     isReadOnly.value !== room.isReadOnly ||
     slowmodeMs.value !== room.slowmodeMs ||
-    topic.value !== room.topic,
+    selectRoomInMessageSchema.shape.topic.safeParse(topic.value).data !== room.topic,
 );
 const save = async () => {
   if (!isDirty.value) return;

@@ -3,7 +3,7 @@ import { useLayoutStore } from "@/store/layout";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useDialogStore } from "@/store/message/room/dialog";
-import { MessageType, ROOM_NAME_MAX_LENGTH } from "@esposter/db-schema";
+import { MessageType, ROOM_NAME_MAX_LENGTH, selectRoomInMessageSchema } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();
 const layoutStore = useLayoutStore();
@@ -33,6 +33,7 @@ const { smAndDown } = useVDisplay();
       :is-editable="isCreator"
       :max-length="ROOM_NAME_MAX_LENGTH"
       :name="currentRoom.name ?? ''"
+      :schema="selectRoomInMessageSchema.shape.name"
       :placeholder
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
       @submit="

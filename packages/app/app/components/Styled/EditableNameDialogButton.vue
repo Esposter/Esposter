@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { VBtn, VCard, VTooltip } from "vuetify/components";
 
+import type { z } from "zod";
+
 import { formRules } from "@/services/vuetify/formRules";
 import { mergeProps } from "vue";
 
@@ -11,6 +13,7 @@ interface EditableNameDialogButtonProps {
   maxLength: number;
   name: string;
   placeholder?: string;
+  schema: z.ZodType<string>;
   tooltipProps: VTooltip["$props"];
 }
 
@@ -23,6 +26,7 @@ const {
   maxLength,
   name,
   placeholder,
+  schema,
   tooltipProps,
 } = defineProps<EditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
@@ -41,7 +45,7 @@ watch(
   <StyledFormDialog
     v-model="modelValue"
     :card-props
-    :confirm-button-props="{ text: 'Save', disabled: editedName === name }"
+    :confirm-button-props="{ text: 'Save', disabled: schema.safeParse(editedName).data === name }"
     @submit="
       (_event, onComplete) => {
         emit('submit', editedName);

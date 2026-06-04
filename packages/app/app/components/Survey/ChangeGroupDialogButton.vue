@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Survey } from "@esposter/db-schema";
 
+import { selectSurveySchema } from "@esposter/db-schema";
 import { useSurveyStore } from "@/store/survey";
 
 interface ChangeGroupDialogButtonProps {
@@ -16,7 +17,10 @@ const group = ref(survey.group);
 <template>
   <StyledDialog
     :card-props="{ title: 'Change Group' }"
-    :confirm-button-props="{ text: 'Change', disabled: group === survey.group }"
+    :confirm-button-props="{
+      text: 'Change',
+      disabled: selectSurveySchema.shape.group.safeParse(group).data === survey.group,
+    }"
     @confirm="
       async (onComplete) => {
         await updateSurvey({ ...survey, group });
