@@ -19,5 +19,5 @@ export const createBasePaginationParamsSchema = <T extends z.ZodType<string>>(
     limit: z.int().min(1).max(MAX_READ_LIMIT).default(DEFAULT_READ_LIMIT),
     sortBy: createUniqueArraySchema(createSortItemSchema(sortKeySchema), "key")
       .min(minimumSortBy)
-      .default(defaultSortBy),
+      .prefault(defaultSortBy),
   });

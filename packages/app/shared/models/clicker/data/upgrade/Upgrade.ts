@@ -20,7 +20,7 @@ export interface Upgrade<TId extends string = UpgradeId> extends Description {
 export const createUpgradeSchema = <T extends z.ZodType<string> = z.ZodType<UpgradeId>>(idSchema: T) =>
   z.object({
     ...descriptionSchema.extend({ description: z.string().min(1) }).shape,
-    effects: createUniqueArraySchema(effectSchema).min(1),
+    effects: effectSchema.array().min(1),
     flavorDescription: z.string().min(1),
     id: idSchema,
     price: z.number(),

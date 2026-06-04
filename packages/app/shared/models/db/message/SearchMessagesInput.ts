@@ -13,10 +13,10 @@ import { z } from "zod";
 export const searchMessagesInputSchema = z
   .object({
     ...roomIdSchema.shape,
-    ...createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), 0, [
+    ...createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
       { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
     ]).shape,
-    filters: createUniqueArraySchema(filterSchema).max(MAX_READ_LIMIT).default([]),
+    filters: createUniqueArraySchema(filterSchema, "type").max(MAX_READ_LIMIT).default([]),
     query: selectSearchHistoryInMessageSchema.shape.query,
   })
   .refine(({ filters, query }) => !getIsSearchQueryEmpty(query, filters));

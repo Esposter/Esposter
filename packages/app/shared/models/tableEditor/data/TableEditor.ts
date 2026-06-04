@@ -15,5 +15,10 @@ export class TableEditor<T extends ToData<Item>> extends AItemEntity {
   }
 }
 
-export const createTableEditorSchema = <T extends z.ZodType<ToData<Item>>>(schema: T) =>
-  z.object({ ...aItemEntitySchema.shape, items: createUniqueArraySchema(schema).max(TABLE_EDITOR_ITEMS_MAX_LENGTH) });
+export const createTableEditorSchema = <TOutput extends ToData<Item>, TInput = TOutput>(
+  schema: z.ZodType<TOutput, TInput>,
+) =>
+  z.object({
+    ...aItemEntitySchema.shape,
+    items: createUniqueArraySchema(schema, "id").max(TABLE_EDITOR_ITEMS_MAX_LENGTH),
+  });
