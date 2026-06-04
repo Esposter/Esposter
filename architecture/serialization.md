@@ -9,7 +9,7 @@ paths in the app: Azure Table read, SSR payload hydration, and tRPC transport.
 
 Each path is independent. They do not compose or run in sequence.
 
-```
+```text
 Azure Table read (server-side only)
 ──────────────────────────────────────────────────────────────────
 Azure SDK row

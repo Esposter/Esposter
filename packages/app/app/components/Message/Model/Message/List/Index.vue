@@ -18,7 +18,7 @@ const getFirstVisibleMessageElement = () => {
   const element = messageContainerElement.value;
   if (!element) return undefined;
   // Anchor to a real visible message instead of scrollHeight; column-reverse
-  // scroll offsets vary enough that height deltas are easy to get subtly wrong.
+  // Scroll offsets vary enough that height deltas are easy to get subtly wrong.
   const { bottom: containerBottom, top: containerTop } = element.getBoundingClientRect();
   return [...element.querySelectorAll("[id]")].find((messageElement) => {
     const { bottom, top } = messageElement.getBoundingClientRect();
@@ -34,7 +34,7 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
       const element = messageContainerElement.value;
       if (top !== undefined && firstVisibleMessageElement && element && !isScrolling.value) {
         // Newer messages insert before the anchor, so compensate by exactly how
-        // far that anchor moved after Vue rendered the new DOM.
+        // Far that anchor moved after Vue rendered the new DOM.
         const currentFirstVisibleMessageElement = window.document.getElementById(firstVisibleMessageElement.id);
         if (currentFirstVisibleMessageElement)
           element.scrollTop += currentFirstVisibleMessageElement.getBoundingClientRect().top - top;

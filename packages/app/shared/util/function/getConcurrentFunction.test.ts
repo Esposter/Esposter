@@ -19,8 +19,9 @@ describe(getConcurrentFunction, () => {
     expect.hasAssertions();
 
     let checkIsStale: (() => boolean) | undefined;
-    const concurrentFn = getConcurrentFunction(async (check) => {
+    const concurrentFn = getConcurrentFunction((check) => {
       checkIsStale = check;
+      return Promise.resolve();
     });
 
     await concurrentFn();
@@ -34,8 +35,9 @@ describe(getConcurrentFunction, () => {
     expect.hasAssertions();
 
     let firstCheckIsStale: (() => boolean) | undefined;
-    const concurrentFn = getConcurrentFunction(async (checkIsStale) => {
+    const concurrentFn = getConcurrentFunction((checkIsStale) => {
       firstCheckIsStale ??= checkIsStale;
+      return Promise.resolve();
     });
 
     await concurrentFn();
@@ -50,8 +52,9 @@ describe(getConcurrentFunction, () => {
     expect.hasAssertions();
 
     let lastCheckIsStale: (() => boolean) | undefined;
-    const concurrentFn = getConcurrentFunction(async (checkIsStale) => {
+    const concurrentFn = getConcurrentFunction((checkIsStale) => {
       lastCheckIsStale = checkIsStale;
+      return Promise.resolve();
     });
 
     await concurrentFn();
