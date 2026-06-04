@@ -15,8 +15,8 @@ const name = ref("");
 
 const submit = async () => {
   const roleName = name.value;
-  name.value = "";
   await createRole({ name: roleName, permissions: 0n, position: 0, roomId });
+  name.value = "";
 };
 </script>
 

@@ -39,8 +39,9 @@ const { smAndDown } = useVDisplay();
       @submit="
         async (name) => {
           if (!currentRoom) return;
-          storeUpdateRoom(await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name }));
-          await createMessage({ roomId: currentRoom.id, type: MessageType.EditRoom, message: name });
+          const updatedRoom = await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name });
+          storeUpdateRoom(updatedRoom);
+          await createMessage({ roomId: currentRoom.id, type: MessageType.EditRoom, message: updatedRoom.name });
         }
       "
     >

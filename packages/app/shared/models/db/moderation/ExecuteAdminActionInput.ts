@@ -21,8 +21,8 @@ export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
     ...baseExecuteAdminActionInputSchema.shape,
     reason: z
       .string()
-      .transform((v) => normalizeString(v) || undefined)
-      .pipe(z.string().optional()),
+      .optional()
+      .transform((v) => normalizeString(v) || undefined),
     type: z.literal(AdminActionType.Warn),
   }),
   z.object({

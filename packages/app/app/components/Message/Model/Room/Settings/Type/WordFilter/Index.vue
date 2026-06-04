@@ -17,6 +17,7 @@ const newWord = ref("");
 const isDirty = computed(() => !deepEqual(words.value, initialWords.value));
 const isAtMaxWords = computed(() => words.value.length >= FILTER_WORDS_MAX_LENGTH);
 const createWord = () => {
+  if (words.value.includes(newWord.value)) return;
   words.value = [...words.value, newWord.value];
   newWord.value = "";
 };
@@ -63,7 +64,8 @@ const createWord = () => {
             :button-props="{ disabled: !isDirty, text: 'Save Changes', variant: 'tonal' }"
             @click="
               async () => {
-                initialWords = (await $trpc.room.filter.upsertRoomFilter.mutate({ roomId: room.id, words })).words;
+                words = initialWords = (await $trpc.room.filter.upsertRoomFilter.mutate({ roomId: room.id, words }))
+                  .words;
               }
             "
           />

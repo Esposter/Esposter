@@ -27,8 +27,11 @@ const isLoading = ref(false);
         @click="
           async () => {
             isLoading = true;
-            await createWebhook(room.id, { name });
-            isLoading = false;
+            try {
+              await createWebhook(room.id, { name });
+            } finally {
+              isLoading = false;
+            }
           }
         "
       >

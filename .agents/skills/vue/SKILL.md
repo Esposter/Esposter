@@ -53,7 +53,7 @@ Keep the split form only when genuinely needed:
 - **Dynamic property assignment** — `@update:model-value="row[col] = $event"` (v-model can't target a computed key)
 - **Genuine value transformation** — unit conversion, date-format conversion, bitwise ops (anything where the stored value differs structurally from the displayed value)
 
-**Never apply `normalizeString` (or any trimming) anywhere in Vue components — not in `@update:model-value` and not in submit handlers.** The Zod input schemas for tRPC mutations already normalize string fields at the boundary via `createNameSchema`/`createNormalizedStringSchema` (which use `.overwrite(normalizeString)`). Duplicating the transform in Vue is redundant and, in `@update:model-value`, actively harmful (trims mid-typing and swallows spaces):
+**Never apply `normalizeString` (or any trimming) anywhere in Vue components — not in `@update:model-value` and not in submit handlers.** The Zod input schemas for tRPC mutations already normalize string fields at the boundary via `createNameSchema`/`createNormalizedStringSchema` (which use `.transform(normalizeString).pipe(...)`). Duplicating the transform in Vue is redundant and, in `@update:model-value`, actively harmful (trims mid-typing and swallows spaces):
 
 ```vue
 <!-- WRONG — trims while the user is still typing -->
@@ -90,7 +90,7 @@ topicSchema.safeParse(editedTopic).data !== storedTopic;
 
 `normalizeString` remains valid in non-Vue, non-form contexts within the codebase (text-parsing utilities, CSV/XLSX deserialization, slash-command parsing, etc.) — places that don't go through a tRPC Zod boundary.
 
-**Don't add client-side Zod validation guards in Vue components.** Trust the server schema — just pass raw values to the API and let tRPC's Zod boundary handle normalization and validation. No `safeParse` guards, no emptiness checks, no local normalization before mutating local state:
+**Don't add client-side Zod validation guards in submit or mutation handlers.** Trust the server schema — just pass raw values to the API and let tRPC's Zod boundary handle normalization and validation. No `safeParse` guards, no emptiness checks, no local normalization before mutating local state in submit paths:
 
 ```typescript
 // WRONG — second-guessing the server schema
