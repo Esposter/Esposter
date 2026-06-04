@@ -2,50 +2,44 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
-import { normalizeString } from "@esposter/shared";
+import { selectRoomInMessageSchema } from "@esposter/db-schema";
 
 interface OverviewProps {
-  roomId: RoomInMessage["id"];
+  room: RoomInMessage;
 }
 
-const { roomId } = defineProps<OverviewProps>();
+const { room } = defineProps<OverviewProps>();
 const { $trpc } = useNuxtApp();
 const { readRoomCategories } = useReadRoomCategories();
 await readRoomCategories();
 
 const roomCategoryStore = useRoomCategoryStore();
 const { categories } = storeToRefs(roomCategoryStore);
-const roomStore = useRoomStore();
-const { storeUpdateRoom } = roomStore;
-const { rooms } = storeToRefs(roomStore);
-const room = computed(() => rooms.value.find(({ id }) => id === roomId));
-const selectedCategoryId = ref(room.value?.categoryId ?? null);
-const isReadOnly = ref(room.value?.isReadOnly ?? false);
-const slowmodeMs = ref(room.value?.slowmodeMs ?? null);
-const topic = ref(room.value?.topic ?? "");
+const selectedCategoryId = ref(room.categoryId);
+const isReadOnly = ref(room.isReadOnly);
+const slowmodeMs = ref(room.slowmodeMs);
+const topic = ref(room.topic);
 const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
   { title: "None (uncategorized)", value: null },
   ...categories.value.map(({ id, name }) => ({ title: name, value: id })),
 ]);
 const isDirty = computed(
   () =>
-    selectedCategoryId.value !== (room.value?.categoryId ?? null) ||
-    isReadOnly.value !== (room.value?.isReadOnly ?? false) ||
-    slowmodeMs.value !== (room.value?.slowmodeMs ?? null) ||
-    normalizeString(topic.value) !== (room.value?.topic ?? ""),
+    selectedCategoryId.value !== room.categoryId ||
+    isReadOnly.value !== room.isReadOnly ||
+    slowmodeMs.value !== room.slowmodeMs ||
+    selectRoomInMessageSchema.shape.topic.safeParse(topic.value).data !== room.topic,
 );
 const save = async () => {
   if (!isDirty.value) return;
-  const updatedRoom = await $trpc.room.updateRoom.mutate({
+  await $trpc.room.updateRoom.mutate({
     categoryId: selectedCategoryId.value,
-    id: roomId,
+    id: room.id,
     isReadOnly: isReadOnly.value,
     slowmodeMs: slowmodeMs.value,
-    topic: normalizeString(topic.value),
+    topic: topic.value,
   });
-  storeUpdateRoom(updatedRoom);
 };
 </script>
 

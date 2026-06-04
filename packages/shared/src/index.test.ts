@@ -11,13 +11,13 @@ describe("@esposter/shared", () => {
     expect.hasAssertions();
 
     if (isWindows) expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 383.91 KB (393119 bytes)"`);
-    else expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 383.84 KB (393050 bytes)"`);
+    else expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 384.00 KB (393220 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
     if (isWindows) expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 109.98 KB (112623 bytes)"`);
-    else expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 106.03 KB (108576 bytes)"`);
+    else expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 106.23 KB (108775 bytes)"`);
   });
 });

@@ -6,11 +6,11 @@ import { useBanStore } from "@/store/message/user/ban";
 import { withFinalizerAsync } from "@esposter/shared";
 
 interface BansProps {
-  roomId: RoomInMessage["id"];
+  room: RoomInMessage;
 }
 
-const { roomId } = defineProps<BansProps>();
-const { readBans, readMoreBans } = useReadBans(roomId);
+const { room } = defineProps<BansProps>();
+const { readBans, readMoreBans } = useReadBans(room.id);
 const banStore = useBanStore();
 const { hasMore, items } = storeToRefs(banStore);
 const { deleteBan } = banStore;
@@ -37,7 +37,7 @@ await readBans();
             :confirm-button-props="{ color: 'primary', text: 'Unban' }"
             @delete="
               async (onComplete) => {
-                await withFinalizerAsync(() => deleteBan({ roomId, userId }), onComplete);
+                await withFinalizerAsync(() => deleteBan({ roomId: room.id, userId }), onComplete);
               }
             "
           >

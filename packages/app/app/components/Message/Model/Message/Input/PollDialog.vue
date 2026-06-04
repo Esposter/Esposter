@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import type { PollMessageContent } from "@/models/message/poll/PollMessageContent";
 import type { SubmitEventPromise } from "vuetify";
 
+import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { formRules } from "@/services/vuetify/formRules";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
@@ -22,11 +21,11 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
     onComplete();
     return;
   }
-  const pollContent: PollMessageContent = {
-    options: options.value.map((label) => ({ id: crypto.randomUUID(), label: normalizeString(label) })),
-    question: normalizeString(question.value),
+  const pollContent = pollMessageContentSchema.parse({
+    options: options.value.map((label) => ({ id: crypto.randomUUID(), label })),
+    question: question.value,
     votes: {},
-  };
+  });
   await createMessage({
     message: JSON.stringify(pollContent),
     roomId: currentRoomId.value,

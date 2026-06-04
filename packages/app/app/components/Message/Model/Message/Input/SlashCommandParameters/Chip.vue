@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { slashCommandParameterValueSchema } from "@/models/message/slashCommands/SlashCommandParameter";
 import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
-import { normalizeString } from "@esposter/shared";
 
 interface ChipProps {
   autofocus?: boolean;
@@ -82,7 +82,12 @@ onMounted(() => {
       :autofocus
       @focus="emit('focus')"
       @blur="emit('blur')"
-      @update:model-value="setErrors(name, isRequired && !normalizeString($event) ? [REQUIRED_ERROR_MESSAGE] : [])"
+      @update:model-value="
+        setErrors(
+          name,
+          isRequired && !slashCommandParameterValueSchema.safeParse($event).success ? [REQUIRED_ERROR_MESSAGE] : [],
+        )
+      "
       @keydown.enter.prevent="emit('submit')"
       @keydown.delete="!modelValue && emit('delete')"
       @keydown.left.exact="

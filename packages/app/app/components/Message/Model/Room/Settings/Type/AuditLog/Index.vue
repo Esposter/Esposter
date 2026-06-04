@@ -7,11 +7,11 @@ import { useModerationLogStore } from "@/store/message/moderation/log";
 import { formatDuration } from "@/util/text/formatDuration";
 
 interface AuditLogProps {
-  roomId: RoomInMessage["id"];
+  room: RoomInMessage;
 }
 
-const { roomId } = defineProps<AuditLogProps>();
-const { readModerationLog, readMoreModerationLog } = useReadModerationLog(roomId);
+const { room } = defineProps<AuditLogProps>();
+const { readModerationLog, readMoreModerationLog } = useReadModerationLog(room.id);
 const moderationLogStore = useModerationLogStore();
 const { hasMore, items } = storeToRefs(moderationLogStore);
 

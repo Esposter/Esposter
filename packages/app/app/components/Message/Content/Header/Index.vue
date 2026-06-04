@@ -3,13 +3,12 @@ import { useLayoutStore } from "@/store/layout";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useDialogStore } from "@/store/message/room/dialog";
-import { MessageType, ROOM_NAME_MAX_LENGTH } from "@esposter/db-schema";
+import { MessageType, ROOM_NAME_MAX_LENGTH, selectRoomInMessageSchema } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
-const { storeUpdateRoom } = roomStore;
 const { currentRoom, isCreator } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
@@ -32,14 +31,15 @@ const { smAndDown } = useVDisplay();
       :card-props="{ title: 'Edit Room' }"
       :is-editable="isCreator"
       :max-length="ROOM_NAME_MAX_LENGTH"
-      :name="currentRoom.name ?? ''"
+      :name="currentRoom.name"
+      :schema="selectRoomInMessageSchema.shape.name"
       :placeholder
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
       @submit="
         async (name) => {
           if (!currentRoom) return;
-          storeUpdateRoom(await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name }));
-          await createMessage({ roomId: currentRoom.id, type: MessageType.EditRoom, message: name });
+          const updatedRoom = await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name });
+          await createMessage({ roomId: updatedRoom.id, type: MessageType.EditRoom, message: updatedRoom.name });
         }
       "
     >
