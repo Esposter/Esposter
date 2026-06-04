@@ -8,6 +8,7 @@ Use this folder for architecture that applies to multiple packages or feature ar
 | ------------------- | -------------------------------------------------------------------------------------- |
 | `azure-services.md` | Azure service ownership, storage split, EventGrid push flow, and real-time layer model |
 | `file-uploads.md`   | Two-step Azure Blob SAS upload pattern and upload procedure inventory                  |
+| `serialization.md`  | How class instances survive the two transport paths (Nuxt payload + tRPC/SuperJSON)    |
 
 ## What Belongs Here
 
