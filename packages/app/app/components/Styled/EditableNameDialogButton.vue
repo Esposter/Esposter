@@ -2,7 +2,6 @@
 import type { VBtn, VCard, VTooltip } from "vuetify/components";
 
 import { formRules } from "@/services/vuetify/formRules";
-import { normalizeString } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 interface EditableNameDialogButtonProps {
@@ -85,12 +84,11 @@ watch(
       <v-row>
         <v-col cols="12">
           <v-text-field
-            :model-value="editedName"
+            v-model="editedName"
             density="compact"
             :placeholder
             autofocus
             :rules="[formRules.requireAtMostNCharacters(maxLength), formRules.isNotProfanity]"
-            @update:model-value="editedName = normalizeString($event)"
           />
         </v-col>
       </v-row>

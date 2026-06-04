@@ -33,6 +33,63 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 - **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
 - **Never declare `defineModel` unless the value is actually used** in script (e.g. in a `watch`, `computed`, or passed somewhere). Don't create a model just to forward it — use `:prop` + `@event` instead.
 
+## v-model vs Split Bindings
+
+Prefer `v-model="ref"` over the split `:model-value="ref"` + `@update:model-value="ref = $event"` whenever the update is a direct assignment to a single ref.
+
+```vue
+<!-- WRONG — unnecessary split for a direct assignment -->
+<v-text-field :model-value="name" @update:model-value="name = $event" />
+
+<!-- CORRECT -->
+<v-text-field v-model="name" />
+```
+
+Keep the split form only when genuinely needed:
+
+- **Computed get expression** — `:model-value` derives from more than a bare ref (e.g. `a?.b ?? c`)
+- **Multiple writes on update** — the handler sets more than one ref
+- **Extra-arg function call** — `@update:model-value="setFilter(key, $event)"` (v-model can't pass `key`)
+- **Dynamic property assignment** — `@update:model-value="row[col] = $event"` (v-model can't target a computed key)
+- **Genuine value transformation** — unit conversion, date-format conversion, bitwise ops (anything where the stored value differs structurally from the displayed value)
+
+**Never apply `normalizeString` (or any trimming) anywhere in Vue components — not in `@update:model-value` and not in submit handlers.** The Zod input schemas for tRPC mutations already normalize string fields at the boundary via `createNameSchema`/`createNormalizedStringSchema` (which use `.overwrite(normalizeString)`). Duplicating the transform in Vue is redundant and, in `@update:model-value`, actively harmful (trims mid-typing and swallows spaces):
+
+```vue
+<!-- WRONG — trims while the user is still typing -->
+<v-text-field :model-value="name" @update:model-value="name = normalizeString($event)" />
+
+<!-- WRONG — redundant; the Zod schema already normalizes on the server -->
+<v-text-field v-model="name" />
+<!-- emit('submit', normalizeString(name)) ← unnecessary -->
+
+<!-- CORRECT — raw input flows through unchanged; Zod handles normalization -->
+<v-text-field v-model="name" />
+<!-- emit('submit', name) -->
+```
+
+`normalizeString` must **never** appear directly in Vue components. Where you need to check validity or guard a disabled button, use the relevant Zod schema's `safeParse` instead:
+
+```vue
+<!-- WRONG — directly normalizing to check emptiness -->
+<v-btn :disabled="!normalizeString(name)" />
+
+<!-- CORRECT — let the schema decide validity -->
+<v-btn :disabled="!nameSchema.safeParse(name).success" />
+```
+
+For dirty-state comparisons (e.g. enabling a Save button only when the value actually changed), parse both sides through the schema so normalized values are compared:
+
+```typescript
+// WRONG — compares raw input against stored normalized value
+normalizeString(editedTopic) !== storedTopic;
+
+// CORRECT — parse through the schema, then compare
+topicSchema.safeParse(editedTopic).data !== storedTopic;
+```
+
+`normalizeString` remains valid in non-Vue, non-form contexts within the codebase (text-parsing utilities, CSV/XLSX deserialization, slash-command parsing, etc.) — places that don't go through a tRPC Zod boundary.
+
 ## Template Attribute Ordering
 
 Within any element or component tag, order attributes as follows:
