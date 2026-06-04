@@ -22,6 +22,24 @@ z.string().overwrite(normalizeString).min(1);
 
 The shared helpers `createNormalizedStringSchema(maxLength)` and `createNameSchema(maxLength)` in `@esposter/db-schema` follow this pattern and should be used for standard name/text fields.
 
+### `.pipe()` chaining and `z.toJSONSchema` — never nest pipes when JSON schema output matters
+
+`z.toJSONSchema` (and `zodToJsonSchema`) runs with `io = "output"` by default. For any `ZodPipe(A, B)`, it uses `B` (the output schema) for JSON schema generation. **Constraints on `A` are silently dropped.** This becomes a bug when you chain `.pipe()` calls:
+
+```typescript
+// BUG — maxLength is on an intermediate pipe output (A), never reaches the JSON schema
+const schema = createNormalizedStringSchema(maxLength, base).pipe(z.string().min(1));
+// z.toJSONSchema sees only z.string().min(1) → { minLength: 1 }  ← maxLength missing!
+
+// CORRECT — all constraints on the single outermost output
+const schema = base.transform(normalizeString).pipe(z.string().min(1).max(maxLength));
+// z.toJSONSchema sees z.string().min(1).max(maxLength) → { minLength: 1, maxLength: N } ✓
+```
+
+**Rule**: when a `.transform().pipe()` schema is itself passed to another `.pipe()`, the intermediate output constraints are invisible to `z.toJSONSchema`. Always consolidate all string constraints (`min`, `max`, `regex`, etc.) on the **single final `.pipe()` output**, not spread across intermediate layers.
+
+This was the root cause of `name` missing `maxLength` in the `ColumnForm` JSON schema — `createNameSchema` was doing `createNormalizedStringSchema(maxLength).pipe(z.string().min(1))`, nesting three pipe layers and losing `max`.
+
 ## Arrays — Always Use `createUniqueArraySchema`
 
 **Never call `.array()` directly** unless duplicates are genuinely valid for that field. Always use `createUniqueArraySchema(schema)` from `@esposter/shared` instead. It wraps `.array()` with a uniqueness refine so duplicate items are rejected at the Zod boundary:

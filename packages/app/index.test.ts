@@ -27,6 +27,6 @@ describe("@esposter/app", () => {
     expect.hasAssertions();
 
     if (isWindows) expect(getDirectorySize(nuxtDir)).toMatchInlineSnapshot(`"_nuxt: 109506.37 KB (112134526 bytes)"`);
-    else expect(getDirectorySize(nuxtDir)).toMatchInlineSnapshot(`"_nuxt: 109502.14 KB (112130192 bytes)"`);
+    else expect(getDirectorySize(nuxtDir)).toMatchInlineSnapshot(`"_nuxt: 109502.46 KB (112130519 bytes)"`);
   });
 });
