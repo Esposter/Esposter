@@ -6,7 +6,7 @@ import type { ItemEntityType } from "@esposter/shared";
 import { effectTypeSchema } from "#shared/models/clicker/data/effect/EffectType";
 import { itemTypeSchema } from "#shared/models/clicker/data/ItemType";
 import { targetSchema } from "#shared/models/clicker/data/Target";
-import { createItemEntityTypeSchema } from "@esposter/shared";
+import { createItemEntityTypeSchema, createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 // Only used for effect types that are based off other specific targets
 export interface EffectConfiguration extends ItemEntityType<EffectType> {
@@ -20,5 +20,5 @@ export interface EffectConfiguration extends ItemEntityType<EffectType> {
 export const effectConfigurationSchema = z.object({
   ...createItemEntityTypeSchema(effectTypeSchema).shape,
   itemType: itemTypeSchema.optional(),
-  targets: targetSchema.array().optional(),
+  targets: createUniqueArraySchema(targetSchema).optional(),
 }) satisfies z.ZodType<EffectConfiguration>;

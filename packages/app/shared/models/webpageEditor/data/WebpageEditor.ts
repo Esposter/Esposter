@@ -3,7 +3,7 @@ import type { ProjectData } from "grapesjs";
 
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { GRAPESJS_BASE_URL, PLACEHOLD_BASE_URL } from "#shared/services/grapesjs/constants";
-import { css, html } from "@esposter/shared";
+import { createUniqueArraySchema, css, html } from "@esposter/shared";
 import { z } from "zod";
 
 export class WebpageEditor extends AItemEntity implements ProjectData {
@@ -738,6 +738,6 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
 export const webpageEditorSchema = z
   .object({
     ...aItemEntitySchema.shape,
-    pages: z.unknown().array().min(1),
+    pages: createUniqueArraySchema(z.unknown()).min(1),
   })
   .catchall(z.unknown()) satisfies z.ZodType<ToData<WebpageEditor>>;

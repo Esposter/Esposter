@@ -7,7 +7,7 @@ import {
   selectSearchHistoryInMessageSchema,
   standardMessageEntitySchema,
 } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames, MAX_READ_LIMIT } from "@esposter/shared";
+import { createUniqueArraySchema, ItemMetadataPropertyNames, MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
 export const searchMessagesInputSchema = z
@@ -16,7 +16,7 @@ export const searchMessagesInputSchema = z
     ...createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), 0, [
       { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
     ]).shape,
-    filters: filterSchema.array().max(MAX_READ_LIMIT).default([]),
+    filters: createUniqueArraySchema(filterSchema).max(MAX_READ_LIMIT).default([]),
     query: selectSearchHistoryInMessageSchema.shape.query,
   })
   .refine(({ filters, query }) => !getIsSearchQueryEmpty(query, filters));

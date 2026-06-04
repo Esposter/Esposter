@@ -5,6 +5,7 @@ import type { EmbedFooter } from "@/models/message/webhook/EmbedFooter";
 import { embedAuthorSchema } from "@/models/message/webhook/EmbedAuthor";
 import { embedFieldSchema } from "@/models/message/webhook/EmbedField";
 import { embedFooterSchema } from "@/models/message/webhook/EmbedFooter";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface Embed {
@@ -30,7 +31,7 @@ export const embedSchema = z.object({
     .max(256 ** 3 - 1)
     .optional(),
   description: z.string().max(4096).optional(),
-  fields: embedFieldSchema.array().max(25).optional(),
+  fields: createUniqueArraySchema(embedFieldSchema, "name").max(25).optional(),
   footer: embedFooterSchema.optional(),
   image: z.object({ url: z.url() }).optional(),
   thumbnail: z.object({ url: z.url() }).optional(),

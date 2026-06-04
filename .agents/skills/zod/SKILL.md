@@ -36,14 +36,17 @@ createUniqueArraySchema(z.string()).max(MAX_READ_LIMIT);
 
 All chaining (`.min()`, `.max()`, `.nullable()`, `.optional()`, `.default()`) works identically after `createUniqueArraySchema` — Zod 4's `.refine()` returns the same `ZodArray` type, preserving the full method surface.
 
-For object arrays where you need uniqueness by a specific property rather than by reference, pass the key as a second argument:
+The generic parameter `T` is the **item type** (not the schema type) — `schema` is typed as `z.ZodType<T>`. This means `key` is simply `keyof T & string` with no conditional, and the implementation accesses `item[key]` directly without casts.
+
+For object arrays, always pass the field name that uniquely identifies each item as the second argument:
 
 ```typescript
-// Check uniqueness by the "id" field
-createUniqueArraySchema(embedFieldSchema, "id").max(25).optional();
+createUniqueArraySchema(fileEntitySchema, "id").max(FILE_MAX_LENGTH).default([]);
+createUniqueArraySchema(embedFieldSchema, "name").max(25).optional();
+createUniqueArraySchema(createSortItemSchema(sortKeySchema), "key").min(0).default([]);
 ```
 
-For primitive arrays (strings, UUIDs) no key is needed and the type system enforces this — passing a key for a primitive schema is a type error.
+TypeScript infers `T` from the schema argument, so `key` is automatically constrained to `keyof T & string` — passing a non-existent property name is a type error.
 
 ## Imports
 

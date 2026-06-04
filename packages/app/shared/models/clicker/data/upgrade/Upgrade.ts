@@ -6,6 +6,7 @@ import type { Description } from "#shared/models/entity/Description";
 import { effectSchema } from "#shared/models/clicker/data/effect/Effect";
 import { unlockConditionSchema } from "#shared/models/clicker/data/unlockCondition/UnlockCondition";
 import { descriptionSchema } from "#shared/models/entity/Description";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface Upgrade<TId extends string = UpgradeId> extends Description {
@@ -19,9 +20,9 @@ export interface Upgrade<TId extends string = UpgradeId> extends Description {
 export const createUpgradeSchema = <T extends z.ZodType<string> = z.ZodType<UpgradeId>>(idSchema: T) =>
   z.object({
     ...descriptionSchema.extend({ description: z.string().min(1) }).shape,
-    effects: effectSchema.array().min(1),
+    effects: createUniqueArraySchema(effectSchema).min(1),
     flavorDescription: z.string().min(1),
     id: idSchema,
     price: z.number(),
-    unlockConditions: unlockConditionSchema.array(),
+    unlockConditions: createUniqueArraySchema(unlockConditionSchema, "type"),
   });

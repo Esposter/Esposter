@@ -7,7 +7,7 @@ import {
   PLACEHOLD_BASE_URL,
   WORDPRESS_DESIGNSPELL_BASE_URL,
 } from "#shared/services/grapesjs/constants";
-import { html } from "@esposter/shared";
+import { createUniqueArraySchema, html } from "@esposter/shared";
 import { z } from "zod";
 
 export class EmailEditor extends AItemEntity implements ProjectData {
@@ -100,6 +100,6 @@ export class EmailEditor extends AItemEntity implements ProjectData {
 export const emailEditorSchema = z
   .object({
     ...aItemEntitySchema.shape,
-    pages: z.unknown().array().min(1),
+    pages: createUniqueArraySchema(z.unknown()).min(1),
   })
   .catchall(z.unknown()) satisfies z.ZodType<ToData<EmailEditor>>;

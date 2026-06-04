@@ -113,8 +113,10 @@ afterEach(() => {
 
 ## Vitest Environment
 
-- **tRPC router tests** (`server/trpc/routers/**/*.test.ts`) — no `// @vitest-environment` directive (Nuxt env required).
-- **All other server-side tests** — add `// @vitest-environment node` as first line.
+The default Vitest environment is `node` — do **not** add `// @vitest-environment node` to any test file.
+
+- **tRPC router tests** (`server/trpc/routers/**/*.test.ts`) — add `// @vitest-environment nuxt` as the first line (Nuxt env required).
+- **All other tests** — no directive needed; node is the default.
 
 ## Bundle Size Snapshot Tests
 

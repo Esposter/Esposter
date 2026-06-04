@@ -3,6 +3,7 @@ import type { Embed } from "@/models/message/webhook/Embed";
 import { embedSchema } from "@/models/message/webhook/Embed";
 import { USER_NAME_MAX_LENGTH } from "@/schema/users";
 import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface WebhookPayload {
@@ -16,7 +17,7 @@ export const webhookPayloadSchema = z
   .object({
     avatar_url: z.url().optional(),
     content: z.string().max(2000).optional(),
-    embeds: embedSchema.array().max(FILE_MAX_LENGTH).optional(),
+    embeds: createUniqueArraySchema(embedSchema).max(FILE_MAX_LENGTH).optional(),
     username: z.string().max(USER_NAME_MAX_LENGTH).optional(),
   })
   // Ensure at least one of content or embeds exists
