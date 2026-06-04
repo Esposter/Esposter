@@ -57,7 +57,15 @@ export const roomsInMessage = pgTable(
 export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
-  name: (schema) => createNameSchema(ROOM_NAME_MAX_LENGTH, schema),
   slowmodeMs: (schema) => schema.min(1),
   topic: (schema) => createNormalizedStringSchema(ROOM_TOPIC_MAX_LENGTH, schema),
+}).superRefine(({ name, type }, ctx) => {
+  if (type === RoomType.DirectMessage) {
+    if (name.trim().length !== 0)
+      ctx.addIssue({ code: "custom", message: "DirectMessage name must be empty", path: ["name"] });
+  } else {
+    const result = createNameSchema(ROOM_NAME_MAX_LENGTH).safeParse(name);
+    if (!result.success)
+      for (const issue of result.error.issues) ctx.addIssue({ ...issue, path: ["name", ...issue.path] });
+  }
 });
