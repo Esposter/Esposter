@@ -12,10 +12,8 @@ const { roomId } = defineProps<CreateRoleFormProps>();
 const roleStore = useRoleStore();
 const { createRole } = roleStore;
 const name = ref("");
-
 const submit = async () => {
-  const roleName = name.value;
-  await createRole({ name: roleName, permissions: 0n, position: 0, roomId });
+  await createRole({ name: name.value, permissions: 0n, position: 0, roomId });
   name.value = "";
 };
 </script>

@@ -17,7 +17,6 @@ const newWord = ref("");
 const isDirty = computed(() => !deepEqual(words.value, initialWords.value));
 const isAtMaxWords = computed(() => words.value.length >= FILTER_WORDS_MAX_LENGTH);
 const createWord = () => {
-  if (words.value.includes(newWord.value)) return;
   words.value = [...words.value, newWord.value];
   newWord.value = "";
 };

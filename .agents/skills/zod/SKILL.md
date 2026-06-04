@@ -22,6 +22,29 @@ z.string().overwrite(normalizeString).min(1);
 
 The shared helpers `createNormalizedStringSchema(maxLength)` and `createNameSchema(maxLength)` in `@esposter/db-schema` follow this pattern and should be used for standard name/text fields.
 
+## Arrays — Always Use `createUniqueArraySchema`
+
+**Never call `.array()` directly.** Always use `createUniqueArraySchema(schema)` from `@esposter/shared` instead. It wraps `.array()` with a uniqueness refine so duplicate items are rejected at the Zod boundary:
+
+```typescript
+// WRONG — bare .array() skips uniqueness enforcement
+z.string().array().max(MAX_READ_LIMIT);
+
+// CORRECT
+createUniqueArraySchema(z.string()).max(MAX_READ_LIMIT);
+```
+
+All chaining (`.min()`, `.max()`, `.nullable()`, `.optional()`, `.default()`) works identically after `createUniqueArraySchema` — Zod 4's `.refine()` returns the same `ZodArray` type, preserving the full method surface.
+
+For object arrays where you need uniqueness by a specific property rather than by reference, pass the key as a second argument:
+
+```typescript
+// Check uniqueness by the "id" field
+createUniqueArraySchema(embedFieldSchema, "id").max(25).optional();
+```
+
+For primitive arrays (strings, UUIDs) no key is needed and the type system enforces this — passing a key for a primitive schema is a type error.
+
 ## Imports
 
 Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.

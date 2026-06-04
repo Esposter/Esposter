@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { useWebhookStore } from "@/store/message/room/webhook";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface WebhookProps {
   room: RoomInMessage;
@@ -27,11 +28,14 @@ const isLoading = ref(false);
         @click="
           async () => {
             isLoading = true;
-            try {
-              await createWebhook(room.id, { name });
-            } finally {
-              isLoading = false;
-            }
+            await withFinalizerAsync(
+              async () => {
+                await createWebhook(room.id, { name });
+              },
+              () => {
+                isLoading = false;
+              },
+            );
           }
         "
       >
