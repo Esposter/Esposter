@@ -14,7 +14,6 @@ const { createRole } = roleStore;
 const name = ref("");
 
 const submit = async () => {
-  if (!createRoleInputSchema.shape.name.safeParse(name.value).success) return;
   const roleName = name.value;
   name.value = "";
   await createRole({ name: roleName, permissions: 0n, position: 0, roomId });

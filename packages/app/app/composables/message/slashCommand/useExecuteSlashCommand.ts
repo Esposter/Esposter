@@ -9,7 +9,7 @@ import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
 import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 import { MessageType } from "@esposter/db-schema";
-import { exhaustiveGuard, normalizeString } from "@esposter/shared";
+import { exhaustiveGuard } from "@esposter/shared";
 import { marked } from "marked";
 
 export const useExecuteSlashCommand = () => {
@@ -62,16 +62,14 @@ export const useExecuteSlashCommand = () => {
       }
       case SlashCommandType.Shrug: {
         const { text } = command.parameterValues;
-        const prefix = normalizeString(text);
-        createMessageInput = { message: `${prefix}¯\\_(ツ)_/¯`, roomId, type: MessageType.Message };
+        createMessageInput = { message: `${text}¯\\_(ツ)_/¯`, roomId, type: MessageType.Message };
         break;
       }
       case SlashCommandType.TableFlip:
         createMessageInput = { message: `(╯°□°）╯︵ ┻━┻`, roomId, type: MessageType.Message };
         break;
       case SlashCommandType.Topic: {
-        const topic = normalizeString(command.parameterValues.text);
-        await $trpc.room.updateRoom.mutate({ id: roomId, topic });
+        await $trpc.room.updateRoom.mutate({ id: roomId, topic: command.parameterValues.text });
         break;
       }
       case SlashCommandType.Unflip:

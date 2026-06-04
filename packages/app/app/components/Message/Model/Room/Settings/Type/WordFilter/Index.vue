@@ -6,12 +6,12 @@ import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH } from "@esposter/db-sch
 import deepEqual from "fast-deep-equal";
 
 interface WordFilterProps {
-  roomId: RoomInMessage["id"];
+  room: RoomInMessage;
 }
 
-const { roomId } = defineProps<WordFilterProps>();
+const { room } = defineProps<WordFilterProps>();
 const { $trpc } = useNuxtApp();
-const initialWords = ref<string[]>(await $trpc.room.filter.readRoomFilter.query({ roomId }));
+const initialWords = ref<string[]>(await $trpc.room.filter.readRoomFilter.query({ roomId: room.id }));
 const words = ref([...initialWords.value]);
 const newWord = ref("");
 const isDirty = computed(() => !deepEqual(words.value, initialWords.value));
@@ -63,7 +63,7 @@ const createWord = () => {
             :button-props="{ disabled: !isDirty, text: 'Save Changes', variant: 'tonal' }"
             @click="
               async () => {
-                initialWords = (await $trpc.room.filter.upsertRoomFilter.mutate({ roomId, words })).words;
+                initialWords = (await $trpc.room.filter.upsertRoomFilter.mutate({ roomId: room.id, words })).words;
               }
             "
           />
