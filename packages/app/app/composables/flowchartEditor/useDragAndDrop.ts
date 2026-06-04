@@ -17,7 +17,7 @@ export const useDragAndDrop = () => {
 
     type.value = nodeType;
     isDragging.value = true;
-    document.addEventListener("drop", onDragEnd);
+    window.document.addEventListener("drop", onDragEnd);
   };
 
   const onDragOver = (event: DragEvent) => {
@@ -36,7 +36,7 @@ export const useDragAndDrop = () => {
     isDragging.value = false;
     isDragOver.value = false;
     type.value = GeneralNodeType.Rectangle;
-    document.removeEventListener("drop", onDragEnd);
+    window.document.removeEventListener("drop", onDragEnd);
   };
 
   const onDrop = (event: DragEvent) => {

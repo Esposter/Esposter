@@ -38,7 +38,7 @@ export const getRender =
 
         const element = component.element as HTMLElement;
         element.style.position = "absolute";
-        document.body.appendChild(element);
+        window.document.body.appendChild(element);
         await updatePosition(props.editor, element);
       }),
 

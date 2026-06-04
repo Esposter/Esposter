@@ -14,23 +14,32 @@ const scrollStore = useScrollStore();
 const { isScrolling, messageContainer, messageContainerElement } = storeToRefs(scrollStore);
 const bottomSentinel = useTemplateRef("bottomSentinel");
 const isPinnedToBottom = useElementVisibility(bottomSentinel, { scrollTarget: messageContainerElement });
-const previousScrollHeight = ref(0);
-const readMoreNewerMessages = async (onComplete: () => void) => {
-  await baseReadMoreNewerMessages(() => {
-    window.requestAnimationFrame(() => {
-      if (!hasMoreNewer.value || isScrolling.value || !messageContainerElement.value) return;
-      messageContainerElement.value.scrollTop -=
-        messageContainerElement.value.scrollHeight - previousScrollHeight.value;
-      previousScrollHeight.value = messageContainerElement.value.scrollHeight;
-    });
-    onComplete();
+const getFirstVisibleMessageElement = () => {
+  const element = messageContainerElement.value;
+  if (!element) return undefined;
+
+  const { bottom: containerBottom, top: containerTop } = element.getBoundingClientRect();
+  return [...element.querySelectorAll("[id]")].find((messageElement) => {
+    const { bottom, top } = messageElement.getBoundingClientRect();
+    return top < containerBottom && bottom > containerTop;
   });
 };
-
-watchOnce(messageContainerElement, (newMessageContainerElement) => {
-  if (!newMessageContainerElement) return;
-  previousScrollHeight.value = newMessageContainerElement.scrollHeight;
-});
+const readMoreNewerMessages = async (onComplete: () => void) => {
+  const firstVisibleMessageElement = getFirstVisibleMessageElement();
+  const top = firstVisibleMessageElement?.getBoundingClientRect().top;
+  await baseReadMoreNewerMessages(async () => {
+    await nextTick();
+    window.requestAnimationFrame(() => {
+      const element = messageContainerElement.value;
+      if (top !== undefined && firstVisibleMessageElement && element && !isScrolling.value) {
+        const currentFirstVisibleMessageElement = window.document.getElementById(firstVisibleMessageElement.id);
+        if (currentFirstVisibleMessageElement)
+          element.scrollTop += currentFirstVisibleMessageElement.getBoundingClientRect().top - top;
+      }
+      onComplete();
+    });
+  });
+};
 </script>
 
 <template>

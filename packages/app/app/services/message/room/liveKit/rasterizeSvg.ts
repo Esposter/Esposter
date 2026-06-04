@@ -26,7 +26,7 @@ export const rasterizeSvg = (svgUrl: string) =>
         URL.revokeObjectURL(svgObjectUrl);
       },
     );
-    const rasterizationCanvas = document.createElement("canvas");
+    const rasterizationCanvas = window.document.createElement("canvas");
     rasterizationCanvas.width = width;
     rasterizationCanvas.height = height;
     const rasterizationContext = rasterizationCanvas.getContext("2d");
