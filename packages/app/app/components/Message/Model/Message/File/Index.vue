@@ -51,8 +51,10 @@ const isActive = ref(false);
     >
       <v-hover #default="{ isHovering, props: hoverProps }">
         <MessageModelMessageFileOptionsMenu
+          :filename="file.filename"
           :is-hovering
           :hover-props
+          :url
           @delete="
             $trpc.message.deleteFile.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey, id: file.id })
           "

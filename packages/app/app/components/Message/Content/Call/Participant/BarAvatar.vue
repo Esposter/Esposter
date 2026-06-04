@@ -39,7 +39,7 @@ const avatarProps = computed(() => ({
           :key="title"
           :prepend-icon="icon"
           :title
-          @click="onClick"
+          @click="onClick?.($event)"
         />
       </v-list>
     </v-menu>
