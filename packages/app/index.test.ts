@@ -12,7 +12,7 @@ describe("@esposter/app", () => {
     expect.hasAssertions();
 
     if (isWindows)
-      expect(getFileSize(join(serverDir, "index.mjs"))).toMatchInlineSnapshot(`"index.mjs: 94.32 KB (96583 bytes)"`);
+      expect(getFileSize(join(serverDir, "index.mjs"))).toMatchInlineSnapshot(`"index.mjs: 94.31 KB (96577 bytes)"`);
     else expect(getFileSize(join(serverDir, "index.mjs"))).toMatchInlineSnapshot(`"index.mjs: 0.70 KB (721 bytes)"`);
   });
 
@@ -26,7 +26,7 @@ describe("@esposter/app", () => {
   test("client js bundle size", () => {
     expect.hasAssertions();
 
-    if (isWindows) expect(getDirectorySize(nuxtDir)).toMatchInlineSnapshot(`"_nuxt: 109427.55 KB (112053810 bytes)"`);
+    if (isWindows) expect(getDirectorySize(nuxtDir)).toMatchInlineSnapshot(`"_nuxt: 109506.37 KB (112134526 bytes)"`);
     else expect(getDirectorySize(nuxtDir)).toMatchInlineSnapshot(`"_nuxt: 109502.14 KB (112130192 bytes)"`);
   });
 });
