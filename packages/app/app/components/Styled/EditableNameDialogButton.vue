@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { VBtn, VCard, VTooltip } from "vuetify/components";
-
 import type { z } from "zod";
 
 import { formRules } from "@/services/vuetify/formRules";
