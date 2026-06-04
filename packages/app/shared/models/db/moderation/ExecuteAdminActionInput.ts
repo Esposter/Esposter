@@ -1,4 +1,5 @@
 import { AdminActionType, roomIdSchema, selectUserSchema } from "@esposter/db-schema";
+import { normalizeString } from "@esposter/shared";
 import { z } from "zod";
 
 const baseExecuteAdminActionInputSchema = z.object({
@@ -18,7 +19,10 @@ export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     ...baseExecuteAdminActionInputSchema.shape,
-    reason: z.string().optional(),
+    reason: z
+      .string()
+      .transform((v) => normalizeString(v) || undefined)
+      .pipe(z.string().optional()),
     type: z.literal(AdminActionType.Warn),
   }),
   z.object({

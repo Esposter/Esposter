@@ -1,6 +1,7 @@
 import type { PollOption } from "@/models/message/poll/PollOption";
 
 import { pollOptionSchema } from "@/models/message/poll/PollOption";
+import { normalizeString } from "@esposter/shared";
 import { z } from "zod";
 
 export interface PollMessageContent {
@@ -12,7 +13,7 @@ export interface PollMessageContent {
 export const pollMessageContentSchema = z
   .object({
     options: z.array(pollOptionSchema).min(1),
-    question: z.string().min(1),
+    question: z.string().transform(normalizeString).pipe(z.string().min(1)),
     votes: z.record(z.string().min(1), z.string().min(1)),
   })
   .superRefine((value, ctx) => {

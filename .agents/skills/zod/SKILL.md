@@ -5,6 +5,23 @@ description: Esposter Zod schema conventions — z namespace imports, no optiona
 
 # Zod Conventions
 
+## String Normalization — Always Use `.transform().pipe()`
+
+When normalizing a string field (trimming, lowercasing, etc.) before further validation, always use `.transform(fn).pipe(refinedSchema)`. Never use `.overwrite()` — `.transform().pipe()` is the consistent pattern across the codebase:
+
+```typescript
+// CORRECT
+z.string().transform(normalizeString).pipe(z.string().min(1).max(MAX));
+z.string()
+  .transform((v) => normalizeString(v).toLowerCase())
+  .pipe(z.string().min(1).max(MAX));
+
+// WRONG — .overwrite() is inconsistent with the rest of the codebase
+z.string().overwrite(normalizeString).min(1);
+```
+
+The shared helpers `createNormalizedStringSchema(maxLength)` and `createNameSchema(maxLength)` in `@esposter/db-schema` follow this pattern and should be used for standard name/text fields.
+
 ## Imports
 
 Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.

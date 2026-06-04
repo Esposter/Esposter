@@ -3,7 +3,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { formRules } from "@/services/vuetify/formRules";
 import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH } from "@esposter/db-schema";
-import { normalizeString } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
 interface WordFilterProps {
@@ -18,10 +17,7 @@ const newWord = ref("");
 const isDirty = computed(() => !deepEqual(words.value, initialWords.value));
 const isAtMaxWords = computed(() => words.value.length >= FILTER_WORDS_MAX_LENGTH);
 const createWord = () => {
-  if (isAtMaxWords.value) return;
-  const normalizedWord = normalizeString(newWord.value).toLowerCase();
-  if (!normalizedWord || words.value.includes(normalizedWord)) return;
-  words.value = [...words.value, normalizedWord];
+  words.value = [...words.value, newWord.value];
   newWord.value = "";
 };
 </script>

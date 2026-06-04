@@ -90,7 +90,24 @@ topicSchema.safeParse(editedTopic).data !== storedTopic;
 
 `normalizeString` remains valid in non-Vue, non-form contexts within the codebase (text-parsing utilities, CSV/XLSX deserialization, slash-command parsing, etc.) — places that don't go through a tRPC Zod boundary.
 
-**Schema placement requirement**: any schema used for `safeParse` in a Vue component must live in `packages/app/shared/` (or `@esposter/db-schema` / `@esposter/shared`). If the schema is currently defined inline in a server-side tRPC router, move it to the appropriate `shared/models/db/<domain>/` file before using it client-side.
+**Don't add client-side Zod validation guards in Vue components.** Trust the server schema — just pass raw values to the API and let tRPC's Zod boundary handle normalization and validation. No `safeParse` guards, no emptiness checks, no local normalization before mutating local state:
+
+```typescript
+// WRONG — second-guessing the server schema
+const createWord = () => {
+  const word = wordSchema.safeParse(newWord.value).data;
+  if (!word || list.value.includes(word)) return;
+  list.value = [...list.value, word];
+};
+
+// CORRECT — pass raw, let Zod on the server handle it
+const createWord = () => {
+  list.value = [...list.value, newWord.value];
+  newWord.value = "";
+};
+```
+
+The only acceptable client-side validation in Vue is Vuetify form field rules (for inline error messages) and simple disabled-button state driven by `safeParse().success` on a shared schema.
 
 ## Template Attribute Ordering
 
