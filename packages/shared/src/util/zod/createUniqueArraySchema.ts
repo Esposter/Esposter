@@ -13,6 +13,6 @@ export const createUniqueArraySchema: CreateUniqueArraySchema = <T>(
     .array()
     .refine(
       (array: T[]) =>
-        new Set<unknown>(key !== undefined ? array.map((item) => item[key as keyof T]) : array).size === array.length,
+        new Set<unknown>(key === undefined ? array : array.map((item) => item[key])).size === array.length,
       "Array items must be unique",
     );
