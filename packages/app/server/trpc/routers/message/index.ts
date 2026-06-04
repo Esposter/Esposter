@@ -374,11 +374,8 @@ export const baseMessageRouter = router({
       }
 
       if (messages.length > 0) {
-        // Remember that Azure Table Storage is insert-sorted by rowKey
-        // So the first message is the newest one but we want to yield from oldest to newest
-        const reversedMessages = messages.toReversed();
-        const newestMessage = takeOne(reversedMessages, reversedMessages.length - 1);
-        yield tracked(newestMessage.rowKey, reversedMessages);
+        const newestMessage = takeOne(messages, messages.length - 1);
+        yield tracked(newestMessage.rowKey, messages);
       }
     }
 

@@ -363,6 +363,11 @@ Always prefix browser-only globals with `window.` for clarity. This makes it exp
 
 ```typescript
 // WRONG
+document.getElementById(id);
+document.querySelector("label");
+document.createElement("a");
+document.body.appendChild(element);
+document.documentElement.animate(...);
 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 const pc = new RTCPeerConnection({ iceServers });
 const ctx = new AudioContext();
@@ -371,6 +376,11 @@ const frame = requestAnimationFrame(cb);
 cancelAnimationFrame(frame);
 
 // CORRECT
+window.document.getElementById(id);
+window.document.querySelector("label");
+window.document.createElement("a");
+window.document.body.appendChild(element);
+window.document.documentElement.animate(...);
 const stream = await window.navigator.mediaDevices.getUserMedia({ audio: true });
 const pc = new window.RTCPeerConnection({ iceServers });
 const ctx = new window.AudioContext();

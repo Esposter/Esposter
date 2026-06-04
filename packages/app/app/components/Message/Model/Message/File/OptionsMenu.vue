@@ -14,7 +14,7 @@ const menuItems = computed<Item[]>(() => [
   {
     icon: "mdi-download",
     onClick: () => {
-      const anchor = document.createElement("a");
+      const anchor = window.document.createElement("a");
       anchor.href = url;
       anchor.download = filename;
       anchor.click();
