@@ -45,6 +45,7 @@ import {
   INVITE_ID_LENGTH,
   InviteInMessageRelations,
   invitesInMessage,
+  refineRoomSchema,
   roomIdSchema,
   RoomPermission,
   roomRolesInMessage,
@@ -81,7 +82,7 @@ const readRoomsInputSchema = z
     ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [
       { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
     ]).shape,
-    filter: selectRoomInMessageSchema.pick({ name: true }).optional(),
+    filter: refineRoomSchema(selectRoomInMessageSchema.pick({ name: true })).optional(),
   })
   .prefault({});
 const onUpdateRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);

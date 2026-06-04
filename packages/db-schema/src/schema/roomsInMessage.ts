@@ -1,4 +1,4 @@
-import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
+import { createNameCheckSql } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
@@ -59,13 +59,4 @@ export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
   slowmodeMs: (schema) => schema.min(1),
   topic: (schema) => createNormalizedStringSchema(ROOM_TOPIC_MAX_LENGTH, schema),
-}).superRefine(({ name, type }, ctx) => {
-  if (type === RoomType.DirectMessage) {
-    if (name.trim().length !== 0)
-      ctx.addIssue({ code: "custom", message: "DirectMessage name must be empty", path: ["name"] });
-  } else {
-    const result = createNameSchema(ROOM_NAME_MAX_LENGTH).safeParse(name);
-    if (!result.success)
-      for (const issue of result.error.issues) ctx.addIssue({ ...issue, path: ["name", ...issue.path] });
-  }
 });
