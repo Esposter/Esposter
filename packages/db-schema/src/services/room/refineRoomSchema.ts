@@ -9,7 +9,7 @@ export const refineRoomSchema = <TSchema extends z.ZodType>(schema: TSchema, roo
     if (name === undefined) return;
 
     if ((type ?? roomType) === RoomType.DirectMessage) {
-      if (normalizeString(name).length !== 0)
+      if (normalizeString(name).length > 0)
         ctx.addIssue({ code: "custom", message: "DirectMessage name must be empty", path: ["name"] });
       return;
     }
