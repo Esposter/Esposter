@@ -57,6 +57,7 @@ export const roomsInMessage = pgTable(
 export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
+  name: (schema) => createNormalizedStringSchema(ROOM_NAME_MAX_LENGTH, schema),
   slowmodeMs: (schema) => schema.min(1),
   topic: (schema) => createNormalizedStringSchema(ROOM_TOPIC_MAX_LENGTH, schema),
 });
