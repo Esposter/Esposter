@@ -69,28 +69,30 @@ pnpm refresh:lockfile
 
 ## CI Runner Strategy
 
-Use Blacksmith runners only for long-running CI jobs. The CI workflow historically took around 20 minutes sequentially, but not every job needs paid runners.
+Use Blacksmith runners only where they materially speed up the shared CI bottleneck. In the main CI workflow, that means the common package build gate only. Every downstream job consumes that shared output, so accelerating `build-packages` gives the best pipeline-wide return.
+
+Keep all other jobs on free GitHub-hosted `ubuntu-latest` runners, even when they are not instant. This preserves the premium free-time allowance for the one job where Blacksmith matters most instead of spending it across routine downstream checks.
 
 Use Blacksmith for:
 
 - Package build gate.
-- App build.
 
 Use free `ubuntu-latest` for quick CI jobs:
 
+- App build.
 - Coverage/tests.
 - Documentation build.
 - Lint.
 - Format check.
 - Typecheck.
 
-Keep short workflows on free GitHub-hosted Ubuntu runners deliberately:
+Keep other workflows on free GitHub-hosted Ubuntu runners deliberately:
 
 - Release notes / GitHub release workflow.
 - Pulumi preview workflow.
 - Azure Functions deployment workflows.
 
-Those jobs are relatively quick, so moving them to Blacksmith adds cost without enough runtime savings.
+Those jobs do not benefit enough from Blacksmith to justify spending premium runner minutes.
 
 ---
 
