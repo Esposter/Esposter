@@ -15,8 +15,12 @@ export const vite: NuxtConfig["vite"] = {
     },
   },
   optimizeDeps: {
-    // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
-    exclude: ["@vue-pdf-viewer/viewer"],
+    exclude: [
+      // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
+      "@vue-pdf-viewer/viewer",
+      // Three's inspector loads extension assets relative to import.meta.url, which breaks from Vite's cache.
+      "three/examples/jsm/inspector/Inspector.js",
+    ],
     include: [...commonjsDeps, "debug", "pdfjs-dist"],
   },
   plugins: [fixAjv],
