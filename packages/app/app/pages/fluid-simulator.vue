@@ -36,8 +36,6 @@ let sky: SkyMesh;
 let box: Mesh<BoxGeometry, MeshStandardMaterial>;
 let pmremGenerator: PMREMGenerator;
 let renderTarget: RenderTarget | undefined;
-const toggleTop = `${APP_BAR_HEIGHT + 15}px`;
-const miniPanelTop = `${APP_BAR_HEIGHT + 60}px`;
 const getHeight = () => window.innerHeight - APP_BAR_HEIGHT;
 
 onMounted(async () => {
@@ -180,11 +178,11 @@ onUnmounted(() => {
 
 <style>
 #profiler-toggle {
-  top: v-bind(toggleTop) !important;
+  top: calc(var(--app-bar-height) + 15px) !important;
 }
 /* three.js profiler blocks the app menus since it is set to z-index 9999 */
 #profiler-mini-panel {
-  top: v-bind(miniPanelTop) !important;
+  top: calc(var(--app-bar-height) + 60px) !important;
   z-index: 0 !important;
 }
 </style>
