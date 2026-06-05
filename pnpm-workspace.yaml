@@ -242,6 +242,9 @@ catalogMode: strict
 
 cleanupUnusedCatalogs: true
 
+configDependencies:
+  "@pnpm/pacquet": ^0.11.0
+
 minimumReleaseAge: 0
 
 overrides:
