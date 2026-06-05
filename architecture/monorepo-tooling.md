@@ -24,7 +24,6 @@ pnpm -r --parallel --aggregate-output run lint
 pnpm -r --parallel --aggregate-output run typecheck
 pnpm -r --parallel --aggregate-output --if-present run coverage
 pnpm -r --filter "!@esposter/app" run build
-pnpm -r --filter "!@esposter/app" --parallel --aggregate-output run export:gen
 pnpm --filter @esposter/app run build
 ```
 
@@ -33,7 +32,6 @@ Guidelines:
 - Use `--parallel` for independent checks such as linting, typechecking, and tests.
 - Use `--aggregate-output` in CI-style commands so package logs remain readable.
 - Use filters instead of Lerna scopes/ignores.
-- Keep package export generation separate from package builds when a job only needs generated source entrypoints.
 - Keep `build:packages` separate from `build:app`; the app can depend on compiled package output.
 - Use `--if-present` only for scripts that are optional across packages.
 
@@ -111,21 +109,24 @@ Use Sticky Disks only after measurement shows cache restore or install time is s
 
 ## CI Job Shape
 
-CI should run independent checks as soon as their actual dependencies are available. Documentation only needs generated source entrypoints, while coverage, typecheck, and app build need compiled package output.
+CI should run independent checks as soon as their actual dependencies are available. Documentation, lint, coverage, typecheck, and app build need compiled package output.
 
 ```text
-build documentation
 format
-lint
 build-packages
+  ├─ build documentation
   ├─ coverage
+  ├─ lint
   ├─ typecheck
   └─ build app
 ```
 
-The documentation job needs generated package source entrypoints, not compiled package bundles. Run `pnpm export:gen:packages` in the docs job before `pnpm build:docs` instead of waiting for `build-packages`.
+The `build-packages` job uploads same-workflow artifacts for both compiled package output and generated package entrypoints:
 
-The `build-packages` job uploads a `package-builds` same-workflow artifact from `packages/*/dist`. Downstream jobs check out the repository for source code. Jobs that need compiled package output download `package-builds` into `packages`; jobs that only need source code do not download the build artifact.
+- `package-builds`: `packages/*/dist`
+- `package-entrypoints`: `packages/*/src/**/index.ts`
+
+Downstream jobs check out the repository for source code, then download both artifacts into `packages` when they need package output. The entrypoint artifact is required because `build:packages` runs `export:gen`, but generated barrel files are not committed. TypeDoc uses `packageOptions.entryPoints: ["src/index.ts"]`, so docs will fail without the generated root barrels even when `dist` is present. Some package generators can also create nested `src/**/index.ts` barrels, so preserve all generated source index files instead of only root `src/index.ts`.
 
 Coverage depends on `build-packages` because workspace package roots resolve through compiled `dist` entrypoints. Coverage does not depend on `build:app`; app bundle-size tests are tracked as `describe.todo` so normal coverage does not require `packages/app/.output`.
 
