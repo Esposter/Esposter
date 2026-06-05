@@ -75,10 +75,10 @@ Use Blacksmith for:
 
 - Package build gate.
 - App build.
-- Coverage/tests.
 
 Use free `ubuntu-latest` for quick CI jobs:
 
+- Coverage/tests.
 - Documentation build.
 - Lint.
 - Format check.
@@ -128,9 +128,40 @@ The `build-packages` job uploads same-workflow artifacts for both compiled packa
 
 Downstream jobs check out the repository for source code, then download both artifacts into `packages` when they need package output. The entrypoint artifact is required because `build:packages` runs `export:gen`, but generated barrel files are not committed. TypeDoc uses `packageOptions.entryPoints: ["src/index.ts"]`, so docs will fail without the generated root barrels even when `dist` is present. Some package generators can also create nested `src/**/index.ts` barrels, so preserve all generated source index files instead of only root `src/index.ts`.
 
-Coverage depends on `build-packages` because workspace package roots resolve through compiled `dist` entrypoints. Coverage does not depend on `build:app`; app bundle-size tests are tracked as `describe.todo` so normal coverage does not require `packages/app/.output`.
+Coverage depends on `build-packages` because workspace package roots resolve through compiled `dist` entrypoints. Coverage does not depend on `build:app`; do not add placeholder bundle-size tests that force normal coverage to require `packages/app/.output`.
 
 Use artifacts for same-workflow package handoff rather than cache entries keyed by commit SHA.
+
+---
+
+## CI Security
+
+Set `persist-credentials: false` on every `actions/checkout` step. Checkout should not leave the GitHub token in `.git/config`, especially in workflows that upload artifacts or run dependency scripts.
+
+Declare job permissions explicitly when a job needs the GitHub token:
+
+- Read-only CI jobs should use `permissions: read-all`.
+- Deployment jobs that authenticate with OIDC should include `id-token: write` and `contents: read`.
+- Release jobs that create GitHub releases should use `contents: write`.
+- PR-commenting infrastructure previews should keep only the permissions required for OIDC, repository reads, and PR comments.
+
+---
+
+## Local Verification
+
+Run local formatting checks from the repo root with:
+
+```bash
+pnpm format:check
+```
+
+Run local lint fixing from `packages/app` with:
+
+```bash
+pnpm lint:fix
+```
+
+Do not run Vitest on Windows unless explicitly requested. This repo has known Windows startup failures around Vite/Rolldown config loading and UnoCSS/happy-dom paths. Prefer writing focused tests and leaving execution to CI or a supported environment.
 
 ---
 
