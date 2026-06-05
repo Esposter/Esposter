@@ -1,16 +1,18 @@
-/* eslint-disable @typescript-eslint/no-duplicate-type-constituents */
-// oxlint-disable @typescript-eslint/no-unnecessary-type-arguments
 import { z } from "zod";
 
-export const createUniqueArraySchema = <TSchema extends z.ZodType>(
+type CreateUniqueArraySchema = (<TOutput extends object, TInput, TSchema extends z.ZodType<TOutput, TInput>>(
   schema: TSchema,
-  key?:
-    | (TSchema extends z.ZodType<infer TOutput, unknown, z.core.$ZodTypeInternals<infer TOutput, unknown>>
-        ? TOutput extends object
-          ? keyof TOutput & string
-          : never
-        : never)
-    | undefined,
+  key: UniqueArraySchemaKey<TSchema>,
+) => z.ZodArray<TSchema>) &
+  (<TSchema extends z.ZodType>(schema: TSchema) => z.ZodArray<TSchema>);
+
+type UniqueArraySchemaKey<TSchema extends z.ZodType> = TSchema extends z.ZodObject
+  ? keyof TSchema["shape"] & string
+  : keyof z.output<TSchema> & string;
+
+export const createUniqueArraySchema: CreateUniqueArraySchema = <TSchema extends z.ZodType>(
+  schema: TSchema,
+  key?: string,
 ): z.ZodArray<TSchema> =>
   schema
     .array()
