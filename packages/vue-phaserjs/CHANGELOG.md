@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
+
+### Bug Fixes
+
+* code review comments ([3c8eccf](https://github.com/Esposter/Esposter/commit/3c8eccfb0ba8403a9678e5aa04ef7a913ee1790d))
+
 # [2.26.0](https://github.com/Esposter/Esposter/compare/v2.25.0...v2.26.0) (2026-06-01)
 
 ### Bug Fixes
