@@ -29,7 +29,7 @@
     "lint:fix": "oxlint --disable-nested-config --fix && eslint --fix . && pnpm -r --parallel --aggregate-output run lint:fix",
     "lint:fix:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint:fix",
     "lint:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint",
-    "prepare": "git config core.hooksPath .githooks",
+    "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm format && pnpm typecheck:packages && lerna publish --yes",
