@@ -114,12 +114,6 @@ catalogs:
     '@lerna-lite/publish':
       specifier: ^5.3.0
       version: 5.3.0
-    '@lerna-lite/run':
-      specifier: ^5.3.0
-      version: 5.3.0
-    '@lerna-lite/watch':
-      specifier: ^5.3.0
-      version: 5.3.0
     '@livekit/track-processors':
       specifier: ^0.7.2
       version: 0.7.2
@@ -689,16 +683,10 @@ importers:
         version: link:packages/configuration
       '@lerna-lite/cli':
         specifier: 'catalog:'
-        version: 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)
+        version: 5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)
       '@lerna-lite/publish':
         specifier: 'catalog:'
-        version: 5.3.0(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0)
-      '@lerna-lite/run':
-        specifier: 'catalog:'
-        version: 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)
-      '@lerna-lite/watch':
-        specifier: 'catalog:'
-        version: 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@types/node@25.9.1)
+        version: 5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0)
       '@types/node':
         specifier: 'catalog:'
         version: 25.9.1
@@ -3735,24 +3723,12 @@ packages:
     resolution: {integrity: sha512-W2Z7ZAJrA4jfuvbDU59fNFVp3hHBAOnO1+LeX8Y2bHNNYNv5EAR9UuyIXikUqewIw7VDWaT6xh+85GjxLLKpcw==}
     engines: {node: ^22.17.0 || >=24.0.0}
 
-  '@lerna-lite/profiler@5.3.0':
-    resolution: {integrity: sha512-VUdx9z70OQE6GmNKWIXaPvp+qQLvlPJDzOfuhkibvJ8LsvtmOPO8e5T1Kp+jWrlMMYVn3fqNQ/S6Po+Klr/Myg==}
-    engines: {node: ^22.17.0 || >=24.0.0}
-
   '@lerna-lite/publish@5.3.0':
     resolution: {integrity: sha512-aLQEMprQJQSeGB8Wdt42zctwo79ybztps0VB/f1pjK2iaD7zBaF9ASacA6FuUt5OsyNujg2mbCZ7kgwAmtjUfg==}
     engines: {node: ^22.17.0 || >=24.0.0}
 
-  '@lerna-lite/run@5.3.0':
-    resolution: {integrity: sha512-PFNhci3dlO3kxomXbQ2UbuuHzX5DNEJ9Pu76+Kp/9b9vUcCEBz89uasw/+x23UQz9MP418UElJcwnAixP9H9EA==}
-    engines: {node: ^22.17.0 || >=24.0.0}
-
   '@lerna-lite/version@5.3.0':
     resolution: {integrity: sha512-ZZUE/ajuCFj1WLNY08wKFmiSD+RYeT0mPosHKYbXejzUGKIBcuOdTApxvRcBr/G2pAWqQowCtE1sOM7AUbvzsw==}
-    engines: {node: ^22.17.0 || >=24.0.0}
-
-  '@lerna-lite/watch@5.3.0':
-    resolution: {integrity: sha512-JtsCQY/5Xm63DSN2v569rvKkf6dSniPWEnXa8TUgvidTOIsjSRw6/Da9E0L3+wrl8pdTGLu+D0SY7KapGbPunQ==}
     engines: {node: ^22.17.0 || >=24.0.0}
 
   '@lezer/common@1.5.2':
@@ -16118,7 +16094,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@lerna-lite/cli@5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)':
+  '@lerna-lite/cli@5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)':
     dependencies:
       '@lerna-lite/core': 5.3.0(@types/node@25.9.1)
       '@lerna-lite/init': 5.3.0(@types/node@25.9.1)
@@ -16127,10 +16103,8 @@ snapshots:
       import-local: 3.2.0
       yargs: 18.0.0
     optionalDependencies:
-      '@lerna-lite/publish': 5.3.0(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0)
-      '@lerna-lite/run': 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)
-      '@lerna-lite/version': 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0)
-      '@lerna-lite/watch': 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@types/node@25.9.1)
+      '@lerna-lite/publish': 5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0)
+      '@lerna-lite/version': 5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)(conventional-commits-filter@5.0.0)
     transitivePeerDependencies:
       - '@types/node'
 
@@ -16166,19 +16140,12 @@ snapshots:
       fast-string-width: 3.0.2
       signal-exit: 4.1.0
 
-  '@lerna-lite/profiler@5.3.0(@types/node@25.9.1)':
+  '@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0)':
     dependencies:
+      '@lerna-lite/cli': 5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)
       '@lerna-lite/core': 5.3.0(@types/node@25.9.1)
       '@lerna-lite/npmlog': 5.3.0
-    transitivePeerDependencies:
-      - '@types/node'
-
-  '@lerna-lite/publish@5.3.0(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0)':
-    dependencies:
-      '@lerna-lite/cli': 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)
-      '@lerna-lite/core': 5.3.0(@types/node@25.9.1)
-      '@lerna-lite/npmlog': 5.3.0
-      '@lerna-lite/version': 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0)
+      '@lerna-lite/version': 5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)(conventional-commits-filter@5.0.0)
       '@npmcli/arborist': 9.7.0
       '@npmcli/package-json': 7.0.5
       ci-info: 4.4.0
@@ -16200,24 +16167,10 @@ snapshots:
       - conventional-commits-filter
       - supports-color
 
-  '@lerna-lite/run@5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)':
-    dependencies:
-      '@lerna-lite/cli': 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)
-      '@lerna-lite/core': 5.3.0(@types/node@25.9.1)
-      '@lerna-lite/npmlog': 5.3.0
-      '@lerna-lite/profiler': 5.3.0(@types/node@25.9.1)
-    transitivePeerDependencies:
-      - '@lerna-lite/exec'
-      - '@lerna-lite/list'
-      - '@lerna-lite/publish'
-      - '@lerna-lite/version'
-      - '@lerna-lite/watch'
-      - '@types/node'
-
-  '@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0)':
+  '@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)(conventional-commits-filter@5.0.0)':
     dependencies:
       '@conventional-changelog/git-client': 2.7.0(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.4.0)
-      '@lerna-lite/cli': 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)
+      '@lerna-lite/cli': 5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@types/node@25.9.1)
       '@lerna-lite/core': 5.3.0(@types/node@25.9.1)
       '@lerna-lite/npmlog': 5.3.0
       '@octokit/plugin-enterprise-rest': 6.0.1
@@ -16240,20 +16193,6 @@ snapshots:
       - '@lerna-lite/watch'
       - '@types/node'
       - conventional-commits-filter
-
-  '@lerna-lite/watch@5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@types/node@25.9.1)':
-    dependencies:
-      '@lerna-lite/cli': 5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0)(@lerna-lite/run@5.3.0)(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)(conventional-commits-filter@5.0.0))(@lerna-lite/watch@5.3.0)(@types/node@25.9.1)
-      '@lerna-lite/core': 5.3.0(@types/node@25.9.1)
-      chokidar: 5.0.0
-      zeptomatch: 2.1.0
-    transitivePeerDependencies:
-      - '@lerna-lite/exec'
-      - '@lerna-lite/list'
-      - '@lerna-lite/publish'
-      - '@lerna-lite/run'
-      - '@lerna-lite/version'
-      - '@types/node'
 
   '@lezer/common@1.5.2': {}
 

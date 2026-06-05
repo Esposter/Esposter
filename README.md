@@ -308,7 +308,7 @@ pnpm preview
 
 ### Architecture
 
-Esposter is a lerna + pnpm workspaces monorepo.
+Esposter is a pnpm workspaces monorepo. See [`architecture/monorepo-tooling.md`](./architecture/monorepo-tooling.md) for workspace script orchestration and publishing boundaries.
 Packages are used directly by the nuxt application via `workspace:*`.
 
 ### Workspace Graph
