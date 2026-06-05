@@ -187,6 +187,7 @@ describe(useMyComposable, () => {
 - **`test` descriptions** — enum value or type arg directly.
 - **Assertion** — always `expectTypeOf(...).toEqualTypeOf<ExpectedType>()`.
 - **`expect.hasAssertions()`** — in every test body.
+- **Prefer type-only fixtures** — when testing generic function signatures, instantiate the function type directly with `ReturnType<typeof fn<TypeArg>>()` or equivalent type expressions. Avoid creating runtime schema values or one-line helper functions just to feed `expectTypeOf`; this prevents unused-value, underscore, and value-liveness lint churn.
 
 ## Test Utility Files
 
