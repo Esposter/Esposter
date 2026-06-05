@@ -110,7 +110,9 @@ jobs:
   build-docs:
     name: Build Documentation
     needs: build-packages
-    permissions: read-all
+    permissions:
+      actions: read
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -172,7 +174,8 @@ jobs:
 
   format:
     name: Format
-    permissions: read-all
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout

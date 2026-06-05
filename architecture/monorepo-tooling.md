@@ -140,7 +140,7 @@ Set `persist-credentials: false` on every `actions/checkout` step. Checkout shou
 
 Declare job permissions explicitly when a job needs the GitHub token:
 
-- Read-only CI jobs should use `permissions: read-all`.
+- Read-only CI jobs should use the narrow scopes they need, such as `contents: read` for checkout and `actions: read` when downloading artifacts.
 - Deployment jobs that authenticate with OIDC should include `id-token: write` and `contents: read`.
 - Release jobs that create GitHub releases should use `contents: write`.
 - PR-commenting infrastructure previews should keep only the permissions required for OIDC, repository reads, and PR comments.
