@@ -5,13 +5,14 @@ import { prettify } from "@/util/text/prettify";
 
 interface ConfirmCloseDialogButtonProps<T> {
   editedItem: T;
+  isDirty: boolean;
   isSavable: boolean;
 }
 
-const { editedItem, isSavable } = defineProps<ConfirmCloseDialogButtonProps<T>>();
+const dialog = defineModel<boolean>({ required: true });
+const { editedItem, isDirty, isSavable } = defineProps<ConfirmCloseDialogButtonProps<T>>();
 const emit = defineEmits<{ save: []; "update:edit-form-dialog": [value: false] }>();
 const displayItemType = computed(() => prettify(editedItem.type));
-const dialog = ref(false);
 </script>
 
 <template>
@@ -24,7 +25,7 @@ const dialog = ref(false);
             :="props"
             @click="
               () => {
-                if (isSavable) dialog = true;
+                if (isDirty) dialog = true;
                 else emit('update:edit-form-dialog', false);
               }
             "
@@ -53,7 +54,7 @@ const dialog = ref(false);
           "
         />
         <StyledButton
-          :button-props="{ text: 'Save changes' }"
+          :button-props="{ disabled: !isSavable, text: 'Save changes' }"
           @click="
             () => {
               dialog = false;

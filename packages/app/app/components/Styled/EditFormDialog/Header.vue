@@ -9,6 +9,7 @@ interface HeaderProps<T> {
   editedItem: T;
   editForm: InstanceType<typeof VForm> | undefined;
   formId: string;
+  isDirty: boolean;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
@@ -18,8 +19,19 @@ interface HeaderProps<T> {
 }
 
 defineSlots<{ "prepend-actions": () => VNode }>();
-const { editedItem, editForm, formId, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
-  defineProps<HeaderProps<T>>();
+const confirmCloseDialog = defineModel<boolean>("confirmCloseDialog", { required: true });
+const {
+  editedItem,
+  editForm,
+  formId,
+  isDirty,
+  isEditFormValid,
+  isFullScreenDialog,
+  isSavable,
+  name,
+  originalItem,
+  schema,
+} = defineProps<HeaderProps<T>>();
 const itemType = computed(() => prettify(editedItem.type));
 const errorIcon = useTemplateRef("errorIcon");
 const isValid = computed(() => errorIcon.value?.isValid ?? true);
@@ -41,7 +53,9 @@ const emit = defineEmits<{
     <v-divider thickness="2" vertical inset mx-2 />
     <StyledToggleFullScreenDialogButton :is-full-screen-dialog @click="emit('update:fullscreen-dialog', $event)" />
     <StyledEditFormDialogConfirmCloseDialogButton
+      v-model="confirmCloseDialog"
       :edited-item
+      :is-dirty
       :is-savable
       @update:edit-form-dialog="emit('update:edit-form-dialog', $event)"
       @save="emit('save')"
