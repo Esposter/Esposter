@@ -34,6 +34,7 @@ Guidelines:
 - Use filters instead of Lerna scopes/ignores.
 - Keep `build:packages` separate from `build:app`; the app can depend on compiled package output.
 - Use `--if-present` only for scripts that are optional across packages.
+- Forward script arguments with one separator after `run <script>`, for example `run test -- --run -u`.
 
 ---
 
@@ -69,9 +70,9 @@ pnpm refresh:lockfile
 
 ## CI Runner Strategy
 
-Use Blacksmith runners only where they materially speed up the shared CI bottleneck. In the main CI workflow, that means the common package build gate only. Every downstream job consumes that shared output, so accelerating `build-packages` gives the best pipeline-wide return.
+Use Blacksmith only for the common package build gate. It is the shared CI bottleneck, and speeding up `build-packages` benefits every downstream job.
 
-Keep all other jobs on free GitHub-hosted `ubuntu-latest` runners, even when they are not instant. This preserves the premium free-time allowance for the one job where Blacksmith matters most instead of spending it across routine downstream checks.
+Use GitHub-hosted `ubuntu-latest` everywhere else to preserve the premium free-time allowance.
 
 Use Blacksmith for:
 
@@ -86,13 +87,11 @@ Use free `ubuntu-latest` for quick CI jobs:
 - Format check.
 - Typecheck.
 
-Keep other workflows on free GitHub-hosted Ubuntu runners deliberately:
+Keep other workflows on GitHub-hosted Ubuntu runners:
 
 - Release notes / GitHub release workflow.
 - Pulumi preview workflow.
 - Azure Functions deployment workflows.
-
-Those jobs do not benefit enough from Blacksmith to justify spending premium runner minutes.
 
 ---
 
@@ -130,7 +129,7 @@ The `build-packages` job uploads same-workflow artifacts for both compiled packa
 
 Downstream jobs check out the repository for source code, then download both artifacts into `packages` when they need package output. The entrypoint artifact is required because `build:packages` runs `export:gen`, but generated barrel files are not committed. TypeDoc uses `packageOptions.entryPoints: ["src/index.ts"]`, so docs will fail without the generated root barrels even when `dist` is present. Some package generators can also create nested `src/**/index.ts` barrels, so preserve all generated source index files instead of only root `src/index.ts`.
 
-Coverage depends on `build-packages` because workspace package roots resolve through compiled `dist` entrypoints. Coverage does not depend on `build:app`; do not add placeholder bundle-size tests that force normal coverage to require `packages/app/.output`.
+Coverage depends on `build-packages` because workspace package roots resolve through compiled `dist` entrypoints.
 
 Use artifacts for same-workflow package handoff rather than cache entries keyed by commit SHA.
 
