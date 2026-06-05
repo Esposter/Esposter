@@ -62,7 +62,9 @@ createUniqueArraySchema(embedFieldSchema, "name").max(25).optional();
 createUniqueArraySchema(createSortItemSchema(sortKeySchema), "key").min(0).default([]);
 ```
 
-TypeScript infers `T` from the schema argument, so `key` is automatically constrained to `keyof T & string` — passing a non-existent property name is a type error. The function uses interface call-signature overloads (per the TypeScript conventions): the first overload (`T extends Record<string, unknown>`) requires a key and gives autocomplete; the second overload accepts any schema without a key.
+TypeScript infers `T` from the schema argument, so `key` is automatically constrained to the schema's keys — passing a non-existent property name is a type error. For Zod 4, prefer deriving object-schema keys from `z.ZodObject["shape"]` instead of from `keyof z.output<TSchema>`; Zod's output type can expand into unresolved mapped internals in generic factories like `createSortItemSchema(sortKeySchema)`.
+
+When maintaining `createUniqueArraySchema`, keep the keyed and keyless call signatures as an intersection function type rather than an overload interface if `typescript/unified-signatures` pushes to merge them. Merging the keyed/keyless forms into one optional conditional parameter can break generic callers such as `createTableEditorSchema(schema, "id")` and `createUniqueArraySchema(createSortItemSchema(sortKeySchema), "key")`. The keyed signature still needs to support non-`ZodObject` object-output schemas, such as discriminated unions, by falling back to output keys.
 
 **Exception — duplicates are valid**: Use plain `.array()` when the array semantically allows duplicate items (e.g. `handleElementSchema` — positional DOM bounds on a node, `effectSchema` — same effect config at different values, `embedSchema` — ordered content blocks). Do not use `createUniqueArraySchema` for these; do not add an artificial `id` field just to force uniqueness.
 
