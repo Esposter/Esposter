@@ -38,7 +38,7 @@ All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `
 | `pnpm i`               | Refresh dependencies/lockfile after manifest changes; use this exact command.                   |
 | `pnpm depcruise:graph` | Generate `dependency-graph.svg` directly from dependency-cruiser DOT output via `graphviz-cli`. |
 
-Do not use `pnpm install --config.confirmModulesPurge=false`; it can create a local `.pnpm-store/`.
+Use plain `pnpm i` exactly. Follow `architecture/monorepo-tooling.md` for install safety rules.
 
 ## Key Rules
 

@@ -119,7 +119,7 @@ New workspace packages follow the pattern of existing packages (e.g. `packages/d
    ```
    On Linux/macOS: `ln -s ../configuration/.oxlintrc.json .oxlintrc.json`.
 7. **`src/index.ts`** — minimal barrel; `ctix` will regenerate it on `pnpm export:gen`.
-8. **Run `pnpm install`** from the repo root to link the new package into the workspace.
+8. **Run plain `pnpm i`** from the repo root to link the new package into the workspace. Follow `architecture/monorepo-tooling.md` for install safety rules.
 9. **Run `pnpm build`** in the new package to produce `dist/`.
 
 ### Rolldown externals
