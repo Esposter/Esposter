@@ -5,7 +5,6 @@ import type { RenderTarget } from "three/webgpu";
 import { APP_BAR_HEIGHT } from "#shared/services/app/constants";
 import { WATERS_NORMALS_TEXTURE_PATH } from "@/services/visual/constants";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { Inspector } from "three/examples/jsm/inspector/Inspector.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
 import { WaterMesh } from "three/examples/jsm/objects/WaterMesh.js";
 import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
@@ -44,12 +43,14 @@ const getHeight = () => window.innerHeight - APP_BAR_HEIGHT;
 onMounted(async () => {
   const container = layout.value?.layoutRef.container;
   if (!container) return;
+  const { Inspector } = await import("three/examples/jsm/inspector/Inspector.js");
   renderer = new WebGPURenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, getHeight());
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = parameters.exposure;
-  renderer.inspector = new Inspector();
+  const inspector = new Inspector();
+  renderer.inspector = inspector;
   container.appendChild(renderer.domElement);
 
   const scene = new Scene();
@@ -122,7 +123,7 @@ onMounted(async () => {
   controls.maxDistance = 200;
   controls.update();
 
-  const gui = (renderer.inspector as Inspector).createParameters("Settings");
+  const gui = inspector.createParameters("Settings");
   const folderSky = gui.addFolder("Sky");
   folderSky.add(parameters, "elevation", 0, 90, 0.1).onChange(updateSun);
   folderSky.add(parameters, "azimuth", -180, 180, 0.1).onChange(updateSun);
