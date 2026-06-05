@@ -22,15 +22,11 @@ jobs:
       - name: 🏗️ Build packages
         run: pnpm build:packages
 
-      - name: 📦 Pack package workspace
-        run: tar --exclude='packages/*/node_modules' --exclude='packages/app/.nuxt' --exclude='packages/app/.output' --exclude='packages/app/coverage' -czf package-workspace.tar.gz packages
-
-      - name: 📤 Upload package workspace
+      - name: 📤 Upload package builds
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: package-workspace
-          path: package-workspace.tar.gz
-          archive: false
+          name: package-builds
+          path: packages/*/dist
           if-no-files-found: error
 
   build:
@@ -47,27 +43,20 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm i
 
-      - name: 📥 Download package workspace
+      - name: 📥 Download package builds
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: package-workspace
-          path: .
-
-      - name: 📦 Unpack package workspace
-        run: tar -xzf package-workspace.tar.gz
+          name: package-builds
+          path: packages
 
       - name: 🏗️ Build app
         run: pnpm build:app
-
-      - name: 📦 Pack app build
-        run: tar -czf app-build.tar.gz packages/app/.output
 
       - name: 📤 Upload app build
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: app-build
-          path: app-build.tar.gz
-          archive: false
+          path: packages/app/.output
           if-no-files-found: error
 
   build-docs:
@@ -84,14 +73,11 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm i
 
-      - name: 📥 Download package workspace
+      - name: 📥 Download package builds
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: package-workspace
-          path: .
-
-      - name: 📦 Unpack package workspace
-        run: tar -xzf package-workspace.tar.gz
+          name: package-builds
+          path: packages
 
       - name: 🏗️ Build documentation
         run: pnpm build:docs
@@ -110,14 +96,11 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm i
 
-      - name: 📥 Download package workspace
+      - name: 📥 Download package builds
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: package-workspace
-          path: .
-
-      - name: 📦 Unpack package workspace
-        run: tar -xzf package-workspace.tar.gz
+          name: package-builds
+          path: packages
 
       - name: 🔍 Lint
         run: pnpm lint
@@ -153,14 +136,11 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm i
 
-      - name: 📥 Download package workspace
+      - name: 📥 Download package builds
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: package-workspace
-          path: .
-
-      - name: 📦 Unpack package workspace
-        run: tar -xzf package-workspace.tar.gz
+          name: package-builds
+          path: packages
 
       - name: ✅ Typecheck
         run: pnpm typecheck
@@ -179,23 +159,17 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm i
 
-      - name: 📥 Download package workspace
+      - name: 📥 Download package builds
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: package-workspace
-          path: .
-
-      - name: 📦 Unpack package workspace
-        run: tar -xzf package-workspace.tar.gz
+          name: package-builds
+          path: packages
 
       - name: 📥 Download app build
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: app-build
-          path: .
-
-      - name: 📦 Unpack app build
-        run: tar -xzf app-build.tar.gz
+          path: packages/app/.output
 
       - name: 🧪 Test
         run: pnpm coverage

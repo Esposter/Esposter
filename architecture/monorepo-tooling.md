@@ -121,9 +121,9 @@ build-packages
        └─ coverage
 ```
 
-The `build-packages` job uploads a `package-workspace.tar.gz` same-workflow artifact containing the package workspace after package builds. Downstream jobs check out the repository, download and extract that artifact at the repo root, then run app builds, documentation builds, typechecking, linting, or coverage with package source and compiled output in the expected `packages/<name>/...` layout.
+The `build-packages` job uploads a `package-builds` same-workflow artifact from `packages/*/dist`. Downstream jobs check out the repository for source code, then download `package-builds` into `packages` so compiled package output overlays the checked-out workspace without replacing source files.
 
-Coverage depends on the app build because package app tests assert files under `packages/app/.output`. The app build job uploads `app-build.tar.gz`, and coverage extracts it before running.
+Coverage depends on the app build because package app tests assert files under `packages/app/.output`. The app build job uploads `app-build` from `packages/app/.output`, and coverage downloads it into the same path before running.
 
 Use artifacts for same-workflow package handoff rather than cache entries keyed by commit SHA.
 
@@ -145,6 +145,31 @@ Use upstream project releases or tag refs as the source of truth. A typical veri
 git ls-remote --tags --sort='v:refname' https://github.com/actions/checkout.git 'v*'
 ```
 
-If the selected version is an annotated tag, `git ls-remote` prints both `refs/tags/<version>` and `refs/tags/<version>^{}`. Pin the dereferenced `^{}` commit SHA, not the tag object SHA.
+Use the same command shape for every action, replacing `actions/checkout` with the action repository:
 
-When artifact uploads use `archive: false`, use `actions/download-artifact` v8 or newer so direct/non-zipped artifacts are handled correctly.
+```bash
+git ls-remote --tags --sort='v:refname' https://github.com/<owner>/<repo>.git 'v*'
+```
+
+Audit process:
+
+1. Run the sorted `git ls-remote` command.
+2. Ignore broad aliases such as `v6`, beta/RC/pre-release tags, and old Node compatibility tags unless there is a deliberate compatibility reason.
+3. Pick the highest stable `vX.Y.Z` tag.
+4. If the selected version is an annotated tag, `git ls-remote` prints both `refs/tags/<version>` and `refs/tags/<version>^{}`. Pin the dereferenced `^{}` commit SHA, not the tag object SHA.
+5. Update the trailing version comment to match the selected tag.
+
+Current audited pins:
+
+| Action                        | Latest stable tag | Pinned SHA                                 |
+| ----------------------------- | ----------------- | ------------------------------------------ |
+| `actions/checkout`            | `v6.0.3`          | `df4cb1c069e1874edd31b4311f1884172cec0e10` |
+| `actions/download-artifact`   | `v8.0.1`          | `3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c` |
+| `actions/setup-node`          | `v6.4.0`          | `48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e` |
+| `actions/upload-artifact`     | `v7.0.1`          | `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` |
+| `azure/login`                 | `v3.0.0`          | `532459ea530d8321f2fb9bb10d1e0bcf23869a43` |
+| `pnpm/action-setup`           | `v6.0.8`          | `0e279bb959325dab635dd2c09392533439d90093` |
+| `pulumi/actions`              | `v7.0.0`          | `8e5e406f4007fca908480587cb9893c07090f58d` |
+| `softprops/action-gh-release` | `v3.0.0`          | `b4309332981a82ec1c5618f44dd2e27cc8bfbfda` |
+
+Use normal zipped artifacts unless there is a measured need for direct artifact uploads. If artifact uploads use `archive: false`, use `actions/download-artifact` v8 or newer so direct/non-zipped artifacts are handled correctly.
