@@ -24,6 +24,7 @@ pnpm -r --parallel --aggregate-output run lint
 pnpm -r --parallel --aggregate-output run typecheck
 pnpm -r --parallel --aggregate-output --if-present run coverage
 pnpm -r --filter "!@esposter/app" run build
+pnpm -r --filter "!@esposter/app" --parallel --aggregate-output run export:gen
 pnpm --filter @esposter/app run build
 ```
 
@@ -32,7 +33,8 @@ Guidelines:
 - Use `--parallel` for independent checks such as linting, typechecking, and tests.
 - Use `--aggregate-output` in CI-style commands so package logs remain readable.
 - Use filters instead of Lerna scopes/ignores.
-- Keep `build:packages` separate from `build:app`; the app can depend on package build output.
+- Keep package export generation separate from package builds when a job only needs generated source entrypoints.
+- Keep `build:packages` separate from `build:app`; the app can depend on compiled package output.
 - Use `--if-present` only for scripts that are optional across packages.
 
 ---
@@ -75,7 +77,7 @@ Use Blacksmith for:
 
 - Package build gate.
 - App build.
-- Coverage/tests that need the app build output.
+- Coverage/tests.
 
 Use free `ubuntu-latest` for quick CI jobs:
 
@@ -109,21 +111,23 @@ Use Sticky Disks only after measurement shows cache restore or install time is s
 
 ## CI Job Shape
 
-CI should build workspace packages first, then fan out into independent downstream jobs:
+CI should run independent checks as soon as their actual dependencies are available. Documentation only needs generated source entrypoints, while coverage, typecheck, and app build need compiled package output.
 
 ```text
+build documentation
+format
+lint
 build-packages
-  ├─ build documentation
-  ├─ lint
-  ├─ format
+  ├─ coverage
   ├─ typecheck
   └─ build app
-       └─ coverage
 ```
 
-The `build-packages` job uploads a `package-builds` same-workflow artifact from `packages/*/dist`. Downstream jobs check out the repository for source code, then download `package-builds` into `packages` so compiled package output overlays the checked-out workspace without replacing source files.
+The documentation job needs generated package source entrypoints, not compiled package bundles. Run `pnpm export:gen:packages` in the docs job before `pnpm build:docs` instead of waiting for `build-packages`.
 
-Coverage depends on the app build because package app tests assert files under `packages/app/.output`. The app build job uploads `app-build` from `packages/app/.output`, and coverage downloads it into the same path before running.
+The `build-packages` job uploads a `package-builds` same-workflow artifact from `packages/*/dist`. Downstream jobs check out the repository for source code. Jobs that need compiled package output download `package-builds` into `packages`; jobs that only need source code do not download the build artifact.
+
+Coverage depends on `build-packages` because workspace package roots resolve through compiled `dist` entrypoints. Coverage does not depend on `build:app`; app bundle-size tests are tracked as `describe.todo` so normal coverage does not require `packages/app/.output`.
 
 Use artifacts for same-workflow package handoff rather than cache entries keyed by commit SHA.
 
