@@ -16,6 +16,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const roomStore = useRoomStore();
   const session = authClient.useSession();
   const knockerStore = useKnockerStore();
+  const { resetKnockerState } = knockerStore;
   const mediaStore = useMediaStore();
   const { resetCallMedia } = mediaStore;
   const participantStore = useParticipantStore();
@@ -193,9 +194,9 @@ export const useCallStore = defineStore("message/room/call", () => {
       },
       async () => {
         callRoomId.value = "";
+        resetKnockerState();
         activeCallSessionId.value = "";
         isCallViewOpen.value = false;
-        knockerStore.resetKnockerState();
         resetCallMedia();
         await disconnect();
         clearJoinNotice();

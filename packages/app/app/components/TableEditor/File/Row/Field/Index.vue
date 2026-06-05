@@ -2,8 +2,8 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
+import { checkIsEditableColumnValue } from "@/services/tableEditor/file/column/checkIsEditableColumnValue";
 import { computeValue } from "@/services/tableEditor/file/column/computeValue";
-import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useCellStore } from "@/store/tableEditor/file/cell";
@@ -36,7 +36,7 @@ const isOutlier = computed(() => outlierCells.value.has(getItemId(item.id, colum
 </script>
 
 <template>
-  <div @dblclick.stop="isEditableColumnValue(column) && requestFocus(rowIndex, column.name)">
+  <div @dblclick.stop="checkIsEditableColumnValue(column) && requestFocus(rowIndex, column.name)">
     <TableEditorFileFindReplaceHighlight
       v-if="findValue"
       :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }"

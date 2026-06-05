@@ -14,16 +14,17 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, searchHistoriesInMessage, selectSearchHistoryInMessageSchema } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { ItemMetadataPropertyNames, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const readSearchHistoriesInputSchema = z.object({
   ...createCursorPaginationParamsSchema(selectSearchHistoryInMessageSchema.keyof(), [
-    { key: "createdAt", order: SortOrder.Desc },
+    { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
   ]).shape,
   roomId: selectSearchHistoryInMessageSchema.shape.roomId,
 });
+
 export const searchHistoryRouter = router({
   createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistoryInMessage>(
     async ({ ctx, input }) => {

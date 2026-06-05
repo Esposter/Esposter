@@ -5,8 +5,8 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
-import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
+import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useDialogStore } from "@/store/dungeons/dialog";
@@ -27,7 +27,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (monsterPartySceneStore.sceneMode !== SceneMode.Default || (await handleShowMessageInput(scene, justDownInput)))
       return;
-    else if (isPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
+    else if (checkIsPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
     else onPlayerDirectionInput(justDownInput);
   };
 
@@ -54,7 +54,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
 
     switch (previousSceneKey.value) {
       case SceneKey.Battle:
-        if (isMonsterFainted(value)) {
+        if (checkIsMonsterFainted(value)) {
           infoPanelStore.infoDialogMessage.text = "Selected monster is fainted.";
           return;
         } else if (battlePlayerStore.activeMonster.id === value.id) {
@@ -85,7 +85,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
   };
 
   const onCancel = (scene: SceneWithPlugins) => {
-    if (previousSceneKey.value === SceneKey.Battle && isMonsterFainted(battlePlayerStore.activeMonster)) {
+    if (previousSceneKey.value === SceneKey.Battle && checkIsMonsterFainted(battlePlayerStore.activeMonster)) {
       infoPanelStore.infoDialogMessage.text = "You need to select a monster to switch to.";
       return;
     }

@@ -6,8 +6,8 @@ import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
-import { isUpdateThemeModeSetting } from "@/services/dungeons/settings/isUpdateThemeModeSetting";
-import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { checkIsUpdateThemeModeSetting } from "@/services/dungeons/settings/checkIsUpdateThemeModeSetting";
+import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { useDungeonsStore } from "@/store/dungeons";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
@@ -69,10 +69,10 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     input: PlayerInput,
     delta: number,
   ) => {
-    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
+    if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
     // Handle special cases first with player direction input
     else if (isUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
-    else if (isUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
+    else if (checkIsUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
       await updateThemeModeSetting(justDownInput);
     // We ignore validation when moving up/down since we auto update grid x
     // And this is just updating the settings options being viewed, not the actual values

@@ -5,7 +5,7 @@ import type { Position } from "grid-engine";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { Direction } from "grid-engine";
 
-const isInteractableDirection = (
+const checkIsInteractableDirection = (
   interactableDirectionMap: InteractableDirectionMap,
   direction: Direction,
 ): direction is InteractableDirection =>
@@ -22,7 +22,7 @@ export const InteractiveObjectPositionComparator = (
     [Direction.UP]: true,
   },
 ): boolean => {
-  if (!isInteractableDirection(interactableDirectionMap, playerDirection)) return false;
+  if (!checkIsInteractableDirection(interactableDirectionMap, playerDirection)) return false;
   const newPlayerPosition = getPositionAfterDirectionMovement(playerPosition, playerDirection);
   return newPlayerPosition.x === objectPosition.x && newPlayerPosition.y === objectPosition.y;
 };

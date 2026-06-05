@@ -226,16 +226,17 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### VSCode Extensions
 
-| Name                       | Link                                                                           |
-| -------------------------- | ------------------------------------------------------------------------------ |
-| Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                  |
-| UnoCSS                     | https://marketplace.visualstudio.com/items?itemName=antfu.unocss               |
-| ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint     |
-| Oxfmt - Code formatter     | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode             |
-| GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens            |
-| Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell       |
-| Material Icon Theme        | https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme  |
-| Better Comments            | https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments |
+| Name                       | Link                                                                                    |
+| -------------------------- | --------------------------------------------------------------------------------------- |
+| Better Comments            | https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments          |
+| UnoCSS                     | https://marketplace.visualstudio.com/items?itemName=antfu.unocss                        |
+| ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint              |
+| GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens                     |
+| Azure Functions            | https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions |
+| Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell                |
+| Oxfmt - Code formatter     | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode                      |
+| Material Icon Theme        | https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme           |
+| Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                           |
 
 ## <a name="local-development">🏠 Local Development</a>
 

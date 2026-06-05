@@ -186,6 +186,33 @@ const readMetadata = (memberIds: User["id"][]) => {
 - Guard `memberIds.length === 0` to avoid unnecessary requests.
 - Every call inside `Promise.all` must be a **single batch request** — never spread N individual calls (no `...ids.map((id) => readX({ id }))`). If the endpoint only accepts one ID, make it accept an array first.
 
+## Pagination Params Schemas
+
+Two factory functions in `shared/models/pagination/`:
+
+- **`createCursorPaginationParamsSchema(sortKeySchema, defaultSortBy)`** — cursor-based pagination; `minimumSortBy` is hard-coded to `1` (needs a primary cursor key). `defaultSortBy` is typed `[SortItem<T>, ...SortItem<T>[]]` (non-empty tuple) — TypeScript enforces at least 1 item matches the `min(1)` runtime constraint. Spread `.shape` into a `z.object({...})` and chain `.prefault({})` on the outer object for optional-input procedures.
+
+- **`createOffsetPaginationParamsSchema(sortKeySchema, defaultSortBy?)`** — offset-based pagination; `minimumSortBy` is hard-coded to `0` (offset skips N rows without needing a stable sort key); `defaultSortBy` defaults to `[]`.
+
+Both use `.prefault(defaultSortBy)` (not `.default()`) on the `sortBy` field — `prefault` applies the default _before_ inner validation, so the default array is itself validated against `.min(minimumSortBy)`. The `defaultSortBy` must therefore satisfy the minimum constraint.
+
+```ts
+// CORRECT — cursor: non-empty defaultSortBy, .prefault({}) on outer object
+const readRoomsInputSchema = z
+  .object({
+    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [
+      { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
+    ]).shape,
+  })
+  .prefault({});
+
+// CORRECT — offset: minimumSortBy=0, empty default is fine
+const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).prefault({});
+
+// WRONG — passing [] as defaultSortBy to cursor schema (TS error: non-empty tuple required)
+createCursorPaginationParamsSchema(sortKeySchema, []);
+```
+
 ## Read Endpoints Must Accept Arrays (No N+1)
 
 Every `read*` procedure that may be called for multiple items **must** accept an array of IDs, not a single ID:
@@ -262,6 +289,28 @@ MessageEmojiMetadataEntityPropertyNames.type; // ✓ specific to that entity
 CompositeKeyPropertyNames.partitionKey; // ✓ always for partitionKey/rowKey
 ItemMetadataPropertyNames.deletedAt; // ✓ always for metadata fields
 ```
+
+## No Redundant Store Updates After Mutations That Emit to a Subscription
+
+When a mutation emits to an event emitter and the corresponding subscription fires for **all** connected clients (including the caller — i.e. no `getIsSameDevice` filter), the subscription's `onData` handler is the single source of truth for updating the store. Do **not** also call the `store*` action explicitly after the mutation returns.
+
+```ts
+// WRONG — onUpdateRoom subscription fires for caller too; store updated twice
+const updatedRoom = await $trpc.room.updateRoom.mutate(input);
+storeUpdateRoom(updatedRoom); // ❌ subscription onData already calls this
+
+// CORRECT — let the subscription handle it
+await $trpc.room.updateRoom.mutate(input);
+```
+
+The two patterns are:
+
+| Subscription filters caller?                  | After-mutation store call needed?           |
+| --------------------------------------------- | ------------------------------------------- |
+| No (`onUpdateRoom` style)                     | ❌ Remove — subscription handles it         |
+| Yes (`getIsSameDevice`, `onDeleteRoom` style) | ✅ Required — subscription skips the caller |
+
+When adding a new subscription: decide once which pattern it uses, then be consistent — never mix both.
 
 ## Subscription Race Condition — Register Listener Before First `await`
 

@@ -16,7 +16,7 @@ const errorMessage = computed(() => {
   const error = editForm?.errors[0];
   if (error) {
     const errorText = takeOne(error.errorMessages);
-    const element = document.querySelector(`label[for="${error.id}"]`);
+    const element = window.document.querySelector(`label[for="${error.id}"]`);
     return element ? `${element.textContent}: ${errorText}` : errorText;
   }
 

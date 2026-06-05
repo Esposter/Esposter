@@ -75,8 +75,6 @@ const getParticipantTileProps = (participant: CallParticipant): CallParticipantT
     </div>
     <MessageContentCallInviteCard />
     <MessageContentCallJoinNotice />
-    <div bottom-0 left-0 right-0 absolute>
-      <MessageContentCallControlBar />
-    </div>
+    <MessageContentCallControlBar />
   </div>
 </template>

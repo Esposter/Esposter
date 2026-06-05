@@ -3,5 +3,5 @@ import type { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecia
 
 import { PlayerSpecialInputs } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 
-export const isPlayerSpecialInput = (input: PlayerInput): input is PlayerSpecialInput =>
+export const checkIsPlayerSpecialInput = (input: PlayerInput): input is PlayerSpecialInput =>
   PlayerSpecialInputs.has(input as PlayerSpecialInput);

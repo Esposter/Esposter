@@ -1,54 +1,21 @@
 import type {
   LocalTrackPublication,
   LocalVideoTrack,
+  Participant,
   RemoteParticipant,
   RemoteTrack,
   RemoteTrackPublication,
 } from "livekit-client";
 
+import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { isRemoteAudioSource } from "@/services/message/room/liveKit/isRemoteAudioSource";
+import { checkIsRemoteAudioSource } from "@/services/message/room/liveKit/checkIsRemoteAudioSource";
+import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
-import { exhaustiveGuard, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
-import { Room, RoomEvent, Track } from "livekit-client";
-
-const rasterizedSvgCache = new Map<string, string>();
-
-const rasterizeSvg = (svgUrl: string) =>
-  getResultAsync(async () => {
-    const cachedRasterizedSvgUrl = rasterizedSvgCache.get(svgUrl);
-    if (cachedRasterizedSvgUrl) return cachedRasterizedSvgUrl;
-
-    const svgResponse = await fetch(svgUrl);
-    const svgBlob = await svgResponse.blob();
-    const svgImageBitmap = await createImageBitmap(svgBlob);
-    const rasterizationCanvas = document.createElement("canvas");
-    rasterizationCanvas.width = 1920;
-    rasterizationCanvas.height = 1080;
-    rasterizationCanvas.getContext("2d")?.drawImage(svgImageBitmap, 0, 0, 1920, 1080);
-    svgImageBitmap.close();
-
-    const rasterizedSvgBlobUrl = await new Promise<string>((resolve, reject) => {
-      rasterizationCanvas.toBlob((rasterizedSvgBlob) => {
-        if (!rasterizedSvgBlob) {
-          reject(new InvalidOperationError(Operation.Create, svgUrl, "Canvas toBlob returned null"));
-          return;
-        }
-        resolve(URL.createObjectURL(rasterizedSvgBlob));
-      }, "image/png");
-    });
-
-    rasterizedSvgCache.set(svgUrl, rasterizedSvgBlobUrl);
-    return rasterizedSvgBlobUrl;
-  }).match(
-    (rasterizedSvgBlobUrl) => rasterizedSvgBlobUrl,
-    (error) => {
-      console.error(error);
-      return null;
-    },
-  );
+import { ConnectionQuality, ConnectionState, Room, RoomEvent, Track } from "livekit-client";
 
 export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
@@ -59,6 +26,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
   const participantStore = useParticipantStore();
   const remoteAudioElements = new Map<string, HTMLMediaElement>();
+  const connectionQuality = ref(ConnectionQuality.Unknown);
+  const connectionState = ref(ConnectionState.Disconnected);
   const selectedAudioInputDeviceId = ref("");
   const selectedAudioOutputDeviceId = ref("");
   const selectedVideoInputDeviceId = ref("");
@@ -87,12 +56,19 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
         exhaustiveGuard(kind);
     }
   };
+  const setConnectionQuality = (quality: ConnectionQuality, participant: Participant) => {
+    if (participant.identity !== activeRoom?.localParticipant.identity) return;
+    connectionQuality.value = quality;
+  };
+  const setConnectionState = (state: ConnectionState) => {
+    connectionState.value = state;
+  };
   const attachRemoteAudio = (
     track: RemoteTrack,
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) => {
-    if (!isRemoteAudioSource(publication.source)) return;
+    if (!checkIsRemoteAudioSource(publication.source)) return;
     const element = track.attach();
     element.autoplay = true;
     element.muted = mediaStore.isDeafened;
@@ -104,7 +80,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     publication: RemoteTrackPublication,
     participant: RemoteParticipant,
   ) => {
-    if (!isRemoteAudioSource(publication.source)) return;
+    if (!checkIsRemoteAudioSource(publication.source)) return;
     for (const element of track.detach()) element.remove();
     remoteAudioElements.delete(`${participant.identity}:${publication.source}`);
   };
@@ -203,7 +179,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     mediaStore.isScreenSharing = isScreenSharing;
     if (!isScreenSharing) setLocalScreenShareStream(null);
   };
-  const setVirtualBackground = async (imagePath: string) => {
+  const setVirtualBackground = getConcurrentFunction(async (checkIsStale, imagePath: string) => {
     mediaStore.selectedVirtualBackground = imagePath;
     if (!localCameraTrack) return;
     else if (!supportsBackgroundProcessors()) {
@@ -214,18 +190,20 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     virtualBackgroundProcessor ??= BackgroundProcessor({ mode: "disabled" });
     if (!localCameraTrack.getProcessor()) {
       await localCameraTrack.setProcessor(virtualBackgroundProcessor);
+      if (checkIsStale()) return;
       if (virtualBackgroundProcessor.processedTrack)
         mediaStore.localVideoStream = new MediaStream([virtualBackgroundProcessor.processedTrack]);
     }
     if (!imagePath) {
+      if (checkIsStale()) return;
       await virtualBackgroundProcessor.switchTo({ mode: "disabled" });
       return;
     }
 
     const resolvedPath = imagePath.endsWith(".svg") ? await rasterizeSvg(imagePath) : imagePath;
-    if (!resolvedPath) return;
+    if (checkIsStale() || !resolvedPath) return;
     await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
-  };
+  });
   const switchDevice = async (kind: MediaDeviceKind, deviceId: string) => {
     if (!activeRoom) {
       setActiveDevice(kind, deviceId);
@@ -249,8 +227,11 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     await disconnect();
     activeRoom = room;
     disconnectHandler = newDisconnectHandler;
+    connectionState.value = room.state;
     room.on(RoomEvent.ActiveSpeakersChanged, setActiveSpeakers);
     room.on(RoomEvent.ActiveDeviceChanged, setActiveDevice);
+    room.on(RoomEvent.ConnectionQualityChanged, setConnectionQuality);
+    room.on(RoomEvent.ConnectionStateChanged, setConnectionState);
     room.on(RoomEvent.TrackSubscribed, attachRemoteAudio);
     room.on(RoomEvent.TrackSubscribed, attachRemoteCamera);
     room.on(RoomEvent.TrackSubscribed, attachRemoteScreenShare);
@@ -262,6 +243,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     room.on(RoomEvent.Disconnected, onDisconnected);
     room.on(RoomEvent.AudioPlaybackStatusChanged, onAudioPlaybackStatusChanged);
     await room.connect(livekitUrl, livekitToken);
+    connectionQuality.value = room.localParticipant.connectionQuality;
+    connectionState.value = room.state;
     await room.localParticipant.setMicrophoneEnabled(isMicrophoneEnabled);
     syncActiveDevices(room);
   };
@@ -273,10 +256,14 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     await room?.disconnect();
     localCameraTrack = undefined;
     virtualBackgroundProcessor = undefined;
+    connectionQuality.value = ConnectionQuality.Unknown;
+    connectionState.value = ConnectionState.Disconnected;
     cleanupRemoteAudio();
   };
   return {
     connect,
+    connectionQuality,
+    connectionState,
     disconnect,
     selectedAudioInputDeviceId,
     selectedAudioOutputDeviceId,

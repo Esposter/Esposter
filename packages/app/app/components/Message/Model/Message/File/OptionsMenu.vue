@@ -2,13 +2,25 @@
 import type { Item } from "@/models/shared/Item";
 
 interface FileOptionsMenuProps {
+  filename: string;
   hoverProps?: Record<string, unknown>;
   isHovering?: boolean | null;
+  url: string;
 }
 
-const { hoverProps, isHovering } = defineProps<FileOptionsMenuProps>();
+const { filename, hoverProps, isHovering, url } = defineProps<FileOptionsMenuProps>();
 const emit = defineEmits<{ delete: [] }>();
-const menuItems: Item[] = [
+const menuItems = computed<Item[]>(() => [
+  {
+    icon: "mdi-download",
+    onClick: () => {
+      const anchor = window.document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      anchor.click();
+    },
+    title: "Download",
+  },
   {
     color: "error",
     icon: "mdi-delete",
@@ -17,7 +29,7 @@ const menuItems: Item[] = [
     },
     title: "Delete",
   },
-];
+]);
 </script>
 
 <template>
@@ -29,7 +41,7 @@ const menuItems: Item[] = [
         :text="shortTitle ?? title"
       >
         <template #activator="{ props }">
-          <v-btn :color density="comfortable" :icon size="small" tile m-0 :="props" @click.stop="onClick" />
+          <v-btn :color density="comfortable" :icon size="small" tile m-0 :="props" @click.stop="onClick?.($event)" />
         </template>
       </v-tooltip>
     </v-card-actions>

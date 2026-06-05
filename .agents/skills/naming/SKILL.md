@@ -7,7 +7,8 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 
 ## Booleans
 
-- `is*` prefix for all boolean variables and boolean-returning functions: `isManageable`, `isExpired`, `isRoomAdmin`
+- `is*` prefix for **boolean variables and properties only**: `isMuted`, `isDeafened`, `isRoomOwner`. Never use `is*` for callable functions
+- `check*` prefix for **all boolean-returning functions**, whether top-level, exported, or passed as a callback parameter: `checkIsManageable`, `checkIsMonsterFainted`, `checkIsStale`. This makes callability unambiguous — `checkIsManageable(...)` is always a function call, `isManageable` is always a stored value
 - `has*` only when `is*` reads unnaturally — possession/membership checks: `hasPermission`, `hasMember`. Never `can*` or `should*`
 - `show*` is **banned** — rename to `is*Visible`: `showSettings` → `isSettingsVisible`, `showDialog` → `isDialogVisible`. Exception: 3rd-party API properties that can't be renamed
 - `isDirty` for tracking unsaved state — never `isChanged`

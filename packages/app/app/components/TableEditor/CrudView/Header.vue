@@ -9,6 +9,7 @@ const {
   editedItem,
   editForm,
   editFormDialog,
+  isDirty,
   isEditFormValid,
   isFullScreenDialog,
   isSavable,
@@ -40,6 +41,7 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
       :name="originalItem?.name ?? ''"
       :edited-item
       :original-item
+      :is-dirty
       :is-edit-form-valid
       :schema
       :is-full-screen-dialog

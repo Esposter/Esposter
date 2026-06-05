@@ -6,6 +6,7 @@
       <MessageContentCallAudioDeafenButton />
       <MessageContentCallScreenShareButton />
       <MessageContentCallControlHandButton />
+      <MessageContentCallControlHealthButton />
       <MessageContentCallControlLeaveButton />
     </StyledCard>
   </div>

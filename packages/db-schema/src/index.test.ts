@@ -1,4 +1,4 @@
-import { getCrossPlatformSize } from "@esposter/configuration";
+import { getFileSize } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -10,15 +10,14 @@ describe("@esposter/db-schema", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    if (isWindows) expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 64.59 KB (66142 bytes)"`);
-    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 64.59 KB (66142 bytes)"`);
+    if (isWindows) expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 65.22 KB (66786 bytes)"`);
+    else expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 65.22 KB (66786 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    if (isWindows)
-      expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3632.85 KB (3720037 bytes)"`);
-    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3634.14 KB (3721360 bytes)"`);
+    if (isWindows) expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3638.18 KB (3725493 bytes)"`);
+    else expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3638.18 KB (3725493 bytes)"`);
   });
 });

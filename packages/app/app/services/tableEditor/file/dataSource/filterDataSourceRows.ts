@@ -3,11 +3,11 @@ import type { ColumnFilter } from "@/models/tableEditor/file/column/ColumnFilter
 
 import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { isActiveColumnFilter } from "@/services/tableEditor/file/column/isActiveColumnFilter";
+import { checkIsActiveColumnFilter } from "@/services/tableEditor/file/column/checkIsActiveColumnFilter";
 import { takeOne } from "@esposter/shared";
 
 export const filterDataSourceRows = (rows: Row[], columnFilters: Record<string, ColumnFilter>): Row[] => {
-  const activeFilters = Object.entries(columnFilters).filter(([, filter]) => isActiveColumnFilter(filter));
+  const activeFilters = Object.entries(columnFilters).filter(([, filter]) => checkIsActiveColumnFilter(filter));
   if (activeFilters.length === 0) return rows;
   return rows.filter((row) =>
     activeFilters.every(([columnName, filter]) => {

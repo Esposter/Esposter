@@ -22,6 +22,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 ## Pinned packages (do not update)
 
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
+- **`vuetify`** — pinned to `4.0.8` (no `^`); cannot upgrade to 4.1.0 due to https://github.com/koumoul-dev/vuetify-jsonschema-form/issues/571.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 

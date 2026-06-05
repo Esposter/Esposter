@@ -5,7 +5,7 @@ export interface Item {
   active?: boolean;
   color?: string;
   icon: string;
-  onClick: (event: KeyboardEvent | MouseEvent) => Promisable<void>;
+  onClick?: (event: KeyboardEvent | MouseEvent) => Promisable<void>;
   shortTitle?: string;
   title: string;
 }

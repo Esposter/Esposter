@@ -1,8 +1,8 @@
-import { createNormalizedStringSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
+import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { boolean, check, index, pgEnum, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";

@@ -5,6 +5,7 @@ import type { ToData } from "@esposter/shared";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { graphEdgeSchema } from "#shared/models/flowchartEditor/data/GraphEdge";
 import { graphNodeSchema } from "#shared/models/flowchartEditor/data/GraphNode";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class FlowchartEditor extends AItemEntity {
@@ -19,6 +20,6 @@ export class FlowchartEditor extends AItemEntity {
 
 export const flowchartEditorSchema = z.object({
   ...aItemEntitySchema.shape,
-  edges: graphEdgeSchema.array(),
-  nodes: graphNodeSchema.array(),
+  edges: createUniqueArraySchema(graphEdgeSchema, "id"),
+  nodes: createUniqueArraySchema(graphNodeSchema, "id"),
 }) satisfies z.ZodType<ToData<FlowchartEditor>>;

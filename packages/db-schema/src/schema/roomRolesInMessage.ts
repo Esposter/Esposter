@@ -1,7 +1,8 @@
-import { createNameCheckSql, createNameSchema, createNormalizedStringSchema } from "@/models/shared/Name";
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
+import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";

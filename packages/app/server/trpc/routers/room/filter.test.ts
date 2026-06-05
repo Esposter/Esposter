@@ -18,7 +18,7 @@ describe("room/filter", () => {
   let roomId: string;
   const name = "name";
   const words = ["word"];
-  const updatedWords = ["word", "updatedWord"];
+  const updatedWords = ["word", "updatedword"];
 
   beforeAll(async () => {
     mockContext = await createMockContext();

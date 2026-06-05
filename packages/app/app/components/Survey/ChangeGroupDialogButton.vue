@@ -2,7 +2,7 @@
 import type { Survey } from "@esposter/db-schema";
 
 import { useSurveyStore } from "@/store/survey";
-import { normalizeString } from "@esposter/shared";
+import { selectSurveySchema } from "@esposter/db-schema";
 
 interface ChangeGroupDialogButtonProps {
   survey: Survey;
@@ -17,7 +17,10 @@ const group = ref(survey.group);
 <template>
   <StyledDialog
     :card-props="{ title: 'Change Group' }"
-    :confirm-button-props="{ text: 'Change', disabled: group === survey.group }"
+    :confirm-button-props="{
+      text: 'Change',
+      disabled: selectSurveySchema.shape.group.safeParse(group).data === survey.group,
+    }"
     @confirm="
       async (onComplete) => {
         await updateSurvey({ ...survey, group });
@@ -35,7 +38,7 @@ const group = ref(survey.group);
     <v-container fluid>
       <v-row>
         <v-col cols="12">
-          <SurveyGroupCombobox :model-value="group" @update:model-value="group = normalizeString($event)" />
+          <SurveyGroupCombobox v-model="group" />
         </v-col>
       </v-row>
     </v-container>

@@ -23,8 +23,8 @@ const isActive = computed(() => room.id === currentRoomId.value);
 const hasDraft = computed(() => draftRoomIds.value.has(room.id) && room.id !== currentRoomId.value);
 const isCreator = computed(() => room.userId === session.value?.user.id);
 const roleStore = useRoleStore();
-const { isManageable } = roleStore;
-const isVisible = computed(() => isCreator.value || isManageable(room.id));
+const { checkIsManageable } = roleStore;
+const isVisible = computed(() => isCreator.value || checkIsManageable(room.id));
 const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom } = userToRoomStore;
 const hasUnread = computed(() => {

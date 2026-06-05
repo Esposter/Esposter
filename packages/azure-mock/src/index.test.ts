@@ -1,4 +1,4 @@
-import { getCrossPlatformSize } from "@esposter/configuration";
+import { getFileSize } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -10,15 +10,14 @@ describe("azure-mock", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    if (isWindows) expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 36.55 KB (37429 bytes)"`);
-    else expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 36.55 KB (37429 bytes)"`);
+    if (isWindows) expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 36.55 KB (37429 bytes)"`);
+    else expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 36.55 KB (37429 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
 
-    if (isWindows)
-      expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 42.49 KB (43506 bytes)"`);
-    else expect(getCrossPlatformSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 43.85 KB (44899 bytes)"`);
+    if (isWindows) expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 43.85 KB (44899 bytes)"`);
+    else expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 43.85 KB (44899 bytes)"`);
   });
 });

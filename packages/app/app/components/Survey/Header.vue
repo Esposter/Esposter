@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Survey } from "@esposter/db-schema";
 
-import { SURVEY_NAME_MAX_LENGTH } from "@esposter/db-schema";
+import { selectSurveySchema, SURVEY_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();
 const survey = defineModel<Survey>({ required: true });
@@ -14,6 +14,7 @@ const survey = defineModel<Survey>({ required: true });
       :card-props="{ title: 'Edit Survey Name' }"
       :max-length="SURVEY_NAME_MAX_LENGTH"
       :name="survey.name"
+      :schema="selectSurveySchema.shape.name"
       :tooltip-props="{ location: 'bottom', text: 'Edit Survey Name' }"
       @submit="
         async (name) => {

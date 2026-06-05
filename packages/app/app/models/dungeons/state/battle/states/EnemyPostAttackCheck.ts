@@ -1,7 +1,7 @@
 import type { State } from "@/models/dungeons/state/State";
 
 import { StateName } from "@/models/dungeons/state/battle/StateName";
-import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
+import { checkIsMonsterFainted } from "@/services/dungeons/monster/checkIsMonsterFainted";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useActionStore } from "@/store/dungeons/battle/action";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
@@ -21,9 +21,9 @@ export const EnemyPostAttackCheck: State<StateName> = {
     const actionStore = useActionStore();
     const { attackStatePriorityMap } = storeToRefs(actionStore);
 
-    if (isMonsterFainted(activeMonster.value)) {
+    if (checkIsMonsterFainted(activeMonster.value)) {
       await useMonsterDeathTween(false);
-      if (player.value.monsters.some((m) => m.id !== activeMonster.value.id && !isMonsterFainted(m))) {
+      if (player.value.monsters.some((m) => m.id !== activeMonster.value.id && !checkIsMonsterFainted(m))) {
         await showMessages(scene, [
           `${prettify(activeMonster.value.key)} has fainted!`,
           "Select another monster to continue the battle.",
