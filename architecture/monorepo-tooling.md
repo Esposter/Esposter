@@ -68,49 +68,9 @@ pnpm refresh:lockfile
 
 ---
 
-## CI Runner Strategy
-
-Use Blacksmith only for the common package build gate. It is the shared CI bottleneck, and speeding up `build-packages` benefits every downstream job.
-
-Use GitHub-hosted `ubuntu-latest` everywhere else to preserve the premium free-time allowance.
-
-Use Blacksmith for:
-
-- Package build gate.
-
-Use free `ubuntu-latest` for quick CI jobs:
-
-- App build.
-- Coverage/tests.
-- Documentation build.
-- Lint.
-- Format check.
-- Typecheck.
-
-Keep other workflows on GitHub-hosted Ubuntu runners:
-
-- Release notes / GitHub release workflow.
-- Pulumi preview workflow.
-- Azure Functions deployment workflows.
-
----
-
-## CI Caching
-
-Prefer upstream GitHub actions for dependency caching:
-
-- `actions/setup-node` with `cache: pnpm`
-- `pnpm/action-setup`
-
-On Blacksmith runners, upstream cache actions use Blacksmith's colocated cache automatically. Do not migrate to archived `useblacksmith/*` cache actions.
-
-Use Sticky Disks only after measurement shows cache restore or install time is still a bottleneck. Sticky Disks are best suited for very large reusable disk state; they are not the default for this repo.
-
----
-
 ## CI Job Shape
 
-CI should run independent checks as soon as their actual dependencies are available. Documentation, lint, coverage, typecheck, and app build need compiled package output.
+CI runs independent checks as soon as their actual dependencies are available. Documentation, lint, coverage, typecheck, and app build need compiled package output.
 
 ```text
 format
@@ -122,29 +82,25 @@ build-packages
   └─ build app
 ```
 
-The `build-packages` job uploads same-workflow artifacts for both compiled package output and generated package entrypoints:
+`build-packages` uploads two same-workflow artifacts:
 
 - `package-builds`: `packages/*/dist`
 - `package-entrypoints`: `packages/*/src/**/index.ts`
 
-Downstream jobs check out the repository for source code, then download both artifacts into `packages` when they need package output. The entrypoint artifact is required because `build:packages` runs `export:gen`, but generated barrel files are not committed. TypeDoc uses `packageOptions.entryPoints: ["src/index.ts"]`, so docs will fail without the generated root barrels even when `dist` is present. Some package generators can also create nested `src/**/index.ts` barrels, so preserve all generated source index files instead of only root `src/index.ts`.
-
-Coverage depends on `build-packages` because workspace package roots resolve through compiled `dist` entrypoints.
-
-Use artifacts for same-workflow package handoff rather than cache entries keyed by commit SHA.
+Downstream jobs download both into `packages`. The entrypoint artifact is required because `build:packages` runs `export:gen` and generated barrel files are not committed — TypeDoc will fail without them even when `dist` is present. Preserve all generated source index files, not just root `src/index.ts`, since some generators create nested barrels.
 
 ---
 
 ## CI Security
 
-Set `persist-credentials: false` on every `actions/checkout` step. Checkout should not leave the GitHub token in `.git/config`, especially in workflows that upload artifacts or run dependency scripts.
+Set `persist-credentials: false` on every `actions/checkout` step.
 
-Declare job permissions explicitly when a job needs the GitHub token:
+Declare job permissions explicitly and narrowly:
 
-- Read-only CI jobs should use the narrow scopes they need, such as `contents: read` for checkout and `actions: read` when downloading artifacts.
-- Deployment jobs that authenticate with OIDC should include `id-token: write` and `contents: read`.
-- Release jobs that create GitHub releases should use `contents: write`.
-- PR-commenting infrastructure previews should keep only the permissions required for OIDC, repository reads, and PR comments.
+- Read-only jobs: `contents: read`, add `actions: read` when downloading artifacts.
+- OIDC deployment jobs: `id-token: write`, `contents: read`.
+- Release jobs: `contents: write`.
+- PR-commenting previews: minimum scopes for OIDC, repo reads, and PR comments.
 
 ---
 
@@ -168,33 +124,19 @@ Do not run Vitest on Windows unless explicitly requested. This repo has known Wi
 
 ## GitHub Action Versions
 
-Workflow actions are pinned to full commit SHAs with a trailing version comment, for example:
+Pin actions to full commit SHAs with a trailing version comment:
 
 ```yaml
 uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 ```
 
-Before adding or updating a GitHub Action pin, list upstream release tags, choose the latest stable version tag, and resolve that tag to its commit SHA. Do not rely on memory, old examples, search snippets, or the version comment already in the workflow.
-
-Use upstream project releases or tag refs as the source of truth. A typical verification command is:
-
-```bash
-git ls-remote --tags --sort='v:refname' https://github.com/actions/checkout.git 'v*'
-```
-
-Use the same command shape for every action, replacing `actions/checkout` with the action repository:
+To resolve the SHA for a pin, look up the latest stable `vX.Y.Z` tag via:
 
 ```bash
 git ls-remote --tags --sort='v:refname' https://github.com/<owner>/<repo>.git 'v*'
 ```
 
-Audit process:
-
-1. Run the sorted `git ls-remote` command.
-2. Ignore broad aliases such as `v6`, beta/RC/pre-release tags, and old Node compatibility tags unless there is a deliberate compatibility reason.
-3. Pick the highest stable `vX.Y.Z` tag.
-4. If the selected version is an annotated tag, `git ls-remote` prints both `refs/tags/<version>` and `refs/tags/<version>^{}`. Pin the dereferenced `^{}` commit SHA, not the tag object SHA.
-5. Update the trailing version comment to match the selected tag.
+Ignore broad aliases (`v6`) and pre-release tags. For annotated tags `git ls-remote` prints both `refs/tags/<version>` and `refs/tags/<version>^{}`— pin the `^{}` (dereferenced) SHA.
 
 Current audited pins:
 
