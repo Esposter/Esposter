@@ -69,7 +69,20 @@ pnpm refresh:lockfile
 
 ## CI Runner Strategy
 
-Use Blacksmith runners only for the main CI workflow because it is the long-running path. The CI workflow historically took around 20 minutes sequentially, so it benefits from Blacksmith runners and parallel jobs.
+Use Blacksmith runners only for long-running CI jobs. The CI workflow historically took around 20 minutes sequentially, but not every job needs paid runners.
+
+Use Blacksmith for:
+
+- Package build gate.
+- App build.
+- Coverage/tests that need the app build output.
+
+Use free `ubuntu-latest` for quick CI jobs:
+
+- Documentation build.
+- Lint.
+- Format check.
+- Typecheck.
 
 Keep short workflows on free GitHub-hosted Ubuntu runners deliberately:
 
@@ -100,13 +113,38 @@ CI should build workspace packages first, then fan out into independent downstre
 
 ```text
 build-packages
-  ├─ build app/docs
+  ├─ build documentation
   ├─ lint
   ├─ format
   ├─ typecheck
-  └─ coverage
+  └─ build app
+       └─ coverage
 ```
 
-The `build-packages` job uploads `packages/*/dist` as a same-workflow artifact. Downstream jobs that can depend on compiled workspace output download that artifact before running.
+The `build-packages` job uploads a `package-workspace.tar.gz` same-workflow artifact containing the package workspace after package builds. Downstream jobs check out the repository, download and extract that artifact at the repo root, then run app builds, documentation builds, typechecking, linting, or coverage with package source and compiled output in the expected `packages/<name>/...` layout.
 
-If compiled package output becomes necessary for downstream jobs, pass `packages/*/dist` through artifacts for same-workflow handoff rather than using cache entries keyed by commit SHA.
+Coverage depends on the app build because package app tests assert files under `packages/app/.output`. The app build job uploads `app-build.tar.gz`, and coverage extracts it before running.
+
+Use artifacts for same-workflow package handoff rather than cache entries keyed by commit SHA.
+
+---
+
+## GitHub Action Versions
+
+Workflow actions are pinned to full commit SHAs with a trailing version comment, for example:
+
+```yaml
+uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+```
+
+Before adding or updating a GitHub Action pin, list upstream release tags, choose the latest stable version tag, and resolve that tag to its commit SHA. Do not rely on memory, old examples, search snippets, or the version comment already in the workflow.
+
+Use upstream project releases or tag refs as the source of truth. A typical verification command is:
+
+```bash
+git ls-remote --tags --sort='v:refname' https://github.com/actions/checkout.git 'v*'
+```
+
+If the selected version is an annotated tag, `git ls-remote` prints both `refs/tags/<version>` and `refs/tags/<version>^{}`. Pin the dereferenced `^{}` commit SHA, not the tag object SHA.
+
+When artifact uploads use `archive: false`, use `actions/download-artifact` v8 or newer so direct/non-zipped artifacts are handled correctly.
