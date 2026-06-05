@@ -96,12 +96,17 @@ Use Sticky Disks only after measurement shows cache restore or install time is s
 
 ## CI Job Shape
 
-CI should favor parallel jobs after checkout/setup/install:
+CI should build workspace packages first, then fan out into independent downstream jobs:
 
-- `build`
-- `lint`
-- `format`
-- `typecheck`
-- `coverage`
+```text
+build-packages
+  ├─ build app/docs
+  ├─ lint
+  ├─ format
+  ├─ typecheck
+  └─ coverage
+```
+
+The `build-packages` job uploads `packages/*/dist` as a same-workflow artifact. Downstream jobs that can depend on compiled workspace output download that artifact before running.
 
 If compiled package output becomes necessary for downstream jobs, pass `packages/*/dist` through artifacts for same-workflow handoff rather than using cache entries keyed by commit SHA.
