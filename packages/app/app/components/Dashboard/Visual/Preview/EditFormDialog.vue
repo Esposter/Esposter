@@ -24,6 +24,7 @@ useConfirmBeforeNavigation(isDirty);
     v-model="editFormDialog"
     :name="`${editedItem.chart.type} ${editedItem.type} Visual`"
     :edited-item
+    :is-dirty
     :is-edit-form-valid
     :is-full-screen-dialog
     :is-savable
