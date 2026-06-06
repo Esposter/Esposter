@@ -83,7 +83,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^5.0.0
-  "@types/node": ^25.9.1
+  "@types/node": ^25.9.2
   "@types/pluralize": ^0.0.33
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
@@ -113,7 +113,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.13.0
+  apexcharts: ^5.14.0
   better-auth: ^1.6.14
   codemirror: ^6.0.2
   crossws: ^0.4.5
@@ -230,7 +230,7 @@ catalog:
   vue-tsc: ^3.3.3
   vue3-apexcharts: ^1.11.1
   vuetify: 4.0.8
-  vuetify-nuxt-module: ^1.0.0-beta.5
+  vuetify-nuxt-module: ^1.0.0-beta.6
   web-push: ^3.6.7
   worker-timers: ^8.0.31
   write-excel-file: ^4.0.7
