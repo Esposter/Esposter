@@ -4,20 +4,15 @@ import { describe, expect, test } from "vitest";
 
 const distFile = resolve(import.meta.dirname, "../dist/index.js");
 const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
-const isWindows = process.platform === "win32";
 
 describe("parse-tmx", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-
-    if (isWindows) expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 769.60 KB (788067 bytes)"`);
-    else expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 769.60 KB (788067 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 769.60 KB (788067 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
-
-    if (isWindows) expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 12.25 KB (12544 bytes)"`);
-    else expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 12.25 KB (12544 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 12.25 KB (12544 bytes)"`);
   });
 });

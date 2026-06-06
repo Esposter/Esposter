@@ -14,6 +14,7 @@ import { nitro } from "./configuration/nitro";
 import { ogImage } from "./configuration/ogImage";
 import { pwa } from "./configuration/pwa";
 import { runtimeConfig } from "./configuration/runtimeConfig";
+import { schemaOrg } from "./configuration/schemaOrg";
 import { security } from "./configuration/security";
 import { site } from "./configuration/site";
 import { typescript } from "./configuration/typescript";
@@ -34,6 +35,7 @@ export default defineNuxtConfig({
   ogImage,
   pwa,
   runtimeConfig,
+  schemaOrg,
   security,
   site,
   typescript,
