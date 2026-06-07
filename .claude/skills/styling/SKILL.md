@@ -35,7 +35,7 @@ Only use `class="..."` when technically required:
 
 Only colors registered in `uno.config.ts` generate utility classes. Do not assume Vuetify default theme colors are supported: for example, use `text-primary` instead of `text-success`, and `bg-surface` instead of `bg-surface-variant`.
 
-Theme colors are auto-registered from `vuetify.config.ts`. Palette colors must be added manually to the `paletteColors` constant in `uno.config.ts` and the snapshot updated. See the `unocss` skill for details.
+Theme colors are auto-registered from `vuetify.config.ts`. Palette colors are covered by Vuetify's color pack. See the `unocss` skill for details.
 
 When reading hyphenated theme colours from `useColorsStore()`, destructure quoted keys and alias them to local camel-case variables:
 

@@ -24,13 +24,20 @@ Adding a color to `vuetify.config.ts` is all that's needed — `uno.config.ts` p
 
 ## Why theme colors must still be safelisted
 
-Vuetify resolves a custom theme `color` prop by adding a CSS class to the element (e.g. `color="primary-darken-1"` → adds `text-primary-darken-1`). Since UnoCSS cannot detect these dynamic prop values at scan time, all theme color utilities are explicitly safelisted:
+Vuetify resolves a theme `color` prop via an inline style (`color: rgb(var(--v-theme-primary))`), not a CSS class. However, theme colors appear in dynamic `:class` bindings that UnoCSS's template scanner cannot detect at build time:
+
+```ts
+// UnoCSS can't see "bg-primary" or "bg-surface" here at scan time
+:class="isActive ? 'bg-primary' : 'bg-surface'"
+```
+
+The safelist forces UnoCSS to generate `.bg-{key}` / `.text-{key}` class selectors for all theme colors unconditionally:
 
 ```ts
 safelist: [...allColorKeys.flatMap((key) => [`bg-${key}`, `text-${key}`])];
 ```
 
-Material Design palette colors (e.g. `color="amber"`) are resolved by Vuetify's color pack CSS — they do not need UnoCSS safelisting.
+Material Design palette colors are resolved by Vuetify's color pack CSS — they do not need UnoCSS safelisting.
 
 ## CSS layer name mapping
 
