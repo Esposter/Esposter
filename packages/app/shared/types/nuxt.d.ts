@@ -6,6 +6,7 @@ import type { PwaModuleOptions } from "@vite-pwa/nuxt";
 import type { LogObject } from "consola";
 import type { H3Event } from "h3";
 import type { ModuleOptions as OgImageModuleOptions } from "nuxt-og-image";
+import type { ModuleOptions as SchemaOrgModuleOptions } from "nuxt-schema-org";
 import type { NuxtSecurityRouteRules, ModuleOptions as SecurityModuleOptions } from "nuxt-security";
 import type { ModuleOptions as SiteModuleOptions } from "nuxt-site-config";
 import type { NuxtIslandContext, NuxtIslandResponse, NuxtRenderHTMLContext } from "nuxt/app";
@@ -70,6 +71,7 @@ declare module "nuxt/schema" {
   interface NuxtConfig {
     ogImage?: Partial<OgImageModuleOptions>;
     pwa?: PwaModuleOptions;
+    schemaOrg?: Partial<SchemaOrgModuleOptions>;
     security?: Partial<SecurityModuleOptions>;
     site?: Partial<SiteModuleOptions>;
     sitemap?: Partial<SitemapModuleOptions>;

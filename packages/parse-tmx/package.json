@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "2.26.0",
+  "version": "2.27.0",
   "description": "A parser for tmx.",
   "keywords": [
     "parser",

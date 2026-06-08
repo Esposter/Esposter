@@ -165,7 +165,7 @@ external: [...externalVueFramework, "@azure/functions"],
 ## Dependency Installs
 
 - Use plain `pnpm i` from the repo root when package manifests change.
-- Do not use `pnpm install --config.confirmModulesPurge=false` or other store override workarounds; they can create a local `.pnpm-store/` in the repo.
+- Follow `architecture/monorepo-tooling.md` for install safety rules.
 - If `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.
 
 ## Workspace Graph

@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
+
+### Bug Fixes
+
+* cleanup normalize string and add tests ([b5085f6](https://github.com/Esposter/Esposter/commit/b5085f677b00a8a5f705637d43de8dae6c66e4d4))
+* deps wip ([3c6f204](https://github.com/Esposter/Esposter/commit/3c6f2048a3bc56abc7422e07eaca17dedd6f30e6))
+* lint ([854cb76](https://github.com/Esposter/Esposter/commit/854cb764be70d4258cd5c353331acc90472be4a9))
+* revert ([8360cdd](https://github.com/Esposter/Esposter/commit/8360cdd61d473b12b6775996a9b69e8de7e11744))
+* snapshot ([7ae781a](https://github.com/Esposter/Esposter/commit/7ae781a54fdb09bfe998ef544596609ac893c2ee))
+* snapshot ([6d495ad](https://github.com/Esposter/Esposter/commit/6d495adc80788297b2f1cb54caa136e653f4987f))
+* snapshot ([ab17d12](https://github.com/Esposter/Esposter/commit/ab17d1201b2bdee2d46711147b7f1fdb385fe1e8))
+* tests and lint ([59bcf59](https://github.com/Esposter/Esposter/commit/59bcf59310701d7a1b49934bec2217ce3d77fc42))
+* ts6 ([a0e8448](https://github.com/Esposter/Esposter/commit/a0e84485b2ff8c50b8511a86f71006bbeb71d382))
+* types ([2d1396e](https://github.com/Esposter/Esposter/commit/2d1396ebb45f9594590bbcf718a669ff33fb4dd1))
+* types ([d054777](https://github.com/Esposter/Esposter/commit/d0547770fff3cee5ab2708f9c2c7f8d192696128))
+* types ([5bbd321](https://github.com/Esposter/Esposter/commit/5bbd321bb17bc79cbde36d4a230f393a0d9ad830))
+* types ([97908b7](https://github.com/Esposter/Esposter/commit/97908b726fb61f68b009674ce0cb81c84c2adb5e))
+* types ([cb3ac38](https://github.com/Esposter/Esposter/commit/cb3ac38452ba5c7f0253c4eccfdf9266997e272c))
+* types and code review comments ([c01ab87](https://github.com/Esposter/Esposter/commit/c01ab8738a06ae40906b3726052f02e744989799))
+* types and migrations ([3cb6145](https://github.com/Esposter/Esposter/commit/3cb6145d43cfb1e046fdf0f589bce9ecad311c3d))
+* warnings and snapshot ([cd19cc1](https://github.com/Esposter/Esposter/commit/cd19cc10fa96ab6b792decbc67b60b23bd99cbb6))
+
+### Features
+
+* Add create unique array schema ([b3787f6](https://github.com/Esposter/Esposter/commit/b3787f68be7b0775fae39da02ca4aa57a60641f5))
+
 # [2.26.0](https://github.com/Esposter/Esposter/compare/v2.25.0...v2.26.0) (2026-06-01)
 
 ### Bug Fixes

@@ -23,6 +23,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
 - **`vuetify`** — pinned to `4.0.8` (no `^`); cannot upgrade to 4.1.0 due to https://github.com/koumoul-dev/vuetify-jsonschema-form/issues/571.
+- **`@vue/language-core`, `vue-tsc`** — pinned to `3.3.3` (no `^`); 3.3.4 is broken per https://github.com/vuejs/language-tools/issues/6096.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 

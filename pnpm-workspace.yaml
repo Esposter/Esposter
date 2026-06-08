@@ -21,7 +21,7 @@ catalog:
   "@azure/functions": ^4.15.0
   "@azure/identity": ^4.13.1
   "@azure/search-documents": ^13.0.0
-  "@azure/storage-blob": ^12.31.0
+  "@azure/storage-blob": ^12.32.0
   "@azure/storage-queue": ^12.29.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.0.4
@@ -43,13 +43,11 @@ catalog:
   "@fullcalendar/interaction": ^6.1.20
   "@fullcalendar/timegrid": ^6.1.20
   "@fullcalendar/vue3": ^6.1.20
-  "@happy-dom/global-registrator": ^20.10.1
+  "@happy-dom/global-registrator": ^20.10.2
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.2
   "@lerna-lite/cli": ^5.3.0
   "@lerna-lite/publish": ^5.3.0
-  "@lerna-lite/run": ^5.3.0
-  "@lerna-lite/watch": ^5.3.0
   "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
   "@ninoseki/eslint-plugin-neverthrow": ^0.2.0
@@ -63,15 +61,15 @@ catalog:
   "@pulumi/pulumi": ^3.244.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^1.7.0
-  "@tiptap/core": ^3.25.0
-  "@tiptap/extension-code-block-lowlight": ^3.25.0
-  "@tiptap/extension-file-handler": ^3.25.0
-  "@tiptap/extension-mention": ^3.25.0
-  "@tiptap/extensions": ^3.25.0
-  "@tiptap/pm": ^3.25.0
-  "@tiptap/starter-kit": ^3.25.0
-  "@tiptap/suggestion": ^3.25.0
-  "@tiptap/vue-3": ^3.25.0
+  "@tiptap/core": ^3.26.0
+  "@tiptap/extension-code-block-lowlight": ^3.26.0
+  "@tiptap/extension-file-handler": ^3.26.0
+  "@tiptap/extension-mention": ^3.26.0
+  "@tiptap/extensions": ^3.26.0
+  "@tiptap/pm": ^3.26.0
+  "@tiptap/starter-kit": ^3.26.0
+  "@tiptap/suggestion": ^3.26.0
+  "@tiptap/vue-3": ^3.26.0
   "@tresjs/cientos": ^5.7.2
   "@tresjs/core": ^5.8.1
   "@tresjs/nuxt": ^5.6.1
@@ -85,7 +83,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^5.0.0
-  "@types/node": ^25.9.1
+  "@types/node": ^25.9.2
   "@types/pluralize": ^0.0.33
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
@@ -93,7 +91,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260604.1
+  "@typescript/native-preview": ^7.0.0-dev.20260607.1
   "@unocss/eslint-config": ^66.7.0
   "@unocss/nuxt": ^66.7.0
   "@vite-pwa/nuxt": ^1.1.1
@@ -106,7 +104,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^4.2.0
-  "@vue/language-core": ^3.3.3
+  "@vue/language-core": 3.3.3
   "@vue/test-utils": ^2.4.11
   "@vuepic/vue-datepicker": ^14.0.0
   "@vueuse/core": ^14.3.0
@@ -115,7 +113,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.13.0
+  apexcharts: ^5.14.0
   better-auth: ^1.6.14
   codemirror: ^6.0.2
   crossws: ^0.4.5
@@ -160,7 +158,7 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.15.0
   h3: ^1.15.11
-  happy-dom: ^20.10.1
+  happy-dom: ^20.10.2
   howler: ^2.2.4
   idb: ^8.0.3
   is-mobile: ^5.0.0
@@ -192,8 +190,8 @@ catalog:
   pluralize: ^8.0.0
   postgres: ^3.4.9
   prosemirror-state: ^1.4.4
-  rate-limiter-flexible: ^11.1.0
-  read-excel-file: ^9.0.10
+  rate-limiter-flexible: ^11.1.1
+  read-excel-file: ^9.1.1
   rolldown: ^1.1.0
   rolldown-plugin-dts: ^0.25.2
   rxjs: ^7.8.2
@@ -229,13 +227,13 @@ catalog:
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
   vue-router: ^5.1.0
-  vue-tsc: ^3.3.3
+  vue-tsc: 3.3.3
   vue3-apexcharts: ^1.11.1
   vuetify: 4.0.8
-  vuetify-nuxt-module: ^1.0.0-beta.4
+  vuetify-nuxt-module: ^1.0.0-beta.6
   web-push: ^3.6.7
   worker-timers: ^8.0.31
-  write-excel-file: ^4.0.7
+  write-excel-file: ^4.1.1
   ws: ^8.21.0
   xmlbuilder2: ^4.0.3
   zod: ^4.4.3
@@ -243,6 +241,9 @@ catalog:
 catalogMode: strict
 
 cleanupUnusedCatalogs: true
+
+configDependencies:
+  "@pnpm/pacquet": ^0.11.1
 
 minimumReleaseAge: 0
 
