@@ -33,11 +33,12 @@ const knockerStore = useKnockerStore();
 const { knockingCallSessionId } = storeToRefs(knockerStore);
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => callSession.userId === session.value?.user.id);
+
 onMounted(async () => {
   if (!isCreator.value) return;
-  await getResultAsync(() => joinCall(id)).match(noop, async (error) => {
-    console.error(`Unable to join call: ${error.message}`);
-    await navigateTo(RoutePath.CallsIndex);
+  await getResultAsync(() => joinCall(id)).match(noop, (error) => {
+    const message = `Unable to join call: ${error.message}`;
+    showError(createError({ message, status: 500, statusText: message }));
   });
 });
 

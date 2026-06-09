@@ -33,14 +33,11 @@ These are set automatically:
 
 ## Where to use what
 
-**`useIsProduction()` / (add `useIsDevelopment`, `useIsTest` if needed)**  
-The preferred choice whenever inside Vue setup context (composables, components, server composables). Uses `useRuntimeConfig().public.appEnv` — the accurate runtime value of `APP_ENV`.
-
-**`IS_PRODUCTION` / `IS_TEST` / `IS_DEVELOPMENT` (from `constants.ts`)**  
-Fallback for module-level code that cannot use a composable: class property initialisers, plain utility functions, top-level constants. Uses `import.meta.env` which Vite bakes in at build time.
+**`IS_PRODUCTION` / `IS_TEST` / `IS_DEVELOPMENT` (from `#shared/util/environment/constants`)**  
+The single consistent choice everywhere — module-level code, class property initialisers, composables, server routes, plugins. `vite.mode` is set from `APP_ENV` in `configuration/vite.ts`, so these build-time constants always reflect the deployed environment.
 
 **`process.env.APP_ENV` directly**  
-Only in build-time config files (`configuration/`) or `server/` code where `useRuntimeConfig()` is not available and the raw string is needed.
+Only in build-time config files (`configuration/`) where `import.meta.env` is not yet available.
 
 ## What not to do
 
@@ -48,5 +45,5 @@ Do not read `process.env.*` in code that executes in the browser — values are 
 
 ## Rule of thumb
 
-- **`import.meta.env`** — for environment mode checks (`IS_PRODUCTION`, `IS_DEV`, etc.) in any code that may run client-side
+- **`import.meta.env`** — for environment mode checks (`IS_PRODUCTION`, `IS_DEVELOPMENT`, etc.) in any code that may run client-side
 - **`process.env`** — for secrets, URLs, and connection strings in code that only ever runs server-side: `server/`, `configuration/`, `packages/azure-functions/`, and `shared/` modules that are only imported from those contexts
