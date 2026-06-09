@@ -3,6 +3,7 @@ import type { TRPCLink } from "@trpc/client";
 
 import { TRPC_WS_PATH } from "#shared/services/trpc/constants";
 import { transformer } from "#shared/services/trpc/transformer";
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { TRPCOfflineClientError } from "@/models/trpc/TRPCOfflineClientError";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
@@ -20,13 +21,12 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (event.reason instanceof TRPCOfflineClientError) event.preventDefault();
     });
 
-  const isProduction = useIsProduction();
   const online = useOnline();
   const links: TRPCLink<TRPCRouter>[] = [
     // Log to your console in development and only log errors in production
     loggerLink({
       enabled: (opts) =>
-        (!isProduction && !getIsServer()) || (opts.direction === "down" && opts.result instanceof Error),
+        (!IS_PRODUCTION && !getIsServer()) || (opts.direction === "down" && opts.result instanceof Error),
     }),
     ...(getIsServer() ? [] : [createOfflineLink(online)]),
     errorLink,

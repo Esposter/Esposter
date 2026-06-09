@@ -20,6 +20,7 @@
     "build:docs": "typedoc",
     "build:packages": "pnpm -r --filter \"!@esposter/app\" run build",
     "coverage": "pnpm -r --parallel --aggregate-output --if-present run coverage",
+    "catalog:check": "node scripts/checkCatalogMismatches.ts",
     "crossOS": "node scripts/crossOS.ts",
     "depcruise:graph": "depcruise packages/*/src/index.ts --include-only \"^packages\" --collapse 2 --output-type dot | graphviz -Tsvg > dependency-graph.svg",
     "dev:docker": "docker compose -f docker-compose.dev.yaml up",

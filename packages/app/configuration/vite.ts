@@ -14,6 +14,7 @@ export const vite: NuxtConfig["vite"] = {
       transformMixedEsModules: true,
     },
   },
+  mode: process.env.APP_ENV,
   optimizeDeps: {
     exclude: [
       // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
