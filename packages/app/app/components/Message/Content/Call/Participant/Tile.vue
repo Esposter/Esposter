@@ -17,7 +17,7 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
 </script>
 
 <template>
-  <StyledCard flex flex-col items-center justify-center relative overflow-hidden>
+  <StyledCard flex flex-col items-center justify-center relative overflow-hidden :card-props="{ ripple: false }">
     <video
       v-if="videoStream"
       autoplay

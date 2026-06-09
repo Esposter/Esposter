@@ -41,6 +41,22 @@ Switch `CallView` to presenter layout: screenshare fills the main stage, partici
 
 Every standalone call visitor sees prejoin before entering the call. The creator gets a **Join now** action that directly calls `joinCall(id)`; non-creators get **Request to join** and enter the waiting room until admitted. Do not auto-join the creator on page mount, because prejoin is where users verify microphone/camera state.
 
+The outer container is `flex-col` on mobile and `lg:flex-row`, with two columns: a `flex-1` left column (camera preview above the media controls) and a `shrink-0` right column (the side card above an invisible spacer):
+
+```text
+┌──────────────────────────────────────┐ ┌────────────┐
+│                                      │ │ Ready to   │  ← StyledCard, flex-1: its column
+│          Camera preview              │ │ join?      │    mirrors the left one, so the card
+│          (flex-1, fills w + h)       │ │ hint line  │    fills the same height as the
+│                                      │ │ [ Join ]   │    preview (not preview + controls)
+├──────────────────────────────────────┤ ├────────────┤
+│            🎤  📷                     │ │ (invisible │  ← controls centered under the
+│        (centered under preview)      │ │  spacer)   │    preview; spacer matches their height
+└──────────────────────────────────────┘ └────────────┘
+```
+
+The camera preview is the hero: the `flex-1` left column fills all remaining width and stretches to full height, and the preview's own `flex-1` fills that height above the media controls. The controls sit in the left column, so `justify-center` centers them **under the preview**, never the full width. The right column mirrors that structure — the card is `flex-1` and beneath it sits a plain spacer whose height is the media controls' measured height (`useElementSize` on the real controls via a template ref) — so the card lines up with the preview's height exactly, not the preview + controls. The column is `shrink-0`, so the card keeps its intrinsic content width. Use no manual widths/heights. Do not duplicate microphone/camera state as text rows in the card; the toggle buttons already convey it through icon and error colour.
+
 ```mermaid
 flowchart TD
     Start["/calls/[id] opens"] --> Read["Read call session"]

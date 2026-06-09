@@ -6,9 +6,9 @@ const { cancelKnock } = knockerStore;
 </script>
 
 <template>
-  <div bg-background p-6 flex size-full items-center justify-center>
+  <div p-6 bg-background flex size-full items-center justify-center>
     <StyledCard p-8 flex flex-col gap-y-6 max-w-md w-full items-center>
-      <div bg-primary rd-full size-16 flex items-center justify-center>
+      <div rd-full bg-primary flex size-16 items-center justify-center>
         <v-progress-circular color="white" indeterminate size="36" />
       </div>
       <div text-center flex flex-col gap-y-2 items-center>

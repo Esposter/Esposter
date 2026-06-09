@@ -8,7 +8,7 @@ const { isCameraEnabled, stream } = defineProps<CameraPreviewProps>();
 </script>
 
 <template>
-  <StyledCard relative overflow-hidden flex min-h-0>
+  <StyledCard flex min-h-0 relative overflow-hidden>
     <video
       v-show="isCameraEnabled && stream"
       autoplay
@@ -20,7 +20,7 @@ const { isCameraEnabled, stream } = defineProps<CameraPreviewProps>();
     />
     <div v-if="!isCameraEnabled || !stream" flex flex-col gap-y-3 size-full items-center justify-center>
       <v-icon icon="mdi-camera-off" size="x-large" color="medium-emphasis" />
-      <span text-body-medium op-medium-emphasis>Camera is off</span>
+      <span op-medium-emphasis text-body-medium>Camera is off</span>
     </div>
   </StyledCard>
 </template>

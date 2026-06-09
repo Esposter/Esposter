@@ -61,8 +61,8 @@ const getParticipantTileProps = (participant: CallParticipant): CallParticipantT
 
 <template>
   <div bg-background flex flex-col size-full relative overflow-hidden>
-    <div p-5 flex-1 min-h-0 flex flex-col gap-y-4>
-      <main flex flex-col flex-1 min-w-0 min-h-0>
+    <div p-5 flex flex-1 flex-col gap-y-4 min-h-0>
+      <main flex flex-1 flex-col min-h-0 min-w-0>
         <StyledCard flex flex-1 min-h-0 overflow-hidden>
           <MessageContentCallScreenShareStage
             v-if="hasScreenShare && activeScreenShareStream"
@@ -78,7 +78,14 @@ const getParticipantTileProps = (participant: CallParticipant): CallParticipantT
             />
           </div>
         </StyledCard>
-        <div v-if="hasScreenShare" pt-3 shrink-0 gap-3 grid :class="screenShareParticipantGridClass">
+        <div
+          v-if="hasScreenShare && activeScreenShareStream"
+          pt-3
+          shrink-0
+          gap-3
+          grid
+          :class="screenShareParticipantGridClass"
+        >
           <MessageContentCallParticipantTile
             v-for="participant of callParticipantMap.values()"
             :key="participant.id"
