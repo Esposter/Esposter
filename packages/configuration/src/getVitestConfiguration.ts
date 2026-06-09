@@ -4,4 +4,5 @@ export const getVitestConfiguration = (): ViteUserConfig => ({
   resolve: {
     tsconfigPaths: true,
   },
+  test: { hookTimeout: 60_000 },
 });
