@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ComponentPublicInstance } from "vue";
+
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -19,7 +21,7 @@ const joinHint = computed(() =>
   isCreator ? "Start the call when you're ready." : "You'll wait in the ready room until someone admits you.",
 );
 const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggleMicrophone } = useCallPreJoinMedia();
-const mediaControls = useTemplateRef("mediaControls");
+const mediaControls = useTemplateRef<ComponentPublicInstance>("mediaControls");
 const { height: mediaControlsHeight } = useElementSize(mediaControls);
 </script>
 

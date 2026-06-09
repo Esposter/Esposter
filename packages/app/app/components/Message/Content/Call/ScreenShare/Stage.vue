@@ -16,14 +16,14 @@ const updateAspectRatio = () => {
 </script>
 
 <template>
-  <div flex flex-1 min-w-0 min-h-0 items-center justify-center>
+  <div flex flex-1 min-h-0 min-w-0 items-center justify-center>
     <div
       ref="stage"
       class="group"
       :style="{ aspectRatio: videoAspectRatio }"
       rd-lg
-      max-w-full
       max-h-full
+      max-w-full
       cursor-pointer
       relative
       overflow-hidden
@@ -40,11 +40,11 @@ const updateAspectRatio = () => {
       />
       <div
         rd-lg
+        op-0
         pointer-events-none
+        transition-opacity
         inset-0
         absolute
-        op-0
-        transition-opacity
         group-hover:op-100
         shadow="[inset_0_0_0_2px_rgb(var(--v-theme-primary))]"
       />

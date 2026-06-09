@@ -59,7 +59,7 @@ const getParticipantTileProps = (participant: CallParticipant): CallParticipantT
   <div bg-background flex flex-col size-full relative overflow-hidden>
     <main p-5 flex flex-1 gap-x-3 min-h-0 min-w-0 :class="isScreenSharePresenting ? 'flex-row' : 'flex-col'">
       <MessageContentCallScreenShareStage
-        v-if="isScreenSharePresenting"
+        v-if="hasScreenShare && activeScreenShareStream"
         :presenter-name
         :stream="activeScreenShareStream"
       />
@@ -75,9 +75,9 @@ const getParticipantTileProps = (participant: CallParticipant): CallParticipantT
         <MessageContentCallParticipantTile
           v-for="participant of callParticipantMap.values()"
           :key="participant.id"
+          shrink-0
           h-32
           aspect-video
-          shrink-0
           :="getParticipantTileProps(participant)"
           @click="pinnedParticipantId = participant.id"
         />

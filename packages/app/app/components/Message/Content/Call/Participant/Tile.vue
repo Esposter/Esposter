@@ -18,12 +18,12 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
 
 <template>
   <StyledCard
+    rd-lg
     flex
     flex-col
     items-center
     justify-center
     relative
-    rd-lg
     :card-props="{ ripple: false }"
     :class="
       isSpeaking
@@ -35,10 +35,10 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
       v-if="videoStream"
       autoplay
       playsinline
+      rd-lg
       size-full
       absolute
       object-cover
-      rd-lg
       :srcObject.prop="videoStream"
       :muted="isSelf"
     />
