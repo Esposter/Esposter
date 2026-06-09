@@ -10,6 +10,10 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - Use `flex` not `d-flex`.
 - Use `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
 - Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index utilities unless the layout genuinely needs them. Do not add z-index defensively; rely on DOM order and positioning first.
+- Prefer the app's theme primitives over bespoke styling. Use `StyledCard` for standard card/panel surfaces and theme colours such as `bg-background`, `bg-surface`, `bg-surface-opacity-80`, `b-border`, `text-primary`, `text-error`, and semantic opacity utilities before adding custom colours.
+- Avoid arbitrary hex colours, RGB/RGBA values, custom shadows, and one-off background/border colours in application UI. If an extra semantic colour is genuinely needed, prefer Vuetify theme colours or the standard Material palette with lighten/darken variants (for example `text-green-darken-2`, `bg-yellow-lighten-5`, `text-red`) instead of raw values.
+- Avoid custom `min-width`, `max-width`, fixed width, and fixed height utilities when flex, grid, wrapping, and intrinsic content sizing can solve the layout. Reach first for `flex-1`, `min-w-0`, `shrink-0`, responsive direction changes (`flex-col lg:flex-row`), and breakpoint grid columns (`grid-cols-1 md:grid-cols-2`) rather than arbitrary dimensions.
+- Treat arbitrary dimensions as a last resort for true format constraints (for example `aspect-video`, viewport-safe containers, canvas/game surfaces, or third-party embeds). When a custom dimension seems necessary, first check whether the component hierarchy or flex/grid structure is wrong.
 
 ## What stays in `class="..."`
 

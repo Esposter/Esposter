@@ -4,7 +4,7 @@ import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntit
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { DatabaseEntityType, selectCallSessionInMessageSchema } from "@esposter/db-schema";
-import { getResultAsync, noop, RoutePath } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 defineRouteRules({ ssr: false });
 definePageMeta({
@@ -28,19 +28,10 @@ if (!callSession)
 
 const callStore = useCallStore();
 const { activeCallSessionId } = storeToRefs(callStore);
-const { joinCall } = callStore;
 const knockerStore = useKnockerStore();
 const { knockingCallSessionId } = storeToRefs(knockerStore);
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => callSession.userId === session.value?.user.id);
-
-onMounted(async () => {
-  if (!isCreator.value) return;
-  await getResultAsync(() => joinCall(id)).match(noop, (error) => {
-    const message = `Unable to join call: ${error.message}`;
-    showError(createError({ message, status: 500, statusText: message }));
-  });
-});
 
 watch(activeCallSessionId, async (newActiveCallSessionId) => {
   if (!newActiveCallSessionId) await navigateTo(RoutePath.CallsIndex);
@@ -55,7 +46,7 @@ watch(activeCallSessionId, async (newActiveCallSessionId) => {
     <div size-full>
       <MessageContentCallView v-if="activeCallSessionId" />
       <MessageContentCallWaiting v-else-if="knockingCallSessionId" />
-      <MessageContentCallPreJoin v-else :call-id="id" />
+      <MessageContentCallPreJoin v-else :call-id="id" :is-creator />
     </div>
   </NuxtLayout>
 </template>
