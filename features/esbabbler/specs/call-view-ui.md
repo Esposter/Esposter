@@ -11,8 +11,8 @@ Full-screen call experience for `/calls/[id]`, with `/calls` as the standalone c
 ```text
 ┌─────────────────────────────────────────────────────────┐  bg-background, full available view
 │                                                         │
-│  ┌───────────────────────────────────────────────────┐  │  ← StyledCard stage
-│  │  ┌──────────────┐  ┌──────────────┐ ┌──────────┐ │  │     responsive tile grid
+│  ┌───────────────────────────────────────────────────┐  │  ← responsive tile grid fills
+│  │  ┌──────────────┐  ┌──────────────┐ ┌──────────┐ │  │     <main> directly (no outer card)
 │  │  │              │  │              │ │          │ │  │
 │  │  │    Avatar    │  │    Video     │ │  Avatar  │ │  │
 │  │              │  │              │  │              │  │
@@ -25,7 +25,7 @@ Full-screen call experience for `/calls/[id]`, with `/calls` as the standalone c
 └─────────────────────────────────────────────────────────┘
 ```
 
-Grid tile: theme-backed `StyledCard`. Camera stream renders when available; otherwise the avatar is centered. Name + badges sit bottom-left.
+Grid tile: theme-backed `StyledCard`. Camera stream renders when available; otherwise the avatar is centered. Name + badges sit bottom-left. There is no outer wrapper card — the participant grid (or, when presenting, the screenshare stage) is the surface itself and fills `<main>` directly.
 
 Grid distributes by participant count while taking the full stage: 1 participant uses one full-stage column, 2 participants use up to two columns, and 3+ participants use the wider responsive grid. Do not reserve a side panel for people in the default view.
 
@@ -35,7 +35,7 @@ Same `CallView` — replace avatar fallback with `<video>` element when camera t
 
 ### Screenshare
 
-Switch `CallView` to presenter layout: screenshare fills the main stage, participant tiles become a secondary grid strip below the share. See `specs/screenshare.md`.
+`<main>` switches from `flex-col` to `flex-row` (`isScreenSharePresenting = hasScreenShare && activeScreenShareStream`): the `ScreenShareStage` takes the left side as the hero (`flex-1`, full height + most of the width), and the participant tiles move into a `shrink-0` **right sidebar** — a vertical, scrollable column of `h-32 aspect-video` tiles — instead of a strip below. This keeps the stage maximal while still showing everyone. See `specs/screenshare.md`.
 
 ### Prejoin / ready room
 

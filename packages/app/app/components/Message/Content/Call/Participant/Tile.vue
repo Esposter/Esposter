@@ -17,7 +17,20 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
 </script>
 
 <template>
-  <StyledCard flex flex-col items-center justify-center relative overflow-hidden :card-props="{ ripple: false }">
+  <StyledCard
+    flex
+    flex-col
+    items-center
+    justify-center
+    relative
+    rd-lg
+    :card-props="{ ripple: false }"
+    :class="
+      isSpeaking
+        ? 'shadow-[0_0_0_2px_rgb(var(--v-theme-primary)),0_0_16px_6px_rgba(var(--v-theme-primary),0.4)]!'
+        : undefined
+    "
+  >
     <video
       v-if="videoStream"
       autoplay
@@ -25,20 +38,13 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
       size-full
       absolute
       object-cover
+      rd-lg
       :srcObject.prop="videoStream"
       :muted="isSelf"
     />
     <div v-else flex size-full items-center justify-center>
       <StyledAvatar :image="participant.image" :name="participant.name" :avatar-props="{ size: '6rem' }" />
     </div>
-    <div
-      v-if="isSpeaking"
-      rd-xl
-      pointer-events-none
-      inset-0
-      absolute
-      shadow="[inset_0_0_0_3px_rgb(var(--v-theme-primary)),0_0_0_1px_rgb(var(--v-theme-primary)),0_0_16px_6px_rgba(var(--v-theme-primary),0.4)]"
-    />
     <StyledCard m-2 px-2 py-1 rd-lg flex gap-x-2 items-center bottom-0 left-0 absolute>
       <span font-medium truncate text-body-small>
         {{ displayName }}

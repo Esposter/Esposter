@@ -16,19 +16,17 @@ const updateAspectRatio = () => {
 </script>
 
 <template>
-  <div m-3 flex flex-1 min-h-0 items-center justify-center>
+  <div flex flex-1 min-w-0 min-h-0 items-center justify-center>
     <div
       ref="stage"
       class="group"
       :style="{ aspectRatio: videoAspectRatio }"
-      rd-2
-      max-h-full
+      rd-lg
       max-w-full
+      max-h-full
       cursor-pointer
-      transition-shadow
       relative
       overflow-hidden
-      hover:shadow="[0_0_0_3px_rgb(var(--v-theme-primary)),0_0_16px_6px_rgba(var(--v-theme-primary),0.4)]"
       @click="stage?.requestFullscreen()"
     >
       <video
@@ -39,6 +37,16 @@ const updateAspectRatio = () => {
         :srcObject.prop="stream"
         @loadedmetadata="updateAspectRatio"
         @resize="updateAspectRatio"
+      />
+      <div
+        rd-lg
+        pointer-events-none
+        inset-0
+        absolute
+        op-0
+        transition-opacity
+        group-hover:op-100
+        shadow="[inset_0_0_0_2px_rgb(var(--v-theme-primary))]"
       />
       <StyledCard m-4 px-3 py-2 rd op-0 transition-opacity bottom-0 left-0 absolute group-hover:op-100>
         <span font-medium text-body-small>{{ presenterName }}'s screen</span>
