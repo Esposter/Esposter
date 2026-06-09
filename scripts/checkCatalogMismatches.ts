@@ -6,10 +6,14 @@ const root = resolve(import.meta.dirname, "..");
 const workspaceYaml = readFileSync(resolve(root, "pnpm-workspace.yaml"), "utf8");
 const lockYaml = readFileSync(resolve(root, "pnpm-lock.yaml"), "utf8");
 // Parse catalog from pnpm-workspace.yaml
-const catalogSection = workspaceYaml.match(/^catalog:\n([\s\S]*?)(?=^\S|\Z)/m)?.[1] ?? "";
+const catalogSection = /^catalog:\n(?<section>[\s\S]*?)(?=^\S|(?![\s\S]))/mu.exec(workspaceYaml)?.groups?.section ?? "";
 const catalogEntries = new Map<string, string>();
-for (const match of catalogSection.matchAll(/^  ['"]?([^'":\n]+)['"]?:\s*(.+)$/gm))
-  catalogEntries.set(match[1].trim(), match[2].trim());
+for (const { groups } of catalogSection.matchAll(/^[ ]{2}['"]?(?<pkg>[^'":\n]+)['"]?:\s*(?<spec>.+)$/gmu)) {
+  const pkg = groups?.pkg;
+  const spec = groups?.spec;
+  if (!pkg || !spec) continue;
+  catalogEntries.set(pkg.trim(), spec.trim());
+}
 // Parse catalog resolved versions from pnpm-lock.yaml
 const lockCatalogsStart = lockYaml.indexOf("\ncatalogs:");
 const lockCatalogsEnd = (() => {
@@ -23,21 +27,22 @@ const lockCatalogsEnd = (() => {
 
 const lockCatalogsText = lockYaml.slice(lockCatalogsStart, lockCatalogsEnd);
 const resolvedVersions = new Map<string, string>();
-for (const match of lockCatalogsText.matchAll(
-  /    ['"]?([^'":\n]+)['"]?:\s*\n      specifier: [^\n]+\n      version: ([^\n]+)/g,
+for (const { groups } of lockCatalogsText.matchAll(
+  /[ ]{4}['"]?(?<pkg>[^'":\n]+)['"]?:\s*\n[ ]{6}specifier: [^\n]+\n[ ]{6}version: (?<version>[^\n]+)/gu,
 )) {
-  const pkg = match[1].trim();
+  const pkg = groups?.pkg;
+  const version = groups?.version;
+  if (!pkg || !version) continue;
   // Strip peer dep suffix e.g. "1.2.3(peer@1.0.0)" -> "1.2.3"
-  const version = match[2].trim().split(/[(@]/)[0].trim();
-  resolvedVersions.set(pkg, version);
+  resolvedVersions.set(pkg.trim(), version.trim().split(/[(@]/u)[0]?.trim() ?? "");
 }
 // Compare
-const mismatches: { pkg: string; catalog: string; resolved: string }[] = [];
+const mismatches: { catalog: string; pkg: string; resolved: string }[] = [];
 for (const [pkg, specifier] of catalogEntries) {
   const resolved = resolvedVersions.get(pkg);
   if (!resolved) continue;
-  const specBase = specifier.replace(/^[\^~>=< ]+/, "");
-  if (specBase !== resolved) mismatches.push({ pkg, catalog: specifier, resolved });
+  const specBase = specifier.replace(/^[\^~>=< ]+/u, "");
+  if (specBase !== resolved) mismatches.push({ catalog: specifier, pkg, resolved });
 }
 
 if (mismatches.length === 0) {
@@ -49,7 +54,7 @@ const pkgWidth = Math.max(...mismatches.map((m) => m.pkg.length), 7);
 const specWidth = Math.max(...mismatches.map((m) => m.catalog.length), 7);
 console.log(`${"Package".padEnd(pkgWidth)}  ${"Catalog".padEnd(specWidth)}  Resolved`);
 console.log("-".repeat(pkgWidth + specWidth + 12));
-for (const { pkg, catalog, resolved } of mismatches)
+for (const { catalog, pkg, resolved } of mismatches)
   console.log(`${pkg.padEnd(pkgWidth)}  ${catalog.padEnd(specWidth)}  ${resolved}`);
 
 console.log(`\n${mismatches.length} mismatch(es) found.`);
