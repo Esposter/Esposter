@@ -10,28 +10,21 @@ const { joinNoticeParticipant } = storeToRefs(participantStore);
 </script>
 
 <template>
-  <StyledCard
-    v-if="knockers.length > 0"
-    left="[50%]"
-    translate-x="[-50%]"
-    mt-4
-    px-4
-    py-3
-    max-w-xs
-    w-full
-    top-0
-    absolute
-  >
+  <StyledCard v-if="knockers.length > 0" right-4 top-4 px-4 py-3 max-w-sm absolute>
     <div flex flex-col gap-y-3>
       <span op-medium-emphasis text-body-small>Waiting to join</span>
       <MessageContentCallJoinNoticeKnockerItem v-for="knocker of knockers" :key="knocker.id" :knocker />
     </div>
   </StyledCard>
-  <StyledCard v-else-if="joinNoticeParticipant" left="[50%]" mt-4 px-4 py-3 top-0 absolute translate-x="[-50%]">
+  <StyledCard v-else-if="joinNoticeParticipant" right-4 top-4 px-4 py-3 absolute>
     <div flex gap-x-3 items-center>
       <StyledAvatar :image="joinNoticeParticipant.image" :name="joinNoticeParticipant.name" />
       <span font-medium text-body-medium>{{ joinNoticeParticipant.name }} joined the call</span>
-      <v-btn icon="mdi-close" size="small" variant="plain" @click="clearJoinNotice()" />
+      <v-tooltip text="Close">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn :="tooltipProps" icon="mdi-close" size="small" variant="plain" @click="clearJoinNotice()" />
+        </template>
+      </v-tooltip>
     </div>
   </StyledCard>
 </template>

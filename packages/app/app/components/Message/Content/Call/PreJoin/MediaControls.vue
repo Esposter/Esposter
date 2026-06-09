@@ -9,7 +9,7 @@ const emit = defineEmits<{ toggleCamera: []; toggleMicrophone: [] }>();
 </script>
 
 <template>
-  <div flex gap-x-3>
+  <div flex gap-x-3 justify-center>
     <v-tooltip :text="isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'">
       <template #activator="{ props: tooltipProps }">
         <v-btn
