@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, caret prefix rules, pinned packages (h3), and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, caret prefix rules, pinned packages (h3, vue-tsc), and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -22,7 +22,6 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 ## Pinned packages (do not update)
 
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
-- **`vuetify`** — pinned to `4.0.8` (no `^`); cannot upgrade to 4.1.0 due to https://github.com/koumoul-dev/vuetify-jsonschema-form/issues/571.
 - **`@vue/language-core`, `vue-tsc`** — pinned to `3.3.3` (no `^`); 3.3.4 is broken per https://github.com/vuejs/language-tools/issues/6096.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
