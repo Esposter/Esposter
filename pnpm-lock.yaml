@@ -86,13 +86,13 @@ catalogs:
       specifier: ^3.3.0
       version: 3.3.0
     '@azure/core-client':
-      specifier: ^1.10.1
+      specifier: ^1.10.2
       version: 1.10.2
     '@azure/core-http-compat':
       specifier: ^2.4.0
       version: 2.4.0
     '@azure/core-rest-pipeline':
-      specifier: ^1.23.0
+      specifier: ^1.24.0
       version: 1.24.0
     '@azure/data-tables':
       specifier: ^13.3.2
@@ -101,7 +101,7 @@ catalogs:
       specifier: ^5.12.0
       version: 5.12.0
     '@azure/functions':
-      specifier: ^4.15.0
+      specifier: ^4.16.0
       version: 4.16.0
     '@azure/identity':
       specifier: ^4.13.1
@@ -113,7 +113,7 @@ catalogs:
       specifier: ^12.32.0
       version: 12.32.0
     '@azure/storage-queue':
-      specifier: ^12.29.0
+      specifier: ^12.30.0
       version: 12.30.0
     '@azure/web-pubsub':
       specifier: ^1.2.0
@@ -218,10 +218,10 @@ catalogs:
       specifier: ^0.11.3
       version: 0.11.3
     '@pulumi/azure-native':
-      specifier: ^3.18.0
+      specifier: ^3.19.0
       version: 3.19.0
     '@pulumi/pulumi':
-      specifier: ^3.244.0
+      specifier: ^3.245.0
       version: 3.245.0
     '@rolldown/plugin-node-polyfills':
       specifier: ^1.0.3
@@ -9004,8 +9004,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  electron-to-chromium@1.5.368:
-    resolution: {integrity: sha512-7RckJJK4uESJF9PxvfMWd3TGqIiieUTG4HxnKaKuIpGbcr+r2ZEB3g2gAhCP3Fqm42vJSzLfgab9eva/C4/XVw==}
+  electron-to-chromium@1.5.369:
+    resolution: {integrity: sha512-XM22K9FNaaCOvMMrBn1caIc8v0g6+pKt660ZbfQqUZvfil0hEzr8ZoiY7VcSLGM3L/x3rz5PqZrk+bKOOmVM9w==}
 
   embla-carousel-auto-height@8.6.0:
     resolution: {integrity: sha512-/HrJQOEM6aol/oF33gd2QlINcXy3e19fJWvHDuHWp2bpyTa+2dm9tVVJak30m2Qy6QyQ6Fc8DkImtv7pxWOJUQ==}
@@ -20598,7 +20598,7 @@ snapshots:
     dependencies:
       baseline-browser-mapping: 2.10.34
       caniuse-lite: 1.0.30001797
-      electron-to-chromium: 1.5.368
+      electron-to-chromium: 1.5.369
       node-releases: 2.0.47
       update-browserslist-db: 1.2.3(browserslist@4.28.2)
 
@@ -21448,7 +21448,7 @@ snapshots:
     dependencies:
       jake: 10.9.4
 
-  electron-to-chromium@1.5.368: {}
+  electron-to-chromium@1.5.369: {}
 
   embla-carousel-auto-height@8.6.0(embla-carousel@8.6.0):
     dependencies:

@@ -19,6 +19,14 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 3. **Tell the user to refresh the lockfile** — do NOT run this yourself. Instruct the user to run `pnpm refresh:lockfile` from the repo root.
 
+4. **Verify catalog/lockfile are in sync** — after the lockfile is refreshed, run:
+
+   ```bash
+   pnpm catalog:check
+   ```
+
+   This runs `scripts/checkCatalogMismatches.ts` and exits non-zero if any catalog specifier base differs from its resolved version. Fix any reported mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
+
 ## Pinned packages (do not update)
 
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.

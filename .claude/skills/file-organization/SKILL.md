@@ -155,6 +155,25 @@ When renaming a file (e.g. `createCode.ts` → `createToken.ts`, `readInviteCode
 
 The alias pattern looks helpful but creates confusion: the old name stays discoverable, callers assume it's the canonical name, and the rename never fully propagates.
 
+## Whitespace
+
+- **No blank line before a `//` comment** — the comment itself is the visual separator. A blank line immediately followed by a comment is always wrong:
+
+  ```ts
+  // CORRECT
+  const foo = parseWorkspace(yaml);
+  // Parse lockfile
+  const bar = parseLockfile(yaml);
+
+  // WRONG
+  const foo = parseWorkspace(yaml);
+
+  // Parse lockfile
+  const bar = parseLockfile(yaml);
+  ```
+
+  Blank lines go between uncommented logical blocks only.
+
 ## Line Endings
 
 - All files must use **LF** line endings (`\n`), not CRLF.
