@@ -20,11 +20,19 @@ const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggle
 
 <template>
   <div bg-background flex flex-col size-full overflow-y-auto>
-    <div p-6 flex flex-1 min-h-0 flex-col gap-y-4 justify-center>
-      <div flex flex-1 min-h-0 flex-col lg:flex-row gap-y-6 lg:gap-x-10 items-stretch>
-        <MessageContentCallPreJoinCameraPreview flex-1 min-w-0 :is-camera-enabled :stream="cameraStream" />
-        <StyledCard p-6 flex flex-col gap-y-6 lg:flex-1>
-          <div flex flex-col gap-y-3>
+    <div p-6 flex flex-1 flex-col min-h-0 justify-center>
+      <div flex flex-1 flex-col gap-y-6 min-h-0 items-stretch lg:flex-row lg:gap-x-10>
+        <div flex flex-1 flex-col gap-y-4 min-w-0>
+          <MessageContentCallPreJoinCameraPreview flex-1 min-h-0 :is-camera-enabled :stream="cameraStream" />
+          <MessageContentCallPreJoinMediaControls
+            :is-camera-enabled
+            :is-microphone-enabled
+            @toggle-camera="toggleCamera()"
+            @toggle-microphone="toggleMicrophone()"
+          />
+        </div>
+        <StyledCard p-6 text-center flex shrink-0 flex-col gap-y-6 items-stretch>
+          <div flex flex-col gap-y-3 items-center>
             <h2 font-medium text-headline-small>Ready to join?</h2>
             <span op-medium-emphasis text-body-medium>Check your setup before joining the call.</span>
             <span op-medium-emphasis text-body-medium>
@@ -45,8 +53,8 @@ const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggle
               <span text-body-medium>{{ isCameraEnabled ? "Camera on" : "Camera off" }}</span>
             </div>
           </div>
+          <v-spacer />
           <StyledButton
-            self-start
             :button-props="{ loading: isRequestingJoin, size: 'large', text: joinButtonText }"
             @click="
               async () => {
@@ -65,12 +73,6 @@ const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggle
           />
         </StyledCard>
       </div>
-      <MessageContentCallPreJoinMediaControls
-        :is-camera-enabled
-        :is-microphone-enabled
-        @toggle-camera="toggleCamera()"
-        @toggle-microphone="toggleMicrophone()"
-      />
     </div>
   </div>
 </template>
