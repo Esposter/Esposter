@@ -20,6 +20,6 @@ const emit = defineEmits<{ save: [] }>();
       @blur="emit('save')"
       @keydown.enter.prevent="emit('save')"
     />
-    <span text-xs op-medium-emphasis>Seconds between messages. Leave empty to disable.</span>
+    <span op-medium-emphasis text-body-small>Seconds between messages. Leave empty to disable.</span>
   </div>
 </template>

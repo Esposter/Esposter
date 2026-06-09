@@ -1,6 +1,6 @@
 # Esbabbler — Screen Share
 
-Requires LiveKit SFU (see [`specs/call.md`](call.md)). Screen share is a LiveKit `Track.Source.ScreenShare` track published from the local participant. No new DB columns or server state needed — it is ephemeral media like audio. Implemented in the shared full-screen call view with a presenter stage and participant strip.
+Requires LiveKit SFU (see [`specs/call.md`](call.md)). Screen share is a LiveKit `Track.Source.ScreenShare` track published from the local participant. No new DB columns or server state needed — it is ephemeral media like audio. Implemented in the shared full-screen call view with a presenter stage and a participant sidebar.
 
 ---
 
@@ -19,20 +19,21 @@ Requires LiveKit SFU (see [`specs/call.md`](call.md)). Screen share is a LiveKit
 When any participant publishes a `ScreenShare` track:
 
 ```
-┌──────────────────────────────────────────────────────┐
-│                                                      │
-│          SCREEN SHARE (fills main area)              │
-│          presenter name in bottom-left corner        │
-│                                                      │
-│                                                      │
-├──────────────────────────────────────────────────────┤
-│ [avatar] [avatar] [avatar]      [🎤] [🎧] [🖥] [📞]  │
-│  participant strip (horizontal scroll)                │
+┌────────────────────────────────────────┬─────────────┐
+│                                        │ ┌─────────┐ │
+│        SCREEN SHARE (left, flex-1,     │ │ [tile]  │ │
+│        fills height + most width)      │ ├─────────┤ │
+│        presenter name bottom-left      │ │ [tile]  │ │
+│                                        │ ├─────────┤ │
+│                                        │ │ [tile]  │ │  ← right sidebar
+│                                        │ └─────────┘ │    (vertical scroll)
+├────────────────────────────────────────┴─────────────┤
+│              [🎤] [🎧] [🖥] [📞]  (control bar)        │
 └──────────────────────────────────────────────────────┘
 ```
 
-- Main area renders `<video>` element bound to the `ScreenShareTrack`
-- Participant strip replaces the video grid; camera tiles shrink to avatar-sized circles
+- `<main>` switches to `flex-row`; the screenshare stage is the left hero (`flex-1`), participant tiles move into a `shrink-0` right sidebar (vertical scroll, `h-32 aspect-video` tiles)
+- Stage renders a `<video>` element bound to the `ScreenShareTrack`; there is no outer wrapper card
 - If multiple participants share simultaneously: tabs above the main area (`Alice's screen`, `Bob's screen`); active tab is the focused share
 
 ### Stopping a share
@@ -106,9 +107,9 @@ const activeScreenShare = computed(
 - Renders when `hasScreenShare`
 - `<video autoplay playsinline />` bound to the active screen stream
 - Presenter label resolves from `CallParticipant` by LiveKit identity/session ID
-- Participant strip remains visible below the presenter stage
+- Participant tiles remain visible in the right sidebar beside the presenter stage
 
-**`Content/Call/Participant/Tile.vue`** — shared camera/avatar tile for grid and strip layouts.
+**`Content/Call/Participant/Tile.vue`** — shared camera/avatar tile for the grid and the sidebar layouts.
 
 ---
 
@@ -159,7 +160,7 @@ const canScreenShare = computed(
 | New    | `Content/Call/Audio/SettingsButton.vue` — microphone and speaker selection                          |
 | New    | `Content/Call/Video/SettingsButton.vue` — camera selection and starter virtual backgrounds          |
 | Modify | `Content/Call/Control/Bar.vue` — screenshare + camera + deafen + settings buttons                   |
-| Modify | `Content/Call/View.vue` — screen stage, participant strip, invite card, join notice                 |
+| Modify | `Content/Call/View.vue` — screen stage, participant sidebar, invite card, join notice               |
 | Modify | `store/message/room/call/media.ts` — screenshare/pin state and local/remote screen streams          |
 | Modify | `store/message/room/call/index.ts` — root `toggleScreenShare` wrapper for UI and tRPC/SDK boundary  |
 | Modify | `store/message/room/liveKit.ts` — `setScreenShare`, device switching, and screen track event bridge |

@@ -36,7 +36,7 @@ const notificationType = computed({
       <v-radio-group v-model="notificationType" hide-details>
         <v-radio v-for="[value, label] of Object.entries(NotificationTypeLabelMap)" :key="value" :value :label>
           <template #label="{ props: labelProps }">
-            <v-label :="labelProps" text-sm :text="label" />
+            <v-label :="labelProps" text-label-large :text="label" />
           </template>
         </v-radio>
       </v-radio-group>

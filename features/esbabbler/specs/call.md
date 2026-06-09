@@ -284,7 +284,7 @@ The root call store exposes `{ joinCall, joinCallByRoomId, leaveCall, toggleMute
 | `joinCallOptions`       | `ref` | Pre-join microphone/camera preferences applied when the knocker is admitted              |
 | `knockers`              | `ref` | `CallParticipant[]` queue shown to the standalone call creator for admit/dismiss actions |
 
-Standalone call ownership is persisted on `callSessionsInMessage.userId`. The `/calls/[id]` page auto-joins only when the authenticated user matches that creator. There is no `direct` query parameter; all non-creators must knock and receive a one-time admission in `callAdmittedParticipantMap` before `joinCall({ id })` succeeds.
+Standalone call ownership is persisted on `callSessionsInMessage.userId`. The `/calls/[id]` page shows prejoin to everyone so users can verify microphone/camera state before entering. The creator sees **Join now** and can call `joinCall({ id })` directly from prejoin; non-creators see **Request to join** and must receive a one-time admission in `callAdmittedParticipantMap` before `joinCall({ id })` succeeds. There is no `direct` query parameter.
 
 #### Media store: `call/media.ts`
 

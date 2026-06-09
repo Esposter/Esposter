@@ -57,7 +57,7 @@ defineExpose({ onKeyDown });
 
 <template>
   <div v-show="items.length > 0" b-1 rd bg-surface flex flex-col max-h-64 max-w-100 overflow-y-auto elevation-1>
-    <v-card-title text-sm font-bold>{{ title }}</v-card-title>
+    <v-card-title font-bold text-title-small>{{ title }}</v-card-title>
     <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
       <v-list-item
         v-for="({ description, icon, parameters, title: commandTitle, type }, index) of items"

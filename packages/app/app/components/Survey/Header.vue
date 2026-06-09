@@ -8,7 +8,7 @@ const survey = defineModel<Survey>({ required: true });
 </script>
 
 <template>
-  <v-toolbar border-b-sm density="comfortable">
+  <v-toolbar b-b-1 b-border b-solid density="comfortable">
     <StyledEditableNameDialogButton
       :button-props="{ class: 'ml-4' }"
       :card-props="{ title: 'Edit Survey Name' }"
@@ -23,7 +23,7 @@ const survey = defineModel<Survey>({ required: true });
       "
     />
     <template #append>
-      <span text-lg text-gray pr-4>
+      <span text-gray pr-4 text-body-large>
         (Version: {{ survey.modelVersion }}, Published Version: {{ survey.publishVersion }})
       </span>
     </template>

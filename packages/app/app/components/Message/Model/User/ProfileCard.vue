@@ -30,7 +30,7 @@ const statusEnum = computed(() => getStatusEnum(user.id));
     <v-card-text pt-2 flex flex-col gap-y-3>
       <div>
         <div font-bold>{{ user.name }}</div>
-        <div text-sm text-gray>{{ statusMessage || statusEnum }}</div>
+        <div text-gray text-body-medium>{{ statusMessage || statusEnum }}</div>
       </div>
       <template v-if="!isSelf">
         <v-divider />

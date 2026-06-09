@@ -32,7 +32,7 @@ const error = computed(() => errors.value.find((error) => error.id === focusedPa
             <span font-bold>{{ name }}</span>
           </template>
           <template #append>
-            <span text-sm ml-4 op-medium-emphasis>Your {{ name }}</span>
+            <span ml-4 op-medium-emphasis text-body-medium>Your {{ name }}</span>
           </template>
         </v-list-item>
         <template v-if="optionalHiddenParameters.length > 0">
@@ -47,7 +47,7 @@ const error = computed(() => errors.value.find((error) => error.id === focusedPa
               <span font-bold>{{ name }}</span>
             </template>
             <template #append>
-              <span text-sm ml-4 op-medium-emphasis>Your {{ name }}</span>
+              <span ml-4 op-medium-emphasis text-body-medium>Your {{ name }}</span>
             </template>
           </v-list-item>
         </template>

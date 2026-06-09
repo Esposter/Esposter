@@ -26,7 +26,7 @@ const createWord = () => {
   <v-container fluid>
     <v-row>
       <v-col cols="12">
-        <div text-lg font-bold>Word Filter</div>
+        <div font-bold text-title-medium>Word Filter</div>
       </v-col>
     </v-row>
     <v-row>
@@ -56,7 +56,7 @@ const createWord = () => {
               {{ word }}
             </v-chip>
           </div>
-          <span text-xs op-medium-emphasis>
+          <span op-medium-emphasis text-body-small>
             Messages containing these words will be blocked. Comparisons are case-insensitive.
           </span>
           <StyledButton

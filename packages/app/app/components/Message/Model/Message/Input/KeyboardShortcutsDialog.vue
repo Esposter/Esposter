@@ -18,13 +18,13 @@ const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
       <v-divider />
       <v-card-text>
         <div v-for="{ category, items } of KeyboardShortcutList" :key="category" mb-4>
-          <div text-xs font-bold mb-2 uppercase op-medium-emphasis>{{ category }}</div>
+          <div font-bold mb-2 uppercase op-medium-emphasis text-label-medium>{{ category }}</div>
           <div v-for="{ description, keys } of items" :key="description" py-1 flex items-center justify-between>
-            <span text-sm>{{ description }}</span>
+            <span text-body-medium>{{ description }}</span>
             <div flex gap-1 items-center>
               <template v-for="(key, keyIndex) of keys" :key>
-                <span v-if="keyIndex > 0" text-xs op-medium-emphasis>+</span>
-                <kbd text-xs font-mono px-1 py-0 op-high-emphasis>{{ key }}</kbd>
+                <span v-if="keyIndex > 0" op-medium-emphasis text-body-small>+</span>
+                <kbd font-mono px-1 py-0 op-high-emphasis text-body-small>{{ key }}</kbd>
               </template>
             </div>
           </div>

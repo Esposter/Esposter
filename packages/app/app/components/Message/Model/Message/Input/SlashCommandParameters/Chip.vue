@@ -56,7 +56,6 @@ onMounted(() => {
   >
     <span
       :class="isError ? 'text-error' : ''"
-      text-sm
       font-bold
       my--1
       ml--2
@@ -67,18 +66,19 @@ onMounted(() => {
       flex
       items-center
       self-stretch
+      text-body-medium
     >
       {{ name }}
     </span>
     <input
       ref="input"
       v-model="modelValue"
-      text-sm
       color-inherit
       outline-none
       b-none
       bg-transparent
       field-sizing-content
+      text-body-medium
       :autofocus
       @focus="emit('focus')"
       @blur="emit('blur')"

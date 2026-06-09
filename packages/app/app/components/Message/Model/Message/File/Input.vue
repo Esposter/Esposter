@@ -52,7 +52,7 @@ const menuItems: Item[] = [
           </template>
         </v-progress-linear>
       </v-card>
-      <v-card-text text-sm px-4 min-w-0 whitespace-normal break-all>
+      <v-card-text px-4 min-w-0 whitespace-normal break-all text-body-medium>
         {{ file.filename }}
       </v-card-text>
     </StyledCard>
