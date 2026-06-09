@@ -226,13 +226,11 @@ export const stringTransformationTypeSchema = z.enum(
 
 ## Environment Checks
 
-- **Never use `import.meta.dev` or `import.meta.env.MODE`** — always use `useIsProduction()` from `@/composables/useIsProduction`:
+- **Never use `import.meta.dev` or `import.meta.env.MODE` directly** — always use `IS_PRODUCTION` / `IS_DEVELOPMENT` / `IS_TEST` from `#shared/util/environment/constants`:
   ```ts
-  import { useIsProduction } from "@/composables/useIsProduction";
-  const isProduction = useIsProduction();
-  if (!isProduction) console.warn("...");
+  import { IS_PRODUCTION } from "#shared/util/environment/constants";
+  if (!IS_PRODUCTION) console.warn("...");
   ```
-- Call `useIsProduction()` at the top level of the store/composable function (not inside callbacks).
 
 ## Enum Refs
 

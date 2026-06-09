@@ -1,10 +1,10 @@
 import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 
 import { auth } from "@@/server/auth";
-import { useIsProduction } from "@@/server/composables/useIsProduction";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { getIpAddress } from "@@/server/services/request/getIpAddress";
 import { middleware } from "@@/server/trpc";
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { getResultAsync, ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { RateLimiterRes } from "rate-limiter-flexible";
@@ -12,8 +12,7 @@ import { RateLimiterRes } from "rate-limiter-flexible";
 export const getIsRateLimited = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
     const getSessionPayload = await auth.api.getSession({ headers: ctx.headers });
-    const isProduction = useIsProduction();
-    if (!isProduction) return next({ ctx: { getSessionPayload } });
+    if (!IS_PRODUCTION) return next({ ctx: { getSessionPayload } });
 
     const ipAddress = getIpAddress(ctx.req);
     if (!ipAddress) {
