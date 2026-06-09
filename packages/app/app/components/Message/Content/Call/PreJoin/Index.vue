@@ -20,8 +20,8 @@ const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggle
 
 <template>
   <div bg-background flex flex-col size-full overflow-y-auto>
-    <div p-6 flex flex-1 flex-col gap-y-4 justify-center>
-      <div flex flex-col lg:flex-row gap-y-6 lg:gap-x-10 items-stretch>
+    <div p-6 flex flex-1 min-h-0 flex-col gap-y-4 justify-center>
+      <div flex flex-1 min-h-0 flex-col lg:flex-row gap-y-6 lg:gap-x-10 items-stretch>
         <MessageContentCallPreJoinCameraPreview flex-1 min-w-0 :is-camera-enabled :stream="cameraStream" />
         <StyledCard p-6 flex flex-col gap-y-6 lg:flex-1>
           <div flex flex-col gap-y-3>
@@ -46,7 +46,8 @@ const { cameraStream, isCameraEnabled, isMicrophoneEnabled, toggleCamera, toggle
             </div>
           </div>
           <StyledButton
-            :button-props="{ block: true, loading: isRequestingJoin, size: 'large', text: joinButtonText }"
+            self-start
+            :button-props="{ loading: isRequestingJoin, size: 'large', text: joinButtonText }"
             @click="
               async () => {
                 isRequestingJoin = true;
