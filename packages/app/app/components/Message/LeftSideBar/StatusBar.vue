@@ -25,7 +25,7 @@ const callRoomName = useRoomName(callRoomId);
         rd
       >
         <template #title>
-          <span text-xs>In a call · {{ callRoomName }}</span>
+          <span text-body-small>In a call · {{ callRoomName }}</span>
         </template>
       </v-list-item>
     </TransitionFade>
@@ -43,10 +43,10 @@ const callRoomName = useRoomName(callRoomId);
       </MessageModelStatusPickerMenuButton>
       <div flex min-w-0 w-full justify-between>
         <div pl-2 flex flex-col min-w-0 justify-center>
-          <div text-xs truncate>
+          <div truncate text-body-small>
             {{ session.user.name }}
           </div>
-          <div text-xs text-gray truncate>
+          <div text-gray truncate text-body-small>
             {{ getStatusMessage(session.user.id) || getStatusEnum(session.user.id) }}
           </div>
         </div>

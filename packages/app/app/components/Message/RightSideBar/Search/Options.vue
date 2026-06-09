@@ -9,7 +9,7 @@ const { createFilter } = searchMessageStore;
 </script>
 
 <template>
-  <v-card-title text-base font-extrabold>Search Options</v-card-title>
+  <v-card-title font-extrabold text-title-medium>Search Options</v-card-title>
   <v-list py-0 density="compact">
     <v-hover v-for="filterType in FilterTypes" :key="filterType" #default="{ isHovering, props }">
       <v-list-item :="props" @click="createFilter(filterType)">

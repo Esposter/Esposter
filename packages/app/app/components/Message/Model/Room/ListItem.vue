@@ -42,7 +42,7 @@ const hasUnread = computed(() => {
       </template>
       <v-list-item-title pr-6 :class="hasUnread ? 'font-weight-bold' : undefined">
         {{ roomName }}
-        <span v-if="hasDraft" text-xs italic op-medium-emphasis> — Draft</span>
+        <span v-if="hasDraft" italic op-medium-emphasis text-body-small> — Draft</span>
       </v-list-item-title>
       <template #append>
         <v-tooltip v-if="room.isReadOnly" text="Read-only" location="top">
