@@ -42,6 +42,6 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div size-full ref="canvasRoot" />
+  <div ref="canvasRoot" />
   <slot v-if="isReady" />
 </template>
