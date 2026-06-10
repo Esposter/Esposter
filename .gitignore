@@ -48,3 +48,6 @@ packages/infra/generated/
 
 # Claude
 scheduled_tasks.lock
+
+# Pnpm artifacts
+.pnpm-store
