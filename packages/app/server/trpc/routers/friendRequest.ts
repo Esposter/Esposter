@@ -93,17 +93,15 @@ export const friendRequestRouter = router({
       friendEventEmitter,
       "acceptFriendRequest",
       { signal },
-    )) {
+    ))
       if (senderId === userId) yield receiverUser;
       else if (receiverId === userId) yield senderUser;
-    }
   }),
   onDeclineFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
-    for await (const [{ receiverId, senderId }] of on(friendEventEmitter, "declineFriendRequest", { signal })) {
+    for await (const [{ receiverId, senderId }] of on(friendEventEmitter, "declineFriendRequest", { signal }))
       if (senderId === userId) yield receiverId;
       else if (receiverId === userId) yield senderId;
-    }
   }),
   onSendFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
