@@ -4,7 +4,7 @@ import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFu
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { WebPubSubClient } from "@azure/web-pubsub-client";
-import { MessageEntityMap } from "@esposter/db-schema";
+import { MessageType, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 
 export const useMessageSubscribables = () => {
@@ -60,8 +60,10 @@ export const useMessageSubscribables = () => {
         // Data arrives as a pre-parsed object (dataType: "json") from WebPubSub — re-stringify so
         // JsonDateParse can revive ISO date strings back to Date instances
         const parsedData = jsonDateParse<MessageEntity>(JSON.stringify(data));
-        const Entity = MessageEntityMap[parsedData.type];
-        const entity = new Entity(parsedData);
+        const entity =
+          parsedData.type === MessageType.Webhook
+            ? new WebhookMessageEntity(parsedData)
+            : new StandardMessageEntity(parsedData);
         await storeCreateMessage(entity);
       }),
     );
