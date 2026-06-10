@@ -60,7 +60,7 @@ catalog:
   "@pulumi/azure-native": ^3.19.0
   "@pulumi/pulumi": ^3.245.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^1.8.0
+  "@takumi-rs/core": ^1.8.1
   "@tiptap/core": ^3.26.0
   "@tiptap/extension-code-block-lowlight": ^3.26.0
   "@tiptap/extension-file-handler": ^3.26.0
@@ -83,7 +83,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^5.0.0
-  "@types/node": ^25.9.2
+  "@types/node": ^25.9.3
   "@types/pluralize": ^0.0.33
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
@@ -195,7 +195,7 @@ catalog:
   rolldown: ^1.1.0
   rolldown-plugin-dts: ^0.25.2
   rxjs: ^7.8.2
-  sanitize-html: ^2.17.4
+  sanitize-html: ^2.17.5
   sass-embedded: ^1.100.0
   sax: ^1.6.0
   show-open-file-picker: ^0.4.0
