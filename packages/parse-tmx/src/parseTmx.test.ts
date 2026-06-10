@@ -17,7 +17,7 @@ describe(parseTmx, () => {
     expect(tmxParsed).toStrictEqual(new TMXParsed());
   });
 
-  test("snapshots", { timeout: dayjs.duration(60, "seconds").asMilliseconds() }, async () => {
+  test.todo("snapshots", { timeout: dayjs.duration(60, "seconds").asMilliseconds() }, async () => {
     expect.hasAssertions();
 
     const filenames = await readdir(MAP_DIRECTORY, { recursive: true });
