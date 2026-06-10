@@ -3,9 +3,6 @@ import type { Context } from "@@/server/trpc/context";
 import type { Session, User } from "better-auth";
 
 import { dayjs } from "#shared/services/dayjs";
-import { useContainerClientMock } from "@@/server/composables/azure/container/useContainerClient.test";
-import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test";
-import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
 import { users } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -43,17 +40,25 @@ vi.mock(
   }),
 );
 
-vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () => ({
-  useContainerClient: useContainerClientMock,
-}));
+vi.mock(
+  import("@@/server/composables/azure/container/useContainerClient"),
+  () => import("@@/server/composables/azure/container/useContainerClient.test"),
+);
 
-vi.mock(import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient"), () => ({
-  useEventGridPublisherClient: useEventGridPublisherClientMock,
-}));
+vi.mock(
+  import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient"),
+  () => import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test"),
+);
 
-vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
-  useTableClient: useTableClientMock,
-}));
+vi.mock(
+  import("@@/server/composables/azure/queue/useQueueClient"),
+  () => import("@@/server/composables/azure/queue/useQueueClient.test"),
+);
+
+vi.mock(
+  import("@@/server/composables/azure/table/useTableClient"),
+  () => import("@@/server/composables/azure/table/useTableClient.test"),
+);
 
 export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const createdAt = new Date();

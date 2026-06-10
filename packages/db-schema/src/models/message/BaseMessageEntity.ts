@@ -30,7 +30,7 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
   isPinned?: true;
   linkPreviewResponse: LinkPreviewResponse | null = null;
   mentions: User["id"][] = [];
-  message!: string;
+  declare message: string;
   replyRowKey?: string;
   type = MessageType.Message as TType;
 }

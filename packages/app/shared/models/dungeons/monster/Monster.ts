@@ -14,12 +14,12 @@ import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class Monster {
-  asset!: Asset;
-  attackIds!: AttackId[];
+  declare asset: Asset;
+  declare attackIds: AttackId[];
   id: string = crypto.randomUUID();
-  key!: MonsterKey;
-  stats!: Stats;
-  status!: Status;
+  declare key: MonsterKey;
+  declare stats: Stats;
+  declare status: Status;
 
   constructor(key: MonsterKey) {
     Object.assign(this, structuredClone(getMonsterData(key)));

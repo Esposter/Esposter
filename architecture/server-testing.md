@@ -157,6 +157,7 @@ Prefer `afterEach` for cleanup over `beforeEach` so leaked state from a failing 
 | `packages/app/server/composables/azure/table/useTableClient.test.ts`                  | `useTableClientMock` export                                              |
 | `packages/app/server/composables/azure/container/useContainerClient.test.ts`          | `useContainerClientMock` export                                          |
 | `packages/app/server/composables/azure/eventGrid/useEventGridPublisherClient.test.ts` | `useEventGridPublisherClientMock` export                                 |
+| `packages/app/server/composables/azure/queue/useQueueClient.test.ts`                  | `useQueueClient` mock export                                             |
 
 ---
 

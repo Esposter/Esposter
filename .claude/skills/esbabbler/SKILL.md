@@ -309,3 +309,19 @@ useOnlineSubscribable(
 ```
 
 A plain getter `() => expr` is equivalent to `computed(() => expr)` as a watch source and is preferred — no extra ref allocation.
+
+## Scheduled Message Jobs Architecture
+
+Scheduled messages and reminders use a two-step pattern: Postgres row + Azure Storage Queue.
+
+**Flow**:
+
+1. tRPC mutation inserts a row into `scheduledMessageJobsInMessage`.
+2. Same mutation enqueues to `AzureQueue.ScheduledMessageJobs` with `visibilityTimeout = Math.min(Math.max(0, Math.ceil((runAt - now) / 1000)), 604800)`.
+3. Azure Functions queue-trigger (`ProcessScheduledMessageJob`) processes it: reads the row, re-checks permissions/room state, executes, marks `completedAt`.
+
+**Key constraint**: Azure Storage Queue max visibility timeout is 604800 seconds (7 days). Scheduled jobs with `runAt > 7 days` from creation will be delivered immediately by the queue but the worker still verifies `cancelledAt`/`completedAt` for idempotency. If longer scheduling is needed in the future, re-add the timer scan.
+
+**No timer function** — a separate `EnqueueScheduledMessageJobs` timer that polls and re-enqueues is unnecessary complexity. The queue's native visibility timeout handles delay. The timer approach was removed in favour of direct enqueueing.
+
+**Azure composable** — use `useQueueClient(AzureQueue.ScheduledMessageJobs)` (from `@@/server/composables/azure/queue/useQueueClient`) inside server routes and tRPC routers. `packages/azure-functions` uses its own `getQueueClient(azureQueue)` wrapper over `@esposter/db`'s `getQueueClient(connectionString, azureQueue)`.

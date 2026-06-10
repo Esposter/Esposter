@@ -41,6 +41,7 @@ import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessage
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
+import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
 import {
   cloneFiles,
   createMessage,
@@ -529,5 +530,5 @@ export const baseMessageRouter = router({
 
 export const messageRouter = mergeRouters(
   baseMessageRouter,
-  router({ emoji: emojiRouter, moderation: moderationRouter }),
+  router({ emoji: emojiRouter, moderation: moderationRouter, scheduledMessageJob: scheduledMessageJobRouter }),
 );

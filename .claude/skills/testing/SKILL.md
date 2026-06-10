@@ -85,9 +85,87 @@ The default mock session is always the **base user** (inserted by `createMockCon
 - **Use `vi.restoreAllMocks()` in cleanup** — prefer `restoreAllMocks` over `clearAllMocks`. `restoreAllMocks` restores spied/mocked implementations and clears mock state; `clearAllMocks` only clears usage data and can leak mock implementations between tests.
 - **Do not use `vi.resetAllMocks()` as routine cleanup** — it resets mock implementations to empty functions, which can erase intentional `vi.mock` defaults and make tests less explicit.
 
+## Colocated Module Mocks (`vi.mock` import pattern)
+
+When a service needs to be mocked across multiple test files, create a colocated `*.test.ts` file next to the service. Import it via `vi.mock(import(...), () => import(...))` — **no `async` keyword** (`import()` already returns a Promise).
+
+### Colocated mock file placement
+
+Place mock files directly next to the service they mock — same directory, `.test.ts` suffix:
+
+```
+src/services/getTableClient.ts          # real service
+src/services/getTableClient.test.ts     # mock — imported by tests
+```
+
+**Export with the real name — never a `Mock` suffix.** The mock file must export the same names as the real module (e.g. `useTableClient`, not `useTableClientMock`). This lets `vi.mock(import("real"), () => import("real.test"))` work automatically and lets tests import from the real path to get the mock.
+
+Centralize all `as unknown as` casts in the mock file, not in individual test files. Every mock-only `.test.ts` file **must** end with `describe.todo("serviceName")` so Vitest accepts it without a real test suite:
+
+```ts
+// src/services/getTableClient.test.ts
+import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
+import { MockTableClient } from "azure-mock";
+import { describe } from "vitest";
+
+export const getTableClient = <T extends AzureTable>(
+  tableName: T,
+): Promise<CustomTableClient<AzureTableEntityMap[T]>> =>
+  Promise.resolve(
+    new MockTableClient<AzureTableEntityMap[T]>("", tableName) as unknown as CustomTableClient<AzureTableEntityMap[T]>,
+  );
+
+describe.todo("getTableClient");
+```
+
+### Usage in test files
+
+```ts
+vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
+vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
+```
+
+When a test needs to call the mock directly (e.g. to assert on calls or read mock state), import from the **real path** — Vitest intercepts it and returns the mock:
+
+```ts
+// moderation.test.ts — import from REAL path, not from .test file
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+
+// Vitest serves the mock because context.test.ts (imported by this file) has vi.mock registered
+const messagesClient = await useTableClient(AzureTable.Messages);
+```
+
+- Typed `vi.mock(import(...))` form enforces type compatibility — casts stay in the mock file, never in individual tests.
+- If `MockXxx` from `azure-mock` doesn't satisfy the Azure SDK type (private class members), fix `azure-mock` first. Use `as unknown as` in the mock `.test.ts` only when the SDK class has private members that make structural compatibility impossible.
+- **Never import from the `.test` file in tests** — only import from real module paths. The mock is wired via `vi.mock`.
+
+### `db` mock exception — getter pattern stays inline
+
+The `db` mock cannot be centralized. It needs a getter so each test's `beforeAll`-initialized `mockDb` is lazily evaluated per-access:
+
+```ts
+// Must stay inline in each test file — not extractable to a shared mock file
+let mockDb: PostgresJsDatabase<typeof relations>;
+
+vi.mock(import("@/services/db"), () => ({
+  get db() {
+    return mockDb;
+  },
+}));
+```
+
+**Why `mockDb` must be at module level** (not inside `describe`): `vi.mock` is hoisted to module scope by Vitest. The getter closes over `mockDb` at the factory's lexical scope. Declaring `let mockDb` inside `describe` puts it out of the getter's scope — it must remain at module level.
+
+### InvocationContext logHandler
+
+Always use a plain no-op: `new InvocationContext({ logHandler: () => {} })`. Never use `vi.fn()` — it returns `unknown`, which violates `strict-void-return` for the `logHandler` type.
+
 ## Error Assertions
 
-- **Never `.rejects.toThrow()`** — always assert the specific error: `.rejects.toThrowErrorMatchingInlineSnapshot(...)` or `.rejects.toBeInstanceOf(ErrorClass)`.
+- **Prefer `.rejects.toThrowErrorMatchingInlineSnapshot(...)`** — use when the error message is deterministic (no dynamic UUIDs, timestamps, or runtime values).
+- **Use `.rejects.toBeInstanceOf(ErrorClass)`** — when the error message contains dynamic values (e.g. a UUID from `crypto.randomUUID()`) that prevent a stable inline snapshot.
+- **Never `.rejects.toThrow()` without args** — always assert the specific error type or message.
+- **Never `.rejects.toThrow(ErrorClass)`** — use `toThrowErrorMatchingInlineSnapshot` or `toBeInstanceOf`, not the overloaded `toThrow(class)` form.
 
 ## Mocking Globals (navigator, window, etc.)
 

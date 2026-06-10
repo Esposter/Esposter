@@ -65,6 +65,7 @@
     "@azure/data-tables": "catalog:",
     "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",
+    "@azure/storage-queue": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@esposter/db-schema": "workspace:*",
     "drizzle-orm": "catalog:"

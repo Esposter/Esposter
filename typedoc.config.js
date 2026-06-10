@@ -13,6 +13,7 @@ const typedocConfiguration = {
     ...azureMockExternalSymbolLinkMappings,
     ...vuePhaserjsExternalSymbolLinkMappings,
   },
+  intentionallyNotExported: ["NodeJS.ProcessEnv"],
   name: "Esposter",
   out: "packages/app/public/docs",
   packageOptions: {
