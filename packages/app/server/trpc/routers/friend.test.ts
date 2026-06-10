@@ -4,7 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
@@ -132,5 +132,28 @@ describe("friend", () => {
     assert(!data.done);
 
     expect(data.value).toBe(receiverUser.id);
+  });
+
+  test("on delete friend notifies caller", async () => {
+    expect.hasAssertions();
+
+    const senderPayload = getMockSession();
+    const { user: receiverUser } = await mockSessionOnce(mockContext.db);
+    await friendRequestCaller.sendFriendRequest(senderPayload.user.id);
+    await friendRequestCaller.acceptFriendRequest(receiverUser.id);
+    const receiverPayload = await mockSessionOnce(mockContext.db, receiverUser);
+    const onDeleteFriend = await friendCaller.onDeleteFriend();
+    replayMockSession(receiverPayload);
+    const data = await withAsyncIterator(
+      () => onDeleteFriend,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), friendCaller.deleteFriend(senderPayload.user.id)]);
+        return result;
+      },
+    );
+
+    assert(!data.done);
+
+    expect(data.value).toBe(senderPayload.user.id);
   });
 });

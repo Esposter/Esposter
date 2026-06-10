@@ -2,11 +2,11 @@
 import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 
+const { $trpc } = useNuxtApp();
 const blockStore = useBlockStore();
 const { blockUser } = blockStore;
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
-const { deleteFriend } = friendStore;
 const displayFriends = computed(() => friends.value.toSorted((a, b) => b.createdAt.getTime() - a.createdAt.getTime()));
 </script>
 
@@ -23,7 +23,13 @@ const displayFriends = computed(() => friends.value.toSorted((a, b) => b.created
         </template>
         <template #append>
           <div flex gap-2>
-            <v-btn text="Remove" variant="tonal" color="error" size="small" @click="deleteFriend(id)" />
+            <v-btn
+              text="Remove"
+              variant="tonal"
+              color="error"
+              size="small"
+              @click="$trpc.friend.deleteFriend.mutate(id)"
+            />
             <v-btn text="Block" variant="tonal" color="error" size="small" @click="blockUser(id)" />
           </div>
         </template>

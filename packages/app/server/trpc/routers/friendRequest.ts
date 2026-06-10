@@ -54,7 +54,12 @@ export const friendRequestRouter = router({
         deletedAt: null,
         image: ctx.getSessionPayload.user.image ?? "",
       };
-      friendEventEmitter.emit("acceptFriendRequest", { receiverUser, senderId });
+      friendEventEmitter.emit("acceptFriendRequest", {
+        receiverId: userId,
+        receiverUser,
+        senderId,
+        senderUser,
+      });
       return senderUser;
     }),
   declineFriendRequest: standardAuthedProcedure
@@ -84,22 +89,26 @@ export const friendRequestRouter = router({
     }),
   onAcceptFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
-    for await (const [{ receiverUser, senderId }] of on(friendEventEmitter, "acceptFriendRequest", { signal })) {
-      if (senderId !== userId) continue;
-      yield receiverUser;
-    }
+    for await (const [{ receiverId, receiverUser, senderId, senderUser }] of on(
+      friendEventEmitter,
+      "acceptFriendRequest",
+      { signal },
+    ))
+      if (senderId === userId) yield receiverUser;
+      else if (receiverId === userId) yield senderUser;
   }),
   onDeclineFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
-    for await (const [{ receiverId, senderId }] of on(friendEventEmitter, "declineFriendRequest", { signal })) {
-      if (senderId !== userId) continue;
-      yield receiverId;
-    }
+    for await (const [{ receiverId, senderId }] of on(friendEventEmitter, "declineFriendRequest", { signal }))
+      if (senderId === userId) yield receiverId;
+      else if (receiverId === userId) yield senderId;
   }),
   onSendFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
-    for await (const [{ friendRequest, receiverId }] of on(friendEventEmitter, "sendFriendRequest", { signal })) {
-      if (receiverId !== userId) continue;
+    for await (const [{ friendRequest, receiverId, senderId }] of on(friendEventEmitter, "sendFriendRequest", {
+      signal,
+    })) {
+      if (![receiverId, senderId].includes(userId)) continue;
       yield friendRequest;
     }
   }),
@@ -178,7 +187,7 @@ export const friendRequestRouter = router({
         receiver: receiverUser,
         sender: senderUser,
       };
-      friendEventEmitter.emit("sendFriendRequest", { friendRequest, receiverId });
+      friendEventEmitter.emit("sendFriendRequest", { friendRequest, receiverId, senderId: userId });
 
       const readPushSubscriptions = await getPushSubscriptionsForUser(ctx.db, receiverId);
       if (readPushSubscriptions.length > 0) {
