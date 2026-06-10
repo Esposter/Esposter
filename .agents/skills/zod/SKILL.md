@@ -116,6 +116,7 @@ myError.issues.push({ code: "custom", message: "..." });
 
 ## Schema Rules
 
+- **Minimal strict input schemas** — model the exact case being implemented now. Prefer required fields over optional fields plus `.refine()` when there is only one supported flow. Split future variants into separate schemas/procedures later instead of accepting broad optional shapes early. Use `.refine()` only for cross-field rules that cannot be represented structurally.
 - **`z.enum` with native enums (Zod 4)** — use `z.enum(MyEnum)` directly for TypeScript string enums; `z.nativeEnum` is Zod 3 only.
 - **Non-negative integers** — use `.nonnegative()` instead of `.min(0)` for fields that must be ≥ 0 (e.g. `position`, `sheetIndex`). Reserve `.min(N)` for ranges where N > 0 or where the intent is a specific lower bound alongside an upper bound.
 - **Schema must match its type exactly** — if a field's TypeScript type is `ColumnFormat`, use `columnFormatSchema` (defined alongside `ColumnFormat`), never inline the equivalent union `z.union([booleanFormatSchema, dateFormatSchema, numberFormatSchema])`. Every named type must have exactly one named schema; never reconstruct a union inline when a schema for that union already exists or should exist.

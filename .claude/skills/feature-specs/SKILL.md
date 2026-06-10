@@ -71,9 +71,21 @@ New or modified Vue components. Bullet list, file path + one-line role.
 ## Constraints / Notes
 
 Decisions made, alternatives rejected with rationale. Keep short.
+
+## End-To-End Plan
+
+Only include when the feature crosses frontend, API, background work, infrastructure, or billing boundaries. Cover current support status, rollout order, cheapest viable infrastructure, reuse of existing resources, failure/retry behavior, and what remains unsupported until later phases.
 ```
 
 Omit any section that has nothing to say — empty sections add noise.
+
+Before implementing cross-cutting features, write or update the spec first enough to answer:
+
+- What works in the frontend today, and what remains local-only or hidden until backend support exists?
+- Which tRPC procedures, DB rows, background workers, queues, timers, and infrastructure resources are required?
+- Can existing Pulumi-managed Azure resources be reused instead of adding a new service?
+- What is the cheapest viable Azure option, and what alternatives were rejected?
+- What are the retry, idempotency, cancellation, and failure semantics?
 
 ---
 
