@@ -36,8 +36,8 @@ const enqueueJob = async (id: string, runAt: Date) => {
 export const scheduledMessageJobRouter = router({
   cancelScheduledJob: standardAuthedProcedure
     .input(cancelScheduledMessageJobInputSchema)
-    .mutation<ScheduledMessageJobInMessage>(async ({ ctx, input }) => {
-      return requireMutation(
+    .mutation<ScheduledMessageJobInMessage>(async ({ ctx, input }) =>
+      requireMutation(
         (
           await ctx.db
             .update(scheduledMessageJobsInMessage)
@@ -56,12 +56,12 @@ export const scheduledMessageJobRouter = router({
         DatabaseEntityType.ScheduledMessageJob,
         input.id,
         "NOT_FOUND",
-      );
-    }),
+      ),
+    ),
   readScheduledJobs: getMemberProcedure(readScheduledMessageJobsInputSchema, "roomId").query<
     ScheduledMessageJobInMessage[]
-  >(({ ctx, input }) => {
-    return ctx.db
+  >(({ ctx, input }) =>
+    ctx.db
       .select()
       .from(scheduledMessageJobsInMessage)
       .where(
@@ -72,8 +72,8 @@ export const scheduledMessageJobRouter = router({
           isNull(scheduledMessageJobsInMessage.completedAt),
         ),
       )
-      .orderBy(asc(scheduledMessageJobsInMessage.runAt));
-  }),
+      .orderBy(asc(scheduledMessageJobsInMessage.runAt)),
+  ),
   scheduleMessage: getMemberProcedure(scheduleMessageInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
     async ({ ctx, input }) => {
       await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);

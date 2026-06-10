@@ -25,8 +25,8 @@ import { and, eq, isNull } from "drizzle-orm";
 
 app.storageQueue(AzureFunction.ProcessScheduledMessageJob, {
   connection: "AZURE_STORAGE_ACCOUNT_CONNECTION_STRING",
-  handler: (message, context) => {
-    return getResultAsync(async () => {
+  handler: (message, context) =>
+    getResultAsync(async () => {
       const { id } = scheduledMessageJobQueueMessageSchema.parse(
         typeof message === "string" ? JSON.parse(message) : message,
       );
@@ -90,8 +90,7 @@ app.storageQueue(AzureFunction.ProcessScheduledMessageJob, {
     }).match(noop, (error) => {
       context.error(`${AzureFunction.ProcessScheduledMessageJob} failed: `, error);
       throw error;
-    });
-  },
+    }),
   queueName: AzureQueue.ScheduledMessageJobs,
 });
 

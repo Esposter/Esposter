@@ -1,7 +1,5 @@
-import {
-  type ScheduledMessageJobPayload,
-  scheduledMessageJobPayloadSchema,
-} from "@/models/message/scheduledMessageJob/ScheduledMessageJobPayload";
+import { scheduledMessageJobPayloadSchema } from "@/models/message/scheduledMessageJob/ScheduledMessageJobPayload";
+import type { ScheduledMessageJobPayload } from "@/models/message/scheduledMessageJob/ScheduledMessageJobPayload";
 import { ScheduledMessageJobType, scheduledMessageJobTypeSchema } from "@/models/message/ScheduledMessageJobType";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
@@ -38,8 +36,7 @@ export const scheduledMessageJobsInMessage = pgTable(
           OR (${type} = '${sql.raw(ScheduledMessageJobType.ScheduledMessage)}' AND ${payload} ? 'message')
         `,
       ),
-      index("scheduled_message_jobs_roomId_runAt_index").on(roomId, runAt),
-      index("scheduled_message_jobs_userId_runAt_index").on(userId, runAt),
+      index("scheduled_message_jobs_userId_roomId_runAt_index").on(userId, roomId, runAt),
     ],
     schema: messageSchema,
   },
