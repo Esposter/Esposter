@@ -4,8 +4,8 @@ import type { OmitIndexSignature } from "type-fest";
 import { getPropertyNames } from "@esposter/shared";
 
 export class CompositeKey implements OmitIndexSignature<TableEntity> {
-  partitionKey!: string;
-  rowKey!: string;
+  declare partitionKey: string;
+  declare rowKey: string;
 }
 
 export const CompositeKeyPropertyNames = getPropertyNames<CompositeKey>();

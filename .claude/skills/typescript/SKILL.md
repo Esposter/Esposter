@@ -11,7 +11,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Always use strict equality** — `===` and `!==` only. Never `==` or `!=`, including null checks: use `=== null || === undefined` (or optional chaining) instead of `== null`.
 - `Omit` is **BANNED** — use `Except` from `type-fest` (`import type { Except } from "type-fest"`). Note: `Except` is not re-exported from `@esposter/shared` — always import directly from `type-fest`.
 - **No parameter properties** — never use `constructor(private readonly foo: T)`. Always declare class properties explicitly and assign in the constructor body: `private readonly foo: T; constructor(foo: T) { super(); this.foo = foo; }`.
-- Non-null assertions (`!`) are **BANNED** — use optional chaining or guard clauses.
+- Non-null assertions (`!`) are **BANNED** — use optional chaining or guard clauses. This covers both the expression operator (`foo!.bar`) and the class-field definite assignment assertion (`field!: T`) — see `Class Fields` below for the field case.
 - `.forEach()` is **BANNED** — use `for...of`.
 - `type` aliases for object shapes are **BANNED** — always use `interface` for object type declarations.
 - **Always prefer non-mutating array methods** — use the copy versions that return a new array instead of mutating in place:
@@ -27,6 +27,40 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **No `current*` variable caching of `.value`** — don't assign `const currentX = x.value` just to use it once. If TypeScript narrowing is needed after a guard, assign with a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source value is already non-reactive (e.g. a `readonly` prop field).
 - **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype. **Exception**: `structuredClone(new ClassName(...))` is intentional when a plain object is explicitly required (e.g. Vjsf does not accept class instances — must use `structuredClone` to strip the prototype). Always add a comment explaining why.
 - **Boolean casting** — never use `!!` to cast to boolean. Always use `Boolean(value)`.
+
+## Class Fields — `declare` over `!`
+
+For a class field that has **no inline initializer** — its value is provided by `Object.assign(this, init)`, a parent/mixin constructor, external assignment, or it is a pure phantom type carrier — use the `declare` modifier, **never** the `!` definite assignment assertion.
+
+```ts
+// WRONG — definite assignment assertion
+export class MockTableClient<TEntity extends TableEntity = TableEntity> {
+  entityType!: TEntity; // phantom type carrier, never assigned at runtime
+}
+export class FileEntity {
+  filename!: string; // value comes from Object.assign below
+  constructor(init?: Partial<FileEntity>) {
+    Object.assign(this, init);
+  }
+}
+
+// CORRECT — declare
+export class MockTableClient<TEntity extends TableEntity = TableEntity> {
+  declare entityType: TEntity;
+}
+export class FileEntity {
+  declare filename: string;
+  constructor(init?: Partial<FileEntity>) {
+    Object.assign(this, init);
+  }
+}
+```
+
+**Why**: `declare` emits no field declaration, which (a) states intent clearly — "this field's value is defined elsewhere, not by this class body" — and (b) avoids the `useDefineForClassFields` footgun where an emitted `field = undefined` initializer runs after `super()` and clobbers a value already set by a parent constructor or mixin. `!` only suppresses the strict-init error while still emitting the clobbering initializer.
+
+- Applies to all class fields lacking an inline initializer: phantom type carriers, `Object.assign`-populated entity models (the `AzureEntity` / `CompositeKeyEntity` / `*MessageEntity` hierarchy), and externally-assigned fields.
+- **Keep the inline initializer** for fields that have one — `id: string = crypto.randomUUID()`, `files: FileEntity[] = []`, `currentState = { name: undefined }`. Never convert these to `declare` (that would drop the runtime default). `declare` and an initializer are mutually exclusive.
+- Optional fields (`direction?: Direction`) are already correct — leave them.
 
 ## Regex
 

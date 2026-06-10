@@ -6,13 +6,13 @@ import type { Direction, WalkingAnimationMapping } from "grid-engine";
 import { ItemMetadata } from "@esposter/shared";
 
 export class Character<TName extends string = string> extends ItemMetadata {
-  asset!: Asset;
+  declare asset: Asset;
   direction?: Direction;
-  id!: `${CharacterId.Npc}${NpcId}` | CharacterId.Player;
-  name!: TName;
+  declare id: `${CharacterId.Npc}${NpcId}` | CharacterId.Player;
+  declare name: TName;
   // Some spritesheets may only animate one side and rely on us to flipX
   singleSidedSpritesheetDirection?: Direction.LEFT | Direction.RIGHT;
-  walkingAnimationMapping!: WalkingAnimationMapping;
+  declare walkingAnimationMapping: WalkingAnimationMapping;
 
   constructor(init: Partial<Character<TName>>) {
     super();

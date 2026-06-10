@@ -58,7 +58,7 @@ describe(sendPushNotification, () => {
 
   afterEach(async () => {
     await mockDb.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.userId, subscriberUserId));
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   test("returns early when message has no text content", async () => {

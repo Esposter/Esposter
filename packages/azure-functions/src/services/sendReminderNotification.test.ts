@@ -41,7 +41,7 @@ describe(sendReminderNotification, () => {
 
   afterEach(async () => {
     await mockDb.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.userId, userId));
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   test("completes without error when user has no push subscriptions", async () => {

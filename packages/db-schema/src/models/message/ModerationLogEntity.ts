@@ -8,10 +8,10 @@ import { selectUserSchema } from "@/schema/users";
 import { z } from "zod";
 
 export class ModerationLogEntity extends AzureEntity {
-  actorUserId!: User["id"];
+  declare actorUserId: User["id"];
   durationMs?: number;
-  targetUserId!: User["id"];
-  type!: AdminActionType;
+  declare targetUserId: User["id"];
+  declare type: AdminActionType;
 
   constructor(init?: Partial<ModerationLogEntity> & ToData<CompositeKeyEntity>) {
     super();
