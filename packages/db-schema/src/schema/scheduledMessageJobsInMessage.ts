@@ -20,6 +20,7 @@ export const scheduledMessageJobsInMessage = pgTable(
     completedAt: timestamp(),
     id: uuid().primaryKey().defaultRandom(),
     payload: jsonb().notNull().$type<ScheduledMessageJobPayload>(),
+    processingStartedAt: timestamp(),
     roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),

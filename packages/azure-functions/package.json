@@ -40,6 +40,7 @@
     "@azure/functions": "catalog:",
     "@azure/identity": "catalog:",
     "@azure/storage-blob": "catalog:",
+    "@azure/storage-queue": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",

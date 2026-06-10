@@ -4,16 +4,11 @@ import type {
   FileSasEntity,
   MessageEntity,
   PushNotificationEventGridData,
-  ScheduledMessageJobInMessage,
 } from "@esposter/db-schema";
 
-import { cancelScheduledMessageJobInputSchema } from "#shared/models/db/message/CancelScheduledMessageJobInput";
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
-import { readScheduledMessageJobsInputSchema } from "#shared/models/db/message/ReadScheduledMessageJobsInput";
 import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput";
-import { scheduleMessageInputSchema } from "#shared/models/db/message/ScheduleMessageInput";
-import { scheduleReminderInputSchema } from "#shared/models/db/message/ScheduleReminderInput";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
@@ -44,9 +39,9 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
+import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
 import {
   cloneFiles,
   createMessage,
@@ -78,8 +73,6 @@ import {
   MessageType,
   roomIdSchema,
   roomsInMessage,
-  scheduledMessageJobsInMessage,
-  ScheduledMessageJobType,
   selectRoomInMessageSchema,
   standardCreateMessageInputSchema,
   StandardMessageEntity,
@@ -96,7 +89,7 @@ import {
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
 // As we insert our messages with a reverse-ticked timestamp as our rowKey
@@ -225,30 +218,6 @@ export const baseMessageRouter = router({
       return newMessageEntity;
     },
   ),
-  cancelScheduledJob: standardAuthedProcedure
-    .input(cancelScheduledMessageJobInputSchema)
-    .mutation<ScheduledMessageJobInMessage>(async ({ ctx, input }) => {
-      return requireMutation(
-        (
-          await ctx.db
-            .update(scheduledMessageJobsInMessage)
-            .set({ cancelledAt: new Date() })
-            .where(
-              and(
-                eq(scheduledMessageJobsInMessage.id, input.id),
-                eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-                isNull(scheduledMessageJobsInMessage.cancelledAt),
-                isNull(scheduledMessageJobsInMessage.completedAt),
-              ),
-            )
-            .returning()
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.ScheduledMessageJob,
-        input.id,
-        "NOT_FOUND",
-      );
-    }),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ ctx, input }) => {
@@ -497,65 +466,6 @@ export const baseMessageRouter = router({
       });
     },
   ),
-  readScheduledJobs: getMemberProcedure(readScheduledMessageJobsInputSchema, "roomId").query<
-    ScheduledMessageJobInMessage[]
-  >(async ({ ctx, input }) => {
-    return ctx.db
-      .select()
-      .from(scheduledMessageJobsInMessage)
-      .where(
-        and(
-          eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-          eq(scheduledMessageJobsInMessage.roomId, input.roomId),
-          isNull(scheduledMessageJobsInMessage.cancelledAt),
-          isNull(scheduledMessageJobsInMessage.completedAt),
-        ),
-      )
-      .orderBy(asc(scheduledMessageJobsInMessage.runAt));
-  }),
-  scheduleMessage: getMemberProcedure(scheduleMessageInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
-    async ({ ctx, input }) => {
-      await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
-      return requireMutation(
-        (
-          await ctx.db
-            .insert(scheduledMessageJobsInMessage)
-            .values({
-              payload: { message: input.message },
-              roomId: input.roomId,
-              runAt: input.runAt,
-              type: ScheduledMessageJobType.ScheduledMessage,
-              userId: ctx.getSessionPayload.user.id,
-            })
-            .returning()
-        )[0],
-        Operation.Create,
-        DatabaseEntityType.ScheduledMessageJob,
-        JSON.stringify(input),
-      );
-    },
-  ),
-  scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
-    async ({ ctx, input }) => {
-      return requireMutation(
-        (
-          await ctx.db
-            .insert(scheduledMessageJobsInMessage)
-            .values({
-              payload: { text: input.text },
-              roomId: input.roomId,
-              runAt: input.runAt,
-              type: ScheduledMessageJobType.Reminder,
-              userId: ctx.getSessionPayload.user.id,
-            })
-            .returning()
-        )[0],
-        Operation.Create,
-        DatabaseEntityType.ScheduledMessageJob,
-        JSON.stringify(input),
-      );
-    },
-  ),
   readThread: getMemberProcedure(readThreadInputSchema, "roomId").query(async ({ input: { roomId, rootRowKey } }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
     const [rootMessage, replyClauses] = await Promise.all([
@@ -620,5 +530,5 @@ export const baseMessageRouter = router({
 
 export const messageRouter = mergeRouters(
   baseMessageRouter,
-  router({ emoji: emojiRouter, moderation: moderationRouter }),
+  router({ emoji: emojiRouter, moderation: moderationRouter, scheduledMessageJob: scheduledMessageJobRouter }),
 );

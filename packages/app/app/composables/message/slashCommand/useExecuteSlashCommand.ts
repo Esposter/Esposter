@@ -2,6 +2,7 @@ import type { SlashCommandParameters } from "@/models/message/slashCommands/Slas
 import type { StandardCreateMessageInput } from "@esposter/db-schema";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
+import { authClient } from "@/services/auth/authClient";
 import { parseDuration } from "@/services/message/slashCommands/parseDuration";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
@@ -14,6 +15,7 @@ import { marked } from "marked";
 
 export const useExecuteSlashCommand = () => {
   const { $trpc } = useNuxtApp();
+  const session = authClient.useSession();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
@@ -48,6 +50,14 @@ export const useExecuteSlashCommand = () => {
         const { message, time } = command.parameterValues;
         const durationMs = parseDuration(time);
         if (!durationMs) break;
+        if (session.value.data) {
+          await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
+            roomId,
+            runAt: new Date(Date.now() + durationMs),
+            text: message,
+          });
+          break;
+        }
         setTimeout(() => {
           if (Notification.permission === "granted")
             // oxlint-disable-next-line no-new
