@@ -12,7 +12,7 @@ const { isOverDropZone } = useDropZone(document, getSynchronizedFunction(uploadF
 <template>
   <v-dialog v-model="isOverDropZone" width="auto">
     <StyledCard p-8 text-center>
-      <v-card-title text-xl font-bold pb-0>Upload to {{ roomName }}</v-card-title>
+      <v-card-title font-bold pb-0 text-title-large>Upload to {{ roomName }}</v-card-title>
       <v-card-subtitle>You can add comments before uploading.</v-card-subtitle>
     </StyledCard>
   </v-dialog>

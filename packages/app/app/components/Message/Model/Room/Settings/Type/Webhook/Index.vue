@@ -42,7 +42,7 @@ const isLoading = ref(false);
         Create
       </StyledButton>
     </div>
-    <div v-if="items.length >= WEBHOOK_MAX_LENGTH" text-sm text-red>
+    <div v-if="items.length >= WEBHOOK_MAX_LENGTH" text-red text-body-medium>
       You can only create up to {{ WEBHOOK_MAX_LENGTH }} webhook{{ WEBHOOK_MAX_LENGTH > 1 ? "s" : "" }}.
     </div>
     <MessageModelRoomSettingsTypeWebhookList :room-id="room.id" />

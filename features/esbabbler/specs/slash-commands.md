@@ -1,41 +1,53 @@
 # Esbabbler — Slash Command Architecture
 
-Triggered by `/` in the message input. Tiptap suggestion API powers the picker. Definitions in `SlashCommandDefinitionMap`.
+Triggered by `/` in the message input. TipTap suggestion API powers the picker. Definitions in `SlashCommandDefinitionMap`.
 
-- **Immediate** — execute on selection (e.g. `/roll`)
-- **Dialog** — open form dialog before sending (e.g. `/poll`)
+---
+
+## Command Categories
+
+| Command     | Type             | Backend                                                                       |
+| ----------- | ---------------- | ----------------------------------------------------------------------------- |
+| `/flip`     | Immediate client | —                                                                             |
+| `/me`       | Immediate client | —                                                                             |
+| `/roll`     | Immediate client | —                                                                             |
+| `/shrug`    | Immediate client | —                                                                             |
+| `/tablefip` | Immediate client | —                                                                             |
+| `/unflip`   | Immediate client | —                                                                             |
+| `/topic`    | Immediate tRPC   | `room.updateRoom`                                                             |
+| `/poll`     | Dialog → tRPC    | `message.createMessage`                                                       |
+| `/remind`   | Immediate tRPC   | `message.scheduledMessageJob.scheduleReminder` → Azure Queue → Azure Function |
+
+---
 
 ## Folder Structure
 
 ```
-packages/shared/
-  models/message/
-    slashCommands/
-      SlashCommand.ts          # interface SlashCommand + SlashCommandContext
-      SlashCommandType.ts       # enum SlashCommandType { Poll, Roll }
-    poll/
-      PollMessageContent.ts     # interface PollMessageContent { question, options, votes }
-  constants/message/
-    SlashCommandDefinitionMap.ts  # Record<SlashCommandType, SlashCommand>
+packages/app/app/
+  models/message/slashCommands/
+    SlashCommand.ts                    # interface SlashCommand
+    SlashCommandParameter.ts           # interface SlashCommandParameter + Zod schema
+    SlashCommandParameterError.ts      # parameter validation error type
+    SlashCommandParameters.ts          # mapped type: { [P in SlashCommandType]: Record<paramName, string> }
+    SlashCommandType.ts                # enum SlashCommandType (9 values)
+    SlashCommandTypeWithoutParameters.ts  # utility type: commands with no parameters
 
-packages/app/
-  app/
-    composables/message/
-      useSlashCommandExtension.ts   # Tiptap Extension (mirrors useMentionExtension)
-    services/message/
-      slashCommands/
-        SlashCommandSuggestion.ts   # suggestion config (mirrors suggestion.ts)
-        executeRoll.ts              # immediate: posts RNG result as a message
-    components/Message/
-      SlashCommand/
-        Suggestion.vue              # picker dropdown (mirrors Mention suggestion UI)
-      Model/Message/Type/
-        Poll.vue                    # renders a poll message with vote buttons
-      Input/
-        PollDialog.vue              # form dialog: question + options input
-  server/trpc/routers/message/
-    vote.ts                         # createVote / deleteVote mutations
+  composables/message/slashCommand/
+    useSlashCommandExtension.ts        # TipTap Extension — mirrors useMentionExtension
+    useExecuteSlashCommand.ts          # dispatches by SlashCommandType via switch; calls tRPC or builds createMessageInput
+
+  services/message/slashCommands/
+    SlashCommandDefinitionMap.ts       # Record<SlashCommandType, SlashCommand> — titles, icons, parameter defs
+    SlashCommandSuggestion.ts          # TipTap suggestion config (items, render, command handler)
+    constants.ts                       # ID_SEPARATOR, MAX_PARAMETERS, etc.
+    parseDuration.ts                   # parses "1h30m", "10m", "30s" → milliseconds (null on invalid)
+    parseTextAndParameters.ts          # reconstructs parameterValues from serialised text
+
+  store/message/input/
+    slashCommand.ts                    # Pinia store: pendingCommand, parameterValues, trailingMessage
 ```
+
+---
 
 ## Core Types
 
@@ -43,23 +55,34 @@ packages/app/
 
 ```typescript
 export enum SlashCommandType {
+  Flip = "Flip",
+  Me = "Me",
   Poll = "Poll",
+  Remind = "Remind",
   Roll = "Roll",
+  Shrug = "Shrug",
+  TableFlip = "TableFlip",
+  Topic = "Topic",
+  Unflip = "Unflip",
 }
 ```
 
 ### `SlashCommand.ts`
 
 ```typescript
-export interface SlashCommandContext {
-  roomId: string;
-}
-
-export interface SlashCommand extends ItemEntityType<SlashCommandType> {
-  title: string;
-  description: string;
+export interface SlashCommand extends Description, ItemEntityType<SlashCommandType> {
   icon: string; // MDI icon name
-  execute(context: SlashCommandContext): Promise<void>;
+  parameters: SlashCommandParameter[];
+  title: string;
+}
+```
+
+### `SlashCommandParameter.ts`
+
+```typescript
+export interface SlashCommandParameter extends Description {
+  isRequired: boolean;
+  name: string;
 }
 ```
 
@@ -67,74 +90,93 @@ export interface SlashCommand extends ItemEntityType<SlashCommandType> {
 
 ```typescript
 export const SlashCommandDefinitionMap = {
-  [SlashCommandType.Poll]: { ... },
-  [SlashCommandType.Roll]: { ... },
+  [SlashCommandType.Remind]: {
+    description: "Set a reminder. Duration format: 1h30m, 10m, 30s",
+    icon: "mdi-bell-outline",
+    parameters: [
+      { description: "Duration until reminder fires (e.g. 10m, 1h30m)", isRequired: true, name: "time" },
+      { description: "What to remind you about", isRequired: true, name: "message" },
+    ],
+    title: "Remind",
+    type: SlashCommandType.Remind,
+  },
+  // ... other commands
 } as const satisfies Record<SlashCommandType, SlashCommand>;
 ```
 
-## Poll Message Type
+---
 
-`/poll` → `MessageType.Poll`. Poll data serialised as JSON in the existing `message` field.
+## Execution Model
 
-### `PollMessageContent.ts`
+All execution happens in `useExecuteSlashCommand.ts` via a `switch` on `SlashCommandType`. No `execute()` method on the command definition — the definition is static metadata only (icon, description, parameters).
 
-```typescript
-export interface PollOption {
-  id: string; // nanoid — stable across edits
-  label: string;
-}
+Two execution paths:
 
-export interface PollMessageContent {
-  question: string;
-  options: PollOption[];
-}
+**Client-only** — builds `createMessageInput` inline, passes to `storeSendMessage`:
+
+- `Flip`, `Me`, `Roll`, `Shrug`, `TableFlip`, `Unflip` → set `createMessageInput`, fall through to `storeSendMessage`
+
+**Server call** — calls a tRPC mutation directly, no `createMessageInput`:
+
+- `Topic` → `$trpc.room.updateRoom.mutate({ id: roomId, topic })`
+- `Poll` → sets `pollDialogStore.isOpen = true` (dialog handles its own submit)
+- `Remind` → `$trpc.message.scheduledMessageJob.scheduleReminder.mutate({ roomId, runAt, text })`
+
+---
+
+## `/remind` — Azure Resource Flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant C as Client (Vue)
+    participant T as tRPC Server
+    participant DB as Postgres
+    participant Q as Azure Storage Queue
+    participant F as Azure Function
+
+    U->>C: /remind 10m Buy milk
+    C->>T: scheduleReminder({ roomId, runAt, text })
+    T->>DB: INSERT scheduledMessageJobsInMessage<br/>(id, userId, roomId, payload, runAt)
+    T->>Q: sendMessage({ id }, visibilityTimeout=600s)
+    T-->>C: ScheduledMessageJobInMessage
+
+    note over Q: Message hidden for 10 min
+
+    Q->>F: ProcessScheduledMessageJob triggered<br/>message becomes visible
+    F->>DB: SELECT job WHERE id AND cancelledAt IS NULL<br/>AND completedAt IS NULL
+    alt job found
+        F->>F: parse payload → Reminder type
+        F->>DB: getPushSubscriptionsForUser
+        F->>U: web-push notification ("Reminder: Buy milk")
+        F->>DB: UPDATE completedAt = now()
+    else cancelled or already completed
+        F->>F: return (no-op)
+    end
 ```
 
-Votes: separate `votes` Azure Table (`roomId` partition, `messageRowKey|userId` row key). One row per user per poll, value = `optionId`.
+### Cancellation window
 
-### New `MessageType`
-
-```typescript
-enum MessageType {
-  EditRoom = "EditRoom",
-  Message = "Message",
-  PinMessage = "PinMessage",
-  Poll = "Poll", // new
-  Webhook = "Webhook",
-}
+```mermaid
+flowchart LR
+    A[scheduleReminder called] -->|visibilityTimeout| B{Queue message<br/>becomes visible}
+    A -->|user cancels| C[cancelScheduledJob tRPC]
+    C -->|UPDATE cancelledAt| D[(Postgres)]
+    B -->|SELECT guard finds cancelledAt set| E[Function exits — no notification]
+    B -->|cancelledAt IS NULL| F[Function sends notification]
 ```
 
-## Tiptap Integration
+---
 
-Mirrors `@` mention flow. Trigger: `/`. Items: `Object.values(SlashCommandDefinitionMap)`. On select: `command.execute(context)` then clears input. Pass `useSlashCommandExtension` via `extensions` prop on `Message/Model/Message/Input/Index.vue`.
-
-## Per-Command Specs
-
-### `/roll`
-
-- **Type**: Immediate
-- **Execute**: Calls `createMessage` tRPC mutation with `type: MessageType.Message`, `message: "🎲 Rolled a **N**"` where N is generated server-side (RNG in the mutation handler, not client-side)
-- **No dialog needed**
-
-### `/poll`
-
-- **Type**: Dialog
-- **Execute**: Opens `PollDialog.vue` (a `StyledEditFormDialog`) with:
-  - Question field (string, required)
-  - Options list (minimum 2, max 10 — add/remove rows, same drag pattern as column reorder)
-- **On submit**: Calls `createMessage` with `type: MessageType.Poll`, `message: JSON.stringify(pollContent)`
-- **Rendered by**: `Message/Model/Message/Type/Poll.vue` — shows question, option buttons, live vote counts, highlights the user's current vote
-- **Vote**: `createVote` / `deleteVote` tRPC mutations in `server/trpc/routers/message/vote.ts`
-
-## User Flow Diagram
+## User Interaction Flow
 
 ### Typing a slash command
 
 ```mermaid
 flowchart TD
-    A([User types /]) --> B[Tiptap suggestion activates]
+    A([User types /]) --> B[TipTap suggestion activates]
     B --> C{User picks command}
-    C -->|no parameters| D[executeSlashCommand immediately]
+    C -->|no parameters| D[useExecuteSlashCommand immediately]
     C -->|has parameters| E[SlashCommandSuggestion.command fires]
     E --> F[Read remaining editor text after range]
     F --> G[Delete from range.from to doc end]
@@ -144,6 +186,8 @@ flowchart TD
     I --> K[setPendingSlashCommand + parsed values]
     J --> K
     K --> L[SlashCommandParameters UI shows with chips pre-filled]
+    L --> M([User fills in + submits])
+    M --> D
 ```
 
 ### Collapsing parameters back to text
@@ -152,8 +196,8 @@ flowchart TD
 flowchart TD
     A([User in parameter mode]) --> B{Collapse trigger}
     B -->|Escape| C[collapseToText]
-    B -->|Backspace in CommandInput<br/>when empty| C
-    B -->|Backspace in TrailingInput<br/>when no parameters + no trailing| C
+    B -->|Backspace in CommandInput when empty| C
+    B -->|Backspace in TrailingInput when no params + no trailing| C
     C --> D["buildText: /CommandType paramName|value ..."]
     D --> E[input.value = formatted text]
     E --> F[clearPendingSlashCommand]
@@ -161,23 +205,11 @@ flowchart TD
     G --> H[autofocus=end → editor focuses at end]
 ```
 
-### Re-selecting an existing command from formatted text
-
-```mermaid
-flowchart TD
-    A(["Editor shows /Me message|hello world"]) --> B[User positions cursor in /Me]
-    B --> C[Tiptap suggestion active: query = Me]
-    C --> D{User presses Space}
-    D --> E[SlashCommandSuggestion.command fires]
-    E --> F["remainingText = message|hello world"]
-    F --> G[Delete entire editor content]
-    G --> H["parseTextAndParameters → {message: 'hello world'}"]
-    H --> I[Parameter mode: message chip pre-filled]
-```
+---
 
 ## Text Format for Parameter Serialisation
 
-When collapsing parameter mode back to normal text, parameters are serialised as:
+When collapsing parameter mode back to normal text:
 
 ```text
 /CommandType parameterName1|value1 parameterName2|value2 trailingMessage
@@ -185,11 +217,36 @@ When collapsing parameter mode back to normal text, parameters are serialised as
 
 - Separator between parameter name and value: `ID_SEPARATOR` (`|`)
 - Parameters separated by space
-- Last parameter's value is greedy (captures trailing spaces and text until next `parameterName|` or end)
+- Last parameter's value is greedy (captures trailing spaces until end)
 - `trailingMessage` appended after all parameters
+- Re-parsing uses prefix matching per parameter in definition order
 
-Re-parsing uses prefix matching per parameter in definition order, so multi-word values for the last parameter round-trip correctly.
+### `/remind` example
+
+```text
+/Remind time|10m message|Buy milk
+```
+
+Parsed back: `{ time: "10m", message: "Buy milk" }` → `parseDuration("10m")` → 600000ms → `runAt = new Date(Date.now() + 600000)`
+
+---
+
+## Per-Command Reference
+
+| Command     | Parameters                              | Result                                                |
+| ----------- | --------------------------------------- | ----------------------------------------------------- |
+| `/flip`     | —                                       | Posts `🌝 **Heads**` or `🌚 **Tails**`                |
+| `/me`       | `message` (required)                    | Posts `*message*` (italic emphasis)                   |
+| `/poll`     | —                                       | Opens poll dialog; on submit posts `MessageType.Poll` |
+| `/remind`   | `time` (required), `message` (required) | Schedules server-side reminder via tRPC → Queue       |
+| `/roll`     | —                                       | Posts `🎲 Rolled a **N**` (1–100)                     |
+| `/shrug`    | `text` (optional)                       | Posts `text¯\_(ツ)_/¯`                                |
+| `/tablefip` | —                                       | Posts `(╯°□°）╯︵ ┻━┻`                                |
+| `/topic`    | `text` (optional)                       | Calls `room.updateRoom` to set/clear topic            |
+| `/unflip`   | —                                       | Posts `┬─┬ノ( º _ ºノ)`                               |
+
+---
 
 ## What Does Not Change
 
-`sendMessage`, `RichTextEditor`, `suggestion.ts` for mentions — untouched. `execute()` calls `createMessage` directly, bypassing normal send flow.
+`sendMessage`, `RichTextEditor`, `useMentionExtension`, mention suggestion — untouched. Client-only commands call `storeSendMessage` after building `createMessageInput`. Server commands call tRPC directly.

@@ -16,6 +16,7 @@ description: Esposter file and folder organisation — one export per file, no e
 ## Files and Exports
 
 - **One export per file** — each exported function, class, or interface lives in its own file. Exception: Zod schemas may be co-located with their interface/type since they are tightly coupled.
+- **Enums and shared model schemas get their own files** — exported enums, discriminated-union variants, payload types, and reusable Zod schemas belong in `models/` (or the relevant shared model folder), one named concern per file. Do not define an enum or reusable payload schema inside a Drizzle table file just because that table is the first consumer. Schema files should import model enums/types/schemas and only define the table plus table-derived select schema/type.
 - **Co-locate single-use event/hook map types** — when an event/hook map interface (e.g. `AdminActionHookMap`, `MessageHookMap`, `TableEditorHookMap`) is imported only by its own service file (which creates the singleton instance), define the interface directly in the service file rather than in a separate `models/` file. The service exports the instance; consumers import the instance, not the type. Do **not** apply this to general type maps (`ColumnTypeColumnMap`, `DataSourceConfigurationTypeMap`, etc.) — those stay in `models/` regardless of consumer count.
 - **Interfaces go in `models/`** — never define an exported interface inline inside a `.vue` component. Extract it to `app/models/<feature>/InterfaceName.ts` (app-local) or `shared/models/<feature>/InterfaceName.ts` (cross-package). This makes it reusable (e.g. a Vjsf context interface shared between create and edit dialogs lives in `app/models/tableEditor/file/column/ColumnFormVjsfContext.ts`, not inside either component).
 - **One class per file** — classes belong in a `models/` folder (e.g., `app/models/`, `shared/models/`).
@@ -119,7 +120,7 @@ New workspace packages follow the pattern of existing packages (e.g. `packages/d
    ```
    On Linux/macOS: `ln -s ../configuration/.oxlintrc.json .oxlintrc.json`.
 7. **`src/index.ts`** — minimal barrel; `ctix` will regenerate it on `pnpm export:gen`.
-8. **Run `pnpm install`** from the repo root to link the new package into the workspace.
+8. **Run plain `pnpm i`** from the repo root to link the new package into the workspace. Follow `architecture/monorepo-tooling.md` for install safety rules.
 9. **Run `pnpm build`** in the new package to produce `dist/`.
 
 ### Rolldown externals
@@ -154,6 +155,25 @@ When renaming a file (e.g. `createCode.ts` → `createToken.ts`, `readInviteCode
 - If a barrel (`index.ts`) exported the old name, update it too.
 
 The alias pattern looks helpful but creates confusion: the old name stays discoverable, callers assume it's the canonical name, and the rename never fully propagates.
+
+## Whitespace
+
+- **No blank line before a `//` comment** — the comment itself is the visual separator. A blank line immediately followed by a comment is always wrong:
+
+  ```ts
+  // CORRECT
+  const foo = parseWorkspace(yaml);
+  // Parse lockfile
+  const bar = parseLockfile(yaml);
+
+  // WRONG
+  const foo = parseWorkspace(yaml);
+
+  // Parse lockfile
+  const bar = parseLockfile(yaml);
+  ```
+
+  Blank lines go between uncommented logical blocks only.
 
 ## Line Endings
 

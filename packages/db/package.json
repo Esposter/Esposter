@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db",
-  "version": "2.26.0",
+  "version": "2.27.0",
   "private": true,
   "description": "A library of database utilities that is available in server environment only.",
   "keywords": [
@@ -65,6 +65,7 @@
     "@azure/data-tables": "catalog:",
     "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",
+    "@azure/storage-queue": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@esposter/db-schema": "workspace:*",
     "drizzle-orm": "catalog:"

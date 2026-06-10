@@ -3,7 +3,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 export class StateMachine<TStateName extends string> {
   currentState: State<TStateName | undefined> = { name: undefined };
-  scene!: SceneWithPlugins;
+  declare scene: SceneWithPlugins;
   stateMap: Record<TStateName, State<TStateName>>;
 
   constructor(stateMap: Record<TStateName, State<TStateName>>) {

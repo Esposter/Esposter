@@ -6,7 +6,7 @@ import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export abstract class AzureMetadataEntity<T extends string> extends AzureEntity implements ItemEntityType<T> {
-  type!: T;
+  declare type: T;
 }
 
 export const createAzureMetadataEntitySchema = <

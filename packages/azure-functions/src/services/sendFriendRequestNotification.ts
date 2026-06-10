@@ -1,35 +1,30 @@
 import type { InvocationContext } from "@azure/functions";
-import type { PushNotificationEventGridData } from "@esposter/db-schema";
+import type { FriendRequestNotificationEventGridData } from "@esposter/db-schema";
 
 import { db } from "@/services/db";
-import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { webpush } from "@/services/webpush";
-import { getPushSubscriptionsForMessage } from "@esposter/db";
+import { getPushSubscriptionsForUser } from "@esposter/db";
 import { pushSubscriptionsInMessage } from "@esposter/db-schema";
 import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { WebPushError } from "web-push";
 
-export const pushNotification = async (
+export const sendFriendRequestNotification = async (
   context: InvocationContext,
-  {
-    message: { message, partitionKey, rowKey, userId },
-    notificationOptions: { icon, title },
-  }: PushNotificationEventGridData,
+  { notificationOptions: { icon, title }, receiverId }: FriendRequestNotificationEventGridData,
 ): Promise<void> => {
-  const payload = getCreateMessageNotificationPayload(context, message, {
-    icon,
-    title,
-    url: `${process.env.BASE_URL}${RoutePath.MessagesMessage(partitionKey, rowKey)}`,
-  });
-  if (!payload) return;
-
-  const readPushSubscriptions = await getPushSubscriptionsForMessage(db, { message, partitionKey, userId });
+  const readPushSubscriptions = await getPushSubscriptionsForUser(db, receiverId);
   if (readPushSubscriptions.length === 0) {
-    context.log(`No push subscriptions found for room ${partitionKey}.`);
+    context.log(`No push subscriptions found for user ${receiverId}.`);
     return;
   }
 
+  const payload = JSON.stringify({
+    body: "sent you a friend request",
+    data: { url: `${process.env.BASE_URL}${RoutePath.MessagesFriends}` },
+    icon,
+    title,
+  });
   await Promise.all(
     readPushSubscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) =>
       (async () => {
@@ -41,7 +36,6 @@ export const pushNotification = async (
         ).match(noop, async (error) => {
           if (error instanceof WebPushError)
             if (error.statusCode === 410) {
-              // A 410 GONE status means the subscription is no longer valid and should be deleted
               context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
               await db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id));
             } else context.error(`Failed to send push notification to ${endpoint}: `, error);

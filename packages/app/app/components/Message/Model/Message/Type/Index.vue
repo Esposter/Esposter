@@ -37,7 +37,7 @@ const messageHtml = useMessageWithMentions(
         <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" pl-2 />
       </div>
       <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
-      <span v-else :op="active ? undefined : 0" text-xs text-gray text-center>
+      <span v-else :op="active ? undefined : 0" text-gray text-center text-body-small>
         {{ displayCreatedAtShort }}
       </span>
     </template>

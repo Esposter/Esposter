@@ -13,7 +13,7 @@ const { hasMore, items } = storeToRefs(searchHistoryStore);
 </script>
 
 <template>
-  <v-card-title text-base font-extrabold>History</v-card-title>
+  <v-card-title font-extrabold text-title-medium>History</v-card-title>
   <v-list py-0 density="compact">
     <template v-if="!isPending">
       <v-hover v-for="{ id, query, filters } in items" :key="id" #default="{ isHovering, props }">

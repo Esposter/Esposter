@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
+
+### Bug Fixes
+
+* deps wip ([3c6f204](https://github.com/Esposter/Esposter/commit/3c6f2048a3bc56abc7422e07eaca17dedd6f30e6))
+* snapshot ([ab17d12](https://github.com/Esposter/Esposter/commit/ab17d1201b2bdee2d46711147b7f1fdb385fe1e8))
+* ts6 ([a0e8448](https://github.com/Esposter/Esposter/commit/a0e84485b2ff8c50b8511a86f71006bbeb71d382))
+* vite ([42c1162](https://github.com/Esposter/Esposter/commit/42c1162627ddf6b71047bfe7b7f708c127a983a2))
+
+### Features
+
+* upgrade to ts6 and unplugin-dts v1.0.2 ([adcba0e](https://github.com/Esposter/Esposter/commit/adcba0e5c651643044c543c1f35f52b68d391a37))
+
 # [2.26.0](https://github.com/Esposter/Esposter/compare/v2.25.0...v2.26.0) (2026-06-01)
 
 ### Bug Fixes

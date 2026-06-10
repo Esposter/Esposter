@@ -9,8 +9,8 @@ export class UserActivityEntity extends AzureEntity {
   acceptLanguage?: string;
   ipAddress?: string;
   referer?: string;
-  triggerPath!: string;
-  type!: ProcedureType;
+  declare triggerPath: string;
+  declare type: ProcedureType;
   userAgent?: string;
 
   constructor(init?: Partial<UserActivityEntity> & ToData<CompositeKeyEntity>) {

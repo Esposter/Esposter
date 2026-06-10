@@ -68,6 +68,33 @@ When maintaining `createUniqueArraySchema`, keep the keyed and keyless call sign
 
 **Exception — duplicates are valid**: Use plain `.array()` when the array semantically allows duplicate items (e.g. `handleElementSchema` — positional DOM bounds on a node, `effectSchema` — same effect config at different values, `embedSchema` — ordered content blocks). Do not use `createUniqueArraySchema` for these; do not add an artificial `id` field just to force uniqueness.
 
+## External Event / Boundary Payloads — Validate, Never Cast
+
+Data arriving from an external system at runtime (EventGrid `event.data`, Storage Queue messages, webhook bodies) is untyped. **Never** assert its shape with `event.data as unknown as SomeType` — a malformed payload then throws deep in the handler when a field is accessed. Always define a co-located Zod schema for the payload interface and `.parse()` it.
+
+```typescript
+// WRONG — unsafe cast, no runtime validation
+const data = event.data as unknown as PushNotificationEventGridData;
+
+// CORRECT — co-locate the schema next to the interface, parse at the boundary
+export interface PushNotificationEventGridData {
+  message: Pick<MessageEntity, "message" | "partitionKey" | "rowKey" | "userId">;
+  notificationOptions: { icon?: null | string; title?: null | string };
+}
+export const pushNotificationEventGridDataSchema = z.object({
+  message: standardMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true, userId: true }),
+  notificationOptions: z.object({ icon: z.string().nullish(), title: z.string().nullish() }),
+}) satisfies z.ZodType<PushNotificationEventGridData>;
+```
+
+**Rules:**
+
+- **Co-locate the schema with the interface** — `*EventGridDataSchema` in the same file as `*EventGridData`, `satisfies z.ZodType<TheInterface>`. After adding an export to a `@esposter/db-schema` file, run `pnpm export:gen` so the barrel re-exports it, and `pnpm build` so dependents (e.g. `azure-functions`) resolve it from `dist`.
+- **Compose from existing schemas** — build the payload schema from the schemas of its parts: `.pick()` from `standardMessageEntitySchema` / `selectWebhookInMessageSchema`, reuse `webhookPayloadSchema`. Never hand-rewrite field validators that already exist.
+- **`.parse()` inside `getResultAsync`** — put the parse call as the first line inside the handler's `getResultAsync(async () => { ... })` body (matching `processScheduledMessageJobHandler`), so a validation failure flows through the neverthrow `.match(noop, (error) => { context.error(...); throw error; })` path instead of throwing synchronously outside it. Let the parsed value's inferred type flow downstream — drop the now-redundant `import type { *EventGridData }`.
+- **`.nullish()` is allowed here** — the app-owned `.nullable()` ban does not apply at the external boundary. EventGrid `notificationOptions` fields are `null | string`, so `z.string().nullish()` (matching `icon?: null | string`) is correct.
+- **Cross-package schemas need an explicit type annotation** — under `--isolatedDeclarations` (enabled for `packages/*` library packages), a `satisfies z.ZodType<T>` schema composed from **another package's** imported schemas (e.g. `webhookEventGridDataSchema` in `azure-functions` built from `@esposter/db-schema`'s `webhookPayloadSchema` / `selectWebhookInMessageSchema.pick(...)`) fails declaration emit with TS9010/TS9013 — the imported types can't be re-inferred. Annotate the export instead and drop `satisfies`: `export const webhookEventGridDataSchema: z.ZodType<WebhookEventGridData> = z.object({...});`. Schemas composed from **same-package** locals keep the normal `satisfies z.ZodType<T>` form (their types resolve within the project).
+
 ## Imports
 
 Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.
@@ -116,6 +143,7 @@ myError.issues.push({ code: "custom", message: "..." });
 
 ## Schema Rules
 
+- **Minimal strict input schemas** — model the exact case being implemented now. Prefer required fields over optional fields plus `.refine()` when there is only one supported flow. Split future variants into separate schemas/procedures later instead of accepting broad optional shapes early. Use `.refine()` only for cross-field rules that cannot be represented structurally.
 - **`z.enum` with native enums (Zod 4)** — use `z.enum(MyEnum)` directly for TypeScript string enums; `z.nativeEnum` is Zod 3 only.
 - **Non-negative integers** — use `.nonnegative()` instead of `.min(0)` for fields that must be ≥ 0 (e.g. `position`, `sheetIndex`). Reserve `.min(N)` for ranges where N > 0 or where the intent is a specific lower bound alongside an upper bound.
 - **Schema must match its type exactly** — if a field's TypeScript type is `ColumnFormat`, use `columnFormatSchema` (defined alongside `ColumnFormat`), never inline the equivalent union `z.union([booleanFormatSchema, dateFormatSchema, numberFormatSchema])`. Every named type must have exactly one named schema; never reconstruct a union inline when a schema for that union already exists or should exist.

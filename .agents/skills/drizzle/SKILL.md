@@ -313,6 +313,10 @@ All mutations that call `.returning()` must:
   - Auth-framework-managed fields (`accounts`, `sessions`) — do not touch
 - **Update downstream `??` fallbacks to `||`** when a field changes from nullable to `""` — `"" ?? fallback` returns `""` (not the fallback), so `??` must become `||` in template expressions and JS/TS checks.
 
+## Optional Insert Values
+
+- **Do not coerce `undefined` to `null` with `?? null` unless null has distinct domain meaning.** For optional insert/update values, omit the key or pass the existing optional value directly. Use explicit `null` only when the schema intentionally distinguishes null from absence, such as nullable foreign keys or audit fields.
+
 ## Time Duration Columns
 
 - **Always store time durations in milliseconds** — never seconds, minutes, or hours. Milliseconds is the standard unit; only deviate when sub-millisecond precision is genuinely required.

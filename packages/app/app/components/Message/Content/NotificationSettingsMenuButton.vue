@@ -5,18 +5,12 @@ import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { NotificationType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
 
+const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
 const { myUserToRoomMap } = storeToRefs(userToRoomStore);
-const { updateUserToRoom } = userToRoomStore;
-const notificationType = computed({
-  get: () => myUserToRoomMap.value?.notificationType ?? NotificationType.DirectMessage,
-  set: (value) => {
-    if (!currentRoomId.value) return;
-    updateUserToRoom({ notificationType: value, roomId: currentRoomId.value });
-  },
-});
+const notificationType = computed(() => myUserToRoomMap.value?.notificationType ?? NotificationType.DirectMessage);
 </script>
 
 <template>
@@ -33,10 +27,20 @@ const notificationType = computed({
       </v-tooltip>
     </template>
     <StyledCard pr-2>
-      <v-radio-group v-model="notificationType" hide-details>
+      <v-radio-group
+        :model-value="notificationType"
+        hide-details
+        @update:model-value="
+          currentRoomId &&
+          $trpc.userToRoom.updateUserToRoom.mutate({
+            notificationType: $event as NotificationType,
+            roomId: currentRoomId,
+          })
+        "
+      >
         <v-radio v-for="[value, label] of Object.entries(NotificationTypeLabelMap)" :key="value" :value :label>
           <template #label="{ props: labelProps }">
-            <v-label :="labelProps" text-sm :text="label" />
+            <v-label :="labelProps" text-label-large :text="label" />
           </template>
         </v-radio>
       </v-radio-group>

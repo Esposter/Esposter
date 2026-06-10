@@ -46,7 +46,7 @@ defineExpose({ onKeyDown });
 
 <template>
   <div v-show="items.length > 0" b-1 rd bg-surface flex flex-col max-h-64 max-w-80 overflow-y-auto elevation-1>
-    <v-card-title text-sm font-bold>{{ title }}</v-card-title>
+    <v-card-title font-bold text-title-small>{{ title }}</v-card-title>
     <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
       <v-list-item
         v-for="({ emoji, name }, index) of items"
@@ -56,7 +56,7 @@ defineExpose({ onKeyDown });
         @click="selectItem(index)"
       >
         <template #prepend>
-          <span text-xl leading-none mr-2>{{ emoji }}</span>
+          <span leading-none mr-2 text-title-large>{{ emoji }}</span>
         </template>
         <v-list-item-title font-semibold
           >{{ SuggestionTrigger.Emoji }}{{ name }}{{ SuggestionTrigger.Emoji }}</v-list-item-title

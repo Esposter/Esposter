@@ -6,7 +6,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 **Project**: Esposter
 **Description**: A comprehensive social platform monorepo ("A nice and casual place for posting random things").
-**Architecture**: Monorepo using pnpm workspaces and Lerna for package management.
+**Architecture**: Monorepo using pnpm workspaces. See `architecture/monorepo-tooling.md` for workspace orchestration, publishing, installs, and CI runner policy.
 **Language**: TypeScript (Strict Mode)
 **Runtime**: Node.js (see `engines.node` in `package.json`)
 **Package Manager**: pnpm (see `packageManager` in `package.json`)
@@ -60,6 +60,7 @@ Vue convention notes:
 
 - `watch`, `onMounted`, `onUnmounted`, and related Vue hooks may use async callbacks directly. Do not wrap Vue hook/watch callbacks in `getSynchronizedFunction`.
 - Always destructure props from `defineProps` (`const { id } = defineProps<Props>()`) so the props reactivity transform is used; avoid `props.id` unless there is a specific reason.
+- Do not add Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` call. Call `$trpc` directly from the component/composable when subscriptions own the state update; keep store actions for optimistic updates, navigation/side effects, or multi-step client logic.
 
 Testing convention notes:
 
@@ -87,7 +88,7 @@ pnpm i                # refresh dependencies/lockfile after package.json changes
 pnpm depcruise:graph  # generate dependency-graph.svg from package entrypoints
 ```
 
-Use plain `pnpm i` for dependency installs. Do not use `pnpm install --config.confirmModulesPurge=false` or similar store overrides; they can create a local `.pnpm-store/` that is annoying to clean up.
+Use plain `pnpm i` for dependency installs. See `architecture/monorepo-tooling.md` for install safety rules.
 
 `pnpm depcruise:graph` should pipe dependency-cruiser DOT output directly into `graphviz-cli` to produce `dependency-graph.svg`. Avoid committing intermediate DOT/Mermaid files unless explicitly needed for debugging.
 

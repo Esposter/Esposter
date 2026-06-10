@@ -12,7 +12,7 @@ const { mutualRooms } = defineProps<ProfileCardMutualRoomsProps>();
 
 <template>
   <template v-if="mutualRooms.length > 0">
-    <div text-xs text-gray font-semibold uppercase>Mutual Rooms</div>
+    <div text-gray font-semibold uppercase text-label-medium>Mutual Rooms</div>
     <div flex flex-col gap-y-1>
       <v-chip
         v-for="{ id, image, name } of mutualRooms"

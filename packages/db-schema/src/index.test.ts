@@ -4,20 +4,15 @@ import { describe, expect, test } from "vitest";
 
 const distFile = resolve(import.meta.dirname, "../dist/index.js");
 const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
-const isWindows = process.platform === "win32";
 
 describe("@esposter/db-schema", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-
-    if (isWindows) expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 65.22 KB (66786 bytes)"`);
-    else expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 65.22 KB (66786 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 69.27 KB (70928 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
-
-    if (isWindows) expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3638.18 KB (3725493 bytes)"`);
-    else expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3638.18 KB (3725493 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 3941.16 KB (4035743 bytes)"`);
   });
 });
