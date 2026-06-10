@@ -100,7 +100,9 @@ describe("scheduledMessageJob", () => {
 
     await expect(
       scheduledMessageJobCaller.cancelScheduledJob({ id: scheduledMessageJob.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: ScheduledMessageJob, ${scheduledMessageJob.id}]`,
+    );
   });
 
   test("fails to schedule reminder as non-member", async () => {

@@ -1,5 +1,5 @@
-import type { AzureContainer } from "@esposter/db-schema";
 import type { ContainerClient } from "@azure/storage-blob";
+import type { AzureContainer } from "@esposter/db-schema";
 
 import { MockContainerClient } from "azure-mock";
 import { describe } from "vitest";

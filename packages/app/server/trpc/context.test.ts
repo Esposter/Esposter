@@ -51,6 +51,11 @@ vi.mock(
 );
 
 vi.mock(
+  import("@@/server/composables/azure/queue/useQueueClient"),
+  () => import("@@/server/composables/azure/queue/useQueueClient.test"),
+);
+
+vi.mock(
   import("@@/server/composables/azure/table/useTableClient"),
   () => import("@@/server/composables/azure/table/useTableClient.test"),
 );

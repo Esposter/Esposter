@@ -2,7 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient.test";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
