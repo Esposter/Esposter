@@ -1,7 +1,7 @@
-import type { WebhookEventGridData } from "@/models/WebhookEventGridData";
 import type { EventGridHandler } from "@azure/functions";
 import type { PushNotificationEventGridData } from "@esposter/db-schema";
 
+import { webhookEventGridDataSchema } from "@/models/WebhookEventGridData";
 import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { getTableClient } from "@/services/getTableClient";
 import { getWebhookCreateMessageInput } from "@/services/getWebhookCreateMessageInput";
@@ -12,8 +12,8 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 export const processWebhookHandler: EventGridHandler = (event, context) => {
   context.log(`${AzureFunction.ProcessWebhook} processed message: `, event.data);
-  const { payload, webhook } = event.data as unknown as WebhookEventGridData;
   return getResultAsync(async () => {
+    const { payload, webhook } = webhookEventGridDataSchema.parse(event.data);
     const messageClient = await getTableClient(AzureTable.Messages);
     const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
     const webhookCreateMessageInput = getWebhookCreateMessageInput(payload, webhook);

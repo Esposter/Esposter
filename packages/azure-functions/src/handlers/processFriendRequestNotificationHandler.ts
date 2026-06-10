@@ -1,20 +1,17 @@
 import type { EventGridHandler } from "@azure/functions";
-import type { FriendRequestNotificationEventGridData } from "@esposter/db-schema";
 
 import { sendFriendRequestNotification } from "@/services/sendFriendRequestNotification";
-import { AzureFunction } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { AzureFunction, friendRequestNotificationEventGridDataSchema } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const processFriendRequestNotificationHandler: EventGridHandler = (event, context) => {
   context.log(`${AzureFunction.ProcessFriendRequestNotification} processed message: `, event.data);
-  const data = event.data as unknown as FriendRequestNotificationEventGridData;
-  return getResultAsync(() => sendFriendRequestNotification(context, data)).match(
-    () => {
-      context.log(`Successfully processed friend request notification for user ${data.receiverId}.`);
-    },
-    (error) => {
-      context.error(`Failed to process friend request notification for user ${data.receiverId}: `, error);
-      throw error;
-    },
-  );
+  return getResultAsync(async () => {
+    const data = friendRequestNotificationEventGridDataSchema.parse(event.data);
+    await sendFriendRequestNotification(context, data);
+    context.log(`Successfully processed friend request notification for user ${data.receiverId}.`);
+  }).match(noop, (error) => {
+    context.error(`${AzureFunction.ProcessFriendRequestNotification} failed: `, error);
+    throw error;
+  });
 };
