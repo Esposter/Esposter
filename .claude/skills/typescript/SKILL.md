@@ -110,6 +110,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 - **Use `switch` for type-based branching** — when branching on an enum or discriminant with multiple cases, use `switch` (with `exhaustiveGuard` in the default) instead of a chain of `if/else if`. Use `if/else if/else` only when conditions are non-enum expressions or when there are exactly two branches.
 - **Always use `if/else if/else` from the first branch** — no standalone `if` followed by `else if`. This applies even when the first branch is a guard clause (early return): `if (!x) return; else if (y) return z;` is correct — the `else if` keeps the intent clear and the chain consistent. Only omit `else` when the branches are genuinely independent (different concerns, not a logical chain).
+- **Do not convert balanced `if/else` into a guard clause** — a guard clause (early `return` with no `else`) is only correct when the remainder of the function is the single "happy path". When two branches represent parallel logical paths of similar weight, keep `if/else`. Converting to a guard clause in that case either duplicates code (repeating shared steps in each branch) or obscures the fact that the branches are mutually exclusive alternatives. A reviewer suggesting "use a guard clause here" is a false positive whenever the `else` branch contains substantial work.
 
 ## Return Type Annotations
 

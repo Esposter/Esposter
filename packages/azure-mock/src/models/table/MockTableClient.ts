@@ -31,7 +31,8 @@ import { exhaustiveGuard, getResultAsync, ID_SEPARATOR, noop } from "@esposter/s
  * await mockTableClient.createEntity({ partitionKey: "partitionKey", rowKey: "rowKey" });
  * const entity = await mockTableClient.getEntity("partitionKey", "rowKey");
  */
-export class MockTableClient implements Except<TableClient, "pipeline"> {
+export class MockTableClient<TEntity extends object = object> implements Except<TableClient, "pipeline"> {
+  entityType!: TEntity;
   tableName: string;
   url: string;
 

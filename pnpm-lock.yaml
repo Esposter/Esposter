@@ -1398,6 +1398,9 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@esposter/db-mock':
+        specifier: workspace:*
+        version: link:../db-mock
       '@types/node':
         specifier: 'catalog:'
         version: 25.9.2
@@ -1407,6 +1410,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.1.8(vitest@4.1.8)
+      azure-mock:
+        specifier: workspace:*
+        version: link:../azure-mock
       ctix:
         specifier: 'catalog:'
         version: 2.8.1(@types/node@25.9.2)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.4)(typescript@6.0.3))(prettier@3.8.4)(typescript@6.0.3)
