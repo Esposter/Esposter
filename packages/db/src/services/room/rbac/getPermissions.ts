@@ -4,7 +4,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { roomRolesInMessage, usersToRoomRolesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, inArray, or } from "drizzle-orm";
 
-interface GetPermissions {
+export interface GetPermissions {
   (db: PostgresJsDatabase<typeof relations>, userId: string, roomId: string): Promise<bigint>;
   (db: PostgresJsDatabase<typeof relations>, userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
 }

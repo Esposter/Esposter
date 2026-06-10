@@ -3,6 +3,7 @@ import { getTableClient } from "@/services/getTableClient";
 import { getWebPubSubServiceClient } from "@/services/getWebPubSubServiceClient";
 import { assertCanCreateMessage } from "@/services/message/assertCanCreateMessage";
 import { sendReminderNotification } from "@/services/message/sendReminderNotification";
+import { ProcessProperties } from "@/services/process";
 import { pushNotification } from "@/services/pushNotification";
 import { app } from "@azure/functions";
 import { createMessage } from "@esposter/db";
@@ -23,29 +24,28 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
 
 app.storageQueue(AzureFunction.ProcessScheduledMessageJob, {
-  connection: "AZURE_STORAGE_ACCOUNT_CONNECTION_STRING",
+  connection: ProcessProperties.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
   handler: (message, context) =>
     getResultAsync(async () => {
       const { id } = scheduledMessageJobQueueMessageSchema.parse(
         typeof message === "string" ? JSON.parse(message) : message,
       );
       const [job] = await db
-        .update(scheduledMessageJobsInMessage)
-        .set({ completedAt: new Date() })
+        .select()
+        .from(scheduledMessageJobsInMessage)
         .where(
           and(
             eq(scheduledMessageJobsInMessage.id, id),
             isNull(scheduledMessageJobsInMessage.cancelledAt),
             isNull(scheduledMessageJobsInMessage.completedAt),
           ),
-        )
-        .returning();
+        );
       if (!job) return;
 
       const payload = scheduledMessageJobPayloadSchema.parse(job.payload);
-      if (payload.type === ScheduledMessageJobType.Reminder) {
+      if (payload.type === ScheduledMessageJobType.Reminder)
         await sendReminderNotification(context, { roomId: job.roomId, text: payload.text, userId: job.userId });
-      } else {
+      else {
         await assertCanCreateMessage(job.userId, job.roomId, payload.message);
         const messageClient = await getTableClient(AzureTable.Messages);
         const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
@@ -85,6 +85,10 @@ app.storageQueue(AzureFunction.ProcessScheduledMessageJob, {
           db.update(roomsInMessage).set({ updatedAt: new Date() }).where(eq(roomsInMessage.id, job.roomId)),
         ]);
       }
+      await db
+        .update(scheduledMessageJobsInMessage)
+        .set({ completedAt: new Date() })
+        .where(eq(scheduledMessageJobsInMessage.id, id));
     }).match(noop, (error) => {
       context.error(`${AzureFunction.ProcessScheduledMessageJob} failed: `, error);
       throw error;

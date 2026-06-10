@@ -109,7 +109,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 - **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to named constant only if reused.
 
 - **Use `switch` for type-based branching** — when branching on an enum or discriminant with multiple cases, use `switch` (with `exhaustiveGuard` in the default) instead of a chain of `if/else if`. Use `if/else if/else` only when conditions are non-enum expressions or when there are exactly two branches.
-- **Always use `if/else if/else` from the first branch** — no standalone `if` followed by `else if`.
+- **Always use `if/else if/else` from the first branch** — no standalone `if` followed by `else if`. This applies even when the first branch is a guard clause (early return): `if (!x) return; else if (y) return z;` is correct — the `else if` keeps the intent clear and the chain consistent. Only omit `else` when the branches are genuinely independent (different concerns, not a logical chain).
 
 ## Return Type Annotations
 

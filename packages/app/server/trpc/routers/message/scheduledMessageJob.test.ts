@@ -8,6 +8,7 @@ import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/schedu
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { roomsInMessage, scheduledMessageJobsInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("scheduledMessageJob", () => {
@@ -74,6 +75,54 @@ describe("scheduledMessageJob", () => {
     expect(cancelledScheduledMessageJob.id).toBe(scheduledMessageJob.id);
     expect(cancelledScheduledMessageJob.cancelledAt).toBeInstanceOf(Date);
     expect(scheduledMessageJobs).toStrictEqual([]);
+  });
+
+  test("excludes completed jobs from readScheduledJobs", async () => {
+    expect.hasAssertions();
+
+    const room = await roomCaller.createRoom({ name });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    await mockContext.db
+      .update(scheduledMessageJobsInMessage)
+      .set({ completedAt: new Date() })
+      .where(eq(scheduledMessageJobsInMessage.id, scheduledMessageJob.id));
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId: room.id });
+
+    expect(scheduledMessageJobs).toStrictEqual([]);
+  });
+
+  test("fails to cancel another user's scheduled job", async () => {
+    expect.hasAssertions();
+
+    const room = await roomCaller.createRoom({ name });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      scheduledMessageJobCaller.cancelScheduledJob({ id: scheduledMessageJob.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
+  });
+
+  test("fails to schedule reminder as non-member", async () => {
+    expect.hasAssertions();
+
+    const room = await roomCaller.createRoom({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test("fails to schedule message as non-member", async () => {
+    expect.hasAssertions();
+
+    const room = await roomCaller.createRoom({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      scheduledMessageJobCaller.scheduleMessage({ message, roomId: room.id, runAt }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails read scheduled jobs with non-member", async () => {

@@ -141,6 +141,7 @@ describe("@esposter/my-package", () => {
 - Run `pnpm build` in the package first — the test reads the compiled `dist/index.js`.
 - Run `pnpm test --run -u` to update the snapshot value after a build change.
 - Use `getCrossPlatformSize` so CRLF/LF differences do not change snapshots across Windows and Linux/macOS.
+- `app` is different — its root bundle-size suite is currently a `describe.todo` with `/* eslint-disable vitest/require-top-level-describe */` so CI coverage does not require `packages/app/.output`.
 
 To add a bundle size test to a new library package: add `test`/`coverage` scripts, add `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`, create `src/index.test.ts`.
 
