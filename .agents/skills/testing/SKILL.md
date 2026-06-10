@@ -98,6 +98,8 @@ src/services/getTableClient.ts          # real service
 src/services/getTableClient.test.ts     # mock — imported by tests
 ```
 
+**Export with the real name — never a `Mock` suffix.** The mock file must export the same names as the real module (e.g. `useTableClient`, not `useTableClientMock`). This lets `vi.mock(import("real"), () => import("real.test"))` work automatically and lets tests import from the real path to get the mock.
+
 Centralize all `as unknown as` casts in the mock file, not in individual test files. Every mock-only `.test.ts` file **must** end with `describe.todo("serviceName")` so Vitest accepts it without a real test suite:
 
 ```ts
@@ -123,8 +125,19 @@ vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableCl
 vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
 ```
 
+When a test needs to call the mock directly (e.g. to assert on calls or read mock state), import from the **real path** — Vitest intercepts it and returns the mock:
+
+```ts
+// moderation.test.ts — import from REAL path, not from .test file
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+
+// Vitest serves the mock because context.test.ts (imported by this file) has vi.mock registered
+const messagesClient = await useTableClient(AzureTable.Messages);
+```
+
 - Typed `vi.mock(import(...))` form enforces type compatibility — casts stay in the mock file, never in individual tests.
 - If `MockXxx` from `azure-mock` doesn't satisfy the Azure SDK type (private class members), fix `azure-mock` first. Use `as unknown as` in the mock `.test.ts` only when the SDK class has private members that make structural compatibility impossible.
+- **Never import from the `.test` file in tests** — only import from real module paths. The mock is wired via `vi.mock`.
 
 ### `db` mock exception — getter pattern stays inline
 
