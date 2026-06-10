@@ -26,9 +26,11 @@ vi.mock(import("@/services/db"), () => ({
 
 vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
 vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
+vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
 
 describe(processScheduledMessageJob, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
+  const context = new InvocationContext();
+  const name = "name";
 
   let userId: string;
   let roomId: string;
@@ -49,8 +51,8 @@ describe(processScheduledMessageJob, () => {
     userId = crypto.randomUUID();
     roomId = crypto.randomUUID();
 
-    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name: "" });
-    await mockDb.insert(roomsInMessage).values({ id: roomId, userId });
+    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
+    await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId });
     await mockDb.insert(usersToRoomsInMessage).values({ roomId, userId });
   });
 
@@ -121,7 +123,7 @@ describe(processScheduledMessageJob, () => {
     expect.hasAssertions();
 
     const otherRoomId = crypto.randomUUID();
-    await mockDb.insert(roomsInMessage).values({ id: otherRoomId, userId });
+    await mockDb.insert(roomsInMessage).values({ id: otherRoomId, name, userId });
     const scheduledMessageJob = takeOne(
       await mockDb
         .insert(scheduledMessageJobsInMessage)

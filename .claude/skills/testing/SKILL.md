@@ -98,12 +98,13 @@ src/services/getTableClient.ts          # real service
 src/services/getTableClient.test.ts     # mock — imported by tests
 ```
 
-Centralize all `as unknown as` casts in the mock file, not in individual test files:
+Centralize all `as unknown as` casts in the mock file, not in individual test files. Every mock-only `.test.ts` file **must** end with `describe.todo("serviceName")` so Vitest accepts it without a real test suite:
 
 ```ts
 // src/services/getTableClient.test.ts
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 import { MockTableClient } from "azure-mock";
+import { describe } from "vitest";
 
 export const getTableClient = <T extends AzureTable>(
   tableName: T,
@@ -111,6 +112,8 @@ export const getTableClient = <T extends AzureTable>(
   Promise.resolve(
     new MockTableClient<AzureTableEntityMap[T]>("", tableName) as unknown as CustomTableClient<AzureTableEntityMap[T]>,
   );
+
+describe.todo("getTableClient");
 ```
 
 ### Usage in test files

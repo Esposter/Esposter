@@ -4,7 +4,7 @@ import { InvocationContext } from "@azure/functions";
 import { assert, describe, expect, test } from "vitest";
 
 describe(getCreateMessageNotificationPayload, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
+  const context = new InvocationContext();
   const url = "url";
 
   test("returns undefined when message has no text content", () => {

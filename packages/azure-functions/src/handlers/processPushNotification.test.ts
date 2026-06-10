@@ -15,8 +15,11 @@ vi.mock(import("@/services/db"), () => ({
   },
 }));
 
+vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
+
 describe(processPushNotification, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
+  const context = new InvocationContext();
+  const name = "name";
 
   beforeAll(async () => {
     mockDb = await createMockDb();
@@ -26,14 +29,14 @@ describe(processPushNotification, () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
-    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name: "" });
+    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
 
     const result = await processPushNotification(
       {
         data: {
-          message: { message: "<p>hello</p>", partitionKey: crypto.randomUUID(), rowKey: "rowKey", userId },
+          message: { message: "<p>hello</p>", partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID(), userId },
           notificationOptions: { icon: "", title: "" },
-        } satisfies PushNotificationEventGridData as Record<string, unknown>,
+        } satisfies PushNotificationEventGridData,
         dataVersion: "1.0",
         eventTime: "1970-01-01T00:00:00.000Z",
         eventType: "",

@@ -15,8 +15,11 @@ vi.mock(import("@/services/db"), () => ({
   },
 }));
 
+vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
+
 describe(processFriendRequestNotification, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
+  const context = new InvocationContext();
+  const name = "name";
 
   beforeAll(async () => {
     mockDb = await createMockDb();
@@ -26,14 +29,14 @@ describe(processFriendRequestNotification, () => {
     expect.hasAssertions();
 
     const receiverId = crypto.randomUUID();
-    await mockDb.insert(users).values({ email: "", emailVerified: true, id: receiverId, name: "" });
+    await mockDb.insert(users).values({ email: "", emailVerified: true, id: receiverId, name });
 
     const result = await processFriendRequestNotification(
       {
         data: {
           notificationOptions: { icon: "", title: "" },
           receiverId,
-        } satisfies FriendRequestNotificationEventGridData as Record<string, unknown>,
+        } satisfies FriendRequestNotificationEventGridData,
         dataVersion: "1.0",
         eventTime: "1970-01-01T00:00:00.000Z",
         eventType: "",

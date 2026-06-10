@@ -13,7 +13,7 @@ vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableCl
 vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
 
 describe(processWebhook, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
+  const context = new InvocationContext();
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
 
@@ -28,9 +28,9 @@ describe(processWebhook, () => {
     const result = await processWebhook(
       {
         data: {
-          payload: { content: "content", username: "username" } satisfies WebhookPayload as Record<string, unknown>,
+          payload: { content: "content", username: "username" } satisfies WebhookPayload,
           webhook: { roomId, userId },
-        } satisfies WebhookEventGridData as Record<string, unknown>,
+        } satisfies WebhookEventGridData,
         dataVersion: "1.0",
         eventTime: "1970-01-01T00:00:00.000Z",
         eventType: "",

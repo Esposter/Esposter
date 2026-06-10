@@ -1,6 +1,7 @@
 import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
 import { MockTableClient } from "azure-mock";
+import { describe } from "vitest";
 
 export const getTableClient = <T extends AzureTable>(
   tableName: T,
@@ -8,3 +9,5 @@ export const getTableClient = <T extends AzureTable>(
   Promise.resolve(
     new MockTableClient<AzureTableEntityMap[T]>("", tableName) as unknown as CustomTableClient<AzureTableEntityMap[T]>,
   );
+
+describe.todo("getTableClient");
