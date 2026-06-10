@@ -5,7 +5,7 @@ import { sendFriendRequestNotification } from "@/services/sendFriendRequestNotif
 import { AzureFunction } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
-export const processFriendRequestNotification: EventGridHandler = (event, context) => {
+export const processFriendRequestNotificationHandler: EventGridHandler = (event, context) => {
   context.log(`${AzureFunction.ProcessFriendRequestNotification} processed message: `, event.data);
   const data = event.data as unknown as FriendRequestNotificationEventGridData;
   return getResultAsync(() => sendFriendRequestNotification(context, data)).match(

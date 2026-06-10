@@ -5,7 +5,7 @@ import { sendPushNotification } from "@/services/sendPushNotification";
 import { AzureFunction } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
-export const processPushNotification: EventGridHandler = (event, context) => {
+export const processPushNotificationHandler: EventGridHandler = (event, context) => {
   context.log(`${AzureFunction.ProcessPushNotification} processed message: `, event.data);
   const data = event.data as unknown as PushNotificationEventGridData;
   return getResultAsync(() => sendPushNotification(context, data)).match(

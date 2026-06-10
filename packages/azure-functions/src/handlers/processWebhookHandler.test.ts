@@ -1,7 +1,7 @@
 import type { WebhookEventGridData } from "@/models/WebhookEventGridData";
 import type { WebhookPayload } from "@esposter/db-schema";
 
-import { processWebhook } from "@/handlers/processWebhook";
+import { processWebhookHandler } from "@/handlers/processWebhookHandler";
 import { MOCK_EVENT_GRID_ENDPOINT } from "@/services/eventGridPublisherClient.test";
 import { InvocationContext } from "@azure/functions";
 import { AzureTable } from "@esposter/db-schema";
@@ -12,7 +12,7 @@ vi.mock(import("@/services/eventGridPublisherClient"), () => import("@/services/
 vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
 vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
 
-describe(processWebhook, () => {
+describe(processWebhookHandler, () => {
   const context = new InvocationContext();
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
@@ -25,7 +25,7 @@ describe(processWebhook, () => {
   test("creates message in table storage and publishes push notification event", async () => {
     expect.hasAssertions();
 
-    const result = await processWebhook(
+    const result = await processWebhookHandler(
       {
         data: {
           payload: { content: "content", username: "username" } satisfies WebhookPayload,

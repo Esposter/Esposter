@@ -10,7 +10,7 @@ import { createMessage } from "@esposter/db";
 import { AzureFunction, AzureTable, AzureWebPubSubHub } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
-export const processWebhook: EventGridHandler = (event, context) => {
+export const processWebhookHandler: EventGridHandler = (event, context) => {
   context.log(`${AzureFunction.ProcessWebhook} processed message: `, event.data);
   const { payload, webhook } = event.data as unknown as WebhookEventGridData;
   return getResultAsync(async () => {

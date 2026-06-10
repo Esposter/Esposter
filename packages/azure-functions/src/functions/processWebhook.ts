@@ -1,9 +1,9 @@
-import { processWebhook } from "@/handlers/processWebhook";
+import { processWebhookHandler } from "@/handlers/processWebhookHandler";
 import { app } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 
 app.eventGrid(AzureFunction.ProcessWebhook, {
-  handler: processWebhook,
+  handler: processWebhookHandler,
 });
 
 export default {};

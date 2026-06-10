@@ -1,9 +1,9 @@
-import { processFriendRequestNotification } from "@/handlers/processFriendRequestNotification";
+import { processFriendRequestNotificationHandler } from "@/handlers/processFriendRequestNotificationHandler";
 import { app } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 
 app.eventGrid(AzureFunction.ProcessFriendRequestNotification, {
-  handler: processFriendRequestNotification,
+  handler: processFriendRequestNotificationHandler,
 });
 
 export default {};

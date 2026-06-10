@@ -1,7 +1,7 @@
 import type { relations } from "@esposter/db-schema";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
-import { pushWebhook } from "@/handlers/pushWebhook";
+import { pushWebhookHandler } from "@/handlers/pushWebhookHandler";
 import { MOCK_EVENT_GRID_ENDPOINT } from "@/services/eventGridPublisherClient.test";
 import { HttpRequest, InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
@@ -28,7 +28,7 @@ const createMockRequest = (params: Record<string, string>, bodyString?: string):
     ...(bodyString !== undefined && { body: { string: bodyString } }),
   });
 
-describe(pushWebhook, () => {
+describe(pushWebhookHandler, () => {
   const name = "name";
   const token = "token";
   const context = new InvocationContext();
@@ -48,7 +48,7 @@ describe(pushWebhook, () => {
   test("returns 404 when webhook not found", async () => {
     expect.hasAssertions();
 
-    const result = await pushWebhook(createMockRequest({ id: crypto.randomUUID(), token }), context);
+    const result = await pushWebhookHandler(createMockRequest({ id: crypto.randomUUID(), token }), context);
 
     expect(result?.status).toBe(404);
   });
@@ -56,7 +56,7 @@ describe(pushWebhook, () => {
   test("returns 400 when id param is not a UUID", async () => {
     expect.hasAssertions();
 
-    const result = await pushWebhook(createMockRequest({ id: "not-a-uuid", token }), context);
+    const result = await pushWebhookHandler(createMockRequest({ id: "not-a-uuid", token }), context);
 
     expect(result?.status).toBe(400);
   });
@@ -75,7 +75,7 @@ describe(pushWebhook, () => {
         .returning(),
     );
 
-    const result = await pushWebhook(createMockRequest({ id: webhook.id, token }, "{invalid"), context);
+    const result = await pushWebhookHandler(createMockRequest({ id: webhook.id, token }, "{invalid"), context);
 
     expect(result?.status).toBe(400);
   });
@@ -95,7 +95,7 @@ describe(pushWebhook, () => {
         .returning(),
     );
 
-    const result = await pushWebhook(
+    const result = await pushWebhookHandler(
       createMockRequest({ id: webhook.id, token }, JSON.stringify({ content })),
       context,
     );

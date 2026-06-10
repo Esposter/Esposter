@@ -1,9 +1,9 @@
-import { processPushNotification } from "@/handlers/processPushNotification";
+import { processPushNotificationHandler } from "@/handlers/processPushNotificationHandler";
 import { app } from "@azure/functions";
 import { AzureFunction } from "@esposter/db-schema";
 
 app.eventGrid(AzureFunction.ProcessPushNotification, {
-  handler: processPushNotification,
+  handler: processPushNotificationHandler,
 });
 
 export default {};

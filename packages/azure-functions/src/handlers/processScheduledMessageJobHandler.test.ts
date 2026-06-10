@@ -1,7 +1,7 @@
 import type { relations, ScheduledMessageJobPayload } from "@esposter/db-schema";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
-import { processScheduledMessageJob } from "@/handlers/processScheduledMessageJob";
+import { processScheduledMessageJobHandler } from "@/handlers/processScheduledMessageJobHandler";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -28,7 +28,7 @@ vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableCl
 vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
 vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
 
-describe(processScheduledMessageJob, () => {
+describe(processScheduledMessageJobHandler, () => {
   const context = new InvocationContext();
   const name = "name";
 
@@ -68,7 +68,7 @@ describe(processScheduledMessageJob, () => {
       { text: "reminder", type: ScheduledMessageJobType.Reminder },
       { completedAt: new Date("1970-01-01") },
     );
-    await processScheduledMessageJob({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const messagesTable = MockTableDatabase.get(AzureTable.Messages);
 
@@ -82,7 +82,7 @@ describe(processScheduledMessageJob, () => {
       { text: "reminder", type: ScheduledMessageJobType.Reminder },
       { cancelledAt: new Date("1970-01-01") },
     );
-    await processScheduledMessageJob({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const messagesTable = MockTableDatabase.get(AzureTable.Messages);
 
@@ -93,7 +93,7 @@ describe(processScheduledMessageJob, () => {
     expect.hasAssertions();
 
     const job = await insertJob({ text: "don't forget!", type: ScheduledMessageJobType.Reminder });
-    await processScheduledMessageJob({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const claimedScheduledMessageJob = await mockDb.query.scheduledMessageJobsInMessage.findFirst({
       where: { id: { eq: job.id } },
@@ -106,7 +106,7 @@ describe(processScheduledMessageJob, () => {
     expect.hasAssertions();
 
     const job = await insertJob({ message: "hello world", type: ScheduledMessageJobType.ScheduledMessage });
-    await processScheduledMessageJob({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const claimedScheduledMessageJob = await mockDb.query.scheduledMessageJobsInMessage.findFirst({
       where: { id: { eq: job.id } },
@@ -136,7 +136,7 @@ describe(processScheduledMessageJob, () => {
         .returning(),
     );
 
-    await expect(processScheduledMessageJob({ id: scheduledMessageJob.id }, context)).rejects.toBeInstanceOf(
+    await expect(processScheduledMessageJobHandler({ id: scheduledMessageJob.id }, context)).rejects.toBeInstanceOf(
       InvalidOperationError,
     );
 

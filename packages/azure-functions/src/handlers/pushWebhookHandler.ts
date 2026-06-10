@@ -7,7 +7,7 @@ import { AzureFunction, selectWebhookInMessageSchema, webhookPayloadSchema } fro
 import { getResultAsync } from "@esposter/shared";
 import { z, ZodError } from "zod";
 
-export const pushWebhook: HttpHandler = (request, context) => {
+export const pushWebhookHandler: HttpHandler = (request, context) => {
   context.log(`${AzureFunction.PushWebhook} received a request`);
   return getResultAsync(async () => {
     const { id, token } = await selectWebhookInMessageSchema.pick({ id: true, token: true }).parseAsync(request.params);

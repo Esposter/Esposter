@@ -22,7 +22,7 @@ import {
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
 
-export const processScheduledMessageJob: StorageQueueHandler = (message, context) =>
+export const processScheduledMessageJobHandler: StorageQueueHandler = (message, context) =>
   getResultAsync(async () => {
     const { id } = scheduledMessageJobQueueMessageSchema.parse(
       typeof message === "string" ? JSON.parse(message) : message,
