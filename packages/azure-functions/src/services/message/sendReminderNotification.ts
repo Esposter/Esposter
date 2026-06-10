@@ -1,7 +1,7 @@
 import type { InvocationContext } from "@azure/functions";
 
-import { db } from "@/services/db";
 import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@/services/constants";
+import { db } from "@/services/db";
 import { webpush } from "@/services/webpush";
 import { getPushSubscriptionsForUser } from "@esposter/db";
 import { pushSubscriptionsInMessage } from "@esposter/db-schema";

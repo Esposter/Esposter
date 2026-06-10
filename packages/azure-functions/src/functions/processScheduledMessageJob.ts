@@ -1,9 +1,9 @@
+import { db } from "@/services/db";
 import { getTableClient } from "@/services/getTableClient";
 import { getWebPubSubServiceClient } from "@/services/getWebPubSubServiceClient";
 import { assertCanCreateMessage } from "@/services/message/assertCanCreateMessage";
 import { sendReminderNotification } from "@/services/message/sendReminderNotification";
 import { pushNotification } from "@/services/pushNotification";
-import { db } from "@/services/db";
 import { app } from "@azure/functions";
 import { createMessage } from "@esposter/db";
 import {
@@ -12,11 +12,10 @@ import {
   AzureTable,
   AzureWebPubSubHub,
   MessageType,
-  reminderScheduledMessageJobPayloadSchema,
   roomsInMessage,
+  scheduledMessageJobPayloadSchema,
   scheduledMessageJobQueueMessageSchema,
   scheduledMessageJobsInMessage,
-  scheduledMessageScheduledMessageJobPayloadSchema,
   ScheduledMessageJobType,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -43,11 +42,10 @@ app.storageQueue(AzureFunction.ProcessScheduledMessageJob, {
         .returning();
       if (!job) return;
 
-      if (job.type === ScheduledMessageJobType.Reminder) {
-        const payload = reminderScheduledMessageJobPayloadSchema.parse(job.payload);
+      const payload = scheduledMessageJobPayloadSchema.parse(job.payload);
+      if (payload.type === ScheduledMessageJobType.Reminder) {
         await sendReminderNotification(context, { roomId: job.roomId, text: payload.text, userId: job.userId });
       } else {
-        const payload = scheduledMessageScheduledMessageJobPayloadSchema.parse(job.payload);
         await assertCanCreateMessage(job.userId, job.roomId, payload.message);
         const messageClient = await getTableClient(AzureTable.Messages);
         const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);

@@ -15,7 +15,7 @@ import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
 import { roomFiltersInMessage } from "@/schema/roomFiltersInMessage";
 import { roomRolesInMessage } from "@/schema/roomRolesInMessage";
 import { roomsInMessage, roomTypeEnum } from "@/schema/roomsInMessage";
-import { scheduledMessageJobsInMessage, scheduledMessageJobTypeEnum } from "@/schema/scheduledMessageJobsInMessage";
+import { scheduledMessageJobsInMessage } from "@/schema/scheduledMessageJobsInMessage";
 import { searchHistoriesInMessage } from "@/schema/searchHistoriesInMessage";
 import { sessions } from "@/schema/sessions";
 import { surveys } from "@/schema/surveys";
@@ -49,7 +49,6 @@ export const schema = {
   roomsInMessage,
   roomTypeEnum,
   scheduledMessageJobsInMessage,
-  scheduledMessageJobTypeEnum,
   searchHistoriesInMessage,
   sessions,
   surveys,

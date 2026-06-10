@@ -82,10 +82,9 @@ export const scheduledMessageJobRouter = router({
           await ctx.db
             .insert(scheduledMessageJobsInMessage)
             .values({
-              payload: { message: input.message },
+              payload: { message: input.message, type: ScheduledMessageJobType.ScheduledMessage },
               roomId: input.roomId,
               runAt: input.runAt,
-              type: ScheduledMessageJobType.ScheduledMessage,
               userId: ctx.getSessionPayload.user.id,
             })
             .returning()
@@ -105,10 +104,9 @@ export const scheduledMessageJobRouter = router({
           await ctx.db
             .insert(scheduledMessageJobsInMessage)
             .values({
-              payload: { text: input.text },
+              payload: { text: input.text, type: ScheduledMessageJobType.Reminder },
               roomId: input.roomId,
               runAt: input.runAt,
-              type: ScheduledMessageJobType.Reminder,
               userId: ctx.getSessionPayload.user.id,
             })
             .returning()

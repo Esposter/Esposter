@@ -1,7 +1,7 @@
 import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devstesposter001 } from "@/resources/Microsoft.Storage/storageAccounts/devstesposter001";
-import * as azure_native from "@pulumi/azure-native";
 import { AzureQueue } from "@esposter/db-schema";
+import * as azure_native from "@pulumi/azure-native";
 
 export const devstesposter001ScheduledMessageJobs: azure_native.storage.Queue = new azure_native.storage.Queue(
   "devstesposter001/default/scheduled-message-jobs",

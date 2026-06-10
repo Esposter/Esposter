@@ -37,8 +37,7 @@ describe("scheduledMessageJob", () => {
     const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
 
     expect(scheduledMessageJob.roomId).toBe(room.id);
-    expect(scheduledMessageJob.type).toBe(ScheduledMessageJobType.Reminder);
-    expect(scheduledMessageJob.payload).toStrictEqual({ text });
+    expect(scheduledMessageJob.payload).toStrictEqual({ text, type: ScheduledMessageJobType.Reminder });
   });
 
   test("schedules message", async () => {
@@ -48,8 +47,7 @@ describe("scheduledMessageJob", () => {
     const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId: room.id, runAt });
 
     expect(scheduledMessageJob.roomId).toBe(room.id);
-    expect(scheduledMessageJob.type).toBe(ScheduledMessageJobType.ScheduledMessage);
-    expect(scheduledMessageJob.payload).toStrictEqual({ message });
+    expect(scheduledMessageJob.payload).toStrictEqual({ message, type: ScheduledMessageJobType.ScheduledMessage });
   });
 
   test("reads scheduled jobs", async () => {

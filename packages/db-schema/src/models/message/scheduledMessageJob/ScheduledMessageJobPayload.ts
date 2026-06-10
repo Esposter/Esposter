@@ -9,7 +9,7 @@ export type ScheduledMessageJobPayload =
   | ReminderScheduledMessageJobPayload
   | ScheduledMessageScheduledMessageJobPayload;
 
-export const scheduledMessageJobPayloadSchema = z.union([
+export const scheduledMessageJobPayloadSchema = z.discriminatedUnion("type", [
   reminderScheduledMessageJobPayloadSchema,
   scheduledMessageScheduledMessageJobPayloadSchema,
 ]) satisfies z.ZodType<ScheduledMessageJobPayload>;
