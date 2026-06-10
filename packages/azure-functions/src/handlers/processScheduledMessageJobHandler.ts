@@ -58,7 +58,7 @@ export const processScheduledMessageJobHandler: StorageQueueHandler = (message, 
 
       const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
         columns: { nickname: true },
-        where: { roomId: job.roomId, userId: job.userId },
+        where: { roomId: { eq: job.roomId }, userId: { eq: job.userId } },
         with: { user: { columns: { image: true, name: true } } },
       });
       if (userToRoom)

@@ -20,7 +20,7 @@ export const createTableFilterPredicate = <T extends Record<string, unknown>>(
       for (const group of orGroup) {
         const clause = deserializeClause(group);
         const value = takeOne(entity, clause.key as keyof typeof entity);
-        let isMatched = false;
+        let isMatched: boolean;
 
         if (isTableNullClause(clause)) isMatched = compare(BinaryOperator.eq, value, null);
         else {
