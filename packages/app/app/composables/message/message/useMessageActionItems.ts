@@ -6,7 +6,6 @@ import { DeletableMessageTypes } from "#shared/services/message/DeletableMessage
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
-import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
 import { exhaustiveGuard, normalizeString, RoutePath } from "@esposter/shared";
@@ -35,8 +34,6 @@ export const useMessageActionItems = (
   const { copy } = messageStore;
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const userToRoomStore = useUserToRoomStore();
-  const { updateUserToRoom } = userToRoomStore;
   const threadStore = useThreadStore();
   const { openThread } = threadStore;
   const runtimeConfig = useRuntimeConfig();
@@ -104,7 +101,7 @@ export const useMessageActionItems = (
   const markUnreadFromHereItem: Item = {
     icon: "mdi-email-mark-as-unread",
     onClick: async () => {
-      await updateUserToRoom({
+      await $trpc.userToRoom.updateUserToRoom.mutate({
         lastMessageAt: dayjs(message.createdAt).subtract(1, "millisecond").toDate(),
         roomId: message.partitionKey,
       });

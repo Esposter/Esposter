@@ -48,11 +48,11 @@ export const useExecuteSlashCommand = () => {
         const { message, time } = command.parameterValues;
         const durationMs = parseDuration(time);
         if (!durationMs) break;
-        setTimeout(() => {
-          if (Notification.permission === "granted")
-            // oxlint-disable-next-line no-new
-            new Notification("Reminder", { body: message });
-        }, durationMs);
+        await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
+          roomId,
+          runAt: new Date(Date.now() + durationMs),
+          text: message,
+        });
         break;
       }
       case SlashCommandType.Roll: {

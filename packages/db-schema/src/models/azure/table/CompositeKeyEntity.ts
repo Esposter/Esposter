@@ -9,8 +9,8 @@ export interface CompositeKeyEntityConstraint extends z.ZodRawShape {
 }
 
 export class CompositeKeyEntity extends Serializable implements CompositeKey {
-  partitionKey!: string;
-  rowKey!: string;
+  declare partitionKey: string;
+  declare rowKey: string;
 }
 
 export const createCompositeKeyEntitySchema = <TEntity extends CompositeKeyEntityConstraint>(

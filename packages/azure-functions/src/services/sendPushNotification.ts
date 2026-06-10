@@ -1,30 +1,34 @@
 import type { InvocationContext } from "@azure/functions";
-import type { FriendRequestNotificationEventGridData } from "@esposter/db-schema";
+import type { PushNotificationEventGridData } from "@esposter/db-schema";
 
 import { db } from "@/services/db";
+import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { webpush } from "@/services/webpush";
-import { getPushSubscriptionsForUser } from "@esposter/db";
+import { getPushSubscriptionsForMessage } from "@esposter/db";
 import { pushSubscriptionsInMessage } from "@esposter/db-schema";
 import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { WebPushError } from "web-push";
 
-export const friendRequestNotification = async (
+export const sendPushNotification = async (
   context: InvocationContext,
-  { notificationOptions: { icon, title }, receiverId }: FriendRequestNotificationEventGridData,
+  {
+    message: { message, partitionKey, rowKey, userId },
+    notificationOptions: { icon, title },
+  }: PushNotificationEventGridData,
 ): Promise<void> => {
-  const readPushSubscriptions = await getPushSubscriptionsForUser(db, receiverId);
-  if (readPushSubscriptions.length === 0) {
-    context.log(`No push subscriptions found for user ${receiverId}.`);
-    return;
-  }
-
-  const payload = JSON.stringify({
-    body: "sent you a friend request",
-    data: { url: `${process.env.BASE_URL}${RoutePath.MessagesFriends}` },
+  const payload = getCreateMessageNotificationPayload(context, message, {
     icon,
     title,
+    url: `${process.env.BASE_URL}${RoutePath.MessagesMessage(partitionKey, rowKey)}`,
   });
+  if (!payload) return;
+
+  const readPushSubscriptions = await getPushSubscriptionsForMessage(db, { message, partitionKey, userId });
+  if (readPushSubscriptions.length === 0) {
+    context.log(`No push subscriptions found for room ${partitionKey}.`);
+    return;
+  }
 
   await Promise.all(
     readPushSubscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) =>

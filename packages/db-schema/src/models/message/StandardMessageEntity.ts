@@ -9,7 +9,7 @@ import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class StandardMessageEntity extends BaseMessageEntity {
-  userId!: User["id"];
+  declare userId: User["id"];
 
   constructor(init?: Partial<StandardMessageEntity> & ToData<CompositeKeyEntity>) {
     super();

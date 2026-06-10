@@ -14,6 +14,7 @@ import { roomCategoriesInMessageRelation } from "@/relations/roomCategoriesInMes
 import { roomFiltersInMessageRelation } from "@/relations/roomFiltersInMessageRelation";
 import { roomRolesInMessageRelation } from "@/relations/roomRolesInMessageRelation";
 import { roomsInMessageRelation } from "@/relations/roomsInMessageRelation";
+import { scheduledMessageJobsInMessageRelation } from "@/relations/scheduledMessageJobsInMessageRelation";
 import { searchHistoriesInMessageRelation } from "@/relations/searchHistoriesInMessageRelation";
 import { sessionsRelation } from "@/relations/sessionsRelation";
 import { surveysRelation } from "@/relations/surveysRelation";
@@ -41,6 +42,7 @@ export const relations = {
   ...roomFiltersInMessageRelation,
   ...roomRolesInMessageRelation,
   ...roomsInMessageRelation,
+  ...scheduledMessageJobsInMessageRelation,
   ...searchHistoriesInMessageRelation,
   ...sessionsRelation,
   ...surveysRelation,

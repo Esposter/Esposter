@@ -1,4 +1,3 @@
-import type { DeleteMemberInput } from "#shared/models/db/room/DeleteMemberInput";
 import type { User } from "@esposter/db-schema";
 
 import { EN_US_COMPARATOR } from "@/services/shared/constants";
@@ -6,7 +5,6 @@ import { createOperationData } from "@/services/shared/createOperationData";
 import { useUserStore } from "@/store/message/user";
 
 export const useMemberStore = defineStore("message/user/member", () => {
-  const { $trpc } = useNuxtApp();
   const userStore = useUserStore();
   const { storeUser, storeUsers } = userStore;
   const { items, ...restData } = useCursorPaginationData<User>();
@@ -36,16 +34,10 @@ export const useMemberStore = defineStore("message/user/member", () => {
     baseStoreDeleteMember({ id });
     count.value--;
   };
-  const deleteMember = async (input: DeleteMemberInput) => {
-    await $trpc.room.deleteMember.mutate(input);
-    storeDeleteMember(input.userId);
-  };
-
   return {
     count,
     members,
     ...restData,
-    deleteMember,
     storeCreateMember,
     storeDeleteMember,
     ...restOperationData,
