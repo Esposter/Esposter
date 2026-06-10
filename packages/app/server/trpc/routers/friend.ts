@@ -37,8 +37,8 @@ export const friendRouter = router({
   onDeleteFriend: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
     for await (const [{ receiverId, senderId }] of on(friendEventEmitter, "deleteFriend", { signal })) {
-      if (receiverId !== userId) continue;
-      yield senderId;
+      if (receiverId === userId) yield senderId;
+      else if (senderId === userId) yield receiverId;
     }
   }),
   readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => {

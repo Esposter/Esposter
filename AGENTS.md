@@ -60,6 +60,7 @@ Vue convention notes:
 
 - `watch`, `onMounted`, `onUnmounted`, and related Vue hooks may use async callbacks directly. Do not wrap Vue hook/watch callbacks in `getSynchronizedFunction`.
 - Always destructure props from `defineProps` (`const { id } = defineProps<Props>()`) so the props reactivity transform is used; avoid `props.id` unless there is a specific reason.
+- Do not add Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` call. Call `$trpc` directly from the component/composable when subscriptions own the state update; keep store actions for optimistic updates, navigation/side effects, or multi-step client logic.
 
 Testing convention notes:
 

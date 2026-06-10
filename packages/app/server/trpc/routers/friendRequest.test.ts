@@ -4,7 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
@@ -247,6 +247,29 @@ describe("friendRequest", () => {
     expect(data.value.sender.id).toBe(senderUser.id);
   });
 
+  test("on send friend request notifies caller", async () => {
+    expect.hasAssertions();
+
+    const receiverUser = getMockSession().user;
+    const senderPayload = await mockSessionOnce(mockContext.db);
+    const { user: senderUser } = senderPayload;
+    const onSendFriendRequest = await friendRequestCaller.onSendFriendRequest();
+    replayMockSession(senderPayload);
+    const data = await withAsyncIterator(
+      () => onSendFriendRequest,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), friendRequestCaller.sendFriendRequest(receiverUser.id)]);
+        return result;
+      },
+    );
+
+    assert(!data.done);
+
+    expect(data.value.senderId).toBe(senderUser.id);
+    expect(data.value.receiverId).toBe(receiverUser.id);
+    expect(data.value.receiver.id).toBe(receiverUser.id);
+  });
+
   test("on accept friend request notifies sender", async () => {
     expect.hasAssertions();
 
@@ -268,6 +291,26 @@ describe("friendRequest", () => {
     expect(data.value.id).toBe(receiverUser.id);
   });
 
+  test("on accept friend request notifies caller", async () => {
+    expect.hasAssertions();
+
+    const receiverUser = getMockSession().user;
+    const { user: senderUser } = await mockSessionOnce(mockContext.db);
+    await friendRequestCaller.sendFriendRequest(receiverUser.id);
+    const onAcceptFriendRequest = await friendRequestCaller.onAcceptFriendRequest();
+    const data = await withAsyncIterator(
+      () => onAcceptFriendRequest,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), friendRequestCaller.acceptFriendRequest(senderUser.id)]);
+        return result;
+      },
+    );
+
+    assert(!data.done);
+
+    expect(data.value.id).toBe(senderUser.id);
+  });
+
   test("on decline friend request notifies sender", async () => {
     expect.hasAssertions();
 
@@ -287,5 +330,25 @@ describe("friendRequest", () => {
     assert(!data.done);
 
     expect(data.value).toBe(receiverUser.id);
+  });
+
+  test("on decline friend request notifies caller", async () => {
+    expect.hasAssertions();
+
+    const receiverUser = getMockSession().user;
+    const { user: senderUser } = await mockSessionOnce(mockContext.db);
+    await friendRequestCaller.sendFriendRequest(receiverUser.id);
+    const onDeclineFriendRequest = await friendRequestCaller.onDeclineFriendRequest();
+    const data = await withAsyncIterator(
+      () => onDeclineFriendRequest,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), friendRequestCaller.declineFriendRequest(senderUser.id)]);
+        return result;
+      },
+    );
+
+    assert(!data.done);
+
+    expect(data.value).toBe(senderUser.id);
   });
 });

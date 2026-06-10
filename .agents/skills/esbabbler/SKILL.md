@@ -253,7 +253,7 @@ Full spec in `features/esbabbler/completed/v5.md` → Phase 5.
 
 Subscriptions handle state updates for **all** clients including the caller. Don't duplicate subscription work in a store wrapper.
 
-**Default**: call `$trpc` directly from the component. Add a store function only when it does something subscriptions cannot:
+**Default**: call `$trpc` directly from the component or composable. Do not add a store wrapper that only awaits one mutation. Add a store function only when it does something subscriptions cannot:
 
 1. Genuine optimistic update (local state before server responds)
 2. Navigation or side effects not covered by any subscription
@@ -268,7 +268,7 @@ const deleteDirectMessageParticipant = async (input) => {
   directMessageParticipantsMap.value.set(input.roomId, participants.filter(...));
 };
 
-// CORRECT — call tRPC directly in the component; subscription owns state
+// CORRECT — call tRPC directly where the user action happens; subscription owns state
 $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId });
 ```
 
