@@ -20,7 +20,7 @@ const save = async () => {
   <v-container fluid>
     <v-row>
       <v-col cols="12">
-        <div text-lg font-bold>My Profile</div>
+        <div font-bold text-title-medium>My Profile</div>
       </v-col>
     </v-row>
     <v-row>

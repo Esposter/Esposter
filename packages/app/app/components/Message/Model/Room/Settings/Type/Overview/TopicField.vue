@@ -14,6 +14,6 @@ const emit = defineEmits<{ save: [] }>();
       @blur="emit('save')"
       @keydown.enter.prevent="emit('save')"
     />
-    <span text-xs op-medium-emphasis>Visible below the room name. Use /topic to update from chat.</span>
+    <span op-medium-emphasis text-body-small>Visible below the room name. Use /topic to update from chat.</span>
   </div>
 </template>

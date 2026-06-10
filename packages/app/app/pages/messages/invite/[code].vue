@@ -46,7 +46,7 @@ const { joinRoom } = roomStore;
                 {{ invite.roomInMessage.name }}
               </span>
               by
-              <div text-2xl font-bold>
+              <div font-bold text-headline-small>
                 {{ invite.user.name }}
               </div>
               <div>

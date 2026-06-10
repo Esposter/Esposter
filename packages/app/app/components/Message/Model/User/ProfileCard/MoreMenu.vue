@@ -24,7 +24,7 @@ const { currentRoomId } = storeToRefs(roomStore);
         </template>
       </v-tooltip>
     </template>
-    <v-list density="compact" text-sm>
+    <v-list density="compact" text-body-medium>
       <MessageModelUserProfileCardMoreMenuModerationItems v-if="currentRoomId" :user :room-id="currentRoomId" />
       <MessageModelUserProfileCardMoreMenuCopyUserIdListItem :user-id="user.id" />
     </v-list>
