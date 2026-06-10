@@ -52,6 +52,10 @@ description: Esposter tRPC conventions — procedure typing with generics, route
 
 - **If a utility function is also needed by a Pinia store (frontend), put it in `shared/services/<feature>/` instead** — this makes it importable on both server and client without duplication.
 
+- **If a utility function is also needed by `packages/azure-functions`, put it in `packages/db`** — functions that operate on Postgres/Drizzle and are called from both the Nuxt app server and Azure Functions belong in `packages/db/src/services/` with `PostgresJsDatabase<typeof relations>` as the `db` parameter. Export from `packages/db/src/index.ts`. The app then re-exports via a thin `export { fn } from "@esposter/db"` wrapper so existing import paths don't break. Examples: RBAC helpers (`getPermissions`, `hasPermission`), message moderation checks, push subscription queries.
+
+  Error-throwing wrappers (`assertCanCreateMessage` and its sub-functions) stay in their respective packages because they throw package-specific error types (`TRPCError` in the app, `InvalidOperationError` in azure-functions). Only the underlying DB query helpers move to `packages/db`.
+
 ## Client-Side Calling Conventions
 
 - **Omit optional UUID fields instead of passing `undefined`** — when a tRPC input has an optional UUID field and the value comes from a ref that defaults to `""` (e.g. `currentRoomId`), use a conditional spread instead of `|| undefined`:

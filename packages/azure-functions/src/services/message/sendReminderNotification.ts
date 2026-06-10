@@ -28,7 +28,7 @@ export const sendReminderNotification = async (
       ).match(noop, async (error) => {
         if (error instanceof WebPushError && error.statusCode === 410)
           await db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id));
-        else context.error(`Failed to send reminder notification to ${endpoint}: `, error);
+        else context.error(`Failed to send reminder notification to ${id}: `, error);
       }),
     ),
   );

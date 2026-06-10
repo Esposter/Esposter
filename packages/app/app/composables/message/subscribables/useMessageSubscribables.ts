@@ -1,3 +1,5 @@
+import type { MessageEntity } from "@esposter/db-schema";
+
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
@@ -57,7 +59,7 @@ export const useMessageSubscribables = () => {
       getSynchronizedFunction(async ({ message: { data } }) => {
         // Data arrives as a pre-parsed object (dataType: "json") from WebPubSub — re-stringify so
         // JsonDateParse can revive ISO date strings back to Date instances
-        const parsedData = jsonDateParse(JSON.stringify(data));
+        const parsedData = jsonDateParse<MessageEntity>(JSON.stringify(data));
         const Entity = MessageEntityMap[parsedData.type];
         const entity = new Entity(parsedData);
         await storeCreateMessage(entity);

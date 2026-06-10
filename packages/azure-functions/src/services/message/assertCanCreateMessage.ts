@@ -1,5 +1,5 @@
 import { db } from "@/services/db";
-import { hasPermission } from "@/services/message/rbac/hasPermission";
+import { hasPermission } from "@esposter/db";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -21,7 +21,7 @@ export const assertCanCreateMessage = async (userId: string, roomId: string, mes
   if (!room || !member)
     throw new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId);
 
-  const canManageMessages = await hasPermission(userId, roomId, RoomPermission.ManageMessages);
+  const canManageMessages = await hasPermission(db, userId, roomId, RoomPermission.ManageMessages);
   if (member.timeoutUntil && member.timeoutUntil > new Date())
     throw new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId);
   else if (room.isReadOnly && !canManageMessages)

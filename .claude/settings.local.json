@@ -154,7 +154,8 @@
       "WebFetch(domain:vuetifyjs.com)",
       "WebFetch(domain:vueuse.org)",
       "WebFetch(domain:www.npmjs.com)",
-      "Bash(pnpm db:gen)"
+      "Bash(pnpm db:gen)",
+      "Bash(pnpm i *)"
     ]
   }
 }
