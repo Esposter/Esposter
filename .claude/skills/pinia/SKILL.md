@@ -183,21 +183,30 @@ const deleteBan = async (input: UnbanUserInput) => {
 
 **When to add `storeCreateXxx`/`storeDeleteXxx` driven by subscriptions:** only when a subscription exists that fires to _all_ affected parties. For bans, `onAdminAction` only fires to the banned user — the moderator initiates the ban themselves, so the ban store just updates locally after the mutation. No `storeCreateBan` subscription handler needed.
 
-## tRPC Mutations Belong in Stores — Never in Components
+## tRPC Mutation Placement
 
-All `$trpc.xxx.mutate(...)` calls must live in a Pinia store action, not in a component's `<script setup>`. Components call the store action; the store owns the tRPC call and the local state update.
+Do **not** create Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` call. Components and composables may call `$trpc` directly when the mutation result is handled by subscriptions or no shared state update is needed.
+
+Add a store action only when it adds meaningful client logic:
+
+- Genuine optimistic state before the server responds
+- Navigation or local side effects tied to the mutation result
+- Shared state updates that are not covered by subscriptions
+- Coordination of multiple stores, requests, or validation steps
 
 ```typescript
-// WRONG — tRPC mutation in component
-const unban = async (userId: string) => {
-  await $trpc.moderation.unbanUser.mutate({ roomId, userId }); // ❌
-  items.value = items.value.filter((ban) => ban.userId !== userId);
+// WRONG — useless wrapper; subscription owns the resulting state change
+const deleteFriend = async (friendId: FriendUserIdInput) => {
+  await $trpc.friend.deleteFriend.mutate(friendId);
 };
 
-// CORRECT — store action: tRPC + state update together
-const unban = async (input: UnbanUserInput) => {
-  await $trpc.moderation.unbanUser.mutate(input);
-  storeDeleteBan(input.userId);
+// CORRECT — call the mutation directly where the user action happens
+$trpc.friend.deleteFriend.mutate(friendId);
+
+// CORRECT — store action adds local state logic after the mutation
+const unban = async (userId: string) => {
+  await $trpc.moderation.unbanUser.mutate({ roomId, userId });
+  items.value = items.value.filter((ban) => ban.userId !== userId);
 };
 ```
 
@@ -224,7 +233,7 @@ const unban = async (input: UnbanUserInput) => {
 
 - **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteMember` not `kick`. Reserve domain terms only when there is no clean CRUD mapping.
 
-- **`store*` prefix for subscription-driven state-update counterparts** — `deleteFriend` (user action) + `storeDeleteFriend` (subscription state update). Never add `store*` prefix to unpaired methods:
+- **`store*` prefix for subscription-driven state-update counterparts** — use `storeCreateFriend` / `storeDeleteFriend` for state-only subscription handlers. If the user action is only a direct tRPC call, do not add a matching non-`store*` wrapper:
 
   ```ts
   // friend.ts — createOperationData wraps base CRUD; store methods add dedup / id-mapping
@@ -239,10 +248,6 @@ const unban = async (input: UnbanUserInput) => {
   };
   const storeDeleteFriend = (friendId: string) => {
     baseStoreDeleteFriend({ id: friendId });
-  };
-  const deleteFriend = async (friendId) => {
-    await $trpc.friend.deleteFriend.mutate(friendId);
-    storeDeleteFriend(friendId); // state-only — also used by subscription handlers
   };
   ```
 

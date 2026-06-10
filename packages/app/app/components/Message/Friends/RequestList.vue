@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
+const { $trpc } = useNuxtApp();
 const friendRequestStore = useFriendRequestStore();
 const { receivedFriendRequests } = storeToRefs(friendRequestStore);
-const { acceptFriendRequest, declineFriendRequest } = friendRequestStore;
 const displayReceivedFriendRequests = computed(() =>
   receivedFriendRequests.value.toSorted((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
 );
@@ -22,8 +22,20 @@ const displayReceivedFriendRequests = computed(() =>
         </template>
         <template #append>
           <div flex gap-2>
-            <v-btn text="Accept" variant="tonal" color="success" size="small" @click="acceptFriendRequest(sender.id)" />
-            <v-btn text="Decline" variant="tonal" color="error" size="small" @click="declineFriendRequest(sender.id)" />
+            <v-btn
+              text="Accept"
+              variant="tonal"
+              color="success"
+              size="small"
+              @click="$trpc.friendRequest.acceptFriendRequest.mutate(sender.id)"
+            />
+            <v-btn
+              text="Decline"
+              variant="tonal"
+              color="error"
+              size="small"
+              @click="$trpc.friendRequest.declineFriendRequest.mutate(sender.id)"
+            />
           </div>
         </template>
       </v-list-item>

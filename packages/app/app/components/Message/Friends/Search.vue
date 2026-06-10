@@ -10,7 +10,6 @@ const { blockedUsers } = storeToRefs(blockStore);
 const { blockUser } = blockStore;
 const friendRequestStore = useFriendRequestStore();
 const { sentFriendRequests } = storeToRefs(friendRequestStore);
-const { sendFriendRequest } = friendRequestStore;
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const searchQuery = ref("");
@@ -64,7 +63,7 @@ const onSearch = async () => {
               text="Send Request"
               variant="tonal"
               size="small"
-              @click="sendFriendRequest(id)"
+              @click="$trpc.friendRequest.sendFriendRequest.mutate(id)"
             />
             <v-chip v-else-if="hasSentRequest(id)" text="Request Sent" size="small" />
             <v-chip v-else text="Friends" size="small" color="success" />
