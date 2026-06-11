@@ -38,10 +38,8 @@ describe(pushWebhookHandler, () => {
   });
 
   afterEach(async () => {
-    await mockDb.delete(webhooksInMessage);
-    await mockDb.delete(roomsInMessage);
-    await mockDb.delete(appUsersInMessage);
     await mockDb.delete(users);
+    await mockDb.delete(appUsersInMessage);
     MockEventGridDatabase.clear();
   });
 

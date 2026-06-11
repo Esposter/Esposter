@@ -14,7 +14,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { WebPushError } from "web-push";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -59,6 +59,10 @@ describe(sendPushNotification, () => {
     vi.clearAllMocks();
   });
 
+  afterAll(async () => {
+    await mockDb.delete(users);
+  });
+
   test("returns early when message has no text content", async () => {
     expect.hasAssertions();
 
@@ -90,7 +94,7 @@ describe(sendPushNotification, () => {
   test("deletes expired subscription when status code is 410", async () => {
     expect.hasAssertions();
 
-    const subscription = takeOne(
+    const insertedPushSubscription = takeOne(
       await mockDb.insert(pushSubscriptionsInMessage).values(pushSubscription).returning(),
       0,
     );
@@ -98,11 +102,11 @@ describe(sendPushNotification, () => {
       new WebPushError("Gone", 410, {} as Record<string, string>, "", ""),
     );
     await sendPushNotification(context, { message: standardMessage, notificationOptions });
-    const remaining = await mockDb
+    const remainingPushSubscriptions = await mockDb
       .select()
       .from(pushSubscriptionsInMessage)
-      .where(eq(pushSubscriptionsInMessage.id, subscription.id));
+      .where(eq(pushSubscriptionsInMessage.id, insertedPushSubscription.id));
 
-    expect(remaining).toHaveLength(0);
+    expect(remainingPushSubscriptions).toHaveLength(0);
   });
 });

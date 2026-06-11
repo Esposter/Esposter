@@ -8,7 +8,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInMessage, roomsInMessage, users, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { WebPushError } from "web-push";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -25,15 +25,11 @@ describe(sendReminderNotification, () => {
   const context = new InvocationContext();
   const endpoint = "http://mock-endpoint";
   const name = "name";
-
-  let userId: string;
-  let roomId: string;
+  const roomId = crypto.randomUUID();
+  const userId = crypto.randomUUID();
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    userId = crypto.randomUUID();
-    roomId = crypto.randomUUID();
-
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId });
     await mockDb.insert(usersToRoomsInMessage).values({ roomId, userId });
@@ -42,6 +38,10 @@ describe(sendReminderNotification, () => {
   afterEach(async () => {
     await mockDb.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.userId, userId));
     vi.clearAllMocks();
+  });
+
+  afterAll(async () => {
+    await mockDb.delete(users);
   });
 
   test("completes without error when user has no push subscriptions", async () => {
@@ -63,7 +63,7 @@ describe(sendReminderNotification, () => {
   test("deletes expired subscription when status code is 410", async () => {
     expect.hasAssertions();
 
-    const subscription = takeOne(
+    const pushSubscription = takeOne(
       await mockDb.insert(pushSubscriptionsInMessage).values({ auth: "", endpoint, p256dh: "", userId }).returning(),
       0,
     );
@@ -74,11 +74,11 @@ describe(sendReminderNotification, () => {
 
     await sendReminderNotification(context, { roomId, text: "reminder", userId });
 
-    const remaining = await mockDb
+    const remainingPushSubscriptions = await mockDb
       .select()
       .from(pushSubscriptionsInMessage)
-      .where(eq(pushSubscriptionsInMessage.id, subscription.id));
+      .where(eq(pushSubscriptionsInMessage.id, pushSubscription.id));
 
-    expect(remaining).toHaveLength(0);
+    expect(remainingPushSubscriptions).toHaveLength(0);
   });
 });

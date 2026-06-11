@@ -6,7 +6,7 @@ import { processPushNotificationHandler } from "@/handlers/processPushNotificati
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { users } from "@esposter/db-schema";
-import { beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
 
@@ -39,6 +39,10 @@ describe(processPushNotificationHandler, () => {
   beforeAll(async () => {
     mockDb = await createMockDb();
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
+  });
+
+  afterAll(async () => {
+    await mockDb.delete(users);
   });
 
   test("completes without error when user has no push subscriptions", async () => {

@@ -6,7 +6,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { roomFiltersInMessage, roomsInMessage, users, usersToRoomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
 
@@ -17,18 +17,13 @@ vi.mock(import("@/services/db"), () => ({
 }));
 
 describe(assertCanCreateMessage, () => {
+  const memberUserId = crypto.randomUUID();
   const name = "name";
-
-  let ownerUserId: string;
-  let memberUserId: string;
-  let roomId: string;
+  const ownerUserId = crypto.randomUUID();
+  const roomId = crypto.randomUUID();
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    ownerUserId = crypto.randomUUID();
-    memberUserId = crypto.randomUUID();
-    roomId = crypto.randomUUID();
-
     await mockDb.insert(users).values([
       { email: "", emailVerified: true, id: ownerUserId, name },
       { email: " ", emailVerified: true, id: memberUserId, name },
@@ -38,6 +33,10 @@ describe(assertCanCreateMessage, () => {
       { roomId, userId: ownerUserId },
       { roomId, userId: memberUserId },
     ]);
+  });
+
+  afterAll(async () => {
+    await mockDb.delete(users);
   });
 
   afterEach(async () => {

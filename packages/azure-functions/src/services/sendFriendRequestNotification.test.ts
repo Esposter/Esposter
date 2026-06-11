@@ -8,7 +8,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInMessage, users } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { WebPushError } from "web-push";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -25,14 +25,15 @@ describe(sendFriendRequestNotification, () => {
   const context = new InvocationContext();
   const endpoint = "http://mock-endpoint";
   const name = "name";
-
-  let receiverId: string;
+  const receiverId = crypto.randomUUID();
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    receiverId = crypto.randomUUID();
-
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: receiverId, name });
+  });
+
+  afterAll(async () => {
+    await mockDb.delete(users);
   });
 
   afterEach(async () => {
@@ -61,7 +62,7 @@ describe(sendFriendRequestNotification, () => {
   test("deletes expired subscription when status code is 410", async () => {
     expect.hasAssertions();
 
-    const subscription = takeOne(
+    const pushSubscription = takeOne(
       await mockDb
         .insert(pushSubscriptionsInMessage)
         .values({ auth: "", endpoint, p256dh: "", userId: receiverId })
@@ -75,11 +76,11 @@ describe(sendFriendRequestNotification, () => {
 
     await sendFriendRequestNotification(context, { notificationOptions: { icon: "", title: "" }, receiverId });
 
-    const remaining = await mockDb
+    const remainingPushSubscriptions = await mockDb
       .select()
       .from(pushSubscriptionsInMessage)
-      .where(eq(pushSubscriptionsInMessage.id, subscription.id));
+      .where(eq(pushSubscriptionsInMessage.id, pushSubscription.id));
 
-    expect(remaining).toHaveLength(0);
+    expect(remainingPushSubscriptions).toHaveLength(0);
   });
 });

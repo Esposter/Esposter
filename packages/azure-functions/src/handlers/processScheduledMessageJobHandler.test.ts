@@ -16,7 +16,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, takeOne } from "@esposter/shared";
 import { MockQueueDatabase, MockTableDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
 
@@ -32,13 +32,12 @@ vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services
 vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
 
 describe(processScheduledMessageJobHandler, () => {
-  const context = new InvocationContext();
+  const context = new InvocationContext({ logHandler: () => {} });
   const message = "message";
   const name = "name";
+  const roomId = crypto.randomUUID();
   const text = "text";
-
-  let userId: string;
-  let roomId: string;
+  const userId = crypto.randomUUID();
 
   const insertJob = async (
     payload: ScheduledMessageJobPayload,
@@ -53,9 +52,6 @@ describe(processScheduledMessageJobHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    userId = crypto.randomUUID();
-    roomId = crypto.randomUUID();
-
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId });
     await mockDb.insert(usersToRoomsInMessage).values({ roomId, userId });
@@ -65,6 +61,10 @@ describe(processScheduledMessageJobHandler, () => {
     await mockDb.delete(scheduledMessageJobsInMessage);
     MockQueueDatabase.clear();
     MockTableDatabase.clear();
+  });
+
+  afterAll(async () => {
+    await mockDb.delete(users);
   });
 
   test("returns early when job already completed", async () => {
@@ -101,7 +101,7 @@ describe(processScheduledMessageJobHandler, () => {
     const job = await insertJob(
       { text, type: ScheduledMessageJobType.Reminder },
       {
-        runAt: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS + 1_000),
+        runAt: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS + 1000),
       },
     );
     await processScheduledMessageJobHandler({ id: job.id }, context);

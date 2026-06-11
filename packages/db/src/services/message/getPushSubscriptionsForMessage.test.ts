@@ -20,7 +20,7 @@ import {
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
 } from "@esposter/shared";
-import { beforeAll, describe, expect, test } from "vitest";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
 const getMentionMessage = (id: string) =>
@@ -106,11 +106,15 @@ describe(getPushSubscriptionsForMessage, () => {
     ]);
   });
 
+  afterAll(async () => {
+    await db.delete(users);
+  });
+
   test("no mention notifies All members excluding sender", async () => {
     expect.hasAssertions();
 
     const result = await getPushSubscriptionsForMessage(db, { ...sender, message: "" });
-    const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
+    const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
 
     expect(result).toHaveLength(3);
     expect(endpointSet.has(getEndpoint(allOnlineUserId))).toBe(true);
@@ -125,7 +129,7 @@ describe(getPushSubscriptionsForMessage, () => {
       message: "",
       partitionKey: roomId,
     });
-    const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
+    const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
 
     expect(result).toHaveLength(4);
     expect(endpointSet.has(getEndpoint(allOnlineUserId))).toBe(true);
@@ -141,7 +145,7 @@ describe(getPushSubscriptionsForMessage, () => {
       ...sender,
       message: getMentionMessage(directMessageOnlineUserId),
     });
-    const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
+    const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
 
     expect(result).toHaveLength(4);
     expect(endpointSet.has(getEndpoint(allOnlineUserId))).toBe(true);
@@ -158,7 +162,7 @@ describe(getPushSubscriptionsForMessage, () => {
       message: getMentionMessage(MENTION_EVERYONE_ID),
     });
 
-    const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
+    const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
 
     expect(result).toHaveLength(5);
     expect(endpointSet.has(getEndpoint(allOnlineUserId))).toBe(true);
@@ -176,7 +180,7 @@ describe(getPushSubscriptionsForMessage, () => {
       message: getMentionMessage(MENTION_HERE_ID),
     });
 
-    const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
+    const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
 
     expect(result).toHaveLength(4);
     expect(endpointSet.has(getEndpoint(allOnlineUserId))).toBe(true);
