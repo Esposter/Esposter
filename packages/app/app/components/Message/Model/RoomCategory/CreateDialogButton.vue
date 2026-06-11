@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { SubmitEventPromise } from "vuetify";
-
 import { formRules } from "@/services/vuetify/formRules";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "@esposter/db-schema";
@@ -10,12 +8,6 @@ const roomCategoryStore = useRoomCategoryStore();
 const { createRoomCategory } = roomCategoryStore;
 const dialog = ref(false);
 const name = ref("");
-const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
-  await withFinalizerAsync(async () => {
-    await createRoomCategory({ name: name.value });
-    name.value = "";
-  }, onComplete);
-};
 </script>
 
 <template>
@@ -23,7 +15,13 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
     v-model="dialog"
     :card-props="{ title: 'New Category' }"
     :confirm-button-props="{ text: 'Create Category' }"
-    @submit="submit"
+    @submit="
+      async (_event, onComplete) =>
+        await withFinalizerAsync(async () => {
+          await createRoomCategory({ name });
+          name = '';
+        }, onComplete)
+    "
   >
     <template #activator="{ updateIsOpen }">
       <v-tooltip text="Create Category">

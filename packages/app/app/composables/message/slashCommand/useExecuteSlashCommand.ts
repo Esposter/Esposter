@@ -49,14 +49,14 @@ export const useExecuteSlashCommand = () => {
       case SlashCommandType.Remind:
         open(ScheduledMessageJobType.Reminder);
         break;
-      case SlashCommandType.Schedule:
-        open(ScheduledMessageJobType.ScheduledMessage);
-        break;
       case SlashCommandType.Roll: {
         const roll = Math.floor(Math.random() * 100) + 1;
         createMessageInput = { message: `🎲 Rolled a **${roll}**`, roomId, type: MessageType.Message };
         break;
       }
+      case SlashCommandType.Schedule:
+        open(ScheduledMessageJobType.ScheduledMessage);
+        break;
       case SlashCommandType.Shrug: {
         const { text } = command.parameterValues;
         createMessageInput = { message: `${text}¯\\_(ツ)_/¯`, roomId, type: MessageType.Message };

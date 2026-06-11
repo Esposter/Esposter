@@ -29,6 +29,7 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - **No `current*` prefix** for reactive refs/computeds — they are always the current value. Exception: global store identifiers distinguishing the active item from a collection: `currentRoomId`
 - `userId` for the session user's ID — never `me`, `myId`, `self`
 - `new{PropName}` for `onUpdate:*` handler parameters: `(newItemsPerPage) =>`, `(newModelValue) =>`
+- **Unused params keep the `_` prefix _and_ a readable name** — `_event`, `_index`, never bare `_`. The prefix marks it unused (satisfies lint); the name documents what the slot is. Applies to inlined event handlers too: `@submit="async (_event, onComplete) => {...}"`
 - `display*` for presentation-layer computed that sorts/filters raw store data: `displayFriends`, `displayReceivedFriendRequests`. Never `sorted*` or `filtered*`
 
 ## Import Aliases
