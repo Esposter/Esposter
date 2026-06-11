@@ -7,6 +7,6 @@ const distFile = resolve(import.meta.dirname, "../dist/index.js");
 describe("@esposter/azure-functions", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4426.15 KB (4532375 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4427.73 KB (4533991 bytes)"`);
   });
 });

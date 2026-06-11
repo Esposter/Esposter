@@ -38,7 +38,7 @@ const isCopied = ref(false);
           variant="outlined"
           hide-details
           readonly
-          bg-background
+          bg-color="background"
           :color="isCopied ? 'success' : undefined"
           :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite('example')}`"
         >

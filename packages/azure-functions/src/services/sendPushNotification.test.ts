@@ -32,19 +32,17 @@ describe(sendPushNotification, () => {
   const endpoint = "http://mock-endpoint";
   const message = "<p>hello</p>";
   const name = "name";
-
-  let senderUserId: string;
-  let subscriberUserId: string;
-  let roomId: string;
-  let rowKey: string;
+  const senderUserId = crypto.randomUUID();
+  const subscriberUserId = crypto.randomUUID();
+  const roomId = crypto.randomUUID();
+  const rowKey = crypto.randomUUID();
+  const notificationOptions = { icon: "", title: "" };
+  const pushSubscription = { auth: "", endpoint, p256dh: "", userId: subscriberUserId };
+  const baseMessage = { message, partitionKey: roomId, rowKey };
+  const standardMessage = { ...baseMessage, userId: senderUserId };
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    senderUserId = crypto.randomUUID();
-    subscriberUserId = crypto.randomUUID();
-    roomId = crypto.randomUUID();
-    rowKey = crypto.randomUUID();
-
     await mockDb.insert(users).values([
       { email: "", emailVerified: true, id: senderUserId, name },
       { email: " ", emailVerified: true, id: subscriberUserId, name },
@@ -58,17 +56,14 @@ describe(sendPushNotification, () => {
 
   afterEach(async () => {
     await mockDb.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.userId, subscriberUserId));
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   test("returns early when message has no text content", async () => {
     expect.hasAssertions();
 
     await expect(
-      sendPushNotification(context, {
-        message: { message: "<p></p>", partitionKey: roomId, rowKey, userId: senderUserId },
-        notificationOptions: { icon: "", title: "" },
-      }),
+      sendPushNotification(context, { message: { ...standardMessage, message: "<p></p>" }, notificationOptions }),
     ).resolves.toBeUndefined();
 
     expect(vi.mocked(webpush.sendNotification)).not.toHaveBeenCalled();
@@ -77,14 +72,17 @@ describe(sendPushNotification, () => {
   test("sends notification to subscribers", async () => {
     expect.hasAssertions();
 
-    await mockDb
-      .insert(pushSubscriptionsInMessage)
-      .values({ auth: "", endpoint, p256dh: "", userId: subscriberUserId });
+    await mockDb.insert(pushSubscriptionsInMessage).values(pushSubscription);
+    await sendPushNotification(context, { message: standardMessage, notificationOptions });
 
-    await sendPushNotification(context, {
-      message: { message, partitionKey: roomId, rowKey, userId: senderUserId },
-      notificationOptions: { icon: "", title: "" },
-    });
+    expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
+  });
+
+  test("sends notification to subscribers when message has no userId (webhook message)", async () => {
+    expect.hasAssertions();
+
+    await mockDb.insert(pushSubscriptionsInMessage).values(pushSubscription);
+    await sendPushNotification(context, { message: baseMessage, notificationOptions });
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
   });
@@ -93,22 +91,13 @@ describe(sendPushNotification, () => {
     expect.hasAssertions();
 
     const subscription = takeOne(
-      await mockDb
-        .insert(pushSubscriptionsInMessage)
-        .values({ auth: "", endpoint, p256dh: "", userId: subscriberUserId })
-        .returning(),
+      await mockDb.insert(pushSubscriptionsInMessage).values(pushSubscription).returning(),
       0,
     );
-
     vi.mocked(webpush.sendNotification).mockRejectedValueOnce(
       new WebPushError("Gone", 410, {} as Record<string, string>, "", ""),
     );
-
-    await sendPushNotification(context, {
-      message: { message, partitionKey: roomId, rowKey, userId: senderUserId },
-      notificationOptions: { icon: "", title: "" },
-    });
-
+    await sendPushNotification(context, { message: standardMessage, notificationOptions });
     const remaining = await mockDb
       .select()
       .from(pushSubscriptionsInMessage)

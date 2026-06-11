@@ -22,6 +22,19 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **Reuse utilities** — check `testUtils.test.ts` for existing helpers before writing local equivalents.
 - **`create*` prefix for test helpers** — all test factory/builder functions use the `create*` prefix (`createRow`, `createColumn`, `createMention`). Never `make*` (`makeRow`, `makeColumn`).
 
+## Shared Test Data (DRY)
+
+Never repeat the same literal value or object across tests. If two or more tests (or rows in a bulk insert) use the same thing, declare it **once** at `describe` scope and reference it. This is a hard rule, not a preference.
+
+- **Repeated scalar values** — declare once: `const auth = ""`, `const p256dh = ""`, `const endpoint = "http://mock-endpoint"`. Never inline the same literal in multiple places.
+- **Repeated objects** — declare the whole object once at `describe` scope: `const pushSubscription = { auth: "", endpoint, p256dh: "", userId: subscriberUserId }`, `const notificationOptions = { icon: "", title: "" }`. Reference the const in every test that needs it.
+- **Near-identical objects** — declare a `base*` const for the shared fields, then spread + override the one field that differs: `const baseMessage = { message, partitionKey: roomId, rowKey }; const standardMessage = { ...baseMessage, userId: senderUserId }`. The webhook variant just reuses `baseMessage`. Never copy-paste a 4-field object to change one field.
+- **Repeated call arguments** — when the same argument shape recurs across calls with one varying field, declare the constant part once and spread: `const sender = { partitionKey: roomId, userId: senderUserId }` → `getX(db, { ...sender, message })`.
+- **Uniform bulk inserts** — when DB insert rows differ only by a single key, `.map()` over that key instead of repeating the row literal: `[idA, idB, idC].map((userId) => ({ auth: "", endpoint: getEndpoint(userId), p256dh: "", userId }))`. Never hand-write N rows that share the same `auth`/`p256dh`/etc.
+- **Repeated event/envelope wrappers** — extract a `create*` helper that takes only the varying payload: `const createEvent = (data: EventGridEvent["data"]): EventGridEvent => ({ data, dataVersion: "1.0", ... })`. Call sites pass `createEvent({ ... } satisfies PayloadType)` so the payload is still type-checked.
+- **Scope correctly** — values built from `beforeAll`/`beforeEach` state stay as `let` (assigned there). Values that don't depend on runtime setup (UUIDs, literals, static objects) go at `describe` scope as `const`. Never regenerate a UUID per test unless each test genuinely needs a unique one.
+- **No single-use extraction** — only extract when a value is used 2+ times (or 2+ identical rows). A value used exactly once stays inline (see "No unnecessary destructure").
+
 ## Canonical Test Values
 
 | Type           | Value(s)                                                                                                                                                                            |
@@ -82,8 +95,22 @@ The default mock session is always the **base user** (inserted by `createMockCon
 
 ## Mock Cleanup
 
-- **Use `vi.restoreAllMocks()` in cleanup** — prefer `restoreAllMocks` over `clearAllMocks`. `restoreAllMocks` restores spied/mocked implementations and clears mock state; `clearAllMocks` only clears usage data and can leak mock implementations between tests.
-- **Do not use `vi.resetAllMocks()` as routine cleanup** — it resets mock implementations to empty functions, which can erase intentional `vi.mock` defaults and make tests less explicit.
+Pick the cleanup based on **how the mock was created**:
+
+- **`vi.spyOn()` mocks → `vi.restoreAllMocks()`** — this is the default. `restoreAllMocks` reinstates the original implementation _and_ clears recorded calls, so spies never leak between tests. Prefer it whenever your mocks are spies.
+- **Module-level `vi.fn()` mocks (colocated `vi.mock`) → `vi.clearAllMocks()`** — `restoreAllMocks` only "restores" things that were spied on a real implementation; a standalone `vi.fn()` from a colocated mock file (e.g. `webpush.sendNotification` in `webpush.test.ts`) was never a spy, so `restoreAllMocks` leaves its recorded call history intact and the count **leaks into the next test**. Use `clearAllMocks` to reset call data while keeping the mock implementation. This is required in any test that asserts `toHaveBeenCalled*` on a module-level `vi.fn()` across more than one test (see `sendPushNotification.test.ts`).
+- **Do not use `vi.resetAllMocks()` as routine cleanup** — it resets mock implementations to empty functions, which erases intentional `vi.mock` defaults and makes tests less explicit.
+
+```ts
+afterEach(async () => {
+  await mockDb.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.userId, subscriberUserId));
+  // webpush.sendNotification is a module-level vi.fn() (not a spy), so restoreAllMocks won't reset its
+  // call history and the count leaks across tests. clearAllMocks resets call data while keeping the impl.
+  vi.clearAllMocks();
+});
+```
+
+When a file mixes both — `vi.spyOn` spies _and_ a module-level `vi.fn()` whose call count is asserted — use `vi.clearAllMocks()` (clears the `vi.fn()` history) plus `vi.restoreAllMocks()` (restores the spies), since neither alone covers both cases.
 
 ## Colocated Module Mocks (`vi.mock` import pattern)
 

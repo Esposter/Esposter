@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSurveyStore } from "@/store/survey";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface DeleteSurveyButtonDialogProps {
   id: string;
@@ -18,8 +19,7 @@ const { deleteSurvey } = surveyStore;
     }"
     @delete="
       async (onComplete) => {
-        await deleteSurvey(id);
-        onComplete();
+        await withFinalizerAsync(() => deleteSurvey(id), onComplete);
       }
     "
   />

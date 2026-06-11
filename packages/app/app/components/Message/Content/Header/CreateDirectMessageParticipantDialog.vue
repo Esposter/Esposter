@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface CreateDirectMessageParticipantDialogProps {
   roomId: RoomInMessage["id"];
@@ -31,13 +32,14 @@ const excludedUserIds = computed(() => {
     :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
     @submit="
       async (_event, onComplete) => {
-        await $trpc.room.directMessage.createDirectMessageParticipants.mutate({
-          roomId,
-          userIds: selectedUserIds,
-        });
-        selectedUserIds = [];
-        friendPicker?.reset();
-        onComplete();
+        await withFinalizerAsync(async () => {
+          await $trpc.room.directMessage.createDirectMessageParticipants.mutate({
+            roomId,
+            userIds: selectedUserIds,
+          });
+          selectedUserIds = [];
+          friendPicker?.reset();
+        }, onComplete);
       }
     "
   >

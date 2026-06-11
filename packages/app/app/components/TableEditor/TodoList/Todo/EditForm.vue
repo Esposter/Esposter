@@ -16,7 +16,6 @@ const modelValue = defineModel<TodoListItem>({ required: true });
       <StyledDatePicker
         v-model="modelValue.dueAt"
         :date-picker-props="{ placeholder: 'Due Date', sixWeeks: 'append' }"
-        @cleared="modelValue.dueAt = null"
       />
     </v-col>
   </v-row>
