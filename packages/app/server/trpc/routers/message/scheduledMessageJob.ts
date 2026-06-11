@@ -4,33 +4,21 @@ import { cancelScheduledMessageJobInputSchema } from "#shared/models/db/message/
 import { readScheduledMessageJobsInputSchema } from "#shared/models/db/message/scheduledMessageJob/ReadScheduledMessageJobsInput";
 import { scheduleMessageInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleMessageInput";
 import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleReminderInput";
-import { dayjs } from "#shared/services/dayjs";
 import { useQueueClient } from "@@/server/composables/azure/queue/useQueueClient";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { enqueueScheduledMessageJob } from "@esposter/db";
 import {
   AzureQueue,
   DatabaseEntityType,
-  scheduledMessageJobQueueMessageSchema,
   scheduledMessageJobsInMessage,
   ScheduledMessageJobType,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, asc, eq, isNull } from "drizzle-orm";
-
-const enqueueJob = async (id: string, runAt: Date) => {
-  const queueClient = useQueueClient(AzureQueue.ScheduledMessageJobs);
-  const visibilityTimeout = Math.min(
-    Math.max(0, Math.ceil(dayjs.duration(runAt.getTime() - Date.now()).asSeconds())),
-    dayjs.duration(7, "days").asSeconds(),
-  );
-  await queueClient.sendMessage(JSON.stringify(scheduledMessageJobQueueMessageSchema.parse({ id })), {
-    visibilityTimeout,
-  });
-};
 
 export const scheduledMessageJobRouter = router({
   cancelScheduledJob: standardAuthedProcedure
@@ -92,7 +80,7 @@ export const scheduledMessageJobRouter = router({
         DatabaseEntityType.ScheduledMessageJob,
         JSON.stringify(input),
       );
-      await enqueueJob(job.id, job.runAt);
+      await enqueueScheduledMessageJob(useQueueClient(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
       return job;
     },
   ),
@@ -114,7 +102,7 @@ export const scheduledMessageJobRouter = router({
         DatabaseEntityType.ScheduledMessageJob,
         JSON.stringify(input),
       );
-      await enqueueJob(job.id, job.runAt);
+      await enqueueScheduledMessageJob(useQueueClient(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
       return job;
     },
   ),

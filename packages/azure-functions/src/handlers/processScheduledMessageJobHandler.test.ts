@@ -2,8 +2,8 @@ import type { relations, ScheduledMessageJobPayload } from "@esposter/db-schema"
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { processScheduledMessageJobHandler } from "@/handlers/processScheduledMessageJobHandler";
-import { dayjs } from "@/services/dayjs";
 import { InvocationContext } from "@azure/functions";
+import { MAX_QUEUE_VISIBILITY_TIMEOUT_MS } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AzureQueue,
@@ -33,7 +33,9 @@ vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
 
 describe(processScheduledMessageJobHandler, () => {
   const context = new InvocationContext();
+  const message = "message";
   const name = "name";
+  const text = "text";
 
   let userId: string;
   let roomId: string;
@@ -69,7 +71,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(
-      { text: "reminder", type: ScheduledMessageJobType.Reminder },
+      { text, type: ScheduledMessageJobType.Reminder },
       { completedAt: new Date("1970-01-01") },
     );
     await processScheduledMessageJobHandler({ id: job.id }, context);
@@ -83,7 +85,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(
-      { text: "reminder", type: ScheduledMessageJobType.Reminder },
+      { text, type: ScheduledMessageJobType.Reminder },
       { cancelledAt: new Date("1970-01-01") },
     );
     await processScheduledMessageJobHandler({ id: job.id }, context);
@@ -97,11 +99,9 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(
-      { text: "don't forget!", type: ScheduledMessageJobType.Reminder },
+      { text, type: ScheduledMessageJobType.Reminder },
       {
-        runAt: new Date(
-          Date.now() + dayjs.duration(7, "days").asMilliseconds() + dayjs.duration(1, "second").asMilliseconds(),
-        ),
+        runAt: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS + 1_000),
       },
     );
     await processScheduledMessageJobHandler({ id: job.id }, context);
@@ -119,7 +119,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("records processing start and processes reminder job", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob({ text: "don't forget!", type: ScheduledMessageJobType.Reminder });
+    const job = await insertJob({ text, type: ScheduledMessageJobType.Reminder });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const processedScheduledMessageJob = await mockDb.query.scheduledMessageJobsInMessage.findFirst({
@@ -133,7 +133,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("records processing start and creates message for scheduled message job", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob({ message: "hello world", type: ScheduledMessageJobType.ScheduledMessage });
+    const job = await insertJob({ message, type: ScheduledMessageJobType.ScheduledMessage });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const processedScheduledMessageJob = await mockDb.query.scheduledMessageJobsInMessage.findFirst({
