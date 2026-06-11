@@ -4,6 +4,7 @@ import { cancelScheduledMessageJobInputSchema } from "#shared/models/db/message/
 import { readScheduledMessageJobsInputSchema } from "#shared/models/db/message/scheduledMessageJob/ReadScheduledMessageJobsInput";
 import { scheduleMessageInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleMessageInput";
 import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleReminderInput";
+import { dayjs } from "#shared/services/dayjs";
 import { useQueueClient } from "@@/server/composables/azure/queue/useQueueClient";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { router } from "@@/server/trpc";
@@ -20,12 +21,12 @@ import {
 import { Operation } from "@esposter/shared";
 import { and, asc, eq, isNull } from "drizzle-orm";
 
-const MAX_QUEUE_VISIBILITY_SECONDS = 604800;
+const MAX_QUEUE_VISIBILITY_SECONDS = dayjs.duration(7, "days").asSeconds();
 
 const enqueueJob = async (id: string, runAt: Date) => {
   const queueClient = useQueueClient(AzureQueue.ScheduledMessageJobs);
   const visibilityTimeout = Math.min(
-    Math.max(0, Math.ceil((runAt.getTime() - Date.now()) / 1000)),
+    Math.max(0, Math.ceil(dayjs.duration(runAt.getTime() - Date.now()).asSeconds())),
     MAX_QUEUE_VISIBILITY_SECONDS,
   );
   await queueClient.sendMessage(JSON.stringify(scheduledMessageJobQueueMessageSchema.parse({ id })), {

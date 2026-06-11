@@ -22,7 +22,7 @@ export const devstesposter001Properties: azure_native.storage.BlobServicePropert
             allowedMethods: ["PUT"],
             allowedOrigins: ["http://localhost:3000"],
             exposedHeaders: [""],
-            maxAgeInSeconds: 86400,
+            maxAgeInSeconds: 86_400,
           },
         ],
       },

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { dayjs } from "#shared/services/dayjs";
 import { sanitizeMessageHtml } from "@/services/sanitizeHtml/sanitizeMessageHtml";
 import { formRules } from "@/services/vuetify/formRules";
 import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
@@ -6,13 +7,12 @@ import { useRoomStore } from "@/store/message/room";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { marked } from "marked";
 
-const MINUTE_MS = 60_000;
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const scheduledMessageJobDialogStore = useScheduledMessageJobDialogStore();
 const { isOpen, type } = storeToRefs(scheduledMessageJobDialogStore);
-const scheduledAt = ref(new Date(Date.now() + MINUTE_MS));
+const scheduledAt = ref(dayjs().add(1, "minute").toDate());
 const minScheduledAt = ref(scheduledAt.value);
 const text = ref("");
 const isReminder = computed(() => type.value === ScheduledMessageJobType.Reminder);
@@ -20,7 +20,7 @@ const title = computed(() => (isReminder.value ? "Set Reminder" : "Schedule Mess
 const textLabel = computed(() => (isReminder.value ? "Reminder" : "Message"));
 const confirmText = computed(() => (isReminder.value ? "Set Reminder" : "Schedule Message"));
 const setDefaultScheduledAt = () => {
-  scheduledAt.value = new Date(Date.now() + MINUTE_MS);
+  scheduledAt.value = dayjs().add(1, "minute").toDate();
   minScheduledAt.value = new Date(scheduledAt.value);
 };
 

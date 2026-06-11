@@ -1,5 +1,6 @@
 import type { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 
+import { dayjs } from "#shared/services/dayjs";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { auth } from "@@/server/auth";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
@@ -34,7 +35,7 @@ export const getIsRateLimited = (type: RateLimiterType) =>
       },
     );
     if ("setHeader" in ctx.res) {
-      ctx.res.setHeader("Retry-After", msBeforeNext / 1000);
+      ctx.res.setHeader("Retry-After", dayjs.duration(msBeforeNext).asSeconds());
       ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
       ctx.res.setHeader("X-RateLimit-Remaining", remainingPoints);
       ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + msBeforeNext).toISOString());
