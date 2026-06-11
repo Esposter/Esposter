@@ -55,7 +55,7 @@ catalog:
   "@nuxt/fonts": ^0.14.0
   "@nuxt/scripts": ^1.2.1
   "@nuxt/test-utils": ^4.0.3
-  "@nuxtjs/seo": ^5.2.1
+  "@nuxtjs/seo": ^5.2.4
   "@pinia/nuxt": ^0.11.3
   "@pulumi/azure-native": ^3.19.0
   "@pulumi/pulumi": ^3.245.0
@@ -222,7 +222,7 @@ catalog:
   vite: ^8.0.16
   vite-plugin-mkcert: ^2.1.0
   vitest: ^4.1.8
-  vue: ^3.5.35
+  vue: ^3.5.37
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4

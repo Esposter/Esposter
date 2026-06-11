@@ -36,6 +36,7 @@
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
+    "dayjs": "catalog:",
     "fast-deep-equal": "catalog:"
   },
   "devDependencies": {

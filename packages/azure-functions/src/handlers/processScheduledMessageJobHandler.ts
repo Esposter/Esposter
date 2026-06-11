@@ -1,6 +1,7 @@
 import type { StorageQueueHandler } from "@azure/functions";
 
 import { assertCanCreateMessage } from "@/services/assertCanCreateMessage";
+import { dayjs } from "@/services/dayjs";
 import { db } from "@/services/db";
 import { getQueueClient } from "@/services/getQueueClient";
 import { getTableClient } from "@/services/getTableClient";
@@ -24,13 +25,11 @@ import {
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
 
-const MAX_QUEUE_VISIBILITY_SECONDS = 604_800;
-
 const enqueueJob = async (id: string, runAt: Date) => {
   const queueClient = getQueueClient(AzureQueue.ScheduledMessageJobs);
   const visibilityTimeout = Math.min(
-    Math.max(0, Math.ceil((runAt.getTime() - Date.now()) / 1000)),
-    MAX_QUEUE_VISIBILITY_SECONDS,
+    Math.max(0, Math.ceil(dayjs.duration(runAt.getTime() - Date.now()).asSeconds())),
+    dayjs.duration(7, "days").asSeconds(),
   );
   await queueClient.sendMessage(JSON.stringify(scheduledMessageJobQueueMessageSchema.parse({ id })), {
     visibilityTimeout,
@@ -39,9 +38,7 @@ const enqueueJob = async (id: string, runAt: Date) => {
 
 export const processScheduledMessageJobHandler: StorageQueueHandler = (message, context) =>
   getResultAsync(async () => {
-    const { id } = scheduledMessageJobQueueMessageSchema.parse(
-      typeof message === "string" ? JSON.parse(message) : message,
-    );
+    const { id } = scheduledMessageJobQueueMessageSchema.parse(message);
     const job = await db.query.scheduledMessageJobsInMessage.findFirst({
       where: { cancelledAt: { isNull: true }, completedAt: { isNull: true }, id: { eq: id } },
     });

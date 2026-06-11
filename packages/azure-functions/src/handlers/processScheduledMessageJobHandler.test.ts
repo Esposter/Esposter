@@ -2,6 +2,7 @@ import type { relations, ScheduledMessageJobPayload } from "@esposter/db-schema"
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { processScheduledMessageJobHandler } from "@/handlers/processScheduledMessageJobHandler";
+import { dayjs } from "@/services/dayjs";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -97,7 +98,11 @@ describe(processScheduledMessageJobHandler, () => {
 
     const job = await insertJob(
       { text: "don't forget!", type: ScheduledMessageJobType.Reminder },
-      { runAt: new Date(Date.now() + 604_801_000) },
+      {
+        runAt: new Date(
+          Date.now() + dayjs.duration(7, "days").asMilliseconds() + dayjs.duration(1, "second").asMilliseconds(),
+        ),
+      },
     );
     await processScheduledMessageJobHandler({ id: job.id }, context);
 

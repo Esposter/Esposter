@@ -31,11 +31,12 @@ import type { Except } from "type-fest";
 
 import { MOCK_QUEUE_BASE_URL } from "@/constants";
 import { toWebResourceLike } from "@/services/container/toWebResourceLike";
+import { dayjs } from "@/services/dayjs";
 import { MockQueueDatabase } from "@/store/MockQueueDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 
-const MESSAGE_TTL_MS = 604_800_000;
+const MESSAGE_TTL_MS = dayjs.duration(7, "days").asMilliseconds();
 /**
  * An in-memory mock of the Azure QueueClient.
  * It uses a Map to simulate queue storage and correctly implements the QueueClient interface.
