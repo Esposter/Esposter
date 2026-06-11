@@ -41,6 +41,7 @@
     "types/*.d.ts",
     "${configDir}/types/*.d.ts",
     "${configDir}/*.ts",
+    "${configDir}/scripts/**/*.ts",
     "${configDir}/src/**/*.ts",
     "${configDir}/src/**/*.vue"
   ]
