@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { withFinalizerAsync } from "@esposter/shared";
 
 const slots = defineSlots<{ "append-header": () => VNode; "prepend-actions": () => VNode }>();
 const tableEditorStore = useTableEditorStore();
@@ -49,8 +50,7 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
       @close="resetItem()"
       @delete="
         async (onComplete) => {
-          await save(true);
-          onComplete();
+          await withFinalizerAsync(() => save(true), onComplete);
         }
       "
       @save="save()"

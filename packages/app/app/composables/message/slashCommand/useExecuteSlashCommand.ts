@@ -2,13 +2,13 @@ import type { SlashCommandParameters } from "@/models/message/slashCommands/Slas
 import type { StandardCreateMessageInput } from "@esposter/db-schema";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
-import { parseDuration } from "@/services/message/slashCommands/parseDuration";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useReplyStore } from "@/store/message/input/reply";
+import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
 import { useRoomStore } from "@/store/message/room";
 import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
-import { MessageType } from "@esposter/db-schema";
+import { MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { marked } from "marked";
 
@@ -20,6 +20,8 @@ export const useExecuteSlashCommand = () => {
   const { storeSendMessage } = dataStore;
   const pollDialogStore = usePollDialogStore();
   const { isOpen } = storeToRefs(pollDialogStore);
+  const scheduledMessageJobDialogStore = useScheduledMessageJobDialogStore();
+  const { open } = scheduledMessageJobDialogStore;
   const replyStore = useReplyStore();
   const { rowKey: replyRowKey } = storeToRefs(replyStore);
   return async (
@@ -44,22 +46,17 @@ export const useExecuteSlashCommand = () => {
       case SlashCommandType.Poll:
         isOpen.value = true;
         break;
-      case SlashCommandType.Remind: {
-        const { message, time } = command.parameterValues;
-        const durationMs = parseDuration(time);
-        if (!durationMs) break;
-        await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
-          roomId,
-          runAt: new Date(Date.now() + durationMs),
-          text: message,
-        });
+      case SlashCommandType.Remind:
+        open(ScheduledMessageJobType.Reminder);
         break;
-      }
       case SlashCommandType.Roll: {
         const roll = Math.floor(Math.random() * 100) + 1;
         createMessageInput = { message: `🎲 Rolled a **${roll}**`, roomId, type: MessageType.Message };
         break;
       }
+      case SlashCommandType.Schedule:
+        open(ScheduledMessageJobType.ScheduledMessage);
+        break;
       case SlashCommandType.Shrug: {
         const { text } = command.parameterValues;
         createMessageInput = { message: `${text}¯\\_(ツ)_/¯`, roomId, type: MessageType.Message };

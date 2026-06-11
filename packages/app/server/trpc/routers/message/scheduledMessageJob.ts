@@ -20,7 +20,7 @@ import {
 import { Operation } from "@esposter/shared";
 import { and, asc, eq, isNull } from "drizzle-orm";
 
-const MAX_QUEUE_VISIBILITY_SECONDS = 604800;
+const MAX_QUEUE_VISIBILITY_SECONDS = 604_800;
 
 const enqueueJob = async (id: string, runAt: Date) => {
   const queueClient = useQueueClient(AzureQueue.ScheduledMessageJobs);

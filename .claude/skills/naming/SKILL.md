@@ -29,7 +29,13 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - **No `current*` prefix** for reactive refs/computeds — they are always the current value. Exception: global store identifiers distinguishing the active item from a collection: `currentRoomId`
 - `userId` for the session user's ID — never `me`, `myId`, `self`
 - `new{PropName}` for `onUpdate:*` handler parameters: `(newItemsPerPage) =>`, `(newModelValue) =>`
+- **Unused params keep the `_` prefix _and_ a readable name** — `_event`, `_index`, never bare `_`. The prefix marks it unused (satisfies lint); the name documents what the slot is. Applies to inlined event handlers too: `@submit="async (_event, onComplete) => {...}"`
 - `display*` for presentation-layer computed that sorts/filters raw store data: `displayFriends`, `displayReceivedFriendRequests`. Never `sorted*` or `filtered*`
+
+## Numbers & Time
+
+- **Time durations use `dayjs.duration(...)`** — never inline arithmetic like `7 * 24 * 60 * 60 * 1000` or raw literals like `604800`. Use `dayjs.duration(7, "days").asMilliseconds()` / `.asSeconds()`, and `dayjs().add(1, "minute").toDate()` for "now + N". For ms→unit conversions, `dayjs.duration(ms).asSeconds()` / `.asMinutes()` — never `ms / 1000` or `ms / 60000`. dayjs is `import { dayjs } from "#shared/services/dayjs"`. Packages without dayjs (`azure-mock`, `infra`) fall back to a digit-separated literal (see below), in a file-local `const` if reused.
+- **Big numeric literals get `_` digit-group separators** — any literal with 5+ digits: `604_800_000`, `1_500_000_000_000`, `86_400`, `60_000`. Applies to non-time tuning constants too (epoch offsets, decay divisors). Small/clear values (`1024`, `1024 * 1024`) stay as-is — never obscure a clear expression into a separated literal. (`unicorn/numeric-separators-style` only fixes the _style_ of existing separators; adding them is on you.)
 
 ## Import Aliases
 

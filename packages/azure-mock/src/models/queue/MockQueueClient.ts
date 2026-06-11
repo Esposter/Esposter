@@ -34,6 +34,8 @@ import { toWebResourceLike } from "@/services/container/toWebResourceLike";
 import { MockQueueDatabase } from "@/store/MockQueueDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
+
+const MESSAGE_TTL_MS = 604_800_000;
 /**
  * An in-memory mock of the Azure QueueClient.
  * It uses a Map to simulate queue storage and correctly implements the QueueClient interface.
@@ -128,7 +130,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   peekMessages(_options?: QueuePeekMessagesOptions): Promise<QueuePeekMessagesResponse> {
     const peekedMessageItems: PeekedMessageItem[] = this.queue.map((text) => ({
       dequeueCount: 0,
-      expiresOn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expiresOn: new Date(Date.now() + MESSAGE_TTL_MS),
       insertedOn: new Date(),
       messageId: crypto.randomUUID(),
       messageText: text,
@@ -149,7 +151,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   receiveMessages(_options?: QueueReceiveMessageOptions): Promise<QueueReceiveMessageResponse> {
     const receivedMessageItems: DequeuedMessageItem[] = this.queue.splice(0).map((text) => ({
       dequeueCount: 1,
-      expiresOn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expiresOn: new Date(Date.now() + MESSAGE_TTL_MS),
       insertedOn: new Date(),
       messageId: crypto.randomUUID(),
       messageText: text,
@@ -172,7 +174,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   sendMessage(messageText: string, _options?: QueueSendMessageOptions): Promise<QueueSendMessageResponse> {
     this.queue.push(messageText);
     const now = new Date();
-    const expiresOn = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const expiresOn = new Date(now.getTime() + MESSAGE_TTL_MS);
     const insertedOn = now;
     const messageId = crypto.randomUUID();
     const nextVisibleOn = now;

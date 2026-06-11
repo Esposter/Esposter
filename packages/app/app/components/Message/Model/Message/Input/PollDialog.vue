@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import type { SubmitEventPromise } from "vuetify";
-
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { formRules } from "@/services/vuetify/formRules";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
@@ -16,23 +15,6 @@ const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const question = ref("");
 const options = ref(["", ""]);
-const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
-  if (!currentRoomId.value) {
-    onComplete();
-    return;
-  }
-  const pollContent = pollMessageContentSchema.parse({
-    options: options.value.map((label) => ({ id: crypto.randomUUID(), label })),
-    question: question.value,
-    votes: {},
-  });
-  await createMessage({
-    message: JSON.stringify(pollContent),
-    roomId: currentRoomId.value,
-    type: MessageType.Poll,
-  });
-  onComplete();
-};
 </script>
 
 <template>
@@ -40,7 +22,18 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
     v-model="isOpen"
     :card-props="{ title: 'Create Poll' }"
     :confirm-button-props="{ text: 'Create Poll', prependIcon: 'mdi-poll' }"
-    @submit="submit"
+    @submit="
+      async (_event, onComplete) =>
+        await withFinalizerAsync(async () => {
+          if (!currentRoomId) return;
+          const pollContent = pollMessageContentSchema.parse({
+            options: options.map((label) => ({ id: crypto.randomUUID(), label })),
+            question,
+            votes: {},
+          });
+          await createMessage({ message: JSON.stringify(pollContent), roomId: currentRoomId, type: MessageType.Poll });
+        }, onComplete)
+    "
   >
     <v-container>
       <v-row>
