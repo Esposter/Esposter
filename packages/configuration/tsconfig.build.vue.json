@@ -8,7 +8,8 @@
   },
   "exclude": [
     "${configDir}/node_modules",
-    "${configDir}/*.config.ts",
+    "${configDir}/*.ts",
+    "${configDir}/scripts/**/*.ts",
     "${configDir}/**/*.test.ts",
     "${configDir}/**/*.bench.ts"
   ]

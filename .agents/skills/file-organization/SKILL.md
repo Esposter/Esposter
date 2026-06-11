@@ -144,7 +144,7 @@ Use `dependencies` for direct runtime imports that are not consumer-provided and
 
 ### Example: `packages/db-mock`
 
-A test-only node package. `drizzle-kit` and `@electric-sql/pglite` are peers (heavy, not bundled). Both are listed in `rolldownConfigurationBrowser.external`. `eslint.config.js` is a symlink to `../configuration/eslint/index.typescript.js`.
+A test-only node package. `@electric-sql/pglite` is a peer (heavy, not bundled, loaded at runtime by `createMockDb`) and is listed in `rolldownConfigurationBrowser.external`. `drizzle-kit` is a `devDependency` only — it is used by `scripts/generateSnapshot.ts` (regenerates the committed `src/snapshot.tar.gz` data-dir snapshot via `pnpm snapshot:gen`) and the verification test, not by the shipped `createMockDb` runtime. `eslint.config.js` is a symlink to `../configuration/eslint/index.typescript.js`.
 
 ## Refactoring — No Alias Re-exports
 
