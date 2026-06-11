@@ -100,9 +100,7 @@ describe(processScheduledMessageJobHandler, () => {
 
     const job = await insertJob(
       { text, type: ScheduledMessageJobType.Reminder },
-      {
-        runAt: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS + 1000),
-      },
+      { runAt: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS + 1000) },
     );
     await processScheduledMessageJobHandler({ id: job.id }, context);
 

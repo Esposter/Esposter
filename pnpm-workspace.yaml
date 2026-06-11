@@ -55,21 +55,21 @@ catalog:
   "@nuxt/fonts": ^0.14.0
   "@nuxt/scripts": ^1.2.1
   "@nuxt/test-utils": ^4.0.3
-  "@nuxtjs/seo": ^5.2.4
+  "@nuxtjs/seo": ^5.2.6
   "@pinia/nuxt": ^0.11.3
   "@pulumi/azure-native": ^3.19.0
   "@pulumi/pulumi": ^3.245.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^1.8.1
-  "@tiptap/core": ^3.26.0
-  "@tiptap/extension-code-block-lowlight": ^3.26.0
-  "@tiptap/extension-file-handler": ^3.26.0
-  "@tiptap/extension-mention": ^3.26.0
-  "@tiptap/extensions": ^3.26.0
-  "@tiptap/pm": ^3.26.0
-  "@tiptap/starter-kit": ^3.26.0
-  "@tiptap/suggestion": ^3.26.0
-  "@tiptap/vue-3": ^3.26.0
+  "@tiptap/core": ^3.26.1
+  "@tiptap/extension-code-block-lowlight": ^3.26.1
+  "@tiptap/extension-file-handler": ^3.26.1
+  "@tiptap/extension-mention": ^3.26.1
+  "@tiptap/extensions": ^3.26.1
+  "@tiptap/pm": ^3.26.1
+  "@tiptap/starter-kit": ^3.26.1
+  "@tiptap/suggestion": ^3.26.1
+  "@tiptap/vue-3": ^3.26.1
   "@tresjs/cientos": ^5.7.2
   "@tresjs/core": ^5.8.1
   "@tresjs/nuxt": ^5.6.1
@@ -113,7 +113,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.14.0
+  apexcharts: ^5.15.0
   better-auth: ^1.6.16
   codemirror: ^6.0.2
   crossws: ^0.4.6
@@ -191,8 +191,8 @@ catalog:
   postgres: ^3.4.9
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.2.0
-  read-excel-file: ^9.1.1
-  rolldown: ^1.1.0
+  read-excel-file: ^9.2.0
+  rolldown: ^1.1.1
   rolldown-plugin-dts: ^0.25.2
   rxjs: ^7.8.2
   sanitize-html: ^2.17.5
@@ -222,7 +222,7 @@ catalog:
   vite: ^8.0.16
   vite-plugin-mkcert: ^2.1.0
   vitest: ^4.1.8
-  vue: ^3.5.37
+  vue: ^3.5.38
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
@@ -243,7 +243,7 @@ catalogMode: strict
 cleanupUnusedCatalogs: true
 
 configDependencies:
-  "@pnpm/pacquet": ^0.11.2
+  "@pnpm/pacquet": ^0.11.3
 
 minimumReleaseAge: 0
 
