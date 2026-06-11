@@ -26,6 +26,7 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 ## Variables
 
 - **No abbreviations** — `directMessageRoom` not `dmRoom`, `existingDirectMessage` not `existing`. Exception: `Ms` suffix for time values: `slowmodeMs`, `durationMs`, `timeoutMs`
+- **Name variables after their full domain type, dropping only the schema `InMessage` suffix** — a value typed as `PushSubscription` (table `pushSubscriptionsInMessage`) is `const pushSubscription`, never the truncated `const subscription` and never the schema-suffixed `const pushSubscriptionInMessage`. Reference the related type to recover the full name; omit only the `InMessage`/`inMessage` namespacing suffix.
 - **No `current*` prefix** for reactive refs/computeds — they are always the current value. Exception: global store identifiers distinguishing the active item from a collection: `currentRoomId`
 - `userId` for the session user's ID — never `me`, `myId`, `self`
 - `new{PropName}` for `onUpdate:*` handler parameters: `(newItemsPerPage) =>`, `(newModelValue) =>`

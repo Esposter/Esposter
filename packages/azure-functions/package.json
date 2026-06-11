@@ -45,7 +45,6 @@
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
-    "dayjs": "catalog:",
     "drizzle-orm": "catalog:",
     "node-html-parser": "catalog:",
     "postgres": "catalog:",

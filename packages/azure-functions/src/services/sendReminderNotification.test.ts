@@ -8,7 +8,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInMessage, roomsInMessage, users, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { WebPushError } from "web-push";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -25,15 +25,14 @@ describe(sendReminderNotification, () => {
   const context = new InvocationContext();
   const endpoint = "http://mock-endpoint";
   const name = "name";
-
-  let userId: string;
-  let roomId: string;
+  const roomId = crypto.randomUUID();
+  const text = "text";
+  const userId = crypto.randomUUID();
+  const pushSubscription = { auth: "", endpoint, p256dh: "", userId };
+  const reminder = { roomId, text, userId };
 
   beforeAll(async () => {
     mockDb = await createMockDb();
-    userId = crypto.randomUUID();
-    roomId = crypto.randomUUID();
-
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId });
     await mockDb.insert(usersToRoomsInMessage).values({ roomId, userId });
@@ -44,18 +43,22 @@ describe(sendReminderNotification, () => {
     vi.clearAllMocks();
   });
 
+  afterAll(async () => {
+    await mockDb.delete(users);
+  });
+
   test("completes without error when user has no push subscriptions", async () => {
     expect.hasAssertions();
 
-    await expect(sendReminderNotification(context, { roomId, text: "reminder", userId })).resolves.toBeUndefined();
+    await expect(sendReminderNotification(context, reminder)).resolves.toBeUndefined();
   });
 
   test("sends notification to all subscriptions", async () => {
     expect.hasAssertions();
 
-    await mockDb.insert(pushSubscriptionsInMessage).values({ auth: "", endpoint, p256dh: "", userId });
+    await mockDb.insert(pushSubscriptionsInMessage).values(pushSubscription);
 
-    await sendReminderNotification(context, { roomId, text: "reminder", userId });
+    await sendReminderNotification(context, reminder);
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
   });
@@ -63,22 +66,20 @@ describe(sendReminderNotification, () => {
   test("deletes expired subscription when status code is 410", async () => {
     expect.hasAssertions();
 
-    const subscription = takeOne(
-      await mockDb.insert(pushSubscriptionsInMessage).values({ auth: "", endpoint, p256dh: "", userId }).returning(),
+    const insertedPushSubscription = takeOne(
+      await mockDb.insert(pushSubscriptionsInMessage).values(pushSubscription).returning(),
       0,
     );
 
-    vi.mocked(webpush.sendNotification).mockRejectedValueOnce(
-      new WebPushError("Gone", 410, {} as Record<string, string>, "", ""),
-    );
+    vi.mocked(webpush.sendNotification).mockRejectedValueOnce(new WebPushError("Gone", 410, {}, "", ""));
 
-    await sendReminderNotification(context, { roomId, text: "reminder", userId });
+    await sendReminderNotification(context, reminder);
 
-    const remaining = await mockDb
+    const remainingPushSubscriptions = await mockDb
       .select()
       .from(pushSubscriptionsInMessage)
-      .where(eq(pushSubscriptionsInMessage.id, subscription.id));
+      .where(eq(pushSubscriptionsInMessage.id, insertedPushSubscription.id));
 
-    expect(remaining).toHaveLength(0);
+    expect(remainingPushSubscriptions).toHaveLength(0);
   });
 });

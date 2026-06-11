@@ -1,14 +1,13 @@
 import type { StorageQueueHandler } from "@azure/functions";
 
 import { assertCanCreateMessage } from "@/services/assertCanCreateMessage";
-import { dayjs } from "@/services/dayjs";
 import { db } from "@/services/db";
 import { getQueueClient } from "@/services/getQueueClient";
 import { getTableClient } from "@/services/getTableClient";
 import { getWebPubSubServiceClient } from "@/services/getWebPubSubServiceClient";
 import { sendPushNotification } from "@/services/sendPushNotification";
 import { sendReminderNotification } from "@/services/sendReminderNotification";
-import { createMessage } from "@esposter/db";
+import { createMessage, enqueueScheduledMessageJob } from "@esposter/db";
 import {
   AzureFunction,
   AzureQueue,
@@ -25,26 +24,23 @@ import {
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
 
-const enqueueJob = async (id: string, runAt: Date) => {
-  const queueClient = getQueueClient(AzureQueue.ScheduledMessageJobs);
-  const visibilityTimeout = Math.min(
-    Math.max(0, Math.ceil(dayjs.duration(runAt.getTime() - Date.now()).asSeconds())),
-    dayjs.duration(7, "days").asSeconds(),
-  );
-  await queueClient.sendMessage(JSON.stringify(scheduledMessageJobQueueMessageSchema.parse({ id })), {
-    visibilityTimeout,
-  });
-};
-
 export const processScheduledMessageJobHandler: StorageQueueHandler = (message, context) =>
   getResultAsync(async () => {
     const { id } = scheduledMessageJobQueueMessageSchema.parse(message);
+    context.log(`${AzureFunction.ProcessScheduledMessageJob} dequeued job`, { id });
     const job = await db.query.scheduledMessageJobsInMessage.findFirst({
       where: { cancelledAt: { isNull: true }, completedAt: { isNull: true }, id: { eq: id } },
     });
-    if (!job) return;
-    else if (job.runAt.getTime() > Date.now()) {
-      await enqueueJob(job.id, job.runAt);
+    if (!job) {
+      context.log(`${AzureFunction.ProcessScheduledMessageJob} skipped: no active job`, { id });
+      return;
+    } else if (job.runAt.getTime() > Date.now()) {
+      context.log(`${AzureFunction.ProcessScheduledMessageJob} requeued: runAt in future`, {
+        id,
+        now: new Date().toISOString(),
+        runAt: job.runAt.toISOString(),
+      });
+      await enqueueScheduledMessageJob(getQueueClient(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
       return;
     }
 
@@ -59,7 +55,10 @@ export const processScheduledMessageJobHandler: StorageQueueHandler = (message, 
         ),
       )
       .returning();
-    if (!processingJob) return;
+    if (!processingJob) {
+      context.log(`${AzureFunction.ProcessScheduledMessageJob} skipped: lost processing race`, { id });
+      return;
+    }
 
     const payload = scheduledMessageJobPayloadSchema.parse(processingJob.payload);
     if (payload.type === ScheduledMessageJobType.Reminder)
@@ -77,6 +76,10 @@ export const processScheduledMessageJobHandler: StorageQueueHandler = (message, 
         roomId: processingJob.roomId,
         type: MessageType.Message,
         userId: processingJob.userId,
+      });
+      context.log(`${AzureFunction.ProcessScheduledMessageJob} created message`, {
+        partitionKey: newMessage.partitionKey,
+        rowKey: newMessage.rowKey,
       });
       const webPubSubServiceClient = getWebPubSubServiceClient(AzureWebPubSubHub.Messages);
       await webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage);

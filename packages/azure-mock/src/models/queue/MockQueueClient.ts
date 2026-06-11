@@ -31,12 +31,10 @@ import type { Except } from "type-fest";
 
 import { MOCK_QUEUE_BASE_URL } from "@/constants";
 import { toWebResourceLike } from "@/services/container/toWebResourceLike";
-import { dayjs } from "@/services/dayjs";
 import { MockQueueDatabase } from "@/store/MockQueueDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
-
-const MESSAGE_TTL_MS = dayjs.duration(7, "days").asMilliseconds();
+import { MAX_QUEUE_VISIBILITY_TIMEOUT_MS } from "@esposter/db";
 /**
  * An in-memory mock of the Azure QueueClient.
  * It uses a Map to simulate queue storage and correctly implements the QueueClient interface.
@@ -131,7 +129,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   peekMessages(_options?: QueuePeekMessagesOptions): Promise<QueuePeekMessagesResponse> {
     const peekedMessageItems: PeekedMessageItem[] = this.queue.map((text) => ({
       dequeueCount: 0,
-      expiresOn: new Date(Date.now() + MESSAGE_TTL_MS),
+      expiresOn: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS),
       insertedOn: new Date(),
       messageId: crypto.randomUUID(),
       messageText: text,
@@ -152,7 +150,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   receiveMessages(_options?: QueueReceiveMessageOptions): Promise<QueueReceiveMessageResponse> {
     const receivedMessageItems: DequeuedMessageItem[] = this.queue.splice(0).map((text) => ({
       dequeueCount: 1,
-      expiresOn: new Date(Date.now() + MESSAGE_TTL_MS),
+      expiresOn: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS),
       insertedOn: new Date(),
       messageId: crypto.randomUUID(),
       messageText: text,
@@ -175,7 +173,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   sendMessage(messageText: string, _options?: QueueSendMessageOptions): Promise<QueueSendMessageResponse> {
     this.queue.push(messageText);
     const now = new Date();
-    const expiresOn = new Date(now.getTime() + MESSAGE_TTL_MS);
+    const expiresOn = new Date(now.getTime() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS);
     const insertedOn = now;
     const messageId = crypto.randomUUID();
     const nextVisibleOn = now;

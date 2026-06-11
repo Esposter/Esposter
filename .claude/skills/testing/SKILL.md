@@ -93,6 +93,14 @@ The default mock session is always the **base user** (inserted by `createMockCon
   - Service-layer unit tests (`server/services/**`) where using router callers creates upward coupling
 - **Never `mockContext.db.select`** — read state via callers (e.g. `caller.readRoles`), not raw DB queries.
 
+### Symmetric setup and teardown
+
+Every row inserted in setup must be removed in the teardown hook of the **same scope**: `beforeAll` inserts are deleted in `afterAll`; rows inserted per test (in the test body or `beforeEach`) are deleted in `afterEach`. Never leave `beforeAll` inserts uncleaned just because the in-memory mock database is discarded at the end of the file — the symmetry is a hard rule so that leaks are always visible and teardown stays intentional.
+
+- **Match the scope** — if you inserted in `beforeAll`, add an `afterAll` that deletes the same rows. If you inserted in a test body or `beforeEach`, delete in `afterEach`.
+- **Delete only the root tables and let cascades handle the rest** — when a child table's foreign key is `onDelete: "cascade"`, deleting the parent removes the children automatically, so do not add an explicit `delete(childTable)` for a cascaded child. For example, deleting `users` and `roomsInMessage` already removes the `usersToRoomsInMessage` join rows (and any `scheduledMessageJobsInMessage` rows), so the teardown lists only `users` and `roomsInMessage`.
+- **Declare UUID identifiers as `const` at `describe` scope, never `let` assigned in `beforeAll`** — a `crypto.randomUUID()` value does not depend on any asynchronous setup, so it belongs at `describe` scope: `const userId = crypto.randomUUID()`. Only values that genuinely require asynchronous initialisation (such as `mockDb = await createMockDb()`) stay as a `let` assigned inside `beforeAll`.
+
 ## Mock Cleanup
 
 Pick the cleanup based on **how the mock was created**:
