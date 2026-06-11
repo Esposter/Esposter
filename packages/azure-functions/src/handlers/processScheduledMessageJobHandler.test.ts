@@ -33,15 +33,20 @@ vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
 
 describe(processScheduledMessageJobHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
-  const message = "message";
   const name = "name";
+  const otherRoomId = crypto.randomUUID();
+  const reminderPayload: ScheduledMessageJobPayload = { text: "text", type: ScheduledMessageJobType.Reminder };
   const roomId = crypto.randomUUID();
-  const text = "text";
+  const scheduledMessagePayload: ScheduledMessageJobPayload = {
+    message: "message",
+    type: ScheduledMessageJobType.ScheduledMessage,
+  };
   const userId = crypto.randomUUID();
 
+  const getJob = (id: string) => mockDb.query.scheduledMessageJobsInMessage.findFirst({ where: { id: { eq: id } } });
   const insertJob = async (
     payload: ScheduledMessageJobPayload,
-    overrides?: { cancelledAt?: Date; completedAt?: Date; runAt?: Date },
+    overrides?: { cancelledAt?: Date; completedAt?: Date; roomId?: string; runAt?: Date },
   ) =>
     takeOne(
       await mockDb
@@ -53,7 +58,10 @@ describe(processScheduledMessageJobHandler, () => {
   beforeAll(async () => {
     mockDb = await createMockDb();
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
-    await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId });
+    await mockDb.insert(roomsInMessage).values([
+      { id: roomId, name, userId },
+      { id: otherRoomId, name, userId },
+    ]);
     await mockDb.insert(usersToRoomsInMessage).values({ roomId, userId });
   });
 
@@ -67,111 +75,92 @@ describe(processScheduledMessageJobHandler, () => {
     await mockDb.delete(users);
   });
 
-  test("returns early when job already completed", async () => {
+  test("skips when no active job exists", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob(
-      { text, type: ScheduledMessageJobType.Reminder },
-      { completedAt: new Date("1970-01-01") },
-    );
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: crypto.randomUUID() }, context);
 
-    const messagesTable = MockTableDatabase.get(AzureTable.Messages);
-
-    expect(messagesTable?.size ?? 0).toBe(0);
+    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
+    expect(MockQueueDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
   });
 
-  test("returns early when job cancelled", async () => {
+  test("skips when job already completed", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob(
-      { text, type: ScheduledMessageJobType.Reminder },
-      { cancelledAt: new Date("1970-01-01") },
-    );
+    const job = await insertJob(reminderPayload, { completedAt: new Date("1970-01-01") });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
-    const messagesTable = MockTableDatabase.get(AzureTable.Messages);
+    const skippedJob = await getJob(job.id);
 
-    expect(messagesTable?.size ?? 0).toBe(0);
+    expect(skippedJob?.processingStartedAt).toBeNull();
+    expect(MockQueueDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
+  });
+
+  test("skips when job cancelled", async () => {
+    expect.hasAssertions();
+
+    const job = await insertJob(reminderPayload, { cancelledAt: new Date("1970-01-01") });
+    await processScheduledMessageJobHandler({ id: job.id }, context);
+
+    const skippedJob = await getJob(job.id);
+
+    expect(skippedJob?.processingStartedAt).toBeNull();
+    expect(MockQueueDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
   });
 
   test("requeues when job is visible before runAt", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob(
-      { text, type: ScheduledMessageJobType.Reminder },
-      { runAt: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS + 1000) },
-    );
+    const job = await insertJob(reminderPayload, {
+      runAt: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS + 1000),
+    });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
-    const scheduledMessageJob = await mockDb.query.scheduledMessageJobsInMessage.findFirst({
-      where: { id: { eq: job.id } },
-    });
-    const queueMessages = MockQueueDatabase.get(AzureQueue.ScheduledMessageJobs);
+    const requeuedJob = await getJob(job.id);
 
-    expect(scheduledMessageJob?.completedAt).toBeNull();
-    expect(scheduledMessageJob?.processingStartedAt).toBeNull();
-    expect(queueMessages).toStrictEqual([JSON.stringify({ id: job.id })]);
+    expect(requeuedJob?.completedAt).toBeNull();
+    expect(requeuedJob?.processingStartedAt).toBeNull();
+    expect(MockQueueDatabase.get(AzureQueue.ScheduledMessageJobs)).toStrictEqual([JSON.stringify({ id: job.id })]);
   });
 
   test("records processing start and processes reminder job", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob({ text, type: ScheduledMessageJobType.Reminder });
+    const job = await insertJob(reminderPayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
-    const processedScheduledMessageJob = await mockDb.query.scheduledMessageJobsInMessage.findFirst({
-      where: { id: { eq: job.id } },
-    });
+    const processedJob = await getJob(job.id);
 
-    expect(processedScheduledMessageJob?.completedAt).toBeInstanceOf(Date);
-    expect(processedScheduledMessageJob?.processingStartedAt).toBeInstanceOf(Date);
+    expect(processedJob?.completedAt).toBeInstanceOf(Date);
+    expect(processedJob?.processingStartedAt).toBeInstanceOf(Date);
+    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
   });
 
   test("records processing start and creates message for scheduled message job", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob({ message, type: ScheduledMessageJobType.ScheduledMessage });
+    const job = await insertJob(scheduledMessagePayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
-    const processedScheduledMessageJob = await mockDb.query.scheduledMessageJobsInMessage.findFirst({
-      where: { id: { eq: job.id } },
-    });
+    const processedJob = await getJob(job.id);
 
-    expect(processedScheduledMessageJob?.completedAt).toBeInstanceOf(Date);
-    expect(processedScheduledMessageJob?.processingStartedAt).toBeInstanceOf(Date);
-
-    const messagesTable = MockTableDatabase.get(AzureTable.Messages);
-
-    expect(messagesTable?.size).toBe(1);
+    expect(processedJob?.completedAt).toBeInstanceOf(Date);
+    expect(processedJob?.processingStartedAt).toBeInstanceOf(Date);
+    expect(MockTableDatabase.get(AzureTable.Messages)?.size).toBe(1);
   });
 
   test("leaves job incomplete when processing fails", async () => {
     expect.hasAssertions();
 
-    const otherRoomId = crypto.randomUUID();
-    await mockDb.insert(roomsInMessage).values({ id: otherRoomId, name, userId });
-    const scheduledMessageJob = takeOne(
-      await mockDb
-        .insert(scheduledMessageJobsInMessage)
-        .values({
-          payload: { message, type: ScheduledMessageJobType.ScheduledMessage },
-          roomId: otherRoomId,
-          runAt: new Date("1970-01-01"),
-          userId,
-        })
-        .returning(),
-    );
+    const job = await insertJob(scheduledMessagePayload, { roomId: otherRoomId });
 
-    await expect(processScheduledMessageJobHandler({ id: scheduledMessageJob.id }, context)).rejects.toBeInstanceOf(
+    await expect(processScheduledMessageJobHandler({ id: job.id }, context)).rejects.toBeInstanceOf(
       InvalidOperationError,
     );
 
-    const failedScheduledMessageJob = await mockDb.query.scheduledMessageJobsInMessage.findFirst({
-      where: { id: { eq: scheduledMessageJob.id } },
-    });
+    const failedJob = await getJob(job.id);
 
-    expect(failedScheduledMessageJob?.completedAt).toBeNull();
-    expect(failedScheduledMessageJob?.processingStartedAt).toBeInstanceOf(Date);
+    expect(failedJob?.completedAt).toBeNull();
+    expect(failedJob?.processingStartedAt).toBeInstanceOf(Date);
   });
 });
