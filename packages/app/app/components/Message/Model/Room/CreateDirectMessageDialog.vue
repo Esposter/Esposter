@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
+import { withFinalizerAsync } from "@esposter/shared";
 
 const isOpen = defineModel<boolean>({ default: false });
 const directMessageStore = useDirectMessageStore();
@@ -16,10 +17,11 @@ const selectedUserIds = ref<string[]>([]);
     :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
     @submit="
       async (_event, onComplete) => {
-        await createDirectMessage(selectedUserIds);
-        selectedUserIds = [];
-        friendPicker?.reset();
-        onComplete();
+        await withFinalizerAsync(async () => {
+          await createDirectMessage(selectedUserIds);
+          selectedUserIds = [];
+          friendPicker?.reset();
+        }, onComplete);
       }
     "
   >
