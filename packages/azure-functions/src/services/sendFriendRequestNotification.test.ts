@@ -37,7 +37,7 @@ describe(sendFriendRequestNotification, () => {
 
   afterEach(async () => {
     await mockDb.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.userId, receiverId));
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   test("completes without error when user has no push subscriptions", async () => {

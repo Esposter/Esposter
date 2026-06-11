@@ -95,8 +95,22 @@ The default mock session is always the **base user** (inserted by `createMockCon
 
 ## Mock Cleanup
 
-- **Use `vi.restoreAllMocks()` in cleanup** — prefer `restoreAllMocks` over `clearAllMocks`. `restoreAllMocks` restores spied/mocked implementations and clears mock state; `clearAllMocks` only clears usage data and can leak mock implementations between tests.
-- **Do not use `vi.resetAllMocks()` as routine cleanup** — it resets mock implementations to empty functions, which can erase intentional `vi.mock` defaults and make tests less explicit.
+Pick the cleanup based on **how the mock was created**:
+
+- **`vi.spyOn()` mocks → `vi.restoreAllMocks()`** — this is the default. `restoreAllMocks` reinstates the original implementation _and_ clears recorded calls, so spies never leak between tests. Prefer it whenever your mocks are spies.
+- **Module-level `vi.fn()` mocks (colocated `vi.mock`) → `vi.clearAllMocks()`** — `restoreAllMocks` only "restores" things that were spied on a real implementation; a standalone `vi.fn()` from a colocated mock file (e.g. `webpush.sendNotification` in `webpush.test.ts`) was never a spy, so `restoreAllMocks` leaves its recorded call history intact and the count **leaks into the next test**. Use `clearAllMocks` to reset call data while keeping the mock implementation. This is required in any test that asserts `toHaveBeenCalled*` on a module-level `vi.fn()` across more than one test (see `sendPushNotification.test.ts`).
+- **Do not use `vi.resetAllMocks()` as routine cleanup** — it resets mock implementations to empty functions, which erases intentional `vi.mock` defaults and makes tests less explicit.
+
+```ts
+afterEach(async () => {
+  await mockDb.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.userId, subscriberUserId));
+  // webpush.sendNotification is a module-level vi.fn() (not a spy), so restoreAllMocks won't reset its
+  // call history and the count leaks across tests. clearAllMocks resets call data while keeping the impl.
+  vi.clearAllMocks();
+});
+```
+
+When a file mixes both — `vi.spyOn` spies _and_ a module-level `vi.fn()` whose call count is asserted — use `vi.clearAllMocks()` (clears the `vi.fn()` history) plus `vi.restoreAllMocks()` (restores the spies), since neither alone covers both cases.
 
 ## Colocated Module Mocks (`vi.mock` import pattern)
 
