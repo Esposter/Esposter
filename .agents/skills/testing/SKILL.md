@@ -22,6 +22,19 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **Reuse utilities** — check `testUtils.test.ts` for existing helpers before writing local equivalents.
 - **`create*` prefix for test helpers** — all test factory/builder functions use the `create*` prefix (`createRow`, `createColumn`, `createMention`). Never `make*` (`makeRow`, `makeColumn`).
 
+## Shared Test Data (DRY)
+
+Never repeat the same literal value or object across tests. If two or more tests (or rows in a bulk insert) use the same thing, declare it **once** at `describe` scope and reference it. This is a hard rule, not a preference.
+
+- **Repeated scalar values** — declare once: `const auth = ""`, `const p256dh = ""`, `const endpoint = "http://mock-endpoint"`. Never inline the same literal in multiple places.
+- **Repeated objects** — declare the whole object once at `describe` scope: `const pushSubscription = { auth: "", endpoint, p256dh: "", userId: subscriberUserId }`, `const notificationOptions = { icon: "", title: "" }`. Reference the const in every test that needs it.
+- **Near-identical objects** — declare a `base*` const for the shared fields, then spread + override the one field that differs: `const baseMessage = { message, partitionKey: roomId, rowKey }; const standardMessage = { ...baseMessage, userId: senderUserId }`. The webhook variant just reuses `baseMessage`. Never copy-paste a 4-field object to change one field.
+- **Repeated call arguments** — when the same argument shape recurs across calls with one varying field, declare the constant part once and spread: `const sender = { partitionKey: roomId, userId: senderUserId }` → `getX(db, { ...sender, message })`.
+- **Uniform bulk inserts** — when DB insert rows differ only by a single key, `.map()` over that key instead of repeating the row literal: `[idA, idB, idC].map((userId) => ({ auth: "", endpoint: getEndpoint(userId), p256dh: "", userId }))`. Never hand-write N rows that share the same `auth`/`p256dh`/etc.
+- **Repeated event/envelope wrappers** — extract a `create*` helper that takes only the varying payload: `const createEvent = (data: EventGridEvent["data"]): EventGridEvent => ({ data, dataVersion: "1.0", ... })`. Call sites pass `createEvent({ ... } satisfies PayloadType)` so the payload is still type-checked.
+- **Scope correctly** — values built from `beforeAll`/`beforeEach` state stay as `let` (assigned there). Values that don't depend on runtime setup (UUIDs, literals, static objects) go at `describe` scope as `const`. Never regenerate a UUID per test unless each test genuinely needs a unique one.
+- **No single-use extraction** — only extract when a value is used 2+ times (or 2+ identical rows). A value used exactly once stays inline (see "No unnecessary destructure").
+
 ## Canonical Test Values
 
 | Type           | Value(s)                                                                                                                                                                            |

@@ -6,18 +6,18 @@ Triggered by `/` in the message input. TipTap suggestion API powers the picker. 
 
 ## Command Categories
 
-| Command     | Type             | Backend                                                                       |
-| ----------- | ---------------- | ----------------------------------------------------------------------------- |
-| `/flip`     | Immediate client | —                                                                             |
-| `/me`       | Immediate client | —                                                                             |
-| `/roll`     | Immediate client | —                                                                             |
-| `/shrug`    | Immediate client | —                                                                             |
-| `/tablefip` | Immediate client | —                                                                             |
-| `/unflip`   | Immediate client | —                                                                             |
-| `/topic`    | Immediate tRPC   | `room.updateRoom`                                                             |
-| `/poll`     | Dialog → tRPC    | `message.createMessage`                                                       |
-| `/remind`   | Dialog → tRPC    | `message.scheduledMessageJob.scheduleReminder` → Azure Queue → Azure Function |
-| `/schedule` | Dialog → tRPC    | `message.scheduledMessageJob.scheduleMessage` → Azure Queue → Azure Function  |
+| Command      | Type             | Backend                                                                       |
+| ------------ | ---------------- | ----------------------------------------------------------------------------- |
+| `/flip`      | Immediate client | —                                                                             |
+| `/me`        | Immediate client | —                                                                             |
+| `/roll`      | Immediate client | —                                                                             |
+| `/shrug`     | Immediate client | —                                                                             |
+| `/tableflip` | Immediate client | —                                                                             |
+| `/unflip`    | Immediate client | —                                                                             |
+| `/topic`     | Immediate tRPC   | `room.updateRoom`                                                             |
+| `/poll`      | Dialog → tRPC    | `message.createMessage`                                                       |
+| `/remind`    | Dialog → tRPC    | `message.scheduledMessageJob.scheduleReminder` → Azure Queue → Azure Function |
+| `/schedule`  | Dialog → tRPC    | `message.scheduledMessageJob.scheduleMessage` → Azure Queue → Azure Function  |
 
 ---
 
@@ -125,8 +125,12 @@ Two execution paths:
 **Server call** — calls a tRPC mutation directly, no `createMessageInput`:
 
 - `Topic` → `$trpc.room.updateRoom.mutate({ id: roomId, topic })`
-- `Poll` → sets `pollDialogStore.isOpen = true` (dialog handles its own submit)
-- `Remind` → `$trpc.message.scheduledMessageJob.scheduleReminder.mutate({ roomId, runAt, text })`
+
+**Dialog** — opens a dialog that owns its own submit (no `createMessageInput`):
+
+- `Poll` → sets `pollDialogStore.isOpen = true`
+- `Remind` → `scheduledMessageJobDialogStore.open(ScheduledMessageJobType.Reminder)`
+- `Schedule` → `scheduledMessageJobDialogStore.open(ScheduledMessageJobType.ScheduledMessage)`
 
 ---
 
@@ -152,6 +156,11 @@ sequenceDiagram
     Q->>F: ProcessScheduledMessageJob triggered<br/>message becomes visible
     F->>DB: SELECT job WHERE id AND cancelledAt IS NULL<br/>AND completedAt IS NULL
     alt job found
+        alt runAt is still future
+            F->>Q: sendMessage({ id }, remaining visibilityTimeout)
+            F->>F: return
+        end
+        F->>DB: UPDATE processingStartedAt = now()
         F->>F: parse payload → Reminder type
         F->>DB: getPushSubscriptionsForUser
         F->>U: web-push notification ("Reminder: Buy milk")
@@ -233,18 +242,18 @@ When collapsing parameter mode back to normal text:
 
 ## Per-Command Reference
 
-| Command     | Parameters           | Result                                                |
-| ----------- | -------------------- | ----------------------------------------------------- |
-| `/flip`     | —                    | Posts `🌝 **Heads**` or `🌚 **Tails**`                |
-| `/me`       | `message` (required) | Posts `*message*` (italic emphasis)                   |
-| `/poll`     | —                    | Opens poll dialog; on submit posts `MessageType.Poll` |
-| `/remind`   | —                    | Opens scheduled-job dialog for reminder text + time   |
-| `/roll`     | —                    | Posts `🎲 Rolled a **N**` (1–100)                     |
-| `/schedule` | —                    | Opens scheduled-job dialog for message text + time    |
-| `/shrug`    | `text` (optional)    | Posts `text¯\_(ツ)_/¯`                                |
-| `/tablefip` | —                    | Posts `(╯°□°）╯︵ ┻━┻`                                |
-| `/topic`    | `text` (optional)    | Calls `room.updateRoom` to set/clear topic            |
-| `/unflip`   | —                    | Posts `┬─┬ノ( º _ ºノ)`                               |
+| Command      | Parameters           | Result                                                |
+| ------------ | -------------------- | ----------------------------------------------------- |
+| `/flip`      | —                    | Posts `🌝 **Heads**` or `🌚 **Tails**`                |
+| `/me`        | `message` (required) | Posts `*message*` (italic emphasis)                   |
+| `/poll`      | —                    | Opens poll dialog; on submit posts `MessageType.Poll` |
+| `/remind`    | —                    | Opens scheduled-job dialog for reminder text + time   |
+| `/roll`      | —                    | Posts `🎲 Rolled a **N**` (1–100)                     |
+| `/schedule`  | —                    | Opens scheduled-job dialog for message text + time    |
+| `/shrug`     | `text` (optional)    | Posts `text¯\_(ツ)_/¯`                                |
+| `/tableflip` | —                    | Posts `(╯°□°）╯︵ ┻━┻`                                |
+| `/topic`     | `text` (optional)    | Calls `room.updateRoom` to set/clear topic            |
+| `/unflip`    | —                    | Posts `┬─┬ノ( º _ ºノ)`                               |
 
 ---
 

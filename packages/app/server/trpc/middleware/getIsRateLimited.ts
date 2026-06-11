@@ -35,7 +35,7 @@ export const getIsRateLimited = (type: RateLimiterType) =>
       },
     );
     if ("setHeader" in ctx.res) {
-      ctx.res.setHeader("Retry-After", dayjs.duration(msBeforeNext).asSeconds());
+      ctx.res.setHeader("Retry-After", Math.ceil(dayjs.duration(msBeforeNext).asSeconds()));
       ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
       ctx.res.setHeader("X-RateLimit-Remaining", remainingPoints);
       ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + msBeforeNext).toISOString());

@@ -155,7 +155,7 @@
       "WebFetch(domain:vueuse.org)",
       "WebFetch(domain:www.npmjs.com)",
       "Bash(pnpm db:gen)",
-      "Bash(pnpm i *)",
+      "Bash(pnpm i)",
       "Bash(Find-ChildItem *)"
     ]
   }

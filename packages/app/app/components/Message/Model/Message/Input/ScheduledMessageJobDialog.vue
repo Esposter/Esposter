@@ -5,6 +5,7 @@ import { formRules } from "@/services/vuetify/formRules";
 import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
 import { useRoomStore } from "@/store/message/room";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 import { marked } from "marked";
 
 const { $trpc } = useNuxtApp();
@@ -37,26 +38,23 @@ watch(isOpen, (newIsOpen) => {
     :confirm-button-attrs="{ disabled: !scheduledAt }"
     @submit="
       async (_event, onComplete) => {
-        const roomId = currentRoomId;
-        if (!roomId || !scheduledAt) {
-          onComplete();
-          return;
-        }
+        await withFinalizerAsync(async () => {
+          const roomId = currentRoomId;
+          if (!roomId) return;
 
-        if (isReminder)
-          await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
-            roomId,
-            runAt: scheduledAt,
-            text,
-          });
-        else
-          await $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
-            message: sanitizeMessageHtml(marked.parse(text, { async: false })),
-            roomId,
-            runAt: scheduledAt,
-          });
-
-        onComplete();
+          if (isReminder)
+            await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
+              roomId,
+              runAt: scheduledAt,
+              text,
+            });
+          else
+            await $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
+              message: sanitizeMessageHtml(marked.parse(text, { async: false })),
+              roomId,
+              runAt: scheduledAt,
+            });
+        }, onComplete);
       }
     "
   >

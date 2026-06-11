@@ -1,3 +1,4 @@
+import type { EventGridEvent } from "@azure/functions";
 import type { PushNotificationEventGridData, relations } from "@esposter/db-schema";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
@@ -20,31 +21,42 @@ vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
 describe(processPushNotificationHandler, () => {
   const context = new InvocationContext();
   const name = "name";
+  const userId = crypto.randomUUID();
+  const baseMessage = { message: "<p>hello</p>", partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() };
+  const notificationOptions = { icon: "", title: "" };
+  const createEvent = (data: EventGridEvent["data"]): EventGridEvent => ({
+    data,
+    dataVersion: "1.0",
+    eventTime: "1970-01-01T00:00:00.000Z",
+    eventType: "",
+    id: crypto.randomUUID(),
+    metadataVersion: "1",
+    subject: "",
+    topic: "",
+  });
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
   });
 
   test("completes without error when user has no push subscriptions", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
-
     const result = await processPushNotificationHandler(
-      {
-        data: {
-          message: { message: "<p>hello</p>", partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID(), userId },
-          notificationOptions: { icon: "", title: "" },
-        } satisfies PushNotificationEventGridData,
-        dataVersion: "1.0",
-        eventTime: "1970-01-01T00:00:00.000Z",
-        eventType: "",
-        id: crypto.randomUUID(),
-        metadataVersion: "1",
-        subject: "",
-        topic: "",
-      },
+      createEvent({ message: { ...baseMessage, userId }, notificationOptions } satisfies PushNotificationEventGridData),
+      context,
+    );
+
+    expect(result).toBeUndefined();
+  });
+
+  test("completes without error when message has no userId (webhook message)", async () => {
+    expect.hasAssertions();
+
+    // Webhook messages have no direct user author, so userId is absent from the payload
+    const result = await processPushNotificationHandler(
+      createEvent({ message: baseMessage, notificationOptions } satisfies PushNotificationEventGridData),
       context,
     );
 
