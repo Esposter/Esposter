@@ -18,22 +18,23 @@ vi.mock(import("@/services/db"), () => ({
 
 vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
 
+const createEvent = (data: EventGridEvent["data"]): EventGridEvent => ({
+  data,
+  dataVersion: "1.0",
+  eventTime: "1970-01-01T00:00:00.000Z",
+  eventType: "",
+  id: crypto.randomUUID(),
+  metadataVersion: "1",
+  subject: "",
+  topic: "",
+});
+
 describe(processPushNotificationHandler, () => {
   const context = new InvocationContext();
   const name = "name";
   const userId = crypto.randomUUID();
   const baseMessage = { message: "<p>hello</p>", partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() };
   const notificationOptions = { icon: "", title: "" };
-  const createEvent = (data: EventGridEvent["data"]): EventGridEvent => ({
-    data,
-    dataVersion: "1.0",
-    eventTime: "1970-01-01T00:00:00.000Z",
-    eventType: "",
-    id: crypto.randomUUID(),
-    metadataVersion: "1",
-    subject: "",
-    topic: "",
-  });
 
   beforeAll(async () => {
     mockDb = await createMockDb();

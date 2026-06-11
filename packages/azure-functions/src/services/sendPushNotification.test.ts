@@ -56,7 +56,9 @@ describe(sendPushNotification, () => {
 
   afterEach(async () => {
     await mockDb.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.userId, subscriberUserId));
-    vi.restoreAllMocks();
+    // Webpush.sendNotification is a module-level vi.fn() (not a spy); restoreAllMocks won't reset its
+    // Call history, so the count leaks across tests. clearAllMocks resets call data while keeping the mock impl.
+    vi.clearAllMocks();
   });
 
   test("returns early when message has no text content", async () => {

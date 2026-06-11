@@ -30,5 +30,5 @@ export const webhookMessageEntitySchema = z.object({
   }),
   type: z.literal(MessageType.Webhook),
   // Webhook messages have no direct user author, so userId is always absent
-  userId: z.undefined(),
+  userId: z.undefined().optional(),
 }) satisfies z.ZodType<ToData<Except<WebhookMessageEntity, "linkPreviewResponse">>>;
