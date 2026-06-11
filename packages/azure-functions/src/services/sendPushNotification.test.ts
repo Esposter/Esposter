@@ -98,9 +98,7 @@ describe(sendPushNotification, () => {
       await mockDb.insert(pushSubscriptionsInMessage).values(pushSubscription).returning(),
       0,
     );
-    vi.mocked(webpush.sendNotification).mockRejectedValueOnce(
-      new WebPushError("Gone", 410, {} as Record<string, string>, "", ""),
-    );
+    vi.mocked(webpush.sendNotification).mockRejectedValueOnce(new WebPushError("Gone", 410, {}, "", ""));
     await sendPushNotification(context, { message: standardMessage, notificationOptions });
     const remainingPushSubscriptions = await mockDb
       .select()

@@ -35,10 +35,6 @@ describe(assertCanCreateMessage, () => {
     ]);
   });
 
-  afterAll(async () => {
-    await mockDb.delete(users);
-  });
-
   afterEach(async () => {
     await mockDb
       .update(roomsInMessage)
@@ -49,6 +45,10 @@ describe(assertCanCreateMessage, () => {
       .set({ lastMessageAt: null, timeoutUntil: null })
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, memberUserId)));
     await mockDb.delete(roomFiltersInMessage).where(eq(roomFiltersInMessage.roomId, roomId));
+  });
+
+  afterAll(async () => {
+    await mockDb.delete(users);
   });
 
   test("throws when room not found", async () => {

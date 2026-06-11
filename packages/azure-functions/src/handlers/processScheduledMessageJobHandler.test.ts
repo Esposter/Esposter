@@ -157,7 +157,7 @@ describe(processScheduledMessageJobHandler, () => {
       await mockDb
         .insert(scheduledMessageJobsInMessage)
         .values({
-          payload: { message: "hello", type: ScheduledMessageJobType.ScheduledMessage },
+          payload: { message, type: ScheduledMessageJobType.ScheduledMessage },
           roomId: otherRoomId,
           runAt: new Date("1970-01-01"),
           userId,
