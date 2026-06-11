@@ -16,7 +16,7 @@ const pushNotificationMessageFields = { message: true, partitionKey: true, rowKe
 
 export const pushNotificationEventGridDataSchema = z.object({
   // Mirrors Pick<MessageEntity, ...> which distributes to the standard | webhook union;
-  // standard messages carry a userId, webhook messages never do
+  // Standard messages carry a userId, webhook messages never do
   message: z.union([
     standardMessageEntitySchema.pick(pushNotificationMessageFields),
     webhookMessageEntitySchema.pick(pushNotificationMessageFields),
