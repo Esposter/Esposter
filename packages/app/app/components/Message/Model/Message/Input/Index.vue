@@ -75,6 +75,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
 <template>
   <MessageModelMessageForwardRoomDialog />
   <MessageModelMessageInputPollDialog />
+  <MessageModelMessageInputScheduledMessageJobDialog />
   <MessageModelMessageInputKeyboardShortcutsDialog />
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
