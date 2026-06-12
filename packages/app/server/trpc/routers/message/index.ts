@@ -1,10 +1,4 @@
-import type {
-  AzureUpdateEntity,
-  Clause,
-  FileSasEntity,
-  MessageEntity,
-  PushNotificationEventGridData,
-} from "@esposter/db-schema";
+import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
@@ -20,24 +14,21 @@ import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessage
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
+import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
-import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
-import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
-import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
@@ -53,7 +44,6 @@ import {
   generateUploadFileSasEntities,
   getBlobName,
   getEntity,
-  getPushSubscriptionsForMessage,
   getTableNullClause,
   getTopNEntitiesByType,
   serializeClauses,
@@ -62,12 +52,10 @@ import {
 import {
   AzureContainer,
   AzureEntityType,
-  AzureFunction,
   AzureTable,
   AzureWebPubSubHub,
   BinaryOperator,
   CompositeKeyPropertyNames,
-  DatabaseEntityType,
   FileEntity,
   fileEntitySchema,
   FilterType,
@@ -75,7 +63,6 @@ import {
   MessageEntityMap,
   MessageType,
   roomIdSchema,
-  roomsInMessage,
   selectRoomInMessageSchema,
   standardCreateMessageInputSchema,
   StandardMessageEntity,
@@ -87,12 +74,10 @@ import {
   ItemMetadataPropertyNames,
   MAX_READ_LIMIT,
   NotFoundError,
-  Operation,
   takeOne,
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { eq } from "drizzle-orm";
 import { z } from "zod";
 // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
 // As we insert our messages with a reverse-ticked timestamp as our rowKey
@@ -156,70 +141,7 @@ const getWebPubSubClientAccessUrlInputSchema = roomIdSchema;
 
 export const baseMessageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
-    async ({ ctx, input }) => {
-      await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-      const now = new Date();
-      const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
-        ...input,
-        userId: ctx.getSessionPayload.user.id,
-      });
-      await updateUserToRoom(ctx.db, ctx.getSessionPayload.user.id, {
-        lastMessageAt: now,
-        roomId: input.roomId,
-      });
-      messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.getSessionPayload.session.id }]);
-
-      const readPushSubscriptions = await getPushSubscriptionsForMessage(ctx.db, newMessageEntity);
-      if (readPushSubscriptions.length > 0) {
-        const eventGridPublisherClient = useEventGridPublisherClient();
-        const nickname = (
-          await ctx.db.query.usersToRoomsInMessage.findFirst({
-            columns: { nickname: true },
-            where: {
-              roomId: newMessageEntity.partitionKey,
-              userId: ctx.getSessionPayload.user.id,
-            },
-          })
-        )?.nickname;
-        const data: PushNotificationEventGridData = {
-          message: {
-            message: newMessageEntity.message,
-            partitionKey: newMessageEntity.partitionKey,
-            rowKey: newMessageEntity.rowKey,
-            userId: newMessageEntity.userId,
-          },
-          notificationOptions: {
-            icon: ctx.getSessionPayload.user.image,
-            title: nickname || ctx.getSessionPayload.user.name,
-          },
-        };
-        await eventGridPublisherClient.send([
-          {
-            data,
-            dataVersion: "1.0",
-            eventType: AzureFunction.ProcessPushNotification,
-            subject: `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
-          },
-        ]);
-      }
-
-      const updatedRoom = requireMutation(
-        (
-          await ctx.db
-            .update(roomsInMessage)
-            .set({ updatedAt: now })
-            .where(eq(roomsInMessage.id, input.roomId))
-            .returning()
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.Room,
-        input.roomId,
-      );
-      roomEventEmitter.emit("updateRoom", updatedRoom);
-      return newMessageEntity;
-    },
+    ({ ctx, input }) => createUserMessage(ctx.db, ctx.getSessionPayload, input),
   ),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting

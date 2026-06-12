@@ -1,28 +1,33 @@
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
-import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
+import type { MessageEntity, ScheduledMessageJobInMessage } from "@esposter/db-schema";
 
 import { cancelScheduledMessageJobInputSchema } from "#shared/models/db/message/scheduledMessageJob/CancelScheduledMessageJobInput";
 import { readMyScheduledMessageJobsInputSchema } from "#shared/models/db/message/scheduledMessageJob/ReadMyScheduledMessageJobsInput";
 import { readScheduledMessageJobsInputSchema } from "#shared/models/db/message/scheduledMessageJob/ReadScheduledMessageJobsInput";
+import { rescheduleMessageInputSchema } from "#shared/models/db/message/scheduledMessageJob/RescheduleMessageInput";
 import { scheduleMessageInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleMessageInput";
 import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleReminderInput";
 import { useQueueClient } from "@@/server/composables/azure/queue/useQueueClient";
+import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
+import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { enqueueScheduledMessageJob } from "@esposter/db";
 import {
   AzureQueue,
   DatabaseEntityType,
+  MessageType,
   roomsInMessage,
+  scheduledMessageScheduledMessageJobPayloadSchema,
   scheduledMessageJobsInMessage,
   ScheduledMessageJobType,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { and, asc, count, eq, isNull } from "drizzle-orm";
+import { and, asc, count, eq, isNull, sql } from "drizzle-orm";
 
 export const scheduledMessageJobRouter = router({
   cancelScheduledJob: standardAuthedProcedure
@@ -108,6 +113,52 @@ export const scheduledMessageJobRouter = router({
       )
       .orderBy(asc(scheduledMessageJobsInMessage.runAt)),
   ),
+  rescheduleMessage: getMemberProcedure(rescheduleMessageInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
+    async ({ ctx, input }) => {
+      await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
+      const job = await ctx.db.transaction(async (tx) => {
+        requireMutation(
+          (
+            await tx
+              .update(scheduledMessageJobsInMessage)
+              .set({ cancelledAt: new Date() })
+              .where(
+                and(
+                  eq(scheduledMessageJobsInMessage.id, input.id),
+                  eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
+                  isNull(scheduledMessageJobsInMessage.cancelledAt),
+                  isNull(scheduledMessageJobsInMessage.completedAt),
+                  sql`${scheduledMessageJobsInMessage.payload}->>'type' = ${ScheduledMessageJobType.ScheduledMessage}`,
+                ),
+              )
+              .returning()
+          )[0],
+          Operation.Update,
+          DatabaseEntityType.ScheduledMessageJob,
+          input.id,
+          "NOT_FOUND",
+        );
+        return requireMutation(
+          (
+            await tx
+              .insert(scheduledMessageJobsInMessage)
+              .values({
+                payload: { message: input.message, type: ScheduledMessageJobType.ScheduledMessage },
+                roomId: input.roomId,
+                runAt: input.runAt,
+                userId: ctx.getSessionPayload.user.id,
+              })
+              .returning()
+          )[0],
+          Operation.Create,
+          DatabaseEntityType.ScheduledMessageJob,
+          JSON.stringify(input),
+        );
+      });
+      await enqueueScheduledMessageJob(useQueueClient(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
+      return job;
+    },
+  ),
   scheduleMessage: getMemberProcedure(scheduleMessageInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
     async ({ ctx, input }) => {
       await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
@@ -131,6 +182,39 @@ export const scheduledMessageJobRouter = router({
       return job;
     },
   ),
+  sendScheduledMessageNow: standardAuthedProcedure
+    .input(cancelScheduledMessageJobInputSchema)
+    .mutation<MessageEntity>(async ({ ctx, input }) => {
+      const scheduledMessageJob = requireMutation(
+        (
+          await ctx.db
+            .update(scheduledMessageJobsInMessage)
+            .set({ cancelledAt: new Date() })
+            .where(
+              and(
+                eq(scheduledMessageJobsInMessage.id, input.id),
+                eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
+                isNull(scheduledMessageJobsInMessage.cancelledAt),
+                isNull(scheduledMessageJobsInMessage.completedAt),
+                sql`${scheduledMessageJobsInMessage.payload}->>'type' = ${ScheduledMessageJobType.ScheduledMessage}`,
+              ),
+            )
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.ScheduledMessageJob,
+        input.id,
+        "NOT_FOUND",
+      );
+      await isMember(ctx.db, ctx.getSessionPayload, scheduledMessageJob.roomId);
+      const payload = scheduledMessageScheduledMessageJobPayloadSchema.parse(scheduledMessageJob.payload);
+      return createUserMessage(ctx.db, ctx.getSessionPayload, {
+        files: [],
+        message: payload.message,
+        roomId: scheduledMessageJob.roomId,
+        type: MessageType.Message,
+      });
+    }),
   scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
     async ({ ctx, input }) => {
       const job = requireMutation(

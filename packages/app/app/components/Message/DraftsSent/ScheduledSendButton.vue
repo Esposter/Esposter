@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
 
-import { useDataStore } from "@/store/message/data";
-import { MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
+import { ScheduledMessageJobType } from "@esposter/db-schema";
 
 interface MessageDraftsSentScheduledSendButtonProps {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
 const { scheduledMessageJob } = defineProps<MessageDraftsSentScheduledSendButtonProps>();
-const dataStore = useDataStore();
-const { createMessage } = dataStore;
-const cancelScheduledMessageJob = useCancelScheduledMessageJob();
+const { $trpc } = useNuxtApp();
+const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
 </script>
 
 <template>
@@ -26,10 +24,9 @@ const cancelScheduledMessageJob = useCancelScheduledMessageJob();
         variant="text"
         @click.stop="
           async () => {
-            const { payload, roomId } = scheduledMessageJob;
-            if (payload.type !== ScheduledMessageJobType.ScheduledMessage) return;
-            await createMessage({ files: [], message: payload.message, roomId, type: MessageType.Message });
-            await cancelScheduledMessageJob(scheduledMessageJob.id);
+            if (scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage) return;
+            await $trpc.message.scheduledMessageJob.sendScheduledMessageNow.mutate({ id: scheduledMessageJob.id });
+            await readScheduledMessageJobs();
           }
         "
       />

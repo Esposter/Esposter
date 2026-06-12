@@ -22,14 +22,21 @@ const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
       (_event, onComplete) =>
         withFinalizerAsync(async () => {
           if (!target) return;
-          await $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
-            message: target.content,
-            roomId: target.roomId,
-            runAt: scheduledAt,
-          });
           if (target.scheduledMessageJobId)
-            await $trpc.message.scheduledMessageJob.cancelScheduledJob.mutate({ id: target.scheduledMessageJobId });
-          else clearDraft(target.roomId);
+            await $trpc.message.scheduledMessageJob.rescheduleMessage.mutate({
+              id: target.scheduledMessageJobId,
+              message: target.content,
+              roomId: target.roomId,
+              runAt: scheduledAt,
+            });
+          else {
+            await $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
+              message: target.content,
+              roomId: target.roomId,
+              runAt: scheduledAt,
+            });
+            clearDraft(target.roomId);
+          }
           await readScheduledMessageJobs();
           target = undefined;
         }, onComplete)

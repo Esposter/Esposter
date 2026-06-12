@@ -7,6 +7,8 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
   const hasMore = ref(false);
   const isPending = ref(true);
   const removeScheduledMessageJob = (id: ScheduledMessageJobInMessage["id"]) => {
+    if (!items.value.some((scheduledMessageJob) => scheduledMessageJob.id === id)) return;
+
     items.value = items.value.filter((scheduledMessageJob) => scheduledMessageJob.id !== id);
     count.value = Math.max(0, count.value - 1);
   };

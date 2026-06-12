@@ -10,11 +10,20 @@ interface MessageDraftsSentScheduledListItemProps {
 }
 
 const { scheduledMessageJob } = defineProps<MessageDraftsSentScheduledListItemProps>();
+const isFocusWithin = ref(false);
+const onFocusOut = (event: FocusEvent) => {
+  const currentTarget = event.currentTarget;
+  const relatedTarget = event.relatedTarget;
+  isFocusWithin.value =
+    currentTarget instanceof window.HTMLElement &&
+    relatedTarget instanceof window.Node &&
+    currentTarget.contains(relatedTarget);
+};
 </script>
 
 <template>
   <v-hover #default="{ isHovering, props }">
-    <v-list-item :="props">
+    <v-list-item :="props" tabindex="0" @focusin="isFocusWithin = true" @focusout="onFocusOut($event)">
       <template #prepend>
         <v-avatar bg-background>
           <v-icon :icon="getScheduledMessageJobIcon(scheduledMessageJob)" />
@@ -27,7 +36,7 @@ const { scheduledMessageJob } = defineProps<MessageDraftsSentScheduledListItemPr
       <template #append>
         <div flex gap-x-3 items-center>
           <span op-medium-emphasis text-body-small>{{ getDisplayTime(scheduledMessageJob.runAt) }}</span>
-          <div v-show="isHovering" p-1 b-1 b-border rd-lg b-solid bg-surface flex items-center>
+          <div v-show="isHovering || isFocusWithin" p-1 b-1 b-border rd-lg b-solid bg-surface flex items-center>
             <MessageDraftsSentScheduledEditButton :scheduled-message-job />
             <MessageDraftsSentScheduledRescheduleButton :scheduled-message-job />
             <MessageDraftsSentScheduledSendButton :scheduled-message-job />

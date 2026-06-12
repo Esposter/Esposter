@@ -9,11 +9,25 @@ interface MessageDraftsSentDraftListItemProps {
 }
 
 const { draftItem } = defineProps<MessageDraftsSentDraftListItemProps>();
+const isFocusWithin = ref(false);
+const onFocusOut = (event: FocusEvent) => {
+  const currentTarget = event.currentTarget;
+  const relatedTarget = event.relatedTarget;
+  isFocusWithin.value =
+    currentTarget instanceof window.HTMLElement &&
+    relatedTarget instanceof window.Node &&
+    currentTarget.contains(relatedTarget);
+};
 </script>
 
 <template>
   <v-hover #default="{ isHovering, props }">
-    <v-list-item :="props" @click="navigateTo(RoutePath.Messages(draftItem.room.id))">
+    <v-list-item
+      :="props"
+      @click="navigateTo(RoutePath.Messages(draftItem.room.id))"
+      @focusin="isFocusWithin = true"
+      @focusout="onFocusOut($event)"
+    >
       <template #prepend>
         <StyledAvatar :image="draftItem.room.image" :name="draftItem.room.name" />
       </template>
@@ -24,7 +38,7 @@ const { draftItem } = defineProps<MessageDraftsSentDraftListItemProps>();
       <template #append>
         <div flex gap-x-3 items-center>
           <span op-medium-emphasis text-body-small>{{ getDisplayTime(draftItem.updatedAt) }}</span>
-          <div v-show="isHovering" p-1 b-1 b-border rd-lg b-solid bg-surface flex items-center>
+          <div v-show="isHovering || isFocusWithin" p-1 b-1 b-border rd-lg b-solid bg-surface flex items-center>
             <MessageDraftsSentDraftDeleteButton :draft-item />
             <MessageDraftsSentDraftEditButton :draft-item />
             <MessageDraftsSentDraftScheduleButton :draft-item />

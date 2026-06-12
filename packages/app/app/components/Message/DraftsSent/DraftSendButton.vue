@@ -27,13 +27,15 @@ const { clearDraft } = inputStore;
         variant="text"
         @click.stop="
           async () => {
-            await createMessage({
-              files: [],
-              message: draftItem.content,
-              roomId: draftItem.room.id,
-              type: MessageType.Message,
-            });
-            clearDraft(draftItem.room.id);
+            if (
+              await createMessage({
+                files: [],
+                message: draftItem.content,
+                roomId: draftItem.room.id,
+                type: MessageType.Message,
+              })
+            )
+              clearDraft(draftItem.room.id);
           }
         "
       />

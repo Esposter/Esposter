@@ -36,12 +36,13 @@ export const useDataStore = defineStore("message/data", () => {
   const typings = ref<CreateTypingInput[]>([]);
 
   const createMessage = async (input: StandardCreateMessageInput) => {
-    if (!session.value.data) return;
+    if (!session.value.data) return false;
 
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
     await storeCreateMessage(newMessage);
     Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
     delete newMessage.isLoading;
+    return true;
   };
   const updateMessage = async (input: UpdateMessageInput) => {
     await $trpc.message.updateMessage.mutate(input);
@@ -79,8 +80,7 @@ export const useDataStore = defineStore("message/data", () => {
   };
   const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
     await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
-    await createMessage(input);
-    clearDraft(input.roomId);
+    if (await createMessage(input)) clearDraft(input.roomId);
   };
   MessageHookMap.ResetSend.push((editor) => {
     editor?.commands.clearContent(true);

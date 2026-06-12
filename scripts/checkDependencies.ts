@@ -104,6 +104,14 @@ const compareVersionBase = (left: string, right: string) => {
   return 0;
 };
 
+const comparePrerelease = (left?: string, right?: string) => {
+  if (!left && !right) return 0;
+  if (!left) return 1;
+  if (!right) return -1;
+
+  return left.localeCompare(right, undefined, { numeric: true });
+};
+
 const getVersionChangeLevel = (current: string, latest: string) => {
   const currentParts = getVersionParts(current);
   const latestParts = getVersionParts(latest);
@@ -120,10 +128,7 @@ const isVersionOutdated = (current: string, latest: string) => {
   const currentPrerelease = getVersionParts(current).prerelease;
   const latestPrerelease = getVersionParts(latest).prerelease;
 
-  if (currentPrerelease && !latestPrerelease) return true;
-  if (!currentPrerelease) return false;
-
-  return currentPrerelease !== latestPrerelease;
+  return comparePrerelease(currentPrerelease, latestPrerelease) < 0;
 };
 
 const getColorizedLatestVersion = (current: string, latest: string) => {
@@ -330,7 +335,7 @@ const getOutdatedDependents = (dependentPackages: unknown) => {
 };
 
 const runPnpmOutdated = () =>
-  new Promise<{ error?: string; status: number | null; stderr: string; stdout: string }>((resolvePromise) => {
+  new Promise<{ error?: string; status: null | number; stderr: string; stdout: string }>((resolvePromise) => {
     const command = process.platform === "win32" ? "cmd.exe" : "pnpm";
     const args =
       process.platform === "win32"
@@ -341,10 +346,18 @@ const runPnpmOutdated = () =>
     let stderr = "";
     child.stdout.setEncoding("utf8");
     child.stderr.setEncoding("utf8");
-    child.stdout.on("data", (chunk: string) => (stdout += chunk));
-    child.stderr.on("data", (chunk: string) => (stderr += chunk));
-    child.on("error", (error) => resolvePromise({ error: error.message, status: null, stderr, stdout }));
-    child.on("close", (status) => resolvePromise({ status, stderr, stdout }));
+    child.stdout.on("data", (chunk: string) => {
+      stdout += chunk;
+    });
+    child.stderr.on("data", (chunk: string) => {
+      stderr += chunk;
+    });
+    child.on("error", (error) => {
+      resolvePromise({ error: error.message, status: null, stderr, stdout });
+    });
+    child.on("close", (status) => {
+      resolvePromise({ status, stderr, stdout });
+    });
   });
 
 const getRegularOutdatedDependencies = async () => {
@@ -487,6 +500,8 @@ const [regularChecks, configDependencyChecks] = await Promise.all([
 ]);
 const outdatedDependencies = [...regularChecks.outdatedDependencies, ...configDependencyChecks.outdatedDependencies];
 const errors = [...regularChecks.errors, ...configDependencyChecks.errors];
+const hasBlockingIssues = uncatalogedManifestDependencies.length > 0 || mismatches.length > 0 || errors.length > 0;
 printOutdatedDependencies(outdatedDependencies);
 printRegistryErrors(errors);
 printExecutionTime();
+if (hasBlockingIssues) process.exitCode = 1;

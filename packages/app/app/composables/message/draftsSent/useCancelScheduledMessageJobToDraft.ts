@@ -8,7 +8,7 @@ export const useCancelScheduledMessageJobToDraft = () => {
   const { storeDraft } = inputStore;
   const cancelScheduledMessageJob = useCancelScheduledMessageJob();
   return async (scheduledMessageJob: ScheduledMessageJobInMessageWithRoom) => {
-    storeDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
     await cancelScheduledMessageJob(scheduledMessageJob.id);
+    storeDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
   };
 };
