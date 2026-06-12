@@ -6,7 +6,7 @@ import {
 } from "@/services/message/constants";
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 
-export const sanitizeMessageHtml = (html: string) =>
+export const sanitizeMessageHtml = (html: string): string =>
   sanitizeHtml(html, {
     allowedAttributes: {
       a: ["href", "rel", "target"],

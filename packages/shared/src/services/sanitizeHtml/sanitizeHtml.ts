@@ -1,6 +1,6 @@
 import baseSanitizeHtml from "sanitize-html";
 
-export const sanitizeHtml = (...[html, options]: Parameters<typeof baseSanitizeHtml>) =>
+export const sanitizeHtml = (...[html, options]: Parameters<typeof baseSanitizeHtml>): string =>
   baseSanitizeHtml(html, {
     ...options,
     allowedAttributes: {
