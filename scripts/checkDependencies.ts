@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -5,6 +6,7 @@ const root = resolve(import.meta.dirname, "..");
 const registryUrl = "https://registry.npmjs.org";
 const registryConcurrency = 4;
 const registryRetryCount = 3;
+const startedAt = performance.now();
 const isColorEnabled = !process.env.NO_COLOR;
 const color = {
   cyan: (text: string) => (isColorEnabled ? `\u001B[36m${text}\u001B[39m` : text),
@@ -52,6 +54,13 @@ interface OutdatedDependency {
 interface RegistryCheckError {
   error: string;
   pkg: string;
+}
+
+interface PnpmOutdatedDependency {
+  current: string;
+  dependencyType: string;
+  dependentPackages: { name: string }[];
+  latest: string;
 }
 
 const workspaceYaml = readFileSync(resolve(root, "pnpm-workspace.yaml"), "utf8");
@@ -246,20 +255,6 @@ const getUncatalogedManifestDependencies = (manifestDependencies: ManifestDepend
     ({ specifier }) => !specifier.startsWith("catalog:") && !specifier.startsWith("workspace:"),
   );
 
-const getDependents = (pkg: string, manifestDependencies: ManifestDependency[]) =>
-  manifestDependencies
-    .filter((dependency) => dependency.pkg === pkg)
-    .map((dependency) => dependency.manifestName)
-    .filter((dependent, index, dependents) => dependents.indexOf(dependent) === index)
-    .toSorted();
-
-const getDependencyTypeForPackage = (pkg: string, manifestDependencies: ManifestDependency[]) => {
-  const dependency = manifestDependencies.find((manifestDependency) => manifestDependency.pkg === pkg);
-  if (!dependency) return "";
-
-  return getDependencyType(dependency.field);
-};
-
 const createTableBorder = (left: string, separator: string, right: string, widths: number[]) =>
   `${left}${widths.map((width) => "─".repeat(width + 2)).join(separator)}${right}`;
 
@@ -329,7 +324,73 @@ const getLatestVersion = async (pkg: string) => {
   throw lastError;
 };
 
-const getRegistryChecks = async (entries: DependencyEntry[], manifestDependencies: ManifestDependency[]) => {
+const isPnpmOutdatedDependency = (value: unknown): value is PnpmOutdatedDependency => {
+  if (!value || typeof value !== "object") return false;
+
+  const dependency = value as Record<string, unknown>;
+
+  return (
+    typeof dependency.current === "string" &&
+    typeof dependency.dependencyType === "string" &&
+    Array.isArray(dependency.dependentPackages) &&
+    dependency.dependentPackages.every(
+      (dependentPackage) =>
+        dependentPackage && typeof dependentPackage === "object" && typeof dependentPackage.name === "string",
+    ) &&
+    typeof dependency.latest === "string"
+  );
+};
+
+const getRegularOutdatedDependencies = () => {
+  const command = process.platform === "win32" ? "cmd.exe" : "pnpm";
+  const args =
+    process.platform === "win32"
+      ? ["/d", "/s", "/c", "pnpm", "outdated", "-r", "--format", "json"]
+      : ["outdated", "-r", "--format", "json"];
+  const result = spawnSync(command, args, {
+    cwd: root,
+    encoding: "utf8",
+  });
+
+  if (result.error)
+    return { errors: [{ error: result.error.message, pkg: "pnpm outdated -r" }], outdatedDependencies: [] };
+  if (!result.stdout.trim()) {
+    if (result.status && result.status !== 0)
+      return {
+        errors: [{ error: result.stderr.trim() || `exit code ${result.status}`, pkg: "pnpm outdated -r" }],
+        outdatedDependencies: [],
+      };
+
+    return { errors: [], outdatedDependencies: [] };
+  }
+
+  const parsed: unknown = JSON.parse(result.stdout);
+  if (!parsed || typeof parsed !== "object")
+    return { errors: [{ error: "unexpected JSON output", pkg: "pnpm outdated -r" }], outdatedDependencies: [] };
+
+  const outdatedDependencies: OutdatedDependency[] = [];
+  for (const [pkg, dependency] of Object.entries(parsed)) {
+    if (!isPnpmOutdatedDependency(dependency)) {
+      return {
+        errors: [{ error: `unexpected JSON entry for ${pkg}`, pkg: "pnpm outdated -r" }],
+        outdatedDependencies: [],
+      };
+    }
+
+    outdatedDependencies.push({
+      current: dependency.current,
+      dependencyType: getDependencyType(dependency.dependencyType),
+      dependents: dependency.dependentPackages.map((dependentPackage) => dependentPackage.name),
+      latest: dependency.latest,
+      pkg,
+      specifier: "",
+    });
+  }
+
+  return { errors: [], outdatedDependencies };
+};
+
+const getConfigDependencyRegistryChecks = async (entries: DependencyEntry[]) => {
   const outdatedDependencies: OutdatedDependency[] = [];
   const errors: RegistryCheckError[] = [];
   const queue = [...entries];
@@ -346,10 +407,8 @@ const getRegistryChecks = async (entries: DependencyEntry[], manifestDependencie
         if (isVersionOutdated(current, latest))
           outdatedDependencies.push({
             current,
-            dependencyType:
-              group === "configDependencies" ? "config" : getDependencyTypeForPackage(pkg, manifestDependencies),
-            dependents:
-              group === "configDependencies" ? ["configDependencies"] : getDependents(pkg, manifestDependencies),
+            dependencyType: group === "configDependencies" ? "config" : "",
+            dependents: group === "configDependencies" ? ["configDependencies"] : [],
             latest,
             pkg,
             specifier,
@@ -403,6 +462,11 @@ const printRegistryErrors = (errors: RegistryCheckError[]) => {
   );
 };
 
+const printExecutionTime = () => {
+  const elapsedSeconds = ((performance.now() - startedAt) / 1000).toFixed(1);
+  console.log(`Done in ${elapsedSeconds}s`);
+};
+
 const catalogEntries = parseWorkspaceEntries("catalog", getSection("catalog", workspaceYaml));
 const configDependencyEntries = parseWorkspaceEntries(
   "configDependencies",
@@ -418,17 +482,10 @@ const mismatches = [
 printUncatalogedManifestDependencies(uncatalogedManifestDependencies);
 printMismatches(mismatches);
 
-const { errors, outdatedDependencies } = await getRegistryChecks(
-  [...catalogEntries, ...configDependencyEntries],
-  manifestDependencies,
-);
+const regularChecks = getRegularOutdatedDependencies();
+const configDependencyChecks = await getConfigDependencyRegistryChecks(configDependencyEntries);
+const outdatedDependencies = [...regularChecks.outdatedDependencies, ...configDependencyChecks.outdatedDependencies];
+const errors = [...regularChecks.errors, ...configDependencyChecks.errors];
 printOutdatedDependencies(outdatedDependencies);
 printRegistryErrors(errors);
-
-if (
-  uncatalogedManifestDependencies.length > 0 ||
-  mismatches.length > 0 ||
-  outdatedDependencies.length > 0 ||
-  errors.length > 0
-)
-  process.exit(1);
+printExecutionTime();

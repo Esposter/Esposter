@@ -3,7 +3,6 @@ import { getTimelineSections } from "@/services/message/draftsSent/getTimelineSe
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 
 const { readMoreScheduledMessageJobs } = useReadScheduledMessageJobs();
-
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { hasMore, isPending, items } = storeToRefs(scheduledMessageJobStore);
 const sections = computed(() => getTimelineSections(items.value, ({ runAt }) => runAt));
@@ -15,7 +14,7 @@ const sections = computed(() => getTimelineSections(items.value, ({ runAt }) => 
       <MessageDraftsSentScheduledListItem
         v-for="scheduledMessageJob of section.items"
         :key="scheduledMessageJob.id"
-        :scheduled-message-job="scheduledMessageJob"
+        :scheduled-message-job
       />
     </MessageDraftsSentSection>
     <StyledWaypoint :is-active="hasMore" @change="readMoreScheduledMessageJobs" />

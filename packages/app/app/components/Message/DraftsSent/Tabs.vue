@@ -5,7 +5,6 @@ import { useSentMessageStore } from "@/store/message/sentMessage";
 
 const tab = defineModel<DraftsSentTab>({ required: true });
 const draftItems = useDraftItems();
-
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { count: scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
 const sentMessageStore = useSentMessageStore();

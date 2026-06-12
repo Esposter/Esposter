@@ -14,8 +14,8 @@ const sections = computed(() => getTimelineSections(items.value, ({ message }) =
       <MessageDraftsSentSentListItem
         v-for="{ message, room } of section.items"
         :key="`${message.partitionKey}:${message.rowKey}`"
-        :message="message"
-        :room="room"
+        :message
+        :room
       />
     </MessageDraftsSentSection>
     <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />

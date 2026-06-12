@@ -1,10 +1,8 @@
 // @vitest-environment nuxt
 
-import type { useSearchClient as baseUseSearchClient } from "@@/server/composables/azure/search/useSearchClient";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { SelectFields } from "@azure/search-documents";
-import type { Clause, MessageEntity } from "@esposter/db-schema";
+import type { MessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -16,22 +14,19 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { getBlobName, getSearchNullClause, serializeClauses as serializeSearchClauses } from "@esposter/db";
+import { getBlobName } from "@esposter/db";
 import {
   AzureContainer,
   AzureEntityType,
-  BinaryOperator,
   getReverseTickedTimestamp,
   MessageType,
   roomFiltersInMessage,
   roomsInMessage,
   SearchIndex,
   StandardMessageEntity,
-  StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
 import {
   InvalidOperationError,
-  ItemMetadataPropertyNames,
   MENTION_ID_ATTRIBUTE,
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
