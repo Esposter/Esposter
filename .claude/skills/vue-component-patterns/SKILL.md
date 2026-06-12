@@ -295,3 +295,86 @@ definePageMeta({ middleware: "auth" });
 - **Button components** — own their loading state (`isCreating`, `isDeleting`), the async action, and navigation. Template is just `v-tooltip` + `v-btn`.
 - **Form components** — own their field refs, validation computeds, and submit handler. Template is the `v-form` block.
 - **Constant arrays** (feature lists, nav items) — live in `services/<domain>/` (e.g. `services/message/room/call/CallFeatures.ts`), never inline in the page.
+
+## Maximal Component Granularity — One Action per Component
+
+Default to the **smallest coherent unit**. Each component should be stupid simple — ideally one component maps to one action / function / concern. This applies to **any** component, not just buttons: whenever a part of a component has its own distinct responsibility, extract it.
+
+### Extract every action control into its own component
+
+An action button is **not** a leaf — it owns logic. Extract each `v-btn` (with its `v-tooltip`, its click handler, and the store access / multi-step logic it needs) into its own component. The handler and store wiring live in that button component, never in the parent list item or page.
+
+```vue
+<!-- WRONG: list item owns send/clear/schedule/delete logic + 4 inline tooltip+btn blocks -->
+<v-list-item>
+  ...
+  <v-tooltip text="Send message"><template #activator="{ props }">
+    <v-btn :="props" icon="mdi-send-outline" @click.stop="sendDraft" />
+  </template></v-tooltip>
+  <!-- repeated for edit, schedule, delete... -->
+</v-list-item>
+
+<!-- CORRECT: list item is pure layout; each button is its own component owning its action -->
+<v-list-item>
+  ...
+  <MessageDraftsSentDraftDeleteButton :draft-item />
+  <MessageDraftsSentDraftEditButton :draft-item />
+  <MessageDraftsSentDraftScheduleButton :draft-item />
+  <MessageDraftsSentDraftSendButton :draft-item />
+</v-list-item>
+```
+
+The button component holds its own store wiring; the single-use handler stays **inline in the template** (the inline-handler rule in the `vue` skill — single-use handlers must be inlined for event-arg inference). Do NOT extract the handler to a named script function:
+
+```vue
+<!-- DraftSendButton.vue — owns the send action end to end -->
+<script setup lang="ts">
+const { draftItem } = defineProps<MessageDraftsSentDraftSendButtonProps>();
+const dataStore = useDataStore();
+const { createMessage } = dataStore;
+const inputStore = useInputStore();
+const { clearDraft } = inputStore;
+</script>
+<template>
+  <v-tooltip text="Send message">
+    <template #activator="{ props }">
+      <v-btn
+        :="props"
+        icon="mdi-send-outline"
+        @click.stop="
+          async () => {
+            await createMessage({
+              files: [],
+              message: draftItem.content,
+              roomId: draftItem.room.id,
+              type: MessageType.Message,
+            });
+            clearDraft(draftItem.room.id);
+          }
+        "
+      />
+    </template>
+  </v-tooltip>
+</template>
+```
+
+Extract to a `use*` composable only when the **same multi-step logic is reused by 2+ buttons** (e.g. `useCancelScheduledMessageJob` = tRPC mutate + store removal, shared by the send button, edit button, and more-menu). A composable is reuse, not single-use extraction — it does not violate the inline-handler rule.
+
+- **List items / rows reduce to pure layout** — avatar, title, subtitle, time, and a row of extracted button/menu components. No action logic in the item.
+- **A `v-menu` and its menu items is one component** (e.g. `ScheduledMoreMenu.vue`) — the menu plus its list items are one coherent unit.
+- **Shared multi-step action logic used by 2+ button components** goes into a `use*` composable (single-function composables return the function directly), never duplicated. e.g. `useCancelScheduledMessageJob` (tRPC mutate + store removal) reused by the send button, edit button, and more-menu.
+- **Props interface name = full component auto-import name + `Props`** — `MessageDraftsSentDraftSendButtonProps`, not bare `Props`.
+
+### Allowed grouping (do NOT split these)
+
+Keep together only when items are genuinely the same logic / coherent:
+
+- Multiple buttons or items following the **same logic**, rendered via `v-for` over a config / constant list (PascalCase array in `services/<domain>/`).
+- A coherent group driven by the same data / config (a single `v-tabs` built from a `tabs` array, an icon-button toolbar from a `computed` array).
+
+### Do NOT over-extract
+
+Granularity must **simplify the problem** or enable **reuse**. Skip refactors that do neither:
+
+- A wrapper that only forwards props/attrs and needs `inheritAttrs: false` plumbing just to make a click reach the inner element is an anti-pattern — inline the `v-tooltip` + `v-btn` instead.
+- Don't extract a component that is used in exactly one place and removes no logic from its parent (pure passthrough). Extract when the child owns a distinct responsibility (an action, a form, a self-contained piece of layout), not to hit a line count.

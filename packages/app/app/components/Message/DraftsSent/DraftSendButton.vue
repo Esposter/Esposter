@@ -14,10 +14,6 @@ const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const inputStore = useInputStore();
 const { clearDraft } = inputStore;
-const sendDraft = async () => {
-  await createMessage({ files: [], message: draftItem.content, roomId: draftItem.room.id, type: MessageType.Message });
-  clearDraft(draftItem.room.id);
-};
 </script>
 
 <template>
@@ -29,7 +25,17 @@ const sendDraft = async () => {
         icon="mdi-send-outline"
         size="small"
         variant="text"
-        @click.stop="sendDraft"
+        @click.stop="
+          async () => {
+            await createMessage({
+              files: [],
+              message: draftItem.content,
+              roomId: draftItem.room.id,
+              type: MessageType.Message,
+            });
+            clearDraft(draftItem.room.id);
+          }
+        "
       />
     </template>
   </v-tooltip>

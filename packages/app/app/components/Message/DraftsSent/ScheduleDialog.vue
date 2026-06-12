@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { SubmitEventPromise } from "vuetify";
-
 import { getTextFromHtml } from "@/services/message/draftsSent/getTextFromHtml";
 import { useDraftsSentScheduleDialogStore } from "@/store/message/draftsSent/scheduleDialog";
 import { useInputStore } from "@/store/message/input";
@@ -12,20 +10,6 @@ const { isOpen, minScheduledAt, scheduledAt, target } = storeToRefs(scheduleDial
 const inputStore = useInputStore();
 const { clearDraft } = inputStore;
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
-const submit = (_event: SubmitEventPromise, onComplete: () => void) =>
-  withFinalizerAsync(async () => {
-    if (!target.value) return;
-    await $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
-      message: target.value.content,
-      roomId: target.value.roomId,
-      runAt: scheduledAt.value,
-    });
-    if (target.value.scheduledMessageJobId)
-      await $trpc.message.scheduledMessageJob.cancelScheduledJob.mutate({ id: target.value.scheduledMessageJobId });
-    else clearDraft(target.value.roomId);
-    await readScheduledMessageJobs();
-    target.value = undefined;
-  }, onComplete);
 </script>
 
 <template>
@@ -34,7 +18,22 @@ const submit = (_event: SubmitEventPromise, onComplete: () => void) =>
     :card-props="{ title: target?.scheduledMessageJobId ? 'Reschedule Message' : 'Schedule Message' }"
     :confirm-button-props="{ prependIcon: 'mdi-send-clock', text: 'Schedule Message' }"
     :confirm-button-attrs="{ disabled: !scheduledAt }"
-    @submit="submit"
+    @submit="
+      (_event, onComplete) =>
+        withFinalizerAsync(async () => {
+          if (!target) return;
+          await $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
+            message: target.content,
+            roomId: target.roomId,
+            runAt: scheduledAt,
+          });
+          if (target.scheduledMessageJobId)
+            await $trpc.message.scheduledMessageJob.cancelScheduledJob.mutate({ id: target.scheduledMessageJobId });
+          else clearDraft(target.roomId);
+          await readScheduledMessageJobs();
+          target = undefined;
+        }, onComplete)
+    "
   >
     <v-container>
       <v-row>

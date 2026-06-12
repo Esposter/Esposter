@@ -57,14 +57,7 @@ const messageHtml = useMessageWithMentions(
           op-100
           v-html="messageHtml"
         />
-        <MessageModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />
-        <MessageModelMessageLinkPreviewContainer
-          v-if="message.linkPreviewResponse"
-          :link-preview-response="message.linkPreviewResponse"
-          :partition-key="message.partitionKey"
-          :row-key="message.rowKey"
-        />
-        <MessageModelMessageEmojiList :is-preview :message />
+        <MessageModelMessageTypeTrailing :is-preview :message />
       </div>
     </div>
     <div v-else flex flex-col gap-y-1>
@@ -79,14 +72,7 @@ const messageHtml = useMessageWithMentions(
           <span v-if="message.isEdited" text-2.4 text-gray line-height-3.2>(edited)</span>
         </div>
       </slot>
-      <MessageModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />
-      <MessageModelMessageLinkPreviewContainer
-        v-if="message.linkPreviewResponse"
-        :link-preview-response="message.linkPreviewResponse"
-        :partition-key="message.partitionKey"
-        :row-key="message.rowKey"
-      />
-      <MessageModelMessageEmojiList :is-preview :message />
+      <MessageModelMessageTypeTrailing :is-preview :message />
     </div>
   </MessageModelMessageTypeListItem>
 </template>

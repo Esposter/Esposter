@@ -9,10 +9,6 @@ interface MessageDraftsSentScheduledEditButtonProps {
 
 const { scheduledMessageJob } = defineProps<MessageDraftsSentScheduledEditButtonProps>();
 const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
-const editScheduledMessageJob = async () => {
-  await cancelScheduledMessageJobToDraft(scheduledMessageJob);
-  await navigateTo(RoutePath.Messages(scheduledMessageJob.roomId));
-};
 </script>
 
 <template>
@@ -24,7 +20,12 @@ const editScheduledMessageJob = async () => {
         icon="mdi-pencil-outline"
         size="small"
         variant="text"
-        @click.stop="editScheduledMessageJob"
+        @click.stop="
+          async () => {
+            await cancelScheduledMessageJobToDraft(scheduledMessageJob);
+            await navigateTo(RoutePath.Messages(scheduledMessageJob.roomId));
+          }
+        "
       />
     </template>
   </v-tooltip>

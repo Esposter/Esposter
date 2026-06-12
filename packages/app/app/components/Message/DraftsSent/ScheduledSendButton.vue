@@ -12,12 +12,6 @@ const { scheduledMessageJob } = defineProps<MessageDraftsSentScheduledSendButton
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const cancelScheduledMessageJob = useCancelScheduledMessageJob();
-const sendScheduledMessageJob = async () => {
-  const { payload, roomId } = scheduledMessageJob;
-  if (payload.type !== ScheduledMessageJobType.ScheduledMessage) return;
-  await createMessage({ files: [], message: payload.message, roomId, type: MessageType.Message });
-  await cancelScheduledMessageJob(scheduledMessageJob.id);
-};
 </script>
 
 <template>
@@ -30,7 +24,14 @@ const sendScheduledMessageJob = async () => {
         icon="mdi-send-outline"
         size="small"
         variant="text"
-        @click.stop="sendScheduledMessageJob"
+        @click.stop="
+          async () => {
+            const { payload, roomId } = scheduledMessageJob;
+            if (payload.type !== ScheduledMessageJobType.ScheduledMessage) return;
+            await createMessage({ files: [], message: payload.message, roomId, type: MessageType.Message });
+            await cancelScheduledMessageJob(scheduledMessageJob.id);
+          }
+        "
       />
     </template>
   </v-tooltip>

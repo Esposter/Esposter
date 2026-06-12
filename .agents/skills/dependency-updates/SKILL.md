@@ -9,10 +9,10 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Process
 
-1. **Check what's outdated** (from repo root): `pnpm outdated -r`
+1. **Check what's outdated and mismatched** (from repo root): `node scripts/checkDependencies.ts`
 2. **Update versions** in `pnpm-workspace.yaml` — all non-pinned packages need a `^` caret prefix.
 3. **Tell the user to refresh the lockfile** — do NOT run it yourself. Have them run `pnpm refresh:lockfile` from the repo root.
-4. **Verify catalog/lockfile sync** — after refresh, run `pnpm catalog:check` (runs `scripts/checkCatalogMismatches.ts`; exits non-zero if any catalog specifier base differs from its resolved version). Fix reported mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
+4. **Verify dependency sync** — after refresh, run `node scripts/checkDependencies.ts` again. It verifies package manifests use `catalog:` or `workspace:`, checks catalog and configDependency specifier bases against lockfile resolutions, and checks catalog/configDependency entries against npm registry latest versions. Use the pinned and tracked-issue notes below to decide which reported updates to skip. Fix reported mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
 
 ## Pinned packages (do not update)
 
