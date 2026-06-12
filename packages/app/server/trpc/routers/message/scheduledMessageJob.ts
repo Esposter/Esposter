@@ -22,9 +22,9 @@ import {
   DatabaseEntityType,
   MessageType,
   roomsInMessage,
-  scheduledMessageScheduledMessageJobPayloadSchema,
   scheduledMessageJobsInMessage,
   ScheduledMessageJobType,
+  scheduledMessageScheduledMessageJobPayloadSchema,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, asc, count, eq, isNull, sql } from "drizzle-orm";
@@ -182,6 +182,28 @@ export const scheduledMessageJobRouter = router({
       return job;
     },
   ),
+  scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
+    async ({ ctx, input }) => {
+      const job = requireMutation(
+        (
+          await ctx.db
+            .insert(scheduledMessageJobsInMessage)
+            .values({
+              payload: { text: input.text, type: ScheduledMessageJobType.Reminder },
+              roomId: input.roomId,
+              runAt: input.runAt,
+              userId: ctx.getSessionPayload.user.id,
+            })
+            .returning()
+        )[0],
+        Operation.Create,
+        DatabaseEntityType.ScheduledMessageJob,
+        JSON.stringify(input),
+      );
+      await enqueueScheduledMessageJob(useQueueClient(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
+      return job;
+    },
+  ),
   sendScheduledMessageNow: standardAuthedProcedure
     .input(cancelScheduledMessageJobInputSchema)
     .mutation<MessageEntity>(async ({ ctx, input }) => {
@@ -215,26 +237,4 @@ export const scheduledMessageJobRouter = router({
         type: MessageType.Message,
       });
     }),
-  scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
-    async ({ ctx, input }) => {
-      const job = requireMutation(
-        (
-          await ctx.db
-            .insert(scheduledMessageJobsInMessage)
-            .values({
-              payload: { text: input.text, type: ScheduledMessageJobType.Reminder },
-              roomId: input.roomId,
-              runAt: input.runAt,
-              userId: ctx.getSessionPayload.user.id,
-            })
-            .returning()
-        )[0],
-        Operation.Create,
-        DatabaseEntityType.ScheduledMessageJob,
-        JSON.stringify(input),
-      );
-      await enqueueScheduledMessageJob(useQueueClient(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
-      return job;
-    },
-  ),
 });

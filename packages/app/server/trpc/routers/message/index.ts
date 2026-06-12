@@ -74,6 +74,7 @@ import {
   ItemMetadataPropertyNames,
   MAX_READ_LIMIT,
   NotFoundError,
+  Operation,
   takeOne,
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
