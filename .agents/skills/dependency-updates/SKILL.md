@@ -9,23 +9,10 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 ## Process
 
-1. **Check what's outdated** (run from repo root):
-
-   ```bash
-   pnpm outdated -r
-   ```
-
-2. **Update versions** in `pnpm-workspace.yaml` — all non-pinned packages must have a `^` caret prefix.
-
-3. **Tell the user to refresh the lockfile** — do NOT run this yourself. Instruct the user to run `pnpm refresh:lockfile` from the repo root.
-
-4. **Verify catalog/lockfile are in sync** — after the lockfile is refreshed, run:
-
-   ```bash
-   pnpm catalog:check
-   ```
-
-   This runs `scripts/checkCatalogMismatches.ts` and exits non-zero if any catalog specifier base differs from its resolved version. Fix any reported mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
+1. **Check what's outdated** (from repo root): `pnpm outdated -r`
+2. **Update versions** in `pnpm-workspace.yaml` — all non-pinned packages need a `^` caret prefix.
+3. **Tell the user to refresh the lockfile** — do NOT run it yourself. Have them run `pnpm refresh:lockfile` from the repo root.
+4. **Verify catalog/lockfile sync** — after refresh, run `pnpm catalog:check` (runs `scripts/checkCatalogMismatches.ts`; exits non-zero if any catalog specifier base differs from its resolved version). Fix reported mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
 
 ## Pinned packages (do not update)
 

@@ -1,17 +1,16 @@
-# README Standards — Esposter
-
-Apply when creating or updating any README.md file in this monorepo.
-
+---
+name: readme-standards
+description: Esposter README conventions — template, badge rules, and section standards for package READMEs. Apply when creating or updating any README.md file in this monorepo.
 ---
 
-## Template
+# README Standards — Esposter
 
-Every package README follows this structure:
+## Template
 
 ```markdown
 # <package-name>
 
-[badges — see rules below]
+[badges — see Badge Rules]
 
 One-sentence description (from package.json `description`, expanded for clarity).
 
@@ -20,8 +19,6 @@ One-sentence description (from package.json `description`, expanded for clarity)
 - 🚀 [Getting Started](#getting-started) ← omit for private packages with no install step
 - 📖 [Documentation](#documentation)
 - ⚖️ [License](#license)
-
----
 
 ## Getting Started ← omit for internal-only packages
 
@@ -37,11 +34,9 @@ Key exports table / usage examples / architecture notes
 Apache-2.0 reference + badge refs at the bottom
 ```
 
----
-
 ## Badge Rules
 
-**Published packages** (no `"private": true` in package.json) — include all four:
+**Published packages** (no `"private": true`) — include all four:
 
 ```markdown
 [![Apache-2.0 licensed][badge-license]][url-license]
@@ -67,8 +62,6 @@ Badge ref format (bottom of file):
 [badge-npm-downloads]: https://img.shields.io/npm/dm/<npm-name>.svg
 ```
 
----
-
 ## Package Summary
 
 | Package         | npm name                    | Private | README path                          |
@@ -86,15 +79,13 @@ Badge ref format (bottom of file):
 | vue-phaserjs    | `vue-phaserjs`              |   no    | `packages/vue-phaserjs/README.md`    |
 | xml2js          | `@esposter/xml2js`          |   no    | `packages/xml2js/README.md`          |
 
----
-
 ## Content Rules
 
 1. **Description** — lead with what it does, not what it is. "Drizzle ORM schemas and migrations" beats "A library of database schemas".
-2. **Getting Started** — show the install command + one minimal working example. Omit for packages that are never installed externally (app, azure-functions, configuration).
-3. **Documentation** — always link `https://esposter.com/docs/modules/<slug>.html` with the phrase "We highly recommend you take a look at the [documentation](...) to level up." Add a key-exports table or an architecture notes section so the README is useful without visiting the docs site.
-4. **Commands** — list the `pnpm` scripts relevant to that package (build, test, lint:fix, typecheck). Use the package's own scripts, not root scripts.
+2. **Getting Started** — install command + one minimal working example. Omit for packages never installed externally (app, azure-functions, configuration).
+3. **Documentation** — always link `https://esposter.com/docs/modules/<slug>.html` with "We highly recommend you take a look at the [documentation](...) to level up." Add a key-exports table or architecture notes so the README is useful without the docs site.
+4. **Commands** — list the package's own `pnpm` scripts (build, test, lint:fix, typecheck), not root scripts.
 5. **No filler** — skip "we are excited to…", lengthy prose, or content that duplicates CLAUDE.md. READMEs are reference docs.
-6. **Private packages** — no "Getting Started / install" section. Add an Architecture or How It Works section instead.
-7. **Root README** — always keep the Packages table in sync when adding or removing packages. Table columns: Package (link), Description, Published (✓ or —). Package links use absolute GitHub URLs with `tree/main` (directories); file links use `blob/main`. Example: `https://github.com/Esposter/Esposter/tree/main/packages/shared` vs `https://github.com/Esposter/Esposter/blob/main/LICENSE`.
-8. **GitHub URL convention** — `blob/main` for files, `tree/main` for directories. Never use relative paths for GitHub links — typedoc resolves them as local media and warns if they resolve to directories.
+6. **Private packages** — no Getting Started/install section; add an Architecture or How It Works section instead.
+7. **Root README** — keep the Packages table in sync when adding/removing packages. Columns: Package (link), Description, Published (✓ or —).
+8. **GitHub URL convention** — `blob/main` for files, `tree/main` for directories (e.g. `.../tree/main/packages/shared` vs `.../blob/main/LICENSE`). Never use relative paths — typedoc resolves them as local media and warns if they resolve to directories.

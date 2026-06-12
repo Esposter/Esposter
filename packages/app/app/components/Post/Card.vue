@@ -31,7 +31,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
           </v-card-title>
           <v-card-text
             v-if="!isEmptyDescription"
-            class="card-content"
+            class="rich-text-content"
             px-0
             pb-0
             text-body-large
@@ -54,7 +54,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
         </v-card-title>
         <v-card-text
           v-if="!isEmptyDescription"
-          class="card-content"
+          class="rich-text-content"
           px-0
           pb-0
           text-body-large
@@ -64,12 +64,3 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
     </template>
   </PostConfirmDeleteDialog>
 </template>
-
-<style scoped>
-:deep(.card-content) {
-  ul,
-  ol {
-    padding: 0 1rem;
-  }
-}
-</style>

@@ -13,8 +13,6 @@ Trims whitespace and returns empty string for absent/null/undefined inputs. Live
 import { normalizeString } from "@esposter/shared";
 
 normalizeString("  hello  "); // → "hello"
-normalizeString("   "); // → ""
-normalizeString(""); // → ""
 normalizeString(null); // → ""
 normalizeString(undefined); // → ""
 ```
@@ -37,7 +35,7 @@ Use everywhere a string needs trimming:
 - Array mapping: `values.map(normalizeString).filter(Boolean)`
 - Guard checks: `if (!normalizeString(value)) return;`
 - Filter predicates: `.filter((line) => normalizeString(line) !== "")`
-- Zod schemas: always `z.string().transform(normalizeString).pipe(z.string().min(1).max(N))` — transform first, then validators in the pipe
+- Zod schemas: see Zod Schema Alignment below
 
 ## When NOT to use `normalizeString`
 
@@ -58,14 +56,10 @@ const sanitizedOld = oldValue !== undefined ? normalizeString(oldValue) : oldVal
 
 ## Zod Schema Alignment
 
-Base select schemas use `.transform(normalizeString)` so server validation matches client normalization:
+Base select schemas use `.transform(normalizeString)` so server validation matches client normalization. Always transform first, then validators in the pipe. Never add trim transforms to derived schemas (`UpdateRoomInput`, `UpdateSurveyInput`, etc.) — only in the base select schema.
 
 ```ts
-// Always: transform first, validators in pipe
 topic: z.string().transform(normalizeString).pipe(z.string().max(ROOM_TOPIC_MAX_LENGTH)),
-group: z.string().transform(normalizeString).pipe(z.string().max(SURVEY_GROUP_MAX_LENGTH)),
 export const createNameSchema = (maxLength: number) =>
   z.string().transform(normalizeString).pipe(z.string().min(1).max(maxLength));
 ```
-
-Never add trim transforms to derived schemas (`UpdateRoomInput`, `UpdateSurveyInput` etc.) — only in the base select schema.

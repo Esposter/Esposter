@@ -5,43 +5,41 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 
 # Styling — UnoCSS Attributify Mode (MANDATORY)
 
-- Use prop-based styling: `<div text-red p-4>` for ALL static styles.
-- **UnoCSS attributes go first** — before Vue/component props. e.g. `<StyledAvatar mr-3 :image="image" :name="name" />`
-- Use `flex` not `d-flex`.
-- Use `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
-- Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index utilities unless the layout genuinely needs them. Do not add z-index defensively; rely on DOM order and positioning first.
-- Prefer the app's theme primitives over bespoke styling. Use `StyledCard` for standard card/panel surfaces and theme colours such as `bg-background`, `bg-surface`, `bg-surface-opacity-80`, `b-border`, `text-primary`, `text-error`, and semantic opacity utilities before adding custom colours.
-- Avoid arbitrary hex colours, RGB/RGBA values, custom shadows, and one-off background/border colours in application UI. If an extra semantic colour is genuinely needed, prefer Vuetify theme colours or the standard Material palette with lighten/darken variants (for example `text-green-darken-2`, `bg-yellow-lighten-5`, `text-red`) instead of raw values.
-- Avoid custom `min-width`, `max-width`, fixed width, and fixed height utilities when flex, grid, wrapping, and intrinsic content sizing can solve the layout. Reach first for `flex-1`, `min-w-0`, `shrink-0`, responsive direction changes (`flex-col lg:flex-row`), and breakpoint grid columns (`grid-cols-1 md:grid-cols-2`) rather than arbitrary dimensions.
-- Treat arbitrary dimensions as a last resort for true format constraints (for example `aspect-video`, viewport-safe containers, canvas/game surfaces, or third-party embeds). When a custom dimension seems necessary, first check whether the component hierarchy or flex/grid structure is wrong.
+- Prop-based styling for ALL static styles: `<div text-red p-4>`.
+- **UnoCSS attributes go first** — before Vue/component props: `<StyledAvatar mr-3 :image="image" :name="name" />`.
+- `flex` not `d-flex`.
+- `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
+- Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index unless the layout needs them. Don't add z-index defensively; rely on DOM order and positioning first.
+- Prefer theme primitives over bespoke styling: `StyledCard` for card/panel surfaces; theme colours (`bg-background`, `bg-surface`, `bg-surface-opacity-80`, `b-border`, `text-primary`, `text-error`) and semantic opacity utilities before custom colours.
+- Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. If a semantic colour is genuinely needed, prefer Vuetify theme colours or the Material palette with lighten/darken variants (`text-green-darken-2`, `bg-yellow-lighten-5`, `text-red`) over raw values.
+- Avoid custom `min-width`/`max-width`/fixed width/height when flex, grid, wrapping, or intrinsic sizing solves it. Reach for `flex-1`, `min-w-0`, `shrink-0`, responsive direction (`flex-col lg:flex-row`), breakpoint grids (`grid-cols-1 md:grid-cols-2`) first.
+- Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds). First check whether the component hierarchy or flex/grid structure is wrong.
 
 ## What stays in `class="..."`
 
-Only use `class="..."` when technically required:
+Only when technically required:
 
-- **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`, `class="card-content"`)
+- **Scoped CSS refs** — class names referenced in `<style scoped>` (e.g. `class="card"`)
 - **Dynamic bindings** — `:class="..."` always stays as-is
-- **Third-party component classes** — e.g. `vue-flow__panel`, `v-window__controls`, `fc-event-title`, Vuetify internal classes that start with `v-` (e.g. `v-theme--light`)
+- **Third-party component classes** — e.g. `vue-flow__panel`, `v-window__controls`, `fc-event-title`, Vuetify internal `v-`-prefixed classes (e.g. `v-theme--light`)
 - **SVG classes** — e.g. `fclass1`, `a`, `b`
-- **`group`** — UnoCSS group variant selector token; must stay in `class` so descendant `group-hover:` variants work
+- **`group`** — UnoCSS group variant token; must stay in `class` so descendant `group-hover:` variants work
 
 ## What can be attributify (including Vuetify utilities)
 
-`presetAttributify()` is active in `uno.config.ts`. This means **ALL** of the following work as standalone attributify attributes:
+`presetAttributify()` is active in `uno.config.ts`, so ALL of these work as standalone attributify attributes:
 
-- Vuetify MD3 typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-body-small`, etc. Do not use MD2 typography utilities such as `text-caption`; use the MD3 equivalent (`text-body-small`) instead.
+- Vuetify MD3 typography: `text-title-large`, `text-headline-small`, `text-body-large`, `text-body-small`, etc. Do not use MD2 utilities like `text-caption`; use the MD3 equivalent (`text-body-small`).
 - Vuetify theme colours: `bg-surface`, `bg-background`, `bg-border`, `text-error`, `text-info`, etc.
-- Opacity emphasis utilities: use `op-medium-emphasis` / `op-high-emphasis`, not `text-medium-emphasis`.
+- Opacity emphasis: use `op-medium-emphasis` / `op-high-emphasis`, not `text-medium-emphasis`.
 - Custom theme colours: `bg-surface-opacity-80`, `bg-background-opacity-40`, etc.
-- Material Design palette colours: `text-amber`, `bg-deep-purple`, `text-yellow-darken-4`, etc. — generated by Vuetify's color pack (`$color-pack: true` in `settings.scss`), no registration needed.
+- Material Design palette: `text-amber`, `bg-deep-purple`, `text-yellow-darken-4`, etc. — generated by Vuetify's color pack (`$color-pack: true` in `settings.scss`), no registration needed.
 
 ### Color utility availability
 
-Only colors registered in `uno.config.ts` generate utility classes. Do not assume Vuetify default theme colors are supported: for example, use `text-primary` instead of `text-success`, and `bg-surface` instead of `bg-surface-variant`.
+Only colors registered in `uno.config.ts` generate utility classes. Don't assume Vuetify default theme colors are supported: use `text-primary` not `text-success`, `bg-surface` not `bg-surface-variant`. Theme colors auto-register from `vuetify.config.ts`; palette colors are covered by the color pack. See the `unocss` skill.
 
-Theme colors are auto-registered from `vuetify.config.ts`. Palette colors are covered by Vuetify's color pack. See the `unocss` skill for details.
-
-When reading hyphenated theme colours from `useColorsStore()`, destructure quoted keys and alias them to local camel-case variables:
+When reading hyphenated theme colours from `useColorsStore()`, destructure quoted keys and alias to camel-case:
 
 ```ts
 const { "background-opacity-40": backgroundOpacity40 } = storeToRefs(colorsStore);
@@ -49,31 +47,27 @@ const { "background-opacity-40": backgroundOpacity40 } = storeToRefs(colorsStore
 
 ## `v-bind(themeColor)` in CSS → attributify
 
-When a scoped CSS class exists _only_ to set a Vuetify theme colour with `v-bind()`, convert it to attributify and delete the class:
+When a scoped CSS class exists _only_ to set a Vuetify theme colour with `v-bind()`, convert to attributify and delete the class (also remove the `storeToRefs` destructure, and `useColorsStore()` if nothing else uses it):
 
 ```diff
 - <StyledCard class="card">
 + <StyledCard bg-surface-opacity-80>
 
 - <style scoped lang="scss">
-- .card {
--   background-color: v-bind(surfaceOpacityColor);
-- }
+- .card { background-color: v-bind(surfaceOpacityColor); }
 - </style>
 ```
 
-Also remove the `storeToRefs` destructure (and `useColorsStore()` call if nothing else uses it).
-
 ### Hover state → `hover:utility`
 
-`&:hover { color: v-bind(primary-darken-1); }` migrates to a standalone `hover:text-primary-darken-1` attribute:
+`&:hover { color: v-bind(primary-darken-1); }` migrates to a standalone `hover:text-primary-darken-1`:
 
 ```diff
 - <NuxtInvisibleLink class="author" ...>
 + <NuxtInvisibleLink text-primary hover:text-primary-darken-1 transition-colors duration-[--transition-duration] ...>
 ```
 
-Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in Vue templates — only a leading `:` triggers `v-bind`.
+Colons inside attribute names (`hover:text-primary-darken-1`) are valid in Vue templates — only a leading `:` triggers `v-bind`.
 
 **Do NOT convert** when `v-bind` appears in:
 
@@ -85,18 +79,16 @@ Colons inside attribute names (e.g. `hover:text-primary-darken-1`) are valid in 
 
 ## `!important` Variant
 
-Append `!` inside the attribute value to generate `!important` CSS:
+Append `!` inside the attribute value to generate `!important`. Use only when overriding third-party styles that can't be targeted otherwise:
 
 ```html
 <!-- top: var(--app-bar-height) !important; z-index: 1500 !important -->
 <NuxtLoadingIndicator top="[--app-bar-height]!" z="[1500]!" />
 ```
 
-Use only when overriding third-party component styles that can't be targeted otherwise.
-
 ## `field-sizing-content`
 
-Replaces `field-sizing: content` in scoped CSS — use directly as an attributify attribute on `<input>` / `<textarea>` elements:
+Replaces `field-sizing: content` in scoped CSS — use directly as an attribute on `<input>` / `<textarea>`:
 
 ```diff
 - <input class="input" ... />
@@ -109,16 +101,12 @@ Replaces `field-sizing: content` in scoped CSS — use directly as an attributif
 
 ## Arbitrary CSS Values
 
-Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and CSS variable references — directly as attributify props:
+Use UnoCSS square-bracket syntax for arbitrary values — including `calc()` and CSS variable references — directly as props:
 
 ```html
-<!-- Instead of a scoped .sidebar { top: calc(1rem + var(--app-bar-height)) } -->
+<!-- Instead of scoped .sidebar { top: calc(1rem + var(--app-bar-height)) } -->
 <UserSideBar sticky top="[calc(1rem+--app-bar-height)]" />
-
-<!-- Fixed height with viewport calc -->
 <div h="[calc(100dvh_-_--app-bar-height)]" overflow-y-auto />
-
-<!-- Arbitrary colour via hex -->
 <div bg="[#f0f0f0]" />
 ```
 
@@ -126,71 +114,61 @@ Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+--x)` no
 
 ### CSS Variables in Arbitrary Values
 
-**Never use `var()` inside UnoCSS arbitrary value brackets.** UnoCSS automatically wraps `--variable` names with `var()`:
+**Never use `var()` inside UnoCSS arbitrary value brackets.** UnoCSS auto-wraps `--variable` names with `var()`:
 
 ```html
 <!-- WRONG — var() keyword in template -->
 <div duration="[var(--transition-duration)]" />
-<div top="[var(--app-bar-height)]!" />
-<div shadow="[0_0_5px_rgb(var(--v-theme-primary-lighten-1))]" />
-
 <!-- CORRECT — --variable reference only -->
 <div duration="[--transition-duration]" />
 <div top="[--app-bar-height]!" />
 <div shadow="[0_0_5px_rgb(--v-theme-primary-lighten-1)]" />
 ```
 
-Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects stays as-is — only the UnoCSS arbitrary value syntax gets the `--variable` shorthand.
-
-When converting a scoped CSS class that only contains arbitrary-value properties, delete the class name and the `<style scoped>` block entirely.
+Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects stays as-is — only UnoCSS arbitrary value syntax gets the `--variable` shorthand. When converting a scoped class that only contains arbitrary-value properties, delete the class name and the `<style scoped>` block entirely.
 
 ## Transition Splitting
 
-Split the CSS `transition` shorthand into separate UnoCSS attributes — one for the property, one for the duration:
+Split the CSS `transition` shorthand into separate UnoCSS attributes — one for property, one for duration:
 
 ```html
-<!-- Single property + CSS-variable duration: split into two attributes -->
+<!-- Single property + CSS-variable duration -->
 <NuxtInvisibleLink transition-colors duration-[--transition-duration] ...>
-  <!-- Multi-property with same static duration: use single arbitrary value (no clean split) -->
-  <button transition="[box-shadow_0.2s,transform_0.2s]" ...></button>
-</NuxtInvisibleLink>
+  <!-- Multi-property with same static duration: single arbitrary value -->
+  <button transition="[box-shadow_0.2s,transform_0.2s]" ...></button
+></NuxtInvisibleLink>
 ```
 
 Rules:
 
-- Single known property → use the UnoCSS shorthand (`transition-colors`, `transition-shadow`, `transition-transform`, `transition-opacity`, etc.)
-- Override the default duration with a separate `duration-{n}` or `duration-[--x]` attribute (no `var()` wrapper)
-- Multi-property transitions (e.g. `box-shadow` + `transform`) must stay as a single `transition="[...]"` arbitrary value — splitting them would cause the second `transition-property` to override the first
+- Single known property → UnoCSS shorthand (`transition-colors`, `transition-shadow`, `transition-transform`, `transition-opacity`, etc.)
+- Override default duration with a separate `duration-{n}` or `duration-[--x]` (no `var()` wrapper)
+- Multi-property transitions (e.g. `box-shadow` + `transform`) must stay a single `transition="[...]"` arbitrary value — splitting them makes the second `transition-property` override the first
 - Spaces in arbitrary `transition` values become `_`
 
 ## Abbreviated Utilities
 
-Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS utilities:
+Always use UnoCSS abbreviated shorthand forms — they are first-class utilities.
 
 **Opacity (`op-` prefix):**
 
-- `op-0` not `opacity-0`
-- `op-50` not `opacity-50`
-- `op-100` not `opacity-100`
+- `op-0`/`op-50`/`op-100` not `opacity-*`
 - Works with variants: `group-hover:op-100`, `hover:op-80`, `disabled:op-30`
-- Prefer semantic opacity utilities for non-obvious values:
-  - `op-medium-emphasis` → `var(--v-medium-emphasis-opacity)`
-  - `op-high-emphasis` → `var(--v-high-emphasis-opacity)`
-- Define semantic opacity utilities in `uno.config.ts` via the shared `opacityUtilities` map and safelist them from the same map. Do not add one-off opacity rules without updating the safelist source.
+- Prefer semantic utilities for non-obvious values: `op-medium-emphasis` → `var(--v-medium-emphasis-opacity)`, `op-high-emphasis` → `var(--v-high-emphasis-opacity)`
+- Define semantic opacity utilities in `uno.config.ts` via the shared `opacityUtilities` map and safelist them from the same map. Don't add one-off opacity rules without updating the safelist source.
 - Use boolean bindings for conditional semantic opacity utilities:
 
   ```html
   <button :op-loading="isLoading ? '' : undefined" :op-high-emphasis="!isLoading && !isHovering ? '' : undefined" />
-  <v-icon :op-disabled="disabled ? '' : undefined" />
   ```
 
-- Reserve raw numeric opacity values for obvious visibility states like `0`, `0!`, `op-0`, `op-100`, and `group-hover:op-100`. Avoid raw non-obvious values like `op-40`, `op-50`, `op-60`, `op-70`, or `:op="80"` in application UI; use semantic utilities or CSS variables instead.
+- Reserve raw numeric opacity for obvious visibility states (`0`, `0!`, `op-0`, `op-100`, `group-hover:op-100`). Avoid raw non-obvious values (`op-40`, `op-50`, `:op="80"`) in app UI; use semantic utilities or CSS variables.
 
 **Spacing/position scale values:**
 
-- Use UnoCSS scale tokens instead of explicit rem values when the value is on the spacing scale. `1` is `0.25rem`, `2` is `0.5rem`, etc.
-- For negative values in attributify syntax, put the double hyphen in the attribute name: `right--1`, `top--1`, `ml--2`. Do not write `right="-0.25rem"` and do not use `-right-1` in Vue templates.
-- Use arbitrary values only when the value is not on the scale or must be computed, e.g. `top="[calc(100dvh_-_--app-bar-height)]"`.
+- Use UnoCSS scale tokens instead of explicit rem when the value is on the spacing scale (`1` = `0.25rem`, `2` = `0.5rem`, etc.).
+- For negative values, put the double hyphen in the attribute name: `right--1`, `top--1`, `ml--2`. Do not write `right="-0.25rem"` or use `-right-1` in templates.
+- Use arbitrary values only when off-scale or computed, e.g. `top="[calc(100dvh_-_--app-bar-height)]"`.
 
 **Border (`b-` prefix) — never use Vuetify `border="sm"` prop or `border-sm` class:**
 
@@ -201,18 +179,14 @@ Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS ut
 | `border-lg` / `border="lg"` | `b-4`             | 4px   |
 | `border-xl` / `border="xl"` | `b-8`             | 8px   |
 
-- `b-none` not `border-none`
-- `b-0` not `border-0`
-- `b-solid` not `border-solid`
-- `b-t-2` not `border-top-2`
-- `b-x-1` not `border-x-1`
+- `b-none` not `border-none`; `b-0` not `border-0`; `b-solid` not `border-solid`; `b-t-2` not `border-top-2`; `b-x-1` not `border-x-1`
 
-Note: `b-1` sets `border-width: 1px`. **`b-solid` is NOT applied automatically — always add it explicitly whenever you use a border-color utility.** For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. For the Vuetify overlay border use `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`.
+`b-1` sets `border-width: 1px`. **`b-solid` is NOT applied automatically — always add it explicitly with any border-color utility.** For theme-colour borders use `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, etc. For the Vuetify overlay border use `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`.
 
-**Border-color + border-style must always appear together:**
+**Border-color + border-style must always appear together** — applies to all border-color utilities (`b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, `b-primary`, etc.), including in dynamic `:class` (put `b-solid` as a static attribute):
 
 ```html
-<!-- WRONG — border won't render without b-solid -->
+<!-- WRONG — won't render without b-solid -->
 <div b-1 b-text>
   <!-- CORRECT -->
   <div b-solid b-1 b-text>
@@ -221,8 +195,6 @@ Note: `b-1` sets `border-width: 1px`. **`b-solid` is NOT applied automatically �
   </div>
 </div>
 ```
-
-This applies to all border-color utilities: `b-text`, `b-border`, `b-info`, `b-error`, `b-transparent`, `b-primary`, etc. — including those in dynamic `:class` bindings (put `b-solid` as a static attribute).
 
 **`custom-border` / `border-color` scoped-class pattern → attributify:**
 
@@ -235,9 +207,9 @@ This applies to all border-color utilities: `b-text`, `b-border`, `b-info`, `b-e
 - </style>
 ```
 
-`--border-width: thin` = 1px → `b-1`. `--border-style: solid` → `b-solid` (must be explicit — not automatic). The theme colour (`text`, `border`, `info`, etc.) becomes the `b-*` suffix.
+`--border-width: thin` = 1px → `b-1`. `--border-style: solid` → `b-solid` (explicit, not automatic). The theme colour becomes the `b-*` suffix.
 
-**BEM border class with focus/error variants (e.g. `parameter-chip`):**
+**BEM border class with focus/error variants (e.g. `parameter-chip`)** — when error and focus-within are mutually exclusive, put both colours in the `:class` conditional so only the active state's colour class is present:
 
 ```diff
 - <div class="parameter-chip" :class="{ 'parameter-chip--error': isError }">
@@ -256,8 +228,6 @@ This applies to all border-color utilities: `b-text`, `b-border`, `b-info`, `b-e
 - </style>
 ```
 
-When error and focus-within are mutually exclusive states, put both colours in the `:class` conditional so only the active state's colour class is present at any time.
-
 **Border-radius (`rd` prefix) — never use Vuetify `rounded="sm"` prop or `rounded-sm` class:**
 
 | Vuetify utility                           | UnoCSS (use this) | Value  |
@@ -269,47 +239,33 @@ When error and focus-within are mutually exclusive states, put both colours in t
 | `rounded-pill` / `rounded="pill"`         | `rd-full`         | 9999px |
 | `rounded-circle` / `rounded="circle"`     | `rd="50%"`        | 50%    |
 
-- `rd` not `rounded`
-- `rd-t-2` not `rounded-t-2`
-- `rd-full` not `rounded-full`
+- `rd` not `rounded`; `rd-t-2` not `rounded-t-2`; `rd-full` not `rounded-full`
 
-**Background (`bg-` prefix):**
+**Background:** `bg-transparent` not `background-transparent`.
 
-- `bg-transparent` not `background-transparent`
+**Outline:** `outline-none` not `outline-0` (sets `outline: 2px solid transparent`).
 
-**Outline:**
-
-- `outline-none` not `outline-0` (sets `outline: 2px solid transparent`)
-
-When in doubt, prefer the shorter form — UnoCSS abbreviations are canonical in this project.
+When in doubt, prefer the shorter form — UnoCSS abbreviations are canonical here.
 
 ## Gap Directionality
 
-Use axis-specific gap utilities instead of the omnidirectional `gap-{n}`:
+Use axis-specific gap utilities instead of omnidirectional `gap-{n}`:
 
-- **`flex` (row)** → `gap-x-{n}` (space between columns only)
-- **`flex-col`** → `gap-y-{n}` (space between rows only)
-- **`grid` / two-dimensional layouts** → `gap-{n}` (both axes intentional)
-
-Examples:
+- **`flex` (row)** → `gap-x-{n}` (columns only)
+- **`flex-col`** → `gap-y-{n}` (rows only)
+- **`grid` / 2D layouts** → `gap-{n}` (both axes intentional)
 
 ```html
-<!-- flex row of chips/buttons -->
 <div flex gap-x-2>...</div>
-
-<!-- flex-col list -->
 <div flex flex-col gap-y-1>...</div>
-
-<!-- grid card layout -->
 <div grid grid-cols-3 gap-4>...</div>
 ```
 
 ## Absolute Positioning Within a Container
 
-Use `relative` on the parent and `absolute top-0 right-0` (or other corners) to pin UI elements:
+Use `relative` on the parent and `absolute top-0 right-0` (or other corners) to pin UI elements. Prefer this over manual margin/padding tricks when an element should float independent of sibling flow:
 
 ```html
-<!-- banner with action buttons top-right -->
 <div bg-background relative h-20>
   <div absolute top-0 right-0 flex gap-x-1 p-1>
     <slot name="actions" />
@@ -317,13 +273,11 @@ Use `relative` on the parent and `absolute top-0 right-0` (or other corners) to 
 </div>
 ```
 
-Prefer this over manual margin/padding tricks when element should float independent of sibling flow.
-
 ## Units
 
 - **Always use `rem` instead of `px`** for all CSS values (font sizes, spacing, widths, heights, borders, etc.).
 
 ## Style Block
 
-- Use `<style scoped>` — `scoped` is always required.
-- Omit `lang="scss"` unless the style block actually uses Sass features (variables, nesting, mixins). Plain CSS does not need it.
+- Use `<style scoped>` — `scoped` always required.
+- Omit `lang="scss"` unless the block uses Sass features (variables, nesting, mixins). Plain CSS doesn't need it.

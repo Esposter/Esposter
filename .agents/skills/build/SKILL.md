@@ -17,11 +17,11 @@ Located in `packages/configuration/src/`. All library packages import one of:
 
 All extend `rolldownConfigurationBrowser`. Node adds `platform: "node"`. Isomorphic adds `@rolldown/plugin-node-polyfills`. Use `{ external }` shorthand when no extra entries needed; spread `[...external, "extra"]` only if the package requires additional externals.
 
-The base browser config enables `tsgo: true` in the `dts()` call — this uses `@typescript/native-preview` for fast DTS generation. `@typescript/native-preview` is already in the catalog; do not remove it.
+The base browser config enables `tsgo: true` in the `dts()` call (uses `@typescript/native-preview` for fast DTS generation; already in catalog — do not remove).
 
 ## Global External List
 
-Defined in `packages/configuration/src/external/external.ts`, exported as `external`. Used by `rolldownConfigurationBrowser` (which all rolldown configs extend) and by `viteConfiguration`.
+Defined in `packages/configuration/src/external/external.ts`, exported as `external`. Used by `rolldownConfigurationBrowser` (extended by all rolldown configs) and by `viteConfiguration`.
 
 ```ts
 // packages/configuration/src/external/external.ts
@@ -33,47 +33,33 @@ export const external: (RegExp | string)[] = [
   "vue-phaserjs",
   // @esposter/azure-mock
   "@azure/core-http-compat",
-  "@azure/core-rest-pipeline",
-  "@azure/eventgrid",
-  "@azure/storage-queue",
-  // @esposter/configuration
-  "@rolldown/plugin-node-polyfills",
-  "@vitejs/plugin-vue",
-  "rolldown",
-  "rolldown-plugin-dts",
-  /^unplugin-auto-import/u,
-  /^unplugin-dts/u,
-  "vite",
-  "vite-plugin-mkcert",
-  // @esposter/db
-  "@azure/data-tables",
   // ... (grouped by owning @esposter package, alphabetical package order, alphabetical entries within)
 ];
 ```
 
 ### Key rules
 
-- **`/@esposter\//u` covers all `@esposter/*` workspace packages automatically** — never add individual `@esposter/foo` strings.
-- **Non-`@esposter/` workspace packages must be listed explicitly** — `azure-mock`, `parse-tmx`, `vue-phaserjs` are not covered by the regex.
-- **External list entries are a build superset, not a peer-dependency checklist for every package** — a package declares only the externalized packages it directly imports at runtime or exposes through its generated `.d.ts` surface.
-- **Do not duplicate transitive peers** — if `azure-mock` imports `@esposter/db-schema`, and `@esposter/db-schema` imports `zod`, then `zod` belongs to `@esposter/db-schema`'s peer dependencies, not `azure-mock`'s. The package that directly imports the dependency owns the contract.
-- **`dependencies` normally get bundled; `peerDependencies` are externalized** — when a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and make sure it is covered by the shared external list. Exceptions: `@esposter/app` (root consumer, not a library) and `@esposter/azure-functions` (overrides external list to bundle almost everything).
-- **Vite builds**: `viteConfiguration` lives in `packages/configuration/src/viteConfiguration.ts`. `packages/configuration/vite.config.js` imports it directly from source; package consumers such as `vue-phaserjs` import it from `@esposter/configuration`.
+- `/@esposter\//u` covers all `@esposter/*` workspace packages — never add individual `@esposter/foo` strings.
+- Non-`@esposter/` workspace packages must be listed explicitly (`azure-mock`, `parse-tmx`, `vue-phaserjs` — not covered by the regex).
+- The external list is a build superset, not a per-package peer-dependency checklist — a package declares only the externalized packages it directly imports at runtime or exposes through its generated `.d.ts` surface.
+- Do not duplicate transitive peers — the package that directly imports a dependency owns the contract. If `azure-mock` imports `@esposter/db-schema` which imports `zod`, `zod` is `db-schema`'s peer, not `azure-mock`'s.
+- `dependencies` get bundled; `peerDependencies` are externalized. When a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and ensure it's covered by the shared external list. Exceptions: `@esposter/app` (root consumer, not a library) and `@esposter/azure-functions` (overrides external list to bundle almost everything).
+- Vite builds: `viteConfiguration` lives in `packages/configuration/src/viteConfiguration.ts`. `packages/configuration/vite.config.js` imports it from source; consumers like `vue-phaserjs` import it from `@esposter/configuration`.
 
 ### Ordering convention
 
-Entries are grouped by **owning `@esposter` package**, sections in alphabetical package-name order, entries alphabetical within each section. One exception: a final "Vue framework" group for deps that are always consumer-provided and not owned by a single package (`@vueuse/core`, `pinia`, `vue`). Each section header comment is the bare package name: `// @esposter/db`, `// @esposter/db-mock`, etc.
+Group by owning `@esposter` package; sections in alphabetical package-name order; entries alphabetical within each section. Section header comment is the bare package name (`// @esposter/db`). One exception: a final "Vue framework" group for always-consumer-provided deps not owned by a single package (`@vueuse/core`, `pinia`, `vue`).
 
 ### Dependency declaration convention
 
-- `dependencies`: direct runtime imports that should be bundled or automatically installed for consumers. Workspace packages that are imported at runtime usually go here even though the shared external list keeps their code out of the package bundle.
-- `peerDependencies`: direct runtime imports or generated declaration-surface imports that are externalized and must be supplied by the consumer, especially framework/runtime singletons (`vue`, `pinia`), SDKs mirrored in public APIs, Drizzle/Pulumi runtimes, and package-plugin ecosystems.
-- `devDependencies`: build, lint, test, codegen, and typecheck tools; packages used only by tests; packages used only by source types that do not appear in generated declarations.
-- If a package only needs a dependency because an imported workspace package needs it, do not redeclare it as a peer. Let the directly importing workspace package own that peer dependency.
+- `dependencies`: direct runtime imports to bundle or auto-install for consumers. Workspace packages imported at runtime usually go here even though the external list keeps their code out of the bundle.
+- `peerDependencies`: direct runtime or declaration-surface imports that are externalized and must be supplied by the consumer — framework/runtime singletons (`vue`, `pinia`), SDKs mirrored in public APIs, Drizzle/Pulumi runtimes, package-plugin ecosystems.
+- `devDependencies`: build, lint, test, codegen, typecheck tools; test-only packages; packages used only by source types that don't appear in generated declarations.
+- If a package only needs a dependency because an imported workspace package needs it, don't redeclare it as a peer — let the directly importing workspace package own it.
 
 ### Auditing external vs peerDependencies alignment
 
-Run this from the repo root to find any `dependencies` entry that should be a `peerDependency`:
+Run from repo root to find any `dependencies` entry that should be a `peerDependency`:
 
 ```js
 // node -e "..." or save as a script
@@ -133,9 +119,9 @@ for (const dir of fs.readdirSync(pkgsDir)) {
 external: [...externalVueFramework, "@azure/functions"],
 ```
 
-- **`externalVueFramework`** (`vue`, `@vueuse/core`, `pinia`) — peer deps of `@esposter/shared`/`@esposter/vue-phaserjs`; azure-functions doesn't use Vue so rolldown tree-shakes these out safely.
-- **Everything else is bundled** — the Azure Functions runtime provides only `@azure/functions`; all other deps (Azure SDKs, drizzle-orm, zod, postgres, @esposter/\* packages) must be in the bundle.
-- Do not spread the full `external` list here — it includes `/@esposter\//u` which would externalize `@esposter/db`, `@esposter/shared`, etc., breaking runtime.
+- `externalVueFramework` (`vue`, `@vueuse/core`, `pinia`) — peer deps of `@esposter/shared`/`@esposter/vue-phaserjs`; azure-functions doesn't use Vue so rolldown tree-shakes these out safely.
+- Everything else is bundled — the runtime provides only `@azure/functions`; all other deps (Azure SDKs, drizzle-orm, zod, postgres, `@esposter/*`) must be in the bundle.
+- Do not spread the full `external` list here — its `/@esposter\//u` would externalize `@esposter/db`, `@esposter/shared`, etc., breaking runtime.
 
 ## Bundle Sizes (Baselines)
 
@@ -157,7 +143,7 @@ external: [...externalVueFramework, "@azure/functions"],
 
 1. Create `rolldown.config.ts` importing the appropriate base config.
 2. Add to `package.json`: `"build": "pnpm export:gen && rolldown --config rolldown.config.ts"`.
-3. For any direct dep that the consumer should provide, add it to `peerDependencies` AND verify it's covered by the global external list (or add it there). Do not add transitive-only peers from imported workspace packages.
+3. For any direct dep the consumer should provide, add it to `peerDependencies` AND verify it's covered by the global external list (or add it). Don't add transitive-only peers from imported workspace packages.
 4. Add `src/index.test.ts` bundle size snapshot (see testing skill).
 5. Add `test`/`coverage` scripts + `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`.
 6. Run `pnpm i` from the workspace root after editing `package.json`.
@@ -171,4 +157,4 @@ external: [...externalVueFramework, "@azure/functions"],
 ## Workspace Graph
 
 - Use `pnpm depcruise:graph` to generate `dependency-graph.svg`.
-- The command should pipe dependency-cruiser DOT output directly into `graphviz-cli`; avoid keeping intermediate `MODULES.dot`, `MODULES.mmd`, or generated Markdown wrapper files unless explicitly requested.
+- It should pipe dependency-cruiser DOT output directly into `graphviz-cli`; avoid keeping intermediate `MODULES.dot`, `MODULES.mmd`, or generated Markdown wrapper files unless explicitly requested.

@@ -7,9 +7,9 @@ description: Esposter Vue 3 component architecture patterns — generic componen
 
 ## Same Level of Abstraction
 
-Every statement in `<script setup>` must operate at the same conceptual level. Mix low-level detail with high-level orchestration and the component becomes hard to read and hard to extend.
+Every statement in `<script setup>` must operate at the same conceptual level. Mixing low-level detail with high-level orchestration makes the component hard to read and extend.
 
-**Rule:** If one line calls a composable that encapsulates a concept, all other lines should be at that same call-site level — not implementing sub-steps inline.
+**Rule:** If one line calls a composable encapsulating a concept, all other lines should be at that same call-site level — not implementing sub-steps inline.
 
 ```vue
 <!-- WRONG: selectedRoleId/selectedRole management is a lower-level concern mixed in -->
@@ -30,22 +30,22 @@ const { selectedRole, selectedRoleId } = useSelectedRole(roles);
 </script>
 ```
 
-**Signals that abstraction levels are mixed:**
+**Signals abstraction levels are mixed:**
 
 - A composable call sits next to a manual `ref` + `computed` + `watch` block implementing the same concept
-- A `v-if="x !== null"` guard exists so that the template body can avoid null checks (extract to a child component receiving a non-null prop instead)
+- A `v-if="x !== null"` guard exists only so the template body can skip null checks (extract to a child component receiving a non-null prop instead)
 - Inline `watch` callbacks contain multi-step logic that belongs in a composable
 
-**Fix:** extract the lower-level block into a composable (`use*`) or a child component, then call it at the same level as everything else.
+**Fix:** extract the lower-level block into a composable (`use*`) or child component, then call it at the same level as everything else.
 
 ## Async Data: Wrapper + Pure Child Pattern
 
-When a component needs async/reactive data (e.g. from a store that populates after mount), split into:
+When a component needs async/reactive data (e.g. a store that populates after mount), split into:
 
 - **`Index.vue` (wrapper)** — owns data lookup + `v-if` guard; pure orchestration
-- **`Form.vue` (pure child)** — receives the data as a required prop; initializes local state once synchronously; no store access for the guarded data
+- **`Form.vue` (pure child)** — receives data as a required prop; initializes local state once synchronously; no store access for the guarded data
 
-This avoids async race conditions where a `ref` is initialized once at setup time before the store is populated, silently overwriting real data with `""`.
+This avoids async races where a `ref` initialized once at setup time (before the store is populated) silently overwrites real data with `""`.
 
 ```vue
 <!-- Index.vue — wrapper owns the lookup and v-if guard -->
@@ -68,11 +68,11 @@ const nickname = ref(userToRoom.nickname);
 </script>
 ```
 
-**When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data — if the store can be empty at component creation time, the wrapper + `v-if` pattern is required.
+**When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data, where the store can be empty at component creation time.
 
 ## Generic SFC Components
 
-When a component's model value type (or other prop type) depends on an enum/discriminant key, make the component generic:
+When a component's model value (or other prop) type depends on an enum/discriminant key, make the component generic:
 
 ```vue
 <script setup lang="ts" generic="TKey extends SomeEnum">
@@ -86,43 +86,43 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 </script>
 ```
 
-- Use `interface` (not `type`) for the value map — string enum values map directly to string literal interface keys
-- Define the interface locally in the component (not exported unless reused elsewhere)
+- Use `interface` (not `type`) for the value map — string enum values map directly to string literal keys
+- Define the interface locally (not exported unless reused elsewhere)
 - The map type drives inference at call sites where the key type is statically known
-- For `as const satisfies` maps, use `Record<Exclude<TEnum, ExcludedVariant>, ValueType>` to explicitly exclude variants that use a different component path (e.g. Boolean → checkbox, not text field)
-- If TypeScript cannot narrow the generic type parameter `TKey` in template v-if/v-else branches (correlated generics limitation), fall back to the union type of all possible values (e.g. `ColumnValue`) for `defineModel` — the prop type still provides inference at call sites
+- For `as const satisfies` maps, use `Record<Exclude<TEnum, ExcludedVariant>, ValueType>` to exclude variants using a different component path (e.g. Boolean → checkbox, not text field)
+- If TypeScript can't narrow `TKey` in template v-if/v-else branches (correlated generics limitation), fall back to the union of all possible values (e.g. `ColumnValue`) for `defineModel` — the prop type still provides call-site inference
 
 ## Component Type Correctness
 
-**Match each component's props and model types exactly to the data it handles** — don't mix concerns by using union types and compensating with `v-if` + null-coalescing inside a single component.
+**Match each component's props/model types exactly to the data it handles** — don't mix concerns via union types + `v-if` + null-coalescing inside one component.
 
-- If logic differs per variant (e.g. date formatting for `DateColumn` vs plain text for `Column<String>`), split into separate focused components (`FieldInputDate.vue`, `FieldInputText.vue`)
-- Each component should access its props directly without defensive coalescing (e.g. `column.format` not `column.type === ColumnType.Date ? column.format : ""`)
-- A **dispatcher** component (e.g. `FieldInput.vue`) is acceptable at the routing level to delegate to the right sub-component — type casts in the dispatcher are necessary at that boundary and acceptable
+- If logic differs per variant (e.g. date formatting for `DateColumn` vs plain text for `Column<String>`), split into focused components (`FieldInputDate.vue`, `FieldInputText.vue`)
+- Each component accesses its props directly without defensive coalescing (`column.format`, not `column.type === ColumnType.Date ? column.format : ""`)
+- A **dispatcher** component (e.g. `FieldInput.vue`) is acceptable at the routing level to delegate to the right sub-component — type casts in the dispatcher are necessary and acceptable at that boundary
 
 ## Component Co-location (Folder = Auto-import Prefix)
 
-**Group components with the same prefix into a folder** — Nuxt auto-imports components with the folder path as prefix, so co-located components share the prefix automatically without repeating it in filenames.
+**Group components with the same prefix into a folder** — Nuxt auto-imports with the folder path as prefix, so co-located components share it without repeating it in filenames.
 
-- `components/TableEditor/File/Row/FieldInput.vue` → auto-import: `TableEditorFileRowFieldInput`
-- `components/TableEditor/File/Row/FieldInputDate.vue` → auto-import: `TableEditorFileRowFieldInputDate`
-- The folder `Row/` provides the `TableEditorFileRow` prefix — no need to repeat in the filename
+- `components/TableEditor/File/Row/FieldInput.vue` → `TableEditorFileRowFieldInput`
+- `components/TableEditor/File/Row/FieldInputDate.vue` → `TableEditorFileRowFieldInputDate`
+- The folder `Row/` provides the `TableEditorFileRow` prefix — no need to repeat it in the filename
 
 ## File Length
 
-- **Target 50–100 lines per `.vue` file** — a file consistently over 100 lines is a yellow flag that a slot, sub-component, or composable extraction is overdue.
-- Extract toolbar/header buttons into a dedicated slot component (e.g. `TopSlot.vue`), row/column action menus into an `ActionSlot.vue`, and logically grouped controls into their own focused component.
-- Complex or rare layout components (e.g. a rich data table with drag-and-drop, pagination, and find/replace) may exceed 100 lines — treat it as a prompt to reconsider, not an absolute rule.
+- **Target 50–100 lines per `.vue` file** — consistently over 100 lines is a yellow flag that a slot, sub-component, or composable extraction is overdue.
+- Extract toolbar/header buttons into a slot component (e.g. `TopSlot.vue`), row/column action menus into `ActionSlot.vue`, and grouped controls into their own focused component.
+- Complex/rare layout components (e.g. a rich data table with drag-and-drop, pagination, find/replace) may exceed 100 lines — treat as a prompt to reconsider, not an absolute rule.
 
 ## Slot Extraction (Complex Components)
 
-When a component has many named slots where each slot's content is non-trivial, extract each slot's content into its own dedicated component. Name the component after the slot it fills (e.g. `#tfoot` → `FooterSlot.vue`, `#top` → `TopSlot.vue`, `#[item.actions]` → `ActionSlot.vue`).
+When a component has many named slots with non-trivial content, extract each slot's content into its own component, named after the slot it fills (`#tfoot` → `FooterSlot.vue`, `#top` → `TopSlot.vue`, `#[item.actions]` → `ActionSlot.vue`).
 
 The extracted component:
 
-- Receives the minimum props needed to derive its content (e.g. `dataSource`)
+- Receives the minimum props to derive its content (e.g. `dataSource`)
 - Pulls shared state from the same stores the parent uses (e.g. `useFilterStore`)
-- Lives in the same folder as the parent so the auto-import prefix is shared
+- Lives in the same folder as the parent to share the auto-import prefix
 
 ```vue
 <!-- Before: inline slot content in Table.vue -->
@@ -138,13 +138,13 @@ The extracted component:
 </template>
 ```
 
-This keeps the parent component lean and makes each slot independently readable and testable.
+This keeps the parent lean and makes each slot independently readable and testable.
 
 ## List Item Rendering: Array + v-for over Hardcoded Items
 
-**Never hardcode repeated `<v-list-item>` (or any list item) elements** when the items share the same structure — extract to an array and render with `v-for`.
+**Never hardcode repeated `<v-list-item>` (or any list item) elements** when they share the same structure — extract to an array and render with `v-for`.
 
-The array lives in `services/` (co-located with the component's feature folder), not inline in the component. **Constant arrays use PascalCase names.**
+The array lives in `services/` (co-located with the component's feature folder), not inline. **Constant arrays use PascalCase names.**
 
 ```text
 services/permission/PermissionItems.ts   ← array defined here
@@ -161,13 +161,6 @@ export const PermissionItems = [
 ```
 
 ```vue
-<!-- WRONG: hardcoded items with identical structure -->
-<v-list>
-  <v-list-item value="read" title="Read" prepend-icon="mdi-eye" />
-  <v-list-item value="write" title="Write" prepend-icon="mdi-pencil" />
-  <v-list-item value="admin" title="Admin" prepend-icon="mdi-shield" />
-</v-list>
-
 <!-- CORRECT: import array from services/, v-for in template -->
 <script setup lang="ts">
 import { PermissionItems } from "@/services/permission/PermissionItems";
@@ -188,14 +181,14 @@ import { PermissionItems } from "@/services/permission/PermissionItems";
 **When to apply:**
 
 - 3+ list items with the same props shape — always extract
-- 2 items — extract if they'll grow or the props are non-trivial
-- Items that differ in non-trivial ways (different slots, conditional logic) — keep separate or use a dispatcher child component
+- 2 items — extract if they'll grow or props are non-trivial
+- Items differing in non-trivial ways (different slots, conditional logic) — keep separate or use a dispatcher child
 
 ## Permission-Filtered Action Items: Composable + v-for
 
-When list items or icon buttons are guarded by `v-if` permission checks, **move the filtering into a composable** — the template gets a plain `v-for` with no conditions.
+When list items or icon buttons are guarded by `v-if` permission checks, **move filtering into a composable** — the template gets a plain `v-for` with no conditions.
 
-Use the existing `Item` type (`@/models/shared/Item`) for the array element shape. The composable reads permissions from stores internally; only pass per-item runtime data (e.g. `userId`, `isMuted`) as arguments to the getter function.
+Use the existing `Item` type (`@/models/shared/Item`) for the array element shape. The composable reads permissions from stores internally; only pass per-item runtime data (e.g. `userId`, `isMuted`) as getter arguments.
 
 ```ts
 // composables/feature/useFeatureActionItems.ts
@@ -219,10 +212,6 @@ export const useFeatureActionItems = () => {
 ```
 
 ```vue
-<!-- WRONG: v-if on each list item -->
-<v-list-item v-if="canDoA && !someState" prepend-icon="mdi-x" title="Action A" @click="doA(id)" />
-<v-list-item v-if="canDoB" prepend-icon="mdi-y" title="Action B" @click="doB(id)" />
-
 <!-- CORRECT: filtered array from composable, single v-for -->
 <v-list-item
   v-for="{ icon, title, onClick } of getActions(id, someState)"
@@ -260,19 +249,6 @@ const controlItems = computed<ControlItem[]>(() => [
 ```
 
 ```vue
-<!-- WRONG: three identical v-tooltip+v-btn blocks -->
-<v-tooltip :text="isActive ? 'Deactivate' : 'Activate'" location="bottom">
-  <template #activator="{ props }">
-    <v-btn :="props" :icon="isActive ? 'mdi-off' : 'mdi-on'" :color="isActive ? 'error' : undefined"
-      size="x-small" variant="plain" :ripple="false" @click="toggle" />
-  </template>
-</v-tooltip>
-<v-tooltip text="Leave" location="bottom">
-  <template #activator="{ props }">
-    <v-btn :="props" icon="mdi-exit" color="error" size="x-small" variant="tonal" :ripple="false" @click="leave" />
-  </template>
-</v-tooltip>
-
 <!-- CORRECT: single v-for -->
 <v-tooltip
   v-for="{ tooltip, icon, color, variant, onClick } of controlItems"
@@ -286,13 +262,13 @@ const controlItems = computed<ControlItem[]>(() => [
 </v-tooltip>
 ```
 
-**When NOT to extract:** Items that render fundamentally different components (e.g. `StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — the template structure diverges too much for a shared shape.
+**When NOT to extract:** Items rendering fundamentally different components (e.g. `StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — the template structure diverges too much for a shared shape.
 
 ## Page Decomposition — Pages are Layout + Composition
 
 Pages (`pages/**/*.vue`) should be **presentation-only orchestrators**: layout structure, `<Head>`, `definePageMeta`/`defineRouteRules`, and composed sub-components. All action logic, validation, and reactive state live in the sub-components or composables they own.
 
-**Rule:** If a page contains a `ref`, `computed`, or named function that belongs to a single interactive element (a button, a form), extract that element into its own component. The page's `<script setup>` should read like a bill of materials — imports and metadata, nothing else.
+**Rule:** If a page contains a `ref`, `computed`, or named function belonging to a single interactive element (a button, a form), extract that element into its own component. The page's `<script setup>` should read like a bill of materials — imports and metadata, nothing else.
 
 ```vue
 <!-- WRONG: page owns startCall logic and isCreating state -->
@@ -316,8 +292,6 @@ definePageMeta({ middleware: "auth" });
 </template>
 ```
 
-**Button components** — own their loading state (`isCreating`, `isDeleting`), the async action, and navigation. Template is just `v-tooltip` + `v-btn`.
-
-**Form components** — own their field refs, validation computeds, and submit handler. Template is the `v-form` block.
-
-**Constant arrays** (feature lists, nav items) — live in `services/<domain>/` (e.g. `services/message/room/call/CallFeatures.ts`), never inline in the page.
+- **Button components** — own their loading state (`isCreating`, `isDeleting`), the async action, and navigation. Template is just `v-tooltip` + `v-btn`.
+- **Form components** — own their field refs, validation computeds, and submit handler. Template is the `v-form` block.
+- **Constant arrays** (feature lists, nav items) — live in `services/<domain>/` (e.g. `services/message/room/call/CallFeatures.ts`), never inline in the page.

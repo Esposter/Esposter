@@ -27,7 +27,12 @@ const scrollToMessage = useScrollToMessage();
         <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
         <span text-gray font-bold text-body-small>{{ creator.name }}</span>
         <v-icon v-if="reply.isForward" icon="mdi-share" size="small" />
-        <span v-if="!EMPTY_TEXT_REGEX.test(reply.message)" text-body-small v-html="reply.message" />
+        <span
+          v-if="!EMPTY_TEXT_REGEX.test(reply.message)"
+          class="rich-text-content"
+          text-body-small
+          v-html="reply.message"
+        />
         <span
           v-else
           :style="{ color }"

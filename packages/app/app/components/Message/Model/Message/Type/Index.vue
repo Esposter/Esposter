@@ -51,7 +51,12 @@ const messageHtml = useMessageWithMentions(
             Forwarded
           </span>
         </v-list-item-subtitle>
-        <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100 v-html="messageHtml" />
+        <v-list-item-subtitle
+          v-if="!EMPTY_TEXT_REGEX.test(messageHtml)"
+          class="rich-text-content"
+          op-100
+          v-html="messageHtml"
+        />
         <MessageModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />
         <MessageModelMessageLinkPreviewContainer
           v-if="message.linkPreviewResponse"
@@ -65,7 +70,12 @@ const messageHtml = useMessageWithMentions(
     <div v-else flex flex-col gap-y-1>
       <slot>
         <div v-if="!EMPTY_TEXT_REGEX.test(messageHtml) || message.isEdited" flex gap-x-1 items-end>
-          <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100 v-html="messageHtml" />
+          <v-list-item-subtitle
+            v-if="!EMPTY_TEXT_REGEX.test(messageHtml)"
+            class="rich-text-content"
+            op-100
+            v-html="messageHtml"
+          />
           <span v-if="message.isEdited" text-2.4 text-gray line-height-3.2>(edited)</span>
         </div>
       </slot>

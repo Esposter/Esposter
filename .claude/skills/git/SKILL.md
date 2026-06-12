@@ -17,7 +17,7 @@ Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`
 
 ## Safety Rules
 
-- **Never use `git stash`** — if stash pop fails or is forgotten, in-progress changes are lost with no easy recovery path. To inspect prior committed state without losing working tree changes, use `git show HEAD:path/to/file` or `git diff HEAD` instead. If you need to set aside work temporarily, commit a WIP commit instead.
+- **Never use `git stash`** — a failed/forgotten pop loses in-progress changes with no easy recovery. To inspect prior committed state, use `git show HEAD:path/to/file` or `git diff HEAD`. To set work aside, make a WIP commit instead.
 
 ## Branch Hygiene
 

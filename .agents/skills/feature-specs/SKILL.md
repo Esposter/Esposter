@@ -1,8 +1,9 @@
-# Feature Specs — Esposter Conventions
-
-Apply when creating, updating, or referencing files in the `features/` directory or root `architecture/` directory.
-
 ---
+name: feature-specs
+description: Feature Specs — Esposter conventions for the features/ and root architecture/ directories. Apply when creating, updating, or referencing files in features/ or root architecture/.
+---
+
+# Feature Specs — Esposter Conventions
 
 ## Directory Layout
 
@@ -23,8 +24,6 @@ features/
     <name>.md              ← technical migrations, not user-visible features
 ```
 
----
-
 ## Spec File Template
 
 ```markdown
@@ -32,41 +31,29 @@ features/
 
 One-sentence description of the feature and its value.
 
----
-
 ## Overview
 
 What it does and why. 2–5 sentences max.
 
----
-
 ## Data Model Changes
 
-Schema additions (Drizzle table, Azure Table column, Zod schema). Only include if there are DB or model changes.
-
----
+Schema additions (Drizzle table, Azure Table column, Zod schema). Only if there are DB/model changes.
 
 ## Procedures / API
 
-tRPC procedure signatures and auth requirements (table form). Only include if new procedures are needed.
+tRPC procedure signatures and auth requirements (table form). Only if new procedures are needed.
 
 | Procedure | Auth | Input | Purpose |
 | --------- | ---- | ----- | ------- |
-
----
 
 ## Components
 
 New or modified Vue components. Bullet list, file path + one-line role.
 
----
-
 ## Key Files
 
 | File | Role |
 | ---- | ---- |
-
----
 
 ## Constraints / Notes
 
@@ -74,20 +61,18 @@ Decisions made, alternatives rejected with rationale. Keep short.
 
 ## End-To-End Plan
 
-Only include when the feature crosses frontend, API, background work, infrastructure, or billing boundaries. Cover current support status, rollout order, cheapest viable infrastructure, reuse of existing resources, failure/retry behavior, and what remains unsupported until later phases.
+Only when the feature crosses frontend, API, background work, infrastructure, or billing boundaries. Cover current support status, rollout order, cheapest viable infrastructure, reuse of existing resources, failure/retry behavior, and what remains unsupported until later phases.
 ```
 
 Omit any section that has nothing to say — empty sections add noise.
 
-Before implementing cross-cutting features, write or update the spec first enough to answer:
+Before implementing cross-cutting features, write or update the spec enough to answer:
 
-- What works in the frontend today, and what remains local-only or hidden until backend support exists?
+- What works in the frontend today, and what remains local-only/hidden until backend support exists?
 - Which tRPC procedures, DB rows, background workers, queues, timers, and infrastructure resources are required?
 - Can existing Pulumi-managed Azure resources be reused instead of adding a new service?
 - What is the cheapest viable Azure option, and what alternatives were rejected?
 - What are the retry, idempotency, cancellation, and failure semantics?
-
----
 
 ## Roadmap File Conventions
 
@@ -96,8 +81,6 @@ Before implementing cross-cutting features, write or update the spec first enoug
 - Dropped items: `- ~~**Name**~~ — reason dropped` (strikethrough + rationale)
 - Group items under `##` headings by theme
 - Link to detailed specs: `Spec: [\`specs/feature-name.md\`](specs/feature-name.md)`
-
----
 
 ## Lifecycle
 
@@ -108,13 +91,11 @@ Before implementing cross-cutting features, write or update the spec first enoug
 | Shipped     | `completed/<name>.md`                       | Move (don't copy) with clean name; no edits after |
 | Abandoned   | deleted or `completed/` with rationale note | Document why in the file before archiving         |
 
----
-
 ## Architecture Files
 
 ### Feature-area `architecture.md`
 
-An AI-assisted development reference for that feature only — not user docs. Include:
+AI-assisted development reference for that feature only — not user docs. Include:
 
 - Key file map (component → file path → one-line role)
 - Data flows (sequence diagrams or arrow notation)
@@ -124,9 +105,7 @@ Keep it current. Stale architecture files mislead AI assistants more than no fil
 
 ### Root `/architecture/` folder
 
-Design decisions that span multiple feature areas go here instead of any single feature's `architecture.md`. Current examples are Azure services and the file upload SAS pattern. When a decision would be copy-pasted into multiple feature architecture files, extract it here instead.
-
----
+Design decisions spanning multiple feature areas go here instead of any single feature's `architecture.md`. Current examples: Azure services and the file upload SAS pattern. When a decision would be copy-pasted into multiple feature architecture files, extract it here.
 
 ## Naming Rules
 
