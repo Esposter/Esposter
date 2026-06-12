@@ -125,7 +125,7 @@ onUnmounted(() => editor.value?.destroy());
       <RichTextEditorMenuBar :editor />
       <v-divider thickness="2" />
       <slot name="prepend-inner-header" />
-      <EditorContent :editor />
+      <EditorContent class="rich-text-content" :editor />
       <RichTextEditorFooterBar :editor>
         <template #prepend="editorProps">
           <slot name="prepend-footer" :="editorProps" />
@@ -150,11 +150,6 @@ onUnmounted(() => editor.value?.destroy());
   max-height: 15rem;
   overflow-y: auto;
   outline: none;
-
-  ul,
-  ol {
-    padding: 0 1rem;
-  }
 
   p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);

@@ -62,15 +62,9 @@ Pinia devtools traverse store state via Vue's `traverse`. Phaser 3.85+ `Frame.ge
 
 ```ts
 // ✅ Correct — traverse-safe
-controls.value = markRaw(new KeyboardControls(scene));
-controls.value = markRaw(new JoystickControls());
 sprite.value = markRaw(newSprite);
-pathFollower.value = markRaw(newPathFollower);
-tilemap.value = markRaw(newTilemap);
-volumeSlider.value = markRaw(useSlider(scene, rectangle, { ... }));
 
-// ❌ Wrong — will crash in dev mode via traverse → Frame.get glTexture → null
-controls.value = new KeyboardControls(scene);
+// ❌ Wrong — crashes in dev via traverse → Frame.get glTexture → null
 sprite.value = newSprite;
 ```
 
@@ -84,16 +78,14 @@ Any Phaser class that chains to `Scene → TextureManager → Texture → Frame 
 
 ## SSR / "Phaser is not defined" Fix
 
-**Problem**: `vue-phaserjs/dist/index.js` bundled `phaser4-rex-plugins` subpath imports (e.g. `phaser4-rex-plugins/plugins/clickoutside.js`). The bundled code accesses `Phaser.Scene`, `Phaser.Game`, etc. as globals at module-evaluation time, which fails in Node.js SSR.
+**Rule**: In Rolldown `external`, always use `/^package-name/` (regex) instead of `"package-name"` (string) when the package may be imported via subpaths. String literals only match exact module IDs.
 
-**Root cause**: The `external` array used string literal `"phaser4-rex-plugins"` which only matches the root package name, not subpath imports like `"phaser4-rex-plugins/plugins/clickoutside.js"`.
+Cause: `external` used `"phaser4-rex-plugins"`, which matched only the root package, not subpath imports like `"phaser4-rex-plugins/plugins/clickoutside.js"`. The bundled subpath code accesses `Phaser.Scene`/`Phaser.Game` as globals at module-eval time, failing in Node.js SSR.
 
-**Fix** (`packages/vue-phaserjs/vite.config.js`): Use a RegExp to match all subpaths:
+Fix (`packages/vue-phaserjs/vite.config.js`):
 
 ```js
 rolldownOptions: {
   external: ["phaser", /^phaser4-rex-plugins/, "pinia", "vue"],
 },
 ```
-
-**Rule**: In Rolldown `external`, always use `/^package-name/` (regex) instead of `"package-name"` (string) when the package may be imported via subpaths. String literals only match exact module IDs.

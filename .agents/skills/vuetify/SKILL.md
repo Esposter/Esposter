@@ -7,14 +7,14 @@ description: Esposter Vuetify 4 conventions — v-btn tooltips, typed SelectItem
 
 ## Primary Buttons
 
-- Use `StyledButton` for primary call-to-action buttons such as create, save, accept, request, and start actions. Pass Vuetify props through `:button-props="{ ... }"` rather than using a raw primary `v-btn`.
+Use `StyledButton` for primary call-to-action buttons (create, save, accept, request, start). Pass Vuetify props through `:button-props="{ ... }"` rather than a raw primary `v-btn`.
 
 ## Auto-Imported Composables — `v` Prefix
 
-Vuetify composables are auto-imported with a `v` prefix. **Never import them from `"vuetify"` directly** — they are already globally available:
+Vuetify composables are auto-imported with a `v` prefix. **Never import from `"vuetify"` directly** — they are globally available:
 
 ```typescript
-// WRONG — explicit import
+// WRONG
 import { useDisplay } from "vuetify";
 const { smAndDown } = useDisplay();
 
@@ -22,11 +22,11 @@ const { smAndDown } = useDisplay();
 const { smAndDown } = useVDisplay();
 ```
 
-Common composables: `useVDisplay()`, `useVTheme()`, `useVLocale()`, `useVDate()`.
+Common: `useVDisplay()`, `useVTheme()`, `useVLocale()`, `useVDate()`.
 
 ## Global Defaults (vuetify.config.ts)
 
-The following variants are set globally and must **never** be repeated on individual components:
+These variants are set globally and must **never** be repeated on individual components:
 
 | Component       | Default                        |
 | --------------- | ------------------------------ |
@@ -43,30 +43,23 @@ The following variants are set globally and must **never** be repeated on indivi
 
 ## Button Conventions
 
-- **Every `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` and a descriptive `text` prop. This applies to all buttons, including those with visible label text.
-- Standard pattern:
-  ```vue
-  <v-tooltip text="Descriptive action">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn icon="mdi-some-icon" size="small" tile :="tooltipProps" @click="doSomething()" />
-    </template>
-  </v-tooltip>
-  ```
-- **`#activator` slot always first** — the `#activator` template must be the first child in `v-tooltip` (and `v-menu`).
-- **Icon choice for create actions** — use the semantically specific MDI icon when available: `mdi-table-row-plus-after` for adding rows, `mdi-table-column-plus-after` for adding columns. Fall back to `mdi-plus` for generic create actions.
+- **Every `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` + descriptive `text`. Applies to all buttons, including those with visible label text.
+- **`#activator` slot always first** in `v-tooltip` (and `v-menu`).
+- **Icon choice for create actions** — use the semantically specific MDI icon when available: `mdi-table-row-plus-after` (add rows), `mdi-table-column-plus-after` (add columns). Fall back to `mdi-plus` for generic create.
+
+```vue
+<v-tooltip text="Descriptive action">
+  <template #activator="{ props: tooltipProps }">
+    <v-btn icon="mdi-some-icon" size="small" tile :="tooltipProps" @click="doSomething()" />
+  </template>
+</v-tooltip>
+```
 
 ## Icon Buttons Inside Input Slots
 
-When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use `variant="plain"` and omit `color`. The global `VBtn` default sets `style: { backgroundColor: "transparent" }` as an inline style — `variant="flat"` with `color="primary"` cannot override an inline style. `variant="plain"` works with the transparent default and lets the icon inherit the surrounding text color naturally.
+When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use `variant="plain"` and omit `color`. The global `VBtn` default sets `style: { backgroundColor: "transparent" }` inline, which `variant="flat"` + `color="primary"` cannot override. `variant="plain"` works with the transparent default and lets the icon inherit the surrounding text color.
 
 ```vue
-<!-- WRONG — we default to inline backgroundColor: transparent in vuetify.config.ts for convenience with avatar backgrounds and icons -->
-<v-tooltip text="Add item">
-  <template #activator="{ props: tooltipProps }">
-    <v-btn color="primary" icon="mdi-plus" :="tooltipProps" @click="submit()" />
-  </template>
-</v-tooltip>
-
 <!-- CORRECT — plain variant works with the transparent default -->
 <v-tooltip text="Add item">
   <template #activator="{ props: tooltipProps }">
@@ -77,15 +70,11 @@ When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use 
 
 ## Vuetify Selects and List Items
 
-- For `v-list-item` icon placement: use `prepend-icon` for decorative/category icons (shown before the title), use `append-icon` for action/severity icons (shown after the title, e.g. moderation actions). Action icon color and icon value should come from the relevant `AdminAction*Map` constants — never hardcode them inline.
-- When building items for `v-autocomplete`, `v-select`, or `v-list-item` (in a `v-menu` / `v-list`), always type them as `SelectItemCategoryDefinition<T>[]` (`{ title: string, value: T }`) from `@/models/vuetify/SelectItemCategoryDefinition`. Never inline untyped `{ title, value }` arrays — always extract to a typed constant.
-- **Never specify `item-title` or `item-value` props** — Vuetify's defaults are already `"title"` and `"value"`, which match `SelectItemCategoryDefinition` exactly. If your source data has different field names (e.g. `{ id, name }`), map it to `{ title, value }` at the call site — never pass the raw shape and compensate with `item-title`/`item-value`.
+- **`v-list-item` icon placement** — `prepend-icon` for decorative/category icons (before the title); `append-icon` for action/severity icons (after, e.g. moderation actions). Action icon color/value come from the relevant `AdminAction*Map` constants — never hardcode inline.
+- **Type items as `SelectItemCategoryDefinition<T>[]`** (`{ title: string, value: T }`) from `@/models/vuetify/SelectItemCategoryDefinition` for `v-autocomplete`/`v-select`/`v-list-item`. Never inline untyped `{ title, value }` arrays — extract to a typed constant.
+- **Never specify `item-title`/`item-value`** — Vuetify defaults (`"title"`, `"value"`) match `SelectItemCategoryDefinition`. If source data has different field names, map it to `{ title, value }` at the call site — never pass the raw shape and compensate with `item-title`/`item-value`.
 
   ```typescript
-  // WRONG — raw entity shape + item-title/item-value to compensate
-  const categoryItems = computed(() => [{ id: null, name: "None" }, ...categories.value]);
-  // <v-select :items="categoryItems" item-title="name" item-value="id" />
-
   // CORRECT — map to SelectItemCategoryDefinition<T> so no extra props needed
   const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
     { title: "None", value: null },
@@ -94,43 +83,33 @@ When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use 
   // <v-select :items="categoryItems" />
   ```
 
-- Name the items constant to reflect what the value represents — e.g. `columnIds` for `SelectItemCategoryDefinition<string>[]` where each `value` is a column ID.
-- **Prefer enum values as display titles** — when the enum string value IS the display label, use `Object.values(EnumType).map((v) => ({ title: v, value: v }))` (`ColumnTypeItemCategoryDefinitions` pattern). When the display must differ from the enum value (rare), use a `const Map = { ... } as const satisfies Record<Enum, Except<SelectItemCategoryDefinition<Enum>, "value">>` + `parseDictionaryToArray` (`CsvDelimiterItemCategoryDefinitions` pattern). Update enum string values to match their display label when reasonable, to keep enum key and value the same string.
+- Name the items constant to reflect what the value represents — e.g. `columnIds` for `SelectItemCategoryDefinition<string>[]` where each value is a column ID.
+- **Prefer enum values as display titles** — when the enum string value IS the label, use `Object.values(EnumType).map((v) => ({ title: v, value: v }))` (`ColumnTypeItemCategoryDefinitions` pattern). When display must differ from the enum value (rare), use `const Map = { ... } as const satisfies Record<Enum, Except<SelectItemCategoryDefinition<Enum>, "value">>` + `parseDictionaryToArray` (`CsvDelimiterItemCategoryDefinitions` pattern). Update enum string values to match the label when reasonable, to keep key and value the same string.
 
 ## Dialog Form Validity
 
-Always name the form validity ref `isEditFormValid`. Bind it via `v-model` on `<v-form>` and use `ref(true)` for optimistic initial state. Disable Save & Close via `:confirm-button-attrs="{ disabled: !isEditFormValid }"` (combined with other conditions as needed). Never use try/catch in submit handlers — prevent invalid submission through form validation rules so state is always consistent. Use `StyledEditFormDialogErrorIcon` with `:edit-form :is-edit-form-valid` (plus optional `:schema :edited-value` for Zod schema validation). `editForm` is a required prop typed `InstanceType<typeof VForm> | undefined` (always passed; `| undefined` reflects the ref being uninitialized before mount). `isEditFormValid` is field-level only (from `<v-form v-model>`); schema errors are computed internally inside `StyledEditFormDialogErrorIcon`.
+Name the form validity ref `isEditFormValid`; bind via `v-model` on `<v-form>`, init `ref(true)` (optimistic). Disable Save & Close via `:confirm-button-attrs="{ disabled: !isEditFormValid }"`. Never use try/catch in submit handlers — prevent invalid submission through validation rules so state stays consistent. Use `StyledEditFormDialogErrorIcon` with `:edit-form :is-edit-form-valid` (plus optional `:schema :edited-value` for Zod validation). `editForm` is a required prop typed `InstanceType<typeof VForm> | undefined` (always passed; `| undefined` reflects the ref being uninitialized before mount). `isEditFormValid` is field-level only (from `<v-form v-model>`); schema errors are computed internally inside `StyledEditFormDialogErrorIcon`.
 
 ## Inline Form Error Display (non-dialog)
 
-For inline forms (e.g. slash command params, embedded editors) where showing validation errors inline would break the layout:
+For inline forms (slash command params, embedded editors) where inline validation errors would break the layout:
 
-- Add `hide-details` to all `v-text-field` / `v-textarea` inputs
-- Show `StyledEditFormDialogErrorIcon` in the form's header row instead
-- Name locals to match prop names so `:edit-form :is-edit-form-valid` shorthands work:
-  - `const editForm = useTemplateRef<InstanceType<typeof VForm>>("editForm")`
-  - `const isEditFormValid = ref(true)`
-- Ref the error icon to gate submit: `const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon")` → `errorIcon.value?.isValid`
+- Add `hide-details` to all `v-text-field`/`v-textarea` inputs.
+- Show `StyledEditFormDialogErrorIcon` in the form's header row instead.
+- Name locals to match prop names so `:edit-form :is-edit-form-valid` shorthands work.
+- Ref the error icon to gate submit via `errorIcon.value?.isValid`.
 
 ```vue
 <script setup lang="ts">
-import type StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
-import type { VForm } from "vuetify/components";
-
 const editForm = useTemplateRef<InstanceType<typeof VForm>>("editForm");
 const isEditFormValid = ref(true);
 const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
 const disabled = computed(() => !(errorIcon.value?.isValid ?? true));
 </script>
 
-<!-- Header row with error icon -->
 <div flex items-center gap-2>
-  <v-icon ... />
-  <span>{{ title }}</span>
   <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid />
 </div>
-
-<!-- Form body with hide-details on all fields -->
 <v-form ref="editForm" v-model="isEditFormValid">
   <v-text-field :rules="[formRules.required]" hide-details ... />
 </v-form>
@@ -138,7 +117,7 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true));
 
 ## Keyboard-Navigable Lists (StyledList)
 
-Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navigation. `StyledList` accepts a `:selected-index` prop and automatically smooth-scrolls to the active item:
+Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navigation. It accepts `:selected-index` and auto smooth-scrolls to the active item:
 
 ```vue
 <StyledList :selected-index="selectedIndex" :list-props="{ density: 'compact' }">
@@ -146,43 +125,33 @@ Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navi
 </StyledList>
 ```
 
-- Never replicate the `watch(selectedIndex) → scrollIntoView` logic manually — always delegate to `StyledList`
-- Props: `selectedIndex?: number`, `listProps?: VList["$props"]`, `listAttrs?: VList["$attrs"]`
-- Scroll uses `{ behavior: 'smooth', block: 'nearest' }` — only scrolls when item is out of view
+- Never replicate `watch(selectedIndex) → scrollIntoView` manually — delegate to `StyledList`.
+- Props: `selectedIndex?: number`, `listProps?: VList["$props"]`, `listAttrs?: VList["$attrs"]`.
+- Scroll uses `{ behavior: 'smooth', block: 'nearest' }` — only when item is out of view.
 
 ## Form Validation Rules
 
-- **Always use `formRules` from `@/services/vuetify/formRules`** — never write inline arrow-function rules in templates (the linter strips them). Import and use the pre-defined rules: `[formRules.required]`, `[formRules.isNotProfanity]`, `[formRules.requireAtMostNCharacters(n)]`, `[formRules.requireAtMostMaxFileSize]`.
-- Multiple rules combine naturally: `:rules="[formRules.required, formRules.requireAtMostNCharacters(100)]"`
-- The `required` HTML attribute is not a Vuetify prop — use `:rules="[formRules.required]"` instead.
+- **Always use `formRules` from `@/services/vuetify/formRules`** — never inline arrow-function rules in templates (the linter strips them). E.g. `[formRules.required]`, `[formRules.isNotProfanity]`, `[formRules.requireAtMostNCharacters(n)]`, `[formRules.requireAtMostMaxFileSize]`.
+- Multiple rules combine naturally: `:rules="[formRules.required, formRules.requireAtMostNCharacters(100)]"`.
+- The `required` HTML attribute is not a Vuetify prop — use `:rules="[formRules.required]"`.
 
 ## HTML Footprint
 
-- **Prefer Vuetify components over raw HTML elements** — avoid `<div>`, `<span>`, `<p>`, `<ul>`, `<li>`, etc. unless there is genuinely no suitable Vuetify component. Use `v-container` / `v-row` / `v-col` for layout, `v-list` / `v-list-item` for lists (the `#append` slot centers inline actions), and `v-alert` or `v-messages` for inline text messages.
-- Only reach for raw HTML when a Vuetify component would add unnecessary complexity (e.g. a single text node inside a slot that needs no styling).
+- **Prefer Vuetify components over raw HTML** — avoid `<div>`, `<span>`, `<p>`, `<ul>`, `<li>` unless there is genuinely no suitable Vuetify component. Use `v-container`/`v-row`/`v-col` for layout, `v-list`/`v-list-item` for lists (the `#append` slot centers inline actions), `v-alert`/`v-messages` for inline text.
+- Only reach for raw HTML when Vuetify would add unnecessary complexity (e.g. a single unstyled text node inside a slot).
 
 ## User Avatars
 
-- **Always use `<StyledAvatar>`** for displaying user avatars — never write inline `v-avatar` + `v-img` + fallback `<span>` combinations.
-- `StyledAvatar` handles the image/fallback logic internally (shows `v-img` when `image` is set, falls back to `StyledDefaultAvatar`).
-- Props: `image?: User["image"]`, `name: User["name"]`, `avatarProps?: VAvatar["$props"]`
+- **Always use `<StyledAvatar>`** — never inline `v-avatar` + `v-img` + fallback `<span>`. It handles image/fallback internally (shows `v-img` when `image` is set, falls back to `StyledDefaultAvatar`).
+- Props: `image?: User["image"]`, `name: User["name"]`, `avatarProps?: VAvatar["$props"]`.
 
-  ```vue
-  <!-- CORRECT -->
-  <StyledAvatar mr-3 :image="user.image" :name="user.name" :avatar-props="{ size: '2.25rem' }" />
-
-  <!-- WRONG — do not write this inline -->
-  <v-avatar :image size="36" mr-3>
-    <v-img v-if="image" :src="image" />
-    <span v-else>{{ name[0] }}</span>
-  </v-avatar>
-  ```
+```vue
+<StyledAvatar mr-3 :image="user.image" :name="user.name" :avatar-props="{ size: '2.25rem' }" />
+```
 
 ## CSS Custom Properties — No SASS Variables in Component Styles
 
-**Never use Vuetify SASS variables (`$border-width-root` etc.) in component `<style>` blocks.** These are build-time SASS variables; they require `additionalData` injection which creates conflicts with Vuetify's compilation pipeline.
-
-All shared values live as CSS custom properties in the `:root` block in `globals.scss`. Use `var(--name)` in component styles.
+**Never use Vuetify SASS variables (`$border-width-root` etc.) in component `<style>` blocks.** These are build-time SASS variables requiring `additionalData` injection, which conflicts with Vuetify's compilation pipeline. All shared values live as CSS custom properties in the `:root` block in `globals.scss`; use `var(--name)`.
 
 | Purpose                       | CSS custom property          | Value                                               |
 | ----------------------------- | ---------------------------- | --------------------------------------------------- |
@@ -196,15 +165,16 @@ All shared values live as CSS custom properties in the `:root` block in `globals
 | Vue gradient                  | `--vue-gradient`             | `linear-gradient(45deg, #42d392 25%, #647eff)`      |
 | Midnight bloom                | `--midnight-bloom`           | `linear-gradient(-20deg, #2b5876 0%, #4e4376 100%)` |
 
+The goal is always attributify. Prefer inline UnoCSS utilities and delete the style block:
+
 ```vue
-<!-- WRONG — uses SASS variable, requires additionalData injection -->
+<!-- WRONG — SASS variable, requires additionalData injection -->
 <style scoped lang="scss">
 .panel {
   border: $border-width-root $border-style-root v-bind(border);
   top: $app-bar-height;
 }
 </style>
-
 <!-- ALSO WRONG — scoped CSS class when attributify can do this directly -->
 <style scoped>
 .panel {
@@ -212,15 +182,12 @@ All shared values live as CSS custom properties in the `:root` block in `globals
   top: var(--app-bar-height);
 }
 </style>
-
 <!-- CORRECT — attributify; no style block needed -->
 <div b-1 b-border top="[var(--app-bar-height)]" />
 ```
 
-The goal is always attributify. The CSS custom-property form (`var(--border-width)` etc.) is only acceptable when a style block is genuinely required (e.g. `:deep()` selectors, `@keyframes`, element selectors). When the styles can be expressed as UnoCSS utilities, always prefer inline attributes and delete the style block entirely.
-
-Only add `lang="scss"` when you actually need SCSS-specific features: `@mixin`/`@include`, or `#{...}` interpolation. Simple styles with `v-bind()` and `:deep()` do not need `lang="scss"`.
+The CSS custom-property form (`var(--border-width)`) is only acceptable when a style block is genuinely required (`:deep()` selectors, `@keyframes`, element selectors). Only add `lang="scss"` for SCSS-specific features (`@mixin`/`@include`, `#{...}` interpolation) — simple styles with `v-bind()` and `:deep()` don't need it.
 
 ## Keyboard Shortcut Components
 
-When a button has an associated keyboard shortcut, extract it into its own component that owns both the `v-btn` and the `onKeyStroke` handler. This keeps each component focused on one action (e.g., `UndoButton.vue`, `RedoButton.vue`).
+When a button has an associated keyboard shortcut, extract it into its own component owning both the `v-btn` and the `onKeyStroke` handler, keeping each focused on one action (e.g. `UndoButton.vue`, `RedoButton.vue`).

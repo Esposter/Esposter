@@ -7,37 +7,35 @@ description: Esposter UnoCSS configuration conventions — theme colors registra
 
 ## Color Architecture
 
-Two systems provide color utilities in this project:
+Two systems provide color utilities:
 
 | System             | Controls                                                            | Configured in                          |
 | ------------------ | ------------------------------------------------------------------- | -------------------------------------- |
 | Vuetify color pack | Material Design palette (`text-amber`, `bg-deep-purple`, etc.)      | `$color-pack: true` in `settings.scss` |
 | UnoCSS             | Custom theme colors (`text-primary`, `bg-surface-opacity-80`, etc.) | `uno.config.ts`                        |
 
-`$color-pack: true` is set in `app/assets/css/settings.scss`. Vuetify's SCSS compilation generates all Material Design palette utility classes automatically. **Do not register palette colors in `uno.config.ts`** — they are already covered.
+`$color-pack: true` (in `app/assets/css/settings.scss`) makes Vuetify's SCSS generate all palette utility classes automatically. **Do not register palette colors in `uno.config.ts`** — already covered.
 
 ## Theme colors
 
-Custom theme colors from `vuetify.config.ts` are auto-derived in `uno.config.ts` via `allColorKeys` (base colors + variations). Vuetify's runtime injects `--v-theme-{color}` CSS variables; UnoCSS maps these to `rgb(var(--v-theme-{color}))` for use as attributify utilities.
-
-Adding a color to `vuetify.config.ts` is all that's needed — `uno.config.ts` picks it up automatically.
+Custom theme colors from `vuetify.config.ts` are auto-derived in `uno.config.ts` via `allColorKeys` (base + variations). Vuetify's runtime injects `--v-theme-{color}` variables; UnoCSS maps them to `rgb(var(--v-theme-{color}))` for attributify utilities. Adding a color to `vuetify.config.ts` is all that's needed.
 
 ## Why theme colors must still be safelisted
 
-Vuetify resolves a theme `color` prop via an inline style (`color: rgb(var(--v-theme-primary))`), not a CSS class. However, theme colors appear in dynamic `:class` bindings that UnoCSS's template scanner cannot detect at build time:
+Theme colors appear in dynamic `:class` bindings that UnoCSS's scanner can't detect at build time:
 
 ```ts
-// UnoCSS can't see "bg-primary" or "bg-surface" here at scan time
+// UnoCSS can't see "bg-primary"/"bg-surface" here at scan time
 :class="isActive ? 'bg-primary' : 'bg-surface'"
 ```
 
-The safelist forces UnoCSS to generate `.bg-{key}` / `.text-{key}` class selectors for all theme colors unconditionally:
+The safelist forces UnoCSS to generate `.bg-{key}`/`.text-{key}` for all theme colors unconditionally:
 
 ```ts
 safelist: [...allColorKeys.flatMap((key) => [`bg-${key}`, `text-${key}`])];
 ```
 
-Material Design palette colors are resolved by Vuetify's color pack CSS — they do not need UnoCSS safelisting.
+Palette colors are resolved by Vuetify's color pack CSS — no UnoCSS safelisting needed.
 
 ## CSS layer name mapping
 
