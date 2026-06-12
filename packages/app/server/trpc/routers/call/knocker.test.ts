@@ -66,9 +66,9 @@ describe("call/knocker", () => {
       expect.hasAssertions();
 
       const { callSessionId } = await callSessionCaller.createCall();
-      const { session } = await mockSessionOnce(mockContext.db);
+      const sessionPayload = await mockSessionOnce(mockContext.db);
       await knockerCaller.knockCall({ id: callSessionId });
-      replayMockSession({ session, user: getMockSession().user });
+      replayMockSession(sessionPayload);
       await knockerCaller.knockCall({ id: callSessionId });
 
       expect(callKnockerMap.get(callSessionId)?.size).toBe(1);

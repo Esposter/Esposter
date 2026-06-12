@@ -92,8 +92,9 @@ describe("scheduledMessageJob", () => {
 
     const room = await roomCaller.createRoom({ name });
     await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
-    await mockSessionOnce(mockContext.db);
+    const { user } = await mockSessionOnce(mockContext.db);
     const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledJobs();
+    await mockSessionOnce(mockContext.db, user);
     const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
 
     expect(scheduledMessageJobs.items).toStrictEqual([]);
