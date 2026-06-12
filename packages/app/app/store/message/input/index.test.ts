@@ -3,7 +3,7 @@ import type { Router } from "vue-router";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useInputStore } from "@/store/message/input";
-import { DRAFT_KEY_PREFIX } from "@/store/message/input/constants";
+import { DRAFT_KEY_PREFIX, DRAFT_UPDATED_AT_KEY_PREFIX } from "@/store/message/input/constants";
 import { marked } from "marked";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -85,6 +85,18 @@ describe(useInputStore, () => {
     expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBeNull();
   });
 
+  test("clearDraft removes draft updated at key from localStorage", () => {
+    expect.hasAssertions();
+
+    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, draftContent);
+    localStorage.setItem(`${DRAFT_UPDATED_AT_KEY_PREFIX}${roomId1}`, new Date().toISOString());
+    const inputStore = useInputStore();
+    const { clearDraft } = inputStore;
+    clearDraft(roomId1);
+
+    expect(localStorage.getItem(`${DRAFT_UPDATED_AT_KEY_PREFIX}${roomId1}`)).toBeNull();
+  });
+
   test("clearDraft clears input data for the room", () => {
     expect.hasAssertions();
 
@@ -108,6 +120,21 @@ describe(useInputStore, () => {
     await nextTick();
 
     expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBe(draftContent);
+    expect(localStorage.getItem(`${DRAFT_UPDATED_AT_KEY_PREFIX}${roomId1}`)).toBeTruthy();
+    expect(input.value).toBe(draftContent);
+    expect(draftRoomIds.value.has(roomId1)).toBe(true);
+  });
+
+  test("storeDraft saves draft content and updated at", () => {
+    expect.hasAssertions();
+
+    const inputStore = useInputStore();
+    const { draftRoomIds, input } = storeToRefs(inputStore);
+    const { storeDraft } = inputStore;
+    storeDraft(roomId1, draftContent);
+
+    expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBe(draftContent);
+    expect(localStorage.getItem(`${DRAFT_UPDATED_AT_KEY_PREFIX}${roomId1}`)).toBeTruthy();
     expect(input.value).toBe(draftContent);
     expect(draftRoomIds.value.has(roomId1)).toBe(true);
   });
@@ -124,6 +151,7 @@ describe(useInputStore, () => {
     await nextTick();
 
     expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBeNull();
+    expect(localStorage.getItem(`${DRAFT_UPDATED_AT_KEY_PREFIX}${roomId1}`)).toBeNull();
     expect(draftRoomIds.value.has(roomId1)).toBe(false);
   });
 

@@ -1,6 +1,8 @@
-import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
+import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
+import type { RoomInMessage, ScheduledMessageJobInMessage } from "@esposter/db-schema";
 
 import { cancelScheduledMessageJobInputSchema } from "#shared/models/db/message/scheduledMessageJob/CancelScheduledMessageJobInput";
+import { readMyScheduledMessageJobsInputSchema } from "#shared/models/db/message/scheduledMessageJob/ReadMyScheduledMessageJobsInput";
 import { readScheduledMessageJobsInputSchema } from "#shared/models/db/message/scheduledMessageJob/ReadScheduledMessageJobsInput";
 import { scheduleMessageInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleMessageInput";
 import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleReminderInput";
@@ -14,11 +16,16 @@ import { enqueueScheduledMessageJob } from "@esposter/db";
 import {
   AzureQueue,
   DatabaseEntityType,
+  roomsInMessage,
   scheduledMessageJobsInMessage,
   ScheduledMessageJobType,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, count, eq, isNull } from "drizzle-orm";
+
+export interface ScheduledMessageJobInMessageWithRoom extends ScheduledMessageJobInMessage {
+  room: RoomInMessage;
+}
 
 export const scheduledMessageJobRouter = router({
   cancelScheduledJob: standardAuthedProcedure
@@ -60,6 +67,47 @@ export const scheduledMessageJobRouter = router({
         ),
       )
       .orderBy(asc(scheduledMessageJobsInMessage.runAt)),
+  ),
+  readMyScheduledJobs: standardAuthedProcedure
+    .input(readMyScheduledMessageJobsInputSchema)
+    .query<OffsetPaginationData<ScheduledMessageJobInMessageWithRoom>>(async ({ ctx, input: { limit, offset } }) => {
+      const rows = await ctx.db
+        .select({
+          room: roomsInMessage,
+          scheduledMessageJob: scheduledMessageJobsInMessage,
+        })
+        .from(scheduledMessageJobsInMessage)
+        .innerJoin(roomsInMessage, eq(scheduledMessageJobsInMessage.roomId, roomsInMessage.id))
+        .where(
+          and(
+            eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
+            isNull(scheduledMessageJobsInMessage.cancelledAt),
+            isNull(scheduledMessageJobsInMessage.completedAt),
+          ),
+        )
+        .orderBy(asc(scheduledMessageJobsInMessage.runAt))
+        .limit(limit + 1)
+        .offset(offset);
+      const items = rows.slice(0, limit).map(({ room, scheduledMessageJob }) => ({ ...scheduledMessageJob, room }));
+      return {
+        hasMore: rows.length > limit,
+        items,
+      };
+    }),
+  readMyScheduledJobsCount: standardAuthedProcedure.query<number>(
+    async ({ ctx }) =>
+      (
+        await ctx.db
+          .select({ count: count() })
+          .from(scheduledMessageJobsInMessage)
+          .where(
+            and(
+              eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
+              isNull(scheduledMessageJobsInMessage.cancelledAt),
+              isNull(scheduledMessageJobsInMessage.completedAt),
+            ),
+          )
+      )[0]?.count ?? 0,
   ),
   scheduleMessage: getMemberProcedure(scheduleMessageInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
     async ({ ctx, input }) => {
