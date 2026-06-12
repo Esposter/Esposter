@@ -99,7 +99,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 ## Promise Style
 
-- **`async`/`await` with neverthrow for fallible work** — `try`/`catch` is **BANNED**; never `.catch()` chains. Use `getResult(() => ...)` for sync throwing ops and `getResultAsync(() => ...)` for async/rejecting ops. Do not call `fromThrowable`/`ResultAsync.fromPromise`/`ResultAsync.fromThrowable` directly. For cleanup after both success and failure use `withFinalizer(...)`/`withFinalizerAsync(...)`. **Exception**: `try`/`finally` (no `catch`) is allowed only when the function must stay synchronous and `withFinalizer` would force an undesirable async cascade (e.g. `ignoreWarn`).
+- **`async`/`await` with neverthrow for fallible work** — `try`/`catch` is **BANNED**; never `.catch()` chains. Use `getResult(() => ...)` for sync throwing ops and `getResultAsync(() => ...)` for async/rejecting ops. Do not call `fromThrowable`/`ResultAsync.fromPromise`/`ResultAsync.fromThrowable` directly. For cleanup after both success and failure use `withFinalizer(...)`/`withFinalizerAsync(...)` — never `try`/`finally`.
 - **`.then()` exception**: acceptable only for a **promise queue** (serialising sequential async ops in a sync context, e.g. `chain = chain.then(async () => {...})`) — can't be expressed with `await` in a sync watcher/callback. All other `.then()`/`.catch()` must be converted.
 - Every `Result`/`ResultAsync` must be consumed with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`; `.orTee(...)` alone is not enough.
 - Fire-and-forget: extract to a named `async` function and call without `await`.
@@ -235,7 +235,7 @@ export const stringTransformationTypeSchema = z.enum(
 
 ```ts
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
-if (!IS_PRODUCTION) console.warn("...");
+const baseUrl = IS_PRODUCTION ? PRODUCTION_URL : DEVELOPMENT_URL;
 ```
 
 ## Enum Refs
@@ -370,20 +370,32 @@ return ColumnTransformationComputeMap[column.transformation.type](column.transfo
 When some (not all) union members share a common field, define a shared interface + Zod schema that members **opt into** by extending — never force the field onto all members.
 
 ```ts
-// shared/models/.../SourceColumnId.ts — opt-in base for single-source transformations
-export interface SourceColumnId { sourceColumnId: string; }
-export const sourceColumnIdSchema = z.object({ sourceColumnId: z.string() });
+// shared/models/.../SourceColumnId.ts — opt-in base; factory takes the vjsf context key to filter the dropdown
+export interface SourceColumnId {
+  sourceColumnId: string;
+}
+export const createSourceColumnIdSchema = (getItems = ColumnFormVjsfContextPropertyNames["context.columnItems"]) =>
+  z.object({
+    sourceColumnId: z.string().meta({ layout: { comp: "select", getItems }, title: "Source Column" }),
+  }) satisfies z.ZodType<SourceColumnId>;
 
-// shared/models/.../SourceColumnIds.ts — opt-in base for multi-source transformations
-export interface SourceColumnIds { sourceColumnIds: string[]; }
-export const sourceColumnIdsSchema = z.object({ sourceColumnIds: z.array(z.string()).default([]) });
+// shared/models/.../SourceColumnIds.ts — multi-source variant
+export interface SourceColumnIds {
+  sourceColumnIds: string[];
+}
+export const createSourceColumnIdsSchema = (getItems = ColumnFormVjsfContextPropertyNames["context.columnItems"]) =>
+  z.object({
+    sourceColumnIds: z.array(z.string()).meta({ layout: { getItems }, title: "Source Columns" }),
+  }) satisfies z.ZodType<SourceColumnIds>;
 
-// Each transformation needing a source column spreads the base schema's .shape:
-export const convertToTransformationSchema = z.object({
-  ...sourceColumnIdSchema.shape,
-  type: z.literal(ColumnTransformationType.ConvertTo),
-  targetType: z.enum([...]),
-});
+// Each transformation spreads the factory's .shape, passing a pre-filtered context key to constrain column types:
+export const datePartTransformationSchema = z
+  .object({
+    ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
+    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"]).shape,
+    part: datePartTypeSchema,
+  })
+  .meta({ title: ColumnTransformationType.DatePart }) satisfies z.ZodType<DatePartTransformation>;
 
 // A transformation needing no source column uses z.object({...}) directly:
 export const mathOperationTransformationSchema = z.object({
@@ -396,21 +408,19 @@ export const mathOperationTransformationSchema = z.object({
 **Rules:**
 
 - Each shared interface/schema lives in its own file (one export per file).
-- Members spread `.shape` from the base schema (never `.extend()` — see zod skill).
+- Members spread the factory's `.shape` (never `.extend()` — see zod skill).
 - Members not needing the field use `z.object({...})` directly.
 - `SourceColumnId` (singular) for single-source, `SourceColumnIds` (plural) for multi-source.
-- Transformations with column-type constraints declare `applicableColumnTypes: ColumnType[]` in `.meta()` (UI filters source-column dropdowns) — from `GlobalMeta extends Partial<ApplicableColumnTypes>` in `shared/types/zod.d.ts`.
-- **`ApplicableColumnTypes`** — interface in `shared/models/.../ApplicableColumnTypes.ts` with `readonly applicableColumnTypes: ColumnType[]`. Both Zod `.meta()` (via `GlobalMeta`) and non-schema definitions (e.g. `ColumnStatDefinition`) extend it so the same field name is used everywhere:
+- **Column-type filtering** happens by passing the pre-filtered vjsf context key into the factory (`createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"])`), **not** via any `.meta()` field. `GlobalMeta` (`shared/types/zod.d.ts`) only carries `layout` (+ ajv keywords).
+- **`ApplicableColumnTypes`** — interface in `shared/models/.../transformation/ApplicableColumnTypes.ts` (`readonly applicableColumnTypes: readonly ColumnType[]`). Used **only by non-schema definitions** (`ColumnStatisticsDefinition` via `defineColumnStatistics` in `ColumnStatisticsDefinitionMap`) — never by Zod schemas:
 
   ```ts
-  export interface ApplicableColumnTypes {
-    readonly applicableColumnTypes: ColumnType[];
-  }
-  export interface ColumnStatDefinition<T extends ColumnStatKey> extends ApplicableColumnTypes { ... }
-  interface GlobalMeta extends Partial<ApplicableColumnTypes> { ... } // optional in schema .meta()
+  export interface ApplicableColumnTypes { readonly applicableColumnTypes: readonly ColumnType[]; }
+  export interface ColumnStatisticsDefinition<T extends ColumnStatisticsKey = ColumnStatisticsKey>
+    extends ApplicableColumnTypes { compute: ...; format: ...; key: T; title: string; }
 
-  // schema usage:    .meta({ applicableColumnTypes: [ColumnType.Date], title: "..." })
-  // stat definition: defineColumnStat({ applicableColumnTypes: [ColumnType.Number], ... })
+  // stat definition usage (NOT a schema):
+  defineColumnStatistics({ applicableColumnTypes: [ColumnType.Number], compute: ..., format: ..., key: "average", title: "..." })
   ```
 
 ## Configuration Interfaces — `Pick` from Source Types

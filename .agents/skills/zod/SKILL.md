@@ -184,28 +184,28 @@ myError.issues.push({ code: "custom", message: "..." });
   - `z.literal(ColumnType.Computed)` (no `.readonly()`) — **BROKEN auto-detection**: can't pre-select the variant when editing. Never omit `.readonly()`.
   - `z.enum([...])` (no `.readonly()`) — renders a select; uses the first enum value as default on switch. ✓
   - `z.enum([...]).readonly()` — **BROKEN**: `readOnly: true` but no `const`, so Vjsf can't determine the value on switch; the old value persists. **Never use `.readonly()` on an enum discriminant.**
-- **Vjsf `getItems` filtering by column type** — when a `sourceColumnId`/`sourceColumnIds` should only show certain column types, override `getItems` to a pre-filtered context key (not generic `context.sourceColumnItems`). The `.meta()` merges with existing meta, preserving `comp` + `title`. Pass the per-type pre-filtered lists in `options.context` from the Vue component (`sourceColumnItems`, `dateSourceColumnItems`, `numberSourceColumnItems`, `stringSourceColumnItems`, each `dataSource.columns.filter(...).map(({ id, name }) => ({ title: name, value: id }))`):
+- **Vjsf `getItems` filtering by column type** — to show only certain column types, pass the pre-filtered context key into the `createSourceColumnIdSchema(getItems)` factory (default `context.columnItems`). The factory bakes `getItems` into `layout`, so transformations just spread its `.shape`. Pass the per-type pre-filtered lists in `options.context` from the Vue component (`columnItems`, `dateColumnItems`, `numberColumnItems`, `stringColumnItems`, each `dataSource.columns.filter(...).map(({ id, name }) => ({ title: name, value: id }))`):
 
   ```typescript
-  export const datePartTransformationSchema = withSourceColumnIdSchema
-    .extend({
-      sourceColumnId: withSourceColumnIdSchema.shape.sourceColumnId.meta({ getItems: "context.dateSourceColumnItems" }),
-      part: z.enum(DatePartType).meta({ title: "Part" }),
-      type: z.literal(ColumnTransformationType.DatePart),
+  export const datePartTransformationSchema = z
+    .object({
+      ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
+      ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"]).shape,
+      part: datePartTypeSchema,
     })
-    .meta({ applicableColumnTypes: [ColumnType.Date], title: ColumnTransformationType.DatePart });
+    .meta({ title: ColumnTransformationType.DatePart }) satisfies z.ZodType<DatePartTransformation>;
   ```
 
-  `getItems` is a JS expression string, so spread works for multiple types: `"[...context.dateSourceColumnItems, ...context.numberSourceColumnItems]"`.
+  `getItems` is a JS expression string, so spread works for multiple types: `"[...context.dateColumnItems, ...context.numberColumnItems]"`.
 
-- **vjsf `.meta()` layout properties** — put `comp`, `getProps`, `getItems` directly on the field's `.meta()` in the schema, not injected dynamically via `schema.extend()` in a composable. `GlobalMeta` types these as `string` — vjsf JS expression strings evaluated at runtime against the vjsf `context` (passed via `:options`):
+- **vjsf `.meta()` layout properties** — put `comp`, `getProps`, `getItems` under the `layout` key of the field's `.meta()` in the schema, not injected dynamically via `schema.extend()` in a composable. `GlobalMeta` (`shared/types/zod.d.ts`) types `layout?: Partial<PartialCompObject>` — its values are vjsf JS expression strings evaluated at runtime against the vjsf `context` (passed via `:options`):
 
   ```typescript
   name: z.string().meta({
-    getProps: `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Already exists'] }`,
+    layout: { getProps: `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Already exists'] }` },
     title: "Name",
   }),
-  sourceColumnId: z.string().meta({ comp: "select", getItems: "context.sourceColumnItems", title: "Source Column" }),
+  sourceColumnId: z.string().meta({ layout: { comp: "select", getItems: "context.columnItems" }, title: "Source Column" }),
   ```
 
 - **`zodToJsonSchema` in components** — expose two computeds: `schema` (Zod, for validation) and `jsonSchema` (for vjsf), deriving `jsonSchema` from `schema.value`. Never create a precomputed JSON schema map file; the `*TypeFormSchemaMap` is the source of truth.

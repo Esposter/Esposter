@@ -9,7 +9,7 @@ Esposter uses **neverthrow** for explicit error handling. No silent swallows —
 
 ## try / catch Are BANNED
 
-Never write `try { ... } catch { ... }` anywhere. The `try` keyword is forbidden in all code (components, composables, stores, server routes, tRPC routers). Always use `getResult`/`getResultAsync` and their chain methods.
+Never write the `try` keyword anywhere — no `try`/`catch`, no `try`/`finally` — in all code (components, composables, stores, server routes, tRPC routers). Always use `getResult`/`getResultAsync` and their chain methods; for cleanup use `withFinalizer`/`withFinalizerAsync`.
 
 ## Core Utility
 

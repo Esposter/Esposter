@@ -102,8 +102,8 @@ When a child has **local mutable state initialized from a prop** (e.g. `permissi
 <!-- WRONG: watch in RoleEditor syncing permissions when role prop changes -->
 watch(() => role.permissions, (newPermissions) => { permissions.value = newPermissions; });
 
-<!-- CORRECT: :key remounts RoleEditor on selection change -->
-<RoleEditor :key="selectedRole.id" :role="selectedRole" :room-id />
+<!-- CORRECT: :key remounts RoleEditor on selection change (guarded — selectedRole is nullable) -->
+<RoleEditor v-if="selectedRole" :key="selectedRole.id" :role="selectedRole" :room-id />
 ```
 
 The remounted component always initializes from the fresh prop.
