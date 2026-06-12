@@ -53,9 +53,9 @@ interface OutdatedDependency {
 }
 
 interface PnpmOutdatedDependency {
-  current: string;
-  dependencyType: string;
-  dependentPackages: { name: string }[];
+  current?: string;
+  dependencyType?: string;
+  dependentPackages?: { name: string }[];
   latest: string;
 }
 
@@ -309,20 +309,23 @@ const getLatestVersion = async (pkg: string) => {
   throw lastError instanceof Error ? lastError : new Error(`${pkg}: ${String(lastError)}`);
 };
 
+// Only `latest` is required; pnpm omits or reshapes the other fields for some entries
+// (catalog/deprecated packages), so treat them as optional and fall back when building.
 const isPnpmOutdatedDependency = (value: unknown): value is PnpmOutdatedDependency => {
   if (!value || typeof value !== "object") return false;
 
   const dependency = value as Record<string, unknown>;
 
-  return (
-    typeof dependency.current === "string" &&
-    typeof dependency.dependencyType === "string" &&
-    Array.isArray(dependency.dependentPackages) &&
-    dependency.dependentPackages.every(
-      (dependentPackage) =>
-        dependentPackage && typeof dependentPackage === "object" && typeof dependentPackage.name === "string",
-    ) &&
-    typeof dependency.latest === "string"
+  return typeof dependency.latest === "string";
+};
+
+const getOutdatedDependents = (dependentPackages: unknown) => {
+  if (!Array.isArray(dependentPackages)) return [];
+
+  return dependentPackages.flatMap((dependentPackage) =>
+    dependentPackage && typeof dependentPackage === "object" && typeof dependentPackage.name === "string"
+      ? [dependentPackage.name]
+      : [],
   );
 };
 
@@ -365,9 +368,9 @@ const getRegularOutdatedDependencies = () => {
       };
 
     outdatedDependencies.push({
-      current: dependency.current,
-      dependencyType: getDependencyType(dependency.dependencyType),
-      dependents: dependency.dependentPackages.map((dependentPackage) => dependentPackage.name),
+      current: dependency.current ?? "",
+      dependencyType: getDependencyType(dependency.dependencyType ?? ""),
+      dependents: getOutdatedDependents(dependency.dependentPackages),
       latest: dependency.latest,
       pkg,
       specifier: "",

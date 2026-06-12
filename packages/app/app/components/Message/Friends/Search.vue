@@ -49,13 +49,7 @@ const onSearch = async () => {
       />
     </div>
     <v-list v-if="searchResults.length > 0" mt-2 rd>
-      <v-list-item v-for="{ id, name, image } of searchResults" :key="id" :title="name">
-        <template #prepend>
-          <v-avatar size="36" mr-3>
-            <v-img v-if="image" :src="image" />
-            <span v-else>{{ name[0] }}</span>
-          </v-avatar>
-        </template>
+      <MessageFriendsUserListItem v-for="{ id, name, image } of searchResults" :key="id" :image :name>
         <template #append>
           <div flex gap-2>
             <v-btn
@@ -77,7 +71,7 @@ const onSearch = async () => {
             />
           </div>
         </template>
-      </v-list-item>
+      </MessageFriendsUserListItem>
     </v-list>
     <v-progress-linear v-if="isSearching" indeterminate mt-2 />
   </div>
