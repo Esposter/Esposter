@@ -15,7 +15,7 @@ export const createFilterPredicate = (filter: string): ((document: Record<string
 
       for (const group of orGroup) {
         const clause = deserializeClause(group);
-        const value = takeOne(document, clause.key as keyof typeof document);
+        const value = takeOne(document, clause.key);
         let isMatched: boolean;
 
         if (isNullClause(clause)) isMatched = compare(BinaryOperator.eq, value, null);

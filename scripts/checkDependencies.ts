@@ -51,16 +51,16 @@ interface OutdatedDependency {
   specifier: string;
 }
 
-interface RegistryCheckError {
-  error: string;
-  pkg: string;
-}
-
 interface PnpmOutdatedDependency {
   current: string;
   dependencyType: string;
   dependentPackages: { name: string }[];
   latest: string;
+}
+
+interface RegistryCheckError {
+  error: string;
+  pkg: string;
 }
 
 const workspaceYaml = readFileSync(resolve(root, "pnpm-workspace.yaml"), "utf8");
@@ -88,7 +88,6 @@ const getSpecifierBase = (specifier: string) => specifier.replace(/^[\^~>=< ]+/u
 const getVersionParts = (version: string) => {
   const [versionBase = "", prerelease] = version.split("-", 2);
   const [major = 0, minor = 0, patch = 0] = versionBase.split(".").map((part) => Number.parseInt(part, 10) || 0);
-
   return { major, minor, patch, prerelease };
 };
 
@@ -107,10 +106,8 @@ const compareVersionBase = (left: string, right: string) => {
 const getVersionChangeLevel = (current: string, latest: string) => {
   const currentParts = getVersionParts(current);
   const latestParts = getVersionParts(latest);
-
   if (currentParts.major !== latestParts.major) return 2;
   if (currentParts.minor !== latestParts.minor) return 1;
-
   return 0;
 };
 
@@ -129,13 +126,13 @@ const isVersionOutdated = (current: string, latest: string) => {
 };
 
 const getColorizedLatestVersion = (current: string, latest: string) => {
-  const currentParts = getVersionParts(current);
+  const changeLevel = getVersionChangeLevel(current, latest);
   const latestParts = getVersionParts(latest);
 
-  if (getVersionChangeLevel(current, latest) === 2) return color.red(latest);
-  if (getVersionChangeLevel(current, latest) === 1)
-    return `${latestParts.major}${color.yellow(latest.slice(String(latestParts.major).length))}`;
+  if (changeLevel === 2) return color.red(latest);
+  if (changeLevel === 1) return `${latestParts.major}${color.yellow(latest.slice(String(latestParts.major).length))}`;
 
+  const currentParts = getVersionParts(current);
   if (currentParts.patch !== latestParts.patch || currentParts.prerelease !== latestParts.prerelease) {
     const prefix = `${latestParts.major}.${latestParts.minor}.`;
     return `${prefix}${color.green(latest.slice(prefix.length))}`;
@@ -144,25 +141,28 @@ const getColorizedLatestVersion = (current: string, latest: string) => {
   return latest;
 };
 
-const getLockCatalogVersions = () => {
-  const lockCatalogsStart = lockYaml.indexOf("\ncatalogs:");
-  if (lockCatalogsStart === -1) return new Map<string, string>();
+const sliceLockSection = (startMarker: string, endMarkers: string[]) => {
+  const start = lockYaml.indexOf(startMarker);
+  if (start === -1) return "";
 
-  const lockCatalogsEnd = (() => {
-    let end = lockYaml.length;
-    for (const section of ["\npackages:", "\nsnapshots:", "\nimporters:"]) {
-      const index = lockYaml.indexOf(section, lockCatalogsStart + 1);
-      if (index !== -1 && index < end) end = index;
-    }
-    return end;
-  })();
+  let end = lockYaml.length;
+  for (const marker of endMarkers) {
+    const index = lockYaml.indexOf(marker, start + 1);
+    if (index !== -1 && index < end) end = index;
+  }
 
-  const lockCatalogsText = lockYaml.slice(lockCatalogsStart, lockCatalogsEnd);
+  return lockYaml.slice(start, end);
+};
+
+const parseLockResolvedVersions = (sectionText: string, pkgIndent: number) => {
+  const childIndent = pkgIndent + 2;
+  const pattern = new RegExp(
+    `[ ]{${pkgIndent}}['"]?(?<pkg>[^'":\\n]+)['"]?:\\s*\\n[ ]{${childIndent}}specifier: [^\\n]+\\n[ ]{${childIndent}}version: (?<version>[^\\n]+)`,
+    "gu",
+  );
   const versions = new Map<string, string>();
 
-  for (const { groups } of lockCatalogsText.matchAll(
-    /[ ]{4}['"]?(?<pkg>[^'":\n]+)['"]?:\s*\n[ ]{6}specifier: [^\n]+\n[ ]{6}version: (?<version>[^\n]+)/gu,
-  )) {
+  for (const { groups } of sectionText.matchAll(pattern)) {
     const pkg = groups?.pkg;
     const version = groups?.version;
     if (!pkg || !version) continue;
@@ -173,26 +173,11 @@ const getLockCatalogVersions = () => {
   return versions;
 };
 
-const getLockConfigDependencyVersions = () => {
-  const importersStart = lockYaml.indexOf("\nimporters:");
-  const packagesStart = lockYaml.indexOf("\npackages:", importersStart + 1);
-  if (importersStart === -1 || packagesStart === -1) return new Map<string, string>();
+const getLockCatalogVersions = () =>
+  parseLockResolvedVersions(sliceLockSection("\ncatalogs:", ["\npackages:", "\nsnapshots:", "\nimporters:"]), 4);
 
-  const importersText = lockYaml.slice(importersStart, packagesStart);
-  const versions = new Map<string, string>();
-
-  for (const { groups } of importersText.matchAll(
-    /[ ]{6}['"]?(?<pkg>[^'":\n]+)['"]?:\s*\n[ ]{8}specifier: [^\n]+\n[ ]{8}version: (?<version>[^\n]+)/gu,
-  )) {
-    const pkg = groups?.pkg;
-    const version = groups?.version;
-    if (!pkg || !version) continue;
-
-    versions.set(pkg.trim(), version.trim().split(/[(@]/u)[0]?.trim() ?? "");
-  }
-
-  return versions;
-};
+const getLockConfigDependencyVersions = () =>
+  parseLockResolvedVersions(sliceLockSection("\nimporters:", ["\npackages:"]), 6);
 
 const getMismatches = (entries: DependencyEntry[], resolvedVersions: Map<string, string>) => {
   const mismatches: Mismatch[] = [];
@@ -306,7 +291,7 @@ const printMismatches = (mismatches: Mismatch[]) => {
 const getLatestVersion = async (pkg: string) => {
   let lastError: unknown;
 
-  for (let attempt = 1; attempt <= registryRetryCount; attempt++) {
+  for (let attempt = 1; attempt <= registryRetryCount; attempt++)
     try {
       const response = await fetch(`${registryUrl}/${encodeURIComponent(pkg).replace(/^%40/u, "@")}/latest`);
       if (!response.ok) throw new Error(`${pkg}: ${response.status} ${response.statusText}`);
@@ -319,9 +304,8 @@ const getLatestVersion = async (pkg: string) => {
     } catch (error) {
       lastError = error;
     }
-  }
 
-  throw lastError;
+  throw lastError instanceof Error ? lastError : new Error(`${pkg}: ${String(lastError)}`);
 };
 
 const isPnpmOutdatedDependency = (value: unknown): value is PnpmOutdatedDependency => {
@@ -354,7 +338,10 @@ const getRegularOutdatedDependencies = () => {
 
   if (result.error)
     return { errors: [{ error: result.error.message, pkg: "pnpm outdated -r" }], outdatedDependencies: [] };
-  if (!result.stdout.trim()) {
+
+  // Pnpm interleaves "[WARN] ..." retry notices into stdout, so isolate the JSON object (printed at column 0).
+  const jsonStart = result.stdout.search(/^\{/mu);
+  if (jsonStart === -1) {
     if (result.status && result.status !== 0)
       return {
         errors: [{ error: result.stderr.trim() || `exit code ${result.status}`, pkg: "pnpm outdated -r" }],
@@ -364,18 +351,17 @@ const getRegularOutdatedDependencies = () => {
     return { errors: [], outdatedDependencies: [] };
   }
 
-  const parsed: unknown = JSON.parse(result.stdout);
+  const parsed: unknown = JSON.parse(result.stdout.slice(jsonStart));
   if (!parsed || typeof parsed !== "object")
     return { errors: [{ error: "unexpected JSON output", pkg: "pnpm outdated -r" }], outdatedDependencies: [] };
 
   const outdatedDependencies: OutdatedDependency[] = [];
   for (const [pkg, dependency] of Object.entries(parsed)) {
-    if (!isPnpmOutdatedDependency(dependency)) {
+    if (!isPnpmOutdatedDependency(dependency))
       return {
         errors: [{ error: `unexpected JSON entry for ${pkg}`, pkg: "pnpm outdated -r" }],
         outdatedDependencies: [],
       };
-    }
 
     outdatedDependencies.push({
       current: dependency.current,

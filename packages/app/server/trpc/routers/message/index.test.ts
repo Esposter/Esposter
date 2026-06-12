@@ -111,7 +111,6 @@ describe("message", () => {
       updatedAt: new Date("1970-01-01"),
       userId,
     });
-    // Belongs to another user, so the userId filter must exclude it.
     const otherUserMessage = new StandardMessageEntity({
       createdAt: new Date("1970-01-03"),
       message,
@@ -121,7 +120,6 @@ describe("message", () => {
       updatedAt: new Date("1970-01-03"),
       userId: crypto.randomUUID(),
     });
-    // Soft-deleted, so the deletedAt null filter must exclude it.
     const deletedMessage = new StandardMessageEntity({
       createdAt: new Date("1970-01-03"),
       deletedAt: new Date("1970-01-03"),

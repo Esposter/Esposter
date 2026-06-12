@@ -39,7 +39,7 @@ const compareValues = (leftHandSide: unknown, rightHandSide: unknown): number =>
 };
 
 const sortDocuments = (documents: Record<string, unknown>[], orderBy: string[]): Record<string, unknown>[] =>
-  [...documents].sort((leftHandSide, rightHandSide) => {
+  [...documents].toSorted((leftHandSide, rightHandSide) => {
     for (const clause of orderBy) {
       const [field = "", direction = "asc"] = clause.split(/\s+/u);
       const key = deserializeKey(field);
