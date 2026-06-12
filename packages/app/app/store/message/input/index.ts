@@ -24,9 +24,12 @@ export const useInputStore = defineStore("message/input", () => {
       const roomId = key.slice(DRAFT_KEY_PREFIX.length);
       const draft = getDraft(roomId);
       if (!draft || EMPTY_TEXT_REGEX.test(draft.content)) continue;
-      // Re-persist to sanitize and migrate any legacy raw-string drafts.
-      const { content } = setDraft(roomId, draft.content);
-      setInput(roomId, content);
+      const sanitizedContent = setDraft(roomId, draft.content).content;
+      if (EMPTY_TEXT_REGEX.test(sanitizedContent)) {
+        removeDraft(roomId);
+        continue;
+      }
+      setInput(roomId, sanitizedContent);
       ids.add(roomId);
     }
     return ids;
@@ -36,6 +39,17 @@ export const useInputStore = defineStore("message/input", () => {
   const storeDraft = (roomId: string, content: string) => {
     if (getIsServer()) return;
     const draft = setDraft(roomId, content);
+    if (EMPTY_TEXT_REGEX.test(draft.content)) {
+      removeDraft(roomId);
+      setInput(roomId, "");
+      if (draftRoomIds.value.has(roomId)) {
+        const updatedDraftRoomIds = new Set(draftRoomIds.value);
+        updatedDraftRoomIds.delete(roomId);
+        draftRoomIds.value = updatedDraftRoomIds;
+      }
+      return;
+    }
+
     setInput(roomId, draft.content);
     if (!draftRoomIds.value.has(roomId)) draftRoomIds.value = new Set([...draftRoomIds.value, roomId]);
   };
@@ -45,8 +59,15 @@ export const useInputStore = defineStore("message/input", () => {
     ([newInput, roomId]) => {
       if (!roomId) return;
       if (newInput && !EMPTY_TEXT_REGEX.test(newInput)) {
-        setDraft(roomId, newInput);
-        if (!draftRoomIds.value.has(roomId)) draftRoomIds.value = new Set([...draftRoomIds.value, roomId]);
+        const draft = setDraft(roomId, newInput);
+        if (EMPTY_TEXT_REGEX.test(draft.content)) {
+          removeDraft(roomId);
+          if (draftRoomIds.value.has(roomId)) {
+            const updatedDraftRoomIds = new Set(draftRoomIds.value);
+            updatedDraftRoomIds.delete(roomId);
+            draftRoomIds.value = updatedDraftRoomIds;
+          }
+        } else if (!draftRoomIds.value.has(roomId)) draftRoomIds.value = new Set([...draftRoomIds.value, roomId]);
       } else {
         removeDraft(roomId);
         if (draftRoomIds.value.has(roomId)) {

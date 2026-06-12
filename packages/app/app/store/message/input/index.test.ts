@@ -51,6 +51,18 @@ describe(useInputStore, () => {
     expect(draftRoomIds.value.has(roomId1)).toBe(false);
   });
 
+  test("ignores legacy draft content that sanitizes to empty", () => {
+    expect.hasAssertions();
+
+    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, "<script>alert(1)</script>");
+    const inputStore = useInputStore();
+    const { draftRoomIds, input } = storeToRefs(inputStore);
+
+    expect(getDraft(roomId1)).toBeUndefined();
+    expect(input.value).toBe("");
+    expect(draftRoomIds.value.has(roomId1)).toBe(false);
+  });
+
   test("populates draftRoomIds for multiple rooms", () => {
     expect.hasAssertions();
 
@@ -128,6 +140,19 @@ describe(useInputStore, () => {
     expect(draftRoomIds.value.has(roomId1)).toBe(true);
   });
 
+  test("storeDraft removes draft content that sanitizes to empty", () => {
+    expect.hasAssertions();
+
+    const inputStore = useInputStore();
+    const { draftRoomIds, input } = storeToRefs(inputStore);
+    const { storeDraft } = inputStore;
+    storeDraft(roomId1, "<script>alert(1)</script>");
+
+    expect(getDraft(roomId1)).toBeUndefined();
+    expect(input.value).toBe("");
+    expect(draftRoomIds.value.has(roomId1)).toBe(false);
+  });
+
   test("removes localStorage draft when input becomes empty", async () => {
     expect.hasAssertions();
 
@@ -135,6 +160,20 @@ describe(useInputStore, () => {
     const inputStore = useInputStore();
     const { draftRoomIds, input } = storeToRefs(inputStore);
     input.value = "";
+    await nextTick();
+    vi.advanceTimersByTime(debounceMs);
+    await nextTick();
+
+    expect(getDraft(roomId1)).toBeUndefined();
+    expect(draftRoomIds.value.has(roomId1)).toBe(false);
+  });
+
+  test("removes localStorage draft when input sanitizes to empty", async () => {
+    expect.hasAssertions();
+
+    const inputStore = useInputStore();
+    const { draftRoomIds, input } = storeToRefs(inputStore);
+    input.value = "<script>alert(1)</script>";
     await nextTick();
     vi.advanceTimersByTime(debounceMs);
     await nextTick();

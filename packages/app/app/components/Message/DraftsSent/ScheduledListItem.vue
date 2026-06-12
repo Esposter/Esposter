@@ -4,7 +4,6 @@ import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/mes
 import { getDisplayTime } from "@/services/message/draftsSent/getDisplayTime";
 import { getScheduledMessageJobIcon } from "@/services/message/draftsSent/getScheduledMessageJobIcon";
 import { getScheduledMessageJobText } from "@/services/message/draftsSent/getScheduledMessageJobText";
-import { RoutePath } from "@esposter/shared";
 
 interface MessageDraftsSentScheduledListItemProps {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
@@ -15,7 +14,7 @@ const { scheduledMessageJob } = defineProps<MessageDraftsSentScheduledListItemPr
 
 <template>
   <v-hover #default="{ isHovering, props }">
-    <v-list-item :="props" @click="navigateTo(RoutePath.Messages(scheduledMessageJob.roomId))">
+    <v-list-item :="props">
       <template #prepend>
         <v-avatar bg-background>
           <v-icon :icon="getScheduledMessageJobIcon(scheduledMessageJob)" />

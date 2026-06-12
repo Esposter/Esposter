@@ -1,48 +1,19 @@
 <script setup lang="ts">
-import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
-import { authClient } from "@/services/auth/authClient";
-import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useKeyboardShortcutsDialogStore } from "@/store/message/input/keyboardShortcutsDialog";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-import { MESSAGE_MAX_LENGTH, MessageType } from "@esposter/db-schema";
-import { Extension } from "@tiptap/vue-3";
+import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
-const { data: session } = await authClient.useSession(useFetch);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const { sendMessage } = dataStore;
-const messageStore = useMessageStore();
-const { editingRowKey } = storeToRefs(messageStore);
-const keyboardExtension = new Extension({
-  addKeyboardShortcuts() {
-    return {
-      ArrowUp: () => {
-        if (!EMPTY_TEXT_REGEX.test(this.editor.getText())) return false;
-        const userId = session.value?.user.id;
-        if (!userId) return false;
-        const lastOwnMessage = items.value.find(
-          ({ deletedAt, type, userId: messageUserId }) =>
-            !deletedAt && type === MessageType.Message && messageUserId === userId,
-        );
-        if (!lastOwnMessage) return false;
-        editingRowKey.value = lastOwnMessage.rowKey;
-        return true;
-      },
-      Enter: () => {
-        getSynchronizedFunction(() => sendMessage(this.editor))();
-        return true;
-      },
-    };
-  },
-});
+const keyboardExtension = await useKeyboardShortcutsExtension();
 const codeBlockExtension = useCodeBlockExtension();
 const emojiExtension = useEmojiExtension();
 const mentionExtension = useMentionExtension();

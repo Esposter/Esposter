@@ -47,6 +47,6 @@ describe(sanitizeMessageHtml, () => {
   test("strips disallowed style properties", () => {
     expect.hasAssertions();
 
-    expect(sanitizeMessageHtml(`<span style="position:fixed">x</span>`)).toBe(`<span style="">x</span>`);
+    expect(sanitizeMessageHtml(`<span style="position:fixed">x</span>`)).toBe(`<span>x</span>`);
   });
 });

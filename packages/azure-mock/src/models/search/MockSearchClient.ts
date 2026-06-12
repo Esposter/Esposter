@@ -49,6 +49,33 @@ const sortDocuments = (documents: Record<string, unknown>[], orderBy: string[]):
     return 0;
   });
 
+const getSearchFieldValues = (value: unknown, pathSegments: string[]): unknown[] => {
+  if (pathSegments.length === 0) return [value];
+  if (Array.isArray(value)) return value.flatMap((item) => getSearchFieldValues(item, pathSegments));
+  if (typeof value !== "object" || value === null) return [];
+
+  const [field = "", ...remainingPathSegments] = pathSegments;
+  return getSearchFieldValues((value as Record<string, unknown>)[deserializeKey(field)], remainingPathSegments);
+};
+
+const searchDocuments = (
+  documents: Record<string, unknown>[],
+  searchText: string | undefined,
+  searchFields: readonly string[] | undefined,
+): Record<string, unknown>[] => {
+  if (!searchText || searchText === "*") return documents;
+
+  const normalizedSearchText = searchText.toLocaleLowerCase();
+  return documents.filter((document) =>
+    (searchFields ?? Object.keys(document)).some((searchField) =>
+      getSearchFieldValues(document, searchField.split("/")).some(
+        (value) =>
+          value !== null && value !== undefined && String(value).toLocaleLowerCase().includes(normalizedSearchText),
+      ),
+    ),
+  );
+};
+
 /**
  * An in-memory mock of the Azure SearchClient.
  * It uses a Map to simulate the search index and applies the same OData filtering as the other mock clients.
@@ -121,11 +148,11 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
   }
 
   search<TFields extends SelectFields<TModel>>(
-    _searchText?: string,
+    searchText?: string,
     options?: SearchOptions<TModel, TFields>,
   ): Promise<SearchDocumentsResult<TModel, TFields>> {
-    const { filter, includeTotalCount, orderBy, skip = 0, top } = options ?? {};
-    let documents = this.documents as Record<string, unknown>[];
+    const { filter, includeTotalCount, orderBy, searchFields, skip = 0, top } = options ?? {};
+    let documents = searchDocuments(this.documents as Record<string, unknown>[], searchText, searchFields);
     if (filter) {
       const predicate = createFilterPredicate(filter);
       documents = documents.filter((document) => predicate(document));
