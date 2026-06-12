@@ -126,7 +126,7 @@ New workspace packages follow existing patterns (e.g. `packages/db`, `packages/d
 Packages declared as `peerDependencies` must also be in the rolldown `external` array — pnpm doesn't tell rolldown to skip them. Either:
 
 - Add to the shared `rolldownConfigurationBrowser.external` list in `packages/configuration/src/rolldownConfigurationBrowser.ts` (preferred when used by multiple packages), OR
-- Override locally: `export default { ...rolldownConfigurationNode, external: [...rolldownConfigurationNode.external as string[], "my-peer-dep"] }`.
+- Override locally: `export default { ...rolldownConfigurationNode, external: [...rolldownConfigurationNode.external, "my-peer-dep"] }`. The `external` array is `(RegExp | string)[]` — don't cast it to `string[]`.
 
 After adding to the shared config, rebuild `packages/configuration` (`pnpm build`) before rebuilding dependents.
 

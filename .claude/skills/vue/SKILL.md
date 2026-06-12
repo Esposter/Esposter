@@ -176,14 +176,16 @@ Name after the component's identity (file/folder name, stripping `Index`): `PreJ
 
 ## Refs & Computed
 
-- **Template refs** — always use `useTemplateRef`. Never annotate with a generic (Vue 3.5+ infers from the template). Never add a `Ref` suffix. Use a semantic name matching the `ref="..."` value (`"video"`, never `"videoRef"`). If a component type was imported only for the generic, remove that import.
+- **Template refs** — always use `useTemplateRef`. Prefer no generic (Vue 3.5+ infers from the template). Never add a `Ref` suffix. Use a semantic name matching the `ref="..."` value (`"video"`, never `"videoRef"`). If a component type was imported only for the generic, remove that import.
 
   ```ts
   // CORRECT — no generic, no "Ref" suffix
   const video = useTemplateRef("video");
-  // WRONG
+  // Usually WRONG — redundant generic when inference works
   const video = useTemplateRef<HTMLVideoElement>("video");
   ```
+
+  **Generic is justified only when template inference doesn't give the type you need**: (1) the element/component the `ref` sits on doesn't expose the property you actually want, or (2) the inferred type is an overly complex union you want to simplify.
 
 - **Sort at display time** — apply `.toSorted()` in the `computed` that feeds the template; never sort in store ingestion (`readX`, `setX`, mutation helpers). Stores hold natural order; components transform for display. **Exception**: sort before the API call when sorted order is sent to the backend (e.g. message pagination cursors).
 - **Computed for reused expressions** — extract a `computed` (named to match the prop) when the same derived value binds to 2+ props; enables `:propName` shorthand. Single-use values stay inline.
@@ -421,6 +423,8 @@ useScript<typeof Desmos>(API_URL, {
 
 - **`useRouter()` for reactive contexts** — reading route data inside a `computed`/`watch` (e.g. `router.currentRoute.value.params.id`) or calling navigation methods (`router.push`, `router.replace`).
 - **`useRoute()` for plain reads** — reading params/query outside a reactive context (regular function or async handler).
+
+> This inverts the usual Vue Router split deliberately: `useRoute()` returns a stale, non-reactive snapshot when called outside a component setup (composables, stores, middleware, async handlers), whereas `useRouter().currentRoute` stays reactive everywhere. Standardizing on `useRouter()` for reactive reads avoids that footgun since route reads often live in composables.
 
 ## After Finishing Code Changes
 

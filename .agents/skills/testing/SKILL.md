@@ -274,7 +274,7 @@ describe(useMyComposable, () => {
 - **`test` descriptions** — enum value or type arg directly.
 - **Assertion** — always `expectTypeOf(...).toEqualTypeOf<ExpectedType>()`.
 - **`expect.hasAssertions()`** — in every test body.
-- **Prefer type-only fixtures** — instantiate the function type directly with `ReturnType<typeof fn<TypeArg>>()` or equivalent type expressions. Avoid runtime schema values or one-line helpers just to feed `expectTypeOf` (prevents unused-value/underscore/value-liveness lint churn).
+- **Prefer type-only fixtures** — drive `expectTypeOf` from a type expression (a type alias, or `ReturnType<typeof fn>` for a non-generic fn) rather than runtime schema values or one-line helpers (prevents unused-value/underscore/value-liveness lint churn). Note `typeof fn<TypeArg>` is invalid — you can't apply type args to a `typeof` query; alias the instantiated type instead.
 
 ## Test Utility Files
 

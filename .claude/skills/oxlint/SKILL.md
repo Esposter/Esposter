@@ -82,9 +82,9 @@ const match = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})$/u.exec(str);
 **Named groups retain positional indices** — all existing usages keep working; only `match.groups.name` is new:
 
 ```ts
-str.replace(/(?<id>\d+)/gu, "$1"); // replacement string $1, $2
+str.replace(/(?<id>\d+)/gu, "$1"); // replacement string $1
 str.replace(/(?<id>\d+)/gu, (_, id) => id); // callback positional arg
-/(?<id>\d+)/u.exec(str)?.[1]; // positional index match[1], match[2]
+/(?<id>\d+)/u.exec(str)?.[1]; // positional index match[1]
 /(?<name>\w+) = \1/u; // back-reference \1 (also \k<name>)
 ```
 

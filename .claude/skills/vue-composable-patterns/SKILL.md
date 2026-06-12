@@ -86,7 +86,7 @@ const readMoreBans = (onComplete: () => void) =>
 
 ## MaybeRefOrGetter vs Function Argument
 
-Use `MaybeRefOrGetter<T>` when the composable **internally reacts** to the value (used inside a `computed`/`watch`) — it must observe changes between calls. Unwrap with `toValue()`. **Naming:** `const {name}Value = toValue({name})` — always suffix with `Value`.
+Use `MaybeRefOrGetter<T>` when the composable **internally reacts** to the value (used inside a `computed`/`watch`) — it must observe changes between calls. Unwrap with `toValue()`. **Naming:** suffix the unwrapped value with `Value`, e.g. `const limitValue = toValue(limit)`.
 
 Use a plain **function argument** on the returned function when the value is just a **pass-through** evaluated at call time (no internal reactive dependency).
 
@@ -202,14 +202,14 @@ export const ColumnTypeCreateMap = {
 
 ```ts
 const columnType = ref<Exclude<ColumnType, ColumnType.Computed>>(ColumnType.String);
-const editedColumn = ref(structuredClone(ColumnTypeCreateMap[ColumnType.String].create()));
+const editedColumn = ref(ColumnTypeCreateMap[ColumnType.String].create());
 const resetForm = () => {
-  editedColumn.value = structuredClone(ColumnTypeCreateMap[columnType.value].create());
+  editedColumn.value = ColumnTypeCreateMap[columnType.value].create();
 };
 
 watch(columnType, (newType) => {
   const name = editedColumn.value.name; // preserve name; object shorthand needs `name` not `currentName`
-  editedColumn.value = structuredClone(ColumnTypeCreateMap[newType].create(name));
+  editedColumn.value = ColumnTypeCreateMap[newType].create(name);
 });
 ```
 

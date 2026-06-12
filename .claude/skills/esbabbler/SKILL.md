@@ -302,7 +302,7 @@ Scheduled messages and reminders use a two-step pattern: Postgres row + Azure St
 2. Same mutation enqueues to `AzureQueue.ScheduledMessageJobs` with `visibilityTimeout = Math.min(Math.max(0, Math.ceil((runAt - now) / 1000)), 604800)`.
 3. Azure Functions queue-trigger (`ProcessScheduledMessageJob`) reads the row, re-checks permissions/room state, executes, marks `completedAt`.
 
-**Key constraint**: Azure Storage Queue max visibility timeout is 604800 seconds (7 days). Jobs with `runAt > 7 days` are delivered immediately by the queue, but the worker verifies `cancelledAt`/`completedAt` for idempotency. For longer scheduling, re-add the timer scan.
+**Key constraint**: Azure Storage Queue max visibility timeout is 604800 seconds (7 days). Jobs with `runAt > 7 days` become visible early, so `ProcessScheduledMessageJob` re-checks `job.runAt` — if still in the future it re-enqueues itself with the remaining delay (`enqueueScheduledMessageJob`) instead of executing. It always verifies `cancelledAt`/`completedAt` for idempotency. No timer scan needed.
 
 **No timer function** — a separate `EnqueueScheduledMessageJobs` polling timer is unnecessary complexity; the queue's native visibility timeout handles delay. The timer approach was removed in favour of direct enqueueing.
 

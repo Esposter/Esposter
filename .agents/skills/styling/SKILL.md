@@ -114,18 +114,20 @@ Spaces inside `calc()` must be omitted or replaced with `_`: `calc(1rem+--x)` no
 
 ### CSS Variables in Arbitrary Values
 
-**Never use `var()` inside UnoCSS arbitrary value brackets.** UnoCSS auto-wraps `--variable` names with `var()`:
+**Prefer the bare `--variable` shorthand inside UnoCSS arbitrary value brackets** — UnoCSS auto-wraps `--variable` names with `var()`:
 
 ```html
-<!-- WRONG — var() keyword in template -->
-<div duration="[var(--transition-duration)]" />
-<!-- CORRECT — --variable reference only -->
+<!-- Prefer — bare --variable shorthand -->
 <div duration="[--transition-duration]" />
 <div top="[--app-bar-height]!" />
 <div shadow="[0_0_5px_rgb(--v-theme-primary-lighten-1)]" />
+<!-- Valid but verbose — use the shorthand for single variables -->
+<div duration="[var(--transition-duration)]" />
 ```
 
-Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects stays as-is — only UnoCSS arbitrary value syntax gets the `--variable` shorthand. When converting a scoped class that only contains arbitrary-value properties, delete the class name and the `<style scoped>` block entirely.
+`var()` inside brackets is not an error — it's the natural form for composite values like `b="[rgba(var(--v-border-color),var(--v-border-opacity))]"`. Just prefer the shorthand for the simple single-variable case.
+
+Exception: `var()` inside `<style scoped>` blocks and `:style` binding objects stays as-is. When converting a scoped class that only contains arbitrary-value properties, delete the class name and the `<style scoped>` block entirely.
 
 ## Transition Splitting
 

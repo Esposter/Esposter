@@ -82,7 +82,7 @@ Badge ref format (bottom of file):
 ## Content Rules
 
 1. **Description** — lead with what it does, not what it is. "Drizzle ORM schemas and migrations" beats "A library of database schemas".
-2. **Getting Started** — install command + one minimal working example. Omit for packages never installed externally (app, azure-functions, configuration).
+2. **Getting Started** — install command + one minimal working example. Omit for private packages / any package never installed externally.
 3. **Documentation** — always link `https://esposter.com/docs/modules/<slug>.html` with "We highly recommend you take a look at the [documentation](...) to level up." Add a key-exports table or architecture notes so the README is useful without the docs site.
 4. **Commands** — list the package's own `pnpm` scripts (build, test, lint:fix, typecheck), not root scripts.
 5. **No filler** — skip "we are excited to…", lengthy prose, or content that duplicates CLAUDE.md. READMEs are reference docs.

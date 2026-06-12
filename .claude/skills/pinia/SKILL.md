@@ -117,7 +117,8 @@ When children need store state, have them read the store directly — don't thre
 <RoleList :roles :selected-role-id @select="selectRole($event)" />
 
 <!-- CORRECT: RoleListItem reads selectedRoleId from store directly -->
-const { selectedRoleId } = storeToRefs(useRoleStore()); // template: :active="role.id === selectedRoleId"
+const roleStore = useRoleStore(); const { selectedRoleId } = storeToRefs(roleStore); // template: :active="role.id ===
+selectedRoleId"
 ```
 
 This also drops the emit chain — `RoleListItem` calls `selectRole()` directly instead of emitting up.

@@ -20,7 +20,7 @@ z.string()
 z.string().overwrite(normalizeString).min(1);
 ```
 
-Use the shared helpers `createNormalizedStringSchema(maxLength)` and `createNameSchema(maxLength)` from `@esposter/db-schema` for standard name/text fields.
+Use the shared helpers for standard name/text fields: `createNormalizedStringSchema(maxLength)` from `@esposter/shared` and `createNameSchema(maxLength)` from `@esposter/db-schema`.
 
 ### Never nest pipes when JSON schema output matters
 
