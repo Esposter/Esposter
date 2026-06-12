@@ -1,9 +1,0 @@
-import type { Clause } from "@esposter/db-schema";
-
-import { getTableNullClause } from "@esposter/db";
-import deepEqual from "fast-deep-equal";
-
-export const isTableNullClause = (clause: Clause<Record<string, unknown>>): boolean => {
-  const tableNullClause = getTableNullClause<Record<string, unknown>>(clause.key);
-  return deepEqual(clause, tableNullClause);
-};

@@ -2,8 +2,9 @@
 import type { Router } from "vue-router";
 
 import { dayjs } from "#shared/services/dayjs";
+import { DRAFT_KEY_PREFIX } from "@/services/message/draft/constants";
+import { getDraft } from "@/services/message/draft/getDraft";
 import { useInputStore } from "@/store/message/input";
-import { DRAFT_KEY_PREFIX } from "@/store/message/input/constants";
 import { marked } from "marked";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -50,6 +51,18 @@ describe(useInputStore, () => {
     expect(draftRoomIds.value.has(roomId1)).toBe(false);
   });
 
+  test("ignores legacy draft content that sanitizes to empty", () => {
+    expect.hasAssertions();
+
+    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, "<script>alert(1)</script>");
+    const inputStore = useInputStore();
+    const { draftRoomIds, input } = storeToRefs(inputStore);
+
+    expect(getDraft(roomId1)).toBeUndefined();
+    expect(input.value).toBe("");
+    expect(draftRoomIds.value.has(roomId1)).toBe(false);
+  });
+
   test("populates draftRoomIds for multiple rooms", () => {
     expect.hasAssertions();
 
@@ -74,7 +87,7 @@ describe(useInputStore, () => {
     expect(draftRoomIds.value.has(roomId1)).toBe(false);
   });
 
-  test("clearDraft removes draft key from localStorage", () => {
+  test("clearDraft removes draft from localStorage", () => {
     expect.hasAssertions();
 
     localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, draftContent);
@@ -82,7 +95,7 @@ describe(useInputStore, () => {
     const { clearDraft } = inputStore;
     clearDraft(roomId1);
 
-    expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBeNull();
+    expect(getDraft(roomId1)).toBeUndefined();
   });
 
   test("clearDraft clears input data for the room", () => {
@@ -107,12 +120,40 @@ describe(useInputStore, () => {
     vi.advanceTimersByTime(debounceMs);
     await nextTick();
 
-    expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBe(draftContent);
+    expect(getDraft(roomId1)?.content).toBe(draftContent);
+    expect(getDraft(roomId1)?.updatedAt).toBeInstanceOf(Date);
     expect(input.value).toBe(draftContent);
     expect(draftRoomIds.value.has(roomId1)).toBe(true);
   });
 
-  test("removes localStorage key when input becomes empty", async () => {
+  test("storeDraft saves draft content and updated at", () => {
+    expect.hasAssertions();
+
+    const inputStore = useInputStore();
+    const { draftRoomIds, input } = storeToRefs(inputStore);
+    const { storeDraft } = inputStore;
+    storeDraft(roomId1, draftContent);
+
+    expect(getDraft(roomId1)?.content).toBe(draftContent);
+    expect(getDraft(roomId1)?.updatedAt).toBeInstanceOf(Date);
+    expect(input.value).toBe(draftContent);
+    expect(draftRoomIds.value.has(roomId1)).toBe(true);
+  });
+
+  test("storeDraft removes draft content that sanitizes to empty", () => {
+    expect.hasAssertions();
+
+    const inputStore = useInputStore();
+    const { draftRoomIds, input } = storeToRefs(inputStore);
+    const { storeDraft } = inputStore;
+    storeDraft(roomId1, "<script>alert(1)</script>");
+
+    expect(getDraft(roomId1)).toBeUndefined();
+    expect(input.value).toBe("");
+    expect(draftRoomIds.value.has(roomId1)).toBe(false);
+  });
+
+  test("removes localStorage draft when input becomes empty", async () => {
     expect.hasAssertions();
 
     localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, draftContent);
@@ -123,7 +164,21 @@ describe(useInputStore, () => {
     vi.advanceTimersByTime(debounceMs);
     await nextTick();
 
-    expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBeNull();
+    expect(getDraft(roomId1)).toBeUndefined();
+    expect(draftRoomIds.value.has(roomId1)).toBe(false);
+  });
+
+  test("removes localStorage draft when input sanitizes to empty", async () => {
+    expect.hasAssertions();
+
+    const inputStore = useInputStore();
+    const { draftRoomIds, input } = storeToRefs(inputStore);
+    input.value = "<script>alert(1)</script>";
+    await nextTick();
+    vi.advanceTimersByTime(debounceMs);
+    await nextTick();
+
+    expect(getDraft(roomId1)).toBeUndefined();
     expect(draftRoomIds.value.has(roomId1)).toBe(false);
   });
 
@@ -137,6 +192,6 @@ describe(useInputStore, () => {
     vi.advanceTimersByTime(debounceMs - 1);
     await nextTick();
 
-    expect(localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId1}`)).toBeNull();
+    expect(getDraft(roomId1)).toBeUndefined();
   });
 });

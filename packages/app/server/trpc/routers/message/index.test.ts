@@ -1,3 +1,5 @@
+// @vitest-environment nuxt
+
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { MessageEntity } from "@esposter/db-schema";
@@ -20,6 +22,7 @@ import {
   MessageType,
   roomFiltersInMessage,
   roomsInMessage,
+  SearchIndex,
   StandardMessageEntity,
 } from "@esposter/db-schema";
 import {
@@ -31,11 +34,11 @@ import {
   Operation,
   takeOne,
 } from "@esposter/shared";
-import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockEventGridDatabase, MockSearchDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const getMessage = (userId: string) =>
-  `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
+  `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}"></span>`;
 
 describe("message", () => {
   let mockContext: Context;
@@ -57,6 +60,7 @@ describe("message", () => {
   afterEach(async () => {
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
+    MockSearchDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
   });
@@ -81,6 +85,59 @@ describe("message", () => {
 
     expect(readMessages.items).toHaveLength(1);
     expect(takeOne(readMessages.items).message).toBe(newMessage.message);
+  });
+
+  test("reads my sent messages", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
+    const firstMessage = new StandardMessageEntity({
+      createdAt: new Date("1970-01-02"),
+      message,
+      partitionKey: newRoom.id,
+      rowKey: crypto.randomUUID(),
+      type: MessageType.Message,
+      updatedAt: new Date("1970-01-02"),
+      userId,
+    });
+    const secondMessage = new StandardMessageEntity({
+      createdAt: new Date("1970-01-01"),
+      message,
+      partitionKey: newRoom.id,
+      rowKey: crypto.randomUUID(),
+      type: MessageType.Message,
+      updatedAt: new Date("1970-01-01"),
+      userId,
+    });
+    const otherUserMessage = new StandardMessageEntity({
+      createdAt: new Date("1970-01-03"),
+      message,
+      partitionKey: newRoom.id,
+      rowKey: crypto.randomUUID(),
+      type: MessageType.Message,
+      updatedAt: new Date("1970-01-03"),
+      userId: crypto.randomUUID(),
+    });
+    const deletedMessage = new StandardMessageEntity({
+      createdAt: new Date("1970-01-03"),
+      deletedAt: new Date("1970-01-03"),
+      message,
+      partitionKey: newRoom.id,
+      rowKey: crypto.randomUUID(),
+      type: MessageType.Message,
+      updatedAt: new Date("1970-01-03"),
+      userId,
+    });
+    MockSearchDatabase.set(SearchIndex.Messages, [firstMessage, secondMessage, otherUserMessage, deletedMessage]);
+    const sentMessages = await messageCaller.readMySentMessages({ limit: 1 });
+
+    expect(sentMessages.count).toBe(2);
+    expect(sentMessages.data.hasMore).toBe(true);
+    expect(sentMessages.data.items).toHaveLength(1);
+    expect(takeOne(sentMessages.data.items).message.rowKey).toBe(firstMessage.rowKey);
+    expect(takeOne(sentMessages.data.items).room.id).toBe(newRoom.id);
   });
 
   test("reads with cursor and includes value", async () => {

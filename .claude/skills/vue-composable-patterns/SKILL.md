@@ -132,6 +132,26 @@ const uniqueNameRule = (v: string) => v === column.name || !columns.some(...) ||
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name) // edit
 ```
 
+## Extract Duplicate Mutation Blocks — Builder Arg for Discriminated-Union Inputs
+
+Same mutation block (lookup + guard + `withFinalizerAsync` + `$trpc.x.mutate`) copy-pasted across siblings differing only in payload → extract a composable. When the input is a **discriminated union**, don't type the param `Except<Input, "field">` and spread `{ ...input, field }` — that won't narrow back to the union (TS error, tempts `as`). Pass a **builder** `(field) => Input` so each caller builds a complete union member:
+
+```ts
+export const useExecuteAdminAction = () => {
+  const { $trpc } = useNuxtApp();
+  const roomStore = useRoomStore();
+  const { currentRoom } = storeToRefs(roomStore);
+  return (getInput: (roomId: string) => ExecuteAdminActionInput, onComplete: () => void) =>
+    withFinalizerAsync(async () => {
+      if (!currentRoom.value) return;
+      await $trpc.message.moderation.executeAdminAction.mutate(getInput(currentRoom.value.id));
+    }, onComplete);
+};
+// caller: @delete="(onComplete) => executeAdminAction((roomId) => ({ roomId, targetUserId: user.id, type: AdminActionType.CreateBan }), onComplete)"
+```
+
+Type-safe (literal checked against the union per call site), no `Except`/spread/cast; callers drop the store/`$trpc`/finalizer setup.
+
 ## Settings Tab Permissions — Hide at the Tab Level
 
 Permission-gated settings tabs are hidden via `SettingsPermissionMap`, not guarded inside the tab. Individual tab components never check permissions — they render unconditionally (the tab simply isn't shown to users lacking permission). **Do NOT** show "Insufficient permissions" text — hide the tab entirely.

@@ -51,6 +51,7 @@
     "@azure/core-rest-pipeline": "catalog:",
     "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
+    "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@azure/storage-queue": "catalog:"
   }

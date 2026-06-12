@@ -49,6 +49,12 @@ const EmojiExtension = Extension.create({
 export const useEmojiExtension = () => EmojiExtension.configure({ suggestion: EmojiSuggestion });
 ```
 
+### Never inline extensions in components
+
+`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable in `app/composables/message/editor/`, never in a `.vue` `<script setup>`. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
+
+Exception: an extension wiring only a couple of local component callbacks (e.g. `Editor.vue`'s Enter/Esc) may stay inline.
+
 ### SuggestionTrigger enum
 
 Trigger characters live in `app/services/message/SuggestionTrigger.ts`. Never hardcode `"/"`, `":"`, or `"@"` as string literals in suggestion configs or component templates:
@@ -81,6 +87,8 @@ With `v-if`, `VueRenderer.element` returns a comment node when the condition is 
 In `app/components/Message/Model/Message/Input/Index.vue`, each extension is instantiated as a `const` and passed in the `:extensions` array:
 
 ```ts
+const keyboardExtension = await useKeyboardShortcutsExtension();
+const codeBlockExtension = useCodeBlockExtension();
 const emojiExtension = useEmojiExtension();
 const mentionExtension = useMentionExtension();
 const slashCommandExtension = useSlashCommandExtension();
@@ -89,3 +97,5 @@ const slashCommandExtension = useSlashCommandExtension();
 ```html
 :extensions="[keyboardExtension, codeBlockExtension, emojiExtension, mentionExtension, slashCommandExtension]"
 ```
+
+Every entry is a `use*Extension()` call. `RichTextEditor` owns only the always-on extensions (`StarterKit`, `CharacterCount`, `Placeholder`, `FileHandler`, `useLinkClickExtension`); feature extensions come via the `:extensions` prop.
