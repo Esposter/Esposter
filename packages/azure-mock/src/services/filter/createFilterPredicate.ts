@@ -1,33 +1,29 @@
-import type { TableEntity } from "@azure/data-tables";
-
-import { compare } from "@/services/table/compare";
-import { isTableNullClause } from "@/services/table/isTableNullClause";
+import { compare } from "@/services/filter/compare";
+import { isNullClause } from "@/services/filter/isNullClause";
 import { deserializeClause } from "@esposter/db";
 import { BinaryOperator } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
-export const createTableFilterPredicate = <T extends Record<string, unknown>>(
-  filter: string,
-): ((entity: TableEntity<T>) => boolean) => {
+export const createFilterPredicate = (filter: string): ((document: Record<string, unknown>) => boolean) => {
   // Preserve spacing when stripping parentheses so patterns like not(<clause>) still match
   const normalizedFilter = filter.replaceAll(String.raw`(`, " ").replaceAll(String.raw`)`, "");
   const andGroups = normalizedFilter.split(/\s+and\s+/iu).filter(Boolean);
   const orGroups = andGroups.map((group) => group.split(/\s+or\s+/iu).filter(Boolean));
-  return (entity) => {
+  return (document) => {
     for (const orGroup of orGroups) {
       let isGroupMatched = false;
 
       for (const group of orGroup) {
         const clause = deserializeClause(group);
-        const value = takeOne(entity, clause.key as keyof typeof entity);
+        const value = takeOne(document, clause.key as keyof typeof document);
         let isMatched: boolean;
 
-        if (isTableNullClause(clause)) isMatched = compare(BinaryOperator.eq, value, null);
+        if (isNullClause(clause)) isMatched = compare(BinaryOperator.eq, value, null);
         else {
           const comparisonResult = compare(
             clause.operator,
             value,
-            clause.value as (typeof entity)[keyof typeof entity] | null,
+            clause.value as (typeof document)[keyof typeof document] | null,
           );
           isMatched = clause.not ? !comparisonResult : comparisonResult;
         }

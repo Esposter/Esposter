@@ -2,6 +2,18 @@
   "permissions": {
     "allow": [
       "Bash(az account show *)",
+      "Bash(do echo:*)",
+      "Bash(done)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(echo \"EXIT_CODE: $?\")",
+      "PowerShell(do echo:*)",
+      "PowerShell(done)",
+      "PowerShell(echo \"exit: $?\")",
+      "PowerShell(echo \"Exit: $?\")",
+      "PowerShell(echo \"EXIT:$?\")",
+      "PowerShell(echo \"EXIT_CODE: $?\")",
       "Bash(az functionapp function list *)",
       "Bash(az functionapp identity show *)",
       "Bash(az functionapp list *)",
@@ -132,8 +144,8 @@
       "WebFetch(domain:vuetifyjs.com)",
       "WebFetch(domain:vueuse.org)",
       "WebFetch(domain:www.npmjs.com)",
-      "Read(//c/c/Users/jimmy/Desktop/Software/Esposter/.claude/**)",
-      "Read(//c/c/Users/jimmy/Desktop/Software/Esposter/**)"
+      "PowerShell(pnpm typecheck *)",
+      "PowerShell(pnpm lint:fix *)"
     ]
   }
 }

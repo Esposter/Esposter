@@ -19,7 +19,7 @@ import type { Except } from "type-fest";
 
 import { MOCK_TABLE_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
-import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
+import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
 import { exhaustiveGuard, getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
@@ -94,9 +94,8 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     const withMetadata = this.withMetadata.bind(this);
     const filter = options?.queryOptions?.filter;
     const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()];
-    const resultTableEntities = filter
-      ? tableEntities.filter((e) => createTableFilterPredicate(filter)(e))
-      : tableEntities;
+    const predicate = filter ? createFilterPredicate(filter) : undefined;
+    const resultTableEntities = predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities;
     return {
       byPage: ({ maxPageSize } = {}) =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {

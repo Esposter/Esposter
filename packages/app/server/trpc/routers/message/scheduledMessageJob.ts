@@ -85,7 +85,9 @@ export const scheduledMessageJobRouter = router({
         .orderBy(asc(scheduledMessageJobsInMessage.runAt))
         .limit(limit + 1)
         .offset(offset);
-      const items = rows.slice(0, limit).map(({ room, scheduledMessageJob }) => ({ ...scheduledMessageJob, room }));
+      const items = rows
+        .slice(0, limit)
+        .map(({ room, scheduledMessageJob }) => Object.assign(scheduledMessageJob, { room }));
       return {
         hasMore: rows.length > limit,
         items,

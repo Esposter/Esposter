@@ -9,6 +9,7 @@ import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
 import { dayjs } from "#shared/services/dayjs";
 import { getTimelineDateLabel } from "#shared/services/dayjs/getTimelineDateLabel";
 import { DraftsSentTab } from "@/models/message/draftsSent/DraftsSentTab";
+import { getDraft } from "@/services/message/draft/getDraft";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
@@ -21,7 +22,7 @@ definePageMeta({ middleware: "auth" });
 const { $trpc } = useNuxtApp();
 const tab = ref(DraftsSentTab.Drafts);
 const inputStore = useInputStore();
-const { clearDraft, getDraft, getDraftUpdatedAt, storeDraft } = inputStore;
+const { clearDraft, storeDraft } = inputStore;
 const { draftRoomIds } = storeToRefs(inputStore);
 const dataStore = useDataStore();
 const roomStore = useRoomStore();
@@ -48,16 +49,11 @@ const isScheduleDialogOpen = computed({
 const roomById = computed(() => new Map(rooms.value.map((room) => [room.id, room])));
 const draftItems = computed(() =>
   [...draftRoomIds.value]
-    .map((roomId) => {
+    .flatMap((roomId) => {
       const room = roomById.value.get(roomId);
-      if (!room) return undefined;
-      return {
-        content: getDraft(roomId),
-        room,
-        updatedAt: getDraftUpdatedAt(roomId) ?? room.updatedAt,
-      };
+      const draft = getDraft(roomId);
+      return room && draft ? [{ content: draft.content, room, updatedAt: draft.updatedAt }] : [];
     })
-    .filter((draftItem): draftItem is DraftItem => Boolean(draftItem))
     .toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)),
 );
 const groupedDraftItems = computed(() => getGroupedTimelineItems(draftItems.value, ({ updatedAt }) => updatedAt));

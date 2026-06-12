@@ -2,7 +2,10 @@ import type { Editor } from "@tiptap/core";
 
 import { dayjs } from "#shared/services/dayjs";
 import { validateFile } from "@/services/file/validateFile";
-import { DRAFT_KEY_PREFIX, DRAFT_UPDATED_AT_KEY_PREFIX } from "@/store/message/input/constants";
+import { DRAFT_KEY_PREFIX } from "@/services/message/draft/constants";
+import { getDraft } from "@/services/message/draft/getDraft";
+import { removeDraft } from "@/services/message/draft/removeDraft";
+import { setDraft } from "@/services/message/draft/setDraft";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
@@ -18,27 +21,22 @@ export const useInputStore = defineStore("message/input", () => {
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
       if (!key?.startsWith(DRAFT_KEY_PREFIX)) continue;
-      const draft = localStorage.getItem(key);
-      if (!draft || EMPTY_TEXT_REGEX.test(draft)) continue;
       const roomId = key.slice(DRAFT_KEY_PREFIX.length);
-      setInput(roomId, draft);
+      const draft = getDraft(roomId);
+      if (!draft || EMPTY_TEXT_REGEX.test(draft.content)) continue;
+      // Re-persist to sanitize and migrate any legacy raw-string drafts.
+      const { content } = setDraft(roomId, draft.content);
+      setInput(roomId, content);
       ids.add(roomId);
     }
     return ids;
   };
 
   const draftRoomIds = ref(initializeDraftRoomIds());
-  const getDraft = (roomId: string) =>
-    getIsServer() ? "" : (localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId}`) ?? "");
-  const getDraftUpdatedAt = (roomId: string) => {
-    const value = getIsServer() ? undefined : localStorage.getItem(`${DRAFT_UPDATED_AT_KEY_PREFIX}${roomId}`);
-    return value ? new Date(value) : undefined;
-  };
-  const storeDraft = (roomId: string, draft: string) => {
+  const storeDraft = (roomId: string, content: string) => {
     if (getIsServer()) return;
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId}`, draft);
-    localStorage.setItem(`${DRAFT_UPDATED_AT_KEY_PREFIX}${roomId}`, new Date().toISOString());
-    setInput(roomId, draft);
+    const draft = setDraft(roomId, content);
+    setInput(roomId, draft.content);
     if (!draftRoomIds.value.has(roomId)) draftRoomIds.value = new Set([...draftRoomIds.value, roomId]);
   };
 
@@ -46,14 +44,11 @@ export const useInputStore = defineStore("message/input", () => {
     () => [input.value, roomStore.currentRoomId],
     ([newInput, roomId]) => {
       if (!roomId) return;
-      const key = `${DRAFT_KEY_PREFIX}${roomId}`;
       if (newInput && !EMPTY_TEXT_REGEX.test(newInput)) {
-        localStorage.setItem(key, newInput);
-        localStorage.setItem(`${DRAFT_UPDATED_AT_KEY_PREFIX}${roomId}`, new Date().toISOString());
+        setDraft(roomId, newInput);
         if (!draftRoomIds.value.has(roomId)) draftRoomIds.value = new Set([...draftRoomIds.value, roomId]);
       } else {
-        localStorage.removeItem(key);
-        localStorage.removeItem(`${DRAFT_UPDATED_AT_KEY_PREFIX}${roomId}`);
+        removeDraft(roomId);
         if (draftRoomIds.value.has(roomId)) {
           const updatedDraftRoomIds = new Set(draftRoomIds.value);
           updatedDraftRoomIds.delete(roomId);
@@ -65,8 +60,7 @@ export const useInputStore = defineStore("message/input", () => {
   );
 
   const clearDraft = (roomId: string) => {
-    localStorage.removeItem(`${DRAFT_KEY_PREFIX}${roomId}`);
-    localStorage.removeItem(`${DRAFT_UPDATED_AT_KEY_PREFIX}${roomId}`);
+    removeDraft(roomId);
     const updatedDraftRoomIds = new Set(draftRoomIds.value);
     updatedDraftRoomIds.delete(roomId);
     draftRoomIds.value = updatedDraftRoomIds;
@@ -87,8 +81,6 @@ export const useInputStore = defineStore("message/input", () => {
   return {
     clearDraft,
     draftRoomIds,
-    getDraft,
-    getDraftUpdatedAt,
     input,
     storeDraft,
     validateInput,

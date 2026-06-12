@@ -1,13 +1,13 @@
-import { isTableNullClause } from "@/services/table/isTableNullClause";
+import { isNullClause } from "@/services/filter/isNullClause";
 import { getTableNullClause } from "@esposter/db";
 import { describe, expect, test } from "vitest";
 
-describe(isTableNullClause, () => {
+describe(isNullClause, () => {
   test(getTableNullClause, () => {
     expect.hasAssertions();
 
     const clause = getTableNullClause("");
 
-    expect(isTableNullClause(clause)).toBe(true);
+    expect(isNullClause(clause)).toBe(true);
   });
 });

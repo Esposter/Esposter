@@ -46,7 +46,7 @@ watch(isOpen, (newIsOpen) => {
             await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
               roomId,
               runAt: scheduledAt,
-              text,
+              text: sanitizeMessageHtml(text),
             });
           else
             await $trpc.message.scheduledMessageJob.scheduleMessage.mutate({

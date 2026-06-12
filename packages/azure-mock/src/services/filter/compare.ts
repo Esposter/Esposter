@@ -9,7 +9,8 @@ export const compare = <T>(operator: BinaryOperator, leftHandSide: T, rightHandS
         compare.name,
         JSON.stringify({ leftHandSide, operator, rightHandSide }),
       );
-    return leftHandSide === rightHandSide;
+    // Azure Search treats a missing field as null, so undefined matches a null clause too.
+    return leftHandSide === null || leftHandSide === undefined;
   }
 
   switch (operator) {

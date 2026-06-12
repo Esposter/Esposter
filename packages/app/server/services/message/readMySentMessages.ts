@@ -47,7 +47,7 @@ export const readMySentMessages = async (
         : new StandardMessageEntity(message)) as MessageEntity,
     );
   }
-  const roomIds = Array.from(new Set(messages.map(({ partitionKey }) => partitionKey)));
+  const roomIds = [...new Set(messages.map(({ partitionKey }) => partitionKey))];
   const rooms =
     roomIds.length > 0 ? await db.select().from(roomsInMessage).where(inArray(roomsInMessage.id, roomIds)) : [];
   const roomMap = new Map(rooms.map((room) => [room.id, room]));

@@ -1,13 +1,13 @@
-import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
+import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
 import { getTableNullClause, serializeClause, serializeClauses } from "@esposter/db";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
-describe(createTableFilterPredicate, () => {
+describe(createFilterPredicate, () => {
   test("and grouping", () => {
     expect.hasAssertions();
 
-    const predicate = createTableFilterPredicate(
+    const predicate = createFilterPredicate(
       serializeClauses([
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" },
         { key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.eq, value: "" },
@@ -21,7 +21,7 @@ describe(createTableFilterPredicate, () => {
   test("or grouping", () => {
     expect.hasAssertions();
 
-    const predicate = createTableFilterPredicate(
+    const predicate = createFilterPredicate(
       serializeClauses([
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" },
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: " " },
@@ -35,7 +35,7 @@ describe(createTableFilterPredicate, () => {
   test("negates with not(...)", () => {
     expect.hasAssertions();
 
-    const predicate = createTableFilterPredicate(
+    const predicate = createFilterPredicate(
       serializeClause({
         key: CompositeKeyPropertyNames.partitionKey,
         not: true,
@@ -51,7 +51,7 @@ describe(createTableFilterPredicate, () => {
   test("null clause", () => {
     expect.hasAssertions();
 
-    const predicate = createTableFilterPredicate(serializeClause(getTableNullClause("")));
+    const predicate = createFilterPredicate(serializeClause(getTableNullClause("")));
 
     expect(predicate({ "": null, partitionKey: "", rowKey: "" })).toBe(true);
     expect(predicate({ "": "", partitionKey: "", rowKey: "" })).toBe(false);

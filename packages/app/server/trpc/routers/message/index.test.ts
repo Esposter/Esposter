@@ -25,6 +25,7 @@ import {
   MessageType,
   roomFiltersInMessage,
   roomsInMessage,
+  SearchIndex,
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
@@ -38,32 +39,8 @@ import {
   Operation,
   takeOne,
 } from "@esposter/shared";
-import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockEventGridDatabase, MockSearchDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-
-const searchDocuments = vi.hoisted(() => ({ value: [] as MessageEntity[] }));
-const searchFilters = vi.hoisted(() => ({ value: [] as string[] }));
-
-vi.mock(import("@@/server/composables/azure/search/useSearchClient"), () => ({
-  useSearchClient: () =>
-    ({
-      search: (
-        _query: string,
-        { filter = "", skip = 0, top = searchDocuments.value.length }: { filter?: string; skip?: number; top?: number },
-      ) => {
-        searchFilters.value.push(filter);
-        const documents = searchDocuments.value.slice(skip, skip + top);
-        return Promise.resolve({
-          count: searchDocuments.value.length,
-          results: {
-            async *[Symbol.asyncIterator]() {
-              for (const document of documents) yield { document };
-            },
-          },
-        });
-      },
-    }) as unknown as ReturnType<typeof baseUseSearchClient>,
-}));
 
 const getMessage = (userId: string) =>
   `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
@@ -88,9 +65,8 @@ describe("message", () => {
   afterEach(async () => {
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
+    MockSearchDatabase.clear();
     MockTableDatabase.clear();
-    searchDocuments.value = [];
-    searchFilters.value = [];
     await mockContext.db.delete(roomsInMessage);
   });
 
@@ -126,7 +102,7 @@ describe("message", () => {
       createdAt: new Date("1970-01-02"),
       message,
       partitionKey: newRoom.id,
-      rowKey: "0",
+      rowKey: crypto.randomUUID(),
       type: MessageType.Message,
       updatedAt: new Date("1970-01-02"),
       userId,
@@ -135,24 +111,40 @@ describe("message", () => {
       createdAt: new Date("1970-01-01"),
       message,
       partitionKey: newRoom.id,
-      rowKey: "1",
+      rowKey: crypto.randomUUID(),
       type: MessageType.Message,
       updatedAt: new Date("1970-01-01"),
       userId,
     });
-    searchDocuments.value = [firstMessage, secondMessage];
+    // Belongs to another user, so the userId filter must exclude it.
+    const otherUserMessage = new StandardMessageEntity({
+      createdAt: new Date("1970-01-03"),
+      message,
+      partitionKey: newRoom.id,
+      rowKey: crypto.randomUUID(),
+      type: MessageType.Message,
+      updatedAt: new Date("1970-01-03"),
+      userId: crypto.randomUUID(),
+    });
+    // Soft-deleted, so the deletedAt null filter must exclude it.
+    const deletedMessage = new StandardMessageEntity({
+      createdAt: new Date("1970-01-03"),
+      deletedAt: new Date("1970-01-03"),
+      message,
+      partitionKey: newRoom.id,
+      rowKey: crypto.randomUUID(),
+      type: MessageType.Message,
+      updatedAt: new Date("1970-01-03"),
+      userId,
+    });
+    MockSearchDatabase.set(SearchIndex.Messages, [firstMessage, secondMessage, otherUserMessage, deletedMessage]);
     const sentMessages = await messageCaller.readMySentMessages({ limit: 1 });
-    const expectedSearchClauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [
-      { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: userId },
-      getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
-    ];
 
     expect(sentMessages.count).toBe(2);
     expect(sentMessages.data.hasMore).toBe(true);
     expect(sentMessages.data.items).toHaveLength(1);
     expect(takeOne(sentMessages.data.items).message.rowKey).toBe(firstMessage.rowKey);
     expect(takeOne(sentMessages.data.items).room.id).toBe(newRoom.id);
-    expect(takeOne(searchFilters.value)).toBe(serializeSearchClauses(expectedSearchClauses));
   });
 
   test("reads with cursor and includes value", async () => {
