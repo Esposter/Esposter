@@ -1,6 +1,10 @@
+// @vitest-environment nuxt
+
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { MessageEntity } from "@esposter/db-schema";
+import type { useSearchClient as baseUseSearchClient } from "@@/server/composables/azure/search/useSearchClient";
+import type { SelectFields } from "@azure/search-documents";
+import type { Clause, MessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -12,18 +16,21 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { getBlobName } from "@esposter/db";
+import { getBlobName, getSearchNullClause, serializeClauses as serializeSearchClauses } from "@esposter/db";
 import {
   AzureContainer,
   AzureEntityType,
+  BinaryOperator,
   getReverseTickedTimestamp,
   MessageType,
   roomFiltersInMessage,
   roomsInMessage,
   StandardMessageEntity,
+  StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
 import {
   InvalidOperationError,
+  ItemMetadataPropertyNames,
   MENTION_ID_ATTRIBUTE,
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
@@ -33,6 +40,30 @@ import {
 } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+const searchDocuments = vi.hoisted(() => ({ value: [] as MessageEntity[] }));
+const searchFilters = vi.hoisted(() => ({ value: [] as string[] }));
+
+vi.mock(import("@@/server/composables/azure/search/useSearchClient"), () => ({
+  useSearchClient: () =>
+    ({
+      search: (
+        _query: string,
+        { filter = "", skip = 0, top = searchDocuments.value.length }: { filter?: string; skip?: number; top?: number },
+      ) => {
+        searchFilters.value.push(filter);
+        const documents = searchDocuments.value.slice(skip, skip + top);
+        return Promise.resolve({
+          count: searchDocuments.value.length,
+          results: {
+            async *[Symbol.asyncIterator]() {
+              for (const document of documents) yield { document };
+            },
+          },
+        });
+      },
+    }) as unknown as ReturnType<typeof baseUseSearchClient>,
+}));
 
 const getMessage = (userId: string) =>
   `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
@@ -58,6 +89,8 @@ describe("message", () => {
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
     MockTableDatabase.clear();
+    searchDocuments.value = [];
+    searchFilters.value = [];
     await mockContext.db.delete(roomsInMessage);
   });
 
@@ -81,6 +114,45 @@ describe("message", () => {
 
     expect(readMessages.items).toHaveLength(1);
     expect(takeOne(readMessages.items).message).toBe(newMessage.message);
+  });
+
+  test("reads my sent messages", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
+    const firstMessage = new StandardMessageEntity({
+      createdAt: new Date("1970-01-02"),
+      message,
+      partitionKey: newRoom.id,
+      rowKey: "0",
+      type: MessageType.Message,
+      updatedAt: new Date("1970-01-02"),
+      userId,
+    });
+    const secondMessage = new StandardMessageEntity({
+      createdAt: new Date("1970-01-01"),
+      message,
+      partitionKey: newRoom.id,
+      rowKey: "1",
+      type: MessageType.Message,
+      updatedAt: new Date("1970-01-01"),
+      userId,
+    });
+    searchDocuments.value = [firstMessage, secondMessage];
+    const sentMessages = await messageCaller.readMySentMessages({ limit: 1 });
+    const expectedSearchClauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [
+      { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: userId },
+      getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
+    ];
+
+    expect(sentMessages.count).toBe(2);
+    expect(sentMessages.data.hasMore).toBe(true);
+    expect(sentMessages.data.items).toHaveLength(1);
+    expect(takeOne(sentMessages.data.items).message.rowKey).toBe(firstMessage.rowKey);
+    expect(takeOne(sentMessages.data.items).room.id).toBe(newRoom.id);
+    expect(takeOne(searchFilters.value)).toBe(serializeSearchClauses(expectedSearchClauses));
   });
 
   test("reads with cursor and includes value", async () => {

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { DraftItem } from "@/models/message/draftsSent/DraftItem";
 import type { DraftsSentSection } from "@/models/message/draftsSent/DraftsSentSection";
-import type { ScheduledMessageJobWithRoom } from "@/models/message/draftsSent/ScheduledMessageJobWithRoom";
 import type { ScheduleDraftsSentTarget } from "@/models/message/draftsSent/ScheduleDraftsSentTarget";
+import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
+import type { SentMessageWithRoom } from "#shared/models/db/message/SentMessageWithRoom";
 import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
+import { getTimelineDateLabel } from "#shared/services/dayjs/getTimelineDateLabel";
 import { DraftsSentTab } from "@/models/message/draftsSent/DraftsSentTab";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
@@ -24,11 +26,16 @@ const { draftRoomIds } = storeToRefs(inputStore);
 const dataStore = useDataStore();
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
-const scheduledMessageJobs = ref<ScheduledMessageJobWithRoom[]>([]);
+const scheduledMessageJobs = ref<ScheduledMessageJobInMessageWithRoom[]>([]);
 const scheduledMessageJobCount = ref(0);
 const scheduledMessageJobsOffset = ref(0);
 const hasMoreScheduledMessageJobs = ref(false);
 const isScheduledMessageJobsPending = ref(true);
+const sentMessages = ref<SentMessageWithRoom[]>([]);
+const sentMessageCount = ref(0);
+const sentMessagesOffset = ref(0);
+const hasMoreSentMessages = ref(false);
+const isSentMessagesPending = ref(true);
 const scheduleTarget = ref<ScheduleDraftsSentTarget>();
 const scheduledAt = ref(dayjs().add(1, "minute").toDate());
 const minScheduledAt = ref(scheduledAt.value);
@@ -57,6 +64,9 @@ const groupedDraftItems = computed(() => getGroupedTimelineItems(draftItems.valu
 const groupedScheduledMessageJobs = computed(() =>
   getGroupedTimelineItems(scheduledMessageJobs.value, ({ runAt }) => runAt),
 );
+const groupedSentMessages = computed(() =>
+  getGroupedTimelineItems(sentMessages.value, ({ message }) => message.createdAt),
+);
 const readScheduledMessageJobs = async () => {
   const [data, count] = await Promise.all([
     $trpc.message.scheduledMessageJob.readMyScheduledJobs.query(),
@@ -77,6 +87,23 @@ const readMoreScheduledMessageJobs = async (onComplete: () => void) => {
   hasMoreScheduledMessageJobs.value = data.hasMore;
   onComplete();
 };
+const readSentMessages = async () => {
+  const { count, data } = await $trpc.message.readMySentMessages.query();
+  sentMessages.value = data.items;
+  sentMessageCount.value = count;
+  sentMessagesOffset.value = data.items.length;
+  hasMoreSentMessages.value = data.hasMore;
+  isSentMessagesPending.value = false;
+};
+const readMoreSentMessages = async (onComplete: () => void) => {
+  const { data } = await $trpc.message.readMySentMessages.query({
+    offset: sentMessagesOffset.value,
+  });
+  sentMessages.value.push(...data.items);
+  sentMessagesOffset.value += data.items.length;
+  hasMoreSentMessages.value = data.hasMore;
+  onComplete();
+};
 const removeScheduledMessageJob = (id: ScheduledMessageJobInMessage["id"]) => {
   scheduledMessageJobs.value = scheduledMessageJobs.value.filter(
     (scheduledMessageJob) => scheduledMessageJob.id !== id,
@@ -84,58 +111,46 @@ const removeScheduledMessageJob = (id: ScheduledMessageJobInMessage["id"]) => {
   scheduledMessageJobsOffset.value = Math.max(0, scheduledMessageJobsOffset.value - 1);
   scheduledMessageJobCount.value = Math.max(0, scheduledMessageJobCount.value - 1);
 };
-const cancelScheduledMessageJob = async ({ id }: ScheduledMessageJobWithRoom) => {
+const cancelScheduledMessageJob = async ({ id }: ScheduledMessageJobInMessageWithRoom) => {
   await $trpc.message.scheduledMessageJob.cancelScheduledJob.mutate({ id });
   removeScheduledMessageJob(id);
 };
-const setDefaultScheduledAt = () => {
+const openScheduleDialog = (target: ScheduleDraftsSentTarget) => {
   scheduledAt.value = dayjs().add(1, "minute").toDate();
   minScheduledAt.value = new Date(scheduledAt.value);
-};
-const openScheduleDialog = (target: ScheduleDraftsSentTarget) => {
-  setDefaultScheduledAt();
   scheduleTarget.value = target;
-};
-const editDraft = async ({ room }: DraftItem) => {
-  await navigateTo(RoutePath.Messages(room.id));
 };
 const sendDraft = async ({ content, room }: DraftItem) => {
   await dataStore.createMessage({ files: [], message: content, roomId: room.id, type: MessageType.Message });
   clearDraft(room.id);
 };
-const editScheduledMessageJob = async (scheduledMessageJob: ScheduledMessageJobWithRoom) => {
+const cancelScheduledMessageJobToDraft = async (scheduledMessageJob: ScheduledMessageJobInMessageWithRoom) => {
   storeDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
   await cancelScheduledMessageJob(scheduledMessageJob);
+};
+const editScheduledMessageJob = async (scheduledMessageJob: ScheduledMessageJobInMessageWithRoom) => {
+  await cancelScheduledMessageJobToDraft(scheduledMessageJob);
   await navigateTo(RoutePath.Messages(scheduledMessageJob.roomId));
 };
-const sendScheduledMessageJob = async (scheduledMessageJob: ScheduledMessageJobWithRoom) => {
+const sendScheduledMessageJob = async (scheduledMessageJob: ScheduledMessageJobInMessageWithRoom) => {
   const { payload, roomId } = scheduledMessageJob;
   if (payload.type !== ScheduledMessageJobType.ScheduledMessage) return;
   await dataStore.createMessage({ files: [], message: payload.message, roomId, type: MessageType.Message });
   await cancelScheduledMessageJob(scheduledMessageJob);
 };
-const cancelScheduledMessageJobToDraft = async (scheduledMessageJob: ScheduledMessageJobWithRoom) => {
-  storeDraft(scheduledMessageJob.roomId, getScheduledMessageJobText(scheduledMessageJob));
-  await cancelScheduledMessageJob(scheduledMessageJob);
-};
-const getSectionTitle = (date: Date) => {
-  if (dayjs(date).isToday()) return "Today";
-  if (dayjs(date).isYesterday()) return "Yesterday";
-  return dayjs(date).format("dddd, D MMMM");
-};
 const getGroupedTimelineItems = <TItem>(items: TItem[], getDate: (item: TItem) => Date): DraftsSentSection<TItem>[] => {
   const sectionMap = new Map<string, DraftsSentSection<TItem>>();
   for (const item of items) {
-    const title = getSectionTitle(getDate(item));
+    const title = getTimelineDateLabel(getDate(item));
     const section = sectionMap.get(title) ?? { items: [], title };
     section.items.push(item);
     sectionMap.set(title, section);
   }
   return [...sectionMap.values()];
 };
-const getScheduledMessageJobText = ({ payload }: ScheduledMessageJobWithRoom) =>
+const getScheduledMessageJobText = ({ payload }: ScheduledMessageJobInMessageWithRoom) =>
   payload.type === ScheduledMessageJobType.Reminder ? payload.text : payload.message;
-const getScheduledMessageJobIcon = ({ payload }: ScheduledMessageJobWithRoom) =>
+const getScheduledMessageJobIcon = ({ payload }: ScheduledMessageJobInMessageWithRoom) =>
   payload.type === ScheduledMessageJobType.Reminder ? "mdi-bell-outline" : "mdi-send-clock";
 const getDisplayTime = (date: Date) => dayjs(date).format("h:mm A");
 const getTextFromHtml = (html: string) => {
@@ -145,7 +160,7 @@ const getTextFromHtml = (html: string) => {
   return element.textContent ?? "";
 };
 
-await readScheduledMessageJobs();
+await Promise.all([readScheduledMessageJobs(), readSentMessages()]);
 </script>
 
 <template>
@@ -171,7 +186,13 @@ await readScheduledMessageJobs();
               <span>{{ scheduledMessageJobCount }}</span>
             </template>
           </v-tab>
-          <v-tab :value="DraftsSentTab.Sent">Sent</v-tab>
+          <v-tab :value="DraftsSentTab.Sent">
+            <span>Sent</span>
+            <template v-if="sentMessageCount">
+              <v-icon icon="mdi-send-outline" ml-1 size="x-small" />
+              <span>{{ sentMessageCount }}</span>
+            </template>
+          </v-tab>
         </v-tabs>
       </div>
       <v-divider />
@@ -230,7 +251,7 @@ await readScheduledMessageJobs();
                                   icon="mdi-pencil-outline"
                                   size="small"
                                   variant="text"
-                                  @click.stop="editDraft(draftItem)"
+                                  @click.stop="navigateTo(RoutePath.Messages(draftItem.room.id))"
                                 />
                               </template>
                             </v-tooltip>
@@ -410,7 +431,31 @@ await readScheduledMessageJobs();
             </div>
           </v-window-item>
           <v-window-item :value="DraftsSentTab.Sent">
-            <div text-center flex flex-col h-full items-center justify-center>
+            <div v-if="sentMessages.length" flex flex-col gap-y-6>
+              <section v-for="{ items, title } of groupedSentMessages" :key="title">
+                <div font-bold mb-3>{{ title }}</div>
+                <v-list b-1 b-border rd-lg b-solid>
+                  <v-list-item
+                    v-for="{ message, room } of items"
+                    :key="`${message.partitionKey}:${message.rowKey}`"
+                    @click="navigateTo(RoutePath.MessagesMessage(message.partitionKey, message.rowKey))"
+                  >
+                    <template #prepend>
+                      <StyledAvatar :image="room.image" :name="room.name" />
+                    </template>
+                    <v-list-item-title font-bold>{{ room.name }}</v-list-item-title>
+                    <v-list-item-subtitle>
+                      <span v-html="message.message" />
+                    </v-list-item-subtitle>
+                    <template #append>
+                      <span op-medium-emphasis text-body-small>{{ getDisplayTime(message.createdAt) }}</span>
+                    </template>
+                  </v-list-item>
+                </v-list>
+              </section>
+              <StyledWaypoint :is-active="hasMoreSentMessages" @change="readMoreSentMessages" />
+            </div>
+            <div v-else-if="!isSentMessagesPending" text-center flex flex-col h-full items-center justify-center>
               <v-icon icon="mdi-send-outline" size="5rem" text-primary />
               <h2 font-bold mt-4 text-title-large>No sent messages</h2>
             </div>
@@ -431,14 +476,11 @@ await readScheduledMessageJobs();
                 roomId: scheduleTarget.roomId,
                 runAt: scheduledAt,
               });
-              if (scheduleTarget.scheduledMessageJobId) {
+              if (scheduleTarget.scheduledMessageJobId)
                 await $trpc.message.scheduledMessageJob.cancelScheduledJob.mutate({
                   id: scheduleTarget.scheduledMessageJobId,
                 });
-                removeScheduledMessageJob(scheduleTarget.scheduledMessageJobId);
-              } else {
-                clearDraft(scheduleTarget.roomId);
-              }
+              else clearDraft(scheduleTarget.roomId);
               await readScheduledMessageJobs();
               scheduleTarget = undefined;
             }, onComplete);

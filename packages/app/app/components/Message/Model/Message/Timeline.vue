@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { dayjs } from "#shared/services/dayjs";
+import { getTimelineDateLabel } from "#shared/services/dayjs/getTimelineDateLabel";
 
 interface MessageTimelineProps {
   messageDate: Date;
@@ -7,13 +8,8 @@ interface MessageTimelineProps {
 }
 
 const { messageDate, nextMessageDate } = defineProps<MessageTimelineProps>();
-const messageDateDayjs = computed(() => dayjs(messageDate));
-const areDifferentDays = computed(() => !nextMessageDate || !messageDateDayjs.value.isSame(nextMessageDate, "day"));
-const displayDate = computed(() => {
-  if (messageDateDayjs.value.isToday()) return "Today";
-  else if (messageDateDayjs.value.isYesterday()) return "Yesterday";
-  else return messageDateDayjs.value.format("dddd, MMMM Do");
-});
+const areDifferentDays = computed(() => !nextMessageDate || !dayjs(messageDate).isSame(nextMessageDate, "day"));
+const displayDate = computed(() => getTimelineDateLabel(messageDate));
 </script>
 
 <template>

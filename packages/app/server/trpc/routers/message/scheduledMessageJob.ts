@@ -1,5 +1,6 @@
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
-import type { RoomInMessage, ScheduledMessageJobInMessage } from "@esposter/db-schema";
+import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
+import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
 
 import { cancelScheduledMessageJobInputSchema } from "#shared/models/db/message/scheduledMessageJob/CancelScheduledMessageJobInput";
 import { readMyScheduledMessageJobsInputSchema } from "#shared/models/db/message/scheduledMessageJob/ReadMyScheduledMessageJobsInput";
@@ -22,10 +23,6 @@ import {
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { and, asc, count, eq, isNull } from "drizzle-orm";
-
-export interface ScheduledMessageJobInMessageWithRoom extends ScheduledMessageJobInMessage {
-  room: RoomInMessage;
-}
 
 export const scheduledMessageJobRouter = router({
   cancelScheduledJob: standardAuthedProcedure

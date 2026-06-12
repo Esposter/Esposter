@@ -9,8 +9,6 @@ const router = useRouter();
 const inputStore = useInputStore();
 const { draftRoomIds } = storeToRefs(inputStore);
 const scheduledMessageJobCount = await $trpc.message.scheduledMessageJob.readMyScheduledJobsCount.query();
-const draftCount = computed(() => draftRoomIds.value.size);
-const scheduledCount = computed(() => scheduledMessageJobCount);
 const items = computed(
   () =>
     [
@@ -24,8 +22,8 @@ const items = computed(
       },
       {
         badges: [
-          { count: draftCount.value, icon: "mdi-pencil" },
-          { count: scheduledCount.value, icon: "mdi-clock-outline" },
+          { count: draftRoomIds.value.size, icon: "mdi-pencil" },
+          { count: scheduledMessageJobCount, icon: "mdi-clock-outline" },
         ].filter(({ count }) => count > 0),
         icon: "mdi-send-outline",
         onClick: async () => {

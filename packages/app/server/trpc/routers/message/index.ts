@@ -8,6 +8,7 @@ import type {
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
+import { readMySentMessagesInputSchema } from "#shared/models/db/message/ReadMySentMessagesInput";
 import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
@@ -29,6 +30,7 @@ import { messageEventEmitter } from "@@/server/services/message/events/messageEv
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
+import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
@@ -39,6 +41,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
@@ -448,6 +451,9 @@ export const baseMessageRouter = router({
     },
   ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
+  readMySentMessages: standardAuthedProcedure
+    .input(readMySentMessagesInputSchema)
+    .query(({ ctx, input }) => readMySentMessages(input, ctx.db, ctx.getSessionPayload.user.id)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
