@@ -14,6 +14,7 @@ const color = {
   red: (text: string) => (isColorEnabled ? `\u001B[31m${text}\u001B[39m` : text),
   yellow: (text: string) => (isColorEnabled ? `\u001B[33m${text}\u001B[39m` : text),
 };
+// oxlint-disable-next-line no-control-regex -- matching ANSI escape sequences requires the ESC control character
 const ansiPattern = /\u001B\[[\d;]+m/gu;
 
 const getVisibleLength = (text: string) => text.replace(ansiPattern, "").length;

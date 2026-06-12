@@ -134,6 +134,7 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
     const count = documents.length;
     const paginatedDocuments = documents.slice(skip, top === undefined ? undefined : skip + top);
     const results = {
+      // oxlint-disable-next-line typescript/require-await -- async is required for the AsyncIterator protocol even though no await is needed
       async *[Symbol.asyncIterator](): AsyncGenerator<{ document: TModel }> {
         for (const document of paginatedDocuments) yield { document: document as TModel };
       },
