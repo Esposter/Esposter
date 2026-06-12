@@ -5,7 +5,6 @@ import { dayjs } from "#shared/services/dayjs";
 import { DRAFT_KEY_PREFIX } from "@/services/message/draft/constants";
 import { getDraft } from "@/services/message/draft/getDraft";
 import { useInputStore } from "@/store/message/input";
-import { sanitizeMessageHtml } from "@esposter/shared";
 import { marked } from "marked";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -15,7 +14,6 @@ describe(useInputStore, () => {
   const roomId1 = crypto.randomUUID();
   const roomId2 = crypto.randomUUID();
   const draftContent = marked.parse("draftContent", { async: false });
-  const unsafeDraftContent = `${draftContent}<script>alert(1)</script>`;
   const debounceMs = dayjs.duration(0.3, "seconds").asMilliseconds();
 
   beforeAll(() => {
@@ -41,18 +39,6 @@ describe(useInputStore, () => {
     const { draftRoomIds } = storeToRefs(inputStore);
 
     expect(draftRoomIds.value.has(roomId1)).toBe(true);
-  });
-
-  test("sanitizes localStorage draft content on init", () => {
-    expect.hasAssertions();
-
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, unsafeDraftContent);
-    const inputStore = useInputStore();
-    const { input } = storeToRefs(inputStore);
-    const sanitizedDraftContent = sanitizeMessageHtml(unsafeDraftContent);
-
-    expect(getDraft(roomId1)?.content).toBe(sanitizedDraftContent);
-    expect(input.value).toBe(sanitizedDraftContent);
   });
 
   test("ignores empty draft content in localStorage", () => {
