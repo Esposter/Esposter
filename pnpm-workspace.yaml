@@ -243,7 +243,7 @@ catalogMode: strict
 cleanupUnusedCatalogs: true
 
 configDependencies:
-  "@pnpm/pacquet": ^0.11.3
+  "@pnpm/pacquet": ^0.11.5
 
 minimumReleaseAge: 0
 
