@@ -186,41 +186,22 @@ import { PermissionItems } from "@/services/permission/PermissionItems";
 
 ## Shared List-Item Shell with an Action Slot
 
-When **multiple list components** render the same item layout (avatar/title/prepend) but each needs **different trailing actions**, extract the shared shell into one item component that exposes a named `#append` (action) slot. Each list keeps only its distinct buttons; the avatar/title markup lives in one place.
+When **multiple list components** (different data sources/stores) render the same item layout but need **different trailing actions**, extract the shared shell into one item component with a named `#append` slot. Distinct from the array + `v-for` pattern above: there a single array drives the rows; here only the shell is shared.
 
 ```vue
-<!-- MessageFriendsUserListItem.vue — the shared shell -->
-<script setup lang="ts">
-import type { User } from "better-auth";
+<!-- shared shell: prepend + title fixed, actions via slot -->
+<v-list-item :title="name">
+  <template #prepend><v-avatar size="36" mr-3>...</v-avatar></template>
+  <template #append><slot name="append" /></template>
+</v-list-item>
 
-interface MessageFriendsUserListItemProps {
-  image?: User["image"];
-  name: User["name"];
-}
-
-const { image, name } = defineProps<MessageFriendsUserListItemProps>();
-</script>
-<template>
-  <v-list-item :title="name">
-    <template #prepend>
-      <v-avatar size="36" mr-3>
-        <v-img v-if="image" :src="image" />
-        <span v-else>{{ name[0] }}</span>
-      </v-avatar>
-    </template>
-    <template #append><slot name="append" /></template>
-  </v-list-item>
-</template>
-
-<!-- Each list supplies only its actions -->
+<!-- each list supplies only its buttons -->
 <MessageFriendsUserListItem v-for="{ id, name, image } of friends" :key="id" :image :name>
-  <template #append>
-    <v-btn text="Remove" @click="$trpc.friend.deleteFriend.mutate(id)" />
-  </template>
+  <template #append><v-btn text="Remove" @click="$trpc.friend.deleteFriend.mutate(id)" /></template>
 </MessageFriendsUserListItem>
 ```
 
-Trigger: the same `v-list-item` + prepend block copy-pasted across 2+ list components (e.g. friends list, blocked list, request list, user search). This is distinct from the array + `v-for` pattern above — here the **rows come from different data sources/stores**, so you share the item shell (a component with a slot), not a single rendered array.
+Trigger: the same `v-list-item` + prepend block copy-pasted across 2+ lists (friends / blocked / requests / search).
 
 ## Permission-Filtered Action Items: Composable + v-for
 

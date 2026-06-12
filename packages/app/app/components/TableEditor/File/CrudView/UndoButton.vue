@@ -3,19 +3,13 @@ import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/
 
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
-import { sanitizeHtml } from "@esposter/shared";
-import { marked } from "marked";
 
 const tableEditorStore = useTableEditorStore<DataSourceItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 const fileHistoryStore = useFileHistoryStore();
 const { undo } = fileHistoryStore;
 const { isUndoable, undoDescription } = storeToRefs(fileHistoryStore);
-const tooltipHtml = computed(() => {
-  const [title, ...rest] = (undoDescription.value ?? "").split("\n\n");
-  const parts = [`Undo: ${title} *(Ctrl+Z)*`, ...rest];
-  return sanitizeHtml(marked.parse(parts.join("\n\n"), { async: false }));
-});
+const tooltipHtml = useHistoryTooltipHtml(undoDescription, "Undo", "Ctrl+Z");
 
 onKeyStroke(["z", "Z"], (event) => {
   if ((!event.ctrlKey && !event.metaKey) || event.shiftKey) return;

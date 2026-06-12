@@ -13,7 +13,7 @@ describe(MockSearchClient, () => {
   test("filters by searchText across searchFields", async () => {
     expect.hasAssertions();
 
-    const client = new MockSearchClient<Record<string, unknown>>(indexName);
+    const client = new MockSearchClient(indexName);
     await client.uploadDocuments([
       { message: "needle", rowKey: "0", title: "ignored" },
       { message: "haystack", rowKey: "1", title: "needle" },
@@ -29,7 +29,7 @@ describe(MockSearchClient, () => {
   test("filters nested collection searchFields", async () => {
     expect.hasAssertions();
 
-    const client = new MockSearchClient<Record<string, unknown>>(indexName);
+    const client = new MockSearchClient(indexName);
     await client.uploadDocuments([
       { files: [{ filename: "needle" }], rowKey: "0" },
       { files: [{ filename: "haystack" }], rowKey: "1" },

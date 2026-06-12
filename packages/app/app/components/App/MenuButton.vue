@@ -27,17 +27,6 @@ const menu = ref(false);
         </template>
       </v-tooltip>
     </template>
-    <v-list min-width="250">
-      <NuxtInvisibleLink v-for="{ title, href, icon } of items" :key="title" :to="href" @click="menu = false">
-        <v-list-item :value="title">
-          <template #prepend>
-            <v-avatar color="background">
-              <v-icon :icon />
-            </v-avatar>
-          </template>
-          <v-list-item-title font-bold>{{ title }}</v-list-item-title>
-        </v-list-item>
-      </NuxtInvisibleLink>
-    </v-list>
+    <AppMenuLinkList :items @select="menu = false" />
   </v-menu>
 </template>

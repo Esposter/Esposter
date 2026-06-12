@@ -51,14 +51,9 @@ export const useEmojiExtension = () => EmojiExtension.configure({ suggestion: Em
 
 ### Never inline extensions in components
 
-Any `new Extension({ ... })`, `Extension.create({ ... })`, or `addProseMirrorPlugins`/`new Plugin` logic belongs in a `use*Extension` composable in `app/composables/message/editor/` — never inline in a `.vue` `<script setup>`. A component's job is to compose extensions, not define them.
+`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable in `app/composables/message/editor/`, never in a `.vue` `<script setup>`. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
 
-- The composable pulls whatever it needs (stores, session, refs) itself, so the component drops those imports. Make it `async` if it awaits (e.g. `authClient.useSession`) and `await` it at the call site.
-- A reactive value the plugin must read/write (e.g. a cursor-style `Ref` for `v-bind` in CSS) is passed in as a parameter and stored via `addOptions()`; the plugin mutates `this.options.x.value`. This removes hacks like hijacking another extension's options with `@ts-expect-error`.
-
-Reference extractions: `useKeyboardShortcutsExtension` (keyboard shortcuts reading the data/message stores), `useLinkClickExtension(cursorStyle)` (Ctrl/Cmd-click-to-open + cursor style for the link mark).
-
-Single-use exception: an extension wiring only two local component callbacks (e.g. `Message/Model/Message/Editor.vue`'s Enter/Esc handlers) may stay inline — extracting it would be a useless one-liner composable.
+Exception: an extension wiring only a couple of local component callbacks (e.g. `Editor.vue`'s Enter/Esc) may stay inline.
 
 ### SuggestionTrigger enum
 
@@ -103,4 +98,4 @@ const slashCommandExtension = useSlashCommandExtension();
 :extensions="[keyboardExtension, codeBlockExtension, emojiExtension, mentionExtension, slashCommandExtension]"
 ```
 
-Every entry is a `use*Extension()` call — no inline definitions. The `RichTextEditor` component itself owns only the always-on extensions (`StarterKit`, `CharacterCount`, `Placeholder`, `FileHandler`, `useLinkClickExtension`); feature extensions are passed in via the `:extensions` prop.
+Every entry is a `use*Extension()` call. `RichTextEditor` owns only the always-on extensions (`StarterKit`, `CharacterCount`, `Placeholder`, `FileHandler`, `useLinkClickExtension`); feature extensions come via the `:extensions` prop.

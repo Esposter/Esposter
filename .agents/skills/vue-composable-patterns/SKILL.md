@@ -132,12 +132,11 @@ const uniqueNameRule = (v: string) => v === column.name || !columns.some(...) ||
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name) // edit
 ```
 
-## Extract Duplicate Mutation Blocks — Builder Argument for Discriminated-Union Inputs
+## Extract Duplicate Mutation Blocks — Builder Arg for Discriminated-Union Inputs
 
-When the same mutation block (store/context lookup + guard + `withFinalizerAsync` + `$trpc.x.mutate`) is copy-pasted across sibling components that differ only in the payload, extract a composable. When the mutation input is a **discriminated union** (e.g. the action `type` selects extra fields), do **not** type the param as `Except<Input, "sharedField">` and spread `{ ...input, sharedField }` — spreading a union member and re-adding a key fails to narrow back to the union (TS error) and tempts an `as` cast. Instead pass a **builder** `(sharedField) => Input` so each caller constructs a complete, correctly-typed union member:
+Same mutation block (lookup + guard + `withFinalizerAsync` + `$trpc.x.mutate`) copy-pasted across siblings differing only in payload → extract a composable. When the input is a **discriminated union**, don't type the param `Except<Input, "field">` and spread `{ ...input, field }` — that won't narrow back to the union (TS error, tempts `as`). Pass a **builder** `(field) => Input` so each caller builds a complete union member:
 
 ```ts
-// app/composables/message/moderation/useExecuteAdminAction.ts
 export const useExecuteAdminAction = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
@@ -148,16 +147,10 @@ export const useExecuteAdminAction = () => {
       await $trpc.message.moderation.executeAdminAction.mutate(getInput(currentRoom.value.id));
     }, onComplete);
 };
+// caller: @delete="(onComplete) => executeAdminAction((roomId) => ({ roomId, targetUserId: user.id, type: AdminActionType.CreateBan }), onComplete)"
 ```
 
-```vue
-<!-- Each dialog supplies only its distinct payload; guard + finalizer + roomId live in the composable -->
-@delete="(onComplete) => executeAdminAction((roomId) => ({ roomId, targetUserId: user.id, type:
-AdminActionType.CreateBan }), onComplete)" @submit="(_event, onComplete) => executeAdminAction((roomId) => ({
-durationMs: selectedTimeoutDurationMs, roomId, targetUserId: user.id, type: AdminActionType.TimeoutUser }), onComplete)"
-```
-
-The builder keeps it fully type-safe (the literal `{ roomId, type, ... }` is checked against the union at each call site) with no `Except`, no spread, no cast. Callers drop the store/`$trpc`/`withFinalizerAsync` setup entirely.
+Type-safe (literal checked against the union per call site), no `Except`/spread/cast; callers drop the store/`$trpc`/finalizer setup.
 
 ## Settings Tab Permissions — Hide at the Tab Level
 
