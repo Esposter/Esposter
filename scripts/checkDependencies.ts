@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -329,19 +329,28 @@ const getOutdatedDependents = (dependentPackages: unknown) => {
   );
 };
 
-const getRegularOutdatedDependencies = () => {
-  const command = process.platform === "win32" ? "cmd.exe" : "pnpm";
-  const args =
-    process.platform === "win32"
-      ? ["/d", "/s", "/c", "pnpm", "outdated", "-r", "--format", "json"]
-      : ["outdated", "-r", "--format", "json"];
-  const result = spawnSync(command, args, {
-    cwd: root,
-    encoding: "utf8",
+const runPnpmOutdated = () =>
+  new Promise<{ error?: string; status: number | null; stderr: string; stdout: string }>((resolvePromise) => {
+    const command = process.platform === "win32" ? "cmd.exe" : "pnpm";
+    const args =
+      process.platform === "win32"
+        ? ["/d", "/s", "/c", "pnpm", "outdated", "-r", "--format", "json"]
+        : ["outdated", "-r", "--format", "json"];
+    const child = spawn(command, args, { cwd: root });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", (chunk: string) => (stdout += chunk));
+    child.stderr.on("data", (chunk: string) => (stderr += chunk));
+    child.on("error", (error) => resolvePromise({ error: error.message, status: null, stderr, stdout }));
+    child.on("close", (status) => resolvePromise({ status, stderr, stdout }));
   });
 
-  if (result.error)
-    return { errors: [{ error: result.error.message, pkg: "pnpm outdated -r" }], outdatedDependencies: [] };
+const getRegularOutdatedDependencies = async () => {
+  const result = await runPnpmOutdated();
+
+  if (result.error) return { errors: [{ error: result.error, pkg: "pnpm outdated -r" }], outdatedDependencies: [] };
 
   // Pnpm interleaves "[WARN] ..." retry notices into stdout, so isolate the JSON object (printed at column 0).
   const jsonStart = result.stdout.search(/^\{/mu);
@@ -472,8 +481,10 @@ const mismatches = [
 printUncatalogedManifestDependencies(uncatalogedManifestDependencies);
 printMismatches(mismatches);
 
-const regularChecks = getRegularOutdatedDependencies();
-const configDependencyChecks = await getConfigDependencyRegistryChecks(configDependencyEntries);
+const [regularChecks, configDependencyChecks] = await Promise.all([
+  getRegularOutdatedDependencies(),
+  getConfigDependencyRegistryChecks(configDependencyEntries),
+]);
 const outdatedDependencies = [...regularChecks.outdatedDependencies, ...configDependencyChecks.outdatedDependencies];
 const errors = [...regularChecks.errors, ...configDependencyChecks.errors];
 printOutdatedDependencies(outdatedDependencies);

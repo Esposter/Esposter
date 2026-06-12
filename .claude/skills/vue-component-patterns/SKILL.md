@@ -184,6 +184,25 @@ import { PermissionItems } from "@/services/permission/PermissionItems";
 - 2 items — extract if they'll grow or props are non-trivial
 - Items differing in non-trivial ways (different slots, conditional logic) — keep separate or use a dispatcher child
 
+## Shared List-Item Shell with an Action Slot
+
+When **multiple list components** (different data sources/stores) render the same item layout but need **different trailing actions**, extract the shared shell into one item component with a named `#append` slot. Distinct from the array + `v-for` pattern above: there a single array drives the rows; here only the shell is shared.
+
+```vue
+<!-- shared shell: prepend + title fixed, actions via slot -->
+<v-list-item :title="name">
+  <template #prepend><v-avatar size="36" mr-3>...</v-avatar></template>
+  <template #append><slot name="append" /></template>
+</v-list-item>
+
+<!-- each list supplies only its buttons -->
+<MessageFriendsUserListItem v-for="{ id, name, image } of friends" :key="id" :image :name>
+  <template #append><v-btn text="Remove" @click="$trpc.friend.deleteFriend.mutate(id)" /></template>
+</MessageFriendsUserListItem>
+```
+
+Trigger: the same `v-list-item` + prepend block copy-pasted across 2+ lists (friends / blocked / requests / search).
+
 ## Permission-Filtered Action Items: Composable + v-for
 
 When list items or icon buttons are guarded by `v-if` permission checks, **move filtering into a composable** — the template gets a plain `v-for` with no conditions.

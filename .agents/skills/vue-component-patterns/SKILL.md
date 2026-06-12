@@ -184,6 +184,44 @@ import { PermissionItems } from "@/services/permission/PermissionItems";
 - 2 items — extract if they'll grow or props are non-trivial
 - Items differing in non-trivial ways (different slots, conditional logic) — keep separate or use a dispatcher child
 
+## Shared List-Item Shell with an Action Slot
+
+When **multiple list components** render the same item layout (avatar/title/prepend) but each needs **different trailing actions**, extract the shared shell into one item component that exposes a named `#append` (action) slot. Each list keeps only its distinct buttons; the avatar/title markup lives in one place.
+
+```vue
+<!-- MessageFriendsUserListItem.vue — the shared shell -->
+<script setup lang="ts">
+import type { User } from "better-auth";
+
+interface MessageFriendsUserListItemProps {
+  image?: User["image"];
+  name: User["name"];
+}
+
+const { image, name } = defineProps<MessageFriendsUserListItemProps>();
+</script>
+<template>
+  <v-list-item :title="name">
+    <template #prepend>
+      <v-avatar size="36" mr-3>
+        <v-img v-if="image" :src="image" />
+        <span v-else>{{ name[0] }}</span>
+      </v-avatar>
+    </template>
+    <template #append><slot name="append" /></template>
+  </v-list-item>
+</template>
+
+<!-- Each list supplies only its actions -->
+<MessageFriendsUserListItem v-for="{ id, name, image } of friends" :key="id" :image :name>
+  <template #append>
+    <v-btn text="Remove" @click="$trpc.friend.deleteFriend.mutate(id)" />
+  </template>
+</MessageFriendsUserListItem>
+```
+
+Trigger: the same `v-list-item` + prepend block copy-pasted across 2+ list components (e.g. friends list, blocked list, request list, user search). This is distinct from the array + `v-for` pattern above — here the **rows come from different data sources/stores**, so you share the item shell (a component with a slot), not a single rendered array.
+
 ## Permission-Filtered Action Items: Composable + v-for
 
 When list items or icon buttons are guarded by `v-if` permission checks, **move filtering into a composable** — the template gets a plain `v-for` with no conditions.

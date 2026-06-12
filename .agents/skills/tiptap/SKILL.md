@@ -49,6 +49,17 @@ const EmojiExtension = Extension.create({
 export const useEmojiExtension = () => EmojiExtension.configure({ suggestion: EmojiSuggestion });
 ```
 
+### Never inline extensions in components
+
+Any `new Extension({ ... })`, `Extension.create({ ... })`, or `addProseMirrorPlugins`/`new Plugin` logic belongs in a `use*Extension` composable in `app/composables/message/editor/` — never inline in a `.vue` `<script setup>`. A component's job is to compose extensions, not define them.
+
+- The composable pulls whatever it needs (stores, session, refs) itself, so the component drops those imports. Make it `async` if it awaits (e.g. `authClient.useSession`) and `await` it at the call site.
+- A reactive value the plugin must read/write (e.g. a cursor-style `Ref` for `v-bind` in CSS) is passed in as a parameter and stored via `addOptions()`; the plugin mutates `this.options.x.value`. This removes hacks like hijacking another extension's options with `@ts-expect-error`.
+
+Reference extractions: `useKeyboardShortcutsExtension` (keyboard shortcuts reading the data/message stores), `useLinkClickExtension(cursorStyle)` (Ctrl/Cmd-click-to-open + cursor style for the link mark).
+
+Single-use exception: an extension wiring only two local component callbacks (e.g. `Message/Model/Message/Editor.vue`'s Enter/Esc handlers) may stay inline — extracting it would be a useless one-liner composable.
+
 ### SuggestionTrigger enum
 
 Trigger characters live in `app/services/message/SuggestionTrigger.ts`. Never hardcode `"/"`, `":"`, or `"@"` as string literals in suggestion configs or component templates:
@@ -81,6 +92,8 @@ With `v-if`, `VueRenderer.element` returns a comment node when the condition is 
 In `app/components/Message/Model/Message/Input/Index.vue`, each extension is instantiated as a `const` and passed in the `:extensions` array:
 
 ```ts
+const keyboardExtension = await useKeyboardShortcutsExtension();
+const codeBlockExtension = useCodeBlockExtension();
 const emojiExtension = useEmojiExtension();
 const mentionExtension = useMentionExtension();
 const slashCommandExtension = useSlashCommandExtension();
@@ -89,3 +102,5 @@ const slashCommandExtension = useSlashCommandExtension();
 ```html
 :extensions="[keyboardExtension, codeBlockExtension, emojiExtension, mentionExtension, slashCommandExtension]"
 ```
+
+Every entry is a `use*Extension()` call — no inline definitions. The `RichTextEditor` component itself owns only the always-on extensions (`StarterKit`, `CharacterCount`, `Placeholder`, `FileHandler`, `useLinkClickExtension`); feature extensions are passed in via the `:extensions` prop.
