@@ -1,4 +1,3 @@
-import "@/util/bigintPolyfill";
 import { SNAPSHOT_FILENAME } from "@/constants";
 import { createMockDb } from "@/createMockDb";
 import { PGlite } from "@electric-sql/pglite";

@@ -1,6 +1,6 @@
 ---
 name: dependency-updates
-description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, caret prefix rules, pinned packages (h3, PGlite, vue-tsc), and tracked open issues. Apply when updating package versions.
+description: Esposter dependency update process — all versions in pnpm-workspace.yaml catalog, caret prefix rules, pinned packages (h3, vue-tsc), and tracked open issues. Apply when updating package versions.
 ---
 
 # Dependency Updates
@@ -14,10 +14,11 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 3. **Tell the user to refresh the lockfile** — do NOT run it yourself. Have them run `pnpm refresh:lockfile` from the repo root.
 4. **Verify dependency sync** — after refresh, run `node scripts/checkDependencies.ts` again. It verifies package manifests use `catalog:` or `workspace:`, checks catalog and configDependency specifier bases against lockfile resolutions, and checks catalog/configDependency entries against npm registry latest versions. Use the pinned and tracked-issue notes below to decide which reported updates to skip. Fix reported mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
 
+When `@electric-sql/pglite` changes between minor versions, regenerate the db-mock data directory snapshot from `packages/db-mock/` with `pnpm snapshot:gen`, then verify the db-mock tests. The committed `packages/db-mock/src/snapshot.tar.gz` is tied to PGlite's dump format and may need refreshing even without schema changes.
+
 ## Pinned packages (do not update)
 
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
-- **`@electric-sql/pglite`** — pinned to `0.4.6` (no `^`) because newer versions are blocked by https://github.com/electric-sql/pglite/issues/1019.
 - **`@vue/language-core`, `vue-tsc`** — pinned to `3.3.3` (no `^`); 3.3.4 is broken per https://github.com/vuejs/language-tools/issues/6096.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)

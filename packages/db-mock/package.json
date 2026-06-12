@@ -39,7 +39,7 @@
     "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "snapshot:gen": "tsx --import ./src/util/bigintPolyfill.ts scripts/generateSnapshot.ts",
+    "snapshot:gen": "tsx scripts/generateSnapshot.ts",
     "test": "vitest",
     "typecheck": "tsgo"
   },

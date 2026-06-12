@@ -1,7 +1,6 @@
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { SNAPSHOT_FILENAME } from "@/constants";
-import "@/util/bigintPolyfill";
 import { PGlite } from "@electric-sql/pglite";
 import { relations } from "@esposter/db-schema";
 import { drizzle } from "drizzle-orm/pglite";

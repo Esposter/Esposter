@@ -82,7 +82,7 @@ The default mock session is always the **base user** (inserted by `createMockCon
   ```
 - **`mockSessionOnce(db, existingUser)`** — requeues an existing user's session without re-inserting. Use for non-owner member operations.
 - **Target: 1 `mockSessionOnce` per test** — one for non-owner user creation; all owner operations use the default.
-- **`replayMockSession`** — only when the same session payload must be reused across multiple calls.
+- **`replayMockSession`** — only when the exact same session payload must be reused across multiple calls, especially when `session.id` is part of the behavior under test. If only the same user matters, prefer `mockSessionOnce(db, user)` so the test does not couple itself to session identity. If the payload comes from a newly created `mockSessionOnce(db)` user and setup should continue as the default owner, first consume the queued slot with `getMockSession()`.
 - **`getMockSession().session.id` is unstable** (new UUID each call); `user.id` is stable.
 
 ## DB Cleanup and Setup
