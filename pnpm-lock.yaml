@@ -1154,9 +1154,6 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
-      sanitize-html:
-        specifier: 'catalog:'
-        version: 2.17.5
       show-open-file-picker:
         specifier: 'catalog:'
         version: 0.4.0
@@ -1290,9 +1287,6 @@ importers:
       '@types/pluralize':
         specifier: 'catalog:'
         version: 0.0.33
-      '@types/sanitize-html':
-        specifier: 'catalog:'
-        version: 2.16.1
       '@types/three':
         specifier: 'catalog:'
         version: 0.184.1
@@ -1816,6 +1810,9 @@ importers:
       node-html-parser:
         specifier: 'catalog:'
         version: 7.1.0
+      sanitize-html:
+        specifier: 'catalog:'
+        version: 2.17.5
       vue:
         specifier: 'catalog:'
         version: 3.5.38(typescript@6.0.3)
@@ -1832,6 +1829,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 25.9.3
+      '@types/sanitize-html':
+        specifier: 'catalog:'
+        version: 2.16.1
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.1.8(vitest@4.1.8)

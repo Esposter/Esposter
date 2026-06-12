@@ -1,13 +1,13 @@
-import { sanitizeMessageHtml } from "@/services/sanitizeHtml/sanitizeMessageHtml";
+import { MentionType } from "@/models/message/MentionType";
 import {
-  getMentions,
   MENTION_ID_ATTRIBUTE,
   MENTION_ITEM_TYPE_ATTRIBUTE,
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
-  MentionType,
-  takeOne,
-} from "@esposter/shared";
+} from "@/services/message/constants";
+import { getMentions } from "@/services/message/getMentions";
+import { sanitizeMessageHtml } from "@/services/sanitizeHtml/sanitizeMessageHtml";
+import { takeOne } from "@/util/array/takeOne";
 import { describe, expect, test } from "vitest";
 
 describe(sanitizeMessageHtml, () => {
@@ -27,7 +27,7 @@ describe(sanitizeMessageHtml, () => {
   test("strips script tags and their content", () => {
     expect.hasAssertions();
 
-    expect(sanitizeMessageHtml(`<p>hi</p><script>alert(1)</script>`)).toBe("<p>hi</p>");
+    expect(sanitizeMessageHtml("<p>hi</p><script>alert(1)</script>")).toBe("<p>hi</p>");
   });
 
   test("strips inline event handler attributes", () => {

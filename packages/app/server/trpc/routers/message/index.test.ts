@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 
+import type { useSearchClient as baseUseSearchClient } from "@@/server/composables/azure/search/useSearchClient";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { useSearchClient as baseUseSearchClient } from "@@/server/composables/azure/search/useSearchClient";
 import type { SelectFields } from "@azure/search-documents";
 import type { Clause, MessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";

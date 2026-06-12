@@ -34,12 +34,14 @@
   },
   "dependencies": {
     "neverthrow": "catalog:",
-    "node-html-parser": "catalog:"
+    "node-html-parser": "catalog:",
+    "sanitize-html": "catalog:"
   },
   "devDependencies": {
     "@azure/data-tables": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
+    "@types/sanitize-html": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:",

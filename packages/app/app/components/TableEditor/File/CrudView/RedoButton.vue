@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
-import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
+import { sanitizeHtml } from "@esposter/shared";
 import { marked } from "marked";
 
 const tableEditorStore = useTableEditorStore<DataSourceItem>();

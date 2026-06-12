@@ -1,10 +1,10 @@
-import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import {
   MENTION_ID_ATTRIBUTE,
   MENTION_ITEM_TYPE_ATTRIBUTE,
   MENTION_LABEL_ATTRIBUTE,
   MENTION_TYPE_ATTRIBUTE,
-} from "@esposter/shared";
+} from "@/services/message/constants";
+import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 
 export const sanitizeMessageHtml = (html: string) =>
   sanitizeHtml(html, {

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { dayjs } from "#shared/services/dayjs";
-import { sanitizeMessageHtml } from "@/services/sanitizeHtml/sanitizeMessageHtml";
 import { formRules } from "@/services/vuetify/formRules";
 import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
 import { useRoomStore } from "@/store/message/room";
@@ -46,11 +45,11 @@ watch(isOpen, (newIsOpen) => {
             await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
               roomId,
               runAt: scheduledAt,
-              text: sanitizeMessageHtml(text),
+              text,
             });
           else
             await $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
-              message: sanitizeMessageHtml(marked.parse(text, { async: false })),
+              message: marked.parse(text, { async: false }),
               roomId,
               runAt: scheduledAt,
             });

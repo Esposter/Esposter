@@ -30,8 +30,8 @@ import { messageEventEmitter } from "@@/server/services/message/events/messageEv
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
-import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
 import { readMessages } from "@@/server/services/message/readMessages";
+import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
@@ -451,9 +451,6 @@ export const baseMessageRouter = router({
     },
   ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
-  readMySentMessages: standardAuthedProcedure
-    .input(readMySentMessagesInputSchema)
-    .query(({ ctx, input }) => readMySentMessages(input, ctx.db, ctx.getSessionPayload.user.id)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
@@ -472,6 +469,9 @@ export const baseMessageRouter = router({
       });
     },
   ),
+  readMySentMessages: standardAuthedProcedure
+    .input(readMySentMessagesInputSchema)
+    .query(({ ctx, input }) => readMySentMessages(input, ctx.db, ctx.getSessionPayload.user.id)),
   readThread: getMemberProcedure(readThreadInputSchema, "roomId").query(async ({ input: { roomId, rootRowKey } }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
     const [rootMessage, replyClauses] = await Promise.all([

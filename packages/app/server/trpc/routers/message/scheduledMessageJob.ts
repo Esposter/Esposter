@@ -1,5 +1,5 @@
-import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
+import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
 
 import { cancelScheduledMessageJobInputSchema } from "#shared/models/db/message/scheduledMessageJob/CancelScheduledMessageJobInput";
@@ -49,22 +49,6 @@ export const scheduledMessageJobRouter = router({
         "NOT_FOUND",
       ),
     ),
-  readScheduledJobs: getMemberProcedure(readScheduledMessageJobsInputSchema, "roomId").query<
-    ScheduledMessageJobInMessage[]
-  >(({ ctx, input }) =>
-    ctx.db
-      .select()
-      .from(scheduledMessageJobsInMessage)
-      .where(
-        and(
-          eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-          eq(scheduledMessageJobsInMessage.roomId, input.roomId),
-          isNull(scheduledMessageJobsInMessage.cancelledAt),
-          isNull(scheduledMessageJobsInMessage.completedAt),
-        ),
-      )
-      .orderBy(asc(scheduledMessageJobsInMessage.runAt)),
-  ),
   readMyScheduledJobs: standardAuthedProcedure
     .input(readMyScheduledMessageJobsInputSchema)
     .query<OffsetPaginationData<ScheduledMessageJobInMessageWithRoom>>(async ({ ctx, input: { limit, offset } }) => {
@@ -107,6 +91,22 @@ export const scheduledMessageJobRouter = router({
             ),
           )
       )[0]?.count ?? 0,
+  ),
+  readScheduledJobs: getMemberProcedure(readScheduledMessageJobsInputSchema, "roomId").query<
+    ScheduledMessageJobInMessage[]
+  >(({ ctx, input }) =>
+    ctx.db
+      .select()
+      .from(scheduledMessageJobsInMessage)
+      .where(
+        and(
+          eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
+          eq(scheduledMessageJobsInMessage.roomId, input.roomId),
+          isNull(scheduledMessageJobsInMessage.cancelledAt),
+          isNull(scheduledMessageJobsInMessage.completedAt),
+        ),
+      )
+      .orderBy(asc(scheduledMessageJobsInMessage.runAt)),
   ),
   scheduleMessage: getMemberProcedure(scheduleMessageInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
     async ({ ctx, input }) => {
