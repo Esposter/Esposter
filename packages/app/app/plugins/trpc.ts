@@ -31,10 +31,12 @@ export default defineNuxtPlugin((nuxtApp) => {
     ...(getIsServer() ? [] : [createOfflineLink(online)]),
     errorLink,
   ];
+  // Absolute URL required so SSR fetch doesn't throw "Invalid URL" on a relative path; works client-side too.
+  const url = new URL(TRPC_CLIENT_PATH, useRequestURL().origin).href;
   const httpSplitLink = splitLink({
     condition: ({ input }) => isNonJsonSerializable(input),
-    false: httpBatchLink({ transformer, url: TRPC_CLIENT_PATH }),
-    true: httpLink({ transformer, url: TRPC_CLIENT_PATH }),
+    false: httpBatchLink({ transformer, url }),
+    true: httpLink({ transformer, url }),
   });
 
   if (getIsServer()) links.push(httpSplitLink);
