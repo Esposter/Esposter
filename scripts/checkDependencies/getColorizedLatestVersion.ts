@@ -11,10 +11,7 @@ export const getColorizedLatestVersion = (current: string, latest: string, color
   if (changeLevel === 1) return `${latestParts.major}${color.yellow(latest.slice(String(latestParts.major).length))}`;
 
   const currentParts = getVersionParts(current);
-
-  // Same base version but the latest is a prerelease (e.g. a nightly `7.0.0-dev.20260613.1`):
-  // Keep the semver base and prerelease label (`7.0.0-dev.`) plain and highlight only the changed
-  // Build/date tail (`20260613.1`) in red, starting from the first digit of the prerelease.
+  // For a prerelease bump on the same base, highlight only the changed build tail (from its first digit) in red.
   if (
     currentParts.patch === latestParts.patch &&
     latestParts.prerelease &&

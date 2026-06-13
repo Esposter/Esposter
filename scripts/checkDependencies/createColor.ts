@@ -1,7 +1,5 @@
 import type { ColorPalette } from "@/checkDependencies/models/ColorPalette";
-
-// ANSI Select Graphic Rendition escape sequences. `escape` is the ESC control character (U+001B);
-// 39 resets the foreground color back to the default.
+// ANSI SGR escape sequences for terminal color; the reset code returns the foreground to the default.
 const escape = String.fromCodePoint(27);
 const reset = `${escape}[39m`;
 const wrap = (code: number, text: string) => `${escape}[${code}m${text}${reset}`;
