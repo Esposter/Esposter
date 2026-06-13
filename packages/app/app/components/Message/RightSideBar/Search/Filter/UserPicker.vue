@@ -34,18 +34,17 @@ if (currentRoomId.value) appUsers.value = await $trpc.webhook.readAppUsers.query
           <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
         </template>
       </MessageModelMemberListItem>
-
-      <v-list-item v-for="appUser of appUsers" :key="appUser.id" @click="emit('select', appUser.id)">
-        <template #prepend>
-          <StyledAvatar :name="appUser.name" />
-        </template>
-        <v-list-item-title>{{ appUser.name }}</v-list-item-title>
-        <v-list-item-subtitle>App</v-list-item-subtitle>
+      <MessageModelMemberListItem
+        v-for="appUser of appUsers"
+        :key="appUser.id"
+        :member="appUser"
+        :room="currentRoom"
+        @click="emit('select', appUser.id)"
+      >
         <template #append="{ hoverProps: { isHovering } }">
           <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
         </template>
-      </v-list-item>
-
+      </MessageModelMemberListItem>
       <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
         <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>
