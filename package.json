@@ -29,13 +29,13 @@
     "lint:fix": "oxlint --disable-nested-config --fix && eslint --fix . && pnpm -r --parallel --aggregate-output run lint:fix",
     "lint:fix:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint:fix",
     "lint:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint",
-    "outdated:dependencies": "node scripts/checkDependencies.ts",
+    "outdated:dependencies": "tsx scripts/checkDependencies/index.ts",
     "prepare": "git config core.hooksPath .githooks || true",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm format && pnpm typecheck:packages && lerna publish --yes",
     "start": "pnpm --filter @esposter/app run start",
-    "test": "pnpm -r --parallel --aggregate-output run test",
+    "test": "vitest run scripts && pnpm -r --parallel --aggregate-output run test",
     "test:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run test",
     "typecheck": "tsgo && pnpm -r --parallel --aggregate-output run typecheck",
     "typecheck:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run typecheck",
@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
+    "@esposter/shared": "workspace:*",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
     "@types/node": "catalog:",
@@ -56,7 +57,8 @@
     "oxlint-tsgolint": "catalog:",
     "tsx": "catalog:",
     "typedoc": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": "^26.3.0"

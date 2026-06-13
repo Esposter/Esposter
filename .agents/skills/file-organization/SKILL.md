@@ -99,6 +99,8 @@ Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfi
   const bar = parseLockfile(yaml);
   ```
 
+- **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line; if an example helps, show only the minimal fragment that illustrates the point. Applies to `//`, `/* */`, and Vue `<!-- -->` comments alike.
+
 ## Creating a New Package
 
 New workspace packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
