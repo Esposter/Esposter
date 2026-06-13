@@ -6,16 +6,9 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { useSearchClient } from "@@/server/composables/azure/search/useSearchClient";
-import { deserializeKey, getSearchNullClause, serializeClauses } from "@esposter/db";
-import {
-  BinaryOperator,
-  MessageType,
-  roomsInMessage,
-  SearchIndex,
-  StandardMessageEntity,
-  StandardMessageEntityPropertyNames,
-  WebhookMessageEntity,
-} from "@esposter/db-schema";
+import { deserializeMessageSearchDocument } from "@@/server/services/message/deserializeMessageSearchDocument";
+import { getSearchNullClause, serializeClauses } from "@esposter/db";
+import { BinaryOperator, roomsInMessage, SearchIndex, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 import { inArray } from "drizzle-orm";
 
@@ -37,16 +30,7 @@ export const readMySentMessages = async (
     top: limit + 1,
   });
   const messages: MessageEntity[] = [];
-  for await (const { document } of results) {
-    const message = Object.fromEntries(
-      Object.entries(document).map(([key, value]) => [deserializeKey(key), value]),
-    ) as unknown as MessageEntity;
-    messages.push(
-      (message.type === MessageType.Webhook
-        ? new WebhookMessageEntity(message)
-        : new StandardMessageEntity(message)) as MessageEntity,
-    );
-  }
+  for await (const { document } of results) messages.push(deserializeMessageSearchDocument(document));
   const roomIds = [...new Set(messages.map(({ partitionKey }) => partitionKey))];
   const rooms =
     roomIds.length > 0 ? await db.select().from(roomsInMessage).where(inArray(roomsInMessage.id, roomIds)) : [];
