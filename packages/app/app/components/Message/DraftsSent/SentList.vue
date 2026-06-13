@@ -18,7 +18,9 @@ const sections = computed(() => getTimelineSections(items.value, ({ message }) =
         :room
       />
     </MessageDraftsSentSection>
-    <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
+    <div flex w-full justify-center>
+      <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
+    </div>
   </div>
   <MessageDraftsSentEmptyState v-else-if="!isPending" icon="mdi-send-outline" title="No sent messages" />
 </template>

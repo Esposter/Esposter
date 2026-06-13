@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/db-schema";
+import type { AppUserInMessage, SerializableValue } from "@esposter/db-schema";
 
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
@@ -11,7 +11,10 @@ const { isPending } = await readMembers();
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
 const roomStore = useRoomStore();
-const { currentRoom } = storeToRefs(roomStore);
+const { currentRoom, currentRoomId } = storeToRefs(roomStore);
+const { $trpc } = useNuxtApp();
+const appUsers = ref<AppUserInMessage[]>([]);
+if (currentRoomId.value) appUsers.value = await $trpc.webhook.readAppUsers.query({ roomId: currentRoomId.value });
 </script>
 
 <template>
@@ -31,6 +34,18 @@ const { currentRoom } = storeToRefs(roomStore);
           <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
         </template>
       </MessageModelMemberListItem>
+
+      <v-list-item v-for="appUser of appUsers" :key="appUser.id" @click="emit('select', appUser.id)">
+        <template #prepend>
+          <StyledAvatar :name="appUser.name" />
+        </template>
+        <v-list-item-title>{{ appUser.name }}</v-list-item-title>
+        <v-list-item-subtitle>App</v-list-item-subtitle>
+        <template #append="{ hoverProps: { isHovering } }">
+          <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
+        </template>
+      </v-list-item>
+
       <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
         <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>
