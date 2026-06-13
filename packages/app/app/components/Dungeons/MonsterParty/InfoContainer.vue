@@ -10,9 +10,7 @@ import { Container, onCreate, Rectangle, Text } from "vue-phaserjs";
 
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
-// It's unfortunate, but we have to access the internals
-// When we handle confirm inputs since we don't know where it comes from
-// I.e. it could be from this info container or from clicking the monster panel
+// Access internals on confirm: the input source is ambiguous (this container or the monster panel).
 const dialogStore = useDialogStore();
 const { isWaitingForPlayerSpecialInput } = storeToRefs(dialogStore);
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
@@ -27,8 +25,7 @@ onCreate((scene) => {
 });
 
 watchImmediate(cancelButtonActive, (newCancelButtonActive) => {
-  // We will keep info text as a ref as it can be set by other things
-  // E.g. when using items
+  // Info text stays a ref since other things set it (e.g. using items).
   infoDialogMessage.value.text = newCancelButtonActive ? "Go back to previous menu." : DEFAULT_INFO_DIALOG_MESSAGE;
 });
 </script>
@@ -45,10 +42,9 @@ watchImmediate(cancelButtonActive, (newCancelButtonActive) => {
       }"
       @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
         () => {
-          // We have multiple possible input sources that we have to disambiguate:
-          // 1. Monster Panel Item Input
-          // 2. Info Panel Input (this component)
-          // and this is only active when we are waiting for player special input
+          // Disambiguate two input sources, active only while waiting for player special input:
+          // 1. Monster panel item input
+          // 2. Info panel input (this component)
           if (isWaitingForPlayerSpecialInput) controls.setInput(PlayerSpecialInput.Confirm);
         }
       "

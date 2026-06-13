@@ -17,8 +17,7 @@ const isPinnedToBottom = useElementVisibility(bottomSentinel, { scrollTarget: me
 const getFirstVisibleMessageElement = () => {
   const element = messageContainerElement.value;
   if (!element) return undefined;
-  // Anchor to a real visible message instead of scrollHeight; column-reverse
-  // Scroll offsets vary enough that height deltas are easy to get subtly wrong.
+  // Anchor to a real visible message, not scrollHeight: column-reverse height deltas are easy to get subtly wrong.
   const { bottom: containerBottom, top: containerTop } = element.getBoundingClientRect();
   return [...element.querySelectorAll("[id]")].find((messageElement) => {
     const { bottom, top } = messageElement.getBoundingClientRect();
@@ -33,8 +32,7 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
     window.requestAnimationFrame(() => {
       const element = messageContainerElement.value;
       if (top !== undefined && firstVisibleMessageElement && element && !isScrolling.value) {
-        // Newer messages insert before the anchor, so compensate by exactly how
-        // Far that anchor moved after Vue rendered the new DOM.
+        // Newer messages insert before the anchor, so compensate by how far it moved after Vue rendered.
         const currentFirstVisibleMessageElement = window.document.getElementById(firstVisibleMessageElement.id);
         if (currentFirstVisibleMessageElement)
           element.scrollTop += currentFirstVisibleMessageElement.getBoundingClientRect().top - top;

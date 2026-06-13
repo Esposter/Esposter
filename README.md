@@ -232,6 +232,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | UnoCSS                     | https://marketplace.visualstudio.com/items?itemName=antfu.unocss                        |
 | ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint              |
 | GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens                     |
+| GitHub Actions             | https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-github-actions        |
 | Azure Functions            | https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions |
 | Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell                |
 | Oxfmt - Code formatter     | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode                      |

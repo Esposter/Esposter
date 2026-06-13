@@ -49,9 +49,7 @@ const { "on-surface": onSurface, surface } = storeToRefs(colorsStore);
 
 <style scoped lang="scss">
 @use "sass:math";
-// @NOTE: Make sure to manually change this when the total number of cards are changed
-// Unfortunately we have to do this manually because sass creates the css at compile-time and is "static"
-// whereas we cannot use vue props as an index for sass loops since vue props are run-time and are "dynamic" :C
+// Update manually when the card count changes: Sass loops run at compile-time and can't index on run-time Vue props.
 $card-length: 6;
 
 .window {

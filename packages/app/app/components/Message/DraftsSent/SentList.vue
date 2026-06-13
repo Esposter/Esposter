@@ -11,14 +11,16 @@ const sections = computed(() => getTimelineSections(items.value, ({ message }) =
 <template>
   <div v-if="items.length" flex flex-col gap-y-6>
     <MessageDraftsSentSection v-for="section of sections" :key="section.title" :title="section.title">
-      <MessageDraftsSentSentListItem
+      <MessageDraftsSentListItem
         v-for="{ message, room } of section.items"
         :key="`${message.partitionKey}:${message.rowKey}`"
         :message
         :room
       />
     </MessageDraftsSentSection>
-    <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
+    <div flex w-full justify-center>
+      <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
+    </div>
   </div>
   <MessageDraftsSentEmptyState v-else-if="!isPending" icon="mdi-send-outline" title="No sent messages" />
 </template>

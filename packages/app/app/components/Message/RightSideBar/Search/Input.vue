@@ -58,9 +58,7 @@ const blur = () => {
           menu = value;
           searchQueryOnFocus = searchQuery;
         }
-        // 2. When focus is lost, if the query is now empty but wasn't on focus,
-        // it means the user selected an item, so we restore the empty string
-        // This prevents the old text from reappearing after selection
+        // 2. Focus lost with a now-empty query: the user selected an item, so restore empty to stop old text reappearing.
         else if (searchQuery === '') searchQueryOnFocus = '';
         // 3. Wait for Vuetify's internal clear to happen, then restore our saved value.
         await nextTick();

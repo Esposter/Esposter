@@ -43,8 +43,7 @@ const animate = () => {
   isAnimating.value = true;
   const savedSettings = { ...calculator.settings };
   calculator.setBlank();
-  // Ignore warnings from updateSettings about
-  // Unsupported extraneous calculator settings which is fine
+  // Ignore updateSettings warnings about unsupported extraneous calculator settings.
   ignoreWarn(() => {
     calculator?.updateSettings(savedSettings);
   });

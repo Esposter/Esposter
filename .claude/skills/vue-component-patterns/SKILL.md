@@ -104,9 +104,16 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 
 **Group components with the same prefix into a folder** — Nuxt auto-imports with the folder path as prefix, so co-located components share it without repeating it in filenames.
 
-- `components/TableEditor/File/Row/FieldInput.vue` → `TableEditorFileRowFieldInput`
-- `components/TableEditor/File/Row/FieldInputDate.vue` → `TableEditorFileRowFieldInputDate`
-- The folder `Row/` provides the `TableEditorFileRow` prefix — no need to repeat it in the filename
+- `components/Feature/Group/ItemCard.vue` → `FeatureGroupItemCard`
+- `components/Feature/Group/ItemCardHeader.vue` → `FeatureGroupItemCardHeader`
+- The folder `Group/` provides the `FeatureGroup` prefix — no need to repeat it in the filename
+
+**Nuxt name compression — avoid adjacent duplicate words across folder and file boundaries.** Nuxt collapses consecutive identical words when building the auto-import name. A file `components/Feature/ItemList/ListItem.vue` produces `FeatureItemListItem`, not `FeatureItemListListItem`. So if a folder ends with a word and the filename starts with the same word, that word appears only once in the generated component name — which can cause silent collisions:
+
+- `Feature/Group/GroupCard.vue` → `FeatureGroupCard` (not `FeatureGroupGroupCard`)
+- `Feature/Items/ItemsHeader.vue` → `FeatureItemsHeader` (not `FeatureItemsItemsHeader`)
+
+**Rule:** ensure the filename's first word differs from the last word of its folder path. If they must share a word, choose a more specific filename (e.g. `GroupDetailCard.vue` instead of `GroupCard.vue`).
 
 ## File Length
 
@@ -324,51 +331,49 @@ Default to the **smallest coherent unit**. Each component should be stupid simpl
 An action button is **not** a leaf — it owns logic. Extract each `v-btn` (with its `v-tooltip`, its click handler, and the store access / multi-step logic it needs) into its own component. The handler and store wiring live in that button component, never in the parent list item or page.
 
 ```vue
-<!-- WRONG: list item owns send/clear/schedule/delete logic + 4 inline tooltip+btn blocks -->
+<!-- WRONG: list item owns multiple actions + 4 inline tooltip+btn blocks -->
 <v-list-item>
   ...
-  <v-tooltip text="Send message"><template #activator="{ props }">
-    <v-btn :="props" icon="mdi-send-outline" @click.stop="sendDraft" />
+  <v-tooltip text="Primary action"><template #activator="{ props }">
+    <v-btn :="props" icon="mdi-send-outline" @click.stop="primaryAction" />
   </template></v-tooltip>
-  <!-- repeated for edit, schedule, delete... -->
+  <!-- repeated for secondary, tertiary, delete... -->
 </v-list-item>
 
 <!-- CORRECT: list item is pure layout; each button is its own component owning its action -->
 <v-list-item>
   ...
-  <MessageDraftsSentDraftDeleteButton :draft-item />
-  <MessageDraftsSentDraftEditButton :draft-item />
-  <MessageDraftsSentDraftScheduleButton :draft-item />
-  <MessageDraftsSentDraftSendButton :draft-item />
+  <FeatureEntityDeleteButton :entity-item />
+  <FeatureEntityEditButton :entity-item />
+  <FeatureEntityScheduleButton :entity-item />
+  <FeatureEntityPrimaryButton :entity-item />
 </v-list-item>
 ```
 
 The button component holds its own store wiring; the single-use handler stays **inline in the template** (the inline-handler rule in the `vue` skill — single-use handlers must be inlined for event-arg inference). Do NOT extract the handler to a named script function:
 
 ```vue
-<!-- DraftSendButton.vue — owns the send action end to end -->
+<!-- EntityPrimaryButton.vue — owns the action end to end -->
 <script setup lang="ts">
-const { draftItem } = defineProps<MessageDraftsSentDraftSendButtonProps>();
-const dataStore = useDataStore();
-const { createMessage } = dataStore;
-const inputStore = useInputStore();
-const { clearDraft } = inputStore;
+const { entityItem } = defineProps<FeatureEntityPrimaryButtonProps>();
+const featureStore = useFeatureStore();
+const { performPrimaryAction } = featureStore;
+const relatedStore = useRelatedStore();
+const { cleanupAfterAction } = relatedStore;
 </script>
 <template>
-  <v-tooltip text="Send message">
+  <v-tooltip text="Primary action">
     <template #activator="{ props }">
       <v-btn
         :="props"
         icon="mdi-send-outline"
         @click.stop="
           async () => {
-            await createMessage({
-              files: [],
-              message: draftItem.content,
-              roomId: draftItem.room.id,
-              type: MessageType.Message,
+            await performPrimaryAction({
+              entityId: entityItem.id,
+              roomId: entityItem.room.id,
             });
-            clearDraft(draftItem.room.id);
+            cleanupAfterAction(entityItem.room.id);
           }
         "
       />
@@ -377,12 +382,12 @@ const { clearDraft } = inputStore;
 </template>
 ```
 
-Extract to a `use*` composable only when the **same multi-step logic is reused by 2+ buttons** (e.g. `useCancelScheduledMessageJob` = tRPC mutate + store removal, shared by the send button, edit button, and more-menu). A composable is reuse, not single-use extraction — it does not violate the inline-handler rule.
+Extract to a `use*` composable only when the **same multi-step logic is reused by 2+ buttons** (e.g. `useCancelScheduledJob` = tRPC mutate + store removal, shared by the primary button, edit button, and more-menu). A composable is reuse, not single-use extraction — it does not violate the inline-handler rule.
 
 - **List items / rows reduce to pure layout** — avatar, title, subtitle, time, and a row of extracted button/menu components. No action logic in the item.
-- **A `v-menu` and its menu items is one component** (e.g. `ScheduledMoreMenu.vue`) — the menu plus its list items are one coherent unit.
-- **Shared multi-step action logic used by 2+ button components** goes into a `use*` composable (single-function composables return the function directly), never duplicated. e.g. `useCancelScheduledMessageJob` (tRPC mutate + store removal) reused by the send button, edit button, and more-menu.
-- **Props interface name = full component auto-import name + `Props`** — `MessageDraftsSentDraftSendButtonProps`, not bare `Props`.
+- **A `v-menu` and its menu items is one component** (e.g. `EntityMoreMenu.vue`) — the menu plus its list items are one coherent unit.
+- **Shared multi-step action logic used by 2+ button components** goes into a `use*` composable (single-function composables return the function directly), never duplicated.
+- **Props interface name = full component auto-import name + `Props`** — `FeatureEntityPrimaryButtonProps`, not bare `Props`.
 
 ### Allowed grouping (do NOT split these)
 

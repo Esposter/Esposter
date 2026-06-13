@@ -28,7 +28,7 @@ await readDraftsSent();
             <MessageDraftsSentScheduledList />
           </v-window-item>
           <v-window-item :value="DraftsSentTab.Sent">
-            <MessageDraftsSentSentList />
+            <MessageDraftsSentList />
           </v-window-item>
         </v-window>
       </div>
