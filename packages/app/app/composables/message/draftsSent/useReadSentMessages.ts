@@ -12,7 +12,7 @@ export const useReadSentMessages = () => {
         items.value = data.items;
         count.value = total;
         hasMore.value = data.hasMore;
-        offset.value = items.value.length;
+        offset.value = data.items.length;
       },
       () => {
         isPending.value = false;
@@ -23,7 +23,7 @@ export const useReadSentMessages = () => {
       const { data } = await $trpc.message.readMySentMessages.query({ offset: offset.value });
       items.value = [...items.value, ...data.items];
       hasMore.value = data.hasMore;
-      offset.value += items.value.length;
+      offset.value += data.items.length;
     }, onComplete);
   return { readMoreSentMessages, readSentMessages };
 };
