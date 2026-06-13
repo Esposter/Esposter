@@ -4,7 +4,7 @@ export const useSentMessageStore = defineStore("message/sentMessage", () => {
   const items = ref<SentMessageWithRoom[]>([]);
   const count = ref(0);
   const hasMore = ref(false);
+  const offset = ref(0);
   const isPending = ref(true);
-  const nextOffset = ref(0);
-  return { count, hasMore, isPending, items, nextOffset };
+  return { count, hasMore, isPending, items, offset };
 });

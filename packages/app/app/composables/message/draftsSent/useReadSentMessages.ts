@@ -1,11 +1,10 @@
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useSentMessageStore } from "@/store/message/sentMessage";
 import { withFinalizerAsync } from "@esposter/shared";
 
 export const useReadSentMessages = () => {
   const { $trpc } = useNuxtApp();
   const sentMessageStore = useSentMessageStore();
-  const { count, hasMore, isPending, items, nextOffset } = storeToRefs(sentMessageStore);
+  const { count, hasMore, isPending, items, offset } = storeToRefs(sentMessageStore);
   const readSentMessages = () =>
     withFinalizerAsync(
       async () => {
@@ -13,7 +12,7 @@ export const useReadSentMessages = () => {
         items.value = data.items;
         count.value = total;
         hasMore.value = data.hasMore;
-        nextOffset.value = DEFAULT_READ_LIMIT;
+        offset.value = items.value.length;
       },
       () => {
         isPending.value = false;
@@ -21,10 +20,10 @@ export const useReadSentMessages = () => {
     );
   const readMoreSentMessages = (onComplete: () => void) =>
     withFinalizerAsync(async () => {
-      const { data } = await $trpc.message.readMySentMessages.query({ offset: nextOffset.value });
+      const { data } = await $trpc.message.readMySentMessages.query({ offset: offset.value });
       items.value = [...items.value, ...data.items];
       hasMore.value = data.hasMore;
-      nextOffset.value += DEFAULT_READ_LIMIT;
+      offset.value += items.value.length;
     }, onComplete);
   return { readMoreSentMessages, readSentMessages };
 };
