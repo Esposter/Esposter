@@ -15,8 +15,7 @@ interface EditDialogButtonProps {
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const updateColumn = useUpdateColumn();
-// StructuredClone is required here: Vjsf does not work with class instances and needs a plain object,
-// And fast-deep-equal checks constructors so class instances never equal their plain object clones
+// StructuredClone to a plain object: vjsf rejects class instances, and fast-deep-equal compares constructors.
 const editedColumn = ref(structuredClone(toRawDeep(column)));
 const title = computed(() => `Edit "${column.name}" Column`);
 const jsonSchema = zodToJsonSchema(columnFormSchema);

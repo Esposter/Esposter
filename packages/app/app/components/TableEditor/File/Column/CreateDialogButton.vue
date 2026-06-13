@@ -15,8 +15,7 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createColumn = useCreateColumn();
-// StructuredClone is required here: Vjsf does not work with class instances and needs a plain object,
-// And fast-deep-equal checks constructors so class instances never equal their plain object clones
+// StructuredClone to a plain object: vjsf rejects class instances, and fast-deep-equal compares constructors.
 const defaultColumn = structuredClone(ColumnTypeCreateMap[ColumnType.String].create());
 const editedColumn = ref<Column>(structuredClone(defaultColumn));
 const jsonSchema = zodToJsonSchema(columnFormSchema);

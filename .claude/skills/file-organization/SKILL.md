@@ -84,7 +84,7 @@ Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfi
 
 ## Whitespace & Comments
 
-- **No blank line before a `//` comment that introduces the next block** — the comment is the separator. Blank lines go between uncommented logical blocks only.
+- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only.
 
   ```ts
   // CORRECT — comment acts as separator
@@ -99,7 +99,7 @@ Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfi
   const bar = parseLockfile(yaml);
   ```
 
-- **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line; if an example helps, show only the minimal fragment that illustrates the point. Applies to `//`, `/* */`, and Vue `<!-- -->` comments alike.
+- **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line, but keep a numbered or bulleted list (one item per `//` line) when enumerating distinct items rather than cramming them into one sentence — the list is more scannable; just tighten each item's wording. If an example helps, show only the minimal fragment that illustrates the point. Applies to `//`, `/* */`, and Vue `<!-- -->` comments alike.
 
 ## Creating a New Package
 
