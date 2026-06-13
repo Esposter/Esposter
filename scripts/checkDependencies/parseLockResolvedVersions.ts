@@ -11,7 +11,7 @@ export const parseLockResolvedVersions = (sectionText: string, pkgIndent: number
     const version = groups?.version;
     if (!pkg || !version) continue;
 
-    versions.set(pkg.trim(), version.trim().split(/[(@]/u)[0]?.trim() ?? "");
+    versions.set(pkg.trim(), version.trim().split("(")[0]?.trim() ?? "");
   }
 
   return versions;

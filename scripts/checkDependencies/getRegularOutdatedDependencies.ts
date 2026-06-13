@@ -5,6 +5,7 @@ import { getDependencyType } from "@/checkDependencies/getDependencyType";
 import { getOutdatedDependents } from "@/checkDependencies/getOutdatedDependents";
 import { isPnpmOutdatedDependency } from "@/checkDependencies/isPnpmOutdatedDependency";
 import { runPnpmOutdated } from "@/checkDependencies/runPnpmOutdated";
+import { getResult } from "@esposter/shared";
 
 export const getRegularOutdatedDependencies = async (
   root: string,
@@ -16,36 +17,47 @@ export const getRegularOutdatedDependencies = async (
   // Pnpm interleaves "[WARN] ..." retry notices into stdout, so isolate the JSON object (printed at column 0).
   const jsonStart = result.stdout.search(/^\{/mu);
   if (jsonStart === -1) {
-    if (result.status && result.status !== 0)
+    if (result.status !== 0)
       return {
-        errors: [{ error: result.stderr.trim() || `exit code ${result.status}`, pkg: "pnpm outdated -r" }],
+        errors: [
+          {
+            error:
+              result.stderr.trim() ||
+              (result.status === null ? "terminated before completion" : `exit code ${result.status}`),
+            pkg: "pnpm outdated -r",
+          },
+        ],
         outdatedDependencies: [],
       };
 
     return { errors: [], outdatedDependencies: [] };
   }
 
-  const parsed: unknown = JSON.parse(result.stdout.slice(jsonStart));
-  if (!parsed || typeof parsed !== "object")
-    return { errors: [{ error: "unexpected JSON output", pkg: "pnpm outdated -r" }], outdatedDependencies: [] };
+  return getResult(() => JSON.parse(result.stdout.slice(jsonStart))).match(
+    (parsed: unknown) => {
+      if (!parsed || typeof parsed !== "object")
+        return { errors: [{ error: "unexpected JSON output", pkg: "pnpm outdated -r" }], outdatedDependencies: [] };
 
-  const outdatedDependencies: OutdatedDependency[] = [];
-  for (const [pkg, dependency] of Object.entries(parsed)) {
-    if (!isPnpmOutdatedDependency(dependency))
-      return {
-        errors: [{ error: `unexpected JSON entry for ${pkg}`, pkg: "pnpm outdated -r" }],
-        outdatedDependencies: [],
-      };
+      const outdatedDependencies: OutdatedDependency[] = [];
+      for (const [pkg, dependency] of Object.entries(parsed)) {
+        if (!isPnpmOutdatedDependency(dependency))
+          return {
+            errors: [{ error: `unexpected JSON entry for ${pkg}`, pkg: "pnpm outdated -r" }],
+            outdatedDependencies: [],
+          };
 
-    outdatedDependencies.push({
-      current: dependency.current ?? "",
-      dependencyType: getDependencyType(dependency.dependencyType ?? ""),
-      dependents: getOutdatedDependents(dependency.dependentPackages),
-      latest: dependency.latest,
-      pkg,
-      specifier: "",
-    });
-  }
+        outdatedDependencies.push({
+          current: dependency.current ?? "",
+          dependencyType: getDependencyType(dependency.dependencyType ?? ""),
+          dependents: getOutdatedDependents(dependency.dependentPackages),
+          latest: dependency.latest,
+          pkg,
+          specifier: "",
+        });
+      }
 
-  return { errors: [], outdatedDependencies };
+      return { errors: [], outdatedDependencies };
+    },
+    () => ({ errors: [{ error: "unexpected JSON output", pkg: "pnpm outdated -r" }], outdatedDependencies: [] }),
+  );
 };

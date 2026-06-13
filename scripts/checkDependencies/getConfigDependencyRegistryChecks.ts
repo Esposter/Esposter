@@ -6,6 +6,7 @@ import { getLatestVersion } from "@/checkDependencies/getLatestVersion";
 import { getSpecifierBase } from "@/checkDependencies/getSpecifierBase";
 import { getVersionChangeLevel } from "@/checkDependencies/getVersionChangeLevel";
 import { isVersionOutdated } from "@/checkDependencies/isVersionOutdated";
+import { getResultAsync } from "@esposter/shared";
 
 const registryConcurrency = 4;
 
@@ -22,22 +23,23 @@ export const getConfigDependencyRegistryChecks = async (
       if (!entry) return;
 
       const { group, pkg, specifier } = entry;
-      try {
-        const latest = await getLatestVersion(pkg);
-        const current = getSpecifierBase(specifier);
-        if (isVersionOutdated(current, latest))
-          outdatedDependencies.push({
-            current,
-            dependencyType: group === "configDependencies" ? "config" : "",
-            dependents: group === "configDependencies" ? ["configDependencies"] : [],
-            latest,
-            pkg,
-            specifier,
-          });
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        errors.push({ error: message, pkg });
-      }
+      await getResultAsync(() => getLatestVersion(pkg)).match(
+        (latest) => {
+          const current = getSpecifierBase(specifier);
+          if (isVersionOutdated(current, latest))
+            outdatedDependencies.push({
+              current,
+              dependencyType: group === "configDependencies" ? "config" : "",
+              dependents: group === "configDependencies" ? ["configDependencies"] : [],
+              latest,
+              pkg,
+              specifier,
+            });
+        },
+        (error) => {
+          errors.push({ error: error.message, pkg });
+        },
+      );
     }
   });
 

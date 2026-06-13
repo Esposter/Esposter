@@ -1,5 +1,7 @@
 import { spawn } from "node:child_process";
 
+const timeoutMs = 120_000;
+
 export const runPnpmOutdated = (
   root: string,
 ): Promise<{ error?: string; status: null | number; stderr: string; stdout: string }> =>
@@ -12,6 +14,17 @@ export const runPnpmOutdated = (
     const child = spawn(command, args, { cwd: root });
     let stdout = "";
     let stderr = "";
+    let isSettled = false;
+    const settle = (result: { error?: string; status: null | number; stderr: string; stdout: string }) => {
+      if (isSettled) return;
+      isSettled = true;
+      clearTimeout(timeout);
+      resolvePromise(result);
+    };
+    const timeout = setTimeout(() => {
+      child.kill();
+      settle({ error: `pnpm outdated -r timed out after ${timeoutMs}ms`, status: null, stderr, stdout });
+    }, timeoutMs);
     child.stdout.setEncoding("utf8");
     child.stderr.setEncoding("utf8");
     child.stdout.on("data", (chunk: string) => {
@@ -21,9 +34,9 @@ export const runPnpmOutdated = (
       stderr += chunk;
     });
     child.on("error", (error) => {
-      resolvePromise({ error: error.message, status: null, stderr, stdout });
+      settle({ error: error.message, status: null, stderr, stdout });
     });
     child.on("close", (status) => {
-      resolvePromise({ status, stderr, stdout });
+      settle({ status, stderr, stdout });
     });
   });

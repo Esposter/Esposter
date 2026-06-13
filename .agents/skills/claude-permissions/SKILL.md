@@ -17,7 +17,7 @@ Rule format is `Tool` or `Tool(specifier)`. Evaluation order is **deny → ask �
 
 Critical rules:
 
-- **`:*` ≡ trailing ` *`.** They are the same matcher. Listing both `pnpm build *` and `pnpm build:*` is pure duplication.
+- **`:*` ≡ a trailing space + `*`.** They are the same matcher. Listing both `pnpm build *` and `pnpm build:*` is pure duplication.
 - **`:*` is only special at the end** of a pattern. Mid-pattern (`git:* push`) the `:` is a literal char and won't match.
 - **A single `*` spans spaces** — one wildcard covers multiple arguments. `git *` matches `git log --oneline --all`.
 - **Colon sub-scripts need the no-space form.** `pnpm lint:fix`, `pnpm build:docker`, `pnpm outdated:dependencies` are NOT covered by `pnpm lint:*` / `pnpm lint *`. Use `pnpm lint*` (no space) to cover a script **and** all its `:sub` variants in one rule. This is why pnpm-script families in our allowlist use the no-space form, while plain commands (`git log *`, `pnpm why *`) keep the boundary form.
@@ -39,7 +39,7 @@ Both shells split on operators (`&&`, `||`, `;`, `|`, `|&`, `&`, newlines; Power
 
 1. **Mirror every rule under both `Bash(...)` and `PowerShell(...)`.** This repo runs on Windows (PowerShell primary) with the Bash tool also available; keep the two blocks symmetric.
 2. **Use the no-space form (`pnpm name*`) for pnpm script families** so `:sub` scripts and args are covered by one rule.
-3. **Use the boundary form (` *`) for everything else.** Never add both `:*` and ` *` for the same command.
+3. **Use the boundary form (a trailing space + `*`) for everything else.** Never add both `:*` and the space-`*` form for the same command.
 4. **Sort each block case-insensitively** (Bash block, then PowerShell block, then `mcp__*`, `Skill(...)`, `WebFetch(domain:...)`).
 5. Scope `az` to read-only verbs (`show`, `list`) only.
 
