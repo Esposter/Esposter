@@ -1,0 +1,136 @@
+# Calls — Picture-in-Picture (Document PiP)
+
+Pop the active call out into an always-on-top OS window (Google Meet / Discord style) so the user can keep talking and watching video while browsing the rest of the app or another tab.
+
+## Overview
+
+When the user is in a call (`callStore.isInCall`) they can **pop out** a compact, live call view into a real OS-level Picture-in-Picture window using the [Document Picture-in-Picture API](https://developer.chrome.com/docs/web-platform/document-picture-in-picture). Unlike native `<video>` PiP (one `<video>` element, no controls), Document PiP renders arbitrary DOM, so the popped-out window keeps the participant grid **and** a minimal control bar (mute / camera / leave / expand).
+
+This is a **pure client-side** feature: no DB changes, no tRPC procedures, no new infrastructure. The LiveKit `Room` and every `MediaStream` already live in Pinia stores, independent of where the DOM renders — popping out is a **DOM relocation, not a media reconnection**. It extends the existing "persistent call UI" boundary (`activeCallSessionId` survives navigation; see [`call.md`](call.md) → _Call Lifetime Boundary_).
+
+## Browser Support
+
+| Engine           | Support                           | Behaviour                                                                                           |
+| ---------------- | --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Chromium 116+    | `window.documentPictureInPicture` | Full feature                                                                                        |
+| Firefox / Safari | Unsupported                       | Pop-out control hidden via feature detection; existing full-page `/calls/[id]` view is the fallback |
+
+Feature-detected with a VueUse-style `isSupported` ref. The control never renders when unsupported — no broken affordance.
+
+## Why not VueUse / native video PiP
+
+- VueUse `14.3.0` ships **no** Document-PiP composable. Its only PiP surface is `useMediaControls().togglePictureInPicture`, which drives the native single-`<video>` API — it cannot show a participant grid or interactive buttons.
+- Native video PiP would require compositing all remote streams onto a `<canvas>` + `captureStream()` and would still lose the in-window controls.
+- Therefore we hand-roll a small, SSR-safe `useDocumentPictureInPicture` composable in the VueUse return-shape style (`{ isSupported, pipWindow, isActive, open, close }`). `useDraggable` is **not** needed — the OS window is natively movable.
+
+## Components
+
+- `Call/Pip/Host.vue` — **mounted once in the persistent root** (`app.vue`, gated on session), not on any page or feature layout. Owns the `useDocumentPictureInPicture` instance, watches the `isPoppedOut` intent, opens/closes the window, `<Teleport>`s the compact view into it, and auto-docks when the call ends.
+- `Call/Pip/View.vue` — compact call surface rendered **inside** the PiP window: reuses `Call/Participant/Tile.vue` (via the shared `useCallParticipantTiles` composable) plus a trimmed control row.
+- `Call/Pip/ControlBar.vue` — minimal controls inside the PiP window: reuses `Audio/MuteButton`, `Camera/Button`, `Control/LeaveButton`, plus an **expand** action (close PiP + navigate back to the call surface).
+- `Call/Pip/Button.vue` — the pop-out toggle; hidden when `!isSupported`. Placed in `Call/Control/Bar.vue`.
+
+## Key Files
+
+| File                                                           | Role                                                                                                                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `shared/types/documentPictureInPicture.d.ts`                   | **New.** Ambient types for the Document PiP API (not yet in lib.dom)                                                      |
+| `app/composables/useDocumentPictureInPicture.ts`               | **New.** SSR-safe wrapper over `documentPictureInPicture.requestWindow`; style bridge + cleanup                           |
+| `app/composables/message/room/call/useCallParticipantTiles.ts` | **New.** Shared `{ callParticipantMap, getParticipantTileProps, sessionId }` — used by `Call/View.vue` and `Pip/View.vue` |
+| `app/store/message/room/call/media.ts`                         | **Modified.** Adds the `isPoppedOut` flag (reset by `resetCallMedia`) — the single pop-out intent                         |
+| `app/components/Message/Content/Call/Pip/Host.vue`             | **New.** Persistent window owner + teleport target                                                                        |
+| `app/components/Message/Content/Call/Pip/View.vue`             | **New.** Compact tiles + controls rendered in the PiP window                                                              |
+| `app/components/Message/Content/Call/Pip/ControlBar.vue`       | **New.** Mute / camera / expand / leave inside PiP                                                                        |
+| `app/components/Message/Content/Call/Pip/Button.vue`           | **New.** Feature-detected pop-out toggle                                                                                  |
+| `app/components/Message/Content/Call/View.vue`                 | **Modified.** Reuses `useCallParticipantTiles` instead of inlining tile-prop logic                                        |
+| `app/components/Message/Content/Call/Control/Bar.vue`          | **Modified.** Adds `Call/Pip/Button.vue`                                                                                  |
+| `app/components/Message/LeftSideBar/StatusBar.vue`             | **Modified.** In-call item now also surfaces **standalone** active calls so a docked call is always reachable             |
+| `app/app.vue`                                                  | **Modified.** Mounts `Call/Pip/Host.vue` so the window survives all route changes                                         |
+| `app/composables/message/room/call/useCallIdSubscribables.ts`  | **Modified.** Skips `leaveCall()` on unmount when `isPoppedOut` (standalone pop-out — see Constraints)                    |
+
+## Architecture
+
+### Where the window lives
+
+The PiP window's content must outlive any single page **and** any feature layout (the user can pop out on `/calls/[id]` then navigate to `/messages`, which use different layouts). So `Call/Pip/Host.vue` mounts in `app.vue` — the persistent root outside `<NuxtPage>` — gated on session, next to `StyledAlertList` / the achievement snackbar list.
+
+The pop-out **intent** is a single `isPoppedOut` boolean on the existing `call/media.ts` store (reset by `resetCallMedia`, so leaving the call clears it for free). `Pip/Button.vue` toggles it; `Pip/Host.vue` watches it to open/close the window and writes it back to `false` when the window is closed externally or the call ends. No new store — this matches the existing local call-UI flags (`isDeafened`, `pinnedParticipantId`, …) and the direct-ref-mutation pattern already used for `pinnedParticipantId`.
+
+### Pop-out / dock flow
+
+```mermaid
+stateDiagram-v2
+    [*] --> Docked: isInCall
+    Docked --> PoppedOut: Button.popOut()
+    note right of PoppedOut
+      Host opens OS window
+      Teleport View into pipWindow.document.body
+      Bridge stylesheets (Uno + Vuetify)
+      Same MediaStream objects — no reconnect
+    end note
+    PoppedOut --> Docked: expand (navigate to call surface)
+    PoppedOut --> Docked: user closes OS window (pagehide)
+    PoppedOut --> [*]: leaveCall (auto-dock + close)
+    Docked --> [*]: leaveCall
+```
+
+### Teleport + style bridge
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant B as Pip/Button
+    participant S as media.isPoppedOut
+    participant H as Pip/Host
+    participant C as useDocumentPictureInPicture
+    participant W as PiP Window (OS)
+
+    U->>B: click pop out
+    B->>S: isPoppedOut = true
+    S-->>H: watch(isPoppedOut)
+    H->>C: open({ width, height })
+    C->>W: documentPictureInPicture.requestWindow()
+    C->>W: copy document.styleSheets + adoptedStyleSheets
+    C->>W: MutationObserver(head) → mirror late <style>/<link> (UnoCSS HMR)
+    H->>W: <Teleport :to="pipWindow.document.body"> Pip/View
+    Note over W: Tile <video :srcObject.prop> binds the same MediaStream — frames keep flowing
+    U->>W: close window (X)
+    W-->>C: pagehide
+    C->>S: dock() (isPoppedOut = false)
+```
+
+The teleport target is the **element** `pipWindow.document.body` (not a selector string) because Vue must teleport across documents. The component instance, reactivity, and event handlers are unchanged — only the DOM host moves, which is why `<video :srcObject.prop="stream">` in `Tile.vue` keeps playing without re-attaching tracks.
+
+### Style bridge detail
+
+The PiP window opens with an empty document — no Vuetify theme, no UnoCSS utilities. On open the composable:
+
+1. Clones every same-origin entry of `document.styleSheets` into a `<style>` in the PiP document, and copies `<link rel="stylesheet">` nodes verbatim.
+2. Copies `document.adoptedStyleSheets` (Vuetify `--v-theme-*` variables / constructed sheets) into `pipWindow.document.adoptedStyleSheets`.
+3. Mirrors the `class`/`style` of `<html>` so theme variables resolve at the root.
+4. Attaches a `MutationObserver` on `document.head` to mirror **late-added** `<style>`/`<link>` nodes — this covers UnoCSS's dev-time runtime injection so PiP-only utility classes are not missing during HMR.
+
+## Component Tree
+
+```text
+app.vue
+  └── Call/Pip/Host.vue                       persistent; owns the PiP window
+        └── <Teleport :to="pipWindow.document.body">
+              └── Call/Pip/View.vue            compact call surface (in OS window)
+                    ├── Call/Participant/Tile.vue   reused per participant
+                    └── Call/Pip/ControlBar.vue     mute / camera / expand / leave
+
+Call/Control/Bar.vue      → + Call/Pip/Button.vue   (pop-out toggle, full call view)
+LeftSideBar/StatusBar.vue → in-call item now also links standalone calls (reachability)
+```
+
+## Constraints / Notes
+
+- **No media reconnection.** Pop-out/dock only relocates DOM. The LiveKit `Room` and `MediaStream`s stay owned by `liveKit.ts` / `call/media.ts`. Never disconnect/reconnect LiveKit on pop-out.
+- **Single window.** The browser allows exactly one Document PiP window per document; `open()` is a no-op (or re-focus) when one is already active. `isPoppedOut` is a single boolean.
+- **Standalone-call leave interaction.** `/calls/[id]` unmount currently calls `leaveCall()` (the page _is_ the call context — see [`call-view-ui.md`](call-view-ui.md) → _Cleanup_). Popping out a **standalone** call means the user navigates away while staying connected, so `useCallIdSubscribables` **skips `leaveCall()` on unmount when `isPoppedOut`**. Room calls already persist across navigation and need no change. The **expand** action (`Pip/ControlBar.vue`) docks and navigates back to the call surface — `RoutePath.Messages(callRoomId)` for room calls, `RoutePath.Calls(activeCallSessionId)` for standalone.
+- **Docked-call reachability.** Once popped out, a standalone call has no on-page surface, so closing the PiP window could otherwise strand the user in an invisible call. `LeftSideBar/StatusBar.vue` therefore surfaces **any** active call (not just room calls) and links to the correct call route, guaranteeing a docked call is always one click away.
+- **Auto-dock on leave.** `Host.vue` watches `isInCall`; when it goes false (explicit leave, moderation kick, session loss) it closes the window so no orphaned PiP remains.
+- **Requires a user gesture.** `documentPictureInPicture.requestWindow()` must be called from a user activation (the button click). Do not auto-open on mount/navigation — only the explicit pop-out gesture, and re-trigger requires another click.
+- **SSR safety.** Composable guards `import.meta.client` and `"documentPictureInPicture" in window`; `pipWindow` is a `ShallowRef<Window | null>`. Cleanup via `tryOnScopeDispose`.
+- **Reuse, don't fork.** `Pip/View.vue` reuses `Call/Participant/Tile.vue`; the PiP control bar is a trimmed subset of `Call/Control/Bar.vue`, not a re-implementation. Keep the compact grid class logic aligned with `Call/View.vue`.

@@ -29,7 +29,7 @@ Filtered by `NotificationType`, mention type (@everyone/@here), and online statu
 
 ### Calls
 
-LiveKit-based audio/video. Key boundary: `activeCallSessionId` (user's active call) vs `currentRoomCallSessionId` (currently viewed room). Room navigation must not leave the active call. Full spec → [`specs/call.md`](specs/call.md). Screenshare → [`specs/screenshare.md`](specs/screenshare.md).
+LiveKit-based audio/video. Key boundary: `activeCallSessionId` (user's active call) vs `currentRoomCallSessionId` (currently viewed room). Room navigation must not leave the active call. Full spec → [`specs/call.md`](specs/call.md). Screenshare → [`specs/screenshare.md`](specs/screenshare.md). Picture-in-Picture pop-out → [`specs/picture-in-picture.md`](specs/picture-in-picture.md).
 
 ### Scheduled Jobs
 

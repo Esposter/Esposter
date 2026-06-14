@@ -14,6 +14,7 @@ const { data: session } = await authClient.useSession(useFetch);
         <NuxtPage />
         <StyledAlertList />
         <AchievementNotificationSnackBarList v-if="session" />
+        <MessageContentCallPipHost v-if="session" />
       </v-app>
     </NuxtSEO>
   </NuxtTheme>

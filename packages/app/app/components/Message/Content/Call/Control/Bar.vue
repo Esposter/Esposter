@@ -7,6 +7,7 @@
       <MessageContentCallScreenShareButton />
       <MessageContentCallControlHandButton />
       <MessageContentCallControlHealthButton />
+      <MessageContentCallPipButton />
       <MessageContentCallControlLeaveButton />
     </StyledCard>
   </div>
