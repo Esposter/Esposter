@@ -4,6 +4,7 @@ import type { EditorView } from "@codemirror/view";
 
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
+import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { Codemirror } from "vue-codemirror";
 
 interface FileRendererCodeProps extends FileRendererComponentProps {
@@ -12,11 +13,14 @@ interface FileRendererCodeProps extends FileRendererComponentProps {
 
 const { isPreview, language, url } = defineProps<FileRendererCodeProps>();
 const code = ref("");
-try {
-  code.value = await (await fetch(url)).text();
-} catch {
-  // Offline or network error — show empty code block
-}
+code.value = await getResultAsync(async () => {
+  const response = await fetch(url);
+  if (!response.ok)
+    throw new InvalidOperationError(Operation.Read, url, `HTTP ${response.status} ${response.statusText}`);
+  return response.text();
+})
+  .orTee(console.error)
+  .unwrapOr("");
 const baseExtensions = computedAsync(() => getLanguageExtension(language), []);
 const extensions = useExtensions(baseExtensions);
 const editorView = shallowRef<EditorView>();

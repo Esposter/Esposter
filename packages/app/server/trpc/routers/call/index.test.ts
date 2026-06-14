@@ -1,0 +1,137 @@
+import type { Context } from "@@/server/trpc/context";
+import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+
+import { callAdmittedParticipantMap } from "@@/server/services/message/call/callAdmittedParticipantMap";
+import { callKnockerMap } from "@@/server/services/message/call/callKnockerMap";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { createCallSessionId } from "@@/server/services/message/call/createCallSessionId";
+import { callEventEmitter } from "@@/server/services/message/events/callEventEmitter";
+import { createCallerFactory } from "@@/server/trpc";
+import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
+import { callRouter } from "@@/server/trpc/routers/call";
+import { roomRouter } from "@@/server/trpc/routers/room";
+import { callSessionsInMessage, roomsInMessage } from "@esposter/db-schema";
+import { ForbiddenError } from "@esposter/shared";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+
+describe("call", () => {
+  let mockContext: Context;
+  let callCaller: DecorateRouterRecord<TRPCRouter["callSession"]>;
+  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
+  const name = "name";
+
+  beforeAll(async () => {
+    mockContext = await createMockContext();
+    callCaller = createCallerFactory(callRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
+  });
+
+  afterEach(async () => {
+    callAdmittedParticipantMap.clear();
+    callKnockerMap.clear();
+    callSessionParticipantMap.clear();
+    await mockContext.db.delete(callSessionsInMessage);
+    await mockContext.db.delete(roomsInMessage);
+    vi.restoreAllMocks();
+  });
+
+  test("creates standalone call", async () => {
+    expect.hasAssertions();
+
+    const { callSessionId } = await callCaller.createCall();
+    const callSession = await mockContext.db.query.callSessionsInMessage.findFirst({
+      where: { id: { eq: callSessionId } },
+    });
+
+    expect(callSession?.id).toBe(callSessionId);
+    expect(callSession?.roomId).toBeNull();
+    expect(callSession?.userId).toBe(getMockSession().user.id);
+  });
+
+  test("prevents non-creator from directly joining standalone call", async () => {
+    expect.hasAssertions();
+
+    const { callSessionId } = await callCaller.createCall();
+    await mockSessionOnce(mockContext.db);
+
+    await expect(callCaller.joinCall({ id: callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new ForbiddenError("Must be admitted to join this call").message}]`,
+    );
+  });
+
+  test("prevents non-participant from reading standalone call participants", async () => {
+    expect.hasAssertions();
+
+    const { callSessionId } = await callCaller.createCall();
+    await mockSessionOnce(mockContext.db);
+
+    await expect(callCaller.readCallParticipantMap({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new ForbiddenError("Must be in call").message}]`,
+    );
+  });
+
+  test("prevents room member from reading room call participants before joining call", async () => {
+    expect.hasAssertions();
+
+    const room = await roomCaller.createRoom({ name });
+    const callSessionId = await createCallSessionId(mockContext.db, room.id, getMockSession().user.id);
+    const inviteCode = await roomCaller.createInvite({ roomId: room.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(inviteCode);
+    await mockSessionOnce(mockContext.db, user);
+
+    await expect(callCaller.readCallParticipantMap({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new ForbiddenError("Must be in call").message}]`,
+    );
+  });
+
+  test("sets raised hand state", async () => {
+    expect.hasAssertions();
+
+    const getSessionPayload = getMockSession();
+    replayMockSession(getSessionPayload);
+    const { callSessionId } = await callCaller.createCall();
+    callSessionParticipantMap.set(
+      callSessionId,
+      new Map([
+        [
+          getSessionPayload.session.id,
+          {
+            id: getSessionPayload.session.id,
+            image: getSessionPayload.user.image,
+            isCameraEnabled: false,
+            isHandRaised: false,
+            isMuted: false,
+            name: getSessionPayload.user.name,
+            userId: getSessionPayload.user.id,
+          },
+        ],
+      ]),
+    );
+    const emitSpy = vi.spyOn(callEventEmitter, "emit");
+    replayMockSession(getSessionPayload);
+    await callCaller.setHandRaised({
+      callSessionId,
+      isHandRaised: true,
+      participantId: getSessionPayload.session.id,
+    });
+
+    expect(emitSpy).toHaveBeenCalledWith("handRaisedChanged", {
+      callSessionId,
+      id: getSessionPayload.session.id,
+      isHandRaised: true,
+    });
+  });
+
+  test("fails join for non-member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(callCaller.joinCallByRoomId({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
+  });
+});

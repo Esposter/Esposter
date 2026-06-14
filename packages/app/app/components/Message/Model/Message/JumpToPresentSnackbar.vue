@@ -10,7 +10,7 @@ const { jumpToPresent } = scrollStore;
 <template>
   <TransitionFade>
     <v-snackbar :model-value="isViewingOlderMessages" color="background">
-      <div flex justify-center items-center flex-wrap>
+      <div flex flex-wrap items-center justify-center>
         You're Viewing Older Messages
         <StyledButton mx-2 :button-props="{ text: 'Jump to Present' }" @click="jumpToPresent" />
       </div>

@@ -1,0 +1,47 @@
+# Build Artifacts
+**/src/index.ts
+**/src/components/index.ts
+**/public/docs
+
+# Docker Build Artifacts
+.dockerignore
+
+# Testing
+coverage
+vitest.config.*.timestamp*
+
+# Local db
+*.db
+*.db-journal
+
+# Tiled
+*.tiled-session
+
+# Nuxt
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Dependencies
+node_modules
+
+# Typescript build info
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.git
+.fleet
+.idea
+
+# Local env files
+.env
+.env.*
+!.env.example

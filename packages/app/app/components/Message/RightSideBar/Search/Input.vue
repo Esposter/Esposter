@@ -2,6 +2,7 @@
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
 import { useSearchMessageStore } from "@/store/message/search";
 import { FilterTypes } from "@esposter/db-schema";
+import { normalizeString } from "@esposter/shared";
 
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
@@ -10,13 +11,18 @@ const { activeSelectedFilter, isSearchQueryEmpty, menu, searchQuery, selectedFil
   storeToRefs(searchMessageStore);
 const searchQueryOnFocus = ref("");
 const filterTypes = [...FilterTypes];
-const blur = () => (document.activeElement as HTMLElement | null)?.blur();
+const searchInput = useTemplateRef("searchInput");
+const blur = () => {
+  const input = searchInput.value?.$el.querySelector("input");
+  if (!(input instanceof HTMLInputElement)) return;
+  input.blur();
+};
 </script>
 
 <template>
   <v-autocomplete
+    ref="searchInput"
     v-model="selectedFilters"
-    cursor-text
     autocomplete="suppress"
     density="compact"
     menu-icon=""
@@ -29,15 +35,17 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
     hide-no-data
     multiple
     return-object
+    cursor-text
     @keydown.esc="blur()"
     @keydown.enter="
       async () => {
         if (activeSelectedFilter && !activeSelectedFilter.value) {
-          const value = searchQuery.trim();
+          const value = normalizeString(searchQuery);
           if (!value) return;
           activeSelectedFilter.value = value;
           searchQuery = '';
         } else if (!isSearchQueryEmpty) {
+          menu = false;
           blur();
           await readSearchedMessages();
         }
@@ -50,9 +58,7 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
           menu = value;
           searchQueryOnFocus = searchQuery;
         }
-        // 2. When focus is lost, if the query is now empty but wasn't on focus,
-        // it means the user selected an item, so we restore the empty string
-        // This prevents the old text from reappearing after selection
+        // 2. Focus lost with a now-empty query: the user selected an item, so restore empty to stop old text reappearing.
         else if (searchQuery === '') searchQueryOnFocus = '';
         // 3. Wait for Vuetify's internal clear to happen, then restore our saved value.
         await nextTick();
@@ -63,11 +69,12 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
       (value: string) => {
         // Ignore internal clear value callback on blur event
         if (!value && !menu) return;
+        if (value) menu = true;
 
         if (value[value.length - 1] === ':') {
-          const trimmedValue = value.trim();
+          const normalizedValue = normalizeString(value);
           const filterType = filterTypes.find(
-            (type) => type.toLowerCase() === trimmedValue.slice(0, trimmedValue.length - 1).toLowerCase(),
+            (type) => type.toLowerCase() === normalizedValue.slice(0, normalizedValue.length - 1).toLowerCase(),
           );
           if (filterType) {
             createFilter(filterType);

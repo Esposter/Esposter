@@ -1,7 +1,7 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useAlertStore } from "@/store/alert";
 import { RoutePath } from "@esposter/shared";
 import { observable } from "@trpc/server/observable";

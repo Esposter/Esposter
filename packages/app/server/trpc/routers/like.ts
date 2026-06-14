@@ -5,6 +5,8 @@ import { deleteLikeInputSchema } from "#shared/models/db/post/DeleteLikeInput";
 import { updateLikeInputSchema } from "#shared/models/db/post/UpdateLikeInput";
 import { ranking } from "@@/server/services/post/ranking";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, likes, posts } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
@@ -14,32 +16,33 @@ import { and, eq } from "drizzle-orm";
 export const likeRouter = router({
   createLike: standardAuthedProcedure.input(createLikeInputSchema).mutation<Like>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
-      const post = await tx.query.posts.findFirst({
-        columns: {
-          createdAt: true,
-          id: true,
-          noLikes: true,
-        },
-        where: (posts, { eq }) => eq(posts.id, input.postId),
-      });
-      if (!post)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Post, input.postId).message,
-        });
-
-      const newLike = (
-        await tx
-          .insert(likes)
-          .values({ ...input, userId: ctx.getSessionPayload.user.id })
-          .returning()
-      )[0];
-      if (!newLike)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Like, JSON.stringify(input)).message,
-        });
-
+      const post = await requireEntity(
+        tx.query.posts.findFirst({
+          columns: {
+            createdAt: true,
+            id: true,
+            noLikes: true,
+          },
+          where: {
+            id: {
+              eq: input.postId,
+            },
+          },
+        }),
+        DatabaseEntityType.Post,
+        input.postId,
+      );
+      const newLike = requireMutation(
+        (
+          await tx
+            .insert(likes)
+            .values({ ...input, userId: ctx.getSessionPayload.user.id })
+            .returning()
+        )[0],
+        Operation.Create,
+        DatabaseEntityType.Like,
+        JSON.stringify(input),
+      );
       const noLikesNew = post.noLikes + newLike.value;
       await tx
         .update(posts)
@@ -54,32 +57,33 @@ export const likeRouter = router({
   deleteLike: standardAuthedProcedure.input(deleteLikeInputSchema).mutation<Like>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       // Get post with current like count in a single query
-      const post = await tx.query.posts.findFirst({
-        columns: {
-          createdAt: true,
-          id: true,
-          noLikes: true,
-        },
-        where: (posts, { eq }) => eq(posts.id, input),
-      });
-      if (!post)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Post, input).message,
-        });
-
-      const deletedLike = (
-        await tx
-          .delete(likes)
-          .where(and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, input)))
-          .returning()
-      )[0];
-      if (!deletedLike)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Like, input).message,
-        });
-
+      const post = await requireEntity(
+        tx.query.posts.findFirst({
+          columns: {
+            createdAt: true,
+            id: true,
+            noLikes: true,
+          },
+          where: {
+            id: {
+              eq: input,
+            },
+          },
+        }),
+        DatabaseEntityType.Post,
+        input,
+      );
+      const deletedLike = requireMutation(
+        (
+          await tx
+            .delete(likes)
+            .where(and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, input)))
+            .returning()
+        )[0],
+        Operation.Delete,
+        DatabaseEntityType.Like,
+        input,
+      );
       const noLikesNew = post.noLikes - deletedLike.value;
       await tx
         .update(posts)
@@ -100,13 +104,23 @@ export const likeRouter = router({
             id: true,
             noLikes: true,
           },
-          where: (posts, { eq }) => eq(posts.id, postId),
+          where: {
+            id: {
+              eq: postId,
+            },
+          },
         }),
         tx.query.likes.findFirst({
-          where: (likes, { and, eq }) => and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, postId)),
+          where: {
+            postId: {
+              eq: postId,
+            },
+            userId: {
+              eq: ctx.getSessionPayload.user.id,
+            },
+          },
         }),
       ]);
-
       if (!post)
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -128,23 +142,18 @@ export const likeRouter = router({
         });
 
       const noLikesNew = post.noLikes + value * 2;
-      const updatedLike = (
-        await tx
-          .update(likes)
-          .set({ value })
-          .where(and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, postId)))
-          .returning()
-      )[0];
-      if (!updatedLike)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Update,
-            DatabaseEntityType.Like,
-            JSON.stringify({ postId, value }),
-          ).message,
-        });
-
+      const updatedLike = requireMutation(
+        (
+          await tx
+            .update(likes)
+            .set({ value })
+            .where(and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, postId)))
+            .returning()
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.Like,
+        JSON.stringify({ postId, value }),
+      );
       await tx
         .update(posts)
         .set({

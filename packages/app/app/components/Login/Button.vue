@@ -23,16 +23,20 @@ const isLoading = ref(false);
 
 <template>
   <button
-    class="button"
     :style
-    pl-2
-    flex
-    items-center
-    w-full
-    rd
+    shadow="[0_2px_4px_0_rgba(0,0,0,0.25)]"
+    hover:shadow="[0_2px_10px_2px_rgba(0,0,0,0.35)]"
     mb-3
+    pl-2
+    rd
+    flex
     h-12
-    @disabled="isLoading"
+    w-full
+    transition="[box-shadow,transform]"
+    duration-.2s
+    items-center
+    hover:translate-y="[-3px]"
+    :disabled="isLoading"
     @click="
       async () => {
         isLoading = true;
@@ -49,23 +53,9 @@ const isLoading = ref(false);
     "
   >
     <component :is="logo" :style="{ ...logoStyle }" w-8 :="{ ...logoAttrs }" />
-    <div size-full flex justify-center items-center>
+    <div flex size-full items-center justify-center>
       <v-progress-circular v-if="isLoading" color="white" size="small" indeterminate />
-      <span v-else font-bold text-white>{{ toTitleCase(provider) }}</span>
+      <span v-else text-white font-bold>{{ toTitleCase(provider) }}</span>
     </div>
   </button>
 </template>
-
-<style scoped lang="scss">
-.button {
-  box-shadow: 0 2px 4px 0 rgba(black, 0.25);
-  transition:
-    box-shadow 0.2s,
-    transform 0.2s;
-
-  &:hover {
-    box-shadow: 0 2px 10px 2px rgba(black, 0.35);
-    transform: translateY(-3px);
-  }
-}
-</style>

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { RoutePath } from "@esposter/shared";
 
 interface DirectMessageListItemProps {
-  room: Room;
+  room: RoomInMessage;
 }
 
 const { room } = defineProps<DirectMessageListItemProps>();
@@ -41,7 +41,7 @@ const isActive = computed(() => room.id === currentDirectMessageId.value);
   </v-hover>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-item__prepend > .v-list-item__spacer) {
   width: 0.5rem;
 }

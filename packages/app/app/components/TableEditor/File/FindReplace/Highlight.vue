@@ -24,11 +24,11 @@ const parts = computed(() => {
 
 watch(
   () => isCurrentOccurrence,
-  async (newIsCurrentOccurrence) => {
+  (newIsCurrentOccurrence) => {
     if (!newIsCurrentOccurrence) return;
-    await nextTick();
     container.value?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   },
+  { flush: "post" },
 );
 </script>
 
@@ -46,9 +46,3 @@ watch(
     </template>
   </span>
 </template>
-
-<style scoped lang="scss">
-span::after {
-  content: "\200B";
-}
-</style>

@@ -2,10 +2,9 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
+import { emojify } from "@/services/message/emoji/emojify";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
-import { useColorsStore } from "@/store/colors";
 import { useEmojiStore } from "@/store/message/emoji";
-import { emojify } from "node-emoji";
 
 interface MessageEmojiListProps {
   isPreview?: boolean;
@@ -14,8 +13,6 @@ interface MessageEmojiListProps {
 
 const { isPreview, message } = defineProps<MessageEmojiListProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const colorsStore = useColorsStore();
-const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = storeToRefs(colorsStore);
 const emojiStore = useEmojiStore();
 const { deleteEmoji, getEmojis, updateEmoji } = emojiStore;
 const emojis = computed(() =>
@@ -32,20 +29,26 @@ const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
-  <div v-if="session && hasEmojis" flex items-center flex-wrap gap-1>
+  <div v-if="session && hasEmojis" flex flex-wrap gap-1 items-center>
     <div
       v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
-      :class="isReacted ? 'reacted' : 'not-reacted'"
-      rd-full
-      flex
-      items-center
+      :class="
+        isReacted
+          ? ['bg-info-opacity-10', 'b-info']
+          : ['bg-background-opacity-80', 'b-transparent', 'hover:bg-surface-opacity-80', 'hover:b-border']
+      "
       px-2
-      shadow-md
-      cursor-pointer
-      z-1
+      b-1
+      rd-full
+      b-solid
+      flex
       w-fit
+      cursor-pointer
+      shadow-md
       origin-center
+      items-center
+      z-1
       active:scale-95
       @click="
         isReacted && userIds.length === 1
@@ -59,7 +62,7 @@ const selectEmoji = await useSelectEmoji(message);
       "
     >
       {{ emoji }}
-      <span class="text-title-small" pl-1>{{ userIds.length }}</span>
+      <span pl-1 text-title-small>{{ userIds.length }}</span>
     </div>
     <StyledEmojiPicker
       v-if="!isPreview"
@@ -69,20 +72,3 @@ const selectEmoji = await useSelectEmoji(message);
     />
   </div>
 </template>
-
-<style scoped lang="scss">
-.reacted {
-  background-color: v-bind(infoOpacity10);
-  border: $border-width-root $border-style-root v-bind(info);
-}
-
-.not-reacted {
-  background-color: v-bind(backgroundOpacity80);
-  border: $border-width-root $border-style-root transparent;
-
-  &:hover {
-    background-color: v-bind(surfaceOpacity80);
-    border: $border-width-root $border-style-root v-bind(border);
-  }
-}
-</style>

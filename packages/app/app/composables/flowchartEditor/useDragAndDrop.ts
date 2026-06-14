@@ -17,7 +17,7 @@ export const useDragAndDrop = () => {
 
     type.value = nodeType;
     isDragging.value = true;
-    document.addEventListener("drop", onDragEnd);
+    window.document.addEventListener("drop", onDragEnd);
   };
 
   const onDragOver = (event: DragEvent) => {
@@ -36,7 +36,7 @@ export const useDragAndDrop = () => {
     isDragging.value = false;
     isDragOver.value = false;
     type.value = GeneralNodeType.Rectangle;
-    document.removeEventListener("drop", onDragEnd);
+    window.document.removeEventListener("drop", onDragEnd);
   };
 
   const onDrop = (event: DragEvent) => {
@@ -46,10 +46,7 @@ export const useDragAndDrop = () => {
   const createNode = ({ x, y }: XYPosition) => {
     const position = screenToFlowCoordinate({ x, y });
     const id = crypto.randomUUID();
-    /**
-     * Align node position after drop, so it's centered to the mouse
-     * We can hook into events even in a callback, and we can remove the event listener after it's been called.
-     */
+    // Centre the dropped node on the mouse once initialized, then remove the listener.
     const { off } = onNodesInitialized(() => {
       updateNode(id, ({ dimensions, position }) => ({
         position: {

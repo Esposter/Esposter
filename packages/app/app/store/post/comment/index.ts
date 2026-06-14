@@ -13,7 +13,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   const router = useRouter();
   const currentPostId = computed(() => {
     const postId = router.currentRoute.value.params.id;
-    return typeof postId === "string" && uuidValidateV4(postId) ? postId : undefined;
+    return typeof postId === "string" && uuidValidateV4(postId) ? postId : "";
   });
   const currentPost = ref<PostWithRelations>();
   const { items, ...restData } = useCursorPaginationDataMap<PostWithRelations>(currentPostId);

@@ -1,5 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Ban, BanWithRelations, Clause } from "@esposter/db-schema";
+import type { BanInMessage, BanInMessageWithRelations, Clause, StandardMessageEntity } from "@esposter/db-schema";
 
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
@@ -8,9 +8,13 @@ import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadM
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
-import { isManageable } from "#shared/services/room/rbac/isManageable";
+import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
+import { stopLiveKitScreenShare } from "@@/server/services/livekit/stopLiveKitScreenShare";
+import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
+import { readCallSessionId } from "@@/server/services/message/call/readCallSessionId";
+import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
 import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -21,26 +25,30 @@ import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import { getTableNullClause, getTopNEntities, serializeClauses } from "@esposter/db";
+import { getTableNullClause, getTopNEntities, serializeClauses, serializeEntity } from "@esposter/db";
 import {
   AdminActionType,
+  AZURE_MAX_BATCH_SIZE,
+  AZURE_MAX_PAGE_SIZE,
   AzureTable,
-  bans,
+  bansInMessage,
   BinaryOperator,
   CompositeKeyPropertyNames,
   DatabaseEntityType,
   ModerationLogEntity,
   roomIdSchema,
   RoomPermission,
+  StandardMessageEntityPropertyNames,
   users,
-  usersToRooms,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { exhaustiveGuard, ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
+import { exhaustiveGuard, ItemMetadataPropertyNames } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
+import { and, eq, getColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 const onAdminActionInputSchema = roomIdSchema;
@@ -48,17 +56,15 @@ const onAdminActionInputSchema = roomIdSchema;
 export const moderationRouter = router({
   deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation(
     async ({ ctx, input: { roomId, userId } }) => {
-      const ban = await ctx.db.query.bans.findFirst({
-        columns: { userId: true },
-        where: (bans, { and, eq }) => and(eq(bans.roomId, roomId), eq(bans.userId, userId)),
-      });
-      if (!ban)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Ban, userId).message,
-        });
-
-      await ctx.db.delete(bans).where(and(eq(bans.roomId, roomId), eq(bans.userId, userId)));
+      await requireEntity(
+        ctx.db.query.bansInMessage.findFirst({
+          columns: { userId: true },
+          where: { roomId: { eq: roomId }, userId: { eq: userId } },
+        }),
+        DatabaseEntityType.Ban,
+        userId,
+      );
+      await ctx.db.delete(bansInMessage).where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, userId)));
     },
   ),
   // oxlint-disable-next-line prefer-spread
@@ -73,35 +79,79 @@ export const moderationRouter = router({
         getTopRolePosition(ctx.db, targetUserId, roomId),
       ]);
 
-      if (!isPermitted || !isManageable(actorContext.actorTopPosition, targetTopPosition, actorContext.isOwner))
+      if (!isPermitted || !checkIsManageable(actorContext.actorTopPosition, targetTopPosition, actorContext.isOwner))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
       switch (input.type) {
         case AdminActionType.CreateBan:
           await ctx.db.transaction(async (tx) => {
             await tx
-              .delete(usersToRooms)
-              .where(and(eq(usersToRooms.userId, targetUserId), eq(usersToRooms.roomId, roomId)));
+              .delete(usersToRoomsInMessage)
+              .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
             await tx
-              .insert(bans)
+              .insert(bansInMessage)
               .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
               .onConflictDoNothing();
           });
           break;
         case AdminActionType.ForceMute:
         case AdminActionType.ForceUnmute:
-        case AdminActionType.KickFromVoice:
+        case AdminActionType.KickFromCall:
           break;
         case AdminActionType.KickFromRoom:
           await ctx.db
-            .delete(usersToRooms)
-            .where(and(eq(usersToRooms.userId, targetUserId), eq(usersToRooms.roomId, roomId)));
+            .delete(usersToRoomsInMessage)
+            .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
           break;
+        case AdminActionType.SoftBan: {
+          await ctx.db.transaction(async (tx) => {
+            await tx
+              .delete(usersToRoomsInMessage)
+              .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
+            await tx
+              .insert(bansInMessage)
+              .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
+              .onConflictDoNothing();
+          });
+          const messageClient = await useTableClient(AzureTable.Messages);
+          const filter = serializeClauses([
+            { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+            { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: targetUserId },
+            getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+          ] as Clause<StandardMessageEntity>[]);
+          const now = new Date();
+          for await (const page of messageClient
+            .listEntities<StandardMessageEntity>({ queryOptions: { filter } })
+            .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
+            for (let i = 0; i < page.length; i += AZURE_MAX_BATCH_SIZE) {
+              const batch = page.slice(i, i + AZURE_MAX_BATCH_SIZE);
+              await messageClient.submitTransaction(
+                batch.map(({ partitionKey, rowKey }) => [
+                  "update",
+                  serializeEntity({ deletedAt: now, partitionKey, rowKey, updatedAt: now }),
+                ]),
+              );
+              for (const { partitionKey, rowKey } of batch)
+                messageEventEmitter.emit("deleteMessage", { partitionKey, rowKey });
+            }
+
+          break;
+        }
+        case AdminActionType.StopScreenShare: {
+          const callSessionId = await readCallSessionId(ctx.db, roomId);
+          if (!callSessionId) break;
+
+          const sessionMap = callSessionParticipantMap.get(callSessionId);
+          if (sessionMap) await stopLiveKitScreenShare(callSessionId, sessionMap, targetUserId);
+          break;
+        }
         case AdminActionType.TimeoutUser:
           await ctx.db
-            .update(usersToRooms)
+            .update(usersToRoomsInMessage)
             .set({ timeoutUntil: new Date(Date.now() + input.durationMs) })
-            .where(and(eq(usersToRooms.userId, targetUserId), eq(usersToRooms.roomId, roomId)));
+            .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
+          break;
+        case AdminActionType.Warn:
           break;
         default:
           exhaustiveGuard(input);
@@ -129,24 +179,26 @@ export const moderationRouter = router({
     }
   }),
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<
-    CursorPaginationData<BanWithRelations>
+    CursorPaginationData<BanInMessageWithRelations>
   >(async ({ ctx, input: { cursor, limit, roomId } }) => {
-    const sortBy: SortItem<keyof Ban>[] = [{ key: "createdAt", order: SortOrder.Desc }];
-    const wheres: (SQL | undefined)[] = [eq(bans.roomId, roomId), isNull(bans.deletedAt)];
-    if (cursor) wheres.push(getCursorWhere(bans, cursor, sortBy));
+    const sortBy: SortItem<keyof BanInMessage>[] = [
+      { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
+    ];
+    const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
+    if (cursor) wheres.push(getCursorWhere(bansInMessage, cursor, sortBy));
 
     const bannedByUsers = alias(users, "bannedByUsers");
     const readBans = await ctx.db
       .select({
-        ...getTableColumns(bans),
-        bannedByUser: getTableColumns(bannedByUsers),
-        user: getTableColumns(users),
+        ...getColumns(bansInMessage),
+        bannedByUser: getColumns(bannedByUsers),
+        user: getColumns(users),
       })
-      .from(bans)
-      .innerJoin(users, eq(bans.userId, users.id))
-      .leftJoin(bannedByUsers, eq(bans.bannedByUserId, bannedByUsers.id))
+      .from(bansInMessage)
+      .innerJoin(users, eq(bansInMessage.userId, users.id))
+      .leftJoin(bannedByUsers, eq(bansInMessage.bannedByUserId, bannedByUsers.id))
       .where(and(...wheres))
-      .orderBy(...parseSortByToSql(bans, sortBy))
+      .orderBy(...parseSortByToSql(bansInMessage, sortBy))
       .limit(limit + 1);
     return getCursorPaginationData(readBans, limit, sortBy);
   }),

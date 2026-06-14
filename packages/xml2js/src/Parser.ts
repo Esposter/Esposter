@@ -48,8 +48,7 @@ export class Parser {
             if (this.options.mergeAttrs) this.assignOrPush(newObject, processedKey, newValue);
             else defineProperty(newObject[this.options.attrkey] as Record<string, unknown>, processedKey, newValue);
           }
-
-      // We will hardcode a place to store the node name
+      // Hardcode a place to store the node name.
       newObject[BUILTIN_NAME_KEY] = this.options.tagNameProcessors
         ? processItem(this.options.tagNameProcessors, node.name, "")
         : node.name;
@@ -75,12 +74,12 @@ export class Parser {
       let emptyString = "";
       // Remove the '#' key altogether if it's blank
       const char = object[this.options.charkey] as string;
-      if (/^\s*$/.exec(char) && !cdata) {
+      if (/^\s*$/u.exec(char) && !cdata) {
         emptyString = char;
         delete object[this.options.charkey];
       } else {
         if (this.options.trim) object[this.options.charkey] = char.trim();
-        if (this.options.normalize) object[this.options.charkey] = char.replaceAll(/\s{2,}/g, " ").trim();
+        if (this.options.normalize) object[this.options.charkey] = char.replaceAll(/\s{2,}/gu, " ").trim();
 
         object[this.options.charkey] = this.options.valueProcessors
           ? processItem(this.options.valueProcessors, char, nodeName)
@@ -98,8 +97,7 @@ export class Parser {
         const xpath = `/${[...this.stack.map((node) => node[BUILTIN_NAME_KEY]), nodeName].join("/")}`;
         object = this.options.validator(xpath, nextObject?.[nodeName], object);
       }
-
-      // Put children into <childkey> property and unfold chars if necessary
+      // Put children into the <childkey> property and unfold chars if necessary.
       if (this.options.explicitChildren && !this.options.mergeAttrs && typeof object === "object")
         if (!this.options.preserveChildrenOrder) {
           const node: Record<string, unknown> = {};
@@ -120,10 +118,10 @@ export class Parser {
         } else if (nextObject) {
           // Append current node onto parent's <childKey> array
           nextObject[this.options.childkey] ??= [];
-          // Push a clone so that the node in the children array can receive the #name property while the original object can do without it
+          // Push a clone so the child entry can carry the #name property while the original goes without.
           (nextObject[this.options.childkey] as Record<string, unknown>[]).push(structuredClone(object));
           delete object[BUILTIN_NAME_KEY];
-          // Re-check whether we can collapse the node now to just the this.options.charkey value
+          // Re-check whether the node can now collapse to just the charkey value.
           if (Object.keys(object).length === 1 && this.options.charkey in object)
             object = object[this.options.charkey] as Record<string, unknown>;
         }
@@ -161,7 +159,7 @@ export class Parser {
         };
         if (this.options.normalize)
           charChild[this.options.charkey] = takeOne(charChild, this.options.charkey)
-            .replaceAll(/\s{2,}/g, " ")
+            .replaceAll(/\s{2,}/gu, " ")
             .trim();
 
         (object[this.options.childkey] as Record<string, string>[]).push(charChild);
@@ -212,8 +210,7 @@ export const parseStringPromise = <T>(
   const parser = new Parser(options);
   return parser.parseStringPromise(convertableToString);
 };
-
-// Underscore has a nice function for this, but we try to go without dependencies
+// Underscore has a nice function for this, but we go without dependencies.
 const isEmpty = (thing: unknown): boolean =>
   typeof thing === "object" && thing !== null && Object.keys(thing).length === 0;
 

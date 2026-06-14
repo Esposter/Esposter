@@ -1,6 +1,7 @@
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { MathTransformation } from "#shared/models/tableEditor/file/column/transformation/MathTransformation";
 
+import { getResult } from "@esposter/shared";
 import { evaluate } from "mathjs";
 
 export const computeMathTransformation = (
@@ -13,10 +14,8 @@ export const computeMathTransformation = (
       return [name, value === null ? 0 : Number(value)];
     }),
   );
-  try {
-    const result: unknown = evaluate(transformation.expression, scope);
-    return typeof result === "number" && isFinite(result) ? result : null;
-  } catch {
-    return null;
-  }
+  return getResult(() => evaluate(transformation.expression, scope)).match(
+    (result) => (typeof result === "number" && isFinite(result) ? result : null),
+    () => null,
+  );
 };

@@ -5,7 +5,7 @@ import { Lifecycle } from "@/models/lifecycle/Lifecycle";
 import { runLifecycleListeners } from "@/util/hooks/runLifecycleListeners";
 import { Scene } from "phaser";
 
-export const createSceneClass = (key: string, hooks: SceneLifecycleHooks = {}) =>
+export const createSceneClass = (key: string, hooks: SceneLifecycleHooks = {}): new () => Scene =>
   class extends Scene {
     constructor() {
       super({ key });

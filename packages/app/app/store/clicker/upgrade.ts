@@ -2,7 +2,7 @@ import type { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 
 import { Target } from "#shared/models/clicker/data/Target";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 import { useClickerStore } from "@/store/clicker";
 import { usePointStore } from "@/store/clicker/point";
 import { exhaustiveGuard } from "@esposter/shared";

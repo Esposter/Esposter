@@ -3,10 +3,10 @@ import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class FileEntity {
-  filename!: string;
-  id!: string;
-  mimetype!: string;
-  size!: number;
+  declare filename: string;
+  declare id: string;
+  declare mimetype: string;
+  declare size: number;
 
   constructor(init?: Partial<FileEntity>) {
     Object.assign(this, init);

@@ -4,14 +4,14 @@ import type { ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { BaseMessageEntity, baseMessageEntitySchema } from "@/models/message/BaseMessageEntity";
-import { selectUserSchema } from "@/schema/users";
+import { userIdSchema } from "@/models/shared/UserId";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class StandardMessageEntity extends BaseMessageEntity {
-  userId!: User["id"];
+  declare userId: User["id"];
 
-  constructor(init: Partial<StandardMessageEntity> & ToData<CompositeKeyEntity>) {
+  constructor(init?: Partial<StandardMessageEntity> & ToData<CompositeKeyEntity>) {
     super();
     Object.assign(this, init);
   }
@@ -21,6 +21,6 @@ export const StandardMessageEntityPropertyNames = getPropertyNames<StandardMessa
 
 export const standardMessageEntitySchema = z.object({
   ...baseMessageEntitySchema.shape,
-  userId: selectUserSchema.shape.id,
-  // We only generate link preview responses via the backend, so we can safely exclude it from the schema
+  ...userIdSchema.shape,
+  // Link preview responses are generated only on the backend, so we exclude the field from the schema.
 }) satisfies z.ZodType<ToData<Except<StandardMessageEntity, "linkPreviewResponse">>>;

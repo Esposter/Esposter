@@ -10,15 +10,16 @@ import { fileKeySchema } from "#shared/models/dungeons/keys/FileKey";
 import { statsSchema } from "#shared/models/dungeons/monster/Stats";
 import { statusSchema } from "#shared/models/dungeons/monster/Status";
 import { getMonsterData } from "#shared/services/dungeons/monster/getMonsterData";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class Monster {
-  asset!: Asset;
-  attackIds!: AttackId[];
+  declare asset: Asset;
+  declare attackIds: AttackId[];
   id: string = crypto.randomUUID();
-  key!: FileKey;
-  stats!: Stats;
-  status!: Status;
+  declare key: FileKey;
+  declare stats: Stats;
+  declare status: Status;
 
   constructor(key: FileKey) {
     Object.assign(this, structuredClone(getMonsterData(key)));
@@ -27,7 +28,7 @@ export class Monster {
 
 export const monsterSchema = z.object({
   asset: assetSchema,
-  attackIds: attackSchema.shape.id.array(),
+  attackIds: createUniqueArraySchema(attackSchema.shape.id),
   id: z.uuid(),
   key: fileKeySchema,
   stats: statsSchema,

@@ -1,1 +1,1 @@
-export const startsWithNumber = (string: string) => /^\d/.test(string);
+export const startsWithNumber = (string: string) => /^\d/u.test(string);

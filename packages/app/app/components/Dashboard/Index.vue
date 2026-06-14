@@ -27,8 +27,8 @@ const layout = ref(structuredClone(toRawDeep(visuals.value)));
   </v-container>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.vgl-layout) {
-  border-radius: $border-radius-root;
+  border-radius: var(--border-radius);
 }
 </style>

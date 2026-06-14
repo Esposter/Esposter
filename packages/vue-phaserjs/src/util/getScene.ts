@@ -1,11 +1,9 @@
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 
 import { useGame } from "@/composables/useGame";
-// We need to get the scene manually instead of injecting the sceneKey here
-// Because scenes may be instantiated at various different complex times
-// And are not always available, so we only want to grab the latest scene
-// When we actually need to use it
-export const getScene = (sceneKey: SceneWithPlugins["scene"]["key"]) => {
+// Resolve the scene manually rather than injecting the sceneKey: scenes are created at varying,
+// Complex times and aren't always available, so we grab the latest one only when we need it.
+export const getScene = (sceneKey: SceneWithPlugins["scene"]["key"]): SceneWithPlugins => {
   const game = useGame();
-  return game.scene.getScene(sceneKey) as SceneWithPlugins;
+  return game.scene.getScene(sceneKey);
 };

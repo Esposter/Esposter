@@ -13,7 +13,6 @@ import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 
 const phaserStore = usePhaserStore();
 const { switchToScene } = phaserStore;
-const isProduction = useIsProduction();
 const x = ref<number>();
 const y = ref<number>();
 const percentageText = ref("0%");
@@ -40,7 +39,7 @@ const preload = (scene: SceneWithPlugins) => {
     })
     .once("complete", async () => {
       scene.load.setBaseURL();
-      await switchToScene(isProduction ? SceneKey.Title : SceneKey.Title);
+      await switchToScene(SceneKey.Title);
     });
 
   for (const spritesheetLoader of SpritesheetLoaders) spritesheetLoader(scene);

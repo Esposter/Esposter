@@ -6,51 +6,62 @@ Unified admin action system. All procedures gated behind specific `RoomPermissio
 
 ## `AdminActionType` enum
 
-`shared/models/message/AdminActionType.ts`
+`packages/db-schema/src/models/message/AdminActionType.ts`
 
 ```typescript
 export enum AdminActionType {
+  CreateBan = "CreateBan",
   ForceMute = "ForceMute",
   ForceUnmute = "ForceUnmute",
-  KickFromVoice = "KickFromVoice",
+  KickFromCall = "KickFromCall",
   KickFromRoom = "KickFromRoom",
+  SoftBan = "SoftBan",
+  StopScreenShare = "StopScreenShare",
   TimeoutUser = "TimeoutUser",
-  BanUser = "BanUser",
+  Warn = "Warn",
 }
 ```
 
 ---
 
-## `moderationRouter` (`server/trpc/routers/moderation.ts`)
+## `moderationRouter` (`server/trpc/routers/message/moderation.ts`)
 
 | Procedure                                                         | Notes                                                              |
 | :---------------------------------------------------------------- | :----------------------------------------------------------------- |
 | `executeAdminAction({ roomId, targetUserId, type, durationMs? })` | Permission gate per action type (see below); checks `isManageable` |
 | `onAdminAction({ roomId })`                                       | Subscription; targeted `userId` receives the action                |
+| `readBans({ roomId, cursor, limit })`                             | Cursor-paginated; behind `BanMembers`                              |
+| `deleteBan({ roomId, userId })`                                   | Removes a ban; behind `BanMembers`                                 |
 | `readModerationLog({ roomId, cursor })`                           | Cursor-paginated; behind `ManageRoom`                              |
 
 ---
 
 ## Permission Gates
 
-| Action          | Required permission |
-| :-------------- | :------------------ |
-| `ForceMute`     | `MuteMembers`       |
-| `ForceUnmute`   | `MuteMembers`       |
-| `KickFromVoice` | `MoveMembers`       |
-| `KickFromRoom`  | `KickMembers`       |
-| `TimeoutUser`   | `KickMembers`       |
-| `BanUser`       | `BanMembers`        |
+| Action            | Required permission |
+| :---------------- | :------------------ |
+| `CreateBan`       | `BanMembers`        |
+| `ForceMute`       | `MuteMembers`       |
+| `ForceUnmute`     | `MuteMembers`       |
+| `KickFromCall`    | `MoveMembers`       |
+| `KickFromRoom`    | `KickMembers`       |
+| `SoftBan`         | `BanMembers`        |
+| `StopScreenShare` | `MuteMembers`       |
+| `TimeoutUser`     | `KickMembers`       |
+| `Warn`            | `ManageMessages`    |
 
 ---
 
 ## Action Behaviours
 
-- **Force-mute / force-unmute** — targeted client receives action via `onAdminAction`; sets `isMuted = true`, disables local toggle until `ForceUnmute`
-- **Kick from voice** — targeted client calls `leaveVoice()` locally; shows snackbar
+- **Force-mute / force-unmute** — targeted client receives action via `onAdminAction`; call store hook toggles local microphone and force-muted state
+- **Kick from call** — targeted client calls `leaveCall()` through `AdminActionHookMap`; shows snackbar
 - **Kick from room** — targeted client navigates away; server deletes `usersToRooms` row
+- **Stop screen share** — server uses LiveKit Admin API to revoke screen-share publish sources and mute active screen-share tracks for the target's active call sessions; targeted client also calls `setScreenShare(false)` through the call store hook and shows a snackbar
 - **Timeout** — `durationMs` required; server sets `timeoutUntil` on `usersToRooms`; all message-producing mutations (`createMessage`, `forwardMessage`, etc.) reject if `timeoutUntil > now()`
-- **Ban** — permanent; deletes `usersToRooms` + all `usersToRoomRoles` rows; inserts into `bans` table; join/invite flows reject banned users; `readBans`/`unbanUser` added behind `BanMembers`
+- **Create ban** — permanent; deletes `usersToRooms`; inserts into `bans` table; join/invite flows reject banned users; `readBans`/`deleteBan` are behind `BanMembers`
+- **Soft ban** — creates a ban, removes the user from the room, and marks their visible messages deleted
+- **Warn** — records and emits the action; targeted client shows a warning notification
 
 ---
 
@@ -66,12 +77,13 @@ Append-only Azure Table (`AzureTable.ModerationLog`):
 
 ## Implementation Tasks
 
-- [ ] **`AdminActionType` enum** — `shared/models/message/AdminActionType.ts`
-- [ ] **`moderationRouter`** — `server/trpc/routers/moderation.ts` (3 procedures above)
-- [ ] **Force-mute / force-unmute** — client handler in voice store
-- [ ] **Kick from voice** — client handler; calls `leaveVoice()` + snackbar
-- [ ] **Kick from room** — client handler; navigate away; server deletes `usersToRooms`
-- [ ] **Timeout** — `durationMs` required; enforce in `createMessage`
-- [ ] **Ban** — cascade delete + `bans` insert; `readBans`/`unbanUser` procedures
-- [ ] **Moderation log** — Azure Table `ModerationLog`; "Audit Log" tab in room settings
-- [ ] **Tests** — `server/trpc/routers/moderation.test.ts`; cover `executeAdminAction` (all action types + permission gates), `onAdminAction` subscription, `readModerationLog`
+- [x] **`AdminActionType` enum** — `packages/db-schema/src/models/message/AdminActionType.ts`
+- [x] **`moderationRouter`** — `server/trpc/routers/message/moderation.ts`
+- [x] **Force-mute / force-unmute** — client hook in call store plus snackbar notification path
+- [x] **Kick from call** — client hook calls `leaveCall()` plus snackbar notification path
+- [x] **Kick from room** — client handler deletes local room state; server deletes `usersToRooms`
+- [x] **Stop screen share** — server-side LiveKit enforcement plus client hook/snackbar path
+- [x] **Timeout** — `durationMs` required; enforced in message-producing paths
+- [x] **Create ban / soft ban / warn** — covered by `executeAdminAction`
+- [x] **Moderation log** — Azure Table `ModerationLog`; "Audit Log" tab in room settings
+- [x] **Tests** — `server/trpc/routers/message/moderation.test.ts`

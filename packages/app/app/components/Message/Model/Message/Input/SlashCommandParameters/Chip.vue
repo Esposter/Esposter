@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { slashCommandParameterValueSchema } from "@/models/message/slashCommands/SlashCommandParameter";
 import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
@@ -41,32 +42,52 @@ onMounted(() => {
 
 <template>
   <div
-    class="parameter-chip bg-border"
-    :class="{ 'parameter-chip--error': isError }"
-    inline-flex
-    items-center
-    gap-1.5
-    rd
-    py-1
+    :class="isError ? ['b-error'] : ['b-border', 'focus-within:b-info']"
+    b="[1.5px]"
     px-2
+    py-1
+    rd
+    b-solid
+    bg-border
+    inline-flex
+    gap-1.5
+    items-center
     overflow-hidden
   >
-    <span class="parameter-chip__label bg-background" font-bold text-sm :class="isError ? 'text-error' : ''">
+    <span
+      :class="isError ? 'text-error' : ''"
+      font-bold
+      my--1
+      ml--2
+      py-1
+      pl-2
+      pr-1
+      bg-background
+      flex
+      items-center
+      self-stretch
+      text-body-medium
+    >
       {{ name }}
     </span>
     <input
       ref="input"
       v-model="modelValue"
-      class="parameter-chip__input"
       color-inherit
-      bg-transparent
-      b-none
       outline-none
-      text-sm
+      b-none
+      bg-transparent
+      field-sizing-content
+      text-body-medium
       :autofocus
       @focus="emit('focus')"
       @blur="emit('blur')"
-      @update:model-value="setErrors(name, isRequired && !$event.trim() ? [REQUIRED_ERROR_MESSAGE] : [])"
+      @update:model-value="
+        setErrors(
+          name,
+          isRequired && !slashCommandParameterValueSchema.safeParse($event).success ? [REQUIRED_ERROR_MESSAGE] : [],
+        )
+      "
       @keydown.enter.prevent="emit('submit')"
       @keydown.delete="!modelValue && emit('delete')"
       @keydown.left.exact="
@@ -90,29 +111,3 @@ onMounted(() => {
     />
   </div>
 </template>
-
-<style scoped lang="scss">
-.parameter-chip {
-  border: 1.5px solid rgba(var(--v-border-color), var(--v-border-opacity));
-
-  &:focus-within {
-    border-color: rgb(var(--v-theme-info));
-  }
-
-  &--error {
-    border-color: rgb(var(--v-theme-error));
-  }
-
-  &__label {
-    align-self: stretch;
-    display: flex;
-    align-items: center;
-    margin: -0.25rem 0 -0.25rem -0.5rem;
-    padding: 0.25rem 0.25rem 0.25rem 0.5rem;
-  }
-
-  &__input {
-    field-sizing: content;
-  }
-}
-</style>

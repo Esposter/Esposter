@@ -2,8 +2,8 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
+import { unemojify } from "@/services/message/emoji/unemojify";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
-import { unemojify } from "node-emoji";
 
 interface MessageOptionsMenuProps {
   hoverProps?: Record<string, unknown>;
@@ -41,9 +41,9 @@ const {
     <v-card-actions p-0 gap-0 min-h-auto>
       <v-tooltip v-for="emoji of EmojiMenuItems" :key="emoji">
         <template #activator="{ props }">
-          <v-btn m-0 size-10 :text="emoji" icon tile :="props" @click="emit('update:select-emoji', emoji)" />
+          <v-btn :text="emoji" icon tile m-0 size-10 :="props" @click="emit('update:select-emoji', emoji)" />
         </template>
-        <div flex flex-col text-center>
+        <div text-center flex flex-col>
           <div font-bold>{{ unemojify(emoji) }}</div>
           <div>Click to react</div>
         </div>

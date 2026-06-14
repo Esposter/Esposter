@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { AchievementStatus, AchievementStatuses } from "#shared/models/achievement/AchievementStatus";
+import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
 import { useAchievementStore } from "@/store/achievement";
 
 const achievementStore = useAchievementStore();
@@ -25,7 +26,7 @@ const achievementListMap = computed(() => {
     },
   };
 });
-const tab = ref(AchievementStatus.All);
+const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, AchievementStatuses, AchievementStatus.All);
 </script>
 
 <template>

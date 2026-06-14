@@ -45,14 +45,16 @@ const isActive = ref(false);
     <div
       v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
       v-show="isActive"
-      absolute
-      top-2
       right-2
+      top-2
+      absolute
     >
       <v-hover #default="{ isHovering, props: hoverProps }">
         <MessageModelMessageFileOptionsMenu
+          :filename="file.filename"
           :is-hovering
           :hover-props
+          :url
           @delete="
             $trpc.message.deleteFile.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey, id: file.id })
           "

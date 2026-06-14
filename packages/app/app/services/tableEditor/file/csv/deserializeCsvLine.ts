@@ -1,3 +1,5 @@
+import { normalizeString } from "@esposter/shared";
+
 export const deserializeCsvLine = (line: string, delimiter: string): string[] => {
   const fields: string[] = [];
   let current = "";
@@ -11,11 +13,11 @@ export const deserializeCsvLine = (line: string, delimiter: string): string[] =>
         i++;
       } else isInQuotes = !isInQuotes;
     else if (char === delimiter && !isInQuotes) {
-      fields.push(current.trim());
+      fields.push(normalizeString(current));
       current = "";
     } else current += char;
   }
 
-  fields.push(current.trim());
+  fields.push(normalizeString(current));
   return fields;
 };

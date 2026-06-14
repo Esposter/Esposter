@@ -1,0 +1,3 @@
+const AzureLogicAppsManagementSolutionProduct = "OMSGallery/LogicAppsManagement";
+
+export default AzureLogicAppsManagementSolutionProduct;

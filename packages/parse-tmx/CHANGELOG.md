@@ -3,6 +3,63 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
+
+### Bug Fixes
+
+* increase timeout ([52cc6b3](https://github.com/Esposter/Esposter/commit/52cc6b376f5ca9fccb18b4c1fac470aff31c522c))
+* snapshots and dev env for now ([c774f1c](https://github.com/Esposter/Esposter/commit/c774f1c58f72f5274c74bc97eca204d30bbc09ee))
+
+# [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
+
+### Bug Fixes
+
+* deps wip ([3c6f204](https://github.com/Esposter/Esposter/commit/3c6f2048a3bc56abc7422e07eaca17dedd6f30e6))
+* snapshot ([6d495ad](https://github.com/Esposter/Esposter/commit/6d495adc80788297b2f1cb54caa136e653f4987f))
+* snapshot ([ab17d12](https://github.com/Esposter/Esposter/commit/ab17d1201b2bdee2d46711147b7f1fdb385fe1e8))
+* ts6 ([a0e8448](https://github.com/Esposter/Esposter/commit/a0e84485b2ff8c50b8511a86f71006bbeb71d382))
+
+# [2.26.0](https://github.com/Esposter/Esposter/compare/v2.25.0...v2.26.0) (2026-06-01)
+
+### Bug Fixes
+
+* add isWindows check ([2b101a5](https://github.com/Esposter/Esposter/commit/2b101a5b8d67bb0751d1c7ef01b0253e6aef8190))
+* add types ([7a761d2](https://github.com/Esposter/Esposter/commit/7a761d22a896c6eabfc7459d193dff0b3a69b791))
+* cleanup vitest config to also be shared package ([8c9e5c6](https://github.com/Esposter/Esposter/commit/8c9e5c6a9e2573485c899db3ccaf3b71f0320fe1))
+* format + perms ([5231b9a](https://github.com/Esposter/Esposter/commit/5231b9a3ec19477ee70573477273d7ba312d3659))
+* lint and test snapshots to include linux ([2389fbc](https://github.com/Esposter/Esposter/commit/2389fbc9f692c65fcff37f5e4e766af6b3e3f722))
+* remove node and plugins and use web native APIs ([a7d80a2](https://github.com/Esposter/Esposter/commit/a7d80a2d535231e8c989b82db25329817eca43fe))
+* tsconfig ([3f0f079](https://github.com/Esposter/Esposter/commit/3f0f0792781048f769967d9eced7dd7300293320))
+* use isomorphic rolldown config for parse-tmx (node:zlib polyfill) ([b518b32](https://github.com/Esposter/Esposter/commit/b518b32be351b26446528b36c7e22b0fcc6815f3))
+* vitest config ts ([204792c](https://github.com/Esposter/Esposter/commit/204792cec21bf26495477d793f106dbd99f84ce6))
+* wip tests ([87dcb4d](https://github.com/Esposter/Esposter/commit/87dcb4db2a8b0b2d3de7d9eca87d6daab9a47056))
+
+### Features
+
+* Add bundle tests + fix up mocking ([b6db055](https://github.com/Esposter/Esposter/commit/b6db055d8d087fc7cc61e3226939d41d8817f730))
+* Add dts bundle size tests ([dfc255a](https://github.com/Esposter/Esposter/commit/dfc255a50259cc6364b6edd97dcd5403c775aa1d))
+
+# [2.25.0](https://github.com/Esposter/Esposter/compare/v2.24.0...v2.25.0) (2026-05-21)
+
+**Note:** Version bump only for package parse-tmx
+
+# [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
+
+### Bug Fixes
+
+* lint ([92cce33](https://github.com/Esposter/Esposter/commit/92cce33cbe510ba04dbdf152a0091b231b5e05b3))
+* typechecking and code review comments ([2a85e3f](https://github.com/Esposter/Esposter/commit/2a85e3fe2652b11a563b91e1749a6f1ce38be6dc))
+
+# [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
+
+### Bug Fixes
+
+* lint ([f6e79f4](https://github.com/Esposter/Esposter/commit/f6e79f496c45f0d7369e7a288891846d6325bd3f))
+
+# [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
+
+**Note:** Version bump only for package parse-tmx
+
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
 
 ### Bug Fixes

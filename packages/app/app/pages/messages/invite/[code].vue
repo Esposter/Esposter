@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
-import { DatabaseEntityType, selectInviteSchema } from "@esposter/db-schema";
+import { DatabaseEntityType, selectInviteInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({
   middleware: "auth",
   validate: async (route) => {
     const code = route.params.code;
-    const result = await selectInviteSchema.shape.code.safeParseAsync(code);
+    const result = await selectInviteInMessageSchema.shape.id.safeParseAsync(code);
     return result.success;
   },
 });
@@ -35,7 +35,7 @@ const { joinRoom } = roomStore;
     </Head>
     <VisualSpaceBackground>
       <v-dialog :model-value="true" persistent no-click-animation :scrim="false">
-        <StyledCard class="bg-background" items-center p-8>
+        <StyledCard p-8 bg-background items-center>
           <v-card-title>
             <StyledAvatar :image="invite.user.image" :name="invite.user.name" :avatar-props="{ size: '6rem' }" />
           </v-card-title>
@@ -43,29 +43,21 @@ const { joinRoom } = roomStore;
             <div text-center>
               You've been invited to join
               <span font-bold>
-                {{ invite.room.name }}
+                {{ invite.roomInMessage.name }}
               </span>
               by
-              <div text-2xl font-bold>
+              <div font-bold text-headline-small>
                 {{ invite.user.name }}
               </div>
               <div>
-                {{ invite.room.usersToRooms.length }} Member{{ invite.room.usersToRooms.length === 1 ? "" : "s" }}
+                {{ invite.roomInMessage.usersToRoomsInMessage.length }} Member{{
+                  invite.roomInMessage.usersToRoomsInMessage.length === 1 ? "" : "s"
+                }}
               </div>
             </div>
           </v-card-text>
           <v-card-actions w-full>
-            <StyledButton
-              w-full
-              :button-props="{ text: 'Accept Invite' }"
-              @click="
-                async () => {
-                  const code = $route.params.code;
-                  if (typeof code !== 'string') return;
-                  await joinRoom(code);
-                }
-              "
-            />
+            <StyledButton w-full :button-props="{ text: 'Accept Invite' }" @click="joinRoom(code)" />
           </v-card-actions>
         </StyledCard>
       </v-dialog>

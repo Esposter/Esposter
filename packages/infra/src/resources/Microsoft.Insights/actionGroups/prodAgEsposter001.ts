@@ -1,0 +1,36 @@
+import ApplicationTags from "@/constants/ApplicationTags";
+import AzureGlobalDisplayLocation from "@/constants/AzureGlobalDisplayLocation";
+import { prodLogicEsposterAe001 } from "@/resources/Microsoft.Logic/workflows/prodLogicEsposterAe001";
+import { prodRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
+import * as azure_native from "@pulumi/azure-native";
+import * as pulumi from "@pulumi/pulumi";
+
+const config = new pulumi.Config();
+
+const actionGroupName = "prod-ag-esposter-001";
+
+export const prodAgEsposter001: azure_native.monitor.ActionGroup = new azure_native.monitor.ActionGroup(
+  actionGroupName,
+  {
+    actionGroupName,
+    enabled: true,
+    groupShortName: "StopFunction",
+    location: AzureGlobalDisplayLocation,
+    logicAppReceivers: [
+      {
+        callbackUrl: config.requireSecret("prodAgEsposterAe001CallbackUrl"),
+        name: "prod-stop-function",
+        resourceId: prodLogicEsposterAe001.id,
+        useCommonAlertSchema: true,
+      },
+    ],
+    resourceGroupName: prodRgEsposterAe001.name,
+    tags: {
+      ...ApplicationTags,
+    },
+  },
+  {
+    parent: prodRgEsposterAe001,
+    protect: true,
+  },
+);

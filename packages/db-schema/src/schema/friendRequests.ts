@@ -2,21 +2,20 @@ import type { User } from "@/schema/users";
 
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, index, text } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
+import { createSelectSchema } from "drizzle-orm/zod";
 
 export const friendRequests = pgTable(
-  "friend_requests",
+  "friendRequests",
   {
     // Natural key — getFriendshipId(senderId, receiverId).
     // Conflicts on insert act as idempotency: if A already sent to B, a second send is a no-op.
-    id: text("id").primaryKey(),
-    receiverId: text("receiverId")
+    id: text().primaryKey(),
+    receiverId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    senderId: text("senderId")
+    senderId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
@@ -33,23 +32,5 @@ export type FriendRequest = typeof friendRequests.$inferSelect;
 export type FriendRequestWithRelations = FriendRequest & { receiver: User; sender: User };
 
 export const selectFriendRequestSchema = createSelectSchema(friendRequests, {
-  id: z.string().min(1),
+  id: (schema) => schema.min(1),
 });
-
-export const friendRequestsRelations = relations(friendRequests, ({ one }) => ({
-  receiver: one(users, {
-    fields: [friendRequests.receiverId],
-    references: [users.id],
-    relationName: "receiver",
-  }),
-  sender: one(users, {
-    fields: [friendRequests.senderId],
-    references: [users.id],
-    relationName: "sender",
-  }),
-}));
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const FriendRequestRelations = {
-  receiver: true,
-  sender: true,
-} as const;

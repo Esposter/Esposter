@@ -4,9 +4,9 @@ import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedC
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import {
-  makeColumn,
-  makeDataSource,
-  makeRow,
+  createColumn as baseCreateColumn,
+  createDataSource,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -136,8 +136,10 @@ describe(useCreateColumn, () => {
   test("adds a computed column to the data source", () => {
     expect.hasAssertions();
 
-    const sourceColumn = makeColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(makeDataSource([sourceColumn], [makeRow({ [SOURCE_COLUMN_NAME]: 0 })]));
+    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
+    const { editedItem } = setupWithDataSource(
+      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
+    );
     const createColumn = useCreateColumn();
     const newColumn = new ComputedColumn({
       name: " ",
@@ -159,8 +161,10 @@ describe(useCreateColumn, () => {
   test("does not write to row.data for computed column", () => {
     expect.hasAssertions();
 
-    const sourceColumn = makeColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(makeDataSource([sourceColumn], [makeRow({ [SOURCE_COLUMN_NAME]: 0 })]));
+    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
+    const { editedItem } = setupWithDataSource(
+      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
+    );
     const createColumn = useCreateColumn();
     const newColumn = new ComputedColumn({
       name: " ",
@@ -181,8 +185,10 @@ describe(useCreateColumn, () => {
   test("undo removes the computed column", () => {
     expect.hasAssertions();
 
-    const sourceColumn = makeColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(makeDataSource([sourceColumn], [makeRow({ [SOURCE_COLUMN_NAME]: 0 })]));
+    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
+    const { editedItem } = setupWithDataSource(
+      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
+    );
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
@@ -206,8 +212,10 @@ describe(useCreateColumn, () => {
   test("redo re-adds the computed column after undo", () => {
     expect.hasAssertions();
 
-    const sourceColumn = makeColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(makeDataSource([sourceColumn], [makeRow({ [SOURCE_COLUMN_NAME]: 0 })]));
+    const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
+    const { editedItem } = setupWithDataSource(
+      createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
+    );
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;

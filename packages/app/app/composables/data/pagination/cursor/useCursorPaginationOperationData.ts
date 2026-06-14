@@ -1,11 +1,7 @@
-import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
-import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
-import type { ReadItemsCacheOptions } from "@/models/cache/indexedDb/ReadItemsCacheOptions";
 import type { Promisable } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
-import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
+import { withFinalizerAsync } from "@esposter/shared";
 
 export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Ref<CursorPaginationData<TItem>>) => {
   const online = useOnline();
@@ -27,70 +23,46 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
       cursorPaginationData.value.hasMore = hasMore;
     },
   });
-  const initializeCursorPaginationData = <TDataItem extends TItem>(data: CursorPaginationData<TDataItem>) => {
-    cursorPaginationData.value = data as CursorPaginationData<TItem>;
+  const initializeCursorPaginationData = (data: CursorPaginationData<TItem>) => {
+    cursorPaginationData.value = data;
   };
   const resetCursorPaginationData = () => {
     cursorPaginationData.value = new CursorPaginationData<TItem>();
   };
-  const readItems = async <T extends IndexedDbStoreName>(
+  const readItems = async (
     query: () => Promise<CursorPaginationData<TItem>>,
     onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>,
-    cacheOptions?: ReadItemsCacheOptions<T>,
   ) => {
     const isPending = ref(true);
     const refresh = async () => {
       isPending.value = true;
-      try {
-        if (!online.value && cacheOptions) {
-          const cachedItems = await readIndexedDb(cacheOptions.configuration, cacheOptions.partitionKey);
-          const cachedData = new CursorPaginationData<TItem>();
-          cachedData.items = cachedItems as TItem[];
-          initializeCursorPaginationData(cachedData);
-          await Promise.allSettled([onComplete?.(cachedData)]);
-          return;
-        }
-        const data = await query();
-        initializeCursorPaginationData(data);
-        // Absorbs onComplete errors so data already set above is never lost
-        await Promise.allSettled([
-          cacheOptions
-            ? writeIndexedDb(
-                cacheOptions.configuration,
-                data.items as IndexedDbDatabaseSchema[T]["value"][],
-                cacheOptions.partitionKey,
-              )
-            : undefined,
-          onComplete?.(data),
-        ]);
-      } finally {
-        isPending.value = false;
-      }
+      await withFinalizerAsync(
+        async () => {
+          const data = await query();
+          initializeCursorPaginationData(data);
+          // Absorbs onComplete errors so data already set above is never lost
+          await Promise.allSettled([onComplete?.(data)]);
+        },
+        () => {
+          isPending.value = false;
+        },
+      );
     };
-    // Absorbs query errors so component setup never fails — errors are handled by the tRPC link chain
+    // Absorb query errors so component setup never fails; the tRPC link chain handles them.
     await Promise.allSettled([refresh()]);
     return { isPending, refresh };
   };
-  const readMoreItems = async <T extends IndexedDbStoreName>(
-    query: (cursor?: string) => Promise<CursorPaginationData<TItem>>,
+  const readMoreItems = async (
+    query: (cursor: string) => Promise<CursorPaginationData<TItem>>,
     onComplete?: () => Promisable<void>,
-    cacheOptions?: ReadItemsCacheOptions<T>,
   ) => {
-    try {
+    await withFinalizerAsync(async () => {
       if (!online.value) return;
       const { hasMore: newHasMore, items: newItems, nextCursor: newNextCursor } = await query(nextCursor.value);
       hasMore.value = newHasMore;
       nextCursor.value = newNextCursor;
       items.value.push(...newItems);
-      if (cacheOptions)
-        await writeIndexedDb(
-          cacheOptions.configuration,
-          items.value as IndexedDbDatabaseSchema[T]["value"][],
-          cacheOptions.partitionKey,
-        );
-    } finally {
-      await onComplete?.();
-    }
+    }, onComplete);
   };
 
   return {

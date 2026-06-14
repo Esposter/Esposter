@@ -43,8 +43,7 @@ const animate = () => {
   isAnimating.value = true;
   const savedSettings = { ...calculator.settings };
   calculator.setBlank();
-  // Ignore warnings from updateSettings about
-  // Unsupported extraneous calculator settings which is fine
+  // Ignore updateSettings warnings about unsupported extraneous calculator settings.
   ignoreWarn(() => {
     calculator?.updateSettings(savedSettings);
   });
@@ -71,7 +70,7 @@ watch(componentsToRender, (newComponentsToRender) => {
 });
 
 onMounted(() => {
-  const element = document.getElementById(id) as HTMLDivElement;
+  const element = window.document.getElementById(id) as HTMLDivElement;
 
   onLoaded(async ({ GraphingCalculator }) => {
     calculator = await GraphingCalculator(element, {
@@ -98,7 +97,7 @@ onMounted(() => {
   <div :id size-full />
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.dcg-container) {
   cursor: move;
 

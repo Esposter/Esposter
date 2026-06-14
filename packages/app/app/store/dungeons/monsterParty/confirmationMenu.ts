@@ -6,7 +6,7 @@ import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { DEFAULT_INFO_DIALOG_MESSAGE } from "@/services/dungeons/scene/monsterParty/constants";
 import { MonsterPartyConfirmationMenuOptionGrid } from "@/services/dungeons/scene/monsterParty/MonsterPartyConfirmationMenuOptionGrid";
-import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirection";
+import { checkIsMovingDirection } from "@/services/dungeons/UI/input/checkIsMovingDirection";
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
@@ -39,7 +39,7 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
           exhaustiveGuard(MonsterPartyConfirmationMenuOptionGrid.value);
       }
     else if (justDownInput === PlayerSpecialInput.Enter || justDownInput === PlayerSpecialInput.Cancel) onCancel();
-    else if (isMovingDirection(justDownInput)) MonsterPartyConfirmationMenuOptionGrid.move(justDownInput);
+    else if (checkIsMovingDirection(justDownInput)) MonsterPartyConfirmationMenuOptionGrid.move(justDownInput);
 
     return true;
   };

@@ -7,6 +7,7 @@ import { dayjs } from "#shared/services/dayjs";
 
 interface EditFormDialogProps<T> {
   editedItem: T;
+  isDirty: boolean;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
@@ -17,7 +18,7 @@ interface EditFormDialogProps<T> {
 
 const slots = defineSlots<{ default: () => VNode; "prepend-actions": () => VNode; "prepend-form": () => VNode }>();
 const dialog = defineModel<boolean>({ required: true });
-const { editedItem, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
+const { editedItem, isDirty, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
   defineProps<EditFormDialogProps<T>>();
 const emit = defineEmits<{
   close: [];
@@ -27,6 +28,7 @@ const emit = defineEmits<{
   "update:fullscreen-dialog": [value: boolean];
 }>();
 const editForm = ref<InstanceType<typeof VForm>>();
+const confirmCloseDialog = ref(false);
 const formId = useId();
 
 watch(dialog, (newDialog) => {
@@ -43,14 +45,27 @@ watch(editForm, (newEditForm) => {
 </script>
 
 <template>
-  <v-dialog v-model="dialog" :fullscreen="isFullScreenDialog" :width="isFullScreenDialog ? '100%' : 800" persistent>
+  <v-dialog
+    :model-value="dialog"
+    :fullscreen="isFullScreenDialog"
+    :width="isFullScreenDialog ? '100%' : 800"
+    @update:model-value="
+      (value) => {
+        if (value) dialog = true;
+        else if (isDirty) confirmCloseDialog = true;
+        else dialog = false;
+      }
+    "
+  >
     <StyledCard>
       <StyledEditFormDialogHeader
+        v-model:confirm-close-dialog="confirmCloseDialog"
         :name
         :edited-item
         :original-item
         :edit-form
         :form-id
+        :is-dirty
         :is-edit-form-valid
         :schema
         :is-full-screen-dialog
@@ -65,7 +80,7 @@ watch(editForm, (newEditForm) => {
         </template>
       </StyledEditFormDialogHeader>
       <v-divider thickness="2" />
-      <v-container overflow-y-auto fluid>
+      <v-container fluid overflow-y-auto>
         <slot name="prepend-form" />
         <v-form :id="formId" ref="editForm" @submit.prevent="emit('save')">
           <slot />

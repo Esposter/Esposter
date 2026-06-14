@@ -1,12 +1,11 @@
 import type { ConfigurableNavigator } from "@vueuse/core";
 
 import { useAlertStore } from "@/store/alert";
+import { getResultAsync, noop } from "@esposter/shared";
 import { defu } from "defu";
 
 interface UseMediaRecorderOptions extends ConfigurableNavigator {
-  /**
-   * The constraints parameter is a MediaStreamConstraints object specifying the types of media to request, along with any requirements for each type.
-   */
+  /** Media types to request, with any per-type requirements. */
   constraints?: MaybeRefOrGetter<MediaStreamConstraints>;
   /**
    * Options to pass to the MediaRecorder constructor.
@@ -37,11 +36,11 @@ interface UseMediaRecorderOptions extends ConfigurableNavigator {
 const defaultOptions: UseMediaRecorderOptions = {
   constraints: { audio: false, video: false },
   mediaRecorderOptions: {},
-  onError: () => {},
-  onPause: () => {},
-  onResume: () => {},
-  onStart: () => {},
-  onStop: () => {},
+  onError: noop,
+  onPause: noop,
+  onResume: noop,
+  onStart: noop,
+  onStop: noop,
 };
 
 export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
@@ -99,15 +98,24 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
   };
 
   const start = async (timeslice?: number) => {
-    if (state.value === "recording") return;
-    data.value = [];
-
-    try {
-      stream.value = await window.navigator.mediaDevices.getUserMedia(toValue(constraints));
-    } catch (error) {
-      if (error instanceof DOMException) createAlert(error.message, "error");
+    if (state.value && state.value !== "inactive") return;
+    else if (!isSupported.value) {
+      createAlert("Media devices API is not supported in this environment.", "error");
       return;
     }
+    data.value = [];
+    stream.value = undefined;
+
+    await getResultAsync(() => window.navigator.mediaDevices.getUserMedia(toValue(constraints))).match(
+      (value) => {
+        stream.value = value;
+      },
+      (error) => {
+        if (error instanceof DOMException) createAlert(error.message, "error");
+        else console.error(error);
+      },
+    );
+    if (!stream.value) return;
 
     const newMediaRecorder = new MediaRecorder(stream.value, toValue(mediaRecorderOptions));
     setupMediaRecorder(newMediaRecorder);

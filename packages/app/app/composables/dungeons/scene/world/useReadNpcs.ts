@@ -76,5 +76,5 @@ export const useReadNpcs = () => {
     );
   }
 
-  initializeCursorPaginationData({ hasMore: false, items: npcs });
+  initializeCursorPaginationData({ hasMore: false, items: npcs, nextCursor: "" });
 };

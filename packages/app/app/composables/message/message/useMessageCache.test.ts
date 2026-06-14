@@ -13,7 +13,17 @@ import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+const goOffline = () => {
+  vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+  window.dispatchEvent(new Event("offline"));
+};
+
+const goOnline = () => {
+  vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
+  window.dispatchEvent(new Event("online"));
+};
 
 describe(useMessageCache, () => {
   let router: Router;
@@ -24,14 +34,6 @@ describe(useMessageCache, () => {
   const secondPartitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const message = "message";
-  const goOffline = () => {
-    vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-    window.dispatchEvent(new Event("offline"));
-  };
-  const goOnline = () => {
-    vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
-    window.dispatchEvent(new Event("online"));
-  };
   const flushCache = async () => {
     await flushPromises();
     await flush();
@@ -51,41 +53,27 @@ describe(useMessageCache, () => {
         setup: () => {
           router = useRouter();
           router.currentRoute.value.params.id = initialRouteId;
+          triggerRef(router.currentRoute);
           const dataStore = useDataStore();
           ({ items } = storeToRefs(dataStore));
           ({ flush } = useMessageCache());
+
+          onUnmounted(() => {
+            items.value = [];
+          });
         },
       }),
     );
   };
 
+  beforeEach(() => {
+    goOffline();
+  });
+
   afterEach(async () => {
-    if (wrapper) {
-      items.value = [];
-      wrapper.unmount();
-    }
+    wrapper?.unmount();
     vi.restoreAllMocks();
     await resetIndexedDb();
-    const databases = await indexedDB.databases();
-    await Promise.all(
-      databases
-        .filter((database): database is IDBDatabaseInfo & { name: string } => database.name !== undefined)
-        .map(
-          (database) =>
-            new Promise<void>((resolve, reject) => {
-              const request = indexedDB.deleteDatabase(database.name);
-              request.onsuccess = () => {
-                resolve();
-              };
-              request.onerror = () => {
-                reject(request.error ?? new Error("Failed to delete database"));
-              };
-              request.onblocked = () => {
-                resolve();
-              };
-            }),
-        ),
-    );
   });
 
   test("persists messages to cache when items change", async () => {
@@ -98,7 +86,19 @@ describe(useMessageCache, () => {
     const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
 
     expect(cachedMessages).toHaveLength(1);
-    expect(takeOne(cachedMessages).message).toBe(message);
+    expect(takeOne(cachedMessages).message).toStrictEqual(message);
+  });
+
+  test("does not persist loading messages", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await mountCache();
+    items.value = [new StandardMessageEntity({ isLoading: true, message, partitionKey, rowKey, userId })];
+    await flushCache();
+    const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
+
+    expect(cachedMessages).toHaveLength(0);
   });
 
   test("does not clear cache when items become empty on room switch", async () => {
@@ -136,13 +136,12 @@ describe(useMessageCache, () => {
       [new StandardMessageEntity({ message, partitionKey: secondPartitionKey, rowKey, userId })],
       secondPartitionKey,
     );
-    goOffline();
     await mountCache();
     setRouteId(secondPartitionKey);
     await flushCache();
 
     expect(items.value).toHaveLength(1);
-    expect(takeOne(items.value).message).toBe(message);
+    expect(takeOne(items.value).message).toStrictEqual(message);
   });
 
   test("does not populate store from cache when switching rooms online", async () => {
@@ -171,7 +170,6 @@ describe(useMessageCache, () => {
       [new StandardMessageEntity({ message, partitionKey, rowKey, userId })],
       partitionKey,
     );
-    goOffline();
     await mountCache(crypto.randomUUID());
     setRouteId(partitionKey);
     setRouteId(crypto.randomUUID());

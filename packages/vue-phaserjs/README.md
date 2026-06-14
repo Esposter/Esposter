@@ -7,7 +7,9 @@
 
 Inspired by [phavuer](https://github.com/laineus/phavuer).
 
-### Table of Contents
+Vue 3 integration for the [Phaser 4](https://phaser.io) game engine. Provides Vue components and composables that bridge Phaser scenes, game objects, and Pinia state with the Vue component lifecycle.
+
+## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
@@ -18,10 +20,13 @@ Inspired by [phavuer](https://github.com/laineus/phavuer).
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i vue-phaserjs vue phaser phaser3-rex-plugins pinia
+pnpm i vue-phaserjs @esposter/shared parse-tmx vue phaser phaser4-rex-plugins pinia
 ```
 
-Add [phaser.d.ts](https://github.com/Esposter/Esposter/blob/main/packages/app/shared/types/phaser.d.ts) and [vue-phaserjs.d.ts](https://github.com/Esposter/Esposter/blob/main/packages/app/shared/types/vue-phaser.d.ts) so `vue-phaserjs` can narrow down your scene key types + provide intellisense for custom plugins.
+Add the type declaration files so scene key types and custom plugins get proper intellisense:
+
+- [`phaser.d.ts`](https://github.com/Esposter/Esposter/blob/main/packages/app/shared/types/phaser.d.ts) — narrows scene key types
+- [`vue-phaserjs.d.ts`](https://github.com/Esposter/Esposter/blob/main/packages/app/shared/types/vue-phaser.d.ts) — provides custom plugin types
 
 ## <a name="documentation">📖 Documentation</a>
 
@@ -29,7 +34,14 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Usage
 
-An example [implementation](https://github.com/Esposter/Esposter/blob/main/packages/app/app/pages/dungeons.vue).
+See the reference implementation in [`packages/app/app/pages/dungeons.vue`](https://github.com/Esposter/Esposter/blob/main/packages/app/app/pages/dungeons.vue) for a complete example of a Phaser game embedded in a Nuxt/Vue page with Pinia-driven state.
+
+### Features
+
+- Vue components wrapping Phaser `Game`, `Scene`, and common game objects
+- Reactive Pinia integration — game state flows naturally through Vue's reactivity system
+- Scene lifecycle hooks aligned with Vue's `onMounted` / `onUnmounted`
+- TypeScript-first with full generic scene key support
 
 ## <a name="license">⚖️ License</a>
 

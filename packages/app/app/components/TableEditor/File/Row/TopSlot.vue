@@ -11,6 +11,7 @@ const deleteRows = useDeleteRows();
     <v-toolbar-title pl-3>
       {{ selectedRowIds.length }} row{{ selectedRowIds.length === 1 ? "" : "s" }} selected
     </v-toolbar-title>
+    <TableEditorFileRowCopyToClipboardButton :row-ids="selectedRowIds" />
     <StyledConfirmDeleteDialogButton
       :card-props="{
         title: `Delete ${selectedRowIds.length} Row${selectedRowIds.length === 1 ? '' : 's'}`,

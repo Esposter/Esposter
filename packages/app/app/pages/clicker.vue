@@ -14,7 +14,7 @@ const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 
     <Head>
       <Title>{{ displayNoPoints }} {{ clickerItemProperties.pluralName }}</Title>
     </Head>
-    <v-container h-full flex justify-center items-center flex-col>
+    <v-container flex flex-col h-full items-center justify-center>
       <ClickerHeader w-full />
       <ClickerModelPointsTitle />
       <ClickerContent />
@@ -31,7 +31,7 @@ const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-group__items > .v-list-item) {
   padding-inline-start: 1rem;
 }

@@ -1,13 +1,14 @@
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { dayjs } from "#shared/services/dayjs";
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
+import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
-import { exhaustiveGuard, RoutePath } from "@esposter/shared";
+import { exhaustiveGuard, normalizeString, RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (
@@ -33,12 +34,12 @@ export const useMessageActionItems = (
   const { copy } = messageStore;
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
+  const threadStore = useThreadStore();
+  const { openThread } = threadStore;
   const runtimeConfig = useRuntimeConfig();
   const editMessageItem: Item = {
     icon: "mdi-pencil",
-    onClick: () => {
-      onUpdateMode();
-    },
+    onClick: onUpdateMode,
     shortTitle: "Edit",
     title: "Edit Message",
   };
@@ -58,19 +59,19 @@ export const useMessageActionItems = (
   };
   const copyTextItem: Item = {
     icon: "mdi-content-copy",
-    onClick: getSynchronizedFunction(async () => {
-      const textContent = parse(message.message).textContent.trim();
+    onClick: async () => {
+      const textContent = normalizeString(parse(message.message).textContent);
       if (textContent) await copy(textContent);
-    }),
+    },
     title: "Copy Text",
   };
   const pinMessageItem = computed<Item>(() =>
     message.isPinned
       ? {
           icon: "mdi-pin-off",
-          onClick: getSynchronizedFunction(async () => {
+          onClick: async () => {
             await $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
-          }),
+          },
           title: "Unpin Message",
         }
       : {
@@ -81,14 +82,31 @@ export const useMessageActionItems = (
           title: "Pin Message",
         },
   );
+  const viewThreadItem: Item = {
+    icon: "mdi-comment-multiple-outline",
+    onClick: async () => {
+      await openThread(message.partitionKey, message.rowKey);
+    },
+    title: "View Thread",
+  };
   const copyMessageLinkItem: Item = {
     icon: "mdi-link-variant",
-    onClick: getSynchronizedFunction(async () => {
+    onClick: async () => {
       if (!currentRoomId.value) return;
       const link = `${runtimeConfig.public.baseUrl}${RoutePath.MessagesMessage(currentRoomId.value, message.rowKey)}`;
       await copy(link);
-    }),
+    },
     title: "Copy Message Link",
+  };
+  const markUnreadFromHereItem: Item = {
+    icon: "mdi-email-mark-as-unread",
+    onClick: async () => {
+      await $trpc.userToRoom.updateUserToRoom.mutate({
+        lastMessageAt: dayjs(message.createdAt).subtract(1, "millisecond").toDate(),
+        roomId: message.partitionKey,
+      });
+    },
+    title: "Mark Unread From Here",
   };
   const updateMessageItems = computed<Item[]>(() =>
     UpdatableMessageTypes.has(message.type)
@@ -106,17 +124,20 @@ export const useMessageActionItems = (
   );
   const actionMessageItems = computed<Item[]>(() => {
     switch (message.type) {
+      case MessageType.Call:
+        return [markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.EditRoom:
-        return [copyTextItem, copyMessageLinkItem];
+        return [copyTextItem, markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.Message:
-      case MessageType.Webhook:
-        return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
+        return [copyTextItem, viewThreadItem, pinMessageItem.value, markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.PinMessage:
-        return [copyMessageLinkItem];
+        return [markUnreadFromHereItem, copyMessageLinkItem];
       case MessageType.Poll:
-        return [pinMessageItem.value, copyMessageLinkItem];
-      case MessageType.VoiceCall:
-        return [copyMessageLinkItem];
+        return [pinMessageItem.value, markUnreadFromHereItem, copyMessageLinkItem];
+      case MessageType.System:
+        return [markUnreadFromHereItem, copyMessageLinkItem];
+      case MessageType.Webhook:
+        return [copyTextItem, pinMessageItem.value, markUnreadFromHereItem, copyMessageLinkItem];
       default:
         return exhaustiveGuard(message);
     }
@@ -126,9 +147,7 @@ export const useMessageActionItems = (
       ? {
           color: "error",
           icon: "mdi-delete",
-          onClick: () => {
-            onDeleteMode();
-          },
+          onClick: onDeleteMode,
           title: "Delete Message",
         }
       : undefined,

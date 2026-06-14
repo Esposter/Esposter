@@ -10,7 +10,7 @@ const stringTransformation = useStringTransformation();
     <template #activator="{ props: menuProps }">
       <v-tooltip text="String Transformation">
         <template #activator="{ props: tooltipProps }">
-          <v-btn m-0 icon="mdi-format-letter-case" size="small" tile :="mergeProps(menuProps, tooltipProps)" />
+          <v-btn icon="mdi-format-letter-case" size="small" tile m-0 :="mergeProps(menuProps, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>

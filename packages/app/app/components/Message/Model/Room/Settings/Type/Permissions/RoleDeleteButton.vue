@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Room, RoomRole } from "@esposter/db-schema";
+import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
 
 interface RoleDeleteButtonProps {
-  roleId: RoomRole["id"];
-  roomId: Room["id"];
+  roleId: RoomRoleInMessage["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { roleId, roomId } = defineProps<RoleDeleteButtonProps>();

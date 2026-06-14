@@ -10,12 +10,12 @@ const { alerts, deleteAlert } = useAlertStore();
       v-for="alert of alerts"
       :key="alert.id"
       position="absolute"
-      z-9999
       :icon="alert.icon"
       :location="alert.location"
       :text="alert.text"
       :type="alert.type"
       closable
+      z-9999
       @click:close="deleteAlert(alert.id)"
     />
   </v-slide-y-transition>

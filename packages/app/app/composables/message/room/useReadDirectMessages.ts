@@ -8,9 +8,9 @@ export const useReadDirectMessages = () => {
 
   const readDirectMessages = () =>
     readItems(async () => {
-      const data = await $trpc.directMessage.readDirectMessages.query();
+      const data = await $trpc.room.directMessage.readDirectMessages.query();
       if (data.items.length > 0) {
-        const participantsData = await $trpc.directMessage.readDirectMessageParticipants.query(
+        const participantsData = await $trpc.room.directMessage.readDirectMessageParticipants.query(
           data.items.map(({ id }) => id),
         );
         for (const { participants, roomId } of participantsData)
@@ -21,9 +21,9 @@ export const useReadDirectMessages = () => {
 
   const readMoreDirectMessages = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
-      const data = await $trpc.directMessage.readDirectMessages.query({ cursor });
+      const data = await $trpc.room.directMessage.readDirectMessages.query({ cursor });
       if (data.items.length > 0) {
-        const participantsData = await $trpc.directMessage.readDirectMessageParticipants.query(
+        const participantsData = await $trpc.room.directMessage.readDirectMessageParticipants.query(
           data.items.map(({ id }) => id),
         );
         for (const { participants, roomId } of participantsData)

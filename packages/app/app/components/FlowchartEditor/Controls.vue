@@ -7,14 +7,14 @@ import deepEqual from "fast-deep-equal";
 
 const { setViewport, viewport } = useVueFlow();
 const colorsStore = useColorsStore();
-const { surface, surfaceOpacity80, text } = storeToRefs(colorsStore);
+const { surface, "surface-opacity-80": surfaceOpacity80, text } = storeToRefs(colorsStore);
 const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANSFORM));
 </script>
 
 <template>
   <Controls position="bottom-left">
     <ControlButton title="Default Viewport" :disabled @click="setViewport(DEFAULT_VIEWPORT_TRANSFORM)">
-      <v-icon :op="disabled ? 40 : undefined" icon="mdi-home" size="x-small" />
+      <v-icon :op-disabled="disabled ? '' : undefined" icon="mdi-home" size="x-small" />
     </ControlButton>
   </Controls>
 </template>
@@ -23,7 +23,7 @@ const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANS
 :deep(.vue-flow__controls-button) {
   background-color: v-bind(surface);
   fill: v-bind(text);
-  border: $border-width-root $border-style-root v-bind(text);
+  border: var(--border-width) var(--border-style) v-bind(text);
 
   &:hover {
     background-color: v-bind(surfaceOpacity80);

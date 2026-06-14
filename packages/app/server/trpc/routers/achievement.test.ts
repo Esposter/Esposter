@@ -1,6 +1,6 @@
-import type { AchievementEvents } from "@@/server/services/achievement/events/achievementEventEmitter";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { UserAchievementWithRelations } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -11,7 +11,7 @@ import { trpcRouter } from "@@/server/trpc/routers";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import {
   achievements,
-  rooms,
+  roomsInMessage,
   SpecialAchievementName,
   UserAchievementRelations,
   WebpageAchievementName,
@@ -33,7 +33,7 @@ describe("achievement", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
     await mockContext.db.delete(achievements);
   });
 
@@ -95,7 +95,7 @@ describe("achievement", () => {
       },
     );
 
-    const unlockedAchievements = [] as unknown as AchievementEvents["updateAchievement"][0];
+    const unlockedAchievements: UserAchievementWithRelations[] = [];
 
     assert(!data.done);
 
@@ -114,11 +114,14 @@ describe("achievement", () => {
 
     const userId = getMockSession().user.id;
     const userAchievement = await mockContext.db.query.userAchievements.findFirst({
-      where: (userAchievements, { and, eq }) =>
-        and(
-          eq(userAchievements.achievementId, takeOne(unlockedAchievements).achievementId),
-          eq(userAchievements.userId, userId),
-        ),
+      where: {
+        achievementId: {
+          eq: takeOne(unlockedAchievements).achievementId,
+        },
+        userId: {
+          eq: userId,
+        },
+      },
       with: UserAchievementRelations,
     });
     assert(userAchievement);

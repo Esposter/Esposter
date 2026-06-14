@@ -1,12 +1,16 @@
 # [Esposter](https://esposter.com)
 
 [![Build Status][badge-ci]][url-ci]
+[![Repository Score][badge-score]][url-score]
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-### Table of Contents
+## Table of Contents
 
 - 📖 [Documentation](#documentation)
 - 🏠 [Local Development](#local-development)
+- 🧱 [Architecture](#architecture)
+- 📦 [Packages](#packages)
+- 🤝 [Community](#community)
 - ⚖️ [License](#license)
 
 ## <a name="documentation">📖 Documentation</a>
@@ -139,13 +143,40 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://www.postgresql.org">
-          <img src="./.github/assets/postgresql/logo.png" />
+          <img src="./.github/assets/postgresql/logo.svg" />
         </a>
       </td>
       <td valign="top">
         <h3>PostgreSQL</h3>
         <p>
           PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance. We highly recommend you take a look at <a href="https://www.postgresql.org/docs">the PostgreSQL documentation</a> to level up.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Infrastructure
+
+<table>
+  <thead>
+    <tr>
+      <th width="2000" colspan="2">
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://www.pulumi.com">
+          <img src="./.github/assets/pulumi/logo.svg" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3>Pulumi</h3>
+        <p>
+          Infrastructure as Code in any programming language. We highly recommend you take a look at <a href="https://www.pulumi.com/docs">the Pulumi documentation</a> to level up.
         </p>
       </td>
     </tr>
@@ -195,15 +226,18 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### VSCode Extensions
 
-| Name                       | Link                                                                           |
-| -------------------------- | ------------------------------------------------------------------------------ |
-| Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                  |
-| ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint     |
-| Oxfmt - Code formatter     | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode             |
-| GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens            |
-| Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell       |
-| Material Icon Theme        | https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme  |
-| Better Comments            | https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments |
+| Name                       | Link                                                                                    |
+| -------------------------- | --------------------------------------------------------------------------------------- |
+| Better Comments            | https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments          |
+| UnoCSS                     | https://marketplace.visualstudio.com/items?itemName=antfu.unocss                        |
+| ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint              |
+| GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens                     |
+| GitHub Actions             | https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-github-actions        |
+| Azure Functions            | https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions |
+| Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell                |
+| Oxfmt - Code formatter     | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode                      |
+| Material Icon Theme        | https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme           |
+| Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                           |
 
 ## <a name="local-development">🏠 Local Development</a>
 
@@ -275,12 +309,39 @@ pnpm preview
 
 ### Architecture
 
-Esposter is a lerna + pnpm workspaces monorepo.
+Esposter is a pnpm workspaces monorepo. See [`architecture/monorepo-tooling.md`](./architecture/monorepo-tooling.md) for workspace script orchestration and publishing boundaries.
 Packages are used directly by the nuxt application via `workspace:*`.
 
-### Miscellaneous Tools
+### Workspace Graph
 
-https://devina.io/svg-minifier
+![Workspace dependency graph](./dependency-graph.svg)
+
+Regenerate this graph from the repo root with:
+
+```bash
+pnpm depcruise:graph
+```
+
+## <a name="packages">📦 Packages</a>
+
+| Package                                                                                               | Description                                                                     | Published |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | :-------: |
+| [`packages/app`](https://github.com/Esposter/Esposter/tree/main/packages/app)                         | Main Nuxt 4 web application — frontend, server routes, tRPC API                 |     —     |
+| [`packages/azure-functions`](https://github.com/Esposter/Esposter/tree/main/packages/azure-functions) | Serverless Azure Functions backend — push notifications, webhooks, EventGrid    |     —     |
+| [`packages/azure-mock`](https://github.com/Esposter/Esposter/tree/main/packages/azure-mock)           | Mock Azure service classes for local dev and testing                            |     ✓     |
+| [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration)     | Shared ESLint, TSConfig, and Rolldown build configurations                      |     —     |
+| [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                           | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub |     —     |
+| [`packages/db-mock`](https://github.com/Esposter/Esposter/tree/main/packages/db-mock)                 | In-memory PGlite database factory for unit and integration tests                |     —     |
+| [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)             | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                 |     —     |
+| [`packages/infra`](https://github.com/Esposter/Esposter/tree/main/packages/infra)                     | Pulumi infrastructure code and migration tools for Azure resources              |     —     |
+| [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)             | Parser for Tiled Map Editor `.tmx` files                                        |     ✓     |
+| [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                   | Shared TypeScript types, utilities, and error classes                           |     ✓     |
+| [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)       | Phaser 4 game engine integration for Vue 3                                      |     ✓     |
+| [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)                   | TypeScript rewrite of xml2js — XML ↔ JSON conversion                            |     ✓     |
+
+## <a name="community">🤝 Community</a>
+
+We welcome contributions from everyone and are committed to maintaining a friendly, safe, and welcoming community. Please see our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md) for more information.
 
 ## <a name="license">⚖️ License</a>
 
@@ -290,4 +351,6 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yaml?query=event%3Apush+branch%3Amain
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
+[badge-score]: https://img.shields.io/badge/score-93%2F100-33c854
+[url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest

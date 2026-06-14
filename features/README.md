@@ -1,0 +1,64 @@
+# Features
+
+Planning and spec documents for Esposter features, refactors, and roadmaps.
+
+---
+
+## Structure
+
+```
+features/
+  README.md
+  <feature-area>/
+    architecture.md        ← optional: key file map, data flows, DB schema (reference)
+    <active-roadmap>.md    ← current version roadmap with pending items
+    specs/
+      <feature-name>.md    ← detailed spec for a planned feature
+    completed/
+      <name>.md            ← frozen record once all items are shipped
+  refactors/
+    <name>.md              ← cross-cutting code changes (not user-visible features)
+```
+
+### Folders
+
+| Folder              | Purpose                                                                                      |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| `specs/`            | Detailed specs for planned, not-yet-started features. Each file covers one cohesive feature. |
+| `<area>/completed/` | Frozen roadmap or spec files inside a feature area. Move here when every item is shipped.    |
+| `refactors/`        | Cross-cutting technical changes (migrations, style enforcement). Not feature-facing.         |
+
+---
+
+## Cross-Cutting Architecture
+
+Design decisions that span multiple feature areas live in [`/architecture/`](../architecture/) at the repo root, not in any single feature area's `architecture.md`.
+
+| File                | What it covers                                                                                           |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| `azure-services.md` | All Azure services (Blob, Table, Functions, EventGrid, WebPubSub, LiveKit) and the real-time layer model |
+| `file-uploads.md`   | Two-step SAS pattern, all upload procedures, why `octetInputParser` was removed                          |
+
+Feature-area `architecture.md` files cover only that area's specific file maps, data flows, and DB schema.
+
+---
+
+## Adding a New Feature
+
+1. **One spec file per feature** — `features/<area>/specs/<feature-name>.md`. Kebab-case names.
+2. **Keep specs minimal** — only what a developer needs to implement: overview, data model changes, procedure signatures, component sketch, key file list. No prose filler.
+3. **Roadmap version files** — when planning a batch release, create `<vN>.md` at the area root listing items with `[ ]` / `[x]` checkboxes and strikethrough rationale for dropped items.
+4. **Mark done** — when every item in a spec or roadmap is shipped, move it to `completed/` with a clean name (drop `(completed)` suffixes).
+5. **Architecture files** — `architecture.md` at the area root for AI-assisted development: key file map, data flows, DB schema. Keep it current as the implementation evolves.
+
+---
+
+## Feature Areas
+
+| Area               | Active Roadmap           | Description                                                     |
+| ------------------ | ------------------------ | --------------------------------------------------------------- |
+| `esbabbler/`       | `v7.md`                  | Messaging, calls, rooms, moderation, DMs                        |
+| `fileTableEditor/` | —                        | CSV/JSON/XLSX table editor with computed columns                |
+| `infra/`           | `optimization-review.md` | Azure Pulumi infrastructure, cost, security, and stack planning |
+| `vue-phaserjs/`    | —                        | Phaser game engine Vue integration                              |
+| `refactors/`       | `null-removal.md`        | Cross-cutting code quality migrations                           |

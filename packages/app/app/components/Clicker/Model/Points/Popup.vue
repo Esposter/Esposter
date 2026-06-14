@@ -20,10 +20,10 @@ const topPx = computed(() => `${top}px`);
 </script>
 
 <template>
-  <div class="text-headline-small popup" font-bold select-none absolute pointer-events-none>+{{ displayPoints }}</div>
+  <div class="popup" font-bold pointer-events-none select-none absolute text-headline-small>+{{ displayPoints }}</div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 @keyframes animation {
   0% {
     opacity: 1;

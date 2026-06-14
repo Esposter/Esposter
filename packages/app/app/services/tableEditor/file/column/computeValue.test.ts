@@ -2,10 +2,10 @@ import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import {
-  makeColumn,
-  makeComputedColumn,
-  makeDataSource,
-  makeRow,
+  createColumn,
+  createComputedColumn,
+  createDataSource,
+  createRow,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { describe, expect, test } from "vitest";
@@ -14,9 +14,9 @@ describe(computeValue, () => {
   test("returns row.data value for non-computed column", () => {
     expect.hasAssertions();
 
-    const column = makeColumn("");
-    const row = makeRow({ "": 0 });
-    const dataSource = makeDataSource([column], [row]);
+    const column = createColumn("");
+    const row = createRow({ "": 0 });
+    const dataSource = createDataSource([column], [row]);
 
     expect(computeValue(dataSource.rows, row, dataSource.columns, column)).toBe(0);
   });
@@ -24,9 +24,9 @@ describe(computeValue, () => {
   test("returns null for computed column when source column is not found", () => {
     expect.hasAssertions();
 
-    const computedColumn = makeComputedColumn("", "-1");
-    const row = makeRow({});
-    const dataSource = makeDataSource([computedColumn], [row]);
+    const computedColumn = createComputedColumn("", "-1");
+    const row = createRow({});
+    const dataSource = createDataSource([computedColumn], [row]);
 
     expect(computeValue(dataSource.rows, row, dataSource.columns, computedColumn)).toBeNull();
   });
@@ -34,10 +34,10 @@ describe(computeValue, () => {
   test("returns null for computed column when source column is itself computed", () => {
     expect.hasAssertions();
 
-    const sourceColumn = makeComputedColumn("source", "-1");
-    const computedColumn = makeComputedColumn("computed", sourceColumn.id);
-    const row = makeRow({});
-    const dataSource = makeDataSource([sourceColumn, computedColumn], [row]);
+    const sourceColumn = createComputedColumn("source", "-1");
+    const computedColumn = createComputedColumn("computed", sourceColumn.id);
+    const row = createRow({});
+    const dataSource = createDataSource([sourceColumn, computedColumn], [row]);
 
     expect(computeValue(dataSource.rows, row, dataSource.columns, computedColumn)).toBeNull();
   });
@@ -45,8 +45,8 @@ describe(computeValue, () => {
   test("returns null when two computed columns form a cycle", () => {
     expect.hasAssertions();
 
-    const columnA = makeComputedColumn("a", "");
-    const columnB = makeComputedColumn("b", columnA.id);
+    const columnA = createComputedColumn("a", "");
+    const columnB = createComputedColumn("b", columnA.id);
     const columnAWithCycle = new ComputedColumn({
       id: columnA.id,
       name: "a",
@@ -58,8 +58,8 @@ describe(computeValue, () => {
         type: ColumnTransformationType.ConvertTo,
       },
     });
-    const row = makeRow({});
-    const dataSource = makeDataSource([columnAWithCycle, columnB], [row]);
+    const row = createRow({});
+    const dataSource = createDataSource([columnAWithCycle, columnB], [row]);
 
     expect(computeValue(dataSource.rows, row, dataSource.columns, columnAWithCycle)).toBeNull();
   });

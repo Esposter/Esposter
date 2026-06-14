@@ -6,7 +6,7 @@ export interface PagedAsyncIterableIterator<TElement, TPage = TElement[], TPageS
   /**
    * The connection to the async iterator, part of the iteration protocol
    */
-  [Symbol.asyncIterator](): PagedAsyncIterableIterator<TElement, TPage, TPageSettings>;
+  [Symbol.asyncIterator]: () => PagedAsyncIterableIterator<TElement, TPage, TPageSettings>;
   /**
    * Return an AsyncIterableIterator that works a page at a time
    */
@@ -14,5 +14,5 @@ export interface PagedAsyncIterableIterator<TElement, TPage = TElement[], TPageS
   /**
    * The next method, part of the iteration protocol
    */
-  next(): Promise<IteratorResult<TElement>>;
+  next: () => Promise<IteratorResult<TElement>>;
 }

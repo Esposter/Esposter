@@ -6,10 +6,10 @@ import type { ReadMyPermissionsInput } from "#shared/models/db/role/ReadMyPermis
 import type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
 import type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
-import type { RoomRole } from "@esposter/db-schema";
+import type { RoomRoleInMessage } from "@esposter/db-schema";
 
+import { checkIsManageable as checkIsManageableByPosition } from "#shared/services/room/rbac/checkIsManageable";
 import { MANAGEMENT_PERMISSIONS } from "#shared/services/room/rbac/constants";
-import { isManageable as isManageableByPosition } from "#shared/services/room/rbac/isManageable";
 import { useRoomStore } from "@/store/message/room";
 
 export const useRoleStore = defineStore("message/room/role", () => {
@@ -19,7 +19,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     data: roles,
     getData: baseGetRoles,
     setData: setRoles,
-  } = useDataMap<RoomRole[]>(() => roomStore.currentRoomId, []);
+  } = useDataMap<RoomRoleInMessage[]>(() => roomStore.currentRoomId, []);
   const getRoles = (roomId: string) => baseGetRoles(roomId) ?? [];
   const {
     data: selectedRoleId,
@@ -46,11 +46,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const selectMember = (id: string) => {
     selectedMemberId.value = id;
   };
-  const isManageable = (roomId: string) => {
+  const checkIsManageable = (roomId: string) => {
     const myPermissions = getMyPermissions(roomId);
     if (!myPermissions) return false;
     return (
-      isManageableByPosition(myPermissions.topRolePosition, 0, myPermissions.isRoomOwner) ||
+      checkIsManageableByPosition(myPermissions.topRolePosition, 0, myPermissions.isRoomOwner) ||
       Boolean(myPermissions.permissions & MANAGEMENT_PERMISSIONS)
     );
   };
@@ -58,17 +58,17 @@ export const useRoleStore = defineStore("message/room/role", () => {
     data: memberRoleMap,
     getData: getMemberRoleMap,
     setData: setMemberRoleMap,
-  } = useDataMap(() => roomStore.currentRoomId, new Map<string, RoomRole[]>());
+  } = useDataMap(() => roomStore.currentRoomId, new Map<string, RoomRoleInMessage[]>());
   const getMemberRoles = (roomId: string, userId: string) => getMemberRoleMap(roomId)?.get(userId) ?? [];
-  const setMemberRoles = (roomId: string, userId: string, roles: RoomRole[]) => {
-    const memberRoleMap = getMemberRoleMap(roomId) ?? new Map<string, RoomRole[]>();
+  const setMemberRoles = (roomId: string, userId: string, roles: RoomRoleInMessage[]) => {
+    const memberRoleMap = getMemberRoleMap(roomId) ?? new Map<string, RoomRoleInMessage[]>();
     memberRoleMap.set(userId, roles);
     setMemberRoleMap(roomId, memberRoleMap);
   };
 
   const readRoles = async (input: ReadRolesInput) => {
     const roles = await $trpc.role.readRoles.query(input);
-    const rolesByRoomId = new Map<string, RoomRole[]>();
+    const rolesByRoomId = new Map<string, RoomRoleInMessage[]>();
     for (const role of roles) {
       const roomRoles = rolesByRoomId.get(role.roomId) ?? [];
       roomRoles.push(role);
@@ -90,7 +90,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const readMemberRoles = async (input: ReadMemberRolesInput) => {
     const memberRoles = await $trpc.role.readMemberRoles.query(input);
-    const rolesByUserId = new Map<string, RoomRole[]>();
+    const rolesByUserId = new Map<string, RoomRoleInMessage[]>();
     for (const { role, userId } of memberRoles) {
       const roles = rolesByUserId.get(userId) ?? [];
       roles.push(role);
@@ -135,13 +135,13 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   return {
     assignRole,
+    checkIsManageable,
     createRole,
     deleteRole,
     getMemberRoleMap,
     getMemberRoles,
     getMyPermissions,
     getRoles,
-    isManageable,
     memberRoleMap,
     myPermissions,
     readMemberRoles,

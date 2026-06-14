@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VBtn, VCard, VTooltip } from "vuetify/components";
+import type { z } from "zod";
 
 import { formRules } from "@/services/vuetify/formRules";
 import { mergeProps } from "vue";
@@ -11,10 +12,11 @@ interface EditableNameDialogButtonProps {
   maxLength: number;
   name: string;
   placeholder?: string;
+  schema: z.ZodType<string>;
   tooltipProps: VTooltip["$props"];
 }
 
-defineSlots<{ default?: () => VNode }>();
+defineSlots<{ default?: () => VNode; "prepend-content"?: () => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
 const {
   buttonProps = {},
@@ -23,6 +25,7 @@ const {
   maxLength,
   name,
   placeholder,
+  schema,
   tooltipProps,
 } = defineProps<EditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
@@ -41,7 +44,7 @@ watch(
   <StyledFormDialog
     v-model="modelValue"
     :card-props
-    :confirm-button-props="{ text: 'Save', disabled: editedName === name }"
+    :confirm-button-props="{ text: 'Save', disabled: schema.safeParse(editedName).data === name }"
     @submit="
       (_event, onComplete) => {
         emit('submit', editedName);
@@ -56,10 +59,10 @@ watch(
             <template #default="{ isHovering, props: hoverProps }">
               <v-btn
                 :style="{ pointerEvents: isEditable ? undefined : 'none' }"
-                font-bold
-                rounded="lg"
                 :ripple="false"
                 slim
+                font-bold
+                rd-lg
                 :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps)"
                 @click="updateIsOpen(true)"
               >
@@ -75,16 +78,20 @@ watch(
         </template>
       </v-tooltip>
     </template>
-    <v-container px-6 fluid>
+    <v-container fluid px-6>
+      <v-row v-if="$slots['prepend-content']">
+        <v-col cols="12">
+          <slot name="prepend-content" />
+        </v-col>
+      </v-row>
       <v-row>
         <v-col cols="12">
           <v-text-field
-            :model-value="editedName"
+            v-model="editedName"
             density="compact"
             :placeholder
             autofocus
             :rules="[formRules.requireAtMostNCharacters(maxLength), formRules.isNotProfanity]"
-            @update:model-value="editedName = $event.trim()"
           />
         </v-col>
       </v-row>
@@ -92,7 +99,7 @@ watch(
   </StyledFormDialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-btn__overlay) {
   transition: none;
 }

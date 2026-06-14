@@ -8,13 +8,13 @@
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-skeleton-loader__avatar) {
   margin-right: 0;
-  min-width: $avatar-width;
-  min-height: $avatar-width;
-  width: $avatar-width;
-  height: $avatar-width;
+  min-width: var(--avatar-width);
+  min-height: var(--avatar-width);
+  width: var(--avatar-width);
+  height: var(--avatar-width);
 }
 
 :deep(.v-skeleton-loader__heading) {

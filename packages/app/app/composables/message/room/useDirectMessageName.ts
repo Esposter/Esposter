@@ -1,9 +1,9 @@
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { takeOne } from "@esposter/shared";
 
-export const useDirectMessageName = (room: MaybeRefOrGetter<Room | undefined>) => {
+export const useDirectMessageName = (room: MaybeRefOrGetter<RoomInMessage | undefined>) => {
   const directMessageStore = useDirectMessageStore();
   const { directMessageParticipantsMap } = storeToRefs(directMessageStore);
 

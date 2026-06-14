@@ -2,13 +2,14 @@ import { describe, expect, test } from "vitest";
 
 import { fixAjv } from "./fixAjv";
 
+const transform = (code: string, id: string) => fixAjv.transform(code, id);
+
 describe("fixAjv", () => {
   const AJV_ID = "/node_modules/ajv/dist/compile/util.js";
   const AJV_FORMATS_ID = "/node_modules/ajv-formats/dist/formats.js";
   const JSON_SCHEMA_TRAVERSE_ID = "/node_modules/json-schema-traverse/index.js";
   const BROWSER_JS_ID = "/node_modules/debug/src/browser.js";
   const COMMON_JS_ID = "/node_modules/debug/src/common.js";
-  const transform = (code: string, id: string) => fixAjv.transform(code, id);
 
   describe("filter", () => {
     test("returns undefined for non-matching paths", () => {
@@ -71,7 +72,7 @@ describe("fixAjv", () => {
       const result = transform("exports.useColors = function() {};\n", BROWSER_JS_ID);
 
       expect(result).toContain("_exports.useColors = function() {};");
-      expect(result).not.toMatch(/(?<!_)exports\.useColors/);
+      expect(result).not.toMatch(/(?<!_)exports\.useColors/u);
     });
 
     test("converts module.exports = expr to const _debug + export default", () => {
@@ -267,7 +268,7 @@ describe("fixAjv", () => {
         const result = transform(code, AJV_ID);
 
         // Module.exports line is suppressed; exports.default becomes the export
-        expect(result).not.toMatch(/^export default Ajv;\nexport default Ajv;/m);
+        expect(result).not.toMatch(/^export default Ajv;\nexport default Ajv;/mu);
         expect(result).toContain("export default Ajv;");
       });
 

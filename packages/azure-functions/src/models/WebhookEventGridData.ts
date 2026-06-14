@@ -1,6 +1,14 @@
-import type { Webhook, WebhookPayload } from "@esposter/db-schema";
+import type { WebhookInMessage, WebhookPayload } from "@esposter/db-schema";
+
+import { selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
+import { z } from "zod";
 
 export interface WebhookEventGridData {
   payload: WebhookPayload;
-  webhook: Pick<Webhook, "roomId" | "userId">;
+  webhook: Pick<WebhookInMessage, "roomId" | "userId">;
 }
+
+export const webhookEventGridDataSchema: z.ZodType<WebhookEventGridData> = z.object({
+  payload: webhookPayloadSchema,
+  webhook: selectWebhookInMessageSchema.pick({ roomId: true, userId: true }),
+});

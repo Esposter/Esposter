@@ -1,17 +1,19 @@
+x-app-volumes: &app-volumes
+  - .:/app:delegated
+  - /app/node_modules
+  - /app/packages/app/node_modules
+  - /app/packages/azure-mock/node_modules
+  - /app/packages/configuration/node_modules
+  - /app/packages/parse-tmx/node_modules
+  - /app/packages/shared/node_modules
+  - /app/packages/vue-phaserjs/node_modules
+  - /app/packages/xml2js/node_modules
+
 services:
   packages-builder:
     command: pnpm watch:packages
     image: esposter-dev:latest
-    volumes:
-      - .:/app:delegated
-      - /app/node_modules
-      - /app/packages/app/node_modules
-      - /app/packages/azure-mock/node_modules
-      - /app/packages/configuration/node_modules
-      - /app/packages/parse-tmx/node_modules
-      - /app/packages/shared/node_modules
-      - /app/packages/vue-phaserjs/node_modules
-      - /app/packages/xml2js/node_modules
+    volumes: *app-volumes
     working_dir: /app
 
   dev-server:
@@ -38,15 +40,5 @@ services:
     # The ':delegated' flag is a performance optimization for Mac/Windows.
     # It tells Docker the container's view is the source of truth, reducing
     # strict consistency checks and speeding up file I/O.
-    volumes:
-      - .:/app:delegated
-      # ...EXCEPT for node_modules which is preserved from the image
-      - /app/node_modules
-      - /app/packages/app/node_modules
-      - /app/packages/azure-mock/node_modules
-      - /app/packages/configuration/node_modules
-      - /app/packages/parse-tmx/node_modules
-      - /app/packages/shared/node_modules
-      - /app/packages/vue-phaserjs/node_modules
-      - /app/packages/xml2js/node_modules
+    volumes: *app-volumes
     working_dir: /app/packages/app

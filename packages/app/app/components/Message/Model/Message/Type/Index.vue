@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
+import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 
 import { dayjs } from "#shared/services/dayjs";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
@@ -15,25 +15,35 @@ const {
 } = defineProps<MessageComponentProps>();
 const isSameBatch = computed(() => baseIsSameBatch && !isPreview);
 const displayCreatedAtShort = computed(() => dayjs(message.createdAt).format("H:mm"));
-const messageHtml = useMessageWithMentions(() => message.message);
+const messageHtml = useMessageWithMentions(
+  () => message.message,
+  () => message.partitionKey,
+);
 </script>
 
 <template>
   <MessageModelMessageTypeListItem :active :is-preview>
     <template #prepend>
-      <div v-if="message.replyRowKey" relative flex flex-col items-center>
-        <MessageModelMessageReplySpine absolute top-0 mt-2.5 ml-7.5 :reply-row-key="message.replyRowKey" />
+      <div v-if="message.replyRowKey" flex flex-col items-center relative>
+        <MessageModelMessageReplySpine
+          ml-7.5
+          mt-2.5
+          top-0
+          absolute
+          :reply-row-key="message.replyRowKey"
+          :room-id="message.partitionKey"
+        />
         <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
         <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" pl-2 />
       </div>
       <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
-      <span v-else :op="active ? undefined : 0" text-center text-gray text-xs>
+      <span v-else :op="active ? undefined : 0" text-gray text-center text-body-small>
         {{ displayCreatedAtShort }}
       </span>
     </template>
     <MessageModelMessageReplyTitle v-if="message.replyRowKey || !isSameBatch" :creator :message />
     <div v-if="message.isForward" flex gap-x-2>
-      <div class="bg-border" w-1 h-inherit rd />
+      <div rd bg-border h-inherit w-1 />
       <div flex flex-col gap-y-1>
         <v-list-item-subtitle>
           <span italic>
@@ -41,32 +51,28 @@ const messageHtml = useMessageWithMentions(() => message.message);
             Forwarded
           </span>
         </v-list-item-subtitle>
-        <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100 v-html="messageHtml" />
-        <MessageModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />
-        <MessageModelMessageLinkPreviewContainer
-          v-if="message.linkPreviewResponse"
-          :link-preview-response="message.linkPreviewResponse"
-          :partition-key="message.partitionKey"
-          :row-key="message.rowKey"
+        <v-list-item-subtitle
+          v-if="!EMPTY_TEXT_REGEX.test(messageHtml)"
+          class="rich-text-content"
+          op-100
+          v-html="messageHtml"
         />
-        <MessageModelMessageEmojiList :is-preview :message />
+        <MessageModelMessageTypeTrailing :is-preview :message />
       </div>
     </div>
     <div v-else flex flex-col gap-y-1>
       <slot>
-        <div flex gap-x-1 items-end>
-          <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100 v-html="messageHtml" />
-          <span v-if="message.isEdited" text-gray text-2.4 line-height-3.2>(edited)</span>
+        <div v-if="!EMPTY_TEXT_REGEX.test(messageHtml) || message.isEdited" flex gap-x-1 items-end>
+          <v-list-item-subtitle
+            v-if="!EMPTY_TEXT_REGEX.test(messageHtml)"
+            class="rich-text-content"
+            op-100
+            v-html="messageHtml"
+          />
+          <span v-if="message.isEdited" text-2.4 text-gray line-height-3.2>(edited)</span>
         </div>
       </slot>
-      <MessageModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />
-      <MessageModelMessageLinkPreviewContainer
-        v-if="message.linkPreviewResponse"
-        :link-preview-response="message.linkPreviewResponse"
-        :partition-key="message.partitionKey"
-        :row-key="message.rowKey"
-      />
-      <MessageModelMessageEmojiList :is-preview :message />
+      <MessageModelMessageTypeTrailing :is-preview :message />
     </div>
   </MessageModelMessageTypeListItem>
 </template>

@@ -25,7 +25,7 @@ const backgroundColor = computed(() => (disabled ? "transparent" : "currentColor
   </v-tooltip>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-btn__overlay) {
   background-color: v-bind(backgroundColor);
 }

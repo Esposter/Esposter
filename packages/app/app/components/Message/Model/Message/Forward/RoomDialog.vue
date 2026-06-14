@@ -5,7 +5,7 @@ import { useAlertStore } from "@/store/alert";
 import { useDataStore } from "@/store/message/data";
 import { useForwardStore } from "@/store/message/input/forward";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { RoutePath, takeOne } from "@esposter/shared";
+import { normalizeString, RoutePath, takeOne } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
@@ -30,11 +30,11 @@ const {
   searchQuery,
 } = useCursorSearcher(
   (searchQuery, cursor, opts) => {
-    const trimmedSearchQuery = searchQuery.trim();
+    const normalizedSearchQuery = normalizeString(searchQuery);
     return $trpc.room.readRooms.query(
       {
         cursor,
-        filter: trimmedSearchQuery ? { name: trimmedSearchQuery } : undefined,
+        filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined,
       },
       opts,
     );
@@ -48,11 +48,11 @@ const {
   <v-dialog v-if="forward && creator" v-model="dialog">
     <StyledCard>
       <v-card-title flex flex-col>
-        <div flex justify-between items-center>
+        <div flex items-center justify-between>
           Forward To
           <v-btn density="comfortable" icon="mdi-close" @click="dialog = false" />
         </div>
-        <div class="text-title-small" text-gray pb-2>Select where you want to share this message.</div>
+        <div text-gray pb-2 text-title-small>Select where you want to share this message.</div>
         <v-text-field
           v-model="searchQuery"
           append-inner-icon="mdi-magnify"

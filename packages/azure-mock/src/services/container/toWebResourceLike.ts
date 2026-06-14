@@ -2,6 +2,7 @@ import type { WebResourceLike } from "@azure/core-http-compat";
 import type { PipelineRequest } from "@azure/core-rest-pipeline";
 
 import { toHttpHeadersLike } from "@azure/core-http-compat";
+import { noop } from "@esposter/shared";
 
 export const toWebResourceLike = (request: PipelineRequest): WebResourceLike => ({
   abortSignal: request.abortSignal,
@@ -25,6 +26,6 @@ export const toWebResourceLike = (request: PipelineRequest): WebResourceLike => 
   streamResponseStatusCodes: request.streamResponseStatusCodes,
   timeout: request.timeout,
   url: request.url,
-  validateRequestProperties: () => {},
+  validateRequestProperties: noop,
   withCredentials: request.withCredentials,
 });

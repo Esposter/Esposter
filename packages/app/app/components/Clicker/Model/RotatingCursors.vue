@@ -25,7 +25,7 @@ const animateCursors = (amount: number) => {
   for (let i = 0; i < amount; i++) {
     const rotationOffset = takeOne(initialRotationOffsets, i);
     const rotatingDivId = takeOne(rotatingDivIds.value, i);
-    const rotatingDiv = document.getElementById(rotatingDivId);
+    const rotatingDiv = window.document.getElementById(rotatingDivId);
     if (!rotatingDiv) continue;
 
     rotatingDiv.animate(
@@ -50,7 +50,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-for="rotatingDivId of rotatingDivIds" :id="rotatingDivId" :key="rotatingDivId" size-50 absolute top-0>
-    <v-img absolute select-none rotate-135 width="2rem" height="2rem" :src="icon" :alt="Target.Cursor" />
+  <div v-for="rotatingDivId of rotatingDivIds" :id="rotatingDivId" :key="rotatingDivId" size-50 top-0 absolute>
+    <v-img select-none rotate-135 absolute width="2rem" height="2rem" :src="icon" :alt="Target.Cursor" />
   </div>
 </template>

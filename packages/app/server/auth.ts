@@ -6,6 +6,7 @@ import { betterAuth } from "better-auth";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
+    camelCase: true,
     provider: "pg",
     schema,
     usePlural: true,
@@ -31,7 +32,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       biography: {
-        required: false,
+        required: true,
         type: "string",
         validator: {
           input: selectUserSchema.shape.biography,

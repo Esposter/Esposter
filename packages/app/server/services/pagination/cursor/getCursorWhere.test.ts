@@ -12,13 +12,13 @@ import { describe, expect, test } from "vitest";
 describe(getCursorWhere, () => {
   const createdAt = new Date();
   const user: User = {
-    biography: null,
+    biography: "",
     createdAt,
     deletedAt: null,
     email: "",
     emailVerified: false,
     id: crypto.randomUUID(),
-    image: null,
+    image: "",
     name: "",
     updatedAt: createdAt,
   };

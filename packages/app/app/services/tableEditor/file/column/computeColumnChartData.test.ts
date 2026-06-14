@@ -4,65 +4,65 @@ import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { computeColumnChartData } from "@/services/tableEditor/file/column/computeColumnChartData";
 import { describe, expect, test } from "vitest";
 
+const createNumberStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
+  average: 1,
+  columnName: "",
+  columnType: ColumnType.Number,
+  falseCount: null,
+  maximum: 2,
+  minimum: 0,
+  mostFrequentValue: null,
+  nullCount: 0,
+  nullPercent: null,
+  standardDeviation: 1,
+  summation: 0,
+  topFrequencies: null,
+  trueCount: null,
+  uniqueCount: 3,
+  ...overrides,
+});
+
+const createBooleanStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
+  average: null,
+  columnName: "",
+  columnType: ColumnType.Boolean,
+  falseCount: 1,
+  maximum: null,
+  minimum: null,
+  mostFrequentValue: null,
+  nullCount: 1,
+  nullPercent: null,
+  standardDeviation: null,
+  summation: null,
+  topFrequencies: null,
+  trueCount: 2,
+  uniqueCount: null,
+  ...overrides,
+});
+
+const createStringStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
+  average: null,
+  columnName: "",
+  columnType: ColumnType.String,
+  falseCount: null,
+  maximum: null,
+  minimum: null,
+  mostFrequentValue: null,
+  nullCount: 0,
+  nullPercent: 0,
+  standardDeviation: null,
+  summation: null,
+  topFrequencies: null,
+  trueCount: null,
+  uniqueCount: 1,
+  ...overrides,
+});
+
 describe(computeColumnChartData, () => {
-  const makeNumberStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
-    average: 1,
-    columnName: "",
-    columnType: ColumnType.Number,
-    falseCount: null,
-    maximum: 2,
-    minimum: 0,
-    mostFrequentValue: null,
-    nullCount: 0,
-    nullPercent: null,
-    standardDeviation: 1,
-    summation: 0,
-    topFrequencies: null,
-    trueCount: null,
-    uniqueCount: 3,
-    ...overrides,
-  });
-
-  const makeBooleanStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
-    average: null,
-    columnName: "",
-    columnType: ColumnType.Boolean,
-    falseCount: 1,
-    maximum: null,
-    minimum: null,
-    mostFrequentValue: null,
-    nullCount: 1,
-    nullPercent: null,
-    standardDeviation: null,
-    summation: null,
-    topFrequencies: null,
-    trueCount: 2,
-    uniqueCount: null,
-    ...overrides,
-  });
-
-  const makeStringStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
-    average: null,
-    columnName: "",
-    columnType: ColumnType.String,
-    falseCount: null,
-    maximum: null,
-    minimum: null,
-    mostFrequentValue: null,
-    nullCount: 0,
-    nullPercent: 0,
-    standardDeviation: null,
-    summation: null,
-    topFrequencies: null,
-    trueCount: null,
-    uniqueCount: 1,
-    ...overrides,
-  });
-
   test(`number column returns bar chart with minimum, average, maximum`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(makeNumberStats({ average: 1, maximum: 2, minimum: 0 }));
+    const result = computeColumnChartData(createNumberStats({ average: 1, maximum: 2, minimum: 0 }));
 
     expect(result?.type).toBe("bar");
     expect(result?.series).toStrictEqual([{ data: [0, 1, 2], name: "" }]);
@@ -71,7 +71,7 @@ describe(computeColumnChartData, () => {
   test(`number column series name matches column name`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(makeNumberStats({ columnName: " " }));
+    const result = computeColumnChartData(createNumberStats({ columnName: " " }));
 
     expect(result?.series).toStrictEqual([{ data: [0, 1, 2], name: " " }]);
   });
@@ -79,13 +79,13 @@ describe(computeColumnChartData, () => {
   test(`number column with all null statistics returns null`, () => {
     expect.hasAssertions();
 
-    expect(computeColumnChartData(makeNumberStats({ average: null, maximum: null, minimum: null }))).toBeNull();
+    expect(computeColumnChartData(createNumberStats({ average: null, maximum: null, minimum: null }))).toBeNull();
   });
 
   test(`boolean column returns pie chart with trueCount, falseCount, nullCount`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(makeBooleanStats({ falseCount: 1, nullCount: 1, trueCount: 2 }));
+    const result = computeColumnChartData(createBooleanStats({ falseCount: 1, nullCount: 1, trueCount: 2 }));
 
     expect(result?.type).toBe("pie");
     expect(result?.series).toStrictEqual([2, 1, 1]);
@@ -94,7 +94,7 @@ describe(computeColumnChartData, () => {
   test(`boolean column with null trueCount and falseCount defaults to 0`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(makeBooleanStats({ falseCount: null, nullCount: 2, trueCount: null }));
+    const result = computeColumnChartData(createBooleanStats({ falseCount: null, nullCount: 2, trueCount: null }));
 
     expect(result?.series).toStrictEqual([0, 0, 2]);
   });
@@ -102,14 +102,14 @@ describe(computeColumnChartData, () => {
   test(`string column with no top frequencies returns null`, () => {
     expect.hasAssertions();
 
-    expect(computeColumnChartData(makeStringStats({ topFrequencies: null }))).toBeNull();
+    expect(computeColumnChartData(createStringStats({ topFrequencies: null }))).toBeNull();
   });
 
   test(`string column returns horizontal bar chart of top frequencies`, () => {
     expect.hasAssertions();
 
     const result = computeColumnChartData(
-      makeStringStats({
+      createStringStats({
         columnName: " ",
         topFrequencies: [
           ["a", 3],

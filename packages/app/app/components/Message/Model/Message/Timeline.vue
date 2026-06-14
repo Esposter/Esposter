@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { dayjs } from "#shared/services/dayjs";
+import { getTimelineDateLabel } from "#shared/services/dayjs/getTimelineDateLabel";
 
 interface MessageTimelineProps {
   messageDate: Date;
@@ -7,21 +8,16 @@ interface MessageTimelineProps {
 }
 
 const { messageDate, nextMessageDate } = defineProps<MessageTimelineProps>();
-const messageDateDayjs = computed(() => dayjs(messageDate));
-const areDifferentDays = computed(() => !nextMessageDate || !messageDateDayjs.value.isSame(nextMessageDate, "day"));
-const displayDate = computed(() => {
-  if (messageDateDayjs.value.isToday()) return "Today";
-  else if (messageDateDayjs.value.isYesterday()) return "Yesterday";
-  else return messageDateDayjs.value.format("dddd, MMMM Do");
-});
+const areDifferentDays = computed(() => !nextMessageDate || !dayjs(messageDate).isSame(nextMessageDate, "day"));
+const displayDate = computed(() => getTimelineDateLabel(messageDate));
 </script>
 
 <template>
-  <v-row v-if="areDifferentDays" mt-4 flex items-center flex-none density="compact">
+  <v-row v-if="areDifferentDays" mt-4 flex flex-none items-center density="compact">
     <v-col flex-1>
       <v-divider />
     </v-col>
-    <div class="text-title-small" text-center>
+    <div text-center text-title-small>
       {{ displayDate }}
     </div>
     <v-col flex-1>

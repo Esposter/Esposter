@@ -1,53 +1,63 @@
-import * as accounts from "@/schema/accounts";
-import * as achievements from "@/schema/achievements";
-import * as appUsers from "@/schema/appUsers";
-import * as bans from "@/schema/bans";
-import * as blocks from "@/schema/blocks";
-import * as friendRequests from "@/schema/friendRequests";
-import * as friends from "@/schema/friends";
-import * as invites from "@/schema/invites";
-import * as likes from "@/schema/likes";
-import * as posts from "@/schema/posts";
-import * as pushSubscriptions from "@/schema/pushSubscriptions";
-import * as rateLimiterFlexible from "@/schema/rateLimiterFlexible";
-import * as roomCategories from "@/schema/roomCategories";
-import * as roomRoles from "@/schema/roomRoles";
-import * as rooms from "@/schema/rooms";
-import * as searchHistories from "@/schema/searchHistories";
-import * as sessions from "@/schema/sessions";
-import * as surveys from "@/schema/surveys";
-import * as userAchievements from "@/schema/userAchievements";
-import * as users from "@/schema/users";
-import * as userStatuses from "@/schema/userStatuses";
-import * as usersToRoomRoles from "@/schema/usersToRoomRoles";
-import * as usersToRooms from "@/schema/usersToRooms";
-import * as verifications from "@/schema/verifications";
-import * as webhooks from "@/schema/webhooks";
+import { accounts } from "@/schema/accounts";
+import { achievementNameEnum, achievements } from "@/schema/achievements";
+import { appUsersInMessage } from "@/schema/appUsersInMessage";
+import { bansInMessage } from "@/schema/bansInMessage";
+import { blocks } from "@/schema/blocks";
+import { callSessionsInMessage } from "@/schema/callSessionsInMessage";
+import { friendRequests } from "@/schema/friendRequests";
+import { friends } from "@/schema/friends";
+import { invitesInMessage } from "@/schema/invitesInMessage";
+import { likes } from "@/schema/likes";
+import { posts } from "@/schema/posts";
+import { pushSubscriptionsInMessage } from "@/schema/pushSubscriptionsInMessage";
+import { rateLimiterFlexible } from "@/schema/rateLimiterFlexible";
+import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
+import { roomFiltersInMessage } from "@/schema/roomFiltersInMessage";
+import { roomRolesInMessage } from "@/schema/roomRolesInMessage";
+import { roomsInMessage, roomTypeEnum } from "@/schema/roomsInMessage";
+import { scheduledMessageJobsInMessage } from "@/schema/scheduledMessageJobsInMessage";
+import { searchHistoriesInMessage } from "@/schema/searchHistoriesInMessage";
+import { sessions } from "@/schema/sessions";
+import { surveys } from "@/schema/surveys";
+import { userAchievements } from "@/schema/userAchievements";
+import { users } from "@/schema/users";
+import { userStatusEnum, userStatusesInMessage } from "@/schema/userStatusesInMessage";
+import { usersToRoomRolesInMessage } from "@/schema/usersToRoomRolesInMessage";
+import { notificationTypeEnum, usersToRoomsInMessage } from "@/schema/usersToRoomsInMessage";
+import { verifications } from "@/schema/verifications";
+import { webhooksInMessage } from "@/schema/webhooksInMessage";
 
 export const schema = {
-  ...accounts,
-  ...achievements,
-  ...appUsers,
-  ...bans,
-  ...blocks,
-  ...friendRequests,
-  ...friends,
-  ...invites,
-  ...likes,
-  ...posts,
-  ...pushSubscriptions,
-  ...rateLimiterFlexible,
-  ...roomCategories,
-  ...roomRoles,
-  ...rooms,
-  ...searchHistories,
-  ...sessions,
-  ...surveys,
-  ...userAchievements,
-  ...users,
-  ...userStatuses,
-  ...usersToRoomRoles,
-  ...usersToRooms,
-  ...verifications,
-  ...webhooks,
+  accounts,
+  achievementNameEnum,
+  achievements,
+  appUsersInMessage,
+  bansInMessage,
+  blocks,
+  callSessionsInMessage,
+  friendRequests,
+  friends,
+  invitesInMessage,
+  likes,
+  notificationTypeEnum,
+  posts,
+  pushSubscriptionsInMessage,
+  rateLimiterFlexible,
+  roomCategoriesInMessage,
+  roomFiltersInMessage,
+  roomRolesInMessage,
+  roomsInMessage,
+  roomTypeEnum,
+  scheduledMessageJobsInMessage,
+  searchHistoriesInMessage,
+  sessions,
+  surveys,
+  userAchievements,
+  users,
+  userStatusEnum,
+  userStatusesInMessage,
+  usersToRoomRolesInMessage,
+  usersToRoomsInMessage,
+  verifications,
+  webhooksInMessage,
 };

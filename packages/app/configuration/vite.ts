@@ -14,21 +14,15 @@ export const vite: NuxtConfig["vite"] = {
       transformMixedEsModules: true,
     },
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `
-        @use "@/assets/css/classes.scss" as *;
-        @use "@/assets/css/components.scss" as *;
-        @use "@/assets/css/variables.scss" as *;
-        `,
-      },
-    },
-  },
+  mode: process.env.APP_ENV,
   optimizeDeps: {
-    // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
-    exclude: ["@vue-pdf-viewer/viewer"],
-    include: [...commonjsDeps, "pdfjs-dist", "debug"],
+    exclude: [
+      // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
+      "@vue-pdf-viewer/viewer",
+      // Three's inspector loads extension assets relative to import.meta.url, which breaks from Vite's cache.
+      "three/examples/jsm/inspector/Inspector.js",
+    ],
+    include: [...commonjsDeps, "debug", "pdfjs-dist"],
   },
   plugins: [fixAjv],
 };

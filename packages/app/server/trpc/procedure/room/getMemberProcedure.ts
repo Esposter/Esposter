@@ -8,7 +8,7 @@ import { TRPCError } from "@trpc/server";
 
 export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: keyof inferParser<T>["out"]) =>
   standardAuthedProcedure.input(schema).use(async ({ ctx, input, next }) => {
-    // If the roomIdKey is not in the input or is undefined, we don't need to check if the user is a member
+    // Skip the membership check when roomIdKey is absent from the input or undefined.
     if (!(roomIdKey in (input as object))) return next();
 
     const value = input[roomIdKey];

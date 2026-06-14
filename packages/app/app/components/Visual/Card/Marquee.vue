@@ -23,19 +23,21 @@ const { "on-surface": onSurface, surface } = storeToRefs(colorsStore);
     p-4
   >
     <div class="scene" h-64>
-      <div class="grid" px-4 h-full grid gap-x-4 list-none>
+      <div class="grid" px-4 list-none gap-x-4 grid h-full>
         <div v-for="(card, index) of cards" :key="index" class="item-container">
           <div
-            class="border-sm item"
-            font="[Montserrat] italic"
-            h-full
-            flex
-            justify-center
-            items-center
-            text-center
-            cursor-pointer
-            rd
+            class="item"
+            font="[Montserrat]"
             p-4
+            text-center
+            b-1
+            rd
+            flex
+            h-full
+            cursor-pointer
+            font-italic
+            items-center
+            justify-center
           >
             {{ card.text }}
           </div>
@@ -47,9 +49,7 @@ const { "on-surface": onSurface, surface } = storeToRefs(colorsStore);
 
 <style scoped lang="scss">
 @use "sass:math";
-// @NOTE: Make sure to manually change this when the total number of cards are changed
-// Unfortunately we have to do this manually because sass creates the css at compile-time and is "static"
-// whereas we cannot use vue props as an index for sass loops since vue props are run-time and are "dynamic" :C
+// Update manually when the card count changes: Sass loops run at compile-time and can't index on run-time Vue props.
 $card-length: 6;
 
 .window {
@@ -70,7 +70,7 @@ $card-length: 6;
   --inset: 0;
   --outset: 1;
   grid-template-columns: 1fr 1fr;
-  transition: transform $transition-move-duration-root;
+  transition: transform var(--transition-move-duration);
   transform: rotateX(20deg) rotateZ(-20deg) skewX(20deg);
   transform-style: preserve-3d;
 
@@ -93,7 +93,7 @@ $card-length: 6;
     content: "";
     position: absolute;
     inset: 4px 4px -2px -2px;
-    border-radius: $border-radius-root;
+    border-radius: var(--border-radius);
     background-color: v-bind(onSurface);
     opacity: 0.1;
     scale: 1 calc(1 + (var(--active) * 0.05));

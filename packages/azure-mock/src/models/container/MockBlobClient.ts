@@ -9,6 +9,7 @@ import type {
   BlobDeleteImmutabilityPolicyResponse,
   BlobDeleteResponse,
   BlobDownloadResponseParsed,
+  BlobGenerateSasUrlOptions,
   BlobGetAccountInfoResponse,
   BlobGetPropertiesResponse,
   BlobGetTagsResponse,
@@ -28,13 +29,14 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
+import { MOCK_BLOB_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
 import { toWebResourceLike } from "@/services/container/toWebResourceLike";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
-import { takeOne } from "@esposter/shared";
+import { noop, takeOne } from "@esposter/shared";
 import { Readable } from "node:stream";
 
 export class MockBlobClient implements Except<BlobClient, "accountName"> {
@@ -57,7 +59,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     this.connectionString = connectionString;
     this.containerName = containerName;
     this.name = blobName;
-    this.url = `https://mockaccount.blob.core.windows.net/${this.containerName}/${this.name}`;
+    this.url = `${MOCK_BLOB_BASE_URL}/${this.containerName}/${this.name}`;
   }
 
   abortCopyFromURL(): Promise<BlobAbortCopyFromURLResponse> {
@@ -98,10 +100,10 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
       getResult: () => response,
       isDone: () => true,
       isStopped: () => false,
-      onProgress: () => () => {},
+      onProgress: () => noop,
       poll: () => Promise.resolve(),
       pollUntilDone: () => Promise.resolve(response),
-      stopPolling: () => {},
+      stopPolling: noop,
     });
   }
 
@@ -123,7 +125,17 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   deleteIfExists(): Promise<BlobDeleteIfExistsResponse> {
-    throw new Error("Method not implemented.");
+    const succeeded = this.container.has(this.name);
+    if (succeeded) this.container.delete(this.name);
+    return Promise.resolve({
+      _response: {
+        headers: toHttpHeadersLike(createHttpHeaders()),
+        parsedHeaders: {},
+        request: toWebResourceLike(createPipelineRequest({ url: "" })),
+        status: succeeded ? 200 : 404,
+      },
+      succeeded,
+    });
   }
 
   deleteImmutabilityPolicy(): Promise<BlobDeleteImmutabilityPolicyResponse> {
@@ -161,9 +173,10 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     throw new Error("Method not implemented.");
   }
 
-  generateSasUrl(): Promise<string> {
+  generateSasUrl(options: BlobGenerateSasUrlOptions): Promise<string> {
+    const sp = options.permissions?.toString() ?? "r";
     return Promise.resolve(
-      `https://mockaccount.blob.core.windows.net/${this.containerName}/${this.name}?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=r`,
+      `${MOCK_BLOB_BASE_URL}/${this.containerName}/${this.name}?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=${sp}`,
     );
   }
 

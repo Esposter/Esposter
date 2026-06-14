@@ -2,8 +2,9 @@
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
+import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { formRules } from "@/services/vuetify/formRules";
-import { takeOne } from "@esposter/shared";
+import { takeOne, withFinalizerAsync } from "@esposter/shared";
 
 export interface UserProfileCardColumnImageProps {
   editMode: boolean;
@@ -17,7 +18,7 @@ const isLoading = ref(false);
 </script>
 
 <template>
-  <v-col flex flex-wrap items-center self-center gap-x-4 cols="6">
+  <v-col flex flex-wrap gap-x-4 items-center self-center cols="6">
     <template v-if="editMode">
       <v-avatar>
         <v-img v-if="modelValue" :src="modelValue" :alt="modelValue" />
@@ -32,8 +33,8 @@ const isLoading = ref(false);
         label="Upload image"
         density="compact"
         hide-details
-        my-2
         show-size
+        my-2
         @update:model-value="
           async (files?) => {
             if (!files) return;
@@ -41,11 +42,16 @@ const isLoading = ref(false);
             const file = Array.isArray(files) ? takeOne(files) : files;
             isLoading = true;
 
-            try {
-              modelValue = await $trpc.user.uploadProfileImage.mutate(file);
-            } finally {
-              isLoading = false;
-            }
+            await withFinalizerAsync(
+              async () => {
+                const { publicUrl, sasUrl } = await $trpc.user.generateProfileImageUploadUrl.mutate();
+                await uploadBlocks(file, sasUrl);
+                modelValue = publicUrl;
+              },
+              () => {
+                isLoading = false;
+              },
+            );
           }
         "
       />

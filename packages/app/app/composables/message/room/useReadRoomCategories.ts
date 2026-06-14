@@ -5,7 +5,7 @@ export const useReadRoomCategories = () => {
   const roomCategoryStore = useRoomCategoryStore();
   const { categories } = storeToRefs(roomCategoryStore);
   const readRoomCategories = async () => {
-    categories.value = await $trpc.roomCategory.readRoomCategories.query();
+    categories.value = await $trpc.room.category.readRoomCategories.query();
   };
   return { readRoomCategories };
 };

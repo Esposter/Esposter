@@ -15,6 +15,7 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     },
     search: {
       apiKey: process.env.AZURE_SEARCH_API_KEY,
+      baseUrl: process.env.AZURE_SEARCH_BASE_URL,
     },
     storageAccountConnectionString: process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
     webPubSub: {
@@ -34,6 +35,11 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  },
+  livekit: {
+    apiKey: process.env.LIVEKIT_API_KEY,
+    apiSecret: process.env.LIVEKIT_API_SECRET,
+    url: process.env.LIVEKIT_URL,
   },
   public: {
     appEnv: process.env.APP_ENV,

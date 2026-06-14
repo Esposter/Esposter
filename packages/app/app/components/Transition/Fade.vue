@@ -8,10 +8,10 @@ defineSlots<{ default: () => VNode }>();
   </Transition>
 </template>
 
-<style lang="scss">
+<style>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity $transition-move-duration-root ease;
+  transition: opacity var(--transition-move-duration) ease;
 }
 
 .fade-enter-from,

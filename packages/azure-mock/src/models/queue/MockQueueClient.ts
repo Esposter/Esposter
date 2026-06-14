@@ -10,6 +10,7 @@ import type {
   QueueDeleteIfExistsResponse,
   QueueDeleteMessageResponse,
   QueueDeleteResponse,
+  QueueGenerateSasUrlOptions,
   QueueGetAccessPolicyResponse,
   QueueGetPropertiesResponse,
   QueueItem,
@@ -28,10 +29,12 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
+import { MOCK_QUEUE_BASE_URL } from "@/constants";
 import { toWebResourceLike } from "@/services/container/toWebResourceLike";
 import { MockQueueDatabase } from "@/store/MockQueueDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
+import { MAX_QUEUE_VISIBILITY_TIMEOUT_MS } from "@esposter/db";
 /**
  * An in-memory mock of the Azure QueueClient.
  * It uses a Map to simulate queue storage and correctly implements the QueueClient interface.
@@ -59,7 +62,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   constructor(connectionString: string, queueName: string) {
     this.connectionString = connectionString;
     this.name = queueName;
-    this.url = `https://mockaccount.queue.core.windows.net/${this.name}`;
+    this.url = `${MOCK_QUEUE_BASE_URL}/${this.name}`;
   }
 
   clearMessages(): Promise<QueueClearMessagesResponse> {
@@ -94,8 +97,9 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
     throw new Error("Method not implemented.");
   }
 
-  generateSasUrl(): string {
-    throw new Error("Method not implemented.");
+  generateSasUrl(options: QueueGenerateSasUrlOptions): string {
+    const sp = options.permissions?.toString() ?? "r";
+    return `${MOCK_QUEUE_BASE_URL}/${this.name}?sv=2025-11-05&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=${sp}`;
   }
 
   generateUserDelegationSasUrl(): string {
@@ -125,7 +129,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   peekMessages(_options?: QueuePeekMessagesOptions): Promise<QueuePeekMessagesResponse> {
     const peekedMessageItems: PeekedMessageItem[] = this.queue.map((text) => ({
       dequeueCount: 0,
-      expiresOn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expiresOn: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS),
       insertedOn: new Date(),
       messageId: crypto.randomUUID(),
       messageText: text,
@@ -146,7 +150,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   receiveMessages(_options?: QueueReceiveMessageOptions): Promise<QueueReceiveMessageResponse> {
     const receivedMessageItems: DequeuedMessageItem[] = this.queue.splice(0).map((text) => ({
       dequeueCount: 1,
-      expiresOn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expiresOn: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS),
       insertedOn: new Date(),
       messageId: crypto.randomUUID(),
       messageText: text,
@@ -169,7 +173,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   sendMessage(messageText: string, _options?: QueueSendMessageOptions): Promise<QueueSendMessageResponse> {
     this.queue.push(messageText);
     const now = new Date();
-    const expiresOn = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const expiresOn = new Date(now.getTime() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS);
     const insertedOn = now;
     const messageId = crypto.randomUUID();
     const nextVisibleOn = now;

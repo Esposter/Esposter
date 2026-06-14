@@ -1,0 +1,75 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy Node.js project to Azure Function App - prod-func-esposter-001
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  FUNCTION_APP_NAME: prod-func-esposter-001
+  OUTPUT_DIRECTORY: dist
+  PACKAGE_PATH: packages/azure-functions
+  RESOURCE_GROUP_NAME: prod-rg-esposter-ae-001
+  STORAGE_ACCOUNT_NAME: prodstesposter001
+  ZIP_FILE_NAME: release.zip
+
+jobs:
+  build-and-deploy:
+    permissions:
+      contents: read
+      id-token: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: 🔨 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 🔧 Resolve Project Dependencies
+        run: |
+          pnpm --filter @esposter/azure-functions... i
+          pnpm --filter @esposter/azure-functions... build
+          pnpm --filter @esposter/azure-functions deploy --prod ${{ env.OUTPUT_DIRECTORY }} --config.inject-workspace-packages=true --config.node-linker=hoisted
+          cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
+
+      - name: 📦 Zip Artifact for Deployment
+        run: |
+          pushd ${{ env.OUTPUT_DIRECTORY }}
+          zip -r ../${{ env.ZIP_FILE_NAME }} . -x@.funcignore
+          popd
+
+      - name: 🔑 Azure CLI Login
+        uses: azure/login@532459ea530d8321f2fb9bb10d1e0bcf23869a43 # v3.0.0
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🌐 Get GitHub Runner IP
+        id: get_ip
+        run: echo runner_ip=$(curl -s ipinfo.io/ip) >> $GITHUB_OUTPUT
+
+      - name: 📡 Allow Runner IP in Storage Account Firewall
+        run: |
+          az storage account network-rule add \
+            --account-name ${{ env.STORAGE_ACCOUNT_NAME }} \
+            --ip-address ${{ steps.get_ip.outputs.runner_ip }}
+
+      - name: 🚀 Upload Package to Blob Storage
+        run: |
+          az storage container create --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --name ${{ env.FUNCTION_APP_NAME }} --auth-mode login --public-access off || true
+          az storage blob upload --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --container-name ${{ env.FUNCTION_APP_NAME }} --name ${{ env.ZIP_FILE_NAME }} --file ${{ env.ZIP_FILE_NAME }} --auth-mode login --overwrite
+
+      - name: 📡 Remove Runner IP from Storage Account Firewall
+        if: always() # This ensures the rule is removed even if deployment fails
+        run: |
+          az storage account network-rule remove \
+            --account-name ${{ env.STORAGE_ACCOUNT_NAME }} \
+            --ip-address ${{ steps.get_ip.outputs.runner_ip }}

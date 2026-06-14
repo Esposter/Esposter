@@ -1,7 +1,9 @@
 import type { CSSProperties } from "vue";
 
-import { APP_BAR_HEIGHT, LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
+import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { useLayoutStore } from "@/store/layout";
+
+const APP_BAR_CSS_VALUE = "var(--app-bar-height)";
 
 export const useFixedLayoutStyles = (bottomOffset: Ref<number | string>) => {
   const layoutStore = useLayoutStore();
@@ -19,21 +21,21 @@ export const useFixedLayoutStyles = (bottomOffset: Ref<number | string>) => {
       width: `calc(100% - ${middleLeftOffset.value + middleRightOffset.value}px)`,
     })),
     left: computed<CSSProperties>(() => ({
-      height: `calc(100% - ${APP_BAR_HEIGHT}px)`,
+      height: `calc(100% - ${APP_BAR_CSS_VALUE})`,
       left: `${leftOffset.value}px`,
-      top: `${APP_BAR_HEIGHT}px`,
+      top: APP_BAR_CSS_VALUE,
       width: `${LEFT_DRAWER_WIDTH}px`,
     })),
     middle: computed<CSSProperties>(() => ({
       "--v-layout-bottom": `${bottomOffset.value}px`,
       "--v-layout-left": `${middleLeftOffset.value}px`,
       "--v-layout-right": `${middleRightOffset.value}px`,
-      "--v-layout-top": `${APP_BAR_HEIGHT}px`,
+      "--v-layout-top": APP_BAR_CSS_VALUE,
     })),
     right: computed<CSSProperties>(() => ({
-      height: `calc(100% - ${APP_BAR_HEIGHT}px)`,
+      height: `calc(100% - ${APP_BAR_CSS_VALUE})`,
       right: `${rightOffset.value}px`,
-      top: `${APP_BAR_HEIGHT}px`,
+      top: APP_BAR_CSS_VALUE,
       width: `${RIGHT_DRAWER_WIDTH}px`,
     })),
   };

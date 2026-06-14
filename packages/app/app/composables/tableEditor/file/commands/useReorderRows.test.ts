@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import {
-  makeColumn,
-  makeDataSource,
-  makeRow,
+  createColumn,
+  createDataSource,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -81,7 +81,10 @@ describe(useReorderRows, () => {
   test("moves row backward (index 2 to 0) with three rows", () => {
     expect.hasAssertions();
 
-    const threeRowDs = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 1 }), makeRow({ "": 2 })]);
+    const threeRowDs = createDataSource(
+      [createColumn("")],
+      [createRow({ "": 0 }), createRow({ "": 1 }), createRow({ "": 2 })],
+    );
     const { editedItem } = setupWithDataSource(threeRowDs);
     const reorderRows = useReorderRows();
     const rows = editedItem.value?.dataSource?.rows ?? [];
@@ -99,7 +102,10 @@ describe(useReorderRows, () => {
   test("moves row forward non-adjacent (index 0 to 2) with three rows", () => {
     expect.hasAssertions();
 
-    const threeRowDs = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 1 }), makeRow({ "": 2 })]);
+    const threeRowDs = createDataSource(
+      [createColumn("")],
+      [createRow({ "": 0 }), createRow({ "": 1 }), createRow({ "": 2 })],
+    );
     const { editedItem } = setupWithDataSource(threeRowDs);
     const reorderRows = useReorderRows();
     const rows = editedItem.value?.dataSource?.rows ?? [];
@@ -117,15 +123,15 @@ describe(useReorderRows, () => {
   test("moves row forward on paginated page (index 2 to 4 with only page rows passed)", () => {
     expect.hasAssertions();
 
-    const sixRowDs = makeDataSource(
-      [makeColumn("")],
+    const sixRowDs = createDataSource(
+      [createColumn("")],
       [
-        makeRow({ "": 0 }),
-        makeRow({ "": 1 }),
-        makeRow({ "": 2 }),
-        makeRow({ "": 3 }),
-        makeRow({ "": 4 }),
-        makeRow({ "": 5 }),
+        createRow({ "": 0 }),
+        createRow({ "": 1 }),
+        createRow({ "": 2 }),
+        createRow({ "": 3 }),
+        createRow({ "": 4 }),
+        createRow({ "": 5 }),
       ],
     );
     const { editedItem } = setupWithDataSource(sixRowDs);
@@ -149,15 +155,15 @@ describe(useReorderRows, () => {
   test("moves row backward on paginated page (index 4 to 2 with only page rows passed)", () => {
     expect.hasAssertions();
 
-    const sixRowDs = makeDataSource(
-      [makeColumn("")],
+    const sixRowDs = createDataSource(
+      [createColumn("")],
       [
-        makeRow({ "": 0 }),
-        makeRow({ "": 1 }),
-        makeRow({ "": 2 }),
-        makeRow({ "": 3 }),
-        makeRow({ "": 4 }),
-        makeRow({ "": 5 }),
+        createRow({ "": 0 }),
+        createRow({ "": 1 }),
+        createRow({ "": 2 }),
+        createRow({ "": 3 }),
+        createRow({ "": 4 }),
+        createRow({ "": 5 }),
       ],
     );
     const { editedItem } = setupWithDataSource(sixRowDs);

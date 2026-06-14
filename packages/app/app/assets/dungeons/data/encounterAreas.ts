@@ -4,7 +4,7 @@ import type { Except } from "type-fest";
 
 import { FileKey } from "#shared/generated/phaser/FileKey";
 import { Area } from "#shared/generated/tiled/propertyTypes/enum/Area";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 export const EncounterAreaMap = {
   [Area.Grass]: {

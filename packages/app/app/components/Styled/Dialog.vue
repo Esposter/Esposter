@@ -7,7 +7,7 @@ export interface StyledDialogActivatorSlotProps {
   isOpen: boolean;
   updateIsOpen: (value: true) => boolean;
 }
-
+// @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledDialogProps {
   cardProps?: VCard["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];

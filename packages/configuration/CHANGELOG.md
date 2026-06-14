@@ -3,6 +3,92 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
+
+### Bug Fixes
+
+* more tests + refactors ([4d060ba](https://github.com/Esposter/Esposter/commit/4d060bae8b00eeb8bfde2515ecac1a9b928bf85e))
+* snapshots and dev env for now ([c774f1c](https://github.com/Esposter/Esposter/commit/c774f1c58f72f5274c74bc97eca204d30bbc09ee))
+* tests ([25e6eda](https://github.com/Esposter/Esposter/commit/25e6edae501249b79b86401e7e65b93de1ab3cd6))
+* vue build ([8acf1fb](https://github.com/Esposter/Esposter/commit/8acf1fb24b551f51a7803017770a5cbb4ed13d53))
+
+### Performance Improvements
+
+* snapshot mock db so we save huge amounts of wasted testing time ([dddd69a](https://github.com/Esposter/Esposter/commit/dddd69aee7c57f1a92490fd70c2fc7b77d02fe05))
+
+# [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
+
+### Bug Fixes
+
+* deps wip ([3c6f204](https://github.com/Esposter/Esposter/commit/3c6f2048a3bc56abc7422e07eaca17dedd6f30e6))
+* snapshot ([ab17d12](https://github.com/Esposter/Esposter/commit/ab17d1201b2bdee2d46711147b7f1fdb385fe1e8))
+* ts6 ([a0e8448](https://github.com/Esposter/Esposter/commit/a0e84485b2ff8c50b8511a86f71006bbeb71d382))
+* vite ([42c1162](https://github.com/Esposter/Esposter/commit/42c1162627ddf6b71047bfe7b7f708c127a983a2))
+
+### Features
+
+* upgrade to ts6 and unplugin-dts v1.0.2 ([adcba0e](https://github.com/Esposter/Esposter/commit/adcba0e5c651643044c543c1f35f52b68d391a37))
+
+# [2.26.0](https://github.com/Esposter/Esposter/compare/v2.25.0...v2.26.0) (2026-06-01)
+
+### Bug Fixes
+
+* add file ([380c1ce](https://github.com/Esposter/Esposter/commit/380c1ce1553a205ec85adb8ff1eee2a7ac1276cb))
+* add isWindows check ([2b101a5](https://github.com/Esposter/Esposter/commit/2b101a5b8d67bb0751d1c7ef01b0253e6aef8190))
+* cleanup vitest config to also be shared package ([8c9e5c6](https://github.com/Esposter/Esposter/commit/8c9e5c6a9e2573485c899db3ccaf3b71f0320fe1))
+* format + perms ([5231b9a](https://github.com/Esposter/Esposter/commit/5231b9a3ec19477ee70573477273d7ba312d3659))
+* isomorphic bring back ([438b35c](https://github.com/Esposter/Esposter/commit/438b35cbb37ad558f014d9161d83e4e83e46c8cf))
+* lint ([2e3a7d9](https://github.com/Esposter/Esposter/commit/2e3a7d9dcf2a85dda4963c27c54ec7d32d44bd73))
+* lint ([a1c7d4c](https://github.com/Esposter/Esposter/commit/a1c7d4c98f6c8e20185935f8981db4d9bbc68076))
+* lint and test snapshots to include linux ([2389fbc](https://github.com/Esposter/Esposter/commit/2389fbc9f692c65fcff37f5e4e766af6b3e3f722))
+* make all [@esposter](https://github.com/esposter) internal packages external ([58dd2c1](https://github.com/Esposter/Esposter/commit/58dd2c1f789e6757e27a59e2e0e31f674866f730))
+* remove node and plugins and use web native APIs ([a7d80a2](https://github.com/Esposter/Esposter/commit/a7d80a2d535231e8c989b82db25329817eca43fe))
+* snapshot ([ddd5db0](https://github.com/Esposter/Esposter/commit/ddd5db08528104c8e4e445381139f0d516af0582))
+* tests ([6b3c0e9](https://github.com/Esposter/Esposter/commit/6b3c0e99f921fa7e7528d83e9f89772b40127765))
+* tsconfig ([976e797](https://github.com/Esposter/Esposter/commit/976e79781ed30784a59412aa44c1af8f33ebe4fa))
+* tsconfig ([3f0f079](https://github.com/Esposter/Esposter/commit/3f0f0792781048f769967d9eced7dd7300293320))
+* vitest config ts ([204792c](https://github.com/Esposter/Esposter/commit/204792cec21bf26495477d793f106dbd99f84ce6))
+* wip tests ([87dcb4d](https://github.com/Esposter/Esposter/commit/87dcb4db2a8b0b2d3de7d9eca87d6daab9a47056))
+
+### Features
+
+* Add dep graph ([cfcaa09](https://github.com/Esposter/Esposter/commit/cfcaa0919e530ab4c7046e59ba00b95cb6cc5132))
+* Add dts bundle size tests ([dfc255a](https://github.com/Esposter/Esposter/commit/dfc255a50259cc6364b6edd97dcd5403c775aa1d))
+* Add remaining bundle tests ([d9b0f1a](https://github.com/Esposter/Esposter/commit/d9b0f1a0cd27ac92e8921bc23e0ed0ddcf337a1d))
+
+# [2.25.0](https://github.com/Esposter/Esposter/compare/v2.24.0...v2.25.0) (2026-05-21)
+
+### Bug Fixes
+
+* allow own app builds and remove unnecessary config ts files ([e2e55a9](https://github.com/Esposter/Esposter/commit/e2e55a971775bce3c53418342a0ccb2ebf9c6537))
+* types ([f628133](https://github.com/Esposter/Esposter/commit/f62813395668127f7e2cde48093bb1021a5f2d89))
+
+# [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
+
+### Bug Fixes
+
+* tests ([ef2fa28](https://github.com/Esposter/Esposter/commit/ef2fa288910a7e5b53651e92a368b411fbbdfe82))
+
+# [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
+
+### Bug Fixes
+
+* lint ([aefc823](https://github.com/Esposter/Esposter/commit/aefc8235dcce421041f9cd050fd916b9619c3a15))
+* lint wip ([53f7f9e](https://github.com/Esposter/Esposter/commit/53f7f9e59d29a0120f261ac9c115caf88f78d50f))
+
+### Features
+
+* error handling wip ([74b7969](https://github.com/Esposter/Esposter/commit/74b796949376815f1f54982b7fc52d69bf31986f))
+* upgrade to phaser 4 rex plugins ([88def4f](https://github.com/Esposter/Esposter/commit/88def4f478fe9c27d6b6548725c0d00de52ac0e0))
+
+# [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
+
+### Bug Fixes
+
+* add types ([4e939f6](https://github.com/Esposter/Esposter/commit/4e939f638a1c692f0eca92bf47ca489f6f6bcdfc))
+
+* move to db-mock package ([2df4164](https://github.com/Esposter/Esposter/commit/2df416413bb4385f050c81213193bff200f24a66))
+
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
 
 ### Features

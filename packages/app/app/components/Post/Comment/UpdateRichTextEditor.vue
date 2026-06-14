@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@esposter/db-schema";
-import type { Editor } from "@tiptap/vue-3";
 
 import { useCommentStore } from "@/store/post/comment";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface PostUpdateCommentRichTextEditorProps {
   comment: PostWithRelations;
@@ -17,20 +17,6 @@ const emit = defineEmits<{
 const commentStore = useCommentStore();
 const { updateComment } = commentStore;
 const editedDescriptionHtml = ref(comment.description);
-const onUpdateComment = async (editor: Editor) => {
-  try {
-    if (editedDescriptionHtml.value === comment.description) return;
-    if (EMPTY_TEXT_REGEX.test(editor.getText())) {
-      emit("update:delete-mode", true);
-      return;
-    }
-
-    await updateComment({ description: editedDescriptionHtml.value, id: comment.id });
-  } finally {
-    emit("update:update-mode", false);
-    editedDescriptionHtml.value = comment.description;
-  }
-};
 </script>
 
 <template>
@@ -41,7 +27,25 @@ const onUpdateComment = async (editor: Editor) => {
         v-if="editor"
         ml-2
         :button-props="{ size: 'small', text: 'Save' }"
-        @click="onUpdateComment(editor)"
+        @click="
+          async () => {
+            await withFinalizerAsync(
+              async () => {
+                if (editedDescriptionHtml === comment.description) return;
+                if (EMPTY_TEXT_REGEX.test(editor.getText())) {
+                  emit('update:delete-mode', true);
+                  return;
+                }
+
+                await updateComment({ description: editedDescriptionHtml, id: comment.id });
+              },
+              () => {
+                emit('update:update-mode', false);
+                editedDescriptionHtml = comment.description;
+              },
+            );
+          }
+        "
       />
     </template>
   </PostDescriptionRichTextEditor>

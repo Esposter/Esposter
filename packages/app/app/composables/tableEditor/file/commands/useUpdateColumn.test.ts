@@ -5,11 +5,11 @@ import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
 import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
-  makeColumn,
-  makeDataSource,
-  makeDateColumn,
-  makeNumberColumn,
-  makeRow,
+  createColumn,
+  createDataSource,
+  createDateColumn,
+  createNumberColumn,
+  createRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
@@ -152,7 +152,10 @@ describe(useUpdateColumn, () => {
   test("preserves row.data key order after rename", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("a"), makeColumn("b"), makeColumn("c")], [makeRow({ a: 1, b: 2, c: 3 })]);
+    const ds = createDataSource(
+      [createColumn("a"), createColumn("b"), createColumn("c")],
+      [createRow({ a: 1, b: 2, c: 3 })],
+    );
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 1);
@@ -167,7 +170,10 @@ describe(useUpdateColumn, () => {
   test("undo preserves row.data key order after rename restore", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("a"), makeColumn("b"), makeColumn("c")], [makeRow({ a: 1, b: 2, c: 3 })]);
+    const ds = createDataSource(
+      [createColumn("a"), createColumn("b"), createColumn("c")],
+      [createRow({ a: 1, b: 2, c: 3 })],
+    );
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const fileHistoryStore = useFileHistoryStore();
@@ -185,9 +191,9 @@ describe(useUpdateColumn, () => {
   test("reformats date values when format changes", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeDateColumn("date", DateFormat["YYYY-MM-DD"])],
-      [makeRow({ date: "2024-01-15" }), makeRow({ date: "2024-06-30" })],
+    const ds = createDataSource(
+      [createDateColumn("date", DateFormat["YYYY-MM-DD"])],
+      [createRow({ date: "2024-01-15" }), createRow({ date: "2024-06-30" })],
     );
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
@@ -205,9 +211,9 @@ describe(useUpdateColumn, () => {
   test("undo restores original date values after format change", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeDateColumn("date", DateFormat["YYYY-MM-DD"])],
-      [makeRow({ date: "2024-01-15" }), makeRow({ date: "2024-06-30" })],
+    const ds = createDataSource(
+      [createDateColumn("date", DateFormat["YYYY-MM-DD"])],
+      [createRow({ date: "2024-01-15" }), createRow({ date: "2024-06-30" })],
     );
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
@@ -236,7 +242,7 @@ describe(useUpdateColumn, () => {
   test("recasts String values to Number when type changes", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("score")], [makeRow({ score: "42" }), makeRow({ score: "7" })]);
+    const ds = createDataSource([createColumn("score")], [createRow({ score: "42" }), createRow({ score: "7" })]);
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? []);
@@ -252,7 +258,7 @@ describe(useUpdateColumn, () => {
   test("recasts Number values to String when type changes", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeNumberColumn("score")], [makeRow({ score: 42 }), makeRow({ score: 7 })]);
+    const ds = createDataSource([createNumberColumn("score")], [createRow({ score: 42 }), createRow({ score: 7 })]);
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? []);
@@ -268,9 +274,9 @@ describe(useUpdateColumn, () => {
   test("recasts String values to Boolean when type changes", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn("flag")],
-      [makeRow({ flag: BooleanValue.True }), makeRow({ flag: BooleanValue.False })],
+    const ds = createDataSource(
+      [createColumn("flag")],
+      [createRow({ flag: BooleanValue.True }), createRow({ flag: BooleanValue.False })],
     );
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
@@ -287,7 +293,7 @@ describe(useUpdateColumn, () => {
   test("undo restores original values after type recast", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("score")], [makeRow({ score: "42" }), makeRow({ score: "7" })]);
+    const ds = createDataSource([createColumn("score")], [createRow({ score: "42" }), createRow({ score: "7" })]);
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const fileHistoryStore = useFileHistoryStore();
@@ -307,7 +313,7 @@ describe(useUpdateColumn, () => {
   test("does not recast values when type is unchanged", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeNumberColumn("score")], [makeRow({ score: 42 })]);
+    const ds = createDataSource([createNumberColumn("score")], [createRow({ score: 42 })]);
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? []);

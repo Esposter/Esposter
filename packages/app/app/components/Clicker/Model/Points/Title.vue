@@ -7,13 +7,13 @@ const clickerStore = useClickerStore();
 const { clicker, clickerItemProperties } = storeToRefs(clickerStore);
 const buildingStore = useBuildingStore();
 const { allBuildingPower } = storeToRefs(buildingStore);
-const displayNoPointsHtml = computed(() => formatNumberLong(clicker.value.noPoints, 3).replaceAll(/\s/g, "<br />"));
+const displayNoPointsHtml = computed(() => formatNumberLong(clicker.value.noPoints, 3).replaceAll(/\s/gu, "<br />"));
 const displayAllBuildingPower = computed(() => formatNumberLong(allBuildingPower.value));
 </script>
 
 <template>
-  <div class="text-display-medium" text-center font-bold select-none>
+  <div font-bold text-center select-none text-display-medium>
     <span v-html="displayNoPointsHtml" /> {{ clickerItemProperties.pluralName }}
   </div>
-  <div class="text-headline-small" text-center font-bold select-none>per second: {{ displayAllBuildingPower }}</div>
+  <div font-bold text-center select-none text-headline-small>per second: {{ displayAllBuildingPower }}</div>
 </template>

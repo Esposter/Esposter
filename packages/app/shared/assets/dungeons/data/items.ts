@@ -4,7 +4,7 @@ import type { Except } from "type-fest";
 import { FileKey } from "#shared/generated/phaser/FileKey";
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 export const ItemMap = {
   [ItemId.DamagedBall]: {

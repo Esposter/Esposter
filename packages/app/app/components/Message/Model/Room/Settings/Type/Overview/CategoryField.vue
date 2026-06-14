@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+
 interface CategoryFieldProps {
-  items: { id: null | string; name: string }[];
+  items: SelectItemCategoryDefinition<null | string>[];
 }
 
 const { items } = defineProps<CategoryFieldProps>();
@@ -11,15 +13,7 @@ const emit = defineEmits<{ save: [] }>();
 <template>
   <div flex flex-col gap-2>
     <div font-semibold>Category</div>
-    <v-select
-      v-model="modelValue"
-      :items
-      density="compact"
-      hide-details
-      item-title="name"
-      item-value="id"
-      @update:model-value="emit('save')"
-    />
-    <span class="text-medium-emphasis" text-xs>Assign this room to a category to group it in the sidebar.</span>
+    <v-select v-model="modelValue" :items density="compact" hide-details @update:model-value="emit('save')" />
+    <span op-medium-emphasis text-body-small>Assign this room to a category to group it in the sidebar.</span>
   </div>
 </template>

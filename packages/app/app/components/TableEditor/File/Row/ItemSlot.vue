@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
-import { Row } from "#shared/models/tableEditor/file/datasource/Row";
-import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
+import { checkIsEditableColumnValue } from "@/services/tableEditor/file/column/checkIsEditableColumnValue";
 import { useCellStore } from "@/store/tableEditor/file/cell";
 
 interface ItemSlotProps {
@@ -15,7 +15,7 @@ interface ItemSlotProps {
 
 const { column, columns, item, rowIndex, rows } = defineProps<ItemSlotProps>();
 const { isEditingCell } = useCellStore();
-const editableColumn = computed(() => (isEditableColumnValue(column) ? column : null));
+const editableColumn = computed(() => (checkIsEditableColumnValue(column) ? column : null));
 </script>
 
 <template>

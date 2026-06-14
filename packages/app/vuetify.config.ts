@@ -1,13 +1,16 @@
 import type { DefaultsOptions } from "vuetify/lib/composables/defaults.mjs";
+import type { DisplayOptions } from "vuetify/lib/composables/display.mjs";
 import type { Colors, ThemeOptions } from "vuetify/lib/composables/theme.mjs";
 
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
-import { EN_US_SEGMENTER } from "./app/services/shared/constants";
+import { forVuetify } from "./configuration/breakpoints";
+import { EN_US_SEGMENTER } from "./shared/services/constants";
 
 const BaseColorsCommon = {
   border: "#ccc",
+  error: "#ff5252",
   info: "#2d88ff",
   primary: "#42b883",
 } as const satisfies Partial<Colors>;
@@ -39,11 +42,12 @@ export const getBaseColorsExtension = (colors: BaseColors) => {
     Object.entries(colors).map(([color, hex]) => [color, `${hex[0]}${toSixDigitHexColor(hex.slice(1))}`]),
   );
   return {
-    backgroundOpacity20: `${sanitisedColors.background}33`,
-    backgroundOpacity40: `${sanitisedColors.background}66`,
-    backgroundOpacity80: `${sanitisedColors.background}cc`,
-    infoOpacity10: `${sanitisedColors.info}1a`,
-    surfaceOpacity80: `${sanitisedColors.surface}cc`,
+    "background-opacity-20": `${sanitisedColors.background}33`,
+    "background-opacity-40": `${sanitisedColors.background}66`,
+    "background-opacity-80": `${sanitisedColors.background}cc`,
+    "info-opacity-10": `${sanitisedColors.info}1a`,
+    "on-info-opacity-10": colors.text,
+    "surface-opacity-80": `${sanitisedColors.surface}cc`,
   };
 };
 
@@ -105,4 +109,9 @@ const defaults: DefaultsOptions = {
   VTooltip: { location: "top" },
 };
 
-export default defineVuetifyConfiguration({ defaults, labComponents: true, theme });
+const display: DisplayOptions = {
+  mobileBreakpoint: "md",
+  thresholds: forVuetify,
+};
+
+export default defineVuetifyConfiguration({ defaults, display, labComponents: true, theme });

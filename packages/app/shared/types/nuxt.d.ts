@@ -1,7 +1,8 @@
-import type { UnocssNuxtOptions } from "@unocss/nuxt";
-import type { PwaModuleOptions } from "@vite-pwa/nuxt";
 // @TODO: Remove this file when nuxt fixes its types
 /// <reference types="nitropack/types" />
+import type { ModuleOptions as SitemapModuleOptions } from "@nuxtjs/sitemap";
+import type { UnocssNuxtOptions } from "@unocss/nuxt";
+import type { PwaModuleOptions } from "@vite-pwa/nuxt";
 import type { LogObject } from "consola";
 import type { H3Event } from "h3";
 import type { ModuleOptions as OgImageModuleOptions } from "nuxt-og-image";
@@ -71,6 +72,7 @@ declare module "nuxt/schema" {
     pwa?: PwaModuleOptions;
     security?: Partial<SecurityModuleOptions>;
     site?: Partial<SiteModuleOptions>;
+    sitemap?: Partial<SitemapModuleOptions>;
     unocss?: UnocssNuxtOptions;
     vuetify?: VuetifyModuleOptions;
   }

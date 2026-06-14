@@ -13,7 +13,7 @@ const { creator, dialog } = useSurveyCreator(survey);
     <Head>
       <Title>{{ survey.name }}</Title>
     </Head>
-    <div h-full flex flex-col>
+    <div flex flex-col h-full>
       <SurveyHeader v-model="survey" />
       <SurveyCreatorComponent :model="creator" />
     </div>
@@ -21,7 +21,7 @@ const { creator, dialog } = useSurveyCreator(survey);
   </NuxtLayout>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.svc-creator__banner) {
   display: none;
 }

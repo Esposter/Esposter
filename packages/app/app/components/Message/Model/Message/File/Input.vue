@@ -26,22 +26,22 @@ const menuItems: Item[] = [
 
 <template>
   <v-col xl="2" lg="3" md="4" sm="6">
-    <StyledCard h-full flex flex-col>
-      <v-card-title flex justify-end p-0>
-        <div class="border-sm">
+    <StyledCard flex flex-col h-full>
+      <v-card-title p-0 flex justify-end>
+        <div b-1>
           <v-tooltip
             v-for="{ icon, shortTitle, title, onClick, color } of menuItems"
             :key="title"
             :text="shortTitle ?? title"
           >
             <template #activator="{ props }">
-              <v-btn m-0 :color :icon size="small" tile variant="text" :="props" @click="onClick" />
+              <v-btn :color :icon size="small" tile m-0 variant="text" :="props" @click="onClick?.($event)" />
             </template>
           </v-tooltip>
         </div>
       </v-card-title>
-      <v-card-text pb-0>
-        <v-card h-full rd-4>
+      <v-card-text pb-0 h-full>
+        <v-card rd-4 h-full>
           <MessageModelFileRenderer :file :url="uploadFileUrl.url" is-preview />
         </v-card>
       </v-card-text>
@@ -52,9 +52,9 @@ const menuItems: Item[] = [
           </template>
         </v-progress-linear>
       </v-card>
-      <v-card-actions px-4 text-sm>
+      <v-card-text px-4 min-w-0 whitespace-normal break-all text-body-medium>
         {{ file.filename }}
-      </v-card-actions>
+      </v-card-text>
     </StyledCard>
   </v-col>
 </template>

@@ -30,7 +30,7 @@ export const useUploadFiles = () => {
     });
 
     isFileLoading.value = true;
-    // Populate the file metadata first before uploading the blocks so that vue can render them properly in the UI
+    // Populate file metadata before uploading the blocks so Vue can render them in the UI.
     for (let i = 0; i < newFiles.length; i++) {
       const file = takeOne(newFiles, i);
       const { id } = takeOne(fileSasEntities, i);

@@ -1,30 +1,45 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
+import { selectRoomInMessageSchema } from "@esposter/db-schema";
 
 interface OverviewProps {
-  roomId: Room["id"];
+  room: RoomInMessage;
 }
 
-const { roomId } = defineProps<OverviewProps>();
+const { room } = defineProps<OverviewProps>();
 const { $trpc } = useNuxtApp();
 const { readRoomCategories } = useReadRoomCategories();
 await readRoomCategories();
 
 const roomCategoryStore = useRoomCategoryStore();
 const { categories } = storeToRefs(roomCategoryStore);
-const roomStore = useRoomStore();
-const { storeUpdateRoom } = roomStore;
-const { rooms } = storeToRefs(roomStore);
-const room = computed(() => rooms.value.find(({ id }) => id === roomId));
-const selectedCategoryId = ref(room.value?.categoryId ?? null);
-const categoryItems = computed(() => [{ id: null, name: "None (uncategorized)" }, ...categories.value]);
-
+const selectedCategoryId = ref(room.categoryId);
+const isReadOnly = ref(room.isReadOnly);
+const slowmodeMs = ref(room.slowmodeMs);
+const topic = ref(room.topic);
+const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
+  { title: "None (uncategorized)", value: null },
+  ...categories.value.map(({ id, name }) => ({ title: name, value: id })),
+]);
+const isDirty = computed(
+  () =>
+    selectedCategoryId.value !== room.categoryId ||
+    isReadOnly.value !== room.isReadOnly ||
+    slowmodeMs.value !== room.slowmodeMs ||
+    selectRoomInMessageSchema.shape.topic.safeParse(topic.value).data !== room.topic,
+);
 const save = async () => {
-  const updatedRoom = await $trpc.room.updateRoom.mutate({ categoryId: selectedCategoryId.value, id: roomId });
-  storeUpdateRoom(updatedRoom);
+  if (!isDirty.value) return;
+  await $trpc.room.updateRoom.mutate({
+    categoryId: selectedCategoryId.value,
+    id: room.id,
+    isReadOnly: isReadOnly.value,
+    slowmodeMs: slowmodeMs.value,
+    topic: topic.value,
+  });
 };
 </script>
 
@@ -32,7 +47,7 @@ const save = async () => {
   <v-container fluid>
     <v-row>
       <v-col cols="12">
-        <div text-lg font-bold>Overview</div>
+        <div font-bold text-title-medium>Overview</div>
       </v-col>
     </v-row>
     <v-row>
@@ -42,6 +57,21 @@ const save = async () => {
           :items="categoryItems"
           @save="save()"
         />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" sm="8">
+        <MessageModelRoomSettingsTypeOverviewTopicField v-model="topic" @save="save()" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" sm="8">
+        <MessageModelRoomSettingsTypeOverviewSlowmodeField v-model="slowmodeMs" @save="save()" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" sm="8">
+        <MessageModelRoomSettingsTypeOverviewReadOnlyField v-model="isReadOnly" @save="save()" />
       </v-col>
     </v-row>
   </v-container>

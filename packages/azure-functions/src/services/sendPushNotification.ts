@@ -1,0 +1,52 @@
+import type { InvocationContext } from "@azure/functions";
+import type { PushNotificationEventGridData } from "@esposter/db-schema";
+
+import { db } from "@/services/db";
+import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
+import { webpush } from "@/services/webpush";
+import { getPushSubscriptionsForMessage } from "@esposter/db";
+import { pushSubscriptionsInMessage } from "@esposter/db-schema";
+import { getResultAsync, noop, RoutePath } from "@esposter/shared";
+import { eq } from "drizzle-orm";
+import { WebPushError } from "web-push";
+
+export const sendPushNotification = async (
+  context: InvocationContext,
+  {
+    message: { message, partitionKey, rowKey, userId },
+    notificationOptions: { icon, title },
+  }: PushNotificationEventGridData,
+): Promise<void> => {
+  const payload = getCreateMessageNotificationPayload(context, message, {
+    icon,
+    title,
+    url: `${process.env.BASE_URL}${RoutePath.MessagesMessage(partitionKey, rowKey)}`,
+  });
+  if (!payload) return;
+
+  const readPushSubscriptions = await getPushSubscriptionsForMessage(db, { message, partitionKey, userId });
+  if (readPushSubscriptions.length === 0) {
+    context.log(`No push subscriptions found for room ${partitionKey}.`);
+    return;
+  }
+
+  await Promise.all(
+    readPushSubscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) =>
+      (async () => {
+        await getResultAsync(() =>
+          webpush.sendNotification(
+            { endpoint, expirationTime: expirationTime ? expirationTime.getTime() : null, keys: { auth, p256dh } },
+            payload,
+          ),
+        ).match(noop, async (error) => {
+          if (error instanceof WebPushError)
+            if (error.statusCode === 410) {
+              context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
+              await db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id));
+            } else context.error(`Failed to send push notification to ${endpoint}: `, error);
+          else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
+        });
+      })(),
+    ),
+  );
+};

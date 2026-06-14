@@ -3,7 +3,7 @@ import type { Except } from "type-fest";
 
 import { FileKey } from "#shared/generated/phaser/FileKey";
 import { AttackId } from "#shared/models/dungeons/attack/AttackId";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 const MonstersDataMap = {
   [FileKey.UIMonstersAquavalor]: {

@@ -3,5 +3,5 @@ const emit = defineEmits<{ save: [] }>();
 </script>
 
 <template>
-  <v-btn color="primary" variant="tonal" @click="emit('save')">Save Changes</v-btn>
+  <StyledButton :button-props="{ text: 'Save Changes', variant: 'tonal' }" @click="emit('save')" />
 </template>

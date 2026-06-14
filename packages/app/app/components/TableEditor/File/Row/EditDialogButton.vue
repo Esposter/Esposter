@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { rowSchema } from "#shared/models/tableEditor/file/datasource/Row";
-import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
+import { checkIsEditableColumnValue } from "@/services/tableEditor/file/column/checkIsEditableColumnValue";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface EditDialogButtonProps {
@@ -12,7 +12,7 @@ interface EditDialogButtonProps {
 }
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
-const editableColumns = computed(() => columns.filter((column) => isEditableColumnValue(column)));
+const editableColumns = computed(() => columns.filter((column) => checkIsEditableColumnValue(column)));
 const updateRow = useUpdateRow();
 const title = computed(() => `Edit Row ${index + 1}`);
 const editedRow = ref(structuredClone(toRawDeep(row)));
@@ -36,13 +36,13 @@ watch(
     :value="row"
     :edited-value="editedRow"
     :schema="rowSchema"
+    @reset="resetForm()"
     @submit="
       (onComplete) => {
         updateRow(editedRow);
         onComplete();
       }
     "
-    @reset="resetForm()"
   >
     <v-row v-for="column of editableColumns.filter((column) => !column.hidden)" :key="column.id">
       <v-col cols="12">

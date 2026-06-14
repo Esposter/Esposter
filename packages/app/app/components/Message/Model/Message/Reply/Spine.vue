@@ -1,38 +1,32 @@
 <script setup lang="ts">
-import { useColorsStore } from "@/store/colors";
 import { useReplyStore } from "@/store/message/input/reply";
 
 interface ReplySpineProps {
   replyRowKey: string;
+  roomId: string;
 }
 
-const { replyRowKey } = defineProps<ReplySpineProps>();
-const colorsStore = useColorsStore();
-const { border, text } = storeToRefs(colorsStore);
+const { replyRowKey, roomId } = defineProps<ReplySpineProps>();
 const replyStore = useReplyStore();
 const { isIndicatorActive } = storeToRefs(replyStore);
-const borderColor = computed(() => (isIndicatorActive.value ? text.value : border.value));
 const scrollToMessage = useScrollToMessage();
 </script>
 
 <template>
   <div
-    class="custom-border"
+    :class="isIndicatorActive ? 'b-text' : 'b-border'"
     b-l-2
     b-t-2
-    cursor-pointer
-    w-8
-    h-3
     rd-tl-2
+    b-l-solid
+    b-t-solid
+    h-3
+    w-8
+    cursor-pointer
+    transition-border-color
+    duration="[--transition-duration]"
     @mouseenter="isIndicatorActive = true"
     @mouseleave="isIndicatorActive = false"
-    @click="scrollToMessage(replyRowKey)"
+    @click="scrollToMessage(roomId, replyRowKey)"
   />
 </template>
-
-<style scoped lang="scss">
-.custom-border {
-  border: 0 $border-style-root v-bind(borderColor);
-  transition: border-color $transition-duration-root;
-}
-</style>

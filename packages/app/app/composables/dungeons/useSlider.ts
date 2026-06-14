@@ -1,4 +1,4 @@
-import type SliderPlugin from "phaser3-rex-plugins/plugins/slider-plugin";
+import type SliderPlugin from "phaser4-rex-plugins/plugins/slider-plugin";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { onShutdown } from "vue-phaserjs";

@@ -21,7 +21,7 @@ const survey = defineModel<Survey>("survey", { required: true });
       }
     "
   >
-    <v-card-text class="text-error">
+    <v-card-text text-error>
       You are about to publish your changes to <span font-bold>{{ survey.name }}</span
       >. This will cause all active surveys to use this version.
     </v-card-text>

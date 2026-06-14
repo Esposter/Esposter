@@ -5,7 +5,7 @@ import { standardMessageEntitySchema } from "@/models/message/StandardMessageEnt
 import { z } from "zod";
 
 export abstract class MessageMetadataEntity<TType extends MessageMetadataType> extends AzureMetadataEntity<TType> {
-  messageRowKey!: string;
+  declare messageRowKey: string;
 }
 
 export const createMessageMetadataEntitySchema = <T extends z.ZodType<string>>(typeSchema: T) =>

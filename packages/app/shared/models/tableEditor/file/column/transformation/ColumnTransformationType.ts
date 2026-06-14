@@ -6,10 +6,8 @@ export enum ColumnTransformationType {
   DatePart = "DatePart",
   Math = "Math",
   RegexMatch = "RegexMatch",
-  // String covers format transformations (Uppercase, Lowercase, TitleCase, Trim) via a nested
-  // StringTransformationType discriminator. StringSplit is a separate top-level entry rather than
-  // A variant of String because it has distinct parameters (delimiter, segmentIndex) that do not
-  // Fit the StringTransformationType enum shape.
+  // String covers format transformations via a nested StringTransformationType discriminator.
+  // StringSplit is a separate top-level entry since its parameters don't fit that enum shape.
   String = "String",
   StringPattern = "StringPattern",
   StringSplit = "StringSplit",

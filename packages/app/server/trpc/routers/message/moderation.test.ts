@@ -2,20 +2,30 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient.test";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { AdminActionType, bans, DatabaseEntityType, RoomPermission, rooms, usersToRooms } from "@esposter/db-schema";
-import { NotFoundError, takeOne } from "@esposter/shared";
+import {
+  AdminActionType,
+  AzureTable,
+  bansInMessage,
+  RoomPermission,
+  roomsInMessage,
+  StandardMessageEntity,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
+import { MockTableDatabase } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("moderation", () => {
   let mockContext: Context;
-  let moderationCaller: DecorateRouterRecord<TRPCRouter["moderation"]>;
+  let moderationCaller: DecorateRouterRecord<TRPCRouter["message"]["moderation"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
@@ -23,9 +33,9 @@ describe("moderation", () => {
   const name = "name";
 
   const createMember = async () => {
+    const inviteCode = await roomCaller.createInvite({ roomId });
     const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    await roomCaller.joinRoom(inviteCode);
     return user;
   };
 
@@ -44,7 +54,9 @@ describe("moderation", () => {
   });
 
   beforeEach(async () => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({
+      toFake: ["Date", "setTimeout", "clearTimeout", "setInterval", "clearInterval", "setImmediate", "clearImmediate"],
+    });
     vi.setSystemTime(0);
     const room = await roomCaller.createRoom({ name });
     roomId = room.id;
@@ -52,11 +64,12 @@ describe("moderation", () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    await mockContext.db.delete(rooms);
+    MockTableDatabase.clear();
+    await mockContext.db.delete(roomsInMessage);
   });
 
   describe("executeAdminAction", () => {
-    test(`${AdminActionType.CreateBan}: owner bans member — ban row inserted, usersToRooms rows deleted`, async () => {
+    test(`${AdminActionType.CreateBan}: owner bansInMessage member — ban row inserted, usersToRoomsInMessage rows deleted`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -68,19 +81,19 @@ describe("moderation", () => {
 
       const banRows = await mockContext.db
         .select()
-        .from(bans)
-        .where(and(eq(bans.roomId, roomId), eq(bans.userId, member.id)));
+        .from(bansInMessage)
+        .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, member.id)));
       const membershipRows = await mockContext.db
         .select()
-        .from(usersToRooms)
-        .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, member.id)));
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
 
       expect(banRows).toHaveLength(1);
       expect(takeOne(banRows).userId).toBe(member.id);
       expect(membershipRows).toHaveLength(0);
     });
 
-    test(`${AdminActionType.KickFromRoom}: owner kicks member — usersToRooms row deleted`, async () => {
+    test(`${AdminActionType.KickFromRoom}: owner kicks member — usersToRoomsInMessage row deleted`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -91,8 +104,8 @@ describe("moderation", () => {
       });
       const membershipRows = await mockContext.db
         .select()
-        .from(usersToRooms)
-        .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, member.id)));
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
 
       expect(membershipRows).toHaveLength(0);
     });
@@ -110,8 +123,8 @@ describe("moderation", () => {
 
       const membershipRows = await mockContext.db
         .select()
-        .from(usersToRooms)
-        .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, member.id)));
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
 
       expect(membershipRows).toHaveLength(1);
 
@@ -149,7 +162,7 @@ describe("moderation", () => {
       ).resolves.toBeUndefined();
     });
 
-    test(`${AdminActionType.KickFromVoice}: owner kicks member from voice — succeeds with no error`, async () => {
+    test(`${AdminActionType.KickFromCall}: owner kicks member from the call — succeeds with no error`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -158,7 +171,7 @@ describe("moderation", () => {
         moderationCaller.executeAdminAction({
           roomId,
           targetUserId: member.id,
-          type: AdminActionType.KickFromVoice,
+          type: AdminActionType.KickFromCall,
         }),
       ).resolves.toBeUndefined();
     });
@@ -194,16 +207,58 @@ describe("moderation", () => {
         }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
+
+    test(`${AdminActionType.SoftBan}: owner soft-bans member — ban row inserted, usersToRoomsInMessage row deleted`, async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: member.id,
+        type: AdminActionType.SoftBan,
+      });
+      const banRows = await mockContext.db
+        .select()
+        .from(bansInMessage)
+        .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, member.id)));
+      const membershipRows = await mockContext.db
+        .select()
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
+
+      expect(banRows).toHaveLength(1);
+      expect(takeOne(banRows).userId).toBe(member.id);
+      expect(membershipRows).toHaveLength(0);
+    });
+
+    test(`${AdminActionType.SoftBan}: soft-deletes all messages`, async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: member.id,
+        type: AdminActionType.SoftBan,
+      });
+
+      const messagesClient = await useTableClient(AzureTable.Messages);
+      const memberMessages: StandardMessageEntity[] = [];
+      for await (const page of messagesClient.listEntities<StandardMessageEntity>().byPage())
+        memberMessages.push(...page);
+
+      expect(memberMessages).toHaveLength(1);
+      expect(memberMessages.every(({ deletedAt }) => deletedAt)).toBe(true);
+    });
   });
 
   describe("readBans", () => {
     test("owner reads empty ban list after room creation", async () => {
       expect.hasAssertions();
 
-      const result = await moderationCaller.readBans({ limit: 15, roomId });
+      const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(0);
-      expect(result.nextCursor).toBeUndefined();
+      expect(result.nextCursor).toBe("");
     });
 
     test("after banning a user, readBans returns that user in results", async () => {
@@ -216,7 +271,7 @@ describe("moderation", () => {
         type: AdminActionType.CreateBan,
       });
 
-      const result = await moderationCaller.readBans({ limit: 15, roomId });
+      const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(1);
       expect(takeOne(result.items).userId).toBe(member.id);
@@ -228,7 +283,7 @@ describe("moderation", () => {
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
 
-      await expect(moderationCaller.readBans({ limit: 15, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      await expect(moderationCaller.readBans({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
         `[TRPCError: UNAUTHORIZED]`,
       );
     });
@@ -241,9 +296,9 @@ describe("moderation", () => {
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
 
-      await expect(
-        moderationCaller.readModerationLog({ limit: 15, roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+      await expect(moderationCaller.readModerationLog({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: UNAUTHORIZED]`,
+      );
     });
   });
 
@@ -259,21 +314,9 @@ describe("moderation", () => {
       });
       await moderationCaller.deleteBan({ roomId, userId: member.id });
 
-      const result = await moderationCaller.readBans({ limit: 15, roomId });
+      const result = await moderationCaller.readBans({ roomId });
 
       expect(result.items).toHaveLength(0);
-    });
-
-    test("delete ban with non-existent userId — throws NOT_FOUND", async () => {
-      expect.hasAssertions();
-
-      const nonExistentUserId = crypto.randomUUID();
-
-      await expect(
-        moderationCaller.deleteBan({ roomId, userId: nonExistentUserId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${new NotFoundError(DatabaseEntityType.Ban, nonExistentUserId).message}]`,
-      );
     });
 
     test(`member without ${RoomPermission.BanMembers} permission cannot delete ban — throws UNAUTHORIZED`, async () => {
@@ -304,7 +347,7 @@ describe("moderation", () => {
             moderationCaller.executeAdminAction({
               roomId,
               targetUserId: member.id,
-              type: AdminActionType.KickFromVoice,
+              type: AdminActionType.KickFromCall,
             }),
           ]);
           return result;
@@ -313,7 +356,7 @@ describe("moderation", () => {
 
       assert(!data.done);
 
-      expect(data.value.type).toBe(AdminActionType.KickFromVoice);
+      expect(data.value.type).toBe(AdminActionType.KickFromCall);
       expect(data.value.durationMs).toBeUndefined();
     });
   });

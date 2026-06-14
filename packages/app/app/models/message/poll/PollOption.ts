@@ -1,3 +1,4 @@
+import { normalizeString } from "@esposter/shared";
 import { z } from "zod";
 
 export interface PollOption {
@@ -7,5 +8,5 @@ export interface PollOption {
 
 export const pollOptionSchema = z.object({
   id: z.uuid(),
-  label: z.string().min(1),
+  label: z.string().transform(normalizeString).pipe(z.string().min(1)),
 }) satisfies z.ZodType<PollOption>;

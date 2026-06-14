@@ -1,22 +1,20 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
+import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
 import { useRoleStore } from "@/store/message/room/role";
 
 interface CreateRoleFormProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { roomId } = defineProps<CreateRoleFormProps>();
 const roleStore = useRoleStore();
 const { createRole } = roleStore;
 const name = ref("");
-
 const submit = async () => {
-  const trimmedName = name.value.trim();
-  if (!trimmedName) return;
+  await createRole({ name: name.value, permissions: 0n, position: 0, roomId });
   name.value = "";
-  await createRole({ name: trimmedName, permissions: 0n, position: 0, roomId });
 };
 </script>
 
@@ -26,7 +24,7 @@ const submit = async () => {
       <v-tooltip text="Create role">
         <template #activator="{ props: tooltipProps }">
           <v-btn
-            :disabled="!name.trim()"
+            :disabled="!createRoleInputSchema.shape.name.safeParse(name).success"
             density="compact"
             icon="mdi-plus"
             size="small"

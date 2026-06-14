@@ -56,11 +56,12 @@ export const RoomPermission = {
   // Moderation
   KickMembers: 1n << 7n, // 128  — remove a member from room
   BanMembers: 1n << 8n, // 256  — permanent ban
-  MuteMembers: 1n << 9n, // 512  — force-mute/unmute in voice
-  MoveMembers: 1n << 10n, // 1024 — kick from voice channel
+  MuteMembers: 1n << 9n, // 512  — force-mute/unmute in call; also stop screenshare
+  MoveMembers: 1n << 10n, // 1024 — kick from call
+  ManageNicknames: 1n << 11n, // 2048 — set per-room nicknames for other members
   // Advanced — keep these last; Administrator must be the highest bit
-  ManageWebhooks: 1n << 11n, // 2048 — create/edit/delete webhooks
-  Administrator: 1n << 12n, // 4096 — all permissions; bypasses hierarchy checks; always the highest bit
+  ManageWebhooks: 1n << 12n, // 4096 — create/edit/delete webhooks
+  Administrator: 1n << 13n, // 8192 — all permissions; bypasses hierarchy checks; always the highest bit
 } as const;
 
 export type RoomPermission = (typeof RoomPermission)[keyof typeof RoomPermission];
@@ -142,25 +143,18 @@ Owner (rooms.userId)          — immune to all role manipulation; can do everyt
 
 ---
 
-## Implementation Tasks
+## Implementation Tasks (all complete)
 
-- [x] **`RoomPermission` const object + type alias** — `packages/db-schema/src/schema/roomRoles.ts`
-- [x] **`roomRoles` Drizzle schema** — `packages/db-schema/src/schema/roomRoles.ts`; partial unique index on `(roomId) WHERE isEveryone = true`
-- [x] **`usersToRoomRoles` Drizzle schema** — `packages/db-schema/src/schema/usersToRoomRoles.ts`
-- [ ] **Migration** — add both tables; seed one `@everyone` role for every existing room
+- [x] **`RoomPermission` const object + type alias** — `packages/db-schema/src/schema/roomRolesInMessage.ts`
+- [x] **`roomRoles` Drizzle schema** — partial unique index on `(roomId) WHERE isEveryone = true`
+- [x] **`usersToRoomRoles` Drizzle schema** — `packages/db-schema/src/schema/usersToRoomRolesInMessage.ts`
+- [x] **Migration** — tables exist; `createRoom` seeds `@everyone` role in same transaction
 - [x] **RBAC service functions** — `server/services/room/rbac/` (4 functions above)
-- [ ] **`getOwnerProcedure`** — `server/trpc/procedure/room/getOwnerProcedure.ts`
+- [x] **`getOwnerProcedure`** — `server/trpc/procedure/room/getOwnerProcedure.ts`
 - [x] **`getPermissionsProcedure`** — `server/trpc/procedure/room/getPermissionsProcedure.ts`
-- [ ] **Wire up `createRoom`** — transaction inserts @everyone role + optional Admin role
-- [ ] **Retire `getCreatorProcedure`** — migrate callers: `updateRoom` → `ManageRoom`, `createMembers` → `ManageRoom`, `deleteMember` → `KickMembers`
-- [x] **`roleRouter`** — `server/trpc/routers/role.ts`
-  - `createRole({ roomId, name, color?, permissions?, position? })` — behind `ManageRoles` + `canManageRole(position)`
-  - `updateRole({ id, roomId, ...partial })` — behind `ManageRoles` + `canManageRole(role.position)`
-  - `deleteRole({ id, roomId })` — behind `ManageRoles` + `canManageRole(role.position)`
-  - `readRoles({ roomId })` — behind `getMemberProcedure`; returns all roles sorted by position DESC
-  - `assignRole({ roomId, userId, roleId })` — behind `ManageRoles` + `canManageRole(role.position)` + `canManageTarget`
-  - `revokeRole({ roomId, userId, roleId })` — same guards as `assignRole`
-  - `onUpdateRole({ roomId })` — subscription; emits on create/update/delete role or assign/revoke
-- [ ] **`readMembers` enrichment** — include each member's roles (sorted by position DESC)
-- [x] **Role assignment UI** — + button on Permissions tab opens Discord-style dropdown to search and assign members to roles (`Permissions/AddMemberMenu.vue`)
-- [ ] **Tests** — `server/services/room/rbac/*.test.ts` for `getPermissions`, `hasPermission`, `getTopRolePosition`, `isManageable`; `server/trpc/routers/role.test.ts` for all `roleRouter` procedures (CRUD, assign/revoke), owner bypass, Administrator bypass, hierarchy enforcement
+- [x] **Wire up `createRoom`** — inserts `@everyone` role (name, isEveryone=true, permissions=default) in the same transaction
+- [x] **Retire `getCreatorProcedure`** — no room callers remain; only `getCreatorProcedure` for surveys survives in `server/trpc/procedure/survey/`
+- [x] **`roleRouter`** — `server/trpc/routers/role.ts`; `readMemberRoles` is a separate procedure called by `useReadMembers` via `Promise.all` (no join — intentional)
+- [x] **`readMembers` enrichment** — roles fetched separately via `readMemberRoles` in `useReadMembers` composable
+- [x] **Role assignment UI** — `Permissions/AddMemberMenu.vue`
+- [x] **Tests** — `server/services/room/rbac/*.test.ts` (all 4 functions) + `server/trpc/routers/role.test.ts`

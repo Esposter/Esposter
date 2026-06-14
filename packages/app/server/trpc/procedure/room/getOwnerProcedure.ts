@@ -15,9 +15,9 @@ export const getOwnerProcedure = <T extends z.ZodType>(
     const value = input[roomIdKey];
     if (!(typeof value === "string" && uuidValidateV4(value))) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const room = await ctx.db.query.rooms.findFirst({
+    const room = await ctx.db.query.roomsInMessage.findFirst({
       columns: { id: true },
-      where: (rooms, { and, eq }) => and(eq(rooms.id, value), eq(rooms.userId, ctx.getSessionPayload.user.id)),
+      where: { id: { eq: value }, userId: { eq: ctx.getSessionPayload.user.id } },
     });
     if (!room) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();

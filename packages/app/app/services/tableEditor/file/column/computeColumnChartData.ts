@@ -1,13 +1,7 @@
 import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
-import type { ApexAxisChartSeries, ApexNonAxisChartSeries, ApexOptions } from "apexcharts";
+import type { ColumnChartData } from "@/models/tableEditor/file/column/ColumnChartData";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-
-export interface ColumnChartData {
-  options: ApexOptions;
-  series: ApexAxisChartSeries | ApexNonAxisChartSeries;
-  type: NonNullable<ApexOptions["chart"]>["type"];
-}
 
 const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatistics) => ColumnChartData | null>> = {
   [ColumnType.Boolean]: (columnStatistics) => ({

@@ -11,7 +11,7 @@ export const useAnimateText = (scene: SceneWithPlugins, targetText: Ref<string>,
 
   const { play, stop } = getDungeonsSoundEffect(scene, FileKey.SoundTextBlip, { loop: true });
   const textDelay = useTextDelay();
-  const textSections = text.split(/(\S|\s+)/).filter(Boolean);
+  const textSections = text.split(/(?<token>\S|\s+)/u).filter(Boolean);
   let i = 0;
 
   play();

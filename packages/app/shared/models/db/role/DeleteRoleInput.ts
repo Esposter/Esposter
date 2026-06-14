@@ -1,8 +1,8 @@
-import { roomIdSchema, selectRoomRoleSchema } from "@esposter/db-schema";
+import { roomIdSchema, selectRoomRoleInMessageSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const deleteRoleInputSchema = z.object({
   ...roomIdSchema.shape,
-  id: selectRoomRoleSchema.shape.id,
+  id: selectRoomRoleInMessageSchema.shape.id,
 });
 export type DeleteRoleInput = z.infer<typeof deleteRoleInputSchema>;

@@ -9,7 +9,7 @@ const { tilemapKey } = storeToRefs(worldSceneStore);
 const texture = computed(() => Object.values(FileKey).find((k) => k === `SceneWorld${tilemapKey.value}Foreground`));
 const worldPlayerStore = useWorldPlayerStore();
 const { sprite } = storeToRefs(worldPlayerStore);
-// Make the foreground have a higher depth than the player for them to hide behind
+// Foreground sits above the player so they can hide behind it.
 const depth = computed(() => (sprite.value ? sprite.value.depth + 1 : 0));
 </script>
 

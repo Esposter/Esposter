@@ -8,7 +8,7 @@ import { ColumnStatisticsDefinitions } from "@/services/tableEditor/file/column/
 import { computeMonthFrequencies } from "@/services/tableEditor/file/column/computeMonthFrequencies";
 import { computeTopFrequencies } from "@/services/tableEditor/file/column/computeTopFrequencies";
 import { getComputedColumnEffectiveType } from "@/services/tableEditor/file/column/getComputedColumnEffectiveType";
-import { takeOne } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const computeColumnStatistics = (dataSource: DataSource): ColumnStatistics[] =>
   dataSource.columns.map((column) => {
@@ -16,7 +16,7 @@ export const computeColumnStatistics = (dataSource: DataSource): ColumnStatistic
       column.type === ColumnType.Computed ? getComputedColumnEffectiveType(column) : column.type;
     const values = dataSource.rows.map((row) => takeOne(row.data, column.name));
     const context = buildColumnStatisticsComputeContext(
-      Object.assign(structuredClone(column), { type: effectiveColumnType }),
+      Object.assign(structuredClone(toRawDeep(column)), { type: effectiveColumnType }),
       values,
     );
     const statisticsValues = Object.fromEntries(

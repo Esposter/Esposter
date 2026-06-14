@@ -23,7 +23,7 @@ const { surface, text } = storeToRefs(colorsStore);
   </svg>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .a {
   stroke: v-bind(surface);
 }

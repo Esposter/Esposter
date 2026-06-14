@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Room, RoomCategory } from "@esposter/db-schema";
+import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
 interface RoomCategoryRoomGroupProps {
-  category?: RoomCategory;
-  rooms: Room[];
+  category?: RoomCategoryInMessage;
+  rooms: RoomInMessage[];
 }
 
 const { category, rooms } = defineProps<RoomCategoryRoomGroupProps>();
@@ -12,9 +12,16 @@ const isCollapsed = useLocalStorage(`message-category-${category?.id ?? "uncateg
 
 <template>
   <div>
-    <v-list-item v-if="category" density="compact" font-bold text-xs uppercase @click="isCollapsed = !isCollapsed">
+    <v-list-item
+      v-if="category"
+      density="compact"
+      font-bold
+      uppercase
+      text-label-medium
+      @click="isCollapsed = !isCollapsed"
+    >
       <v-list-item-title>
-        <div flex items-center gap-1>
+        <div flex gap-1 items-center>
           <v-icon :icon="isCollapsed ? 'mdi-chevron-right' : 'mdi-chevron-down'" size="x-small" />
           {{ category.name }}
         </div>

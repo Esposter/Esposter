@@ -3,9 +3,6 @@
 **/src/components/index.ts
 **/public/docs
 
-# Docker Build Artifacts
-.dockerignore
-
 # Testing
 coverage
 vitest.config.*.timestamp*
@@ -46,3 +43,11 @@ logs
 .env.*
 !.env.example
 
+# Pulumi migration output
+packages/infra/generated/
+
+# Claude
+scheduled_tasks.lock
+
+# Pnpm artifacts
+.pnpm-store

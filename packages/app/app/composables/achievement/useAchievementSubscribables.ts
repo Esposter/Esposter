@@ -1,7 +1,16 @@
+import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
+
 import { authClient } from "@/services/auth/authClient";
 import { useAchievementStore } from "@/store/achievement";
+import { getIsServer } from "@esposter/shared";
 
 export const useAchievementSubscribables = async () => {
+  if (getIsServer()) return;
+
+  const onlineSubscribableContext: OnlineSubscribableContext = {
+    instance: getCurrentInstance(),
+    scope: getCurrentScope(),
+  };
   const { $trpc } = useNuxtApp();
   const achievementStore = useAchievementStore();
   const { updateAchievement } = achievementStore;
@@ -21,5 +30,6 @@ export const useAchievementSubscribables = async () => {
         updateAchievementUnsubscribable.unsubscribe();
       };
     },
+    onlineSubscribableContext,
   );
 };

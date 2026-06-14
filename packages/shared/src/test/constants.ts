@@ -1,3 +1,5 @@
+import { noop } from "@/util/function/noop";
+
 export const AllSpecialValues: { isPlainObject: boolean; value: unknown }[] = [
   { isPlainObject: true, value: {} },
   { isPlainObject: true, value: Object.create(null) },
@@ -8,6 +10,6 @@ export const AllSpecialValues: { isPlainObject: boolean; value: unknown }[] = [
   { isPlainObject: false, value: "" },
   { isPlainObject: false, value: 0 },
   { isPlainObject: false, value: Symbol("") },
-  { isPlainObject: false, value: () => {} },
-  { isPlainObject: false, value: new RegExp("") },
+  { isPlainObject: false, value: noop },
+  { isPlainObject: false, value: /(?:)/u },
 ];

@@ -1,9 +1,11 @@
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IDBPDatabase } from "idb";
 
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { openDB } from "idb";
 
 const DATABASE_NAME = "esposter";
@@ -26,15 +28,34 @@ export const openIndexedDb = (): Promise<IDBPDatabase<IndexedDbDatabaseSchema>> 
       }
     },
   });
-  promise.catch(() => {
-    if (databasePromise === promise) databasePromise = undefined;
-  });
+  getSynchronizedFunction(async () => {
+    await getResultAsync(() => promise).match(noop, (error) => {
+      console.error(error);
+      if (databasePromise === promise) databasePromise = undefined;
+    });
+  })();
   databasePromise = promise;
   return databasePromise;
 };
 
 export const resetIndexedDb = async () => {
   const db = await databasePromise;
-  db?.close();
+  if (db) {
+    db.close();
+    const deleteRequest = indexedDB.deleteDatabase(db.name);
+    await new Promise<void>((resolve, reject) => {
+      deleteRequest.onsuccess = () => {
+        resolve();
+      };
+      deleteRequest.onerror = () => {
+        reject(
+          deleteRequest.error ?? new InvalidOperationError(Operation.Delete, indexedDB.deleteDatabase.name, db.name),
+        );
+      };
+      deleteRequest.onblocked = () => {
+        resolve();
+      };
+    });
+  }
   databasePromise = undefined;
 };

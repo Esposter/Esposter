@@ -3,6 +3,7 @@ import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
 import type { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 
+import { slashCommandParameterValueSchema } from "@/models/message/slashCommands/SlashCommandParameter";
 import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useInputStore } from "@/store/message/input";
@@ -20,7 +21,7 @@ const { input } = storeToRefs(inputStore);
 const executeSlashCommand = useExecuteSlashCommand();
 const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
 
-watchImmediate(pendingSlashCommand, (newPendingSlashCommand) => {
+watch(pendingSlashCommand, (newPendingSlashCommand) => {
   if (newPendingSlashCommand) commandTitle.value = newPendingSlashCommand.type;
 });
 
@@ -60,9 +61,6 @@ const selectCommand = (slashCommand: SlashCommand) => {
 const navigatePrevious = (index: number) => {
   focusedIndex.value = index - 1;
 };
-const navigateNext = (index: number) => {
-  focusedIndex.value = index + 1;
-};
 const focus = (index: number) => {
   focusedIndex.value = index;
 };
@@ -80,11 +78,16 @@ const submit = async () => {
   if (!pendingSlashCommand.value || !currentRoomId.value) return;
 
   const missingRequiredParameters = pendingSlashCommand.value.parameters.filter(
-    ({ isRequired, name }) => isRequired && !parameterValues.value[name]?.trim(),
+    ({ isRequired, name }) =>
+      isRequired && !slashCommandParameterValueSchema.safeParse(parameterValues.value[name]).success,
   );
 
   for (const { isRequired, name } of pendingSlashCommand.value.parameters)
-    if (isRequired) setErrors(name, parameterValues.value[name]?.trim() ? [] : [REQUIRED_ERROR_MESSAGE]);
+    if (isRequired)
+      setErrors(
+        name,
+        slashCommandParameterValueSchema.safeParse(parameterValues.value[name]).success ? [] : [REQUIRED_ERROR_MESSAGE],
+      );
 
   if (missingRequiredParameters.length > 0) {
     const hiddenMissingParameters = missingRequiredParameters.filter(
@@ -105,15 +108,16 @@ const submit = async () => {
   await executeSlashCommand(payload);
 };
 
-useEventListener("keydown", (event: KeyboardEvent) => {
-  if (event.key === "Escape" || (event.key === "Backspace" && focusedIndex.value === -1)) collapseToText();
+onKeyStroke("Escape", () => collapseToText());
+onKeyStroke("Backspace", () => {
+  if (focusedIndex.value === -1) collapseToText();
 });
 </script>
 
 <template>
   <div v-if="pendingSlashCommand" w-full>
     <StyledCard>
-      <div flex items-center gap-2 px-4 pt-3 pb-2>
+      <div px-4 pb-2 pt-3 flex gap-2 items-center>
         <MessageModelMessageInputSlashCommandParametersCommandInput
           v-model="commandTitle"
           :is-focused="focusedIndex === -1"
@@ -133,7 +137,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
             @delete="deleteParameter(index)"
             @submit="submit"
             @navigate:previous="navigatePrevious(index)"
-            @navigate:next="navigateNext(index)"
+            @navigate:next="focusedIndex = index + 1"
             @focus="focus(index)"
             @blur="blur(index)"
           />
@@ -154,7 +158,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         <MessageModelMessageInputSendMessageButton @click="submit" />
       </div>
     </StyledCard>
-    <div flex justify-between px-1 pt-1>
+    <div px-1 pt-1 flex justify-between>
       <MessageModelMessageInputFooter />
     </div>
   </div>

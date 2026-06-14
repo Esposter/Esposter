@@ -19,17 +19,17 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     if (!session.value.data) return;
     const newEmoji = reactive(createMessageEmojiMetadataEntity({ ...input, userIds: [session.value.data.user.id] }));
     storeCreateEmoji(newEmoji);
-    Object.assign(newEmoji, await $trpc.emoji.createEmoji.mutate(input));
+    Object.assign(newEmoji, await $trpc.message.emoji.createEmoji.mutate(input));
   };
   const updateEmoji = async (input: Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput) => {
     if (!session.value.data) return;
     const updatedInput = { ...input, userIds: getUpdatedUserIds(input.userIds, session.value.data.user.id) };
     storeUpdateEmoji(updatedInput);
-    await $trpc.emoji.updateEmoji.mutate(updatedInput);
+    await $trpc.message.emoji.updateEmoji.mutate(updatedInput);
   };
   const deleteEmoji = async (input: DeleteEmojiInput) => {
     storeDeleteEmoji(input);
-    await $trpc.emoji.deleteEmoji.mutate(input);
+    await $trpc.message.emoji.deleteEmoji.mutate(input);
   };
 
   const storeCreateEmoji = (newEmoji: MessageEmojiMetadataEntity) => {

@@ -5,7 +5,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -16,7 +16,7 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
   const onPlayerInput = async (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    if (isPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
+    if (checkIsPlayerSpecialInput(justDownInput)) await onPlayerSpecialInput(scene, justDownInput);
     else onPlayerDirectionInput(justDownInput);
   };
 
@@ -29,7 +29,7 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
         if (itemOptionGrid.value === PlayerSpecialInput.Cancel) onCancel(scene);
         else
           switch (itemOptionGrid.value.effect.type) {
-            // We assume that you can only call capture items in the battle scene (which is the previous scene)
+            // Capture items can only be used in the battle scene (the previous scene).
             case ItemEffectType.Capture: {
               await useItem(scene, toRef(itemOptionGrid.value), toRef(enemyStore, "activeMonster"));
               break;

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { SettingsType } from "@/models/message/room/SettingsType";
-import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
 
 interface RoomSettingsDialogButtonProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 defineSlots<{ activator: (props: Record<string, unknown>) => VNode }>();
@@ -16,7 +16,6 @@ const { roomId } = defineProps<RoomSettingsDialogButtonProps>();
 const dialog = ref(false);
 const settingsType = ref<keyof typeof SettingsContentMap>(SettingsType.Overview);
 const isDeleteOpen = ref(false);
-
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));
@@ -35,7 +34,7 @@ const room = computed(() => rooms.value.find(({ id }) => id === roomId));
     <v-app>
       <MessageModelRoomSettingsLeftSideBar v-model="settingsType" :room-id @open:delete="isDeleteOpen = true" />
       <MessageModelRoomSettingsRightSideBar @close="dialog = false" />
-      <MessageModelRoomSettingsContent :room-id :settings-type />
+      <MessageModelRoomSettingsContent v-if="room" :room :settings-type />
     </v-app>
   </v-dialog>
 </template>

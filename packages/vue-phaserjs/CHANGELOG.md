@@ -3,6 +3,60 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
+
+### Bug Fixes
+
+* snapshots and dev env for now ([c774f1c](https://github.com/Esposter/Esposter/commit/c774f1c58f72f5274c74bc97eca204d30bbc09ee))
+
+# [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
+
+### Bug Fixes
+
+* code review comments ([3c8eccf](https://github.com/Esposter/Esposter/commit/3c8eccfb0ba8403a9678e5aa04ef7a913ee1790d))
+
+# [2.26.0](https://github.com/Esposter/Esposter/compare/v2.25.0...v2.26.0) (2026-06-01)
+
+### Bug Fixes
+
+* add isWindows check ([2b101a5](https://github.com/Esposter/Esposter/commit/2b101a5b8d67bb0751d1c7ef01b0253e6aef8190))
+* cleanup vitest config to also be shared package ([8c9e5c6](https://github.com/Esposter/Esposter/commit/8c9e5c6a9e2573485c899db3ccaf3b71f0320fe1))
+* format + perms ([5231b9a](https://github.com/Esposter/Esposter/commit/5231b9a3ec19477ee70573477273d7ba312d3659))
+* lint and test snapshots to include linux ([2389fbc](https://github.com/Esposter/Esposter/commit/2389fbc9f692c65fcff37f5e4e766af6b3e3f722))
+* wip tests ([87dcb4d](https://github.com/Esposter/Esposter/commit/87dcb4db2a8b0b2d3de7d9eca87d6daab9a47056))
+
+### Features
+
+* Add bundle tests + fix up mocking ([b6db055](https://github.com/Esposter/Esposter/commit/b6db055d8d087fc7cc61e3226939d41d8817f730))
+* Add dts bundle size tests ([dfc255a](https://github.com/Esposter/Esposter/commit/dfc255a50259cc6364b6edd97dcd5403c775aa1d))
+
+# [2.25.0](https://github.com/Esposter/Esposter/compare/v2.24.0...v2.25.0) (2026-05-21)
+
+**Note:** Version bump only for package vue-phaserjs
+
+# [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
+
+### Bug Fixes
+
+* code review comments ([f759f5d](https://github.com/Esposter/Esposter/commit/f759f5d5b42e5596495f51f0cf07c1b3091ec3ce))
+* grid engine referencing phaser globally ([71ac015](https://github.com/Esposter/Esposter/commit/71ac0155000532f6e946ba6a281859b8b4ef7db5))
+* types ([3a9486a](https://github.com/Esposter/Esposter/commit/3a9486a5b9cc2242edae2d069c51fa7cd2678998))
+* types ([a4d6e9b](https://github.com/Esposter/Esposter/commit/a4d6e9bf7b8fedd9eb904a58e8b56797fe03d66d))
+
+# [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
+
+### Bug Fixes
+
+* lint and typedoc warnings ([dcd64f4](https://github.com/Esposter/Esposter/commit/dcd64f45e16e41d8002a3cc5c9002c484cd01a43))
+
+### Features
+
+* upgrade to phaser 4 rex plugins ([88def4f](https://github.com/Esposter/Esposter/commit/88def4f478fe9c27d6b6548725c0d00de52ac0e0))
+
+# [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
+
+**Note:** Version bump only for package vue-phaserjs
+
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
 
 ### Bug Fixes
@@ -12,6 +66,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * add input ([fd6307e](https://github.com/Esposter/Esposter/commit/fd6307e10d548614e1d0d028159dfd2905fa6280))
+
 * implement features + fix lint ([e62cdd4](https://github.com/Esposter/Esposter/commit/e62cdd42a44775ba52e06d57030da740c61e1a7a))
 
 # [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)

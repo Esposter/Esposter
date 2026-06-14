@@ -2,17 +2,21 @@ import type { AggregationTransformation } from "#shared/models/tableEditor/file/
 
 import { AggregationTransformationType } from "#shared/models/tableEditor/file/column/transformation/AggregationTransformationType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { makeDataSource, makeNumberColumn, makeRow } from "@/composables/tableEditor/file/commands/testUtils.test";
+import {
+  createDataSource,
+  createNumberColumn,
+  createRow,
+} from "@/composables/tableEditor/file/commands/testUtils.test";
 import { computeAggregationValue } from "@/services/tableEditor/file/column/computeAggregationValue";
 import { describe, expect, test } from "vitest";
 
 describe(computeAggregationValue, () => {
-  const sourceColumn = makeNumberColumn("");
-  const rows = [makeRow({ "": 10 }), makeRow({ "": 20 }), makeRow({ "": 30 }), makeRow({ "": 40 })];
-  const dataSource = makeDataSource([sourceColumn], rows);
+  const sourceColumn = createNumberColumn("");
+  const rows = [createRow({ "": 10 }), createRow({ "": 20 }), createRow({ "": 30 }), createRow({ "": 40 })];
+  const dataSource = createDataSource([sourceColumn], rows);
   const findSource = (sourceColumnId: string) => dataSource.columns.find(({ id }) => id === sourceColumnId);
 
-  const makeAggregationTransformation = (
+  const createAggregationTransformation = (
     aggregationTransformationType: AggregationTransformationType,
   ): AggregationTransformation => ({
     aggregationTransformationType,
@@ -35,7 +39,7 @@ describe(computeAggregationValue, () => {
   test(`${AggregationTransformationType.PercentOfTotal} computes percentage of row value over total`, () => {
     expect.hasAssertions();
 
-    const transformation = makeAggregationTransformation(AggregationTransformationType.PercentOfTotal);
+    const transformation = createAggregationTransformation(AggregationTransformationType.PercentOfTotal);
 
     // Total = 100, row[0] = 10 → 10%
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(10);
@@ -47,7 +51,7 @@ describe(computeAggregationValue, () => {
   test(`${AggregationTransformationType.Rank} returns 1-based descending rank`, () => {
     expect.hasAssertions();
 
-    const transformation = makeAggregationTransformation(AggregationTransformationType.Rank);
+    const transformation = createAggregationTransformation(AggregationTransformationType.Rank);
 
     // Values: [40, 30, 20, 10] sorted desc — 40 is rank 1
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 3)).toBe(1);
@@ -59,7 +63,7 @@ describe(computeAggregationValue, () => {
   test(`${AggregationTransformationType.RunningSummation} accumulates from row 0 to rowIndex`, () => {
     expect.hasAssertions();
 
-    const transformation = makeAggregationTransformation(AggregationTransformationType.RunningSummation);
+    const transformation = createAggregationTransformation(AggregationTransformationType.RunningSummation);
 
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(10);
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 1)).toBe(30);
@@ -70,9 +74,9 @@ describe(computeAggregationValue, () => {
   test(`${AggregationTransformationType.PercentOfTotal} returns null for null row value`, () => {
     expect.hasAssertions();
 
-    const transformation = makeAggregationTransformation(AggregationTransformationType.PercentOfTotal);
-    const rowsWithNull = [makeRow({ "": null }), makeRow({ "": 10 })];
-    const dataSourceWithNull = makeDataSource([sourceColumn], rowsWithNull);
+    const transformation = createAggregationTransformation(AggregationTransformationType.PercentOfTotal);
+    const rowsWithNull = [createRow({ "": null }), createRow({ "": 10 })];
+    const dataSourceWithNull = createDataSource([sourceColumn], rowsWithNull);
     const findSourceWithNull = (sourceColumnId: string) =>
       dataSourceWithNull.columns.find(({ id }) => id === sourceColumnId);
 
@@ -82,9 +86,9 @@ describe(computeAggregationValue, () => {
   test(`${AggregationTransformationType.PercentOfTotal} returns null when total is zero`, () => {
     expect.hasAssertions();
 
-    const transformation = makeAggregationTransformation(AggregationTransformationType.PercentOfTotal);
-    const zeroRows = [makeRow({ "": 0 }), makeRow({ "": 0 })];
-    const dataSourceZero = makeDataSource([sourceColumn], zeroRows);
+    const transformation = createAggregationTransformation(AggregationTransformationType.PercentOfTotal);
+    const zeroRows = [createRow({ "": 0 }), createRow({ "": 0 })];
+    const dataSourceZero = createDataSource([sourceColumn], zeroRows);
     const findSourceZero = (sourceColumnId: string) => dataSourceZero.columns.find(({ id }) => id === sourceColumnId);
 
     expect(computeAggregationValue(dataSourceZero.rows, findSourceZero, transformation, 0)).toBeNull();
@@ -93,9 +97,9 @@ describe(computeAggregationValue, () => {
   test(`${AggregationTransformationType.RunningSummation} skips null values`, () => {
     expect.hasAssertions();
 
-    const transformation = makeAggregationTransformation(AggregationTransformationType.RunningSummation);
-    const rowsWithNull = [makeRow({ "": 10 }), makeRow({ "": null }), makeRow({ "": 20 })];
-    const dataSourceWithNull = makeDataSource([sourceColumn], rowsWithNull);
+    const transformation = createAggregationTransformation(AggregationTransformationType.RunningSummation);
+    const rowsWithNull = [createRow({ "": 10 }), createRow({ "": null }), createRow({ "": 20 })];
+    const dataSourceWithNull = createDataSource([sourceColumn], rowsWithNull);
     const findSourceWithNull = (sourceColumnId: string) =>
       dataSourceWithNull.columns.find(({ id }) => id === sourceColumnId);
 

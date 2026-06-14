@@ -1,5 +1,5 @@
 import { Environment } from "../../../shared/models/environment/Environment";
 
-export const IS_PRODUCTION = process.env.APP_ENV === Environment.production;
-export const IS_TEST = process.env.APP_ENV === Environment.test;
-export const IS_DEVELOPMENT = process.env.APP_ENV === Environment.development;
+export const IS_PRODUCTION = import.meta.env.PROD;
+export const IS_TEST = import.meta.env.MODE === Environment.test;
+export const IS_DEVELOPMENT = import.meta.env.DEV;

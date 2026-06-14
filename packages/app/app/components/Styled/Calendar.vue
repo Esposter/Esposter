@@ -32,17 +32,18 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
     <template #eventContent="{ event, timeText }">
       <v-tooltip>
         <template #activator="{ props }">
-          <div w-full flex items-center overflow-hidden :="props">
+          <div flex w-full items-center overflow-hidden :="props">
             <div class="fc-daygrid-event-dot" />
             <div class="fc-event-time">{{ timeText }}</div>
             <div class="fc-event-title">{{ event.title }}</div>
           </div>
         </template>
-        <div text-center font-bold>
+        <div font-bold text-center>
           {{ event.title }}
         </div>
         <div
           v-if="event.extendedProps.description && !EMPTY_TEXT_REGEX.test(event.extendedProps.description)"
+          class="rich-text-content"
           pt-2
           v-html="event.extendedProps.description"
         />
@@ -51,7 +52,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
   </FullCalendar>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.fc-icon) {
   display: flex;
 }

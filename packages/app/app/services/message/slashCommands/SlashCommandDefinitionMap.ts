@@ -24,12 +24,26 @@ export const SlashCommandDefinitionMap = {
     title: "Poll",
     type: SlashCommandType.Poll,
   },
+  [SlashCommandType.Remind]: {
+    description: "Set a reminder",
+    icon: "mdi-bell-outline",
+    parameters: [],
+    title: "Remind",
+    type: SlashCommandType.Remind,
+  },
   [SlashCommandType.Roll]: {
     description: "Roll a random number between 1 and 100",
     icon: "mdi-dice-5",
     parameters: [],
     title: "Roll",
     type: SlashCommandType.Roll,
+  },
+  [SlashCommandType.Schedule]: {
+    description: "Schedule a message",
+    icon: "mdi-send-clock",
+    parameters: [],
+    title: "Schedule",
+    type: SlashCommandType.Schedule,
   },
   [SlashCommandType.Shrug]: {
     description: "Appends ¯\\_(ツ)_/¯ to your message",
@@ -44,6 +58,13 @@ export const SlashCommandDefinitionMap = {
     parameters: [],
     title: "TableFlip",
     type: SlashCommandType.TableFlip,
+  },
+  [SlashCommandType.Topic]: {
+    description: "Set the room topic. Omit text to clear.",
+    icon: "mdi-forum-outline",
+    parameters: [{ description: "The new topic for this room", isRequired: false, name: "text" }],
+    title: "Topic",
+    type: SlashCommandType.Topic,
   },
   [SlashCommandType.Unflip]: {
     description: "Appends ┬─┬ノ(° -°ノ) to your message",

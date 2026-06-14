@@ -17,7 +17,7 @@ const args = process.argv.slice(3);
 const { platform } = process;
 const require = createRequire(import.meta.url);
 const packageJson = require(resolve(process.cwd(), "package.json")) as typeof packageJsonType;
-const command = (packageJson[property] as Record<string, Record<string, string | undefined>>)[script]?.[platform];
+const command = (packageJson[property] as Record<string, Partial<Record<string, string>>>)[script]?.[platform];
 if (!command) throw new Error(`script: "${script}" not found for the current platform: ${platform}`);
 
 const proc = spawn(command, args, { shell: true, stdio: "inherit" });

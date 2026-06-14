@@ -6,10 +6,8 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { selectUserSchema, UserAchievementRelations } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
 
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
-export type ReadUserAchievementsInput = z.infer<typeof readUserAchievementsInputSchema>;
 
 export const achievementRouter = router({
   onUpdateAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
@@ -21,9 +19,8 @@ export const achievementRouter = router({
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
-      where: (userAchievements, { and, eq, isNotNull }) =>
-        and(eq(userAchievements.userId, userId), isNotNull(userAchievements.unlockedAt)),
-      with: { achievement: { columns: { name: true } } },
+      where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },
+      with: UserAchievementRelations,
     });
     const unlockedUserAchievementNames = new Set(unlockedUserAchievements.map(({ achievement }) => achievement.name));
     return Object.fromEntries(
@@ -43,7 +40,7 @@ export const achievementRouter = router({
     const userId = input ?? ctx.getSessionPayload?.user.id;
     if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
     return ctx.db.query.userAchievements.findMany({
-      where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
+      where: { userId: { eq: userId } },
       with: UserAchievementRelations,
     });
   }),

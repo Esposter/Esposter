@@ -1,6 +1,6 @@
-import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
 import type { Item } from "#shared/models/tableEditor/data/Item";
 import type { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
+import type { TableEditorStoreState } from "@/models/tableEditor/TableEditorStoreState";
 import type { ToData } from "@esposter/shared";
 import type {
   _ExtractActionsFromSetupStore,
@@ -19,18 +19,6 @@ import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants
 import { TableEditorHookMap } from "@/services/tableEditor/TableEditorHookMap";
 import { useItemStore } from "@/store/tableEditor/item";
 import { toRawDeep } from "@esposter/shared";
-
-type TableEditorStoreState<
-  TItem extends ToData<Item> = ToData<Item>,
-  TIdKeys extends EntityIdKeys<TItem> = EntityIdKeys<TItem>,
-> = ReturnType<typeof createEditFormData<TItem, TIdKeys>> & {
-  importConfiguration: (data: Partial<TableEditor<ToData<Item>>>) => Promise<void>;
-  save: (isDeleteAction?: true) => Promise<void>;
-  searchQuery: Ref<string>;
-  tableEditor: ComputedRef<TableEditor<TItem>>;
-  tableEditorConfiguration: Ref<TableEditorConfiguration>;
-  tableEditorType: Ref<TableEditorType>;
-};
 
 const id = "tableEditor";
 const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id, () => {

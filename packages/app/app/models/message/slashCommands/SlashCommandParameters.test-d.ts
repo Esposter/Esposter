@@ -22,10 +22,22 @@ describe("slashCommandParameters type", () => {
     expectTypeOf<SlashCommandParameters<SlashCommandType.Poll>>().toEqualTypeOf<{}>();
   });
 
+  test(SlashCommandType.Remind, () => {
+    expect.hasAssertions();
+
+    expectTypeOf<SlashCommandParameters<SlashCommandType.Remind>>().toEqualTypeOf<{}>();
+  });
+
   test(SlashCommandType.Roll, () => {
     expect.hasAssertions();
 
     expectTypeOf<SlashCommandParameters<SlashCommandType.Roll>>().toEqualTypeOf<{}>();
+  });
+
+  test(SlashCommandType.Schedule, () => {
+    expect.hasAssertions();
+
+    expectTypeOf<SlashCommandParameters<SlashCommandType.Schedule>>().toEqualTypeOf<{}>();
   });
 
   test(SlashCommandType.Shrug, () => {

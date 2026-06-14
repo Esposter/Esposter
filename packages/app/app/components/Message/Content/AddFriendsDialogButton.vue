@@ -6,13 +6,13 @@ import { mergeProps } from "vue";
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const inviteCode = ref<null | string>(null);
-if (currentRoomId.value) inviteCode.value = await $trpc.room.readInviteCode.query({ roomId: currentRoomId.value });
+const inviteId = ref("");
+if (currentRoomId.value) inviteId.value = await $trpc.room.readInviteId.query({ roomId: currentRoomId.value });
 
 const roomName = useRoomName(currentRoomId);
 const runtimeConfig = useRuntimeConfig();
 const inviteLink = computed(() =>
-  inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(inviteCode.value)}` : "",
+  inviteId.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(inviteId.value)}` : "",
 );
 const dialog = ref(false);
 const isCopied = ref(false);
@@ -35,10 +35,10 @@ const isCopied = ref(false);
         <div mb-2>Send An Invite Link To A Friend!</div>
         <v-text-field
           v-model="inviteLink"
-          class="bg-background"
           variant="outlined"
           hide-details
           readonly
+          bg-color="background"
           :color="isCopied ? 'success' : undefined"
           :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite('example')}`"
         >
@@ -50,19 +50,19 @@ const isCopied = ref(false);
               @create="
                 async () => {
                   if (!currentRoomId) return;
-                  inviteCode = await $trpc.room.createInvite.mutate({ roomId: currentRoomId });
+                  inviteId = await $trpc.room.createInvite.mutate({ roomId: currentRoomId });
                 }
               "
             />
           </template>
         </v-text-field>
-        <div v-if="inviteLink" class="text-title-small" text-gray pt-2>Your invite link expires in 24 hours.</div>
+        <div v-if="inviteLink" text-gray pt-2 text-title-small>Your invite link expires in 24 hours.</div>
       </v-card-text>
     </StyledCard>
   </v-dialog>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-field__input) {
   min-height: auto;
   font-size: 0.875rem;

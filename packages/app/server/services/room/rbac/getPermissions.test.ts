@@ -7,7 +7,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { RoomPermission, rooms } from "@esposter/db-schema";
+import { RoomPermission, roomsInMessage } from "@esposter/db-schema";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(getPermissions, () => {
@@ -30,7 +30,7 @@ describe(getPermissions, () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   test("returns 0n with no roles", async () => {
@@ -46,9 +46,9 @@ describe(getPermissions, () => {
   test("updates @everyone permissions for all members", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const { user } = getMockSession();
-    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    const inviteCode = await roomCaller.createInvite({ roomId });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(inviteCode);
 
     const roles = await roleCaller.readRoles({ roomIds: [roomId] });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
@@ -62,9 +62,9 @@ describe(getPermissions, () => {
   test("ors @everyone + assigned role permissions", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const { user } = getMockSession();
-    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    const inviteCode = await roomCaller.createInvite({ roomId });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(inviteCode);
 
     const roles = await roleCaller.readRoles({ roomIds: [roomId] });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);

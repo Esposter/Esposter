@@ -1,0 +1,64 @@
+<script setup lang="ts">
+import { useLayoutStore } from "@/store/layout";
+import { useDataStore } from "@/store/message/data";
+import { useRoomStore } from "@/store/message/room";
+import { useDialogStore } from "@/store/message/room/dialog";
+import { MessageType, ROOM_NAME_MAX_LENGTH, selectRoomInMessageSchema } from "@esposter/db-schema";
+
+const { $trpc } = useNuxtApp();
+const layoutStore = useLayoutStore();
+const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
+const roomStore = useRoomStore();
+const { currentRoom, isCreator } = storeToRefs(roomStore);
+const dataStore = useDataStore();
+const { createMessage } = dataStore;
+const dialogStore = useDialogStore();
+const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
+const roomName = useRoomName(() => currentRoom.value?.id ?? "");
+const placeholder = useRoomPlaceholder(currentRoom);
+const { smAndDown } = useVDisplay();
+</script>
+
+<template>
+  <v-toolbar
+    v-if="currentRoom"
+    :style="{ paddingLeft: isLeftDrawerOpenAuto ? '.25rem' : undefined }"
+    density="comfortable"
+  >
+    <MessageContentShowRoomListButton />
+    <StyledEditableNameDialogButton
+      v-model="isEditRoomDialogOpen"
+      :card-props="{ title: 'Edit Room' }"
+      :is-editable="isCreator"
+      :max-length="ROOM_NAME_MAX_LENGTH"
+      :name="currentRoom.name"
+      :schema="selectRoomInMessageSchema.shape.name"
+      :placeholder
+      :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
+      @submit="
+        async (name) => {
+          if (!currentRoom) return;
+          const updatedRoom = await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name });
+          await createMessage({ roomId: updatedRoom.id, type: MessageType.EditRoom, message: updatedRoom.name });
+        }
+      "
+    >
+      <template #prepend-content>
+        <MessageContentHeaderEditRoomImageField :image="currentRoom.image" :name="roomName" :room-id="currentRoom.id" />
+      </template>
+      <StyledAvatar :image="currentRoom.image" :name="roomName" :avatar-props="{ size: 'x-small' }" />
+      <div pl-2 flex flex-col>
+        <span>{{ roomName }}</span>
+        <span v-if="currentRoom.topic" truncate op-medium-emphasis text-body-small>{{ currentRoom.topic }}</span>
+      </div>
+    </StyledEditableNameDialogButton>
+    <template #append>
+      <MessageContentCallButton />
+      <MessageContentNotificationSettingsMenuButton />
+      <MessageContentHeaderActionButtons v-if="!smAndDown" />
+      <MessageContentShowSearchButton />
+      <MessageContentHeaderOverflowMenu v-if="smAndDown" />
+    </template>
+  </v-toolbar>
+  <MessageContentHeaderDirectMessage v-else />
+</template>

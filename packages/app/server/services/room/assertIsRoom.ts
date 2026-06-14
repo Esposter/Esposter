@@ -9,7 +9,7 @@ export const assertIsRoom = async (
   roomId: string,
   type: RoomType = RoomType.Room,
 ): Promise<void> => {
-  const room = await db.query.rooms.findFirst({ where: (rooms, { eq }) => eq(rooms.id, roomId) });
+  const room = await db.query.roomsInMessage.findFirst({ where: { id: { eq: roomId } } });
   if (room?.type !== type)
     throw new TRPCError({
       code: "BAD_REQUEST",

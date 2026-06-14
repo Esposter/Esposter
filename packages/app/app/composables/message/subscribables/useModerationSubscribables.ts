@@ -1,4 +1,4 @@
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useRoomStore } from "@/store/message/room";
 
 export const useModerationSubscribables = () => {
@@ -9,7 +9,7 @@ export const useModerationSubscribables = () => {
   useOnlineSubscribable(currentRoomId, (roomId) => {
     if (!roomId) return undefined;
 
-    const adminActionUnsubscribable = $trpc.moderation.onAdminAction.subscribe(
+    const adminActionUnsubscribable = $trpc.message.moderation.onAdminAction.subscribe(
       { roomId },
       {
         onData: getSynchronizedFunction(async ({ durationMs, type }) => {

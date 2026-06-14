@@ -1,0 +1,311 @@
+{
+  "name": "messages-index",
+  "fields": [
+    {
+      "name": "PartitionKey",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": false,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "RowKey",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": true,
+      "facetable": false,
+      "key": true,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "appUser",
+      "type": "Edm.ComplexType",
+      "fields": [
+        {
+          "name": "id",
+          "type": "Edm.String",
+          "searchable": false,
+          "filterable": false,
+          "retrievable": true,
+          "stored": true,
+          "sortable": false,
+          "facetable": false,
+          "key": false,
+          "analyzer": null,
+          "synonymMaps": []
+        },
+        {
+          "name": "image",
+          "type": "Edm.String",
+          "searchable": false,
+          "filterable": false,
+          "retrievable": true,
+          "stored": true,
+          "sortable": false,
+          "facetable": false,
+          "key": false,
+          "analyzer": null,
+          "synonymMaps": []
+        },
+        {
+          "name": "name",
+          "type": "Edm.String",
+          "searchable": true,
+          "filterable": true,
+          "retrievable": true,
+          "stored": true,
+          "sortable": false,
+          "facetable": false,
+          "key": false,
+          "analyzer": "standard.lucene",
+          "synonymMaps": []
+        }
+      ]
+    },
+    {
+      "name": "createdAt",
+      "type": "Edm.DateTimeOffset",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": true,
+      "facetable": false,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "deletedAt",
+      "type": "Edm.DateTimeOffset",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": false,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "files",
+      "type": "Collection(Edm.ComplexType)",
+      "fields": [
+        {
+          "name": "filename",
+          "type": "Edm.String",
+          "searchable": true,
+          "filterable": false,
+          "retrievable": true,
+          "stored": true,
+          "sortable": false,
+          "facetable": false,
+          "key": false,
+          "analyzer": "standard.lucene",
+          "synonymMaps": []
+        },
+        {
+          "name": "id",
+          "type": "Edm.String",
+          "searchable": false,
+          "filterable": false,
+          "retrievable": true,
+          "stored": true,
+          "sortable": false,
+          "facetable": false,
+          "key": false,
+          "analyzer": null,
+          "synonymMaps": []
+        },
+        {
+          "name": "mimetype",
+          "type": "Edm.String",
+          "searchable": false,
+          "filterable": true,
+          "retrievable": true,
+          "stored": true,
+          "sortable": false,
+          "facetable": true,
+          "key": false,
+          "analyzer": null,
+          "synonymMaps": []
+        },
+        {
+          "name": "size",
+          "type": "Edm.Int64",
+          "searchable": false,
+          "filterable": true,
+          "retrievable": true,
+          "stored": true,
+          "sortable": false,
+          "facetable": false,
+          "key": false,
+          "analyzer": null,
+          "synonymMaps": []
+        }
+      ]
+    },
+    {
+      "name": "isEdited",
+      "type": "Edm.Boolean",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": true,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "isForward",
+      "type": "Edm.Boolean",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": true,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "isPinned",
+      "type": "Edm.Boolean",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": true,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "linkPreviewResponse",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": false,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "mentions",
+      "type": "Collection(Edm.String)",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": false,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "message",
+      "type": "Edm.String",
+      "searchable": true,
+      "filterable": false,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": false,
+      "key": false,
+      "analyzer": "en.lucene",
+      "synonymMaps": []
+    },
+    {
+      "name": "replyRowKey",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": false,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": false,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "type",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": true,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "updatedAt",
+      "type": "Edm.DateTimeOffset",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": true,
+      "facetable": false,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    },
+    {
+      "name": "userId",
+      "type": "Edm.String",
+      "searchable": false,
+      "filterable": true,
+      "retrievable": true,
+      "stored": true,
+      "sortable": false,
+      "facetable": true,
+      "key": false,
+      "analyzer": null,
+      "synonymMaps": []
+    }
+  ],
+  "scoringProfiles": [
+    {
+      "name": "messageBoost",
+      "text": {
+        "weights": {
+          "message": 3,
+          "appUser/name": 1.5
+        }
+      }
+    }
+  ],
+  "defaultScoringProfile": "messageBoost",
+  "corsOptions": null,
+  "suggesters": [],
+  "analyzers": [],
+  "tokenizers": [],
+  "tokenFilters": [],
+  "charFilters": [],
+  "similarity": {
+    "@odata.type": "#Microsoft.Azure.Search.BM25Similarity"
+  }
+}

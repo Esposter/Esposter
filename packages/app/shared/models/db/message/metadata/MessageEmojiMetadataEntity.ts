@@ -5,13 +5,13 @@ import {
   createMessageMetadataEntitySchema,
   MessageMetadataEntity,
   MessageMetadataType,
-  selectUserSchema,
+  userIdsSchema,
 } from "@esposter/db-schema";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class MessageEmojiMetadataEntity extends MessageMetadataEntity<MessageMetadataType.Emoji> {
-  emojiTag!: string;
+  declare emojiTag: string;
   userIds: string[] = [];
 
   constructor(init?: Partial<MessageEmojiMetadataEntity> & ToData<CompositeKeyEntity>) {
@@ -25,5 +25,5 @@ export const MessageEmojiMetadataEntityPropertyNames = getPropertyNames<MessageE
 export const messageEmojiMetadataEntitySchema = z.object({
   ...createMessageMetadataEntitySchema(z.literal(MessageMetadataType.Emoji)).shape,
   emojiTag: z.string(),
-  userIds: selectUserSchema.shape.id.array(),
+  ...userIdsSchema.shape,
 }) satisfies z.ZodType<ToData<MessageEmojiMetadataEntity>>;

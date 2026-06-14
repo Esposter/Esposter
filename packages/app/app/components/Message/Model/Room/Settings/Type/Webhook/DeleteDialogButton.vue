@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { Room, Webhook } from "@esposter/db-schema";
+import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/room/webhook";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface DeleteDialogButtonProps {
-  roomId: Room["id"];
-  webhook: Webhook;
+  roomId: RoomInMessage["id"];
+  webhook: WebhookInMessage;
 }
 
 const { roomId, webhook } = defineProps<DeleteDialogButtonProps>();
@@ -18,11 +19,7 @@ const { deleteWebhook } = webhookStore;
     :card-props="{ title: 'Delete Webhook', text: `Are you sure you want to delete ${webhook.name}?` }"
     @delete="
       async (onComplete) => {
-        try {
-          deleteWebhook(roomId, { id: webhook.id });
-        } finally {
-          onComplete();
-        }
+        await withFinalizerAsync(() => deleteWebhook(roomId, { id: webhook.id }), onComplete);
       }
     "
   >

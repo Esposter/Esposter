@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
+
+### Bug Fixes
+
+* snapshots and dev env for now ([c774f1c](https://github.com/Esposter/Esposter/commit/c774f1c58f72f5274c74bc97eca204d30bbc09ee))
+
+# [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
+
+**Note:** Version bump only for package @esposter/xml2js
+
+# [2.26.0](https://github.com/Esposter/Esposter/compare/v2.25.0...v2.26.0) (2026-06-01)
+
+### Bug Fixes
+
+* add isWindows check ([2b101a5](https://github.com/Esposter/Esposter/commit/2b101a5b8d67bb0751d1c7ef01b0253e6aef8190))
+* isomorphic bring back ([438b35c](https://github.com/Esposter/Esposter/commit/438b35cbb37ad558f014d9161d83e4e83e46c8cf))
+* lint and test snapshots to include linux ([2389fbc](https://github.com/Esposter/Esposter/commit/2389fbc9f692c65fcff37f5e4e766af6b3e3f722))
+* remove node and plugins and use web native APIs ([a7d80a2](https://github.com/Esposter/Esposter/commit/a7d80a2d535231e8c989b82db25329817eca43fe))
+* tests ([6b3c0e9](https://github.com/Esposter/Esposter/commit/6b3c0e99f921fa7e7528d83e9f89772b40127765))
+* tsconfig ([3f0f079](https://github.com/Esposter/Esposter/commit/3f0f0792781048f769967d9eced7dd7300293320))
+* wip tests ([87dcb4d](https://github.com/Esposter/Esposter/commit/87dcb4db2a8b0b2d3de7d9eca87d6daab9a47056))
+
+### Features
+
+* Add dts bundle size tests ([dfc255a](https://github.com/Esposter/Esposter/commit/dfc255a50259cc6364b6edd97dcd5403c775aa1d))
+* Add remaining bundle tests ([d9b0f1a](https://github.com/Esposter/Esposter/commit/d9b0f1a0cd27ac92e8921bc23e0ed0ddcf337a1d))
+
+# [2.25.0](https://github.com/Esposter/Esposter/compare/v2.24.0...v2.25.0) (2026-05-21)
+
+**Note:** Version bump only for package @esposter/xml2js
+
+# [2.24.0](https://github.com/Esposter/Esposter/compare/v2.23.0...v2.24.0) (2026-05-15)
+
+### Bug Fixes
+
+* code review comments ([f759f5d](https://github.com/Esposter/Esposter/commit/f759f5d5b42e5596495f51f0cf07c1b3091ec3ce))
+* lint ([92cce33](https://github.com/Esposter/Esposter/commit/92cce33cbe510ba04dbdf152a0091b231b5e05b3))
+* typechecking and code review comments ([2a85e3f](https://github.com/Esposter/Esposter/commit/2a85e3fe2652b11a563b91e1749a6f1ce38be6dc))
+
+# [2.23.0](https://github.com/Esposter/Esposter/compare/v2.22.0...v2.23.0) (2026-05-07)
+
+### Bug Fixes
+
+* lint ([f6e79f4](https://github.com/Esposter/Esposter/commit/f6e79f496c45f0d7369e7a288891846d6325bd3f))
+* lint and typedoc warnings ([dcd64f4](https://github.com/Esposter/Esposter/commit/dcd64f45e16e41d8002a3cc5c9002c484cd01a43))
+
+# [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
+
+**Note:** Version bump only for package @esposter/xml2js
+
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
 
 ### Bug Fixes

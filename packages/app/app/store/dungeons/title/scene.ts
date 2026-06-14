@@ -1,5 +1,4 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
-import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Save } from "#shared/models/dungeons/data/Save";
@@ -7,7 +6,7 @@ import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { PlayerTitleMenuOption } from "@/models/dungeons/scene/title/menu/PlayerTitleMenuOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
-import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { useDungeonsStore } from "@/store/dungeons";
 import { exhaustiveGuard, takeOne } from "@esposter/shared";
 
@@ -17,8 +16,8 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const isContinueEnabled = computed(() => dungeonsStore.dungeons.saves.length > 0);
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
-    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
-    else onPlayerDirectionInput(justDownInput);
+    if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
+    else PlayerTitleMenuOptionGrid.move(justDownInput);
   };
 
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
@@ -38,10 +37,6 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
         default:
           exhaustiveGuard(PlayerTitleMenuOptionGrid.value);
       }
-  };
-
-  const onPlayerDirectionInput = (direction: Direction) => {
-    PlayerTitleMenuOptionGrid.move(direction);
   };
 
   return { isContinueEnabled, onPlayerInput };

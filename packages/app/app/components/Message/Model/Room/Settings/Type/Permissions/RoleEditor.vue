@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Room, RoomRole } from "@esposter/db-schema";
+import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
 
 interface RoleEditorProps {
-  role: RoomRole;
-  roomId: Room["id"];
+  role: RoomRoleInMessage;
+  roomId: RoomInMessage["id"];
 }
 
 const { role, roomId } = defineProps<RoleEditorProps>();
@@ -16,7 +16,7 @@ const isDirty = computed(() => permissions.value !== role.permissions);
 </script>
 
 <template>
-  <div mb-2 text-lg font-bold>{{ role.name }}</div>
+  <div font-bold mb-2 text-title-medium>{{ role.name }}</div>
   <MessageModelRoomSettingsTypePermissionsPermissionList v-model="permissions" />
   <template v-if="isDirty">
     <MessageModelRoomSettingsTypePermissionsSaveButton @save="updateRole({ id: role.id, permissions, roomId })" />

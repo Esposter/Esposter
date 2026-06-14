@@ -1,5 +1,6 @@
 import type { Promisable } from "type-fest";
 
+import { dayjs } from "#shared/services/dayjs";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
@@ -15,16 +16,26 @@ export const useAdminActionMap = () => {
       await storeDeleteRoom({ id: roomId });
       notify("You have been banned from this room.");
     },
+    [AdminActionType.KickFromCall]: () => {
+      notify("You have been kicked from the call.");
+    },
     [AdminActionType.KickFromRoom]: async (roomId: string) => {
       await storeDeleteRoom({ id: roomId });
       notify("You have been kicked from this room.");
     },
-    [AdminActionType.KickFromVoice]: () => {
-      notify("You have been kicked from voice.");
+    [AdminActionType.SoftBan]: async (roomId: string) => {
+      await storeDeleteRoom({ id: roomId });
+      notify("You have been soft-banned from this room.");
+    },
+    [AdminActionType.StopScreenShare]: () => {
+      notify("Your screen share has been stopped by a moderator.");
     },
     [AdminActionType.TimeoutUser]: (_roomId: string, durationMs?: number) => {
-      const minutes = durationMs ? Math.max(1, Math.ceil(durationMs / 60000)) : 0;
+      const minutes = durationMs ? Math.max(1, Math.ceil(dayjs.duration(durationMs).asMinutes())) : 0;
       notify(`You have been timed out for ${minutes} minute${minutes === 1 ? "" : "s"}.`);
+    },
+    [AdminActionType.Warn]: () => {
+      notify("You have been warned.");
     },
   };
   return Object.fromEntries(

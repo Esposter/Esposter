@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
@@ -13,7 +13,7 @@ const { hasMore, rooms } = storeToRefs(roomStore);
 const { readMoreRooms, readRooms } = await useReadRooms();
 const [{ isPending }] = await Promise.all([readRooms(), readRoomCategories()]);
 const roomsByCategoryId = computed(() => {
-  const map = new Map<null | string, Room[]>();
+  const map = new Map<null | string, RoomInMessage[]>();
   for (const room of rooms.value) {
     const group = map.get(room.categoryId) ?? [];
     group.push(room);

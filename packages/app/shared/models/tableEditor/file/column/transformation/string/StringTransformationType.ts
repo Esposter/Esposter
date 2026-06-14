@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export enum StringTransformationType {
-  Lowercase = "Lowercase",
+  LowerCase = "LowerCase",
   TitleCase = "TitleCase",
   Trim = "Trim",
-  Uppercase = "Uppercase",
+  UpperCase = "UpperCase",
 }
 
 export const stringTransformationTypeSchema = z.enum(

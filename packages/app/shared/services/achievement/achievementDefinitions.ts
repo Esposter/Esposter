@@ -10,7 +10,7 @@ import { SpecialAchievementDefinitionMap } from "#shared/services/achievement/de
 import { SurveyAchievementDefinitionMap } from "#shared/services/achievement/definitions/SurveyAchievementDefinitionMap";
 import { TableAchievementDefinitionMap } from "#shared/services/achievement/definitions/TableAchievementDefinitionMap";
 import { WebpageAchievementDefinitionMap } from "#shared/services/achievement/definitions/WebpageAchievementDefinitionMap";
-import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 export const AchievementDefinitionMap = {
   ...ClickerAchievementDefinitionMap,

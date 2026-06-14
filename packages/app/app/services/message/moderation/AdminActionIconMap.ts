@@ -4,7 +4,10 @@ export const AdminActionIconMap = {
   [AdminActionType.CreateBan]: "mdi-account-cancel",
   [AdminActionType.ForceMute]: "mdi-microphone-off",
   [AdminActionType.ForceUnmute]: "mdi-microphone",
+  [AdminActionType.KickFromCall]: "mdi-headset-off",
   [AdminActionType.KickFromRoom]: "mdi-account-remove",
-  [AdminActionType.KickFromVoice]: "mdi-headset-off",
+  [AdminActionType.SoftBan]: "mdi-account-arrow-left",
+  [AdminActionType.StopScreenShare]: "mdi-monitor-off",
   [AdminActionType.TimeoutUser]: "mdi-clock-alert-outline",
+  [AdminActionType.Warn]: "mdi-alert-circle-outline",
 } as const satisfies Record<AdminActionType, string>;

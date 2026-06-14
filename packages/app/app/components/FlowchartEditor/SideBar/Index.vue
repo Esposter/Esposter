@@ -11,7 +11,7 @@ const { height, width } = useWindowSize();
 
 <template>
   <div flex flex-col h-full>
-    <v-list flex flex-col items-center flex-1 gap-y-4>
+    <v-list flex flex-1 flex-col gap-y-4 items-center>
       <v-expansion-panels variant="accordion">
         <v-expansion-panel
           v-for="[nodeCategory, nodeTypes] of Object.entries(NodeCategoryTypeMap)"

@@ -19,6 +19,6 @@ const { messages } = defineProps<ListProps>();
     </div>
   </template>
   <slot v-else name="no-data">
-    <div pt-6 text-center text-gray>No results</div>
+    <div text-gray pt-6 text-center>No results</div>
   </slot>
 </template>

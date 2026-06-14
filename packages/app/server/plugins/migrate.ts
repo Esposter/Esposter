@@ -1,4 +1,4 @@
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { db } from "@@/server/db";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 // @TODO: Remove getSynchronizedFunction in nitro v3

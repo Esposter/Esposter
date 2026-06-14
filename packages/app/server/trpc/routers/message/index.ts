@@ -1,13 +1,9 @@
-import type {
-  AzureUpdateEntity,
-  Clause,
-  FileSasEntity,
-  MessageEntity,
-  PushNotificationEventGridData,
-} from "@esposter/db-schema";
+import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
+import { readMySentMessagesInputSchema } from "#shared/models/db/message/ReadMySentMessagesInput";
+import { readThreadInputSchema } from "#shared/models/db/message/ReadThreadInput";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
@@ -15,27 +11,31 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { PinnableMessageTypes } from "#shared/services/message/PinnableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
-import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
+import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
-import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
-import { assertNotTimedOut } from "@@/server/services/message/moderation/assertNotTimedOut";
+import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { readMessages } from "@@/server/services/message/readMessages";
+import { readMySentMessages } from "@@/server/services/message/readMySentMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
-import { timeoutPlugin } from "@@/server/trpc/plugins/timeoutPlugin";
 import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
+import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
+import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
 import {
   cloneFiles,
   createMessage,
@@ -44,7 +44,6 @@ import {
   generateUploadFileSasEntities,
   getBlobName,
   getEntity,
-  getPushSubscriptionsForMessage,
   getTableNullClause,
   getTopNEntitiesByType,
   serializeClauses,
@@ -53,38 +52,36 @@ import {
 import {
   AzureContainer,
   AzureEntityType,
-  AzureFunction,
   AzureTable,
   AzureWebPubSubHub,
   BinaryOperator,
   CompositeKeyPropertyNames,
-  DatabaseEntityType,
   FileEntity,
   fileEntitySchema,
   FilterType,
   getReverseTickedTimestamp,
   MessageEntityMap,
   MessageType,
-  rooms,
-  selectRoomSchema,
+  roomIdSchema,
+  selectRoomInMessageSchema,
   standardCreateMessageInputSchema,
   StandardMessageEntity,
+  StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import {
+  InvalidOperationError,
+  ItemMetadataPropertyNames,
+  MAX_READ_LIMIT,
+  NotFoundError,
+  Operation,
+  takeOne,
+} from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { z } from "zod";
-
-export const readMetadataInputSchema = z.object({
-  messageRowKeys: standardMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomSchema.shape.id,
-});
-export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
-// Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
-// As we insert our messages with a reverse-ticked timestamp as our rowKey
-// So unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
-// Always requires a sortBy even though we don't actually need the user to specify it
+// Azure Table Storage has no real sorting; messages are insert-sorted via a reverse-ticked timestamp rowKey.
+// We still pass a dummy default sortBy because cursor pagination always requires one.
 const readMessagesInputSchema = z
   .object({
     ...createCursorPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
@@ -93,117 +90,60 @@ const readMessagesInputSchema = z
     filter: standardMessageEntitySchema.pick({ isPinned: true }).optional(),
     isIncludeValue: z.literal(true).optional(),
     order: z.literal(SortOrder.Asc).optional(),
-    roomId: selectRoomSchema.shape.id,
+    ...roomIdSchema.shape,
   })
   .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const readMessagesByRowKeysInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
+  ...roomIdSchema.shape,
   rowKeys: standardMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
-export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
-
 const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomSchema.shape.id,
+  ...roomIdSchema.shape,
 });
-export type GenerateUploadFileSasEntitiesInput = z.infer<typeof generateUploadFileSasEntitiesInputSchema>;
 
 const generateDownloadFileSasUrlsInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomSchema.shape.id,
+  ...roomIdSchema.shape,
 });
-export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
 
 const deleteFileInputSchema = z.object({
   ...standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
   id: fileEntitySchema.shape.id,
 });
-export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 
 const deleteLinkPreviewResponseInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
-export type DeleteLinkPreviewResponseInput = z.infer<typeof deleteLinkPreviewResponseInputSchema>;
 
 const onstandardCreateMessageInputSchema = z.object({
   lastEventId: z.string().nullish(),
-  roomId: selectRoomSchema.shape.id,
+  ...roomIdSchema.shape,
 });
-export type OnCreateMessageInput = z.infer<typeof onstandardCreateMessageInputSchema>;
 
-const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
+const onUpdateMessageInputSchema = roomIdSchema;
 
-const onCreateTypingInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnCreateTypingInput = z.infer<typeof onCreateTypingInputSchema>;
+const onCreateTypingInputSchema = roomIdSchema;
 
-const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
+const onDeleteMessageInputSchema = roomIdSchema;
 
 export const forwardMessageInputSchema = z.object({
   ...standardMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
-  roomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  roomIds: selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
-export type ForwardMessageInput = z.infer<typeof forwardMessageInputSchema>;
 
 export const pinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
-export type PinMessageInput = z.infer<typeof pinMessageInputSchema>;
 
 export const unpinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
-export type UnpinMessageInput = z.infer<typeof unpinMessageInputSchema>;
 
-const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type GetWebPubSubClientAccessUrlInput = z.infer<typeof getWebPubSubClientAccessUrlInputSchema>;
+const getWebPubSubClientAccessUrlInputSchema = roomIdSchema;
 
-export const messageRouter = router({
-  // oxlint-disable-next-line prefer-spread
-  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId")
-    .concat(timeoutPlugin)
-    .mutation<MessageEntity>(async ({ ctx, input }) => {
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-      const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
-        ...input,
-        userId: ctx.getSessionPayload.user.id,
-      });
-      messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.getSessionPayload.session.id }]);
-
-      const readPushSubscriptions = await getPushSubscriptionsForMessage(ctx.db, newMessageEntity);
-      if (readPushSubscriptions.length > 0) {
-        const eventGridPublisherClient = useEventGridPublisherClient();
-        const data: PushNotificationEventGridData = {
-          message: {
-            message: newMessageEntity.message,
-            partitionKey: newMessageEntity.partitionKey,
-            rowKey: newMessageEntity.rowKey,
-            userId: newMessageEntity.userId,
-          },
-          notificationOptions: { icon: ctx.getSessionPayload.user.image, title: ctx.getSessionPayload.user.name },
-        };
-        await eventGridPublisherClient.send([
-          {
-            data,
-            dataVersion: "1.0",
-            eventType: AzureFunction.ProcessPushNotification,
-            subject: `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
-          },
-        ]);
-      }
-
-      const updatedRoom = (
-        await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
-      )[0];
-      if (!updatedRoom)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, input.roomId).message,
-        });
-
-      roomEventEmitter.emit("updateRoom", updatedRoom);
-      return newMessageEntity;
-    }),
+export const baseMessageRouter = router({
+  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
+    ({ ctx, input }) => createUserMessage(ctx.db, ctx.getSessionPayload, input),
+  ),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
-    // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
+    // Query, not mutation: emitting has no ordering/concurrency concerns.
     .query(({ ctx, input }) => {
       messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.getSessionPayload.session.id });
     }),
@@ -270,20 +210,20 @@ export const messageRouter = router({
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await isMember(ctx.db, ctx.getSessionPayload, roomIds);
-
       const messageClient = await useTableClient(AzureTable.Messages);
-      const messageEntity = await getEntity(messageClient, StandardMessageEntity, partitionKey, rowKey);
-      if (!messageEntity)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
-        });
+      const messageEntity = await requireEntity(
+        getEntity(messageClient, StandardMessageEntity, partitionKey, rowKey),
+        AzureEntityType.Message,
+        JSON.stringify({ partitionKey, rowKey }),
+      );
 
+      await Promise.all(
+        roomIds.map((roomId) => assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, roomId, message)),
+      );
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       await Promise.all(
         roomIds.map(async (roomId) => {
-          await assertNotTimedOut(ctx.db, ctx.getSessionPayload.user.id, roomId);
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, messageAscendingClient, {
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
@@ -307,8 +247,7 @@ export const messageRouter = router({
             });
             messages.push(newMessageEntity);
           }
-          // We don't need visual effects like isLoading when forwarding messages
-          // So we'll instead rely on the subscription to auto-add the forwarded message for convenience
+          // Forwarding needs no isLoading effect, so let the subscription auto-add the message.
           messageEventEmitter.emit("createMessage", [
             messages,
             { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
@@ -347,9 +286,7 @@ export const messageRouter = router({
     signal,
   }) {
     if (lastEventId) {
-      let cursor: string | undefined = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [
-        MESSAGE_ROWKEY_SORT_ITEM,
-      ]);
+      let cursor: string = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROWKEY_SORT_ITEM]);
       let hasMore = true;
       const messages: MessageEntity[] = [];
 
@@ -361,11 +298,8 @@ export const messageRouter = router({
       }
 
       if (messages.length > 0) {
-        // Remember that Azure Table Storage is insert-sorted by rowKey
-        // So the first message is the newest one but we want to yield from oldest to newest
-        const reversedMessages = messages.toReversed();
-        const newestMessage = takeOne(reversedMessages, reversedMessages.length - 1);
-        yield tracked(newestMessage.rowKey, reversedMessages);
+        const newestMessage = takeOne(messages, messages.length - 1);
+        yield tracked(newestMessage.rowKey, messages);
       }
     }
 
@@ -455,6 +389,25 @@ export const messageRouter = router({
       });
     },
   ),
+  readMySentMessages: standardAuthedProcedure
+    .input(readMySentMessagesInputSchema)
+    .query(({ ctx, input }) => readMySentMessages(input, ctx.db, ctx.getSessionPayload.user.id)),
+  readThread: getMemberProcedure(readThreadInputSchema, "roomId").query(async ({ input: { roomId, rootRowKey } }) => {
+    const messageClient = await useTableClient(AzureTable.Messages);
+    const [rootMessage, replyClauses] = await Promise.all([
+      getEntity(messageClient, StandardMessageEntity, roomId, rootRowKey),
+      Promise.resolve([
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+        { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.eq, value: rootRowKey },
+        getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+      ] as Clause<StandardMessageEntity>[]),
+    ]);
+    const replies = await getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
+      filter: serializeClauses(replyClauses),
+    });
+    if (rootMessage?.deletedAt) return replies;
+    return rootMessage ? [rootMessage, ...replies] : replies;
+  }),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(async ({ ctx, input }) => {
     const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
     if (inFilterRoomIds.some((value) => typeof value !== "string"))
@@ -500,3 +453,8 @@ export const messageRouter = router({
     },
   ),
 });
+
+export const messageRouter = mergeRouters(
+  baseMessageRouter,
+  router({ emoji: emojiRouter, moderation: moderationRouter, scheduledMessageJob: scheduledMessageJobRouter }),
+);

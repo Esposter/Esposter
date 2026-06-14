@@ -25,17 +25,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <div inline-flex items-center gap-0.5>
-    <span font-bold text-sm>/</span>
+  <div inline-flex gap-0.5 items-center>
+    <span font-bold text-body-medium>/</span>
     <input
       ref="input"
       v-model="modelValue"
-      class="input"
-      bg-transparent
-      b-none
-      outline-none
-      text-sm
       font-bold
+      outline-none
+      b-none
+      bg-transparent
+      field-sizing-content
+      text-body-medium
       @focus="emit('focus')"
       @blur="emit('blur')"
       @keydown.enter.prevent="emit('navigate:next')"
@@ -55,9 +55,3 @@ onMounted(() => {
     />
   </div>
 </template>
-
-<style scoped lang="scss">
-.input {
-  field-sizing: content;
-}
-</style>

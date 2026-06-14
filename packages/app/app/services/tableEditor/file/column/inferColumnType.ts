@@ -2,15 +2,16 @@ import { BooleanValue, BooleanValues } from "#shared/models/tableEditor/file/col
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { DateFormats } from "#shared/models/tableEditor/file/column/DateFormat";
 import { dayjs } from "#shared/services/dayjs";
+import { normalizeString } from "@esposter/shared";
 
 export const inferColumnType = (values: string[]): ColumnType => {
-  const trimmedValues = values.map((value) => value.trim()).filter(Boolean);
-  if (trimmedValues.length === 0) return ColumnType.String;
-  else if (trimmedValues.every((value) => BooleanValues.has(value.toLowerCase() as BooleanValue)))
+  const normalizedValues = values.map((value) => normalizeString(value)).filter(Boolean);
+  if (normalizedValues.length === 0) return ColumnType.String;
+  else if (normalizedValues.every((value) => BooleanValues.has(value.toLowerCase() as BooleanValue)))
     return ColumnType.Boolean;
-  else if (trimmedValues.every((value) => !Number.isNaN(Number(value)))) return ColumnType.Number;
+  else if (normalizedValues.every((value) => !Number.isNaN(Number(value)))) return ColumnType.Number;
   else if (
-    trimmedValues.every(
+    normalizedValues.every(
       (value) => Number.isNaN(Number(value)) && [...DateFormats].some((format) => dayjs(value, format, true).isValid()),
     )
   )

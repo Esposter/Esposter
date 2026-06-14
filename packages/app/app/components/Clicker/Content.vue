@@ -11,8 +11,8 @@ const { onClick } = popupStore;
       <ClickerModelRotatingCursors />
     </ClientOnly>
     <ClickerModelItem
-      relative
       size-50
+      relative
       :g-attrs="{ class: 'origin-center active:scale-95', cursor: 'pointer' }"
       @click="onClick"
     />

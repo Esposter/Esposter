@@ -3,7 +3,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/datasource/Data
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
-import { trimFileExtension } from "@/util/trimFileExtension";
+import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { takeOne } from "@esposter/shared";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
@@ -36,13 +36,11 @@ const previewRows = computed(() => previewDataSource.value?.rows.slice(0, 5) ?? 
         icon="mdi-upload"
         :="props"
         @click="
-          async () => {
-            await importFile(dataSourceConfiguration.mimeType, dataSourceConfiguration.accept, async (file) => {
-              const result = await dataSourceConfiguration.deserialize(file, modelValue);
-              pendingName = trimFileExtension(result.metadata.name);
-              previewDataSource = result;
-            });
-          }
+          importFile(dataSourceConfiguration.mimeType, dataSourceConfiguration.accept, async (file) => {
+            const result = await dataSourceConfiguration.deserialize(file, modelValue);
+            pendingName = trimFileExtension(result.metadata.name);
+            previewDataSource = result;
+          })
         "
       />
     </template>

@@ -1,3 +1,3 @@
 rm -rf pnpm-lock.yaml
-find . -name "node_modules" -type d -exec rm -rf {} +
+find . -name "node_modules" -type d -prune -exec rm -rf {} +
 pnpm i

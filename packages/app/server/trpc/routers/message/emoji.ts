@@ -7,6 +7,7 @@ import {
   MessageEmojiMetadataEntityPropertyNames,
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
+import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
@@ -15,8 +16,8 @@ import { on } from "@@/server/services/events/on";
 import { emojiEventEmitter } from "@@/server/services/message/events/emojiEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
 import { router } from "@@/server/trpc";
+import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
 import { createEntity, deleteEntity, getEntity, getTopNEntities, serializeClauses, updateEntity } from "@esposter/db";
 import {
   AZURE_MAX_PAGE_SIZE,
@@ -24,20 +25,16 @@ import {
   BinaryOperator,
   CompositeKeyPropertyNames,
   MessageMetadataType,
-  selectRoomSchema,
+  roomIdSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
 
-const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
+const onCreateEmojiInputSchema = roomIdSchema;
 
-const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
+const onUpdateEmojiInputSchema = roomIdSchema;
 
-const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
+const onDeleteEmojiInputSchema = roomIdSchema;
 
 export const emojiRouter = router({
   createEmoji: getMemberProcedure(createEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
@@ -155,18 +152,12 @@ export const emojiRouter = router({
       const messagesMetadataClient = (await useTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
-      const readEmoji = await getEntity(
-        messagesMetadataClient,
-        MessageEmojiMetadataEntity,
-        input.partitionKey,
-        input.rowKey,
+      const readEmoji = await requireEntity(
+        getEntity(messagesMetadataClient, MessageEmojiMetadataEntity, input.partitionKey, input.rowKey),
+        MessageMetadataType.Emoji,
+        JSON.stringify(input),
       );
-      if (!readEmoji)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Read, MessageMetadataType.Emoji, JSON.stringify(input)).message,
-        });
-      else if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.getSessionPayload.user.id)
+      if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.getSessionPayload.user.id)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(readEmoji))

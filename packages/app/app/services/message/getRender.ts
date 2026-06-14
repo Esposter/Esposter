@@ -1,7 +1,7 @@
 import type { SuggestionKeyDownProps, SuggestionOptions } from "@tiptap/suggestion";
 import type { Component } from "vue";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { updatePosition } from "@/services/message/updatePosition";
 import { VueRenderer } from "@tiptap/vue-3";
 
@@ -38,7 +38,7 @@ export const getRender =
 
         const element = component.element as HTMLElement;
         element.style.position = "absolute";
-        document.body.appendChild(element);
+        window.document.body.appendChild(element);
         await updatePosition(props.editor, element);
       }),
 

@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "2.21.0",
+  "version": "2.28.0",
   "description": "A parser for tmx.",
   "keywords": [
     "parser",
@@ -43,7 +43,13 @@
     "dayjs": "catalog:"
   },
   "devDependencies": {
+    "@esposter/configuration": "workspace:*",
     "@types/data-urls": "catalog:",
-    "@types/xml2js": "catalog:"
+    "@types/xml2js": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "ctix": "catalog:",
+    "rolldown": "catalog:",
+    "type-fest": "catalog:",
+    "vitest": "catalog:"
   }
 }

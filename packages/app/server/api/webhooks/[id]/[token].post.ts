@@ -1,13 +1,14 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { webhookRateLimiter } from "@@/server/services/rateLimiter/webhookRateLimiter";
 import { RestError } from "@azure/storage-blob";
-import { selectWebhookSchema } from "@esposter/db-schema";
+import { selectWebhookInMessageSchema } from "@esposter/db-schema";
+import { getResultAsync } from "@esposter/shared";
 import { RateLimiterRes } from "rate-limiter-flexible";
 
 export default defineEventHandler(async (event) => {
   const { id: rawId, token: rawToken } = getRouterParams(event);
-  const { data: id, success: idSuccess } = selectWebhookSchema.shape.id.safeParse(rawId);
-  const { data: token, success: tokenSuccess } = selectWebhookSchema.shape.token.safeParse(rawToken);
+  const { data: id, success: idSuccess } = selectWebhookInMessageSchema.shape.id.safeParse(rawId);
+  const { data: token, success: tokenSuccess } = selectWebhookInMessageSchema.shape.token.safeParse(rawToken);
 
   if (!(idSuccess && tokenSuccess)) {
     setResponseStatus(event, 400);
@@ -16,8 +17,7 @@ export default defineEventHandler(async (event) => {
 
   const runtimeConfig = useRuntimeConfig(event);
   const body = await readBody(event);
-
-  try {
+  return getResultAsync(async () => {
     await webhookRateLimiter.consume(id);
     const { _data, status } = await $fetch.raw<unknown>(
       `${runtimeConfig.public.azure.function.baseUrl}/api/webhooks/${id}/${token}`,
@@ -32,16 +32,20 @@ export default defineEventHandler(async (event) => {
     );
     setResponseStatus(event, status);
     return _data;
-  } catch (error) {
-    if (error instanceof RestError) {
-      setResponseStatus(event, error.statusCode ?? 502);
-      return error.cause;
-    } else if (error instanceof RateLimiterRes) {
-      setResponseStatus(event, 429);
-      return { message: "Rate limit exceeded." };
-    } else {
-      setResponseStatus(event, 500);
-      return { message: "An internal server error occurred." };
-    }
-  }
+  }).match(
+    (data) => data,
+    (error) => {
+      if (error instanceof RestError) {
+        setResponseStatus(event, error.statusCode ?? 502);
+        return error.cause;
+      } else if (error instanceof RateLimiterRes) {
+        setResponseStatus(event, 429);
+        return { message: "Rate limit exceeded." };
+      } else {
+        console.error(error);
+        setResponseStatus(event, 500);
+        return { message: "An internal server error occurred." };
+      }
+    },
+  );
 });

@@ -1,8 +1,14 @@
+import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
+
 import { authClient } from "@/services/auth/authClient";
 import { useMemberStore } from "@/store/message/user/member";
 import { useStatusStore } from "@/store/message/user/status";
 
 export const useUserSubscribables = async () => {
+  const onlineSubscribableContext: OnlineSubscribableContext = {
+    instance: getCurrentInstance(),
+    scope: getCurrentScope(),
+  };
   const { data: session } = await authClient.useSession(useFetch);
   const { $trpc } = useNuxtApp();
   const memberStore = useMemberStore();
@@ -10,20 +16,31 @@ export const useUserSubscribables = async () => {
   const statusStore = useStatusStore();
   const { statusMap } = storeToRefs(statusStore);
 
-  useOnlineSubscribable([members, session], ([newMembers, newSession]) => {
-    if (!newSession) return undefined;
+  useOnlineSubscribable(
+    [
+      () =>
+        members.value
+          .map(({ id }) => id)
+          .toSorted()
+          .join(","),
+      session,
+    ],
+    ([memberIdsString, newSession]) => {
+      if (!newSession) return undefined;
 
-    const newMemberIds = newMembers.filter(({ id }) => id !== newSession.user.id).map(({ id }) => id);
-    if (newMemberIds.length === 0) return undefined;
+      const newMemberIds = memberIdsString.split(",").filter((id) => id && id !== newSession.user.id);
+      if (newMemberIds.length === 0) return undefined;
 
-    const upsertStatusUnsubscribable = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
-      onData: ({ userId, ...userStatus }) => {
-        statusMap.value.set(userId, userStatus);
-      },
-    });
+      const upsertStatusUnsubscribable = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
+        onData: ({ userId, ...userStatus }) => {
+          statusMap.value.set(userId, userStatus);
+        },
+      });
 
-    return () => {
-      upsertStatusUnsubscribable.unsubscribe();
-    };
-  });
+      return () => {
+        upsertStatusUnsubscribable.unsubscribe();
+      };
+    },
+    onlineSubscribableContext,
+  );
 };

@@ -1,84 +1,87 @@
-import type { IUserStatus, User } from "@esposter/db-schema";
-import type { ReadableStream } from "node:stream/web";
+import type { UserStatusInMessage } from "@esposter/db-schema";
 import type { SetNonNullable } from "type-fest";
-import type { z } from "zod";
 
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { dayjs } from "#shared/services/dayjs";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
 import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
 import { router } from "@@/server/trpc";
+import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { ContainerSASPermissions } from "@azure/storage-blob";
 import {
   AzureContainer,
   DatabaseEntityType,
   selectUserSchema,
-  selectUserStatusSchema,
+  selectUserStatusInMessageSchema,
   users,
   UserStatus,
-  userStatuses,
+  userStatusesInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, MAX_READ_LIMIT, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { octetInputParser } from "@trpc/server/http";
-import { eq } from "drizzle-orm";
-import { Readable } from "node:stream";
+import { eq, inArray } from "drizzle-orm";
 
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
 
 const upsertStatusInputSchema = refineAtLeastOne(
-  selectUserStatusSchema.pick({ message: true, status: true }).partial(),
+  selectUserStatusInMessageSchema.pick({ message: true, status: true }).partial(),
   ["message", "status"],
 );
-export type UpsertStatusInput = z.infer<typeof upsertStatusInputSchema>;
 
 const onUpsertStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnUpsertStatusInput = z.infer<typeof onUpsertStatusInputSchema>;
 
 export const userRouter = router({
   connect: standardAuthedProcedure.mutation(async ({ ctx }) => {
-    const upsertedStatus = (
-      await ctx.db
-        .insert(userStatuses)
-        .values({ isConnected: true, userId: ctx.getSessionPayload.user.id })
-        .onConflictDoUpdate({
-          set: { isConnected: true },
-          target: userStatuses.userId,
-        })
-        .returning()
-    )[0];
-    if (!upsertedStatus)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserStatus, userRouter.disconnect.name)
-          .message,
-      });
+    const upsertedStatus = requireMutation(
+      (
+        await ctx.db
+          .insert(userStatusesInMessage)
+          .values({ isConnected: true, userId: ctx.getSessionPayload.user.id })
+          .onConflictDoUpdate({
+            set: { isConnected: true },
+            target: userStatusesInMessage.userId,
+          })
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.UserStatus,
+      userRouter.connect.name,
+    );
 
     userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
   }),
   disconnect: standardAuthedProcedure.mutation(async ({ ctx }) => {
-    const upsertedStatus = (
-      await ctx.db
-        .insert(userStatuses)
-        .values({ isConnected: false, userId: ctx.getSessionPayload.user.id })
-        .onConflictDoUpdate({
-          set: { isConnected: false },
-          target: userStatuses.userId,
-        })
-        .returning()
-    )[0];
-    if (!upsertedStatus)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserStatus, userRouter.disconnect.name)
-          .message,
-      });
+    const upsertedStatus = requireMutation(
+      (
+        await ctx.db
+          .insert(userStatusesInMessage)
+          .values({ isConnected: false, userId: ctx.getSessionPayload.user.id })
+          .onConflictDoUpdate({
+            set: { isConnected: false },
+            target: userStatusesInMessage.userId,
+          })
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.UserStatus,
+      userRouter.disconnect.name,
+    );
 
     userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
+  }),
+  generateProfileImageUploadUrl: standardAuthedProcedure.mutation(async ({ ctx }) => {
+    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const sasUrl = await blockBlobClient.generateSasUrl({
+      expiresOn: dayjs().add(1, "hour").toDate(),
+      permissions: ContainerSASPermissions.from({ write: true }),
+    });
+    return { publicUrl: blockBlobClient.url, sasUrl };
   }),
   onUpsertStatus: standardAuthedProcedure.input(onUpsertStatusInputSchema).subscription(async function* ({
     ctx,
@@ -101,10 +104,11 @@ export const userRouter = router({
     }
   }),
   readStatuses: standardAuthedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
-    const foundUserStatuses = await ctx.db.query.userStatuses.findMany({
-      where: (userStatuses, { inArray }) => inArray(userStatuses.userId, input),
-    });
-    const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
+    const foundUserStatuses = await ctx.db
+      .select()
+      .from(userStatusesInMessage)
+      .where(inArray(userStatusesInMessage.userId, input));
+    const resultUserStatuses: SetNonNullable<UserStatusInMessage, "status">[] = [];
     const statusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
 
     for (const userId of input) {
@@ -127,44 +131,31 @@ export const userRouter = router({
 
     return resultUserStatuses;
   }),
-  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<User>(async ({ ctx, input }) => {
-    const updatedUser = (
-      await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning()
-    )[0];
-    if (!updatedUser)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.User, ctx.getSessionPayload.user.id)
-          .message,
-      });
+  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation(async ({ ctx, input }) => {
+    const updatedUser = requireMutation(
+      (await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning())[0],
+      Operation.Update,
+      DatabaseEntityType.User,
+      ctx.getSessionPayload.user.id,
+    );
     return updatedUser;
   }),
-  uploadProfileImage: standardAuthedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
-    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-    const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    // @TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/65542
-    const readable = Readable.fromWeb(input as ReadableStream);
-    await blockBlobClient.uploadStream(readable);
-    return blockBlobClient.url;
-  }),
   upsertStatus: standardAuthedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
-    const upsertedStatus = (
-      await ctx.db
-        .insert(userStatuses)
-        .values({ ...input, userId: ctx.getSessionPayload.user.id })
-        .onConflictDoUpdate({
-          set: input,
-          target: userStatuses.userId,
-        })
-        .returning()
-    )[0];
-    if (!upsertedStatus)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserStatus, JSON.stringify(input))
-          .message,
-      });
+    const upsertedStatus = requireMutation(
+      (
+        await ctx.db
+          .insert(userStatusesInMessage)
+          .values({ ...input, userId: ctx.getSessionPayload.user.id })
+          .onConflictDoUpdate({
+            set: input,
+            target: userStatusesInMessage.userId,
+          })
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.UserStatus,
+      JSON.stringify(input),
+    );
 
     const detectedStatus = { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) };
     userEventEmitter.emit("upsertStatus", detectedStatus);

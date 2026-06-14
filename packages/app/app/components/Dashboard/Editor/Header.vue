@@ -12,10 +12,10 @@ const { visualType } = storeToRefs(visualStore);
 
 <template>
   <v-toolbar>
-    <v-toolbar-title px-4 font-bold>
-      <div flex flex-col pt-4 justify-between gap-y-4>
+    <v-toolbar-title font-bold px-4>
+      <div pt-4 flex flex-col gap-y-4 justify-between>
         <div>Dashboard Editor</div>
-        <div flex items-center w-full>
+        <div flex w-full items-center>
           <v-select
             v-model="visualType"
             :items="visualTypeItemCategoryDefinitions"
@@ -27,7 +27,7 @@ const { visualType } = storeToRefs(visualStore);
               })
             "
           />
-          <v-divider mx-4 thickness="2" vertical inset />
+          <v-divider thickness="2" vertical inset mx-4 />
           <v-tooltip :text="`Add ${prettify(visualType)} Visual`">
             <template #activator="{ props }">
               <v-btn ml-2 variant="elevated" :flat="false" :="props" @click="createVisual">

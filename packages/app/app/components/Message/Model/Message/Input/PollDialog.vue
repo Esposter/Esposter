@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { PollMessageContent } from "@/models/message/poll/PollMessageContent";
 import type { SubmitEventPromise } from "vuetify";
 
+import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { formRules } from "@/services/vuetify/formRules";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
@@ -16,23 +17,16 @@ const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const question = ref("");
 const options = ref(["", ""]);
-const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
-  if (!currentRoomId.value) {
-    onComplete();
-    return;
-  }
-  const pollContent: PollMessageContent = {
-    options: options.value.map((label) => ({ id: crypto.randomUUID(), label: label.trim() })),
-    question: question.value.trim(),
-    votes: {},
-  };
-  await createMessage({
-    message: JSON.stringify(pollContent),
-    roomId: currentRoomId.value,
-    type: MessageType.Poll,
-  });
-  onComplete();
-};
+const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
+  await withFinalizerAsync(async () => {
+    if (!currentRoomId.value) return;
+    const pollContent = pollMessageContentSchema.parse({
+      options: options.value.map((label) => ({ id: crypto.randomUUID(), label })),
+      question: question.value,
+      votes: {},
+    });
+    await createMessage({ message: JSON.stringify(pollContent), roomId: currentRoomId.value, type: MessageType.Poll });
+  }, onComplete);
 </script>
 
 <template>

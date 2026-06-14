@@ -8,6 +8,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/survey";
 import { SURVEY_NAME_MAX_LENGTH } from "@esposter/db-schema";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface CreateSurveyDialogProps {
   cardProps?: VCard["$props"];
@@ -17,7 +18,7 @@ interface CreateSurveyDialogProps {
 defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => VNode;
 }>();
-const { cardProps, initialValue = { group: null, model: "", name: DEFAULT_NAME } } =
+const { cardProps, initialValue = { group: "", model: "", name: DEFAULT_NAME } } =
   defineProps<CreateSurveyDialogProps>();
 const surveyStore = useSurveyStore();
 const { createSurvey } = surveyStore;
@@ -30,8 +31,7 @@ const group = ref(initialValue.group);
     :card-props
     @create="
       async (onComplete) => {
-        await createSurvey({ name, group, model: initialValue.model });
-        onComplete();
+        await withFinalizerAsync(() => createSurvey({ name, group, model: initialValue.model }), onComplete);
         useTimeoutFn(() => {
           name = initialValue.name;
           group = initialValue.group;

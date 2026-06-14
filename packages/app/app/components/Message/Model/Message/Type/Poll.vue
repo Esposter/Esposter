@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
+import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
-import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import {
+  getResultAsync,
+  InvalidOperationError,
+  jsonDateParse,
+  noop,
+  Operation,
+  withFinalizerAsync,
+} from "@esposter/shared";
 
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
@@ -40,15 +47,29 @@ const vote = async (optionId: null | string) => {
   if (optionId === null) delete updatedVotes[userId.value];
   else updatedVotes[userId.value] = optionId;
   const updatedMessage = JSON.stringify({ ...pollContent.value, votes: updatedVotes });
-  await storeUpdateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-  try {
-    await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-  } catch (error) {
-    await storeUpdateMessage({ message: previousMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-    throw error;
-  } finally {
-    isVoting.value = false;
-  }
+  await withFinalizerAsync(
+    () =>
+      getResultAsync(async () => {
+        await storeUpdateMessage({
+          message: updatedMessage,
+          partitionKey: message.partitionKey,
+          rowKey: message.rowKey,
+        });
+        await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
+      }).match(noop, async (error) => {
+        await getResultAsync(() =>
+          storeUpdateMessage({
+            message: previousMessage,
+            partitionKey: message.partitionKey,
+            rowKey: message.rowKey,
+          }),
+        ).match(noop, console.error);
+        throw error;
+      }),
+    () => {
+      isVoting.value = false;
+    },
+  );
 };
 </script>
 
@@ -60,7 +81,7 @@ const vote = async (optionId: null | string) => {
     <span font-bold>{{ creator.name }}</span>
     <span text-gray> created a poll </span>
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
-    <v-card mt-2 variant="outlined" w-full>
+    <v-card variant="outlined" mt-2 w-full>
       <v-card-title>{{ pollContent.question }}</v-card-title>
       <v-card-text>
         <v-radio-group
@@ -76,7 +97,7 @@ const vote = async (optionId: null | string) => {
               <template #label>
                 <div flex w-full>
                   <div flex-1>{{ label }}</div>
-                  <div text-caption text-medium-emphasis>
+                  <div op-medium-emphasis text-body-small>
                     {{ getVoteDescription(voteCountMap.get(id) ?? 0) }} · {{ getVotePercentage(id) }}%
                   </div>
                 </div>
@@ -92,7 +113,7 @@ const vote = async (optionId: null | string) => {
   </MessageModelMessageTypeListItem>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-label) {
   width: 100%;
 }

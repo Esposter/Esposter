@@ -12,13 +12,14 @@ const { sm, xs } = useVDisplay();
 <template>
   <StyledCard
     :class="xs ? 'text-title-large' : sm ? 'text-headline-small' : 'text-headline-large'"
-    flex
-    font="[Montserrat] italic"
-    justify-center
-    items-center
-    text-center
+    font-[montserrat]
     p-4
+    text-center
+    flex
     break-anywhere
+    font-italic
+    items-center
+    justify-center
     :card-props="{ minHeight: '12rem' }"
   >
     {{ card.text }}

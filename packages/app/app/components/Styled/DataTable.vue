@@ -9,19 +9,19 @@ interface StyledDataTableProps {
 const slots = defineSlots<Record<keyof VDataTable["$slots"], Function>>();
 const { dataTableProps } = defineProps<StyledDataTableProps>();
 const colorsStore = useColorsStore();
-const { backgroundOpacity40 } = storeToRefs(colorsStore);
+const { "background-opacity-40": backgroundOpacity40 } = storeToRefs(colorsStore);
 </script>
 
 <template>
   <!-- @vue-expect-error @TODO: https://github.com/vuetifyjs/vuetify/issues/21183 -->
-  <v-data-table class="border-sm" :="dataTableProps">
+  <v-data-table b-1 :="dataTableProps">
     <template v-for="(_slot, name) of slots" #[name]="scope">
       <slot :name :="{ ...scope }" />
     </template>
   </v-data-table>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-data-table__tr:hover) {
   background-color: v-bind(backgroundOpacity40);
 }

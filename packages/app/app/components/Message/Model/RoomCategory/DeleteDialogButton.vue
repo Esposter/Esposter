@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { RoomCategory } from "@esposter/db-schema";
+import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
+import { withFinalizerAsync } from "@esposter/shared";
 
 interface RoomCategoryDeleteDialogButtonProps {
-  category: RoomCategory;
+  category: RoomCategoryInMessage;
 }
 
 const { category } = defineProps<RoomCategoryDeleteDialogButtonProps>();
@@ -17,11 +18,7 @@ const { deleteRoomCategory } = roomCategoryStore;
     :card-props="{ title: 'Delete Category', text: `Are you sure you want to delete ${category.name}?` }"
     @delete="
       async (onComplete) => {
-        try {
-          await deleteRoomCategory(category.id);
-        } finally {
-          onComplete();
-        }
+        await withFinalizerAsync(() => deleteRoomCategory(category.id), onComplete);
       }
     "
   >

@@ -10,7 +10,7 @@ import deepEqual from "fast-deep-equal";
 const { data: session } = await authClient.useSession(useFetch);
 const { updateUser } = authClient;
 const colorsStore = useColorsStore();
-const { backgroundOpacity20 } = storeToRefs(colorsStore);
+const { "background-opacity-20": backgroundOpacity20 } = storeToRefs(colorsStore);
 const profileCardRows = computed(() => {
   if (!session.value)
     throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });
@@ -45,8 +45,8 @@ const disabled = computed(
 </script>
 
 <template>
-  <div class="text-title-large" font-bold>Profile</div>
-  <div class="text-body-large">Your personal information</div>
+  <div font-bold text-title-large>Profile</div>
+  <div text-body-large>Your personal information</div>
   <v-form
     v-model="isEditFormValid"
     @submit.prevent="
@@ -83,7 +83,7 @@ const disabled = computed(
   </v-form>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .v-row:nth-of-type(even) {
   background-color: v-bind(backgroundOpacity20);
 }

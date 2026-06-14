@@ -3,8 +3,8 @@ import {
   benchRows1k,
   benchRows10k,
   benchRows100,
-  makeBenchItem,
-  makeOriginalRowValues,
+  createBenchItem,
+  createOriginalRowValues,
 } from "@/composables/tableEditor/file/commands/testUtils.bench";
 import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
 import { takeOne } from "@esposter/shared";
@@ -16,32 +16,32 @@ const updatedColumn = Object.assign(structuredClone(originalColumn), {
   name: `${originalName}_renamed`,
 });
 
-const makeRenameCommand = (rows: typeof benchRows1k) =>
-  new UpdateColumnCommand(originalName, originalColumn, updatedColumn, makeOriginalRowValues(rows, originalName));
+const createRenameCommand = (rows: typeof benchRows1k) =>
+  new UpdateColumnCommand(originalName, originalColumn, updatedColumn, createOriginalRowValues(rows, originalName));
 
 describe(UpdateColumnCommand, () => {
   bench("execute (rename) — 100 rows", () => {
-    makeRenameCommand(benchRows100).execute(makeBenchItem(benchRows100));
+    createRenameCommand(benchRows100).execute(createBenchItem(benchRows100));
   });
 
   bench("execute (rename) — 1000 rows", () => {
-    makeRenameCommand(benchRows1k).execute(makeBenchItem(benchRows1k));
+    createRenameCommand(benchRows1k).execute(createBenchItem(benchRows1k));
   });
 
   bench("execute (rename) — 10000 rows", () => {
-    makeRenameCommand(benchRows10k).execute(makeBenchItem(benchRows10k));
+    createRenameCommand(benchRows10k).execute(createBenchItem(benchRows10k));
   });
 
   bench("undo (rename) — 1000 rows", () => {
-    const item = makeBenchItem(benchRows1k);
-    const command = makeRenameCommand(benchRows1k);
+    const item = createBenchItem(benchRows1k);
+    const command = createRenameCommand(benchRows1k);
     command.execute(item);
     command.undo(item);
   });
 
   bench("undo (rename) — 10000 rows", () => {
-    const item = makeBenchItem(benchRows10k);
-    const command = makeRenameCommand(benchRows10k);
+    const item = createBenchItem(benchRows10k);
+    const command = createRenameCommand(benchRows10k);
     command.execute(item);
     command.undo(item);
   });

@@ -8,19 +8,19 @@ import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSour
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 import { describe, expect, test } from "vitest";
 
+const createDataSource = (columns: StringColumn[], rows: Row[]): DataSource => ({
+  columns,
+  metadata: { dataSourceType: DataSourceType.Xlsx, importedAt: new Date(0), name: "", size: 0 },
+  rows,
+  statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
+});
+
+const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
+
+const createRow = (data: Record<string, number>): Row => new Row({ data });
+
 describe(serializeXlsx, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Xlsx].mimeType;
-
-  const createDataSource = (columns: StringColumn[], rows: Row[]): DataSource => ({
-    columns,
-    metadata: { dataSourceType: DataSourceType.Xlsx, importedAt: new Date(0), name: "", size: 0 },
-    rows,
-    statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
-  });
-
-  const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
-
-  const createRow = (data: Record<string, number>): Row => new Row({ data });
 
   test("returns a blob for data with columns and rows", async () => {
     expect.hasAssertions();

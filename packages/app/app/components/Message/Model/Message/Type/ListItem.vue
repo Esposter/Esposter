@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
+import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { CSSProperties } from "vue";
 import type { VListItem } from "vuetify/components";
@@ -23,12 +23,12 @@ const style = computed<CSSProperties>(() =>
   </v-list-item>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-item__prepend) {
   align-self: flex-start;
 
   > :first-child {
-    width: $avatar-width;
+    width: var(--avatar-width);
   }
 
   > .v-list-item__spacer {
@@ -40,7 +40,7 @@ const style = computed<CSSProperties>(() =>
   pointer-events: v-bind("style.pointerEvents");
   user-select: v-bind("style.userSelect");
 }
-// We don't want to hide message content even if they added a bunch of newlines
+/* Don't clamp message content, even with many newlines. */
 :deep(.v-list-item-subtitle) {
   line-clamp: unset;
   -webkit-line-clamp: unset;

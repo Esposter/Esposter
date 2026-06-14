@@ -32,16 +32,17 @@ export const useDataStore = defineStore("message/data", () => {
   );
   const files = computed(() => items.value.flatMap(({ files }) => files));
   const hasMoreNewer = ref(false);
-  const nextCursorNewer = ref<string>();
+  const nextCursorNewer = ref("");
   const typings = ref<CreateTypingInput[]>([]);
 
   const createMessage = async (input: StandardCreateMessageInput) => {
-    if (!session.value.data) return;
+    if (!session.value.data) return false;
 
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
     await storeCreateMessage(newMessage);
     Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
     delete newMessage.isLoading;
+    return true;
   };
   const updateMessage = async (input: UpdateMessageInput) => {
     await $trpc.message.updateMessage.mutate(input);
@@ -61,27 +62,31 @@ export const useDataStore = defineStore("message/data", () => {
   };
 
   const inputStore = useInputStore();
-  const { validateInput } = inputStore;
+  const { clearDraft, validateInput } = inputStore;
   const uploadFileStore = useUploadFileStore();
   const replyStore = useReplyStore();
   const sendMessage = async (editor: Editor) => {
-    if (!roomStore.currentRoomId || !validateInput(editor, true)) return;
+    const roomId = roomStore.currentRoomId;
+    if (!roomId || !validateInput(editor, true)) return;
 
     const input: StandardCreateMessageInput = {
       files: uploadFileStore.files,
       message: inputStore.input,
       replyRowKey: replyStore.rowKey,
-      roomId: roomStore.currentRoomId,
+      roomId,
       type: MessageType.Message,
     };
+    await storeSendMessage(input, editor);
+  };
+  const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
     await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
-    await createMessage(input);
+    if (await createMessage(input)) clearDraft(input.roomId);
   };
   MessageHookMap.ResetSend.push((editor) => {
-    editor.commands.clearContent(true);
+    editor?.commands.clearContent(true);
   });
-  // We only expose the internal store crud message functions for subscriptions
-  // Everything else will directly use trpc mutations that are tracked by the related subscriptions
+  // Only expose the internal store CRUD functions for subscriptions; everything else directly calls
+  // The $trpc mutations, tracked by their related subscriptions.
   return {
     createMessage,
     files,
@@ -94,6 +99,7 @@ export const useDataStore = defineStore("message/data", () => {
     updateMessage,
     ...restOperationData,
     sendMessage,
+    storeSendMessage,
     ...restData,
     typings,
   };

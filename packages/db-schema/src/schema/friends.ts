@@ -1,9 +1,8 @@
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, index, text } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
+import { createSelectSchema } from "drizzle-orm/zod";
 
 export const friends = pgTable(
   "friends",
@@ -11,11 +10,11 @@ export const friends = pgTable(
     // Natural key — getFriendshipId(senderId, receiverId).
     // Text PK: every lookup goes through this value, it never changes,
     // And there is exactly one row per user pair.
-    id: text("id").primaryKey(),
-    receiverId: text("receiverId")
+    id: text().primaryKey(),
+    receiverId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    senderId: text("senderId")
+    senderId: text()
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
@@ -31,18 +30,5 @@ export const friends = pgTable(
 export type Friend = typeof friends.$inferSelect;
 
 export const selectFriendSchema = createSelectSchema(friends, {
-  id: z.string().min(1),
+  id: (schema) => schema.min(1),
 });
-
-export const friendsRelations = relations(friends, ({ one }) => ({
-  receiver: one(users, {
-    fields: [friends.receiverId],
-    references: [users.id],
-    relationName: "receiver",
-  }),
-  sender: one(users, {
-    fields: [friends.senderId],
-    references: [users.id],
-    relationName: "sender",
-  }),
-}));

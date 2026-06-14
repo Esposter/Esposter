@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
+import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
 interface PinMessageProps extends MessageComponentProps<StandardMessageEntity> {}
@@ -15,9 +15,14 @@ const scrollToMessage = useScrollToMessage();
     </template>
     <span font-bold>{{ creator.name }}</span>
     <span text-gray> pinned </span>
-    <span font-bold cursor-pointer hover:underline @click="message.replyRowKey && scrollToMessage(message.replyRowKey)">
-      a message</span
+    <span
+      font-bold
+      cursor-pointer
+      hover:underline
+      @click="message.replyRowKey && scrollToMessage(message.partitionKey, message.replyRowKey)"
     >
+      a message
+    </span>
     <span text-gray> to this room. </span>
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     <MessageModelMessageEmojiList :is-preview :message />

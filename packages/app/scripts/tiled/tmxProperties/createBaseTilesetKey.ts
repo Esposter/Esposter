@@ -1,8 +1,8 @@
 import type { TMXExternalTilesetParsed } from "parse-tmx";
 
 import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
-import { getFilename } from "@/util/getFilename";
-import { trimFileExtension } from "@/util/trimFileExtension";
+import { getFilename } from "@/util/file/getFilename";
+import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
 import { outputFile } from "@@/scripts/tiled/util/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";

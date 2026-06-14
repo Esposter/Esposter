@@ -2,13 +2,13 @@ import type { Survey } from "@esposter/db-schema";
 import type { Base } from "survey-core";
 import type { ThemeTabPlugin } from "survey-creator-core";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getActions } from "@/services/survey/getActions";
 import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
-import { getPropertyNames, takeOne } from "@esposter/shared";
+import { getPropertyNames, getResultAsync, noop, takeOne } from "@esposter/shared";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
@@ -35,15 +35,15 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
   const { $trpc } = useNuxtApp();
   const deleteFile = useDeleteFile(survey.value.id);
   creator.onUploadFile.add(async (_creator, { callback, element, files, propertyName }) => {
-    const file = takeOne(files);
+    await getResultAsync(async () => {
+      const file = takeOne(files);
 
-    if (!validateFile(file.size)) {
-      useEmptyFileAlert();
-      callback("error");
-      return;
-    }
+      if (!validateFile(file.size)) {
+        useEmptyFileAlert();
+        callback("error");
+        return;
+      }
 
-    try {
       const { id, sasUrl } = takeOne(
         await $trpc.survey.generateUploadFileSasEntities.query({
           files: [{ filename: file.name, mimetype: file.type }],
@@ -62,9 +62,9 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
         }),
       );
       callback("success", downloadFileSasUrl);
-    } catch {
+    }).match(noop, () => {
       callback("error");
-    }
+    });
   });
   // Add all the possible delete file events
   const remove = LogoImageViewModel.prototype.remove;

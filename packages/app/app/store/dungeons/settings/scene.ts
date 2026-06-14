@@ -6,7 +6,8 @@ import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
-import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
+import { checkIsUpdateThemeModeSetting } from "@/services/dungeons/settings/checkIsUpdateThemeModeSetting";
+import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { useDungeonsStore } from "@/store/dungeons";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
@@ -24,15 +25,14 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const volumeStore = useVolumeStore();
   const { isUpdateVolume, updateVolume } = volumeStore;
   const colorPickerStore = useColorPickerStore();
-  const { isUpdateThemeModeSetting, updateThemeModeSetting } = colorPickerStore;
+  const { updateThemeModeSetting } = colorPickerStore;
   const selectedSettingsOption = computed(
     () => SettingsOptionGrid.getValue({ x: 0, y: SettingsOptionGrid.position.value.y }) as SettingsOption,
   );
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
-  // We need to do 1 of 2 things when the option grid is updated:
-  // 1. If the user has changed position "y" (settings option) regardless of keyboard/click/touch,
-  // Then we should automatically switch it to the active settings value
-  // 2. If the user has changed position "x" (updated settings value), then we should setSettings (save the game)
+  // On option grid update, do one of two things:
+  // 1. Position "y" changed (settings option): switch to the active settings value.
+  // 2. Position "x" changed (settings value): setSettings to save the game.
   watch(
     () => SettingsOptionGrid.position.value.y,
     (newY) => {
@@ -68,10 +68,10 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     input: PlayerInput,
     delta: number,
   ) => {
-    if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
+    if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
     // Handle special cases first with player direction input
     else if (isUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
-    else if (isUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
+    else if (checkIsUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
       await updateThemeModeSetting(justDownInput);
     // We ignore validation when moving up/down since we auto update grid x
     // And this is just updating the settings options being viewed, not the actual values

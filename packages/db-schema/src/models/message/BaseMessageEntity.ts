@@ -8,9 +8,11 @@ import type { Except } from "type-fest";
 import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
 import { fileEntitySchema } from "@/models/azure/table/FileEntity";
 import { MessageType, standardMessageTypeSchema } from "@/models/message/MessageType";
-import { selectRoomSchema } from "@/schema/rooms";
+import { userIdSchema } from "@/models/shared/UserId";
+import { selectRoomInMessageSchema } from "@/schema/roomsInMessage";
 import { selectUserSchema } from "@/schema/users";
 import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
+import { createUniqueArraySchema, sanitizeMessageHtml } from "@esposter/shared";
 import { z } from "zod";
 
 export const MENTION_MAX_LENGTH = 100;
@@ -28,7 +30,7 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
   isPinned?: true;
   linkPreviewResponse: LinkPreviewResponse | null = null;
   mentions: User["id"][] = [];
-  message!: string;
+  declare message: string;
   replyRowKey?: string;
   type = MessageType.Message as TType;
 }
@@ -37,17 +39,17 @@ export const baseMessageEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
       // Reverse-ticked timestamp
-      partitionKey: selectRoomSchema.shape.id,
+      partitionKey: selectRoomInMessageSchema.shape.id,
       rowKey: z.string(),
     }),
   ).shape,
-  files: fileEntitySchema.array().max(FILE_MAX_LENGTH).default([]),
+  files: createUniqueArraySchema(fileEntitySchema, "id").max(FILE_MAX_LENGTH).default([]),
   isEdited: z.literal(true).optional(),
   isForward: z.literal(true).optional(),
   isPinned: z.literal(true).optional(),
-  mentions: selectUserSchema.shape.id.array().max(MENTION_MAX_LENGTH).default([]),
-  message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
+  mentions: createUniqueArraySchema(selectUserSchema.shape.id).max(MENTION_MAX_LENGTH).default([]),
+  message: z.string().transform(sanitizeMessageHtml).pipe(z.string().max(MESSAGE_MAX_LENGTH)).default(""),
   replyRowKey: z.string().optional(),
   type: standardMessageTypeSchema.default(MessageType.Message),
-  userId: selectUserSchema.shape.id,
+  ...userIdSchema.shape,
 }) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>;

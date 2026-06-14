@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Room, Webhook } from "@esposter/db-schema";
+import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface ListItemProps {
-  roomId: Room["id"];
-  webhook: Webhook;
+  roomId: RoomInMessage["id"];
+  webhook: WebhookInMessage;
 }
 
 const { roomId, webhook } = defineProps<ListItemProps>();
@@ -40,7 +40,7 @@ const source = computed(() => `${runtimeConfig.public.baseUrl}/api/webhooks/${we
   </v-list-item>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 :deep(.v-list-item__content) {
   overflow: visible;
 }

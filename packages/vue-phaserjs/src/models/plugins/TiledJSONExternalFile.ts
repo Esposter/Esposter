@@ -3,7 +3,7 @@ import type { TMXEmbeddedTilesetNode, TMXEmbeddedTilesetParsed, TMXExternalTiles
 import type { Types } from "phaser";
 
 import { TilesetFile } from "@/models/plugins/TilesetFile";
-import { ID_SEPARATOR, InvalidOperationError, isPlainObject, NotFoundError, Operation } from "@esposter/shared";
+import { checkIsPlainObject, ID_SEPARATOR, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { parseTileset, parseXmlString } from "parse-tmx";
 import { Loader, Tilemaps, Utils } from "phaser";
 
@@ -23,7 +23,7 @@ export class TiledJSONExternalFile extends MultiFile {
     tilemapXhrSettings?: Types.Loader.XHRSettingsObject,
     tilesetXhrSettings?: Types.Loader.XHRSettingsObject,
   ) {
-    if (isPlainObject(key)) {
+    if (checkIsPlainObject(key)) {
       const configuration = key;
       key = GetFastValue(configuration, "key") as string;
       tilemapURL = GetFastValue(configuration, "url");
@@ -122,8 +122,7 @@ export class TiledJSONExternalFile extends MultiFile {
       this.addToMultiFile(tilesetFile);
       loader.addFile(tilesetFile);
     }
-
-    //  Reset the loader settings
+    // Reset the loader settings.
     loader.setBaseURL(currentBaseURL);
     loader.setPath(currentPath);
     loader.setPrefix(currentPrefix);

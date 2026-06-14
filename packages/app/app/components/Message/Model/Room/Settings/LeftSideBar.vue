@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { SettingsType } from "@/models/message/room/SettingsType";
-import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
 import { useRoleStore } from "@/store/message/room/role";
 
 interface LeftSideBarProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { roomId } = defineProps<LeftSideBarProps>();

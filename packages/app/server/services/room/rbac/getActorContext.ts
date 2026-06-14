@@ -9,7 +9,7 @@ export const getActorContext = async (
   roomId: string,
 ): Promise<ActorContext> => {
   const [room, actorTopPosition] = await Promise.all([
-    db.query.rooms.findFirst({ columns: { userId: true }, where: (rooms, { eq }) => eq(rooms.id, roomId) }),
+    db.query.roomsInMessage.findFirst({ columns: { userId: true }, where: { id: { eq: roomId } } }),
     getTopRolePosition(db, actorUserId, roomId),
   ]);
   return { actorTopPosition, isOwner: room?.userId === actorUserId };

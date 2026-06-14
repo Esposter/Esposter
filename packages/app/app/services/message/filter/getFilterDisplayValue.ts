@@ -2,7 +2,7 @@
 import type { Filter } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
-import { useMemberStore } from "@/store/message/user/member";
+import { useUserStore } from "@/store/message/user";
 import { FilterType, serializeValue } from "@esposter/db-schema";
 import { exhaustiveGuard, InvalidOperationError, Operation, uncapitalize } from "@esposter/shared";
 
@@ -15,9 +15,9 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
     case FilterType.Mentions: {
       if (typeof value !== "string")
         throw new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value));
-      const memberStore = useMemberStore();
-      const { memberMap } = storeToRefs(memberStore);
-      const member = memberMap.value.get(value);
+      const userStore = useUserStore();
+      const { userMap } = storeToRefs(userStore);
+      const member = userMap.value.get(value);
       return `${displayType} ${member?.name ?? value}`;
     }
     case FilterType.In: {

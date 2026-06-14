@@ -1,6 +1,6 @@
 {
   "name": "@esposter/azure-functions",
-  "version": "2.21.0",
+  "version": "2.28.0",
   "private": true,
   "description": "A library that contains webhook functionality.",
   "keywords": [
@@ -25,11 +25,13 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "coverage": "vitest run --coverage",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
+    "test": "vitest",
     "typecheck": "tsgo"
   },
   "dependencies": {
@@ -38,18 +40,26 @@
     "@azure/functions": "catalog:",
     "@azure/identity": "catalog:",
     "@azure/storage-blob": "catalog:",
+    "@azure/storage-queue": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "catalog:",
     "node-html-parser": "catalog:",
     "postgres": "catalog:",
     "web-push": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/web-push": "catalog:"
+    "@esposter/configuration": "workspace:*",
+    "@esposter/db-mock": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/web-push": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "azure-mock": "workspace:*",
+    "ctix": "catalog:",
+    "rolldown": "catalog:",
+    "vitest": "catalog:"
   }
 }

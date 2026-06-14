@@ -1,7 +1,7 @@
 import type { Survey } from "@esposter/db-schema";
 import type { SurveyCreatorModel } from "survey-creator-core";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { Action, ComputedUpdater } from "survey-core";
 
 export const getActions = (

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
+import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { useDialogStore } from "@/store/message/room/dialog";
@@ -24,7 +24,7 @@ const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
     <template v-else>
       <span text-gray> removed the custom room name. </span>
     </template>
-    <span class="text-info" cursor-pointer hover:underline @click="isEditRoomDialogOpen = true">Edit Room</span>
+    <span text-info cursor-pointer hover:underline @click="isEditRoomDialogOpen = true">Edit Room</span>
     &nbsp;
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     <MessageModelMessageEmojiList :is-preview :message />

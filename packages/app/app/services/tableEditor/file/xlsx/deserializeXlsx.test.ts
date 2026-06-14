@@ -12,19 +12,19 @@ import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
+  columns,
+  metadata: { dataSourceType: DataSourceType.Xlsx, importedAt: new Date(0), name: "", size: 0 },
+  rows,
+  statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
+});
+
+const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
+
+const createRow = (data: Record<string, number>): Row => new Row({ data });
+
 describe(deserializeXlsx, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Xlsx].mimeType;
-
-  const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
-    columns,
-    metadata: { dataSourceType: DataSourceType.Xlsx, importedAt: new Date(0), name: "", size: 0 },
-    rows,
-    statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
-  });
-
-  const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
-
-  const createRow = (data: Record<string, number>): Row => new Row({ data });
 
   const createXlsxFile = async (dataSource: DataSource, name = "test.xlsx") => {
     const blob = await serializeXlsx(dataSource, new XlsxDataSourceItem(), MIME_TYPE);

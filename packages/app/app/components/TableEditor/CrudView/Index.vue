@@ -19,7 +19,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Item>) => editItem({ 
 </script>
 
 <template>
-  <v-container h-full flex flex-col fluid>
+  <v-container fluid flex flex-col h-full>
     <StyledDataTable
       flex
       flex-1
@@ -44,7 +44,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Item>) => editItem({ 
         :key="richTextColumnKey"
         #[`item.${richTextColumnKey}`]="{ item }"
       >
-        <div v-html="item[richTextColumnKey]" />
+        <div class="rich-text-content" v-html="item[richTextColumnKey]" />
       </template>
     </StyledDataTable>
   </v-container>

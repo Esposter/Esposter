@@ -1,6 +1,11 @@
 import { Environment } from "#shared/models/environment/Environment";
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
+import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, beforeAll, vi } from "vitest";
+
+vi.mock("@@/server/composables/azure/container/useContainerBaseUrl", () => ({
+  useContainerBaseUrl: () => MOCK_BLOB_BASE_URL,
+}));
 
 vi.mock("nitropack/runtime", () => ({
   useRuntimeConfig: () => ({
@@ -8,7 +13,7 @@ vi.mock("nitropack/runtime", () => ({
       appEnv: Environment.development,
       azure: {
         container: {
-          baseUrl: "https://mockaccount.blob.core.windows.net",
+          baseUrl: MOCK_BLOB_BASE_URL,
         },
       },
     },
@@ -21,6 +26,11 @@ beforeAll(() => {
     url: "http://localhost:3000",
     width: 1920,
   });
+  if (!document.getElementById("__nuxt")) {
+    const nuxtElement = document.createElement("div");
+    nuxtElement.id = "__nuxt";
+    document.body.appendChild(nuxtElement);
+  }
 });
 
 afterAll(async () => {

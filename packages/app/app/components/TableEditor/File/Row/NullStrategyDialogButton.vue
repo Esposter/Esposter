@@ -10,7 +10,7 @@ const nullStrategy = useNullStrategy();
     <template #activator="{ props: menuProps }">
       <v-tooltip text="Null Strategy">
         <template #activator="{ props: tooltipProps }">
-          <v-btn m-0 icon="mdi-null" size="small" tile :="mergeProps(menuProps, tooltipProps)" />
+          <v-btn icon="mdi-null" size="small" tile m-0 :="mergeProps(menuProps, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>

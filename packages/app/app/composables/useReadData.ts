@@ -14,7 +14,6 @@ export const useReadData = async (unauthedReader: () => void, authedReader: () =
   );
 
   if (session.value) await authedReader();
-  // We'll assume that not being authenticated means that we will read from local storage for data
-  // Which needs to be done onMounted
+  // Unauthenticated means reading data from local storage, which must happen onMounted.
   else onMounted(unauthedReader, currentInstance);
 };

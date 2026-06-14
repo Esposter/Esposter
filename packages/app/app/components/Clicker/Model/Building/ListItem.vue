@@ -42,10 +42,10 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
       <div
         v-for="(buildingStatHtml, index) of buildingStatsHtml"
         :key="index"
-        rd
-        mt-1
         mx-8
+        mt-1
         px-1
+        rd
         v-html="buildingStatHtml"
       />
     </template>
@@ -64,7 +64,7 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
   </ClickerModelItemMenu>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .list-item:last-of-type {
   margin-bottom: 0.25rem;
 }

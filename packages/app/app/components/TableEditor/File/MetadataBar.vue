@@ -2,7 +2,7 @@
 import type { Metadata } from "#shared/models/tableEditor/file/datasource/Metadata";
 
 import { dayjs } from "#shared/services/dayjs";
-import { formatSize } from "@/util/formatSize";
+import { formatSize } from "@/util/text/formatSize";
 
 interface MetadataBarProps {
   metadata: Metadata;

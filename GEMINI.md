@@ -4,7 +4,7 @@
 
 **Project**: Esposter
 **Description**: A comprehensive social platform monorepo ("A nice and casual place for posting random things").
-**Architecture**: Monorepo using pnpm workspaces and Lerna for package management.
+**Architecture**: Monorepo using pnpm workspaces. See `architecture/monorepo-tooling.md` for workspace orchestration, publishing, installs, and CI runner policy.
 **Language**: TypeScript (Strict Mode)
 **Runtime**: Node.js (see `engines.node` in `package.json`)
 **Package Manager**: pnpm (see `packageManager` in `package.json`)
@@ -76,8 +76,7 @@ _Note: Migrations are output to `../app/server/db/migrations`._
 - **Build All**: `pnpm build` (Builds packages -> Docs -> App).
 - **Barrel Files**: Uses `ctix` to automatically generate `index.ts` exports.
   - Run `pnpm export:gen` in specific packages to regenerate exports.
-- **Lerna**: Used for orchestrating scripts across packages.
-  - Example: `lerna run test --scope=@esposter/shared`
+- **Monorepo tooling**: See `architecture/monorepo-tooling.md` for pnpm recursive commands, package script orchestration, and publishing boundaries.
 
 ### Environment Configuration
 

@@ -1,6 +1,6 @@
 {
   "name": "vue-phaserjs",
-  "version": "2.21.0",
+  "version": "2.28.0",
   "description": "A component library to integrate Phaser Framework with Vue.",
   "keywords": [
     "phaser",
@@ -35,13 +35,22 @@
     "test": "vitest",
     "typecheck": "vue-tsc"
   },
-  "dependencies": {
-    "@esposter/shared": "workspace:*",
-    "parse-tmx": "workspace:*"
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "ctix": "catalog:",
+    "type-fest": "catalog:",
+    "unplugin-auto-import": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "vue-tsc": "catalog:"
   },
   "peerDependencies": {
+    "@esposter/shared": "workspace:*",
+    "parse-tmx": "workspace:*",
     "phaser": "catalog:",
-    "phaser3-rex-plugins": "catalog:",
+    "phaser4-rex-plugins": "catalog:",
     "pinia": "catalog:",
     "vue": "catalog:"
   }
