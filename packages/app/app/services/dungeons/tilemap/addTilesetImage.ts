@@ -25,10 +25,8 @@ export const addTilesetImage = (tilemap: Tilemaps.Tilemap, tilemapKey: TilemapKe
 };
 
 const baseAddTilesetImage = (tilemap: Tilemaps.Tilemap, tilesetKey: TilesetKey) => {
-  // Phaser warns if we specify tileset keys that are not required by the tilemap,
-  // Which is ok because we always create all the tilesets.
-  // And store them in the cache for convenience in the development workflow
-  // We will also enforce that the tileset name should exactly match the tileset key
+  // Phaser warns on tileset keys the tilemap doesn't require, which is fine since we always create
+  // All of them; the tileset name must exactly match the tileset key.
   const newTileset = ignoreWarn(() => tilemap.addTilesetImage(tilesetKey));
   if (!newTileset) return null;
   return newTileset;

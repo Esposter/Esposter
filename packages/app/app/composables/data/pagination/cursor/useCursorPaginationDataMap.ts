@@ -1,6 +1,5 @@
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-// We want to handle the case where we have a Record<id, CursorPaginationData> scenario
-// Where we store multiple different lists for different ids, e.g. comments for post ids
+// Keep a Record<id, CursorPaginationData> so we can store separate lists per id (e.g. comments per post).
 export const useCursorPaginationDataMap = <TItem>(
   currentId: MaybeRefOrGetter<string>,
 ): ReturnType<typeof useCursorPaginationOperationData<TItem>> => {

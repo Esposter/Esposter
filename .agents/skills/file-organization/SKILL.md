@@ -12,6 +12,7 @@ description: Esposter file and folder organisation — one export per file, no e
   - `@@/` — project root (`packages/app/`); `server/` and other root-level paths.
   - `@/` — app source dir (`packages/app/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
   - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
+- **Blank lines between imports** — a single blank line separates the `import type` group from the value `import` group. Never insert blank lines between value imports (or within the type group); all value imports stay contiguous regardless of source (`#shared`, `@vueuse/*`, `@/`).
 
 ## Files and Exports
 
@@ -99,7 +100,15 @@ Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfi
   const bar = parseLockfile(yaml);
   ```
 
+  - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. `vitest.configs.all` (enabled in the eslint vitest plugin config) turns on the `vitest/padding-around-*` rules, which _require_ a blank line around `describe`/`test` blocks, hooks (`beforeEach`/`afterEach`), and expect groups. A leading comment on such a block sits after that mandatory blank line, so keep it. Still tighten the comment text itself.
+
 - **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line, but keep a numbered or bulleted list (one item per `//` line) when enumerating distinct items rather than cramming them into one sentence — the list is more scannable; just tighten each item's wording. If an example helps, show only the minimal fragment that illustrates the point. Applies to `//`, `/* */`, and Vue `<!-- -->` comments alike.
+
+- **Interfaces/types at the top** — within a `.vue` `<script setup>` or `.ts` module, group all local `interface`/`type` declarations together at the top of the block (after imports), before the runtime `const`/logic. Don't interleave a stray interface between logic blocks.
+
+- **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Don't strip it out when genericising; just trim it to the minimal identifying fragment and drop surrounding example values/arguments.
+
+- **Don't fight the comment-capitalization hook** — a hook capitalizes the first letter of every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine; it doesn't hurt readability. Write comments naturally and don't reword just to dodge the capitalization (the only thing to avoid is starting a wrapped line with a case-sensitive code identifier the hook would corrupt — reword those).
 
 ## Creating a New Package
 

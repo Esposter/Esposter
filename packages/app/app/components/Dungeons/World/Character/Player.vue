@@ -63,8 +63,8 @@ onShutdown((scene) => {
 </script>
 
 <template>
-  <!-- The character is keyed to the tilemap so grid engine knows to re-render the player
-    and regenerate the player grid metadata everytime the tilemap changes -->
+  <!-- Keyed to the tilemap so grid engine re-renders the player and regenerates its grid metadata
+    whenever the tilemap changes. -->
   <DungeonsWorldCharacter
     :id="CharacterId.Player"
     :key="tilemapKey"

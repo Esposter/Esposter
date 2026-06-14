@@ -271,6 +271,20 @@ const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSourc
 
 Always use `toRawDeep` from `@esposter/shared` instead of Vue's `toRaw` — `toRaw` only unwraps one level; `toRawDeep` recursively unwraps all nested reactive proxies. Critical when passing reactive data to APIs requiring plain objects (IndexedDB `store.put()`, `structuredClone`, postMessage).
 
+## Route-Synced Tabs
+
+Sync `v-tabs` state to the URL instead of a plain `ref`, so the active tab survives a refresh and is linkable. Use `useEnumRouteQuery` (`app/composables/shared/route/useEnumRouteQuery.ts`, auto-imported) with the shared `TAB_QUERY_PARAMETER_KEY` key and the enum's value `Set`. It validates against the enum, falling back to the default when the param is missing **or** invalid — raw `@vueuse/router` `useRouteQuery` only falls back when the param is absent, so a hand-edited `?tab=garbage` would otherwise leave no tab active. It also infers the enum type from its arguments, so no generic argument is needed.
+
+```typescript
+import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
+import { DraftsSentTab, DraftsSentTabs } from "@/models/message/draftsSent/DraftsSentTab";
+
+const tab = ref(DraftsSentTab.Drafts); // WRONG: loses the tab on refresh
+const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsSentTabs, DraftsSentTab.Drafts); // CORRECT: syncs to ?tab=Drafts
+```
+
+Each enum exposes a value `Set` alongside it (`DraftsSentTabs`, `PermissionsTabs`, `AchievementStatuses`). Put `useEnumRouteQuery` where the `v-tabs` `v-model` originates. When a child renders the tabs via `defineModel`, keep it in the parent and pass it down as `v-model`.
+
 ## Resource Management
 
 - Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.

@@ -7,13 +7,11 @@ import type { SetOptional } from "type-fest";
 
 export interface MessageEvents {
   createMessage: [[StandardMessageEntity[], Pick<Device, "sessionId"> & { isSendToSelf?: true }]];
-  // We'll allow typing events to also be propagated to separate devices of the same account
-  // Why? Because we can. (also it's better UX I suppose)
+  // Typing events also propagate to the account's other devices for better UX.
   createTyping: [CreateTypingInput & Pick<Device, "sessionId">];
   deleteMessage: [DeleteMessageInput];
-  // UpdatedAt also gets implicitly updated, but for the sake of my sanity in not wanting to do any more type-massaging
-  // And the fact that we never explicitly use updatedAt anyways (we always update all the properties via Object.assign),
-  // We don't need to strictly declare the type c:
+  // UpdatedAt is implicitly updated too, but we never read it (all properties are set via Object.assign),
+  // So we don't declare it in the type.
   updateMessage: [
     SetOptional<
       Pick<StandardMessageEntity, "files" | "isEdited" | "isPinned" | "linkPreviewResponse"> & UpdateMessageInput,

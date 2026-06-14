@@ -46,10 +46,7 @@ export const useDragAndDrop = () => {
   const createNode = ({ x, y }: XYPosition) => {
     const position = screenToFlowCoordinate({ x, y });
     const id = crypto.randomUUID();
-    /**
-     * Align node position after drop, so it's centered to the mouse
-     * We can hook into events even in a callback, and we can remove the event listener after it's been called.
-     */
+    // Centre the dropped node on the mouse once initialized, then remove the listener.
     const { off } = onNodesInitialized(() => {
       updateNode(id, ({ dimensions, position }) => ({
         position: {

@@ -29,7 +29,7 @@ describe("friend", () => {
     await mockContext.db.delete(friendRequests);
   });
 
-  // Helper: establish an accepted friendship between default user and a new user
+  // Helper: establish an accepted friendship between the default user and a new user.
   const setupFriendship = async () => {
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);

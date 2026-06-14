@@ -45,8 +45,7 @@ export const SwitchAttempt: State<StateName> = {
       "switchMonster",
       getSynchronizedFunction(async (monster) => {
         const isActiveMonsterFainted = checkIsMonsterFainted(activeMonster.value);
-        // If our active monster has fainted, then the death tween would have already been played
-        // So we don't have to play it again
+        // A fainted active monster has already played its death tween, so don't replay it.
         if (isActiveMonsterFainted) {
           switchActiveMonster(monster.id);
           await battleStateMachine.setState(StateName.BringOutMonster);

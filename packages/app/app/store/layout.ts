@@ -3,11 +3,8 @@ export const useLayoutStore = defineStore("layout", () => {
   const isDesktop = computed(() => !mobile.value);
   const isLeftDrawerOpen = ref(isDesktop.value);
   const isRightDrawerOpen = ref(isDesktop.value);
-  // These variables are only affected by screen resizing
-  // They will be read-only to outer components deeper in the layout
-  // Because we want the decision of showing the outer components (i.e. buttons that open the drawers)
-  // To only be dependent on screen-resizing for better UI/UX and not disappear and shift the UI
-  // Suddenly whenever we open and close the drawer
+  // Resize-only refs, read-only to outer components: whether to show the drawer-toggle buttons
+  // Depends solely on screen size, so the UI doesn't shift when a drawer opens or closes.
   const isLeftDrawerOpenAuto = ref(isDesktop.value);
   const isRightDrawerOpenAuto = ref(isDesktop.value);
   return {
