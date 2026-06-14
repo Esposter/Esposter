@@ -7,7 +7,7 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 
 ## SFC Structure & Formatting
 
-- `<script setup lang="ts">` at the top of every SFC; `lang="scss"` in `<style>` blocks.
+- `<script setup lang="ts">` at the top of every SFC. Prefer attributify over `<style>` blocks; when a block is genuinely needed use `<style scoped>` and only add `lang="scss"` for Sass features (nesting, `&`, `//` comments, `@mixin`/`@include`). See the `styling` skill.
 - Self-closing tags for empty components/elements: `<Component />`.
 - No blank lines within templates.
 - No blank lines between consecutive `const` assignments — group them tightly.

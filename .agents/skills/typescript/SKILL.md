@@ -277,7 +277,7 @@ Prefer `undefined` for all absent/optional values in app-owned code. `null` is o
 
 - **Drizzle ORM** — nullable columns infer as `T | null`; convert via `nullToUndefined` from `@esposter/shared` before values enter app code.
 - **Azure SDK / EventGrid** — `SerializableValue`, EventGrid data shapes; keep raw types, convert on ingress.
-- **Vuetify** — a few Vuetify 3 props are typed `T | null`; use `null` only where the prop type requires it, with a comment explaining why.
+- **Vuetify** — a few Vuetify props are typed `T | null`; use `null` only where the prop type requires it, with a comment explaining why.
 
 When checking `null` at a boundary, use `=== null` (strict equality).
 

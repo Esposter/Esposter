@@ -8,16 +8,19 @@ const { data: session } = await authClient.useSession(useFetch);
 const statusStore = useStatusStore();
 const { getStatusEnum, getStatusMessage } = statusStore;
 const callStore = useCallStore();
-const { callRoomId, isInCall } = storeToRefs(callStore);
+const { activeCallSessionId, callRoomId, isInCall } = storeToRefs(callStore);
 const callRoomName = useRoomName(callRoomId);
+const callRoute = computed(() =>
+  callRoomId.value ? RoutePath.Messages(callRoomId.value) : RoutePath.Calls(activeCallSessionId.value),
+);
 </script>
 
 <template>
   <div v-if="session" px-2 pb-2>
     <TransitionFade>
       <v-list-item
-        v-if="isInCall && callRoomId"
-        :to="RoutePath.Messages(callRoomId)"
+        v-if="isInCall"
+        :to="callRoute"
         prepend-icon="mdi-phone"
         density="compact"
         base-color="success"
@@ -25,7 +28,7 @@ const callRoomName = useRoomName(callRoomId);
         rd
       >
         <template #title>
-          <span text-body-small>In a call · {{ callRoomName }}</span>
+          <span text-body-small>In a call{{ callRoomName ? ` · ${callRoomName}` : "" }}</span>
         </template>
       </v-list-item>
     </TransitionFade>

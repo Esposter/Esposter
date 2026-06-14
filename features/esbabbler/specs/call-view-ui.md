@@ -163,6 +163,8 @@ onUnmounted in useCallIdSubscribables
 
 This differs intentionally from room navigation cleanup. `/calls/[id]` is a dedicated call surface, so leaving the page means leaving the call. A normal room route change is only an observer swap and must not call `store.leaveCall()`.
 
+> Exception — Picture-in-Picture pop-out keeps a standalone call alive while the user navigates away: when `isPoppedOut` is set, this unmount path skips `store.leaveCall()`. See [`specs/picture-in-picture.md`](picture-in-picture.md).
+
 ---
 
 ## Differences from Room Call

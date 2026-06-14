@@ -2,6 +2,7 @@ import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSu
 
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { useMediaStore } from "@/store/message/room/call/media";
 import { getResultAsync } from "@esposter/shared";
 
 export const useCallIdSubscribables = async (callId: string) => {
@@ -16,6 +17,8 @@ export const useCallIdSubscribables = async (callId: string) => {
   const knockerStore = useKnockerStore();
   const { knockingCallSessionId } = storeToRefs(knockerStore);
   const { cancelKnock } = knockerStore;
+  const mediaStore = useMediaStore();
+  const { isPoppedOut } = storeToRefs(mediaStore);
   const callSession = await getResultAsync(() => $trpc.callSession.readCallSession.query({ id: callId })).match(
     (result) => result,
     () => undefined,
@@ -26,6 +29,8 @@ export const useCallIdSubscribables = async (callId: string) => {
   useCallKnockingSubscribables(callId, onlineSubscribableContext);
 
   onUnmounted(async () => {
+    // Popping out keeps a standalone call alive while the user navigates away; the PiP window owns the call surface.
+    if (isPoppedOut.value) return;
     if (!activeCallSessionId.value && knockingCallSessionId.value === callId) cancelKnock();
     await leaveCall();
   }, onlineSubscribableContext.instance);
