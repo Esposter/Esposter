@@ -6,7 +6,7 @@ const { isPoppedOut } = storeToRefs(mediaStore);
 </script>
 
 <template>
-  <div flex flex-1 flex-col gap-y-4 items-center justify-center text-center p-8>
+  <div p-8 text-center flex flex-1 flex-col gap-y-4 items-center justify-center>
     <v-icon icon="mdi-picture-in-picture-bottom-right" size="64" text-primary />
     <div flex flex-col gap-y-1>
       <span text-h6>Your call is in a mini player</span>

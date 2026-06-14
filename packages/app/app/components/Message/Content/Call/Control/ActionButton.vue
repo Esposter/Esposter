@@ -10,7 +10,7 @@ const { color, icon, tooltip, variant } = defineProps<CallActionButtonProps>();
 const emit = defineEmits<{ click: [] }>();
 const wrapper = useTemplateRef("wrapper");
 // Vuetify positions the tooltip against the main window, so inside a Document PiP window attach it
-// to this wrapper and let the .call-pip-tooltip-wrapper overrides anchor it to the button via CSS.
+// To this wrapper and let the .call-pip-tooltip-wrapper overrides anchor it to the button via CSS.
 const attach = ref<HTMLElement>();
 
 onMounted(() => {
@@ -19,7 +19,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="wrapper" relative flex class="call-pip-tooltip-wrapper">
+  <div ref="wrapper" flex relative class="call-pip-tooltip-wrapper">
     <v-tooltip :text="tooltip" location="top" :attach>
       <template #activator="{ props }">
         <v-btn :="props" :icon :color size="default" :variant :ripple="false" @click="emit('click')" />
@@ -35,6 +35,7 @@ onMounted(() => {
   position: absolute !important;
   inset: 0 !important;
 }
+
 .call-pip-tooltip-wrapper .v-overlay__content {
   position: absolute !important;
   inset: auto auto calc(100% + 4px) 50% !important;

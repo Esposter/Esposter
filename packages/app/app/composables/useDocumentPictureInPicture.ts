@@ -34,9 +34,9 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
     for (const styleSheet of document.styleSheets) cloneStyleSheet(target, styleSheet);
     for (const styleSheet of document.adoptedStyleSheets) cloneStyleSheet(target, styleSheet);
     // Vuetify scopes its theme variables (--v-theme-*) to the .v-theme--* class, so the PiP body
-    // must carry it for bg-background / theme colours to resolve. Only the theme class is copied —
-    // not the full .v-application className — to avoid pulling in its flex layout CSS.
-    const themeClass = Array.from(document.querySelector(".v-application")?.classList ?? []).find((className) =>
+    // Must carry it for bg-background / theme colours to resolve. Only the theme class is copied —
+    // Not the full .v-application className — to avoid pulling in its flex layout CSS.
+    const themeClass = [...(document.querySelector(".v-application")?.classList ?? [])].find((className) =>
       className.startsWith("v-theme--"),
     );
     if (themeClass) target.document.body.classList.add(themeClass);

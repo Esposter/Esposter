@@ -17,7 +17,7 @@ watch(isPoppedOut, async (newIsPoppedOut) => {
   else close();
 });
 // Window closed (native "Back to tab", expand button, or leaveCall clearing isPoppedOut): sync
-// intent and, if still in the call, surface it on the main tab so a docked call is never invisible.
+// Intent and, if still in the call, surface it on the main tab so a docked call is never invisible.
 watch(pipWindow, async (newPipWindow) => {
   if (newPipWindow) return;
   const wasInCall = isInCall.value;

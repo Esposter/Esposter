@@ -11,11 +11,11 @@ Rule format is `Tool` or `Tool(specifier)`. Evaluation order is **deny → ask �
 
 **Only the trailing `space + *` form works in this harness.** The `:*` shorthand and the no-space `*` form do **not** match here — verified empirically (`pnpm format*` and `pnpm format:*` both kept prompting; `pnpm format *` is what finally allowed it).
 
-| Pattern             | Meaning                                             | Matches                       | Does NOT match                                |
-| ------------------- | --------------------------------------------------- | ----------------------------- | --------------------------------------------- |
-| `Bash(pnpm lint *)` | prefix + **word boundary** (space or end-of-string) | `pnpm lint`, `pnpm lint --fix` | `pnpm lint:fix`, `pnpm linter`                |
-| `Bash(pnpm lint:*)` | **does NOT work** — never matches in this harness    | —                             | everything (including `pnpm lint`)            |
-| `Bash(pnpm lint*)`  | **does NOT work** — never matches in this harness    | —                             | everything (including `pnpm lint`)            |
+| Pattern             | Meaning                                             | Matches                        | Does NOT match                     |
+| ------------------- | --------------------------------------------------- | ------------------------------ | ---------------------------------- |
+| `Bash(pnpm lint *)` | prefix + **word boundary** (space or end-of-string) | `pnpm lint`, `pnpm lint --fix` | `pnpm lint:fix`, `pnpm linter`     |
+| `Bash(pnpm lint:*)` | **does NOT work** — never matches in this harness   | —                              | everything (including `pnpm lint`) |
+| `Bash(pnpm lint*)`  | **does NOT work** — never matches in this harness   | —                              | everything (including `pnpm lint`) |
 
 Critical rules:
 
