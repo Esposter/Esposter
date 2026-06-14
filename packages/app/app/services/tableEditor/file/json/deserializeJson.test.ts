@@ -3,7 +3,7 @@ import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataS
 import { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { deserializeJson } from "@/services/tableEditor/file/json/deserializeJson";
-import { InvalidOperationError, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeJson, () => {
@@ -47,6 +47,15 @@ describe(deserializeJson, () => {
 
     const file = createFile(JSON.stringify({ a: 0 }));
 
-    await expect(deserializeJson(file, new JsonDataSourceItem())).rejects.toBeInstanceOf(InvalidOperationError);
+    await expect(deserializeJson(file, new JsonDataSourceItem())).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [InvalidOperationError: Invalid operation: Read, name: test.json, [
+        {
+          "expected": "array",
+          "code": "invalid_type",
+          "path": [],
+          "message": "Invalid input: expected array, received object"
+        }
+      ]]
+    `);
   });
 });

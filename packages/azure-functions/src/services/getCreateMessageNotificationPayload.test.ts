@@ -6,6 +6,8 @@ import { assert, describe, expect, test } from "vitest";
 describe(getCreateMessageNotificationPayload, () => {
   const context = new InvocationContext();
   const url = "url";
+  const icon = "icon";
+  const title = "title";
 
   test("returns undefined when message has no text content", () => {
     expect.hasAssertions();
@@ -26,13 +28,17 @@ describe(getCreateMessageNotificationPayload, () => {
   test("extracts text from paragraph and serializes payload", () => {
     expect.hasAssertions();
 
-    const result = getCreateMessageNotificationPayload(context, "<p>hello world</p>", {
-      icon: "icon.png",
-      title: "Room",
-      url,
-    });
+    const result = getCreateMessageNotificationPayload(context, "<p>a</p>", { icon, title, url });
 
-    expect(result).toBe(JSON.stringify({ body: "hello world", data: { url }, icon: "icon.png", title: "Room" }));
+    expect(result).toBe(JSON.stringify({ body: "a", data: { url }, icon, title }));
+  });
+
+  test("extracts text from plain-text webhook content without a paragraph wrapper", () => {
+    expect.hasAssertions();
+
+    const result = getCreateMessageNotificationPayload(context, "a", { icon, title, url });
+
+    expect(result).toBe(JSON.stringify({ body: "a", data: { url }, icon, title }));
   });
 
   test(`truncates body to ${PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH} characters`, () => {

@@ -103,7 +103,7 @@ describe(coerceValue, () => {
   test(`plain string stays as ${ColumnType.String}`, () => {
     expect.hasAssertions();
 
-    expect(coerceValue("hello", ColumnType.String)).toBe("hello");
+    expect(coerceValue("a", ColumnType.String)).toBe("a");
   });
 
   test("whitespace is trimmed before coercion", () => {

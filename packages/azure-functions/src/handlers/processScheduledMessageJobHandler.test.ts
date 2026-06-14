@@ -8,13 +8,14 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   AzureQueue,
   AzureTable,
+  DatabaseEntityType,
   roomsInMessage,
   scheduledMessageJobsInMessage,
   ScheduledMessageJobType,
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockQueueDatabase, MockTableDatabase } from "azure-mock";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -154,8 +155,8 @@ describe(processScheduledMessageJobHandler, () => {
 
     const job = await insertJob(scheduledMessagePayload, { roomId: otherRoomId });
 
-    await expect(processScheduledMessageJobHandler({ id: job.id }, context)).rejects.toBeInstanceOf(
-      InvalidOperationError,
+    await expect(processScheduledMessageJobHandler({ id: job.id }, context)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, otherRoomId).message}]`,
     );
 
     const failedJob = await getJob(job.id);
