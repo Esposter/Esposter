@@ -60,7 +60,7 @@ catalog:
   "@pulumi/azure-native": ^3.19.0
   "@pulumi/pulumi": ^3.246.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^1.8.4
+  "@takumi-rs/core": ^1.8.5
   "@tiptap/core": ^3.26.1
   "@tiptap/extension-code-block-lowlight": ^3.26.1
   "@tiptap/extension-file-handler": ^3.26.1
@@ -231,7 +231,7 @@ catalog:
   vue-tsc: ^3.3.5
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.1.1
-  vuetify-nuxt-module: ^1.0.0-beta.8
+  vuetify-nuxt-module: ^1.0.0-beta.9
   web-push: ^3.6.7
   worker-timers: ^8.0.31
   write-excel-file: ^4.1.1
@@ -244,7 +244,7 @@ catalogMode: strict
 cleanupUnusedCatalogs: true
 
 configDependencies:
-  "@pnpm/pacquet": ^0.11.5
+  "@pnpm/pacquet": ^0.11.6
 
 minimumReleaseAge: 0
 
