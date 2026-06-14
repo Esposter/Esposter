@@ -13,8 +13,13 @@ const callRoute = computed(() =>
 );
 
 watch(isPoppedOut, async (newIsPoppedOut) => {
-  if (newIsPoppedOut) await open();
-  else close();
+  if (!newIsPoppedOut) {
+    close();
+    return;
+  }
+  await open();
+  // isPoppedOut flipped back to false while requestWindow was pending: undo the stale open.
+  if (!isPoppedOut.value) close();
 });
 // Window closed (native "Back to tab", expand button, or leaveCall clearing isPoppedOut): sync
 // Intent and, if still in the call, surface it on the main tab so a docked call is never invisible.
