@@ -2,8 +2,7 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
-import { useRouteQuery } from "@vueuse/router";
-import { PermissionsTab } from "@/models/message/room/PermissionsTab";
+import { PermissionsTab, PermissionsTabs } from "@/models/message/room/PermissionsTab";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 
@@ -21,7 +20,7 @@ const selectedMember = computed(() =>
   selectedMemberId.value ? (members.value.find(({ id }) => id === selectedMemberId.value) ?? null) : null,
 );
 const roles = computed(() => getRoles(room.id).toSorted((a, b) => (a.isEveryone ? -1 : b.isEveryone ? 1 : 0)));
-const tab = useRouteQuery<PermissionsTab>(TAB_QUERY_PARAMETER_KEY, PermissionsTab.Roles);
+const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, PermissionsTabs, PermissionsTab.Roles);
 </script>
 
 <template>

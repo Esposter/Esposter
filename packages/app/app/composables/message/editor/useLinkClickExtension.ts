@@ -1,4 +1,4 @@
-import type { CSSProperties, Ref } from "vue";
+import type { CSSProperties } from "vue";
 
 import { Extension } from "@tiptap/vue-3";
 import { Plugin } from "prosemirror-state";

@@ -273,19 +273,17 @@ Always use `toRawDeep` from `@esposter/shared` instead of Vue's `toRaw` — `toR
 
 ## Route-Synced Tabs
 
-Sync `v-tabs` state to the URL with `useRouteQuery` from `@vueuse/router` instead of a plain `ref`, so the active tab survives a refresh and is linkable. Use the shared `TAB_QUERY_PARAMETER_KEY` constant for the key. `useRouteQuery` is not auto-imported — import it explicitly.
+Sync `v-tabs` state to the URL instead of a plain `ref`, so the active tab survives a refresh and is linkable. Use `useEnumRouteQuery` (`app/composables/shared/route/useEnumRouteQuery.ts`, auto-imported) with the shared `TAB_QUERY_PARAMETER_KEY` key and the enum's value `Set`. It validates against the enum, falling back to the default when the param is missing **or** invalid — raw `@vueuse/router` `useRouteQuery` only falls back when the param is absent, so a hand-edited `?tab=garbage` would otherwise leave no tab active. It also infers the enum type from its arguments, so no generic argument is needed.
 
 ```typescript
 import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
-import { useRouteQuery } from "@vueuse/router";
+import { DraftsSentTab, DraftsSentTabs } from "@/models/message/draftsSent/DraftsSentTab";
 
 const tab = ref(DraftsSentTab.Drafts); // WRONG: loses the tab on refresh
-const tab = useRouteQuery<DraftsSentTab>(TAB_QUERY_PARAMETER_KEY, DraftsSentTab.Drafts); // CORRECT: syncs to ?tab=Drafts
+const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsSentTabs, DraftsSentTab.Drafts); // CORRECT: syncs to ?tab=Drafts
 ```
 
-Pass the enum as an explicit type argument (`useRouteQuery<DraftsSentTab>`). Without it the ref narrows to the literal default (e.g. `DraftsSentTab.Drafts`), breaking `tab === OtherValue` comparisons — `ref()` widened this automatically, `useRouteQuery` does not.
-
-Put `useRouteQuery` where the `v-tabs` `v-model` originates. When a child renders the tabs via `defineModel`, keep `useRouteQuery` in the parent and pass it down as `v-model`.
+Each enum exposes a value `Set` alongside it (`DraftsSentTabs`, `PermissionsTabs`, `AchievementStatuses`). Put `useEnumRouteQuery` where the `v-tabs` `v-model` originates. When a child renders the tabs via `defineModel`, keep it in the parent and pass it down as `v-model`.
 
 ## Resource Management
 
