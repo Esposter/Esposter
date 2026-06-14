@@ -29,7 +29,6 @@ const cloneStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
 export const useDocumentPictureInPicture = (options: UseDocumentPictureInPictureOptions = {}) => {
   const isSupported = useSupported(() => "documentPictureInPicture" in window);
   const pipWindow = shallowRef<null | Window>(null);
-  const isActive = computed(() => Boolean(pipWindow.value));
   let styleObserver: MutationObserver | undefined;
   const bridgeStyles = (target: Window) => {
     for (const styleSheet of document.styleSheets) cloneStyleSheet(target, styleSheet);
@@ -75,5 +74,5 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
 
   tryOnScopeDispose(close);
 
-  return { close, isActive, isSupported, open, pipWindow };
+  return { close, isSupported, open, pipWindow };
 };

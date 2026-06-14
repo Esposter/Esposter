@@ -8,21 +8,36 @@ interface CallActionButtonProps {
 
 const { color, icon, tooltip, variant } = defineProps<CallActionButtonProps>();
 const emit = defineEmits<{ click: [] }>();
-const activator = useTemplateRef("activator");
-// When teleported into a Document PiP window, the tooltip overlay must attach to that document's
-// body (instead of the main overlay container) so it anchors to the button inside the PiP window.
+const wrapper = useTemplateRef("wrapper");
+// Vuetify positions the tooltip against the main window, so inside a Document PiP window attach it
+// to this wrapper and let the .call-pip-tooltip-wrapper overrides anchor it to the button via CSS.
 const attach = ref<HTMLElement>();
 
 onMounted(() => {
-  const ownerDocument = activator.value?.$el.ownerDocument;
-  if (ownerDocument && ownerDocument !== document) attach.value = ownerDocument.body;
+  if (wrapper.value && wrapper.value.ownerDocument !== document) attach.value = wrapper.value;
 });
 </script>
 
 <template>
-  <v-tooltip :text="tooltip" location="top" :attach>
-    <template #activator="{ props }">
-      <v-btn ref="activator" :="props" :icon :color size="default" :variant :ripple="false" @click="emit('click')" />
-    </template>
-  </v-tooltip>
+  <div ref="wrapper" relative flex class="call-pip-tooltip-wrapper">
+    <v-tooltip :text="tooltip" location="top" :attach>
+      <template #activator="{ props }">
+        <v-btn :="props" :icon :color size="default" :variant :ripple="false" @click="emit('click')" />
+      </template>
+    </v-tooltip>
+  </div>
 </template>
+
+<style>
+/* When attached to the wrapper (PiP window only — otherwise the overlay teleports out and these
+   selectors do not match), anchor the tooltip to the button instead of Vuetify's main-window coords. */
+.call-pip-tooltip-wrapper .v-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+}
+.call-pip-tooltip-wrapper .v-overlay__content {
+  position: absolute !important;
+  inset: auto auto calc(100% + 4px) 50% !important;
+  transform: translateX(-50%) !important;
+}
+</style>

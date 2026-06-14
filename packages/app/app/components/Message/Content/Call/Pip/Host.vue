@@ -16,17 +16,13 @@ watch(isPoppedOut, async (newIsPoppedOut) => {
   if (newIsPoppedOut) await open();
   else close();
 });
-// Window closed (native "Back to tab", expand button, or programmatic): sync intent and, if the
-// Call is still active, surface it on the main tab so a docked call is never left invisible.
+// Window closed (native "Back to tab", expand button, or leaveCall clearing isPoppedOut): sync
+// intent and, if still in the call, surface it on the main tab so a docked call is never invisible.
 watch(pipWindow, async (newPipWindow) => {
   if (newPipWindow) return;
   const wasInCall = isInCall.value;
   isPoppedOut.value = false;
   if (wasInCall) await navigateTo(callRoute.value);
-});
-// Leaving the call (intent, moderation, or session loss) must not leave an orphaned window.
-watch(isInCall, (newIsInCall) => {
-  if (!newIsInCall) isPoppedOut.value = false;
 });
 </script>
 
