@@ -11,6 +11,7 @@ const { isPoppedOut } = storeToRefs(mediaStore);
 const callRoute = computed(() =>
   callRoomId.value ? RoutePath.Messages(callRoomId.value) : RoutePath.Calls(activeCallSessionId.value),
 );
+
 watch(isPoppedOut, async (newIsPoppedOut) => {
   if (newIsPoppedOut) await open();
   else close();

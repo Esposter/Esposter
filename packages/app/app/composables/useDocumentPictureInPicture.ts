@@ -34,13 +34,19 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
   const bridgeStyles = (target: Window) => {
     for (const styleSheet of document.styleSheets) cloneStyleSheet(target, styleSheet);
     for (const styleSheet of document.adoptedStyleSheets) cloneStyleSheet(target, styleSheet);
-    // Vuetify scopes its theme variables (--v-theme-*) to the .v-theme--*/.v-application classes,
-    // So the PiP body must carry them for bg-background / theme colours to resolve.
-    const application = document.querySelector(".v-application");
-    if (application) target.document.body.className = application.className;
+    // Vuetify scopes its theme variables (--v-theme-*) to the .v-theme--* class, so the PiP body
+    // must carry it for bg-background / theme colours to resolve. Only the theme class is copied —
+    // not the full .v-application className — to avoid pulling in its flex layout CSS.
+    const themeClass = Array.from(document.querySelector(".v-application")?.classList ?? []).find((className) =>
+      className.startsWith("v-theme--"),
+    );
+    if (themeClass) target.document.body.classList.add(themeClass);
     target.document.documentElement.className = document.documentElement.className;
     const rootStyle = document.documentElement.getAttribute("style");
     if (rootStyle) target.document.documentElement.setAttribute("style", rootStyle);
+    // The fresh PiP document has no layout height, so size-full content would collapse.
+    target.document.documentElement.style.height = "100%";
+    target.document.body.style.height = "100%";
     target.document.body.style.margin = "0";
     // Mirror late-added stylesheets (UnoCSS dev-time runtime injection) into the PiP document.
     styleObserver = new MutationObserver((mutations) => {

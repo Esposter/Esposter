@@ -103,12 +103,14 @@ The teleport target is the **element** `pipWindow.document.body` (not a selector
 
 ### Style bridge detail
 
-The PiP window opens with an empty document — no Vuetify theme, no UnoCSS utilities. On open the composable:
+The PiP window opens with an empty document — no Vuetify theme, no UnoCSS utilities, no layout height. On open the composable:
 
-1. Clones every same-origin entry of `document.styleSheets` into a `<style>` in the PiP document, and copies `<link rel="stylesheet">` nodes verbatim.
-2. Copies `document.adoptedStyleSheets` (Vuetify `--v-theme-*` variables / constructed sheets) into `pipWindow.document.adoptedStyleSheets`.
-3. Mirrors the `class`/`style` of `<html>` so theme variables resolve at the root.
-4. Attaches a `MutationObserver` on `document.head` to mirror **late-added** `<style>`/`<link>` nodes — this covers UnoCSS's dev-time runtime injection so PiP-only utility classes are not missing during HMR.
+1. Rebuilds every entry of `document.styleSheets` **and** `document.adoptedStyleSheets` into a fresh `<style>` by serialising `styleSheet.cssRules` (`rule.cssText`). This is deliberate: Vuetify's theme stylesheet and UnoCSS's runtime sheet inject rules via the CSSOM (`insertRule`), leaving the `<style>` node's `textContent` **empty** — a naive `cloneNode` would copy nothing. Cross-origin sheets throw on `cssRules` access, so those fall back to a re-linked `<link href>`.
+2. Adds the active `v-theme--*` class to the PiP `<body>` (not the whole `.v-application` className, to avoid its flex layout CSS). Vuetify scopes `--v-theme-*` variables to that class, so without it `bg-background` and theme colours resolve to nothing.
+3. Sets `<html>`/`<body>` `height: 100%` (and `body` `margin: 0`); the fresh document has no layout height, so `size-full` content would otherwise collapse.
+4. Attaches a `MutationObserver` on `document.head` to mirror **late-added** stylesheets (`node.sheet` → rebuild) — covers UnoCSS dev-time runtime injection so PiP-only utility classes are not missing during HMR.
+
+**Tooltips:** Vuetify overlays teleport to the main document's overlay container, so a tooltip on a button inside the PiP window would mis-anchor. `Call/Control/ActionButton.vue` detects teleportation at mount (its element's `ownerDocument !== document`) and `attach`es the tooltip to the PiP `<body>`; in normal usage `attach` stays undefined, so behaviour is unchanged.
 
 ## Component Tree
 
