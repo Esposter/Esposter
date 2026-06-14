@@ -33,7 +33,7 @@ describe(processPushNotificationHandler, () => {
   const context = new InvocationContext();
   const name = "name";
   const userId = crypto.randomUUID();
-  const baseMessage = { message: "<p>hello</p>", partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() };
+  const baseMessage = { message: "<p>a</p>", partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() };
   const notificationOptions = { icon: "", title: "" };
 
   beforeAll(async () => {

@@ -186,9 +186,19 @@ Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. Never `
 
 ## Error Assertions
 
-- **Prefer `.rejects.toThrowErrorMatchingInlineSnapshot(...)`** — when the message is deterministic (no UUIDs/timestamps/runtime values).
-- **`.rejects.toBeInstanceOf(ErrorClass)`** — when the message contains dynamic values that prevent a stable snapshot.
-- **Never `.rejects.toThrow()` without args**, and **never `.rejects.toThrow(ErrorClass)`** — use the snapshot or `toBeInstanceOf` form.
+- **Always `.rejects.toThrowErrorMatchingInlineSnapshot(...)`** — the inline snapshot is the only accepted form; it captures the exact message for 100% accuracy. **Never `.rejects.toBeInstanceOf(...)`**, **never `.rejects.toThrow()`** without args, **never `.rejects.toThrow(arg)`**.
+- **Reconstruct dynamic values into the snapshot argument** instead of falling back to `toBeInstanceOf`. When the message embeds a UUID/runtime value, interpolate that same value via the error's `.message` so the snapshot is exact every run:
+  ```ts
+  // tRPC-wrapped throw → [TRPCError: ...]
+  await expect(webhookCaller.createWebhook(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+    `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Webhook, JSON.stringify(input)).message}]`,
+  );
+  // Direct (non-tRPC) throw → [ErrorClassName: ...]
+  await expect(assertCanCreateMessage(userId, roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
+  );
+  ```
+- **Opaque third-party messages** (e.g. a Zod error string you can't cleanly reconstruct) — leave the snapshot empty `toThrowErrorMatchingInlineSnapshot()` and populate it with `pnpm test -u`. Still never `toBeInstanceOf`.
 
 ## Mocking Globals (navigator, window, etc.)
 
@@ -204,7 +214,8 @@ afterEach(() => vi.unstubAllGlobals());
 ## Reactive Effects and Timers
 
 - **No `nextTick`** — no DOM, sync effects fire immediately. Use `flushPromises()` from `@vue/test-utils` for async watch callbacks.
-- **Fake timers** — `vi.useFakeTimers()` in `beforeEach`, `vi.useRealTimers()` in `afterEach`. Never inside individual tests.
+- **Fake timers** — `vi.useFakeTimers()` in `beforeEach`, `vi.useRealTimers()` in `afterEach`. Never inside individual tests. Pin the clock with `vi.setSystemTime(0)` so `Date.now()`/`new Date()` are deterministic (epoch). `vi.useFakeTimers()` already fakes `Date`, so no `toFake` option is needed unless a test asserts on specific non-Date timer behavior.
+- **Never force past/future time with large arbitrary offsets** — `new Date(Date.now() + 999_999_999)` or `slowmodeMs: 999_999_999` are banned (unstable, unreadable). With a pinned clock, use the minimal offset: `new Date(Date.now() + 1)` for "1ms in the future", `slowmodeMs: 1` + `lastMessageAt: new Date()` for "no time elapsed", and `vi.advanceTimersByTime(1)` when a test needs time to pass.
 
 ## Vitest Environment
 
