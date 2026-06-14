@@ -1,82 +1,69 @@
 # Comment Cleanup — Sweep Ledger
 
-Goal: make every comment tight, generic, and correctly placed across the repo, per the conventions in `.claude/skills/file-organization/SKILL.md` (**Whitespace & Comments**). This file tracks which files have already been swept so future passes can skip them and resume where we left off.
+Goal: make every comment tight, generic, readable, and correctly placed across the whole repo, per the conventions in `.claude/skills/file-organization/SKILL.md` (**Whitespace & Comments**). This file tracks what's been swept so future passes skip unchanged files and resume where we left off.
+
+**Last full sweep:** 2026-06-14 (covers all packages; baseline below).
+
+To re-sweep efficiently, only re-check files changed since the last sweep date:
+
+```bash
+git log --since=2026-06-14 --name-only --pretty=format: -- '*.ts' '*.vue' | sort -u
+```
+
+Anything not in that list is already clean — skip it. After a re-sweep, bump the date above.
 
 ---
 
 ## Conventions (summary — full rules in the skill)
 
-- No blank line **before or after** a `//` comment; the comment is the separator. **Exception**: `.test.ts`/`.test-d.ts` keep blanks required by `vitest/padding-around-*`.
-- Keep comments tight and generic — explain the _why_, drop concrete example values (versions, IDs, payloads, magic numbers). Single line preferred; keep a numbered/bulleted list when enumerating distinct items.
+- No blank line **before or after** a `//` comment; the comment is the separator. **Exception**: `.test.ts`/`.test-d.ts` keep blanks required by `vitest/padding-around-*`. Also keep the structural blank at the import→body boundary.
+- Keep comments tight, generic, readable, minimal — explain the _why_, drop concrete example values (versions, IDs, payloads, magic numbers). Single line preferred; keep a numbered/bulleted list when enumerating distinct items.
 - Keep quoted error/warning text (e.g. `[Vue warn]: Invalid prop`) — trimmed to the minimal identifying fragment — so it stays greppable.
 - Local `interface`/`type` declarations grouped at the top of the block (after imports).
+- A hook capitalizes the first letter of every `//` line; that's fine, don't reword to dodge it (only avoid starting a wrapped line with a case-sensitive code identifier).
 - Applies to `//`, `/* */`, and Vue `<!-- -->` comments alike.
 
 ---
 
-## Swept files
+## Coverage by package
 
-Files whose comments have been reviewed and cleaned. Listed only if they had comments worth touching; files with no comments are out of scope.
+All packages have had their **`^\s*//.{85,}` (long single-line)** comments swept as of the date above. Per-package notes:
 
-### Vue components
+| Package           | Status       | Notes                                                          |
+| ----------------- | ------------ | -------------------------------------------------------------- |
+| `app`             | ✅ long-line | components + composables + stores + services + server + shared |
+| `vue-phaserjs`    | ✅ long-line | composables, store, models, test setup                         |
+| `azure-mock`      | ✅ long-line | filter/search/container mocks                                  |
+| `db-schema`       | ✅ long-line | schema + models                                                |
+| `db`, `db-mock`   | ✅ long-line | already tight; minimal changes                                 |
+| `shared`          | ✅ long-line | `takeOne`                                                      |
+| `configuration`   | ✅ long-line | external lists, global.d.ts; `fixAjv.ts` left intentionally    |
+| `xml2js`          | ✅ long-line | `Parser.ts`                                                    |
+| `parse-tmx`       | ✅ long-line | `TMXNode.ts`                                                   |
+| `azure-functions` | ✅ long-line | only ts-directive comments, left as-is                         |
 
-- `app/components/Visual/Card/Carousel.vue` — major rewrite of the over-commented animation block + scss; interfaces hoisted, blank-before-comment removed
-- `app/components/Visual/Card/Marquee.vue`
-- `app/components/Visual/Card/Switch.vue`
-- `app/components/Visual/Desmos/DisplayGraph.vue`
-- `app/components/Dashboard/Visual/Index.vue`
-- `app/components/Dungeons/World/Character/Index.vue`
-- `app/components/Dungeons/World/Character/Player.vue`
-- `app/components/Dungeons/World/Map/Foreground.vue`
-- `app/components/Dungeons/UI/Bar/Container.vue`
-- `app/components/Dungeons/MonsterParty/InfoContainer.vue`
-- `app/components/Dungeons/Settings/Menu/VolumeSlider.vue`
-- `app/components/Dungeons/Battle/Menu/Panel/Info.vue`
-- `app/components/Post/Card.vue`
-- `app/components/TableEditor/File/Column/CreateDialogButton.vue`
-- `app/components/TableEditor/File/Column/EditDialogButton.vue`
-- `app/components/TableEditor/File/Row/CreateDialogButton.vue`
-- `app/components/TableEditor/VuetifyComponent/ComponentAutocomplete.vue`
-- `app/components/Message/Model/Message/List/Index.vue`
-- `app/components/Message/Model/Message/Type/ListItem.vue`
-- `app/components/Message/RightSideBar/Search/Input.vue`
+### Still TODO (next sweep)
 
-### App / shared / server TS
-
-- `app/store/layout.ts`
-- `app/store/message/data.ts`
-- `app/store/dungeons/settings/scene.ts`
-- `app/store/dungeons/inventory/input.ts`
-- `app/store/dungeons/dialog.ts`
-- `app/services/shared/createOperationData.ts`
-- `app/services/jsonSchema/zodToJsonSchema.ts`
-- `app/composables/useReadData.ts`
-- `app/composables/message/file/useUploadFiles.ts`
-- `app/composables/message/search/useReadSearchedMessages.ts`
-- `app/composables/data/pagination/offset/useOffsetPaginationDataMap.ts`
-- `app/composables/data/pagination/cursor/useCursorPaginationOperationData.ts`
-- `configuration/experimental.ts`
-- `shared/models/message/events/MessageEvents.ts`
-- `shared/models/tableEditor/file/column/transformation/ColumnTransformationType.ts`
-- `shared/models/clicker/data/effect/EffectConfiguration.ts`
-- `shared/services/pagination/constants.ts`
-- `server/trpc/routers/message/index.ts`
-- `server/trpc/procedure/room/getMemberProcedure.ts`
-- `server/services/achievement/checkAchievementCondition.ts`
+- **Multi-line `//` blocks where each line is < 85 chars** — not caught by the long-line grep; spot-check with `Grep` multiline `(?m)^\s*//.*\n\s*//.*\n\s*//` for 3+ line blocks.
+- **`/* */` and `/** \*/`block comments** —`Grep` `/\*`(filter out`import.meta.glob` path hits).
+- **Vue `<!-- -->` template comments** — `Grep` `<!--` over `*.vue`.
 
 ---
 
 ## Intentionally left as-is
 
-- `configuration/plugins/fixAjv.ts` + `fixAjv.test.ts` — the numbered transform-step list is a deliberate reference; wording already tight.
-- `shared/types/nuxt.d.ts`, `shared/types/desmos.d.ts` — vendored/upstream-synced type augmentations.
-- `app/util/math/random/getRandomValues.ts` — single source-URL reference comment.
+- `app/configuration/plugins/fixAjv.ts` + `fixAjv.test.ts` — the numbered transform-step list is a deliberate reference; wording already tight.
+- `app/shared/types/nuxt.d.ts`, `app/shared/types/desmos.d.ts`, `configuration/types/global.d.ts` — vendored/upstream-synced type augmentations.
+- `app/util/math/random/getRandomValues.ts`, `db/src/services/azure/table/getTableNullClause.ts` — single source-URL reference comments.
+- `*/rolldown.config.ts`, scattered `@ts-expect-error`/`oxlint-disable` lines — directive comments (kept; reasons trimmed where verbose).
 
 ---
 
 ## How to run the next sweep
 
-1. Find verbose single-line comments: `Grep` `^\s*//.{90,}` over `packages/app` (`*.ts`, `*.vue`).
-2. Find blank-before-comment: multiline `Grep` `\n[ \t]*\n[ \t]*//` (skip `.test.ts`/`.test-d.ts` and the import→body boundary).
-3. Find block comments: `/\*` over `*.vue` (ignore `import.meta.glob` path hits) and `*.ts`.
-4. Skip anything already listed above. Append newly-swept files here.
+1. Get the changed-file list with the `git log --since` command above; restrict all greps below to those files.
+2. Long single-line comments: `Grep` `^\s*//.{85,}` over `*.ts`, `*.vue`.
+3. Blank-before-comment: multiline `Grep` `\n[ \t]*\n[ \t]*//` (skip `.test.ts`/`.test-d.ts` and the import→body boundary).
+4. Block comments: `/\*` over `*.vue` (ignore `import.meta.glob` hits) and `*.ts`.
+5. Vue template comments: `<!--` over `*.vue`.
+6. Tighten/genericise per the conventions above; bump the sweep date.

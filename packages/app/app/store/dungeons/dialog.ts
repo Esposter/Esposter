@@ -15,9 +15,8 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
   const inputPromptCursorX = ref<number>();
   const inputPromptCursorDisplayWidth = ref<number>();
   const isInputPromptCursorVisible = ref(false);
-  // We need to store a reference to the dialog UI since there could be multiple messages
-  // That the player can go through and we have to wait for their input so we need to be able
-  // To access the dialog when the player has inputted a value
+  // Store a reference to the dialog UI: the player may step through multiple messages, so we need
+  // to access the dialog whenever they input a value.
   let dialogTarget: DialogTarget;
   let queuedMessages: DialogMessage[];
   let queuedOnComplete: (() => void) | undefined;

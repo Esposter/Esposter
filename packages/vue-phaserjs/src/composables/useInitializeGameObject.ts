@@ -33,11 +33,9 @@ export const useInitializeGameObject = <
     immediate,
   );
   const { eventStopHandles, initializeGameObjectEvents } = useInitializeGameObjectEvents();
-  // This is only used to track if the current gameObject we are rendering
-  // Is in a parent container and append to it if it exists. We need to use
-  // The vue provide / inject api as this context should not be shared across every component,
-  // Only the components through the current rendering tree that it belongs to
-  // We can do this because phaser containers can only contain gameObjects one level deep
+  // Track whether this gameObject sits in a parent container so we can append to it.
+  // Use provide/inject so the context is scoped to the current rendering tree, not every component;
+  // this works because phaser containers only hold gameObjects one level deep.
   const parentContainer = inject(InjectionKeyMap.ParentContainer);
   const sceneKey = useInjectSceneKey();
   const lifecycleHook = getInitializeGameObjectLifecycleHook(sceneKey);
@@ -54,8 +52,7 @@ export const useInitializeGameObject = <
   if (immediate) {
     const scene = getScene(sceneKey);
     initializeGameObject(scene);
-    // The parent container may not be immediately created in comparison to this gameObject
-    // So we still need to push the gameObject after the parentContainer's lifecycle hook is run
+    // The parent container may not exist yet, so push the gameObject after its lifecycle hook runs.
     lifecycleHook(() => {
       pushToParentContainer();
     });

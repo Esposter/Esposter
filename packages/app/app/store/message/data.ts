@@ -85,8 +85,8 @@ export const useDataStore = defineStore("message/data", () => {
   MessageHookMap.ResetSend.push((editor) => {
     editor?.commands.clearContent(true);
   });
-  // Only expose the internal store CRUD functions for subscriptions; everything else calls the
-  // TRPC mutations directly, tracked by their related subscriptions.
+  // Only expose the internal store CRUD functions for subscriptions; everything else directly calls
+  // the $trpc mutations, tracked by their related subscriptions.
   return {
     createMessage,
     files,

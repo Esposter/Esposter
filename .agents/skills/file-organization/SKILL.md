@@ -108,6 +108,8 @@ Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfi
 
 - **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Don't strip it out when genericising; just trim it to the minimal identifying fragment and drop surrounding example values/arguments.
 
+- **Don't fight the comment-capitalization hook** — a hook capitalizes the first letter of every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine; it doesn't hurt readability. Write comments naturally and don't reword just to dodge the capitalization (the only thing to avoid is starting a wrapped line with a case-sensitive code identifier the hook would corrupt — reword those).
+
 ## Creating a New Package
 
 New workspace packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):

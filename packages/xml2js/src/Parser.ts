@@ -120,10 +120,10 @@ export class Parser {
         } else if (nextObject) {
           // Append current node onto parent's <childKey> array
           nextObject[this.options.childkey] ??= [];
-          // Push a clone so that the node in the children array can receive the #name property while the original object can do without it
+          // Push a clone so the child entry can carry the #name property while the original goes without.
           (nextObject[this.options.childkey] as Record<string, unknown>[]).push(structuredClone(object));
           delete object[BUILTIN_NAME_KEY];
-          // Re-check whether we can collapse the node now to just the this.options.charkey value
+          // Re-check whether the node can now collapse to just the charkey value.
           if (Object.keys(object).length === 1 && this.options.charkey in object)
             object = object[this.options.charkey] as Record<string, unknown>;
         }
