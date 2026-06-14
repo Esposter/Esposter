@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
+
+### Bug Fixes
+
+* add remaining tests ([4d0fc50](https://github.com/Esposter/Esposter/commit/4d0fc50c6248ced2e375e6444e8b9b71e675af84))
+* declarations & test values ([fe3febb](https://github.com/Esposter/Esposter/commit/fe3febb4a70b7bef0a715e8236cc92a9200f814e))
+* lint and types ([dbd2cff](https://github.com/Esposter/Esposter/commit/dbd2cff9011d99d9fd6afa1a855a8a40a56673f7))
+* more tests + refactors ([4d060ba](https://github.com/Esposter/Esposter/commit/4d060bae8b00eeb8bfde2515ecac1a9b928bf85e))
+* namings and warnings and types ([3858148](https://github.com/Esposter/Esposter/commit/38581482435dd67ace3fa9e8c825faa4233275c5))
+* snapshots and dev env for now ([c774f1c](https://github.com/Esposter/Esposter/commit/c774f1c58f72f5274c74bc97eca204d30bbc09ee))
+
+### Features
+
+* Add drafts and sent ([f86443c](https://github.com/Esposter/Esposter/commit/f86443c1600895a4cbb872e405a0e5417d581239))
+* consolidate sanitize html to message ([b586502](https://github.com/Esposter/Esposter/commit/b5865027c92744e360110f522b4107df183fece2))
+
 # [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
 
 ### Bug Fixes

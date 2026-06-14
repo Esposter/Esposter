@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
+
+### Bug Fixes
+
+* more tests + refactors ([4d060ba](https://github.com/Esposter/Esposter/commit/4d060bae8b00eeb8bfde2515ecac1a9b928bf85e))
+* snapshots and dev env for now ([c774f1c](https://github.com/Esposter/Esposter/commit/c774f1c58f72f5274c74bc97eca204d30bbc09ee))
+* tests ([25e6eda](https://github.com/Esposter/Esposter/commit/25e6edae501249b79b86401e7e65b93de1ab3cd6))
+* vue build ([8acf1fb](https://github.com/Esposter/Esposter/commit/8acf1fb24b551f51a7803017770a5cbb4ed13d53))
+
+### Performance Improvements
+
+* snapshot mock db so we save huge amounts of wasted testing time ([dddd69a](https://github.com/Esposter/Esposter/commit/dddd69aee7c57f1a92490fd70c2fc7b77d02fe05))
+
 # [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
 
 ### Bug Fixes

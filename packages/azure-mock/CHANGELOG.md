@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
+
+### Bug Fixes
+
+* cleanup unnecessary numbers and time to use dayjs durations ([028ec14](https://github.com/Esposter/Esposter/commit/028ec144d8c9943b7d691ed70874362d49937c26))
+* code review comments ([3c654a9](https://github.com/Esposter/Esposter/commit/3c654a9376d85ff05d8e69acf372aca775830c6a))
+* duration + hopefully azure-functions ([dd1f905](https://github.com/Esposter/Esposter/commit/dd1f90595f65a918da7e89a75844112b949d876e))
+* lint ([bde47ab](https://github.com/Esposter/Esposter/commit/bde47ab7924587f9d5d453e52a2aeaf63a6447db))
+* lint and types ([dbd2cff](https://github.com/Esposter/Esposter/commit/dbd2cff9011d99d9fd6afa1a855a8a40a56673f7))
+* more tests + refactors ([4d060ba](https://github.com/Esposter/Esposter/commit/4d060bae8b00eeb8bfde2515ecac1a9b928bf85e))
+* namings and warnings and types ([3858148](https://github.com/Esposter/Esposter/commit/38581482435dd67ace3fa9e8c825faa4233275c5))
+* snapshots ([b2219ba](https://github.com/Esposter/Esposter/commit/b2219ba18193880d35cd04c5d20f35fd8e47dad0))
+* snapshots ([84a2865](https://github.com/Esposter/Esposter/commit/84a2865faec03c9757cafdda983cecd7351c5699))
+* snapshots and dev env for now ([c774f1c](https://github.com/Esposter/Esposter/commit/c774f1c58f72f5274c74bc97eca204d30bbc09ee))
+* tests wip ([c257bfb](https://github.com/Esposter/Esposter/commit/c257bfb9055d401ec66377ff3f05a13be42f9abc))
+* wip ([fb38ad5](https://github.com/Esposter/Esposter/commit/fb38ad5ea5f2bc5fef84aa2fead3df34b262130c))
+
+### Features
+
+* Add mock search db ([56c5461](https://github.com/Esposter/Esposter/commit/56c546111c798846a7c21fb6a8093cee91dc4231))
+
 # [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
 
 ### Bug Fixes
