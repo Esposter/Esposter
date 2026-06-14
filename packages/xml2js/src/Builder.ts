@@ -13,12 +13,11 @@ export class Builder {
   }
 
   buildObject(rootObj: Record<string, unknown>): string {
-    // If there is a sane-looking first element to use as the root,
-    // And the user hasn't specified a non-default rootName,
+    // Use a lone first element as the root, unless the user specified a non-default rootName.
     let rootName = this.options.rootName;
     let rootObject = rootObj;
     if (Object.keys(rootObject).length === 1 && this.options.rootName === DefaultBuilderOptions.rootName) {
-      // We'll take the first element as the root element
+      // Take the first element as the root element.
       rootName = takeOne(Object.keys(rootObject));
       rootObject = rootObject[rootName] as Record<string, unknown>;
     }

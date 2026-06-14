@@ -12,7 +12,7 @@ import { userIdSchema } from "@/models/shared/UserId";
 import { selectRoomInMessageSchema } from "@/schema/roomsInMessage";
 import { selectUserSchema } from "@/schema/users";
 import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
-import { createUniqueArraySchema } from "@esposter/shared";
+import { createUniqueArraySchema, sanitizeMessageHtml } from "@esposter/shared";
 import { z } from "zod";
 
 export const MENTION_MAX_LENGTH = 100;
@@ -48,7 +48,7 @@ export const baseMessageEntitySchema = z.object({
   isForward: z.literal(true).optional(),
   isPinned: z.literal(true).optional(),
   mentions: createUniqueArraySchema(selectUserSchema.shape.id).max(MENTION_MAX_LENGTH).default([]),
-  message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
+  message: z.string().transform(sanitizeMessageHtml).pipe(z.string().max(MESSAGE_MAX_LENGTH)).default(""),
   replyRowKey: z.string().optional(),
   type: standardMessageTypeSchema.default(MessageType.Message),
   ...userIdSchema.shape,

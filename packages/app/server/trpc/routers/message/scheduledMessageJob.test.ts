@@ -1,3 +1,5 @@
+// @vitest-environment nuxt
+
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -60,6 +62,44 @@ describe("scheduledMessageJob", () => {
 
     expect(scheduledMessageJobs).toHaveLength(1);
     expect(takeOne(scheduledMessageJobs).id).toBe(scheduledMessageJob.id);
+  });
+
+  test("reads my scheduled jobs", async () => {
+    expect.hasAssertions();
+
+    const room = await roomCaller.createRoom({ name });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledJobs();
+
+    expect(scheduledMessageJobs.items).toHaveLength(1);
+    expect(scheduledMessageJobs.hasMore).toBe(false);
+    expect(takeOne(scheduledMessageJobs.items).id).toBe(scheduledMessageJob.id);
+    expect(takeOne(scheduledMessageJobs.items).room.id).toBe(room.id);
+  });
+
+  test("reads my scheduled jobs count", async () => {
+    expect.hasAssertions();
+
+    const room = await roomCaller.createRoom({ name });
+    await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
+
+    expect(scheduledMessageJobCount).toBe(1);
+  });
+
+  test("excludes other users from readMyScheduledJobs", async () => {
+    expect.hasAssertions();
+
+    const room = await roomCaller.createRoom({ name });
+    await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    const { user } = await mockSessionOnce(mockContext.db);
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledJobs();
+    await mockSessionOnce(mockContext.db, user);
+    const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
+
+    expect(scheduledMessageJobs.items).toStrictEqual([]);
+    expect(scheduledMessageJobs.hasMore).toBe(false);
+    expect(scheduledMessageJobCount).toBe(0);
   });
 
   test("cancels scheduled job", async () => {

@@ -3,10 +3,8 @@ import { useTableEditorStore } from "@/store/tableEditor";
 
 export const useItemStore = defineStore("tableEditor/item", () => {
   const tableEditorStore = useTableEditorStore();
-  // We want to pass in the initial value from our tableEditor
-  // But also keep the reactivity of our operations so we need to
-  // Pass in a computed state which will notify our tableEditor
-  // Whenever any operations has been performed on our items
+  // Pass a computed state so we seed the initial value from the tableEditor while staying reactive,
+  // Notifying the tableEditor whenever an operation runs on our items.
   const { items, ...restData } = useOffsetPaginationData(
     computed({
       get: () => tableEditorStore.tableEditor.items,

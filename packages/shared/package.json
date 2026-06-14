@@ -1,6 +1,6 @@
 {
   "name": "@esposter/shared",
-  "version": "2.27.0",
+  "version": "2.28.0",
   "description": "A library that contains shared typescript code.",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/shared#readme",
   "bugs": {
@@ -34,12 +34,14 @@
   },
   "dependencies": {
     "neverthrow": "catalog:",
-    "node-html-parser": "catalog:"
+    "node-html-parser": "catalog:",
+    "sanitize-html": "catalog:"
   },
   "devDependencies": {
     "@azure/data-tables": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
+    "@types/sanitize-html": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:",

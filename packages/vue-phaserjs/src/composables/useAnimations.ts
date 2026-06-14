@@ -5,9 +5,8 @@ import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
 import { onNextTick } from "@/hooks/onNextTick";
 import { onShutdown } from "@/hooks/onShutdown";
 import { getScene } from "@/util/getScene";
-// Some animations e.g. attacks may exist only for a very short time before they disappear
-// And are launched after the scene is created, outside of any lifecycle hooks
-// So we want to allow returning the animations frames created by the scene immediately
+// Some animations (e.g. attacks) are short-lived and launched after scene creation, outside any
+// Lifecycle hook, so we return the scene's created animation frames immediately.
 export const useAnimations = (
   createConfigurations: (scene: SceneWithPlugins) => Types.Animations.Animation[],
   immediate?: true,

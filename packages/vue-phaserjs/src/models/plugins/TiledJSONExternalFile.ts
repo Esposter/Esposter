@@ -122,8 +122,7 @@ export class TiledJSONExternalFile extends MultiFile {
       this.addToMultiFile(tilesetFile);
       loader.addFile(tilesetFile);
     }
-
-    //  Reset the loader settings
+    // Reset the loader settings.
     loader.setBaseURL(currentBaseURL);
     loader.setPath(currentPath);
     loader.setPrefix(currentPrefix);

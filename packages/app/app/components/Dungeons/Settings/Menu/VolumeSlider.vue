@@ -69,8 +69,7 @@ const onSliderBarClick = async ({ x }: Input.Pointer) => {
               { x: VOLUME_SLIDER_END_X, y: baseY + 17 },
             ],
             value: volumePercentage / 100,
-            // We want the sliding of the volume cursor to be smooth
-            // so it will only be handled by the plugin instead of our store
+            // Keep cursor sliding smooth: handled by the plugin, not the store.
             valuechangeCallback: (newValue) => setVolume(Math.floor(newValue * 100), false),
           }),
         );
@@ -79,8 +78,7 @@ const onSliderBarClick = async ({ x }: Input.Pointer) => {
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="
       () => {
         if (!volumeSlider) return;
-        // We just need to sync the slider to the valid volume value
-        // once the user has finished deciding on the volume of the game
+        // Sync the slider to the valid volume once the user finishes adjusting.
         volumeSlider.value = volumePercentage / 100;
       }
     "

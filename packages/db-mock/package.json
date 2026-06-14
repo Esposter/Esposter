@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db-mock",
-  "version": "2.27.0",
+  "version": "2.28.0",
   "private": true,
   "description": "A library of database mock utilities for testing, available in server environment only.",
   "keywords": [
@@ -39,7 +39,7 @@
     "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "snapshot:gen": "tsx --import ./src/util/bigintPolyfill.ts scripts/generateSnapshot.ts",
+    "snapshot:gen": "tsx scripts/generateSnapshot.ts",
     "test": "vitest",
     "typecheck": "tsgo"
   },

@@ -21,6 +21,7 @@ export const RoutePath: {
   readonly Index: "/";
   readonly Login: "/login";
   readonly Messages: (id: string) => string;
+  readonly MessagesDraftsSent: "/messages/drafts-sent";
   readonly MessagesFriends: "/messages/friends";
   readonly MessagesIndex: "/messages";
   readonly MessagesInvite: (code: string) => string;
@@ -53,6 +54,7 @@ export const RoutePath: {
   Index: "/",
   Login: "/login",
   Messages: (id: string) => `/messages/${id}`,
+  MessagesDraftsSent: "/messages/drafts-sent",
   MessagesFriends: "/messages/friends",
   MessagesIndex: "/messages",
   MessagesInvite: (code: string) => `/messages/invite/${code}`,

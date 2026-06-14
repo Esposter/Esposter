@@ -5,9 +5,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { defu } from "defu";
 
 interface UseMediaRecorderOptions extends ConfigurableNavigator {
-  /**
-   * The constraints parameter is a MediaStreamConstraints object specifying the types of media to request, along with any requirements for each type.
-   */
+  /** Media types to request, with any per-type requirements. */
   constraints?: MaybeRefOrGetter<MediaStreamConstraints>;
   /**
    * Options to pass to the MediaRecorder constructor.

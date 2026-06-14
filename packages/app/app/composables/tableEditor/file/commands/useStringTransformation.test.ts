@@ -76,7 +76,7 @@ describe(useStringTransformation, () => {
   test(`${StringTransformationType.TitleCase} title-cases all string cells`, () => {
     expect.hasAssertions();
 
-    const ds = createDataSource([createColumn("")], [createRow({ "": "hello world" })]);
+    const ds = createDataSource([createColumn("")], [createRow({ "": "a b" })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     stringTransformation(StringTransformationType.TitleCase);
@@ -84,7 +84,7 @@ describe(useStringTransformation, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows).data[""]).toBe("Hello World");
+    expect(takeOne(dataSource.rows).data[""]).toBe("A B");
   });
 
   test("skips non-string columns", () => {

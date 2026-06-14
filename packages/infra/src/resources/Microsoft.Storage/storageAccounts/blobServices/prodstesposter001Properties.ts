@@ -22,7 +22,7 @@ export const prodstesposter001Properties: azure_native.storage.BlobServiceProper
             allowedMethods: ["PUT"],
             allowedOrigins: ["https://esposter.com"],
             exposedHeaders: [""],
-            maxAgeInSeconds: 86400,
+            maxAgeInSeconds: 86_400,
           },
         ],
       },

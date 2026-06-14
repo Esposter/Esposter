@@ -1,0 +1,29 @@
+name: 🔥 Claude Warmup
+
+on:
+  schedule:
+    # Runs every 5 hours (00:00, 05:00, 10:00, 15:00, 20:00 UTC) to reset the rolling
+    # Claude usage window. 20:00 UTC (06:00 AEST / UTC+10) stays in the set as the daily anchor.
+    - cron: "0 0,5,10,15,20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  warmup:
+    name: Warmup
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 🔥 Warm up Claude Code session
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: pnpm dlx @anthropic-ai/claude-code -p "hi"

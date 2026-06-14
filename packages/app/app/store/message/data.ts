@@ -7,7 +7,6 @@ import type { Editor } from "@tiptap/core";
 
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { sanitizeMessageHtml } from "@/services/sanitizeHtml/sanitizeMessageHtml";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
@@ -37,21 +36,16 @@ export const useDataStore = defineStore("message/data", () => {
   const typings = ref<CreateTypingInput[]>([]);
 
   const createMessage = async (input: StandardCreateMessageInput) => {
-    if (!session.value.data) return;
+    if (!session.value.data) return false;
 
-    const sanitizedInput = { ...input, message: input.message ? sanitizeMessageHtml(input.message) : input.message };
-    const newMessage = reactive(
-      createMessageEntity({ ...sanitizedInput, isLoading: true, userId: session.value.data.user.id }),
-    );
+    const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
     await storeCreateMessage(newMessage);
-    Object.assign(newMessage, await $trpc.message.createMessage.mutate(sanitizedInput));
+    Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
     delete newMessage.isLoading;
+    return true;
   };
   const updateMessage = async (input: UpdateMessageInput) => {
-    await $trpc.message.updateMessage.mutate({
-      ...input,
-      message: input.message ? sanitizeMessageHtml(input.message) : input.message,
-    });
+    await $trpc.message.updateMessage.mutate(input);
   };
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => Promise.resolve(fn(message))));
@@ -86,14 +80,13 @@ export const useDataStore = defineStore("message/data", () => {
   };
   const storeSendMessage = async (input: StandardCreateMessageInput, editor?: Editor) => {
     await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
-    await createMessage(input);
-    clearDraft(input.roomId);
+    if (await createMessage(input)) clearDraft(input.roomId);
   };
   MessageHookMap.ResetSend.push((editor) => {
     editor?.commands.clearContent(true);
   });
-  // We only expose the internal store crud message functions for subscriptions
-  // Everything else will directly use trpc mutations that are tracked by the related subscriptions
+  // Only expose the internal store CRUD functions for subscriptions; everything else directly calls
+  // The $trpc mutations, tracked by their related subscriptions.
   return {
     createMessage,
     files,

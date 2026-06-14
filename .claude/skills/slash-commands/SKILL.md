@@ -7,9 +7,7 @@ description: Esposter slash command conventions — parameter definitions, execu
 
 ## Core Types
 
-### `SlashCommandParameter` extends `Description`
-
-Always has both `name` and `description` — never make description optional:
+`SlashCommandParameter` extends `Description` — always has both `name` and `description` (never make description optional):
 
 ```typescript
 export interface SlashCommandParameter extends Description {
@@ -17,9 +15,7 @@ export interface SlashCommandParameter extends Description {
 }
 ```
 
-### `SlashCommand` — `parameters` is always present (never optional)
-
-Default to an empty array `[]` for commands with no parameters. Do not use `parameters?`:
+`SlashCommand` — `parameters` is always present (never `parameters?`). Default to `[]` for commands with no parameters:
 
 ```typescript
 export interface SlashCommand extends Description, ItemEntityType<SlashCommandType> {
@@ -27,35 +23,20 @@ export interface SlashCommand extends Description, ItemEntityType<SlashCommandTy
   title: string;
   parameters: SlashCommandParameter[];
 }
-```
 
-```typescript
 // CORRECT — no params: empty array
-[SlashCommandType.Roll]: {
-  parameters: [],
-  ...
-}
+[SlashCommandType.Roll]: { parameters: [], ... }
 
-// WRONG — omitting parameters
-[SlashCommandType.Roll]: {
-  // no parameters field ❌
-}
-
-// WRONG — optional field
-parameters?: SlashCommandParameter[]; // ❌
+// WRONG — omitting the parameters field, or making it optional ❌
 ```
 
 ## Message Format
 
-Messages use **markdown** via `marked.parse()`. Rich text formatting applies:
-
-- Italic: `*text*`
-- Bold: `**text**`
-- Code: `` `text` ``
+Messages use markdown via `marked.parse()`. Rich text applies: italic `*text*`, bold `**text**`, code `` `text` ``.
 
 ### `/me` — no new `MessageType`
 
-`/me [message]` does NOT introduce `MessageType.Me`. Simply wrap the argument in `*...*` and post as a regular `MessageType.Message`:
+`/me [message]` does NOT introduce `MessageType.Me`. Wrap the argument in `*...*` and post as a regular `MessageType.Message`:
 
 ```typescript
 // CORRECT
@@ -65,20 +46,19 @@ await createMessage({
   type: MessageType.Message,
 });
 
-// WRONG — unnecessary new MessageType
-type: MessageType.Me ❌
+// WRONG — unnecessary new MessageType: MessageType.Me ❌
 ```
 
 ## Parameterized Command UI
 
-`SlashCommandParameters.vue` handles the inline parameter input mode:
+`SlashCommandParameters.vue` handles inline parameter input mode:
 
 - Styled header bar (like `ReplyHeader.vue`) showing command name + description + close button
 - `<v-form @submit.prevent="onSubmit">` wrapping all parameter inputs
 - `SubmitEventPromise` from Vuetify — `const { valid } = await event` before proceeding
-- Required fields use `:rules="[formRules.required]"` — Vuetify shows inline validation errors
-- Optional fields use `:rules="[]"` (empty array, not omitted)
-- Escape key dismisses via `useEventListener("keydown", ...)`, submit button is `type="submit"`
+- Required fields: `:rules="[formRules.required]"` (Vuetify shows inline validation errors)
+- Optional fields: `:rules="[]"` (empty array, not omitted)
+- Escape key dismisses via `useEventListener("keydown", ...)`; submit button is `type="submit"`
 
 ```vue
 const onSubmit = async (event: SubmitEventPromise) => { const { valid } = await event; if (!valid ||
@@ -88,37 +68,31 @@ slashCommandStore.clearPendingSlashCommand(); };
 
 ## Execution Modes
 
-Commands fall into two categories based on their `parameters` array:
+Derived from `slashCommand.parameters.length > 0`, not a separate `mode` field:
 
 - **Immediate** — `parameters: []` — execute on selection, no extra input
-- **Parameterized** — has one or more parameters — transforms the composer into inline parameter input mode
-
-The distinction is derived from `slashCommand.parameters.length > 0`, not a separate `mode` field.
+- **Parameterized** — one or more parameters — transforms the composer into inline parameter input mode
 
 ## Never Use String Literals for Command Types
 
-Always use `SlashCommandType.X` enum values — never string literals `"Me"`, `"Shrug"`, etc.:
+Always use `SlashCommandType.X` enum values, never `"Me"`, `"Shrug"`, etc. Applies in `SlashCommandSuggestion.ts`, `SlashCommandParameters.vue`, and any switch over `slashCommand.type`:
 
 ```typescript
 // CORRECT
 case SlashCommandType.Me:
-case SlashCommandType.Shrug:
 
 // WRONG
 case "Me":
-case "Shrug":
 ```
-
-This applies in `SlashCommandSuggestion.ts`, `SlashCommandParameters.vue`, and any switch over `slashCommand.type`.
 
 ## Adding a New Command
 
-1. Add value to `SlashCommandType` enum
-2. Add entry to `SlashCommandDefinitionMap` with `parameters: []` or required/optional params
+1. Add value to `SlashCommandType` enum.
+2. Add entry to `SlashCommandDefinitionMap` with `parameters: []` or required/optional params.
 3. Add `case SlashCommandType.X:` to `SlashCommandSuggestion.ts`:
    - Immediate: call `createMessage` directly
    - Parameterized: set `pendingSlashCommand` in `useSlashCommandStore`
-4. No new `MessageType` unless the rendering is structurally different (e.g. Poll, Call)
+4. No new `MessageType` unless rendering is structurally different (e.g. Poll, Call).
 
 ## Existing Commands
 

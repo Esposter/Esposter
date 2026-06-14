@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
+
+### Bug Fixes
+
+* no longer need bigint polyfill ([21c1723](https://github.com/Esposter/Esposter/commit/21c17237a32abe31e1ed30ccf3cca48cf4ac0eed))
+* snapshots and dev env for now ([c774f1c](https://github.com/Esposter/Esposter/commit/c774f1c58f72f5274c74bc97eca204d30bbc09ee))
+* snapshots and tests ([9b2a6f2](https://github.com/Esposter/Esposter/commit/9b2a6f2102395a230ef4cd0b1f3a31fe37408c08))
+* use back latest pglite ver after updating snapshot ([cb1ab97](https://github.com/Esposter/Esposter/commit/cb1ab970968ce9cb7a40fc29bcbdf1ee0eb858d9))
+
+### Performance Improvements
+
+* snapshot mock db so we save huge amounts of wasted testing time ([dddd69a](https://github.com/Esposter/Esposter/commit/dddd69aee7c57f1a92490fd70c2fc7b77d02fe05))
+
 # [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
 
 **Note:** Version bump only for package @esposter/db-mock

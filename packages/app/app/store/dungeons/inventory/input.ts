@@ -29,7 +29,7 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
         if (itemOptionGrid.value === PlayerSpecialInput.Cancel) onCancel(scene);
         else
           switch (itemOptionGrid.value.effect.type) {
-            // We assume that you can only call capture items in the battle scene (which is the previous scene)
+            // Capture items can only be used in the battle scene (the previous scene).
             case ItemEffectType.Capture: {
               await useItem(scene, toRef(itemOptionGrid.value), toRef(enemyStore, "activeMonster"));
               break;

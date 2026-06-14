@@ -25,12 +25,11 @@ const barPercentage = computed(() =>
 </script>
 
 <template>
-  <!-- When we are animating the Experience Bar and we want to skip the animation via player input,
-   :is-skip-animations="isSkipAnimations && !isAnimatingLevelUp" so the prop changes after we finish 
-   leveling up and reset isAnimatingLevelUp. The experience bar display width can then be properly updated.
-   There are also 2 situations we need to consider when skipping the animation via player input
-   1. If we are leveling up, we want to reset isSkipAnimations trigger after level up animation has finished
-   2. If we are NOT leveling up, we want to reset isSkipAnimations trigger after the tween animation has finished -->
+  <!-- To skip the animation via player input, is-skip-animations only flips after level-up finishes
+   (gated on !isAnimatingLevelUp) so the display width updates correctly. Two cases for resetting the
+   isSkipAnimations trigger:
+   1. Leveling up: reset after the level-up animation finishes.
+   2. Not leveling up: reset after the tween animation finishes. -->
   <DungeonsUIBarContainer
     :type="BarType.Experience"
     :position

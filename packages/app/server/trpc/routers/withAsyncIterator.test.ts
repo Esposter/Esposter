@@ -35,9 +35,9 @@ describe(withAsyncIterator, () => {
 
     const returnFn = vi.fn<() => Promise<IteratorResult<unknown>>>();
 
-    await expect(withAsyncIterator(createIterator(returnFn), () => Promise.reject(new Error("fail")))).rejects.toThrow(
-      "fail",
-    );
+    await expect(
+      withAsyncIterator(createIterator(returnFn), () => Promise.reject(new Error("fail"))),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: fail]`);
     expect(returnFn).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,5 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 
+import { dayjs } from "#shared/services/dayjs";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { callSessionParticipantMap } from "@@/server/services/message/call/callParticipantMap";
 import { callStartTimeMap } from "@@/server/services/message/call/callStartTimeMap";
@@ -30,7 +31,7 @@ export const leaveCallAsParticipant = async (
   callStartTimeMap.delete(callSessionId);
   if (!callSession?.roomId) return true;
 
-  const callDurationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / 1000) : 0;
+  const callDurationSeconds = callStart ? Math.round(dayjs.duration(Date.now() - callStart.getTime()).asSeconds()) : 0;
   const { roomId } = callSession;
   await getResultAsync(async () => {
     const [messageClient, messageAscendingClient] = await Promise.all([

@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
+
+### Bug Fixes
+
+* cleanup code ([c377566](https://github.com/Esposter/Esposter/commit/c37756616760798a63929f537ae52300a27dbbef))
+* code review comments ([3c654a9](https://github.com/Esposter/Esposter/commit/3c654a9376d85ff05d8e69acf372aca775830c6a))
+* code review comments ([61cbffd](https://github.com/Esposter/Esposter/commit/61cbffd5767549d1a787bbd3bc0193bfd78733d4))
+* lint ([e732b9a](https://github.com/Esposter/Esposter/commit/e732b9a8d6776ad352fc3ebf3b19428fd52f2414))
+* lint and types ([dbd2cff](https://github.com/Esposter/Esposter/commit/dbd2cff9011d99d9fd6afa1a855a8a40a56673f7))
+* no longer need bigint polyfill ([21c1723](https://github.com/Esposter/Esposter/commit/21c17237a32abe31e1ed30ccf3cca48cf4ac0eed))
+* schemas ([f939bcb](https://github.com/Esposter/Esposter/commit/f939bcb5e32119e9cc7f6aebb62780dc61530e3c))
+* snapshots and dev env for now ([c774f1c](https://github.com/Esposter/Esposter/commit/c774f1c58f72f5274c74bc97eca204d30bbc09ee))
+* snapshots and tests ([9b2a6f2](https://github.com/Esposter/Esposter/commit/9b2a6f2102395a230ef4cd0b1f3a31fe37408c08))
+* tests ([3c2a09b](https://github.com/Esposter/Esposter/commit/3c2a09bc8610503f6e2e925c6d4f029e87951c8f))
+* tests and cleanup settings ([a0646c4](https://github.com/Esposter/Esposter/commit/a0646c454006cf2c074c5db89ae912e4e3b08876))
+* wip ([fb38ad5](https://github.com/Esposter/Esposter/commit/fb38ad5ea5f2bc5fef84aa2fead3df34b262130c))
+* wip ([ffb8b3e](https://github.com/Esposter/Esposter/commit/ffb8b3e25832225b6f177e9a8d331ea1bf813f09))
+
+### Features
+
+* Add reminders ([6f5d6b7](https://github.com/Esposter/Esposter/commit/6f5d6b70c233c74140864b5a4cca23df5a186d81))
+* consolidate sanitize html to message ([b586502](https://github.com/Esposter/Esposter/commit/b5865027c92744e360110f522b4107df183fece2))
+* wip ([4f094da](https://github.com/Esposter/Esposter/commit/4f094da70109cc17533f2e6d70bd995fac477d0d))
+
 # [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
 
 ### Bug Fixes

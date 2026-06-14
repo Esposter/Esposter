@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-> Last reviewed: 2026-06-01 · Nuxt `compatibilityDate`: `2026-06-01` · Overall: **92 / 100**
+> Last reviewed: 2026-06-13 · Nuxt `compatibilityDate`: `2026-06-13` · Overall: **93 / 100**
 
 A well-engineered, TypeScript-strict monorepo with strong architectural discipline and comprehensive linting. The approach deliberately delegates heavy lifting to well-maintained libraries (Vite, nuxt-security, pnpm actions, Drizzle) rather than rolling custom solutions. Primary remaining drag is the set of pre-release production dependencies.
 
@@ -8,7 +8,7 @@ A well-engineered, TypeScript-strict monorepo with strong architectural discipli
 
 ## Architecture & Organisation — 20 / 20
 
-11 packages with clear responsibilities and a sensible dependency DAG (`shared` has no Vue deps, `db-schema` has no server deps, etc.). Data-driven map pattern (`*TypeColorMap`, `*TypeCommandMap`, `ColumnStatDefinitionMap`, etc.) enforces single-entry extension. Command pattern for undo/redo is well-scoped. 24 tRPC routers, 109 Pinia store files across 13 modules. Barrel files managed by ctix — no accidental re-export drift.
+12 packages with clear responsibilities and a sensible dependency DAG (`shared` has no Vue deps, `db-schema` has no server deps, etc.). Data-driven map pattern (`*TypeColorMap`, `*TypeCommandMap`, `ColumnStatDefinitionMap`, etc.) enforces single-entry extension. Command pattern for undo/redo is well-scoped. ~32 tRPC routers, 107 Pinia store files across 13 modules. Barrel files managed by ctix — no accidental re-export drift.
 
 ---
 
@@ -28,18 +28,19 @@ Guard clauses over nested conditionals throughout. `InvalidOperationError` for i
 
 ## Testing — 10 / 10
 
-174 test files across the monorepo (app: 149, shared: 20, db-schema: 5). Commands, pure services, and shared utilities are well covered. 7 benchmark files for table editor hot paths. PGlite used for in-memory PostgreSQL in server tests — no real DB required. Canonical test value conventions enforced. Full type-safety across the board reduces the need for coverage thresholds as a quality gate.
+255 test files across the monorepo (app: 160, shared: 25, azure-functions: 17, vue-phaserjs: 16, parse-tmx: 11, db: 8, db-schema: 8, azure-mock: 5, db-mock: 2, infra/xml2js/configuration: 1 each). Commands, pure services, and shared utilities are well covered. 7 benchmark files for table editor hot paths. PGlite used for in-memory PostgreSQL in server tests — no real DB required. Canonical test value conventions enforced. Full type-safety across the board reduces the need for coverage thresholds as a quality gate.
 
-**Accepted trade-offs:**
+`packages/azure-functions` logic now lives in extracted `handlers/` (e.g. `processPushNotificationHandler`, `processWebhookHandler`, `processFriendRequestNotificationHandler`) which are unit-tested directly — 17 test files — leaving only the thin `app.eventGrid(...)` registration glue untested.
 
-- `packages/azure-functions` has no test files — function handlers are `app.eventGrid(...)` registration glue; the underlying services are thin and low-risk. Azure Functions v4 provides no dedicated test runtime, making handler-level testing impractical.
-- Pinia store unit tests cover all stores with real business logic (tableEditor undo/redo, message emoji/input/slash command/call). The remaining 40 untested stores are Phaser game-engine state (dungeons, clicker) that cannot be meaningfully exercised outside the canvas runtime, or thin CRUD holders with no logic to assert.
+**Accepted trade-off:**
+
+- Pinia store unit tests cover all stores with real business logic (tableEditor undo/redo, message emoji/input/slash command/call). The remaining untested stores are Phaser game-engine state (dungeons, clicker) that cannot be meaningfully exercised outside the canvas runtime, or thin CRUD holders with no logic to assert.
 
 ---
 
 ## Security — 8 / 10
 
-Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.10 with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle ORM parameterized queries prevent SQL injection. Rate limiting via `RateLimiterDrizzleNonAtomic` (1000 pts / 60 s window, 60 s block) — NonAtomic is a deliberate choice for performance given rate limiting is not a hard security boundary here. CSRF protection handled by `nuxt-security` defaults; tRPC's JSON content-type provides additional mitigation.
+Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.18 with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle ORM parameterized queries prevent SQL injection. Tiered rate limiting via `RateLimiterDrizzleNonAtomic` (`standard` 1000 pts, `slow` 100 pts, plus a dedicated `webhook` limiter — all 60 s window / 60 s block) — NonAtomic is a deliberate choice for performance given rate limiting is not a hard security boundary here. `nuxt-security`'s own `rateLimiter` is disabled in favour of these app-level limiters. CSRF protection handled by `nuxt-security` defaults; tRPC's JSON content-type provides additional mitigation.
 
 **Accepted trade-offs:**
 
@@ -51,21 +52,21 @@ Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` v1.6.1
 
 ## Dependencies — 8 / 10
 
-Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents version drift. Core tools pinned. `better-auth` 1.6.10, Nuxt 4.4.4, Phaser 4.1.0 all on stable releases. Drizzle graduated from beta to RC (`1.0.0-rc.2`) — the v1 API is stable in practice, schema/query migration complete. `rolldown` reached stable (`^1.0.0`) and `unplugin-dts` graduated to `^1.0.2` — both no longer a pre-release concern. TypeScript upgraded to v6 (`^6.0.3`).
+Catalog-driven versioning via `pnpm-workspace.yaml` with `catalogMode: strict` prevents version drift. `better-auth` 1.6.18, Nuxt 4.4.8, Phaser 4.1.0, `rolldown` (`^1.1.1`) and `unplugin-dts` (`^1.0.2`) all on stable releases. Drizzle is on RC (`1.0.0-rc.2`) — the v1 API is stable in practice, schema/query migration complete. TypeScript on v6 (`^6.0.3`). Only `h3` remains pinned (held below its v2 RC); `@vue/language-core`/`vue-tsc` are back on caret ranges (`^3.3.5`).
 
-**7 pre-release packages in production paths** (down from 8):
+**7 pre-release packages in production paths:**
 
-| Package               | Version       | Change from last review | Role                     |
-| --------------------- | ------------- | ----------------------- | ------------------------ |
-| `drizzle-orm`         | 1.0.0-rc.2    | ↑ promoted from beta.23 | Core ORM — all DB access |
-| `drizzle-kit`         | 1.0.0-rc.2    | ↑ promoted from beta.23 | Migrations toolchain     |
-| `vuetify-nuxt-module` | ^1.0.0-beta.4 | beta.3 → beta.4         | Primary UI integration   |
-| `survey-core`         | 3.0.0-beta.0  | unchanged               | Survey feature           |
-| `survey-creator-core` | 3.0.0-beta.0  | unchanged               | Survey feature           |
-| `survey-creator-vue`  | 3.0.0-beta.0  | unchanged               | Survey feature           |
-| `survey-vue3-ui`      | 3.0.0-beta.0  | unchanged               | Survey feature           |
+| Package               | Version       | Role                     |
+| --------------------- | ------------- | ------------------------ |
+| `drizzle-orm`         | 1.0.0-rc.2    | Core ORM — all DB access |
+| `drizzle-kit`         | 1.0.0-rc.2    | Migrations toolchain     |
+| `vuetify-nuxt-module` | ^1.0.0-beta.8 | Primary UI integration   |
+| `survey-core`         | 3.0.0-beta.0  | Survey feature           |
+| `survey-creator-core` | 3.0.0-beta.0  | Survey feature           |
+| `survey-creator-vue`  | 3.0.0-beta.0  | Survey feature           |
+| `survey-vue3-ui`      | 3.0.0-beta.0  | Survey feature           |
 
-`unplugin-dts` (`^1.0.2`) graduated to stable since last review — removed from the list. `eslint-plugin-depend` is configured and will surface new issues here over time.
+`eslint-plugin-depend` is configured and will surface new issues here over time.
 
 ---
 
@@ -80,11 +81,11 @@ UnoCSS `presetAttributify` + `presetWind4` enforced project-wide: all static sty
 
 ---
 
-## CI / CD — 9 / 10
+## CI / CD — 10 / 10
 
-Four workflows: CI (all branches), Release (tags), and two Azure Functions deployment pipelines (develop → dev slot, main → prod slot). Full CI pipeline: install → build → lint → format check → typecheck → test → coverage upload. Dependency caching is handled automatically by the pnpm actions setup — no manual cache configuration needed.
+Five workflows: CI (all branches), Pulumi (infra preview on PRs), Release (tags), and two Azure Functions deployment pipelines (develop → dev slot, main → prod slot). CI is a parallel fan-out DAG: `build-packages` runs first and uploads package `dist` + `src/**/index.ts` entrypoints as artifacts, then `build`, `coverage`, `build-docs`, `lint`, and `typecheck` run concurrently (each `needs: build-packages`), downloading those artifacts instead of rebuilding; `format` runs independently with no build dependency. Coverage is uploaded as an artifact. Dependency caching is handled by the shared `setup-project-dependencies` composite action.
 
-**Note:** CI steps run sequentially in a single job by design — parallelising across jobs interleaves log output, making failures harder to diagnose. Wall-clock time is the accepted trade-off.
+Security hardening throughout: every third-party action is SHA-pinned (`actions/checkout`, `upload-artifact`, `download-artifact`), `persist-credentials: false` on all checkouts, and explicit least-privilege `permissions:` on the jobs that need them.
 
 ---
 
@@ -102,13 +103,13 @@ Four workflows: CI (all branches), Release (tags), and two Azure Functions deplo
 
 | Area                 | Score        | Notes                                                                            |
 | -------------------- | ------------ | -------------------------------------------------------------------------------- |
-| Architecture         | 20 / 20      | 11 packages, clean DAG, data-driven maps, command pattern                        |
+| Architecture         | 20 / 20      | 12 packages, clean DAG, data-driven maps, command pattern                        |
 | TypeScript           | 10 / 10      | Maximum strictness; `skipLibCheck` only trade-off                                |
 | Code Quality         | 10 / 10      | Guard clauses, `InvalidOperationError`, clean patterns                           |
-| Testing              | 10 / 10      | All logic-bearing stores tested; game/glue gaps documented                       |
+| Testing              | 10 / 10      | 255 test files; handlers extracted + tested; only Phaser store gaps remain       |
 | Security             | 8 / 10       | CSP trade-offs documented; xssValidator pending upstream                         |
-| Dependencies         | 8 / 10       | 7 pre-release packages; unplugin-dts stable, TypeScript v6                       |
+| Dependencies         | 8 / 10       | 7 pre-release packages (Drizzle RC, Survey betas); TypeScript v6                 |
 | Styling              | 9 / 10       | Attributify enforced; Vuetify token bridge; visual regression accepted trade-off |
-| CI / CD              | 9 / 10       | Sequential by design; caching and thresholds handled                             |
+| CI / CD              | 10 / 10      | Parallel fan-out DAG; SHA-pinned actions; least-privilege; Pulumi preview        |
 | Bundle & Performance | 8 / 10       | Vite auto-splits; ~65 MB known footprint; Nuxt build provides visible baseline   |
-| **Total**            | **92 / 100** |                                                                                  |
+| **Total**            | **93 / 100** |                                                                                  |

@@ -6,11 +6,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
   const messagesBasePath = RoutePath.Messages("").replace(/\/$/u, "");
   const isFromMessages = from.path.startsWith(messagesBasePath);
   const isToMessages = to.path.startsWith(messagesBasePath);
-  // We only need to act if the user is *crossing* the boundary
-  // If they are navigating from one messages page to another, or from one
-  // Normal page to another, we don't need to do anything
+  // Only act when crossing the messages boundary; navigating within messages or within normal pages is a no-op.
   if (isFromMessages === isToMessages) return;
-  // Force a full browser navigation to the destination URL,
-  // Triggering a request to the Nuxt server
+  // Force a full browser navigation so the Nuxt server gets a fresh request.
   window.location.replace(to.fullPath);
 });

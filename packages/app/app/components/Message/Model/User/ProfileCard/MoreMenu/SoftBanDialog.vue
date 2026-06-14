@@ -2,18 +2,14 @@
 import type { User } from "@esposter/db-schema";
 
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
-import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface SoftBanDialogProps {
   user: Pick<User, "id" | "name">;
 }
 
 const { user } = defineProps<SoftBanDialogProps>();
-const { $trpc } = useNuxtApp();
-const roomStore = useRoomStore();
-const { currentRoom } = storeToRefs(roomStore);
+const executeAdminAction = useExecuteAdminAction();
 </script>
 
 <template>
@@ -24,16 +20,8 @@ const { currentRoom } = storeToRefs(roomStore);
     }"
     :confirm-button-props="{ text: 'Soft Ban' }"
     @delete="
-      async (onComplete) => {
-        await withFinalizerAsync(async () => {
-          if (!currentRoom) return;
-          await $trpc.message.moderation.executeAdminAction.mutate({
-            roomId: currentRoom.id,
-            targetUserId: user.id,
-            type: AdminActionType.SoftBan,
-          });
-        }, onComplete);
-      }
+      (onComplete) =>
+        executeAdminAction((roomId) => ({ roomId, targetUserId: user.id, type: AdminActionType.SoftBan }), onComplete)
     "
   >
     <template #activator="{ updateIsOpen }">

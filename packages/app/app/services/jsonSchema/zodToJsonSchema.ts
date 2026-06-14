@@ -3,7 +3,7 @@ import { processSchema } from "@/services/jsonSchema/processSchema";
 import { z } from "zod";
 
 export const zodToJsonSchema = (schema: z.ZodType) => {
-  // $schema is stripped because vjsf's internal Ajv2019 instance does not have the draft 2020-12 meta-schema loaded
+  // Strip $schema since vjsf's internal Ajv2019 lacks the draft 2020-12 meta-schema.
   const { $schema: _, ...result } = z.toJSONSchema(schema, {
     override: (ctx) => {
       const zodSchema = ctx.zodSchema as z.ZodObject;

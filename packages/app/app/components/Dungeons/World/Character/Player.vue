@@ -50,9 +50,7 @@ onCreate(
 
 usePhaserListener("playerTeleport", (position, direction) => {
   onNextTick((scene) => {
-    // Don't set player position manually and let grid engine set the player position
-    // This will help us detect errors if we're trying to teleport the player
-    // Before the tilemap has been properly initialized when we're changing the tilemap key
+    // Let grid engine set the position; teleporting before the tilemap is initialized then surfaces as an error.
     scene.gridEngine.setPosition(CharacterId.Player, position);
     if (direction) player.value.direction = direction;
     frame.value = PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing;
@@ -65,8 +63,8 @@ onShutdown((scene) => {
 </script>
 
 <template>
-  <!-- The character is keyed to the tilemap so grid engine knows to re-render the player
-    and regenerate the player grid metadata everytime the tilemap changes -->
+  <!-- Keyed to the tilemap so grid engine re-renders the player and regenerates its grid metadata
+    whenever the tilemap changes. -->
   <DungeonsWorldCharacter
     :id="CharacterId.Player"
     :key="tilemapKey"

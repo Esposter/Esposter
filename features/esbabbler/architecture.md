@@ -29,11 +29,11 @@ Filtered by `NotificationType`, mention type (@everyone/@here), and online statu
 
 ### Calls
 
-LiveKit-based audio/video. Key boundary: `activeCallSessionId` (user's active call) vs `currentRoomCallSessionId` (currently viewed room). Room navigation must not leave the active call. Full spec → [`specs/call.md`](specs/call.md). Screenshare → [`specs/screenshare.md`](specs/screenshare.md).
+LiveKit-based audio/video. Key boundary: `activeCallSessionId` (user's active call) vs `currentRoomCallSessionId` (currently viewed room). Room navigation must not leave the active call. Full spec → [`specs/call.md`](specs/call.md). Screenshare → [`specs/screenshare.md`](specs/screenshare.md). Picture-in-Picture pop-out → [`specs/picture-in-picture.md`](specs/picture-in-picture.md).
 
 ### Scheduled Jobs
 
-tRPC mutation → Postgres row + Azure Storage Queue (visibility delay = `runAt`, capped at 7 days) → Azure Function executes on visibility. Guard: `cancelledAt IS NULL AND completedAt IS NULL`. Full flow, Mermaid diagrams, cancellation window → [`specs/slash-commands.md`](specs/slash-commands.md).
+tRPC mutation → Postgres row + Azure Storage Queue (visibility delay = `runAt`, capped at 7 days) → Azure Function executes on visibility. If the message is visible before `runAt`, the function re-enqueues it with the remaining delay. Guard: `cancelledAt IS NULL AND completedAt IS NULL`. Full flow, Mermaid diagrams, cancellation window → [`specs/slash-commands.md`](specs/slash-commands.md).
 
 ### Offline Cache
 
@@ -47,19 +47,19 @@ Permission bitfield on `roomRoles` (bigint). Full spec → [`specs/rbac.md`](spe
 
 ## DB Schema
 
-| Table                           | Key Fields                                                                                            |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `rooms`                         | `id`, `userId` (owner), `type` (Room/DM), `categoryId`, `participantKey`                              |
-| `usersToRooms`                  | `userId`, `roomId` (PK), `notificationType` (All/DM/Never), `isHidden`, `timeoutUntil`                |
-| `callSessionsInMessage`         | `id` (12-char text PK), `userId` (creator), `roomId` (unique FK → rooms)                              |
-| `invitesInMessage`              | `id`, `roomId`, `userId`, `token` (8-char unique invite code)                                         |
-| `roomRoles`                     | `id`, `roomId`, `name`, `color`, `position`, `permissions` (bigint bitfield), `isEveryone`            |
-| `usersToRoomRoles`              | `userId`, `roomId`, `roleId` (composite PK)                                                           |
-| `bans`                          | `roomId`, `userId`, `bannedByUserId`, `createdAt`                                                     |
-| `userStatuses`                  | `userId` (PK), `status` (nullable enum), `isConnected`, `message`, `expiresAt`                        |
-| `pushSubscriptions`             | `id`, `userId`, `endpoint`, `auth`, `p256dh`, `expirationTime`                                        |
-| `roomCategories`                | `id`, `userId` (owner), `name`, `position`                                                            |
-| `scheduledMessageJobsInMessage` | `id`, `userId`, `roomId`, `payload` (JSON discriminated union), `runAt`, `completedAt`, `cancelledAt` |
+| Table                           | Key Fields                                                                                                                   |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `rooms`                         | `id`, `userId` (owner), `type` (Room/DM), `categoryId`, `participantKey`                                                     |
+| `usersToRooms`                  | `userId`, `roomId` (PK), `notificationType` (All/DM/Never), `isHidden`, `timeoutUntil`                                       |
+| `callSessionsInMessage`         | `id` (12-char text PK), `userId` (creator), `roomId` (unique FK → rooms)                                                     |
+| `invitesInMessage`              | `id`, `roomId`, `userId`, `token` (8-char unique invite code)                                                                |
+| `roomRoles`                     | `id`, `roomId`, `name`, `color`, `position`, `permissions` (bigint bitfield), `isEveryone`                                   |
+| `usersToRoomRoles`              | `userId`, `roomId`, `roleId` (composite PK)                                                                                  |
+| `bans`                          | `roomId`, `userId`, `bannedByUserId`, `createdAt`                                                                            |
+| `userStatuses`                  | `userId` (PK), `status` (nullable enum), `isConnected`, `message`, `expiresAt`                                               |
+| `pushSubscriptions`             | `id`, `userId`, `endpoint`, `auth`, `p256dh`, `expirationTime`                                                               |
+| `roomCategories`                | `id`, `userId` (owner), `name`, `position`                                                                                   |
+| `scheduledMessageJobsInMessage` | `id`, `userId`, `roomId`, `payload` (JSON discriminated union), `runAt`, `processingStartedAt`, `completedAt`, `cancelledAt` |
 
 - `UserStatus`: `Online | Idle | DoNotDisturb | Offline` — nullable (`null` = connected, no manual override)
 - `NotificationType`: `All | DirectMessage | Never` — on `usersToRooms`; `Never` = muted

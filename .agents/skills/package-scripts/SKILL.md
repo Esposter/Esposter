@@ -44,6 +44,6 @@ Use plain `pnpm i` exactly. Follow `architecture/monorepo-tooling.md` for instal
 ## Key Rules
 
 - **Local linting**: run `pnpm lint:fix` directly — never manually edit to satisfy ESLint/oxlint
-- **Check-only linting**: reserve `pnpm lint` and `pnpm lint:all` for CI/CD-style verification or when explicitly requested.
-- **Do not run tests on Windows**: Vitest currently fails during config startup on Windows (`spawn EPERM`). Do not run `pnpm test`, targeted Vitest files, or coverage unless the user explicitly asks and acknowledges the Windows limitation.
-- **Long-running commands** (`dev`, `build`, `test`, `typecheck`): run with `run_in_background: true` on the Bash tool — they can take 2+ minutes
+- **Check-only linting**: reserve `pnpm lint`/`pnpm lint:all` for CI/CD verification or when explicitly requested
+- **Do not run tests on Windows**: Vitest fails during config startup (`spawn EPERM`). Don't run `pnpm test`, targeted files, or coverage unless the user explicitly asks and acknowledges the limitation
+- **Long-running commands** (`dev`, `build`, `test`, `typecheck`): run with `run_in_background: true` — they can take 2+ minutes

@@ -2,18 +2,14 @@
 import type { User } from "@esposter/db-schema";
 
 import { AdminActionListItemPropsMap } from "@/services/message/moderation/AdminActionListItemPropsMap";
-import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface BanDialogProps {
   user: Pick<User, "id" | "name">;
 }
 
 const { user } = defineProps<BanDialogProps>();
-const { $trpc } = useNuxtApp();
-const roomStore = useRoomStore();
-const { currentRoom } = storeToRefs(roomStore);
+const executeAdminAction = useExecuteAdminAction();
 </script>
 
 <template>
@@ -21,16 +17,8 @@ const { currentRoom } = storeToRefs(roomStore);
     :card-props="{ title: 'Ban User', text: `Are you sure you want to ban ${user.name}?` }"
     :confirm-button-props="{ text: 'Ban' }"
     @delete="
-      async (onComplete) => {
-        await withFinalizerAsync(async () => {
-          if (!currentRoom) return;
-          await $trpc.message.moderation.executeAdminAction.mutate({
-            roomId: currentRoom.id,
-            targetUserId: user.id,
-            type: AdminActionType.CreateBan,
-          });
-        }, onComplete);
-      }
+      (onComplete) =>
+        executeAdminAction((roomId) => ({ roomId, targetUserId: user.id, type: AdminActionType.CreateBan }), onComplete)
     "
   >
     <template #activator="{ updateIsOpen }">
