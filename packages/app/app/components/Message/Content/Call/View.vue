@@ -2,7 +2,7 @@
 import { useMediaStore } from "@/store/message/room/call/media";
 
 const mediaStore = useMediaStore();
-const { activeScreenShareParticipantId, activeScreenShareStream, hasScreenShare, pinnedParticipantId } =
+const { activeScreenShareParticipantId, activeScreenShareStream, hasScreenShare, isPoppedOut, pinnedParticipantId } =
   storeToRefs(mediaStore);
 const { callParticipantMap, getParticipantTileProps, sessionId } = useCallParticipantTiles();
 const activeScreenShareParticipant = computed(() =>
@@ -23,34 +23,37 @@ const callParticipantGridClass = computed(() => {
 
 <template>
   <div bg-background flex flex-col size-full relative overflow-hidden>
-    <main p-5 flex flex-1 gap-x-3 min-h-0 min-w-0 :class="isScreenSharePresenting ? 'flex-row' : 'flex-col'">
-      <MessageContentCallScreenShareStage
-        v-if="hasScreenShare && activeScreenShareStream"
-        :presenter-name
-        :stream="activeScreenShareStream"
-      />
-      <div v-else flex-1 gap-3 grid grid-auto-rows-fr :class="callParticipantGridClass">
-        <MessageContentCallParticipantTile
-          v-for="participant of callParticipantMap.values()"
-          :key="participant.id"
-          :="getParticipantTileProps(participant)"
-          @click="pinnedParticipantId = participant.id"
+    <MessageContentCallPipPlaceholder v-if="isPoppedOut" />
+    <template v-else>
+      <main p-5 flex flex-1 gap-x-3 min-h-0 min-w-0 :class="isScreenSharePresenting ? 'flex-row' : 'flex-col'">
+        <MessageContentCallScreenShareStage
+          v-if="hasScreenShare && activeScreenShareStream"
+          :presenter-name
+          :stream="activeScreenShareStream"
         />
-      </div>
-      <div v-if="isScreenSharePresenting" flex shrink-0 flex-col gap-y-3 items-center overflow-y-auto>
-        <MessageContentCallParticipantTile
-          v-for="participant of callParticipantMap.values()"
-          :key="participant.id"
-          shrink-0
-          h-32
-          aspect-video
-          :="getParticipantTileProps(participant)"
-          @click="pinnedParticipantId = participant.id"
-        />
-      </div>
-    </main>
-    <MessageContentCallInviteCard />
-    <MessageContentCallJoinNotice />
-    <MessageContentCallControlBar />
+        <div v-else flex-1 gap-3 grid grid-auto-rows-fr :class="callParticipantGridClass">
+          <MessageContentCallParticipantTile
+            v-for="participant of callParticipantMap.values()"
+            :key="participant.id"
+            :="getParticipantTileProps(participant)"
+            @click="pinnedParticipantId = participant.id"
+          />
+        </div>
+        <div v-if="isScreenSharePresenting" flex shrink-0 flex-col gap-y-3 items-center overflow-y-auto>
+          <MessageContentCallParticipantTile
+            v-for="participant of callParticipantMap.values()"
+            :key="participant.id"
+            shrink-0
+            h-32
+            aspect-video
+            :="getParticipantTileProps(participant)"
+            @click="pinnedParticipantId = participant.id"
+          />
+        </div>
+      </main>
+      <MessageContentCallInviteCard />
+      <MessageContentCallJoinNotice />
+      <MessageContentCallControlBar />
+    </template>
   </div>
 </template>

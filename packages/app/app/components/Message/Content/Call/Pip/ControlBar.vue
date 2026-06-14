@@ -1,18 +1,8 @@
 <script setup lang="ts">
-import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
-import { RoutePath } from "@esposter/shared";
 
-const callStore = useCallStore();
-const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
 const mediaStore = useMediaStore();
 const { isPoppedOut } = storeToRefs(mediaStore);
-const returnToCall = async () => {
-  isPoppedOut.value = false;
-  await navigateTo(
-    callRoomId.value ? RoutePath.Messages(callRoomId.value) : RoutePath.Calls(activeCallSessionId.value),
-  );
-};
 </script>
 
 <template>
@@ -24,7 +14,7 @@ const returnToCall = async () => {
         icon="mdi-arrow-expand"
         tooltip="Return to Call"
         variant="plain"
-        @click="returnToCall()"
+        @click="isPoppedOut = false"
       />
       <MessageContentCallControlLeaveButton />
     </StyledCard>
