@@ -42,11 +42,18 @@ All packages have had their **`^\s*//.{85,}` (long single-line)** comments swept
 | `parse-tmx`       | ✅ long-line | `TMXNode.ts`                                                   |
 | `azure-functions` | ✅ long-line | only ts-directive comments, left as-is                         |
 
-### Still TODO (next sweep)
+Also swept repo-wide as of the date above:
 
-- **Multi-line `//` blocks where each line is < 85 chars** — not caught by the long-line grep; spot-check with `Grep` multiline `(?m)^\s*//.*\n\s*//.*\n\s*//` for 3+ line blocks.
-- **`/* */` and `/** \*/`block comments** —`Grep` `/\*`(filter out`import.meta.glob` path hits).
-- **Vue `<!-- -->` template comments** — `Grep` `<!--` over `*.vue`.
+- **Long single-line `//` comments** (`^\s*//.{85,}`) — all packages.
+- **Multi-line `//` blocks** (4+ consecutive lines) — all 40 matches triaged; verbose prose tightened, section-label/numbered-reason lists kept.
+- **Vue `<!-- -->` template comments** — all 14 matches; multi-line ones tightened, directives/attribution kept.
+- **Blank-before-comment** in non-test source — removed (kept in `.test`/`.bench` for `vitest/padding-around-*`, and at the import→body boundary).
+- **`/* */` / `/** \*/` block comments** — spot-checked; azure-mock SDK JSDoc mirrors, desmos/`.d.ts` re-exports, and constant-map section labels left intact.
+
+### Possible future spot-checks
+
+- 3-line `//` blocks where every line is < 85 chars (rare; the long-line grep already caught any block containing a long line).
+- New `/** */` JSDoc added since the sweep date.
 
 ---
 

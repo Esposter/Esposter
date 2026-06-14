@@ -6,7 +6,7 @@ import { useGame } from "@/composables/useGame";
 export const usePhaserStore = defineStore("phaser", () => {
   // Use a writable computed, not a ref, to keep the Game object unproxied: ref() would wrap it in
   // Vue's deep reactive Proxy, and Phaser's InputManager sorts/finds objects by === identity — proxied
-  // objects differ from the raw ones Phaser stored, silently breaking setInteractive priority.
+  // Objects differ from the raw ones Phaser stored, silently breaking setInteractive priority.
   let baseGame: Game | undefined;
   const game = computed({
     get: () => baseGame,

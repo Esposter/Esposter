@@ -110,7 +110,7 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
   const numberOfCards = Math.min(maxShownCards, cards.length - 1);
   const items: CardStyleVariables[] = [];
   // Walk from the right-most card leftwards so each card reuses its right neighbour's margin and scale
-  // as its own "old" values (animation flows right -> left); reversed at the end for LTR order.
+  // As its own "old" values (animation flows right -> left); reversed at the end for LTR order.
   for (let i = 0; i < numberOfCards; i++)
     items.push({
       marginRight: `${i * scale.value}rem`,

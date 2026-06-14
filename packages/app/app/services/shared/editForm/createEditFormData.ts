@@ -32,7 +32,7 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
       isEditFormValid.value &&
       // 2. Be a new item, or differ from the original.
       // The edited item is a clone that drops class information, so it's never strictly equal;
-      // deepEqual isn't a strict check, so it's fine.
+      // DeepEqual isn't a strict check, so it's fine.
       (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value)))),
   );
   // The form is dirty if:

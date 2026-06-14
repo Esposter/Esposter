@@ -8,7 +8,7 @@ vi.spyOn(HTMLImageElement.prototype, "src", "set").mockImplementation(function (
   if (typeof this.onload === "function") this.onload(new Event("load"));
 });
 // Happy-dom has no canvas, and its instance method resolution bypasses a prototype spy on getContext,
-// so store the original createElement and spy per-instance instead.
+// So store the original createElement and spy per-instance instead.
 // oxlint-disable-next-line @typescript-eslint/no-deprecated
 const createElement = document.createElement.bind(document);
 const mockCanvasContext: CanvasRenderingContext2D = {

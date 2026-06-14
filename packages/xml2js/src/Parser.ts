@@ -48,8 +48,7 @@ export class Parser {
             if (this.options.mergeAttrs) this.assignOrPush(newObject, processedKey, newValue);
             else defineProperty(newObject[this.options.attrkey] as Record<string, unknown>, processedKey, newValue);
           }
-
-      // We will hardcode a place to store the node name
+      // Hardcode a place to store the node name.
       newObject[BUILTIN_NAME_KEY] = this.options.tagNameProcessors
         ? processItem(this.options.tagNameProcessors, node.name, "")
         : node.name;
@@ -98,8 +97,7 @@ export class Parser {
         const xpath = `/${[...this.stack.map((node) => node[BUILTIN_NAME_KEY]), nodeName].join("/")}`;
         object = this.options.validator(xpath, nextObject?.[nodeName], object);
       }
-
-      // Put children into <childkey> property and unfold chars if necessary
+      // Put children into the <childkey> property and unfold chars if necessary.
       if (this.options.explicitChildren && !this.options.mergeAttrs && typeof object === "object")
         if (!this.options.preserveChildrenOrder) {
           const node: Record<string, unknown> = {};
@@ -212,8 +210,7 @@ export const parseStringPromise = <T>(
   const parser = new Parser(options);
   return parser.parseStringPromise(convertableToString);
 };
-
-// Underscore has a nice function for this, but we try to go without dependencies
+// Underscore has a nice function for this, but we go without dependencies.
 const isEmpty = (thing: unknown): boolean =>
   typeof thing === "object" && thing !== null && Object.keys(thing).length === 0;
 

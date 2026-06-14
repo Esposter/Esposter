@@ -86,7 +86,7 @@ export const useDataStore = defineStore("message/data", () => {
     editor?.commands.clearContent(true);
   });
   // Only expose the internal store CRUD functions for subscriptions; everything else directly calls
-  // the $trpc mutations, tracked by their related subscriptions.
+  // The $trpc mutations, tracked by their related subscriptions.
   return {
     createMessage,
     files,
