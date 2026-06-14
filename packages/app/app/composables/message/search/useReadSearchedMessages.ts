@@ -41,7 +41,7 @@ export const useReadSearchedMessages = () => {
         query: searchQuery.value,
         roomId: currentRoomId.value,
       });
-      // No offset means the user has searched the message instead of reading from the offset pagination
+      // No offset means a fresh search rather than reading the next offset page.
       if (!offset) {
         page.value = 1;
         await createSearchHistory({

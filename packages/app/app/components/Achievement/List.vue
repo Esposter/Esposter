@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { AchievementStatus, AchievementStatuses } from "#shared/models/achievement/AchievementStatus";
+import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
+import { useRouteQuery } from "@vueuse/router";
 import { useAchievementStore } from "@/store/achievement";
 
 const achievementStore = useAchievementStore();
@@ -25,7 +27,7 @@ const achievementListMap = computed(() => {
     },
   };
 });
-const tab = ref(AchievementStatus.All);
+const tab = useRouteQuery<AchievementStatus>(TAB_QUERY_PARAMETER_KEY, AchievementStatus.All);
 </script>
 
 <template>

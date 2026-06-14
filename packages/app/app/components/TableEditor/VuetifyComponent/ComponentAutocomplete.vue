@@ -8,7 +8,7 @@ import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore<VuetifyComponentItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
-// Optimise performance and paginate because we have too many vuetify components to load in the dropdown all at once
+// Paginate the dropdown since there are too many vuetify components to load at once.
 const vuetifyComponentKeys = computed(() => Object.keys(VuetifyComponentMap));
 const vuetifyComponentKeysCursor = ref(Math.min(DEFAULT_READ_LIMIT, vuetifyComponentKeys.value.length));
 const displayVuetifyComponentKeys = computed(() =>

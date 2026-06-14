@@ -48,7 +48,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
         },
       );
     };
-    // Absorbs query errors so component setup never fails — errors are handled by the tRPC link chain
+    // Absorb query errors so component setup never fails; the tRPC link chain handles them.
     await Promise.allSettled([refresh()]);
     return { isPending, refresh };
   };

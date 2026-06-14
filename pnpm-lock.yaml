@@ -395,6 +395,9 @@ catalogs:
     '@vueuse/nuxt':
       specifier: ^14.3.0
       version: 14.3.0
+    '@vueuse/router':
+      specifier: ^14.3.0
+      version: 14.3.0
     ajv:
       specifier: ^8.20.0
       version: 8.20.0
@@ -977,6 +980,9 @@ importers:
       '@vueuse/core':
         specifier: 'catalog:'
         version: 14.3.0(vue@3.5.38(typescript@6.0.3))
+      '@vueuse/router':
+        specifier: 'catalog:'
+        version: 14.3.0(vue-router@5.1.0(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vite@8.0.16(@types/node@25.9.3)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3))
       ajv:
         specifier: 'catalog:'
         version: 8.20.0
@@ -7829,6 +7835,12 @@ packages:
     peerDependencies:
       nuxt: ^3.0.0 || ^4.0.0-0
       vue: ^3.5.0
+
+  '@vueuse/router@14.3.0':
+    resolution: {integrity: sha512-MK7YETFDPyDDF9aSP4W3TzUIHLZ+uq0n/t4VMxOP39e0qGbCZ21ZRsGE93ML84teKtCtPDlN+73CTk2e3xVl9w==}
+    peerDependencies:
+      vue: ^3.5.0
+      vue-router: ^5.1.0
 
   '@vueuse/shared@10.11.1':
     resolution: {integrity: sha512-LHpC8711VFZlDaYUXEBbFBCQ7GS3dVU9mjOhhMhXP6txTV4EhYQg/KGnQuvt/sPAtoUKq7VVUnL6mVtFoL42sA==}
@@ -20674,6 +20686,12 @@ snapshots:
       vue: 3.5.38(typescript@6.0.3)
     transitivePeerDependencies:
       - magicast
+
+  '@vueuse/router@14.3.0(vue-router@5.1.0(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vite@8.0.16(@types/node@25.9.3)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3)))(vue@3.5.38(typescript@6.0.3))':
+    dependencies:
+      '@vueuse/shared': 14.3.0(vue@3.5.38(typescript@6.0.3))
+      vue: 3.5.38(typescript@6.0.3)
+      vue-router: 5.1.0(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.38(typescript@6.0.3)))(vite@8.0.16(@types/node@25.9.3)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vue@3.5.38(typescript@6.0.3))
 
   '@vueuse/shared@10.11.1(vue@3.5.38(typescript@6.0.3))':
     dependencies:

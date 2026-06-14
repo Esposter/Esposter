@@ -80,10 +80,8 @@ import {
 import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { z } from "zod";
-// Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
-// As we insert our messages with a reverse-ticked timestamp as our rowKey
-// So unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
-// Always requires a sortBy even though we don't actually need the user to specify it
+// Azure Table Storage has no real sorting; messages are insert-sorted via a reverse-ticked timestamp rowKey.
+// We still pass a dummy default sortBy because cursor pagination always requires one.
 const readMessagesInputSchema = z
   .object({
     ...createCursorPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
@@ -145,7 +143,7 @@ export const baseMessageRouter = router({
     ({ ctx, input }) => createUserMessage(ctx.db, ctx.getSessionPayload, input),
   ),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
-    // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
+    // Query, not mutation: emitting has no ordering/concurrency concerns.
     .query(({ ctx, input }) => {
       messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.getSessionPayload.session.id });
     }),
@@ -249,8 +247,7 @@ export const baseMessageRouter = router({
             });
             messages.push(newMessageEntity);
           }
-          // We don't need visual effects like isLoading when forwarding messages
-          // So we'll instead rely on the subscription to auto-add the forwarded message for convenience
+          // Forwarding needs no isLoading effect, so let the subscription auto-add the message.
           messageEventEmitter.emit("createMessage", [
             messages,
             { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },

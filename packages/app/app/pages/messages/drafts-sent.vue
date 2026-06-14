@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
+import { useRouteQuery } from "@vueuse/router";
 import { DraftsSentTab } from "@/models/message/draftsSent/DraftsSentTab";
 
 definePageMeta({ middleware: "auth" });
 
-const tab = ref(DraftsSentTab.Drafts);
+const tab = useRouteQuery<DraftsSentTab>(TAB_QUERY_PARAMETER_KEY, DraftsSentTab.Drafts);
 const readDraftsSent = useReadDraftsSent();
 await readDraftsSent();
 </script>

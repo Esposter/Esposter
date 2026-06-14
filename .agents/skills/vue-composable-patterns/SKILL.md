@@ -271,6 +271,22 @@ const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSourc
 
 Always use `toRawDeep` from `@esposter/shared` instead of Vue's `toRaw` — `toRaw` only unwraps one level; `toRawDeep` recursively unwraps all nested reactive proxies. Critical when passing reactive data to APIs requiring plain objects (IndexedDB `store.put()`, `structuredClone`, postMessage).
 
+## Route-Synced Tabs
+
+Sync `v-tabs` state to the URL with `useRouteQuery` from `@vueuse/router` instead of a plain `ref`, so the active tab survives a refresh and is linkable. Use the shared `TAB_QUERY_PARAMETER_KEY` constant for the key. `useRouteQuery` is not auto-imported — import it explicitly.
+
+```typescript
+import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
+import { useRouteQuery } from "@vueuse/router";
+
+const tab = ref(DraftsSentTab.Drafts); // WRONG: loses the tab on refresh
+const tab = useRouteQuery<DraftsSentTab>(TAB_QUERY_PARAMETER_KEY, DraftsSentTab.Drafts); // CORRECT: syncs to ?tab=Drafts
+```
+
+Pass the enum as an explicit type argument (`useRouteQuery<DraftsSentTab>`). Without it the ref narrows to the literal default (e.g. `DraftsSentTab.Drafts`), breaking `tab === OtherValue` comparisons — `ref()` widened this automatically, `useRouteQuery` does not.
+
+Put `useRouteQuery` where the `v-tabs` `v-model` originates. When a child renders the tabs via `defineModel`, keep `useRouteQuery` in the parent and pass it down as `v-model`.
+
 ## Resource Management
 
 - Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.

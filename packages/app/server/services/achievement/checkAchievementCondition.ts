@@ -16,7 +16,7 @@ export const checkAchievementCondition = (
     case AchievementConditionType.Or:
       return condition.conditions.some((c) => checkAchievementCondition(c, data));
     case AchievementConditionType.Property: {
-      // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
+      // @ts-expect-error achievementDefinitions is well-typed at its definition site
       const value = condition.path.split(".").reduce((property, key) => property?.[key], data);
       switch (condition.operator) {
         case AchievementOperator.Contains:
@@ -30,21 +30,21 @@ export const checkAchievementCondition = (
           if (!(condition.value instanceof RegExp)) return false;
           return typeof value === "string" && condition.value.test(value);
         case AchievementOperator.Operation:
-          // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
+          // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return condition.operation(value);
         case BinaryOperator.eq:
           return value === condition.value;
         case BinaryOperator.ge:
-          // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
+          // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return value >= condition.value;
         case BinaryOperator.gt:
-          // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
+          // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return value > condition.value;
         case BinaryOperator.le:
-          // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
+          // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return value <= condition.value;
         case BinaryOperator.lt:
-          // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
+          // @ts-expect-error achievementDefinitions is well-typed at its definition site
           return value < condition.value;
         case BinaryOperator.ne:
           return value !== condition.value;

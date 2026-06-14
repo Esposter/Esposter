@@ -90,6 +90,7 @@
     "@vue-pdf-viewer/viewer": "catalog:",
     "@vuepic/vue-datepicker": "catalog:",
     "@vueuse/core": "catalog:",
+    "@vueuse/router": "catalog:",
     "ajv": "catalog:",
     "ajv-errors": "catalog:",
     "ajv-formats": "catalog:",

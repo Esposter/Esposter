@@ -59,8 +59,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       queuedOnComplete?.();
       return;
     }
-
-    // Tell other components like the dialog that we're ready to show our message
+    // Signal other components that we're ready to show our message.
     phaserEventEmitter.emit(`${SceneEventKey.ShowMessage}${scene.scene.key}`);
 
     if (settingsStore.isSkipAnimations) {
