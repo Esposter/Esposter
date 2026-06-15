@@ -138,7 +138,9 @@
       "Bash(cp .claude/skills/vuetify/SKILL.md .agents/skills/vuetify/SKILL.md)",
       "Bash(cp .claude/skills/configuration)",
       "Read(//tmp/**)",
-      "Bash(npx --yes typescript@latest tsc --noEmit --strict --target ESNext t_priv.ts)"
+      "Bash(npx --yes typescript@latest tsc --noEmit --strict --target ESNext t_priv.ts)",
+      "Bash(cp /home/jimmyc/Esposter/.claude/skills/pinia/SKILL.md /home/jimmyc/Esposter/.agents/skills/pinia/SKILL.md)",
+      "Bash(cp /home/jimmyc/Esposter/.claude/skills/file-organization/SKILL.md /home/jimmyc/Esposter/.agents/skills/file-organization/SKILL.md)"
     ]
   }
 }

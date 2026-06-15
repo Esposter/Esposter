@@ -77,7 +77,9 @@ interface FilePickerProps {
 
 ## Command Pattern
 
-Commands are classes extending `ADataSourceCommand<T extends CommandType>`. Each declares `readonly type = CommandType.X` (no `name` — the base provides `get name() { return this.type; }`). `CommandType` enum lives in `models/tableEditor/file/commands/CommandType.ts`. Field ordering within a command: `readonly type` → blank line → `get description()` → blank line → all `private readonly` fields grouped together (no blank lines between same-level fields) → blank line → constructor → blank line between each method.
+Commands are classes extending `ADataSourceCommand<T extends CommandType>`. Each declares `readonly type = CommandType.X` (no `name` — the base provides `get name() { return this.type; }`). `CommandType` enum lives in `models/tableEditor/file/commands/CommandType.ts`. Field ordering within a command: `readonly type` → blank line → `get description()` → blank line → all `readonly #` private fields grouped together (no blank lines between same-level fields) → blank line → constructor → blank line between each method. Use ECMAScript `#` private members, never the TypeScript `private` keyword (see the `typescript` skill); subclass-reachable methods like `doExecute`/`doUndo` stay `protected`.
+
+Command instances are stored in the `useFileHistoryStore` `ref` arrays, so they MUST be `markRaw`'d on entry — a reactive `Proxy` breaks `#` private brand checks at execute/undo time. See the `pinia` skill "Storing Class Instances — markRaw".
 
 ## MIME Types
 
