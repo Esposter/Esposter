@@ -11,6 +11,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Strict equality only** — `===`/`!==`, never `==`/`!=`. For null checks use `=== null || === undefined` (or optional chaining), never `== null`.
 - `Omit` is **BANNED** — use `Except` from `type-fest` (import directly; not re-exported from `@esposter/shared`).
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
+- **The `private` keyword is BANNED** — use ECMAScript `#` private members instead (see Private Members). `protected` is still allowed (no `#` equivalent for subclass access).
 - Non-null assertions (`!`) are **BANNED** — both the expression operator (`foo!.bar`) and the field definite-assignment assertion (`field!: T`, see Class Fields). Use optional chaining or guard clauses.
 - `.forEach()` is **BANNED** — use `for...of`.
 - `type` aliases for object shapes are **BANNED** — use `interface`.
@@ -55,6 +56,33 @@ export class FileEntity {
 - Applies to all fields lacking an inline initializer: phantom type carriers, `Object.assign`-populated entity models (`AzureEntity`/`CompositeKeyEntity`/`*MessageEntity`), externally-assigned fields.
 - **Keep the inline initializer** for fields that have one (`id: string = crypto.randomUUID()`) — never convert to `declare` (drops the runtime default); they're mutually exclusive.
 - Optional fields (`direction?: Direction`) are already correct — leave them.
+
+## Private Members — `#` over `private`
+
+Class-private fields and methods use the ECMAScript `#` prefix, never the TypeScript `private` keyword. `#` gives true runtime privacy (not just compile-time); `private` is erased at runtime.
+
+```ts
+// WRONG — TypeScript private keyword
+export class MoveColumnCommand {
+  private readonly fromIndex: number;
+  private moveColumn(item: DataSourceItem) {
+    columns.splice(this.fromIndex, 1);
+  }
+}
+
+// CORRECT — # private members
+export class MoveColumnCommand {
+  readonly #fromIndex: number;
+  #moveColumn(item: DataSourceItem) {
+    columns.splice(this.#fromIndex, 1);
+  }
+}
+```
+
+- `private readonly foo: T` → `readonly #foo: T` — **keep `readonly`**; it is allowed on `#` fields and still enforces immutability.
+- `private foo()` → `#foo()`; `private async *foo()` → `async *#foo()`.
+- Access is always `this.#foo` — there is no `this.foo` form for `#` members.
+- **`protected` stays** — `#` is inaccessible to subclasses, so members a subclass must reach (e.g. `protected doExecute`) keep `protected`.
 
 ## Regex
 

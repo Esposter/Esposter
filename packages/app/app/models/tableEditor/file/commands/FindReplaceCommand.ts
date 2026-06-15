@@ -12,30 +12,30 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
   readonly type = CommandType.FindReplace;
 
   get description() {
-    const uniqueRowIndices = new Set(this.affectedCells.map((cell) => cell.rowIndex));
-    const location = uniqueRowIndices.size === 1 ? ` on row ${takeOne(this.affectedCells).rowIndex + 1}` : " (all)";
-    return `Find & Replace "${this.findValue}" → "${this.replaceValue}"${location}`;
+    const uniqueRowIndices = new Set(this.#affectedCells.map((cell) => cell.rowIndex));
+    const location = uniqueRowIndices.size === 1 ? ` on row ${takeOne(this.#affectedCells).rowIndex + 1}` : " (all)";
+    return `Find & Replace "${this.#findValue}" → "${this.#replaceValue}"${location}`;
   }
 
-  private readonly affectedCells: AffectedCell[];
-  private readonly findValue: string;
-  private readonly replaceValue: string;
+  readonly #affectedCells: AffectedCell[];
+  readonly #findValue: string;
+  readonly #replaceValue: string;
 
   constructor(findValue: string, replaceValue: string, affectedCells: AffectedCell[]) {
     super();
-    this.findValue = findValue;
-    this.replaceValue = replaceValue;
-    this.affectedCells = affectedCells;
+    this.#findValue = findValue;
+    this.#replaceValue = replaceValue;
+    this.#affectedCells = affectedCells;
   }
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
-    for (const { columnName, originalValue, rowIndex } of this.affectedCells) {
+    for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
       const row = takeOne(item.dataSource.rows, rowIndex);
       const column = columnsByNameMap.get(columnName);
       if (!column) continue;
-      const replacedString = String(originalValue).replaceAll(this.findValue, this.replaceValue);
+      const replacedString = String(originalValue).replaceAll(this.#findValue, this.#replaceValue);
       const newValue = column.type === ColumnType.String ? replacedString : coerceValue(replacedString, column.type);
       column.size += getValueSize(newValue) - getValueSize(takeOne(row.data, columnName));
       row.data[columnName] = newValue;
@@ -45,7 +45,7 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
-    for (const { columnName, originalValue, rowIndex } of this.affectedCells) {
+    for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
       const row = takeOne(item.dataSource.rows, rowIndex);
       const column = columnsByNameMap.get(columnName);
       if (!column) continue;

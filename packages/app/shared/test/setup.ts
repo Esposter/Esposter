@@ -1,10 +1,8 @@
 import { Environment } from "#shared/models/environment/Environment";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
-import { afterAll, vi } from "vitest";
-// The nuxt test environment builds its own happy-dom `window`/`document`/`DOMParser`, but it does
-// Not expose `localStorage`/`sessionStorage` (not even on `window`). They were previously provided
-// By happy-dom's `GlobalRegistrator`; with that removed we install a minimal in-memory `Storage`
-// Instead — far cheaper than registering a full DOM, and harmless in the node environment.
+import { afterAll, afterEach, vi } from "vitest";
+// The nuxt test env provides `window`/`document`/`DOMParser` but not `localStorage`/`sessionStorage`,
+// so install a minimal in-memory `Storage` — cheaper than registering a full DOM, harmless in node.
 class MemoryStorage implements Storage {
   get length() {
     return this.#store.size;
@@ -52,6 +50,11 @@ vi.mock("nitropack/runtime", () => ({
     },
   }),
 }));
+
+afterEach(() => {
+  globalThis.localStorage.clear();
+  globalThis.sessionStorage.clear();
+});
 
 afterAll(() => {
   vi.restoreAllMocks();

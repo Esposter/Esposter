@@ -383,6 +383,7 @@ const { cleanupAfterAction } = relatedStore;
 Extract to a `use*` composable only when the **same multi-step logic is reused by 2+ buttons** (e.g. `useCancelScheduledJob` = tRPC mutate + store removal, shared by the primary button, edit button, and more-menu). A composable is reuse, not single-use extraction — it does not violate the inline-handler rule.
 
 - **List items / rows reduce to pure layout** — avatar, title, subtitle, time, and a row of extracted button/menu components. No action logic in the item.
+- **A button with a keyboard shortcut is its own component** owning both the `v-btn` and the `onKeyStroke` handler (e.g. `UndoButton.vue`, `RedoButton.vue`) — never wire the shortcut in the parent.
 - **A `v-menu` and its menu items is one component** (e.g. `EntityMoreMenu.vue`) — the menu plus its list items are one coherent unit.
 - **Shared multi-step action logic used by 2+ button components** goes into a `use*` composable (single-function composables return the function directly), never duplicated.
 

@@ -133,7 +133,12 @@
       "WebFetch(domain:orm.drizzle.team)",
       "WebFetch(domain:vuetifyjs.com)",
       "WebFetch(domain:vueuse.org)",
-      "WebFetch(domain:www.npmjs.com)"
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(cp .claude/skills/vue-component-patterns/SKILL.md .agents/skills/vue-component-patterns/SKILL.md)",
+      "Bash(cp .claude/skills/vuetify/SKILL.md .agents/skills/vuetify/SKILL.md)",
+      "Bash(cp .claude/skills/configuration)",
+      "Read(//tmp/**)",
+      "Bash(npx --yes typescript@latest tsc --noEmit --strict --target ESNext t_priv.ts)"
     ]
   }
 }

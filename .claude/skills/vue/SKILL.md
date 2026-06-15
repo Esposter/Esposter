@@ -15,7 +15,7 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 
 `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, then all `const` assignments, then `defineExpose` last (preceded by a blank line, before any `watch`/lifecycle hooks).
 
-- **`defineModel`**: always type explicitly. For booleans pass `{ default: false }` so the type excludes `undefined`: `defineModel<boolean>({ default: false })`. Never declare `defineModel` unless the value is used in script (`watch`, `computed`, or passed) — otherwise use `:prop` + `@event`. Name the variable `modelValue` — never `model` or any other alias: `const modelValue = defineModel<string>()`.
+- **`defineModel`**: always type explicitly. For booleans pass `{ default: false }` so the type excludes `undefined`: `defineModel<boolean>({ default: false })`. Never declare `defineModel` unless the value is used in script (`watch`, `computed`, or passed) — otherwise use `:prop` + `@event`. For an **unnamed** model, name the variable `modelValue` (never `model` or another alias): `const modelValue = defineModel<string>()`. For a **named** model, the variable matches the name: `const title = defineModel<string>("title")`.
 - **`defineSlots`**: only assign to `const slots` when `slots` is referenced in script. Otherwise call `defineSlots<...>()` without assignment.
 
 ## Inline Functions & Handlers
@@ -170,7 +170,7 @@ interface Props {
 
 Name after the component's identity (file/folder name, stripping `Index`): `PreJoin/Index.vue` → `PreJoinProps`; `JoinNotice/KnockerItem.vue` → `KnockerItemProps`.
 
-**Prop shorthand naming** — name a local variable to match the target prop it feeds: `const dataSourceType = ref(...)` → `:dataSourceType`.
+**Prop shorthand naming** — when binding a simple local `ref`/`computed` directly to a prop, name it to match that prop so the `:prop` shorthand works: `const dataSourceType = ref(...)` → `:dataSourceType`. Doesn't apply to complex expressions (`:src="session.user.image"`) or named `defineModel` variables.
 
 ## Refs & Computed
 

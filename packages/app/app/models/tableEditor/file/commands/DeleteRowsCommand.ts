@@ -11,27 +11,27 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
   readonly type = CommandType.DeleteRows;
 
   get description() {
-    return `Delete ${this.indexedRows.length} Row${this.indexedRows.length === 1 ? "" : "s"}`;
+    return `Delete ${this.#indexedRows.length} Row${this.#indexedRows.length === 1 ? "" : "s"}`;
   }
 
-  private readonly indexedRows: IndexedRow[];
+  readonly #indexedRows: IndexedRow[];
 
   constructor(indexedRows: IndexedRow[]) {
     super();
-    this.indexedRows = indexedRows.toSorted((a, b) => b.index - a.index);
+    this.#indexedRows = indexedRows.toSorted((a, b) => b.index - a.index);
   }
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
-    const indexSet = new Set(this.indexedRows.map(({ index }) => index));
-    for (const { row } of this.indexedRows)
+    const indexSet = new Set(this.#indexedRows.map(({ index }) => index));
+    for (const { row } of this.#indexedRows)
       for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
     item.dataSource.rows = item.dataSource.rows.filter((_, index) => !indexSet.has(index));
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
-    const ascendingRows = this.indexedRows.toSorted((a, b) => a.index - b.index);
+    const ascendingRows = this.#indexedRows.toSorted((a, b) => a.index - b.index);
     for (const { row } of ascendingRows)
       for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
     const result: Row[] = [];

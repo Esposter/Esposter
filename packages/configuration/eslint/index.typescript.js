@@ -25,5 +25,5 @@ export default withNuxt(plugins, {
   })
   .append(oxlint)
   // `public` is generated/static assets (incl. generated tileset `.tsx`); oxlint already ignores it,
-  // so skip it here too — otherwise eslint walks the whole 64MB tree calculating config per file.
+  // So skip it here too — otherwise eslint walks the whole 64MB tree calculating config per file.
   .append({ ignores: ["**/*.md", "public/**"] });

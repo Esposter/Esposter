@@ -11,15 +11,15 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
   readonly type = CommandType.PasteRange;
 
   get description() {
-    const rowCount = this.pastedValues.length;
+    const rowCount = this.#pastedValues.length;
     return `Paste ${rowCount} row${rowCount === 1 ? "" : "s"}`;
   }
 
-  private readonly anchorColumnIndex: number;
-  private readonly anchorRowIndex: number;
-  private readonly originalRows: Row[];
-  private readonly pastedValues: string[][];
-  private readonly targetColumnNames: string[];
+  readonly #anchorColumnIndex: number;
+  readonly #anchorRowIndex: number;
+  readonly #originalRows: Row[];
+  readonly #pastedValues: string[][];
+  readonly #targetColumnNames: string[];
 
   constructor(
     anchorRowIndex: number,
@@ -29,21 +29,21 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
     originalRows: Row[],
   ) {
     super();
-    this.anchorRowIndex = anchorRowIndex;
-    this.anchorColumnIndex = anchorColumnIndex;
-    this.pastedValues = pastedValues;
-    this.targetColumnNames = targetColumnNames;
-    this.originalRows = originalRows;
+    this.#anchorRowIndex = anchorRowIndex;
+    this.#anchorColumnIndex = anchorColumnIndex;
+    this.#pastedValues = pastedValues;
+    this.#targetColumnNames = targetColumnNames;
+    this.#originalRows = originalRows;
   }
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     const { columns, rows } = item.dataSource;
-    const targetNames = this.targetColumnNames.slice(this.anchorColumnIndex);
+    const targetNames = this.#targetColumnNames.slice(this.#anchorColumnIndex);
     const columnsByName = new Map(columns.map((column) => [column.name, column]));
-    for (let rowOffset = 0; rowOffset < this.pastedValues.length; rowOffset++) {
-      const rowIndex = this.anchorRowIndex + rowOffset;
-      const pastedRow = takeOne(this.pastedValues, rowOffset);
+    for (let rowOffset = 0; rowOffset < this.#pastedValues.length; rowOffset++) {
+      const rowIndex = this.#anchorRowIndex + rowOffset;
+      const pastedRow = takeOne(this.#pastedValues, rowOffset);
       if (rowIndex < rows.length) {
         const row = takeOne(rows, rowIndex);
         for (
@@ -79,16 +79,16 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const { columns, rows } = item.dataSource;
-    const appendedRowCount = this.pastedValues.length - this.originalRows.length;
+    const appendedRowCount = this.#pastedValues.length - this.#originalRows.length;
     if (appendedRowCount > 0) {
       const removedRows = rows.splice(rows.length - appendedRowCount, appendedRowCount);
       for (const removedRow of removedRows)
         for (const column of columns) column.size -= getValueSize(removedRow.data[column.name]);
     }
-    for (let rowOffset = 0; rowOffset < this.originalRows.length; rowOffset++) {
-      const rowIndex = this.anchorRowIndex + rowOffset;
+    for (let rowOffset = 0; rowOffset < this.#originalRows.length; rowOffset++) {
+      const rowIndex = this.#anchorRowIndex + rowOffset;
       const row = takeOne(rows, rowIndex);
-      const originalRow = takeOne(this.originalRows, rowOffset);
+      const originalRow = takeOne(this.#originalRows, rowOffset);
       for (const column of columns) {
         const columnValue = takeOne(row.data, column.name);
         const originalColumnValue = takeOne(originalRow.data, column.name);
