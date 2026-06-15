@@ -6,11 +6,11 @@ import { afterAll, vi } from "vitest";
 // By happy-dom's `GlobalRegistrator`; with that removed we install a minimal in-memory `Storage`
 // Instead — far cheaper than registering a full DOM, and harmless in the node environment.
 class MemoryStorage implements Storage {
-  readonly #store = new Map<string, string>();
-
   get length() {
     return this.#store.size;
   }
+
+  readonly #store = new Map<string, string>();
 
   clear() {
     this.#store.clear();
