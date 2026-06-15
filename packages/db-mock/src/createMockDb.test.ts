@@ -1,9 +1,9 @@
-import { SNAPSHOT_FILENAME } from "@/constants";
-import { createMockDb } from "@/createMockDb";
-import { PGlite } from "@electric-sql/pglite";
 import type { relations } from "@esposter/db-schema";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
+import { SNAPSHOT_FILENAME } from "@/constants";
+import { createMockDb } from "@/createMockDb";
+import { PGlite } from "@electric-sql/pglite";
 import { messageSchema, schema, users } from "@esposter/db-schema";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api-postgres";
 import { readFile } from "node:fs/promises";

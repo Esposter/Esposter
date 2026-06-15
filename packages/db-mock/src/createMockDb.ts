@@ -14,7 +14,7 @@ export const createMockDb = async (): Promise<PostgresJsDatabase<typeof relation
   const loadDataDir = new Blob([await readFile(join(import.meta.dirname, SNAPSHOT_FILENAME))]);
   const client = new PGlite({ loadDataDir });
   // `new PGlite()` returns before init finishes, so the first query would otherwise pay the
-  // boot cost and blow past the per-test timeout. Await readiness here so it lands in `beforeAll`.
+  // Boot cost and blow past the per-test timeout. Await readiness here so it lands in `beforeAll`.
   await client.waitReady;
   const db = drizzle({ client, relations });
   return db as unknown as PostgresJsDatabase<typeof relations>;
