@@ -9,17 +9,13 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 
 - `<script setup lang="ts">` at the top of every SFC. Prefer attributify over `<style>` blocks; when a block is genuinely needed use `<style scoped>` and only add `lang="scss"` for Sass features (nesting, `&`, `//` comments, `@mixin`/`@include`). See the `styling` skill.
 - Self-closing tags for empty components/elements: `<Component />`.
-- No blank lines within templates.
-- No blank lines between consecutive `const` assignments — group them tightly.
-- No blank line before a `return` that immediately follows a `const` in a small function (including composables that return a function directly — `return` follows the last setup line with no gap).
-- Blank line after a closing `}` of an `if`/`for`/block statement — unless it is the last statement in its scope or immediately followed by another opening block.
-- Avoid unnecessary comments — prefer descriptive names. Keep comments that explain _why_ (non-obvious decisions, disable reasons, workarounds). Attach comments directly to the code (no blank line before/after).
+- Blank-line placement (templates, consts, returns, blocks) and comment attachment — see the `formatting` skill.
 
 ## Vue Macro Ordering
 
 `defineSlots` → `defineModel` → `defineProps` → `defineEmits`, then all `const` assignments, then `defineExpose` last (preceded by a blank line, before any `watch`/lifecycle hooks).
 
-- **`defineModel`**: always type explicitly. For booleans pass `{ default: false }` so the type excludes `undefined`: `defineModel<boolean>({ default: false })`. Never declare `defineModel` unless the value is used in script (`watch`, `computed`, or passed) — otherwise use `:prop` + `@event`.
+- **`defineModel`**: always type explicitly. For booleans pass `{ default: false }` so the type excludes `undefined`: `defineModel<boolean>({ default: false })`. Never declare `defineModel` unless the value is used in script (`watch`, `computed`, or passed) — otherwise use `:prop` + `@event`. Name the variable `modelValue` — never `model` or any other alias: `const modelValue = defineModel<string>()`.
 - **`defineSlots`**: only assign to `const slots` when `slots` is referenced in script. Otherwise call `defineSlots<...>()` without assignment.
 
 ## Inline Functions & Handlers
@@ -173,6 +169,8 @@ interface Props {
 ```
 
 Name after the component's identity (file/folder name, stripping `Index`): `PreJoin/Index.vue` → `PreJoinProps`; `JoinNotice/KnockerItem.vue` → `KnockerItemProps`.
+
+**Prop shorthand naming** — name a local variable to match the target prop it feeds: `const dataSourceType = ref(...)` → `:dataSourceType`.
 
 ## Refs & Computed
 

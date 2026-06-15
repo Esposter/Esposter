@@ -78,6 +78,12 @@ Exception: `achievement` merged separately to avoid circular dep with the router
 - **Never use `call`, `apply`, `bind`, `then`, `catch` as router keys** — they are `Function.prototype` methods. tRPC clients use a `Proxy`; accessing `.call` returns `Function.prototype.call` instead of descending the router, silently breaking the namespace.
 - Use a descriptive compound name: `callSession`, `videoCall`, `roomCall`.
 
+## Procedure & Result Naming
+
+- `upsert*` for procedures that do `insert().onConflictDoUpdate()` — never `update*` (update implies the record already exists). Domain operation names (`subscribe`, `connect`) are exempt.
+- Subscription naming: `on` + exact mutation name (camelCase): `createMessage` → `onCreateMessage`, `updateRole` → `onUpdateRole`.
+- DB result variables named after the entity: `newFriend`, `updatedFriend`, `existingFriend` — never `created`, `updated`, `existing`.
+
 ## Sub-router Composition Pattern
 
 When a feature router has sub-routers, export a `base*Router` with the feature's own procedures, then compose with `mergeRouters`. The feature's `index.ts` is the composition root; `routers/index.ts` only imports the composed router, never sub-routers directly.

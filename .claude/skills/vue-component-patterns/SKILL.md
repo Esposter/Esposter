@@ -117,9 +117,7 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 
 ## File Length
 
-- **Target 50–100 lines per `.vue` file** — consistently over 100 lines is a yellow flag that a slot, sub-component, or composable extraction is overdue.
-- Extract toolbar/header buttons into a slot component (e.g. `TopSlot.vue`), row/column action menus into `ActionSlot.vue`, and grouped controls into their own focused component.
-- Complex/rare layout components (e.g. a rich data table with drag-and-drop, pagination, find/replace) may exceed 100 lines — treat as a prompt to reconsider, not an absolute rule.
+Line-count target and exceptions — see the `file-organization` skill. Component-specific extractions when a `.vue` runs long: pull toolbar/header buttons into a slot component (e.g. `TopSlot.vue`), row/column action menus into `ActionSlot.vue`, and grouped controls into their own focused component.
 
 ## Slot Extraction (Complex Components)
 
@@ -387,7 +385,6 @@ Extract to a `use*` composable only when the **same multi-step logic is reused b
 - **List items / rows reduce to pure layout** — avatar, title, subtitle, time, and a row of extracted button/menu components. No action logic in the item.
 - **A `v-menu` and its menu items is one component** (e.g. `EntityMoreMenu.vue`) — the menu plus its list items are one coherent unit.
 - **Shared multi-step action logic used by 2+ button components** goes into a `use*` composable (single-function composables return the function directly), never duplicated.
-- **Props interface name = full component auto-import name + `Props`** — `FeatureEntityPrimaryButtonProps`, not bare `Props`.
 
 ### Allowed grouping (do NOT split these)
 

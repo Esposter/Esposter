@@ -7,6 +7,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
 
 ## Usage in Vue Components
 
+- **Full descriptive store variable name** — `const fileTableEditorStore = useFileTableEditorStore()`, never `const store = ...`. Exception: conditional assignment where the store type varies at runtime.
 - **`storeToRefs` and `defineStore` are auto-imported** — never `import { storeToRefs } from "pinia"`.
 - **In components**: assign the store to a named variable first (`const roleStore = useRoleStore()`), then destructure. Never destructure directly from the `useXxxStore()` call. Keep each store's lines grouped — fully extract one store before the next. Never batch all inits, then all refs, then all methods. Order per store:
   1. `const xyzStore = useXyzStore()`

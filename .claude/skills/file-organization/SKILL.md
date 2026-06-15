@@ -1,6 +1,6 @@
 ---
 name: file-organization
-description: Esposter file and folder organisation — one export per file, no export{} syntax, models vs services vs constants, command pattern field ordering, constant maps with as-const-satisfies, generic Vue components, MIME types, and LF line endings. Apply when creating, moving, or organising files, exports, constants, or new packages.
+description: Esposter file and folder organisation — one export per file, no export{} syntax, models vs services vs constants, command pattern field ordering, constant maps with as-const-satisfies, generic Vue components, MIME types, and file length. Apply when creating, moving, or organising files, exports, constants, or new packages.
 ---
 
 # File & Folder Organisation
@@ -12,7 +12,7 @@ description: Esposter file and folder organisation — one export per file, no e
   - `@@/` — project root (`packages/app/`); `server/` and other root-level paths.
   - `@/` — app source dir (`packages/app/app/`); `composables/`, `components/`, `store/`, `services/`, etc.
   - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
-- **Blank lines between imports** — a single blank line separates the `import type` group from the value `import` group. Never insert blank lines between value imports (or within the type group); all value imports stay contiguous regardless of source (`#shared`, `@vueuse/*`, `@/`).
+- Import grouping, blank lines, and ordering — see the `formatting` skill.
 
 ## Files and Exports
 
@@ -83,33 +83,6 @@ Commands are classes extending `ADataSourceCommand<T extends CommandType>`. Each
 
 Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfigurationMap`) rather than calling `mime-types` `lookup` at runtime — `mime-types` uses Node.js `path.extname`, unavailable in the browser. Access `mimeType` through the configuration map at the call site.
 
-## Whitespace & Comments
-
-- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only.
-
-  ```ts
-  // CORRECT — comment acts as separator
-  const foo = parseWorkspace(yaml);
-  // Parse lockfile
-  const bar = parseLockfile(yaml);
-
-  // WRONG — blank line + comment is redundant
-  const foo = parseWorkspace(yaml);
-
-  // Parse lockfile
-  const bar = parseLockfile(yaml);
-  ```
-
-  - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. `vitest.configs.all` (enabled in the eslint vitest plugin config) turns on the `vitest/padding-around-*` rules, which _require_ a blank line around `describe`/`test` blocks, hooks (`beforeEach`/`afterEach`), and expect groups. A leading comment on such a block sits after that mandatory blank line, so keep it. Still tighten the comment text itself.
-
-- **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line, but keep a numbered or bulleted list (one item per `//` line) when enumerating distinct items rather than cramming them into one sentence — the list is more scannable; just tighten each item's wording. If an example helps, show only the minimal fragment that illustrates the point. Applies to `//`, `/* */`, and Vue `<!-- -->` comments alike.
-
-- **Interfaces/types at the top** — within a `.vue` `<script setup>` or `.ts` module, group all local `interface`/`type` declarations together at the top of the block (after imports), before the runtime `const`/logic. Don't interleave a stray interface between logic blocks.
-
-- **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Don't strip it out when genericising; just trim it to the minimal identifying fragment and drop surrounding example values/arguments.
-
-- **Don't fight the comment-capitalization hook** — a hook capitalizes the first letter of every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine; it doesn't hurt readability. Write comments naturally and don't reword just to dodge the capitalization (the only thing to avoid is starting a wrapped line with a case-sensitive code identifier the hook would corrupt — reword those).
-
 ## Creating a New Package
 
 New workspace packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
@@ -165,28 +138,16 @@ When renaming a file (e.g. `createCode.ts` → `createToken.ts`):
 
 The alias pattern looks helpful but creates confusion: the old name stays discoverable, callers assume it's canonical, and the rename never fully propagates.
 
-## Naming Conventions
-
-- **No abbreviations in exported names** — always the full English word:
-  - `stat`/`stats` → `statistics` (singular and plural — like "mathematics"; e.g. `ColumnStatistics`, `ColumnStatisticsKey`, `useColumnStatistics`).
-  - `sum` (as a statistics identifier) → `summation` (e.g. `ColumnStatisticsDefinitionMap.summation`, `FooterStatisticsType.Summation`) — does NOT apply to math accumulator locals (`acc`, `s`) or the display title `"Sum"`.
-  - Prefer `FooterStatisticsType` over `FooterStatType`, `ColumnStatisticsDefinition` over `ColumnStatDefinition`.
-
 ## Shared Schemas
 
 - **Shared field schemas** — when multiple models share a field (e.g. `description`), define a single named interface + schema (`Description` / `descriptionSchema`) in `shared/models/tableEditor/` and spread the schema's `.shape` into each model schema. No `With` prefix (follows `SourceColumnId`, `ApplicableColumnTypes`). Don't add `.default(...)` to the shared schema — each implementing class declares its own default as a class field and adds it at the schema call site.
 
 ## File Length
 
-- **Target 50-100 lines per `.ts` file** — over 100 lines is a yellow flag that a helper/sub-service/model extraction is overdue.
+- **Target 50-100 lines per file** (`.ts` and `.vue` alike) — consistently over 100 lines is a yellow flag that an extraction is overdue (helper/sub-service/model for `.ts`; slot/sub-component/composable for `.vue` — see the `vue-component-patterns` skill).
 - Each file should have a single clear responsibility. Split a file that handles multiple concerns.
-- Exceptions: generated files, large constant maps with many entries, and files where co-location of tightly coupled logic (e.g. a Zod schema next to its interface) is intentional.
+- Exceptions: generated files, large constant maps with many entries, complex/rare layout components, and files where co-location of tightly coupled logic (e.g. a Zod schema next to its interface) is intentional.
 
 ## Line Endings
 
-- All files must use **LF** line endings (`\n`), not CRLF.
-- The `Write` tool on Windows always produces CRLF. **Immediately after every `Write` call**, convert:
-  ```bash
-  sed -i 's/\r//' "path/to/file"
-  ```
-  For multiple files: `find "path/to/dir" -name "*.md" | xargs -I{} sed -i 's/\r//' "{}"`.
+See the `formatting` skill.

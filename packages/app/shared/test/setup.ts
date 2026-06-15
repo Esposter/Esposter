@@ -2,9 +2,9 @@ import { Environment } from "#shared/models/environment/Environment";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, vi } from "vitest";
 // The nuxt test environment builds its own happy-dom `window`/`document`/`DOMParser`, but it does
-// not expose `localStorage`/`sessionStorage` (not even on `window`). They were previously provided
-// by happy-dom's `GlobalRegistrator`; with that removed we install a minimal in-memory `Storage`
-// instead — far cheaper than registering a full DOM, and harmless in the node environment.
+// Not expose `localStorage`/`sessionStorage` (not even on `window`). They were previously provided
+// By happy-dom's `GlobalRegistrator`; with that removed we install a minimal in-memory `Storage`
+// Instead — far cheaper than registering a full DOM, and harmless in the node environment.
 class MemoryStorage implements Storage {
   readonly #store = new Map<string, string>();
 
@@ -29,7 +29,7 @@ class MemoryStorage implements Storage {
   }
 
   setItem(key: string, value: string) {
-    this.#store.set(key, String(value));
+    this.#store.set(key, value);
   }
 }
 
