@@ -1,11 +1,14 @@
 import { SNAPSHOT_FILENAME } from "@/constants";
 import { createMockDb } from "@/createMockDb";
 import { PGlite } from "@electric-sql/pglite";
+import type { relations } from "@esposter/db-schema";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+
 import { messageSchema, schema, users } from "@esposter/db-schema";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api-postgres";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 const introspectQuery = `
   SELECT table_schema, table_name, column_name, udt_name, is_nullable, column_default
@@ -17,6 +20,12 @@ const introspectQuery = `
 const introspect = async (client: PGlite) => (await client.query(introspectQuery)).rows;
 
 describe(createMockDb, () => {
+  let db: PostgresJsDatabase<typeof relations>;
+
+  beforeAll(async () => {
+    db = await createMockDb();
+  });
+
   test("snapshot matches a freshly generated migration", { timeout: 60_000 }, async () => {
     expect.hasAssertions();
 
@@ -35,8 +44,6 @@ describe(createMockDb, () => {
 
   test("returns a queryable db", async () => {
     expect.hasAssertions();
-
-    const db = await createMockDb();
 
     await expect(db.$count(users)).resolves.toBe(0);
   });
