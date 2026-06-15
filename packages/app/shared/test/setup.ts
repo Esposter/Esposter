@@ -2,7 +2,7 @@ import { Environment } from "#shared/models/environment/Environment";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, afterEach, vi } from "vitest";
 // The nuxt test env provides `window`/`document`/`DOMParser` but not `localStorage`/`sessionStorage`,
-// so install a minimal in-memory `Storage` — cheaper than registering a full DOM, harmless in node.
+// So install a minimal in-memory `Storage` — cheaper than registering a full DOM, harmless in node.
 class MemoryStorage implements Storage {
   get length() {
     return this.#store.size;
