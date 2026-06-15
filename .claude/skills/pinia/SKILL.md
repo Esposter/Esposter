@@ -7,6 +7,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
 
 ## Usage in Vue Components
 
+- **Full descriptive store variable name** — `const fileTableEditorStore = useFileTableEditorStore()`, never `const store = ...`. Exception: conditional assignment where the store type varies at runtime.
 - **`storeToRefs` and `defineStore` are auto-imported** — never `import { storeToRefs } from "pinia"`.
 - **In components**: assign the store to a named variable first (`const roleStore = useRoleStore()`), then destructure. Never destructure directly from the `useXxxStore()` call. Keep each store's lines grouped — fully extract one store before the next. Never batch all inits, then all refs, then all methods. Order per store:
   1. `const xyzStore = useXyzStore()`
@@ -332,6 +333,22 @@ rolesMap.value = new Map(rolesMap.value).set(roomId, result);
 // CORRECT — mutate in place
 rolesMap.value.set(roomId, result);
 ```
+
+## Storing Class Instances — markRaw
+
+Pinia `ref`/`reactive` state is **deep** — pushing a class instance into a reactive array (or assigning it to a reactive field) recursively wraps the instance in a reactive `Proxy`. A `Proxy` **breaks ECMAScript `#` private field/method access**: when a method runs with `this` bound to the Proxy, the `#field` brand check fails with `TypeError: Cannot read private member #x from an object whose class did not declare it`.
+
+Wrap class instances in `markRaw` at the single point they enter reactive state. The container stays reactive (its `length`/identity still drives computeds); only the instance opts out of proxying — correct since command/controller instances hold no reactive state of their own.
+
+```typescript
+// store/tableEditor/fileHistory — commands use # private fields, so never let them be proxied
+const history = ref<ADataSourceCommand[]>([]); // array stays reactive (length drives isUndoable)
+const push = (command: ADataSourceCommand) => {
+  history.value.push(markRaw(command)); // markRaw so undo()/execute() can read this.#index etc.
+};
+```
+
+This is the same pattern used for Phaser objects (`markRaw(new KeyboardControls())`) — see the `vue-phaserjs` skill. Prefer it over downgrading `#` fields to the TS `private` keyword: keep the strictest ECMAScript form and stop the proxying instead. `shallowRef` is not a substitute when the container relies on in-place `.push()`/mutation — shallowRef only tracks `.value` reassignment.
 
 ## Optimistic Input Clearing on Submit
 

@@ -8,31 +8,31 @@ export class ToggleColumnVisibilityCommand extends ADataSourceCommand<CommandTyp
   readonly type = CommandType.ToggleColumnVisibility;
 
   get description() {
-    return getToggleColumnVisibilityDescription(this.columnName, this.hidden);
+    return getToggleColumnVisibilityDescription(this.#columnName, this.#hidden);
   }
 
-  private readonly columnId: string;
-  private readonly columnName: string;
-  private readonly hidden: boolean;
+  readonly #columnId: string;
+  readonly #columnName: string;
+  readonly #hidden: boolean;
 
   constructor(columnId: string, columnName: string, hidden: boolean) {
     super();
-    this.columnId = columnId;
-    this.columnName = columnName;
-    this.hidden = hidden;
+    this.#columnId = columnId;
+    this.#columnName = columnName;
+    this.#hidden = hidden;
   }
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
-    const column = item.dataSource.columns.find(({ id }) => id === this.columnId);
+    const column = item.dataSource.columns.find(({ id }) => id === this.#columnId);
     if (!column) return;
-    column.hidden = !this.hidden;
+    column.hidden = !this.#hidden;
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
-    const column = item.dataSource.columns.find(({ id }) => id === this.columnId);
+    const column = item.dataSource.columns.find(({ id }) => id === this.#columnId);
     if (!column) return;
-    column.hidden = this.hidden;
+    column.hidden = this.#hidden;
   }
 }

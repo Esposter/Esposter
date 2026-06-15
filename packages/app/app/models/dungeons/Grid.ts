@@ -26,7 +26,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
     return takeOne(takeOne(unref(this.grid), this.position.value.y), this.position.value.x);
   }
 
-  private readonly internalValidate: (
+  readonly #internalValidate: (
     ...args: Parameters<typeof this.validate>
   ) => UnwrapRef<ReturnType<typeof this.validate>>;
 
@@ -37,7 +37,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
       if (value === undefined) return false;
       return validate?.bind(this)(position) ?? true;
     };
-    this.internalValidate = (...args) => unref(this.validate(...args));
+    this.#internalValidate = (...args) => unref(this.validate(...args));
     this.grid = grid;
     this.position = position ?? ref({ x: 0, y: 0 });
     this.wrap = wrap ?? false;
@@ -80,7 +80,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           if (newPositionY > 0) newPositionY -= 1;
           else if (this.wrap && newPositionY === 0) newPositionY = this.rowSize - 1;
 
-          if (!(isSkipValidation || this.internalValidate({ x: this.position.value.x, y: newPositionY }))) continue;
+          if (!(isSkipValidation || this.#internalValidate({ x: this.position.value.x, y: newPositionY }))) continue;
 
           this.position.value.y = newPositionY;
           return;
@@ -95,7 +95,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           if (newPositionY < this.rowSize - 1) newPositionY += 1;
           else if (this.wrap && newPositionY === this.rowSize - 1) newPositionY = 0;
 
-          if (!(isSkipValidation || this.internalValidate({ x: this.position.value.x, y: newPositionY }))) continue;
+          if (!(isSkipValidation || this.#internalValidate({ x: this.position.value.x, y: newPositionY }))) continue;
 
           this.position.value.y = newPositionY;
           return;
@@ -110,7 +110,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           if (newPositionX > 0) newPositionX -= 1;
           else if (this.wrap && newPositionX === 0) newPositionX = this.getColumnSize(this.position.value.y) - 1;
 
-          if (!(isSkipValidation || this.internalValidate({ x: newPositionX, y: this.position.value.y }))) continue;
+          if (!(isSkipValidation || this.#internalValidate({ x: newPositionX, y: this.position.value.y }))) continue;
 
           this.position.value.x = newPositionX;
           return;
@@ -125,7 +125,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
           if (newPositionX < this.getColumnSize(this.position.value.y) - 1) newPositionX += 1;
           else if (this.wrap && newPositionX === this.getColumnSize(this.position.value.y) - 1) newPositionX = 0;
 
-          if (!(isSkipValidation || this.internalValidate({ x: newPositionX, y: this.position.value.y }))) continue;
+          if (!(isSkipValidation || this.#internalValidate({ x: newPositionX, y: this.position.value.y }))) continue;
 
           this.position.value.x = newPositionX;
           return;

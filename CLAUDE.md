@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Framework**: Nuxt 4
 - **UI Library**: Vue 3.5+
 - **Build System**: Vite, Rolldown
-- **Styling**: UnoCSS (Attributify Mode), Vuetify 3, Sass
+- **Styling**: UnoCSS (Attributify Mode), Vuetify 4, Sass
 - **State Management**: Pinia
 - **API**: tRPC, Nuxt Server Routes
 - **Database**: Drizzle ORM (PostgreSQL), Azure Table Storage, Azure Blob Storage

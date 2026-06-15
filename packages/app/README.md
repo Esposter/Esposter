@@ -58,7 +58,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | Layer      | Technology                                                       |
 | ---------- | ---------------------------------------------------------------- |
 | Framework  | [Nuxt 4](https://nuxt.com)                                       |
-| UI         | [Vue 3.5](https://vuejs.org), [Vuetify 3](https://vuetifyjs.com) |
+| UI         | [Vue 3.5](https://vuejs.org), [Vuetify 4](https://vuetifyjs.com) |
 | Styling    | [UnoCSS](https://unocss.dev) (Attributify mode), Sass            |
 | State      | [Pinia](https://pinia.vuejs.org)                                 |
 | API        | [tRPC](https://trpc.io) via `trpc-nuxt`                          |

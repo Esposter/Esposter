@@ -11,6 +11,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Strict equality only** — `===`/`!==`, never `==`/`!=`. For null checks use `=== null || === undefined` (or optional chaining), never `== null`.
 - `Omit` is **BANNED** — use `Except` from `type-fest` (import directly; not re-exported from `@esposter/shared`).
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
+- **The `private` keyword is BANNED** — use ECMAScript `#` private members instead (see Private Members). `protected` is still allowed (no `#` equivalent for subclass access).
 - Non-null assertions (`!`) are **BANNED** — both the expression operator (`foo!.bar`) and the field definite-assignment assertion (`field!: T`, see Class Fields). Use optional chaining or guard clauses.
 - `.forEach()` is **BANNED** — use `for...of`.
 - `type` aliases for object shapes are **BANNED** — use `interface`.
@@ -55,6 +56,33 @@ export class FileEntity {
 - Applies to all fields lacking an inline initializer: phantom type carriers, `Object.assign`-populated entity models (`AzureEntity`/`CompositeKeyEntity`/`*MessageEntity`), externally-assigned fields.
 - **Keep the inline initializer** for fields that have one (`id: string = crypto.randomUUID()`) — never convert to `declare` (drops the runtime default); they're mutually exclusive.
 - Optional fields (`direction?: Direction`) are already correct — leave them.
+
+## Private Members — `#` over `private`
+
+Class-private fields and methods use the ECMAScript `#` prefix, never the TypeScript `private` keyword. `#` gives true runtime privacy (not just compile-time); `private` is erased at runtime.
+
+```ts
+// WRONG — TypeScript private keyword
+export class MoveColumnCommand {
+  private readonly fromIndex: number;
+  private moveColumn(item: DataSourceItem) {
+    columns.splice(this.fromIndex, 1);
+  }
+}
+
+// CORRECT — # private members
+export class MoveColumnCommand {
+  readonly #fromIndex: number;
+  #moveColumn(item: DataSourceItem) {
+    columns.splice(this.#fromIndex, 1);
+  }
+}
+```
+
+- `private readonly foo: T` → `readonly #foo: T` — **keep `readonly`**; it is allowed on `#` fields and still enforces immutability.
+- `private foo()` → `#foo()`; `private async *foo()` → `async *#foo()`.
+- Access is always `this.#foo` — there is no `this.foo` form for `#` members.
+- **`protected` stays** — `#` is inaccessible to subclasses, so members a subclass must reach (e.g. `protected doExecute`) keep `protected`.
 
 ## Regex
 
@@ -228,6 +256,15 @@ export const stringTransformationTypeSchema = z.enum(
   Spread + `.map()` is only acceptable when a plain array is already the source.
 
 - **Never `new Set` just to call `.has()` on a small non-enum array** — if values are unique and the array is small, use `.some()`. `Set` only for enums or large collections.
+
+## Loops — `for...of` + `.entries()`, Destructure, No Dead Vars
+
+- **`.forEach()` is BANNED** — use `for...of`.
+- **No index-based `for (let i = 0; i < arr.length; i++)`** for plain array iteration — use `for...of`. When the index is needed (parallel arrays, offsets), use `.entries()`: `for (const [i, item] of arr.entries())`. The `.entries()` iterator cost is negligible (tiny per-element pair alloc, JIT-friendly) versus the readability win — it does not "drop perf hugely".
+- **Index-based `for` stays** only when the loop genuinely isn't sequential array iteration: step counters (`i += 4`, `i += BATCH_SIZE`), pure counts (`for (let i = 0; i < 3; i++)`), `<=` bounds, multi-condition bounds, or in-body index mutation/lookahead (e.g. `line.charAt(i + 1)` then `i++`).
+- **Destructure in the binding position (loop var, function param) straight to the props you use** — don't bind the whole object then read its fields. `for (const [i, { id }] of files.entries())` not `for (const [i, file] of ...) { ...file.id... }`. Destructure multiple: `for (const [i, { name, size, type }] of files.entries())`. This _removes_ the intermediate binding, so it does **not** conflict with the "no unnecessary destructure" rule (which bans adding a separate `const { x } = obj` line for a single use). Binding-position destructure = fewer vars; a standalone destructure statement for one use = more syntax. Keep the whole binding only when the object is passed on as a whole (`set(user.id, user)`) or used too many ways to enumerate cleanly.
+- **Don't declare intermediate vars that are used once** — `const pastedRow = takeOne(this.#pastedValues, rowOffset)` disappears entirely once you bind it via `.entries()`. Inline single-use values; only name a var when it's referenced more than once or the name adds clarity.
+- **Bound a zip with `break`, not a dual condition** — iterate the driving array via `.entries()` and `if (i >= other.length) break;` instead of `for (let i = 0; i < a.length && i < b.length; i++)`.
 
 ## Environment Checks
 

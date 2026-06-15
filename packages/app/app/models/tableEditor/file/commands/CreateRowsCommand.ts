@@ -10,36 +10,36 @@ export class CreateRowsCommand extends ADataSourceCommand<CommandType.CreateRows
   readonly type = CommandType.CreateRows;
 
   get description() {
-    return `Create ${this.rows.length} Row${this.rows.length === 1 ? "" : "s"}`;
+    return `Create ${this.#rows.length} Row${this.#rows.length === 1 ? "" : "s"}`;
   }
 
-  private readonly rows: Row[];
-  private readonly startIndex: number;
+  readonly #rows: Row[];
+  readonly #startIndex: number;
 
   constructor(startIndex: number, rows: Row[]) {
     super();
-    this.startIndex = startIndex;
-    this.rows = rows;
+    this.#startIndex = startIndex;
+    this.#rows = rows;
   }
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
-    for (const row of this.rows)
+    for (const row of this.#rows)
       for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
     item.dataSource.rows = [
-      ...item.dataSource.rows.slice(0, this.startIndex),
-      ...this.rows,
-      ...item.dataSource.rows.slice(this.startIndex),
+      ...item.dataSource.rows.slice(0, this.#startIndex),
+      ...this.#rows,
+      ...item.dataSource.rows.slice(this.#startIndex),
     ];
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
-    for (const row of this.rows)
+    for (const row of this.#rows)
       for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
     item.dataSource.rows = [
-      ...item.dataSource.rows.slice(0, this.startIndex),
-      ...item.dataSource.rows.slice(this.startIndex + this.rows.length),
+      ...item.dataSource.rows.slice(0, this.#startIndex),
+      ...item.dataSource.rows.slice(this.#startIndex + this.#rows.length),
     ];
   }
 }

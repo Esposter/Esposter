@@ -31,10 +31,9 @@ export const useUploadFiles = () => {
 
     isFileLoading.value = true;
     // Populate file metadata before uploading the blocks so Vue can render them in the UI.
-    for (let i = 0; i < newFiles.length; i++) {
-      const file = takeOne(newFiles, i);
+    for (const [i, { name, size, type }] of newFiles.entries()) {
       const { id } = takeOne(fileSasEntities, i);
-      files.value.push({ filename: file.name, id, mimetype: file.type, size: file.size });
+      files.value.push({ filename: name, id, mimetype: type, size });
     }
 
     await Promise.all(

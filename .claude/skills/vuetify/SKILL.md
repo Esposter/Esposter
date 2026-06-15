@@ -190,4 +190,4 @@ The CSS custom-property form (`var(--border-width)`) is only acceptable when a s
 
 ## Keyboard Shortcut Components
 
-When a button has an associated keyboard shortcut, extract it into its own component owning both the `v-btn` and the `onKeyStroke` handler, keeping each focused on one action (e.g. `UndoButton.vue`, `RedoButton.vue`).
+A button and its keyboard shortcut are one component — see the **vue-component-patterns** skill (Maximal Component Granularity).

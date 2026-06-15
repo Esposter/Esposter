@@ -13,14 +13,14 @@
 
 ### Core
 
-- **Framework**: Nuxt 4 (Beta/RC)
+- **Framework**: Nuxt 4
 - **UI Library**: Vue 3.5+
 - **Build System**: Vite, Rolldown
 
 ### Styling
 
 - **Engine**: UnoCSS (Attributify Mode)
-- **Components**: Vuetify 3 (Material Design), Custom Components
+- **Components**: Vuetify 4 (Material Design), Custom Components
 - **Preprocessors**: Sass (Always use `lang="scss"` in Vue components)
 
 ### State & Data
@@ -126,7 +126,7 @@ The application relies on environment variables defined in `packages/app/configu
 - **Variable Assignments**: Group variable assignments together without blank lines between them.
 - **Vue Templates**: Avoid unnecessary blank lines within templates.
 - **Self-Closing Tags**: Always use self-closing tags (void tags) for components/elements without content (e.g., `<Component />`).
-- **Comments**: Remove comments from the code. Make variable names descriptive instead.
+- **Comments**: No comments unless the _why_ is non-obvious (hidden constraints, workarounds); prefer descriptive variable names.
 - **Whitespace**: Minimize blank lines. Group related code tightly.
 
 ### Resource Management

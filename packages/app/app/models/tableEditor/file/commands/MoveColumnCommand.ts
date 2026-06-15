@@ -8,37 +8,37 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
   readonly type = CommandType.MoveColumn;
 
   get description() {
-    return `Move "${this.columnName}" (Column ${this.fromIndex + 1}) to "${this.toColumnName}" (Column ${this.toIndex + 1})`;
+    return `Move "${this.#columnName}" (Column ${this.#fromIndex + 1}) to "${this.#toColumnName}" (Column ${this.#toIndex + 1})`;
   }
 
-  private readonly columnName: string;
-  private readonly fromIndex: number;
-  private readonly toColumnName: string;
-  private readonly toIndex: number;
+  readonly #columnName: string;
+  readonly #fromIndex: number;
+  readonly #toColumnName: string;
+  readonly #toIndex: number;
 
   constructor(fromIndex: number, toIndex: number, columnName: string, toColumnName: string) {
     super();
-    this.columnName = columnName;
-    this.fromIndex = fromIndex;
-    this.toColumnName = toColumnName;
-    this.toIndex = toIndex;
+    this.#columnName = columnName;
+    this.#fromIndex = fromIndex;
+    this.#toColumnName = toColumnName;
+    this.#toIndex = toIndex;
   }
 
   protected doExecute(item: DataSourceItem) {
-    this.moveColumn(item);
+    this.#moveColumn(item);
   }
 
   protected doUndo(item: DataSourceItem) {
-    this.moveColumn(item);
+    this.#moveColumn(item);
   }
 
-  private moveColumn(item: DataSourceItem) {
+  #moveColumn(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columns = [...item.dataSource.columns];
-    const [moved] = columns.splice(this.fromIndex, 1);
+    const [moved] = columns.splice(this.#fromIndex, 1);
     if (!moved) return;
 
-    columns.splice(this.toIndex, 0, moved);
+    columns.splice(this.#toIndex, 0, moved);
     item.dataSource.columns = columns;
     const columnNames = columns.map(({ name }) => name);
     for (const row of item.dataSource.rows) {

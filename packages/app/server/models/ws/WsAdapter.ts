@@ -8,19 +8,19 @@ export class WsAdapter extends EventEmitter {
   readonly CONNECTING = 0 as const;
   readonly OPEN = 1 as const;
   readyState: typeof this.CLOSED | typeof this.CLOSING | typeof this.CONNECTING | typeof this.OPEN = this.OPEN;
-  private readonly peer: Peer;
+  readonly #peer: Peer;
 
   constructor(peer: Peer) {
     super();
-    this.peer = peer;
+    this.#peer = peer;
   }
 
   close(code?: number, reason?: Buffer | string) {
     this.readyState = this.CLOSING;
-    this.peer.close(code, typeof reason === "string" ? reason : reason?.toString());
+    this.#peer.close(code, typeof reason === "string" ? reason : reason?.toString());
   }
 
   send(data: string) {
-    this.peer.send(data);
+    this.#peer.send(data);
   }
 }
