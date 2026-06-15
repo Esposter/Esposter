@@ -1,3 +1,5 @@
+// @vitest-environment nuxt
+// read-excel-file parses the workbook XML with DOMParser, which only exists in the nuxt env.
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
