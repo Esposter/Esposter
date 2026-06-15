@@ -225,6 +225,8 @@ Default environment is `node` — do **not** add `// @vitest-environment node`.
 - **Nuxt-dependent non-router tests** — add `// @vitest-environment nuxt` when Nuxt runtime APIs are required (e.g. `app/store/message/emoji.test.ts`).
 - **All other tests** — no directive needed.
 
+**DOM comes from the nuxt environment, not setup.ts.** The nuxt environment builds its own happy-dom `window`/`document` (and `mountSuspended` attaches to its own `#test-wrapper`), so there is **no** manual happy-dom registration — node-env tests run without a DOM. If a test touches the DOM (or imports something that does at module load), declare `// @vitest-environment nuxt`; do not reach for `window` in a node-env test. `fake-indexeddb/auto` stays a global setup file: it only assigns the IDB\* global constructors the `idb` library needs, is cheap in node, and the cache composables (`useCursorPaginationCache`/`useOffsetPaginationCache`) pull IndexedDB in transitively across many nuxt-env tests, so scoping it isn't worth the surface area.
+
 ## Bundle Size Snapshot Tests
 
 Every library package (`packages/*` except `app`) has `src/index.test.ts` with a bundle size snapshot:
