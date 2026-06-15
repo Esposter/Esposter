@@ -43,7 +43,6 @@ catalog:
   "@fullcalendar/interaction": ^6.1.20
   "@fullcalendar/timegrid": ^6.1.20
   "@fullcalendar/vue3": ^6.1.20
-  "@happy-dom/global-registrator": ^20.10.3
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.3
   "@lerna-lite/cli": ^5.3.0

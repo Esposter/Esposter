@@ -181,7 +181,6 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
-    "@happy-dom/global-registrator": "catalog:",
     "@json-layout/vocabulary": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
