@@ -41,34 +41,27 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
     const { columns, rows } = item.dataSource;
     const targetNames = this.#targetColumnNames.slice(this.#anchorColumnIndex);
     const columnsByName = new Map(columns.map((column) => [column.name, column]));
-    for (let rowOffset = 0; rowOffset < this.#pastedValues.length; rowOffset++) {
+    for (const [rowOffset, pastedRow] of this.#pastedValues.entries()) {
       const rowIndex = this.#anchorRowIndex + rowOffset;
-      const pastedRow = takeOne(this.#pastedValues, rowOffset);
       if (rowIndex < rows.length) {
         const row = takeOne(rows, rowIndex);
-        for (
-          let columnOffset = 0;
-          columnOffset < pastedRow.length && columnOffset < targetNames.length;
-          columnOffset++
-        ) {
+        for (const [columnOffset, value] of pastedRow.entries()) {
+          if (columnOffset >= targetNames.length) break;
           const columnName = takeOne(targetNames, columnOffset);
           const column = columnsByName.get(columnName);
           if (!column) continue;
-          const newValue = coerceValue(takeOne(pastedRow, columnOffset), column.type);
+          const newValue = coerceValue(value, column.type);
           column.size += getValueSize(newValue) - getValueSize(row.data[columnName]);
           row.data[columnName] = newValue;
         }
       } else {
         const newRow = new Row({ data: Object.fromEntries(columns.map((c) => [c.name, null])) });
-        for (
-          let columnOffset = 0;
-          columnOffset < pastedRow.length && columnOffset < targetNames.length;
-          columnOffset++
-        ) {
+        for (const [columnOffset, value] of pastedRow.entries()) {
+          if (columnOffset >= targetNames.length) break;
           const columnName = takeOne(targetNames, columnOffset);
           const column = columnsByName.get(columnName);
           if (!column) continue;
-          newRow.data[columnName] = coerceValue(takeOne(pastedRow, columnOffset), column.type);
+          newRow.data[columnName] = coerceValue(value, column.type);
         }
         for (const column of columns) column.size += getValueSize(newRow.data[column.name]);
         rows.push(newRow);
@@ -85,10 +78,9 @@ export class PasteRangeCommand extends ADataSourceCommand<CommandType.PasteRange
       for (const removedRow of removedRows)
         for (const column of columns) column.size -= getValueSize(removedRow.data[column.name]);
     }
-    for (let rowOffset = 0; rowOffset < this.#originalRows.length; rowOffset++) {
+    for (const [rowOffset, originalRow] of this.#originalRows.entries()) {
       const rowIndex = this.#anchorRowIndex + rowOffset;
       const row = takeOne(rows, rowIndex);
-      const originalRow = takeOne(this.#originalRows, rowOffset);
       for (const column of columns) {
         const columnValue = takeOne(row.data, column.name);
         const originalColumnValue = takeOne(originalRow.data, column.name);

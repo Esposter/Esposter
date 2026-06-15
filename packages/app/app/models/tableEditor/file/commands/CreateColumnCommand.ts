@@ -29,12 +29,12 @@ export class CreateColumnCommand extends ADataSourceCommand<CommandType.CreateCo
       this.#newColumn,
       ...item.dataSource.columns.slice(this.#columnIndex),
     ];
-    for (const row of item.dataSource.rows) row.data[this.#newColumn.name] = null;
+    for (const { data } of item.dataSource.rows) data[this.#newColumn.name] = null;
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.#newColumn.name);
-    for (const row of item.dataSource.rows) delete row.data[this.#newColumn.name];
+    for (const { data } of item.dataSource.rows) delete data[this.#newColumn.name];
   }
 }

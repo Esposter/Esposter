@@ -24,7 +24,7 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
     if (!item.dataSource) return;
     const namesToDelete = new Set(this.#indexedColumns.map(({ originalColumn }) => originalColumn.name));
     item.dataSource.columns = item.dataSource.columns.filter((column) => !namesToDelete.has(column.name));
-    for (const row of item.dataSource.rows) for (const name of namesToDelete) delete row.data[name];
+    for (const { data } of item.dataSource.rows) for (const name of namesToDelete) delete data[name];
   }
 
   protected doUndo(item: DataSourceItem) {
