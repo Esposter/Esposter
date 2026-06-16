@@ -9,10 +9,10 @@ interface ListItemProps {
 }
 
 const { roomId, webhook } = defineProps<ListItemProps>();
+const runtimeConfig = useRuntimeConfig();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
 const name = ref(webhook.name);
-const runtimeConfig = useRuntimeConfig();
 const source = computed(() => `${runtimeConfig.public.baseUrl}/api/webhooks/${webhook.id}/${webhook.token}`);
 </script>
 

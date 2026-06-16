@@ -99,7 +99,8 @@ Message/Content/Index.vue
 
 ### `Call/View.vue`
 
-- Theme-backed (`bg-background`) full-size flex column with no decorative header
+- Theme-backed (`bg-background`) full-size flex column
+- Top bar (rendered only when there is something to show — a screenshare is active **or** the `append` slot is filled): a Meet-style presenter pill on the left + the `append` slot on the right. The pill is a rounded `StyledCard` (`mdi-monitor-share` + `{presenterName} is presenting`) with an inline `color="info" variant="tonal"` rounded **Stop presenting** button (`toggleScreenShare()`) shown only when the local user is the presenter (`isScreenSharing`). `append` is where the dialog wrapper injects its **Close call view** (`mdi-close`) button, so the pill and close button live in one container instead of overlapping in the corner.
 - Participant grid: full-stage responsive CSS grid; do not add a separate people list in the normal view
 - Presenter layout when screenshare is active: `ScreenShareStage` plus horizontal participant strip
 - Reads connection/session state from the root call store, media streams from `call/media`, and participant/speaking state from `call/participant`

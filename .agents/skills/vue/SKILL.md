@@ -20,15 +20,18 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 
 ## Script Setup Declaration Order
 
-After the macros, declare composables and state in this order:
+Declare composables and state in this order:
 
-1. **Macros** — `defineSlots` → `defineModel` → `defineProps` → `defineEmits` (see above).
-2. **Framework / third-party composables** — `useNuxtApp`, `useRoute`, `useRouter`, VueUse (`useVDisplay`, `useTemplateRef`, `useDebounceFn`, …), auth (`authClient.useSession`). Group these together immediately after the macros.
+0. **Page-metadata side-effects** — `useHead`, `useSeoMeta` belong near the **top**. A metadata call with no local-state dependency may sit even **above** `defineSlots`/the macros. One that references reactive state (a store ref, `useRuntimeConfig`) stays just after that state is declared (still above unrelated logic).
+1. **Macros** — `defineSlots` → `defineModel` → `defineProps` → `defineEmits` (see above). No blank line between the macros and the declarations that follow.
+2. **Framework / third-party value composables** — those returning reusable reactive state/values: `useNuxtApp`, `useRoute`, `useRouter`, `useRuntimeConfig`, VueUse value composables (`useVDisplay`, `useWindowSize`, …), auth (`authClient.useSession`). Group these together immediately after the macros.
 3. **Custom Pinia stores** — `useXStore` + `storeToRefs` + destructured methods, using per-store grouping (init → `storeToRefs` → methods, then the next store; never batch all inits then all refs).
-4. **Custom composables, refs, computeds, watches, functions** — everything else (`useRoomName`, `ref`, `computed`, `watch`, handlers).
+4. **Custom composables, refs, computeds, watches, functions** — everything else (`useRoomName`, `useTemplateRef`, `ref`, `computed`, `watch`, handlers).
 
 ```ts
 // CORRECT
+useHead({ titleTemplate: ... });       // 0. static page metadata — top, may precede macros
+defineSlots<{ default: () => VNode }>();
 const { $trpc } = useNuxtApp();        // 2. third-party
 const { smAndDown } = useVDisplay();   // 2. third-party
 const roomStore = useRoomStore();      // 3. custom store
@@ -36,7 +39,7 @@ const { currentRoom } = storeToRefs(roomStore);
 const roomName = useRoomName(...);     // 4. custom composable / state
 ```
 
-Never leave a third-party composable (e.g. `useVDisplay`) stranded at the bottom below custom stores and refs.
+Never leave a framework value composable (e.g. `useVDisplay`, `useRoute`) stranded at the bottom below custom stores and refs. **Exceptions that stay in place (category 4, not hoisted):** `useTemplateRef` (a ref — group with refs), and side-effect registrations that depend on local state (`useEventListener`, or a `useSeoMeta` that reads store refs) which must stay after the state they depend on.
 
 ## Inline Functions & Handlers
 

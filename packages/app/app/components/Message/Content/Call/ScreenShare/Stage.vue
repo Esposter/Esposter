@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getResultAsync, noop } from "@esposter/shared";
+
 interface CallScreenShareStageProps {
   isInteractive?: false;
   presenterName: string;
@@ -14,6 +16,16 @@ const updateAspectRatio = () => {
   const { videoHeight, videoWidth } = video.value;
   videoAspectRatio.value = `${videoWidth} / ${videoHeight}`;
 };
+// Reattach + explicitly play whenever the element or stream changes. A <video> mounted into a
+// Freshly opened Document PiP window (auto-pop on screen share) doesn't reliably honour `autoplay`,
+// So it stays paused/blank — unlike sharing from an already-open PiP, where it plays. Driving
+// SrcObject + play() imperatively keeps both paths identical.
+watchEffect(async () => {
+  const element = video.value;
+  if (!element) return;
+  element.srcObject = stream;
+  await getResultAsync(() => element.play()).match(noop, noop);
+});
 </script>
 
 <template>
@@ -34,7 +46,6 @@ const updateAspectRatio = () => {
         autoplay
         playsinline
         size-full
-        :srcObject.prop="stream"
         @loadedmetadata="updateAspectRatio"
         @resize="updateAspectRatio"
       />

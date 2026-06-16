@@ -1,13 +1,35 @@
 <script setup lang="ts">
+import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 
+defineSlots<{ append?: () => VNode }>();
+const callStore = useCallStore();
+const { toggleScreenShare } = callStore;
 const mediaStore = useMediaStore();
-const { isPoppedOut } = storeToRefs(mediaStore);
+const { hasScreenShare, isPoppedOut, isScreenSharing } = storeToRefs(mediaStore);
+const { presenterName } = useCallParticipantTiles();
 const callView = useTemplateRef("callView");
 </script>
 
 <template>
   <div ref="callView" bg-background flex flex-col size-full relative overflow-hidden>
+    <header v-if="hasScreenShare || $slots.append" pa-3 flex gap-x-3 items-center right-0 top-0 z-1 absolute>
+      <StyledCard v-if="hasScreenShare" rounded="pill" px-4 py-2 flex gap-x-3 items-center>
+        <v-icon icon="mdi-monitor-share" text-primary />
+        <span font-medium truncate>{{ presenterName }} is presenting</span>
+        <v-btn
+          v-if="isScreenSharing"
+          color="info"
+          variant="tonal"
+          rounded="pill"
+          size="small"
+          @click="toggleScreenShare()"
+        >
+          Stop presenting
+        </v-btn>
+      </StyledCard>
+      <slot name="append" />
+    </header>
     <MessageContentCallPipPlaceholder v-if="isPoppedOut" />
     <template v-else>
       <MessageContentCallStage @fullscreen="callView?.requestFullscreen()" />

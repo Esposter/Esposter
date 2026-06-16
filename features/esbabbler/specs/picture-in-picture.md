@@ -4,9 +4,9 @@ Pop the active call out into an always-on-top OS window (Google Meet / Discord s
 
 ## Overview
 
-When the user is in a call (`callStore.isInCall`) they can **pop out** a compact, live call view into a real OS-level Picture-in-Picture window using the [Document Picture-in-Picture API](https://developer.chrome.com/docs/web-platform/document-picture-in-picture). Unlike native `<video>` PiP (one `<video>` element, no controls), Document PiP renders arbitrary DOM, so the popped-out window mirrors the full call stage — **shared-screen + side participant tiles** (or the participant grid when nobody is presenting) via the shared `Call/Stage.vue`, a **presenter header** (`{name} is presenting`) when a screen is shared, **and** a compact control bar (mute / camera / screenshare / deafen / raise-hand / expand / leave).
+When the user is in a call (`callStore.isInCall`) they can **pop out** a compact, live call view into a real OS-level Picture-in-Picture window using the [Document Picture-in-Picture API](https://developer.chrome.com/docs/web-platform/document-picture-in-picture). Unlike native `<video>` PiP (one `<video>` element, no controls), Document PiP renders arbitrary DOM, so the popped-out window mirrors the full call stage — **shared-screen + side participant tiles** (or the participant grid when nobody is presenting) via the shared `Call/Stage.vue` **and** a compact control bar (mute / camera / screenshare / deafen / raise-hand / expand / leave).
 
-While popped out, the main page still owns the call: `Call/View.vue` swaps the stage for `Pip/Placeholder.vue` (the "call is in a mini player" notice) but **keeps rendering the full `Call/Control/Bar.vue`**, so every primary control stays usable from the placeholder page (Google-Meet parity).
+While popped out, the main page still owns the call: `Call/View.vue` swaps the stage for `Pip/Placeholder.vue` (the "call is in a mini player" notice) but **keeps rendering the full `Call/Control/Bar.vue`**, so every primary control stays usable from the placeholder page (Google-Meet parity). The Meet-style **presenter pill** (`{name} is presenting`, plus an inline tonal-`info` **Stop presenting** button when _you_ are the presenter) lives in `Call/View.vue`'s shared top bar — not the placeholder — so it shows over both the live stage and the placeholder, and shares one container with the dialog's **Close call view** button (see [`call-view-ui.md`](call-view-ui.md)).
 
 This is a **pure client-side** feature: no DB changes, no tRPC procedures, no new infrastructure. The LiveKit `Room` and every `MediaStream` already live in Pinia stores, independent of where the DOM renders — popping out is a **DOM relocation, not a media reconnection**. It extends the existing "persistent call UI" boundary (`activeCallSessionId` survives navigation; see [`call.md`](call.md) → _Call Lifetime Boundary_).
 
@@ -29,31 +29,33 @@ Feature-detected with a VueUse-style `isSupported` ref. The control never render
 
 - `Call/Pip/Host.vue` — **mounted once in the persistent root** (`app.vue`, gated on session), not on any page or feature layout. Owns the `useDocumentPictureInPicture` instance, watches the `isPoppedOut` intent, opens/closes the window, `<Teleport>`s the compact view into it, reverts the intent when `open()` yields no window, and auto-docks when the call ends.
 - `Call/Stage.vue` — **shared** call stage (presenter layout): screen-share video + side participant tiles when someone is presenting, else the participant grid. An `isDense` prop tightens padding / tile size for the small PiP window. Rendered by both `Call/View.vue` (full) and `Call/Pip/View.vue` (`isDense`), so the two surfaces never diverge.
-- `Call/Pip/View.vue` — compact call surface rendered **inside** the PiP window: a presenter header (`{presenterName} is presenting`, shown only while a screen is shared) + the shared `Call/Stage.vue` (`isDense`) + a trimmed control row. Presenter name comes from the shared `useCallParticipantTiles` composable.
-- `Call/Pip/Placeholder.vue` — shown in the **main** page (not the PiP window) while popped out: the "call is in a mini player" notice + a "bring call back" button. It renders above the always-present `Call/Control/Bar.vue`, so the placeholder page keeps the full control bar.
+- `Call/Pip/View.vue` — compact call surface rendered **inside** the PiP window: the shared `Call/Stage.vue` (`isDense`) + a trimmed control row.
+- `Call/Pip/Placeholder.vue` — shown in the **main** page (not the PiP window) while popped out: the "call is in a mini player" notice + a "bring call back" button. It renders below `Call/View.vue`'s top bar and above the always-present `Call/Control/Bar.vue`, so the placeholder page keeps the presenter pill and the full control bar.
+- `Call/View.vue` top bar — the Meet-style presenter pill (rounded `StyledCard` with `mdi-monitor-share` + `{presenterName} is presenting`, and when the local user is the presenter (`isScreenSharing`) an inline `color="info" variant="tonal"` rounded **Stop presenting** button wired to `toggleScreenShare()`) lives here, shown whenever a screen is shared. Its `append` slot holds the dialog's **Close call view** button, so pill + close share one container. Presenter name comes from the shared `useCallParticipantTiles` composable.
 - `Call/Pip/ControlBar.vue` — Meet-style compact controls inside the PiP window, reusing the shared `Control/ActionButton` (which already self-anchors its tooltip in the PiP document): `Audio/MuteButton`, `Camera/Button`, `ScreenShare/Button`, `Audio/DeafenButton`, `Control/HandButton`, an **expand** action (close PiP + return to the call surface), and `Control/LeaveButton`. Laid out as a flat row rather than a `⋯` overflow menu — a Vuetify `v-menu` mis-anchors against the main window inside the PiP document (same root cause as the tooltip fix), so the connection/`HealthButton` (menu-only) is intentionally omitted here.
 - `Call/Pip/Button.vue` — the pop-out toggle; hidden when `!isSupported`. Placed in `Call/Control/Bar.vue`.
 
 ## Key Files
 
-| File                                                           | Role                                                                                                                                        |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `shared/types/documentPictureInPicture.d.ts`                   | **New.** Ambient types for the Document PiP API (not yet in lib.dom)                                                                        |
-| `app/composables/useDocumentPictureInPicture.ts`               | **New.** SSR-safe wrapper over `documentPictureInPicture.requestWindow`; style bridge + cleanup                                             |
-| `app/composables/message/room/call/useCallParticipantTiles.ts` | **New.** Shared `{ callParticipantMap, getParticipantTileProps, presenterName, sessionId }` — used by `Call/Stage.vue` and `Pip/View.vue`   |
-| `app/components/Message/Content/Call/Stage.vue`                | **New.** Shared presenter/grid stage (`isDense` prop); reused by `Call/View.vue` and `Pip/View.vue`                                         |
-| `app/store/message/room/call/media.ts`                         | **Modified.** Adds the `isPoppedOut` flag (reset by `resetCallMedia`) — the single pop-out intent                                           |
-| `app/components/Message/Content/Call/Pip/Host.vue`             | **New.** Persistent window owner + teleport target                                                                                          |
-| `app/components/Message/Content/Call/Pip/View.vue`             | **New.** Compact tiles + controls rendered in the PiP window                                                                                |
-| `app/components/Message/Content/Call/Pip/ControlBar.vue`       | **New.** Mute / camera / screenshare / deafen / raise-hand / expand / leave inside PiP                                                      |
-| `app/components/Message/Content/Call/Pip/Button.vue`           | **New.** Feature-detected pop-out toggle                                                                                                    |
-| `app/components/Message/Content/Call/View.vue`                 | **Modified.** Renders shared `Call/Stage.vue`; swaps it for `Pip/Placeholder.vue` when popped out but always keeps `Control/Bar.vue`        |
-| `app/components/Message/Content/Call/Pip/Placeholder.vue`      | **Modified.** Main-page "mini player" notice; now sits above the always-rendered control bar                                                |
-| `app/components/Message/Content/Call/Control/Bar.vue`          | **Modified.** Adds `Call/Pip/Button.vue`                                                                                                    |
-| `app/store/message/room/call/index.ts`                         | **Modified.** `toggleScreenShare` sets `isPoppedOut` **after** the picker resolves (auto-pop on share); a cancelled/failed share never pops |
-| `app/components/Message/LeftSideBar/StatusBar.vue`             | **Modified.** In-call item now also surfaces **standalone** active calls so a docked call is always reachable                               |
-| `app/app.vue`                                                  | **Modified.** Mounts `Call/Pip/Host.vue` so the window survives all route changes                                                           |
-| `app/composables/message/room/call/useCallIdSubscribables.ts`  | **Modified.** Skips `leaveCall()` on unmount when `isPoppedOut` (standalone pop-out — see Constraints)                                      |
+| File                                                           | Role                                                                                                                                                                                    |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shared/types/documentPictureInPicture.d.ts`                   | **New.** Ambient types for the Document PiP API (not yet in lib.dom)                                                                                                                    |
+| `app/composables/useDocumentPictureInPicture.ts`               | **New.** SSR-safe wrapper over `documentPictureInPicture.requestWindow`; style bridge + cleanup                                                                                         |
+| `app/composables/message/room/call/useCallParticipantTiles.ts` | **New.** Shared `{ callParticipantMap, getParticipantTileProps, presenterName, sessionId }` — used by `Call/Stage.vue` and `Call/View.vue` (top-bar pill)                               |
+| `app/components/Message/Content/Call/Stage.vue`                | **New.** Shared presenter/grid stage (`isDense` prop); reused by `Call/View.vue` and `Pip/View.vue`                                                                                     |
+| `app/store/message/room/call/media.ts`                         | **Modified.** Adds the `isPoppedOut` flag (reset by `resetCallMedia`) — the single pop-out intent                                                                                       |
+| `app/components/Message/Content/Call/Pip/Host.vue`             | **New.** Persistent window owner + teleport target                                                                                                                                      |
+| `app/components/Message/Content/Call/Pip/View.vue`             | **New.** Compact tiles + controls rendered in the PiP window                                                                                                                            |
+| `app/components/Message/Content/Call/Pip/ControlBar.vue`       | **New.** Mute / camera / screenshare / deafen / raise-hand / expand / leave inside PiP                                                                                                  |
+| `app/components/Message/Content/Call/Pip/Button.vue`           | **New.** Feature-detected pop-out toggle                                                                                                                                                |
+| `app/components/Message/Content/Call/View.vue`                 | **Modified.** Renders shared `Call/Stage.vue`; swaps it for `Pip/Placeholder.vue` when popped out but always keeps `Control/Bar.vue`. Adds the top bar (presenter pill + `append` slot) |
+| `app/components/Message/Content/Call/Pip/Placeholder.vue`      | **Modified.** Main-page "mini player" notice; sits below the top bar and above the always-rendered control bar                                                                          |
+| `app/components/Message/Content/Call/Panel/Dialog.vue`         | **Modified.** Passes the **Close call view** (`mdi-close`) button into `Call/View.vue`'s `append` slot instead of overlaying it absolutely                                              |
+| `app/components/Message/Content/Call/Control/Bar.vue`          | **Modified.** Adds `Call/Pip/Button.vue`                                                                                                                                                |
+| `app/store/message/room/call/index.ts`                         | **Modified.** `toggleScreenShare` sets `isPoppedOut` **after** the picker resolves (auto-pop on share); a cancelled/failed share never pops                                             |
+| `app/components/Message/LeftSideBar/StatusBar.vue`             | **Modified.** In-call item now also surfaces **standalone** active calls so a docked call is always reachable                                                                           |
+| `app/app.vue`                                                  | **Modified.** Mounts `Call/Pip/Host.vue` so the window survives all route changes                                                                                                       |
+| `app/composables/message/room/call/useCallIdSubscribables.ts`  | **Modified.** Skips `leaveCall()` on unmount when `isPoppedOut` (standalone pop-out — see Constraints)                                                                                  |
 
 ## Architecture
 
@@ -127,13 +129,13 @@ app.vue
   └── Call/Pip/Host.vue                       persistent; owns the PiP window
         └── <Teleport :to="pipWindow.document.body">
               └── Call/Pip/View.vue            compact call surface (in OS window)
-                    ├── presenter header           "{name} is presenting" (when screen shared)
                     ├── Call/Stage.vue (dense)      shared screen + side tiles / grid
                     │     ├── Call/ScreenShare/Stage.vue
                     │     └── Call/Participant/Tile.vue   per participant
                     └── Call/Pip/ControlBar.vue     mute / camera / screenshare / deafen / hand / expand / leave
 
 Call/View.vue                                  full call surface (main page)
+  ├── top bar                    (when sharing / append slot)  presenter pill (+ Stop presenting) ··· #append (Close call view)
   ├── Call/Pip/Placeholder.vue   (when popped out)   "mini player" notice
   ├── Call/Stage.vue             (else)               shared screen + side tiles / grid
   └── Call/Control/Bar.vue       (always)             full controls — present even on the placeholder

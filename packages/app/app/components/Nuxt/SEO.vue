@@ -3,14 +3,13 @@ import { SITE_DESCRIPTION } from "#shared/services/app/constants";
 import { useColorsStore } from "@/store/colors";
 import { SITE_NAME } from "@esposter/shared";
 
-defineSlots<{ default: () => VNode }>();
-
 useHead({
   titleTemplate: (title) => (title ? `${SITE_NAME} | ${title}` : SITE_NAME),
 });
+defineSlots<{ default: () => VNode }>();
+const runtimeConfig = useRuntimeConfig();
 const colorsStore = useColorsStore();
 const { surface } = storeToRefs(colorsStore);
-const runtimeConfig = useRuntimeConfig();
 const logoImageUrl = useLogoImageUrl();
 useSeoMeta({
   appleMobileWebAppCapable: "yes",
