@@ -18,6 +18,26 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 - **`defineModel`**: always type explicitly. For booleans pass `{ default: false }` so the type excludes `undefined`: `defineModel<boolean>({ default: false })`. Never declare `defineModel` unless the value is used in script (`watch`, `computed`, or passed) — otherwise use `:prop` + `@event`. For an **unnamed** model, name the variable `modelValue` (never `model` or another alias): `const modelValue = defineModel<string>()`. For a **named** model, the variable matches the name: `const title = defineModel<string>("title")`.
 - **`defineSlots`**: only assign to `const slots` when `slots` is referenced in script. Otherwise call `defineSlots<...>()` without assignment.
 
+## Script Setup Declaration Order
+
+After the macros, declare composables and state in this order:
+
+1. **Macros** — `defineSlots` → `defineModel` → `defineProps` → `defineEmits` (see above).
+2. **Framework / third-party composables** — `useNuxtApp`, `useRoute`, `useRouter`, VueUse (`useVDisplay`, `useTemplateRef`, `useDebounceFn`, …), auth (`authClient.useSession`). Group these together immediately after the macros.
+3. **Custom Pinia stores** — `useXStore` + `storeToRefs` + destructured methods, using per-store grouping (init → `storeToRefs` → methods, then the next store; never batch all inits then all refs).
+4. **Custom composables, refs, computeds, watches, functions** — everything else (`useRoomName`, `ref`, `computed`, `watch`, handlers).
+
+```ts
+// CORRECT
+const { $trpc } = useNuxtApp();        // 2. third-party
+const { smAndDown } = useVDisplay();   // 2. third-party
+const roomStore = useRoomStore();      // 3. custom store
+const { currentRoom } = storeToRefs(roomStore);
+const roomName = useRoomName(...);     // 4. custom composable / state
+```
+
+Never leave a third-party composable (e.g. `useVDisplay`) stranded at the bottom below custom stores and refs.
+
 ## Inline Functions & Handlers
 
 - Inline arrow functions where argument types are inferable — don't extract single-use, trivially-typed lambdas.

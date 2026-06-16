@@ -5,10 +5,10 @@ import { dayjs } from "#shared/services/dayjs";
 
 interface FieldInputDateProps {
   column: DateColumn;
-  inline?: boolean;
+  isInline?: true;
 }
 
-const { column, inline = false } = defineProps<FieldInputDateProps>();
+const { column, isInline } = defineProps<FieldInputDateProps>();
 const modelValue = defineModel<null | string>({ required: true });
 const displayModelValue = computed(() => {
   if (typeof modelValue.value !== "string") return modelValue.value;
@@ -20,9 +20,9 @@ const displayModelValue = computed(() => {
 <template>
   <v-text-field
     :model-value="displayModelValue"
-    :hide-details="inline"
-    :label="inline ? '' : column.name"
-    :single-line="inline"
+    :hide-details="isInline"
+    :label="isInline ? '' : column.name"
+    :single-line="isInline"
     type="date"
     density="compact"
     @update:model-value="modelValue = $event ? dayjs($event, 'YYYY-MM-DD').format(column.format) : $event"
