@@ -7,23 +7,31 @@ export interface UseDocumentPictureInPictureOptions {
 
 const isStyleNode = (node: Node): node is HTMLLinkElement | HTMLStyleElement =>
   node instanceof HTMLStyleElement || (node instanceof HTMLLinkElement && node.rel === "stylesheet");
-// Rebuild each sheet from its CSSOM rules so rules injected via insertRule (Vuetify theme,
-// UnoCSS runtime) — which have empty textContent — are carried over, not just inline <style> text.
+const relinkStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
+  if (!styleSheet.href) return;
+  const link = target.document.createElement("link");
+  link.rel = "stylesheet";
+  if (styleSheet.media.mediaText) link.media = styleSheet.media.mediaText;
+  link.href = styleSheet.href;
+  target.document.head.appendChild(link);
+};
+// Linked sheets (those with an href) are re-linked, not inlined: their relative url(...) — e.g.
+// the MDI @font-face — resolve against the CSS file's location, which inlining cssText into the
+// PiP document would break (urls would resolve against the PiP base and 404 to index.html).
+// Sheets without an href (Vuetify theme, UnoCSS runtime injected via insertRule, whose <style>
+// textContent is empty) are rebuilt from their CSSOM rules so those rules carry over.
 const cloneStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
+  if (styleSheet.href) {
+    relinkStyleSheet(target, styleSheet);
+    return;
+  }
+  // Cross-origin sheets without an href can't be reached at all; cssRules access throws → skip.
   getResult(() => {
     const style = target.document.createElement("style");
     if (styleSheet.media.mediaText) style.media = styleSheet.media.mediaText;
     style.textContent = Array.from(styleSheet.cssRules, (rule) => rule.cssText).join("\n");
     target.document.head.appendChild(style);
-  }).match(noop, () => {
-    // Cross-origin sheet: cssRules access throws, so re-link instead of inlining.
-    if (!styleSheet.href) return;
-    const link = target.document.createElement("link");
-    link.rel = "stylesheet";
-    if (styleSheet.media.mediaText) link.media = styleSheet.media.mediaText;
-    link.href = styleSheet.href;
-    target.document.head.appendChild(link);
-  });
+  }).match(noop, noop);
 };
 
 export const useDocumentPictureInPicture = (options: UseDocumentPictureInPictureOptions = {}) => {
