@@ -19,8 +19,20 @@ const relinkStyleSheet = (target: Window, styleSheet: CSSStyleSheet) =>
     link.rel = "stylesheet";
     if (styleSheet.media.mediaText) link.media = styleSheet.media.mediaText;
     link.href = styleSheet.href;
-    link.addEventListener("load", () => resolve(), { once: true });
-    link.addEventListener("error", () => resolve(), { once: true });
+    link.addEventListener(
+      "load",
+      () => {
+        resolve();
+      },
+      { once: true },
+    );
+    link.addEventListener(
+      "error",
+      () => {
+        resolve();
+      },
+      { once: true },
+    );
     target.document.head.appendChild(link);
   });
 // Linked sheets (those with an href) are re-linked, not inlined: their relative url(...) — e.g.
