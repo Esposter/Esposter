@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { VUEJS_LOGO_UWU_PATH } from "#shared/services/app/constants";
 
-const isDark = useIsDark();
 const { smAndDown } = useVDisplay();
+const isDark = useIsDark();
 const ACCENT_CLASSES = ["text-transparent", "bg-clip-text", "bg-[image:--vue-gradient]"];
 </script>
 

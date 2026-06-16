@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
 
-import { getDisplayTime } from "@/services/message/draftsSent/getDisplayTime";
-import { getScheduledMessageJobIcon } from "@/services/message/draftsSent/getScheduledMessageJobIcon";
-import { getScheduledMessageJobText } from "@/services/message/draftsSent/getScheduledMessageJobText";
+import { getDisplayTime } from "@/services/message/draftsAndSent/getDisplayTime";
+import { getScheduledMessageJobIcon } from "@/services/message/draftsAndSent/getScheduledMessageJobIcon";
+import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/getScheduledMessageJobText";
 
-interface MessageDraftsSentScheduledListItemProps {
+interface MessageDraftsAndSentScheduledListItemProps {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
-const { scheduledMessageJob } = defineProps<MessageDraftsSentScheduledListItemProps>();
+const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledListItemProps>();
 const isFocusWithin = ref(false);
 const onFocusOut = (event: FocusEvent) => {
   const currentTarget = event.currentTarget;
@@ -37,10 +37,10 @@ const onFocusOut = (event: FocusEvent) => {
         <div flex gap-x-3 items-center>
           <span op-medium-emphasis text-body-small>{{ getDisplayTime(scheduledMessageJob.runAt) }}</span>
           <div v-show="isHovering || isFocusWithin" p-1 b-1 b-border rd-lg b-solid bg-surface flex items-center>
-            <MessageDraftsSentScheduledEditButton :scheduled-message-job />
-            <MessageDraftsSentScheduledRescheduleButton :scheduled-message-job />
-            <MessageDraftsSentScheduledSendButton :scheduled-message-job />
-            <MessageDraftsSentScheduledMoreMenu :scheduled-message-job />
+            <MessageDraftsAndSentScheduledEditButton :scheduled-message-job />
+            <MessageDraftsAndSentScheduledRescheduleButton :scheduled-message-job />
+            <MessageDraftsAndSentScheduledSendButton :scheduled-message-job />
+            <MessageDraftsAndSentScheduledMoreMenu :scheduled-message-job />
           </div>
         </div>
       </template>

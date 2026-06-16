@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { MessageEntity, RoomInMessage } from "@esposter/db-schema";
 
-import { getDisplayTime } from "@/services/message/draftsSent/getDisplayTime";
+import { getDisplayTime } from "@/services/message/draftsAndSent/getDisplayTime";
 import { RoutePath } from "@esposter/shared";
 
-interface MessageDraftsSentSentListItemProps {
+interface MessageDraftsAndSentSentListItemProps {
   message: MessageEntity;
   room: RoomInMessage;
 }
 
-const { message, room } = defineProps<MessageDraftsSentSentListItemProps>();
+const { message, room } = defineProps<MessageDraftsAndSentSentListItemProps>();
 </script>
 
 <template>

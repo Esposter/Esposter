@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { DraftItem } from "@/models/message/draftsSent/DraftItem";
+import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 
-import { getDisplayTime } from "@/services/message/draftsSent/getDisplayTime";
+import { getDisplayTime } from "@/services/message/draftsAndSent/getDisplayTime";
 import { RoutePath } from "@esposter/shared";
 
-interface MessageDraftsSentDraftListItemProps {
+interface MessageDraftsAndSentDraftListItemProps {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<MessageDraftsSentDraftListItemProps>();
+const { draftItem } = defineProps<MessageDraftsAndSentDraftListItemProps>();
 const isFocusWithin = ref(false);
 const onFocusOut = (event: FocusEvent) => {
   const currentTarget = event.currentTarget;
@@ -39,10 +39,10 @@ const onFocusOut = (event: FocusEvent) => {
         <div flex gap-x-3 items-center>
           <span op-medium-emphasis text-body-small>{{ getDisplayTime(draftItem.updatedAt) }}</span>
           <div v-show="isHovering || isFocusWithin" p-1 b-1 b-border rd-lg b-solid bg-surface flex items-center>
-            <MessageDraftsSentDraftDeleteButton :draft-item />
-            <MessageDraftsSentDraftEditButton :draft-item />
-            <MessageDraftsSentDraftScheduleButton :draft-item />
-            <MessageDraftsSentDraftSendButton :draft-item />
+            <MessageDraftsAndSentDraftDeleteButton :draft-item />
+            <MessageDraftsAndSentDraftEditButton :draft-item />
+            <MessageDraftsAndSentDraftScheduleButton :draft-item />
+            <MessageDraftsAndSentDraftSendButton :draft-item />
           </div>
         </div>
       </template>

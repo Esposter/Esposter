@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { DraftItem } from "@/models/message/draftsSent/DraftItem";
+import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 
 import { useInputStore } from "@/store/message/input";
 
-interface MessageDraftsSentDraftDeleteButtonProps {
+interface MessageDraftsAndSentDraftDeleteButtonProps {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<MessageDraftsSentDraftDeleteButtonProps>();
+const { draftItem } = defineProps<MessageDraftsAndSentDraftDeleteButtonProps>();
 const inputStore = useInputStore();
 const { clearDraft } = inputStore;
 </script>

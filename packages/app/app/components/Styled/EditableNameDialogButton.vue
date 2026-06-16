@@ -8,6 +8,7 @@ import { mergeProps } from "vue";
 interface EditableNameDialogButtonProps {
   buttonProps?: VBtn["$props"];
   cardProps: VCard["$props"];
+  isDirty?: boolean;
   isEditable?: boolean;
   maxLength: number;
   name: string;
@@ -21,6 +22,7 @@ const modelValue = defineModel<boolean>({ default: false });
 const {
   buttonProps = {},
   cardProps,
+  isDirty = false,
   isEditable = true,
   maxLength,
   name,
@@ -44,7 +46,7 @@ watch(
   <StyledFormDialog
     v-model="modelValue"
     :card-props
-    :confirm-button-props="{ text: 'Save', disabled: schema.safeParse(editedName).data === name }"
+    :confirm-button-props="{ text: 'Save', disabled: schema.safeParse(editedName).data === name && !isDirty }"
     @submit="
       (_event, onComplete) => {
         emit('submit', editedName);

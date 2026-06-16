@@ -1,9 +1,9 @@
 <script setup lang="ts">
-interface MessageDraftsSentSectionProps {
+interface MessageDraftsAndSentSectionProps {
   title: string;
 }
 
-const { title } = defineProps<MessageDraftsSentSectionProps>();
+const { title } = defineProps<MessageDraftsAndSentSectionProps>();
 </script>
 
 <template>

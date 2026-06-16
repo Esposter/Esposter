@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
 
-import { getScheduledMessageJobText } from "@/services/message/draftsSent/getScheduledMessageJobText";
-import { useDraftsSentScheduleDialogStore } from "@/store/message/draftsSent/scheduleDialog";
+import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/getScheduledMessageJobText";
+import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 
-interface MessageDraftsSentScheduledRescheduleButtonProps {
+interface MessageDraftsAndSentScheduledRescheduleButtonProps {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
-const { scheduledMessageJob } = defineProps<MessageDraftsSentScheduledRescheduleButtonProps>();
-const scheduleDialogStore = useDraftsSentScheduleDialogStore();
+const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledRescheduleButtonProps>();
+const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = scheduleDialogStore;
 </script>
 
