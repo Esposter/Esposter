@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { getTextFromHtml } from "@/services/message/draftsSent/getTextFromHtml";
-import { useDraftsSentScheduleDialogStore } from "@/store/message/draftsSent/scheduleDialog";
+import { getTextFromHtml } from "@/services/message/draftsAndSent/getTextFromHtml";
+import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 import { useInputStore } from "@/store/message/input";
 import { withFinalizerAsync } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
-const scheduleDialogStore = useDraftsSentScheduleDialogStore();
+const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { isOpen, minScheduledAt, scheduledAt, target } = storeToRefs(scheduleDialogStore);
 const inputStore = useInputStore();
 const { clearDraft } = inputStore;

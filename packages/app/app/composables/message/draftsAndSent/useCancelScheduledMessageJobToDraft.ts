@@ -1,6 +1,6 @@
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
 
-import { getScheduledMessageJobText } from "@/services/message/draftsSent/getScheduledMessageJobText";
+import { getScheduledMessageJobText } from "@/services/message/draftsAndSent/getScheduledMessageJobText";
 import { useInputStore } from "@/store/message/input";
 
 export const useCancelScheduledMessageJobToDraft = () => {

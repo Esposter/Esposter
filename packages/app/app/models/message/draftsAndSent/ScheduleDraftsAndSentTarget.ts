@@ -1,6 +1,6 @@
 import type { RoomInMessage, ScheduledMessageJobInMessage } from "@esposter/db-schema";
 
-export interface ScheduleDraftsSentTarget {
+export interface ScheduleDraftsAndSentTarget {
   content: string;
   roomId: RoomInMessage["id"];
   scheduledMessageJobId?: ScheduledMessageJobInMessage["id"];

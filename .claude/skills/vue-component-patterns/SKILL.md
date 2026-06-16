@@ -115,6 +115,14 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 
 **Rule:** ensure the filename's first word differs from the last word of its folder path. If they must share a word, choose a more specific filename (e.g. `GroupDetailCard.vue` instead of `GroupCard.vue`).
 
+**When the shared word is intentional** (the folder name legitimately ends with the word the file starts with), Nuxt still collapses it — so reference the **collapsed** name in the template, never the naive un-collapsed concatenation:
+
+- `Feature/ListSent/SentList.vue` → tag is `<FeatureListSentList />`, **not** `<FeatureListSentSentList />`. The duplicated form resolves to no component and renders **empty with no error**, so it fails silently.
+- `Feature/ListSent/SentListItem.vue` → tag is `<FeatureListSentListItem />`.
+- This collapse affects **only the template tag**. A props interface is a plain TS type and does not collapse, so `FeatureListSentSentListItemProps` remains valid (if redundant) — don't "fix" it to match the tag.
+
+When renaming a folder, the collapse is preserved if the new folder ends with the same word as the old one (e.g. `DraftsSent/` → `DraftsAndSent/` both end in `Sent`), so collapsed usages stay correct under a mechanical token rename. Verify with `typecheck`, which flags an unknown collapsed tag.
+
 ## File Length
 
 Line-count target and exceptions — see the `file-organization` skill. Component-specific extractions when a `.vue` runs long: pull toolbar/header buttons into a slot component (e.g. `TopSlot.vue`), row/column action menus into `ActionSlot.vue`, and grouped controls into their own focused component.

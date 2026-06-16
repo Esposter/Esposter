@@ -27,10 +27,10 @@ const items = computed(
         ].filter(({ count }) => count > 0),
         icon: "mdi-send-outline",
         onClick: async () => {
-          await navigateTo(RoutePath.MessagesDraftsSent);
+          await navigateTo(RoutePath.MessagesDraftsAndSent);
         },
         title: "Drafts & sent",
-        value: RoutePath.MessagesDraftsSent,
+        value: RoutePath.MessagesDraftsAndSent,
       },
     ] satisfies Item[],
 );

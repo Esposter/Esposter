@@ -3,11 +3,11 @@ import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/mes
 
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 
-interface MessageDraftsSentScheduledSendButtonProps {
+interface MessageDraftsAndSentScheduledSendButtonProps {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
-const { scheduledMessageJob } = defineProps<MessageDraftsSentScheduledSendButtonProps>();
+const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledSendButtonProps>();
 const { $trpc } = useNuxtApp();
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
 </script>

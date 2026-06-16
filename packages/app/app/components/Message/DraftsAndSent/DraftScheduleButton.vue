@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { DraftItem } from "@/models/message/draftsSent/DraftItem";
+import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 
-import { useDraftsSentScheduleDialogStore } from "@/store/message/draftsSent/scheduleDialog";
+import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 
-interface MessageDraftsSentDraftScheduleButtonProps {
+interface MessageDraftsAndSentDraftScheduleButtonProps {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<MessageDraftsSentDraftScheduleButtonProps>();
-const scheduleDialogStore = useDraftsSentScheduleDialogStore();
+const { draftItem } = defineProps<MessageDraftsAndSentDraftScheduleButtonProps>();
+const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = scheduleDialogStore;
 </script>
 

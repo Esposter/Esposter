@@ -277,13 +277,13 @@ Sync `v-tabs` state to the URL instead of a plain `ref`, so the active tab survi
 
 ```typescript
 import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
-import { DraftsSentTab, DraftsSentTabs } from "@/models/message/draftsSent/DraftsSentTab";
+import { DraftsAndSentTab, DraftsAndSentTabs } from "@/models/message/draftsAndSent/DraftsAndSentTab";
 
-const tab = ref(DraftsSentTab.Drafts); // WRONG: loses the tab on refresh
-const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsSentTabs, DraftsSentTab.Drafts); // CORRECT: syncs to ?tab=Drafts
+const tab = ref(DraftsAndSentTab.Drafts); // WRONG: loses the tab on refresh
+const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsAndSentTabs, DraftsAndSentTab.Drafts); // CORRECT: syncs to ?tab=Drafts
 ```
 
-Each enum exposes a value `Set` alongside it (`DraftsSentTabs`, `PermissionsTabs`, `AchievementStatuses`). Put `useEnumRouteQuery` where the `v-tabs` `v-model` originates. When a child renders the tabs via `defineModel`, keep it in the parent and pass it down as `v-model`.
+Each enum exposes a value `Set` alongside it (`DraftsAndSentTabs`, `PermissionsTabs`, `AchievementStatuses`). Put `useEnumRouteQuery` where the `v-tabs` `v-model` originates. When a child renders the tabs via `defineModel`, keep it in the parent and pass it down as `v-model`.
 
 ## Resource Management
 

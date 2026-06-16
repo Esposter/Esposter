@@ -1,10 +1,10 @@
 <script setup lang="ts">
-interface MessageDraftsSentEmptyStateProps {
+interface MessageDraftsAndSentEmptyStateProps {
   icon: string;
   title: string;
 }
 
-const { icon, title } = defineProps<MessageDraftsSentEmptyStateProps>();
+const { icon, title } = defineProps<MessageDraftsAndSentEmptyStateProps>();
 </script>
 
 <template>
