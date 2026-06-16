@@ -2,10 +2,10 @@
 import { useMediaStore } from "@/store/message/room/call/media";
 
 interface CallStageProps {
-  dense?: boolean;
+  isDense?: true;
 }
 
-const { dense } = defineProps<CallStageProps>();
+const { isDense } = defineProps<CallStageProps>();
 const emit = defineEmits<{ fullscreen: [] }>();
 const mediaStore = useMediaStore();
 const { activeScreenShareStream, hasScreenShare, pinnedParticipantId } = storeToRefs(mediaStore);
@@ -24,15 +24,16 @@ const callParticipantGridClass = computed(() => {
     flex-1
     min-h-0
     min-w-0
-    :class="[dense ? 'p-2 gap-x-2' : 'p-5 gap-x-3', isScreenSharePresenting ? 'flex-row' : 'flex-col']"
+    :class="[isDense ? 'p-2 gap-x-2' : 'p-5 gap-x-3', isScreenSharePresenting ? 'flex-row' : 'flex-col']"
   >
     <MessageContentCallScreenShareStage
       v-if="hasScreenShare && activeScreenShareStream"
+      :is-interactive="isDense ? false : undefined"
       :presenter-name
       :stream="activeScreenShareStream"
       @fullscreen="emit('fullscreen')"
     />
-    <div v-else flex-1 grid grid-auto-rows-fr :class="[dense ? 'gap-2' : 'gap-3', callParticipantGridClass]">
+    <div v-else flex-1 grid grid-auto-rows-fr :class="[isDense ? 'gap-2' : 'gap-3', callParticipantGridClass]">
       <MessageContentCallParticipantTile
         v-for="participant of callParticipantMap.values()"
         :key="participant.id"
@@ -47,14 +48,14 @@ const callParticipantGridClass = computed(() => {
       flex-col
       items-center
       overflow-y-auto
-      :class="dense ? 'gap-y-2' : 'gap-y-3'"
+      :class="isDense ? 'gap-y-2' : 'gap-y-3'"
     >
       <MessageContentCallParticipantTile
         v-for="participant of callParticipantMap.values()"
         :key="participant.id"
         shrink-0
         aspect-video
-        :class="dense ? 'h-20' : 'h-32'"
+        :class="isDense ? 'h-20' : 'h-32'"
         :="getParticipantTileProps(participant)"
         @click="pinnedParticipantId = participant.id"
       />

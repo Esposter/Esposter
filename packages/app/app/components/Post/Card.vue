@@ -6,11 +6,11 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCardProps {
   // Comments page only: look up post data in the comment store instead.
-  isCommentStore?: boolean;
+  isCommentStore?: true;
   post: PostWithRelations;
 }
 
-const { isCommentStore = false, post } = defineProps<PostCardProps>();
+const { isCommentStore, post } = defineProps<PostCardProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
 const isCreator = computed(() => post.userId === session.value?.user.id);

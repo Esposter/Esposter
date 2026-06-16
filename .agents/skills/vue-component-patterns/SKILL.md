@@ -100,6 +100,39 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 - Each component accesses its props directly without defensive coalescing (`column.format`, not `column.type === ColumnType.Date ? column.format : ""`)
 - A **dispatcher** component (e.g. `FieldInput.vue`) is acceptable at the routing level to delegate to the right sub-component — type casts in the dispatcher are necessary and acceptable at that boundary
 
+## Boolean Props — `is` Prefix + Default-Aware Literal Typing
+
+Two rules for every boolean prop:
+
+1. **`is` prefix.** Boolean props read as a question: `isDense`, `isInteractive`, `isOpen` — never bare `dense` / `interactive` / `open`, and never `can*` / `should*` (prefer `is`, fall back to `has`; see global naming rules). The same applies to `defineModel` / emit payloads.
+
+2. **Type as the non-default literal, not `boolean`.** When a boolean prop has a default, restrict its type to the only value a caller would ever pass, so passing the default is impossible (no redundant `:is-x="true"`):
+   - Defaults to **false** → type `?: true`; caller opts in with the bare attribute (`<Comp is-dense />`).
+   - Defaults to **true** → type `?: false` with destructure default `= true`; caller opts out with `:is-x="false"`.
+
+```ts
+// defaults false → only `true` is meaningful
+interface CallStageProps {
+  isDense?: true;
+}
+const { isDense } = defineProps<CallStageProps>(); // isDense: true | undefined
+
+// defaults true → only `false` is meaningful
+interface CallScreenShareStageProps {
+  isInteractive?: false; /* ... */
+}
+const { isInteractive = true } = defineProps<CallScreenShareStageProps>(); // boolean at runtime
+```
+
+A **derived/computed** value still fits the literal type as long as it can only be the default or its opposite — map the default branch to `undefined` instead of widening to `boolean`:
+
+```vue
+<!-- isDense ? false : undefined → type `false | undefined`, matches `isInteractive?: false` -->
+<MessageContentCallScreenShareStage :is-interactive="isDense ? false : undefined" />
+```
+
+**Exception — genuinely two-way boolean.** Use the full `boolean` type only when the prop carries a real, changeable boolean: a `v-model` / `defineModel<boolean>()`, or a ref/computed whose value legitimately flips **both** ways at the call site. A flag that only ever toggles away from its default is not this case — keep it a literal.
+
 ## Component Co-location (Folder = Auto-import Prefix)
 
 **Group components with the same prefix into a folder** — Nuxt auto-imports with the folder path as prefix, so co-located components share it without repeating it in filenames.

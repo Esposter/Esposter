@@ -197,7 +197,7 @@ describe("room", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("deletes profile image", async () => {
+  test("deletes profile image on clear", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -209,7 +209,7 @@ describe("room", () => {
     const data = await withAsyncIterator(
       () => onUpdateRoom,
       async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), roomCaller.deleteProfileImage({ roomId: newRoom.id })]);
+        const [result] = await Promise.all([iterator.next(), roomCaller.updateRoom({ id: newRoom.id, image: "" })]);
         return result;
       },
     );
@@ -218,17 +218,6 @@ describe("room", () => {
 
     expect(data.value.image).toBe("");
     expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(false);
-  });
-
-  test("fails delete profile image without permission", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(roomCaller.deleteProfileImage({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
   });
 
   test("updates", async () => {

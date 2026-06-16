@@ -6,7 +6,7 @@ import deepEqual from "fast-deep-equal";
 interface EditDialogButtonProps {
   editedValue: unknown;
   icon?: string;
-  isCreate?: boolean;
+  isCreate?: true;
   schema: z.ZodType;
   title: string;
   tooltipText: string;
@@ -17,7 +17,7 @@ defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
 const {
   editedValue,
   icon = "mdi-pencil",
-  isCreate = false,
+  isCreate,
   schema,
   title,
   tooltipText,

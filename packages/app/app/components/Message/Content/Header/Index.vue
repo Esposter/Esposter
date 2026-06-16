@@ -6,6 +6,7 @@ import { useDialogStore } from "@/store/message/room/dialog";
 import { MessageType, ROOM_NAME_MAX_LENGTH, selectRoomInMessageSchema } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();
+const { smAndDown } = useVDisplay();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
@@ -16,7 +17,13 @@ const dialogStore = useDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 const roomName = useRoomName(() => currentRoom.value?.id ?? "");
 const placeholder = useRoomPlaceholder(currentRoom);
-const { smAndDown } = useVDisplay();
+const editedImage = ref(currentRoom.value?.image ?? "");
+watch(
+  () => currentRoom.value?.image,
+  (newImage) => {
+    editedImage.value = newImage ?? "";
+  },
+);
 </script>
 
 <template>
@@ -32,19 +39,22 @@ const { smAndDown } = useVDisplay();
       :is-editable="isCreator"
       :max-length="ROOM_NAME_MAX_LENGTH"
       :name="currentRoom.name"
+      :is-dirty="editedImage !== currentRoom.image"
       :schema="selectRoomInMessageSchema.shape.name"
       :placeholder
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
       @submit="
         async (name) => {
           if (!currentRoom) return;
-          const updatedRoom = await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name });
-          await createMessage({ roomId: updatedRoom.id, type: MessageType.EditRoom, message: updatedRoom.name });
+          const isNameChanged = name !== currentRoom.name;
+          const updatedRoom = await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name, image: editedImage });
+          if (isNameChanged)
+            await createMessage({ roomId: updatedRoom.id, type: MessageType.EditRoom, message: updatedRoom.name });
         }
       "
     >
       <template #prepend-content>
-        <MessageContentHeaderEditRoomImageField :image="currentRoom.image" :name="roomName" :room-id="currentRoom.id" />
+        <MessageContentHeaderEditRoomImageField v-model="editedImage" :name="roomName" :room-id="currentRoom.id" />
       </template>
       <StyledAvatar :image="currentRoom.image" :name="roomName" :avatar-props="{ size: 'x-small' }" />
       <div pl-2 flex flex-col>
