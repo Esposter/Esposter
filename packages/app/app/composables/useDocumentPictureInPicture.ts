@@ -1,4 +1,4 @@
-import { getResult, getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export interface UseDocumentPictureInPictureOptions {
   height?: number;
@@ -7,23 +7,29 @@ export interface UseDocumentPictureInPictureOptions {
 
 const isStyleNode = (node: Node): node is HTMLLinkElement | HTMLStyleElement =>
   node instanceof HTMLStyleElement || (node instanceof HTMLLinkElement && node.rel === "stylesheet");
-// Rebuild each sheet from its CSSOM rules so rules injected via insertRule (Vuetify theme,
-// UnoCSS runtime) — which have empty textContent — are carried over, not just inline <style> text.
+const relinkStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
+  if (!styleSheet.href) return;
+  const link = target.document.createElement("link");
+  link.rel = "stylesheet";
+  if (styleSheet.media.mediaText) link.media = styleSheet.media.mediaText;
+  link.href = styleSheet.href;
+  target.document.head.appendChild(link);
+};
+// Linked sheets (those with an href) are re-linked, not inlined: their relative url(...) — e.g.
+// The MDI @font-face — resolve against the CSS file's location, which inlining cssText into the
+// PiP document would break (urls would resolve against the PiP base and 404 to index.html).
+// Sheets without an href (Vuetify theme, UnoCSS runtime injected via insertRule, whose <style>
+// TextContent is empty) are rebuilt from their CSSOM rules so those rules carry over. These are
+// Always inline <style>/constructed sheets, i.e. same-origin, so cssRules never throws.
 const cloneStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
-  getResult(() => {
-    const style = target.document.createElement("style");
-    if (styleSheet.media.mediaText) style.media = styleSheet.media.mediaText;
-    style.textContent = Array.from(styleSheet.cssRules, (rule) => rule.cssText).join("\n");
-    target.document.head.appendChild(style);
-  }).match(noop, () => {
-    // Cross-origin sheet: cssRules access throws, so re-link instead of inlining.
-    if (!styleSheet.href) return;
-    const link = target.document.createElement("link");
-    link.rel = "stylesheet";
-    if (styleSheet.media.mediaText) link.media = styleSheet.media.mediaText;
-    link.href = styleSheet.href;
-    target.document.head.appendChild(link);
-  });
+  if (styleSheet.href) {
+    relinkStyleSheet(target, styleSheet);
+    return;
+  }
+  const style = target.document.createElement("style");
+  if (styleSheet.media.mediaText) style.media = styleSheet.media.mediaText;
+  style.textContent = Array.from(styleSheet.cssRules, (rule) => rule.cssText).join("\n");
+  target.document.head.appendChild(style);
 };
 
 export const useDocumentPictureInPicture = (options: UseDocumentPictureInPictureOptions = {}) => {
