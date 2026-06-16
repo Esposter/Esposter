@@ -12,26 +12,26 @@ export class StringTransformationCommand extends ADataSourceCommand<CommandType.
   readonly type = CommandType.StringTransformation;
 
   get description() {
-    return `Format Strings (${this.stringTransformationType})`;
+    return `Format Strings (${this.#stringTransformationType})`;
   }
 
-  private readonly affectedCells: AffectedCell[];
-  private readonly stringTransformationType: StringTransformationType;
+  readonly #affectedCells: AffectedCell[];
+  readonly #stringTransformationType: StringTransformationType;
 
   constructor(stringTransformationType: StringTransformationType, affectedCells: AffectedCell[]) {
     super();
-    this.stringTransformationType = stringTransformationType;
-    this.affectedCells = affectedCells;
+    this.#stringTransformationType = stringTransformationType;
+    this.#affectedCells = affectedCells;
   }
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
-    for (const { columnName, originalValue, rowIndex } of this.affectedCells) {
+    for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
       const row = takeOne(item.dataSource.rows, rowIndex);
       const column = columnsByNameMap.get(columnName);
       if (!column) continue;
-      const newValue = computeStringTransformation(String(originalValue), this.stringTransformationType);
+      const newValue = computeStringTransformation(String(originalValue), this.#stringTransformationType);
       column.size += getValueSize(newValue) - getValueSize(takeOne(row.data, columnName));
       row.data[columnName] = newValue;
     }
@@ -40,7 +40,7 @@ export class StringTransformationCommand extends ADataSourceCommand<CommandType.
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
-    for (const { columnName, originalValue, rowIndex } of this.affectedCells) {
+    for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
       const row = takeOne(item.dataSource.rows, rowIndex);
       const column = columnsByNameMap.get(columnName);
       if (!column) continue;

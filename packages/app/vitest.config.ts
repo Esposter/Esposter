@@ -8,10 +8,11 @@ export default defineVitestConfig({
       outputJson: "./bench/results.json",
     },
     hookTimeout: dayjs.duration(60, "seconds").asMilliseconds(),
-    // Fake-indexeddb/auto polyfills ALL IndexedDB globals (IDBDatabase, IDBObjectStore, etc.)
-    // The nuxt mock `indexedDb: true` only sets `indexedDB` itself, but the `idb` library's
-    // Proxy mechanism also requires the class constructors (IDBDatabase, IDBObjectStore, etc.)
-    // To be available as globals — without them, idb operations silently fail
+    // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
+    // Build their own happy-dom window, so no manual happy-dom registration is needed, and tests in
+    // The node environment run without a DOM. `fake-indexeddb/auto` polyfills the IDB* global
+    // Constructors the `idb` library needs (the nuxt env's indexedDb mock only sets `indexedDB`); it's
+    // Cheap and harmless for node tests, so it stays global.
     setupFiles: ["fake-indexeddb/auto", "./shared/test/setup.ts"],
   },
 });

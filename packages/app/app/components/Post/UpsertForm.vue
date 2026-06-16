@@ -7,10 +7,10 @@ import { POST_TITLE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface PostUpsertFormProps {
   initialValues?: Pick<Post, "description" | "title">;
-  isCreate?: boolean;
+  isCreate?: true;
 }
 
-const { initialValues = { description: "", title: "" }, isCreate = false } = defineProps<PostUpsertFormProps>();
+const { initialValues = { description: "", title: "" }, isCreate } = defineProps<PostUpsertFormProps>();
 const emit = defineEmits<{
   submit: [event: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>];
 }>();

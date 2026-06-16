@@ -6,11 +6,11 @@ import { useCommentLikeStore } from "@/store/post/comment/like";
 import { useLikeStore } from "@/store/post/like";
 
 interface PostLikeSectionProps {
-  isCommentStore?: boolean;
+  isCommentStore?: true;
   post: PostWithRelations;
 }
 
-const { isCommentStore = false, post } = defineProps<PostLikeSectionProps>();
+const { isCommentStore, post } = defineProps<PostLikeSectionProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const likeStore = isCommentStore ? useCommentLikeStore() : useLikeStore();
 const { createLike, deleteLike, updateLike } = likeStore;

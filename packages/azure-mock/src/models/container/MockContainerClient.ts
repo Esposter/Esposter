@@ -170,7 +170,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     delimiter: string,
     options?: ContainerListBlobsOptions,
   ): PagedAsyncIterableIterator<BlobHierarchyItem, ContainerListBlobHierarchySegmentResponse> {
-    const blobHierarchyItemIterator = this.getBlobHierarchyItemIterator(delimiter, options);
+    const blobHierarchyItemIterator = this.#getBlobHierarchyItemIterator(delimiter, options);
     return {
       byPage: () =>
         async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobFlatSegmentResponse> {
@@ -227,7 +227,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   listBlobsFlat(): PagedAsyncIterableIterator<BlobItem, ContainerListBlobFlatSegmentResponse> {
-    const blobItemIterator = this.getBlobItemIterator();
+    const blobItemIterator = this.#getBlobItemIterator();
     return {
       byPage: () =>
         async function* (this: MockContainerClient): AsyncGenerator<ContainerListBlobFlatSegmentResponse> {
@@ -297,7 +297,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     };
   }
 
-  private async *getBlobHierarchyItemIterator(
+  async *#getBlobHierarchyItemIterator(
     delimiter: string,
     options?: ContainerListBlobsOptions,
   ): AsyncGenerator<BlobHierarchyItem> {
@@ -341,7 +341,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
 
-  private async *getBlobItemIterator(): AsyncGenerator<BlobItem> {
+  async *#getBlobItemIterator(): AsyncGenerator<BlobItem> {
     for (const [name, buffer] of this.container.entries())
       yield await Promise.resolve({
         deleted: false,

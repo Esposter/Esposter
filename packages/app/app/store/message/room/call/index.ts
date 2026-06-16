@@ -245,8 +245,15 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, console.error);
   };
   const toggleScreenShare = async () => {
+    const newIsScreenSharing = !mediaStore.isScreenSharing;
     await getResultAsync(async () => {
-      await setScreenShare(!mediaStore.isScreenSharing);
+      await setScreenShare(newIsScreenSharing);
+      // Pop out only after the picker resolves. requestWindow and getDisplayMedia both consume the
+      // Click's transient activation, so opening the PiP first would steal it and the share would
+      // Fail (or vice versa). Choosing a screen in the picker grants a fresh activation, so popping
+      // Out here keeps the call visible while presenting, Meet-style. Pip/Host reverts the intent if
+      // The OS window never materialises (unsupported browser / activation lost).
+      if (newIsScreenSharing) mediaStore.isPoppedOut = true;
     }).match(noop, console.error);
   };
 

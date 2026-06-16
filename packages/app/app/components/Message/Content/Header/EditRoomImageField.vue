@@ -7,12 +7,12 @@ import { withFinalizerAsync } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 interface EditRoomImageFieldProps {
-  image: RoomInMessage["image"];
   name: NonNullable<RoomInMessage["name"]>;
   roomId: RoomInMessage["id"];
 }
 
-const { image, name, roomId } = defineProps<EditRoomImageFieldProps>();
+const modelValue = defineModel<RoomInMessage["image"]>({ required: true });
+const { name, roomId } = defineProps<EditRoomImageFieldProps>();
 const { $trpc } = useNuxtApp();
 const input = useTemplateRef("input");
 const isLoading = ref(false);
@@ -38,7 +38,7 @@ const isLoading = ref(false);
                 @click="input?.click()"
               >
                 <v-avatar color="background" size="7rem">
-                  <v-img v-if="image" :src="image" :alt="name" cover />
+                  <v-img v-if="modelValue" :src="modelValue" :alt="name" cover />
                   <v-icon v-else icon="mdi-account-multiple" size="3rem" />
                 </v-avatar>
                 <div v-if="isLoading" flex items-center inset-0 justify-center absolute>
@@ -64,7 +64,7 @@ const isLoading = ref(false);
                   async () => {
                     const { publicUrl, sasUrl } = await $trpc.room.generateProfileImageUploadUrl.mutate({ roomId });
                     await uploadBlocks(file, sasUrl);
-                    await $trpc.room.updateRoom.mutate({ id: roomId, image: publicUrl });
+                    modelValue = publicUrl;
                   },
                   () => {
                     isLoading = false;
@@ -78,27 +78,13 @@ const isLoading = ref(false);
       </v-hover>
     </div>
     <button
-      v-if="image"
+      v-if="modelValue"
       text-error
       font-bold
       type="button"
       :disabled="isLoading"
-      :op-loading="isLoading ? '' : undefined"
       hover:underline
-      @click="
-        async () => {
-          if (!image || isLoading) return;
-          isLoading = true;
-          await withFinalizerAsync(
-            async () => {
-              await $trpc.room.deleteProfileImage.mutate({ roomId });
-            },
-            () => {
-              isLoading = false;
-            },
-          );
-        }
-      "
+      @click="modelValue = ''"
     >
       Remove Image
     </button>

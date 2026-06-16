@@ -35,7 +35,7 @@ Same `CallView` — replace avatar fallback with `<video>` element when camera t
 
 ### Screenshare
 
-`<main>` switches from `flex-col` to `flex-row` (`isScreenSharePresenting = hasScreenShare && activeScreenShareStream`): the `ScreenShareStage` takes the left side as the hero (`flex-1`, full height + most of the width), and the participant tiles move into a `shrink-0` **right sidebar** — a vertical, scrollable column of `h-32 aspect-video` tiles — instead of a strip below. This keeps the stage maximal while still showing everyone. See `specs/screenshare.md`.
+The presenter/grid layout lives in the shared `Call/Stage.vue` (rendered by both `Call/View.vue` and, with `isDense`, `Pip/View.vue`). Its `<main>` switches from `flex-col` to `flex-row` (`isScreenSharePresenting = hasScreenShare && activeScreenShareStream`): the `ScreenShareStage` takes the left side as the hero (`flex-1`, full height + most of the width), and the participant tiles move into a `shrink-0` **right sidebar** — a vertical, scrollable column of `h-32 aspect-video` tiles — instead of a strip below. This keeps the stage maximal while still showing everyone. Clicking the stage emits `fullscreen`; `Call/View.vue` maps it to **native fullscreen of the `View` root** (`callView` template ref), so the fullscreen surface keeps the participant sidebar and control bar — `requestFullscreen()` on the video alone would isolate to the video subtree and drop them. In the PiP window the stage is non-interactive (no click-to-fullscreen). See `specs/screenshare.md`.
 
 ### Prejoin / ready room
 
@@ -99,7 +99,8 @@ Message/Content/Index.vue
 
 ### `Call/View.vue`
 
-- Theme-backed (`bg-background`) full-size flex column with no decorative header
+- Theme-backed (`bg-background`) full-size flex column
+- Top bar — an **absolute top-right overlay** (`right-0 top-0 absolute`), so it never pushes the stage/placeholder down — rendered only when there is something to show (a screenshare is active **or** the `append` slot is filled). Holds a Meet-style presenter pill + the `append` slot, both anchored top-right. The pill is a rounded `StyledCard` (`mdi-monitor-share` + `{presenterName} is presenting`) with an inline `color="info" variant="tonal"` rounded **Stop presenting** button (`toggleScreenShare()`) shown only when the local user is the presenter (`isScreenSharing`). `append` is where the dialog wrapper injects its **Close call view** (`mdi-close`) button, so the pill and close button live in one container instead of overlapping in the corner.
 - Participant grid: full-stage responsive CSS grid; do not add a separate people list in the normal view
 - Presenter layout when screenshare is active: `ScreenShareStage` plus horizontal participant strip
 - Reads connection/session state from the root call store, media streams from `call/media`, and participant/speaking state from `call/participant`

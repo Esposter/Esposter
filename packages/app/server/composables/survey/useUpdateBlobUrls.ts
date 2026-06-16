@@ -44,8 +44,7 @@ export const useUpdateBlobUrls = async (survey: Survey, isPublish?: true) => {
   );
   let updatedModel = survey.model;
 
-  for (let i = 0; i < blobUrls.length; i++) {
-    const blobUrl = takeOne(blobUrls, i);
+  for (const [i, blobUrl] of blobUrls.entries()) {
     const updatedBlobUrl = takeOne(updatedBlobUrls, i);
     updatedModel = updatedModel.replaceAll(useBlobUrlSearchRegex(blobUrl), updatedBlobUrl);
   }

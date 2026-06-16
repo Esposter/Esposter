@@ -14,7 +14,7 @@ const roomParticipantMap = computed(
 </script>
 
 <template>
-  <div px-4 py-2 b-b-1 b-border b-solid bg-surface flex gap-x-3 items-center>
+  <div px-4 py-2 bg-surface flex gap-x-3 items-center>
     <v-icon icon="mdi-volume-high" size="small" color="success" />
     <span font-medium flex-1 text-body-small>Call</span>
     <div flex gap-x-2 items-center>

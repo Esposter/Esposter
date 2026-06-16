@@ -22,7 +22,9 @@ export const useFileHistoryStore = defineStore("tableEditor/file/history", () =>
   };
   TableEditorHookMap.Close.push(clear);
   const push = (command: ADataSourceCommand) => {
-    history.value.push(command);
+    // MarkRaw so Vue never wraps the command in a reactive Proxy; a Proxy breaks the
+    // ECMAScript # private field/method brand checks the command relies on at execute/undo time.
+    history.value.push(markRaw(command));
     if (history.value.length > MAX_HISTORY_SIZE) history.value.shift();
     future.value = [];
   };

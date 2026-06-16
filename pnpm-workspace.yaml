@@ -25,14 +25,14 @@ catalog:
   "@azure/storage-queue": ^12.30.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.0.4
-  "@better-auth/drizzle-adapter": ^1.6.18
+  "@better-auth/drizzle-adapter": ^1.6.19
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.3
   "@codemirror/language-data": ^6.5.2
   "@codemirror/state": ^6.6.0
   "@codemirror/theme-one-dark": ^6.1.3
   "@codemirror/view": ^6.43.1
-  "@dxup/nuxt": ^0.4.1
+  "@dxup/nuxt": ^0.5.0
   "@dxup/unimport": ^0.1.2
   "@electric-sql/pglite": ^0.5.2
   "@eslint/core": ^1.2.1
@@ -43,7 +43,6 @@ catalog:
   "@fullcalendar/interaction": ^6.1.20
   "@fullcalendar/timegrid": ^6.1.20
   "@fullcalendar/vue3": ^6.1.20
-  "@happy-dom/global-registrator": ^20.10.3
   "@json-layout/vocabulary": ^2.13.1
   "@koumoul/vjsf": ^4.5.3
   "@lerna-lite/cli": ^5.3.0
@@ -91,12 +90,12 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260613.1
+  "@typescript/native-preview": ^7.0.0-dev.20260615.1
   "@unocss/eslint-config": ^66.7.2
   "@unocss/nuxt": ^66.7.2
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.7
-  "@vitest/coverage-v8": ^4.1.8
+  "@vitest/coverage-v8": ^4.1.9
   "@vitest/eslint-plugin": ^1.6.20
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.3
@@ -115,7 +114,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.15.0
-  better-auth: ^1.6.18
+  better-auth: ^1.6.19
   codemirror: ^6.0.2
   crossws: ^0.4.6
   ctix: ^2.8.1
@@ -131,8 +130,8 @@ catalog:
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^10.5.0
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.69.0
-  eslint-plugin-perfectionist: ^5.9.0
+  eslint-plugin-oxlint: ^1.70.0
+  eslint-plugin-perfectionist: ^5.9.1
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
   fake-indexeddb: ^6.2.5
@@ -159,7 +158,7 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.15.0
   h3: ^1.15.11
-  happy-dom: ^20.10.3
+  happy-dom: ^20.10.4
   howler: ^2.2.4
   idb: ^8.0.3
   is-mobile: ^5.0.0
@@ -179,8 +178,8 @@ catalog:
   node-html-parser: ^7.1.0
   nuxt: ^4.4.8
   nuxt-security: ^2.6.0
-  oxfmt: ^0.54.0
-  oxlint: ^1.69.0
+  oxfmt: ^0.55.0
+  oxlint: ^1.70.0
   oxlint-tsgolint: ^0.23.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
@@ -213,7 +212,7 @@ catalog:
   type-fest: ^5.7.0
   typedoc: ^0.28.19
   typescript: ^6.0.3
-  typescript-eslint: ^8.61.0
+  typescript-eslint: ^8.61.1
   unocss: ^66.7.2
   unocss-preset-vuetify: ^0.3.0
   unplugin-auto-import: ^21.0.0
@@ -222,7 +221,7 @@ catalog:
   viewerjs: ^1.11.7
   vite: ^8.0.16
   vite-plugin-mkcert: ^2.1.0
-  vitest: ^4.1.8
+  vitest: ^4.1.9
   vue: ^3.5.38
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
@@ -231,9 +230,9 @@ catalog:
   vue-tsc: ^3.3.5
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.1.1
-  vuetify-nuxt-module: ^1.0.0-beta.9
+  vuetify-nuxt-module: ^1.0.0-beta.11
   web-push: ^3.6.7
-  worker-timers: ^8.0.31
+  worker-timers: ^8.0.32
   write-excel-file: ^4.1.1
   ws: ^8.21.0
   xmlbuilder2: ^4.0.3
@@ -244,7 +243,7 @@ catalogMode: strict
 cleanupUnusedCatalogs: true
 
 configDependencies:
-  "@pnpm/pacquet": ^0.11.6
+  "@pnpm/pacquet": ^0.11.7
 
 minimumReleaseAge: 0
 

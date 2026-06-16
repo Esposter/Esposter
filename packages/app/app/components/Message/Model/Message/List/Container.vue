@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useDataStore } from "@/store/message/data";
 
+const route = useRoute();
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
-const route = useRoute();
 const roomId = route.params.id as string;
 const rowKey = route.params.rowKey as string;
 

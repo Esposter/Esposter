@@ -13,6 +13,7 @@ Requires LiveKit SFU (see [`specs/call.md`](call.md)). Screen share is a LiveKit
 - User picks window / tab / monitor → track is published to the LiveKit room
 - Button changes to **Stop Sharing** (red); a screenshare icon appears on the sharer's participant tile
 - Optional: share system audio by checking "Share audio" in the browser picker (LiveKit publishes it as a separate `ScreenShareAudio` track)
+- Starting a share **auto-pops the call into Picture-in-Picture** (Meet/Discord style) so the sharer keeps watching the call while presenting another window. Both `documentPictureInPicture.requestWindow()` and `getDisplayMedia` **consume** the click's transient activation, so they can't share one gesture — opening PiP first makes the share fail (or vice-versa). `toggleScreenShare` therefore `await`s `setScreenShare(true)` **first** and only sets `isPoppedOut = true` **after** the picker resolves: choosing a screen grants a fresh activation that `requestWindow` then uses. If the user cancels the picker (or the share fails) it never reaches the pop-out line, so nothing pops; on browsers without Document PiP `Pip/Host` clears the stale intent. The user can still close the PiP manually. See [`specs/picture-in-picture.md`](picture-in-picture.md).
 
 ### Viewer layout — presenter mode
 
@@ -32,8 +33,9 @@ When any participant publishes a `ScreenShare` track:
 └──────────────────────────────────────────────────────┘
 ```
 
-- `<main>` switches to `flex-row`; the screenshare stage is the left hero (`flex-1`), participant tiles move into a `shrink-0` right sidebar (vertical scroll, `h-32 aspect-video` tiles)
-- Stage renders a `<video>` element bound to the `ScreenShareTrack`; there is no outer wrapper card
+- The shared `Call/Stage.vue`'s `<main>` switches to `flex-row`; the screenshare stage is the left hero (`flex-1`), participant tiles move into a `shrink-0` right sidebar (vertical scroll, `h-32 aspect-video` tiles, `h-20` in PiP's `isDense` mode)
+- `ScreenShare/Stage.vue` renders a `<video>` element bound to the `ScreenShareTrack`; there is no outer wrapper card
+- Clicking the stage requests **native fullscreen of the whole `Call/View` root** (Google Meet model — `requestFullscreen()` on the wrapper that holds the stage **+** the participant sidebar **+** the control bar), not just the `<video>`. The Fullscreen API isolates rendering to the target element's subtree, so fullscreening the video alone would drop the tiles/controls; fullscreening the View root keeps them visible. `ScreenShare/Stage.vue` emits a `fullscreen` event (re-emitted by the shared `Call/Stage.vue`); `View.vue` owns the root template ref and calls `requestFullscreen()` on it. In the PiP window the stage is rendered non-interactive (`isInteractive = false` via `isDense`) — no click-to-fullscreen, matching Meet — see [`picture-in-picture.md`](picture-in-picture.md).
 - If multiple participants share simultaneously: tabs above the main area (`Alice's screen`, `Bob's screen`); active tab is the focused share
 
 ### Stopping a share

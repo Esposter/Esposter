@@ -2,9 +2,10 @@ name: 🔥 Claude Warmup
 
 on:
   schedule:
-    # Runs every 5 hours (00:00, 05:00, 10:00, 15:00, 20:00 UTC) to reset the rolling
-    # Claude usage window. 20:00 UTC (06:00 AEST / UTC+10) stays in the set as the daily anchor.
-    - cron: "0 0,5,10,15,20 * * *"
+    # Runs every 6 hours (02:00, 08:00, 14:00, 20:00 UTC) to reset the rolling
+    # Claude usage window. The extra hour of gap gives buffer since runs can take a while.
+    # 20:00 UTC (06:00 AEST / UTC+10) stays in the set as the daily anchor.
+    - cron: "0 2,8,14,20 * * *"
   workflow_dispatch:
 
 permissions:

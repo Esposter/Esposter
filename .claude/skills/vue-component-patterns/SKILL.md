@@ -100,6 +100,39 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 - Each component accesses its props directly without defensive coalescing (`column.format`, not `column.type === ColumnType.Date ? column.format : ""`)
 - A **dispatcher** component (e.g. `FieldInput.vue`) is acceptable at the routing level to delegate to the right sub-component — type casts in the dispatcher are necessary and acceptable at that boundary
 
+## Boolean Props — `is` Prefix + Default-Aware Literal Typing
+
+Two rules for every boolean prop:
+
+1. **`is` prefix.** Boolean props read as a question: `isDense`, `isInteractive`, `isOpen` — never bare `dense` / `interactive` / `open`, and never `can*` / `should*` (prefer `is`, fall back to `has`; see global naming rules). The same applies to `defineModel` / emit payloads.
+
+2. **Type as the non-default literal, not `boolean`.** When a boolean prop has a default, restrict its type to the only value a caller would ever pass, so passing the default is impossible (no redundant `:is-x="true"`):
+   - Defaults to **false** → type `?: true`; caller opts in with the bare attribute (`<Comp is-dense />`).
+   - Defaults to **true** → type `?: false` with destructure default `= true`; caller opts out with `:is-x="false"`.
+
+```ts
+// defaults false → only `true` is meaningful
+interface CallStageProps {
+  isDense?: true;
+}
+const { isDense } = defineProps<CallStageProps>(); // isDense: true | undefined
+
+// defaults true → only `false` is meaningful
+interface CallScreenShareStageProps {
+  isInteractive?: false; /* ... */
+}
+const { isInteractive = true } = defineProps<CallScreenShareStageProps>(); // boolean at runtime
+```
+
+A **derived/computed** value still fits the literal type as long as it can only be the default or its opposite — map the default branch to `undefined` instead of widening to `boolean`:
+
+```vue
+<!-- isDense ? false : undefined → type `false | undefined`, matches `isInteractive?: false` -->
+<MessageContentCallScreenShareStage :is-interactive="isDense ? false : undefined" />
+```
+
+**Exception — genuinely two-way boolean.** Use the full `boolean` type only when the prop carries a real, changeable boolean: a `v-model` / `defineModel<boolean>()`, or a ref/computed whose value legitimately flips **both** ways at the call site. A flag that only ever toggles away from its default is not this case — keep it a literal.
+
 ## Component Co-location (Folder = Auto-import Prefix)
 
 **Group components with the same prefix into a folder** — Nuxt auto-imports with the folder path as prefix, so co-located components share it without repeating it in filenames.
@@ -115,11 +148,17 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 
 **Rule:** ensure the filename's first word differs from the last word of its folder path. If they must share a word, choose a more specific filename (e.g. `GroupDetailCard.vue` instead of `GroupCard.vue`).
 
+**When the shared word is intentional** (the folder name legitimately ends with the word the file starts with), Nuxt still collapses it — so reference the **collapsed** name in the template, never the naive un-collapsed concatenation:
+
+- `Feature/ListSent/SentList.vue` → tag is `<FeatureListSentList />`, **not** `<FeatureListSentSentList />`. The duplicated form resolves to no component and renders **empty with no error**, so it fails silently.
+- `Feature/ListSent/SentListItem.vue` → tag is `<FeatureListSentListItem />`.
+- This collapse affects **only the template tag**. A props interface is a plain TS type and does not collapse, so `FeatureListSentSentListItemProps` remains valid (if redundant) — don't "fix" it to match the tag.
+
+When renaming a folder, the collapse is preserved if the new folder ends with the same word as the old one (e.g. `DraftsSent/` → `DraftsAndSent/` both end in `Sent`), so collapsed usages stay correct under a mechanical token rename. Verify with `typecheck`, which flags an unknown collapsed tag.
+
 ## File Length
 
-- **Target 50–100 lines per `.vue` file** — consistently over 100 lines is a yellow flag that a slot, sub-component, or composable extraction is overdue.
-- Extract toolbar/header buttons into a slot component (e.g. `TopSlot.vue`), row/column action menus into `ActionSlot.vue`, and grouped controls into their own focused component.
-- Complex/rare layout components (e.g. a rich data table with drag-and-drop, pagination, find/replace) may exceed 100 lines — treat as a prompt to reconsider, not an absolute rule.
+Line-count target and exceptions — see the `file-organization` skill. Component-specific extractions when a `.vue` runs long: pull toolbar/header buttons into a slot component (e.g. `TopSlot.vue`), row/column action menus into `ActionSlot.vue`, and grouped controls into their own focused component.
 
 ## Slot Extraction (Complex Components)
 
@@ -385,9 +424,9 @@ const { cleanupAfterAction } = relatedStore;
 Extract to a `use*` composable only when the **same multi-step logic is reused by 2+ buttons** (e.g. `useCancelScheduledJob` = tRPC mutate + store removal, shared by the primary button, edit button, and more-menu). A composable is reuse, not single-use extraction — it does not violate the inline-handler rule.
 
 - **List items / rows reduce to pure layout** — avatar, title, subtitle, time, and a row of extracted button/menu components. No action logic in the item.
+- **A button with a keyboard shortcut is its own component** owning both the `v-btn` and the `onKeyStroke` handler (e.g. `UndoButton.vue`, `RedoButton.vue`) — never wire the shortcut in the parent.
 - **A `v-menu` and its menu items is one component** (e.g. `EntityMoreMenu.vue`) — the menu plus its list items are one coherent unit.
 - **Shared multi-step action logic used by 2+ button components** goes into a `use*` composable (single-function composables return the function directly), never duplicated.
-- **Props interface name = full component auto-import name + `Props`** — `FeatureEntityPrimaryButtonProps`, not bare `Props`.
 
 ### Allowed grouping (do NOT split these)
 

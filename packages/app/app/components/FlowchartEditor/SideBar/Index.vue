@@ -3,10 +3,10 @@ import { NodeCategoryTypeMap } from "@/services/flowchartEditor/NodeCategoryType
 import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
 import { useLayoutStore } from "@/store/layout";
 
+const { height, width } = useWindowSize();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const { createNode, onDragStart } = useDragAndDrop();
-const { height, width } = useWindowSize();
 </script>
 
 <template>

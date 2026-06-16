@@ -58,6 +58,6 @@ const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
       }
     "
   >
-    <TableEditorFileRowFieldInput v-model="localValue" :column autofocus hide-details inline />
+    <TableEditorFileRowFieldInput v-model="localValue" :column autofocus hide-details is-inline />
   </div>
 </template>

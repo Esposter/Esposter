@@ -20,8 +20,8 @@ export const useDownloadFileStore = defineStore("message/file", () => {
       roomId: roomStore.currentRoomId,
     });
 
-    for (let i = 0; i < message.files.length; i++)
-      fileUrlMap.value.set(takeOne(message.files, i).id, { url: takeOne(downloadFileSasUrls, i) });
+    for (const [i, { id }] of message.files.entries())
+      fileUrlMap.value.set(id, { url: takeOne(downloadFileSasUrls, i) });
   });
   MessageHookMap[Operation.Delete].push((input) => {
     const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);

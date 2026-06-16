@@ -36,6 +36,15 @@ export default Object.assign(
   }),
   {
     "@typescript-eslint/consistent-type-exports": "error",
+    // Ban the TypeScript `private` keyword — use ECMAScript `#` private members instead (`protected` is still allowed; no `#` equivalent for subclass access).
+    "no-restricted-syntax": [
+      "error",
+      {
+        message: "Use an ECMAScript `#` private member instead of the TypeScript `private` keyword.",
+        selector:
+          ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
+      },
+    ],
     // Computationally expensive
     // "@typescript-eslint/naming-convention": [
     //   "error",

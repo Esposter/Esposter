@@ -8,7 +8,7 @@ import { prettify } from "@/util/text/prettify";
 import { Container, Image, Text } from "vue-phaserjs";
 
 interface InfoContainerProps {
-  isEnemy: boolean;
+  isEnemy?: true;
 }
 
 defineSlots<{ default: () => VNode }>();

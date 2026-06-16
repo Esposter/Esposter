@@ -214,23 +214,6 @@ export const baseRoomRouter = router({
           ctx.getSessionPayload.session.id,
         );
     }),
-  deleteProfileImage: getPermissionsProcedure(
-    RoomPermission.ManageRoom,
-    roomIdSchema,
-    "roomId",
-  ).mutation<RoomInMessage>(async ({ ctx, input: { roomId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-    const blockBlobClient = containerClient.getBlockBlobClient(getRoomProfileImageBlobName(roomId));
-    await blockBlobClient.deleteIfExists();
-    const updatedRoom = requireMutation(
-      (await ctx.db.update(roomsInMessage).set({ image: "" }).where(eq(roomsInMessage.id, roomId)).returning())[0],
-      Operation.Update,
-      DatabaseEntityType.Room,
-      roomId,
-    );
-    roomEventEmitter.emit("updateRoom", updatedRoom);
-    return updatedRoom;
-  }),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
@@ -562,6 +545,11 @@ export const baseRoomRouter = router({
       DatabaseEntityType.Room,
       id,
     );
+    if (rest.image === "") {
+      const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+      const blockBlobClient = containerClient.getBlockBlobClient(getRoomProfileImageBlobName(id));
+      await blockBlobClient.deleteIfExists();
+    }
     roomEventEmitter.emit("updateRoom", updatedRoom);
     return updatedRoom;
   }),
