@@ -61,7 +61,7 @@ const { height: mediaControlsHeight } = useElementSize(mediaControls);
           "
         />
       </StyledCard>
-      <div shrink-0 :style="{ height: `${mediaControlsHeight}px` }" />
+      <div hidden shrink-0 lg:block :style="{ height: `${mediaControlsHeight}px` }" />
     </div>
   </div>
 </template>
