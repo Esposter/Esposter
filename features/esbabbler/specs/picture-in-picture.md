@@ -25,7 +25,7 @@ Feature-detected with a VueUse-style `isSupported` ref. The control never render
 
 ## Components
 
-- `Call/Pip/Host.vue` — **mounted once in the persistent root** (`app.vue`, gated on session), not on any page or feature layout. Owns the `useDocumentPictureInPicture` instance, watches the `isPoppedOut` intent, opens/closes the window, `<Teleport>`s the compact view into it, and auto-docks when the call ends.
+- `Call/Pip/Host.vue` — **mounted once in the persistent root** (`app.vue`, gated on session), not on any page or feature layout. Owns the `useDocumentPictureInPicture` instance, watches the `isPoppedOut` intent, opens/closes the window, `<Teleport>`s the compact view into it, reverts the intent when `open()` yields no window, and auto-docks when the call ends.
 - `Call/Pip/View.vue` — compact call surface rendered **inside** the PiP window: reuses `Call/Participant/Tile.vue` (via the shared `useCallParticipantTiles` composable) plus a trimmed control row.
 - `Call/Pip/ControlBar.vue` — minimal controls inside the PiP window: reuses `Audio/MuteButton`, `Camera/Button`, `Control/LeaveButton`, plus an **expand** action (close PiP + navigate back to the call surface).
 - `Call/Pip/Button.vue` — the pop-out toggle; hidden when `!isSupported`. Placed in `Call/Control/Bar.vue`.
@@ -44,6 +44,7 @@ Feature-detected with a VueUse-style `isSupported` ref. The control never render
 | `app/components/Message/Content/Call/Pip/Button.vue`           | **New.** Feature-detected pop-out toggle                                                                                  |
 | `app/components/Message/Content/Call/View.vue`                 | **Modified.** Reuses `useCallParticipantTiles` instead of inlining tile-prop logic                                        |
 | `app/components/Message/Content/Call/Control/Bar.vue`          | **Modified.** Adds `Call/Pip/Button.vue`                                                                                  |
+| `app/store/message/room/call/index.ts`                         | **Modified.** `toggleScreenShare` sets `isPoppedOut` pre-picker (auto-pop on share) and reverts on cancel/failure         |
 | `app/components/Message/LeftSideBar/StatusBar.vue`             | **Modified.** In-call item now also surfaces **standalone** active calls so a docked call is always reachable             |
 | `app/app.vue`                                                  | **Modified.** Mounts `Call/Pip/Host.vue` so the window survives all route changes                                         |
 | `app/composables/message/room/call/useCallIdSubscribables.ts`  | **Modified.** Skips `leaveCall()` on unmount when `isPoppedOut` (standalone pop-out — see Constraints)                    |
@@ -54,7 +55,7 @@ Feature-detected with a VueUse-style `isSupported` ref. The control never render
 
 The PiP window's content must outlive any single page **and** any feature layout (the user can pop out on `/calls/[id]` then navigate to `/messages`, which use different layouts). So `Call/Pip/Host.vue` mounts in `app.vue` — the persistent root outside `<NuxtPage>` — gated on session, next to `StyledAlertList` / the achievement snackbar list.
 
-The pop-out **intent** is a single `isPoppedOut` boolean on the existing `call/media.ts` store (reset by `resetCallMedia`, so leaving the call clears it for free). `Pip/Button.vue` toggles it; `Pip/Host.vue` watches it to open/close the window and writes it back to `false` when the window is closed externally or the call ends. No new store — this matches the existing local call-UI flags (`isDeafened`, `pinnedParticipantId`, …) and the direct-ref-mutation pattern already used for `pinnedParticipantId`.
+The pop-out **intent** is a single `isPoppedOut` boolean on the existing `call/media.ts` store (reset by `resetCallMedia`, so leaving the call clears it for free). `Pip/Button.vue` toggles it and `toggleScreenShare` (in `call/index.ts`) sets it on share start; `Pip/Host.vue` watches it to open/close the window and writes it back to `false` when the window is closed externally, when the call ends, or when `open()` produced no window. No new store — this matches the existing local call-UI flags (`isDeafened`, `pinnedParticipantId`, …) and the direct-ref-mutation pattern already used for `pinnedParticipantId`.
 
 ### Pop-out / dock flow
 
@@ -62,6 +63,7 @@ The pop-out **intent** is a single `isPoppedOut` boolean on the existing `call/m
 stateDiagram-v2
     [*] --> Docked: isInCall
     Docked --> PoppedOut: Button.popOut()
+    Docked --> PoppedOut: startScreenShare (auto, pre-picker)
     note right of PoppedOut
       Host opens OS window
       Teleport View into pipWindow.document.body
@@ -133,6 +135,7 @@ LeftSideBar/StatusBar.vue → in-call item now also links standalone calls (reac
 - **Standalone-call leave interaction.** `/calls/[id]` unmount currently calls `leaveCall()` (the page _is_ the call context — see [`call-view-ui.md`](call-view-ui.md) → _Cleanup_). Popping out a **standalone** call means the user navigates away while staying connected, so `useCallIdSubscribables` **skips `leaveCall()` on unmount when `isPoppedOut`**. Room calls already persist across navigation and need no change. The **expand** action (`Pip/ControlBar.vue`) docks and navigates back to the call surface — `RoutePath.Messages(callRoomId)` for room calls, `RoutePath.Calls(activeCallSessionId)` for standalone.
 - **Docked-call reachability.** Once popped out, a standalone call has no on-page surface, so closing the PiP window could otherwise strand the user in an invisible call. `LeftSideBar/StatusBar.vue` therefore surfaces **any** active call (not just room calls) and links to the correct call route, guaranteeing a docked call is always one click away.
 - **Auto-dock on leave.** No dedicated watcher — `leaveCall`'s finalizer calls `resetCallMedia`, which clears `isPoppedOut`; the `isPoppedOut` watch then closes the window. The `pipWindow` watcher skips navigation because `isInCall` is already false by then (participant removed before the finalizer runs).
-- **Requires a user gesture.** `documentPictureInPicture.requestWindow()` must be called from a user activation (the button click). Do not auto-open on mount/navigation — only the explicit pop-out gesture, and re-trigger requires another click.
+- **Requires a user gesture.** `documentPictureInPicture.requestWindow()` must be called from a user activation. Do not auto-open on mount/navigation. Two sanctioned triggers, both gesture-rooted: (1) the explicit pop-out **button** click; (2) **starting a screen share** — `toggleScreenShare` sets `isPoppedOut = true` _before_ awaiting `setScreenShare(true)`, so the window opens inside the click's activation window and the subsequent `getDisplayMedia` picker doesn't strand it. Re-trigger always requires another gesture.
+- **Failed open reverts the intent.** `open()` no-ops on unsupported browsers and swallows `requestWindow` rejections (activation lost, user denied). `Pip/Host` therefore checks `pipWindow` after `await open()`: if no window materialised it resets `isPoppedOut = false`, so the main view never shows a PiP placeholder for a call that didn't actually pop out. This also covers the screen-share-cancelled case (the picker rejects → `toggleScreenShare` reverts `isPoppedOut` directly).
 - **SSR safety.** Composable guards `import.meta.client` and `"documentPictureInPicture" in window`; `pipWindow` is a `ShallowRef<Window | null>`. Cleanup via `tryOnScopeDispose`.
 - **Reuse, don't fork.** `Pip/View.vue` reuses `Call/Participant/Tile.vue`; the PiP control bar is a trimmed subset of `Call/Control/Bar.vue`, not a re-implementation. Keep the compact grid class logic aligned with `Call/View.vue`.

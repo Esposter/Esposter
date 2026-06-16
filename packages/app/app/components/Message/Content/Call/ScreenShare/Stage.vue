@@ -5,7 +5,7 @@ interface CallScreenShareStageProps {
 }
 
 const { presenterName, stream } = defineProps<CallScreenShareStageProps>();
-const stage = useTemplateRef("stage");
+const emit = defineEmits<{ fullscreen: [] }>();
 const video = useTemplateRef("video");
 const videoAspectRatio = ref("16 / 9");
 const updateAspectRatio = () => {
@@ -18,7 +18,6 @@ const updateAspectRatio = () => {
 <template>
   <div flex flex-1 min-h-0 min-w-0 items-center justify-center>
     <div
-      ref="stage"
       class="group"
       :style="{ aspectRatio: videoAspectRatio }"
       rd-lg
@@ -27,7 +26,7 @@ const updateAspectRatio = () => {
       cursor-pointer
       relative
       overflow-hidden
-      @click="stage?.requestFullscreen()"
+      @click="emit('fullscreen')"
     >
       <video
         ref="video"

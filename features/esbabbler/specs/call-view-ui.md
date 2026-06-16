@@ -35,7 +35,7 @@ Same `CallView` — replace avatar fallback with `<video>` element when camera t
 
 ### Screenshare
 
-`<main>` switches from `flex-col` to `flex-row` (`isScreenSharePresenting = hasScreenShare && activeScreenShareStream`): the `ScreenShareStage` takes the left side as the hero (`flex-1`, full height + most of the width), and the participant tiles move into a `shrink-0` **right sidebar** — a vertical, scrollable column of `h-32 aspect-video` tiles — instead of a strip below. This keeps the stage maximal while still showing everyone. See `specs/screenshare.md`.
+`<main>` switches from `flex-col` to `flex-row` (`isScreenSharePresenting = hasScreenShare && activeScreenShareStream`): the `ScreenShareStage` takes the left side as the hero (`flex-1`, full height + most of the width), and the participant tiles move into a `shrink-0` **right sidebar** — a vertical, scrollable column of `h-32 aspect-video` tiles — instead of a strip below. This keeps the stage maximal while still showing everyone. Clicking the stage requests **native fullscreen of the `View` root** (`callView` template ref), so the fullscreen surface keeps the participant sidebar and control bar — `requestFullscreen()` on the video alone would isolate to the video subtree and drop them. See `specs/screenshare.md`.
 
 ### Prejoin / ready room
 

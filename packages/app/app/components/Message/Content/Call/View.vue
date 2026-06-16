@@ -5,6 +5,7 @@ const mediaStore = useMediaStore();
 const { activeScreenShareParticipantId, activeScreenShareStream, hasScreenShare, isPoppedOut, pinnedParticipantId } =
   storeToRefs(mediaStore);
 const { callParticipantMap, getParticipantTileProps, sessionId } = useCallParticipantTiles();
+const callView = useTemplateRef("callView");
 const activeScreenShareParticipant = computed(() =>
   activeScreenShareParticipantId.value ? callParticipantMap.value.get(activeScreenShareParticipantId.value) : undefined,
 );
@@ -22,7 +23,7 @@ const callParticipantGridClass = computed(() => {
 </script>
 
 <template>
-  <div bg-background flex flex-col size-full relative overflow-hidden>
+  <div ref="callView" bg-background flex flex-col size-full relative overflow-hidden>
     <MessageContentCallPipPlaceholder v-if="isPoppedOut" />
     <template v-else>
       <main p-5 flex flex-1 gap-x-3 min-h-0 min-w-0 :class="isScreenSharePresenting ? 'flex-row' : 'flex-col'">
@@ -30,6 +31,7 @@ const callParticipantGridClass = computed(() => {
           v-if="hasScreenShare && activeScreenShareStream"
           :presenter-name
           :stream="activeScreenShareStream"
+          @fullscreen="callView?.requestFullscreen()"
         />
         <div v-else flex-1 gap-3 grid grid-auto-rows-fr :class="callParticipantGridClass">
           <MessageContentCallParticipantTile

@@ -245,9 +245,18 @@ export const useCallStore = defineStore("message/room/call", () => {
     }).match(noop, console.error);
   };
   const toggleScreenShare = async () => {
+    const newIsScreenSharing = !mediaStore.isScreenSharing;
+    // Pop the call out before the getDisplayMedia picker consumes the click's user activation, so
+    // The user can keep watching the call while presenting another window. Pip/Host reverts the
+    // Intent if the OS PiP window never materialises (unsupported browser / activation lost).
+    if (newIsScreenSharing) mediaStore.isPoppedOut = true;
     await getResultAsync(async () => {
-      await setScreenShare(!mediaStore.isScreenSharing);
-    }).match(noop, console.error);
+      await setScreenShare(newIsScreenSharing);
+    }).match(noop, (error) => {
+      console.error(error);
+      // Picker cancelled or share failed: undo the pop-out so a non-share doesn't strand the PiP.
+      if (newIsScreenSharing) mediaStore.isPoppedOut = false;
+    });
   };
 
   AdminActionHookMap[AdminActionType.CreateBan].push(async (roomId) => {
