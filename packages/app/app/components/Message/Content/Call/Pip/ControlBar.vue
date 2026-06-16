@@ -10,6 +10,9 @@ const { isPoppedOut } = storeToRefs(mediaStore);
     <StyledCard px-3 py-1 rd-full flex gap-x-1 items-center overflow-visible="!">
       <MessageContentCallAudioMuteButton />
       <MessageContentCallCameraButton />
+      <MessageContentCallScreenShareButton />
+      <MessageContentCallAudioDeafenButton />
+      <MessageContentCallControlHandButton />
       <MessageContentCallControlActionButton
         icon="mdi-arrow-expand"
         tooltip="Return to Call"
