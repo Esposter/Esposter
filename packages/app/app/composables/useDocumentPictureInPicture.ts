@@ -1,4 +1,4 @@
-import { getResult, getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export interface UseDocumentPictureInPictureOptions {
   height?: number;
@@ -16,22 +16,20 @@ const relinkStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
   target.document.head.appendChild(link);
 };
 // Linked sheets (those with an href) are re-linked, not inlined: their relative url(...) — e.g.
-// the MDI @font-face — resolve against the CSS file's location, which inlining cssText into the
+// The MDI @font-face — resolve against the CSS file's location, which inlining cssText into the
 // PiP document would break (urls would resolve against the PiP base and 404 to index.html).
 // Sheets without an href (Vuetify theme, UnoCSS runtime injected via insertRule, whose <style>
-// textContent is empty) are rebuilt from their CSSOM rules so those rules carry over.
+// TextContent is empty) are rebuilt from their CSSOM rules so those rules carry over. These are
+// Always inline <style>/constructed sheets, i.e. same-origin, so cssRules never throws.
 const cloneStyleSheet = (target: Window, styleSheet: CSSStyleSheet) => {
   if (styleSheet.href) {
     relinkStyleSheet(target, styleSheet);
     return;
   }
-  // Cross-origin sheets without an href can't be reached at all; cssRules access throws → skip.
-  getResult(() => {
-    const style = target.document.createElement("style");
-    if (styleSheet.media.mediaText) style.media = styleSheet.media.mediaText;
-    style.textContent = Array.from(styleSheet.cssRules, (rule) => rule.cssText).join("\n");
-    target.document.head.appendChild(style);
-  }).match(noop, noop);
+  const style = target.document.createElement("style");
+  if (styleSheet.media.mediaText) style.media = styleSheet.media.mediaText;
+  style.textContent = Array.from(styleSheet.cssRules, (rule) => rule.cssText).join("\n");
+  target.document.head.appendChild(style);
 };
 
 export const useDocumentPictureInPicture = (options: UseDocumentPictureInPictureOptions = {}) => {
