@@ -36,6 +36,7 @@
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm format && pnpm typecheck:packages && lerna publish --yes",
     "start": "pnpm --filter @esposter/app run start",
     "test": "vitest run",
+    "test:packages": "vitest run --project \"!@esposter/app\"",
     "typecheck": "tsgo && pnpm -r --parallel --aggregate-output run typecheck",
     "typecheck:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run typecheck",
     "watch:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --stream --if-present run watch"

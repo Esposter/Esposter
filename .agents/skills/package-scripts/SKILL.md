@@ -32,19 +32,18 @@ All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `
 
 ## Root Scripts
 
-| Command                | Notes                                                                                                                                                           |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm i`               | Refresh dependencies/lockfile after manifest changes; use this exact command.                                                                                   |
-| `pnpm test`            | Run the whole suite once via the unified root vitest `projects` config (all packages + scripts).                                                                |
-| `pnpm coverage`        | Same as `pnpm test` with a coverage report; CI shards this (`--reporter=blob` + `--merge-reports`). Coverage is root-only — packages have no `coverage` script. |
-| `pnpm catalog:check`   | Verify catalog specifiers in `pnpm-workspace.yaml` match resolved versions in the lockfile.                                                                     |
-| `pnpm depcruise:graph` | Generate `dependency-graph.svg` directly from dependency-cruiser DOT output via `graphviz-cli`.                                                                 |
-
-Use plain `pnpm i` exactly. Follow `architecture/monorepo-tooling.md` for install safety rules.
+| Command                | Notes                                                                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm i`               | Refresh deps/lockfile after manifest changes.                                                                                |
+| `pnpm test`            | Whole suite once via unified root vitest `projects` config (all packages + scripts).                                         |
+| `pnpm test:packages`   | All projects except the app (`--project "!@esposter/app"`) — fast local run, skips Nuxt. Local-only.                         |
+| `pnpm coverage`        | `pnpm test` + coverage; root-only (packages have no `coverage` script). CI shards via `--reporter=blob` + `--merge-reports`. |
+| `pnpm catalog:check`   | Verify `pnpm-workspace.yaml` catalog specifiers match the lockfile.                                                          |
+| `pnpm depcruise:graph` | Generate `dependency-graph.svg` from dependency-cruiser via `graphviz-cli`.                                                  |
 
 ## Key Rules
 
-- **Local linting**: run `pnpm lint:fix` directly — never manually edit to satisfy ESLint/oxlint
-- **Check-only linting**: reserve `pnpm lint`/`pnpm lint:all` for CI/CD verification or when explicitly requested
-- **Do not run tests on Windows**: Vitest fails during config startup (`spawn EPERM`). Don't run `pnpm test`, targeted files, or coverage unless the user explicitly asks and acknowledges the limitation
-- **Long-running commands** (`dev`, `build`, `test`, `typecheck`): run with `run_in_background: true` — they can take 2+ minutes
+- **Lint locally** with `pnpm lint:fix` directly — never hand-edit to satisfy the linter. Reserve `pnpm lint`/`pnpm lint:all` for CI.
+- **No Windows tests**: Vitest fails at config startup (`spawn EPERM`) — only run when the user explicitly asks.
+- **Long-running** (`dev`, `build`, `test`, `typecheck`): use `run_in_background: true` (2+ min).
+- **Never use `pnpm <script> -- <args>`**: pnpm forwards the literal `--`, so trailing flags become post-`--` positionals and are dropped. Use `pnpm exec <binary> <args>` or direct args (`pnpm test -u`).
