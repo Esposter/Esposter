@@ -1,5 +1,6 @@
 import { devRgEsposterAe001 } from "@/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devstesposter001 } from "@/resources/Microsoft.Storage/storageAccounts/devstesposter001";
+import { AzureContainer } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 
 export const devstesposter001ManagementPolicy: azure_native.storage.ManagementPolicy =
@@ -25,6 +26,27 @@ export const devstesposter001ManagementPolicy: azure_native.storage.ManagementPo
             },
             enabled: true,
             name: "DeletePreviousVersions (auto-created)",
+            type: azure_native.storage.RuleType.Lifecycle,
+          },
+          {
+            definition: {
+              actions: {
+                baseBlob: {
+                  tierToCold: {
+                    daysAfterCreationGreaterThan: 90,
+                  },
+                  tierToCool: {
+                    daysAfterCreationGreaterThan: 30,
+                  },
+                },
+              },
+              filters: {
+                blobTypes: ["blockBlob"],
+                prefixMatch: [AzureContainer.MessageAssets],
+              },
+            },
+            enabled: true,
+            name: "TierMessageAttachments",
             type: azure_native.storage.RuleType.Lifecycle,
           },
         ],
