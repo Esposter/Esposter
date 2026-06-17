@@ -38,8 +38,7 @@ Run from `packages/db/`:
 
 ```bash
 pnpm build        # compile to dist/
-pnpm test         # vitest watch mode
-pnpm coverage     # vitest run --coverage
+pnpm test         # vitest watch mode (coverage is run from the repo root)
 pnpm lint:fix     # auto-fix lint
 pnpm typecheck    # type check
 ```

@@ -5,11 +5,11 @@ description: Esposter Error Handling Conventions — neverthrow getResult/getRes
 
 # Error Handling Conventions
 
-Esposter uses **neverthrow** for explicit error handling. No silent swallows — every error is propagated, logged, or shown to the user.
+**neverthrow** for explicit error handling. No silent swallows — every error is propagated, logged, or shown to the user.
 
 ## try / catch Are BANNED
 
-Never write the `try` keyword anywhere — no `try`/`catch`, no `try`/`finally` — in all code (components, composables, stores, server routes, tRPC routers). Always use `getResult`/`getResultAsync` and their chain methods; for cleanup use `withFinalizer`/`withFinalizerAsync`.
+Never write `try` anywhere (no `try`/`catch`, no `try`/`finally`) in any code — components, composables, stores, server routes, tRPC routers. Use `getResult`/`getResultAsync` + chain methods; for cleanup use `withFinalizer`/`withFinalizerAsync`.
 
 ## Core Utility
 

@@ -52,10 +52,10 @@ Layer declaration order is in `app/assets/css/layers.css`. All `uno-*` layers ap
 
 ## Snapshot test
 
-`packages/app/uno.config.test.ts` snapshots `rules`, `safelist`, `shortcuts`, and `theme`, and separately tests the `cssLayerName` function. Run with `--run -u` to update after intentional changes:
+`packages/app/uno.config.test.ts` snapshots `rules`, `safelist`, `shortcuts`, and `theme`, and separately tests the `cssLayerName` function. Run it to update the snapshots after intentional changes:
 
 ```bash
-pnpm test uno.config.test.ts -- --run -u
+pnpm exec vitest run uno.config.test.ts -u
 ```
 
 Update the snapshot whenever:

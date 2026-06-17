@@ -36,7 +36,7 @@
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm format && pnpm typecheck:packages && lerna publish --yes",
     "start": "pnpm --filter @esposter/app run start",
     "test": "vitest run",
-    "test:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run test",
+    "test:packages": "vitest run --project \"!@esposter/app\"",
     "typecheck": "tsgo && pnpm -r --parallel --aggregate-output run typecheck",
     "typecheck:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run typecheck",
     "watch:packages": "pnpm -r --filter \"!@esposter/app\" --parallel --stream --if-present run watch"
@@ -48,6 +48,7 @@
     "@lerna-lite/publish": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "dependency-cruiser": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",

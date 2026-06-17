@@ -16,7 +16,7 @@ Always import from `@esposter/db-schema`, never redefine locally.
 
 ## Batch Write Pattern
 
-Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`. Pages hold up to 1000 entities but `submitTransaction` accepts max 100 actions per call, and all actions in one transaction **must share the same `partitionKey`** (Azure requirement).
+Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`. `submitTransaction` accepts max 100 actions per call, and all actions in one transaction **must share the same `partitionKey`** (Azure requirement).
 
 ```typescript
 for await (const page of tableClient
@@ -68,7 +68,7 @@ const filter = serializeClauses([
 
 ## Entity Class Constructors
 
-`deserializeEntity` calls `new cls()` with **no arguments**. So every Azure entity constructor must declare `init` as optional (`init?:`) and access it with optional chaining (`init?.foo`):
+`deserializeEntity` calls `new cls()` with **no arguments**, so every Azure entity constructor must declare `init` optional (`init?:`) and access via optional chaining (`init?.foo`):
 
 ```typescript
 export class MyEntity extends AzureEntity {

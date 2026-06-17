@@ -794,6 +794,9 @@ importers:
       '@typescript/native-preview':
         specifier: 'catalog:'
         version: 7.0.0-dev.20260616.1
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.9(vitest@4.1.9)
       dependency-cruiser:
         specifier: 'catalog:'
         version: 17.4.3
