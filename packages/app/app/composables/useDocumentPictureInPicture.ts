@@ -1,3 +1,4 @@
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export interface UseDocumentPictureInPictureOptions {
@@ -74,11 +75,13 @@ export const useDocumentPictureInPicture = (options: UseDocumentPictureInPicture
     target.document.body.style.height = "100%";
     target.document.body.style.margin = "0";
     // Mirror late-added stylesheets (UnoCSS dev-time runtime injection) into the PiP document.
-    styleObserver = new MutationObserver((mutations) => {
-      for (const mutation of mutations)
-        for (const node of mutation.addedNodes)
-          if (isStyleNode(node) && node.sheet) cloneStyleSheet(target, node.sheet);
-    });
+    styleObserver = new MutationObserver(
+      getSynchronizedFunction(async (mutations) => {
+        for (const mutation of mutations)
+          for (const node of mutation.addedNodes)
+            if (isStyleNode(node) && node.sheet) await cloneStyleSheet(target, node.sheet);
+      }),
+    );
     styleObserver.observe(document.head, { childList: true });
     // Wait for re-linked sheets to finish loading so content isn't revealed before its CSS (FOUC).
     await Promise.all(pendingSheets);
