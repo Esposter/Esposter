@@ -24,8 +24,6 @@ export default Object.assign(
     // Computationally expensive
     delete rules["@typescript-eslint/no-confusing-void-expression"];
     delete rules["@typescript-eslint/no-deprecated"];
-    delete rules["@typescript-eslint/no-floating-promises"];
-    delete rules["@typescript-eslint/no-misused-promises"];
     delete rules["@typescript-eslint/unified-signatures"];
     return rules;
   }),
