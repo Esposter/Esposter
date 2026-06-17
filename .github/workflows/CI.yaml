@@ -52,7 +52,6 @@ jobs:
   build-docs:
     name: Build Documentation
     permissions:
-      actions: read
       contents: read
     runs-on: ubuntu-latest
     steps:
