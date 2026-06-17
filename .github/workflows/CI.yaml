@@ -5,6 +5,9 @@ on:
     branches:
       - "**"
 
+permissions:
+  contents: read
+
 jobs:
   build-packages:
     name: Build Packages
@@ -147,9 +150,6 @@ jobs:
   build-docs:
     name: Build Documentation
     needs: build-packages
-    permissions:
-      actions: read
-      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -187,8 +187,6 @@ jobs:
 
   format:
     name: Format
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
