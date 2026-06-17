@@ -54,6 +54,7 @@ jobs:
           name: coverage-blob-${{ matrix.shard }}
           path: .vitest-reports/*
           if-no-files-found: error
+          include-hidden-files: true
 
   coverage-merge:
     name: Merge Coverage

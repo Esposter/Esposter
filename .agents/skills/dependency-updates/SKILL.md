@@ -12,7 +12,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 1. **Check what's outdated and mismatched** (from repo root): `pnpm outdated:dependencies`
 2. **Update versions** in `pnpm-workspace.yaml` — all non-pinned packages need a `^` caret prefix.
 3. **Tell the user to refresh the lockfile** — do NOT run it yourself. Have them run `pnpm refresh:lockfile` from the repo root.
-4. **Verify dependency sync** — after refresh, run `pnpm outdated:dependencies` again. It verifies package manifests use `catalog:` or `workspace:`, checks catalog and configDependency specifier bases against lockfile resolutions, and checks catalog/configDependency entries against npm registry latest versions. Use the pinned and tracked-issue notes below to decide which reported updates to skip. Fix reported mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
+4. **Verify dependency sync** — after refresh, re-run `pnpm outdated:dependencies`. It checks manifests use `catalog:`/`workspace:`, catalog + configDependency specifiers against lockfile resolutions, and catalog/configDependency entries against npm latest. Skip updates per the pinned/tracked-issue notes below; fix mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
 
 When `@electric-sql/pglite` changes between minor versions, regenerate the db-mock data directory snapshot from `packages/db-mock/` with `pnpm snapshot:gen`, then verify the db-mock tests. The committed `packages/db-mock/src/snapshot.tar.gz` is tied to PGlite's dump format and may need refreshing even without schema changes.
 
