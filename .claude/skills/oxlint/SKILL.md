@@ -18,7 +18,7 @@ pnpm lint:fix   # root oxlint/eslint then lerna lint:fix for all packages
 
 ## `typescript/method-signature-style` (oxlint)
 
-Interface method signatures must be written as property signatures:
+Interface method signatures must be property signatures:
 
 ```ts
 // ✗ method signature

@@ -7,7 +7,7 @@ description: Esposter slash command conventions — parameter definitions, execu
 
 ## Core Types
 
-`SlashCommandParameter` extends `Description` — always has both `name` and `description` (never make description optional):
+`SlashCommandParameter` extends `Description` — always has both `name` and `description` (never optional):
 
 ```typescript
 export interface SlashCommandParameter extends Description {

@@ -15,9 +15,9 @@ Located in `packages/configuration/src/`. All library packages import one of:
 | `rolldownConfigurationNode`       | node                     | `db`, `azure-mock`, `infra`, `db-mock` |
 | `rolldownConfigurationIsomorphic` | browser + node polyfills | `xml2js`                               |
 
-All extend `rolldownConfigurationBrowser`. Node adds `platform: "node"`. Isomorphic adds `@rolldown/plugin-node-polyfills`. Use `{ external }` shorthand when no extra entries needed; spread `[...external, "extra"]` only if the package requires additional externals.
+All extend `rolldownConfigurationBrowser`. Node adds `platform: "node"`; Isomorphic adds `@rolldown/plugin-node-polyfills`. Use `{ external }` shorthand when no extra entries needed; spread `[...external, "extra"]` only when the package needs additional externals.
 
-The base browser config enables `tsgo: true` in the `dts()` call (uses `@typescript/native-preview` for fast DTS generation; already in catalog — do not remove).
+Base browser config enables `tsgo: true` in `dts()` (`@typescript/native-preview` for fast DTS gen; in catalog — do not remove).
 
 ## Global External List
 
@@ -41,9 +41,9 @@ export const external: (RegExp | string)[] = [
 
 - `/@esposter\//u` covers all `@esposter/*` workspace packages — never add individual `@esposter/foo` strings.
 - Non-`@esposter/` workspace packages must be listed explicitly (`azure-mock`, `parse-tmx`, `vue-phaserjs` — not covered by the regex).
-- The external list is a build superset, not a per-package peer-dependency checklist — a package declares only the externalized packages it directly imports at runtime or exposes through its generated `.d.ts` surface.
+- The external list is a build superset, not a per-package peer-dependency checklist — a package declares only the externalized packages it directly imports at runtime or exposes through its `.d.ts` surface.
 - Do not duplicate transitive peers — the package that directly imports a dependency owns the contract. If `azure-mock` imports `@esposter/db-schema` which imports `zod`, `zod` is `db-schema`'s peer, not `azure-mock`'s.
-- `dependencies` get bundled; `peerDependencies` are externalized. When a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and ensure it's covered by the shared external list. Exceptions: `@esposter/app` (root consumer, not a library) and `@esposter/azure-functions` (overrides external list to bundle almost everything).
+- `dependencies` get bundled; `peerDependencies` are externalized. When a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and ensure the shared external list covers it. Exceptions: `@esposter/app` (root consumer, not a library) and `@esposter/azure-functions` (overrides external list to bundle almost everything).
 - Vite builds: `viteConfiguration` lives in `packages/configuration/src/viteConfiguration.ts`. `packages/configuration/vite.config.js` imports it from source; consumers like `vue-phaserjs` import it from `@esposter/configuration`.
 
 ### Ordering convention

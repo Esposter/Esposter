@@ -5,7 +5,7 @@ description: Esposter code formatting — blank-line placement, comment attachme
 
 # Formatting
 
-Cross-cutting whitespace, comment, and line-ending rules for all files. Language- and framework-specific structure lives in those skills (`vue`, `typescript`, `file-organization`); this skill owns only how code is spaced and commented.
+Cross-cutting whitespace, comment, and line-ending rules for all files. Language/framework-specific structure lives in `vue`, `typescript`, `file-organization`; this skill owns only spacing and comments.
 
 ## Blank Lines
 

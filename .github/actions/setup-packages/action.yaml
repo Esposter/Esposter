@@ -1,0 +1,36 @@
+name: Setup Packages
+description: Install dependencies, then restore built package output (dist + generated barrels) from cache, building only on a cache miss
+runs:
+  using: composite
+  steps:
+    - name: 📦 Install dependencies
+      run: pnpm i
+      shell: bash
+    # Cache key = the git tree hash of every workspace package except the app, plus the lockfile and catalog.
+    # A tree hash is a content hash of TRACKED files only, so generated/gitignored output (dist, ctix barrels,
+    # *.tsbuildinfo, node_modules) is excluded by construction — no glob enumeration to keep in sync, and a
+    # Change to any tracked build input rebuilds. The app (`packages/app`) is excluded, so app-only commits hit.
+    - name: 🔑 Compute package build cache key
+      id: key
+      shell: bash
+      run: |
+        hash=$( {
+          git ls-tree HEAD:packages | awk '$2 == "tree" && $4 != "app" { print $3 }'
+          git rev-parse HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
+        } | sha256sum | cut -d' ' -f1 )
+        echo "hash=$hash" >> "$GITHUB_OUTPUT"
+    # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
+    # Barrels (gitignored, absent on a fresh checkout). Both are produced by `pnpm build:packages`.
+    - name: ♻️ Restore package builds
+      id: cache
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: |
+          packages/*/dist
+          packages/*/src/**/index.ts
+        key: package-builds-${{ steps.key.outputs.hash }}
+
+    - name: 🏗️ Build packages
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: pnpm build:packages
+      shell: bash

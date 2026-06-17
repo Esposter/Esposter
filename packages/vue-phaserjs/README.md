@@ -43,6 +43,17 @@ See the reference implementation in [`packages/app/app/pages/dungeons.vue`](http
 - Scene lifecycle hooks aligned with Vue's `onMounted` / `onUnmounted`
 - TypeScript-first with full generic scene key support
 
+### Commands
+
+Run from `packages/vue-phaserjs/`:
+
+```bash
+pnpm build        # compile to dist/
+pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint:fix     # auto-fix lint
+pnpm typecheck    # type check
+```
+
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).

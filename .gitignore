@@ -5,6 +5,7 @@
 
 # Testing
 coverage
+.vitest-reports
 vitest.config.*.timestamp*
 
 # Local db
