@@ -18,7 +18,7 @@ catalog:
   "@azure/core-rest-pipeline": ^1.24.0
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
-  "@azure/functions": ^4.16.0
+  "@azure/functions": ^4.16.1
   "@azure/identity": ^4.13.1
   "@azure/search-documents": ^13.0.0
   "@azure/storage-blob": ^12.32.0
@@ -59,16 +59,16 @@ catalog:
   "@pulumi/azure-native": ^3.19.0
   "@pulumi/pulumi": ^3.246.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^1.8.5
-  "@tiptap/core": ^3.26.1
-  "@tiptap/extension-code-block-lowlight": ^3.26.1
-  "@tiptap/extension-file-handler": ^3.26.1
-  "@tiptap/extension-mention": ^3.26.1
-  "@tiptap/extensions": ^3.26.1
-  "@tiptap/pm": ^3.26.1
-  "@tiptap/starter-kit": ^3.26.1
-  "@tiptap/suggestion": ^3.26.1
-  "@tiptap/vue-3": ^3.26.1
+  "@takumi-rs/core": ^1.8.6
+  "@tiptap/core": ^3.27.0
+  "@tiptap/extension-code-block-lowlight": ^3.27.0
+  "@tiptap/extension-file-handler": ^3.27.0
+  "@tiptap/extension-mention": ^3.27.0
+  "@tiptap/extensions": ^3.27.0
+  "@tiptap/pm": ^3.27.0
+  "@tiptap/starter-kit": ^3.27.0
+  "@tiptap/suggestion": ^3.27.0
+  "@tiptap/vue-3": ^3.27.0
   "@tresjs/cientos": ^5.7.2
   "@tresjs/core": ^5.8.1
   "@tresjs/nuxt": ^5.6.1

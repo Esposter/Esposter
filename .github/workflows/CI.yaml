@@ -5,9 +5,65 @@ on:
     branches:
       - "**"
 
+permissions:
+  contents: read
+
 jobs:
+  build-packages:
+    name: Build Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install dependencies
+        run: pnpm i
+      # Cache key = the git tree hash of every workspace package except the app, plus the lockfile and catalog.
+      # A tree hash is a content hash of TRACKED files only, so generated/gitignored output (dist, ctix barrels,
+      # *.tsbuildinfo, node_modules) is excluded by construction — no glob enumeration to keep in sync, and a
+      # Change to any tracked build input rebuilds. The app (`packages/app`) is excluded, so app-only commits hit.
+      - name: 🔑 Compute package build cache key
+        id: key
+        run: |
+          hash=$( {
+            git ls-tree HEAD:packages | awk '$2 == "tree" && $4 != "app" { print $3 }'
+            git rev-parse HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
+          } | sha256sum | cut -d' ' -f1 )
+          echo "hash=$hash" >> "$GITHUB_OUTPUT"
+      # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
+      # Barrels (gitignored, absent on a fresh checkout). Both are produced by `pnpm build:packages`.
+      - name: ♻️ Restore package builds
+        id: cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: |
+            packages/*/dist
+            packages/*/src/**/index.ts
+          key: package-builds-${{ steps.key.outputs.hash }}
+
+      - name: 🏗️ Build packages
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pnpm build:packages
+      # Single gated build, then fan the output out to every consuming job as one artifact (dist + barrels share
+      # The `packages/` common ancestor, so consumers download into `packages`). No hidden-file flag needed —
+      # Neither `dist` nor `index.ts` is a dotfile.
+      - name: 📤 Upload package builds
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: package-builds
+          path: |
+            packages/*/dist
+            packages/*/src/**/index.ts
+          if-no-files-found: error
+
   build:
     name: Build App
+    needs: build-packages
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -26,10 +82,11 @@ jobs:
 
   coverage:
     name: Coverage
+    needs: build-packages
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -42,11 +99,11 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
-      # `--shard=i/4` runs a distinct quarter of ALL test files (every package + scripts, via the root
+      # `--shard=i/16` runs a distinct 1/16th of ALL test files (every package + scripts, via the root
       # Vitest `projects` config) on this runner; `--reporter=blob` serialises this shard's results and
-      # Coverage data (vitest writes the per-shard `.vitest-reports/blob-i-4.json`) for the merge job.
+      # Coverage data (vitest writes the per-shard `.vitest-reports/blob-i-16.json`) for the merge job.
       - name: 🧪 Test
-        run: pnpm exec vitest run --coverage --reporter=blob --shard=${{ matrix.shard }}/4
+        run: pnpm exec vitest run --coverage --reporter=blob --shard=${{ matrix.shard }}/16
 
       - name: 📤 Upload blob report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -58,7 +115,7 @@ jobs:
 
   coverage-merge:
     name: Merge Coverage
-    needs: coverage
+    needs: [build-packages, coverage]
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -92,8 +149,7 @@ jobs:
 
   build-docs:
     name: Build Documentation
-    permissions:
-      contents: read
+    needs: build-packages
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -112,6 +168,7 @@ jobs:
 
   lint:
     name: Lint
+    needs: build-packages
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -130,8 +187,6 @@ jobs:
 
   format:
     name: Format
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -150,6 +205,7 @@ jobs:
 
   typecheck:
     name: Typecheck
+    needs: build-packages
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
