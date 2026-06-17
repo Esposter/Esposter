@@ -127,13 +127,11 @@
       "Skill(dependency-updates)",
       "Skill(pulumi-infra)",
       "Skill(styling)",
-      "WebFetch(domain:bundlephobia.com)",
-      "WebFetch(domain:mathjs.org)",
       "WebFetch(domain:nuxt.com)",
       "WebFetch(domain:orm.drizzle.team)",
+      "WebFetch(domain:vitest.dev)",
       "WebFetch(domain:vuetifyjs.com)",
-      "WebFetch(domain:vueuse.org)",
-      "WebFetch(domain:www.npmjs.com)"
+      "WebFetch(domain:vueuse.org)"
     ]
   }
 }

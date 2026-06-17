@@ -33,7 +33,6 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
-    "coverage": "vitest run --coverage",
     "db:gen": "pnpm db:run generate",
     "db:pull": "pnpm db:run pull",
     "db:run": "tsx node_modules/drizzle-kit/bin.cjs",

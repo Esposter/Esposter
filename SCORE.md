@@ -83,9 +83,9 @@ UnoCSS `presetAttributify` + `presetWind4` enforced project-wide: all static sty
 
 ## CI / CD — 10 / 10
 
-Five workflows: CI (all branches), Pulumi (infra preview on PRs), Release (tags), and two Azure Functions deployment pipelines (develop → dev slot, main → prod slot). CI is a parallel fan-out DAG: `build-packages` runs first and uploads package `dist` + `src/**/index.ts` entrypoints as artifacts, then `build`, `coverage`, `build-docs`, `lint`, and `typecheck` run concurrently (each `needs: build-packages`), downloading those artifacts instead of rebuilding; `format` runs independently with no build dependency. Coverage is uploaded as an artifact. Dependency caching is handled by the shared `setup-project-dependencies` composite action.
+Five workflows: CI (all branches), Pulumi (infra preview on PRs), Release (tags), and two Azure Functions deployment pipelines (develop → dev slot, main → prod slot). CI runs all checks as fully independent parallel jobs with no inter-job gate: `build`, `coverage`, `build-docs`, `lint`, and `typecheck` each restore compiled package output (`dist` + generated `src/**/index.ts` barrels) from an `actions/cache` via the shared `setup-packages` composite, rebuilding only on a cache miss; `format` runs with no package dependency. The previous serial `build-packages` artifact gate was removed — the common app-only commit hits the cache and every check starts at t=0, trading redundant parallel rebuilds on package-change commits for a shorter critical path. Tests run through one root `vitest.config.ts` `projects` config (every package + the `scripts/` suite as projects, the app as a Nuxt project), so coverage runs as a 4-way `--shard=i/4 --reporter=blob` matrix over the whole suite, feeding a dependent merge job (`--merge-reports`) that recombines the blobs into one unified coverage artifact. pnpm store caching is handled by the shared `setup-project-dependencies` composite action.
 
-Security hardening throughout: every third-party action is SHA-pinned (`actions/checkout`, `upload-artifact`, `download-artifact`), `persist-credentials: false` on all checkouts, and explicit least-privilege `permissions:` on the jobs that need them.
+Security hardening throughout: every third-party action is SHA-pinned (`actions/checkout`, `actions/cache`, `actions/setup-node`, `upload-artifact`), `persist-credentials: false` on all checkouts, and explicit least-privilege `permissions:` on the jobs that need them.
 
 ---
 
@@ -110,6 +110,6 @@ Security hardening throughout: every third-party action is SHA-pinned (`actions/
 | Security             | 8 / 10       | CSP trade-offs documented; xssValidator pending upstream                         |
 | Dependencies         | 8 / 10       | 7 pre-release packages (Drizzle RC, Survey betas); TypeScript v6                 |
 | Styling              | 9 / 10       | Attributify enforced; Vuetify token bridge; visual regression accepted trade-off |
-| CI / CD              | 10 / 10      | Parallel fan-out DAG; SHA-pinned actions; least-privilege; Pulumi preview        |
+| CI / CD              | 10 / 10      | Fully-parallel cached jobs; SHA-pinned actions; least-privilege; Pulumi preview  |
 | Bundle & Performance | 8 / 10       | Vite auto-splits; ~65 MB known footprint; Nuxt build provides visible baseline   |
 | **Total**            | **93 / 100** |                                                                                  |
