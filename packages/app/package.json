@@ -19,7 +19,6 @@
     "bench": "vitest bench --run",
     "build": "NODE_OPTIONS=--max-old-space-size=8192 nuxt build",
     "cleanup": "nuxt cleanup",
-    "coverage": "vitest run --coverage",
     "dev": "nuxt dev",
     "env:gen": "pnpx gen-env-types .env -o shared/types/env.d.ts -e .",
     "format": "oxfmt",

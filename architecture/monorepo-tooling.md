@@ -8,7 +8,7 @@ How workspace package scripts, dependency installs, publishing, and CI runners a
 
 Esposter uses **pnpm workspaces** as the package manager and workspace script runner. Workspace packages are declared in `pnpm-workspace.yaml`, and package versions are centralized in the root catalog.
 
-Use the root `package.json` scripts as the canonical entry points for cross-package work. Package-local scripts should stay small and predictable (`build`, `lint`, `lint:fix`, `typecheck`, `test`, `coverage`, `export:gen`) so root recursive commands can compose them.
+Use the root `package.json` scripts as the canonical entry points for cross-package work. Package-local scripts should stay small and predictable (`build`, `lint`, `lint:fix`, `typecheck`, `test`, `export:gen`) so root recursive commands can compose them. Coverage is not a package-local script — it is owned entirely by the root `vitest` `projects` run.
 
 ---
 
@@ -22,14 +22,14 @@ Common patterns:
 pnpm -r run build
 pnpm -r --parallel --aggregate-output run lint
 pnpm -r --parallel --aggregate-output run typecheck
-pnpm -r --parallel --aggregate-output --if-present run coverage
 pnpm -r --filter "!@esposter/app" run build
 pnpm --filter @esposter/app run build
 ```
 
 Guidelines:
 
-- Use `--parallel` for independent checks such as linting, typechecking, and tests.
+- Tests are the exception: `test`/`coverage` run through one root `vitest.config.ts` `projects` config (a single `vitest run`), not a recursive fan-out, so the whole suite shares one run, one coverage report, and one `--shard` axis.
+- Use `--parallel` for independent checks such as linting and typechecking.
 - Use `--aggregate-output` in CI-style commands so package logs remain readable.
 - Use filters instead of Lerna scopes/ignores.
 - Keep `build:packages` separate from `build:app`; the app can depend on compiled package output.
@@ -75,13 +75,13 @@ CI runs every check as a fully independent job with no inter-job gate, so they a
 ```text
 format
 build documentation
-coverage (×4 shards)
+coverage (×4 shards) ─▶ merge coverage
 lint
 typecheck
 build app
 ```
 
-`coverage` runs as a 4-way matrix: the app suite (the long pole) is split across runners with `vitest --shard`, while the small non-app package suites run once on the first shard only. Each shard uploads its partial report as `coverage-<n>`. This shortens the coverage job itself but not total CI time, which is gated by `lint`; it is kept for faster test-failure feedback. There are no coverage thresholds, so a partial per-shard report cannot false-fail.
+Tests run through a single root `vitest.config.ts` with a `projects: ["packages/*", <scripts>]` config — every package (the app as a Nuxt project via `defineVitestProject`, the rest by their own configs) plus the root `scripts/` suite is one project in one vitest run. So `coverage`/`test` are now `vitest run` at the root, not a `pnpm -r` fan-out. `coverage` runs as a 4-way matrix: `pnpm coverage -- --reporter=blob --shard=i/4` splits _all_ test files across runners (each shard runs a distinct quarter and writes the collision-safe `.vitest-reports/blob-i-4.json`, which carries that shard's coverage data). A dependent `merge coverage` job downloads all four blobs and runs `pnpm coverage -- --merge-reports` to recombine them into one unified coverage report — this re-emits the report only, it does not re-run tests. This shortens the coverage work itself but not total CI time, which is gated by `lint`; it is kept for faster test-failure feedback and so every suite (previously `vue-phaserjs` and the `scripts/` tests were skipped by the coverage fan-out) is now covered. There are no coverage thresholds, so a partial per-shard report cannot false-fail. Matrix shards are isolated runners with no shared filesystem, so each repeats checkout + install + `setup-packages`; the package _build_ is not repeated (it is restored from the cache), so the per-shard cost is setup only.
 
 `setup-packages` installs dependencies, then restores `packages/*/dist` and the generated `packages/*/src/**/index.ts` barrels from an `actions/cache`. The key is the git tree hash of every workspace package except the app, plus the lockfile and catalog blobs — a tree hash covers only _tracked_ files, so generated/gitignored output (`dist`, barrels, `*.tsbuildinfo`, `node_modules`) is excluded by construction and there is no glob list to keep in sync; any tracked build-input change rebuilds, while app-only commits (the app is excluded from the key) hit. On a cache hit nothing is rebuilt; on a miss the job runs `pnpm build:packages` itself and seeds the cache (concurrent jobs racing the same key dedupe — first save wins, the rest get a harmless "cache already exists").
 
@@ -144,6 +144,7 @@ Current audited pins:
 | ----------------------------- | ----------------- | ------------------------------------------ |
 | `actions/cache`               | `v5.0.5`          | `27d5ce7f107fe9357f9df03efb73ab90386fccae` |
 | `actions/checkout`            | `v6.0.3`          | `df4cb1c069e1874edd31b4311f1884172cec0e10` |
+| `actions/download-artifact`   | `v8.0.1`          | `3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c` |
 | `actions/setup-node`          | `v6.4.0`          | `48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e` |
 | `actions/upload-artifact`     | `v7.0.1`          | `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` |
 | `azure/login`                 | `v3.0.0`          | `532459ea530d8321f2fb9bb10d1e0bcf23869a43` |
