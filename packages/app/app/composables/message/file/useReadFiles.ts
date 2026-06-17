@@ -20,7 +20,6 @@ export const useReadFiles = () => {
       files: newFiles.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
       roomId: currentRoomId.value,
     });
-    for (let i = 0; i < newFiles.length; i++)
-      fileUrlMap.value.set(takeOne(newFiles, i).id, { url: takeOne(downloadFileSasUrls, i) });
+    for (const [i, { id }] of newFiles.entries()) fileUrlMap.value.set(id, { url: takeOne(downloadFileSasUrls, i) });
   };
 };

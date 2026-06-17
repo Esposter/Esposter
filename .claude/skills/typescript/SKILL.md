@@ -257,6 +257,15 @@ export const stringTransformationTypeSchema = z.enum(
 
 - **Never `new Set` just to call `.has()` on a small non-enum array** — if values are unique and the array is small, use `.some()`. `Set` only for enums or large collections.
 
+## Loops — `for...of` + `.entries()`, Destructure, No Dead Vars
+
+- **`.forEach()` is BANNED** — use `for...of`.
+- **No index-based `for (let i = 0; i < arr.length; i++)`** for plain array iteration — use `for...of`. When the index is needed (parallel arrays, offsets), use `.entries()`: `for (const [i, item] of arr.entries())`. The `.entries()` iterator cost is negligible (tiny per-element pair alloc, JIT-friendly) versus the readability win — it does not "drop perf hugely".
+- **Index-based `for` stays** only when the loop genuinely isn't sequential array iteration: step counters (`i += 4`, `i += BATCH_SIZE`), pure counts (`for (let i = 0; i < 3; i++)`), `<=` bounds, multi-condition bounds, or in-body index mutation/lookahead (e.g. `line.charAt(i + 1)` then `i++`).
+- **Destructure in the binding position (loop var, function param) straight to the props you use** — don't bind the whole object then read its fields. `for (const [i, { id }] of files.entries())` not `for (const [i, file] of ...) { ...file.id... }`. Destructure multiple: `for (const [i, { name, size, type }] of files.entries())`. This _removes_ the intermediate binding, so it does **not** conflict with the "no unnecessary destructure" rule (which bans adding a separate `const { x } = obj` line for a single use). Binding-position destructure = fewer vars; a standalone destructure statement for one use = more syntax. Keep the whole binding only when the object is passed on as a whole (`set(user.id, user)`) or used too many ways to enumerate cleanly.
+- **Don't declare intermediate vars that are used once** — `const pastedRow = takeOne(this.#pastedValues, rowOffset)` disappears entirely once you bind it via `.entries()`. Inline single-use values; only name a var when it's referenced more than once or the name adds clarity.
+- **Bound a zip with `break`, not a dual condition** — iterate the driving array via `.entries()` and `if (i >= other.length) break;` instead of `for (let i = 0; i < a.length && i < b.length; i++)`.
+
 ## Environment Checks
 
 **Never use `import.meta.dev` or `import.meta.env.MODE` directly** — use `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`:

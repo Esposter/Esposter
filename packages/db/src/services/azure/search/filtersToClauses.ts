@@ -108,16 +108,18 @@ export const filtersToClauses = (
           if (!(value instanceof Date))
             throw new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue(value));
           const date = dayjs(value);
-          clauses.push({
-            key: StandardMessageEntityPropertyNames.createdAt,
-            operator: BinaryOperator.ge,
-            value: date.startOf("day").toDate(),
-          });
-          clauses.push({
-            key: StandardMessageEntityPropertyNames.createdAt,
-            operator: BinaryOperator.le,
-            value: date.endOf("day").toDate(),
-          });
+          clauses.push(
+            {
+              key: StandardMessageEntityPropertyNames.createdAt,
+              operator: BinaryOperator.ge,
+              value: date.startOf("day").toDate(),
+            },
+            {
+              key: StandardMessageEntityPropertyNames.createdAt,
+              operator: BinaryOperator.le,
+              value: date.endOf("day").toDate(),
+            },
+          );
         }
         break;
       }

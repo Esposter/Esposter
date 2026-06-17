@@ -7,10 +7,10 @@ import { FieldInputTypeMap } from "@/services/tableEditor/file/column/FieldInput
 
 interface FieldInputTextProps {
   column: NumberColumn | StringColumn;
-  inline?: boolean;
+  isInline?: true;
 }
 
-const { column, inline = false } = defineProps<FieldInputTextProps>();
+const { column, isInline } = defineProps<FieldInputTextProps>();
 const modelValue = defineModel<null | number | string>({ required: true });
 const textValue = computed({
   get: () => (modelValue.value === null ? "" : String(modelValue.value)),
@@ -23,9 +23,9 @@ const textValue = computed({
 <template>
   <v-text-field
     v-model="textValue"
-    :hide-details="inline"
-    :label="inline ? '' : column.name"
-    :single-line="inline"
+    :hide-details="isInline"
+    :label="isInline ? '' : column.name"
+    :single-line="isInline"
     :type="FieldInputTypeMap[column.type]"
     density="compact"
   />

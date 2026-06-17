@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { DraftItem } from "@/models/message/draftsSent/DraftItem";
+import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 
 import { RoutePath } from "@esposter/shared";
 
-interface MessageDraftsSentDraftEditButtonProps {
+interface MessageDraftsAndSentDraftEditButtonProps {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<MessageDraftsSentDraftEditButtonProps>();
+const { draftItem } = defineProps<MessageDraftsAndSentDraftEditButtonProps>();
 </script>
 
 <template>

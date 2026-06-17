@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getTimelineSections } from "@/services/message/draftsSent/getTimelineSections";
+import { getTimelineSections } from "@/services/message/draftsAndSent/getTimelineSections";
 import { useSentMessageStore } from "@/store/message/sentMessage";
 
 const { readMoreSentMessages } = useReadSentMessages();
@@ -10,17 +10,17 @@ const sections = computed(() => getTimelineSections(items.value, ({ message }) =
 
 <template>
   <div v-if="items.length" flex flex-col gap-y-6>
-    <MessageDraftsSentSection v-for="section of sections" :key="section.title" :title="section.title">
-      <MessageDraftsSentListItem
+    <MessageDraftsAndSentSection v-for="section of sections" :key="section.title" :title="section.title">
+      <MessageDraftsAndSentListItem
         v-for="{ message, room } of section.items"
         :key="`${message.partitionKey}:${message.rowKey}`"
         :message
         :room
       />
-    </MessageDraftsSentSection>
+    </MessageDraftsAndSentSection>
     <div flex w-full justify-center>
       <StyledWaypoint :is-active="hasMore" @change="readMoreSentMessages" />
     </div>
   </div>
-  <MessageDraftsSentEmptyState v-else-if="!isPending" icon="mdi-send-outline" title="No sent messages" />
+  <MessageDraftsAndSentEmptyState v-else-if="!isPending" icon="mdi-send-outline" title="No sent messages" />
 </template>

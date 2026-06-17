@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { DraftItem } from "@/models/message/draftsSent/DraftItem";
+import type { DraftItem } from "@/models/message/draftsAndSent/DraftItem";
 
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { MessageType } from "@esposter/db-schema";
 
-interface MessageDraftsSentDraftSendButtonProps {
+interface MessageDraftsAndSentDraftSendButtonProps {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<MessageDraftsSentDraftSendButtonProps>();
+const { draftItem } = defineProps<MessageDraftsAndSentDraftSendButtonProps>();
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const inputStore = useInputStore();

@@ -1,59 +1,41 @@
 <script setup lang="ts">
+import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 
+defineSlots<{ append?: () => VNode }>();
+const callStore = useCallStore();
+const { toggleScreenShare } = callStore;
 const mediaStore = useMediaStore();
-const { activeScreenShareParticipantId, activeScreenShareStream, hasScreenShare, isPoppedOut, pinnedParticipantId } =
-  storeToRefs(mediaStore);
-const { callParticipantMap, getParticipantTileProps, sessionId } = useCallParticipantTiles();
-const activeScreenShareParticipant = computed(() =>
-  activeScreenShareParticipantId.value ? callParticipantMap.value.get(activeScreenShareParticipantId.value) : undefined,
-);
-const presenterName = computed(() => {
-  const participant = activeScreenShareParticipant.value;
-  if (!participant) return "Someone";
-  return participant.id === sessionId.value ? `${participant.name} (You)` : participant.name;
-});
-const isScreenSharePresenting = computed(() => hasScreenShare.value && Boolean(activeScreenShareStream.value));
-const callParticipantGridClass = computed(() => {
-  if (callParticipantMap.value.size <= 1) return "grid-cols-1";
-  if (callParticipantMap.value.size === 2) return "grid-cols-1 md:grid-cols-2";
-  return "grid-cols-1 md:grid-cols-2 xl:grid-cols-3";
-});
+const { hasScreenShare, isPoppedOut, isScreenSharing } = storeToRefs(mediaStore);
+const { presenterName } = useCallParticipantTiles();
+const callView = useTemplateRef("callView");
 </script>
 
 <template>
-  <div bg-background flex flex-col size-full relative overflow-hidden>
+  <div ref="callView" bg-background flex flex-col size-full relative overflow-hidden>
+    <header v-if="hasScreenShare || $slots.append" pa-3 flex gap-x-3 items-center right-0 top-0 absolute z-1>
+      <StyledCard v-if="hasScreenShare" rounded="pill" px-4 py-2 flex gap-x-3 items-center>
+        <v-icon icon="mdi-monitor-share" text-primary />
+        <span font-medium truncate>{{ presenterName }} is presenting</span>
+        <v-btn
+          v-if="isScreenSharing"
+          color="info"
+          variant="tonal"
+          rounded="pill"
+          size="small"
+          @click="toggleScreenShare()"
+        >
+          Stop presenting
+        </v-btn>
+      </StyledCard>
+      <slot name="append" />
+    </header>
     <MessageContentCallPipPlaceholder v-if="isPoppedOut" />
     <template v-else>
-      <main p-5 flex flex-1 gap-x-3 min-h-0 min-w-0 :class="isScreenSharePresenting ? 'flex-row' : 'flex-col'">
-        <MessageContentCallScreenShareStage
-          v-if="hasScreenShare && activeScreenShareStream"
-          :presenter-name
-          :stream="activeScreenShareStream"
-        />
-        <div v-else flex-1 gap-3 grid grid-auto-rows-fr :class="callParticipantGridClass">
-          <MessageContentCallParticipantTile
-            v-for="participant of callParticipantMap.values()"
-            :key="participant.id"
-            :="getParticipantTileProps(participant)"
-            @click="pinnedParticipantId = participant.id"
-          />
-        </div>
-        <div v-if="isScreenSharePresenting" flex shrink-0 flex-col gap-y-3 items-center overflow-y-auto>
-          <MessageContentCallParticipantTile
-            v-for="participant of callParticipantMap.values()"
-            :key="participant.id"
-            shrink-0
-            h-32
-            aspect-video
-            :="getParticipantTileProps(participant)"
-            @click="pinnedParticipantId = participant.id"
-          />
-        </div>
-      </main>
+      <MessageContentCallStage @fullscreen="callView?.requestFullscreen()" />
       <MessageContentCallInviteCard />
       <MessageContentCallJoinNotice />
-      <MessageContentCallControlBar />
     </template>
+    <MessageContentCallControlBar />
   </div>
 </template>

@@ -27,7 +27,7 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.#originalColumn.name);
-    for (const row of item.dataSource.rows) delete row.data[this.#originalColumn.name];
+    for (const { data } of item.dataSource.rows) delete data[this.#originalColumn.name];
   }
 
   protected doUndo(item: DataSourceItem) {

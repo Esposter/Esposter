@@ -18,8 +18,12 @@ watch(isPoppedOut, async (newIsPoppedOut) => {
     return;
   }
   await open();
+  // Open() no-ops on unsupported browsers and swallows requestWindow rejections (e.g. activation
+  // Lost after the screen picker), so if no window materialised, clear the stale intent — otherwise
+  // The main view shows an empty PiP placeholder for a call that never popped out.
+  if (!pipWindow.value) isPoppedOut.value = false;
   // IsPoppedOut flipped back to false while requestWindow was pending: undo the stale open.
-  if (!isPoppedOut.value) close();
+  else if (!isPoppedOut.value) close();
 });
 // Window closed (native "Back to tab", expand button, or leaveCall clearing isPoppedOut): sync
 // Intent and, if still in the call, surface it on the main tab so a docked call is never invisible.

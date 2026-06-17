@@ -12,12 +12,25 @@ export const useCallParticipantTiles = () => {
   const callStore = useCallStore();
   const { activeCallSessionId } = storeToRefs(callStore);
   const mediaStore = useMediaStore();
-  const { isDeafened, localVideoStream, remoteVideoStreams, screenSharingParticipantIds } = storeToRefs(mediaStore);
+  const {
+    activeScreenShareParticipantId,
+    isDeafened,
+    localVideoStream,
+    remoteVideoStreams,
+    screenSharingParticipantIds,
+  } = storeToRefs(mediaStore);
   const participantStore = useParticipantStore();
   const { callSessionParticipantsMap, speakingIds } = storeToRefs(participantStore);
   const callParticipantMap = computed(
     () => callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
   );
+  const presenterName = computed(() => {
+    const participant = activeScreenShareParticipantId.value
+      ? callParticipantMap.value.get(activeScreenShareParticipantId.value)
+      : undefined;
+    if (!participant) return "Someone";
+    return participant.id === sessionId.value ? `${participant.name} (You)` : participant.name;
+  });
   const getParticipantTileProps = (participant: CallParticipant): CallParticipantTileProps => ({
     isDeafened: isDeafened.value && participant.id === sessionId.value,
     isHandRaised: participant.isHandRaised,
@@ -30,5 +43,5 @@ export const useCallParticipantTiles = () => {
         ? (localVideoStream.value ?? undefined)
         : remoteVideoStreams.value.get(participant.id),
   });
-  return { callParticipantMap, getParticipantTileProps, sessionId };
+  return { callParticipantMap, getParticipantTileProps, presenterName, sessionId };
 };

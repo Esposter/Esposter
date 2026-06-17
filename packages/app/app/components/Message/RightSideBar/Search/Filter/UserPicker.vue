@@ -6,13 +6,13 @@ import { useRoomStore } from "@/store/message/room";
 import { useMemberStore } from "@/store/message/user/member";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
+const { $trpc } = useNuxtApp();
 const { readMembers, readMoreMembers } = useReadMembers();
 const { isPending } = await readMembers();
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
 const roomStore = useRoomStore();
 const { currentRoom, currentRoomId } = storeToRefs(roomStore);
-const { $trpc } = useNuxtApp();
 const appUsers = ref<AppUserInMessage[]>([]);
 if (currentRoomId.value) appUsers.value = await $trpc.webhook.readAppUsers.query({ roomId: currentRoomId.value });
 </script>

@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { DraftsSentTab } from "@/models/message/draftsSent/DraftsSentTab";
+import { DraftsAndSentTab } from "@/models/message/draftsAndSent/DraftsAndSentTab";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { useSentMessageStore } from "@/store/message/sentMessage";
 
-const tab = defineModel<DraftsSentTab>({ required: true });
+const tab = defineModel<DraftsAndSentTab>({ required: true });
 const draftItems = useDraftItems();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { count: scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
 const sentMessageStore = useSentMessageStore();
 const { count: sentMessageCount } = storeToRefs(sentMessageStore);
 const tabs = computed(() => [
-  { count: draftItems.value.length, icon: "mdi-pencil", title: "Drafts", value: DraftsSentTab.Drafts },
+  { count: draftItems.value.length, icon: "mdi-pencil", title: "Drafts", value: DraftsAndSentTab.Drafts },
   {
     count: scheduledMessageJobCount.value,
     icon: "mdi-clock-outline",
     title: "Scheduled",
-    value: DraftsSentTab.Scheduled,
+    value: DraftsAndSentTab.Scheduled,
   },
-  { count: sentMessageCount.value, icon: "mdi-send-outline", title: "Sent", value: DraftsSentTab.Sent },
+  { count: sentMessageCount.value, icon: "mdi-send-outline", title: "Sent", value: DraftsAndSentTab.Sent },
 ]);
 </script>
 

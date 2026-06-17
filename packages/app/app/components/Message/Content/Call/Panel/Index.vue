@@ -7,7 +7,10 @@ const { isInCall } = storeToRefs(callStore);
 
 <template>
   <div>
-    <MessageContentCallPanelBar v-if="isInCall" />
+    <template v-if="isInCall">
+      <MessageContentCallPanelBar />
+      <v-divider />
+    </template>
     <MessageContentCallPanelDialog />
   </div>
 </template>

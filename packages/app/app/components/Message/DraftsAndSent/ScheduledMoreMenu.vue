@@ -4,11 +4,11 @@ import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/mes
 import { withFinalizerAsync } from "@esposter/shared";
 import { mergeProps } from "vue";
 
-interface MessageDraftsSentScheduledMoreMenuProps {
+interface MessageDraftsAndSentScheduledMoreMenuProps {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
-const { scheduledMessageJob } = defineProps<MessageDraftsSentScheduledMoreMenuProps>();
+const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledMoreMenuProps>();
 const cancelScheduledMessageJob = useCancelScheduledMessageJob();
 const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 </script>
