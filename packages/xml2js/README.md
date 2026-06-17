@@ -41,6 +41,17 @@ const result = await parseStringPromise(xml);
 
 The original package pulls in the `events` module which causes runtime errors in certain bundler/edge environments. This rewrite is a drop-in replacement that works cleanly in Node.js, Azure Functions, and browser bundles.
 
+### Commands
+
+Run from `packages/xml2js/`:
+
+```bash
+pnpm build        # compile to dist/
+pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint:fix     # auto-fix lint
+pnpm typecheck    # type check
+```
+
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).

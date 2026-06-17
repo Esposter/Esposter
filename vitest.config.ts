@@ -1,12 +1,13 @@
+import type { ViteUserConfig } from "vitest/config";
+
 import { getVitestConfiguration } from "@esposter/configuration";
 import { defineConfig } from "vitest/config";
 
-const base = getVitestConfiguration();
-
-export default defineConfig({
-  ...base,
+const baseVitestConfiguration = getVitestConfiguration();
+const vitestConfiguration: ViteUserConfig = defineConfig({
+  ...baseVitestConfiguration,
   test: {
-    ...base.test,
+    ...baseVitestConfiguration.test,
     projects: [
       "packages/*",
       // The root `scripts/` suite is not a workspace package, so it needs its own project entry;
@@ -15,3 +16,5 @@ export default defineConfig({
     ],
   },
 });
+
+export default vitestConfiguration;

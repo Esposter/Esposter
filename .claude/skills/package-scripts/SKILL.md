@@ -14,8 +14,7 @@ All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `
 | `pnpm lint:all`     | full ESLint (no `light` config)                                  | Full lint pass (slower)                         |
 | `pnpm lint:all:fix` | full ESLint fix                                                  | Fix all lint errors (full pass)                 |
 | `pnpm typecheck`    | `nuxt typecheck`                                                 | TypeScript type checking                        |
-| `pnpm test`         | `vitest` (watch mode)                                            | Run tests in watch mode                         |
-| `pnpm coverage`     | `vitest run --coverage`                                          | Run tests with coverage report                  |
+| `pnpm test`         | `vitest` (watch mode)                                            | Run this package's tests in watch mode          |
 | `pnpm format`       | `oxfmt`                                                          | Format code                                     |
 | `pnpm format:check` | `oxfmt --check`                                                  | Check formatting without writing                |
 | `pnpm dev`          | `nuxt dev`                                                       | Start dev server                                |
@@ -33,11 +32,13 @@ All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `
 
 ## Root Scripts
 
-| Command                | Notes                                                                                           |
-| ---------------------- | ----------------------------------------------------------------------------------------------- |
-| `pnpm i`               | Refresh dependencies/lockfile after manifest changes; use this exact command.                   |
-| `pnpm catalog:check`   | Verify catalog specifiers in `pnpm-workspace.yaml` match resolved versions in the lockfile.     |
-| `pnpm depcruise:graph` | Generate `dependency-graph.svg` directly from dependency-cruiser DOT output via `graphviz-cli`. |
+| Command                | Notes                                                                                                                                                           |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm i`               | Refresh dependencies/lockfile after manifest changes; use this exact command.                                                                                   |
+| `pnpm test`            | Run the whole suite once via the unified root vitest `projects` config (all packages + scripts).                                                                |
+| `pnpm coverage`        | Same as `pnpm test` with a coverage report; CI shards this (`--reporter=blob` + `--merge-reports`). Coverage is root-only — packages have no `coverage` script. |
+| `pnpm catalog:check`   | Verify catalog specifiers in `pnpm-workspace.yaml` match resolved versions in the lockfile.                                                                     |
+| `pnpm depcruise:graph` | Generate `dependency-graph.svg` directly from dependency-cruiser DOT output via `graphviz-cli`.                                                                 |
 
 Use plain `pnpm i` exactly. Follow `architecture/monorepo-tooling.md` for install safety rules.
 

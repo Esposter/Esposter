@@ -81,8 +81,7 @@ pnpm preview          # preview production build locally
 pnpm typecheck        # vue-tsc type check
 pnpm lint             # oxlint + eslint (check only)
 pnpm lint:fix         # oxlint + eslint --fix (always use this; never fix manually)
-pnpm test             # vitest watch mode
-pnpm coverage         # vitest run --coverage
+pnpm test             # vitest watch mode (coverage is run from the repo root)
 ```
 
 ### App Structure

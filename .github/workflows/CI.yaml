@@ -46,7 +46,7 @@ jobs:
       # Vitest `projects` config) on this runner; `--reporter=blob` serialises this shard's results and
       # Coverage data (vitest writes the per-shard `.vitest-reports/blob-i-4.json`) for the merge job.
       - name: 🧪 Test
-        run: pnpm coverage -- --reporter=blob --shard=${{ matrix.shard }}/4
+        run: pnpm exec vitest run --coverage --reporter=blob --shard=${{ matrix.shard }}/4
 
       - name: 📤 Upload blob report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -80,7 +80,7 @@ jobs:
       # Recombine the sharded runs into one report with unified coverage from the blob data —
       # This re-emits the report only, it does not re-run any tests.
       - name: 🧪 Merge coverage
-        run: pnpm coverage -- --merge-reports
+        run: pnpm exec vitest run --merge-reports --coverage
 
       - name: 📊 Upload Coverage
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
