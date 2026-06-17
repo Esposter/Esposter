@@ -75,13 +75,15 @@ CI runs every check as a fully independent job with no inter-job gate, so they a
 ```text
 format
 build documentation
-coverage
+coverage (×4 shards)
 lint
 typecheck
 build app
 ```
 
-`setup-packages` installs dependencies, then restores `packages/*/dist` and the generated `packages/*/src/**/index.ts` barrels from an `actions/cache` keyed on the package build inputs (lockfile, catalog, non-app sources, manifests, rolldown configs — the app has no `src/`, so it is naturally excluded). On a cache hit nothing is rebuilt; on a miss the job runs `pnpm build:packages` itself and seeds the cache (concurrent jobs racing the same key dedupe — first save wins, the rest get a harmless "cache already exists").
+`coverage` runs as a 4-way matrix: the app suite (the long pole) is split across runners with `vitest --shard`, while the small non-app package suites run once on the first shard only. Each shard uploads its partial report as `coverage-<n>`. This shortens the coverage job itself but not total CI time, which is gated by `lint`; it is kept for faster test-failure feedback. There are no coverage thresholds, so a partial per-shard report cannot false-fail.
+
+`setup-packages` installs dependencies, then restores `packages/*/dist` and the generated `packages/*/src/**/index.ts` barrels from an `actions/cache`. The key is the git tree hash of every workspace package except the app, plus the lockfile and catalog blobs — a tree hash covers only _tracked_ files, so generated/gitignored output (`dist`, barrels, `*.tsbuildinfo`, `node_modules`) is excluded by construction and there is no glob list to keep in sync; any tracked build-input change rebuilds, while app-only commits (the app is excluded from the key) hit. On a cache hit nothing is rebuilt; on a miss the job runs `pnpm build:packages` itself and seeds the cache (concurrent jobs racing the same key dedupe — first save wins, the rest get a harmless "cache already exists").
 
 There is intentionally no shared `build-packages` gate job. Removing it lets every check run from t=0 on the common app-only commit (≈68% of commits — the package `dist` is unchanged, so all jobs hit the cache). The trade is redundant builds on the rarer package-change commit, where each consuming job rebuilds in parallel; with the runner budget treated as effectively free this is preferred over reinstating a serial ~2-minute build step on every run.
 

@@ -26,6 +26,10 @@ jobs:
 
   coverage:
     name: Coverage
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -38,14 +42,19 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
+      # Shard the app suite (the CI long pole) across runners; package suites are small, so run them
+      # Once on the first shard only rather than redundantly in every shard.
+      - name: 🧪 Test (app)
+        run: pnpm --filter @esposter/app run coverage -- --shard=${{ matrix.shard }}/4
 
-      - name: 🧪 Test
-        run: pnpm coverage
+      - name: 🧪 Test (packages)
+        if: ${{ matrix.shard == 1 }}
+        run: pnpm -r --parallel --aggregate-output --if-present --filter "!@esposter/app" run coverage
 
       - name: 📊 Upload Coverage
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: coverage
+          name: coverage-${{ matrix.shard }}
           path: packages/app/coverage
           if-no-files-found: error
 
