@@ -19,10 +19,11 @@ Which Azure services are used, what each one owns, and which package accesses it
 
 ## Blob Storage Containers
 
-| Container (`AzureContainer`) | Contents                                                                                                                                                 |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PublicUserAssets`           | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage`), message file attachments (`rooms/{roomId}/{fileId}`) |
-| _(survey container)_         | Survey-related blobs managed by `useUpdateBlobUrls`                                                                                                      |
+| Container (`AzureContainer`) | Contents                                                                                                                                                        |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PublicUserAssets`           | User profile images (`{userId}/ProfileImage`), room profile images (`rooms/{roomId}/ProfileImage`)                                                              |
+| `MessageAssets`              | Message file attachments (`{roomId}/{fileId}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost (see `packages/infra` management policies) |
+| _(survey container)_         | Survey-related blobs managed by `useUpdateBlobUrls`                                                                                                             |
 
 ---
 
