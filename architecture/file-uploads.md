@@ -26,11 +26,11 @@ Client helper: `uploadBlocks(file, sasUrl)` in `app/services/azure/container/upl
 
 | Procedure                                          | Router    | Blob path                     | Size limit              | Auth         |
 | -------------------------------------------------- | --------- | ----------------------------- | ----------------------- | ------------ |
-| `generateUploadFileSasEntities({ files, roomId })` | `message` | `rooms/{roomId}/{fileId}`     | `MAX_FILE_REQUEST_SIZE` | member       |
+| `generateUploadFileSasEntities({ files, roomId })` | `message` | `{roomId}/{fileId}`           | `MAX_FILE_REQUEST_SIZE` | member       |
 | `generateProfileImageUploadUrl()`                  | `user`    | `{userId}/ProfileImage`       | `MAX_FILE_REQUEST_SIZE` | authed       |
 | `generateProfileImageUploadUrl({ roomId })`        | `room`    | `rooms/{roomId}/ProfileImage` | `MAX_FILE_REQUEST_SIZE` | `ManageRoom` |
 
-All blobs land in `AzureContainer.PublicUserAssets`.
+Message attachments land in `AzureContainer.MessageAssets`; profile images (user + room) land in `AzureContainer.PublicUserAssets`. The separate container lets a lifecycle policy tier old attachments (Cool@30d → Cold@90d) without touching hot, small profile images — see `packages/infra` management policies.
 
 ---
 
