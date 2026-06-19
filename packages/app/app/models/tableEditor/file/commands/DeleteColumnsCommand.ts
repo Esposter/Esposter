@@ -10,26 +10,26 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
   readonly type = CommandType.DeleteColumns;
 
   get description() {
-    return `Delete ${this.indexedColumns.length} Column${this.indexedColumns.length === 1 ? "" : "s"}`;
+    return `Delete ${this.#indexedColumns.length} Column${this.#indexedColumns.length === 1 ? "" : "s"}`;
   }
 
-  private readonly indexedColumns: IndexedColumn[];
+  readonly #indexedColumns: IndexedColumn[];
 
   constructor(indexedColumns: IndexedColumn[]) {
     super();
-    this.indexedColumns = indexedColumns.toSorted((a, b) => b.columnIndex - a.columnIndex);
+    this.#indexedColumns = indexedColumns.toSorted((a, b) => b.columnIndex - a.columnIndex);
   }
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
-    const namesToDelete = new Set(this.indexedColumns.map(({ originalColumn }) => originalColumn.name));
+    const namesToDelete = new Set(this.#indexedColumns.map(({ originalColumn }) => originalColumn.name));
     item.dataSource.columns = item.dataSource.columns.filter((column) => !namesToDelete.has(column.name));
-    for (const row of item.dataSource.rows) for (const name of namesToDelete) delete row.data[name];
+    for (const { data } of item.dataSource.rows) for (const name of namesToDelete) delete data[name];
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
-    const ascendingColumns = this.indexedColumns.toSorted((a, b) => a.columnIndex - b.columnIndex);
+    const ascendingColumns = this.#indexedColumns.toSorted((a, b) => a.columnIndex - b.columnIndex);
     const result: Column[] = [];
     let existingIndex = 0;
     for (const { columnIndex, originalColumn } of ascendingColumns) {

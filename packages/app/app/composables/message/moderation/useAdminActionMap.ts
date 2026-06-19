@@ -1,5 +1,6 @@
 import type { Promisable } from "type-fest";
 
+import { dayjs } from "#shared/services/dayjs";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useRoomStore } from "@/store/message/room";
 import { AdminActionType } from "@esposter/db-schema";
@@ -30,7 +31,7 @@ export const useAdminActionMap = () => {
       notify("Your screen share has been stopped by a moderator.");
     },
     [AdminActionType.TimeoutUser]: (_roomId: string, durationMs?: number) => {
-      const minutes = durationMs ? Math.max(1, Math.ceil(durationMs / 60000)) : 0;
+      const minutes = durationMs ? Math.max(1, Math.ceil(dayjs.duration(durationMs).asMinutes())) : 0;
       notify(`You have been timed out for ${minutes} minute${minutes === 1 ? "" : "s"}.`);
     },
     [AdminActionType.Warn]: () => {

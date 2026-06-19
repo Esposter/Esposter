@@ -232,6 +232,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | UnoCSS                     | https://marketplace.visualstudio.com/items?itemName=antfu.unocss                        |
 | ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint              |
 | GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens                     |
+| GitHub Actions             | https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-github-actions        |
 | Azure Functions            | https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions |
 | Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell                |
 | Oxfmt - Code formatter     | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode                      |
@@ -350,6 +351,6 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yaml?query=event%3Apush+branch%3Amain
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-score]: https://img.shields.io/badge/score-92%2F100-33c854
+[badge-score]: https://img.shields.io/badge/score-93%2F100-33c854
 [url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest

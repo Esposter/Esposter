@@ -43,6 +43,7 @@ const { calendarOptions } = defineProps<StyledCalendarProps>();
         </div>
         <div
           v-if="event.extendedProps.description && !EMPTY_TEXT_REGEX.test(event.extendedProps.description)"
+          class="rich-text-content"
           pt-2
           v-html="event.extendedProps.description"
         />

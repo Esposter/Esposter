@@ -22,5 +22,5 @@ export const StandardMessageEntityPropertyNames = getPropertyNames<StandardMessa
 export const standardMessageEntitySchema = z.object({
   ...baseMessageEntitySchema.shape,
   ...userIdSchema.shape,
-  // We only generate link preview responses via the backend, so we can safely exclude it from the schema
+  // Link preview responses are generated only on the backend, so we exclude the field from the schema.
 }) satisfies z.ZodType<ToData<Except<StandardMessageEntity, "linkPreviewResponse">>>;

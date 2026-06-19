@@ -82,6 +82,7 @@
     "unicorn/prefer-dom-node-append": "off",
     "unicorn/prefer-dom-node-dataset": "off",
     "unicorn/prefer-event-target": "off",
+    "unicorn/prefer-export-from": "off",
     "unicorn/prefer-node-protocol": "error",
     "unicorn/prefer-query-selector": "off",
     "unicorn/prefer-ternary": "off",
@@ -90,6 +91,7 @@
     "vars-on-top": "off",
     "vue/define-props-destructuring": "off",
     "vue/no-required-prop-with-default": "off",
+    "vue/require-default-prop": "off",
     "yoda": ["error", "never"]
   }
 }

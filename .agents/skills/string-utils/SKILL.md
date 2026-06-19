@@ -1,6 +1,6 @@
 ---
 name: string-utils
-description: Esposter string normalization conventions — normalizeString replaces all .trim() usages everywhere including Zod schemas; only exception is user-facing transformation actions.
+description: Esposter string normalization and HTML sanitization conventions — normalizeString replaces all .trim() usages everywhere including Zod schemas; sanitizeMessageHtml is declared at the Zod boundary in base db-schema schemas (never manual frontend calls). Exception — user-facing transformation actions and localStorage drafts.
 ---
 
 # String Normalization
@@ -13,8 +13,6 @@ Trims whitespace and returns empty string for absent/null/undefined inputs. Live
 import { normalizeString } from "@esposter/shared";
 
 normalizeString("  hello  "); // → "hello"
-normalizeString("   "); // → ""
-normalizeString(""); // → ""
 normalizeString(null); // → ""
 normalizeString(undefined); // → ""
 ```
@@ -37,7 +35,7 @@ Use everywhere a string needs trimming:
 - Array mapping: `values.map(normalizeString).filter(Boolean)`
 - Guard checks: `if (!normalizeString(value)) return;`
 - Filter predicates: `.filter((line) => normalizeString(line) !== "")`
-- Zod schemas: always `z.string().transform(normalizeString).pipe(z.string().min(1).max(N))` — transform first, then validators in the pipe
+- Zod schemas: see Zod Schema Alignment below
 
 ## When NOT to use `normalizeString`
 
@@ -58,14 +56,28 @@ const sanitizedOld = oldValue !== undefined ? normalizeString(oldValue) : oldVal
 
 ## Zod Schema Alignment
 
-Base select schemas use `.transform(normalizeString)` so server validation matches client normalization:
+Base select schemas use `.transform(normalizeString)` so server validation matches client normalization. Always transform first, then validators in the pipe. Never add trim transforms to derived schemas (`UpdateRoomInput`, `UpdateSurveyInput`, etc.) — only in the base select schema.
 
 ```ts
-// Always: transform first, validators in pipe
 topic: z.string().transform(normalizeString).pipe(z.string().max(ROOM_TOPIC_MAX_LENGTH)),
-group: z.string().transform(normalizeString).pipe(z.string().max(SURVEY_GROUP_MAX_LENGTH)),
 export const createNameSchema = (maxLength: number) =>
   z.string().transform(normalizeString).pipe(z.string().min(1).max(maxLength));
 ```
 
-Never add trim transforms to derived schemas (`UpdateRoomInput`, `UpdateSurveyInput` etc.) — only in the base select schema.
+## HTML Sanitization at the Zod Boundary
+
+Same principle as `normalizeString`: HTML message content is sanitized **once, in the base Zod schema** via `.transform(sanitizeMessageHtml)` — never with manual `sanitizeMessageHtml(...)` calls on the frontend. Declaring it in the schema is the contract; the server enforces it during input validation, so the client never needs to re-sanitize or re-validate.
+
+- `sanitizeHtml` and `sanitizeMessageHtml` live in `@esposter/shared` (so `db-schema` schemas can import them). `sanitizeHtml` is the generic wrapper (table styling); `sanitizeMessageHtml` adds the message allowlist (mentions, code, links, inline styles).
+- Applied to every message-content field in the base `db-schema` model, transform-first then validators:
+  ```ts
+  // BaseMessageEntity.ts
+  message: z.string().transform(sanitizeMessageHtml).pipe(z.string().max(MESSAGE_MAX_LENGTH)).default(""),
+  // ScheduledMessage / Reminder payloads
+  message: z.string().transform(sanitizeMessageHtml).pipe(z.string().min(1).max(MESSAGE_MAX_LENGTH)),
+  text: z.string().transform(sanitizeMessageHtml).pipe(z.string().min(1).max(MESSAGE_MAX_LENGTH)),
+  ```
+  Derived input schemas (`UpdateMessageInput`, `ScheduleMessageInput`, …) `.pick()` these fields and inherit the transform — never re-declare it.
+- **No frontend sanitize on the send path.** `createMessage`/`updateMessage` pass raw `input` to the mutation; the zod boundary sanitizes. The brief optimistic render of your own message is self-XSS only (you typed it) and is replaced by the sanitized server echo.
+- **Exception — localStorage drafts:** `setDraft` still calls `sanitizeMessageHtml` because drafts are loaded into the editor without passing through a tRPC zod boundary.
+- **Testing:** only the base `sanitizeHtml`/`sanitizeMessageHtml` functions are unit-tested (in `@esposter/shared`). Schema wiring needs no test — declaring the transform is the contract. `marked.parse` is third-party and untested.

@@ -10,33 +10,33 @@ export class DeleteRowCommand extends ADataSourceCommand<CommandType.DeleteRow> 
   readonly type = CommandType.DeleteRow;
 
   get description() {
-    return `Delete Row ${this.index + 1}`;
+    return `Delete Row ${this.#index + 1}`;
   }
 
-  private readonly index: number;
-  private readonly originalRow: Row;
+  readonly #index: number;
+  readonly #originalRow: Row;
 
   constructor(index: number, originalRow: Row) {
     super();
-    this.index = index;
-    this.originalRow = originalRow;
+    this.#index = index;
+    this.#originalRow = originalRow;
   }
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
-    const row = takeOne(item.dataSource.rows, this.index);
+    const row = takeOne(item.dataSource.rows, this.#index);
     for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
-    item.dataSource.rows = item.dataSource.rows.filter((_, i) => i !== this.index);
+    item.dataSource.rows = item.dataSource.rows.filter((_, i) => i !== this.#index);
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     for (const column of item.dataSource.columns)
-      column.size += getValueSize(takeOne(this.originalRow.data, column.name));
+      column.size += getValueSize(takeOne(this.#originalRow.data, column.name));
     item.dataSource.rows = [
-      ...item.dataSource.rows.slice(0, this.index),
-      this.originalRow,
-      ...item.dataSource.rows.slice(this.index),
+      ...item.dataSource.rows.slice(0, this.#index),
+      this.#originalRow,
+      ...item.dataSource.rows.slice(this.#index),
     ];
   }
 }

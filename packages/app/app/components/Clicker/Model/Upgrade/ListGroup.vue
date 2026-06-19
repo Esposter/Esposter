@@ -2,26 +2,16 @@
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 
 interface UpgradeListGroupProps {
-  isBought?: boolean;
+  isBought?: true;
   upgrades: Upgrade[];
 }
 
-const { isBought = false, upgrades } = defineProps<UpgradeListGroupProps>();
+const { isBought, upgrades } = defineProps<UpgradeListGroupProps>();
 const hasUpgrades = computed(() => upgrades.length > 0);
 </script>
 
 <template>
-  <v-list-group v-if="hasUpgrades">
-    <template #activator="{ props }">
-      <v-list-item :="props">
-        <template #prepend>
-          <v-avatar color="background">
-            <v-icon icon="mdi-gesture-swipe-up" />
-          </v-avatar>
-        </template>
-        <v-list-item-title font-bold>Upgrades</v-list-item-title>
-      </v-list-item>
-    </template>
+  <ClickerModelListGroup v-if="hasUpgrades" icon="mdi-gesture-swipe-up" title="Upgrades">
     <ClickerModelUpgradeListItem v-for="upgrade of upgrades" :key="upgrade.id" :upgrade :is-bought />
-  </v-list-group>
+  </ClickerModelListGroup>
 </template>

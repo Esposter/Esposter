@@ -12,7 +12,7 @@ interface CreateDialogButtonProps {
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createRow = useCreateRow();
 const editableColumns = computed(() => dataSource.columns.filter(checkIsEditableColumnValue));
-// StructuredClone is required here: fast-deep-equal checks constructors so class instances never equal their plain object clones
+// StructuredClone to a plain object: fast-deep-equal compares constructors, so class instances never equal their clones.
 const blankRow = structuredClone(
   new Row({ data: Object.fromEntries(editableColumns.value.map((column) => [column.name, null])) }),
 );

@@ -49,6 +49,12 @@ const EmojiExtension = Extension.create({
 export const useEmojiExtension = () => EmojiExtension.configure({ suggestion: EmojiSuggestion });
 ```
 
+### Never inline extensions in components
+
+`new Extension(...)`, `Extension.create(...)`, or `addProseMirrorPlugins`/`new Plugin` belong in a `use*Extension` composable in `app/composables/message/editor/`, never in a `.vue` `<script setup>`. The composable pulls its own stores/session/refs (make it `async` + `await` if it awaits). A reactive value the plugin reads/writes (e.g. a cursor `Ref` for CSS `v-bind`) is passed in and stored via `addOptions()`, then mutated as `this.options.x.value` — avoids hijacking another extension's options with `@ts-expect-error`.
+
+Exception: an extension wiring only a couple of local component callbacks (e.g. `Editor.vue`'s Enter/Esc) may stay inline.
+
 ### SuggestionTrigger enum
 
 Trigger characters live in `app/services/message/SuggestionTrigger.ts`. Never hardcode `"/"`, `":"`, or `"@"` as string literals in suggestion configs or component templates:
@@ -63,32 +69,26 @@ export enum SuggestionTrigger {
 
 Use in suggestion config (`char: SuggestionTrigger.Emoji`) and in templates (`{{ SuggestionTrigger.Emoji }}{{ name }}{{ SuggestionTrigger.Emoji }}`).
 
-## VueRenderer: v-if vs v-show on root element
-
-**This is a critical gotcha.** When a suggestion list component uses `v-if` on its root element:
-
-- `VueRenderer.element` returns a **comment node** (not an HTMLElement) when the condition is false
-- `getRender.ts`'s `onStart` appends that comment node to `document.body`
-- When items later populate, Vue re-renders the real div inside VueRenderer's internal container — which is never in `document.body`
-- Result: the popup never appears
+## VueRenderer: always `v-show` on suggestion list root
 
 **Rule**: Always use `v-show` on the suggestion list root element, never `v-if`.
 
 ```html
-<!-- WRONG — any suggestion list root -->
-<div v-if="items.length > 0" ...>
-  <!-- CORRECT — always a real HTMLElement, just hidden when empty -->
-  <div v-show="items.length > 0" ...></div>
-</div>
+<!-- WRONG -->
+<div v-if="items.length > 0" ...></div>
+<!-- CORRECT -->
+<div v-show="items.length > 0" ...></div>
 ```
 
-`v-show` ensures `VueRenderer.element` is always a real HTMLElement from the moment `onStart` fires. This keeps the element anchored in `document.body` for the lifetime of the suggestion session so `computePosition` can always measure and reposition it correctly.
+With `v-if`, `VueRenderer.element` returns a comment node when the condition is false; `getRender.ts`'s `onStart` appends that comment to `document.body`, and the later-rendered real div lives in VueRenderer's internal container outside `document.body` — so the popup never appears. `v-show` keeps `VueRenderer.element` a real HTMLElement anchored in `document.body` for the whole session, so `computePosition` can always measure and reposition it.
 
 ## Wiring extensions into the editor
 
 In `app/components/Message/Model/Message/Input/Index.vue`, each extension is instantiated as a `const` and passed in the `:extensions` array:
 
 ```ts
+const keyboardExtension = await useKeyboardShortcutsExtension();
+const codeBlockExtension = useCodeBlockExtension();
 const emojiExtension = useEmojiExtension();
 const mentionExtension = useMentionExtension();
 const slashCommandExtension = useSlashCommandExtension();
@@ -97,3 +97,5 @@ const slashCommandExtension = useSlashCommandExtension();
 ```html
 :extensions="[keyboardExtension, codeBlockExtension, emojiExtension, mentionExtension, slashCommandExtension]"
 ```
+
+Every entry is a `use*Extension()` call. `RichTextEditor` owns only the always-on extensions (`StarterKit`, `CharacterCount`, `Placeholder`, `FileHandler`, `useLinkClickExtension`); feature extensions come via the `:extensions` prop.

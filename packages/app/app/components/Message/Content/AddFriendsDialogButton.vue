@@ -4,13 +4,13 @@ import { RoutePath } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 const { $trpc } = useNuxtApp();
+const runtimeConfig = useRuntimeConfig();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const inviteId = ref("");
 if (currentRoomId.value) inviteId.value = await $trpc.room.readInviteId.query({ roomId: currentRoomId.value });
 
 const roomName = useRoomName(currentRoomId);
-const runtimeConfig = useRuntimeConfig();
 const inviteLink = computed(() =>
   inviteId.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(inviteId.value)}` : "",
 );
@@ -38,7 +38,7 @@ const isCopied = ref(false);
           variant="outlined"
           hide-details
           readonly
-          bg-background
+          bg-color="background"
           :color="isCopied ? 'success' : undefined"
           :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite('example')}`"
         >

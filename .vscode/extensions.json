@@ -4,6 +4,7 @@
     "antfu.unocss",
     "dbaeumer.vscode-eslint",
     "eamodio.gitlens",
+    "GitHub.vscode-github-actions",
     "ms-azuretools.vscode-azurefunctions",
     "ms-vscode.PowerShell",
     "oxc.oxc-vscode",

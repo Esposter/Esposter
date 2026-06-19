@@ -4,6 +4,7 @@ export enum SlashCommandType {
   Poll = "Poll",
   Remind = "Remind",
   Roll = "Roll",
+  Schedule = "Schedule",
   Shrug = "Shrug",
   TableFlip = "TableFlip",
   Topic = "Topic",

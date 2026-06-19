@@ -1,6 +1,6 @@
 {
   "name": "azure-mock",
-  "version": "2.27.0",
+  "version": "2.28.0",
   "description": "A library that contains azure mock classes.",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "bugs": {
@@ -23,7 +23,6 @@
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
-    "coverage": "vitest run --coverage",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
@@ -51,6 +50,7 @@
     "@azure/core-rest-pipeline": "catalog:",
     "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
+    "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@azure/storage-queue": "catalog:"
   }

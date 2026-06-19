@@ -57,16 +57,16 @@ flowchart TD
 
 `createMockDb()` in `packages/db-mock/src/createMockDb.ts`:
 
-1. Creates a fresh `PGlite` instance (WebAssembly PostgreSQL, runs in-process).
-2. Manually creates the `message` schema (`CREATE SCHEMA "message"`).
-3. Calls `generateDrizzleJson({})` (empty baseline) and `generateDrizzleJson(schema)` (current schema) from `drizzle-kit/api-postgres` to produce snapshot JSON.
-4. Calls `generateMigration(previousJson, currentJson)` to compute the minimal SQL diff from empty → current schema.
-5. Applies each statement to PGlite via `db.execute`.
-6. Returns the drizzle-orm `db` instance cast to `PostgresJsDatabase<typeof relations>`.
+1. Reads the pre-migrated PGlite data directory snapshot (`snapshot.tar.gz`) from disk.
+2. Creates a `PGlite` instance with `loadDataDir: <snapshot>` (WebAssembly PostgreSQL, runs in-process).
+3. Awaits `client.waitReady` — `new PGlite()` returns before init finishes, so without this the first query pays the boot cost and can blow past the per-test timeout.
+4. Returns the drizzle-orm `db` instance cast to `PostgresJsDatabase<typeof relations>`.
+
+**Why a snapshot instead of running migrations at runtime?** Loading a pre-migrated data directory skips PGlite's `initdb` boot + migration generation, cutting ~2.3 s per call down to ~0.9 s. Regenerate it with `pnpm snapshot:gen` (in `packages/db-mock`) whenever the schema changes. `createMockDb.test.ts` fails if the committed snapshot drifts from the live schema (it diffs the snapshot against a freshly `generateMigration`-built DB). The hookTimeout in `vitest.config.ts` stays at 60 s to absorb PGlite boot under parallel test load.
 
 **Why PGlite instead of a real PostgreSQL?** No external process, no port, no cleanup — each test suite gets an isolated in-memory database that vanishes when the worker exits.
 
-**Why `generateMigration` instead of applying the historical migration files?** `generateMigration` produces the minimal SQL to reach the current schema state from scratch, keeping the statement count small and staying in sync with the live schema automatically. The hookTimeout in `getVitestConfiguration` is set to 60 s to accommodate the schema introspection time under parallel test load.
+**Environment cost.** Server tests run in the default `node` environment. They get **no DOM** — happy-dom is built by the nuxt environment only, so there is no manual happy-dom registration and node-env tests run without a `window`. So a server test pays only PGlite boot + the Azure/auth `vi.mock`s (plus the cheap global `fake-indexeddb/auto` polyfill).
 
 ### 2. `azure-mock` — In-Memory Azure Services
 

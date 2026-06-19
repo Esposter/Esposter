@@ -16,14 +16,14 @@ describe(useFileHistoryStore, () => {
     clear();
   });
 
-  test("undoDescription is null when no history", () => {
+  test("undoDescription is empty when no history", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
     const fileHistoryStore = useFileHistoryStore();
     const { undoDescription } = storeToRefs(fileHistoryStore);
 
-    expect(undoDescription.value).toBeNull();
+    expect(undoDescription.value).toBe("");
   });
 
   test("undoDescription reflects last command", () => {
@@ -38,14 +38,14 @@ describe(useFileHistoryStore, () => {
     expect(undoDescription.value).toBe("Delete Row 1");
   });
 
-  test("redoDescription is null when no future", () => {
+  test("redoDescription is empty when no future", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
     const fileHistoryStore = useFileHistoryStore();
     const { redoDescription } = storeToRefs(fileHistoryStore);
 
-    expect(redoDescription.value).toBeNull();
+    expect(redoDescription.value).toBe("");
   });
 
   test("redoDescription reflects undone command", () => {

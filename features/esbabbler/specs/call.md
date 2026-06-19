@@ -93,6 +93,8 @@ Keep one owner for media membership and one owner for room observation:
 
 `activeCallSessionId` answers "what call am I in?" while `currentRoomCallSessionId` answers "what call belongs to the room I am looking at?" They can be different, and that is valid.
 
+The active-call membership boundary is what lets the call render outside the `/calls` page. **Picture-in-Picture pop-out** uses this to teleport the live call UI into an always-on-top OS window while the user browses elsewhere — a DOM relocation only, with no media reconnection. See [`specs/picture-in-picture.md`](picture-in-picture.md).
+
 ---
 
 ## Cost Comparison

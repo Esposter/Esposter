@@ -10,17 +10,7 @@ const hasBuildings = computed(() => buildings.length > 0);
 </script>
 
 <template>
-  <v-list-group v-if="hasBuildings">
-    <template #activator="{ props }">
-      <v-list-item :="props">
-        <template #prepend>
-          <v-avatar color="background">
-            <v-icon icon="mdi-domain" />
-          </v-avatar>
-        </template>
-        <v-list-item-title font-bold>Buildings</v-list-item-title>
-      </v-list-item>
-    </template>
+  <ClickerModelListGroup v-if="hasBuildings" icon="mdi-domain" title="Buildings">
     <ClickerModelBuildingListItem v-for="building of buildings" :key="building.id" :building />
-  </v-list-group>
+  </ClickerModelListGroup>
 </template>

@@ -1,3 +1,8 @@
+---
+name: azure-table
+description: Esposter Azure Table Storage patterns — key constants, partition/row key design, reverse-ticked timestamps, and batch write/pagination. Apply when reading or writing Azure Table Storage data (messages, moderation logs) in server code.
+---
+
 # Azure Table Storage Patterns
 
 ## Key Constants (from `@esposter/db-schema`)
@@ -9,19 +14,9 @@
 
 Always import from `@esposter/db-schema`, never redefine locally.
 
-## Pagination Pattern
-
-```typescript
-for await (const page of tableClient
-  .listEntities<TEntity>({ queryOptions: { filter } })
-  .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE })) {
-  // process page
-}
-```
-
 ## Batch Write Pattern
 
-When updating/deleting many entities, paginate at `AZURE_MAX_PAGE_SIZE` and chunk transactions at `AZURE_MAX_BATCH_SIZE`:
+Paginate at `AZURE_MAX_PAGE_SIZE`, chunk transactions at `AZURE_MAX_BATCH_SIZE`. `submitTransaction` accepts max 100 actions per call, and all actions in one transaction **must share the same `partitionKey`** (Azure requirement).
 
 ```typescript
 for await (const page of tableClient
@@ -36,8 +31,6 @@ for await (const page of tableClient
 }
 ```
 
-Why two loops: Azure Table pages hold up to 1000 entities but `submitTransaction` accepts max 100 actions per call. All actions in a single transaction **must share the same `partitionKey`** (Azure requirement).
-
 ## Testing Pagination Boundaries
 
 Use `AZURE_MAX_PAGE_SIZE + 1` records to cross a page boundary:
@@ -48,10 +41,9 @@ for (let i = 0; i < messageCount; i++) {
   await mockSessionOnce(db, user);
   await caller.createMessage({ message: " ", roomId });
 }
-// then verify all are affected
 ```
 
-Use `MockTableDatabase` to inspect raw table state after operations:
+Inspect raw table state with `MockTableDatabase`:
 
 ```typescript
 import { MockTableDatabase } from "azure-mock";
@@ -62,7 +54,7 @@ const allEntities = [...(MockTableDatabase.get(AzureTable.Messages)?.values() ??
 
 ## Filter Clauses
 
-Use `serializeClauses` from `@esposter/db` to build Azure Table OData filter strings:
+Build OData filter strings with `serializeClauses` from `@esposter/db`:
 
 ```typescript
 import { getTableNullClause, serializeClauses } from "@esposter/db";
@@ -76,7 +68,7 @@ const filter = serializeClauses([
 
 ## Entity Class Constructors
 
-`deserializeEntity` calls `new cls()` with **no arguments** to create an empty instance before populating it. Therefore, all Azure entity class constructors must declare `init` as optional (`init?:`), and any property access on `init` inside the constructor must use optional chaining (`init?.foo`):
+`deserializeEntity` calls `new cls()` with **no arguments**, so every Azure entity constructor must declare `init` optional (`init?:`) and access via optional chaining (`init?.foo`):
 
 ```typescript
 export class MyEntity extends AzureEntity {
@@ -92,11 +84,9 @@ export class MyEntity extends AzureEntity {
 
 ## Soft-Delete
 
-Set `deletedAt` and `updatedAt` together via `serializeEntity`:
+Set `deletedAt` and `updatedAt` together via `serializeEntity`. `getTableNullClause(ItemMetadataPropertyNames.deletedAt)` filters to non-deleted rows only.
 
 ```typescript
 const now = new Date();
 serializeEntity({ deletedAt: now, partitionKey, rowKey, updatedAt: now });
 ```
-
-`getTableNullClause(ItemMetadataPropertyNames.deletedAt)` filters to non-deleted rows only.

@@ -1,9 +1,8 @@
 #!/bin/sh
 set -e
-STAGED=$(git diff --cached --name-only --diff-filter=ACMR)
-[ -z "$STAGED" ] && exit 0
 STAGED_FILE=$(mktemp)
 trap 'rm -f "$STAGED_FILE"' EXIT
 git diff --cached --name-only --diff-filter=ACMR -z > "$STAGED_FILE"
-xargs -0 -L 50 ./node_modules/.bin/oxfmt < "$STAGED_FILE" || true
-xargs -0 git add < "$STAGED_FILE"
+[ -s "$STAGED_FILE" ] || exit 0
+xargs -0 -n 50 ./node_modules/.bin/oxfmt < "$STAGED_FILE" || true
+xargs -0 -n 50 git add < "$STAGED_FILE"

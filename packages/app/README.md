@@ -58,7 +58,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | Layer      | Technology                                                       |
 | ---------- | ---------------------------------------------------------------- |
 | Framework  | [Nuxt 4](https://nuxt.com)                                       |
-| UI         | [Vue 3.5](https://vuejs.org), [Vuetify 3](https://vuetifyjs.com) |
+| UI         | [Vue 3.5](https://vuejs.org), [Vuetify 4](https://vuetifyjs.com) |
 | Styling    | [UnoCSS](https://unocss.dev) (Attributify mode), Sass            |
 | State      | [Pinia](https://pinia.vuejs.org)                                 |
 | API        | [tRPC](https://trpc.io) via `trpc-nuxt`                          |
@@ -81,8 +81,7 @@ pnpm preview          # preview production build locally
 pnpm typecheck        # vue-tsc type check
 pnpm lint             # oxlint + eslint (check only)
 pnpm lint:fix         # oxlint + eslint --fix (always use this; never fix manually)
-pnpm test             # vitest watch mode
-pnpm coverage         # vitest run --coverage
+pnpm test             # vitest watch mode (coverage is run from the repo root)
 ```
 
 ### App Structure

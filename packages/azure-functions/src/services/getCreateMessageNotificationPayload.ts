@@ -9,7 +9,10 @@ export const getCreateMessageNotificationPayload = (
   message: string,
   { icon, title, url }: { icon?: null | string; title?: null | string; url: string },
 ): string | undefined => {
-  const textContent = getResult(() => normalizeString(parse(message).querySelector("p")?.structuredText)).match(
+  const textContent = getResult(() => {
+    const root = parse(message);
+    return normalizeString(root.querySelector("p")?.structuredText ?? root.structuredText);
+  }).match(
     (newTextContent) => newTextContent,
     (error) => {
       context.error("Failed to create message notification payload", { error, messageLength: message.length });

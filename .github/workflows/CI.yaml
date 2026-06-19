@@ -5,6 +5,9 @@ on:
     branches:
       - "**"
 
+permissions:
+  contents: read
+
 jobs:
   build-packages:
     name: Build Packages
@@ -20,22 +23,42 @@ jobs:
 
       - name: 📦 Install dependencies
         run: pnpm i
+      # Cache key = the git tree hash of every workspace package except the app, plus the lockfile and catalog.
+      # A tree hash is a content hash of TRACKED files only, so generated/gitignored output (dist, ctix barrels,
+      # *.tsbuildinfo, node_modules) is excluded by construction — no glob enumeration to keep in sync, and a
+      # Change to any tracked build input rebuilds. The app (`packages/app`) is excluded, so app-only commits hit.
+      - name: 🔑 Compute package build cache key
+        id: key
+        run: |
+          hash=$( {
+            git ls-tree HEAD:packages | awk '$2 == "tree" && $4 != "app" { print $3 }'
+            git rev-parse HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
+          } | sha256sum | cut -d' ' -f1 )
+          echo "hash=$hash" >> "$GITHUB_OUTPUT"
+      # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
+      # Barrels (gitignored, absent on a fresh checkout). Both are produced by `pnpm build:packages`.
+      - name: ♻️ Restore package builds
+        id: cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: |
+            packages/*/dist
+            packages/*/src/**/index.ts
+          key: package-builds-${{ steps.key.outputs.hash }}
 
       - name: 🏗️ Build packages
+        if: steps.cache.outputs.cache-hit != 'true'
         run: pnpm build:packages
-
+      # Single gated build, then fan the output out to every consuming job as one artifact (dist + barrels share
+      # The `packages/` common ancestor, so consumers download into `packages`). No hidden-file flag needed —
+      # Neither `dist` nor `index.ts` is a dotfile.
       - name: 📤 Upload package builds
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: package-builds
-          path: packages/*/dist
-          if-no-files-found: error
-
-      - name: 📤 Upload package entrypoints
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: package-entrypoints
-          path: packages/*/src/**/index.ts
+          path: |
+            packages/*/dist
+            packages/*/src/**/index.ts
           if-no-files-found: error
 
   build:
@@ -51,20 +74,8 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Install dependencies
-        run: pnpm i
-
-      - name: 📥 Download package builds
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: package-builds
-          path: packages
-
-      - name: 📥 Download package entrypoints
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: package-entrypoints
-          path: packages
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
 
       - name: 🏗️ Build app
         run: pnpm build:app
@@ -72,6 +83,10 @@ jobs:
   coverage:
     name: Coverage
     needs: build-packages
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -82,37 +97,62 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Install dependencies
-        run: pnpm i
-
-      - name: 📥 Download package builds
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: package-builds
-          path: packages
-
-      - name: 📥 Download package entrypoints
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: package-entrypoints
-          path: packages
-
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
+      # `--shard=i/16` runs a distinct 1/16th of ALL test files (every package + scripts, via the root
+      # Vitest `projects` config) on this runner; `--reporter=blob` serialises this shard's results and
+      # Coverage data (vitest writes the per-shard `.vitest-reports/blob-i-16.json`) for the merge job.
+      # `--reporter=blob` serialises this shard's results + coverage for the merge job. We pair it with
+      # `--reporter=default` so failing tests / unhandled errors are also printed to the console — the
+      # blob reporter alone writes only the file and prints nothing, hiding why a shard exits non-zero.
       - name: 🧪 Test
-        run: pnpm coverage
+        run: pnpm exec vitest run --coverage --reporter=default --reporter=blob --shard=${{ matrix.shard }}/16
+
+      - name: 📤 Upload blob report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-blob-${{ matrix.shard }}
+          path: .vitest-reports/*
+          if-no-files-found: error
+          include-hidden-files: true
+
+  coverage-merge:
+    name: Merge Coverage
+    needs: [build-packages, coverage]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
+
+      - name: 📥 Download blob reports
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: .vitest-reports
+          pattern: coverage-blob-*
+          merge-multiple: true
+      # Recombine the sharded runs into one report with unified coverage from the blob data —
+      # This re-emits the report only, it does not re-run any tests.
+      - name: 🧪 Merge coverage
+        run: pnpm exec vitest run --merge-reports --coverage
 
       - name: 📊 Upload Coverage
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage
-          path: packages/app/coverage
+          path: coverage
           if-no-files-found: error
 
   build-docs:
     name: Build Documentation
     needs: build-packages
-    permissions:
-      actions: read
-      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -123,20 +163,8 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Install dependencies
-        run: pnpm i
-
-      - name: 📥 Download package builds
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: package-builds
-          path: packages
-
-      - name: 📥 Download package entrypoints
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: package-entrypoints
-          path: packages
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
 
       - name: 🏗️ Build documentation
         run: pnpm build:docs
@@ -154,28 +182,14 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Install dependencies
-        run: pnpm i
-
-      - name: 📥 Download package builds
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: package-builds
-          path: packages
-
-      - name: 📥 Download package entrypoints
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: package-entrypoints
-          path: packages
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
 
       - name: 🔍 Lint
         run: pnpm lint
 
   format:
     name: Format
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -205,20 +219,8 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Install dependencies
-        run: pnpm i
-
-      - name: 📥 Download package builds
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: package-builds
-          path: packages
-
-      - name: 📥 Download package entrypoints
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: package-entrypoints
-          path: packages
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
 
       - name: ✅ Typecheck
         run: pnpm typecheck

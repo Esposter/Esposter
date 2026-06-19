@@ -20,7 +20,7 @@ import {
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
 } from "@esposter/shared";
-import { beforeAll, describe, expect, test } from "vitest";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
 const getMentionMessage = (id: string) =>
@@ -37,6 +37,7 @@ describe(getPushSubscriptionsForMessage, () => {
   const directMessageOfflineUserId = crypto.randomUUID();
   const neverUserId = crypto.randomUUID();
   const senderUserId = crypto.randomUUID();
+  const sender = { partitionKey: roomId, userId: senderUserId };
 
   beforeAll(async () => {
     db = await createMockDb();
@@ -80,15 +81,19 @@ describe(getPushSubscriptionsForMessage, () => {
       { notificationType: NotificationType.All, roomId, userId: senderUserId },
     ]);
 
-    await db.insert(pushSubscriptionsInMessage).values([
-      { auth: "", endpoint: getEndpoint(allOnlineUserId), p256dh: "", userId: allOnlineUserId },
-      { auth: "", endpoint: getEndpoint(allOfflineUserId), p256dh: "", userId: allOfflineUserId },
-      { auth: "", endpoint: getEndpoint(allNullStatusUserId), p256dh: "", userId: allNullStatusUserId },
-      { auth: "", endpoint: getEndpoint(directMessageOnlineUserId), p256dh: "", userId: directMessageOnlineUserId },
-      { auth: "", endpoint: getEndpoint(directMessageOfflineUserId), p256dh: "", userId: directMessageOfflineUserId },
-      { auth: "", endpoint: getEndpoint(neverUserId), p256dh: "", userId: neverUserId },
-      { auth: "", endpoint: getEndpoint(senderUserId), p256dh: "", userId: senderUserId },
-    ]);
+    await db
+      .insert(pushSubscriptionsInMessage)
+      .values(
+        [
+          allOnlineUserId,
+          allOfflineUserId,
+          allNullStatusUserId,
+          directMessageOnlineUserId,
+          directMessageOfflineUserId,
+          neverUserId,
+          senderUserId,
+        ].map((userId) => ({ auth: "", endpoint: getEndpoint(userId), p256dh: "", userId })),
+      );
 
     await db.insert(userStatusesInMessage).values([
       { status: UserStatus.Online, userId: allOnlineUserId },
@@ -101,15 +106,15 @@ describe(getPushSubscriptionsForMessage, () => {
     ]);
   });
 
+  afterAll(async () => {
+    await db.delete(users);
+  });
+
   test("no mention notifies All members excluding sender", async () => {
     expect.hasAssertions();
 
-    const result = await getPushSubscriptionsForMessage(db, {
-      message: "",
-      partitionKey: roomId,
-      userId: senderUserId,
-    });
-    const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
+    const result = await getPushSubscriptionsForMessage(db, { ...sender, message: "" });
+    const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
 
     expect(result).toHaveLength(3);
     expect(endpointSet.has(getEndpoint(allOnlineUserId))).toBe(true);
@@ -117,15 +122,30 @@ describe(getPushSubscriptionsForMessage, () => {
     expect(endpointSet.has(getEndpoint(allNullStatusUserId))).toBe(true);
   });
 
+  test("no userId notifies every All member without excluding a sender (webhook message)", async () => {
+    expect.hasAssertions();
+
+    const result = await getPushSubscriptionsForMessage(db, {
+      message: "",
+      partitionKey: roomId,
+    });
+    const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
+
+    expect(result).toHaveLength(4);
+    expect(endpointSet.has(getEndpoint(allOnlineUserId))).toBe(true);
+    expect(endpointSet.has(getEndpoint(allOfflineUserId))).toBe(true);
+    expect(endpointSet.has(getEndpoint(allNullStatusUserId))).toBe(true);
+    expect(endpointSet.has(getEndpoint(senderUserId))).toBe(true);
+  });
+
   test("regular mention notifies All and mentioned DirectMessage members", async () => {
     expect.hasAssertions();
 
     const result = await getPushSubscriptionsForMessage(db, {
+      ...sender,
       message: getMentionMessage(directMessageOnlineUserId),
-      partitionKey: roomId,
-      userId: senderUserId,
     });
-    const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
+    const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
 
     expect(result).toHaveLength(4);
     expect(endpointSet.has(getEndpoint(allOnlineUserId))).toBe(true);
@@ -138,12 +158,11 @@ describe(getPushSubscriptionsForMessage, () => {
     expect.hasAssertions();
 
     const result = await getPushSubscriptionsForMessage(db, {
+      ...sender,
       message: getMentionMessage(MENTION_EVERYONE_ID),
-      partitionKey: roomId,
-      userId: senderUserId,
     });
 
-    const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
+    const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
 
     expect(result).toHaveLength(5);
     expect(endpointSet.has(getEndpoint(allOnlineUserId))).toBe(true);
@@ -157,12 +176,11 @@ describe(getPushSubscriptionsForMessage, () => {
     expect.hasAssertions();
 
     const result = await getPushSubscriptionsForMessage(db, {
+      ...sender,
       message: getMentionMessage(MENTION_HERE_ID),
-      partitionKey: roomId,
-      userId: senderUserId,
     });
 
-    const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
+    const endpointSet = new Set(result.map((pushSubscription) => pushSubscription.endpoint));
 
     expect(result).toHaveLength(4);
     expect(endpointSet.has(getEndpoint(allOnlineUserId))).toBe(true);

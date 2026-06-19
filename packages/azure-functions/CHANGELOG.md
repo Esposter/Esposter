@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
+
+### Bug Fixes
+
+* add remaining tests ([4d0fc50](https://github.com/Esposter/Esposter/commit/4d0fc50c6248ced2e375e6444e8b9b71e675af84))
+* cleanup code ([c377566](https://github.com/Esposter/Esposter/commit/c37756616760798a63929f537ae52300a27dbbef))
+* cleanup remaining syntax ([06d4bfe](https://github.com/Esposter/Esposter/commit/06d4bfeb8a7cacd9b629ca43c9243e0c30b59113))
+* cleanup test to cover all scenarios ([1e7e7b2](https://github.com/Esposter/Esposter/commit/1e7e7b2a344b4d60b42b4ff208c84f7734c2e53f))
+* code review comments ([3c654a9](https://github.com/Esposter/Esposter/commit/3c654a9376d85ff05d8e69acf372aca775830c6a))
+* code review comments ([09db4c9](https://github.com/Esposter/Esposter/commit/09db4c906ae9458021c0ea3c2960e798c516e7a4))
+* code review comments ([61cbffd](https://github.com/Esposter/Esposter/commit/61cbffd5767549d1a787bbd3bc0193bfd78733d4))
+* duration + hopefully azure-functions ([dd1f905](https://github.com/Esposter/Esposter/commit/dd1f90595f65a918da7e89a75844112b949d876e))
+* lint and types ([dbd2cff](https://github.com/Esposter/Esposter/commit/dbd2cff9011d99d9fd6afa1a855a8a40a56673f7))
+* namings and warnings and types ([3858148](https://github.com/Esposter/Esposter/commit/38581482435dd67ace3fa9e8c825faa4233275c5))
+* schemas ([f939bcb](https://github.com/Esposter/Esposter/commit/f939bcb5e32119e9cc7f6aebb62780dc61530e3c))
+* snapshot ([0750997](https://github.com/Esposter/Esposter/commit/0750997e2392a4228fbd6acdda6103e822c9d299))
+* snapshots ([84a2865](https://github.com/Esposter/Esposter/commit/84a2865faec03c9757cafdda983cecd7351c5699))
+* snapshots and dev env for now ([c774f1c](https://github.com/Esposter/Esposter/commit/c774f1c58f72f5274c74bc97eca204d30bbc09ee))
+* snapshots and tests ([9b2a6f2](https://github.com/Esposter/Esposter/commit/9b2a6f2102395a230ef4cd0b1f3a31fe37408c08))
+* test ([e7d7a11](https://github.com/Esposter/Esposter/commit/e7d7a11d153fbb222348e6d6644ebd0baa849ede))
+* test ([59c5383](https://github.com/Esposter/Esposter/commit/59c5383481eb48ed0584811fe3b95f76be94cf7f))
+* tests ([2e5f9c1](https://github.com/Esposter/Esposter/commit/2e5f9c1432db06ae4999bec994bbe161d1dbcf2d))
+* tests ([3c2a09b](https://github.com/Esposter/Esposter/commit/3c2a09bc8610503f6e2e925c6d4f029e87951c8f))
+* tests and cleanup settings ([a0646c4](https://github.com/Esposter/Esposter/commit/a0646c454006cf2c074c5db89ae912e4e3b08876))
+* tests wip ([c257bfb](https://github.com/Esposter/Esposter/commit/c257bfb9055d401ec66377ff3f05a13be42f9abc))
+* try not using encoding base 64 ([0ecab21](https://github.com/Esposter/Esposter/commit/0ecab2141a372ace60e2183ae6b79a1d310da409))
+* types and migration ([f9b7d92](https://github.com/Esposter/Esposter/commit/f9b7d92c58f4d1fae9ff03e4fa09587e49ef975b))
+* update deps ([7ee5e2e](https://github.com/Esposter/Esposter/commit/7ee5e2e051909f5a76effa03b40f1d1b52a22ca2))
+* wip ([fb38ad5](https://github.com/Esposter/Esposter/commit/fb38ad5ea5f2bc5fef84aa2fead3df34b262130c))
+* wip ([ffb8b3e](https://github.com/Esposter/Esposter/commit/ffb8b3e25832225b6f177e9a8d331ea1bf813f09))
+* wip tests ([4eee636](https://github.com/Esposter/Esposter/commit/4eee63667def07f45e40499e2bb8cddc2d51e001))
+
+### Features
+
+* wip ([4f094da](https://github.com/Esposter/Esposter/commit/4f094da70109cc17533f2e6d70bd995fac477d0d))
+
 # [2.27.0](https://github.com/Esposter/Esposter/compare/v2.26.0...v2.27.0) (2026-06-05)
 
 ### Bug Fixes

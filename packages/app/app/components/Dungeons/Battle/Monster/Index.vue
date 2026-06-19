@@ -5,10 +5,10 @@ import { Image } from "vue-phaserjs";
 
 interface MonsterProps {
   // By default, this will be the player
-  isEnemy?: boolean;
+  isEnemy?: true;
 }
 
-const { isEnemy = false } = defineProps<MonsterProps>();
+const { isEnemy } = defineProps<MonsterProps>();
 const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
 const { initialMonsterPosition } = store;
 const { activeMonster, monsterPosition, monsterTween } = storeToRefs(store);

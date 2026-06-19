@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 describe(parseClipboardValuesByPosition, () => {
   test("parses single row with single value", () => {
     expect.hasAssertions();
-    expect(parseClipboardValuesByPosition("hello")).toStrictEqual([["hello"]]);
+    expect(parseClipboardValuesByPosition("a")).toStrictEqual([["a"]]);
   });
 
   test("splits tab-separated values into columns", () => {
@@ -51,9 +51,9 @@ describe(parseClipboardValuesByPosition, () => {
   test("preserves whitespace within values", () => {
     expect.hasAssertions();
 
-    const result = parseClipboardValuesByPosition("  hello  \t world  ");
+    const result = parseClipboardValuesByPosition("  a  \t b  ");
 
-    expect(takeOne(takeOne(result))).toBe("  hello  ");
-    expect(takeOne(takeOne(result), 1)).toBe(" world  ");
+    expect(takeOne(takeOne(result))).toBe("  a  ");
+    expect(takeOne(takeOne(result), 1)).toBe(" b  ");
   });
 });

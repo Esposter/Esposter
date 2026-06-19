@@ -42,13 +42,26 @@ export const useCallPreJoinMedia = () => {
     if (isCameraEnabled.value) stopCamera();
     else await startCamera();
   };
-  const toggleMicrophone = () => {
-    isMicrophoneEnabled.value = !isMicrophoneEnabled.value;
+  const startMicrophone = async () => {
+    await getResultAsync(() => window.navigator.mediaDevices.getUserMedia({ audio: true })).match(
+      (stream) => {
+        for (const track of stream.getTracks()) track.stop();
+        isMicrophoneEnabled.value = true;
+      },
+      () => {
+        isMicrophoneEnabled.value = false;
+      },
+    );
+  };
+  const toggleMicrophone = async () => {
+    if (isMicrophoneEnabled.value) isMicrophoneEnabled.value = false;
+    else await startMicrophone();
   };
 
   onMounted(async () => {
-    await startCamera();
+    await Promise.all([startMicrophone(), startCamera()]);
   });
+
   onUnmounted(() => {
     stopCameraStream();
   });

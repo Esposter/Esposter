@@ -9,7 +9,7 @@ import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { mergeProps } from "vue";
 
 interface MemberListItemProps {
-  member: User;
+  member: Pick<User, "id" | "image" | "name">;
   room: RoomInMessage;
 }
 

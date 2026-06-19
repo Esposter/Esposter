@@ -5,6 +5,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   const isCameraEnabled = ref(false);
   const isDeafened = ref(false);
   const isForceMuted = ref(false);
+  const isPoppedOut = ref(false);
   const isScreenSharing = ref(false);
   const pinnedParticipantId = ref("");
   const selectedVirtualBackground = ref("");
@@ -63,6 +64,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
     isCameraEnabled.value = false;
     isDeafened.value = false;
     isForceMuted.value = false;
+    isPoppedOut.value = false;
     isScreenSharing.value = false;
     pinnedParticipantId.value = "";
     selectedVirtualBackground.value = "";
@@ -80,6 +82,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
     isCameraEnabled,
     isDeafened,
     isForceMuted,
+    isPoppedOut,
     isScreenSharing,
     localScreenShareStream,
     localVideoStream,

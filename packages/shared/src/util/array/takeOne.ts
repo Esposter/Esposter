@@ -4,8 +4,7 @@ export const takeOne: TakeOne = <T extends readonly unknown[] | Record<PropertyK
   values: T,
   index: keyof T = 0,
 ): T[keyof T] => {
-  // We'll cheat a little bit here since the syntax for index accessing and key accessing is the same
-  // And we're able to restrict the values passed in based on the overloaded types of the function
+  // Index and key access share the same syntax, and the overloads already restrict the inputs.
   const value = values[index];
   return value as T[keyof T];
 };

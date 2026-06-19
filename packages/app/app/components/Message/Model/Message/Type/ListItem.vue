@@ -40,7 +40,7 @@ const style = computed<CSSProperties>(() =>
   pointer-events: v-bind("style.pointerEvents");
   user-select: v-bind("style.userSelect");
 }
-/* We don't want to hide message content even if they added a bunch of newlines */
+/* Don't clamp message content, even with many newlines. */
 :deep(.v-list-item-subtitle) {
   line-clamp: unset;
   -webkit-line-clamp: unset;

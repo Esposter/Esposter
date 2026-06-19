@@ -10,36 +10,36 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
   readonly type = CommandType.DeleteColumn;
 
   get description() {
-    return `Delete "${this.originalColumn.name}" Column`;
+    return `Delete "${this.#originalColumn.name}" Column`;
   }
 
-  private readonly columnIndex: number;
-  private readonly originalColumn: Column;
-  private readonly originalRowValues: ColumnValue[];
+  readonly #columnIndex: number;
+  readonly #originalColumn: Column;
+  readonly #originalRowValues: ColumnValue[];
 
   constructor(columnIndex: number, originalColumn: Column, originalRowValues: ColumnValue[]) {
     super();
-    this.columnIndex = columnIndex;
-    this.originalColumn = originalColumn;
-    this.originalRowValues = originalRowValues;
+    this.#columnIndex = columnIndex;
+    this.#originalColumn = originalColumn;
+    this.#originalRowValues = originalRowValues;
   }
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
-    item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.originalColumn.name);
-    for (const row of item.dataSource.rows) delete row.data[this.originalColumn.name];
+    item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.#originalColumn.name);
+    for (const { data } of item.dataSource.rows) delete data[this.#originalColumn.name];
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     item.dataSource.columns = [
-      ...item.dataSource.columns.slice(0, this.columnIndex),
-      this.originalColumn,
-      ...item.dataSource.columns.slice(this.columnIndex),
+      ...item.dataSource.columns.slice(0, this.#columnIndex),
+      this.#originalColumn,
+      ...item.dataSource.columns.slice(this.#columnIndex),
     ];
     const restoredColumnNames = item.dataSource.columns.map(({ name }) => name);
     for (const [index, row] of item.dataSource.rows.entries()) {
-      row.data[this.originalColumn.name] = takeOne(this.originalRowValues, index);
+      row.data[this.#originalColumn.name] = takeOne(this.#originalRowValues, index);
       const newData: typeof row.data = {};
       for (const name of restoredColumnNames) newData[name] = takeOne(row.data, name);
       row.data = newData;

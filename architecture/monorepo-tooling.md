@@ -8,7 +8,7 @@ How workspace package scripts, dependency installs, publishing, and CI runners a
 
 Esposter uses **pnpm workspaces** as the package manager and workspace script runner. Workspace packages are declared in `pnpm-workspace.yaml`, and package versions are centralized in the root catalog.
 
-Use the root `package.json` scripts as the canonical entry points for cross-package work. Package-local scripts should stay small and predictable (`build`, `lint`, `lint:fix`, `typecheck`, `test`, `coverage`, `export:gen`) so root recursive commands can compose them.
+Use the root `package.json` scripts as the canonical entry points for cross-package work. Package-local scripts should stay small and predictable (`build`, `lint`, `lint:fix`, `typecheck`, `test`, `export:gen`) so root recursive commands can compose them. Coverage is not a package-local script — it is owned entirely by the root `vitest` `projects` run.
 
 ---
 
@@ -22,19 +22,19 @@ Common patterns:
 pnpm -r run build
 pnpm -r --parallel --aggregate-output run lint
 pnpm -r --parallel --aggregate-output run typecheck
-pnpm -r --parallel --aggregate-output --if-present run coverage
 pnpm -r --filter "!@esposter/app" run build
 pnpm --filter @esposter/app run build
 ```
 
 Guidelines:
 
-- Use `--parallel` for independent checks such as linting, typechecking, and tests.
+- Tests are the exception: `test`/`coverage` run through one root `vitest.config.ts` `projects` config (a single `vitest run`), not a recursive fan-out, so the whole suite shares one run, one coverage report, and one `--shard` axis.
+- Use `--parallel` for independent checks such as linting and typechecking.
 - Use `--aggregate-output` in CI-style commands so package logs remain readable.
 - Use filters instead of Lerna scopes/ignores.
 - Keep `build:packages` separate from `build:app`; the app can depend on compiled package output.
 - Use `--if-present` only for scripts that are optional across packages.
-- Forward script arguments with one separator after `run <script>`, for example `run test -- --run -u`.
+- Pass tool flags with `pnpm exec <binary> <args>` (e.g. `pnpm exec vitest run --shard=1/4`), or as direct args (`pnpm test -u`). Do **not** use the `pnpm <script> -- <args>` separator form — pnpm forwards the literal `--` into the script's arguments, so the underlying tool treats the trailing flags as post-`--` positionals and silently ignores them (this dropped `--shard`/`--reporter` in CI).
 
 ---
 
@@ -70,24 +70,25 @@ pnpm refresh:lockfile
 
 ## CI Job Shape
 
-CI runs independent checks as soon as their actual dependencies are available. Documentation, lint, coverage, typecheck, and app build need compiled package output.
+A single `build-packages` job gates the package-consuming checks. `format` needs only the installed dependencies, so it runs from t=0. The package-consuming checks — documentation, lint, coverage, typecheck, and app build — `needs: build-packages` and obtain its compiled output through the shared `setup-packages` composite action before running.
 
 ```text
 format
-build-packages
-  ├─ build documentation
-  ├─ coverage
-  ├─ lint
-  ├─ typecheck
-  └─ build app
+
+build-packages ─┬─▶ build documentation
+                ├─▶ coverage (×4 shards) ─▶ merge coverage
+                ├─▶ lint
+                ├─▶ typecheck
+                └─▶ build app
 ```
 
-`build-packages` uploads two same-workflow artifacts:
+Tests run through a single root `vitest.config.ts` with a `projects: ["packages/*", <scripts>]` config — every package (the app as a Nuxt project via `defineVitestProject`, the rest by their own configs) plus the root `scripts/` suite is one project in one vitest run. So `coverage`/`test` are now `vitest run` at the root, not a `pnpm -r` fan-out. `coverage` runs as a 4-way matrix: `pnpm exec vitest run --coverage --reporter=blob --shard=i/4` splits _all_ test files across runners (each shard runs a distinct quarter and writes the collision-safe `.vitest-reports/blob-i-4.json`, which carries that shard's coverage data). A dependent `merge coverage` job downloads all four blobs and runs `pnpm exec vitest run --merge-reports --coverage` to recombine them into one unified coverage report — this re-emits the report only, it does not re-run tests. CI invokes `vitest` via `pnpm exec` (not `pnpm coverage -- …`) because pnpm does not reliably forward post-`--` args to the script here, which silently dropped `--shard`/`--reporter`. This shortens the coverage work itself but not total CI time, which is gated by `lint`; it is kept for faster test-failure feedback and so every suite (previously `vue-phaserjs` and the `scripts/` tests were skipped by the coverage fan-out) is now covered. There are no coverage thresholds, so a partial per-shard report cannot false-fail. Matrix shards are isolated runners with no shared filesystem, so each repeats checkout + install + `setup-packages`; the package _build_ is not repeated (it is downloaded as an artifact), so the per-shard cost is setup only.
 
-- `package-builds`: `packages/*/dist`
-- `package-entrypoints`: `packages/*/src/**/index.ts`
+The `build-packages` job builds the packages once and uploads `packages/*/dist` plus the generated `packages/*/src/**/index.ts` barrels as a single `package-builds` artifact (both share the `packages/` common ancestor, so consumers download into `packages`; neither path is a dotfile, so no `include-hidden-files`). The build itself is gated by an `actions/cache`: the key is the git tree hash of every workspace package except the app, plus the lockfile and catalog blobs — a tree hash covers only _tracked_ files, so generated/gitignored output (`dist`, barrels, `*.tsbuildinfo`, `node_modules`) is excluded by construction and there is no glob list to keep in sync; any tracked build-input change rebuilds, while app-only commits (the app is excluded from the key) hit. On a cache hit `pnpm build:packages` is skipped and the restored output is uploaded as-is; on a miss the job builds and seeds the cache. The downstream `setup-packages` composite just installs dependencies and downloads the artifact — no build, no per-job cache.
 
-Downstream jobs download both into `packages`. The entrypoint artifact is required because `build:packages` runs `export:gen` and generated barrel files are not committed — TypeDoc will fail without them even when `dist` is present. Preserve all generated source index files, not just root `src/index.ts`, since some generators create nested barrels.
+The shared gate is preferred over per-job caching because the package _build_ then happens at most once per run (no redundant parallel rebuilds on a package-change commit), and on the common app-only commit (≈68% of commits) the gate's own build is a cache hit, so the gate cost collapses to install + restore + upload. The trade is the serial gate wait before the consuming checks start.
+
+The generated barrels must be cached alongside `dist` because `build:packages` runs `export:gen` and the barrel files are not committed — TypeDoc and the package lint/typecheck steps fail without them even when `dist` is present. Preserve all generated source index files, not just root `src/index.ts`, since some generators create nested barrels.
 
 ---
 
@@ -142,6 +143,7 @@ Current audited pins:
 
 | Action                        | Latest stable tag | Pinned SHA                                 |
 | ----------------------------- | ----------------- | ------------------------------------------ |
+| `actions/cache`               | `v5.0.5`          | `27d5ce7f107fe9357f9df03efb73ab90386fccae` |
 | `actions/checkout`            | `v6.0.3`          | `df4cb1c069e1874edd31b4311f1884172cec0e10` |
 | `actions/download-artifact`   | `v8.0.1`          | `3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c` |
 | `actions/setup-node`          | `v6.4.0`          | `48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e` |

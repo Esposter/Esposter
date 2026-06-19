@@ -13,13 +13,12 @@ const displayReceivedFriendRequests = computed(() =>
   <div v-if="displayReceivedFriendRequests.length > 0" mb-8>
     <div mb-3 text-title-large>Pending Requests — {{ displayReceivedFriendRequests.length }}</div>
     <v-list rd>
-      <v-list-item v-for="{ id, sender } of displayReceivedFriendRequests" :key="id" :title="sender.name">
-        <template #prepend>
-          <v-avatar size="36" mr-3>
-            <v-img v-if="sender.image" :src="sender.image" />
-            <span v-else>{{ sender.name[0] }}</span>
-          </v-avatar>
-        </template>
+      <MessageFriendsUserListItem
+        v-for="{ id, sender } of displayReceivedFriendRequests"
+        :key="id"
+        :image="sender.image"
+        :name="sender.name"
+      >
         <template #append>
           <div flex gap-2>
             <v-btn
@@ -38,7 +37,7 @@ const displayReceivedFriendRequests = computed(() =>
             />
           </div>
         </template>
-      </v-list-item>
+      </MessageFriendsUserListItem>
     </v-list>
   </div>
 </template>

@@ -12,25 +12,25 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
   readonly type = CommandType.NullStrategy;
 
   get description() {
-    return `Null Strategy (${this.mode})`;
+    return `Null Strategy (${this.#mode})`;
   }
 
-  private readonly affectedCells: AffectedCell[];
-  private readonly affectedRows: IndexedRow[];
-  private readonly mode: NullStrategy;
+  readonly #affectedCells: AffectedCell[];
+  readonly #affectedRows: IndexedRow[];
+  readonly #mode: NullStrategy;
 
   constructor(mode: NullStrategy, affectedCells: AffectedCell[], affectedRows: IndexedRow[]) {
     super();
-    this.mode = mode;
-    this.affectedCells = affectedCells;
-    this.affectedRows = affectedRows;
+    this.#mode = mode;
+    this.#affectedCells = affectedCells;
+    this.#affectedRows = affectedRows;
   }
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
-    if (this.mode === NullStrategy.ReplaceWithNA)
-      for (const { columnName, rowIndex } of this.affectedCells) {
+    if (this.#mode === NullStrategy.ReplaceWithNA)
+      for (const { columnName, rowIndex } of this.#affectedCells) {
         const row = takeOne(item.dataSource.rows, rowIndex);
         const column = columnsByNameMap.get(columnName);
         if (!column) continue;
@@ -38,22 +38,22 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
         row.data[columnName] = "N/A";
       }
     else {
-      for (const { row } of this.affectedRows)
+      for (const { row } of this.#affectedRows)
         for (const [columnName, value] of Object.entries(row.data)) {
           const column = columnsByNameMap.get(columnName);
           if (column) column.size -= getValueSize(value);
         }
       item.dataSource.rows = item.dataSource.rows.filter(
-        ({ id }) => !this.affectedRows.some(({ row }) => row.id === id),
+        ({ id }) => !this.#affectedRows.some(({ row }) => row.id === id),
       );
     }
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
-    if (this.mode === NullStrategy.ReplaceWithNA) {
+    if (this.#mode === NullStrategy.ReplaceWithNA) {
       const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
-      for (const { columnName, originalValue, rowIndex } of this.affectedCells) {
+      for (const { columnName, originalValue, rowIndex } of this.#affectedCells) {
         const row = takeOne(item.dataSource.rows, rowIndex);
         const column = columnsByNameMap.get(columnName);
         if (!column) continue;
@@ -61,9 +61,9 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
         row.data[columnName] = originalValue;
       }
     } else {
-      for (const { index, row } of this.affectedRows) item.dataSource.rows.splice(index, 0, row);
+      for (const { index, row } of this.#affectedRows) item.dataSource.rows.splice(index, 0, row);
       const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
-      for (const { row } of this.affectedRows)
+      for (const { row } of this.#affectedRows)
         for (const [columnName, value] of Object.entries(row.data)) {
           const column = columnsByNameMap.get(columnName);
           if (column) column.size += getValueSize(value);

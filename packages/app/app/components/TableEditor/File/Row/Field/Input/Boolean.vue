@@ -3,13 +3,13 @@ import type { BooleanColumn } from "#shared/models/tableEditor/file/column/Boole
 
 interface FieldInputBooleanProps {
   column: BooleanColumn;
-  inline?: boolean;
+  isInline?: true;
 }
 
-const { column, inline = false } = defineProps<FieldInputBooleanProps>();
+const { column, isInline } = defineProps<FieldInputBooleanProps>();
 const modelValue = defineModel<boolean | null>({ required: true });
 </script>
 
 <template>
-  <v-checkbox v-model="modelValue" :hide-details="inline" :label="inline ? '' : column.name" />
+  <v-checkbox v-model="modelValue" :hide-details="isInline" :label="isInline ? '' : column.name" />
 </template>

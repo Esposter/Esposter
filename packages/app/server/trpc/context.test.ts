@@ -56,6 +56,11 @@ vi.mock(
 );
 
 vi.mock(
+  import("@@/server/composables/azure/search/useSearchClient"),
+  () => import("@@/server/composables/azure/search/useSearchClient.test"),
+);
+
+vi.mock(
   import("@@/server/composables/azure/table/useTableClient"),
   () => import("@@/server/composables/azure/table/useTableClient.test"),
 );

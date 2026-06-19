@@ -5,7 +5,7 @@ import { processFriendRequestNotificationHandler } from "@/handlers/processFrien
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { users } from "@esposter/db-schema";
-import { beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
 
@@ -23,6 +23,10 @@ describe(processFriendRequestNotificationHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+  });
+
+  afterEach(async () => {
+    await mockDb.delete(users);
   });
 
   test("completes without error when user has no push subscriptions", async () => {

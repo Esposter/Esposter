@@ -30,8 +30,7 @@ const emit = defineEmits<{
   "update:display-width": [value: number];
 }>();
 const barPercentage = computed(() => clamp(baseBarPercentage, 0, 100));
-// Set origin to the middle-left of the health caps to enable
-// Grabbing the full width of the game object
+// Origin at the middle-left of the health caps so it spans the game object's full width.
 const imageOrigin = { originX: 0, originY: 0.5 } as const satisfies Pick<ImagePosition, "originX" | "originY">;
 </script>
 

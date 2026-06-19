@@ -6,17 +6,18 @@ Triggered by `/` in the message input. TipTap suggestion API powers the picker. 
 
 ## Command Categories
 
-| Command     | Type             | Backend                                                                       |
-| ----------- | ---------------- | ----------------------------------------------------------------------------- |
-| `/flip`     | Immediate client | —                                                                             |
-| `/me`       | Immediate client | —                                                                             |
-| `/roll`     | Immediate client | —                                                                             |
-| `/shrug`    | Immediate client | —                                                                             |
-| `/tablefip` | Immediate client | —                                                                             |
-| `/unflip`   | Immediate client | —                                                                             |
-| `/topic`    | Immediate tRPC   | `room.updateRoom`                                                             |
-| `/poll`     | Dialog → tRPC    | `message.createMessage`                                                       |
-| `/remind`   | Immediate tRPC   | `message.scheduledMessageJob.scheduleReminder` → Azure Queue → Azure Function |
+| Command      | Type             | Backend                                                                       |
+| ------------ | ---------------- | ----------------------------------------------------------------------------- |
+| `/flip`      | Immediate client | —                                                                             |
+| `/me`        | Immediate client | —                                                                             |
+| `/roll`      | Immediate client | —                                                                             |
+| `/shrug`     | Immediate client | —                                                                             |
+| `/tableflip` | Immediate client | —                                                                             |
+| `/unflip`    | Immediate client | —                                                                             |
+| `/topic`     | Immediate tRPC   | `room.updateRoom`                                                             |
+| `/poll`      | Dialog → tRPC    | `message.createMessage`                                                       |
+| `/remind`    | Dialog → tRPC    | `message.scheduledMessageJob.scheduleReminder` → Azure Queue → Azure Function |
+| `/schedule`  | Dialog → tRPC    | `message.scheduledMessageJob.scheduleMessage` → Azure Queue → Azure Function  |
 
 ---
 
@@ -29,7 +30,7 @@ packages/app/app/
     SlashCommandParameter.ts           # interface SlashCommandParameter + Zod schema
     SlashCommandParameterError.ts      # parameter validation error type
     SlashCommandParameters.ts          # mapped type: { [P in SlashCommandType]: Record<paramName, string> }
-    SlashCommandType.ts                # enum SlashCommandType (9 values)
+    SlashCommandType.ts                # enum SlashCommandType
     SlashCommandTypeWithoutParameters.ts  # utility type: commands with no parameters
 
   composables/message/slashCommand/
@@ -40,11 +41,11 @@ packages/app/app/
     SlashCommandDefinitionMap.ts       # Record<SlashCommandType, SlashCommand> — titles, icons, parameter defs
     SlashCommandSuggestion.ts          # TipTap suggestion config (items, render, command handler)
     constants.ts                       # ID_SEPARATOR, MAX_PARAMETERS, etc.
-    parseDuration.ts                   # parses "1h30m", "10m", "30s" → milliseconds (null on invalid)
     parseTextAndParameters.ts          # reconstructs parameterValues from serialised text
 
   store/message/input/
     slashCommand.ts                    # Pinia store: pendingCommand, parameterValues, trailingMessage
+    scheduledMessageJobDialog.ts       # Pinia store: schedule/reminder dialog mode + open state
 ```
 
 ---
@@ -60,6 +61,7 @@ export enum SlashCommandType {
   Poll = "Poll",
   Remind = "Remind",
   Roll = "Roll",
+  Schedule = "Schedule",
   Shrug = "Shrug",
   TableFlip = "TableFlip",
   Topic = "Topic",
@@ -91,14 +93,18 @@ export interface SlashCommandParameter extends Description {
 ```typescript
 export const SlashCommandDefinitionMap = {
   [SlashCommandType.Remind]: {
-    description: "Set a reminder. Duration format: 1h30m, 10m, 30s",
+    description: "Set a reminder",
     icon: "mdi-bell-outline",
-    parameters: [
-      { description: "Duration until reminder fires (e.g. 10m, 1h30m)", isRequired: true, name: "time" },
-      { description: "What to remind you about", isRequired: true, name: "message" },
-    ],
+    parameters: [],
     title: "Remind",
     type: SlashCommandType.Remind,
+  },
+  [SlashCommandType.Schedule]: {
+    description: "Schedule a message",
+    icon: "mdi-send-clock",
+    parameters: [],
+    title: "Schedule",
+    type: SlashCommandType.Schedule,
   },
   // ... other commands
 } as const satisfies Record<SlashCommandType, SlashCommand>;
@@ -119,8 +125,12 @@ Two execution paths:
 **Server call** — calls a tRPC mutation directly, no `createMessageInput`:
 
 - `Topic` → `$trpc.room.updateRoom.mutate({ id: roomId, topic })`
-- `Poll` → sets `pollDialogStore.isOpen = true` (dialog handles its own submit)
-- `Remind` → `$trpc.message.scheduledMessageJob.scheduleReminder.mutate({ roomId, runAt, text })`
+
+**Dialog** — opens a dialog that owns its own submit (no `createMessageInput`):
+
+- `Poll` → sets `pollDialogStore.isOpen = true`
+- `Remind` → `scheduledMessageJobDialogStore.open(ScheduledMessageJobType.Reminder)`
+- `Schedule` → `scheduledMessageJobDialogStore.open(ScheduledMessageJobType.ScheduledMessage)`
 
 ---
 
@@ -146,6 +156,11 @@ sequenceDiagram
     Q->>F: ProcessScheduledMessageJob triggered<br/>message becomes visible
     F->>DB: SELECT job WHERE id AND cancelledAt IS NULL<br/>AND completedAt IS NULL
     alt job found
+        alt runAt is still future
+            F->>Q: sendMessage({ id }, remaining visibilityTimeout)
+            F->>F: return
+        end
+        F->>DB: UPDATE processingStartedAt = now()
         F->>F: parse payload → Reminder type
         F->>DB: getPushSubscriptionsForUser
         F->>U: web-push notification ("Reminder: Buy milk")
@@ -221,29 +236,24 @@ When collapsing parameter mode back to normal text:
 - `trailingMessage` appended after all parameters
 - Re-parsing uses prefix matching per parameter in definition order
 
-### `/remind` example
-
-```text
-/Remind time|10m message|Buy milk
-```
-
-Parsed back: `{ time: "10m", message: "Buy milk" }` → `parseDuration("10m")` → 600000ms → `runAt = new Date(Date.now() + 600000)`
+`/remind`, `/schedule`, and `/poll` skip inline parameter mode and open dialogs so richer inputs can use normal form controls.
 
 ---
 
 ## Per-Command Reference
 
-| Command     | Parameters                              | Result                                                |
-| ----------- | --------------------------------------- | ----------------------------------------------------- |
-| `/flip`     | —                                       | Posts `🌝 **Heads**` or `🌚 **Tails**`                |
-| `/me`       | `message` (required)                    | Posts `*message*` (italic emphasis)                   |
-| `/poll`     | —                                       | Opens poll dialog; on submit posts `MessageType.Poll` |
-| `/remind`   | `time` (required), `message` (required) | Schedules server-side reminder via tRPC → Queue       |
-| `/roll`     | —                                       | Posts `🎲 Rolled a **N**` (1–100)                     |
-| `/shrug`    | `text` (optional)                       | Posts `text¯\_(ツ)_/¯`                                |
-| `/tablefip` | —                                       | Posts `(╯°□°）╯︵ ┻━┻`                                |
-| `/topic`    | `text` (optional)                       | Calls `room.updateRoom` to set/clear topic            |
-| `/unflip`   | —                                       | Posts `┬─┬ノ( º _ ºノ)`                               |
+| Command      | Parameters           | Result                                                |
+| ------------ | -------------------- | ----------------------------------------------------- |
+| `/flip`      | —                    | Posts `🌝 **Heads**` or `🌚 **Tails**`                |
+| `/me`        | `message` (required) | Posts `*message*` (italic emphasis)                   |
+| `/poll`      | —                    | Opens poll dialog; on submit posts `MessageType.Poll` |
+| `/remind`    | —                    | Opens scheduled-job dialog for reminder text + time   |
+| `/roll`      | —                    | Posts `🎲 Rolled a **N**` (1–100)                     |
+| `/schedule`  | —                    | Opens scheduled-job dialog for message text + time    |
+| `/shrug`     | `text` (optional)    | Posts `text¯\_(ツ)_/¯`                                |
+| `/tableflip` | —                    | Posts `(╯°□°）╯︵ ┻━┻`                                |
+| `/topic`     | `text` (optional)    | Calls `room.updateRoom` to set/clear topic            |
+| `/unflip`    | —                    | Posts `┬─┬ノ( º _ ºノ)`                               |
 
 ---
 

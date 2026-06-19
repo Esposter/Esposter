@@ -7,36 +7,34 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 ## Core Rules
 
-- TypeScript compiler: `strict` mode enabled. ESLint: `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
-- **Always use strict equality** — `===` and `!==` only. Never `==` or `!=`, including null checks: use `=== null || === undefined` (or optional chaining) instead of `== null`.
-- `Omit` is **BANNED** — use `Except` from `type-fest` (`import type { Except } from "type-fest"`). Note: `Except` is not re-exported from `@esposter/shared` — always import directly from `type-fest`.
-- **No parameter properties** — never use `constructor(private readonly foo: T)`. Always declare class properties explicitly and assign in the constructor body: `private readonly foo: T; constructor(foo: T) { super(); this.foo = foo; }`.
-- Non-null assertions (`!`) are **BANNED** — use optional chaining or guard clauses. This covers both the expression operator (`foo!.bar`) and the class-field definite assignment assertion (`field!: T`) — see `Class Fields` below for the field case.
+- `strict` mode + `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
+- **Strict equality only** — `===`/`!==`, never `==`/`!=`. For null checks use `=== null || === undefined` (or optional chaining), never `== null`.
+- `Omit` is **BANNED** — use `Except` from `type-fest` (import directly; not re-exported from `@esposter/shared`).
+- **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
+- **The `private` keyword is BANNED** — use ECMAScript `#` private members instead (see Private Members). `protected` is still allowed (no `#` equivalent for subclass access).
+- Non-null assertions (`!`) are **BANNED** — both the expression operator (`foo!.bar`) and the field definite-assignment assertion (`field!: T`, see Class Fields). Use optional chaining or guard clauses.
 - `.forEach()` is **BANNED** — use `for...of`.
-- `type` aliases for object shapes are **BANNED** — always use `interface` for object type declarations.
-- **Always prefer non-mutating array methods** — use the copy versions that return a new array instead of mutating in place:
-  - `arr.toSorted(fn)` instead of `[...arr].sort(fn)` — `sort()` is **BANNED**
-  - `arr.toReversed()` instead of `[...arr].reverse()` — `reverse()` is **BANNED**
-  - `arr.toSpliced(start, deleteCount, ...items)` instead of manual splice + spread — `splice()` is **BANNED** for producing new arrays (it is still allowed for in-place mutation of store/reactive arrays)
-  - `arr.with(index, value)` instead of `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`
-- **Only use `new Set` when deduplication is needed** — use `.some()` for unique arrays. `Set` only when: (a) deduplication is the goal, or (b) collection large enough that O(n) `.some()` hurts perf.
-- Always use named imports from libraries — only when not already auto-imported by Nuxt or Nuxt modules (e.g. `ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; VueUse composables are all auto-imported and must not be manually imported).
-- **Always use the `node:` protocol for Node.js built-in imports** — `import { readFileSync } from "node:fs"`, `import { resolve } from "node:path"`, `import { Buffer } from "node:buffer"`. Never bare `"fs"`, `"path"`, `"crypto"`, etc. Enforced by `unicorn/prefer-node-protocol: error`.
+- `type` aliases for object shapes are **BANNED** — use `interface`.
+- **Prefer non-mutating array methods** (copy versions returning a new array):
+  - `arr.toSorted(fn)` not `[...arr].sort(fn)` — `sort()` **BANNED**
+  - `arr.toReversed()` not `[...arr].reverse()` — `reverse()` **BANNED**
+  - `arr.toSpliced(...)` not manual splice+spread — `splice()` **BANNED** for producing new arrays (still allowed for in-place mutation of store/reactive arrays)
+  - `arr.with(index, value)` not `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`
+- **`new Set` only for dedup** — use `.some()` for unique arrays. `Set` only when (a) deduplication is the goal, or (b) collection large enough that O(n) `.some()` hurts perf.
+- Named imports from libraries, but only when not auto-imported by Nuxt/modules (`ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; all VueUse composables are auto-imported — never import manually).
+- **Use the `node:` protocol for Node.js built-ins** — `import { readFileSync } from "node:fs"`, never bare `"fs"`/`"path"`/`"crypto"`. Enforced by `unicorn/prefer-node-protocol`.
 - Explicitly type variables with proper types.
-- **Never use generic variable names like `parsed`** — always use a descriptive name that includes the type: `parsedDate`, `parsedResult`, `parsedConfig`, etc.
-- **No `current*` variable caching of `.value`** — don't assign `const currentX = x.value` just to use it once. If TypeScript narrowing is needed after a guard, assign with a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source value is already non-reactive (e.g. a `readonly` prop field).
-- **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype. **Exception**: `structuredClone(new ClassName(...))` is intentional when a plain object is explicitly required (e.g. Vjsf does not accept class instances — must use `structuredClone` to strip the prototype). Always add a comment explaining why.
-- **Boolean casting** — never use `!!` to cast to boolean. Always use `Boolean(value)`.
+- **Never generic variable names like `parsed`** — use a name including the type: `parsedDate`, `parsedResult`.
+- **No `current*` caching of `.value`** just to use it once. If narrowing is needed after a guard, assign a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source is already non-reactive (e.g. a `readonly` prop field).
+- **Cloning** — `structuredClone(obj)` for deep clones; `Object.assign(structuredClone(obj), { ...updates })` to clone+override. Never `{ ...spread }` to clone a class instance (loses prototype). **Exception**: `structuredClone(new ClassName(...))` when a plain object is explicitly required (e.g. Vjsf rejects class instances) — add a comment explaining why.
+- **Boolean casting** — never `!!`; always `Boolean(value)`.
 
 ## Class Fields — `declare` over `!`
 
-For a class field that has **no inline initializer** — its value is provided by `Object.assign(this, init)`, a parent/mixin constructor, external assignment, or it is a pure phantom type carrier — use the `declare` modifier, **never** the `!` definite assignment assertion.
+For a class field with **no inline initializer** (value provided by `Object.assign(this, init)`, a parent/mixin constructor, external assignment, or a pure phantom type carrier), use `declare`, **never** `!`.
 
 ```ts
 // WRONG — definite assignment assertion
-export class MockTableClient<TEntity extends TableEntity = TableEntity> {
-  entityType!: TEntity; // phantom type carrier, never assigned at runtime
-}
 export class FileEntity {
   filename!: string; // value comes from Object.assign below
   constructor(init?: Partial<FileEntity>) {
@@ -45,9 +43,6 @@ export class FileEntity {
 }
 
 // CORRECT — declare
-export class MockTableClient<TEntity extends TableEntity = TableEntity> {
-  declare entityType: TEntity;
-}
 export class FileEntity {
   declare filename: string;
   constructor(init?: Partial<FileEntity>) {
@@ -56,33 +51,57 @@ export class FileEntity {
 }
 ```
 
-**Why**: `declare` emits no field declaration, which (a) states intent clearly — "this field's value is defined elsewhere, not by this class body" — and (b) avoids the `useDefineForClassFields` footgun where an emitted `field = undefined` initializer runs after `super()` and clobbers a value already set by a parent constructor or mixin. `!` only suppresses the strict-init error while still emitting the clobbering initializer.
+**Why**: `declare` emits no field declaration, avoiding the `useDefineForClassFields` footgun where an emitted `field = undefined` runs after `super()` and clobbers a value set by a parent/mixin. `!` only suppresses the strict-init error while still emitting the clobbering initializer.
 
-- Applies to all class fields lacking an inline initializer: phantom type carriers, `Object.assign`-populated entity models (the `AzureEntity` / `CompositeKeyEntity` / `*MessageEntity` hierarchy), and externally-assigned fields.
-- **Keep the inline initializer** for fields that have one — `id: string = crypto.randomUUID()`, `files: FileEntity[] = []`, `currentState = { name: undefined }`. Never convert these to `declare` (that would drop the runtime default). `declare` and an initializer are mutually exclusive.
+- Applies to all fields lacking an inline initializer: phantom type carriers, `Object.assign`-populated entity models (`AzureEntity`/`CompositeKeyEntity`/`*MessageEntity`), externally-assigned fields.
+- **Keep the inline initializer** for fields that have one (`id: string = crypto.randomUUID()`) — never convert to `declare` (drops the runtime default); they're mutually exclusive.
 - Optional fields (`direction?: Direction`) are already correct — leave them.
+
+## Private Members — `#` over `private`
+
+Class-private fields and methods use the ECMAScript `#` prefix, never the TypeScript `private` keyword. `#` gives true runtime privacy (not just compile-time); `private` is erased at runtime.
+
+```ts
+// WRONG — TypeScript private keyword
+export class MoveColumnCommand {
+  private readonly fromIndex: number;
+  private moveColumn(item: DataSourceItem) {
+    columns.splice(this.fromIndex, 1);
+  }
+}
+
+// CORRECT — # private members
+export class MoveColumnCommand {
+  readonly #fromIndex: number;
+  #moveColumn(item: DataSourceItem) {
+    columns.splice(this.#fromIndex, 1);
+  }
+}
+```
+
+- `private readonly foo: T` → `readonly #foo: T` — **keep `readonly`**; it is allowed on `#` fields and still enforces immutability.
+- `private foo()` → `#foo()`; `private async *foo()` → `async *#foo()`.
+- Access is always `this.#foo` — there is no `this.foo` form for `#` members.
+- **`protected` stays** — `#` is inaccessible to subclasses, so members a subclass must reach (e.g. `protected doExecute`) keep `protected`.
 
 ## Regex
 
-- **Always use regex literals** `/pattern/flags` for static patterns — `prefer-regex-literals` ESLint rule enforces this.
-- **Always include the `u` flag** (Unicode-aware mode). Use `/pattern/u` for standard; `/pattern/gu` for global+unicode; `/pattern/gmu` for global+multiline+unicode.
-- **Dynamic patterns only**: use `new RegExp(template, flags)` when the pattern contains variable interpolation — `new RegExp(\`\\b${escaped}\\s\*\\(\`, "u")`.
-- **Named constants use `_REGEX` suffix** — `EMPTY_TEXT_REGEX`, `DURATION_REGEX`. Never `_RE`, `_PATTERN`.
+- **Regex literals** `/pattern/flags` for static patterns (`prefer-regex-literals`).
+- **Always include the `u` flag** — `/pattern/u`, `/pattern/gu`, `/pattern/gmu`.
+- **Dynamic patterns only**: `new RegExp(template, flags)` when the pattern contains interpolation — `new RegExp(\`\\b${escaped}\\s\*\\(\`, "u")`.
+- **Named constants use `_REGEX` suffix** — `EMPTY_TEXT_REGEX`. Never `_RE`/`_PATTERN`.
 
 ## Function Syntax
 
-- **Always use arrow functions** — `const fn = () => { ... }` and `export const fn = () => { ... }`. Never use the `function` keyword except for the narrow cases below.
-- **`function` keyword only when `this` binding is required** — class methods, object methods that reference `this`, and generator functions (`function*`). All other functions — module-level, composables, callbacks, helpers — must be arrow functions.
+- **Always arrow functions** — `const fn = () => { ... }`. Never the `function` keyword except below.
+- **`function` keyword only when `this` binding is required** — class methods, object methods referencing `this`, generators (`function*`). Everything else (module-level, composables, callbacks, helpers) must be arrow functions.
 
-  ```ts
-  // WRONG — function declaration for a utility
-  export function useInFlight() { ... }
-  async function execute<T>(fn: () => Promise<T>) { ... }
-
-  // CORRECT
-  export const useInFlight = () => { ... };
-  const execute = async <T>(fn: () => Promise<T>): Promise<T | undefined> => { ... };
-  ```
+```ts
+// WRONG
+export function useInFlight() { ... }
+// CORRECT
+export const useInFlight = () => { ... };
+```
 
 ## Arrow Function Overloads
 
@@ -102,70 +121,57 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 };
 ```
 
-- Overload signatures go on the **type annotation** of the `const`, not repeated in the body
-- Implementation parameter types must be the **union** of all overload variants
-- Use `Array.isArray` to branch; each branch returns the corresponding specific type
-- TypeScript uses overload signatures at call sites; the implementation body is not exposed
+- Overload signatures go on the `const`'s **type annotation**, not repeated in the body.
+- Implementation parameter types must be the **union** of all overload variants.
+- Use `Array.isArray` to branch; each branch returns its specific type.
 
 ## Promise Style
 
-- **Always use `async`/`await` with neverthrow for fallible work** — `try`/`catch` is **BANNED**. Never use `.catch()` promise chains. Use shared wrappers: `getResult(() => ...)` for sync throwing operations and `getResultAsync(() => ...)` for async/rejecting operations. Do not call `fromThrowable(...)` / `ResultAsync.fromPromise(...)` / `ResultAsync.fromThrowable(...)` directly. For cleanup that must run after both success and failure, use `withFinalizer(...)` / `withFinalizerAsync(...)`. **Exception**: `try`/`finally` (no `catch`) is allowed only when the function must stay synchronous and using `withFinalizer` would force an undesirable async cascade (e.g. `ignoreWarn`).
-  - **Exception**: `.then()` is acceptable only for building a **promise queue** (serialising sequential async operations in a sync context, e.g. `chain = chain.then(async () => {...})`). This pattern cannot be expressed with `await` inside a synchronous watcher/event callback. All other `.then()`/`.catch()` usages must be converted.
-- Every `Result` / `ResultAsync` must be consumed with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`; `.orTee(...)` by itself is not enough.
-- When fire-and-forgetting an async operation, extract to a named `async` function and call it without `await`.
-- **Never use `void asyncFn()`** — when passing an async function to a sync callback slot (e.g. `onScopeDispose`, event listeners, Phaser callbacks), wrap it with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction` instead. This satisfies `@typescript-eslint/no-misused-promises` without suppressing the lint rule.
+- **`async`/`await` with neverthrow for fallible work** — `try`/`catch` is **BANNED**; never `.catch()` chains. Use `getResult(() => ...)` for sync throwing ops and `getResultAsync(() => ...)` for async/rejecting ops. Do not call `fromThrowable`/`ResultAsync.fromPromise`/`ResultAsync.fromThrowable` directly. For cleanup after both success and failure use `withFinalizer(...)`/`withFinalizerAsync(...)` — never `try`/`finally`.
+- **`.then()` exception**: acceptable only for a **promise queue** (serialising sequential async ops in a sync context, e.g. `chain = chain.then(async () => {...})`) — can't be expressed with `await` in a sync watcher/callback. All other `.then()`/`.catch()` must be converted.
+- Every `Result`/`ResultAsync` must be consumed with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`; `.orTee(...)` alone is not enough.
+- Fire-and-forget: extract to a named `async` function and call without `await`.
+- **Never `void asyncFn()`** — when passing an async function to a sync callback slot (`onScopeDispose`, event listeners, Phaser callbacks), wrap with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction`. This satisfies `no-misused-promises` without suppressing the rule.
 
 ## Error Handling
 
-- **Never use `new Error(...)`** — always throw `new InvalidOperationError(operation, name, message)` from `@esposter/shared`.
-- Pick the appropriate `Operation` enum value (`Operation.Read`, `Operation.Create`, `Operation.Update`, `Operation.Delete`, etc.).
-- Use the resource name (e.g. `file.name`, entity ID) as the `name` argument — fall back to the calling function's name (e.g. `deserializeJson.name`) if no better resource name is available.
-- For user-supplied JSON (file uploads, external input): use Zod `safeParse` and throw `InvalidOperationError` on failure — never use bare `JSON.parse` with a type cast.
-- For validated endpoint data: `jsonDateParse` from `@esposter/shared` is acceptable.
+- **Never `new Error(...)`** — throw `new InvalidOperationError(operation, name, message)` from `@esposter/shared`.
+- Pick the appropriate `Operation` value (`Operation.Read`/`Create`/`Update`/`Delete`, etc.).
+- Use the resource name (`file.name`, entity ID) as `name`; fall back to the calling function's name (`deserializeJson.name`) if none better.
+- User-supplied JSON (uploads, external input): use Zod `safeParse` and throw `InvalidOperationError` on failure — never bare `JSON.parse` with a cast.
+- Validated endpoint data: `jsonDateParse` from `@esposter/shared` is acceptable.
 
 ## Control Flow
 
-- **Guard clauses first**: always use `if (!condition) return` to exit early instead of wrapping the main body in an `if` block. Reduce nesting aggressively — if the body of an `if` is the rest of the function, invert the condition and return early instead.
-- **Combine consecutive guards with `||`** — when consecutive early-return guards share the same return value, combine into a single `if`:
+- **Guard clauses first** — `if (!condition) return` to exit early instead of wrapping the body in `if`. Invert and return early aggressively.
+- **Combine consecutive guards with `||`** when they share the same return value:
 
   ```ts
-  // BAD — two separate guards
-  if (!editedItem.value?.dataSource) return;
-  if (editedItem.value.dataSource.columns.some(({ name }) => name === newColumn.name)) return;
-
-  // GOOD — combined with ||
+  // GOOD
   if (!editedItem.value?.dataSource || editedItem.value.dataSource.columns.some(({ name }) => name === newColumn.name))
     return;
   ```
 
   Exception: when the second check has side effects or depends on the first passing.
 
-- **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to named constant only if reused.
-
-- **Use `switch` for type-based branching** — when branching on an enum or discriminant with multiple cases, use `switch` (with `exhaustiveGuard` in the default) instead of a chain of `if/else if`. Use `if/else if/else` only when conditions are non-enum expressions or when there are exactly two branches.
-- **Always use `if/else if/else` from the first branch** — no standalone `if` followed by `else if`. This applies even when the first branch is a guard clause (early return): `if (!x) return; else if (y) return z;` is correct — the `else if` keeps the intent clear and the chain consistent. Only omit `else` when the branches are genuinely independent (different concerns, not a logical chain).
-- **Do not convert balanced `if/else` into a guard clause** — a guard clause (early `return` with no `else`) is only correct when the remainder of the function is the single "happy path". When two branches represent parallel logical paths of similar weight, keep `if/else`. Converting to a guard clause in that case either duplicates code (repeating shared steps in each branch) or obscures the fact that the branches are mutually exclusive alternatives. A reviewer suggesting "use a guard clause here" is a false positive whenever the `else` branch contains substantial work.
+- **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to a named constant only if reused.
+- **Use `switch` for type-based branching** — branching on an enum/discriminant with multiple cases uses `switch` (with `exhaustiveGuard` in the default), not an `if/else if` chain. Use `if/else if/else` only for non-enum expressions or exactly two branches.
+- **Always use `if/else if/else` from the first branch** — no standalone `if` followed by `else if`, even when the first branch is a guard clause: `if (!x) return; else if (y) return z;` is correct. Only omit `else` when branches are genuinely independent (different concerns, not a logical chain).
+- **Do not convert balanced `if/else` into a guard clause** — guard clauses are only correct when the remainder of the function is the single happy path. When two branches are parallel paths of similar weight, keep `if/else`; converting either duplicates shared steps or obscures mutual exclusivity. A reviewer suggesting "use a guard clause" is a false positive when the `else` branch contains substantial work.
 
 ## Return Type Annotations
 
-- **Prefer inferred return types** — don't annotate a function's return type when TypeScript can infer it correctly. Only add explicit return type annotations when: (a) the inferred type is too broad and you want to enforce a narrower contract (e.g. `ComputedRef<ValidationRule>` instead of `ComputedRef<(value: string) => string | true>`), or (b) the function is part of a public API boundary. Never add redundant annotations just for documentation.
+**Prefer inferred return types** — don't annotate when TypeScript infers correctly. Annotate only when (a) the inferred type is too broad and you want a narrower contract (e.g. `ComputedRef<ValidationRule>` instead of `ComputedRef<(value: string) => string | true>`), or (b) the function is a public API boundary. Never add redundant annotations for documentation. Applies to service functions too (don't annotate `Promise<Map<string, bigint>>` when inferable).
 
 ## Helper Functions
 
-- **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
-- **Prefer inferred return types on service functions** — don't annotate `Promise<Map<string, bigint>>` when TypeScript can infer it. Only annotate when the inferred type is too broad or when enforcing a public API contract (see `Return Type Annotations` above).
+**Don't extract helpers that add no value** — if a helper just wraps an inline object literal or single expression without reuse or meaningful abstraction, use the value directly. Three lines of inline code beats a named wrapper used once.
 
 ## Exhaustive Switch Guards
 
-**Every `switch` on an enum or discriminated union discriminant must have a `default: exhaustiveGuard(value)` (or `return exhaustiveGuard(value)` when the switch is in a return-position).** Import `exhaustiveGuard` from `@esposter/shared`. This ensures TypeScript surfaces a compile error when a new enum variant is added without updating the switch.
+Every `switch` on an enum or discriminated-union discriminant must have `default: exhaustiveGuard(value)` (or `return exhaustiveGuard(value)` in return-position). Import `exhaustiveGuard` from `@esposter/shared`. This surfaces a compile error when a new variant is added without updating the switch.
 
 ```ts
-// BAD — no default, silently misses new variants
-switch (step.type) {
-  case MathStepType.Unary: ...
-  case MathStepType.Binary: ...
-}
-
 // GOOD
 switch (step.type) {
   case MathStepType.Unary: ...; break;
@@ -181,21 +187,19 @@ switch (transformation.part) {
 }
 ```
 
-Applies to nested switches too (each inner switch on an enum needs its own guard).
-
-**Exception**: switches on non-enum values (strings, numbers, class instances) do not need an exhaustive guard.
+Applies to nested switches too (each inner enum switch needs its own guard). **Exception**: switches on non-enum values (strings, numbers, class instances) don't need a guard.
 
 ## Enum Naming
 
-- **Never abbreviate enum value names** — use the full word: `Absolute` not `Abs`, `Subtract` not `Sub`, `Configuration` not `Config`. This applies to both the enum key and string value. Abbreviated names save nothing and hurt readability.
+**Never abbreviate enum value names** — full word: `Absolute` not `Abs`, `Subtract` not `Sub`, `Configuration` not `Config`. Applies to both key and string value.
 
 ## Enum Extension via mergeObjectsStrict
 
-When a large enum has a meaningful "base" subset that should be handled separately (e.g. a function that only handles some variants), split it:
+When a large enum has a meaningful "base" subset handled separately, split it:
 
-1. Declare **named sub-groups that are used independently** as exported TypeScript enums in their own files (e.g. `BasicStringTransformationType.ts` — used by functions like `computeStringTransformation` that only handle the base variants).
-2. Declare **unlabelled/catch-all values** (e.g. `Interpolate`, future `Split`) as an **unexported `enum BaseXxxType`** inside the merged type's file — never a separate file.
-3. Merge using `mergeObjectsStrict` from `@esposter/shared` and export the union type using enum type names.
+1. Declare **named sub-groups used independently** as exported enums in their own files (e.g. `BasicStringTransformationType.ts`).
+2. Declare **unlabelled/catch-all values** (e.g. `Interpolate`) as an **unexported `enum BaseXxxType`** inside the merged type's file — never a separate file.
+3. Merge with `mergeObjectsStrict` from `@esposter/shared`; export the union type using enum type names.
 
 ```ts
 // BasicStringTransformationType.ts (exported — sub-functions accept this for exhaustive switch)
@@ -221,148 +225,145 @@ export const stringTransformationTypeSchema = z.enum(
 ) satisfies z.ZodType<StringTransformationType>;
 ```
 
-**Why**: Functions like `computeStringTransformation` accept `BasicStringTransformationType` so their `switch` is **exhaustive** — TypeScript verifies all cases are handled and `default: exhaustiveGuard(transform)` is truly unreachable. `mergeObjectsStrict` ensures `StringTransformationType.LowerCase`, `StringTransformationType.Interpolate` etc. all work identically to a plain enum at call sites. Keeping the catch-all `enum BaseXxxType` unexported and co-located in the merged file avoids polluting exports with one-off internal groupings.
+**Why**: functions like `computeStringTransformation` accept `BasicStringTransformationType` so their `switch` stays exhaustive (TypeScript verifies all cases; `default: exhaustiveGuard` is truly unreachable). `mergeObjectsStrict` makes `StringTransformationType.LowerCase`/`.Interpolate` work identically to a plain enum at call sites. Keeping the catch-all unexported and co-located avoids polluting exports.
 
 ## Enum Values Array
 
-- **Export a pluralized `Set` constant from the enum's definition file only when `Object.values` is actually used** — add `export const EnumNames = new Set(Object.values(EnumName))` at the bottom of the file (after the Zod schema, if any). Do not pre-emptively add it if the enum values are never iterated or checked. Use this exported constant at every call site instead of `Object.values(EnumName)`.
+- **Export a pluralized `Set` from the enum file only when `Object.values` is actually used** — `export const EnumNames = new Set(Object.values(EnumName))` at the bottom (after the Zod schema). Don't add pre-emptively if never iterated/checked. Use it at every call site.
 
   ```ts
-  // BooleanFormat.ts
   export const BooleanFormats = new Set(Object.values(BooleanFormat));
-
-  // call sites
-  BooleanFormats.has(format); // O(1) lookup
-  for (const f of BooleanFormats) { ... } // iteration (Set is iterable)
-  Array.from(BooleanFormats, fn); // map over a Set — see below
+  BooleanFormats.has(format); // O(1)
+  for (const f of BooleanFormats) { ... } // Set is iterable
+  Array.from(BooleanFormats, fn); // map over a Set
   ```
 
-- **Never write `Object.values(SomeEnum)` inline** — always use the exported `Set` constant.
+- **Never write `Object.values(SomeEnum)` inline** — use the exported `Set`.
 
 ## Iterating Non-Array Iterables (Set, Map, etc.)
 
-- **`Array.from(iterable, mapFn)` over `[...iterable].map(mapFn)`** — the two-argument form of `Array.from` maps while converting, producing no intermediate array. Use it whenever mapping over a `Set`, `Map`, or other non-array iterable:
+- **`Array.from(iterable, mapFn)` over `[...iterable].map(mapFn)`** — the two-arg form maps while converting, producing no intermediate array. Use for any `Set`/`Map`/non-array iterable:
 
   ```ts
   // CORRECT — Set
   Object.fromEntries(Array.from(VisualTypes, (v) => [v, {}]));
-
-  // CORRECT — Map (iterates as [key, value] pairs directly; no need for .entries())
+  // CORRECT — Map (iterates as [key, value]; no .entries() needed)
   Array.from(participantsMap, ([roomId, participants]) => ({ participants, roomId }));
-
-  // WRONG — creates an intermediate array just to map
-  Object.fromEntries([...VisualTypes].map((v) => [v, {}]));
+  // WRONG — intermediate array just to map
   [...participantsMap.entries()].map(([roomId, participants]) => ({ participants, roomId }));
   ```
 
-  The spread + `.map()` pattern is only acceptable when a plain array is already the source.
+  Spread + `.map()` is only acceptable when a plain array is already the source.
 
-- **Never use `new Set` just to call `.has()` on a small non-enum array** — if the values are already unique and the array is small, use `.some()` instead. Only `Set` when the source is an enum or the collection is large enough that O(n) repeated lookups would hurt performance.
+- **Never `new Set` just to call `.has()` on a small non-enum array** — if values are unique and the array is small, use `.some()`. `Set` only for enums or large collections.
+
+## Loops — `for...of` + `.entries()`, Destructure, No Dead Vars
+
+- **`.forEach()` is BANNED** — use `for...of`.
+- **No index-based `for (let i = 0; i < arr.length; i++)`** for plain array iteration — use `for...of`. When the index is needed (parallel arrays, offsets), use `.entries()`: `for (const [i, item] of arr.entries())`. The `.entries()` iterator cost is negligible (tiny per-element pair alloc, JIT-friendly) versus the readability win — it does not "drop perf hugely".
+- **Index-based `for` stays** only when the loop genuinely isn't sequential array iteration: step counters (`i += 4`, `i += BATCH_SIZE`), pure counts (`for (let i = 0; i < 3; i++)`), `<=` bounds, multi-condition bounds, or in-body index mutation/lookahead (e.g. `line.charAt(i + 1)` then `i++`).
+- **Destructure in the binding position (loop var, function param) straight to the props you use** — don't bind the whole object then read its fields. `for (const [i, { id }] of files.entries())` not `for (const [i, file] of ...) { ...file.id... }`. Destructure multiple: `for (const [i, { name, size, type }] of files.entries())`. This _removes_ the intermediate binding, so it does **not** conflict with the "no unnecessary destructure" rule (which bans adding a separate `const { x } = obj` line for a single use). Binding-position destructure = fewer vars; a standalone destructure statement for one use = more syntax. Keep the whole binding only when the object is passed on as a whole (`set(user.id, user)`) or used too many ways to enumerate cleanly.
+- **Don't declare intermediate vars that are used once** — `const pastedRow = takeOne(this.#pastedValues, rowOffset)` disappears entirely once you bind it via `.entries()`. Inline single-use values; only name a var when it's referenced more than once or the name adds clarity.
+- **Bound a zip with `break`, not a dual condition** — iterate the driving array via `.entries()` and `if (i >= other.length) break;` instead of `for (let i = 0; i < a.length && i < b.length; i++)`.
 
 ## Environment Checks
 
-- **Never use `import.meta.dev` or `import.meta.env.MODE` directly** — always use `IS_PRODUCTION` / `IS_DEVELOPMENT` / `IS_TEST` from `#shared/util/environment/constants`:
-  ```ts
-  import { IS_PRODUCTION } from "#shared/util/environment/constants";
-  if (!IS_PRODUCTION) console.warn("...");
-  ```
+**Never use `import.meta.dev` or `import.meta.env.MODE` directly** — use `IS_PRODUCTION`/`IS_DEVELOPMENT`/`IS_TEST` from `#shared/util/environment/constants`:
+
+```ts
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
+const baseUrl = IS_PRODUCTION ? PRODUCTION_URL : DEVELOPMENT_URL;
+```
 
 ## Enum Refs
 
-- **Never use `ref<EnumType | null>(null)`** — always default to a sensible first enum value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`, etc.
-- **Never write `ref<EnumType>(EnumValue)`** — TypeScript infers the enum type from the value. Write `ref(ColumnType.String)`, not `ref<ColumnType>(ColumnType.String)`.
+- **Never `ref<EnumType | null>(null)`** — default to a sensible first value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`.
+- **Never `ref<EnumType>(EnumValue)`** — TypeScript infers the type from the value: `ref(ColumnType.String)`.
 
 ## `string` — Always Use `""` as Empty Sentinel
 
-Prefer `string` with `""` as the "absent/empty" sentinel over `string | undefined`. Do not use `string | undefined` for any app-owned string value.
+Prefer `string` with `""` as the absent/empty sentinel. Do not use `string | undefined` for any app-owned string value.
 
-- **`ref<string>()` is BANNED** — always `ref("")`. TypeScript infers `Ref<string>`.
+- **`ref<string>()` is BANNED** — always `ref("")`.
 - **`useDataMap<string | undefined>(..., undefined)` is BANNED** — use `useDataMap(..., "")`.
-- **`MaybeRefOrGetter<string | undefined>` is BANNED for currentId params** — always `MaybeRefOrGetter<string>`; internal `if (!currentIdValue)` guards handle `""` correctly.
-- **`cursor?: string` is BANNED** — always `cursor: string` with `z.string().default("")` in Zod schemas; server checks `if (cursor)` so `""` means "no cursor".
+- **`MaybeRefOrGetter<string | undefined>` is BANNED for currentId params** — always `MaybeRefOrGetter<string>`; internal `if (!currentIdValue)` guards handle `""`.
+- **`cursor?: string` is BANNED** — always `cursor: string` with `z.string().default("")`; server checks `if (cursor)` so `""` means no cursor.
 - **`nextCursor = ""`** — `CursorPaginationData.nextCursor` is always `string`; `""` means no next page.
-- **Resetting**: assign `""` not `undefined`. Never use `value || undefined` to coerce before passing to an API — pass `""` directly.
+- **Resetting**: assign `""` not `undefined`. Never `value || undefined` before an API call — pass `""` directly.
 - **`currentRoomId`** and similar route-derived IDs return `""` (not `undefined`) when absent.
 
-**Legitimate `string | undefined` exceptions (third-party boundaries only):**
+**Legitimate exceptions (third-party boundaries only):**
 
-- Browser API properties that are genuinely optional with no meaningful default (e.g. `MediaRecorder.mimeType`)
-- Type assertions on Vue Router params: `route.params.x as string | undefined` — normalise at the boundary, guard with `if (x)` immediately after
-- Node.js `req.socket.remoteAddress` and similar network properties
+- Browser API properties genuinely optional with no default (e.g. `MediaRecorder.mimeType`).
+- Vue Router param casts: `route.params.x as string | undefined` — normalise at the boundary, guard with `if (x)` immediately after.
+- Node.js `req.socket.remoteAddress` and similar network properties.
 
 ## `null` vs `undefined`
 
 Prefer `undefined` for all absent/optional values in app-owned code. `null` is only permitted at the external system boundary.
 
-**App-owned code — always use `undefined`:**
+**App-owned code — always `undefined`:**
 
-- For string refs, use `ref("")` (see `string` section above) — not `ref<string>()`.
-- Optional interface fields use `?:` (which implies `| undefined`), not `| null`.
-- Uninitialised state, optional function parameters, and absent return values are all `undefined`.
-- Never assign `?? null` — if the left side is already `T | undefined`, drop the fallback entirely.
-- `.nullable()` is **BANNED** in app-owned Zod schemas — use `.optional()` instead.
+- String refs use `ref("")` (see above), not `ref<string>()`.
+- Optional interface fields use `?:` (implies `| undefined`), not `| null`.
+- Uninitialised state, optional params, absent returns are all `undefined`.
+- Never `?? null` — if the left side is already `T | undefined`, drop the fallback.
+- `.nullable()` is **BANNED** in app-owned Zod schemas — use `.optional()`.
 
-**External boundary — keep `null` where the external system requires it:**
+**External boundary — keep `null` where required:**
 
 - **Drizzle ORM** — nullable columns infer as `T | null`; convert via `nullToUndefined` from `@esposter/shared` before values enter app code.
 - **Azure SDK / EventGrid** — `SerializableValue`, EventGrid data shapes; keep raw types, convert on ingress.
-- **Vuetify** — a small number of Vuetify 3 props are typed as `T | null` (not `T | undefined`); use `null` only where the Vuetify prop type requires it, and add a comment explaining why.
+- **Vuetify** — a few Vuetify props are typed `T | null`; use `null` only where the prop type requires it, with a comment explaining why.
 
-When checking `null` at a boundary, use `=== null` (strict equality — see Core Rules).
+When checking `null` at a boundary, use `=== null` (strict equality).
 
 ## Stable Identifiers for Selections
 
-- **Track selections by stable ID, not by name or index** — column names change, indices shift on delete/reorder. Always use `entity.id` (UUID) as the key when storing which items are selected/active. A stale ID in a selection is harmless; a stale name or index is a bug.
+**Track selections by stable ID, not name or index** — names change, indices shift on delete/reorder. Use `entity.id` (UUID) as the key for selected/active items. A stale ID is harmless; a stale name/index is a bug.
 
 ## Generic Definition Arrays — `as const` Without `satisfies`
 
-When a definition array has entries typed as `Definition<T>` where the generic `T` controls a **contravariant** position (e.g. a callback parameter like `format: (value: ColumnStats[T]) => string`), using `satisfies readonly Definition[]` widens each entry to `Definition<KeyUnion>`, which fails due to contravariance.
+When a definition array has entries typed `Definition<T>` where `T` controls a **contravariant** position (e.g. a callback parameter `format: (value: ColumnStats[T]) => string`), `satisfies readonly Definition[]` widens each entry to `Definition<KeyUnion>` and fails on contravariance.
 
-**Fix**: drop `satisfies` and use `as const` alone. Each entry retains its specific `Definition<"specificKey">` type, inferred by the `define*` helper.
+**Fix**: drop `satisfies`, use `as const` alone. Each entry keeps its specific `Definition<"specificKey">` type from the `define*` helper.
 
 ```ts
-// ColumnStatDefinition<T> has format: (value: ColumnStats[T]) => string  — contravariant in T
-// satisfies readonly ColumnStatDefinition[] FAILS (widens T → ColumnStatKey → function parameter too broad)
+// satisfies readonly ColumnStatDefinition[] FAILS (widens T → function param too broad)
 // as const alone PASSES — preserves ColumnStatDefinition<"nullCount">, etc.
 export const ColumnStatDefinitions = [
   defineColumnStat({ key: "nullCount", format: (value) => String(value), ... }),
   ...
-] as const;  // NOT "satisfies readonly ColumnStatDefinition[]"
+] as const;
 ```
 
-At call sites where the entry is destructured from the array (losing key↔format correlation), cast the value with `as never`:
+At call sites where the entry is destructured (losing key↔format correlation), cast with `as never`:
 
 ```ts
-// key and format are destructured — TypeScript loses their correlation
-format(item[key] as never); // safe: key and format always come from the same definition entry
+format(item[key] as never); // safe: key and format always come from the same entry
 ```
 
 ## Filter-Based Type Narrowing
 
-- **No redundant type guards after a filtering condition** — if a `.filter()` predicate already narrows the type (e.g. `filter((v) => typeof v === "number")`), the resulting array is already typed `number[]`. Do NOT add a separate type guard (`: v is number`) or cast inside the callback — the filter itself is sufficient.
-  ```ts
-  // WRONG — redundant guard
-  values.filter((v): v is number => typeof v === "number");
-  // CORRECT — filter condition narrows the type
-  values.filter((v) => typeof v === "number");
-  ```
-  Exception: when the predicate is a function reference (e.g. `filter(Boolean)`) that TypeScript cannot narrow automatically, a type predicate is still needed.
+**No redundant type guards after a filtering condition** — if a `.filter()` predicate narrows the type (e.g. `filter((v) => typeof v === "number")`), the result is already `number[]`. Don't add `: v is number` or a cast inside the callback.
+
+```ts
+// WRONG
+values.filter((v): v is number => typeof v === "number");
+// CORRECT
+values.filter((v) => typeof v === "number");
+```
+
+Exception: when the predicate is a function reference (`filter(Boolean)`) TypeScript can't narrow, a type predicate is still needed.
 
 ## Polymorphic Dispatch — No Switch Statements
 
-**NEVER** write a function that switches over a discriminant enum to call different logic for each case. This anti-pattern (a "type switch dispatcher") concentrates all variant logic in one place, prevents co-location, and forces every new variant to touch the central function.
+**NEVER** write a function that switches over a discriminant enum to call different logic per case ("type switch dispatcher") — it concentrates all variant logic in one place, prevents co-location, and forces every new variant to touch the central function.
 
-**Instead, use a `*ComputeMap` where each entry is a compute function** — receives the typed transformation and a context object:
+**Instead, use a `*ComputeMap`** where each entry is a compute function receiving the typed transformation and a context object:
 
 ```ts
-// BAD — if/switch chains in one place, hard to extend:
-export const computeValue = (...) => {
-  if (transformation.type === ConvertTo) { /* ... */ }
-  else if (transformation.type === DatePart) { /* ... */ }
-};
-
-// GOOD — per-type compute functions stay co-located with their schema:
-// services/column/transformation/computeConvertToTransformation.ts
+// services/column/transformation/computeConvertToTransformation.ts (per-type, co-located with schema)
 export const computeConvertToTransformation = (value, t: ConvertToTransformation) => ...;
 
 // services/column/transformation/ColumnTransformationComputeMap.ts
@@ -371,19 +372,15 @@ export interface ComputeContext {
   findSource: (sourceColumnId: string) => DataSource["columns"][number] | undefined;
 }
 
-type TransformationComputer<T extends ColumnTransformation> = (
-  transformation: T,
-  context: ComputeContext,
-) => ColumnValue;
+type TransformationComputer<T extends ColumnTransformation> = (transformation: T, context: ComputeContext) => ColumnValue;
 
 export const ColumnTransformationComputeMap = {
   [ColumnTransformationType.ConvertTo]: (transformation, { computeSource }) =>
     computeConvertToTransformation(computeSource(transformation.sourceColumnId), transformation),
-
   [ColumnTransformationType.DatePart]: (transformation, { computeSource, findSource }) => {
     const sourceColumn = findSource(transformation.sourceColumnId);
     if (sourceColumn?.type !== ColumnType.Date) return null;
-    // TypeScript narrows sourceColumn to DateColumn via optional chaining + discriminant — sourceColumn.format is accessible
+    // discriminant narrowing makes sourceColumn.format accessible
     return computeDatePartTransformation(computeSource(transformation.sourceColumnId), transformation, sourceColumn.format);
   },
   // ...
@@ -397,33 +394,45 @@ return ColumnTransformationComputeMap[column.transformation.type](column.transfo
 
 **Rules:**
 
-- Each per-type compute function lives in `services/<feature>/transformation/compute<TypeName>Transformation.ts`
-- The map file (`<Noun>ComputeMap.ts`) imports all per-type functions; each entry is a compute function
-- The `ComputeContext` interface is exported so callers can implement it
-- Use `as const satisfies { [K in TheType]: TransformationComputer<Extract<Union, { type: K }>> }` — each entry is typed to its specific transformation subtype
-- Call site uses `as never` on the transformation — TypeScript cannot correlate the discriminant key with the map entry's expected parameter type
-- TypeScript discriminant narrowing (e.g. `someColumn.type !== ColumnType.Date`) provides type-safe access to subtype fields inside computers without explicit casts
-- Adding a new variant only requires: (1) a new per-type function file, (2) one new entry in the map
+- Each per-type function lives in `services/<feature>/transformation/compute<TypeName>Transformation.ts`.
+- The map file (`<Noun>ComputeMap.ts`) imports all per-type functions; each entry is a compute function.
+- Export the `ComputeContext` interface so callers can implement it.
+- Use `as const satisfies { [K in TheType]: TransformationComputer<Extract<Union, { type: K }>> }` — each entry typed to its specific subtype.
+- Call site uses `as never` on the transformation — TypeScript can't correlate the discriminant key with the entry's expected param type.
+- Discriminant narrowing (`someColumn.type !== ColumnType.Date`) gives type-safe subtype field access in computers without casts.
+- Adding a variant requires only: (1) a new per-type file, (2) one new map entry.
 
 ## Opt-In Shared Interfaces for Discriminated Union Members
 
-When some (but not all) members of a discriminated union share a common field, define a shared interface and Zod schema that members **opt into** by extending — never force the field onto all members.
+When some (not all) union members share a common field, define a shared interface + Zod schema that members **opt into** by extending — never force the field onto all members.
 
 ```ts
-// shared/models/.../SourceColumnId.ts — opt-in base for single-source transformations
-export interface SourceColumnId { sourceColumnId: string; }
-export const sourceColumnIdSchema = z.object({ sourceColumnId: z.string() });
+// shared/models/.../SourceColumnId.ts — opt-in base; factory takes the vjsf context key to filter the dropdown
+export interface SourceColumnId {
+  sourceColumnId: string;
+}
+export const createSourceColumnIdSchema = (getItems = ColumnFormVjsfContextPropertyNames["context.columnItems"]) =>
+  z.object({
+    sourceColumnId: z.string().meta({ layout: { comp: "select", getItems }, title: "Source Column" }),
+  }) satisfies z.ZodType<SourceColumnId>;
 
-// shared/models/.../SourceColumnIds.ts — opt-in base for multi-source transformations
-export interface SourceColumnIds { sourceColumnIds: string[]; }
-export const sourceColumnIdsSchema = z.object({ sourceColumnIds: z.array(z.string()).default([]) });
+// shared/models/.../SourceColumnIds.ts — multi-source variant
+export interface SourceColumnIds {
+  sourceColumnIds: string[];
+}
+export const createSourceColumnIdsSchema = (getItems = ColumnFormVjsfContextPropertyNames["context.columnItems"]) =>
+  z.object({
+    sourceColumnIds: z.array(z.string()).meta({ layout: { getItems }, title: "Source Columns" }),
+  }) satisfies z.ZodType<SourceColumnIds>;
 
-// Each transformation that needs a source column spreads the base schema's .shape:
-export const convertToTransformationSchema = z.object({
-  ...sourceColumnIdSchema.shape,
-  type: z.literal(ColumnTransformationType.ConvertTo),
-  targetType: z.enum([...]),
-});
+// Each transformation spreads the factory's .shape, passing a pre-filtered context key to constrain column types:
+export const datePartTransformationSchema = z
+  .object({
+    ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
+    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"]).shape,
+    part: datePartTypeSchema,
+  })
+  .meta({ title: ColumnTransformationType.DatePart }) satisfies z.ZodType<DatePartTransformation>;
 
 // A transformation needing no source column uses z.object({...}) directly:
 export const mathOperationTransformationSchema = z.object({
@@ -435,37 +444,28 @@ export const mathOperationTransformationSchema = z.object({
 
 **Rules:**
 
-- Each shared interface/schema lives in its own file (one export per file rule)
-- Members spread `.shape` from the base schema (never `.extend()`) — see zod skill
-- Members that don't need the shared field just use `z.object({...})` directly
-- Use `SourceColumnId` (singular) for single-source, `SourceColumnIds` (plural) for multi-source
-- Transformations with column type constraints declare `applicableColumnTypes: ColumnType[]` in `.meta()` — used by the UI to filter source column dropdowns. This comes from `GlobalMeta extends Partial<ApplicableColumnTypes>` in `shared/types/zod.d.ts`
-- **`ApplicableColumnTypes`** — interface in `shared/models/.../ApplicableColumnTypes.ts` with `readonly applicableColumnTypes: ColumnType[]`. Both Zod `.meta()` (via `GlobalMeta`) and non-schema definitions (e.g. `ColumnStatDefinition`) extend this interface so the same field name is used everywhere:
+- Each shared interface/schema lives in its own file (one export per file).
+- Members spread the factory's `.shape` (never `.extend()` — see zod skill).
+- Members not needing the field use `z.object({...})` directly.
+- `SourceColumnId` (singular) for single-source, `SourceColumnIds` (plural) for multi-source.
+- **Column-type filtering** happens by passing the pre-filtered vjsf context key into the factory (`createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"])`), **not** via any `.meta()` field. `GlobalMeta` (`shared/types/zod.d.ts`) only carries `layout` (+ ajv keywords).
+- **`ApplicableColumnTypes`** — interface in `shared/models/.../transformation/ApplicableColumnTypes.ts` (`readonly applicableColumnTypes: readonly ColumnType[]`). Used **only by non-schema definitions** (`ColumnStatisticsDefinition` via `defineColumnStatistics` in `ColumnStatisticsDefinitionMap`) — never by Zod schemas:
 
   ```ts
-  // shared/models/.../ApplicableColumnTypes.ts
-  export interface ApplicableColumnTypes {
-    readonly applicableColumnTypes: ColumnType[];
-  }
+  export interface ApplicableColumnTypes { readonly applicableColumnTypes: readonly ColumnType[]; }
+  export interface ColumnStatisticsDefinition<T extends ColumnStatisticsKey = ColumnStatisticsKey>
+    extends ApplicableColumnTypes { compute: ...; format: ...; key: T; title: string; }
 
-  // app/models/.../ColumnStatDefinition.ts
-  export interface ColumnStatDefinition<T extends ColumnStatKey> extends ApplicableColumnTypes { ... }
-
-  // shared/types/zod.d.ts — makes it optional in schema .meta()
-  interface GlobalMeta extends Partial<ApplicableColumnTypes> { ... }
-
-  // Usage in schema:
-  .meta({ applicableColumnTypes: [ColumnType.Date], title: "..." })
-  // Usage in stat definition:
-  defineColumnStat({ applicableColumnTypes: [ColumnType.Number], ... })
+  // stat definition usage (NOT a schema):
+  defineColumnStatistics({ applicableColumnTypes: [ColumnType.Number], compute: ..., format: ..., key: "average", title: "..." })
   ```
 
 ## Configuration Interfaces — `Pick` from Source Types
 
-When a configuration interface re-declares properties that already exist on a source type (e.g. a Phaser `GameObjects.X`), use `Pick<SourceType, "prop1" | "prop2">` in the `extends` clause instead of re-declaring each property individually.
+When a configuration interface re-declares properties already on a source type (e.g. a Phaser `GameObjects.X`), use `Pick<SourceType, "prop1" | "prop2">` in the `extends` clause instead of re-declaring each.
 
 ```ts
-// BAD — re-declares types that already exist on GameObjects.Arc
+// BAD — re-declares types already on GameObjects.Arc
 export interface ArcConfiguration extends ShapeConfiguration {
   closePath: GameObjects.Arc["closePath"];
   endAngle: GameObjects.Arc["endAngle"];
@@ -473,13 +473,13 @@ export interface ArcConfiguration extends ShapeConfiguration {
   startAngle: GameObjects.Arc["startAngle"];
 }
 
-// GOOD — Pick directly from the source type
+// GOOD — Pick from the source type
 export interface ArcConfiguration
   extends ShapeConfiguration, Pick<GameObjects.Arc, "closePath" | "endAngle" | "radius" | "startAngle"> {}
 ```
 
-Use `Pick` for all properties whose types are derived directly from the source type. Keep explicit property declarations only for:
+Use `Pick` for all properties derived directly from the source type. Keep explicit declarations only for:
 
 - `Parameters<SourceType["method"]>` tuples — no readable property to pick
 - `Parameters<SourceType["method"]>[n]` — same
-- Plain primitives (`number`, `string`) representing constructor arguments with no matching readable property on the source type
+- Plain primitives (`number`, `string`) representing constructor args with no matching readable property on the source type

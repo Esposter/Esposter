@@ -1,0 +1,16 @@
+name: Setup Packages
+description: Install dependencies, then download the compiled package output (dist + generated barrels) produced by the build-packages job
+runs:
+  using: composite
+  steps:
+    - name: 📦 Install dependencies
+      run: pnpm i
+      shell: bash
+    # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
+    # Barrels (gitignored, absent on a fresh checkout). Both are produced once by the `build-packages` job and
+    # Passed here as the `package-builds` artifact; common ancestor is `packages/`, so download into `packages`.
+    - name: 📥 Download package builds
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: package-builds
+        path: packages

@@ -1,10 +1,9 @@
 export enum AzureTable {
   Messages = "Messages",
-  // An index table that only contains the message partition key and row key
-  // Where the row key is the original timestamp of the message to allow for double indexing and sorting the messages both ways
+  // Index table of just the message partition/row key, keyed by the original timestamp so messages
+  // Can be double-indexed and sorted both ways.
   MessagesAscending = "MessagesAscending",
   MessagesMetadata = "MessagesMetadata",
   ModerationLog = "ModerationLog",
   SurveyResponses = "SurveyResponses",
-  UserActivities = "UserActivities",
 }

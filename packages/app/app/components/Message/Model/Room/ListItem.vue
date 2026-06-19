@@ -40,11 +40,15 @@ const hasUnread = computed(() => {
       <template #prepend>
         <StyledAvatar :image="room.image" :name="roomName" />
       </template>
-      <v-list-item-title pr-6 :class="hasUnread ? 'font-weight-bold' : undefined">
+      <v-list-item-title pr-6 :class="hasUnread || hasDraft ? 'font-weight-bold' : undefined">
         {{ roomName }}
-        <span v-if="hasDraft" italic op-medium-emphasis text-body-small> — Draft</span>
       </v-list-item-title>
       <template #append>
+        <v-tooltip v-if="hasDraft" text="Draft" location="top">
+          <template #activator="{ props: activatorProps }">
+            <v-icon :="activatorProps" icon="mdi-pencil" size="x-small" op-medium-emphasis />
+          </template>
+        </v-tooltip>
         <v-tooltip v-if="room.isReadOnly" text="Read-only" location="top">
           <template #activator="{ props: activatorProps }">
             <v-icon :="activatorProps" icon="mdi-bullhorn-outline" size="x-small" op-medium-emphasis />

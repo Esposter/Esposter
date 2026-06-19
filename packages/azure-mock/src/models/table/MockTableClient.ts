@@ -19,7 +19,7 @@ import type { Except } from "type-fest";
 
 import { MOCK_TABLE_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
-import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
+import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
 import { exhaustiveGuard, getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
@@ -51,11 +51,11 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   }
 
   createEntity<T extends object>(entity: TableEntity<T>): Promise<CreateTableEntityResponse> {
-    const key = this.getCompositeKey(entity.partitionKey, entity.rowKey);
+    const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     if (this.table.has(key)) throw new MockRestError("The specified entity already exists.", 409);
 
     this.table.set(key, entity);
-    return Promise.resolve({ date: new Date(), etag: this.getEtag() });
+    return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
   }
 
   createTable(): Promise<void> {
@@ -63,7 +63,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   }
 
   deleteEntity(partitionKey: string, rowKey: string): Promise<TableDeleteEntityHeaders> {
-    const key = this.getCompositeKey(partitionKey, rowKey);
+    const key = this.#getCompositeKey(partitionKey, rowKey);
     if (!this.table.has(key)) throw new MockRestError("The specified resource does not exist.", 404);
     this.table.delete(key);
     // The real response contains headers, an empty object is a sufficient mock.
@@ -82,21 +82,20 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
     partitionKey: string,
     rowKey: string,
   ): Promise<GetTableEntityResponse<TableEntityResult<T>>> {
-    const key = this.getCompositeKey(partitionKey, rowKey);
+    const key = this.#getCompositeKey(partitionKey, rowKey);
     const entity = this.table.get(key) as T | undefined;
     if (!entity) throw new MockRestError("The specified resource does not exist.", 404);
-    return Promise.resolve({ ...entity, etag: this.getEtag() });
+    return Promise.resolve({ ...entity, etag: this.#getEtag() });
   }
 
   listEntities<T extends object>(
     options?: ListTableEntitiesOptions,
   ): PagedAsyncIterableIterator<TableEntityResult<T>, TableEntityResultPage<T>> {
-    const withMetadata = this.withMetadata.bind(this);
+    const withMetadata = this.#withMetadata.bind(this);
     const filter = options?.queryOptions?.filter;
     const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()];
-    const resultTableEntities = filter
-      ? tableEntities.filter((e) => createTableFilterPredicate(filter)(e))
-      : tableEntities;
+    const predicate = filter ? createFilterPredicate(filter) : undefined;
+    const resultTableEntities = predicate ? tableEntities.filter((e) => predicate(e)) : tableEntities;
     return {
       byPage: ({ maxPageSize } = {}) =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
@@ -168,49 +167,49 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   }
 
   updateEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
-    const key = this.getCompositeKey(entity.partitionKey, entity.rowKey);
+    const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     const existingEntity = this.table.get(key);
     if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
-    else if (mode === "Merge") return this.mergeEntity(key, existingEntity, entity);
+    else if (mode === "Merge") return this.#mergeEntity(key, existingEntity, entity);
     // "Replace"
     else {
       this.table.set(key, entity);
-      return Promise.resolve({ date: new Date(), etag: this.getEtag() });
+      return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
     }
   }
 
   upsertEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
-    const key = this.getCompositeKey(entity.partitionKey, entity.rowKey);
+    const key = this.#getCompositeKey(entity.partitionKey, entity.rowKey);
     const existingEntity = this.table.get(key);
-    if (existingEntity && mode === "Merge") return this.mergeEntity(key, existingEntity, entity);
+    if (existingEntity && mode === "Merge") return this.#mergeEntity(key, existingEntity, entity);
     // "Replace" or entity doesn't exist (which is an insert)
     else {
       this.table.set(key, entity);
-      return Promise.resolve({ date: new Date(), etag: this.getEtag() });
+      return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
     }
   }
 
-  private getCompositeKey(partitionKey: string, rowKey: string): string {
+  #getCompositeKey(partitionKey: string, rowKey: string): string {
     return `${partitionKey}${ID_SEPARATOR}${rowKey}`;
   }
 
-  private getEtag(): string {
+  #getEtag(): string {
     return `W/"datetime'${new Date().toISOString()}'"`;
   }
 
-  private mergeEntity<T extends object>(
+  #mergeEntity<T extends object>(
     key: string,
     entity: TableEntity<T>,
     entityToMerge: TableEntity<T>,
   ): Promise<TableMergeEntityHeaders> {
     this.table.set(key, { ...entity, ...entityToMerge });
-    return Promise.resolve({ date: new Date(), etag: this.getEtag() });
+    return Promise.resolve({ date: new Date(), etag: this.#getEtag() });
   }
 
-  private withMetadata<T extends object>(entity: T): T & { etag: string } {
+  #withMetadata<T extends object>(entity: T): T & { etag: string } {
     return {
       ...entity,
-      etag: this.getEtag(),
+      etag: this.#getEtag(),
     };
   }
 }

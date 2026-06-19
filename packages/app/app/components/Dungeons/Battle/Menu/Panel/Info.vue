@@ -23,7 +23,7 @@ onCreate((scene) => {
       :configuration="{
         x: 20,
         y: 468,
-        // Display width is computed based on the set text, so we only require @update:display-width listener
+        // Display width derives from the set text, so we only need the @update:display-width listener.
         text: line1DialogMessage.text,
         style: { ...DialogTextStyle, wordWrap: { width: wordWrapWidth } },
       }"

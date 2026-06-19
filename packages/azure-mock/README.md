@@ -47,6 +47,17 @@ const entity = await mockTableClient.getEntity("pk", "rk");
 
 Replace real Azure clients with their mock equivalents by swapping them in your test setup or local `.env` configuration.
 
+### Commands
+
+Run from `packages/azure-mock/`:
+
+```bash
+pnpm build        # compile to dist/
+pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint:fix     # auto-fix lint
+pnpm typecheck    # type check
+```
+
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).

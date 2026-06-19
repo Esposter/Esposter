@@ -1,5 +1,4 @@
 import type { DeviceSection } from "@/models/message/room/call/DeviceSection";
-import type { Ref } from "vue";
 
 import { readDevices } from "@/services/message/room/liveKit/readDevices";
 import { useLiveKitStore } from "@/store/message/room/liveKit";

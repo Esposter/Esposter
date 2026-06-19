@@ -7,35 +7,51 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 
 ## SFC Structure & Formatting
 
-- `<script setup lang="ts">` at the top of every SFC.
-- Always use `lang="scss"` in Vue `<style>` blocks.
-- Use self-closing tags for components/elements without content: `<Component />`.
-- No blank lines within Vue templates.
-- No blank lines between `const` assignments — group them tightly together.
-- No blank line before `return` when it immediately follows a `const` assignment in a small function.
-- **Composables that return a function directly**: no blank line between the last `const` assignment and the `return` — the `return` line immediately follows the last setup line with no gap.
-- Avoid unnecessary comments — make variable names descriptive instead of explaining obvious logic. Keep comments that explain _why_ (non-obvious decisions, disable reasons, intentional workarounds). No blank line before or after a comment — attach it directly to the code it describes.
-- Minimise blank lines; group related code tightly.
-- **Blank line after a closing `}`** of an `if`, `for`, or other block statement — unless it is the last statement in its scope or is immediately followed by another opening block.
+- `<script setup lang="ts">` at the top of every SFC. Prefer attributify over `<style>` blocks; when a block is genuinely needed use `<style scoped>` and only add `lang="scss"` for Sass features (nesting, `&`, `//` comments, `@mixin`/`@include`). See the `styling` skill.
+- Self-closing tags for empty components/elements: `<Component />`.
+- Blank-line placement (templates, consts, returns, blocks) and comment attachment — see the `formatting` skill.
 
 ## Vue Macro Ordering
 
-`defineSlots` → `defineModel` → `defineProps` → `defineEmits` (in this order), then all `const` assignments, then `defineExpose` last (preceded by a blank line, before any `watch`/lifecycle hooks).
+`defineSlots` → `defineModel` → `defineProps` → `defineEmits`, then all `const` assignments, then `defineExpose` last (preceded by a blank line, before any `watch`/lifecycle hooks).
 
-## Inline Functions & Macros
+- **`defineModel`**: always type explicitly. For booleans pass `{ default: false }` so the type excludes `undefined`: `defineModel<boolean>({ default: false })`. Never declare `defineModel` unless the value is used in script (`watch`, `computed`, or passed) — otherwise use `:prop` + `@event`. For an **unnamed** model, name the variable `modelValue` (never `model` or another alias): `const modelValue = defineModel<string>()`. For a **named** model, the variable matches the name: `const title = defineModel<string>("title")`.
+- **`defineSlots`**: only assign to `const slots` when `slots` is referenced in script. Otherwise call `defineSlots<...>()` without assignment.
 
-- **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
-- **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places (e.g. called from both a button click AND a keydown handler). Single-use handlers must always be inlined, no exceptions.
-- **IME composition guard** — when handling `@keydown.enter` on text inputs, guard inline against IME composition so that confirming a CJK candidate doesn't prematurely commit: `@keydown.enter.stop="!$event.isComposing && commitEdit()"`.
-- **`defineModel`**: always type explicitly. For booleans, you must pass `{ default: false }` so the type does not implicitly include `undefined` (`defineModel<boolean>({ default: false })`).
-- **`defineSlots`**: only assign to a variable when `slots` is actually referenced in script — `const slots = defineSlots<{ ... }>()`. If `slots` is not used in script (e.g. the template uses `<slot>` tags directly), call `defineSlots<...>()` without assignment.
-- **Never destructure event parameters** — always use `(event: KeyboardEvent) => { event.key ... }` not `({ key }: KeyboardEvent) => { key ... }`. Destructuring event methods (e.g. `preventDefault`, `stopPropagation`) causes "Illegal invocation" because they lose their `this` binding. Keep the full `event` object for consistency even when only accessing properties.
-- **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
-- **Never declare `defineModel` unless the value is actually used** in script (e.g. in a `watch`, `computed`, or passed somewhere). Don't create a model just to forward it — use `:prop` + `@event` instead.
+## Script Setup Declaration Order
+
+Declare composables and state in this order:
+
+0. **Page-metadata side-effects** — `useHead`, `useSeoMeta` belong near the **top**. A metadata call with no local-state dependency may sit even **above** `defineSlots`/the macros. One that references reactive state (a store ref, `useRuntimeConfig`) stays just after that state is declared (still above unrelated logic).
+1. **Macros** — `defineSlots` → `defineModel` → `defineProps` → `defineEmits` (see above). No blank line between the macros and the declarations that follow.
+2. **Framework / third-party value composables** — those returning reusable reactive state/values: `useNuxtApp`, `useRoute`, `useRouter`, `useRuntimeConfig`, VueUse value composables (`useVDisplay`, `useWindowSize`, …), auth (`authClient.useSession`). Group these together immediately after the macros.
+3. **Custom Pinia stores** — `useXStore` + `storeToRefs` + destructured methods, using per-store grouping (init → `storeToRefs` → methods, then the next store; never batch all inits then all refs).
+4. **Custom composables, refs, computeds, watches, functions** — everything else (`useRoomName`, `useTemplateRef`, `ref`, `computed`, `watch`, handlers).
+
+```ts
+// CORRECT
+useHead({ titleTemplate: ... });       // 0. static page metadata — top, may precede macros
+defineSlots<{ default: () => VNode }>();
+const { $trpc } = useNuxtApp();        // 2. third-party
+const { smAndDown } = useVDisplay();   // 2. third-party
+const roomStore = useRoomStore();      // 3. custom store
+const { currentRoom } = storeToRefs(roomStore);
+const roomName = useRoomName(...);     // 4. custom composable / state
+```
+
+Never leave a framework value composable (e.g. `useVDisplay`, `useRoute`) stranded at the bottom below custom stores and refs. **Exceptions that stay in place (category 4, not hoisted):** `useTemplateRef` (a ref — group with refs), and side-effect registrations that depend on local state (`useEventListener`, or a `useSeoMeta` that reads store refs) which must stay after the state they depend on.
+
+## Inline Functions & Handlers
+
+- Inline arrow functions where argument types are inferable — don't extract single-use, trivially-typed lambdas.
+- Inline Vue event handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`) so Vue infers event arg types. Extract to a named function only if the same logic is reused in multiple places. Single-use handlers must always be inlined.
+- **`@click` shorthand**: a single async call uses `@click="myAsyncFn(args)"` directly — no `async () => { await ... }` wrapper.
+- **IME composition guard** — on `@keydown.enter` for text inputs, guard inline so confirming a CJK candidate doesn't commit: `@keydown.enter.stop="!$event.isComposing && commitEdit()"`.
+- **Never destructure event parameters** — use `(event: KeyboardEvent) => { event.key ... }` not `({ key })`. Destructuring event methods (`preventDefault`, etc.) causes "Illegal invocation" via lost `this` binding. Keep the full `event` object even when only reading properties.
 
 ## v-model vs Split Bindings
 
-Prefer `v-model="ref"` over the split `:model-value="ref"` + `@update:model-value="ref = $event"` whenever the update is a direct assignment to a single ref.
+Prefer `v-model="ref"` over the split `:model-value` + `@update:model-value` whenever the update is a direct assignment to a single ref.
 
 ```vue
 <!-- WRONG — unnecessary split for a direct assignment -->
@@ -47,50 +63,46 @@ Prefer `v-model="ref"` over the split `:model-value="ref"` + `@update:model-valu
 
 Keep the split form only when genuinely needed:
 
-- **Computed get expression** — `:model-value` derives from more than a bare ref (e.g. `a?.b ?? c`)
+- **Computed get** — `:model-value` derives from more than a bare ref (e.g. `a?.b ?? c`)
 - **Multiple writes on update** — the handler sets more than one ref
-- **Extra-arg function call** — `@update:model-value="setFilter(key, $event)"` (v-model can't pass `key`)
-- **Dynamic property assignment** — `@update:model-value="row[col] = $event"` (v-model can't target a computed key)
-- **Genuine value transformation** — unit conversion, date-format conversion, bitwise ops (anything where the stored value differs structurally from the displayed value)
+- **Extra-arg function call** — `@update:model-value="setFilter(key, $event)"`
+- **Dynamic property assignment** — `@update:model-value="row[col] = $event"`
+- **Genuine value transformation** — unit/date-format conversion, bitwise ops (stored value differs structurally from displayed)
 
-**Never apply `normalizeString` (or any trimming) anywhere in Vue components — not in `@update:model-value` and not in submit handlers.** The Zod input schemas for tRPC mutations already normalize string fields at the boundary via `createNameSchema`/`createNormalizedStringSchema` (which use `.transform(normalizeString).pipe(...)`). Duplicating the transform in Vue is redundant and, in `@update:model-value`, actively harmful (trims mid-typing and swallows spaces):
+### `normalizeString` Never in Vue
+
+Never apply `normalizeString` (or any trimming) anywhere in Vue — not in `@update:model-value`, not in submit handlers. The Zod input schemas for tRPC mutations already normalize via `createNameSchema`/`createNormalizedStringSchema` (`.transform(normalizeString).pipe(...)`). Duplicating is redundant, and in `@update:model-value` actively harmful (trims mid-typing, swallows spaces).
 
 ```vue
-<!-- WRONG — trims while the user is still typing -->
+<!-- WRONG — trims while still typing -->
 <v-text-field :model-value="name" @update:model-value="name = normalizeString($event)" />
 
-<!-- WRONG — redundant; the Zod schema already normalizes on the server -->
-<v-text-field v-model="name" />
-<!-- emit('submit', normalizeString(name)) ← unnecessary -->
-
-<!-- CORRECT — raw input flows through unchanged; Zod handles normalization -->
+<!-- CORRECT — raw input flows through; Zod handles normalization -->
 <v-text-field v-model="name" />
 <!-- emit('submit', name) -->
 ```
 
-`normalizeString` must **never** appear directly in Vue components. Where you need to check validity or guard a disabled button, use the relevant Zod schema's `safeParse` instead:
+To check validity or guard a disabled button, use the Zod schema's `safeParse` instead:
 
 ```vue
-<!-- WRONG — directly normalizing to check emptiness -->
+<!-- WRONG -->
 <v-btn :disabled="!normalizeString(name)" />
-
-<!-- CORRECT — let the schema decide validity -->
+<!-- CORRECT -->
 <v-btn :disabled="!nameSchema.safeParse(name).success" />
 ```
 
-For dirty-state comparisons (e.g. enabling a Save button only when the value actually changed), parse both sides through the schema so normalized values are compared:
+For dirty-state comparisons, parse both sides through the schema so normalized values are compared:
 
 ```typescript
 // WRONG — compares raw input against stored normalized value
 normalizeString(editedTopic) !== storedTopic;
-
 // CORRECT — parse through the schema, then compare
 topicSchema.safeParse(editedTopic).data !== storedTopic;
 ```
 
-`normalizeString` remains valid in non-Vue, non-form contexts within the codebase (text-parsing utilities, CSV/XLSX deserialization, slash-command parsing, etc.) — places that don't go through a tRPC Zod boundary.
+`normalizeString` remains valid in non-Vue, non-form contexts (text-parsing utilities, CSV/XLSX deserialization, slash-command parsing) — anything not crossing a tRPC Zod boundary.
 
-**Don't add client-side Zod validation guards in submit or mutation handlers.** Trust the server schema — just pass raw values to the API and let tRPC's Zod boundary handle normalization and validation. In these handlers, avoid `safeParse` guards, emptiness checks, and local normalization before mutating local state:
+Don't add client-side Zod validation guards in submit/mutation handlers (no `safeParse` guards, emptiness checks, or local normalization before mutating local state). Pass raw values; trust the server schema.
 
 ```typescript
 // WRONG — second-guessing the server schema
@@ -100,27 +112,23 @@ const createWord = () => {
   list.value = [...list.value, word];
 };
 
-// CORRECT — pass raw, let Zod on the server handle it
+// CORRECT — pass raw, let server Zod handle it
 const createWord = () => {
   list.value = [...list.value, newWord.value];
   newWord.value = "";
 };
 ```
 
-The only acceptable client-side validation in Vue is Vuetify form field rules (for inline error messages) and simple disabled-button state driven by `safeParse().success` on a shared schema.
+The only acceptable client-side validation is Vuetify form field rules (inline errors) and disabled-button state driven by `safeParse().success` on a shared schema.
 
 ## Template Attribute Ordering
 
-Within any element or component tag, order attributes as follows:
-
 1. **`v-model`** (or **`v-for`** + **`:key`**) — binding/iteration directives first
-2. **`class`** — static class string (if any)
-3. **UnoCSS attributify props** — shorthand utility classes used as props (e.g. `ma-2`, `flex`, `flex-col`)
-4. **Component props with values** — `:prop="value"` or `prop="string"` (alphabetical within this group)
-5. **Shorthand boolean props** — bare prop names that default to `true` (e.g. `clearable`, `hide-details`, `single-line`)
+2. **`class`** — static class string
+3. **UnoCSS attributify props** — shorthand utilities as props (`ma-2`, `flex`, `flex-col`)
+4. **Component props with values** — `:prop="value"` / `prop="string"` (alphabetical)
+5. **Shorthand boolean props** — bare names defaulting to `true` (`clearable`, `hide-details`)
 6. **Event handlers** — `@event="..."` last
-
-Example:
 
 ```vue
 <v-text-field
@@ -137,47 +145,39 @@ Example:
 
 ## Template Conventions
 
-- **Truthiness checks** — use `v-if="value"` not `v-if="value !== null"`. Explicit null/undefined comparisons are only needed when distinguishing between multiple falsy values (e.g. a number where `0` is valid, a boolean where `false` is meaningful, or when `null` vs `undefined` must be treated differently).
-
-- **No bare function references in `@event` bindings** — bare references forward the DOM/Vue event object as the first argument, which is almost always unintended. Use `fn()` for zero-arg calls and an explicit arrow function when arguments are needed:
+- **Truthiness** — use `v-if="value"` not `v-if="value !== null"`. Explicit null/undefined comparisons only when distinguishing falsy values (`0` valid, `false` meaningful, or `null` vs `undefined` matter).
+- **No bare function references in `@event` bindings** — bare refs forward the event object as first arg (almost always unintended). Use `fn()` for zero-arg calls, an arrow function when args are needed:
 
   ```vue
-  <!-- CORRECT — zero-arg call, no event forwarding -->
-  @click="onSave()" @keydown.enter="onSave()"
-
-  <!-- CORRECT — arrow function when passing specific args -->
-  @complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"
-
-  <!-- WRONG — forwards the click/keydown Event object as first arg -->
-  @click="onSave" @keydown.enter="onSave"
+  <!-- CORRECT -->
+  @click="onSave()" @complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"
+  <!-- WRONG — forwards Event object -->
+  @click="onSave"
   ```
 
-- **`v-for` destructuring** — always destructure `v-for` bindings when properties are accessed in the template: `v-for="{ value, icon, title } of items"` not `v-for="item of items"` + `item.value`. Only keep a full reference when the whole object is needed (e.g. passed as a prop or stored in a ref). In that case, name the loop variable to match the prop it will be passed to, enabling `:propName` shorthand.
-- **`#activator` always first** — in components that use both `#activator` and other slots (e.g. `v-tooltip`, `v-menu`), always place the `#activator` template as the first child.
-- **Slot names with dots always use dynamic binding** — Vue does not support dots in static slot names, so Vuetify item slots always require the bracket syntax: `#[`item.drag`]`, `#[`item.actions`]`. Only plain names without dots can be static (e.g. `#top`, `#activator`).
-- **Always use `:` shorthand** instead of `v-bind:propName` — write `:disabled="..."` not `v-bind:disabled="..."`. The object-spread form also has a shorthand: use `:="object"` instead of `v-bind="object"`.
-- **Never use `.value` in templates** — Vue auto-unwraps refs in template expressions. Writing `ref.value` in a template accesses `.value` on the already-unwrapped object (not on the ref), which is almost always `undefined`. Write `fn(ref)` not `fn(ref.value)`. `.value` is only needed in `<script setup>` (outside template expressions).
+- **`v-for` destructuring** — destructure when properties are accessed: `v-for="{ value, icon, title } of items"` not `item.value`. Keep a full reference only when the whole object is needed (passed as prop or stored); name the loop var to match the target prop for `:propName` shorthand.
+- **`#activator` always first** — in `v-tooltip`/`v-menu` etc., place `#activator` as the first child.
+- **Dotted slot names need dynamic binding** — Vue rejects dots in static slot names; Vuetify item slots use brackets: `#[`item.drag`]`, `#[`item.actions`]`. Only dot-free names are static (`#top`, `#activator`).
+- **Always use `:` shorthand** — `:disabled="..."` not `v-bind:disabled`. Object spread: `:="object"` not `v-bind="object"`.
+- **Never use `.value` in templates** — Vue auto-unwraps refs. `ref.value` in a template reads `.value` on the unwrapped object (usually `undefined`). Write `fn(ref)`. `.value` is only for `<script setup>` outside template expressions.
 
 ## Optional Refs — Omit the Initial Value
 
-When a ref is initially `undefined`, **do not pass `undefined` as the argument** — just omit it. Vue's `ref<T>()` overload infers `Ref<T | undefined>` automatically:
+When a ref is initially `undefined`, omit the argument — `ref<T>()` infers `Ref<T | undefined>`:
 
 ```typescript
 // WRONG — explicit undefined is redundant
 const callRoomId = ref<string | undefined>(undefined);
-
-// CORRECT — omit the argument; type is Ref<string | undefined>
+// CORRECT
 const callRoomId = ref<string>();
 ```
 
-The same applies to other nullable-initial refs: `ref<User>()`, `ref<number>()`, etc.
+## defineProps — Named `interface <ComponentName>Props`
 
-## defineProps — Always Use Named `interface <ComponentName>Props`
-
-Always declare a named interface suffixed with `Props` and named after the component, then pass it to `defineProps<...>()`. Never use the inline object-literal type or a plain `interface Props`.
+Declare a named interface suffixed `Props`, named after the component, then pass to `defineProps<...>()`. Never use an inline object-literal type or a plain `interface Props`.
 
 ```ts
-// CORRECT — name reflects the component
+// CORRECT
 interface KnockerItemProps {
   knocker: CallParticipant;
 }
@@ -185,39 +185,34 @@ const props = defineProps<KnockerItemProps>();
 
 // WRONG — anonymous type
 const props = defineProps<{ knocker: CallParticipant }>();
-
 // WRONG — generic name loses component identity
 interface Props {
   knocker: CallParticipant;
 }
-const props = defineProps<Props>();
 ```
 
-Name the interface after the component's meaningful identity (file/folder name, stripping `Index`). For `PreJoin/Index.vue` → `interface PreJoinProps`. For `JoinNotice/KnockerItem.vue` → `interface KnockerItemProps`.
+Name after the component's identity (file/folder name, stripping `Index`): `PreJoin/Index.vue` → `PreJoinProps`; `JoinNotice/KnockerItem.vue` → `KnockerItemProps`.
+
+**Prop shorthand naming** — when binding a simple local `ref`/`computed` directly to a prop, name it to match that prop so the `:prop` shorthand works: `const dataSourceType = ref(...)` → `:dataSourceType`. Doesn't apply to complex expressions (`:src="session.user.image"`) or named `defineModel` variables.
 
 ## Refs & Computed
 
-- **Template refs** — always use `useTemplateRef` for both component and HTML element refs. **Never annotate with a generic type argument** — Vue 3.5+ infers the type from the template automatically. **Never add a `Ref` suffix to the variable name.**
+- **Template refs** — always use `useTemplateRef`. Prefer no generic (Vue 3.5+ infers from the template). Never add a `Ref` suffix. Use a semantic name matching the `ref="..."` value (`"video"`, never `"videoRef"`). If a component type was imported only for the generic, remove that import.
 
   ```ts
-  // CORRECT — no generic, no "Ref" suffix, matches the ref="video" attribute
+  // CORRECT — no generic, no "Ref" suffix
   const video = useTemplateRef("video");
-
-  // WRONG — spurious type annotation
+  // Usually WRONG — redundant generic when inference works
   const video = useTemplateRef<HTMLVideoElement>("video");
-
-  // WRONG — spurious import + "Ref" suffix
-  import type MyDialog from "@/components/MyDialog.vue";
-  const dialogRef = useTemplateRef<InstanceType<typeof MyDialog>>("dialogRef");
   ```
 
-  Use a semantic name matching the `ref="..."` attribute value (e.g. `"video"`, `"container"`, `"dialog"` — never `"videoRef"`, `"divRef"`). If a component type was only imported for the `useTemplateRef` generic, remove that import entirely.
+  **Generic is justified only when template inference doesn't give the type you need**: (1) the element/component the `ref` sits on doesn't expose the property you actually want, or (2) the inferred type is an overly complex union you want to simplify.
 
-- **Sort at display time** — apply `.toSorted()` inside the `computed` that feeds the template; never sort in store ingestion (`readX`, `setX`, mutation helpers). Stores hold data in natural order; components transform for display. **Exception**: when the sorted order must be sent to the backend (e.g. message pagination cursors), sort before the API call instead.
-- **Computed for reused expressions** — extract a `computed` (named to match the prop, e.g. `title`) when the same derived value is bound to two or more props. This enables the `:propName` shorthand for one binding and avoids repeating the expression: `const title = computed(() => ...)` → `:title :tooltip-text="title"`. No need for a computed if the value is only used in one place.
-- **Inline prop values** — inline prop values directly in the template to take advantage of Vue TypeScript inference. Only extract to a `computed` when the same logic is reused in multiple places. Single-use derived values stay inline.
-- **Map lookups over computed** — when a value depends on an enum/discriminant key, use a `Map[type]` lookup directly in the template instead of a computed. If multiple properties are needed from the same map entry, use `Map[type].value`. Only fall back to computed when the same map lookup is duplicated in two or more places.
-- **Writable computed over watch + local ref** — when a local boolean ref is entirely derived from (and writes back to) a store value, replace both the `ref` and the `watch` with a writable `computed`. This eliminates the indirect trigger pattern and keeps the store as the single source of truth:
+- **Sort at display time** — apply `.toSorted()` in the `computed` that feeds the template; never sort in store ingestion (`readX`, `setX`, mutation helpers). Stores hold natural order; components transform for display. **Exception**: sort before the API call when sorted order is sent to the backend (e.g. message pagination cursors).
+- **Computed for reused expressions** — extract a `computed` (named to match the prop) when the same derived value binds to 2+ props; enables `:propName` shorthand. Single-use values stay inline.
+- **Inline prop values** — inline directly to leverage Vue inference; extract to `computed` only when reused.
+- **Map lookups over computed** — when a value depends on an enum/discriminant key, use `Map[type]` directly in the template (`Map[type].value` for multiple properties). Fall back to computed only when the lookup is duplicated 2+ places.
+- **Writable computed over watch + local ref** — when a local boolean ref is entirely derived from and writes back to a store value, replace the `ref` + `watch` with a writable `computed`:
 
   ```typescript
   // WRONG — local ref + watch as indirect trigger
@@ -228,7 +223,7 @@ Name the interface after the component's meaningful identity (file/folder name, 
     editingRowKey.value = undefined;
   });
 
-  // CORRECT — writable computed; no watch needed
+  // CORRECT — writable computed; no watch
   const isUpdateMode = computed({
     get: () => editingRowKey.value === message.rowKey,
     set: (value) => {
@@ -239,60 +234,48 @@ Name the interface after the component's meaningful identity (file/folder name, 
 
 ## Conditional Logic
 
-When branching on a type/discriminant, use in this priority order:
+Branch on a type/discriminant in priority order:
 
 1. **Map lookup** — `Map[type]` inline in template (preferred)
-2. **`switch` expression** — use a `switch` in script when a map is impractical
+2. **`switch` expression** — in script when a map is impractical
 3. **`if / else if / else`** — explicit branches for complex conditions
-4. **Never** chain standalone `if` statements for mutually exclusive conditions. Always use `else if` / `else` or a `switch`.
+4. **Never** chain standalone `if` statements for mutually exclusive conditions — use `else if`/`else` or `switch`.
 
 ## Auth Session
 
-Always pass `useFetch` as the argument to `authClient.useSession()` in Vue components. This makes better-auth use Nuxt's SSR-aware `useFetch` internally instead of its default fetch:
+Always pass `useFetch` to `authClient.useSession()` so better-auth uses Nuxt's SSR-aware `useFetch`:
 
 ```ts
 // CORRECT — SSR-aware
 const { data: session } = await authClient.useSession(useFetch);
-
-// WRONG — skips Nuxt's useFetch, breaks SSR
+// WRONG — breaks SSR
 const { data: session } = await authClient.useSession();
 ```
 
 ## Upsert Forms — Create vs Edit Mode
 
-When a form component handles both create and edit, use an explicit `isCreate` prop (default `false`) rather than deriving mode from the presence of `initialValues`. The parent page knows the intent and passes `is-create` explicitly.
-
-For local form state, use a single `values` ref over separate per-field refs:
+When a form handles both create and edit, use an explicit `isCreate` prop (default `false`) rather than deriving mode from `initialValues`. The parent passes `is-create` explicitly. Use a single `values` ref over per-field refs:
 
 ```ts
 interface PostUpsertFormProps {
   initialValues?: Pick<Post, "description" | "title">;
   isCreate?: boolean;
 }
-
 const { initialValues = { description: "", title: "" }, isCreate = false } = defineProps<PostUpsertFormProps>();
 const values = ref(initialValues);
 ```
 
-- Template binds to `values.title`, `values.description` — Vue auto-unwraps the ref
-- Emit passes `values` directly (auto-unwrapped in template to the plain object)
-- `isCreate` drives button text: `isCreate ? 'Post' : 'Edit Post'`
-- Create page passes `is-create`; update page passes `:initial-values` — no `is-create`
+- Template binds to `values.title` etc. (auto-unwrapped); emit passes `values` directly.
+- `isCreate` drives button text: `isCreate ? 'Post' : 'Edit Post'`.
+- Create page passes `is-create`; update page passes `:initial-values` (no `is-create`).
 
-The same `isCreate?: boolean` pattern applies to dialog buttons (e.g. `CrudView/EditDialogButton`) where it also skips the equality check that would otherwise disable the save button when form state matches the original.
+The same `isCreate?: boolean` pattern applies to dialog buttons (e.g. `CrudView/EditDialogButton`), where it also skips the equality check that would disable the save button when state matches the original.
 
-## After Finishing Code Changes
+## Watch Decision Tree — When (Not) to Use `watch`
 
-1. Run `pnpm format` from the **repo root** — formats all packages at once (~1.6s, oxfmt).
-2. Run `pnpm typecheck` in `packages/app` as a background task — takes too long to block on. The user reviews results when ready.
-
-## Watch Decision Tree — When to Use (and When Not to Use) `watch`
-
-Reach for `watch` only after exhausting these alternatives:
+Reach for `watch` only after exhausting these:
 
 ### 1. Read-only derived value → `computed`
-
-If a value is entirely derived from existing reactive state and never independently set, use `computed`. No `watch` needed.
 
 ```typescript
 // WRONG — watch + local ref for read-only derivation
@@ -303,17 +286,16 @@ watchImmediate(
     displayName.value = name ?? "";
   },
 );
-
 // CORRECT
 const displayName = computed(() => user.value?.name ?? "");
 ```
 
 ### 2. Form state initialized from props/store → initialize the `ref` directly
 
-When a component has local form state that starts from a prop or store value but is independently editable by the user, initialize the `ref` directly. **Never use `watchImmediate` just to set an initial value** — that is always a code smell.
+Local form state starting from a prop/store value but independently editable: initialize the `ref` directly. **Never use `watchImmediate` just to set an initial value** — always a code smell.
 
 ```typescript
-// WRONG — watchImmediate to initialize is redundant; ref starts as null then immediately overwritten
+// WRONG — watchImmediate to initialize
 const selectedCategoryId = ref<null | string>(null);
 watchImmediate(
   () => room.value?.categoryId,
@@ -321,12 +303,11 @@ watchImmediate(
     selectedCategoryId.value = categoryId ?? null;
   },
 );
-
-// CORRECT — initialize directly; no watch needed
+// CORRECT — initialize directly
 const selectedCategoryId = ref(room.value?.categoryId ?? null);
 ```
 
-If the source can change externally while the form is open (e.g. real-time collaboration), add a plain `watch` — but not `watchImmediate`:
+If the source can change externally while the form is open (e.g. real-time collaboration), add a plain `watch` — not `watchImmediate`:
 
 ```typescript
 const selectedCategoryId = ref(room.value?.categoryId ?? null);
@@ -338,41 +319,39 @@ watch(
 );
 ```
 
-**Prefer props-down when the parent is adjacent and already has the data.** If the immediate parent already computes the value, pass it as a prop. The child initializes from the prop — no watch, no store duplication:
+**Prefer props-down when the parent is adjacent and already has the data.** Child initializes from the prop — no watch, no store duplication:
 
 ```typescript
-// Parent passes :category-id="room?.categoryId ?? null"
-// Child:
+// Parent: :category-id="room?.categoryId ?? null"
 const { categoryId } = defineProps<Props>();
-const selectedCategoryId = ref(categoryId); // no watch, no store read
+const selectedCategoryId = ref(categoryId);
 ```
 
-Only pass through an intermediate generic router component (e.g. `Content.vue` that routes to all settings types) if the prop is truly shared by all children. If only one specific settings type needs it, keep the store read in the leaf component and just initialize the ref directly.
+Only pass through an intermediate generic router component (e.g. `Content.vue`) if the prop is truly shared by all children. If only one settings type needs it, keep the store read in the leaf and initialize the ref directly.
 
-### 3. Reset form state when a dialog/menu opens → only if data changes externally
+### 3. Reset form state on dialog/menu open → only if data changes externally
 
-Ask: **can the underlying data change between opens from an external source** (WebSocket push, another tab, another user)?
+Ask: **can the underlying data change between opens from an external source** (WebSocket, another tab/user)?
 
 - **Yes** → `watch` the open boolean and reset on open
-- **No** → just initialize the `ref` once at setup; the watch is ceremony
+- **No** → initialize the `ref` once at setup; the watch is ceremony
 
 ```typescript
-// ONLY justified if status can change from an external source (e.g. WebSocket)
+// ONLY justified if status can change externally (e.g. WebSocket)
 watch(menu, (isOpen) => {
   if (!isOpen) return;
   selectedStatus.value = status.value;
   statusMessage.value = message.value;
 });
-
-// If this component is the only mutation path, skip the watch entirely:
-const selectedStatus = ref(status.value); // initialized once; fine
+// If this is the only mutation path, skip the watch:
+const selectedStatus = ref(status.value);
 ```
 
-If the user opens → changes → closes without saving → reopens, they'll see their unsaved selection. That is usually acceptable (or even desirable — they indicated intent). The watch-to-reset pattern forces a reset on every open, which can feel punishing.
+If the user opens → changes → closes without saving → reopens, they see their unsaved selection — usually acceptable (it indicates intent). Watch-to-reset forces a reset on every open, which can feel punishing.
 
 ### 4. Bridging to external imperative APIs → `watch` is correct
 
-Vue's reactivity cannot reach into Phaser, Three.js, Tiptap, Desmos, or any DOM-imperative API. `watch` is the correct bridge:
+Vue reactivity can't reach Phaser, Three.js, Tiptap, Desmos, or DOM-imperative APIs:
 
 ```typescript
 watch(isDark, (newIsDark) => {
@@ -382,7 +361,7 @@ watch(isDark, (newIsDark) => {
 
 ### 5. Async side effects triggered by reactive state → `watch` is correct
 
-Auto-save, API calls on throttled search, typing indicators — these are inherently imperative:
+Auto-save, API calls on throttled search, typing indicators:
 
 ```typescript
 watch(throttledSearchQuery, async (newQuery) => {
@@ -402,84 +381,60 @@ watch(throttledSearchQuery, async (newQuery) => {
 | External imperative API        | `watch`                                                   |
 | Async side effect              | `watch`                                                   |
 
-## Watch Aliases
+## Watch Aliases & `watchEffect`
 
-Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `watchImmediate(source, cb)` over `watch(source, cb, { immediate: true })`. When both flags are needed, use `watchDeep(source, cb, { immediate: true })` (alphabetical: deep before immediate).
+- Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `watchImmediate(source, cb)` over `{ immediate: true }`. When both needed: `watchDeep(source, cb, { immediate: true })` (alphabetical: deep before immediate).
+- Always use `watch` with explicit dependencies instead of `watchEffect` — implicit tracking is hard to audit and re-runs on unrelated changes. Wrap a prop dependency in a getter: `() => isActive`.
 
-## Prefer `watch` Over `watchEffect`
-
-Always use `watch` with explicit dependencies instead of `watchEffect`. `watchEffect` tracks dependencies implicitly, making them hard to audit and prone to unexpected re-runs when unrelated reactive data changes.
-
-```typescript
-// WRONG — implicit tracking, hard to audit
-watchEffect(() => {
-  if (!gem.value) return;
-  gem.value.material.roughnessMap = roughnessMap.value;
-});
-
-// CORRECT — explicit dependencies
-watch([gem, roughnessMap], ([newGem, newRoughnessMap]) => {
-  if (!newGem) return;
-  newGem.material.roughnessMap = newRoughnessMap;
-});
-```
-
-For a prop dependency, wrap it in a getter: `() => isActive`.
+  ```typescript
+  // WRONG — implicit tracking
+  watchEffect(() => {
+    if (!gem.value) return;
+    gem.value.material.roughnessMap = roughnessMap.value;
+  });
+  // CORRECT — explicit dependencies
+  watch([gem, roughnessMap], ([newGem, newRoughnessMap]) => {
+    if (!newGem) return;
+    newGem.material.roughnessMap = newRoughnessMap;
+  });
+  ```
 
 ## Vue Hooks
 
-- Always place `watch`, `onMounted`, `onUnmounted`, and other Vue lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments.
-- Always put a blank line before them to visually separate them from regular `const` assignments.
-- Always wrap the callback in an explicit arrow function — never pass a function reference directly. This avoids scope/binding issues and prevents accidental argument forwarding: `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
-- This applies everywhere — `.map()`, `.filter()`, lifecycle hooks, JS event listeners, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`. Vue template `@event` bindings are handled separately in Template Conventions: use `@click="fn()"` (call expression), not `@click="fn"` (bare reference).
+- Place `watch`, `onMounted`, `onUnmounted`, and other lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments, with a blank line before them.
+- Always wrap the callback in an explicit arrow function — never pass a function reference directly (avoids scope/binding issues and argument forwarding): `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
+- Applies everywhere — `.map()`, `.filter()`, lifecycle hooks, JS event listeners: `array.map((item) => fn(item))` not `array.map(fn)`. (Template `@event` bindings: use `@click="fn()"`, not `@click="fn"` — see Template Conventions.)
 
 ## Browser Globals — Always Use `window.` Prefix
 
-Always prefix browser-only globals with `window.` for clarity. This makes it explicit that the code is browser-only and won't run on the server:
+Prefix browser-only globals with `window.` to make browser-only code explicit (won't run on server):
 
 ```typescript
 // WRONG
 document.getElementById(id);
-document.querySelector("label");
-document.createElement("a");
-document.body.appendChild(element);
-document.documentElement.animate(...);
 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 const pc = new RTCPeerConnection({ iceServers });
-const ctx = new AudioContext();
-const audio = new Audio();
 const frame = requestAnimationFrame(cb);
-cancelAnimationFrame(frame);
 
 // CORRECT
 window.document.getElementById(id);
-window.document.querySelector("label");
-window.document.createElement("a");
-window.document.body.appendChild(element);
-window.document.documentElement.animate(...);
 const stream = await window.navigator.mediaDevices.getUserMedia({ audio: true });
 const pc = new window.RTCPeerConnection({ iceServers });
-const ctx = new window.AudioContext();
-const audio = new window.Audio();
 const frame = window.requestAnimationFrame(cb);
-window.cancelAnimationFrame(frame);
 ```
 
-Standard built-ins available in all environments (Node.js + browser) do **not** need the `window.` prefix: `Uint8Array`, `Map`, `Set`, `JSON`, `Promise`, `crypto`, etc.
+Standard built-ins available in all environments (`Uint8Array`, `Map`, `Set`, `JSON`, `Promise`, `crypto`, etc.) do **not** need `window.`.
 
 ## SSR Guards — Always Use `getIsServer()`
 
-Always use `getIsServer()` from `@esposter/shared` to guard browser-only code. Never use `import.meta.client` or `typeof window !== "undefined"` — `getIsServer()` is consistent across Nuxt app code, shared packages, and Azure Functions.
+Use `getIsServer()` from `@esposter/shared` to guard browser-only code. Never `import.meta.client` or `typeof window !== "undefined"` — `getIsServer()` is consistent across Nuxt, shared packages, and Azure Functions.
 
 ```typescript
 // WRONG
 if (import.meta.client) { ... }
-if (typeof window !== "undefined") { ... }
-
 // CORRECT
 if (!getIsServer()) { ... }
 
-// Example: useScript use callback
 useScript<typeof Desmos>(API_URL, {
   use: () => (getIsServer() ? undefined : window.Desmos) as typeof Desmos,
 });
@@ -487,8 +442,15 @@ useScript<typeof Desmos>(API_URL, {
 
 ## Routing
 
-- **`useRouter()` for reactive contexts** — use when reading route data inside a `computed` or `watch` (e.g. `router.currentRoute.value.params.id` in a `computed`), or when calling navigation methods (`router.push`, `router.replace`).
-- **`useRoute()` for plain reads** — use when reading params/query outside of a reactive context (e.g. inside a regular function or async handler).
+- **`useRouter()` for reactive contexts** — reading route data inside a `computed`/`watch` (e.g. `router.currentRoute.value.params.id`) or calling navigation methods (`router.push`, `router.replace`).
+- **`useRoute()` for plain reads** — reading params/query outside a reactive context (regular function or async handler).
+
+> This inverts the usual Vue Router split deliberately: `useRoute()` returns a stale, non-reactive snapshot when called outside a component setup (composables, stores, middleware, async handlers), whereas `useRouter().currentRoute` stays reactive everywhere. Standardizing on `useRouter()` for reactive reads avoids that footgun since route reads often live in composables.
+
+## After Finishing Code Changes
+
+1. Run `pnpm format` from the **repo root** — formats all packages (~1.6s, oxfmt).
+2. Run `pnpm typecheck` in `packages/app` as a background task — too long to block on; user reviews when ready.
 
 ## Vuetify
 

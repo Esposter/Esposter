@@ -1,10 +1,15 @@
+---
+name: error-handling
+description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch banned), chaining patterns, finalizers, and tRPC backend guards. Apply when handling errors in components, composables, stores, server routes, or tRPC routers.
+---
+
 # Error Handling Conventions
 
-Esposter uses **neverthrow** for explicit error handling. No silent swallows — every error is either propagated, logged, or shown to the user.
+**neverthrow** for explicit error handling. No silent swallows — every error is propagated, logged, or shown to the user.
 
-## `try` / `catch` Are BANNED
+## try / catch Are BANNED
 
-**Never write `try { ... } catch { ... }` anywhere in this codebase.** The `try` keyword is forbidden. Always use `getResult`/`getResultAsync` (and their chain methods) instead. This applies to all code — components, composables, stores, server routes, and tRPC routers alike.
+Never write `try` anywhere (no `try`/`catch`, no `try`/`finally`) in any code — components, composables, stores, server routes, tRPC routers. Use `getResult`/`getResultAsync` + chain methods; for cleanup use `withFinalizer`/`withFinalizerAsync`.
 
 ## Core Utility
 
@@ -12,11 +17,17 @@ Esposter uses **neverthrow** for explicit error handling. No silent swallows —
 import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } from "@esposter/shared";
 // getResult: sync fn → Result<T, Error>
 // getResultAsync: async fn → ResultAsync<T, Error>
-// Always use these instead of fromThrowable or ResultAsync.fromPromise directly.
-// noop: () => {} — use as the ok-handler in .match(noop, errorHandler)
-// withFinalizer: sync fn + sync finalizer — use for sync cleanup (e.g. restoring globals)
-// withFinalizerAsync: async/sync fn + async/sync finalizer — use for all async operations
+// noop: () => {} — the ok-handler in .match(noop, errorHandler)
+// withFinalizer: sync fn + sync finalizer (e.g. restoring globals)
+// withFinalizerAsync: async/sync fn + async/sync finalizer — for all async operations
 ```
+
+- Always use `getResult(() => expr)` / `getResultAsync(() => asyncExpr)`. Never call `fromThrowable` or `ResultAsync.fromPromise` directly.
+- Never leave a `Result`/`ResultAsync` unhandled — finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
+- Never `catch {}` (silent swallow). Never `console.warn` — always `.orTee(console.error)`.
+- Never `void` a ResultAsync — always `await` (ResultAsync never rejects, so awaiting is safe).
+- Never end a fire-and-forget chain with `.orTee(handler)` alone (lint flags it) — use `.match(noop, handler)`.
+- No-op ok handler: always `noop`. Never inline `() => undefined` or `() => {}`.
 
 ## Patterns
 
@@ -47,6 +58,8 @@ return getResultAsync(() => someAsyncOp())
   .unwrapOr(defaultValue);
 ```
 
+Best-effort but still logged: same shape with `.unwrapOr(undefined)`.
+
 ### Async operation → boolean success (composables)
 
 ```typescript
@@ -59,25 +72,9 @@ return getResultAsync(() => auth.save(value)).match(
 );
 ```
 
-### Best-effort (still log)
-
-```typescript
-await getResultAsync(() => bestEffortOp())
-  .orTee(console.error)
-  .unwrapOr(undefined);
-```
-
-Never leave a `Result` or `ResultAsync` unhandled. Finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
-Never use `catch {}` (silent swallow). Never use `console.warn` — always `.orTee(console.error)`.
-Never use `void` with ResultAsync — always `await`. Since ResultAsync never rejects, awaiting is always safe.
-Never end a fire-and-forget chain with `.orTee(handler)` alone — it returns `ResultAsync` and the lint rule flags it. Use `.match(noop, handler)` instead.
-No-op ok handler: always `noop` (from `@esposter/shared`). Never inline `() => undefined` or `() => {}` — `noop` is the canonical form.
-
-Always use `getResult(() => expr)` for sync throwing operations and `getResultAsync(() => asyncExpr)` for async ones. Never call `fromThrowable` or `ResultAsync.fromPromise` directly.
-
 ### Discriminated error types
 
-When you need `instanceof` checks on the error, use `.match()` or `.isErr()`:
+For `instanceof` checks on the error, use `.match()` or `.isErr()`:
 
 ```typescript
 const result = await getResultAsync(() => op());
@@ -91,10 +88,9 @@ const value = result.value;
 
 ### Chaining multiple fallible steps
 
-Use `getResultAsync(() => promise).andThen(...)` chains when different steps need different error handling (`.orElse()` on a specific step) or mid-chain side effects (`.andTee()`).
+Use `getResultAsync(() => promise).andThen(...)` when different steps need different error handling (`.orElse()` on a specific step) or mid-chain side effects (`.andTee()`).
 
 ```typescript
-// per-step error recovery — use andThen chain
 await getResultAsync(() => showSaveFilePicker())
   .andThen(({ blob, writable }) =>
     getResultAsync(() => writable.write(blob)).orElse((error) =>
@@ -137,18 +133,14 @@ await getResultAsync(() => showOpenFilePicker())
 
 ## tRPC Backend Guards
 
-Located in `server/trpc/guards/`. Test once, use everywhere — routers don't need to repeat null checks.
+Located in `server/trpc/guards/`. Test once, use everywhere — routers don't repeat null checks.
 
 ```typescript
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 
 // findFirst → throws TRPCError NOT_FOUND if null
-const post = await requireEntity(
-  tx.query.posts.findFirst({ where: ... }),
-  DatabaseEntityType.Post,
-  input.postId,
-);
+const post = await requireEntity(tx.query.posts.findFirst({ where: ... }), DatabaseEntityType.Post, input.postId);
 
 // insert/update .returning()[0] → throws TRPCError BAD_REQUEST if undefined
 const updated = requireMutation(
@@ -161,34 +153,20 @@ const updated = requireMutation(
 
 ## Finalizers
 
-Two variants — both live in `@esposter/shared`. Both run the finalizer regardless of success/failure, then unwrap the original result (throwing on Err). No terminal consumer (`.unwrapOr`, `.match`) needed.
+Both live in `@esposter/shared`. Both run the finalizer regardless of success/failure, then unwrap the original result (throwing on Err). No terminal consumer needed.
 
-Finalizer error handling differs between variants:
+Finalizer error handling differs:
 
-- **`withFinalizer`**: finalizer errors are always rethrown.
-- **`withFinalizerAsync`**: finalizer errors are rethrown if the original operation succeeded; silently logged via `console.error` if the original operation failed (to preserve and rethrow the original error).
-
-### `withFinalizer` — sync
-
-Use when both the operation and the finalizer are synchronous:
+- **`withFinalizer`** (sync): finalizer errors are always rethrown.
+- **`withFinalizerAsync`** (async/sync mix): finalizer errors rethrown if the original operation succeeded; silently logged via `console.error` if it failed (preserving the original error). Both arguments are plain `() => Promisable<T>`, not `ResultAsync`.
 
 ```typescript
-// restoring a global (see ignoreWarn.ts)
+// withFinalizer — restoring a global (see ignoreWarn.ts)
 return withFinalizer(fn, () => {
   console.warn = warn;
 });
-```
 
-### `withFinalizerAsync` — async/sync mix
-
-Use for all async operations. Both arguments are plain `() => Promisable<T>` — not `ResultAsync`:
-
-```typescript
-await withFinalizerAsync(async () => {
-  await save();
-}, onComplete);
-
-// loading flag pattern
+// withFinalizerAsync — loading flag pattern
 await withFinalizerAsync(
   async () => {
     items.value = await fetchItems();
@@ -199,6 +177,4 @@ await withFinalizerAsync(
 );
 ```
 
-For simple loading flags around a `ResultAsync`, set the flag after `await`; `ResultAsync` resolves to a `Result` instead of rejecting.
-
-`useInFlight()` handles loading state automatically — prefer it over manual `isLoading` flags.
+For simple loading flags around a `ResultAsync`, set the flag after `await` (ResultAsync resolves to a `Result` instead of rejecting). `useInFlight()` handles loading state automatically — prefer it over manual `isLoading` flags.

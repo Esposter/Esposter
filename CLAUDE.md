@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Framework**: Nuxt 4
 - **UI Library**: Vue 3.5+
 - **Build System**: Vite, Rolldown
-- **Styling**: UnoCSS (Attributify Mode), Vuetify 3, Sass
+- **Styling**: UnoCSS (Attributify Mode), Vuetify 4, Sass
 - **State Management**: Pinia
 - **API**: tRPC, Nuxt Server Routes
 - **Database**: Drizzle ORM (PostgreSQL), Azure Table Storage, Azure Blob Storage
@@ -49,7 +49,7 @@ pnpm lint:fix         # oxlint + eslint --fix (use this for local lint verificat
 pnpm test             # vitest watch mode
 pnpm test path/to/file.test.ts          # run single test file
 pnpm test -t "test description"         # run single test by name
-pnpm coverage         # vitest run --coverage
+pnpm coverage         # run from repo root — vitest --coverage across all workspace projects
 ```
 
 Do not run Vitest on Windows in this repository unless explicitly requested. Known Windows startup failures include Vite/Rolldown `spawn EPERM` during config loading and UnoCSS/happy-dom path issues; write tests when useful and let the user run them in a supported environment.

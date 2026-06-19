@@ -12,7 +12,7 @@ const foregroundTextureKey = computed(() => `World${tilemapKey.value}Foreground`
 const texture = computed(() => (ImageKeys.has(foregroundTextureKey.value) ? foregroundTextureKey.value : undefined));
 const worldPlayerStore = useWorldPlayerStore();
 const { sprite } = storeToRefs(worldPlayerStore);
-// Make the foreground have a higher depth than the player for them to hide behind
+// Foreground sits above the player so they can hide behind it.
 const depth = computed(() => (sprite.value ? sprite.value.depth + 1 : 0));
 </script>
 

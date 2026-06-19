@@ -11,10 +11,10 @@ export const useFileHistoryStore = defineStore("tableEditor/file/history", () =>
   const isRedoable = computed(() => future.value.length > 0);
   const isUndoable = computed(() => history.value.length > 0);
   const redoDescription = computed(() =>
-    future.value.length > 0 ? takeOne(future.value, future.value.length - 1).description : null,
+    future.value.length > 0 ? takeOne(future.value, future.value.length - 1).description : "",
   );
   const undoDescription = computed(() =>
-    history.value.length > 0 ? takeOne(history.value, history.value.length - 1).description : null,
+    history.value.length > 0 ? takeOne(history.value, history.value.length - 1).description : "",
   );
   const clear = () => {
     future.value = [];
@@ -22,7 +22,9 @@ export const useFileHistoryStore = defineStore("tableEditor/file/history", () =>
   };
   TableEditorHookMap.Close.push(clear);
   const push = (command: ADataSourceCommand) => {
-    history.value.push(command);
+    // MarkRaw so Vue never wraps the command in a reactive Proxy; a Proxy breaks the
+    // ECMAScript # private field/method brand checks the command relies on at execute/undo time.
+    history.value.push(markRaw(command));
     if (history.value.length > MAX_HISTORY_SIZE) history.value.shift();
     future.value = [];
   };
