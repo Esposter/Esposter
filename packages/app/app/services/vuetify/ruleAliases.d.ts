@@ -1,7 +1,9 @@
-import type rulesConfiguration from "@/rules.config";
-
-type CustomRuleAliases = (typeof rulesConfiguration)["aliases"];
+import type { ValidationRuleBuilderWithOptions, ValidationRuleBuilderWithoutOptions } from "vuetify/labs/rules";
 
 declare module "vuetify/labs/rules" {
-  interface RuleAliases extends CustomRuleAliases {}
+  interface RuleAliases {
+    isNotProfanity: ValidationRuleBuilderWithoutOptions;
+    requireAtLeastN: ValidationRuleBuilderWithOptions<number>;
+    requireAtMostMaxFileSize: ValidationRuleBuilderWithoutOptions;
+  }
 }

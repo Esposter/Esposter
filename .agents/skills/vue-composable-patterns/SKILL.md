@@ -123,7 +123,7 @@ const uniqueNameRule = useColumnNameRule(() => dataSource.columns); // create
 
 ## Extract Duplicate Validation Rules
 
-When the same validation rule appears in 2+ components, extract to a shared composable immediately — don't copy-paste. The optional `currentName` parameter handles edit vs create:
+When the same validation rule appears in 2+ components **and depends on reactive component state** (e.g. uniqueness against a live list), extract to a shared composable immediately — don't copy-paste. (Stateless or simply parameterized rules belong in `app/rules.config.ts` as global `useVRules()` aliases instead — see the vuetify skill.) The optional `currentName` parameter handles edit vs create:
 
 ```typescript
 // WRONG: duplicate inline rules in Edit/CreateDialogButton

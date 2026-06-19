@@ -111,7 +111,7 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true));
   <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid />
 </div>
 <v-form ref="editForm" v-model="isEditFormValid">
-  <v-text-field :rules="[formRules.required]" hide-details ... />
+  <v-text-field :rules="[rules.required()]" hide-details ... />
 </v-form>
 ```
 
@@ -131,9 +131,24 @@ Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navi
 
 ## Form Validation Rules
 
-- **Always use `formRules` from `@/services/vuetify/formRules`** — never inline arrow-function rules in templates (the linter strips them). E.g. `[formRules.required]`, `[formRules.isNotProfanity]`, `[formRules.requireAtMostNCharacters(n)]`, `[formRules.requireAtMostMaxFileSize]`.
-- Multiple rules combine naturally: `:rules="[formRules.required, formRules.requireAtMostNCharacters(100)]"`.
-- The `required` HTML attribute is not a Vuetify prop — use `:rules="[formRules.required]"`.
+- Use the auto-imported `useVRules()` composable (Vuetify's rules plugin; `prefixComposables: true` renames `useRules` → `useVRules`). Declare `const rules = useVRules();` at the top of `<script setup>` with the other composables, then reference rules as builders: `:rules="[rules.required(), rules.maxLength(100)]"`. Never inline arrow-function rules in templates (the linter strips them).
+- Built-in aliases (`required`, `maxLength`, `minLength`, `email`, `pattern`, …) come from Vuetify — don't reimplement them; their default messages live in Vuetify's locale (e.g. `required` → "This field is required", `maxLength` → "You must enter a maximum of {0} characters").
+- Custom stateless/parameterized rules live in `app/rules.config.ts` (wired via `vuetify.moduleOptions.rulesConfiguration.configFile`): currently `isNotProfanity`, `requireAtLeastN(n)`, `requireAtMostMaxFileSize`. Add new global rules there as `aliases` builders (`(err) => (value) => …` or `(options, err) => (value) => …`, threading `err` for a caller-supplied message), end the file with `satisfies RulesOptions`, then call `rules.<name>(...)`.
+- Declare each custom alias's type in `app/services/vuetify/ruleAliases.d.ts` so it gets autocomplete + option-type checking — use Vuetify's canonical builder helpers, not hand-rolled signatures:
+
+```ts
+import type { ValidationRuleBuilderWithOptions, ValidationRuleBuilderWithoutOptions } from "vuetify/labs/rules";
+
+declare module "vuetify/labs/rules" {
+  interface RuleAliases {
+    myRule: ValidationRuleBuilderWithoutOptions; // (err?) => ValidationRule
+    myRuleWithOption: ValidationRuleBuilderWithOptions<number>; // (option, err?) => ValidationRule
+  }
+}
+```
+
+- Rules that depend on reactive component state (e.g. uniqueness against a live list) stay component composables instead — see vue-composable-patterns "Extract Duplicate Validation Rules".
+- The `required` HTML attribute is not a Vuetify prop — use `:rules="[rules.required()]"`.
 
 ## HTML Footprint
 
