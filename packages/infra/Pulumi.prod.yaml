@@ -1,2 +1,4 @@
 environment:
   - esposter-infra/prod
+config:
+  github:owner: Esposter
