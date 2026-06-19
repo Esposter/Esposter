@@ -239,6 +239,9 @@ catalogs:
     '@pulumi/azure-native':
       specifier: ^3.19.0
       version: 3.19.0
+    '@pulumi/github':
+      specifier: ^6.14.0
+      version: 6.14.0
     '@pulumi/pulumi':
       specifier: ^3.247.0
       version: 3.247.0
@@ -1745,6 +1748,9 @@ importers:
       '@pulumi/azure-native':
         specifier: 'catalog:'
         version: 3.19.0(typescript@6.0.3)
+      '@pulumi/github':
+        specifier: 'catalog:'
+        version: 6.14.0(typescript@6.0.3)
       '@pulumi/pulumi':
         specifier: 'catalog:'
         version: 3.247.0(typescript@6.0.3)
@@ -5943,6 +5949,9 @@ packages:
 
   '@pulumi/azure-native@3.19.0':
     resolution: {integrity: sha512-ucHbfBz18VblvCe36XqLyR4ofFoPvNYYhC8oaoHKQuu9xQuFCbGGLYG9ptDvVapUNztcxcqIvz/8nD7oxUHyag==}
+
+  '@pulumi/github@6.14.0':
+    resolution: {integrity: sha512-qrgH5ot2Wh9xLMPnBq9hpBjEYTIfgDpJRS/rmROgt5NIEAhwDfaTJ8dgpdjV8CQwfpuaRY7mrs8mKWlSANEeYQ==}
 
   '@pulumi/pulumi@3.247.0':
     resolution: {integrity: sha512-JaXgWfRaT8XLQaqy6MriSxnphuyE56EjD8enZcNSEZ9nWthuTLV6i+w7q1KdcDJKGuMEn6yBeZuBoNafQtx4XA==}
@@ -18732,6 +18741,14 @@ snapshots:
   '@protobufjs/utf8@1.1.1': {}
 
   '@pulumi/azure-native@3.19.0(typescript@6.0.3)':
+    dependencies:
+      '@pulumi/pulumi': 3.247.0(typescript@6.0.3)
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
+      - typescript
+
+  '@pulumi/github@6.14.0(typescript@6.0.3)':
     dependencies:
       '@pulumi/pulumi': 3.247.0(typescript@6.0.3)
     transitivePeerDependencies:

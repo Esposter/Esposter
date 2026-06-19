@@ -85,7 +85,7 @@ Every new resource must set the `parent` Pulumi option to the **nearest final Az
 
 ## Generated And Migration Files
 
-- `generated/` is ignored and must not be committed. Import output may contain live Logic App callback URLs/signatures.
+- `pulumi import --generate-code` output and discovery scripts/`import.json` are throwaway: write them to the session scratchpad, never the repo. Import output may contain live callback URLs/signatures/webhook secrets. Refactor the relevant resources into `src/<provider>/` by hand, then discard the generated file.
 - Do not manually edit generated `src/index.ts` — regenerate with `pnpm export:gen`.
 - Do not manually edit `dist/` — rebuild with `pnpm build`.
 
