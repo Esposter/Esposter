@@ -2,7 +2,6 @@
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
-import { formRules } from "@/services/vuetify/formRules";
 import { USER_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 export interface UserProfileCardColumnTextProps {
@@ -12,6 +11,7 @@ export interface UserProfileCardColumnTextProps {
 
 const modelValue = defineModel<Row<RowValueType.Text>["value"]>({ required: true });
 const { editMode, value } = defineProps<UserProfileCardColumnTextProps>();
+const rules = useVRules();
 </script>
 
 <template>
@@ -20,7 +20,7 @@ const { editMode, value } = defineProps<UserProfileCardColumnTextProps>();
       v-if="editMode"
       v-model="modelValue"
       size="small"
-      :rules="[formRules.required, formRules.requireAtMostNCharacters(USER_NAME_MAX_LENGTH), formRules.isNotProfanity]"
+      :rules="[rules.required(), rules.maxLength(USER_NAME_MAX_LENGTH), rules.isNotProfanity()]"
     />
     <template v-else>
       {{ value }}

@@ -3,7 +3,6 @@ import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
-import { formRules } from "@/services/vuetify/formRules";
 import { takeOne, withFinalizerAsync } from "@esposter/shared";
 
 export interface UserProfileCardColumnImageProps {
@@ -13,6 +12,7 @@ export interface UserProfileCardColumnImageProps {
 
 const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
 const { editMode, value } = defineProps<UserProfileCardColumnImageProps>();
+const rules = useVRules();
 const { $trpc } = useNuxtApp();
 const isLoading = ref(false);
 </script>
@@ -26,7 +26,7 @@ const isLoading = ref(false);
       </v-avatar>
       <v-file-input
         :disabled="isLoading"
-        :rules="[formRules.requireAtMostMaxFileSize]"
+        :rules="[rules.requireAtMostMaxFileSize()]"
         accept="image/*"
         prepend-icon=""
         prepend-inner-icon="mdi-upload"

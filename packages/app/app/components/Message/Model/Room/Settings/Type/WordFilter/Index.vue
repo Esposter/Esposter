@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { formRules } from "@/services/vuetify/formRules";
 import { FILTER_KEY_MAX_LENGTH, FILTER_WORDS_MAX_LENGTH } from "@esposter/db-schema";
 import deepEqual from "fast-deep-equal";
 
@@ -10,6 +9,7 @@ interface WordFilterProps {
 }
 
 const { room } = defineProps<WordFilterProps>();
+const rules = useVRules();
 const { $trpc } = useNuxtApp();
 const initialWords = ref<string[]>(await $trpc.room.filter.readRoomFilter.query({ roomId: room.id }));
 const words = ref([...initialWords.value]);
@@ -36,7 +36,7 @@ const createWord = () => {
           <v-text-field
             v-model="newWord"
             :disabled="isAtMaxWords"
-            :rules="[formRules.requireAtMostNCharacters(FILTER_KEY_MAX_LENGTH)]"
+            :rules="[rules.maxLength(FILTER_KEY_MAX_LENGTH)]"
             density="compact"
             placeholder="Add a word..."
             @keydown.enter.prevent="createWord()"

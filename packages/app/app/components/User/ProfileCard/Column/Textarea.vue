@@ -2,7 +2,6 @@
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
-import { formRules } from "@/services/vuetify/formRules";
 import { USER_BIOGRAPHY_MAX_LENGTH } from "@esposter/db-schema";
 
 export interface UserProfileCardColumnTextareaProps {
@@ -12,6 +11,7 @@ export interface UserProfileCardColumnTextareaProps {
 
 const modelValue = defineModel<Row<RowValueType.Textarea>["value"]>({ required: true });
 const { editMode, value } = defineProps<UserProfileCardColumnTextareaProps>();
+const rules = useVRules();
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const { editMode, value } = defineProps<UserProfileCardColumnTextareaProps>();
     <v-textarea
       v-if="editMode"
       v-model="modelValue"
-      :rules="[formRules.requireAtMostNCharacters(USER_BIOGRAPHY_MAX_LENGTH)]"
+      :rules="[rules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)]"
       rows="3"
       auto-grow
     />

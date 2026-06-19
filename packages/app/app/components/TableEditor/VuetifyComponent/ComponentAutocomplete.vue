@@ -3,9 +3,9 @@ import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyCom
 
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { VuetifyComponentMap } from "#shared/services/tableEditor/vuetifyComponent/VuetifyComponentMap";
-import { formRules } from "@/services/vuetify/formRules";
 import { useTableEditorStore } from "@/store/tableEditor";
 
+const rules = useVRules();
 const tableEditorStore = useTableEditorStore<VuetifyComponentItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 // Paginate the dropdown since there are too many vuetify components to load at once.
@@ -29,7 +29,7 @@ const onIntersect = (isIntersecting: boolean) => {
       v-model="editedItem.component"
       label="Component"
       :items="displayVuetifyComponentKeys"
-      :rules="[formRules.required]"
+      :rules="[rules.required()]"
       @update:menu="
         (value) => {
           if (!value) vuetifyComponentKeysCursor = Math.min(DEFAULT_READ_LIMIT, vuetifyComponentKeys.length);

@@ -5,7 +5,6 @@ import type { VCard } from "vuetify/components";
 
 import { DEFAULT_NAME } from "#shared/services/constants";
 import { dayjs } from "#shared/services/dayjs";
-import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/survey";
 import { SURVEY_NAME_MAX_LENGTH } from "@esposter/db-schema";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -20,6 +19,7 @@ defineSlots<{
 }>();
 const { cardProps, initialValue = { group: "", model: "", name: DEFAULT_NAME } } =
   defineProps<CreateSurveyDialogProps>();
+const rules = useVRules();
 const surveyStore = useSurveyStore();
 const { createSurvey } = surveyStore;
 const name = ref(initialValue.name);
@@ -48,7 +48,7 @@ const group = ref(initialValue.group);
           <v-text-field
             v-model="name"
             label="Name"
-            :rules="[formRules.required, formRules.requireAtMostNCharacters(SURVEY_NAME_MAX_LENGTH)]"
+            :rules="[rules.required(), rules.maxLength(SURVEY_NAME_MAX_LENGTH)]"
           />
         </v-col>
         <v-col cols="12">

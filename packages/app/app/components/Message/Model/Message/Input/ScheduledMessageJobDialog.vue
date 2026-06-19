@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { dayjs } from "#shared/services/dayjs";
-import { formRules } from "@/services/vuetify/formRules";
 import { useScheduledMessageJobDialogStore } from "@/store/message/input/scheduledMessageJobDialog";
 import { useRoomStore } from "@/store/message/room";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 import { withFinalizerAsync } from "@esposter/shared";
 import { marked } from "marked";
 
+const rules = useVRules();
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
@@ -70,7 +70,7 @@ watch(isOpen, (newIsOpen) => {
           />
         </v-col>
         <v-col cols="12">
-          <v-textarea v-model="text" :label="textLabel" :rules="[formRules.required]" auto-grow />
+          <v-textarea v-model="text" :label="textLabel" :rules="[rules.required()]" auto-grow />
         </v-col>
       </v-row>
     </v-container>

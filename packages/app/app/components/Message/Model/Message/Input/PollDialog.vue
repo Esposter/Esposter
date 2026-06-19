@@ -2,13 +2,13 @@
 import type { SubmitEventPromise } from "vuetify";
 
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
-import { formRules } from "@/services/vuetify/formRules";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
 import { withFinalizerAsync } from "@esposter/shared";
 
+const rules = useVRules();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const pollDialogStore = usePollDialogStore();
@@ -39,14 +39,14 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
     <v-container>
       <v-row>
         <v-col cols="12">
-          <v-text-field v-model="question" :rules="[formRules.required]" label="Question" />
+          <v-text-field v-model="question" :rules="[rules.required()]" label="Question" />
         </v-col>
         <v-col cols="12">
           <v-list bg-color="transparent">
             <v-list-item v-for="(option, index) of options" :key="index" :ripple="false" px-0>
               <v-text-field
                 :model-value="option"
-                :rules="[formRules.required]"
+                :rules="[rules.required()]"
                 :label="`Option ${index + 1}`"
                 hide-details="auto"
                 @update:model-value="options[index] = $event"
