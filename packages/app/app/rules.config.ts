@@ -13,7 +13,7 @@ export default {
       !value || Number(value) >= n || err || `Must be at least ${n}`,
     requireAtMostMaxFileSize: (err) => (value: FileFieldValue) =>
       !value ||
-      value.size <= MAX_FILE_REQUEST_SIZE ||
+      (Array.isArray(value) ? value : [value]).every((file) => file.size <= MAX_FILE_REQUEST_SIZE) ||
       err ||
       `This field's file size should be at most ${MAX_FILE_REQUEST_SIZE / MEGABYTE} MB`,
   },
