@@ -25,8 +25,8 @@ pnpm i vue-phaserjs @esposter/shared parse-tmx vue phaser phaser4-rex-plugins pi
 
 Add the type declaration files so scene key types and custom plugins get proper intellisense:
 
-- [`phaser.d.ts`](https://github.com/Esposter/Esposter/blob/main/packages/app/shared/types/phaser.d.ts) — narrows scene key types
-- [`vue-phaserjs.d.ts`](https://github.com/Esposter/Esposter/blob/main/packages/app/shared/types/vue-phaser.d.ts) — provides custom plugin types
+- [`phaser.d.ts`](https://github.com/Esposter/Esposter/blob/main/packages/app/app/types/phaser.d.ts) — narrows scene key types
+- [`vue-phaserjs.d.ts`](https://github.com/Esposter/Esposter/blob/main/packages/app/app/types/vue-phaser.d.ts) — provides custom plugin types
 
 ## <a name="documentation">📖 Documentation</a>
 

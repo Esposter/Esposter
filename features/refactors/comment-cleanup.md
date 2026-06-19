@@ -60,7 +60,7 @@ Also swept repo-wide as of the date above:
 ## Intentionally left as-is
 
 - `app/configuration/plugins/fixAjv.ts` + `fixAjv.test.ts` — the numbered transform-step list is a deliberate reference; wording already tight.
-- `app/shared/types/nuxt.d.ts`, `app/shared/types/desmos.d.ts`, `configuration/types/global.d.ts` — vendored/upstream-synced type augmentations.
+- `app/shared/types/nuxt.d.ts`, `app/app/types/desmos.d.ts`, `configuration/types/global.d.ts` — vendored/upstream-synced type augmentations.
 - `app/util/math/random/getRandomValues.ts`, `db/src/services/azure/table/getTableNullClause.ts` — single source-URL reference comments.
 - `*/rolldown.config.ts`, scattered `@ts-expect-error`/`oxlint-disable` lines — directive comments (kept; reasons trimmed where verbose).
 
