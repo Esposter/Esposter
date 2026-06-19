@@ -55,7 +55,7 @@ pulumi stack select prod
 - `Pulumi.yaml` defines the Pulumi project.
 - `Pulumi.prod.yaml` holds stack-specific configuration.
 - `docs/` contains architecture, naming, security, and roadmap notes.
-- `src/resources/` contains Pulumi resource declarations grouped by Azure ARM provider namespace and resource type.
+- `src/azure/resources/` contains Pulumi resource declarations grouped by Azure ARM provider namespace and resource type.
 
 ### Commands
 
