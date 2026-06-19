@@ -56,7 +56,7 @@ await createMessage({
 - Styled header bar (like `ReplyHeader.vue`) showing command name + description + close button
 - `<v-form @submit.prevent="onSubmit">` wrapping all parameter inputs
 - `SubmitEventPromise` from Vuetify — `const { valid } = await event` before proceeding
-- Required fields: `:rules="[formRules.required]"` (Vuetify shows inline validation errors)
+- Required fields: `:rules="[rules.required()]"` (from `useVRules()`; Vuetify shows inline validation errors)
 - Optional fields: `:rules="[]"` (empty array, not omitted)
 - Escape key dismisses via `useEventListener("keydown", ...)`; submit button is `type="submit"`
 

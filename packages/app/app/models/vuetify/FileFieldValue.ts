@@ -1,1 +1,1 @@
-export type FileFieldValue = File | undefined;
+export type FileFieldValue = File | File[] | undefined;

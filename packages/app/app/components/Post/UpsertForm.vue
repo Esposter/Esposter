@@ -2,7 +2,6 @@
 import type { Post } from "@esposter/db-schema";
 import type { SubmitEventPromise } from "vuetify";
 
-import { formRules } from "@/services/vuetify/formRules";
 import { POST_TITLE_MAX_LENGTH } from "@esposter/db-schema";
 
 interface PostUpsertFormProps {
@@ -14,6 +13,7 @@ const { initialValues = { description: "", title: "" }, isCreate } = defineProps
 const emit = defineEmits<{
   submit: [event: SubmitEventPromise, values: NonNullable<PostUpsertFormProps["initialValues"]>];
 }>();
+const rules = useVRules();
 const values = ref(initialValues);
 const isEditFormValid = ref(true);
 </script>
@@ -29,11 +29,7 @@ const isEditFormValid = ref(true);
               label="Title"
               placeholder="Title"
               :counter="POST_TITLE_MAX_LENGTH"
-              :rules="[
-                formRules.required,
-                formRules.requireAtMostNCharacters(POST_TITLE_MAX_LENGTH),
-                formRules.isNotProfanity,
-              ]"
+              :rules="[rules.required(), rules.maxLength(POST_TITLE_MAX_LENGTH), rules.isNotProfanity()]"
               autofocus
             />
           </v-col>

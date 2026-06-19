@@ -2,7 +2,6 @@
 import type { VBtn, VCard, VTooltip } from "vuetify/components";
 import type { z } from "zod";
 
-import { formRules } from "@/services/vuetify/formRules";
 import { mergeProps } from "vue";
 
 interface EditableNameDialogButtonProps {
@@ -31,6 +30,7 @@ const {
   tooltipProps,
 } = defineProps<EditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
+const rules = useVRules();
 const editedName = ref(name);
 const displayName = computed(() => name || placeholder);
 
@@ -93,7 +93,7 @@ watch(
             density="compact"
             :placeholder
             autofocus
-            :rules="[formRules.requireAtMostNCharacters(maxLength), formRules.isNotProfanity]"
+            :rules="[rules.maxLength(maxLength), rules.isNotProfanity()]"
           />
         </v-col>
       </v-row>

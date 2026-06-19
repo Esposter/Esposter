@@ -59,6 +59,6 @@ Both user and room upload procedures are named `generateProfileImageUploadUrl`. 
 
 - Cannot accept any input alongside the binary body — userId must come from session only; there is no way to scope to a `roomId`
 - Size limit is shared with all tRPC requests (2 MB) and can only be enforced client-side
-- `formRules.requireAtMostMaxFileSize` previously had a todo comment acknowledging the client-side-only enforcement as a workaround
+- `requireAtMostMaxFileSize` (a custom rule alias in `app/rules.config.ts`) previously had a todo comment acknowledging the client-side-only enforcement as a workaround
 
 The SAS pattern resolves all three issues.

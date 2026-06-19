@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { formRules } from "@/services/vuetify/formRules";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "@esposter/db-schema";
 import { withFinalizerAsync } from "@esposter/shared";
 
+const rules = useVRules();
 const roomCategoryStore = useRoomCategoryStore();
 const { createRoomCategory } = roomCategoryStore;
 const dialog = ref(false);
@@ -37,7 +37,7 @@ const name = ref("");
         density="compact"
         autofocus
         :maxlength="ROOM_CATEGORY_NAME_MAX_LENGTH"
-        :rules="[formRules.required, formRules.requireAtMostNCharacters(ROOM_CATEGORY_NAME_MAX_LENGTH)]"
+        :rules="[rules.required(), rules.maxLength(ROOM_CATEGORY_NAME_MAX_LENGTH)]"
         variant="outlined"
       />
     </v-container>
