@@ -134,7 +134,7 @@ Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navi
 - Use the auto-imported `useVRules()` composable (Vuetify's rules plugin; `prefixComposables: true` renames `useRules` → `useVRules`). Declare `const rules = useVRules();` at the top of `<script setup>` with the other composables, then reference rules as builders: `:rules="[rules.required(), rules.maxLength(100)]"`. Never inline arrow-function rules in templates (the linter strips them).
 - Built-in aliases (`required`, `maxLength`, `minLength`, `email`, `pattern`, …) come from Vuetify — don't reimplement them; their default messages live in Vuetify's locale (e.g. `required` → "This field is required", `maxLength` → "You must enter a maximum of {0} characters").
 - Custom stateless/parameterized rules live in `app/rules.config.ts` (wired via `vuetify.moduleOptions.rulesConfiguration.configFile`): currently `isNotProfanity`, `requireAtLeastN(n)`, `requireAtMostMaxFileSize`. Add new global rules there as `aliases` builders (`(err) => (value) => …` or `(options, err) => (value) => …`, threading `err` for a caller-supplied message), end the file with `satisfies RulesOptions`, then call `rules.<name>(...)`.
-- Declare each custom alias's type in `app/services/vuetify/ruleAliases.d.ts` so it gets autocomplete + option-type checking — use Vuetify's canonical builder helpers, not hand-rolled signatures:
+- Declare each custom alias's type in `app/types/vuetify.d.ts` so it gets autocomplete + option-type checking — use Vuetify's canonical builder helpers, not hand-rolled signatures:
 
 ```ts
 import type { ValidationRuleBuilderWithOptions, ValidationRuleBuilderWithoutOptions } from "vuetify/labs/rules";
