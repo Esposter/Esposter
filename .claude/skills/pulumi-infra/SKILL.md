@@ -73,7 +73,7 @@ Every new resource must set the `parent` Pulumi option to the **nearest final Az
 
 ## Docs
 
-- Durable infrastructure docs live in `packages/infra/docs/`, split by provider: provider-specific docs under `docs/azure/` (and `docs/github/`), cross-cutting docs at the `docs/` root. The forward roadmap + shipped log live in `features/infra/README.md` (thin index); completed design records live in `features/infra/reference/`.
+- Durable infrastructure docs live in `packages/infra/docs/`, split by provider: provider-specific docs under `docs/azure/` (and `docs/github/`), cross-cutting docs at the `docs/` root. The forward roadmap is `features/infra/roadmap.md` (prioritized, checkbox backlog); the shipped log + index is `features/infra/README.md` (thin); completed design records live in `features/infra/reference/`.
 - `docs/azure/naming-conventions.md` — Azure naming rules.
 - `docs/azure/overview.md` — Azure resource inventory.
 - `docs/azure/search-indexes.md` — Azure Search index/datasource/indexer setup.

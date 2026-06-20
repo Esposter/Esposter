@@ -6,16 +6,7 @@ This README is the index. Durable infra docs live in [`packages/infra/docs/`](..
 
 ## Now
 
-- ✅ Migration complete. No active wave. Remaining loose ends: post-migration smoke tests (uploads, messages, push, search, Web PubSub, function processing) and verifying the prod search indexer populated `messages-index`.
-
-## Roadmap
-
-Ordered, not started. All are deferred-with-trigger; rationale in [`packages/infra/docs/roadmap.md`](../../packages/infra/docs/roadmap.md) and [`reference/optimization-review.md`](reference/optimization-review.md).
-
-1. **Observability caps** — measure Log Analytics / App Insights ingestion, then set daily caps + sampling (currently uncapped, `dailyQuotaGb: -1`).
-2. **Pulumi as full source of truth** — move Function App runtime settings + App Insights connection settings into Pulumi.
-3. **Event Grid dead-letter** — design a dead-letter storage target + replay process, then enable dead-letter destinations.
-4. **Security hardening** — disable storage shared-key / blob public access / Search + Event Grid local auth, and set storage network default-deny. Each is **blocked on an app-side migration** off key-based auth — see [`packages/infra/docs/azure/security-constraints.md`](../../packages/infra/docs/azure/security-constraints.md).
+- ✅ Migration complete. No active wave. Forward items (smoke-test loose ends + deferred hardening) are tracked in **[roadmap.md](roadmap.md)** — all deferred-with-trigger, nothing in flight.
 
 ## Shipped
 

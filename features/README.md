@@ -12,7 +12,8 @@ Each feature area is a thin index (`README.md`) over many small topic files. No 
 features/
   README.md
   <area>/
-    README.md            ← thin index: Now · Roadmap · Shipped · Decisions · Reference
+    README.md            ← thin index: Now · Shipped · Decisions · Reference
+    roadmap.md           ← prioritized, granular, checkbox backlog (living implementation file)
     architecture.md      ← optional: key file map, data flows, DB schema (AI reference)
     specs/<name>.md      ← design spec for one cohesive feature
     out-of-scope/<name>.md ← won't-do decision (one per file)
@@ -23,13 +24,14 @@ features/
 
 ### Area README sections
 
-| Section        | Purpose                                                                             |
-| -------------- | ----------------------------------------------------------------------------------- |
-| `## Now`       | What is actively being worked, with a status tag. **How an agent knows the focus.** |
-| `## Roadmap`   | Ordered, not-started backlog. One line each, link to a spec where one exists.       |
-| `## Shipped`   | Chronological done log, one terse line per feature → links to the detail file.      |
-| `## Decisions` | Links to `out-of-scope/` and `deferred/`. Grep here before adding a roadmap item.   |
-| `## Reference` | Links to `architecture.md`, `reference/`, `specs/`, relevant skills.                |
+| Section        | Purpose                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| `## Now`       | One line naming the active feature → pointer to `roadmap.md`. **Where an agent starts.** |
+| `## Shipped`   | Chronological done log, one terse line per feature → links to the detail file.           |
+| `## Decisions` | Links to `out-of-scope/` and `deferred/`. Grep here before adding a roadmap item.        |
+| `## Reference` | Links to `architecture.md`, `roadmap.md`, `reference/`, `specs/`, relevant skills.       |
+
+The granular, prioritized, checkbox backlog lives in each area's **`roadmap.md`** — that is the file to update while implementing. The README only logs what shipped.
 
 ### Principles
 
@@ -41,13 +43,13 @@ features/
 
 ## Feature Areas
 
-| Area                                            | Now                              | Description                                         |
-| ----------------------------------------------- | -------------------------------- | --------------------------------------------------- |
-| [`esbabbler/`](esbabbler/README.md)             | Scheduled-jobs listing/cancel UI | Messaging, calls, rooms, moderation, DMs            |
-| [`fileTableEditor/`](fileTableEditor/README.md) | — (mature)                       | CSV/JSON/XLSX table editor with computed columns    |
-| [`infra/`](infra/README.md)                     | — (migration complete)           | Azure Pulumi infrastructure, cost, security, naming |
-| [`vue-phaserjs/`](vue-phaserjs/README.md)       | — (mature)                       | Phaser game engine Vue integration                  |
-| [`refactors/`](#refactors)                      | null-removal (planned)           | Cross-cutting code migrations                       |
+| Area                                            | Now                                                 | Description                                         |
+| ----------------------------------------------- | --------------------------------------------------- | --------------------------------------------------- |
+| [`esbabbler/`](esbabbler/README.md)             | Scheduled-jobs UI → [roadmap](esbabbler/roadmap.md) | Messaging, calls, rooms, moderation, DMs            |
+| [`fileTableEditor/`](fileTableEditor/README.md) | — (mature)                                          | CSV/JSON/XLSX table editor with computed columns    |
+| [`infra/`](infra/README.md)                     | — (migration complete)                              | Azure Pulumi infrastructure, cost, security, naming |
+| [`vue-phaserjs/`](vue-phaserjs/README.md)       | — (mature)                                          | Phaser game engine Vue integration                  |
+| [`refactors/`](#refactors)                      | null-removal (planned)                              | Cross-cutting code migrations                       |
 
 ---
 

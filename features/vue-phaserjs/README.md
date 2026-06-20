@@ -6,11 +6,7 @@ This README is the index.
 
 ## Now
 
-- Mature library — no active work.
-
-## Roadmap
-
-- None queued. New component/composable ideas should be checked against [out-of-scope/](out-of-scope) first — most Phaser primitives that don't map to a Vue component hierarchy are intentionally left as imperative `onComplete` calls.
+- Mature library — no active work, no roadmap. New component/composable ideas: check [out-of-scope/](out-of-scope) first — most Phaser primitives that don't map to a Vue component hierarchy are intentionally left as imperative `onComplete` calls.
 
 ## Shipped
 

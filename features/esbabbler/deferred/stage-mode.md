@@ -5,8 +5,12 @@ A room setting where only users with `SpeakInStage` or `MuteMembers` publish mic
 ## Why deferred
 
 - Stage/town-hall is a large-event feature; overkill for casual drop-in room calls.
-- Adds a new `RoomPermission.SpeakInStage` bit and call-publishing gating for a use case that has not come up.
+- Adds a new `RoomPermission.SpeakInStage` bit (a permission-bitfield-shift migration) plus call-publishing gating, for a use case that has not come up.
+
+## What already exists
+
+The publish-gating mechanism is proven — the `StopScreenShare` admin action already revokes a LiveKit publish permission, so muting non-speakers by default is the same pattern, not new infrastructure.
 
 ## Revisit when
 
-Rooms host large, presentation-style calls where most participants should be listeners by default. If it ships, add `RoomPermission.SpeakInStage` in the same permission-bitfield migration as `ManageEvents` (see [../specs/community-events.md](../specs/community-events.md)) so the bitfield is migrated only once.
+Rooms host large, presentation-style calls where most participants should be listeners by default.

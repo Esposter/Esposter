@@ -23,7 +23,8 @@ architecture/
 features/
   README.md                ← index of all areas + their current "Now"
   <area>/
-    README.md              ← thin index: Now · Roadmap · Shipped · Decisions · Reference
+    README.md              ← thin index: Now · Shipped · Decisions · Reference
+    roadmap.md             ← prioritized, granular, checkbox backlog (the living implementation file)
     architecture.md        ← AI reference: key files, data flows, DB tables
     specs/<name>.md        ← design spec for one cohesive feature
     out-of-scope/<name>.md ← won't-do decision (one per file)
@@ -36,11 +37,20 @@ features/
 
 The area README is a map, not a content store. Detail lives in the linked files. Sections (omit any that are empty):
 
-- `## Now` — the item(s) actively being worked, each with a status tag (🔨 in progress / ⏳ next) and a link to its spec. **This is how an agent knows what is being worked on.** Keep it to the genuinely active work.
-- `## Roadmap` — the ordered, not-started backlog. Implement top-down. One line each, link to a spec where one exists.
+- `## Now` — one line naming the genuinely active feature, then a pointer to `roadmap.md`. **This is how an agent finds the focus**, but the working detail lives in `roadmap.md`, not here.
 - `## Shipped` — chronological done log, one terse line per feature, linking to the spec/reference/architecture file that holds the detail. Do not paste the detail here.
 - `## Decisions` — two links: `out-of-scope/` (won't do) and `deferred/` (not yet). The instruction "grep here before adding a roadmap item" lives here.
-- `## Reference` — links to `architecture.md`, `reference/`, and `specs/`.
+- `## Reference` — links to `architecture.md`, `roadmap.md`, `reference/`, and `specs/`.
+
+## Roadmap File (`roadmap.md`)
+
+The living implementation backlog — the file an agent reads and edits while building. Omit it for an area with no active or planned work (mature/complete areas).
+
+- **Prioritized, top-down.** Top = next up. Order so early items stay local/user-visible and later items add background/cross-process work.
+- **Checkbox-driven and granular.** Use `- [ ]` per feature with nested `- [ ]` sub-items for the concrete implementation steps (migration, procedure, mutation, component, edge cases). The roadmap _can and should_ hold implementation detail — unlike the thin README.
+- **Group by horizon**, e.g. `## In progress`, `## Next — low-hanging fruit`, `## Later — larger or multi-area`. Favour low-hanging fruit that extends something already shipped without new infrastructure.
+- **Sweep when shipped.** When a feature is fully checked off, collapse it to one line under `## Shipped` in the README and delete it from `roadmap.md`. The roadmap holds only open work.
+- Grep `out-of-scope/` + `deferred/` before adding an item, so a decided idea is not re-proposed.
 
 ## Decision Registry (`out-of-scope/` + `deferred/`)
 
@@ -103,13 +113,13 @@ Before implementing cross-cutting features, write or update the spec enough to a
 
 ## Lifecycle
 
-| State       | Location                 | Action                                                                           |
-| ----------- | ------------------------ | -------------------------------------------------------------------------------- |
-| Planning    | `specs/<name>.md`        | Create the spec; add a `## Roadmap` line in the area README                      |
-| In progress | `specs/<name>.md`        | Move the README line to `## Now` with a status tag; keep the spec updated        |
-| Shipped     | `## Shipped` in README   | Collapse to one terse line linking the spec/reference; trim the spec if outdated |
-| Won't do    | `out-of-scope/<name>.md` | One file with the rationale; link from `## Decisions`                            |
-| Deferred    | `deferred/<name>.md`     | One file with rationale + revisit trigger; link from `## Decisions`              |
+| State       | Location                 | Action                                                                                                             |
+| ----------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Planning    | `specs/<name>.md`        | Create the spec (if non-trivial); add a checkbox item in `roadmap.md`                                              |
+| In progress | `roadmap.md`             | Move the item to `## In progress` + name it in the README `## Now`; break it into sub-tasks; keep the spec updated |
+| Shipped     | `## Shipped` in README   | Collapse to one terse line linking the spec/reference; delete it from `roadmap.md`; trim the spec if outdated      |
+| Won't do    | `out-of-scope/<name>.md` | One file with the rationale; link from `## Decisions`                                                              |
+| Deferred    | `deferred/<name>.md`     | One file with rationale + revisit trigger; link from `## Decisions`                                                |
 
 ## Architecture Files
 

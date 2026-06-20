@@ -6,11 +6,7 @@ This README is the index. Detail lives in the linked specs.
 
 ## Now
 
-- Mature feature — no active work.
-
-## Roadmap
-
-- None queued. New ideas should be checked against [out-of-scope/](out-of-scope) first.
+- Mature feature — no active work, no roadmap. New ideas: check [out-of-scope/](out-of-scope) first.
 
 ## Shipped
 
