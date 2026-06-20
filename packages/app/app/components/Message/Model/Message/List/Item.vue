@@ -42,12 +42,17 @@ const isUpdateMode = computed({
 });
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
-const { cloned: isOptionsChildrenActive } = useCloned(() => optionsMenu.value?.rowKey === message.rowKey);
+const isOptionsMenuOpen = ref(false);
+const isContextMenuTarget = computed(() => optionsMenu.value?.rowKey === message.rowKey);
 const isDisabled = computed(() => optionsMenu.value && optionsMenu.value.rowKey !== message.rowKey);
 const isActive = computed(
   () =>
     !isDisabled.value &&
-    (isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value),
+    (isMessageActive.value ||
+      isOptionsActive.value ||
+      isOptionsMenuOpen.value ||
+      isContextMenuTarget.value ||
+      isUpdateMode.value),
 );
 const isActiveAndNotUpdateMode = computed(() => isActive.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
@@ -102,7 +107,7 @@ const selectEmoji = await useSelectEmoji(message);
                   :hover-props
                   @update:delete-mode="updateIsOpen"
                   @update:forward="forwardRowKey = $event"
-                  @update:menu="isOptionsChildrenActive = $event"
+                  @update:menu="isOptionsMenuOpen = $event"
                   @update:pin="updatePinDialogIsOpen"
                   @update:reply="replyRowKey = $event"
                   @update:select-emoji="selectEmoji"
