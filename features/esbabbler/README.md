@@ -6,9 +6,7 @@ This README is the index. Detail lives in the linked files; nothing is duplicate
 
 ## Now
 
-🔨 **Scheduled-jobs listing/cancel UI** — the one active feature.
-
-Active focus + the full prioritized, granular backlog (with checkboxes) live in **[roadmap.md](roadmap.md)**. That is the file to read and update during implementation; this README only logs what has shipped.
+- No active wave. The prioritized, granular backlog (with checkboxes) lives in **[roadmap.md](roadmap.md)** — pick the top item there to start the next one. This README only logs what has shipped.
 
 ## Shipped
 
@@ -32,7 +30,7 @@ Chronological. One line per feature; detail in the linked spec/reference/archite
 
 **Calls** — persistent per-room drop-in audio, LiveKit migration, video, screenshare, call lobby (knock & admit), deafen, raise-hand, call-health indicator. → [specs/call.md](specs/call.md), [specs/screenshare.md](specs/screenshare.md), [reference/call-refactor.md](reference/call-refactor.md), [reference/call-session-migration.md](reference/call-session-migration.md)
 
-**Integrations & infra** — inbound webhooks, offline message cache, scheduled-message backend (queue worker), Sent tab via Search index.
+**Integrations & infra** — inbound webhooks, offline message cache, scheduled messages (queue-worker backend + listing/cancel UI), Sent tab via Search index. → [specs/scheduled-messages.md](specs/scheduled-messages.md)
 
 ## Decisions
 

@@ -6,7 +6,7 @@ This README is the index. Durable infra docs live in [`packages/infra/docs/`](..
 
 ## Now
 
-- ✅ Migration complete. No active wave. Forward items (smoke-test loose ends + deferred hardening) are tracked in **[roadmap.md](roadmap.md)** — all deferred-with-trigger, nothing in flight.
+- ✅ Migration complete and verified. No active wave. Remaining forward items in **[roadmap.md](roadmap.md)** are all deferred-with-trigger — nothing in flight.
 
 ## Shipped
 
@@ -22,6 +22,7 @@ Chronological. Detail lives in the linked reference docs and `packages/infra/doc
 - **Stack rename + naming convention** — `dev` stack → `prod`; adopted CAF-aligned naming in [`docs/azure/naming-conventions.md`](../../packages/infra/docs/azure/naming-conventions.md).
 - **Naming migration** — migrated all dev + prod resources (stateless, stateful, monitoring) to the CAF convention with `parent` hierarchy, including storage/table/search data migration and Railway endpoint cutover.
 - **Provider split + GitHub** — split `src/azure/`; added `@pulumi/github` managing repo settings, labels, environments, and secrets (via ESC); migrated branch protection to a single `develop`+`main` ruleset with `required_approving_review_count: 0`.
+- **Post-migration verification** — smoke-tested uploads, messages, push, search, Web PubSub, and function processing; confirmed the prod search indexer populated `messages-index`.
 
 ## Decisions
 

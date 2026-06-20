@@ -2,11 +2,6 @@
 
 Prioritized backlog. All items are deferred-with-trigger (no active wave); rationale lives in [`packages/infra/docs/`](../../packages/infra/docs) and [reference/optimization-review.md](reference/optimization-review.md) — not repeated here. Check off and sweep to README `## Shipped` when done.
 
-## Loose ends (migration follow-up)
-
-- [ ] Post-migration smoke tests — uploads, messages, push, search, Web PubSub, function processing.
-- [ ] Verify the prod search indexer populated `messages-index`.
-
 ## Next
 
 - [ ] **Observability caps** — measure Log Analytics / App Insights ingestion, then set daily caps + sampling (currently uncapped, `dailyQuotaGb: -1`).
