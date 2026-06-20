@@ -5,6 +5,14 @@ description: Feature Specs — Esposter conventions for the features/ and root a
 
 # Feature Specs — Esposter Conventions
 
+## Core Principles
+
+- **Every line earns its place.** If a line repeats something another file already says, delete it and link instead. Docs are deduped aggressively.
+- **Organize by topic, not by version.** One file per cohesive feature/decision. Never create version grab-bags (`v1.md`, `v2.md` …) that accumulate unrelated items.
+- **Prefer more small files over fewer large ones.** When something grows, split it into another topic file rather than letting one file sprawl.
+- **Nothing is frozen.** Merge, trim, rename, and dedupe completed docs freely as understanding improves — they are not immutable history.
+- **Decide once.** A dropped or deferred idea is recorded in the decision registry (below) exactly once, with its rationale. Roadmaps link to it; they never re-argue it.
+
 ## Directory Layout
 
 ```text
@@ -13,16 +21,45 @@ architecture/
   <topic>.md               ← cross-cutting architecture shared by multiple areas
 
 features/
+  README.md                ← index of all areas + their current "Now"
   <area>/
+    README.md              ← thin index: Now · Shipped · Decisions · Reference
+    roadmap.md             ← prioritized, granular, checkbox backlog (the living implementation file)
     architecture.md        ← AI reference: key files, data flows, DB tables
-    <vN>.md                ← active roadmap (checkbox list, current version)
-    specs/
-      <feature-name>.md    ← spec for a single planned feature
-    completed/
-      <name>.md            ← frozen after all items shipped; never edit
-  refactors/
-    <name>.md              ← technical migrations, not user-visible features
+    specs/<name>.md        ← design spec for one cohesive feature
+    out-of-scope/<name>.md ← won't-do decision (one per file)
+    deferred/<name>.md     ← not-yet decision (one per file, includes a revisit trigger)
+    reference/<name>.md    ← completed design records worth keeping (migrations, refactors)
+  refactors/<name>.md      ← cross-cutting code changes, not user-visible features
 ```
+
+## Area `README.md` — the thin index
+
+The area README is a map, not a content store. Detail lives in the linked files. Sections (omit any that are empty):
+
+- `## Now` — one line naming the genuinely active feature, then a pointer to `roadmap.md`. **This is how an agent finds the focus**, but the working detail lives in `roadmap.md`, not here.
+- `## Shipped` — chronological done log, one terse line per feature, linking to the spec/reference/architecture file that holds the detail. Do not paste the detail here.
+- `## Decisions` — two links: `out-of-scope/` (won't do) and `deferred/` (not yet). The instruction "grep here before adding a roadmap item" lives here.
+- `## Reference` — links to `architecture.md`, `roadmap.md`, `reference/`, and `specs/`.
+
+## Roadmap File (`roadmap.md`)
+
+The living implementation backlog — the file an agent reads and edits while building. Omit it for an area with no active or planned work (mature/complete areas).
+
+- **Prioritized, top-down.** Top = next up. Order so early items stay local/user-visible and later items add background/cross-process work.
+- **Checkbox-driven and granular.** Use `- [ ]` per feature with nested `- [ ]` sub-items for the concrete implementation steps (migration, procedure, mutation, component, edge cases). The roadmap _can and should_ hold implementation detail — unlike the thin README.
+- **Group by horizon**, e.g. `## In progress`, `## Next — low-hanging fruit`, `## Later — larger or multi-area`. Favour low-hanging fruit that extends something already shipped without new infrastructure.
+- **Sweep when shipped.** When a feature is fully checked off, collapse it to one line under `## Shipped` in the README and delete it from `roadmap.md`. The roadmap holds only open work.
+- Grep `out-of-scope/` + `deferred/` before adding an item, so a decided idea is not re-proposed.
+
+## Decision Registry (`out-of-scope/` + `deferred/`)
+
+One file per decision, lean. The folder name carries the status — do not repeat it inside, and do not add version/date metadata.
+
+- `out-of-scope/<name>.md` — a one-line description of the idea, then `## Why not`.
+- `deferred/<name>.md` — the idea, `## Why deferred`, and `## Revisit when` (the concrete trigger that reopens it). Optionally `## Cheaper interim` if something already covers the need.
+
+Before adding any roadmap item, check these folders so a previously-decided idea is not re-proposed.
 
 ## Spec File Template
 
@@ -74,22 +111,15 @@ Before implementing cross-cutting features, write or update the spec enough to a
 - What is the cheapest viable Azure option, and what alternatives were rejected?
 - What are the retry, idempotency, cancellation, and failure semantics?
 
-## Roadmap File Conventions
-
-- File name: `v<N>.md` at the area root (e.g. `esbabbler/v5.md`)
-- Each item: `- [ ] **Name** — one-line description` (pending) or `- [x] **Name** — ...` (done)
-- Dropped items: `- ~~**Name**~~ — reason dropped` (strikethrough + rationale)
-- Group items under `##` headings by theme
-- Link to detailed specs: `Spec: [\`specs/feature-name.md\`](specs/feature-name.md)`
-
 ## Lifecycle
 
-| State       | Location                                    | Action                                            |
-| ----------- | ------------------------------------------- | ------------------------------------------------- |
-| Planning    | `specs/<name>.md`                           | Create file; write minimal spec                   |
-| In progress | `specs/<name>.md`                           | Keep spec updated as design evolves               |
-| Shipped     | `completed/<name>.md`                       | Move (don't copy) with clean name; no edits after |
-| Abandoned   | deleted or `completed/` with rationale note | Document why in the file before archiving         |
+| State       | Location                 | Action                                                                                                             |
+| ----------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Planning    | `specs/<name>.md`        | Create the spec (if non-trivial); add a checkbox item in `roadmap.md`                                              |
+| In progress | `roadmap.md`             | Move the item to `## In progress` + name it in the README `## Now`; break it into sub-tasks; keep the spec updated |
+| Shipped     | `## Shipped` in README   | Collapse to one terse line linking the spec/reference; delete it from `roadmap.md`; trim the spec if outdated      |
+| Won't do    | `out-of-scope/<name>.md` | One file with the rationale; link from `## Decisions`                                                              |
+| Deferred    | `deferred/<name>.md`     | One file with rationale + revisit trigger; link from `## Decisions`                                                |
 
 ## Architecture Files
 
@@ -110,6 +140,5 @@ Design decisions spanning multiple feature areas go here instead of any single f
 ## Naming Rules
 
 - Feature area folders: camelCase (`fileTableEditor`, `esbabbler`, `vue-phaserjs`)
-- Spec files: kebab-case (`computed-columns`, `null-removal`)
-- Completed files: drop `(completed)` suffix — just `v1.md`, `clipboard.md`
-- Test roadmaps: `testing.md` (not `v1 (completed).test.md`)
+- All doc files: kebab-case (`computed-columns.md`, `cross-process-event-bridge.md`)
+- One topic per file; no version-numbered grab-bag files
