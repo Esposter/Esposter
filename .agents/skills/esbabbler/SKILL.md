@@ -5,6 +5,15 @@ description: Esposter messaging feature (esbabbler) conventions — display name
 
 # Esbabbler (Messaging) Feature Conventions
 
+## Discord Parity (Default Design Rule)
+
+Esbabbler is a Discord clone. When a behaviour, structure, naming, information architecture, default, or feature semantic is undecided, **default to whatever Discord does** instead of inventing our own — bespoke decisions should be near zero.
+
+- **Match:** feature behaviour, settings layout/categories, naming (Discord's term wins — e.g. "Roles", "Voice & Video"), defaults (e.g. push-to-talk off), scope (user vs server/room setting), keybinds, and copy.
+- **Diverge only on:** visual styling (Vuetify-defined — not ours to match pixel-for-pixel) and the explicit infra/storage constraints already recorded (Postgres + Azure Table split, no expensive infrastructure).
+- **When Discord's behaviour is unknown or ambiguous:** record it as an open question in the spec/roadmap — do not silently invent. A guess that diverges from Discord is a defect, not a design choice.
+- A feature Discord has but we deliberately dropped lives in `features/esbabbler/out-of-scope/` or `deferred/` with rationale — grep there before re-proposing.
+
 ## Display Name Resolution
 
 All member name display goes through `getDisplayName(user, roomId)` from `useUserToRoomStore`. Never read `user.name` / `member.name` directly in a room context.
