@@ -11,8 +11,8 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 
 - **No blank lines between consecutive `const` assignments** — group them tightly.
 - **No blank line before a `return`** that immediately follows a `const` in a small function (including composables that return a function directly — `return` follows the last setup line with no gap).
-- **Blank line after a closing `}`** of an `if`/`for`/block statement — unless it is the last statement in its scope or immediately followed by another opening block.
-- **No blank lines within Vue templates.**
+- **Blank line after a closing `}`** of an `if`/`for`/block statement — unless it is the last statement in its scope or immediately followed by another opening block. (Exception: consecutive top-level `watch`/lifecycle-hook registrations in a Vue `<script setup>` each get a blank line between them — see the `vue` skill.)
+- **No blank lines within Vue templates.** A blank line inserted to visually separate template sections is a smell that the component owns more than one responsibility — extract each section into its own focused child component rather than spacing them apart. See the `vue-component-patterns` skill (maximal granularity / one concern per component).
 - **Imports** — a single blank line separates the `import type` group from the value `import` group. That is the _only_ blank line allowed among imports. Never insert a blank line **between two `import type` lines** (the whole type group stays contiguous, even when mixing external and `@/` alias sources) nor between value imports; all imports of the same kind stay contiguous regardless of source (`@tiptap/core`, `#shared`, `@vueuse/*`, `@/`).
 
   ```ts
