@@ -35,6 +35,7 @@ export const external: (RegExp | string)[] = [
   "zod",
   // @esposter/infra
   "@pulumi/azure-native",
+  "@pulumi/github",
   "@pulumi/pulumi",
   // @esposter/vue-phaserjs
   "phaser",
