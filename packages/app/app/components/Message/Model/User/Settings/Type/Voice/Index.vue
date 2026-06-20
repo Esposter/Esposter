@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { VoiceInputMode } from "@esposter/db-schema";
 
 import { VoiceInputModeLabelMap } from "@/services/message/user/settings/VoiceInputModeLabelMap";
 import { useUserSettingsStore } from "@/store/message/user/settings";
@@ -8,7 +9,6 @@ import {
   MAX_INPUT_SENSITIVITY_DECIBELS,
   MAX_USER_VOLUME_PERCENTAGE,
   MIN_INPUT_SENSITIVITY_DECIBELS,
-  VoiceInputMode,
 } from "@esposter/db-schema";
 
 const userSettingsStore = useUserSettingsStore();

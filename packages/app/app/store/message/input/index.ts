@@ -1,5 +1,5 @@
-import type { Editor } from "@tiptap/core";
 import type { Draft } from "@/models/message/Draft";
+import type { Editor } from "@tiptap/core";
 
 import { dayjs } from "#shared/services/dayjs";
 import { validateFile } from "@/services/file/validateFile";
