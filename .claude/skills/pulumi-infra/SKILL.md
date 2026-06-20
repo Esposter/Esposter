@@ -111,6 +111,10 @@ This is a deliberate **exception** to the repo-wide "prefer named imports from l
 - `packages/infra` is `"type": "module"` (rolldown emits ESM; the `@pulumi/*` packages stay external). Named ESM imports from these CJS modules force Node's CJS↔ESM interop to evaluate bindings eagerly — `require()`-ing every referenced submodule at import time and defeating the lazy-load (slower startup, higher memory). They are not tree-shakable; the namespace + lazy-load is the only thing that keeps provider load cheap.
 - Pulumi's own codegen always emits `import * as`. Match it. Do not "fix" provider imports to named form for lint/style consistency.
 
+## GitHub Branch Auto-Delete
+
+GitHub's repository `deleteBranchOnMerge` is a system action that **bypasses ruleset deletion rules** — it deleted `develop` on a `develop → main` merge despite the ruleset's `deletion: true` on those refs. Keep `deleteBranchOnMerge: false` on the `Repository` resource and clean up merged head branches via the `Delete Merged Branch` GH Actions workflow (`.github/workflows/DeleteMergedBranch.yaml`), which excludes `main`/`develop` explicitly. Don't rely on rulesets to protect long-lived branches from native auto-delete.
+
 ## Azure Native Imports
 
 - Use Azure Native provider tokens matching the installed provider version. For Azure Native v3:
