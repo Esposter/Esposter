@@ -134,9 +134,7 @@
       "WebFetch(domain:orm.drizzle.team)",
       "WebFetch(domain:vitest.dev)",
       "WebFetch(domain:vuetifyjs.com)",
-      "WebFetch(domain:vueuse.org)",
-      "Read(//c/c/Users/jimmy/Desktop/Software/Esposter/packages/infra/**)",
-      "Read(//c/c/Users/jimmy/Desktop/Software/Esposter/**)"
+      "WebFetch(domain:vueuse.org)"
     ]
   }
 }
