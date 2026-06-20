@@ -4,24 +4,22 @@ Prioritized, granular implementation backlog. Top = next up. Ordered so early it
 
 **Workflow:** check sub-items off as you build; when a feature is fully shipped, collapse it to one line under `## Shipped` in [README.md](README.md) and delete it here. Grep [out-of-scope/](out-of-scope) + [deferred/](deferred) before adding anything new.
 
-## Foundation — do first (prerequisite)
+## Foundation — in progress
 
-**User-settings surface** — → [specs/user-settings.md](specs/user-settings.md), [specs/voice-video-settings.md](specs/voice-video-settings.md). The dialog is a skeleton today; build it out by mirroring the room-settings pattern. Push-to-talk, per-user volume default, and auto-idle have no home until this exists, so it gates them.
+**User-settings surface** — → [specs/user-settings.md](specs/user-settings.md), [specs/voice-video-settings.md](specs/voice-video-settings.md). DB-backed via a new `userSettings` table (synced); device IDs + UI collapsibles stay `localStorage`. Mirrors the room-settings pattern under `Message/Model/User/Settings/`.
 
-Scaffold (no DB — client prefs are `localStorage`-backed):
+Built:
 
-- [ ] `UserSettingsType` enum + `UserSettingsListItemMap` + `UserSettingsContentMap` (mirror the room-settings trio; no permission map).
-- [ ] Wire `Message/Model/Settings/LeftSideBar.vue` (render items + `v-model` active type) and `Content.vue` (`<component :is>`); add `Message/Model/Settings/LeftSideBarItem.vue`.
-- [ ] `store/user/settings/index.ts` (appearance, keybinds, auto-idle threshold) + `store/user/settings/voice.ts` — `localStorage`-backed, `getIsServer()`-guarded.
+- [x] `userSettings` table + `VoiceInputMode` enum + select schema (`packages/db-schema`); `readUserSettings` / `updateUserSettings` on `userRouter`; `UpdateUserSettingsInput`.
+- [x] `UserSettingsType` enum + `UserSettingsListItemMap` + `UserSettingsContentMap`; user wrappers (`LeftSideBar`/`LeftSideBarItem`/`Content`) + dialog wiring (loads settings on open).
+- [x] Stores: `store/message/user/settings/index.ts` (DB-backed, optimistic + revert/alert) + `store/message/user/settings/voice.ts` (device IDs, `localStorage`).
+- [x] Panels: Account, Profile (`UserProfileCard`), Voice & Video, Notifications (auto-idle), Appearance (theme), Keybinds (read-only reference).
 
-Panels (`Message/Model/Settings/Type/*/Index.vue`):
+Remaining:
 
-- [ ] **My Account** — email / account identity (read-only).
-- [ ] **Profile** — bio + avatar; fold in `pages/user/settings.vue` so there is one profile editor.
-- [ ] **Voice & Video** — push-to-talk (default off), device selects, input sensitivity meter, default mute/deafen, per-user volume default. Detail: [specs/voice-video-settings.md](specs/voice-video-settings.md).
-- [ ] **Notifications** — default notification type + presence status (relocate shipped UI) + auto-idle threshold.
-- [ ] **Appearance** — theme mode.
-- [ ] **Keybinds** — Ctrl+K palette + call keybinds.
+- [ ] **Run migration** — `pnpm db:gen` + `pnpm db:up` in `packages/db-schema` (user-run).
+- [ ] Fold `pages/user/settings.vue` into the Profile panel / make the route a deep-link to the dialog.
+- [ ] Sensitivity live meter (reuse the speaking-indicator analyser) — currently a plain threshold slider.
 
 ## Next — low-hanging fruit
 

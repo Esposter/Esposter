@@ -8,7 +8,7 @@ This README is the index. Detail lives in the linked files; nothing is duplicate
 
 ## Now
 
-- **User-settings surface** — building out the skeleton user-settings dialog into a Discord-style surface; prerequisite that gates push-to-talk, per-user volume default, and auto-idle. → [specs/user-settings.md](specs/user-settings.md), [specs/voice-video-settings.md](specs/voice-video-settings.md). Full backlog with checkboxes in **[roadmap.md](roadmap.md)**.
+- **User-settings surface** — Discord-style fullscreen user-settings dialog (Account · Profile · Voice & Video · Notifications · Appearance · Keybinds), DB-backed via a new `userSettings` table. Surface + panels built; **migration pending** (`pnpm db:gen` + `db:up`). Gates push-to-talk, per-user volume default, and auto-idle. → [specs/user-settings.md](specs/user-settings.md), [specs/voice-video-settings.md](specs/voice-video-settings.md). Full backlog in **[roadmap.md](roadmap.md)**.
 
 ## Shipped
 
@@ -39,7 +39,7 @@ Chronological. One line per feature; detail in the linked spec/reference/archite
 Do **not** re-propose these on a future roadmap without a new reason. Grep here first when adding roadmap items.
 
 - **Won't do** → [out-of-scope/](out-of-scope) — community events, edit history, read receipts / unread badges, starred messages, keyword notification rules, "currently playing" activity, collapsible embeds.
-- **Deferred (revisit trigger inside each file)** → [deferred/](deferred) — cross-process event bridge, message retention, server-side transcoding, virus scanning, custom emoji, outbound webhooks, `/giphy`, per-channel permission overrides, stage mode, user-settings sync.
+- **Deferred (revisit trigger inside each file)** → [deferred/](deferred) — cross-process event bridge, message retention, server-side transcoding, virus scanning, custom emoji, outbound webhooks, `/giphy`, per-channel permission overrides, stage mode.
 
 ## Reference
 

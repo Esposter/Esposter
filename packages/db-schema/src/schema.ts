@@ -21,6 +21,7 @@ import { sessions } from "@/schema/sessions";
 import { surveys } from "@/schema/surveys";
 import { userAchievements } from "@/schema/userAchievements";
 import { users } from "@/schema/users";
+import { userSettingsInMessage, voiceInputModeEnum } from "@/schema/userSettingsInMessage";
 import { userStatusEnum, userStatusesInMessage } from "@/schema/userStatusesInMessage";
 import { usersToRoomRolesInMessage } from "@/schema/usersToRoomRolesInMessage";
 import { notificationTypeEnum, usersToRoomsInMessage } from "@/schema/usersToRoomsInMessage";
@@ -54,10 +55,12 @@ export const schema = {
   surveys,
   userAchievements,
   users,
+  userSettingsInMessage,
   userStatusEnum,
   userStatusesInMessage,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   verifications,
+  voiceInputModeEnum,
   webhooksInMessage,
 };

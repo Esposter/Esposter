@@ -4,7 +4,7 @@ The Voice & Video panel of the [user-settings surface](user-settings.md). Holds 
 
 ## Overview
 
-All settings here are **client-local** (`localStorage` via `store/user/settings/voice.ts`) because device IDs and audio tuning are per-browser/device, not per-account. The call store reads this store on join and applies it through the LiveKit SDK. Nothing here touches the server or the DB.
+Most settings here are **DB-backed** (`userSettings` via `useUserSettingsStore`) and sync across devices — input mode, PTT keybind, sensitivity, default mute/deafen, default volume. Only the **hardware device IDs** (mic/speaker/camera) stay device-local in `localStorage` (`store/message/user/settings/voice.ts`), since a device chosen on one machine must not apply on another. The call store reads both on join and applies them through the LiveKit SDK.
 
 ## Settings
 
@@ -30,12 +30,13 @@ Device lists come from `navigator.mediaDevices.enumerateDevices()`; re-enumerate
 
 ## Key Files
 
-| File                                                         | Role                                                                                                                                       |
-| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `app/store/user/settings/voice.ts`                           | client voice prefs (input mode, keybind, sensitivity, device IDs, default mute/deafen, volume default); `localStorage`-backed, SSR-guarded |
-| `app/components/Message/Model/Settings/Type/Voice/Index.vue` | the panel UI: device selects, sensitivity meter, input-mode + keybind capture, default toggles                                             |
-| `app/store/message/room/call/index.ts`                       | reads `voice.ts` on join; applies devices, default mute/deafen, PTT gating                                                                 |
-| `app/store/message/room/call/media.ts`                       | holds the live mic/deafen state the PTT keybind toggles                                                                                    |
+| File                                                              | Role                                                                                                             |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `app/store/message/user/settings/index.ts`                        | DB-backed voice prefs (input mode, keybind, sensitivity, default mute/deafen, volume default) via `userSettings` |
+| `app/store/message/user/settings/voice.ts`                        | device-local store: mic/speaker/camera IDs in `localStorage`                                                     |
+| `app/components/Message/Model/User/Settings/Type/Voice/Index.vue` | the panel UI: device selects, sensitivity slider, input-mode + keybind capture, default toggles                  |
+| `app/store/message/room/call/index.ts`                            | reads `voice.ts` on join; applies devices, default mute/deafen, PTT gating                                       |
+| `app/store/message/room/call/media.ts`                            | holds the live mic/deafen state the PTT keybind toggles                                                          |
 
 ## Constraints / Notes
 
