@@ -4,9 +4,16 @@ Register HTTP endpoints per room; on configurable events (new message, pin, etc.
 
 ## Why deferred
 
-- Developer/power-user feature requiring queue + retry infrastructure.
-- Low ROI for a casual social platform.
+- Developer/power-user feature; low ROI for a casual social platform.
+- Posting to user-supplied URLs is an SSRF/abuse surface (same risk family as remote URL fetches).
+
+## What already exists
+
+The "needs infrastructure" blocker is gone — the building blocks are in code:
+
+- Generic Storage Queue + retry pattern (`useQueueClient`, `enqueueScheduledMessageJob`, `app.storageQueue` trigger).
+- `RoomPermission.ManageWebhooks` gate and the inbound webhook model (`webhooksInMessage`, `appUsersInMessage`, tokens).
 
 ## Revisit when
 
-There is clear integration/automation demand, and the scheduled-job queue infrastructure can be reused to deliver it cheaply.
+There is clear integration/automation demand. Remaining work is an outbound config (URL + event subscriptions), an emit→enqueue hook, a POST-with-retry queue function, and an SSRF/abuse review of the destination URLs — not new infrastructure.

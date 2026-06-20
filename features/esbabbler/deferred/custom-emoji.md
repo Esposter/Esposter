@@ -5,9 +5,12 @@ Per-room upload of custom emoji/stickers to Azure Blob (reusing the SAS upload f
 ## Why deferred
 
 - Ongoing Azure Blob storage cost per room.
-- Needs moderation tooling for uploaded image content.
-- Low ROI relative to that complexity on a casual platform.
+- A medium feature build: a new room-emoji table, upload UI, and picker + render integration (the reaction system already keys on a string `emojiTag`).
+
+## What already exists
+
+The "needs moderation tooling" blocker is largely answered — RBAC, the word filter, and the moderation log are all shipped, and the SAS upload flow (`generateProfileImageUploadUrl`) + blob containers already exist.
 
 ## Revisit when
 
-Rooms want identity/branding badly enough, and there is content-moderation tooling in place to govern uploads.
+Rooms want identity/branding badly enough to justify the per-room blob cost and the feature build.

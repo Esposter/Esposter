@@ -15,6 +15,7 @@ In active development:
 Ordered backlog, not started. Implement top-down — early items stay local/user-visible, later items add background/cross-process work.
 
 1. **Community events** — RSVP-able scheduled room events; reuses the scheduled-job worker; needs the `ManageEvents` permission-bitfield migration. → [specs/community-events.md](specs/community-events.md)
+   - Do the bitfield-shift migration **once**: add `ManageEvents` **and** `SpeakInStage` together. The LiveKit publish-gating needed for [stage mode](deferred/stage-mode.md) is already proven by the `StopScreenShare` admin action, so stage mode becomes nearly free to follow once the permission exists.
 2. **Voice/call polish** — call-notes system message, push-to-talk, Picture-in-Picture ([specs/picture-in-picture.md](specs/picture-in-picture.md)). (Raise-hand + call-health indicator already shipped.)
 3. **Mention badges & thread follows** — mention-only sidebar counts; `threadFollowsInMessage` + notify-on-reply; "Threads" drawer filter (open/followed/participated).
 4. **Moderation/safety upgrades** — moderator notes; automod actions on `roomFiltersInMessage` (reject/warn/timeout); raid mode; audit-log filters; softban preview.
