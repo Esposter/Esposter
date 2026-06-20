@@ -11,7 +11,7 @@ const radioGroup = useTemplateRef("radioGroup");
 const changeTheme = (themeMode: ThemeMode) =>
   animateThemeTransition(radioGroup.value?.$el ?? null, () => {
     themeCookie.value = themeMode;
-    theme.change(themeMode);
+    return theme.change(themeMode);
   });
 </script>
 

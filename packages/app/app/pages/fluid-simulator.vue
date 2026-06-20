@@ -153,11 +153,11 @@ onMounted(async () => {
     renderPipeline.render();
   };
 
-  renderer.setAnimationLoop(render);
+  await renderer.setAnimationLoop(render);
 });
 
-onUnmounted(() => {
-  renderer.setAnimationLoop(null);
+onUnmounted(async () => {
+  await renderer.setAnimationLoop(null);
   renderPipeline.dispose();
   water.geometry.dispose();
   water.material.dispose();

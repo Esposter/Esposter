@@ -34,11 +34,11 @@ const enumerateDevices = async () => {
 };
 
 const isCapturingKeybind = ref(false);
-const onKeydown = (event: KeyboardEvent) => {
+const onKeydown = async (event: KeyboardEvent) => {
   if (!isCapturingKeybind.value) return;
   event.preventDefault();
-  updateUserSettings({ pushToTalkKeybind: event.code });
   isCapturingKeybind.value = false;
+  await updateUserSettings({ pushToTalkKeybind: event.code });
 };
 
 const inputSensitivityDecibels = ref(0);

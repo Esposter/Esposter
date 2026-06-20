@@ -19,9 +19,13 @@ export const useInputStore = defineStore("message/input", () => {
   const initializeDrafts = (): Map<string, Draft> => {
     if (getIsServer()) return new Map();
     const drafts = new Map<string, Draft>();
+    const draftKeys: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (!key?.startsWith(DRAFT_KEY_PREFIX)) continue;
+      if (key?.startsWith(DRAFT_KEY_PREFIX)) draftKeys.push(key);
+    }
+
+    for (const key of draftKeys) {
       const roomId = key.slice(DRAFT_KEY_PREFIX.length);
       const draft = getDraft(roomId);
       if (!draft || EMPTY_TEXT_REGEX.test(draft.content)) continue;

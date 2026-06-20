@@ -46,16 +46,16 @@ const deleteParameter = (index: number) => {
   setErrors(name, []);
   focus(index - 1);
 };
-const commandNavigateNext = () => {
+const commandNavigateNext = async () => {
   const newSlashCommand = Object.values(SlashCommandDefinitionMap).find(
     ({ type }) => type.toLowerCase() === commandTitle.value.toLowerCase(),
   );
-  if (newSlashCommand && newSlashCommand.type !== pendingSlashCommand.value?.type) selectCommand(newSlashCommand);
+  if (newSlashCommand && newSlashCommand.type !== pendingSlashCommand.value?.type) await selectCommand(newSlashCommand);
   else if (activeParameters.value.length > 0) focus(0);
 };
-const selectCommand = (slashCommand: SlashCommand) => {
+const selectCommand = async (slashCommand: SlashCommand) => {
   setPendingSlashCommand(slashCommand);
-  if (slashCommand.parameters.length === 0) submit();
+  if (slashCommand.parameters.length === 0) await submit();
   else focus(0);
 };
 const navigatePrevious = (index: number) => {
