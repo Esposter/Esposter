@@ -17,13 +17,7 @@ const dialogStore = useDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 const roomName = useRoomName(() => currentRoom.value?.id ?? "");
 const placeholder = useRoomPlaceholder(currentRoom);
-const editedImage = ref(currentRoom.value?.image ?? "");
-watch(
-  () => currentRoom.value?.image,
-  (newImage) => {
-    editedImage.value = newImage ?? "";
-  },
-);
+const { cloned: editedImage } = useCloned(() => currentRoom.value?.image ?? "");
 </script>
 
 <template>

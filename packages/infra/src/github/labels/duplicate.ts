@@ -1,3 +1,4 @@
+import { repository } from "@/github/repository";
 import * as github from "@pulumi/github";
 
 export const duplicate: github.IssueLabel = new github.IssueLabel(
@@ -6,7 +7,7 @@ export const duplicate: github.IssueLabel = new github.IssueLabel(
     color: "cfd3d7",
     description: "This issue or pull request already exists",
     name: "duplicate",
-    repository: "Esposter",
+    repository: repository.name,
   },
   {
     protect: true,

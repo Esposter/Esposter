@@ -56,17 +56,6 @@ Do not run Vitest on Windows in this repository unless explicitly requested. Kno
 
 When linting locally, run `pnpm lint:fix` directly. `pnpm lint` is mainly for CI/CD check-only verification.
 
-Vue convention notes:
-
-- `watch`, `onMounted`, `onUnmounted`, and related Vue hooks may use async callbacks directly. Do not wrap Vue hook/watch callbacks in `getSynchronizedFunction`.
-- Always destructure props from `defineProps` (`const { id } = defineProps<Props>()`) so the props reactivity transform is used; avoid `props.id` unless there is a specific reason.
-- Do not add Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` call. Call `$trpc` directly from the component/composable when subscriptions own the state update; keep store actions for optimistic updates, navigation/side effects, or multi-step client logic.
-
-Testing convention notes:
-
-- Prefer `vi.restoreAllMocks()` in cleanup. It restores spied/mocked implementations and clears mock state; `vi.clearAllMocks()` only clears usage data and can leak mock implementations between tests.
-- Do not use `vi.resetAllMocks()` as routine cleanup because it erases mock implementations.
-
 DB migrations (run from `packages/db-schema/`):
 
 ```bash

@@ -1,3 +1,4 @@
+import { repository } from "@/github/repository";
 import * as github from "@pulumi/github";
 
 export const wontfix: github.IssueLabel = new github.IssueLabel(
@@ -6,7 +7,7 @@ export const wontfix: github.IssueLabel = new github.IssueLabel(
     color: "ffffff",
     description: "This will not be worked on",
     name: "wontfix",
-    repository: "Esposter",
+    repository: repository.name,
   },
   {
     protect: true,

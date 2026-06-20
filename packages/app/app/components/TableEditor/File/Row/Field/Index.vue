@@ -23,7 +23,8 @@ const findReplaceStore = useFindReplaceStore();
 const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findReplaceStore);
 const outlierStore = useOutlierStore();
 const { outlierCells } = storeToRefs(outlierStore);
-const { requestFocus } = useCellStore();
+const cellStore = useCellStore();
+const { requestFocus } = cellStore;
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
   const value = computeValue(rows, item, columns, column, rowIndex);

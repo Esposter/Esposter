@@ -1,12 +1,14 @@
 # Esbabbler
 
-Messaging, calls, rooms, moderation, and DMs — a casual Discord-style community app. Goal: durable and polished without expensive infrastructure or undoing the Postgres / Azure Table storage split.
+Messaging, calls, rooms, moderation, and DMs — a Discord clone.
+
+**Design rule: match Discord by default** — behaviour, structure, naming, defaults, and where each setting lives. Diverge only on visual styling (Vuetify-defined) and the infra/storage constraints below; when Discord's behaviour is unclear, note it as an open question rather than inventing. Full rule in [.claude/skills/esbabbler/SKILL.md](../../.claude/skills/esbabbler/SKILL.md). Goal: durable and polished without expensive infrastructure or undoing the Postgres / Azure Table storage split.
 
 This README is the index. Detail lives in the linked files; nothing is duplicated here.
 
 ## Now
 
-- No active wave. The prioritized, granular backlog (with checkboxes) lives in **[roadmap.md](roadmap.md)** — pick the top item there to start the next one. This README only logs what has shipped.
+- **User-settings surface** — Discord-style fullscreen user-settings dialog (Account · Profile · Voice & Video · Notifications · Appearance · Keybinds), DB-backed via a new `userSettings` table. Surface + panels built; **migration pending** (`pnpm db:gen` + `db:up`). Gates push-to-talk, per-user volume default, and auto-idle. → [specs/user-settings.md](specs/user-settings.md), [specs/voice-video-settings.md](specs/voice-video-settings.md). Full backlog in **[roadmap.md](roadmap.md)**.
 
 ## Shipped
 
@@ -28,7 +30,7 @@ Chronological. One line per feature; detail in the linked spec/reference/archite
 
 **Moderation** — RBAC roles/permissions, force-mute, kick, ban/unban, timeout, warn, softban, word filter, audit log. → [specs/rbac.md](specs/rbac.md), [specs/moderation.md](specs/moderation.md)
 
-**Calls** — persistent per-room drop-in audio, LiveKit migration, video, screenshare, call lobby (knock & admit), deafen, raise-hand, call-health indicator. → [specs/call.md](specs/call.md), [specs/screenshare.md](specs/screenshare.md), [reference/call-refactor.md](reference/call-refactor.md), [reference/call-session-migration.md](reference/call-session-migration.md)
+**Calls** — persistent per-room drop-in audio, LiveKit migration, video, screenshare, call lobby (knock & admit), deafen, raise-hand, call-health indicator, call-end duration system message. → [specs/call.md](specs/call.md), [specs/screenshare.md](specs/screenshare.md), [reference/call-refactor.md](reference/call-refactor.md), [reference/call-session-migration.md](reference/call-session-migration.md)
 
 **Integrations & infra** — inbound webhooks, offline message cache, scheduled messages (queue-worker backend + listing/cancel UI), Sent tab via Search index. → [specs/scheduled-messages.md](specs/scheduled-messages.md)
 
