@@ -35,6 +35,20 @@ export const developMainProtection: github.RepositoryRuleset = new github.Reposi
       pullRequest: {
         requiredApprovingReviewCount: 0,
       },
+      // Gate merges on CI. Contexts are the CI.yaml job names; the sharded Coverage matrix
+      // Is gated via its single Merge Coverage fan-in job rather than 16 separate contexts.
+      requiredStatusChecks: {
+        requiredChecks: [
+          { context: "Build Packages" },
+          { context: "Build App" },
+          { context: "Build Documentation" },
+          { context: "Merge Coverage" },
+          { context: "Lint" },
+          { context: "Format" },
+          { context: "Typecheck" },
+        ],
+        strictRequiredStatusChecksPolicy: true,
+      },
     },
     target: "branch",
   },

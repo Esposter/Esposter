@@ -101,6 +101,16 @@ Do not, until the listed app-side migration completes:
 - Disable Web PubSub local auth or public REST API access — while app/functions use Web PubSub connection-string service clients over public endpoints.
 - Set storage network default action to `Deny` without a complete allowlist, private endpoint, or equivalent migration.
 
+## Provider Imports (namespace, not named)
+
+Always import Pulumi provider packages as a namespace — `import * as github from "@pulumi/github"`, `import * as azure_native from "@pulumi/azure-native"`, `import * as pulumi from "@pulumi/pulumi"` — and reference members as `github.Repository`, `azure_native.resources.ResourceGroup`, etc.
+
+This is a deliberate **exception** to the repo-wide "prefer named imports from libraries" rule, and the review suggestion to switch `@pulumi/github` to named imports (`import { Repository }`) is **wrong**. Reasons:
+
+- Pulumi provider packages are CommonJS and lazy-load every resource submodule through `utilities.lazyLoad`, which installs getters on the `exports` object via `Object.defineProperty` (`exports.Repository = null; lazyLoad(exports, ["Repository"], () => require("./repository"))`). That mechanism only works through the live namespace object from `import * as`.
+- `packages/infra` is `"type": "module"` (rolldown emits ESM; the `@pulumi/*` packages stay external). Named ESM imports from these CJS modules force Node's CJS↔ESM interop to evaluate bindings eagerly — `require()`-ing every referenced submodule at import time and defeating the lazy-load (slower startup, higher memory). They are not tree-shakable; the namespace + lazy-load is the only thing that keeps provider load cheap.
+- Pulumi's own codegen always emits `import * as`. Match it. Do not "fix" provider imports to named form for lint/style consistency.
+
 ## Azure Native Imports
 
 - Use Azure Native provider tokens matching the installed provider version. For Azure Native v3:

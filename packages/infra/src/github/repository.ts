@@ -1,29 +1,39 @@
 import * as github from "@pulumi/github";
 
+// Single source of truth: GitHub topics mirror the root package.json keywords.
+// Keep both lists curated to valid topic syntax (lowercase, hyphenated, <=20 entries).
+import packageJson from "../../../../package.json" with { type: "json" };
+
 export const repository: github.Repository = new github.Repository(
   "repository",
   {
     allowAutoMerge: true,
     allowForking: true,
+    allowMergeCommit: true,
     allowRebaseMerge: false,
     allowSquashMerge: false,
+    allowUpdateBranch: true,
     defaultBranch: "main",
+    deleteBranchOnMerge: true,
     description: "A nice and casual place for posting random things.",
     hasDiscussions: true,
     hasDownloads: true,
     hasIssues: true,
+    hasProjects: true,
     hasWiki: true,
     homepageUrl: "https://esposter.com",
+    mergeCommitMessage: "PR_BODY",
+    mergeCommitTitle: "PR_TITLE",
     name: "Esposter",
     securityAndAnalysis: {
       secretScanning: {
-        status: "disabled",
+        status: "enabled",
       },
       secretScanningPushProtection: {
-        status: "disabled",
+        status: "enabled",
       },
     },
-    topics: ["drizzle-orm", "nuxt", "pinia", "postgresql", "trpc", "vue", "vuejs", "vuetify", "zod"],
+    topics: packageJson.keywords,
     visibility: "public",
     vulnerabilityAlerts: true,
   },
