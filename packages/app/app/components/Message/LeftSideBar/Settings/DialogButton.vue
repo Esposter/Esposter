@@ -10,6 +10,7 @@ const settingsType = ref(UserSettingsType.Account);
 const userSettingsStore = useUserSettingsStore();
 const { userSettings } = storeToRefs(userSettingsStore);
 const { readUserSettings } = userSettingsStore;
+
 watch(dialog, async (isOpen) => {
   if (isOpen && !userSettings.value) await readUserSettings();
 });

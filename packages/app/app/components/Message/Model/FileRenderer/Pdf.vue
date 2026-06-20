@@ -9,11 +9,7 @@ import VuePdfEmbed from "vue-pdf-embed";
 const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
 const isDark = useIsDark();
 const dialog = ref(false);
-const darkMode = ref(isDark.value);
-
-watch(isDark, (newIsDark) => {
-  darkMode.value = newIsDark;
-});
+const { cloned: darkMode } = useCloned(isDark);
 </script>
 
 <template>

@@ -12,7 +12,7 @@ const { userSettings } = defineProps<IdleTimeoutSliderProps>();
 const MS_PER_MINUTE = 60_000;
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
-const autoIdleThresholdMinutes = ref(userSettings.autoIdleThresholdMs / MS_PER_MINUTE);
+const { cloned: autoIdleThresholdMinutes } = useCloned(() => userSettings.autoIdleThresholdMs / MS_PER_MINUTE);
 </script>
 
 <template>

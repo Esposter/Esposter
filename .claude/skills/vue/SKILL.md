@@ -309,9 +309,10 @@ watchImmediate(
 const selectedCategoryId = ref(room.value?.categoryId ?? null);
 ```
 
-If the source can change externally while the form is open (e.g. real-time collaboration), add a plain `watch` — not `watchImmediate`:
+If the source can change externally while the form is open (e.g. real-time collaboration, an optimistic store that rolls back on failure), the local copy must **resync** when the source changes. Use VueUse's `useCloned` — never a hand-written `ref` + `watch` mirror:
 
 ```typescript
+// WRONG — manual ref + watch to mirror the source
 const selectedCategoryId = ref(room.value?.categoryId ?? null);
 watch(
   () => room.value?.categoryId,
@@ -319,7 +320,25 @@ watch(
     selectedCategoryId.value = categoryId ?? null;
   },
 );
+
+// CORRECT — useCloned owns the editable copy and resyncs automatically
+const { cloned: selectedCategoryId } = useCloned(() => room.value?.categoryId ?? null);
 ```
+
+`useCloned(source, options)` returns `{ cloned, isModified, sync }`:
+
+- `cloned` is a **writable** ref (bind it with `v-model`); it re-clones whenever `source` changes, so a rollback or external edit flows back into the form.
+- Fold any normalization into the **source getter** (`() => x ?? ""`) rather than a custom clone.
+- Default clone is `JSON.parse(JSON.stringify(...))` — fine for primitives/plain objects. For values that JSON can't round-trip (Dates, class instances, reactive proxies), pass a `clone` and `deep: true`, and use the returned `sync` as the reset handler instead of a separate `resetForm`:
+
+  ```typescript
+  const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
+    clone: (source) => structuredClone(toRawDeep(source)),
+    deep: true,
+  });
+  ```
+
+`useCloned` also covers writable local copies driven by an imperative consumer (a `v-model` an external widget mutates) that must still resync from a reactive source — e.g. `const { cloned: darkMode } = useCloned(isDark)` bound to `v-model:dark-mode`.
 
 **Prefer props-down when the parent is adjacent and already has the data.** Child initializes from the prop — no watch, no store duplication:
 
@@ -374,14 +393,15 @@ watch(throttledSearchQuery, async (newQuery) => {
 
 ### Summary
 
-| Scenario                       | Pattern                                                   |
-| ------------------------------ | --------------------------------------------------------- |
-| Read-only derivation           | `computed`                                                |
-| Form init from prop/store      | `ref(source.value)` directly — never `watchImmediate`     |
-| Form reset on dialog/menu open | `watch(dialog, (isOpen) => { if (!isOpen) return; ... })` |
-| Two-way store binding          | Writable `computed` (get/set)                             |
-| External imperative API        | `watch`                                                   |
-| Async side effect              | `watch`                                                   |
+| Scenario                                       | Pattern                                                   |
+| ---------------------------------------------- | --------------------------------------------------------- |
+| Read-only derivation                           | `computed`                                                |
+| Form init from prop/store (no external change) | `ref(source.value)` directly — never `watchImmediate`     |
+| Editable copy that resyncs from source         | `useCloned(() => source)` — never `ref` + `watch` mirror  |
+| Form reset on dialog/menu open                 | `watch(dialog, (isOpen) => { if (!isOpen) return; ... })` |
+| Two-way store binding                          | Writable `computed` (get/set)                             |
+| External imperative API                        | `watch`                                                   |
+| Async side effect                              | `watch`                                                   |
 
 ## Watch Aliases & `watchEffect`
 

@@ -42,7 +42,7 @@ const isUpdateMode = computed({
 });
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
-const isOptionsChildrenActive = ref(false);
+const { cloned: isOptionsChildrenActive } = useCloned(() => optionsMenu.value?.rowKey === message.rowKey);
 const isDisabled = computed(() => optionsMenu.value && optionsMenu.value.rowKey !== message.rowKey);
 const isActive = computed(
   () =>
@@ -51,10 +51,6 @@ const isActive = computed(
 );
 const isActiveAndNotUpdateMode = computed(() => isActive.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
-
-watch(optionsMenu, (newOptionsMenu) => {
-  isOptionsChildrenActive.value = newOptionsMenu?.rowKey === message.rowKey;
-});
 </script>
 
 <template>

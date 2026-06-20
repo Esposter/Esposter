@@ -15,18 +15,10 @@ const { columns, index, row } = defineProps<EditDialogButtonProps>();
 const editableColumns = computed(() => columns.filter((column) => checkIsEditableColumnValue(column)));
 const updateRow = useUpdateRow();
 const title = computed(() => `Edit Row ${index + 1}`);
-const editedRow = ref(structuredClone(toRawDeep(row)));
-const resetForm = () => {
-  editedRow.value = structuredClone(toRawDeep(row));
-};
-
-watch(
-  () => row,
-  (newRow) => {
-    editedRow.value = structuredClone(toRawDeep(newRow));
-  },
-  { deep: true },
-);
+const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
+  clone: (source) => structuredClone(toRawDeep(source)),
+  deep: true,
+});
 </script>
 
 <template>

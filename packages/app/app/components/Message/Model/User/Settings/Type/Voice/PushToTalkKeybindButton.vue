@@ -14,6 +14,7 @@ useEventListener("keydown", async (event) => {
   if (!isCapturingKeybind.value) return;
   event.preventDefault();
   isCapturingKeybind.value = false;
+  if (event.code === "Escape") return;
   await updateUserSettings({ pushToTalkKeybind: event.code });
 });
 </script>

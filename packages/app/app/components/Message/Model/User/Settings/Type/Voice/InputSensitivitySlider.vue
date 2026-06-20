@@ -11,7 +11,7 @@ interface InputSensitivitySliderProps {
 const { userSettings } = defineProps<InputSensitivitySliderProps>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
-const inputSensitivityDecibels = ref(userSettings.inputSensitivityDecibels);
+const { cloned: inputSensitivityDecibels } = useCloned(() => userSettings.inputSensitivityDecibels);
 </script>
 
 <template>

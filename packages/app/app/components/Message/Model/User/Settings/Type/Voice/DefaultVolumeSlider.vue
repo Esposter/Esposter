@@ -11,7 +11,7 @@ interface DefaultVolumeSliderProps {
 const { userSettings } = defineProps<DefaultVolumeSliderProps>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
-const defaultUserVolumePercentage = ref(userSettings.defaultUserVolumePercentage);
+const { cloned: defaultUserVolumePercentage } = useCloned(() => userSettings.defaultUserVolumePercentage);
 </script>
 
 <template>
