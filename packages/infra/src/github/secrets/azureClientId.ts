@@ -6,9 +6,9 @@ const config = new pulumi.Config();
 export const azureClientId: github.ActionsSecret = new github.ActionsSecret(
   "actionsSecret-AZURE-CLIENT-ID",
   {
-    plaintextValue: config.require("AZURE_CLIENT_ID"),
     repository: "Esposter",
     secretName: "AZURE_CLIENT_ID",
+    value: config.require("AZURE_CLIENT_ID"),
   },
   {
     protect: true,
