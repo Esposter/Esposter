@@ -3,7 +3,8 @@ const THEME_TRANSITION_DURATION_MS = 500;
 // Circular clip-path reveal expanding from the origin element, used whenever the theme changes.
 // Falls back to an instant change when the View Transition API is unavailable or motion is reduced.
 export const animateThemeTransition = async (origin: HTMLElement | null, change: () => Promise<void> | void) => {
-  if (!origin || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const isViewTransitionSupported = typeof window.document.startViewTransition === "function";
+  if (!origin || !isViewTransitionSupported || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     await change();
     return;
   }

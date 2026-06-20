@@ -20,8 +20,10 @@ const { cameraDeviceId, inputDeviceId, outputDeviceId } = storeToRefs(deviceStor
 const audioInputItems = ref<SelectItemCategoryDefinition<string>[]>([]);
 const audioOutputItems = ref<SelectItemCategoryDefinition<string>[]>([]);
 const videoInputItems = ref<SelectItemCategoryDefinition<string>[]>([]);
+const isDeviceEnumerationSupported = useSupported(() => Boolean(window.navigator.mediaDevices?.enumerateDevices));
 const enumerateDevices = async () => {
-  const devices = await navigator.mediaDevices.enumerateDevices();
+  if (!isDeviceEnumerationSupported.value) return;
+  const devices = await window.navigator.mediaDevices.enumerateDevices();
   const toItems = (kind: MediaDeviceKind): SelectItemCategoryDefinition<string>[] =>
     devices
       .filter((device) => device.kind === kind)
@@ -49,12 +51,15 @@ watchEffect(() => {
 
 onMounted(async () => {
   window.addEventListener("keydown", onKeydown);
-  navigator.mediaDevices.addEventListener("devicechange", enumerateDevices);
-  await enumerateDevices();
+  if (isDeviceEnumerationSupported.value) {
+    window.navigator.mediaDevices.addEventListener("devicechange", enumerateDevices);
+    await enumerateDevices();
+  }
 });
 onUnmounted(() => {
   window.removeEventListener("keydown", onKeydown);
-  navigator.mediaDevices.removeEventListener("devicechange", enumerateDevices);
+  if (isDeviceEnumerationSupported.value)
+    window.navigator.mediaDevices.removeEventListener("devicechange", enumerateDevices);
 });
 </script>
 
