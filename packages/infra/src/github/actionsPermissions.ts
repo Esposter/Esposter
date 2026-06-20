@@ -1,3 +1,4 @@
+import { repository } from "@/github/repository";
 import * as github from "@pulumi/github";
 
 export const actionsPermissions: github.ActionsRepositoryPermissions = new github.ActionsRepositoryPermissions(
@@ -11,7 +12,7 @@ export const actionsPermissions: github.ActionsRepositoryPermissions = new githu
       patternsAlloweds: ["azure/login@*", "pnpm/action-setup@*", "pulumi/actions@*", "softprops/action-gh-release@*"],
       verifiedAllowed: false,
     },
-    repository: "Esposter",
+    repository: repository.name,
   },
   {
     protect: true,

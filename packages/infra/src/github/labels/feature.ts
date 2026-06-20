@@ -1,3 +1,4 @@
+import { repository } from "@/github/repository";
 import * as github from "@pulumi/github";
 
 export const feature: github.IssueLabel = new github.IssueLabel(
@@ -6,7 +7,7 @@ export const feature: github.IssueLabel = new github.IssueLabel(
     color: "a2eeef",
     description: "New feature or request",
     name: "feature",
-    repository: "Esposter",
+    repository: repository.name,
   },
   {
     protect: true,

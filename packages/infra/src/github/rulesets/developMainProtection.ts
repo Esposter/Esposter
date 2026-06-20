@@ -1,3 +1,6 @@
+import GitHubAdminRepositoryRoleActorId from "@/github/constants/GitHubAdminRepositoryRoleActorId";
+import GitHubRenovateAppActorId from "@/github/constants/GitHubRenovateAppActorId";
+import { repository } from "@/github/repository";
 import * as github from "@pulumi/github";
 
 // Modern ruleset replacing the classic branch protection on develop + main.
@@ -10,12 +13,12 @@ export const developMainProtection: github.RepositoryRuleset = new github.Reposi
   {
     bypassActors: [
       {
-        actorId: 5,
+        actorId: GitHubAdminRepositoryRoleActorId,
         actorType: "RepositoryRole",
         bypassMode: "always",
       },
       {
-        actorId: 2740,
+        actorId: GitHubRenovateAppActorId,
         actorType: "Integration",
         bypassMode: "always",
       },
@@ -28,7 +31,7 @@ export const developMainProtection: github.RepositoryRuleset = new github.Reposi
     },
     enforcement: "active",
     name: "develop & main branch protection",
-    repository: "Esposter",
+    repository: repository.name,
     rules: {
       deletion: true,
       nonFastForward: true,

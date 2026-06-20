@@ -1,3 +1,4 @@
+import { repository } from "@/github/repository";
 import * as github from "@pulumi/github";
 
 export const pendingTriage: github.IssueLabel = new github.IssueLabel(
@@ -5,7 +6,7 @@ export const pendingTriage: github.IssueLabel = new github.IssueLabel(
   {
     color: "F9D0C4",
     name: "pending triage",
-    repository: "Esposter",
+    repository: repository.name,
   },
   {
     protect: true,
