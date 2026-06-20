@@ -13,7 +13,10 @@ export const repository: github.Repository = new github.Repository(
     allowRebaseMerge: false,
     allowSquashMerge: false,
     allowUpdateBranch: true,
-    deleteBranchOnMerge: true,
+    // Native auto-delete bypasses rulesets and would nuke develop on a develop -> main
+    // merge. Disabled here; the Delete Merged Branch workflow cleans up head branches
+    // while excluding long-lived branches (main, develop).
+    deleteBranchOnMerge: false,
     description: "A nice and casual place for posting random things.",
     hasDiscussions: true,
     hasIssues: true,
