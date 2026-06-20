@@ -8,7 +8,7 @@ Planning and design documents for Esposter features, refactors, and roadmaps. Co
 
 Each feature area is a thin index (`README.md`) over many small topic files. No version-numbered grab-bags; organize by topic.
 
-```
+```text
 features/
   README.md
   <area>/

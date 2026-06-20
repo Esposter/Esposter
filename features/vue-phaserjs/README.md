@@ -15,7 +15,7 @@ This README is the index.
 
 ## Decisions
 
-Do not re-propose without a new reason — [out-of-scope/](out-of-scope): `<Group>`, camera tween helpers, multiple cameras, tilemap layer components, `useSound`, input-polling composables, `useDrag`, `useTimeline`, `<Tween>`, `useSceneData`, scene transition effects, `useArcadePhysics`.
+Grep [out-of-scope/](out-of-scope) before proposing a new component/composable — settled won't-dos (`<Group>`, camera tween helpers, multiple cameras, tilemap layer components, `useSound`, input-polling, `useDrag`, `useTimeline`, `<Tween>`, `useSceneData`, scene transition effects, `useArcadePhysics`) each have a file there.
 
 ## Reference
 
