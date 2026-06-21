@@ -1,7 +1,6 @@
+import { KIBIBYTE } from "#shared/services/app/constants";
 import { getFileSize } from "@/services/file/getFileSize";
 import { describe, expect, test } from "vitest";
-
-const KIBIBYTE = 1024;
 
 describe(getFileSize, () => {
   test("returns 0 B for non-positive sizes", () => {

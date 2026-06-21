@@ -1,6 +1,6 @@
-import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@/services/constants";
 import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { InvocationContext } from "@azure/functions";
+import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { assert, describe, expect, test } from "vitest";
 
 describe(getCreateMessageNotificationPayload, () => {

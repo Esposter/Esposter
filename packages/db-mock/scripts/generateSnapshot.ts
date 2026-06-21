@@ -1,4 +1,5 @@
 import { PGlite } from "@electric-sql/pglite";
+import { KIBIBYTE } from "@esposter/configuration";
 import { messageSchema, relations, schema } from "@esposter/db-schema";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api-postgres";
 import { sql } from "drizzle-orm";
@@ -19,4 +20,4 @@ const dump = await client.dumpDataDir("gzip");
 const buffer = Buffer.from(await dump.arrayBuffer());
 const output = fileURLToPath(new URL(`../src/${SNAPSHOT_FILENAME}`, import.meta.url));
 await writeFile(output, buffer);
-console.log(`Wrote ${output} (${(buffer.length / 1024).toFixed(1)} KB, ${statements.length} statements)`);
+console.log(`Wrote ${output} (${(buffer.length / KIBIBYTE).toFixed(1)} KB, ${statements.length} statements)`);
