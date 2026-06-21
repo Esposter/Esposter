@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.29.0](https://github.com/Esposter/Esposter/compare/v2.28.0...v2.29.0) (2026-06-21)
+
+### Bug Fixes
+
+* lint ([8a8511d](https://github.com/Esposter/Esposter/commit/8a8511d46aa233ce8c15b8954de9a5d83f4436eb))
+* timeouts by actually waiting until db is ready in before all setups before running tests ([3346f72](https://github.com/Esposter/Esposter/commit/3346f72b112d0bb7ec16e0e08069fcb8a590b6ce))
+* unifying vitest ([8e3e6bf](https://github.com/Esposter/Esposter/commit/8e3e6bf186a7fecbd3054cf5b9e80e5763d3c8b0))
+
+### Features
+
+* **esbabbler:** DB-backed Discord-style user-settings surface ([b61bf66](https://github.com/Esposter/Esposter/commit/b61bf6649da89c1be1d1c38feef41bfe31c44dda))
+
 # [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
 
 ### Bug Fixes

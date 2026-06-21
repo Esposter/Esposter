@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.29.0](https://github.com/Esposter/Esposter/compare/v2.28.0...v2.29.0) (2026-06-21)
+
+### Bug Fixes
+
+* await re-linked stylesheets in document PiP to avoid FOUC ([8b18e24](https://github.com/Esposter/Esposter/commit/8b18e243ef58c48795fb519f55607bd0022c286a))
+* cleanup styles ([933bd7e](https://github.com/Esposter/Esposter/commit/933bd7ecda53cde67cb530e062e3911ed97263e3))
+* code review comments ([d7c4a0f](https://github.com/Esposter/Esposter/commit/d7c4a0f4d899a7dee0fc55051816c795694f012a))
+* document styles ([8d9bf8c](https://github.com/Esposter/Esposter/commit/8d9bf8c90a0318e5c676256b6989f5c121c97ff6))
+* drop @nuxtjs/seo under vitest to stop schema-org teardown leak ([5860fa7](https://github.com/Esposter/Esposter/commit/5860fa728521ef566c6412cbfe1f22df7a701a7e))
+* **esbabbler:** await floating promises and fix draft init scan ([19c55a8](https://github.com/Esposter/Esposter/commit/19c55a8eecf471bc8d34d7d9f3c142788599e71f))
+* **esbabbler:** guard media/view-transition APIs and concurrent settings updates ([6ddc7cd](https://github.com/Esposter/Esposter/commit/6ddc7cded2782a956693d460036d19b1d0d305b2))
+* full screen & pip on share ([056c3a8](https://github.com/Esposter/Esposter/commit/056c3a8cf5e32e3cf35db96af351166af191005f))
+* lint ([b8410e7](https://github.com/Esposter/Esposter/commit/b8410e7d8e31fa06932ef8bfdbe36f074ab59610))
+* lint ([d8e0203](https://github.com/Esposter/Esposter/commit/d8e0203593b999f1b183af9a2f45cbf926633885))
+* lint ([2c6623b](https://github.com/Esposter/Esposter/commit/2c6623b13812eabd091554ed9ee7e8f796979459))
+* lint ([c3c95fc](https://github.com/Esposter/Esposter/commit/c3c95fcd0f09196a506fa01fc6b19214be259345))
+* lint ([7f859de](https://github.com/Esposter/Esposter/commit/7f859deb27ee2043c70e7135fa55e4c1741f0820))
+* lint ([5bb1c58](https://github.com/Esposter/Esposter/commit/5bb1c58aa54a6663bde4ceb03c85ce2b730dca43))
+* lint ([a8ec4d8](https://github.com/Esposter/Esposter/commit/a8ec4d883352522b8ff069b4888614b57de61142))
+* lint + comments etc ([13de898](https://github.com/Esposter/Esposter/commit/13de898e802444afc16acd33145538c9034727ea))
+* lint and snapshot ([cda7f33](https://github.com/Esposter/Esposter/commit/cda7f33c8c54e3f52a25551101ff0794dd74086c))
+* relink linked stylesheets in document PiP so MDI font icons load ([5dca41b](https://github.com/Esposter/Esposter/commit/5dca41b143fe1271b8dd7d46aa894a13c085c952))
+* remaining styles and video ([36f1671](https://github.com/Esposter/Esposter/commit/36f167119ceb68b84ea04a72f6ff9b490797d3d4))
+* screenshare in pip ([77d867a](https://github.com/Esposter/Esposter/commit/77d867a0d0d028dd42d92fea822b8b484f401908))
+* start mic on mount and don't block if not enabled ([8dc0dda](https://github.com/Esposter/Esposter/commit/8dc0dda218c4aa1b8fba4e1a23c158ee4e30c6b4))
+* styles + pip ([8ab03db](https://github.com/Esposter/Esposter/commit/8ab03db3b9443ed9076624822308a9144f992b75))
+* styles and deps ([f059ffd](https://github.com/Esposter/Esposter/commit/f059ffd3fd3fc488e2ee93fde6a4cfb54e87cc36))
+* **test:** run vitest on windows via minimal module allowlist ([abe2279](https://github.com/Esposter/Esposter/commit/abe2279ed2909a13908910374ca87c62dd4ac0ae))
+* tests ([2865e58](https://github.com/Esposter/Esposter/commit/2865e58e8f12c4e5ffd97c07ccf5fcffa4b8e551))
+* tests + remove unnecessary plugin ([420448a](https://github.com/Esposter/Esposter/commit/420448a450ce2056c68566e5da8326dbf1f9b700))
+* tests and push notifs for webhooks ([c88d5e6](https://github.com/Esposter/Esposter/commit/c88d5e6985276d33a23047479da76650f5dcfbc1))
+* types and commands ([e0ad825](https://github.com/Esposter/Esposter/commit/e0ad82515d8bb6c1adc46b3ee30b7fa35650910c))
+* unifying vitest ([8e3e6bf](https://github.com/Esposter/Esposter/commit/8e3e6bf186a7fecbd3054cf5b9e80e5763d3c8b0))
+* visibility ([5eb2f77](https://github.com/Esposter/Esposter/commit/5eb2f7773c44a38703edfed1b2f87124e398e087))
+* wip ([1bb9874](https://github.com/Esposter/Esposter/commit/1bb9874ea021e6b09833c595c743d72d6c7aea9c))
+
+### Features
+
+* Add pip ([cd007b7](https://github.com/Esposter/Esposter/commit/cd007b744c586d68d0df438c75a732b61357ff2a))
+* **esbabbler:** add voice/notification user settings and adopt vueuse media composables ([9eb80e5](https://github.com/Esposter/Esposter/commit/9eb80e5b095d408117d59358db6341ca97bca1d8))
+* **esbabbler:** DB-backed Discord-style user-settings surface ([b61bf66](https://github.com/Esposter/Esposter/commit/b61bf6649da89c1be1d1c38feef41bfe31c44dda))
+
+### Performance Improvements
+
+* fix lint + optimize ([0756cc6](https://github.com/Esposter/Esposter/commit/0756cc6f5fc6b2f067959cd484631a45d6e1ee00))
+
 # [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
 
 ### Bug Fixes

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.29.0](https://github.com/Esposter/Esposter/compare/v2.28.0...v2.29.0) (2026-06-21)
+
+### Bug Fixes
+
+* lint ([2c6623b](https://github.com/Esposter/Esposter/commit/2c6623b13812eabd091554ed9ee7e8f796979459))
+* lint ([7f859de](https://github.com/Esposter/Esposter/commit/7f859deb27ee2043c70e7135fa55e4c1741f0820))
+* lint + comments etc ([13de898](https://github.com/Esposter/Esposter/commit/13de898e802444afc16acd33145538c9034727ea))
+* unifying vitest ([8e3e6bf](https://github.com/Esposter/Esposter/commit/8e3e6bf186a7fecbd3054cf5b9e80e5763d3c8b0))
+
+### Features
+
+* Add github resources ([81f1c0c](https://github.com/Esposter/Esposter/commit/81f1c0c0677321943fccd9c486332b549d756334))
+* **infra:** finalize GitHub provider (v12) and harden repo settings ([76c6d98](https://github.com/Esposter/Esposter/commit/76c6d982bde4edf2c1c1319a53488c658e77720f))
+
+### Performance Improvements
+
+* fix lint + optimize ([0756cc6](https://github.com/Esposter/Esposter/commit/0756cc6f5fc6b2f067959cd484631a45d6e1ee00))
+
 # [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
 
 ### Bug Fixes
