@@ -23,16 +23,36 @@ jobs:
 
       - name: 📦 Install dependencies
         run: pnpm i
-      # Cache key = the git tree hash of every workspace package except the app, plus the lockfile and catalog.
-      # A tree hash is a content hash of TRACKED files only, so generated/gitignored output (dist, ctix barrels,
-      # *.tsbuildinfo, node_modules) is excluded by construction — no glob enumeration to keep in sync, and a
-      # Change to any tracked build input rebuilds. The app (`packages/app`) is excluded, so app-only commits hit.
+      # Cache key = a content hash (mode + blob hash + path) of only the TRACKED files that actually feed
+      # `pnpm build:packages` (ctix barrel gen + rolldown/vite bundle of each package's src/index.ts), plus the
+      # root package.json (infra bundles it via `import packageJson from "../../../../package.json"`), the lockfile
+      # and the catalog. This is an allowlist, not a denylist: every non-app package builds with the same fixed
+      # stack, so the build inputs are a small, stable set and we enumerate them explicitly rather than hashing
+      # everything and subtracting noise. Excluded by being absent from the allowlist: docs (README/CHANGELOG/
+      # docs/**), lint config (.oxlintrc.json, eslint.config.js, eslint/**), test files + vitest.config.ts, test
+      # fixtures (parse-tmx maps/, __snapshots__/), deploy/runtime config (host.json, Pulumi*.yaml,
+      # drizzle.config.ts), and build-glue scripts (db-mock/scripts/** only copies a snapshot that already lives
+      # in src/, so the script itself moves no untracked input) — none of which reach dist. Tracked files only, so
+      # generated output (dist, ctix barrels, *.tsbuildinfo, node_modules) is excluded by construction. NOTE:
+      # adding a build input of a new shape (e.g. a new root-level config a package's build reads) means adding
+      # it to the allowlist below.
+      #
+      # Allowed per non-app package: package.json, rolldown.config.ts, vite.config.ts, auto-imports.d.ts (any vue
+      # package's generated ambient imports), tsconfig*.json, src/** (minus *.test.ts/*.test-d.ts/*.bench.ts),
+      # types/**; plus configuration/.ctirc-* (drives every package's barrel gen).
       - name: 🔑 Compute package build cache key
         id: key
         run: |
           hash=$( {
-            git ls-tree HEAD:packages | awk '$2 == "tree" && $4 != "app" { print $3 }'
-            git rev-parse HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
+            git ls-tree -r HEAD packages | awk -F'\t' '
+              $2 ~ /^packages\/app\// { next }
+              $2 ~ /\.(test|test-d|bench)\.ts$/ { next }
+              $2 ~ /^packages\/[^/]+\/(package\.json|rolldown\.config\.ts|vite\.config\.ts|auto-imports\.d\.ts)$/ { print; next }
+              $2 ~ /^packages\/[^/]+\/tsconfig[^/]*\.json$/ { print; next }
+              $2 ~ /^packages\/[^/]+\/(src|types)\// { print; next }
+              $2 ~ /^packages\/configuration\/\.ctirc-/ { print; next }
+            '
+            git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
           } | sha256sum | cut -d' ' -f1 )
           echo "hash=$hash" >> "$GITHUB_OUTPUT"
       # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
