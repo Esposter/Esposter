@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DataSourceStatistics } from "#shared/models/tableEditor/file/datasource/DataSourceStatistics";
 
-import { formatSize } from "@/util/text/formatSize";
+import { getFileSize } from "@/services/file/getFileSize";
 
 interface StatisticsBarProps {
   filteredRowCount?: number;
@@ -19,6 +19,6 @@ const isFiltered = computed(() => filteredRowCount !== undefined && filteredRowC
       <template v-else>{{ statistics.rowCount }} rows</template>
     </v-chip>
     <v-chip label size="small" prepend-icon="mdi-table-column">{{ statistics.columnCount }} columns</v-chip>
-    <v-chip label size="small" prepend-icon="mdi-database">{{ formatSize(statistics.size) }}</v-chip>
+    <v-chip label size="small" prepend-icon="mdi-database">{{ getFileSize(statistics.size) }}</v-chip>
   </div>
 </template>

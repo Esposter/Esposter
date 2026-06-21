@@ -52,7 +52,7 @@ pnpm test -t "test description"         # run single test by name
 pnpm coverage         # vitest run --coverage
 ```
 
-Do not run Vitest on Windows in this repository unless explicitly requested. Known Windows startup failures include Vite/Rolldown `spawn EPERM` during config loading and UnoCSS/happy-dom path issues; write tests when useful and let the user run them in a supported environment.
+Vitest runs on Windows. The former `spawn EPERM` / UnoCSS config-load crash was fixed by giving `packages/app/configuration/modules.ts` a minimal Nuxt module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO). If a new test needs an excluded module, add it to the Vitest branch there.
 
 When linting locally, run `pnpm lint:fix` directly. `pnpm lint` is mainly for CI/CD check-only verification.
 

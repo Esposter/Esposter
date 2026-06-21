@@ -1,10 +1,12 @@
 import { readdirSync, statSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
 
+import { KIBIBYTE } from "./constants";
+
 export const getDirectorySize = (targetPath: string): string => {
   const absolutePath = resolve(targetPath);
   const sizeInBytes = baseGetDirectorySize(absolutePath);
-  const sizeInKB = (sizeInBytes / 1024).toFixed(2);
+  const sizeInKB = (sizeInBytes / KIBIBYTE).toFixed(2);
   return `${basename(absolutePath)}: ${sizeInKB} KB (${sizeInBytes} bytes)`;
 };
 

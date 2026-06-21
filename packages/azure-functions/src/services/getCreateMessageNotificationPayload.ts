@@ -1,6 +1,6 @@
 import type { InvocationContext } from "@azure/functions";
 
-import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@/services/constants";
+import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { getResult, normalizeString, truncate } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
