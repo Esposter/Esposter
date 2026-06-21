@@ -12,7 +12,7 @@ describe("@esposter/azure-functions", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    if (isWindows) expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4634.77 KB (4746003 bytes)"`);
+    if (isWindows) expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4634.63 KB (4745866 bytes)"`);
     else expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4640.72 KB (4752094 bytes)"`);
   });
 });
