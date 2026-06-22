@@ -2,11 +2,11 @@
 import type { SettingsSection } from "@/models/message/user/settings/SettingsSection";
 import type { UserSettingsType } from "@/models/message/user/UserSettingsType";
 
-import { withFinalizerAsync } from "@esposter/shared";
 import { SETTINGS_CONTENT_ID } from "@/services/message/settings/constants";
 import { UserSettingsListItemMap } from "@/services/message/user/settings/UserSettingsListItemMap";
 import { UserSettingsSectionMap } from "@/services/message/user/settings/UserSettingsSectionMap";
 import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
+import { withFinalizerAsync } from "@esposter/shared";
 
 const modelValue = defineModel<UserSettingsType>({ required: true });
 const userSettingsDialogStore = useUserSettingsDialogStore();
