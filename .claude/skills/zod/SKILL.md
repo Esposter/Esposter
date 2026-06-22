@@ -10,14 +10,10 @@ description: Esposter Zod schema conventions — z namespace imports, no optiona
 When normalizing a string (trim, lowercase, etc.) before further validation, use `.transform(fn).pipe(refinedSchema)`. Never `.overwrite()` — inconsistent with the codebase.
 
 ```typescript
-// CORRECT
 z.string().transform(normalizeString).pipe(z.string().min(1).max(MAX));
 z.string()
   .transform((v) => normalizeString(v).toLowerCase())
   .pipe(z.string().min(1).max(MAX));
-
-// WRONG
-z.string().overwrite(normalizeString).min(1);
 ```
 
 Use the shared helpers for standard name/text fields: `createNormalizedStringSchema(maxLength)` from `@esposter/shared` and `createNameSchema(maxLength)` from `@esposter/db-schema`.
@@ -43,10 +39,7 @@ const schema = base.transform(normalizeString).pipe(z.string().min(1).max(maxLen
 **Never call `.array()` directly** unless duplicates are genuinely valid. Use `createUniqueArraySchema(schema)` from `@esposter/shared` — it wraps `.array()` with a uniqueness refine.
 
 ```typescript
-// WRONG — bare .array() skips uniqueness
-z.string().array().max(MAX_READ_LIMIT);
-// CORRECT
-createUniqueArraySchema(z.string()).max(MAX_READ_LIMIT);
+createUniqueArraySchema(z.string()).max(MAX_READ_LIMIT); // not z.string().array()
 ```
 
 All chaining (`.min()`, `.max()`, `.nullable()`, `.optional()`, `.default()`) works identically after — Zod 4's `.refine()` returns the same `ZodArray` type.
@@ -67,10 +60,7 @@ TS infers `T` from the schema, so a non-existent key is a type error. In Zod 4, 
 Runtime data from external systems (EventGrid `event.data`, Storage Queue messages, webhook bodies) is untyped. **Never** assert with `event.data as unknown as SomeType` — a malformed payload throws deep in the handler. Define a co-located Zod schema and `.parse()` at the boundary.
 
 ```typescript
-// WRONG
-const data = event.data as unknown as PushNotificationEventGridData;
-
-// CORRECT — schema co-located next to the interface, parsed at the boundary
+// schema co-located next to the interface, parsed at the boundary — never `event.data as unknown as T`
 export interface PushNotificationEventGridData {
   message: Pick<MessageEntity, "message" | "partitionKey" | "rowKey" | "userId">;
   notificationOptions: { icon?: null | string; title?: null | string };
@@ -123,10 +113,7 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`. Never named impo
 **Never call `.addIssue()` / `.addIssues()` on a `ZodError`** — deprecated in Zod 4. Push directly:
 
 ```typescript
-// WRONG
-myError.addIssue({ code: "custom", message: "..." });
-// CORRECT
-myError.issues.push({ code: "custom", message: "..." });
+myError.issues.push({ code: "custom", message: "..." }); // not myError.addIssue(...)
 ```
 
 `ctx.addIssue()` inside `superRefine` is still valid (it operates on the refinement context, not a `ZodError`).
@@ -141,9 +128,7 @@ myError.issues.push({ code: "custom", message: "..." });
 - **Generic schemas** — when an abstract class has a generic type param (e.g. `ADataSourceItem<TType, TConfig>`), its schema must be generic too: export a `create*Schema` function taking typed zod schemas as params. Never hardcode type-specific values in a base schema. Use `T` for one param, descriptive `T*` (`TType`, `TConfiguration`) for multiple:
 
   ```typescript
-  // WRONG — hardcodes type, missing configuration
-  export const aDataSourceItemSchema = z.object({ ...base.shape, type: dataSourceTypeSchema });
-  // CORRECT — generic function, concrete schemas passed by callers
+  // generic function, concrete schemas passed by callers (never hardcode type-specific values in a base schema)
   export const createDataSourceItemSchema = <
     TType extends z.ZodType<keyof DataSourceConfigurationTypeMap>,
     TConfiguration extends z.ZodType<object>,
@@ -211,11 +196,7 @@ myError.issues.push({ code: "custom", message: "..." });
 - **`zodToJsonSchema` in components** — expose two computeds: `schema` (Zod, for validation) and `jsonSchema` (for vjsf), deriving `jsonSchema` from `schema.value`. Never create a precomputed JSON schema map file; the `*TypeFormSchemaMap` is the source of truth.
 
   ```typescript
-  // WRONG — unnecessary intermediate JSON schema map file
-  export const ColumnTypeJsonSchemaMap = {
-    [ColumnType.String]: zodToJsonSchema(ColumnTypeFormSchemaMap[ColumnType.String]),
-  };
-  // CORRECT — schema.value reused for jsonSchema
+  // schema.value reused for jsonSchema — no intermediate JSON schema map file
   const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]);
   const jsonSchema = computed(() => zodToJsonSchema(schema.value));
   ```
@@ -277,12 +258,7 @@ myError.issues.push({ code: "custom", message: "..." });
 - **Paginated endpoint schemas** — never define `limit`/`cursor` manually. Use `createCursorPaginationParamsSchema` (cursor-based) or `createBasePaginationParamsSchema` (non-cursor). When sort order is fixed, omit `sortBy`: `createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true })`. The factory bakes in `DEFAULT_READ_LIMIT`, `MAX_READ_LIMIT`, `cursor: z.string().optional()` — never override. Server-side, wire cursor into `getCursorWhereAzureTable` (Azure Table) or `getCursorWhere` (Postgres), fetch `limit + 1` rows, return `getCursorPaginationData(items, limit, sortBy)`:
 
   ```typescript
-  // WRONG — manual limit/cursor
-  const readModerationLogsInputSchema = z.object({
-    cursor: z.string().optional(),
-    limit: z.int().min(1).max(MAX_READ_LIMIT).default(50),
-  });
-  // CORRECT — shared factory
+  // shared factory — never define limit/cursor manually
   const readModerationLogsInputSchema = z.object({
     ...createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true }).shape,
   });

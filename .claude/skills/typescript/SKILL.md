@@ -34,17 +34,8 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 For a class field with **no inline initializer** (value provided by `Object.assign(this, init)`, a parent/mixin constructor, external assignment, or a pure phantom type carrier), use `declare`, **never** `!`.
 
 ```ts
-// WRONG — definite assignment assertion
 export class FileEntity {
-  filename!: string; // value comes from Object.assign below
-  constructor(init?: Partial<FileEntity>) {
-    Object.assign(this, init);
-  }
-}
-
-// CORRECT — declare
-export class FileEntity {
-  declare filename: string;
+  declare filename: string; // value comes from Object.assign below
   constructor(init?: Partial<FileEntity>) {
     Object.assign(this, init);
   }
@@ -62,15 +53,6 @@ export class FileEntity {
 Class-private fields and methods use the ECMAScript `#` prefix, never the TypeScript `private` keyword. `#` gives true runtime privacy (not just compile-time); `private` is erased at runtime.
 
 ```ts
-// WRONG — TypeScript private keyword
-export class MoveColumnCommand {
-  private readonly fromIndex: number;
-  private moveColumn(item: DataSourceItem) {
-    columns.splice(this.fromIndex, 1);
-  }
-}
-
-// CORRECT — # private members
 export class MoveColumnCommand {
   readonly #fromIndex: number;
   #moveColumn(item: DataSourceItem) {
@@ -95,13 +77,6 @@ export class MoveColumnCommand {
 
 - **Always arrow functions** — `const fn = () => { ... }`. Never the `function` keyword except below.
 - **`function` keyword only when `this` binding is required** — class methods, object methods referencing `this`, generators (`function*`). Everything else (module-level, composables, callbacks, helpers) must be arrow functions.
-
-```ts
-// WRONG
-export function useInFlight() { ... }
-// CORRECT
-export const useInFlight = () => { ... };
-```
 
 ## Arrow Function Overloads
 
@@ -249,8 +224,6 @@ export const stringTransformationTypeSchema = z.enum(
   Object.fromEntries(Array.from(VisualTypes, (v) => [v, {}]));
   // CORRECT — Map (iterates as [key, value]; no .entries() needed)
   Array.from(participantsMap, ([roomId, participants]) => ({ participants, roomId }));
-  // WRONG — intermediate array just to map
-  [...participantsMap.entries()].map(([roomId, participants]) => ({ participants, roomId }));
   ```
 
   Spread + `.map()` is only acceptable when a plain array is already the source.
@@ -346,13 +319,6 @@ format(item[key] as never); // safe: key and format always come from the same en
 ## Filter-Based Type Narrowing
 
 **No redundant type guards after a filtering condition** — if a `.filter()` predicate narrows the type (e.g. `filter((v) => typeof v === "number")`), the result is already `number[]`. Don't add `: v is number` or a cast inside the callback.
-
-```ts
-// WRONG
-values.filter((v): v is number => typeof v === "number");
-// CORRECT
-values.filter((v) => typeof v === "number");
-```
 
 Exception: when the predicate is a function reference (`filter(Boolean)`) TypeScript can't narrow, a type predicate is still needed.
 
@@ -465,15 +431,6 @@ export const mathOperationTransformationSchema = z.object({
 When a configuration interface re-declares properties already on a source type (e.g. a Phaser `GameObjects.X`), use `Pick<SourceType, "prop1" | "prop2">` in the `extends` clause instead of re-declaring each.
 
 ```ts
-// BAD — re-declares types already on GameObjects.Arc
-export interface ArcConfiguration extends ShapeConfiguration {
-  closePath: GameObjects.Arc["closePath"];
-  endAngle: GameObjects.Arc["endAngle"];
-  radius: GameObjects.Arc["radius"];
-  startAngle: GameObjects.Arc["startAngle"];
-}
-
-// GOOD — Pick from the source type
 export interface ArcConfiguration
   extends ShapeConfiguration, Pick<GameObjects.Arc, "closePath" | "endAngle" | "radius" | "startAngle"> {}
 ```

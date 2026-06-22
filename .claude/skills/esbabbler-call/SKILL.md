@@ -82,30 +82,19 @@ The client `callSessionParticipantsMap` mirrors the server structure for O(1) lo
 - **Never wrap raw store state in a getter for read-only access** — expose `callSessionParticipantsMap` directly via `storeToRefs` (components) or dot access (stores), and inline the guard within each consumer's reactive context. A `getParticipantMap(id)` wrapper hides tracked deps, can break reactivity when the reference escapes, and returns a new empty `Map` each call (breaking computed caching). Inline `participantStore.callSessionParticipantsMap.get(id) ?? new Map<string, CallParticipant>()` instead.
 
 ```ts
-// WRONG — tracking array, O(n) lookups; getter wrapper obscures deps & breaks caching
-const handRaisedIdsMap = ref(new Map<string, string[]>());
-const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
-const getParticipantMap = (id: string) =>
-  id ? (callSessionParticipantsMap.value.get(id) ?? new Map<string, CallParticipant>()) : new Map<string, CallParticipant>();
-
-// CORRECT — Map-based, O(1), state on entity, reactive deps visible at the call site
+// Map-based, O(1), state on entity, reactive deps visible at the call site
 // In stores (dot access on store instance):
-const callParticipantMap = computed(
-  () => participantStore.callSessionParticipantsMap.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
-);
-const selfParticipant = computed(() => sessionId.value ? callParticipantMap.value.get(sessionId.value) : undefined);
-const isInCall = computed(() => Boolean(selfParticipant.value));
-const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
-const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
+const childMap = computed(() => entityStore.parentMap.get(parentId.value) ?? new Map<string, Entity>());
+const self = computed(() => (selfId.value ? childMap.value.get(selfId.value) : undefined));
+const isPresent = computed(() => Boolean(self.value));
+const isActive = computed(() => self.value?.isActive ?? false);
 
 // In components (storeToRefs):
-const { callSessionParticipantsMap, speakingIds } = storeToRefs(participantStore);
-const callParticipantMap = computed(
-  () => callSessionParticipantsMap.value.get(activeCallSessionId.value) ?? new Map<string, CallParticipant>(),
-);
+const { parentMap } = storeToRefs(entityStore);
+const childMap = computed(() => parentMap.value.get(parentId.value) ?? new Map<string, Entity>());
 
 // template iteration
-v-for="participant of callParticipantMap.values()"
+v-for="entity of childMap.values()"
 ```
 
 `useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.

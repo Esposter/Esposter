@@ -14,11 +14,7 @@ Use `StyledButton` for primary call-to-action buttons (create, save, accept, req
 Vuetify composables are auto-imported with a `v` prefix. **Never import from `"vuetify"` directly** — they are globally available:
 
 ```typescript
-// WRONG
-import { useDisplay } from "vuetify";
-const { smAndDown } = useDisplay();
-
-// CORRECT — auto-import with v prefix
+// auto-imported with v prefix — never import { useDisplay } from "vuetify"
 const { smAndDown } = useVDisplay();
 ```
 
@@ -43,7 +39,7 @@ These variants are set globally and must **never** be repeated on individual com
 
 ## Button Conventions
 
-- **Every `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` + descriptive `text`. Applies to all buttons, including those with visible label text.
+- **Every icon-only `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` + descriptive `text` so the action is discoverable. A button with **visible label text** (`text="Remove"` or default-slot text) is self-describing and does **not** need a tooltip.
 - **`#activator` slot always first** in `v-tooltip` (and `v-menu`).
 - **Icon choice for create actions** — use the semantically specific MDI icon when available: `mdi-table-row-plus-after` (add rows), `mdi-table-column-plus-after` (add columns). Fall back to `mdi-plus` for generic create.
 
@@ -54,6 +50,40 @@ These variants are set globally and must **never** be repeated on individual com
   </template>
 </v-tooltip>
 ```
+
+## Nested Activators — `mergeProps`, Never Stacked `v-bind`
+
+When one button is the activator for **multiple** overlays (a `v-menu`/`v-dialog`/`v-hover` _and_ a `v-tooltip`), each overlay's `#activator` slot hands you its own props object. Combine them with `mergeProps(...)` from `vue` on a single `:=` — **never stack two `:=` binds** (`:="menuProps" :="tooltipProps"`). A second `v-bind` of the same key silently overrides the first, so the loser's `onClick` / `onMouseenter` / `class` is dropped; `mergeProps` chains event handlers and concatenates `class`/`style` instead.
+
+**Order: structural/outer activator(s) first, tooltip last** — e.g. `mergeProps(menuProps, tooltipProps)`, `mergeProps(dialogProps, tooltipProps)`, `mergeProps(hoverProps, tooltipProps)`, or three-way `mergeProps(tooltipActivatorProps, hoverProps, buttonProps)`.
+
+```vue
+<v-menu>
+  <template #activator="{ props: menuProps }">
+    <v-tooltip text="Options">
+      <template #activator="{ props: tooltipProps }">
+        <v-btn icon="mdi-dots-vertical" :="mergeProps(menuProps, tooltipProps)" />
+      </template>
+    </v-tooltip>
+  </template>
+</v-menu>
+```
+
+**A custom dialog/menu button that exposes an `#activator` slot should merge its own tooltip into the slot props** so consumers don't have to:
+
+```vue
+<v-dialog>
+  <template #activator="{ props: dialogProps }">
+    <v-tooltip text="Settings">
+      <template #activator="{ props: tooltipProps }">
+        <slot name="activator" :="mergeProps(dialogProps, tooltipProps)" />
+      </template>
+    </v-tooltip>
+  </template>
+</v-dialog>
+```
+
+Consumers then bind the slot scope directly (`:="activatorProps"`) — **do not** wrap such an activator in a second `v-tooltip`; it already has one.
 
 ## Icon Buttons Inside Input Slots
 

@@ -19,9 +19,7 @@ Esbabbler is a Discord clone. When a behaviour, structure, naming, information a
 All member name display goes through `getDisplayName(user, roomId)` from `useUserToRoomStore`. Never read `user.name` / `member.name` directly in a room context.
 
 ```ts
-// WRONG — ignores room nickname
-<StyledAvatar :name="member.name" />
-// CORRECT — respects room nickname, falls back to global name
+// respects room nickname, falls back to global name — never bare member.name
 <StyledAvatar :name="getDisplayName(member, roomId)" />
 ```
 
@@ -39,9 +37,7 @@ All member name display goes through `getDisplayName(user, roomId)` from `useUse
 Nicknames are `text().notNull().default("")`. Empty string `""` is falsy — use `||` to fall back to global name:
 
 ```ts
-// WRONG — empty string passes through, user sees blank name
-getUserToRoomMap(roomId)?.get(user.id)?.nickname ?? user.name;
-// CORRECT
+// || (not ??) — empty-string nickname is falsy, so fall back to global name
 getUserToRoomMap(roomId)?.get(user.id)?.nickname || user.name;
 ```
 
@@ -68,15 +64,7 @@ Subscriptions handle state updates for **all** clients including the caller. Don
 3. Combines multiple mutations or concerns
 
 ```ts
-// WRONG — wrapper that duplicates subscription work
-const deleteDirectMessageParticipant = async (input) => {
-  await $trpc.room.directMessage.deleteDirectMessageParticipant.mutate(input);
-  // ❌ onLeaveRoom subscription already handles participant removal on all clients
-  const participants = directMessageParticipantsMap.value.get(input.roomId) ?? [];
-  directMessageParticipantsMap.value.set(input.roomId, participants.filter(...));
-};
-
-// CORRECT — call tRPC directly where the user action happens; subscription owns state
+// call tRPC directly where the user action happens; the onLeaveRoom subscription owns state
 $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId });
 ```
 

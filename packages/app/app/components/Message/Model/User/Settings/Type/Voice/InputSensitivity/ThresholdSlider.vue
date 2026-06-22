@@ -28,20 +28,34 @@ const startDrag = (event: PointerEvent) => {
   isDragging.value = true;
   setThresholdFromClientX(event.clientX);
 };
-useEventListener(window, "pointermove", (event) => {
+useEventListener("pointermove", (event) => {
   if (isDragging.value) setThresholdFromClientX(event.clientX);
 });
-useEventListener(window, "pointerup", () => {
+
+useEventListener("pointerup", () => {
   if (!isDragging.value) return;
   isDragging.value = false;
   updateUserSettings({ inputSensitivityDecibels: inputSensitivityDecibels.value });
 });
-onMounted(start);
+
+onMounted(() => {
+  start();
+});
 </script>
 
 <template>
   <div ref="track" relative h-5 w-full cursor-pointer @pointerdown="startDrag">
-    <div absolute left-0 top="1/2" translate-y="-1/2" h-2 w-full overflow-hidden rounded class="gradient-track">
+    <div
+      absolute
+      left-0
+      top="1/2"
+      translate-y="-1/2"
+      h-2
+      w-full
+      overflow-hidden
+      rounded
+      bg="[linear-gradient(to_right,hsl(55,70%,45%),hsl(120,70%,45%))]"
+    >
       <div absolute left-0 top-0 h-full bg-black opacity-30 :style="{ width: `${levelFraction * 100}%` }" />
     </div>
     <div
@@ -58,9 +72,3 @@ onMounted(start);
     />
   </div>
 </template>
-
-<style scoped>
-.gradient-track {
-  background: linear-gradient(to right, hsl(55, 70%, 45%), hsl(120, 70%, 45%));
-}
-</style>

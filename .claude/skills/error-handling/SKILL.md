@@ -107,15 +107,12 @@ await getResultAsync(() => showSaveFilePicker())
 Use `.map()` (not `.andThen`) when the next step is synchronous and doesn't throw. Never chain a sync call via `.then()` on the raw Promise before `getResultAsync` — errors thrown there bypass `orTee`.
 
 ```typescript
-// CORRECT — sync parseClipboardRows uses .map(); errors from readText() caught by orTee
+// sync parseClipboardRows uses .map(); errors from readText() caught by orTee
 getResultAsync(() => window.navigator.clipboard.readText())
   .map((text) => parseClipboardRows(text, dataSource))
   .andTee(createRows)
   .orTee((error) => createAlert(error.message, "error"))
   .unwrapOr(undefined);
-
-// WRONG — .then() runs outside ResultAsync; parseClipboardRows errors bypass orTee
-getResultAsync(() => window.navigator.clipboard.readText().then((text) => parseClipboardRows(text, dataSource)));
 ```
 
 ### Abort / cancel (recover from specific error)

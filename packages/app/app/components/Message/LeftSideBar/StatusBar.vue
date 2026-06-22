@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { authClient } from "@/services/auth/authClient";
 import { useCallStore } from "@/store/message/room/call";
-import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
 import { useStatusStore } from "@/store/message/user/status";
 import { RoutePath } from "@esposter/shared";
 
 const { data: session } = await authClient.useSession(useFetch);
-const userSettingsDialogStore = useUserSettingsDialogStore();
-const { isVisible } = storeToRefs(userSettingsDialogStore);
 const statusStore = useStatusStore();
 const { getStatusEnum, getStatusMessage } = statusStore;
 const callStore = useCallStore();
@@ -56,7 +53,7 @@ const callRoute = computed(() =>
             {{ getStatusMessage(session.user.id) || getStatusEnum(session.user.id) }}
           </div>
         </div>
-        <v-btn icon="mdi-cog" size="small" @click="isVisible = true" />
+        <MessageLeftSideBarSettingsButton />
       </div>
     </StyledCard>
   </div>
