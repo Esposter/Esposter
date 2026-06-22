@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { SettingsSection } from "@/models/message/user/settings/SettingsSection";
+import type { UserSettingsType } from "@/models/message/user/UserSettingsType";
 
-import { UserSettingsType } from "@/models/message/user/UserSettingsType";
+import { withFinalizerAsync } from "@esposter/shared";
 import { SETTINGS_CONTENT_ID } from "@/services/message/settings/constants";
 import { UserSettingsListItemMap } from "@/services/message/user/settings/UserSettingsListItemMap";
 import { UserSettingsSectionMap } from "@/services/message/user/settings/UserSettingsSectionMap";
@@ -16,8 +17,12 @@ const scrollToSection = async (section: SettingsSection) => {
   const element = document.getElementById(section);
   if (!element) return;
   isScrollingToSection.value = true;
-  await goTo(element, { container: `#${SETTINGS_CONTENT_ID}` });
-  isScrollingToSection.value = false;
+  await withFinalizerAsync(
+    () => goTo(element, { container: `#${SETTINGS_CONTENT_ID}` }),
+    () => {
+      isScrollingToSection.value = false;
+    },
+  );
 };
 </script>
 

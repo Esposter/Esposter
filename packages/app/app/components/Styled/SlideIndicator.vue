@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Drop-in animated rail for any vertical list: place inside a `position: relative` container
-// whose items each carry `data-slide-indicator-key="<key>"`. The bar measures the active
-// item and slides to it. Reusable across sidebars — pass the active key, nothing else.
+// Whose items each carry `data-slide-indicator-key="<key>"`. The bar measures the active
+// Item and slides to it. Reusable across sidebars — pass the active key, nothing else.
 interface StyledSlideIndicatorProps {
   activeKey: string;
 }
@@ -41,13 +41,13 @@ onMounted(() => {
   <div
     ref="indicator"
     :style="indicatorStyle"
-    absolute
-    left-0
-    top-0
-    w-1
     rounded-r
     bg-primary
+    w-1
     transition-transform
     duration-200
+    left-0
+    top-0
+    absolute
   />
 </template>
