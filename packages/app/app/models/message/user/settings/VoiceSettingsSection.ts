@@ -1,8 +1,8 @@
 /* eslint-disable perfectionist/sort-enums */
 export enum VoiceSettingsSection {
-  InputMode = "Input Mode",
-  InputSensitivity = "Input Sensitivity",
   Devices = "Devices",
+  InputProfile = "Input Profile",
+  InputSensitivity = "Input Sensitivity",
+  InputMode = "Input Mode",
   JoinSettings = "Join Settings",
-  DefaultVolume = "Default Volume",
 }

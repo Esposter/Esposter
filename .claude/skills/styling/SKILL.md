@@ -39,6 +39,15 @@ Only when technically required:
 
 Only colors registered in `uno.config.ts` generate utility classes. Don't assume Vuetify default theme colors are supported: use `text-primary` not `text-success`, `bg-surface` not `bg-surface-variant`. Theme colors auto-register from `vuetify.config.ts`; palette colors are covered by the color pack. See the `unocss` skill.
 
+### Links use `text-info` (the blue), never `text-primary`
+
+Hyperlinks / clickable inline text get `text-info` — that is the conventional link blue. `text-primary` is the brand/action accent, not a link colour. Applies to `<a>`, `NuxtLink`, and any inline "click here" affordance.
+
+```html
+<!-- WRONG --><a text-primary @click="...">grant access</a>
+<!-- CORRECT --><a cursor-pointer text-info underline @click="...">grant access</a>
+```
+
 When reading hyphenated theme colours from `useColorsStore()`, destructure quoted keys and alias to camel-case:
 
 ```ts

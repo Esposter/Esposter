@@ -8,20 +8,20 @@ const { userSettings } = storeToRefs(userSettingsStore);
 
 <template>
   <template v-if="userSettings">
+    <MessageModelUserSettingsSection :title="VoiceSettingsSection.Devices">
+      <MessageModelUserSettingsTypeVoiceDevices :user-settings />
+    </MessageModelUserSettingsSection>
+    <MessageModelUserSettingsSection :title="VoiceSettingsSection.InputProfile">
+      <MessageModelUserSettingsTypeVoiceInputProfile :user-settings />
+    </MessageModelUserSettingsSection>
+    <MessageModelUserSettingsSection :title="VoiceSettingsSection.InputSensitivity">
+      <MessageModelUserSettingsTypeVoiceInputSensitivity :user-settings />
+    </MessageModelUserSettingsSection>
     <MessageModelUserSettingsSection :title="VoiceSettingsSection.InputMode">
       <MessageModelUserSettingsTypeVoiceInputMode :user-settings />
     </MessageModelUserSettingsSection>
-    <MessageModelUserSettingsSection :title="VoiceSettingsSection.InputSensitivity">
-      <MessageModelUserSettingsTypeVoiceInputSensitivitySlider :user-settings />
-    </MessageModelUserSettingsSection>
-    <MessageModelUserSettingsSection :title="VoiceSettingsSection.Devices">
-      <MessageModelUserSettingsTypeVoiceDeviceSelectList />
-    </MessageModelUserSettingsSection>
     <MessageModelUserSettingsSection :title="VoiceSettingsSection.JoinSettings">
       <MessageModelUserSettingsTypeVoiceJoinSwitches :user-settings />
-    </MessageModelUserSettingsSection>
-    <MessageModelUserSettingsSection :title="VoiceSettingsSection.DefaultVolume">
-      <MessageModelUserSettingsTypeVoiceDefaultVolumeSlider :user-settings />
     </MessageModelUserSettingsSection>
   </template>
 </template>

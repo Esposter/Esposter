@@ -19,14 +19,15 @@ Remaining:
 
 - [x] **Run migration** — `pnpm db:gen` + `pnpm db:up` in `packages/db-schema` (user-run).
 - [x] Split surfaces along the backend boundary: message-scoped dialog (Voice / Notifications / Keybinds, backed by `userSettingsInMessage`) opened from the messages-sidebar gear; global account/profile stays on the `/user/settings` route. Appearance/theme handled by the top-right toggle (no panel).
-- [ ] Sensitivity live meter (reuse the speaking-indicator analyser) — currently a plain threshold slider.
+- [x] Sensitivity live meter — segmented yellow→green meter, driven by a dedicated `useMicrophoneLevel` Web Audio analyser (the "reuse the speaking-indicator analyser" premise was wrong — speaking state is LiveKit server-side, no local analyser existed).
+- [x] **Discord-aligned Voice & Video panel + live-call application** → [specs/voice-video-settings.md](specs/voice-video-settings.md). Devices two-up, mic/speaker volume sliders, Input Profile (browser-native noise suppression, no Krisp), gradient Input Sensitivity slider. New `userSettings` fields (`microphoneVolumePercentage`, `speakerVolumePercentage`, `noiseSuppressionMode`); migration generated, **`db:up` pending (user-run)**. Applied to LiveKit: speaker volume (master output), noise mode (`audioCaptureDefaults` + `restartTrack`), mic gain + voice-activity gating via a native `MicrophoneProcessor` audio TrackProcessor. **Needs real two-party call verification.** Not yet: PTT keybind listener (PushToTalk mode is pass-through), Speaker Volume >100% boost (needs `webAudioMix`).
 
 ## Next — low-hanging fruit
 
 Pick from the top; each extends something already shipped, no new infra. Independent of the user-settings foundation above.
 
 - [ ] **Mention badges** — mention-only unread counts in the sidebar (reuse mention-highlight detection; new per-user count).
-- [ ] **Per-user call volume (in-call)** — per-remote-participant volume slider via LiveKit `setVolume`, right-click → User Volume. Client-only; the _default_ lives in the Voice & Video panel above.
+- [ ] **Per-user call volume (in-call)** — per-remote-participant volume slider via LiveKit `setVolume`, right-click → User Volume. Client-only, in-call state (Discord has no panel default for this).
 - [ ] **Picture-in-Picture** — → [specs/picture-in-picture.md](specs/picture-in-picture.md). Browser PiP for the active call video tile.
 
 ## Later — larger or multi-area

@@ -6,21 +6,25 @@ export const updateUserSettingsInputSchema = refineAtLeastOne(
   selectUserSettingsInMessageSchema
     .pick({
       autoIdleThresholdMs: true,
-      defaultUserVolumePercentage: true,
       inputSensitivityDecibels: true,
       isDeafenOnJoin: true,
       isMuteOnJoin: true,
+      microphoneVolumePercentage: true,
+      noiseSuppressionMode: true,
       pushToTalkKeybind: true,
+      speakerVolumePercentage: true,
       voiceInputMode: true,
     })
     .partial(),
   [
     "autoIdleThresholdMs",
-    "defaultUserVolumePercentage",
     "inputSensitivityDecibels",
     "isDeafenOnJoin",
     "isMuteOnJoin",
+    "microphoneVolumePercentage",
+    "noiseSuppressionMode",
     "pushToTalkKeybind",
+    "speakerVolumePercentage",
     "voiceInputMode",
   ],
 );

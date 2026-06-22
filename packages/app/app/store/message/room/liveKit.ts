@@ -9,10 +9,14 @@ import type {
 
 import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { MicrophoneProcessor } from "@/models/message/room/call/MicrophoneProcessor";
+import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { checkIsRemoteAudioSource } from "@/services/message/room/liveKit/checkIsRemoteAudioSource";
 import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
+import { useUserSettingsStore } from "@/store/message/user/settings";
+import { DEFAULT_SPEAKER_VOLUME_PERCENTAGE, NoiseSuppressionMode, VoiceInputMode } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { ConnectionQuality, ConnectionState, Room, RoomEvent, Track } from "livekit-client";
@@ -21,10 +25,12 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let activeRoom: Room | undefined;
   let disconnectHandler: (() => Promise<void>) | undefined;
   let localCameraTrack: LocalVideoTrack | undefined;
+  let microphoneProcessor: MicrophoneProcessor | undefined;
   let virtualBackgroundProcessor: ReturnType<typeof BackgroundProcessor> | undefined;
   const mediaStore = useMediaStore();
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
   const participantStore = useParticipantStore();
+  const userSettingsStore = useUserSettingsStore();
   const remoteAudioElements = new Map<string, HTMLMediaElement>();
   const connectionQuality = ref(ConnectionQuality.Unknown);
   const connectionState = ref(ConnectionState.Disconnected);
@@ -40,6 +46,26 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   };
   const setRemoteAudioMuted = (isDeafened: boolean) => {
     for (const audio of remoteAudioElements.values()) audio.muted = isDeafened;
+  };
+  // Master output volume — HTMLMediaElement.volume caps at 1, so values above 100% clamp to full.
+  const applyRemoteAudioVolume = (element: HTMLMediaElement) => {
+    const percentage = userSettingsStore.userSettings?.speakerVolumePercentage ?? DEFAULT_SPEAKER_VOLUME_PERCENTAGE;
+    element.volume = Math.min(1, percentage / 100);
+  };
+  const setSpeakerVolume = () => {
+    for (const audio of remoteAudioElements.values()) applyRemoteAudioVolume(audio);
+  };
+  const setNoiseSuppressionMode = getSynchronizedFunction(async (noiseSuppressionMode: NoiseSuppressionMode) => {
+    if (!activeRoom) return;
+    const microphonePublication = activeRoom.localParticipant.getTrackPublication(Track.Source.Microphone);
+    await microphonePublication?.audioTrack?.restartTrack(getAudioCaptureDefaults(noiseSuppressionMode));
+  });
+  const applyMicrophoneSettings = () => {
+    const settings = userSettingsStore.userSettings;
+    if (!microphoneProcessor || !settings) return;
+    microphoneProcessor.inputSensitivityDecibels = settings.inputSensitivityDecibels;
+    microphoneProcessor.isVoiceActivity = settings.voiceInputMode === VoiceInputMode.VoiceActivity;
+    microphoneProcessor.microphoneVolumePercentage = settings.microphoneVolumePercentage;
   };
   const setActiveDevice = (kind: MediaDeviceKind, deviceId: string) => {
     switch (kind) {
@@ -72,6 +98,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     const element = track.attach();
     element.autoplay = true;
     element.muted = mediaStore.isDeafened;
+    applyRemoteAudioVolume(element);
     remoteAudioElements.set(`${participant.identity}:${publication.source}`, element);
     window.document.body.append(element);
   };
@@ -136,6 +163,10 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     else if (publication.source === Track.Source.ScreenShare) {
       setLocalScreenShareStream(publication.track?.mediaStream ?? null);
       mediaStore.isScreenSharing = true;
+    } else if (publication.source === Track.Source.Microphone && publication.audioTrack) {
+      microphoneProcessor = new MicrophoneProcessor();
+      applyMicrophoneSettings();
+      await publication.audioTrack.setProcessor(microphoneProcessor);
     }
   });
   const onLocalTrackUnpublished = getSynchronizedFunction(async (publication: LocalTrackPublication) => {
@@ -143,7 +174,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     else if (publication.source === Track.Source.ScreenShare) {
       setLocalScreenShareStream(null);
       mediaStore.isScreenSharing = false;
-    }
+    } else if (publication.source === Track.Source.Microphone) microphoneProcessor = undefined;
   });
   const onDisconnected = getSynchronizedFunction(async () => {
     const handler = disconnectHandler;
@@ -255,11 +286,28 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     await localCameraTrack?.stopProcessor();
     await room?.disconnect();
     localCameraTrack = undefined;
+    microphoneProcessor = undefined;
     virtualBackgroundProcessor = undefined;
     connectionQuality.value = ConnectionQuality.Unknown;
     connectionState.value = ConnectionState.Disconnected;
     cleanupRemoteAudio();
   };
+  watch(() => userSettingsStore.userSettings?.speakerVolumePercentage, setSpeakerVolume);
+  watch(
+    () => userSettingsStore.userSettings?.noiseSuppressionMode,
+    (newNoiseSuppressionMode) => {
+      if (newNoiseSuppressionMode) setNoiseSuppressionMode(newNoiseSuppressionMode);
+    },
+  );
+  watch(
+    () => [
+      userSettingsStore.userSettings?.inputSensitivityDecibels,
+      userSettingsStore.userSettings?.microphoneVolumePercentage,
+      userSettingsStore.userSettings?.voiceInputMode,
+    ],
+    applyMicrophoneSettings,
+  );
+
   return {
     connect,
     connectionQuality,

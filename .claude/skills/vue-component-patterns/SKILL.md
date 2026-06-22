@@ -435,6 +435,8 @@ Keep together only when items are genuinely the same logic / coherent:
 - Multiple buttons or items following the **same logic**, rendered via `v-for` over a config / constant list (PascalCase array in `services/<domain>/`).
 - A coherent group driven by the same data / config (a single `v-tabs` built from a `tabs` array, an icon-button toolbar from a `computed` array).
 
+**`v-for` does not exempt the item body.** Iterating is shared structure; per-item _logic_ is not. If each iterated item carries its own handler, store wiring, or multi-step logic, the item body becomes **its own component** rendered inside the `v-for` (`<FeatureRowItem v-for="item of items" :key="item.id" :item />`) — the parent's loop stays pure layout. Only inline the item body when it is a plain prop spread over a config array with no own logic (the icon-button-toolbar / `v-tabs` cases above).
+
 ### Do NOT over-extract
 
 Granularity must **simplify the problem** or enable **reuse**. Skip refactors that do neither:
