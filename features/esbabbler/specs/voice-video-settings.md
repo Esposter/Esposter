@@ -89,7 +89,7 @@ settings panel meter uses a separate read-only `useMicrophoneLevel` composable.
 | `app/composables/message/user/settings/useMicrophoneLevel.ts` | read-only mic level for the panel meters                                           |
 | `app/models/message/room/call/MicrophoneProcessor.ts`         | Web Audio gain + voice-activity gate (LiveKit audio TrackProcessor)                |
 | `app/services/message/room/call/getAudioCaptureDefaults.ts`   | noise-suppression mode → getUserMedia constraints                                  |
-| `app/store/message/room/liveKit.ts`                           | speaker volume, noise mode, mic processor; `switchDevice` + device watchers        |
+| `app/store/message/room/liveKit.ts`                           | speaker volume, noise mode, mic processor; `setActiveDevice` + device watchers     |
 | `app/store/message/room/call/index.ts`                        | `createRoom` seeds audio/video capture-default device IDs; join flow               |
 | `app/composables/message/room/call/useCallPreJoinMedia.ts`    | pre-join camera/mic preview — reactive `useUserMedia` constraints from device IDs  |
 | `app/composables/message/room/call/useCallDeviceSettings.ts`  | in-call device picker — lists devices, writes selection to the voice store         |
