@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { KeybindsSettingsSection } from "@/models/message/user/settings/KeybindsSettingsSection";
+
 // Read-only reference for now; rebinding is a future enhancement (the PTT keybind is editable under Voice & Video).
 const shortcuts = [
   { keys: "Ctrl + K", title: "Open command palette" },
@@ -8,14 +10,13 @@ const shortcuts = [
 </script>
 
 <template>
-  <v-container fluid>
-    <div font-bold mb-4 text-title-medium>Keybinds</div>
+  <MessageModelUserSettingsSection :title="KeybindsSettingsSection.Shortcuts">
     <v-list>
-      <v-list-item v-for="shortcut of shortcuts" :key="shortcut.title" :title="shortcut.title">
+      <v-list-item v-for="{ keys, title } of shortcuts" :key="title" :title>
         <template #append>
-          <kbd>{{ shortcut.keys }}</kbd>
+          <kbd>{{ keys }}</kbd>
         </template>
       </v-list-item>
     </v-list>
-  </v-container>
+  </MessageModelUserSettingsSection>
 </template>

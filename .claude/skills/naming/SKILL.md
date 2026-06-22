@@ -49,6 +49,7 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - **`A` prefix for abstract classes only** — never on interfaces. `AColumn` (abstract class) ✓, `SlashCommand` (interface) ✓, `ASlashCommand` ✗
 - **Interface fields use full type name** — `aggregationType: AggregationTransformationType` not `transform`, `mode`, or `type`. Never abbreviate enum field names
 - **Constant arrays/maps use PascalCase** — `export const PermissionItems = [...]`, `export const FrierenExpressions: Expression[] = [...]`. File names match: `PermissionItems.ts`
+- **UI section enums: one per group, values double as title + id** — when a panel has scrollable subsections (or any list whose labels also serve as stable ids/anchors), model each group as its own enum whose values are the human title (e.g. `VoiceSettingsSection { InputMode = "Input Mode", ... }`). The value is reused as the display title and the DOM/scroll id, so don't derive a separate slug. One enum per subsection group, never a shared catch-all.
 
 ## Regex Constants
 

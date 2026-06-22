@@ -17,8 +17,8 @@ Built:
 
 Remaining:
 
-- [ ] **Run migration** — `pnpm db:gen` + `pnpm db:up` in `packages/db-schema` (user-run).
-- [ ] Fold `pages/user/settings.vue` into the Profile panel / make the route a deep-link to the dialog.
+- [x] **Run migration** — `pnpm db:gen` + `pnpm db:up` in `packages/db-schema` (user-run).
+- [x] Split surfaces along the backend boundary: message-scoped dialog (Voice / Notifications / Keybinds, backed by `userSettingsInMessage`) opened from the messages-sidebar gear; global account/profile stays on the `/user/settings` route. Appearance/theme handled by the top-right toggle (no panel).
 - [ ] Sensitivity live meter (reuse the speaking-indicator analyser) — currently a plain threshold slider.
 
 ## Next — low-hanging fruit

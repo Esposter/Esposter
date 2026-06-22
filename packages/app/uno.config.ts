@@ -70,5 +70,12 @@ export default defineConfig({
   theme: {
     breakpoint: forUnoCSS,
     colors: Object.fromEntries(allColorKeys.map((key) => [key, `rgb(var(--v-theme-${key}))`])),
+    // Override preset-wind4's default sans stack, which lists OS-only fonts
+    // ("Segoe UI", "Helvetica Neue", Arial) with no downloadable web source.
+    // These warn at startup because nuxt-og-image scans this token to embed
+    // Fonts into OG images and cannot resolve them. Roboto matches Vuetify's body font.
+    font: {
+      sans: 'Roboto, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+    },
   },
 });

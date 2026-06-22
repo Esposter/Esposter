@@ -15,7 +15,7 @@ const { cloned: inputSensitivityDecibels } = useCloned(() => userSettings.inputS
 </script>
 
 <template>
-  <div font-bold mb-2 text-body-large>Input Sensitivity: {{ inputSensitivityDecibels }} dB</div>
+  <div mb-2 text-body-medium>{{ inputSensitivityDecibels }} dB</div>
   <v-slider
     v-model="inputSensitivityDecibels"
     :max="MAX_INPUT_SENSITIVITY_DECIBELS"
