@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { SettingsSection } from "@/models/message/user/settings/SettingsSection";
+
 import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
 
 interface UserSettingsSectionProps {
-  title: string;
+  title: SettingsSection;
 }
 
 defineSlots<{ default: () => VNode }>();

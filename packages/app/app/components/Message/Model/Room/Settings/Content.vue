@@ -15,7 +15,7 @@ const component = computed(() => SettingsContentMap[settingsType]);
 
 <template>
   <MessageModelSettingsContent>
-    <header sticky top-0 z-1 bg-surface pb-4 mb-4 flex items-center justify-between>
+    <header mb-4 pb-4 bg-surface flex items-center top-0 justify-between sticky z-1>
       <div font-bold text-headline-medium>{{ settingsType }}</div>
       <v-btn icon="mdi-close" variant="text" @click="emit('close')" />
     </header>

@@ -75,7 +75,9 @@ The global route reuses the existing `UserIntroductionCard` + `UserProfileCard` 
 
 ## Navigation / Scrollspy
 
-Both the user and room dialogs dropped the separate right-sidebar component; the close button now lives inline with the content heading (sticky header). The user dialog adds a Discord-style two-level scrollspy nav, built entirely on Vuetify primitives (`v-list-group`, `v-intersect`, `useVGoTo` — no VueUse/scrollspy lib). See the `vuetify` skill "Scrollspy Sub-Nav" section for the reusable pattern. Section identity is a **per-panel subsection enum** (`VoiceSettingsSection` / `NotificationsSettingsSection` / `KeybindsSettingsSection`) whose values double as the section title and DOM id; `UserSettingsSectionMap` maps each `UserSettingsType` to its enum values.
+Both the user and room dialogs dropped the separate right-sidebar component; the close button now lives inline with the content heading (sticky header). The user dialog adds a Discord-style two-level scrollspy nav, built entirely on Vuetify primitives (`v-list-group`, `v-intersect`, `useVGoTo` — no VueUse/scrollspy lib). See the `vuetify` skill "Scrollspy Sub-Nav" section for the reusable pattern. Section identity is a **per-panel subsection enum** (`VoiceSettingsSection` / `NotificationsSettingsSection` / `KeybindsSettingsSection`, unioned as `SettingsSection`) whose values double as the section title and DOM id; `UserSettingsSectionMap` maps each `UserSettingsType` to its enum values.
+
+The active sub-item is marked by an animated rail via the **generic** `StyledSlideIndicator` (`components/Styled/SlideIndicator.vue`) — a drop-in that measures the active item and slides to it, reusable for any future vertical nav (see the `vuetify` skill "Animated active rail").
 
 ## Key Files
 
@@ -91,6 +93,8 @@ Both the user and room dialogs dropped the separate right-sidebar component; the
 | `app/services/message/user/settings/VoiceInputModeLabelMap.ts`                      | enum → display label                                                                                                 |
 | `app/services/message/settings/constants.ts`                                        | `SETTINGS_CONTENT_ID` — scroll-container id for `useVGoTo`                                                           |
 | `app/models/message/user/settings/{Voice,Notifications,Keybinds}SettingsSection.ts` | per-panel subsection enums (value = title + DOM id)                                                                  |
+| `app/models/message/user/settings/SettingsSection.ts`                               | union of the three subsection enums; type of `activeSectionId`                                                       |
+| `app/components/Styled/SlideIndicator.vue`                                          | generic animated active-item rail (measures active item, slides via `translateY`)                                    |
 | `app/store/message/user/settings/index.ts`                                          | DB-backed store: `userSettings` ref, `readUserSettings`, optimistic `updateUserSettings` (revert + alert on failure) |
 | `app/store/message/user/settings/voice.ts`                                          | device-local store: mic/speaker/camera IDs in `localStorage`                                                         |
 | `app/store/message/user/settings/dialog.ts`                                         | dialog UI store: `isVisible`, active `settingsType` (default Voice), `activeSectionId`, `isScrollingToSection`       |
