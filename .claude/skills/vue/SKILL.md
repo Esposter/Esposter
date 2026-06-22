@@ -45,6 +45,8 @@ Never leave a framework value composable (e.g. `useVDisplay`, `useRoute`) strand
 
 - Inline arrow functions where argument types are inferable — don't extract single-use, trivially-typed lambdas.
 - Inline Vue event handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`) so Vue infers event arg types. Extract to a named function only if the same logic is reused in multiple places. Single-use handlers must always be inlined.
+- **Single-use callbacks passed to `useEventListener`/`watch`/lifecycle hooks must be inlined too** — never define a `const onFoo = ...` that is referenced in exactly one registration. Inline the arrow: `useEventListener("keydown", (event) => { ... })`, not a separate `onKeydown` used once. The callback's arg types are inferred from the event name, so no annotation is needed. Keep a named function only when the **same reference** is needed in 2+ places (e.g. passed to both `addEventListener` and `removeEventListener`).
+- **Prefer `useEventListener` over manual `addEventListener`/`removeEventListener`** — it auto-removes on unmount, so it replaces an `onMounted` (add) + `onUnmounted` (remove) pair and lets the handler be inlined. Omit the target for `window` events (`useEventListener("resize", ...)`) — the omitted-target form is SSR-safe (don't reference `window` at setup top-level). Fall back to manual `onMounted`/`onUnmounted` only when the target isn't reachable SSR-safely as a getter and the listener is genuinely tied to mount.
 - **`@click` shorthand**: a single async call uses `@click="myAsyncFn(args)"` directly — no `async () => { await ... }` wrapper.
 - **IME composition guard** — on `@keydown.enter` for text inputs, guard inline so confirming a CJK candidate doesn't commit: `@keydown.enter.stop="!$event.isComposing && commitEdit()"`.
 - **Never destructure event parameters** — use `(event: KeyboardEvent) => { event.key ... }` not `({ key })`. Destructuring event methods (`preventDefault`, etc.) causes "Illegal invocation" via lost `this` binding. Keep the full `event` object even when only reading properties.
@@ -307,9 +309,10 @@ watchImmediate(
 const selectedCategoryId = ref(room.value?.categoryId ?? null);
 ```
 
-If the source can change externally while the form is open (e.g. real-time collaboration), add a plain `watch` — not `watchImmediate`:
+If the source can change externally while the form is open (e.g. real-time collaboration, an optimistic store that rolls back on failure), the local copy must **resync** when the source changes. Use VueUse's `useCloned` — never a hand-written `ref` + `watch` mirror:
 
 ```typescript
+// WRONG — manual ref + watch to mirror the source
 const selectedCategoryId = ref(room.value?.categoryId ?? null);
 watch(
   () => room.value?.categoryId,
@@ -317,7 +320,25 @@ watch(
     selectedCategoryId.value = categoryId ?? null;
   },
 );
+
+// CORRECT — useCloned owns the editable copy and resyncs automatically
+const { cloned: selectedCategoryId } = useCloned(() => room.value?.categoryId ?? null);
 ```
+
+`useCloned(source, options)` returns `{ cloned, isModified, sync }`:
+
+- `cloned` is a **writable** ref (bind it with `v-model`); it re-clones whenever `source` changes, so a rollback or external edit flows back into the form.
+- Fold any normalization into the **source getter** (`() => x ?? ""`) rather than a custom clone.
+- Default clone is `JSON.parse(JSON.stringify(...))` — fine for primitives/plain objects. For values that JSON can't round-trip (Dates, class instances, reactive proxies), pass a `clone` and `deep: true`, and use the returned `sync` as the reset handler instead of a separate `resetForm`:
+
+  ```typescript
+  const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
+    clone: (source) => structuredClone(toRawDeep(source)),
+    deep: true,
+  });
+  ```
+
+`useCloned` also covers writable local copies driven by an imperative consumer (a `v-model` an external widget mutates) that must still resync from a reactive source — e.g. `const { cloned: darkMode } = useCloned(isDark)` bound to `v-model:dark-mode`.
 
 **Prefer props-down when the parent is adjacent and already has the data.** Child initializes from the prop — no watch, no store duplication:
 
@@ -372,14 +393,15 @@ watch(throttledSearchQuery, async (newQuery) => {
 
 ### Summary
 
-| Scenario                       | Pattern                                                   |
-| ------------------------------ | --------------------------------------------------------- |
-| Read-only derivation           | `computed`                                                |
-| Form init from prop/store      | `ref(source.value)` directly — never `watchImmediate`     |
-| Form reset on dialog/menu open | `watch(dialog, (isOpen) => { if (!isOpen) return; ... })` |
-| Two-way store binding          | Writable `computed` (get/set)                             |
-| External imperative API        | `watch`                                                   |
-| Async side effect              | `watch`                                                   |
+| Scenario                                       | Pattern                                                   |
+| ---------------------------------------------- | --------------------------------------------------------- |
+| Read-only derivation                           | `computed`                                                |
+| Form init from prop/store (no external change) | `ref(source.value)` directly — never `watchImmediate`     |
+| Editable copy that resyncs from source         | `useCloned(() => source)` — never `ref` + `watch` mirror  |
+| Form reset on dialog/menu open                 | `watch(dialog, (isOpen) => { if (!isOpen) return; ... })` |
+| Two-way store binding                          | Writable `computed` (get/set)                             |
+| External imperative API                        | `watch`                                                   |
+| Async side effect                              | `watch`                                                   |
 
 ## Watch Aliases & `watchEffect`
 
@@ -402,6 +424,8 @@ watch(throttledSearchQuery, async (newQuery) => {
 ## Vue Hooks
 
 - Place `watch`, `onMounted`, `onUnmounted`, and other lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments, with a blank line before them.
+- **Prefer no hook at all.** Before adding a `watch`/`watchEffect`, exhaust the Watch Decision Tree above — derive with `computed`, initialize a `ref` from a prop/store value directly, or push the data down as a prop and let the child own it. Reach for a watcher only when bridging an imperative API or running an async side effect. A `watchEffect` that merely copies a store value into a local `ref` is almost always replaceable by the wrapper + pure-child pattern (see the `vue-component-patterns` skill): guard the source with `v-if` in the parent, pass it as a required prop, and init the child's `ref` from that prop.
+- **Blank line between each consecutive hook/watcher** — every `watch`/`watchEffect`/`onMounted`/`onUnmounted` block is an independent registration, so put a blank line between adjacent ones. This overrides the `formatting` skill's "no blank line before a block that immediately follows another block".
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly (avoids scope/binding issues and argument forwarding): `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
 - Applies everywhere — `.map()`, `.filter()`, lifecycle hooks, JS event listeners: `array.map((item) => fn(item))` not `array.map(fn)`. (Template `@event` bindings: use `@click="fn()"`, not `@click="fn"` — see Template Conventions.)
 

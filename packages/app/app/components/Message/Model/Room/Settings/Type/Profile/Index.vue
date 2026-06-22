@@ -8,7 +8,8 @@ interface ProfileProps {
 }
 
 const { room } = defineProps<ProfileProps>();
-const { getMyUserToRoom } = useUserToRoomStore();
+const userToRoomStore = useUserToRoomStore();
+const { getMyUserToRoom } = userToRoomStore;
 const userToRoom = computed(() => getMyUserToRoom(room.id));
 </script>
 

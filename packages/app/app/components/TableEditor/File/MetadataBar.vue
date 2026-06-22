@@ -2,7 +2,7 @@
 import type { Metadata } from "#shared/models/tableEditor/file/datasource/Metadata";
 
 import { dayjs } from "#shared/services/dayjs";
-import { formatSize } from "@/util/text/formatSize";
+import { getFileSize } from "@/services/file/getFileSize";
 
 interface MetadataBarProps {
   metadata: Metadata;
@@ -19,7 +19,7 @@ const formattedDate = computed(() => dayjs(metadata.importedAt).format("MMM D, Y
       <v-card-subtitle>Imported {{ formattedDate }}</v-card-subtitle>
       <template #append>
         <div flex flex-wrap gap-2>
-          <v-chip label size="small" prepend-icon="mdi-database">{{ formatSize(metadata.size) }}</v-chip>
+          <v-chip label size="small" prepend-icon="mdi-database">{{ getFileSize(metadata.size) }}</v-chip>
           <v-chip label size="small" prepend-icon="mdi-file-outline">
             {{ metadata.dataSourceType.toUpperCase() }}
           </v-chip>

@@ -2,8 +2,8 @@
 import { FontKey } from "#shared/models/dungeons/keys/FontKey";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { SceneKeyMap } from "@/services/dungeons/scene/SceneKeyMap";
+import { checkIsMobile } from "@/util/device/checkIsMobile";
 import { GridEngine } from "grid-engine";
-import isMobile from "is-mobile";
 import { AUTO, Scale } from "phaser";
 import ClickOutsidePlugin from "phaser4-rex-plugins/plugins/clickoutside-plugin.js";
 import SliderPlugin from "phaser4-rex-plugins/plugins/slider-plugin";
@@ -41,7 +41,7 @@ defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
           touch: true,
           // We need to support multi-touch for mobile joystick
           // https://phaser.discourse.group/t/how-to-enable-multitouch-jsfiddle-inside/2422
-          activePointers: isMobile() ? 3 : 2,
+          activePointers: checkIsMobile() ? 3 : 2,
         },
         plugins: {
           global: [

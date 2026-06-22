@@ -6,7 +6,7 @@ defineSlots<{ default: () => VNode }>();
 
 const theme = useVTheme();
 const themeCookie = useCookie(THEME_COOKIE_NAME, { default: () => ThemeMode.system });
-theme.change(themeCookie.value);
+await theme.change(themeCookie.value);
 </script>
 
 <template>

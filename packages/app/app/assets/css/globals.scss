@@ -55,6 +55,12 @@ canvas {
   min-height: var(--app-bar-height);
   height: auto !important;
 }
+// Theme-change circular reveal (see util/vuetify/animateThemeTransition) — disable the default cross-fade
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
 // Restore list padding for rich text (tiptap) output, which the reset layer above zeroes out
 .rich-text-content {
   ul,

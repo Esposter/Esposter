@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.29.0](https://github.com/Esposter/Esposter/compare/v2.28.0...v2.29.0) (2026-06-21)
+
+### Bug Fixes
+
+* lint + comments etc ([13de898](https://github.com/Esposter/Esposter/commit/13de898e802444afc16acd33145538c9034727ea))
+* lint and snapshot ([cda7f33](https://github.com/Esposter/Esposter/commit/cda7f33c8c54e3f52a25551101ff0794dd74086c))
+* types and commands ([e0ad825](https://github.com/Esposter/Esposter/commit/e0ad82515d8bb6c1adc46b3ee30b7fa35650910c))
+* unifying vitest ([8e3e6bf](https://github.com/Esposter/Esposter/commit/8e3e6bf186a7fecbd3054cf5b9e80e5763d3c8b0))
+
 # [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
 
 ### Bug Fixes

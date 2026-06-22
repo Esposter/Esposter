@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useAlertStore } from "@/store/alert";
 
-const { alerts, deleteAlert } = useAlertStore();
+const alertStore = useAlertStore();
+const { alerts } = storeToRefs(alertStore);
+const { deleteAlert } = alertStore;
 </script>
 
 <template>

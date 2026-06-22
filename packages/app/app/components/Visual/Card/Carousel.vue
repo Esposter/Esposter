@@ -12,6 +12,7 @@ interface CardStyleVariables {
   oldScaleY?: string;
   scaleY?: string;
 }
+
 interface VisualCardCarouselProps {
   cards: Card[];
   cardScaleYRatioLoss?: number;
@@ -47,7 +48,6 @@ const cardIds = ref<number[]>(cards.map((_card, index) => index));
 // The active card is the card that's moving from right -> left -> right.
 const activeCardId = ref<number>();
 const inactiveCardId = ref<number>();
-
 const classes = computed<string[]>(() => {
   const newClasses = [];
   for (const cardId of cardIds.value) newClasses.push(getClass(cardId));
@@ -90,7 +90,6 @@ const moveOneCard = () => {
 };
 // Re-animate on every screen change to avoid cards getting stuck in weird positions.
 const { thresholds, width } = useVDisplay();
-
 const gap = computed<string>(() => {
   let gap = 2;
   if (width.value >= thresholds.value.xxl) gap = 6;
@@ -104,7 +103,6 @@ const scale = computed<number>(() => {
   else if (width.value >= thresholds.value.xl) scale = 1.25;
   return scale;
 });
-
 const normalCardStyles = computed<CardStyleVariables[]>(() => {
   // Count the cards we care about, ignoring the moving card.
   const numberOfCards = Math.min(maxShownCards, cards.length - 1);
@@ -124,11 +122,9 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
   for (let i = numberOfCards; i < maxShownCards; i++) items.push({});
   return items;
 });
-
 const activeCardStyle = computed<CardStyleVariables>(() => ({
   oldMarginRight: normalCardStyles.value.length > 0 ? takeOne(normalCardStyles.value).marginRight : "0",
 }));
-
 const inactiveCardStyle = computed<CardStyleVariables>(() => {
   // Size is irrelevant with a single card.
   if (cards.length === 1) return { scaleY: "1" };
