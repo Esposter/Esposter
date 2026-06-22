@@ -41,17 +41,19 @@ onMounted(start);
 
 <template>
   <div ref="track" relative h-5 w-full cursor-pointer @pointerdown="startDrag">
-    <div absolute left-0 h-2 w-full overflow-hidden rounded class="gradient-track top-1/2 -translate-y-1/2">
+    <div absolute left-0 top="1/2" translate-y="-1/2" h-2 w-full overflow-hidden rounded class="gradient-track">
       <div absolute left-0 top-0 h-full bg-black opacity-30 :style="{ width: `${levelFraction * 100}%` }" />
     </div>
     <div
       absolute
+      top="1/2"
+      translate-x="-1/2"
+      translate-y="-1/2"
       h-5
       w-5
       rounded-full
       bg-white
       shadow
-      class="top-1/2 -translate-x-1/2 -translate-y-1/2"
       :style="{ left: `${thresholdFraction * 100}%` }"
     />
   </div>

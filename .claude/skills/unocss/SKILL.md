@@ -5,6 +5,8 @@ description: Esposter UnoCSS configuration conventions — theme colors registra
 
 # UnoCSS Configuration
 
+> Attributify **template syntax** (valued attributes, negatives, `!important`) lives in the `styling` skill, not here. This file is config only.
+
 ## Color Architecture
 
 Two systems provide color utilities:
