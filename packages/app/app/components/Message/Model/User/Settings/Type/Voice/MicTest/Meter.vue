@@ -20,12 +20,12 @@ const segments = computed(() =>
 </script>
 
 <template>
-  <div flex h-4 w-full items-stretch gap-0.5>
+  <div flex gap-0.5 h-4 w-full items-stretch>
     <div
       v-for="{ fraction, hue, isLit } of segments"
       :key="fraction"
-      flex-1
       rounded-sm
+      flex-1
       :style="{ backgroundColor: `hsl(${hue}, 70%, 45%)`, opacity: isLit ? 1 : 0.15 }"
     />
   </div>

@@ -44,30 +44,30 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="track" relative h-5 w-full cursor-pointer @pointerdown="startDrag">
+  <div ref="track" h-5 w-full cursor-pointer relative @pointerdown="startDrag">
     <div
-      absolute
-      left-0
       top="1/2"
       translate-y="-1/2"
+      rounded
       h-2
       w-full
+      left-0
+      absolute
       overflow-hidden
-      rounded
       bg="[linear-gradient(to_right,hsl(55,70%,45%),hsl(120,70%,45%))]"
     >
-      <div absolute left-0 top-0 h-full bg-black opacity-30 :style="{ width: `${levelFraction * 100}%` }" />
+      <div bg-black opacity-30 h-full left-0 top-0 absolute :style="{ width: `${levelFraction * 100}%` }" />
     </div>
     <div
-      absolute
       top="1/2"
       translate-x="-1/2"
       translate-y="-1/2"
-      h-5
-      w-5
       rounded-full
       bg-white
+      h-5
+      w-5
       shadow
+      absolute
       :style="{ left: `${thresholdFraction * 100}%` }"
     />
   </div>

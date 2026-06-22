@@ -16,6 +16,7 @@ import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useUserSettingsStore } from "@/store/message/user/settings";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import { DEFAULT_SPEAKER_VOLUME_PERCENTAGE, NoiseSuppressionMode, VoiceInputMode } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
@@ -31,12 +32,12 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
   const participantStore = useParticipantStore();
   const userSettingsStore = useUserSettingsStore();
+  // Persisted (localStorage) device selections are the single source of truth, shared with the settings
+  // Panel, mic test, and pre-join preview - so the call captures the device the user actually picked.
+  const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
   const remoteAudioElements = new Map<string, HTMLMediaElement>();
   const connectionQuality = ref(ConnectionQuality.Unknown);
   const connectionState = ref(ConnectionState.Disconnected);
-  const selectedAudioInputDeviceId = ref("");
-  const selectedAudioOutputDeviceId = ref("");
-  const selectedVideoInputDeviceId = ref("");
   const cleanupRemoteAudio = () => {
     for (const audio of remoteAudioElements.values()) audio.remove();
     remoteAudioElements.clear();
@@ -70,13 +71,13 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   const setActiveDevice = (kind: MediaDeviceKind, deviceId: string) => {
     switch (kind) {
       case "audioinput":
-        selectedAudioInputDeviceId.value = deviceId;
+        voiceDeviceSettingsStore.inputDeviceId = deviceId;
         break;
       case "audiooutput":
-        selectedAudioOutputDeviceId.value = deviceId;
+        voiceDeviceSettingsStore.outputDeviceId = deviceId;
         break;
       case "videoinput":
-        selectedVideoInputDeviceId.value = deviceId;
+        voiceDeviceSettingsStore.cameraDeviceId = deviceId;
         break;
       default:
         exhaustiveGuard(kind);
@@ -235,18 +236,36 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     if (checkIsStale() || !resolvedPath) return;
     await virtualBackgroundProcessor.switchTo({ imagePath: resolvedPath, mode: "virtual-background" });
   });
-  const switchDevice = async (kind: MediaDeviceKind, deviceId: string) => {
-    if (!activeRoom) {
-      setActiveDevice(kind, deviceId);
-      return;
-    }
-
+  // Selecting a device just writes the persisted ref (via setActiveDevice); these watchers restart the
+  // Live track on change. The guard skips no-op switches - including the echo from LiveKit's own
+  // ActiveDeviceChanged event - so there is no feedback loop.
+  const syncDeviceToRoom = getSynchronizedFunction(async (kind: MediaDeviceKind, deviceId: string) => {
+    if (!activeRoom || !deviceId || activeRoom.getActiveDevice(kind) === deviceId) return;
     await activeRoom.switchActiveDevice(kind, deviceId);
-  };
+  });
+  watch(
+    () => voiceDeviceSettingsStore.inputDeviceId,
+    (deviceId) => {
+      syncDeviceToRoom("audioinput", deviceId);
+    },
+  );
+  watch(
+    () => voiceDeviceSettingsStore.outputDeviceId,
+    (deviceId) => {
+      syncDeviceToRoom("audiooutput", deviceId);
+    },
+  );
+  watch(
+    () => voiceDeviceSettingsStore.cameraDeviceId,
+    (deviceId) => {
+      syncDeviceToRoom("videoinput", deviceId);
+    },
+  );
   const syncActiveDevices = (room: Room) => {
-    selectedAudioInputDeviceId.value = room.getActiveDevice("audioinput") ?? "";
-    selectedAudioOutputDeviceId.value = room.getActiveDevice("audiooutput") ?? "";
-    selectedVideoInputDeviceId.value = room.getActiveDevice("videoinput") ?? "";
+    for (const kind of ["audioinput", "audiooutput", "videoinput"] as const) {
+      const deviceId = room.getActiveDevice(kind);
+      if (deviceId) setActiveDevice(kind, deviceId);
+    }
   };
   const connect = async (
     room: Room,
@@ -313,14 +332,11 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     connectionQuality,
     connectionState,
     disconnect,
-    selectedAudioInputDeviceId,
-    selectedAudioOutputDeviceId,
-    selectedVideoInputDeviceId,
+    setActiveDevice,
     setCamera,
     setMicrophone,
     setRemoteAudioMuted,
     setScreenShare,
     setVirtualBackground,
-    switchDevice,
   };
 });

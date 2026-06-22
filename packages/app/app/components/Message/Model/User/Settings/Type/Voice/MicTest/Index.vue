@@ -3,7 +3,7 @@ const { isTesting, level, start, stop } = useMicrophoneLevel();
 </script>
 
 <template>
-  <div mt-3 flex items-center gap-3>
+  <div mt-3 flex gap-3 items-center>
     <v-btn
       :color="isTesting ? 'primary' : undefined"
       :prepend-icon="isTesting ? 'mdi-microphone-off' : 'mdi-microphone'"

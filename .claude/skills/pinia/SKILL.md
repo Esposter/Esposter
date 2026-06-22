@@ -38,6 +38,38 @@ description: Esposter Pinia store conventions — full store name, destructure w
   const roomParticipants = computed(() => roomParticipantsMap.value.get(roomStore.currentRoomId));
   ```
 
+## Never Redirect Store Functions — Use Them Directly
+
+A store function is defined **once** and consumed directly at every use site by destructuring it from the store. Never insert a layer that only forwards to it:
+
+- **No alias re-export through a composable** — a composable must never `return { foo: store.foo }` (or `return { foo: someStoreMethod }`). The consumer destructures the method straight from the store.
+- **No one-line wrapper** — never write `const selectDevice = (kind, id) => switchDevice(kind, id)` in a store, composable, or component when the body just forwards arguments. Delete it and call the underlying function.
+- **No chain of pass-throughs** — `selectDevice → switchDevice → setActiveDevice` collapses to a single `setActiveDevice` that everyone calls.
+
+A composable earns its place **only** when it adds genuine reused behaviour — shared reactive state, multi-step logic, resource lifecycle (`onScopeDispose`), a computed projection — not to re-expose a store's existing API under a new name. If a composable would just relay store methods, drop it and use the store.
+
+```ts
+// WRONG: composable relays a store method under a new name
+export const useCallDeviceSettings = (definitions) => {
+  const { switchDevice } = useLiveKitStore();
+  const selectDevice = (kind, id) => switchDevice(kind, id); // pointless redirect
+  return { deviceSections, refreshDevices, selectDevice };
+};
+// component: <List @select="selectDevice" />
+
+// CORRECT: composable returns only its real value; component calls the store method directly
+export const useCallDeviceSettings = (definitions) => {
+  // ...deviceMap, deviceSections, refreshDevices — genuine shared logic
+  return { deviceSections, refreshDevices };
+};
+// component:
+const liveKitStore = useLiveKitStore();
+const { setActiveDevice } = liveKitStore;
+// template: <List @select="setActiveDevice" />
+```
+
+Same principle as [tRPC Mutation Placement](#trpc-mutation-placement) — don't add an indirection that carries no logic.
+
 ## Store as Single Source of Truth — Eliminate Watches and Prop Threading
 
 Reactive state shared across a component tree belongs in the store, not local refs. Local refs + watches to sync state signal the data should live in the store.

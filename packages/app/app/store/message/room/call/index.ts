@@ -1,14 +1,15 @@
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { authClient } from "@/services/auth/authClient";
-import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
+import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { useRoomStore } from "@/store/message/room";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { useUserSettingsStore } from "@/store/message/user/settings";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import { AdminActionType, NoiseSuppressionMode } from "@esposter/db-schema";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { Room } from "livekit-client";
@@ -35,6 +36,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const { connect, disconnect, setCamera, setMicrophone, setRemoteAudioMuted, setScreenShare, setVirtualBackground } =
     liveKitStore;
   const userSettingsStore = useUserSettingsStore();
+  const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
   const callRoomId = ref("");
   const activeCallSessionId = ref("");
   const currentRoomCallSessionId = ref("");
@@ -114,10 +116,12 @@ export const useCallStore = defineStore("message/room/call", () => {
   const createRoom = () =>
     new Room({
       adaptiveStream: true,
-      audioCaptureDefaults: getAudioCaptureDefaults(
-        userSettingsStore.userSettings?.noiseSuppressionMode ?? NoiseSuppressionMode.Custom,
-      ),
+      audioCaptureDefaults: {
+        ...getAudioCaptureDefaults(userSettingsStore.userSettings?.noiseSuppressionMode ?? NoiseSuppressionMode.Custom),
+        deviceId: voiceDeviceSettingsStore.inputDeviceId || undefined,
+      },
       dynacast: true,
+      videoCaptureDefaults: { deviceId: voiceDeviceSettingsStore.cameraDeviceId || undefined },
     });
   const createCall = async (): Promise<string | undefined> => {
     const { callSessionId } = await $trpc.callSession.createCall.mutate();

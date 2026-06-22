@@ -3,16 +3,17 @@ import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "
 import { getResultAsync } from "@esposter/shared";
 
 // Opens a local microphone and exposes the live input level (dB) so the Input Sensitivity panel
-// can show a calibration meter. There is no shared analyser to reuse - in-call speaking detection
-// comes from LiveKit's server-side ActiveSpeakersChanged, and this panel can be opened outside a call.
+// Can show a calibration meter. There is no shared analyser to reuse - in-call speaking detection
+// Comes from LiveKit's server-side ActiveSpeakersChanged, and this panel can be opened outside a call.
 export const useMicrophoneLevel = () => {
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
   const { inputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
   const isTesting = ref(false);
   const level = ref(MIN_INPUT_SENSITIVITY_DECIBELS);
-  const { start: startStream, stop: stopStream } = useUserMedia({
-    constraints: { audio: { deviceId: inputDeviceId.value || undefined } },
-  });
+  const constraints = computed<MediaStreamConstraints>(() => ({
+    audio: { deviceId: inputDeviceId.value || undefined },
+  }));
+  const { start: startStream, stop: stopStream } = useUserMedia({ constraints });
   let audioContext: AudioContext | undefined;
   let analyser: AnalyserNode | undefined;
   let timeDomainData: Float32Array<ArrayBuffer> | undefined;
@@ -20,7 +21,7 @@ export const useMicrophoneLevel = () => {
     () => {
       if (!analyser || !timeDomainData) return;
       // Float (not byte) time-domain data: 8-bit quantization clusters quiet input around the
-      // midpoint, so the meter barely moves; floats give full precision across the range.
+      // Midpoint, so the meter barely moves; floats give full precision across the range.
       analyser.getFloatTimeDomainData(timeDomainData);
       let sumSquares = 0;
       for (const sample of timeDomainData) sumSquares += sample * sample;

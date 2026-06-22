@@ -1,17 +1,28 @@
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import { getResultAsync } from "@esposter/shared";
 
 export const useCallPreJoinMedia = () => {
   const knockerStore = useKnockerStore();
   const { joinCallOptions } = storeToRefs(knockerStore);
+  const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
+  const { cameraDeviceId, inputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
+  const cameraConstraints = computed<MediaStreamConstraints>(() => ({
+    video: { deviceId: cameraDeviceId.value || undefined },
+  }));
+  const microphoneConstraints = computed<MediaStreamConstraints>(() => ({
+    audio: { deviceId: inputDeviceId.value || undefined },
+  }));
   // UseUserMedia retains the live camera stream and releases it on scope dispose.
   const {
     start: startCameraStream,
     stop: stopCameraStream,
     stream: cameraStream,
-  } = useUserMedia({ constraints: { video: true } });
+  } = useUserMedia({ constraints: cameraConstraints });
   // The microphone is only probed for permission, so its stream is released immediately after start.
-  const { start: startMicrophoneStream, stop: stopMicrophoneStream } = useUserMedia({ constraints: { audio: true } });
+  const { start: startMicrophoneStream, stop: stopMicrophoneStream } = useUserMedia({
+    constraints: microphoneConstraints,
+  });
   const isCameraEnabled = computed({
     get: () => joinCallOptions.value.isCameraEnabled,
     set: (value) => {

@@ -33,10 +33,31 @@ change (reactive watchers).
 | **Input Sensitivity**   | `inputSensitivityDecibels`        | voice-activity gate in `MicrophoneProcessor`: gain → 0 when live dB < threshold (Voice Activity mode only)           |
 | **Input mode**          | `voiceInputMode`                  | `VoiceActivity` enables the sensitivity gate; `PushToTalk` is pass-through until the PTT keybind listener is built   |
 | **Default mute/deafen** | `isMuteOnJoin` / `isDeafenOnJoin` | initial mic/deafen state in the join flow                                                                            |
-| **Devices**             | `inputDeviceId` etc. (local)      | `room.switchActiveDevice(kind, id)` / pre-join constraints                                                           |
+| **Devices**             | `inputDeviceId` etc. (local)      | join: Room `audio`/`videoCaptureDefaults.deviceId`; mid-call: `room.switchActiveDevice` via store watchers           |
 
 Device lists come from VueUse `useDevicesList`; permission is requested lazily from the Input
 Sensitivity warning link.
+
+## Device selection (single source of truth)
+
+The persisted `useVoiceDeviceSettingsStore` (`voice.ts`, `localStorage`) holds the selected
+mic/speaker/camera IDs and is the **only** source of truth. Everything reads from it, so a device
+picked anywhere is honoured everywhere:
+
+- **Settings panel selects** (`Devices/*Select.vue`) — `v-model` directly on the store refs.
+- **Mic test** (`useMicrophoneLevel`) and **pre-join preview** (`useCallPreJoinMedia`) — build
+  reactive `computed` `useUserMedia` constraints from the IDs, so a device change re-requests the
+  right stream immediately (no stale capture at composable setup).
+- **The live call** — `createRoom` seeds `audioCaptureDefaults.deviceId` + `videoCaptureDefaults.deviceId`
+  from the store, so the call opens the chosen device. The in-call picker
+  (`Audio`/`Video SettingsButton` → `useCallDeviceSettings`) and the `HealthButton` readout also bind
+  the same store refs.
+
+`liveKit.ts` no longer keeps its own `selectedAudioInputDeviceId`/etc. refs. `setActiveDevice` writes
+the store (the in-call picker and LiveKit's `ActiveDeviceChanged` event both use it); per-kind `watch`ers
+call `room.switchActiveDevice` to restart the live track when a selection changes mid-call. A guard
+(`getActiveDevice(kind) === deviceId`) skips no-op switches — including the echo from that same
+`ActiveDeviceChanged` event — so there is no feedback loop.
 
 ## Input Profile (noise suppression)
 
@@ -68,8 +89,10 @@ settings panel meter uses a separate read-only `useMicrophoneLevel` composable.
 | `app/composables/message/user/settings/useMicrophoneLevel.ts` | read-only mic level for the panel meters                                           |
 | `app/models/message/room/call/MicrophoneProcessor.ts`         | Web Audio gain + voice-activity gate (LiveKit audio TrackProcessor)                |
 | `app/services/message/room/call/getAudioCaptureDefaults.ts`   | noise-suppression mode → getUserMedia constraints                                  |
-| `app/store/message/room/liveKit.ts`                           | applies speaker volume, noise mode, and the mic processor to the call              |
-| `app/store/message/room/call/index.ts`                        | `createRoom` passes `audioCaptureDefaults`; join flow                              |
+| `app/store/message/room/liveKit.ts`                           | speaker volume, noise mode, mic processor; `switchDevice` + device watchers        |
+| `app/store/message/room/call/index.ts`                        | `createRoom` seeds audio/video capture-default device IDs; join flow               |
+| `app/composables/message/room/call/useCallPreJoinMedia.ts`    | pre-join camera/mic preview — reactive `useUserMedia` constraints from device IDs  |
+| `app/composables/message/room/call/useCallDeviceSettings.ts`  | in-call device picker — lists devices, writes selection to the voice store         |
 
 ## Not yet built
 
