@@ -139,15 +139,6 @@ external: [...externalVueFramework, "@azure/functions"],
 | `@esposter/xml2js`          | ~1.12MB | Bundles sax + xmlbuilder2    |
 | `vue-phaserjs`              | ~34KB   | Phaser/parse-tmx external    |
 
-## Adding a New Package
-
-1. Create `rolldown.config.ts` importing the appropriate base config.
-2. Add to `package.json`: `"build": "pnpm export:gen && rolldown --config rolldown.config.ts"`.
-3. For any direct dep the consumer should provide, add it to `peerDependencies` AND verify it's covered by the global external list (or add it). Don't add transitive-only peers from imported workspace packages.
-4. Add `src/index.test.ts` bundle size snapshot (see testing skill).
-5. Add `test`/`coverage` scripts + `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`.
-6. Run `pnpm i` from the workspace root after editing `package.json`.
-
 ## Dependency Installs
 
 - Use plain `pnpm i` from the repo root when package manifests change.
