@@ -296,6 +296,9 @@ describe(defineConfig, () => {
             "surface-opacity-80": "rgb(var(--v-theme-surface-opacity-80))",
             "text": "rgb(var(--v-theme-text))",
           },
+          "font": {
+            "sans": "Roboto, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"",
+          },
         },
       }
     `);

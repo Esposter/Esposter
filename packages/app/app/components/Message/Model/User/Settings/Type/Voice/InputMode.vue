@@ -16,7 +16,6 @@ const voiceInputModes = Object.values(VoiceInputMode);
 </script>
 
 <template>
-  <div font-bold mb-2 text-body-large>Input Mode</div>
   <v-radio-group
     :model-value="userSettings.voiceInputMode"
     hide-details

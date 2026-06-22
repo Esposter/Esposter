@@ -33,8 +33,7 @@ const room = computed(() => rooms.value.find(({ id }) => id === roomId));
     </template>
     <v-app>
       <MessageModelRoomSettingsLeftSideBar v-model="settingsType" :room-id @open:delete="isDeleteOpen = true" />
-      <MessageModelRoomSettingsRightSideBar @close="dialog = false" />
-      <MessageModelRoomSettingsContent v-if="room" :room :settings-type />
+      <MessageModelRoomSettingsContent v-if="room" :room :settings-type @close="dialog = false" />
     </v-app>
   </v-dialog>
 </template>

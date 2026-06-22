@@ -206,3 +206,14 @@ The CSS custom-property form (`var(--border-width)`) is only acceptable when a s
 ## Keyboard Shortcut Components
 
 A button and its keyboard shortcut are one component — see the **vue-component-patterns** skill (Maximal Component Granularity).
+
+## Scrollspy Sub-Nav (Two-Level List + `v-intersect` + `useVGoTo`)
+
+For a settings-style surface where a sidebar tracks the section scrolled into view, reuse Vuetify's native primitives — **do not** pull in VueUse `useIntersectionObserver` or a scrollspy library:
+
+- **Two-level nav** — `v-list` with `:opened="[activeCategory]"` (controlled, so only the active category expands) + `v-list-group` per category. Sub-items render the active category's sections.
+- **Scroll tracking** — the `v-intersect` directive on each section. Use a top-of-viewport active band via `options: { rootMargin: '0px 0px -80% 0px' }` so at most one section is "intersecting" at a time; on `isIntersecting`, write the section id to shared state (a store ref).
+- **Click-to-scroll** — `useVGoTo()` (auto-imported, `v` prefix — never `import { useGoTo } from "vuetify"`). Scroll within the panel's scroll container: `goTo(element, { container: '#<scroll-container-id>' })`. Resolve the target with `document.getElementById(id)` so section ids may contain spaces (enum values), avoiding selector escaping.
+- **Click vs. scrollspy race** — set the active id immediately on click, and guard the `v-intersect` handler with an `isScrollingToSection` flag (set true before `await goTo(...)`, false after) so the animated scroll doesn't flicker the highlight through intermediate sections. The manual click-set also fixes the case where every section fits without scrolling (the band would otherwise pin the first one).
+
+Section identity comes from a **per-subsection enum** whose values double as titles and DOM ids (one enum per panel, e.g. `VoiceSettingsSection`); a `Record<ParentType, EnumValues[]>` map drives the sidebar sub-items. See the esbabbler `specs/user-settings.md` for the concrete wiring.

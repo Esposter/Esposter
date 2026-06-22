@@ -15,7 +15,7 @@ const { cloned: defaultUserVolumePercentage } = useCloned(() => userSettings.def
 </script>
 
 <template>
-  <div font-bold mb-2 text-body-large>Default User Volume: {{ defaultUserVolumePercentage }}%</div>
+  <div mb-2 text-body-medium>{{ defaultUserVolumePercentage }}%</div>
   <v-slider
     v-model="defaultUserVolumePercentage"
     :max="MAX_USER_VOLUME_PERCENTAGE"

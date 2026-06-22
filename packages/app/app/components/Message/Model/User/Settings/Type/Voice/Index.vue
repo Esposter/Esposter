@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { VoiceSettingsSection } from "@/models/message/user/settings/VoiceSettingsSection";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 
 const userSettingsStore = useUserSettingsStore();
@@ -6,16 +7,21 @@ const { userSettings } = storeToRefs(userSettingsStore);
 </script>
 
 <template>
-  <v-container v-if="userSettings" fluid>
-    <div font-bold mb-4 text-title-medium>Voice & Video</div>
-    <MessageModelUserSettingsTypeVoiceInputMode :user-settings />
-    <v-divider my-4 />
-    <MessageModelUserSettingsTypeVoiceInputSensitivitySlider :user-settings />
-    <v-divider my-4 />
-    <MessageModelUserSettingsTypeVoiceDeviceSelectList />
-    <v-divider my-4 />
-    <MessageModelUserSettingsTypeVoiceJoinSwitches :user-settings />
-    <v-divider my-4 />
-    <MessageModelUserSettingsTypeVoiceDefaultVolumeSlider :user-settings />
-  </v-container>
+  <template v-if="userSettings">
+    <MessageModelUserSettingsSection :title="VoiceSettingsSection.InputMode">
+      <MessageModelUserSettingsTypeVoiceInputMode :user-settings />
+    </MessageModelUserSettingsSection>
+    <MessageModelUserSettingsSection :title="VoiceSettingsSection.InputSensitivity">
+      <MessageModelUserSettingsTypeVoiceInputSensitivitySlider :user-settings />
+    </MessageModelUserSettingsSection>
+    <MessageModelUserSettingsSection :title="VoiceSettingsSection.Devices">
+      <MessageModelUserSettingsTypeVoiceDeviceSelectList />
+    </MessageModelUserSettingsSection>
+    <MessageModelUserSettingsSection :title="VoiceSettingsSection.JoinSettings">
+      <MessageModelUserSettingsTypeVoiceJoinSwitches :user-settings />
+    </MessageModelUserSettingsSection>
+    <MessageModelUserSettingsSection :title="VoiceSettingsSection.DefaultVolume">
+      <MessageModelUserSettingsTypeVoiceDefaultVolumeSlider :user-settings />
+    </MessageModelUserSettingsSection>
+  </template>
 </template>

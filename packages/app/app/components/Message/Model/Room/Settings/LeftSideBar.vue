@@ -30,7 +30,7 @@ const visibleSettings = computed(() =>
 
 <template>
   <MessageModelSettingsLeftSideBar>
-    <v-list pt-10>
+    <v-list>
       <MessageModelRoomSettingsLeftSideBarItem
         v-for="[settingsType, { color, icon }] of visibleSettings"
         :key="settingsType"

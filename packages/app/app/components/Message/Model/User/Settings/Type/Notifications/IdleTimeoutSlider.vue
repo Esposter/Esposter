@@ -16,7 +16,7 @@ const { cloned: autoIdleThresholdMinutes } = useCloned(() => userSettings.autoId
 </script>
 
 <template>
-  <div mb-2 text-body-medium>Idle timeout: {{ autoIdleThresholdMinutes }} min</div>
+  <div mb-2 text-body-medium>{{ autoIdleThresholdMinutes }} min</div>
   <v-slider
     v-model="autoIdleThresholdMinutes"
     :max="MAX_AUTO_IDLE_THRESHOLD_MS / MS_PER_MINUTE"
