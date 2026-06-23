@@ -1,4 +1,5 @@
 import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
+import { withFinalizer } from "@esposter/shared";
 import { createRequire } from "node:module";
 import { describe, expect, test } from "vitest";
 
@@ -22,18 +23,21 @@ describe(createPlatformaticFsProvider, () => {
 
     const { mount, unmount, writeFile } = createPlatformaticFsProvider();
     mount("/mnt");
-    try {
-      const fs = require("node:fs");
-      writeFile("/mnt/data.txt", " ");
+    withFinalizer(
+      () => {
+        const fs = require("node:fs");
+        writeFile("/mnt/data.txt", " ");
 
-      expect(fs.readFileSync("/mnt/data.txt", "utf8")).toBe(" ");
+        expect(fs.readFileSync("/mnt/data.txt", "utf8")).toBe(" ");
 
-      writeFile("/mnt/index.js", 'module.exports = require("node:fs").readFileSync("/mnt/data.txt", "utf8")');
-
-      expect(require("/mnt/index.js")).toBe(" ");
-    } finally {
-      unmount();
-    }
+        writeFile("/mnt/index.js", 'module.exports = require("node:fs").readFileSync("/mnt/data.txt", "utf8")');
+        // oxlint-disable-next-line import/no-absolute-path -- absolute mount path is the point: verifies the VFS module loader resolves mounted files
+        expect(require("/mnt/index.js")).toBe(" ");
+      },
+      () => {
+        unmount();
+      },
+    );
   });
 
   test("dispose tears down the mount so interception stops", () => {
