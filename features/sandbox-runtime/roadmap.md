@@ -16,7 +16,7 @@ These run from the first backend onward, not as a phase. A change that fails eit
 - [x] `ExecBackend` seam + native passthrough backend — the foundation every future backend implements.
 - [x] `sandbox -- <command>` prefix CLI with live stdio + exit-code propagation → [specs/adoption.md](specs/adoption.md). Routes through the sandbox; native passthrough today, so it is already dogfoodable on this repo.
 - [x] Stand up the benchmark + correctness harnesses against the native backend (differential test asserts identical-to-native; `pnpm bench` reports sandbox-vs-baseline) so every later phase is measured from day one.
-- [ ] Source loaders: `{ dir }`, `{ files }`, `{ git }` → normalized into the FS layer.
+- [x] Source loaders: `{ dir }`, `{ files }`, `{ git }` (discriminated on `SourceType`) → normalized into a `LoadedSource` (working dir + `dispose`); `createSandbox` is now async and owns teardown.
 - [ ] Wire the bench + differential suites into CI as required gates (skeletons exist; not yet CI-enforced).
 
 ## Phase 1 — `vfs` backend (pure npm, cross-platform)

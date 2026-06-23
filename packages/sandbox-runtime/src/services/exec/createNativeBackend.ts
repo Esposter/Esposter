@@ -1,8 +1,9 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
+
 import { spawn } from "node:child_process";
 // The only backend today: run the real command on the host, unchanged. It does not isolate or
-// virtualize anything — it is the baseline the future `vfs`/`os` backends must beat on speed and
-// match on correctness, and the fallback every higher backend defers to when it can't run a command.
+// Virtualize anything — it is the baseline the future `vfs`/`os` backends must beat on speed and
+// Match on correctness, and the fallback every higher backend defers to when it can't run a command.
 export const createNativeBackend = (): ExecBackend => ({
   exec: (command, options) =>
     new Promise((resolve, reject) => {

@@ -3,9 +3,9 @@ import { spawn } from "node:child_process";
 import { performance } from "node:perf_hooks";
 import process from "node:process";
 // Minimal speed-gate harness (specs/benchmarking.md). The rule: a sandbox path that loses to the
-// native baseline has negative value. With the native passthrough backend the two are expected to
-// tie — this exists to prove the measurement works, not to show a win yet. Real backends report a
-// matrix of cache states here; for now it is one command, median of a few runs, native vs sandbox.
+// Native baseline has negative value. With the native passthrough backend the two are expected to
+// Tie — this exists to prove the measurement works, not to show a win yet. Real backends report a
+// Matrix of cache states here; for now it is one command, median of a few runs, native vs sandbox.
 const RUNS = 5;
 const COMMAND = `node -e "process.stdout.write('bench')"`;
 const runNative = (): Promise<void> =>
@@ -26,9 +26,10 @@ const median = async (run: () => Promise<unknown>): Promise<number> => {
   samples.sort((a, b) => a - b);
   return samples[Math.floor(samples.length / 2)] ?? 0;
 };
-const sandbox = createSandbox();
+const sandbox = await createSandbox();
 const sandboxMedian = await median(() => sandbox.exec(COMMAND));
 const nativeMedian = await median(runNative);
+await sandbox.dispose();
 const ratio = sandboxMedian / nativeMedian;
 process.stdout.write(`native  median: ${nativeMedian.toFixed(1)}ms\n`);
 process.stdout.write(`sandbox median: ${sandboxMedian.toFixed(1)}ms\n`);

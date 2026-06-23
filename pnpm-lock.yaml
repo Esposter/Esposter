@@ -1797,6 +1797,10 @@ importers:
         version: 4.1.9(@opentelemetry/api@1.9.1)(@types/node@26.0.0)(@vitest/coverage-v8@4.1.9)(happy-dom@20.10.6)(vite@8.0.16(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
 
   packages/sandbox-runtime:
+    dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*

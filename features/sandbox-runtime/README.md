@@ -29,7 +29,7 @@ These are pass/fail. A feature that violates either is not shippable, no matter 
 
 ## Now
 
-- MVP foundation shipped: `@esposter/sandbox-runtime` (private) with the `ExecBackend` seam, a native passthrough backend, `createSandbox`, the `sandbox -- <cmd>` CLI, and skeleton bench + differential-correctness harnesses. Next up in [roadmap.md](roadmap.md): source loaders, then CI-wiring the gates.
+- MVP foundation shipped: `@esposter/sandbox-runtime` (private) with the `ExecBackend` seam, a native passthrough backend, async `createSandbox`, source loaders (`dir`/`files`/`git` → working dir + `dispose`), the `sandbox -- <cmd>` CLI, and bench + differential-correctness harnesses. Next up in [roadmap.md](roadmap.md): CI-wiring the gates, then the `vfs` backend.
 - Core open question that still gates the real speedup: making **spawned subprocesses and native binaries** see the RAM filesystem (node:vfs is in-process JS only). See [architecture.md](architecture.md) → "The subprocess wall".
 
 ## Decisions
@@ -38,6 +38,7 @@ Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roa
 
 - [out-of-scope/pure-js-exec.md](out-of-scope/pure-js-exec.md) — why a pure-JS interpreter (just-bash style) can't be the exec engine.
 - [deferred/wasm-runtime.md](deferred/wasm-runtime.md) — WebContainers-style WASM-node backend, parked with a revisit trigger.
+- [deferred/citty-cli.md](deferred/citty-cli.md) — delegate the CLI to unjs/citty once it grows real subcommands/flags.
 
 ## Reference
 

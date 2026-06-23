@@ -12,8 +12,10 @@ One entry point creates a sandbox from a source, runs commands, and snapshots/fo
 import { createSandbox } from "@esposter/sandbox-runtime";
 
 const sandbox = await createSandbox({
-  source: { git: "https://github.com/user/repo" }, // or { dir } | { files }
-  backend: "auto", // "vfs" | "os" | "auto"
+  // Source is a discriminated union on `type` (SourceType.Dir | Files | Git), normalized to a
+  // working dir + dispose() by the source loaders.
+  source: { type: SourceType.Git, repo: "https://github.com/user/repo", ref: "" },
+  backend: BackendType.Auto, // Auto resolves to the fastest supported backend (Native today).
 });
 
 await sandbox.exec("pnpm install"); // real toolchain (os backend)
