@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSettingsScrollSpy } from "@/composables/message/user/settings/useSettingsScrollSpy";
+import { SETTINGS_HEADER_ID } from "@/services/message/settings/constants";
 import { UserSettingsContentMap } from "@/services/message/user/settings/UserSettingsContentMap";
 import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
 
@@ -16,7 +17,7 @@ useSettingsScrollSpy();
 
 <template>
   <MessageModelSettingsContent>
-    <header mb-4 pb-4 bg-surface flex items-center top-0 justify-between sticky z-1>
+    <header :id="SETTINGS_HEADER_ID" mb-4 pb-4 bg-surface flex items-center top-0 justify-between sticky z-1>
       <div font-bold text-headline-medium>{{ settingsType }}</div>
       <v-tooltip text="Close">
         <template #activator="{ props: tooltipProps }">
