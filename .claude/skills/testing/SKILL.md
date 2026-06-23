@@ -229,28 +229,35 @@ Default environment is `node` — do **not** add `// @vitest-environment node`.
 
 ## Bundle Size Snapshot Tests
 
-Every library package (`packages/*` except `app`) has `src/index.test.ts` with a bundle size snapshot:
+Every library package (`packages/*` except `app`) has `src/index.test.ts` with two snapshots — bundle size (`index.js`) and types size (`index.d.ts`):
 
 ```ts
-import { getCrossPlatformSize } from "@esposter/configuration";
+import { getFileSize } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const distFile = resolve(import.meta.dirname, "../dist/index.js");
+const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
 
 describe("@esposter/my-package", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 12.06 KB (12345 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 12.06 KB (12345 bytes)"`);
+  });
+
+  test("types size", () => {
+    expect.hasAssertions();
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 1.45 KB (1484 bytes)"`);
   });
 });
 ```
 
-- Run `pnpm build` in the package first (the test reads compiled `dist/index.js`).
-- Run `pnpm test --run -u` to update the snapshot after a build change.
-- Use `getCrossPlatformSize` so CRLF/LF differences don't change snapshots across OSes.
+- Import `getFileSize` from `@esposter/configuration` (the `configuration` package itself imports it locally from `./getFileSize`).
+- Run `pnpm build` in the package first (the test reads compiled `dist/index.js` + `dist/index.d.ts`).
+- Auto-fill workflow: create the test with **empty** snapshots (`toMatchInlineSnapshot()`), then `pnpm build` + `pnpm test --run -u` to let Vitest write the sizes in.
+- `pnpm test --run -u` also updates the snapshots after any later build change.
 - `app` is different — its root bundle-size suite is a `describe.todo` with `/* eslint-disable vitest/require-top-level-describe */` so CI doesn't require `packages/app/.output`.
-- To add to a new library package: add `test`/`coverage` scripts, add `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`, create `src/index.test.ts`.
+- To add to a new library package: add a `test` script (`"test": "vitest"`), add `vitest` + `@types/node` to `devDependencies`, create `src/index.test.ts`. Do **not** add `@vitest/coverage-v8` per-package — coverage runs only from the repo root (`pnpm coverage` → `vitest run --coverage` across all projects), so the provider lives in the root `package.json` alone.
 
 ## Running Tests
 

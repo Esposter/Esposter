@@ -43,7 +43,6 @@
     "@types/node": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
     "@vue/language-core": "catalog:",
     "ctix": "catalog:",

@@ -41,7 +41,6 @@
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "@types/sanitize-html": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:",
     "type-fest": "catalog:",
