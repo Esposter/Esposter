@@ -22,9 +22,14 @@ The FS layer provides files to the sandbox without touching real disk. Node is s
 
 In-process JS only. **Child processes and native binaries bypass it** (raw syscalls hit real disk). The FS layer therefore cannot, by itself, host a real `pnpm install`. Closing that gap is the `os` backend's job — see [exec-isolation.md](exec-isolation.md) and architecture.md → "The subprocess wall".
 
-## Key Files (planned)
+## Usage contract
 
-| File                          | Role                                                     |
-| ----------------------------- | -------------------------------------------------------- |
-| `vfs/FsProvider.ts`           | internal interface the rest of the runtime codes against |
-| `vfs/platformaticProvider.ts` | adapter over `@platformatic/vfs`; the one import to swap |
+`mount(prefix)` maps the prefix onto the provider root, so **mount first, then read/write the prefixed paths** you want exposed (writing a prefixed path _before_ mounting stores it literally and the post-mount lookup misses it). Once mounted, global `require`/`import`/core `fs` serve files under the prefix — verified cross-platform (Windows + node 26). `dispose()` unmounts and is safe to call when already torn down.
+
+## Key Files
+
+| File                                           | Role                                                                         |
+| ---------------------------------------------- | ---------------------------------------------------------------------------- |
+| `models/vfs/FsProvider.ts`                     | internal interface the rest of the runtime codes against                     |
+| `models/vfs/FsProviderOptions.ts`              | provider options (`overlay`)                                                 |
+| `services/vfs/createPlatformaticFsProvider.ts` | adapter over `@platformatic/vfs`; the lone import = the `node:vfs` swap shim |

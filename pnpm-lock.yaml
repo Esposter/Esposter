@@ -236,6 +236,9 @@ catalogs:
     '@pinia/nuxt':
       specifier: ^0.11.3
       version: 0.11.3
+    '@platformatic/vfs':
+      specifier: ^0.4.0
+      version: 0.4.0
     '@pulumi/azure-native':
       specifier: ^3.19.0
       version: 3.19.0
@@ -1777,6 +1780,9 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
+      '@platformatic/vfs':
+        specifier: 'catalog:'
+        version: 0.4.0
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -5881,6 +5887,10 @@ packages:
   '@pkgr/core@0.3.6':
     resolution: {integrity: sha512-SEeaJLb3qBNF/OaXnaR1NmmBbFYk1zC0ZH/52fATcRPLFg/p791YrcyFFy44Bo9sLaGuSuLp5Q6axbb/O+v/RA==}
     engines: {node: ^14.18.0 || >=16.0.0}
+
+  '@platformatic/vfs@0.4.0':
+    resolution: {integrity: sha512-JwRxSIG63e/VaDSkYXkSBajySt5MJzxYIKuknYda28fhhmJMqyUGf5rbKrGW+vO9L83nIjQH3+YI12fp7EKICQ==}
+    engines: {node: '>= 22'}
 
   '@pmndrs/pointer-events@6.6.30':
     resolution: {integrity: sha512-YD2jWdgEqqAWJNOOZ1WZMunUby8jwuQyOMk8zbeqC39R4nkZnGvu1Pa5EMGbV1zd2vZTxXDxYcAVxtQuhVwf3g==}
@@ -18667,6 +18677,8 @@ snapshots:
     optional: true
 
   '@pkgr/core@0.3.6': {}
+
+  '@platformatic/vfs@0.4.0': {}
 
   '@pmndrs/pointer-events@6.6.30': {}
 

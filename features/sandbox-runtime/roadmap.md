@@ -21,10 +21,15 @@ These run from the first backend onward, not as a phase. A change that fails eit
 
 ## Phase 1 — `vfs` backend (pure npm, cross-platform)
 
-- [ ] Wrap `@platformatic/vfs` as the FS layer behind our interface → [specs/virtual-fs.md](specs/virtual-fs.md).
-- [ ] In-process exec for pure-JS workloads (run a JS entry / script against the virtual FS + module loader).
-- [ ] `node:vfs` swap shim — single import indirection so we flip when core lands.
-- [ ] Tests: read/write/overlay, module loading from virtual files, fall-through to real disk.
+### Step A — FS layer (shipped)
+
+- [x] Wrap `@platformatic/vfs` behind our `FsProvider` interface; the single adapter import doubles as the `node:vfs` swap shim → [specs/virtual-fs.md](specs/virtual-fs.md).
+- [x] Tests (cross-platform, incl. Windows + node 26): in-memory read/write/exists/mkdir; mount → global `require`/`fs` serve virtual files; dispose tears down. Contract: mount the prefix first, then read/write prefixed paths.
+
+### Step B — in-process exec (next)
+
+- [ ] `BackendType.Vfs` + in-process JS runner over the FS layer: parse node-invocation commands, run in-process so module hooks + fs interception apply, capture stdout/stderr/exit-code, fall back to native otherwise; wire into `backendFactories`.
+- [ ] Overlay fall-through to real disk + differential tests vs native for a pure-JS workload.
 
 ## Phase 2 — `os` backend (the native core, Linux)
 

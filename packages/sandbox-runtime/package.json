@@ -34,7 +34,8 @@
     "typecheck": "tsgo"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*"
+    "@esposter/shared": "workspace:*",
+    "@platformatic/vfs": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

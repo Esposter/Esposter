@@ -29,7 +29,8 @@ These are pass/fail. A feature that violates either is not shippable, no matter 
 
 ## Now
 
-- MVP foundation shipped: `@esposter/sandbox-runtime` (private) with the `ExecBackend` seam, a native passthrough backend, async `createSandbox`, source loaders (`dir`/`files`/`git` → working dir + `dispose`), the `sandbox -- <cmd>` CLI, and the benchmark foundation (`pnpm bench` → committed [results.md](../../packages/sandbox-runtime/bench/results.md) with env metadata + tinybench stats). CI-enforcement of the gates is deferred until a backend can regress. Next up in [roadmap.md](roadmap.md): the `vfs` backend (Phase 1).
+- MVP foundation shipped: `@esposter/sandbox-runtime` (private) with the `ExecBackend` seam, a native passthrough backend, async `createSandbox`, source loaders (`dir`/`files`/`git` → working dir + `dispose`), the `sandbox -- <cmd>` CLI, and the benchmark foundation (`pnpm bench` → committed [results.md](../../packages/sandbox-runtime/bench/results.md) with env metadata + tinybench stats). CI-enforcement of the gates is deferred until a backend can regress.
+- `vfs` backend Phase 1 **Step A** shipped: the RAM-backed FS layer — `FsProvider` interface + `createPlatformaticFsProvider` adapter over `@platformatic/vfs` (the lone import, doubling as the `node:vfs` swap shim). Mounting patches `require`/`fs` so in-process code reads virtual files; verified cross-platform (Windows + node 26). Next up in [roadmap.md](roadmap.md): **Step B** — the in-process `vfs` exec backend.
 - Core open question that still gates the real speedup: making **spawned subprocesses and native binaries** see the RAM filesystem (node:vfs is in-process JS only). See [architecture.md](architecture.md) → "The subprocess wall".
 
 ## Decisions

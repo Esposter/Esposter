@@ -186,7 +186,8 @@ Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. Never `
 
 ## Error Assertions
 
-- **Always `.rejects.toThrowErrorMatchingInlineSnapshot(...)`** — the inline snapshot is the only accepted form; it captures the exact message for 100% accuracy. **Never `.rejects.toBeInstanceOf(...)`**, **never `.rejects.toThrow()`** without args, **never `.rejects.toThrow(arg)`**.
+- **CRITICAL — `toThrowErrorMatchingInlineSnapshot(...)` is the ONLY accepted error assertion**, for both async (`.rejects.`) and sync (`expect(() => fn())`) throws. It captures the exact message for 100% accuracy. **BANNED in every form**: `toThrow()`, `toThrow(arg)` (string/regex/class), `.rejects.toThrow(...)`, `toThrowError(...)`, `toBeInstanceOf(...)`, and hand-rolled `try { fn(); expect.fail() } catch`. If you typed anything other than `toThrowErrorMatchingInlineSnapshot`, it is wrong.
+- **Non-deterministic / OS-specific messages** — when the thrown message embeds something you cannot reconstruct portably (an absolute path that differs by OS, e.g. a Node `ENOENT` showing `C:\…` on Windows vs `/…` on Linux), do NOT snapshot the throw — it will pass locally and fail in CI. Restructure the assertion to observe the behavior portably instead (e.g. assert `fs.existsSync(path)` is `false`, or assert the returned value changed) rather than asserting the error.
 - **Reconstruct dynamic values into the snapshot argument** instead of falling back to `toBeInstanceOf`. When the message embeds a UUID/runtime value, interpolate that same value via the error's `.message` so the snapshot is exact every run:
   ```ts
   // tRPC-wrapped throw → [TRPCError: ...]
@@ -253,6 +254,7 @@ describe("@esposter/my-package", () => {
 ```
 
 - Import `getFileSize` from `@esposter/configuration` (the `configuration` package itself imports it locally from `./getFileSize`).
+- **Default to the simple unguarded form above.** Only split into an `isWindows` per-platform branch when you have **confirmed** the byte count actually differs across OSes (e.g. a large bundle where CRLF vs LF shifts the count, as `packages/azure-functions/src/index.test.ts` does) or its CI fails on the other OS — don't add the branch speculatively. When you do branch, fill the OS you're on and leave the other's snapshot empty (`toMatchInlineSnapshot()`) for that OS's CI to auto-populate. The branch needs `/* eslint-disable vitest/no-conditional-expect, vitest/no-conditional-in-test */`.
 - Run `pnpm build` in the package first (the test reads compiled `dist/index.js` + `dist/index.d.ts`).
 - Auto-fill workflow: create the test with **empty** snapshots (`toMatchInlineSnapshot()`), then `pnpm build` + `pnpm test --run -u` to let Vitest write the sizes in.
 - `pnpm test --run -u` also updates the snapshots after any later build change.
