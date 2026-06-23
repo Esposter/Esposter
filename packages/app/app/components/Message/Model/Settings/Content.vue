@@ -5,7 +5,7 @@ defineSlots<{ default: () => VNode; header: () => VNode }>();
 </script>
 
 <template>
-  <v-main h-dvh flex flex-col>
+  <v-main flex flex-col h-dvh>
     <slot name="header" />
     <div :id="SETTINGS_CONTENT_ID" bg-surface flex-1 relative overflow-y-auto>
       <v-container fluid py-0>

@@ -17,7 +17,7 @@ useSettingsScrollSpy();
 <template>
   <MessageModelSettingsContent>
     <template #header>
-      <header bg-surface flex items-center justify-between px-4 py-4>
+      <header px-4 py-4 bg-surface flex items-center justify-between>
         <div font-bold text-headline-medium>{{ settingsType }}</div>
         <v-tooltip text="Close">
           <template #activator="{ props: tooltipProps }">
