@@ -47,7 +47,8 @@
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "ctix": "catalog:",
-    "rolldown": "catalog:"
+    "rolldown": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "vitest": "catalog:"

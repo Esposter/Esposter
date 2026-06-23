@@ -10,11 +10,11 @@ const JSON_EXTENSION_REGEX = /\.json$/u;
 // View is a side-effect of `vitest bench --run`, with no extra script or bin to chain. The markdown
 // Path mirrors the configured outputJson (results.json → results.md). Default export: consumers wire it
 // Via the `@esposter/shared-node/reporter` path string in `benchmark.reporters`, and Vitest's
-// loadCustomReporterModule requires a default export (it reads `module.default`).
+// LoadCustomReporterModule requires a default export (it reads `module.default`).
 export default class BenchmarkMarkdownReporter extends BenchmarkReporter {
   override async onTestRunEnd(
-    testModules: ReadonlyArray<TestModule>,
-    unhandledErrors: ReadonlyArray<SerializedError>,
+    testModules: readonly TestModule[],
+    unhandledErrors: readonly SerializedError[],
     reason: TestRunEndReason,
   ): Promise<void> {
     await super.onTestRunEnd(testModules, unhandledErrors, reason);

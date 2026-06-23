@@ -30,7 +30,6 @@
     "lint:all:fix": "oxlint --fix && NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --fix .",
     "lint:fix": "oxlint --fix && NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --config eslint.light.config.js --fix .",
     "phaser:gen": "tsx --tsconfig tsconfig.root.json scripts/phaser/index.ts",
-    "postbench": "node scripts/bench/index.ts",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",

@@ -52,10 +52,11 @@ describe(loadFilesSource, () => {
     expect.hasAssertions();
 
     const before = await readSandboxDirCount();
+
     await expect(loadFilesSource({ files: { "../escape.txt": "" }, type: SourceType.Files })).rejects.toThrow(
       "path escapes sandbox directory",
     );
 
-    expect(await readSandboxDirCount()).toBe(before);
+    await expect(readSandboxDirCount()).resolves.toBe(before);
   });
 });

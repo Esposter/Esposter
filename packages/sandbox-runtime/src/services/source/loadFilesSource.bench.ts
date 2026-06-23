@@ -7,7 +7,7 @@ import { bench, describe } from "vitest";
 // Spawn (~100ms), so it cannot see the sandbox's own per-call work. This isolates the one source
 // Loader that does real work scaling with untrusted input — loadFilesSource — with no spawn in the
 // Way, so a regression in the per-file materialization cost (or its path-traversal guard) shows up.
-// loadDirSource is a no-op and loadGitSource spawns real git over the network, so neither is timed.
+// LoadDirSource is a no-op and loadGitSource spawns real git over the network, so neither is timed.
 // Each iteration materializes then disposes so temp dirs never accumulate across samples.
 const FILE_COUNTS = [1, 100, 1000];
 
