@@ -29,8 +29,8 @@ These are pass/fail. A feature that violates either is not shippable, no matter 
 
 ## Now
 
-- Greenfield — no code yet. Active design in [roadmap.md](roadmap.md). Start there.
-- Core open question that gates everything: making **spawned subprocesses and native binaries** see the RAM filesystem (node:vfs is in-process JS only). See [architecture.md](architecture.md) → "The subprocess wall".
+- MVP foundation shipped: `@esposter/sandbox-runtime` (private) with the `ExecBackend` seam, a native passthrough backend, `createSandbox`, the `sandbox -- <cmd>` CLI, and skeleton bench + differential-correctness harnesses. Next up in [roadmap.md](roadmap.md): source loaders, then CI-wiring the gates.
+- Core open question that still gates the real speedup: making **spawned subprocesses and native binaries** see the RAM filesystem (node:vfs is in-process JS only). See [architecture.md](architecture.md) → "The subprocess wall".
 
 ## Decisions
 
