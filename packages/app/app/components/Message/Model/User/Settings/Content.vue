@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSettingsScrollSpy } from "@/composables/message/user/settings/useSettingsScrollSpy";
 import { UserSettingsContentMap } from "@/services/message/user/settings/UserSettingsContentMap";
 import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
 
@@ -10,6 +11,7 @@ const { settingsType } = defineProps<UserSettingsContentProps>();
 const userSettingsDialogStore = useUserSettingsDialogStore();
 const { isVisible } = storeToRefs(userSettingsDialogStore);
 const component = computed(() => UserSettingsContentMap[settingsType]);
+useSettingsScrollSpy();
 </script>
 
 <template>
