@@ -1,8 +1,9 @@
+import type { ExecResult } from "@/models/exec/ExecResult";
 import type { Task } from "tinybench";
 
+import { createNativeBackend } from "@/services/exec/createNativeBackend";
 import { createSandbox } from "@/services/sandbox/createSandbox";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawn } from "node:child_process";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { arch, cpus, platform, release, totalmem } from "node:os";
 import { dirname, resolve } from "node:path";
@@ -22,14 +23,10 @@ const RESULTS_FILE = resolve(import.meta.dirname, "../../bench/results.md");
 // Until then the verdict is reported, never fatal.
 const REGRESSION_RATIO = 1.1;
 
-const runNative = (): Promise<void> =>
-  new Promise((resolve, reject) => {
-    const child = spawn(COMMAND, { shell: true, stdio: "ignore" });
-    child.on("error", reject);
-    child.on("close", () => {
-      resolve();
-    });
-  });
+// Route the native baseline through the same backend the sandbox path uses internally, with the same
+// "pipe" stdio, so the only difference timed is the sandbox wrapper — not I/O handling.
+const nativeBackend = createNativeBackend();
+const runNative = (): Promise<ExecResult> => nativeBackend.exec(COMMAND, { cwd: "", stdio: "pipe" });
 
 const latencyOf = (task: Task) => {
   const { result } = task;
@@ -90,14 +87,10 @@ const meanByName = new Map(bench.tasks.map((task) => [task.name, latencyOf(task)
 const ratio = (meanByName.get(SANDBOX) ?? 0) / (meanByName.get(NATIVE) ?? 1);
 const isRegression = ratio > REGRESSION_RATIO;
 const markdown = formatResults(bench.tasks, ratio, isRegression);
-try {
+await getResultAsync(async () => {
   await mkdir(dirname(RESULTS_FILE), { recursive: true });
   await writeFile(RESULTS_FILE, markdown);
-} catch (error) {
-  throw new InvalidOperationError(
-    Operation.Create,
-    RESULTS_FILE,
-    error instanceof Error ? error.message : String(error),
-  );
-}
+}).match(noop, (error) => {
+  throw new InvalidOperationError(Operation.Create, RESULTS_FILE, error.message);
+});
 process.stdout.write(markdown);

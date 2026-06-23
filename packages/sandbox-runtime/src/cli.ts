@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { createSandbox } from "@/services/sandbox/createSandbox";
+import { withFinalizerAsync } from "@esposter/shared";
 import process from "node:process";
 // The human-facing entrypoint and the lowest rung of adoption (specs/adoption.md): `sandbox -- <cmd>`
 // Runs a single command through the sandbox with no other change. Output streams live (stdio
@@ -14,8 +15,10 @@ const main = async (): Promise<void> => {
     return;
   }
   const sandbox = await createSandbox();
-  const { exitCode } = await sandbox.exec(command, "inherit");
-  await sandbox.dispose();
+  const { exitCode } = await withFinalizerAsync(
+    () => sandbox.exec(command, "inherit"),
+    () => sandbox.dispose(),
+  );
   process.exitCode = exitCode;
 };
 

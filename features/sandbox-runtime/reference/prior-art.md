@@ -5,7 +5,7 @@ Surveyed projects and why each does or doesn't fit. Keeps us from re-deriving th
 ## Filesystem layer — adopt
 
 - **`node:vfs`** ([nodejs/node#61478](https://github.com/nodejs/node/pull/61478), open) — official core virtual filesystem. Provider-based, full `fs` API compat, mount prefixes, overlay mode, module loading from virtual files, intercepts at 164+ internal points. The end state we target.
-- **`@platformatic/vfs`** ([github](https://github.com/platformatic/vfs), MIT, v0.4.0) — the same work extracted to userland. Memory / Sqlite / RealFS providers, overlay mode, patches `require`/`import`/`fs`. **Adopt now, swap to `node:vfs` later.** Filesystem only — explicitly _cannot_ run processes, native binaries, or `npm install`.
+- **`@platformatic/vfs`** ([GitHub](https://github.com/platformatic/vfs), MIT, v0.4.0) — the same work extracted to userland. Memory / Sqlite / RealFS providers, overlay mode, patches `require`/`import`/`fs`. **Adopt now, swap to `node:vfs` later.** Filesystem only — explicitly _cannot_ run processes, native binaries, or `npm install`.
 
 ## Shell layer — optional reuse
 

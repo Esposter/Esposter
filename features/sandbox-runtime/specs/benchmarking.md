@@ -7,7 +7,7 @@ The speed gate. The whole project's value is "faster than doing it normally" —
 For each scenario, compare against **baseline = the same command run natively on the host** (warm OS cache, normal disk, normal network). A sandbox path ships only if:
 
 - **Warm path** (snapshot/fork or shared store hit) is **meaningfully faster** than baseline.
-- **Cold path** (first ever run, empty caches) is **no worse than baseline by more than a small, documented overhead** — the one-time cost is bought back by later warm runs.
+- **Cold path** (first-ever run, empty caches) is **no worse than baseline by more than a small, documented overhead** — the one-time cost is bought back by later warm runs.
 
 If neither holds, the feature has negative value. Cut it.
 

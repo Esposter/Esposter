@@ -6,7 +6,7 @@ Freeze a warm sandbox (post-install, post-build) and clone it instantly for each
 
 Booting a repo and installing deps is the slow part and it is identical across runs. Do it **once**, snapshot the warm state, then `fork()` a fresh isolated sandbox per command. Repeated runs skip install entirely.
 
-```
+```text
 boot + install (once, slow) ─► snapshot ─► fork ─► run cmd ─► dispose
                                         └─► fork ─► run cmd ─► dispose   (near-instant)
 ```

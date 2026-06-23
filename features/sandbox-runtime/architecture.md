@@ -6,7 +6,7 @@ High-level system map for the sandbox runtime. Read alongside the specs in [spec
 
 ## The five layers
 
-```
+```text
 ┌─ orchestrator API (TS, node-compat)   ← public surface — specs/orchestrator-api.md
 ├─ shell layer (optional)               ← parse/dispatch shell scripts
 ├─ exec + isolation layer   ★ THE CORE  ← run real processes, sandboxed — specs/exec-isolation.md
@@ -30,7 +30,7 @@ The only layer no existing package solves is **exec + isolation**. Everything el
 
 `node:vfs` and `@platformatic/vfs` intercept the **in-process** JS `fs` module and module loader. They are blind to anything a child process does:
 
-```
+```text
 node process ──fs calls──► node:vfs        ✅ sees virtual files
    └─ spawn("pnpm" / "esbuild" / "sharp") ──raw syscalls──► REAL disk   ❌ VFS blind
 ```
