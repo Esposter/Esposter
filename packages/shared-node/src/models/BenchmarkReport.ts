@@ -7,6 +7,8 @@ export interface BenchmarkReport {
   files: BenchmarkFile[];
 }
 
-export const benchmarkReportSchema: z.ZodType<BenchmarkReport> = z.object({
+export const benchmarkReportSchema: z.ZodObject<{
+  files: z.ZodArray<typeof benchmarkFileSchema>;
+}> = z.object({
   files: z.array(benchmarkFileSchema),
-});
+}) satisfies z.ZodType<BenchmarkReport>;

@@ -7,7 +7,7 @@ export const formatBenchmarkMarkdown = (report: BenchmarkReport, environment: st
     file.groups.map((group) => {
       const rows = group.benchmarks.map(
         ({ hz, mean, name, p99, sampleCount, sd }) =>
-          `| ${name} | ${mean.toFixed(4)} | ${sd.toFixed(4)} | ${p99.toFixed(4)} | ${hz.toFixed(0)} | ${sampleCount} |`,
+          `| ${name.replaceAll("|", "\\|")} | ${mean.toFixed(4)} | ${sd.toFixed(4)} | ${p99.toFixed(4)} | ${hz.toFixed(0)} | ${sampleCount} |`,
       );
       return [
         `## ${group.fullName}`,

@@ -47,4 +47,20 @@ describe(formatBenchmarkMarkdown, () => {
     expect(markdown).toContain("|  | 0.0000 | 0.0000 | 0.0000 | 1 | 0 |");
     expect(markdown).toContain("|   | 1.0000 | 1.0000 | 1.0000 | 2 | 1 |");
   });
+
+  test("escapes pipe delimiters in benchmark names", () => {
+    expect.hasAssertions();
+
+    const escaped: BenchmarkReport = {
+      files: [
+        {
+          filepath: "",
+          groups: [{ benchmarks: [{ hz: 1, mean: 1, name: " | ", p99: 1, sampleCount: 1, sd: 1 }], fullName: " " }],
+        },
+      ],
+    };
+    const markdown = formatBenchmarkMarkdown(escaped, environment);
+
+    expect(markdown).toContain("|  \\|  | 1.0000 | 1.0000 | 1.0000 | 1 | 1 |");
+  });
 });

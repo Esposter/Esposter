@@ -1,6 +1,6 @@
 ---
 name: build
-description: Esposter rolldown build conventions — shared rolldown configs, external list rules, bundle sizes, azure-functions special case. Apply when adding packages, editing rolldown configs, or optimizing bundle sizes.
+description: Esposter rolldown build conventions — shared rolldown configs, external list rules, and self-contained bundle packages. Apply when adding packages or editing rolldown configs.
 ---
 
 # Build Conventions (Rolldown)
@@ -43,7 +43,7 @@ export const external: (RegExp | string)[] = [
 - Non-`@esposter/` workspace packages must be listed explicitly (`azure-mock`, `parse-tmx`, `vue-phaserjs` — not covered by the regex).
 - The external list is a build superset, not a per-package peer-dependency checklist — a package declares only the externalized packages it directly imports at runtime or exposes through its `.d.ts` surface.
 - Do not duplicate transitive peers — the package that directly imports a dependency owns the contract. If `azure-mock` imports `@esposter/db-schema` which imports `zod`, `zod` is `db-schema`'s peer, not `azure-mock`'s.
-- `dependencies` get bundled; `peerDependencies` are externalized. When a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and ensure the shared external list covers it. Exceptions: `@esposter/app` (root consumer, not a library) and `@esposter/azure-functions` (overrides external list to bundle almost everything).
+- `dependencies` get bundled; `peerDependencies` are externalized. When a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and ensure the shared external list covers it. Exceptions: `@esposter/app` (root consumer, not a library) and the self-contained bundles `@esposter/azure-functions` / `@esposter/sandbox-runtime` (override the external list to bundle almost everything — see Self-Contained Bundle Packages).
 - Vite builds: `viteConfiguration` lives in `packages/configuration/src/viteConfiguration.ts`. `packages/configuration/vite.config.js` imports it from source; consumers like `vue-phaserjs` import it from `@esposter/configuration`.
 
 ### Ordering convention
@@ -96,7 +96,7 @@ const externalPatterns = [
   /^unplugin-auto-import/,
   /^unplugin-dts/,
 ];
-const skip = new Set(["@esposter/app", "@esposter/azure-functions"]); // intentional exceptions
+const skip = new Set(["@esposter/app", "@esposter/azure-functions", "@esposter/sandbox-runtime"]); // intentional exceptions
 const pkgsDir = "packages";
 for (const dir of fs.readdirSync(pkgsDir)) {
   const p = path.join(pkgsDir, dir, "package.json");
@@ -111,33 +111,18 @@ for (const dir of fs.readdirSync(pkgsDir)) {
 }
 ```
 
-## Azure Functions Special Case
+## Self-Contained Bundle Packages (azure-functions, sandbox-runtime)
 
-`packages/azure-functions/rolldown.config.ts` uses a targeted external list instead of the full global one:
+Both vendor everything except the vue framework peer deps plus one runtime-provided module, so consumers need **no peer deps**:
 
 ```ts
-external: [...externalVueFramework, "@azure/functions"],
+external: [...externalVueFramework, "@azure/functions"],   // azure-functions — provided by the runtime
+external: [...externalVueFramework, "@platformatic/vfs"],  // sandbox-runtime — declared dependency
 ```
 
-- `externalVueFramework` (`vue`, `@vueuse/core`, `pinia`) — peer deps of `@esposter/shared`/`@esposter/vue-phaserjs`; azure-functions doesn't use Vue so rolldown tree-shakes these out safely.
-- Everything else is bundled — the runtime provides only `@azure/functions`; all other deps (Azure SDKs, drizzle-orm, zod, postgres, `@esposter/*`) must be in the bundle.
-- Do not spread the full `external` list here — its `/@esposter\//u` would externalize `@esposter/db`, `@esposter/shared`, etc., breaking runtime.
-
-## Bundle Sizes (Baselines)
-
-| Package                     | Size    | Notes                        |
-| --------------------------- | ------- | ---------------------------- |
-| `@esposter/azure-functions` | ~4.23MB | Intentionally self-contained |
-| `@esposter/azure-mock`      | ~35.8KB | Azure SDKs external          |
-| `@esposter/configuration`   | ~4KB    | Build toolchain external     |
-| `@esposter/db`              | ~1.09MB | Azure SDKs external          |
-| `@esposter/db-mock`         | ~886B   | Re-exports                   |
-| `@esposter/db-schema`       | ~64.4KB | Schema only                  |
-| `@esposter/infra`           | ~121KB  | Pulumi resources external    |
-| `@esposter/parse-tmx`       | ~815KB  | xml2js external              |
-| `@esposter/shared`          | ~384KB  | Vue/Zod external             |
-| `@esposter/xml2js`          | ~1.12MB | Bundles sax + xmlbuilder2    |
-| `vue-phaserjs`              | ~34KB   | Phaser/parse-tmx external    |
+- `externalVueFramework` (`vue`, `@vueuse/core`, `pinia`) — neither package uses Vue, so these tree-shake out; keeping them external also stops rolldown parsing `@vueuse/core/dist/index.js` and emitting its harmless `INVALID_ANNOTATION` ("comment ignored due to position") warnings.
+- **Never spread the full `external` list here** — `/@esposter\//u` would externalize `@esposter/shared`/`@esposter/db`, re-introducing peer deps.
+- An `INVALID_ANNOTATION` warning is never our code — it comes from a bundled third-party `dist`. Fix by externalizing that dep, never by editing comments.
 
 ## Dependency Installs
 

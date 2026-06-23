@@ -8,7 +8,10 @@ export interface BenchmarkFile {
   groups: BenchmarkGroup[];
 }
 
-export const benchmarkFileSchema: z.ZodType<BenchmarkFile> = z.object({
+export const benchmarkFileSchema: z.ZodObject<{
+  filepath: z.ZodString;
+  groups: z.ZodArray<typeof benchmarkGroupSchema>;
+}> = z.object({
   filepath: z.string(),
   groups: z.array(benchmarkGroupSchema),
-});
+}) satisfies z.ZodType<BenchmarkFile>;

@@ -8,7 +8,10 @@ export interface BenchmarkGroup {
   fullName: string;
 }
 
-export const benchmarkGroupSchema: z.ZodType<BenchmarkGroup> = z.object({
+export const benchmarkGroupSchema: z.ZodObject<{
+  benchmarks: z.ZodArray<typeof benchmarkResultSchema>;
+  fullName: z.ZodString;
+}> = z.object({
   benchmarks: z.array(benchmarkResultSchema),
   fullName: z.string(),
-});
+}) satisfies z.ZodType<BenchmarkGroup>;

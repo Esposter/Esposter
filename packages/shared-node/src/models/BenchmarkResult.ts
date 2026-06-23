@@ -11,11 +11,18 @@ export interface BenchmarkResult {
   sd: number;
 }
 
-export const benchmarkResultSchema: z.ZodType<BenchmarkResult> = z.object({
+export const benchmarkResultSchema: z.ZodObject<{
+  hz: z.ZodNumber;
+  mean: z.ZodNumber;
+  name: z.ZodString;
+  p99: z.ZodNumber;
+  sampleCount: z.ZodNumber;
+  sd: z.ZodNumber;
+}> = z.object({
   hz: z.number(),
   mean: z.number(),
   name: z.string(),
   p99: z.number(),
   sampleCount: z.number(),
   sd: z.number(),
-});
+}) satisfies z.ZodType<BenchmarkResult>;
