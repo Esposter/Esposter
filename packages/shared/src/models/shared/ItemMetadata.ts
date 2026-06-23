@@ -11,12 +11,8 @@ export class ItemMetadata {
 
 export const ItemMetadataPropertyNames: PropertyNames<ItemMetadata> = getPropertyNames<ItemMetadata>();
 
-export const itemMetadataSchema: z.ZodObject<{
-  createdAt: z.ZodDate;
-  deletedAt: z.ZodNullable<z.ZodDate>;
-  updatedAt: z.ZodDate;
-}> = z.object({
+export const itemMetadataSchema: z.ZodType<ItemMetadata> = z.object({
   createdAt: z.date(),
   deletedAt: z.date().nullable(),
   updatedAt: z.date(),
-}) satisfies z.ZodType<ItemMetadata>;
+});

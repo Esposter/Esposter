@@ -109,6 +109,10 @@ New workspace packages follow existing patterns (e.g. `packages/db`, `packages/d
 8. **Run plain `pnpm i`** from repo root to link the package. Follow `architecture/monorepo-tooling.md` for install safety.
 9. **Run `pnpm build`** in the new package to produce `dist/`.
 
+### Bin entrypoints — no shebang
+
+Don't add `#!/usr/bin/env node` to source files, including `bin` entrypoints (`src/cli.ts`). pnpm generates the bin shim that invokes `node` for the target, so the shebang is dead weight. Only add one if a file is genuinely meant to be executed directly (`chmod +x ./file`), which workspace bins are not.
+
 ### Rolldown externals
 
 Packages declared as `peerDependencies` must also be in the rolldown `external` array — pnpm doesn't tell rolldown to skip them. Either:

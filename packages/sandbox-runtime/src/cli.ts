@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { createSandbox } from "@/services/sandbox/createSandbox";
 import { withFinalizerAsync } from "@esposter/shared";
 import process from "node:process";

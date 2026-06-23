@@ -1,9 +1,9 @@
 {
-  "name": "@esposter/sandbox-runtime",
+  "name": "@esposter/shared-node",
   "version": "0.0.0",
   "private": true,
-  "description": "An ephemeral, in-memory sandbox runtime that runs a repo's real toolchain fast and isolated.",
-  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/sandbox-runtime#readme",
+  "description": "Node-only shared tooling (benchmark reporting, dev scripts) reused across packages.",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/shared-node#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },
@@ -13,17 +13,23 @@
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bin": {
-    "sandbox": "dist/cli.js"
-  },
   "files": [
     "dist"
   ],
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./reporter": {
+      "types": "./dist/reporter.d.ts",
+      "default": "./dist/reporter.js"
+    }
+  },
   "scripts": {
-    "bench": "vitest bench --run",
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
@@ -35,14 +41,15 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "@platformatic/vfs": "catalog:"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
-    "@esposter/shared-node": "workspace:*",
     "@types/node": "catalog:",
     "ctix": "catalog:",
-    "rolldown": "catalog:",
+    "rolldown": "catalog:"
+  },
+  "peerDependencies": {
     "vitest": "catalog:"
   }
 }

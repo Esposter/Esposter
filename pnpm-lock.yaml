@@ -677,9 +677,6 @@ catalogs:
     three-globe:
       specifier: ^2.45.2
       version: 2.45.2
-    tinybench:
-      specifier: ^6.0.2
-      version: 6.0.2
     trpc-nuxt:
       specifier: ^2.1.1
       version: 2.1.1
@@ -1242,6 +1239,9 @@ importers:
       '@esposter/db-mock':
         specifier: workspace:*
         version: link:../db-mock
+      '@esposter/shared-node':
+        specifier: workspace:*
+        version: link:../shared-node
       '@json-layout/vocabulary':
         specifier: 'catalog:'
         version: 2.13.1(supports-color@10.2.2)
@@ -1787,6 +1787,9 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@esposter/shared-node':
+        specifier: workspace:*
+        version: link:../shared-node
       '@types/node':
         specifier: 'catalog:'
         version: 26.0.0
@@ -1796,12 +1799,6 @@ importers:
       rolldown:
         specifier: 'catalog:'
         version: 1.1.2
-      tinybench:
-        specifier: 'catalog:'
-        version: 6.0.2
-      tsx:
-        specifier: 'catalog:'
-        version: 4.22.4
       vitest:
         specifier: 'catalog:'
         version: 4.1.9(@opentelemetry/api@1.9.1)(@types/node@26.0.0)(@vitest/coverage-v8@4.1.9)(happy-dom@20.10.6)(vite@8.0.16(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
@@ -1851,6 +1848,31 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.9(@opentelemetry/api@1.9.1)(@types/node@26.0.0)(@vitest/coverage-v8@4.1.9)(happy-dom@20.10.6)(vite@8.0.16(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
+
+  packages/shared-node:
+    dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.9(@opentelemetry/api@1.9.1)(@types/node@26.0.0)(@vitest/coverage-v8@4.1.9)(happy-dom@20.10.6)(vite@8.0.16(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.0.0
+      ctix:
+        specifier: 'catalog:'
+        version: 2.8.1(@types/node@26.0.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.4)(typescript@6.0.3)(vue-tsc@3.3.5(typescript@6.0.3)))(prettier@3.8.4)(typescript@6.0.3)
+      rolldown:
+        specifier: 'catalog:'
+        version: 1.1.2
 
   packages/vue-phaserjs:
     dependencies:
@@ -13128,10 +13150,6 @@ packages:
 
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
-
-  tinybench@6.0.2:
-    resolution: {integrity: sha512-FlHoQpcFvCzeXK5kVPvV7IVgW/hs/B36QWTz876iSdeJguBDfdTSRQmYmaHX+fQNt4hp+gEFB2XXw+8hT4/y8A==}
-    engines: {node: '>=20.0.0'}
 
   tinyclip@0.1.15:
     resolution: {integrity: sha512-uo33abH+Ays0xYaDysoBt494Hb3hsEczMpcC0MwFl773pazORx4fmvKhclhR1wonUbB6vvpRsvVMwnhfqeMc+A==}
@@ -27401,8 +27419,6 @@ snapshots:
   tiny-invariant@1.3.3: {}
 
   tinybench@2.9.0: {}
-
-  tinybench@6.0.2: {}
 
   tinyclip@0.1.15: {}
 

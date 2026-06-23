@@ -206,7 +206,6 @@ catalog:
   survey-vue3-ui: 3.0.0-beta.0
   three: ^0.184.0
   three-globe: ^2.45.2
-  tinybench: ^6.0.2
   trpc-nuxt: ^2.1.1
   tsx: ^4.22.4
   type-fest: ^5.7.0
