@@ -90,7 +90,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260621.1
+  "@typescript/native-preview": ^7.0.0-dev.20260622.1
   "@unocss/eslint-config": ^66.7.2
   "@unocss/nuxt": ^66.7.2
   "@vite-pwa/nuxt": ^1.1.1
@@ -130,7 +130,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^10.5.0
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.70.0
+  eslint-plugin-oxlint: ^1.71.0
   eslint-plugin-perfectionist: ^5.9.1
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
@@ -173,11 +173,11 @@ catalog:
   mjml-browser: ^5.3.0
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
-  node-html-parser: ^8.0.2
+  node-html-parser: ^8.0.3
   nuxt: ^4.4.8
   nuxt-security: ^2.6.0
-  oxfmt: ^0.55.0
-  oxlint: ^1.70.0
+  oxfmt: ^0.56.0
+  oxlint: ^1.71.0
   oxlint-tsgolint: ^0.23.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
@@ -210,7 +210,7 @@ catalog:
   type-fest: ^5.7.0
   typedoc: ^0.28.19
   typescript: ^6.0.3
-  typescript-eslint: ^8.61.1
+  typescript-eslint: ^8.62.0
   unocss: ^66.7.2
   unocss-preset-vuetify: ^0.3.0
   unplugin-auto-import: ^21.0.0
@@ -223,7 +223,7 @@ catalog:
   vue: ^3.5.38
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
-  vue-pdf-embed: ^2.1.4
+  vue-pdf-embed: ^2.1.5
   vue-router: ^5.1.0
   vue-tsc: ^3.3.5
   vue3-apexcharts: ^1.11.1
