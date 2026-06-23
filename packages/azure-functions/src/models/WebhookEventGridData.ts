@@ -8,12 +8,13 @@ export interface WebhookEventGridData {
   webhook: Pick<WebhookInMessage, "roomId" | "userId">;
 }
 
-const webhookSchema = selectWebhookInMessageSchema.pick({ roomId: true, userId: true });
-
 export const webhookEventGridDataSchema: z.ZodObject<{
   payload: typeof webhookPayloadSchema;
-  webhook: typeof webhookSchema;
+  webhook: z.ZodObject<{
+    roomId: (typeof selectWebhookInMessageSchema.shape)["roomId"];
+    userId: (typeof selectWebhookInMessageSchema.shape)["userId"];
+  }>;
 }> = z.object({
   payload: webhookPayloadSchema,
-  webhook: webhookSchema,
+  webhook: selectWebhookInMessageSchema.pick({ roomId: true, userId: true }),
 }) satisfies z.ZodType<WebhookEventGridData>;
