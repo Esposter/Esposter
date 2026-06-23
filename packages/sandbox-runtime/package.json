@@ -42,6 +42,7 @@
     "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:",
+    "tinybench": "catalog:",
     "tsx": "catalog:",
     "vitest": "catalog:"
   }

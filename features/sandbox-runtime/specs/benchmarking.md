@@ -35,7 +35,11 @@ Wall-clock (primary), plus peak RAM, disk written (should be ~0 for RAM FS), and
 - Same host, same corpus, alternate sandbox vs baseline to cancel drift.
 - Control the OS page cache between cold runs (drop caches) so "cold" is honest.
 - Bench both backends; `vfs` and `os` have different cost profiles.
-- Track results over time (regressions are bugs); wire a bench run into CI on the core packages.
+- Track results over time (regressions are bugs). CI-enforcement is deferred until a backend can actually regress → [../deferred/ci-bench-gate.md](../deferred/ci-bench-gate.md); the committed results file (below) is the interim regression check.
+
+## Results file
+
+`pnpm bench` (harness: `packages/sandbox-runtime/src/bench/index.ts`, stats via `tinybench`) writes a committed `packages/sandbox-runtime/bench/results.md` — the tracked source of truth. It records environment metadata (date, Node version, OS + release, arch, CPU model + core count, RAM) and a latency table (mean / sd / p99 / samples per task) plus the sandbox-vs-native ratio and an OK/REGRESSION verdict. Regenerate it before committing and diff the ratio. Numbers are machine-dependent — only compare runs from the same host (one dev's Windows box today; CI Linux numbers will differ). The verdict is reported, never fatal, until the CI gate is un-deferred.
 
 ## Constraints / Notes
 

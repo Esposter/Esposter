@@ -6,8 +6,8 @@ Phased, prioritized backlog. Early phases ship something usable with pure npm; l
 
 These run from the first backend onward, not as a phase. A change that fails either does not ship.
 
-- [ ] **Speed harness** — native-baseline benchmark over a fixed repo corpus, cache-state matrix, wired into CI → [specs/benchmarking.md](specs/benchmarking.md). Any path slower than baseline gets cut.
-- [ ] **Differential correctness suite** — run each command natively vs sandbox, normalize, assert identical; required CI gate → [specs/correctness.md](specs/correctness.md). Grow the corpus on every gap; every fixed bug becomes a golden regression test.
+- [ ] **Speed harness** — native-baseline benchmark over a fixed repo corpus, cache-state matrix → [specs/benchmarking.md](specs/benchmarking.md). Any path slower than baseline gets cut. CI-enforcement is deferred until a backend can actually regress → [deferred/ci-bench-gate.md](deferred/ci-bench-gate.md).
+- [ ] **Differential correctness suite** — run each command natively vs sandbox, normalize, assert identical → [specs/correctness.md](specs/correctness.md). Grow the corpus on every gap; every fixed bug becomes a golden regression test. CI-enforcement deferred with the speed gate → [deferred/ci-bench-gate.md](deferred/ci-bench-gate.md).
 
 ## Phase 0 — Foundations
 
@@ -17,7 +17,7 @@ These run from the first backend onward, not as a phase. A change that fails eit
 - [x] `sandbox -- <command>` prefix CLI with live stdio + exit-code propagation → [specs/adoption.md](specs/adoption.md). Routes through the sandbox; native passthrough today, so it is already dogfoodable on this repo.
 - [x] Stand up the benchmark + correctness harnesses against the native backend (differential test asserts identical-to-native; `pnpm bench` reports sandbox-vs-baseline) so every later phase is measured from day one.
 - [x] Source loaders: `{ dir }`, `{ files }`, `{ git }` (discriminated on `SourceType`) → normalized into a `LoadedSource` (working dir + `dispose`); `createSandbox` is now async and owns teardown.
-- [ ] Wire the bench + differential suites into CI as required gates (skeletons exist; not yet CI-enforced).
+- [x] Benchmark foundation — `pnpm bench` writes a committed `bench/results.md` (environment metadata + tinybench latency stats: mean/sd/p99/samples + native-vs-sandbox ratio). Regenerate + diff pre-commit as a manual regression check. CI-enforcement deferred → [deferred/ci-bench-gate.md](deferred/ci-bench-gate.md).
 
 ## Phase 1 — `vfs` backend (pure npm, cross-platform)
 
