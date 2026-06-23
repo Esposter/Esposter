@@ -21,7 +21,7 @@ export const parseObject = (node: TMXObjectNode): TMXObjectParsed => {
         const points = point.split(",");
         const x = takeOne(points);
         const y = takeOne(points, 1);
-        return [parseFloat(x), parseFloat(y)];
+        return [Number(x), Number(y)];
       });
 
   if (text) {

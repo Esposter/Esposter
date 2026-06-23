@@ -4,7 +4,7 @@ export const ScatterPropsData = {
   options: {
     xaxis: {
       labels: {
-        formatter: (value) => parseFloat(typeof value === "number" ? value.toString() : value).toFixed(1),
+        formatter: (value) => Number(typeof value === "number" ? value.toString() : value).toFixed(1),
       },
       tickAmount: 10,
     },

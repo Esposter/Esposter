@@ -72,6 +72,7 @@
     "typescript/switch-exhaustiveness-check": "off",
     "typescript/unbound-method": "off",
     "unicorn/filename-case": "off",
+    "unicorn/max-nested-calls": "off",
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",
     "unicorn/no-object-as-default-parameter": "off",
