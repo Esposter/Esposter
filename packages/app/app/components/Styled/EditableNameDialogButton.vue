@@ -31,15 +31,8 @@ const {
 } = defineProps<EditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
 const rules = useVRules();
-const editedName = ref(name);
+const { cloned: editedName } = useCloned(() => name);
 const displayName = computed(() => name || placeholder);
-
-watch(
-  () => name,
-  (newName) => {
-    editedName.value = newName;
-  },
-);
 </script>
 
 <template>

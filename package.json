@@ -2,6 +2,28 @@
   "name": "esposter",
   "version": "1.0.0",
   "description": "A nice and casual place for posting random things.",
+  "keywords": [
+    "azure",
+    "chat",
+    "drizzle-orm",
+    "monorepo",
+    "nuxt",
+    "phaser",
+    "pinia",
+    "pnpm",
+    "postgresql",
+    "pwa",
+    "realtime",
+    "serverless",
+    "social-platform",
+    "trpc",
+    "typescript",
+    "unocss",
+    "vite",
+    "vue",
+    "vuetify",
+    "zod"
+  ],
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"

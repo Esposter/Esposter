@@ -44,6 +44,6 @@ All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `
 ## Key Rules
 
 - **Lint locally** with `pnpm lint:fix` directly — never hand-edit to satisfy the linter. Reserve `pnpm lint`/`pnpm lint:all` for CI.
-- **No Windows tests**: Vitest fails at config startup (`spawn EPERM`) — only run when the user explicitly asks.
+- **Windows tests run**: the old `spawn EPERM` config-startup crash is fixed via the minimal Vitest module allowlist in `packages/app/configuration/modules.ts`.
 - **Long-running** (`dev`, `build`, `test`, `typecheck`): use `run_in_background: true` (2+ min).
 - **Never use `pnpm <script> -- <args>`**: pnpm forwards the literal `--`, so trailing flags become post-`--` positionals and are dropped. Use `pnpm exec <binary> <args>` or direct args (`pnpm test -u`).

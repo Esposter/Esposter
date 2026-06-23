@@ -1,10 +1,28 @@
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import { getResultAsync } from "@esposter/shared";
 
 export const useCallPreJoinMedia = () => {
   const knockerStore = useKnockerStore();
   const { joinCallOptions } = storeToRefs(knockerStore);
-  const cameraStream = ref<MediaStream>();
+  const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
+  const { cameraDeviceId, inputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
+  const cameraConstraints = computed<MediaStreamConstraints>(() => ({
+    video: { deviceId: cameraDeviceId.value || undefined },
+  }));
+  const microphoneConstraints = computed<MediaStreamConstraints>(() => ({
+    audio: { deviceId: inputDeviceId.value || undefined },
+  }));
+  // UseUserMedia retains the live camera stream and releases it on scope dispose.
+  const {
+    start: startCameraStream,
+    stop: stopCameraStream,
+    stream: cameraStream,
+  } = useUserMedia({ constraints: cameraConstraints });
+  // The microphone is only probed for permission, so its stream is released immediately after start.
+  const { start: startMicrophoneStream, stop: stopMicrophoneStream } = useUserMedia({
+    constraints: microphoneConstraints,
+  });
   const isCameraEnabled = computed({
     get: () => joinCallOptions.value.isCameraEnabled,
     set: (value) => {
@@ -18,21 +36,14 @@ export const useCallPreJoinMedia = () => {
     },
   });
   const startCamera = async () => {
-    await getResultAsync(() => window.navigator.mediaDevices.getUserMedia({ video: true })).match(
+    await getResultAsync(startCameraStream).match(
       (stream) => {
-        cameraStream.value = stream;
-        isCameraEnabled.value = true;
+        isCameraEnabled.value = Boolean(stream);
       },
       () => {
         isCameraEnabled.value = false;
       },
     );
-  };
-  const stopCameraStream = () => {
-    const stream = cameraStream.value;
-    if (stream) for (const track of stream.getTracks()) track.stop();
-
-    cameraStream.value = undefined;
   };
   const stopCamera = () => {
     stopCameraStream();
@@ -43,10 +54,10 @@ export const useCallPreJoinMedia = () => {
     else await startCamera();
   };
   const startMicrophone = async () => {
-    await getResultAsync(() => window.navigator.mediaDevices.getUserMedia({ audio: true })).match(
+    await getResultAsync(startMicrophoneStream).match(
       (stream) => {
-        for (const track of stream.getTracks()) track.stop();
-        isMicrophoneEnabled.value = true;
+        isMicrophoneEnabled.value = Boolean(stream);
+        stopMicrophoneStream();
       },
       () => {
         isMicrophoneEnabled.value = false;
@@ -60,10 +71,6 @@ export const useCallPreJoinMedia = () => {
 
   onMounted(async () => {
     await Promise.all([startMicrophone(), startCamera()]);
-  });
-
-  onUnmounted(() => {
-    stopCameraStream();
   });
 
   return {

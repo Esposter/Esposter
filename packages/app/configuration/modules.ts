@@ -1,20 +1,24 @@
 import type { NuxtConfig } from "nuxt/schema";
-// The @nuxtjs/seo umbrella (sitemap, og-image, schema-org, site-config) is SSR/SEO-only and unused by
-// Unit tests — the only SEO composables we call (`useSeoMeta`, `useHead`) ship with Nuxt core, not this
-// Module. Worse, nuxt-schema-org's plugin fires an async chunk import that resolves *after* @nuxt/test-utils
-// Tears the Nuxt environment down, surfacing as an EnvironmentTeardownError unhandled rejection that fails
-// The entire shard even though every test passes. Drop it under Vitest to remove the leak (and the noise).
-export const modules: NuxtConfig["modules"] = [
-  "@nuxt/eslint",
-  "@nuxt/fonts",
-  "@nuxt/scripts",
-  "@nuxt/test-utils/module",
-  ...(process.env.VITEST ? [] : ["@nuxtjs/seo"]),
-  "@pinia/nuxt",
-  "@tresjs/nuxt",
-  "@unocss/nuxt",
-  "@vite-pwa/nuxt",
-  "@vueuse/nuxt",
-  "nuxt-security",
-  "vuetify-nuxt-module",
-];
+
+// Unit tests need only the modules whose runtime/auto-imports they actually exercise. The rest are
+// SSR/build/styling concerns that don't run under Vitest but DO break or slow Nuxt config resolution —
+// E.g. @unocss/nuxt trips the Windows `spawn EPERM` / "filename must be a file URL" crash (taking down
+// Even pure-node tests), @vite-pwa/nuxt builds a service worker, @nuxtjs/seo's nuxt-schema-org plugin
+// Leaks an EnvironmentTeardownError after teardown, and nuxt-security adds headers/CSP nothing asserts.
+// Allowlist instead of subtract: add a module to the Vitest branch only when a test needs it (then re-run).
+export const modules: NuxtConfig["modules"] = process.env.VITEST
+  ? ["@nuxt/test-utils/module", "@pinia/nuxt", "@vueuse/nuxt", "vuetify-nuxt-module"]
+  : [
+      "@nuxt/eslint",
+      "@nuxt/fonts",
+      "@nuxt/scripts",
+      "@nuxt/test-utils/module",
+      "@nuxtjs/seo",
+      "@pinia/nuxt",
+      "@tresjs/nuxt",
+      "@unocss/nuxt",
+      "@vite-pwa/nuxt",
+      "@vueuse/nuxt",
+      "nuxt-security",
+      "vuetify-nuxt-module",
+    ];

@@ -9,11 +9,20 @@ interface RoomSettingsContentProps {
 }
 
 const { room, settingsType } = defineProps<RoomSettingsContentProps>();
+const emit = defineEmits<{ close: [] }>();
 const component = computed(() => SettingsContentMap[settingsType]);
 </script>
 
 <template>
   <MessageModelSettingsContent>
-    <component :is="component" v-if="component" pt-10 :room />
+    <header mb-4 pb-4 bg-surface flex items-center top-0 justify-between sticky z-1>
+      <div font-bold text-headline-medium>{{ settingsType }}</div>
+      <v-tooltip text="Close">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn :="tooltipProps" icon="mdi-close" variant="text" @click="emit('close')" />
+        </template>
+      </v-tooltip>
+    </header>
+    <component :is="component" v-if="component" :room />
   </MessageModelSettingsContent>
 </template>

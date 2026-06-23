@@ -19,6 +19,7 @@ export enum DatabaseEntityType {
   Survey = "Survey",
   User = "User",
   UserAchievement = "UserAchievement",
+  UserSettings = "UserSettings",
   UserStatus = "UserStatus",
   UserToRoom = "UserToRoom",
   UserToRoomRole = "UserToRoomRole",

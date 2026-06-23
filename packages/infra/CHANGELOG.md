@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.29.0](https://github.com/Esposter/Esposter/compare/v2.28.0...v2.29.0) (2026-06-21)
+
+### Bug Fixes
+
+* **infra:** stop native auto-delete nuking develop on merge ([5dae10b](https://github.com/Esposter/Esposter/commit/5dae10b60ca750cff0ac9fba0f89b7fb6e4ea1c8))
+* lint ([5b8545e](https://github.com/Esposter/Esposter/commit/5b8545ec26e59a1b066d138e6c03dca9112c5c02))
+* remove unnecessary ruleset ([b8ab2fa](https://github.com/Esposter/Esposter/commit/b8ab2fae9b7decbee3f3c75efb6be71494a756f9))
+* test ([4484052](https://github.com/Esposter/Esposter/commit/4484052dd587b62985ffe8925e8f3ce6608304d4))
+* unifying vitest ([8e3e6bf](https://github.com/Esposter/Esposter/commit/8e3e6bf186a7fecbd3054cf5b9e80e5763d3c8b0))
+
+### Features
+
+* Add github resources ([81f1c0c](https://github.com/Esposter/Esposter/commit/81f1c0c0677321943fccd9c486332b549d756334))
+* **infra:** add branch-creation ruleset, dedupe github actor IDs and repo name ([2e3af97](https://github.com/Esposter/Esposter/commit/2e3af97b1dfaa4fd4ceba073f46d83e836a3247f))
+* **infra:** finalize GitHub provider (v12) and harden repo settings ([76c6d98](https://github.com/Esposter/Esposter/commit/76c6d982bde4edf2c1c1319a53488c658e77720f))
+
+### Performance Improvements
+
+* tier old message attachments to cool/cold to cut blob storage cost ([9f6881e](https://github.com/Esposter/Esposter/commit/9f6881edb63e601d2091ed52194362701daa7e66))
+
 # [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
 
 ### Bug Fixes

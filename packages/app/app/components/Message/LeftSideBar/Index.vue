@@ -7,7 +7,7 @@ import { RoutePath } from "@esposter/shared";
 const { $trpc } = useNuxtApp();
 const router = useRouter();
 const inputStore = useInputStore();
-const { draftRoomIds } = storeToRefs(inputStore);
+const { drafts } = storeToRefs(inputStore);
 const scheduledMessageJobCount = await $trpc.message.scheduledMessageJob.readMyScheduledJobsCount.query();
 const items = computed(
   () =>
@@ -22,7 +22,7 @@ const items = computed(
       },
       {
         badges: [
-          { count: draftRoomIds.value.size, icon: "mdi-pencil" },
+          { count: drafts.value.size, icon: "mdi-pencil" },
           { count: scheduledMessageJobCount, icon: "mdi-clock-outline" },
         ].filter(({ count }) => count > 0),
         icon: "mdi-send-outline",

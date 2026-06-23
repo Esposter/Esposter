@@ -25,14 +25,14 @@ catalog:
   "@azure/storage-queue": ^12.30.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.0.4
-  "@better-auth/drizzle-adapter": ^1.6.19
+  "@better-auth/drizzle-adapter": ^1.6.20
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.3
   "@codemirror/language-data": ^6.5.2
   "@codemirror/state": ^6.6.0
   "@codemirror/theme-one-dark": ^6.1.3
   "@codemirror/view": ^6.43.1
-  "@dxup/nuxt": ^0.5.0
+  "@dxup/nuxt": ^0.5.2
   "@dxup/unimport": ^0.1.2
   "@electric-sql/pglite": ^0.5.3
   "@eslint/core": ^1.2.1
@@ -57,9 +57,10 @@ catalog:
   "@nuxtjs/seo": ^5.3.0
   "@pinia/nuxt": ^0.11.3
   "@pulumi/azure-native": ^3.19.0
-  "@pulumi/pulumi": ^3.246.0
+  "@pulumi/github": ^6.14.0
+  "@pulumi/pulumi": ^3.247.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^1.8.6
+  "@takumi-rs/core": ^1.8.7
   "@tiptap/core": ^3.27.1
   "@tiptap/extension-code-block-lowlight": ^3.27.1
   "@tiptap/extension-file-handler": ^3.27.1
@@ -76,13 +77,12 @@ catalog:
   "@trpc/server": ^11.18.0
   "@types/data-urls": ^3.0.5
   "@types/dedent": ^0.7.2
-  "@types/deep-equal": ^1.0.4
   "@types/fs-extra": ^11.0.4
   "@types/howler": ^2.2.13
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^5.0.0
-  "@types/node": ^25.9.3
+  "@types/node": ^26.0.0
   "@types/pluralize": ^0.0.33
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
@@ -90,7 +90,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260618.1
+  "@typescript/native-preview": ^7.0.0-dev.20260621.1
   "@unocss/eslint-config": ^66.7.2
   "@unocss/nuxt": ^66.7.2
   "@vite-pwa/nuxt": ^1.1.1
@@ -113,8 +113,8 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.15.0
-  better-auth: ^1.6.19
+  apexcharts: ^5.15.2
+  better-auth: ^1.6.20
   codemirror: ^6.0.2
   crossws: ^0.4.6
   ctix: ^2.8.1
@@ -136,7 +136,6 @@ catalog:
   eventemitter3: ^5.0.4
   fake-indexeddb: ^6.2.5
   fast-deep-equal: ^3.1.3
-  filesize: ^11.0.17
   fs-extra: ^11.3.5
   grapesjs: ^0.23.2
   grapesjs-blocks-basic: ^1.0.2
@@ -161,7 +160,6 @@ catalog:
   happy-dom: ^20.10.6
   howler: ^2.2.4
   idb: ^8.0.3
-  is-mobile: ^5.0.0
   js-beautify: ^1.15.4
   link-preview-js: ^4.0.3
   linkifyjs: ^4.3.3
@@ -175,7 +173,7 @@ catalog:
   mjml-browser: ^5.3.0
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
-  node-html-parser: ^7.1.0
+  node-html-parser: ^8.0.2
   nuxt: ^4.4.8
   nuxt-security: ^2.6.0
   oxfmt: ^0.55.0
@@ -184,7 +182,7 @@ catalog:
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^6.0.227
-  phaser: ^4.1.0
+  phaser: ^4.2.0
   phaser4-rex-plugins: ^4.0.7
   pinia: ^3.0.4
   pluralize: ^8.0.0

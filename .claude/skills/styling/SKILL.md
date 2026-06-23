@@ -15,6 +15,21 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - Avoid custom `min-width`/`max-width`/fixed width/height when flex, grid, wrapping, or intrinsic sizing solves it. Reach for `flex-1`, `min-w-0`, `shrink-0`, responsive direction (`flex-col lg:flex-row`), breakpoint grids (`grid-cols-1 md:grid-cols-2`) first.
 - Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds). First check whether the component hierarchy or flex/grid structure is wrong.
 
+## Slashes / fractions → valued attributify (never bare, never `class`)
+
+A utility containing `/` (fractions like `top-1/2`, `translate-y-1/2`) **cannot** be a bare attribute — the SFC/prettier parser reads the `/` as a tag terminator and fails (`Opening tag "div" not terminated`). It also must **not** be dumped into `class="..."` to dodge the parser. Use the **valued** attributify form `attr="value"`, and for negatives put the `-` in front of the number, inside the quotes:
+
+```html
+<!-- WRONG — bare slash breaks the parser -->
+<div top-1/2 translate-y-1/2 />
+<!-- WRONG — utilities crammed into class -->
+<div class="top-1/2 -translate-y-1/2" />
+<!-- CORRECT — valued attributify; negative prefixes the number inside the quotes -->
+<div top="1/2" translate-y="-1/2" translate-x="-1/2" />
+```
+
+This is the valued analogue of the bare-scale negative rule (`top--1`) below: the minus always prefixes the number, never the attribute name.
+
 ## What stays in `class="..."`
 
 Only when technically required:
@@ -38,6 +53,15 @@ Only when technically required:
 ### Color utility availability
 
 Only colors registered in `uno.config.ts` generate utility classes. Don't assume Vuetify default theme colors are supported: use `text-primary` not `text-success`, `bg-surface` not `bg-surface-variant`. Theme colors auto-register from `vuetify.config.ts`; palette colors are covered by the color pack. See the `unocss` skill.
+
+### Links use `text-info` (the blue), never `text-primary`
+
+Hyperlinks / clickable inline text get `text-info` — that is the conventional link blue. `text-primary` is the brand/action accent, not a link colour. Applies to `<a>`, `NuxtLink`, and any inline "click here" affordance.
+
+```html
+<!-- WRONG --><a text-primary @click="...">grant access</a>
+<!-- CORRECT --><a cursor-pointer text-info underline @click="...">grant access</a>
+```
 
 When reading hyphenated theme colours from `useColorsStore()`, destructure quoted keys and alias to camel-case:
 

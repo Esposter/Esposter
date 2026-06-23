@@ -38,6 +38,10 @@ const { createNode, onDragStart } = useDragAndDrop();
         </v-expansion-panel>
       </v-expansion-panels>
     </v-list>
-    <v-btn v-if="!isLeftDrawerOpenAuto" self-end icon="mdi-chevron-double-left" @click="isLeftDrawerOpen = false" />
+    <v-tooltip v-if="!isLeftDrawerOpenAuto" text="Collapse sidebar">
+      <template #activator="{ props: tooltipProps }">
+        <v-btn :="tooltipProps" self-end icon="mdi-chevron-double-left" @click="isLeftDrawerOpen = false" />
+      </template>
+    </v-tooltip>
   </div>
 </template>

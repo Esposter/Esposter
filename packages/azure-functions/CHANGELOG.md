@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.29.0](https://github.com/Esposter/Esposter/compare/v2.28.0...v2.29.0) (2026-06-21)
+
+### Bug Fixes
+
+* build ([350c450](https://github.com/Esposter/Esposter/commit/350c45001d722bff225fc2edb8ced2ff0ac098f5))
+* pre-commit hook and snapshot ([b98f8bf](https://github.com/Esposter/Esposter/commit/b98f8bf426a97310a72fa3d13914149c965b5fc5))
+* resolve azure-functions bundle size snapshot conflict ([08029e9](https://github.com/Esposter/Esposter/commit/08029e90ed7a318352394a8fa5f04fe2c14ef7bb))
+* resolve stash pop conflict in azure-functions bundle size snapshot ([994539e](https://github.com/Esposter/Esposter/commit/994539e072fa2d4e44c16afff33467774f9b6bd7))
+* snapshot ([cdc2cf2](https://github.com/Esposter/Esposter/commit/cdc2cf201c1bac1b914928a0b9947b29ff5b8a7c))
+* snapshot ([5e71088](https://github.com/Esposter/Esposter/commit/5e71088d276cc6808054741523fc7cbf5298f9dc))
+* snapshot ([213283f](https://github.com/Esposter/Esposter/commit/213283f347ec562a6d9fa258b6a7f52cdf925f5b))
+* snapshot ([826b23b](https://github.com/Esposter/Esposter/commit/826b23b9ce24202af2520e1d93d97cfd820053c7))
+* snapshot ([56872be](https://github.com/Esposter/Esposter/commit/56872befb7a1b032a5785f3bf12657b0f0952dc1))
+* snapshots ([31ba759](https://github.com/Esposter/Esposter/commit/31ba759434f62d892b198d06e804fe6450acd7e5))
+* snapshots ([0ddd898](https://github.com/Esposter/Esposter/commit/0ddd898b947eaa371deb6a5d9172625195af0b67))
+* snapshots ([8666a0a](https://github.com/Esposter/Esposter/commit/8666a0ac2dd3b2f520df1b85ce0516cc8ffa281f))
+* snapshots ([09c47ef](https://github.com/Esposter/Esposter/commit/09c47efabb36b6ec540edfd6065a70c303938dc2))
+* tests + remove unnecessary plugin ([420448a](https://github.com/Esposter/Esposter/commit/420448a450ce2056c68566e5da8326dbf1f9b700))
+* tests and push notifs for webhooks ([c88d5e6](https://github.com/Esposter/Esposter/commit/c88d5e6985276d33a23047479da76650f5dcfbc1))
+* unifying vitest ([8e3e6bf](https://github.com/Esposter/Esposter/commit/8e3e6bf186a7fecbd3054cf5b9e80e5763d3c8b0))
+
+### Features
+
+* **esbabbler:** DB-backed Discord-style user-settings surface ([b61bf66](https://github.com/Esposter/Esposter/commit/b61bf6649da89c1be1d1c38feef41bfe31c44dda))
+* **infra:** finalize GitHub provider (v12) and harden repo settings ([76c6d98](https://github.com/Esposter/Esposter/commit/76c6d982bde4edf2c1c1319a53488c658e77720f))
+
 # [2.28.0](https://github.com/Esposter/Esposter/compare/v2.27.0...v2.28.0) (2026-06-14)
 
 ### Bug Fixes

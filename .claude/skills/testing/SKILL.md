@@ -254,7 +254,7 @@ describe("@esposter/my-package", () => {
 
 ## Running Tests
 
-- **Do not run tests on Windows** — known Vitest crash (`TypeError: The argument 'filename' must be a file URL object...`) with UnoCSS + happy-dom. Write tests; user runs them manually.
+- **Tests run on Windows.** The old Vitest crash (`TypeError: The argument 'filename' must be a file URL object...`) came from `@unocss/nuxt` loading during Nuxt config resolution; `configuration/modules.ts` now uses a minimal allowlist of modules under `process.env.VITEST` (no UnoCSS/PWA/security/SEO), so the full suite runs cross-platform. If a new test needs an excluded module, add it to the Vitest branch in `modules.ts`.
 - **Always use `run_in_background: true`** for `pnpm lint`, `pnpm typecheck`, and test commands.
 
 ## Testing Composables with Lifecycle Hooks

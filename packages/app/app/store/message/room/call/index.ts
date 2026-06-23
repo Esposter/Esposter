@@ -2,12 +2,15 @@ import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
 
 import { authClient } from "@/services/auth/authClient";
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
+import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { useRoomStore } from "@/store/message/room";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
-import { AdminActionType } from "@esposter/db-schema";
+import { useUserSettingsStore } from "@/store/message/user/settings";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+import { AdminActionType, NoiseSuppressionMode } from "@esposter/db-schema";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 import { Room } from "livekit-client";
 
@@ -32,6 +35,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   const liveKitStore = useLiveKitStore();
   const { connect, disconnect, setCamera, setMicrophone, setRemoteAudioMuted, setScreenShare, setVirtualBackground } =
     liveKitStore;
+  const userSettingsStore = useUserSettingsStore();
+  const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
   const callRoomId = ref("");
   const activeCallSessionId = ref("");
   const currentRoomCallSessionId = ref("");
@@ -108,6 +113,16 @@ export const useCallStore = defineStore("message/room/call", () => {
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
     currentRoomCallSessionId.value = callSessionId;
   };
+  const createRoom = () =>
+    new Room({
+      adaptiveStream: true,
+      audioCaptureDefaults: {
+        ...getAudioCaptureDefaults(userSettingsStore.userSettings?.noiseSuppressionMode ?? NoiseSuppressionMode.Custom),
+        deviceId: voiceDeviceSettingsStore.inputDeviceId || undefined,
+      },
+      dynacast: true,
+      videoCaptureDefaults: { deviceId: voiceDeviceSettingsStore.cameraDeviceId || undefined },
+    });
   const createCall = async (): Promise<string | undefined> => {
     const { callSessionId } = await $trpc.callSession.createCall.mutate();
     return callSessionId;
@@ -124,13 +139,7 @@ export const useCallStore = defineStore("message/room/call", () => {
             id,
           });
           const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
-          await connect(
-            new Room({ adaptiveStream: true, dynacast: true }),
-            livekitUrl,
-            livekitToken,
-            leaveCall,
-            isMicrophoneEnabled,
-          );
+          await connect(createRoom(), livekitUrl, livekitToken, leaveCall, isMicrophoneEnabled);
           activeCallSessionId.value = callSessionId;
           joinedCallSessionId = callSessionId;
           isJoined = true;
@@ -167,7 +176,7 @@ export const useCallStore = defineStore("message/room/call", () => {
         await $trpc.callSession.joinCallByRoomId.mutate({
           roomId,
         });
-      await connect(new Room({ adaptiveStream: true, dynacast: true }), livekitUrl, livekitToken, leaveCall, true);
+      await connect(createRoom(), livekitUrl, livekitToken, leaveCall, true);
       currentRoomCallSessionId.value = callSessionId;
       activeCallSessionId.value = callSessionId;
       isJoined = true;

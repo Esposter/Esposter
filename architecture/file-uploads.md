@@ -30,7 +30,7 @@ Client helper: `uploadBlocks(file, sasUrl)` in `app/services/azure/container/upl
 | `generateProfileImageUploadUrl()`                  | `user`    | `{userId}/ProfileImage`       | `MAX_FILE_REQUEST_SIZE` | authed       |
 | `generateProfileImageUploadUrl({ roomId })`        | `room`    | `rooms/{roomId}/ProfileImage` | `MAX_FILE_REQUEST_SIZE` | `ManageRoom` |
 
-Message attachments land in `AzureContainer.MessageAssets`; profile images (user + room) land in `AzureContainer.PublicUserAssets`. The separate container lets a lifecycle policy tier old attachments (Cool@30d → Cold@90d) without touching hot, small profile images — see `packages/infra` management policies.
+Message attachments land in `AzureContainer.MessageAssets`; profile images (user + room) land in `AzureContainer.PublicUserAssets`. The separate container lets a lifecycle policy tier old attachments without touching hot, small profile images.
 
 ---
 
@@ -59,6 +59,6 @@ Both user and room upload procedures are named `generateProfileImageUploadUrl`. 
 
 - Cannot accept any input alongside the binary body — userId must come from session only; there is no way to scope to a `roomId`
 - Size limit is shared with all tRPC requests (2 MB) and can only be enforced client-side
-- `formRules.requireAtMostMaxFileSize` previously had a todo comment acknowledging the client-side-only enforcement as a workaround
+- `requireAtMostMaxFileSize` (a custom rule alias in `app/rules.config.ts`) previously had a todo comment acknowledging the client-side-only enforcement as a workaround
 
 The SAS pattern resolves all three issues.

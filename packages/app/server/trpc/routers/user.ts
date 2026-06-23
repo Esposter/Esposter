@@ -1,7 +1,8 @@
-import type { UserStatusInMessage } from "@esposter/db-schema";
+import type { UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
 import type { SetNonNullable } from "type-fest";
 
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
+import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { dayjs } from "#shared/services/dayjs";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -15,11 +16,18 @@ import { ContainerSASPermissions } from "@azure/storage-blob";
 import {
   AzureContainer,
   DatabaseEntityType,
+  DEFAULT_AUTO_IDLE_THRESHOLD_MS,
+  DEFAULT_INPUT_SENSITIVITY_DECIBELS,
+  DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
+  DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+  NoiseSuppressionMode,
   selectUserSchema,
   selectUserStatusInMessageSchema,
   users,
+  userSettingsInMessage,
   UserStatus,
   userStatusesInMessage,
+  VoiceInputMode,
 } from "@esposter/db-schema";
 import { InvalidOperationError, MAX_READ_LIMIT, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -131,6 +139,31 @@ export const userRouter = router({
 
     return resultUserStatuses;
   }),
+  readUserSettings: standardAuthedProcedure.query(async ({ ctx }) => {
+    const foundUserSettings = (
+      await ctx.db
+        .select()
+        .from(userSettingsInMessage)
+        .where(eq(userSettingsInMessage.userId, ctx.getSessionPayload.user.id))
+    )[0];
+    if (foundUserSettings) return foundUserSettings;
+    // No row yet — return the defaults without persisting; the first update upserts the row
+    return {
+      autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
+      createdAt: new Date(),
+      deletedAt: null,
+      inputSensitivityDecibels: DEFAULT_INPUT_SENSITIVITY_DECIBELS,
+      isDeafenOnJoin: false,
+      isMuteOnJoin: false,
+      microphoneVolumePercentage: DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
+      noiseSuppressionMode: NoiseSuppressionMode.Custom,
+      pushToTalkKeybind: "",
+      speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+      updatedAt: new Date(),
+      userId: ctx.getSessionPayload.user.id,
+      voiceInputMode: VoiceInputMode.VoiceActivity,
+    } satisfies UserSettingsInMessage;
+  }),
   updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation(async ({ ctx, input }) => {
     const updatedUser = requireMutation(
       (await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning())[0],
@@ -140,6 +173,20 @@ export const userRouter = router({
     );
     return updatedUser;
   }),
+  updateUserSettings: standardAuthedProcedure.input(updateUserSettingsInputSchema).mutation(async ({ ctx, input }) =>
+    requireMutation(
+      (
+        await ctx.db
+          .insert(userSettingsInMessage)
+          .values({ ...input, userId: ctx.getSessionPayload.user.id })
+          .onConflictDoUpdate({ set: input, target: userSettingsInMessage.userId })
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.UserSettings,
+      JSON.stringify(input),
+    ),
+  ),
   upsertStatus: standardAuthedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
     const upsertedStatus = requireMutation(
       (

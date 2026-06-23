@@ -15,17 +15,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
   3. `const { method1 } = xyzStore` _(omit if no methods)_
 
   ```typescript
-  // WRONG — destructuring directly from the call
-  const { createRole } = useRoleStore(); // ❌
-
-  // WRONG — all inits, then all refs, then all methods
-  const blockStore = useBlockStore(); // ❌
-  const friendStore = useFriendStore();
-  const { blockedUsers } = storeToRefs(blockStore);
-  const { friends } = storeToRefs(friendStore);
-  const { blockUser } = blockStore;
-
-  // CORRECT — each store fully extracted before the next
+  // each store fully extracted before the next
   const blockStore = useBlockStore();
   const { blockedUsers } = storeToRefs(blockStore);
   const { blockUser, unblockUser } = blockStore;
@@ -39,22 +29,46 @@ description: Esposter Pinia store conventions — full store name, destructure w
 - **Store-to-store** (inside a Pinia store file): declare nested stores at the root of the setup function (avoid calling `useXxxStore()` repeatedly inside actions — prevents repeated lookups). Access refs/computeds via dot syntax (`otherStore.someRef`) to keep reactivity — **never `storeToRefs` inside a store**. Methods **must** be destructured at the root: `const { methodName } = otherStore`. Never call `otherStore.methodName()` inline.
 
   ```typescript
-  // CORRECT — nested store + method destructured at root
+  // nested store declared at root + method destructured at root
   const friendStore = useFriendStore();
   const { storeCreateFriend } = friendStore;
   storeCreateFriend(user);
 
-  // WRONG — store called inside a function; dot-access
-  const someAction = async () => {
-    const friendStore = useFriendStore(); // ❌ never inside a function
-    friendStore.storeCreateFriend(user); // ❌ dot-access
-  };
-
-  // WRONG — storeToRefs inside a store
-  const { currentRoomId } = storeToRefs(roomStore);
-  // CORRECT — dot access
+  // refs/computeds via dot-access (never storeToRefs inside a store)
   const roomParticipants = computed(() => roomParticipantsMap.value.get(roomStore.currentRoomId));
   ```
+
+## Never Redirect Store Functions — Use Them Directly
+
+A store function is defined **once** and consumed directly at every use site by destructuring it from the store. Never insert a layer that only forwards to it:
+
+- **No alias re-export through a composable** — a composable must never `return { foo: store.foo }` (or `return { foo: someStoreMethod }`). The consumer destructures the method straight from the store.
+- **No one-line wrapper** — never write `const selectDevice = (kind, id) => switchDevice(kind, id)` in a store, composable, or component when the body just forwards arguments. Delete it and call the underlying function.
+- **No chain of pass-throughs** — `selectDevice → switchDevice → setActiveDevice` collapses to a single `setActiveDevice` that everyone calls.
+
+A composable earns its place **only** when it adds genuine reused behaviour — shared reactive state, multi-step logic, resource lifecycle (`onScopeDispose`), a computed projection — not to re-expose a store's existing API under a new name. If a composable would just relay store methods, drop it and use the store.
+
+```ts
+// WRONG: composable relays a store method under a new name
+export const useCallDeviceSettings = (definitions) => {
+  const { switchDevice } = useLiveKitStore();
+  const selectDevice = (kind, id) => switchDevice(kind, id); // pointless redirect
+  return { deviceSections, refreshDevices, selectDevice };
+};
+// component: <List @select="selectDevice" />
+
+// CORRECT: composable returns only its real value; component calls the store method directly
+export const useCallDeviceSettings = (definitions) => {
+  // ...deviceMap, deviceSections, refreshDevices — genuine shared logic
+  return { deviceSections, refreshDevices };
+};
+// component:
+const liveKitStore = useLiveKitStore();
+const { setActiveDevice } = liveKitStore;
+// template: <List @select="setActiveDevice" />
+```
+
+Same principle as [tRPC Mutation Placement](#trpc-mutation-placement) — don't add an indirection that carries no logic.
 
 ## Store as Single Source of Truth — Eliminate Watches and Prop Threading
 
@@ -151,11 +165,8 @@ const { data: pendingSlashCommand } = useDataMap<null | SlashCommand>(() => room
 const { data: parameterValues } = useDataMap<Record<string, string>>(() => roomStore.currentRoomId, {});
 const { data: errors } = useDataMap<SlashCommandParameterError[]>(() => roomStore.currentRoomId, []);
 
-// OK — primitive default infers
+// primitive default infers — no generic needed
 const { data: trailingMessage } = useDataMap(() => roomStore.currentRoomId, "");
-
-// WRONG — as-cast instead of generic
-const { data: pendingSlashCommand } = useDataMap(() => roomStore.currentRoomId, null as null | SlashCommand); // ❌
 ```
 
 ## Cursor Pagination in Stores
@@ -195,15 +206,10 @@ Add a store action only when it adds meaningful client logic:
 - Coordination of multiple stores, requests, or validation steps
 
 ```typescript
-// WRONG — useless wrapper; subscription owns the state change
-const deleteFriend = async (friendId: FriendUserIdInput) => {
-  await $trpc.friend.deleteFriend.mutate(friendId);
-};
-
-// CORRECT — call the mutation directly at the user action
+// subscription owns the state change — call the mutation directly at the user action
 $trpc.friend.deleteFriend.mutate(friendId);
 
-// CORRECT — store action adds local state logic after the mutation
+// store action justified — adds local state logic after the mutation
 const unban = async (userId: string) => {
   await $trpc.moderation.unbanUser.mutate({ roomId, userId });
   items.value = items.value.filter((ban) => ban.userId !== userId);
@@ -262,11 +268,7 @@ Consistent param names across stores, composables, functions (mirrors `createOpe
 Store action params mirror the tRPC input type directly. Never split a shared field (e.g. `roomId`) out as a separate argument with `Except<Input, "roomId">` for the rest. Pass the full input as a single argument and spread it to the mutation.
 
 ```typescript
-// WRONG — splits roomId out
-const createRole = async (roomId: Room["id"], input: Except<CreateRoleInput, "roomId">) => {
-  const newRole = await $trpc.role.createRole.mutate({ ...input, roomId });
-};
-// CORRECT — single input matching the tRPC type
+// single input matching the tRPC type
 const createRole = async (input: CreateRoleInput) => {
   const newRole = await $trpc.role.createRole.mutate(input);
 };
@@ -275,9 +277,6 @@ const createRole = async (input: CreateRoleInput) => {
 Call sites pass the full object inline:
 
 ```typescript
-// WRONG
-await createRole(roomId, { id: selectedRole.value.id, permissions: pendingPermissions.value });
-// CORRECT
 await createRole({ roomId, id: selectedRole.value.id, permissions: pendingPermissions.value });
 ```
 
@@ -286,12 +285,7 @@ await createRole({ roomId, id: selectedRole.value.id, permissions: pendingPermis
 Store action params = minimum input required (typically just an ID). The full entity comes from the **API response**, not the caller. Design tRPC mutations to return the affected entity when the store needs it for local state.
 
 ```typescript
-// WRONG — forces caller to have the full User upfront
-const blockUser = async (user: User) => {
-  await $trpc.friend.blockUser.mutate(user.id);
-  blockedUsers.value = [user, ...blockedUsers.value]; // from caller
-};
-// CORRECT — caller passes only the ID; entity comes back from the API
+// caller passes only the ID; entity comes back from the API
 const blockUser = async (userId: FriendUserIdInput) => {
   const user = await $trpc.friend.blockUser.mutate(userId);
   blockedUsers.value = [user, ...blockedUsers.value]; // from API
@@ -303,16 +297,7 @@ const blockUser = async (userId: FriendUserIdInput) => {
 When a store action receives entities already cached in another store's map (e.g. `memberMap` in `useMemberStore`), write them into that map directly. Do **not** build a transient local `Map` just to look up values within the same action, and do **not** create a second parallel map ref holding the same data.
 
 ```typescript
-// WRONG — local userMap built only to populate a parallel creatorMap
-const storeMessages = (messages: MessageEntity[], users: User[]) => {
-  const userMap = new Map(users.map((u) => [u.id, u])); // ❌ local map
-  for (const message of messages) {
-    const creator = userMap.get(message.userId);
-    if (creator) messageCreatorMap.value.set(message.rowKey, creator); // ❌ duplicated map
-  }
-};
-
-// CORRECT — write directly into the existing memberMap; look up at display time
+// write directly into the existing memberMap; look up at display time
 const memberStore = useMemberStore(); // declared at store root
 const storeMessages = (messages: MessageEntity[], users: User[]) => {
   for (const user of users) memberStore.memberMap.set(user.id, user);
@@ -328,9 +313,7 @@ This keeps a single source of truth for user data.
 Vue 3 tracks `Map` mutations (`set`, `delete`, `clear`) on a `ref(new Map(...))` — no need to clone and reassign.
 
 ```typescript
-// WRONG — unnecessary clone + reassign
-rolesMap.value = new Map(rolesMap.value).set(roomId, result);
-// CORRECT — mutate in place
+// mutate in place — no clone + reassign needed
 rolesMap.value.set(roomId, result);
 ```
 
@@ -355,14 +338,7 @@ This is the same pattern used for Phaser objects (`markRaw(new KeyboardControls(
 Clear local form input **before** `await`-ing the store action so the field empties instantly. Capture the normalized value in a local variable first so clearing doesn't affect the value passed to the store.
 
 ```typescript
-// WRONG — field stays filled until server responds
-const submit = async () => {
-  const normalizedName = normalizeString(name.value);
-  if (!normalizedName) return;
-  await createRole({ name: normalizedName, permissions: 0n, position: 0, roomId });
-  name.value = "";
-};
-// CORRECT — clear first, then fire
+// clear first (capture the value), then fire — field empties instantly
 const submit = async () => {
   const normalizedName = normalizeString(name.value);
   if (!normalizedName) return;
@@ -373,11 +349,11 @@ const submit = async () => {
 
 ## Session Auth in Stores
 
-Never expose `sessionId` or any raw session identifier as a store state field. Use `authClient.useSession(useFetch)` (callable in both components and stores).
+Never expose `sessionId` or any raw session identifier as a store state field. Read the session via `authClient.useSession()` instead. In a setup store use the **synchronous** form (no `useFetch`) — the setup function can't `await`, so the `useFetch` form is impossible here:
 
 ```ts
-// WRONG — session ID leaked into store state
-const sessionId = ref<string | null>(null);
-// CORRECT — call useSession wherever needed
-const { data: session } = await authClient.useSession(useFetch);
+// synchronous reactive ref — access as session.value.data
+const session = authClient.useSession();
 ```
+
+The awaited `await authClient.useSession(useFetch)` form is for async, SSR-relevant contexts only (components, async composables, middleware) — see the `vue` skill's Auth Session section.

@@ -11,9 +11,22 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 
 - **No blank lines between consecutive `const` assignments** — group them tightly.
 - **No blank line before a `return`** that immediately follows a `const` in a small function (including composables that return a function directly — `return` follows the last setup line with no gap).
-- **Blank line after a closing `}`** of an `if`/`for`/block statement — unless it is the last statement in its scope or immediately followed by another opening block.
-- **No blank lines within Vue templates.**
-- **Imports** — a single blank line separates the `import type` group from the value `import` group. Never insert blank lines between value imports (or within the type group); all value imports stay contiguous regardless of source (`#shared`, `@vueuse/*`, `@/`).
+- **Blank line after a closing `}`** of an `if`/`for`/block statement — unless it is the last statement in its scope or immediately followed by another opening block. (Exception: consecutive top-level `watch`/lifecycle-hook registrations in a Vue `<script setup>` each get a blank line between them — see the `vue` skill.)
+- **No blank lines within Vue templates.** A blank line inserted to visually separate template sections is a smell that the component owns more than one responsibility — extract each section into its own focused child component rather than spacing them apart. See the `vue-component-patterns` skill (maximal granularity / one concern per component).
+- **Imports** — a single blank line separates the `import type` group from the value `import` group. That is the _only_ blank line allowed among imports. Never insert a blank line **between two `import type` lines** (the whole type group stays contiguous, even when mixing external and `@/` alias sources) nor between value imports; all imports of the same kind stay contiguous regardless of source (`@tiptap/core`, `#shared`, `@vueuse/*`, `@/`).
+
+  ```ts
+  // CORRECT — type group contiguous, single blank before value group
+  import type { Foo } from "external-pkg";
+  import type { Bar } from "@/models/Bar";
+
+  import { baz } from "#shared/services/baz";
+
+  // WRONG — blank line splitting the type group
+  import type { Foo } from "external-pkg";
+
+  import type { Bar } from "@/models/Bar";
+  ```
 
 ## Comments
 
@@ -32,12 +45,31 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
   const bar = parseLockfile(yaml);
   ```
 
+  - **Consecutive `//` lines are one comment block — never blank-separate them.** A multi-line explanation is a contiguous run of `//` lines with no gaps; a blank line _between_ two comment lines splits one thought into two and is wrong. This is the same rule as "no blank line after a comment" applied to a comment that is itself the next line.
+
+    ```ts
+    // CORRECT — one contiguous block
+    // Opens a local mic and exposes the live level.
+    // No shared analyser exists to reuse here.
+    export const useThing = () => {};
+
+    // WRONG — blank line splits one comment block
+    // Opens a local mic and exposes the live level.
+
+    // No shared analyser exists to reuse here.
+    export const useThing = () => {};
+    ```
+
   - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. `vitest.configs.all` (enabled in the eslint vitest plugin config) turns on the `vitest/padding-around-*` rules, which _require_ a blank line around `describe`/`test` blocks, hooks (`beforeEach`/`afterEach`), and expect groups. A leading comment on such a block sits after that mandatory blank line, so keep it. Still tighten the comment text itself.
 
 - **Avoid unnecessary comments** — prefer descriptive names. Keep comments that explain _why_ (non-obvious decisions, disable reasons, workarounds).
 - **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line, but keep a bulleted list (one item per `//` line) when enumerating distinct items rather than cramming them into one sentence. If an example helps, show only the minimal fragment. Applies to `//`, `/* */`, and Vue `<!-- -->` alike.
 - **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Trim it to the minimal identifying fragment; drop surrounding example values.
 - **Don't fight the comment-capitalization hook** — a hook capitalizes the first letter of every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine. Only avoid starting a wrapped line with a case-sensitive code identifier the hook would corrupt — reword those.
+
+## Skill Doc Examples
+
+- **Code examples in skill docs must use generic placeholders** — `Foo`/`Bar`/`baz`, `external-pkg`, `@/models/Bar`, etc. NEVER paste the concrete identifiers, package names, or file paths from the change that prompted the note (e.g. `Editor`, `@tiptap/core`, `useDraftItems`). A skill is a reusable convention, not a changelog; task-specific names make the rule read as a one-off. Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine since they describe a class of import, not a specific symbol.
 
 ## Declaration Layout
 

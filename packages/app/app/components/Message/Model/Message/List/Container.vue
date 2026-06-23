@@ -10,8 +10,8 @@ const rowKey = route.params.rowKey as string;
 if (rowKey) {
   const scrollToMessage = useScrollToMessage();
 
-  onMounted(() => {
-    scrollToMessage(roomId, rowKey);
+  onMounted(async () => {
+    await scrollToMessage(roomId, rowKey);
   });
 }
 </script>

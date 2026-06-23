@@ -1,0 +1,19 @@
+import ApplicationTags from "@/azure/constants/ApplicationTags";
+import AzureAustraliaEastLocation from "@/azure/constants/AzureAustraliaEastLocation";
+import * as azure_native from "@pulumi/azure-native";
+
+const resourceGroupName = "dev-rg-esposter-ae-001";
+
+export const devRgEsposterAe001: azure_native.resources.ResourceGroup = new azure_native.resources.ResourceGroup(
+  resourceGroupName,
+  {
+    location: AzureAustraliaEastLocation,
+    resourceGroupName,
+    tags: {
+      ...ApplicationTags,
+    },
+  },
+  {
+    protect: true,
+  },
+);

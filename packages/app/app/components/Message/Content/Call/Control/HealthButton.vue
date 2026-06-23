@@ -2,16 +2,13 @@
 import { ConnectionQualityMetadataMap } from "@/services/message/room/liveKit/ConnectionQualityMetadataMap";
 import { ConnectionStateMetadataMap } from "@/services/message/room/liveKit/ConnectionStateMetadataMap";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import { mergeProps } from "vue";
 
 const liveKitStore = useLiveKitStore();
-const {
-  connectionQuality,
-  connectionState,
-  selectedAudioInputDeviceId,
-  selectedAudioOutputDeviceId,
-  selectedVideoInputDeviceId,
-} = storeToRefs(liveKitStore);
+const { connectionQuality, connectionState } = storeToRefs(liveKitStore);
+const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
+const { cameraDeviceId, inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
 const connectionQualityMetadata = computed(() => ConnectionQualityMetadataMap[connectionQuality.value]);
 const connectionStateMetadata = computed(() => ConnectionStateMetadataMap[connectionState.value]);
 const title = computed(() => `${connectionStateMetadata.value.title} - ${connectionQualityMetadata.value.title}`);
@@ -54,13 +51,9 @@ const title = computed(() => `${connectionStateMetadata.value.title} - ${connect
           </template>
         </v-list-item>
         <v-divider />
-        <v-list-item
-          prepend-icon="mdi-microphone"
-          :subtitle="selectedAudioInputDeviceId || 'Default'"
-          title="Microphone"
-        />
-        <v-list-item prepend-icon="mdi-speaker" :subtitle="selectedAudioOutputDeviceId || 'Default'" title="Speakers" />
-        <v-list-item prepend-icon="mdi-video" :subtitle="selectedVideoInputDeviceId || 'Default'" title="Camera" />
+        <v-list-item prepend-icon="mdi-microphone" :subtitle="inputDeviceId || 'Default'" title="Microphone" />
+        <v-list-item prepend-icon="mdi-speaker" :subtitle="outputDeviceId || 'Default'" title="Speakers" />
+        <v-list-item prepend-icon="mdi-video" :subtitle="cameraDeviceId || 'Default'" title="Camera" />
       </v-list>
     </StyledCard>
   </v-menu>

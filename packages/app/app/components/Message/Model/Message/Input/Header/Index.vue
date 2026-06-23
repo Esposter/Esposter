@@ -10,18 +10,23 @@ const emit = defineEmits<{ close: [] }>();
 <template>
   <div :class="isTopAttached ? '' : 'rd-t-2'" px-4 py-2 bg-background flex gap-2 items-center relative text-body-medium>
     <slot />
-    <v-btn
-      top="1/2"
-      b-1
-      b-text
-      b-solid
-      right-4
-      absolute
-      translate-y="-1/2"
-      icon="mdi-close"
-      size="small"
-      density="compact"
-      @click="emit('close')"
-    />
+    <v-tooltip text="Close">
+      <template #activator="{ props: tooltipProps }">
+        <v-btn
+          :="tooltipProps"
+          top="1/2"
+          b-1
+          b-text
+          b-solid
+          right-4
+          absolute
+          translate-y="-1/2"
+          icon="mdi-close"
+          size="small"
+          density="compact"
+          @click="emit('close')"
+        />
+      </template>
+    </v-tooltip>
   </div>
 </template>

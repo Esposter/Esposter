@@ -123,13 +123,11 @@ const uniqueNameRule = useColumnNameRule(() => dataSource.columns); // create
 
 ## Extract Duplicate Validation Rules
 
-When the same validation rule appears in 2+ components, extract to a shared composable immediately — don't copy-paste. The optional `currentName` parameter handles edit vs create:
+When the same validation rule appears in 2+ components **and depends on reactive component state** (e.g. uniqueness against a live list), extract to a shared composable immediately — don't copy-paste. (Stateless or simply parameterized rules belong in `app/rules.config.ts` as global `useVRules()` aliases instead — see the vuetify skill.) The optional `currentName` parameter handles edit vs create:
 
 ```typescript
-// WRONG: duplicate inline rules in Edit/CreateDialogButton
-const uniqueNameRule = (v: string) => v === column.name || !columns.some(...) || 'Column already exists'
-// RIGHT: single composable
-const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name) // edit
+// single shared composable — never duplicate the inline rule across dialog buttons
+const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name); // edit
 ```
 
 ## Extract Duplicate Mutation Blocks — Builder Arg for Discriminated-Union Inputs
@@ -259,11 +257,9 @@ watch(
 Only call `structuredClone(toRawDeep(...))` on data pulled from Vue reactive stores or refs. Freshly constructed class instances are already plain, non-reactive.
 
 ```typescript
-// WRONG: unnecessary wrapping
-executeAndRecord(new CreateRowCommand(index, structuredClone(toRawDeep(newRow))));
-// RIGHT: pass the instance directly
+// freshly newed instance is already plain — pass it directly
 executeAndRecord(new CreateRowCommand(index, newRow));
-// CORRECT: clone IS needed for data from reactive stores
+// clone IS needed for data pulled from reactive stores
 const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
 ```
 
@@ -279,8 +275,8 @@ Sync `v-tabs` state to the URL instead of a plain `ref`, so the active tab survi
 import { TAB_QUERY_PARAMETER_KEY } from "#shared/services/route/constants";
 import { DraftsAndSentTab, DraftsAndSentTabs } from "@/models/message/draftsAndSent/DraftsAndSentTab";
 
-const tab = ref(DraftsAndSentTab.Drafts); // WRONG: loses the tab on refresh
-const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsAndSentTabs, DraftsAndSentTab.Drafts); // CORRECT: syncs to ?tab=Drafts
+// syncs to ?tab=Drafts and survives refresh — not a plain ref(DraftsAndSentTab.Drafts)
+const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsAndSentTabs, DraftsAndSentTab.Drafts);
 ```
 
 Each enum exposes a value `Set` alongside it (`DraftsAndSentTabs`, `PermissionsTabs`, `AchievementStatuses`). Put `useEnumRouteQuery` where the `v-tabs` `v-model` originates. When a child renders the tabs via `defineModel`, keep it in the parent and pass it down as `v-model`.
@@ -332,13 +328,7 @@ onMounted(async () => {
 **Do NOT re-fetch on every dialog open.** Trust the Pinia store as source of truth — CRUD flows through tRPC subscriptions which keep the store current. Fetch once on mount; subsequent opens use cached store data.
 
 ```typescript
-// WRONG: re-fetches every open
-const { readFriends } = useReadFriends();
-watchImmediate(isOpen, async (newIsOpen) => {
-  if (newIsOpen) await readFriends();
-});
-
-// CORRECT: fetch once on mount
+// fetch once on mount — never re-fetch on every dialog open
 const { readFriends } = useReadFriends();
 await readFriends();
 ```
@@ -419,12 +409,7 @@ Offline cache should mirror Pinia state. Prefer thin feature-level `use*Cache` c
 When a component needs ancillary data (permissions, metadata) alongside a primary list load, bundle the ancillary read inside the primary read composable — not in the component's `onMounted`. `readMyPermissions` and similar belong inside the composable owning the load (`useReadRooms`, `useReadMembers`), called in `Promise.all` alongside other metadata reads. If there is no natural companion read, call it directly in `<script setup>` — still no `onMounted`.
 
 ```typescript
-// WRONG: component fetches permissions separately in onMounted
-onMounted(async () => {
-  if (!isCreator.value) await readMyPermissions({ roomId: room.id });
-});
-
-// CORRECT: bundled in the owning read composable (useReadRooms.ts)
+// bundle ancillary reads in the owning read composable (useReadRooms.ts) — not a separate component onMounted fetch
 const readMyPermissions = useReadMyPermissions();
 const readRooms = () =>
   readItems(

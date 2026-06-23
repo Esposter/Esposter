@@ -110,13 +110,6 @@ export const webhookRouter = router({
       });
     return webhook;
   }),
-  readAppUsers: getMemberProcedure(roomIdSchema, "roomId").query(({ ctx, input: { roomId } }) =>
-    ctx.db
-      .select(getColumns(appUsersInMessage))
-      .from(appUsersInMessage)
-      .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
-      .where(eq(webhooksInMessage.roomId, roomId)),
-  ),
   readAppUsersByIds: getMemberProcedure(readAppUsersByIdsInputSchema, "roomId").query(
     ({ ctx, input: { ids, roomId } }) =>
       ctx.db

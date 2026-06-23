@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 
 defineSlots<{ append?: () => VNode }>();
-const callStore = useCallStore();
-const { toggleScreenShare } = callStore;
 const mediaStore = useMediaStore();
-const { hasScreenShare, isPoppedOut, isScreenSharing } = storeToRefs(mediaStore);
+const { hasScreenShare, isPoppedOut } = storeToRefs(mediaStore);
 const { presenterName } = useCallParticipantTiles();
 const callView = useTemplateRef("callView");
 </script>
@@ -17,16 +14,7 @@ const callView = useTemplateRef("callView");
       <StyledCard v-if="hasScreenShare" rounded="pill" px-4 py-2 flex gap-x-3 items-center>
         <v-icon icon="mdi-monitor-share" text-primary />
         <span font-medium truncate>{{ presenterName }} is presenting</span>
-        <v-btn
-          v-if="isScreenSharing"
-          color="info"
-          variant="tonal"
-          rounded="pill"
-          size="small"
-          @click="toggleScreenShare()"
-        >
-          Stop presenting
-        </v-btn>
+        <MessageContentCallScreenShareStopButton />
       </StyledCard>
       <slot name="append" />
     </header>

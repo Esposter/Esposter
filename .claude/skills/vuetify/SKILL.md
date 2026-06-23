@@ -14,11 +14,7 @@ Use `StyledButton` for primary call-to-action buttons (create, save, accept, req
 Vuetify composables are auto-imported with a `v` prefix. **Never import from `"vuetify"` directly** — they are globally available:
 
 ```typescript
-// WRONG
-import { useDisplay } from "vuetify";
-const { smAndDown } = useDisplay();
-
-// CORRECT — auto-import with v prefix
+// auto-imported with v prefix — never import { useDisplay } from "vuetify"
 const { smAndDown } = useVDisplay();
 ```
 
@@ -43,7 +39,7 @@ These variants are set globally and must **never** be repeated on individual com
 
 ## Button Conventions
 
-- **Every `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` + descriptive `text`. Applies to all buttons, including those with visible label text.
+- **Every icon-only `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` + descriptive `text` so the action is discoverable. A button with **visible label text** (`text="Remove"` or default-slot text) is self-describing and does **not** need a tooltip.
 - **`#activator` slot always first** in `v-tooltip` (and `v-menu`).
 - **Icon choice for create actions** — use the semantically specific MDI icon when available: `mdi-table-row-plus-after` (add rows), `mdi-table-column-plus-after` (add columns). Fall back to `mdi-plus` for generic create.
 
@@ -54,6 +50,40 @@ These variants are set globally and must **never** be repeated on individual com
   </template>
 </v-tooltip>
 ```
+
+## Nested Activators — `mergeProps`, Never Stacked `v-bind`
+
+When one button is the activator for **multiple** overlays (a `v-menu`/`v-dialog`/`v-hover` _and_ a `v-tooltip`), each overlay's `#activator` slot hands you its own props object. Combine them with `mergeProps(...)` from `vue` on a single `:=` — **never stack two `:=` binds** (`:="menuProps" :="tooltipProps"`). A second `v-bind` of the same key silently overrides the first, so the loser's `onClick` / `onMouseenter` / `class` is dropped; `mergeProps` chains event handlers and concatenates `class`/`style` instead.
+
+**Order: structural/outer activator(s) first, tooltip last** — e.g. `mergeProps(menuProps, tooltipProps)`, `mergeProps(dialogProps, tooltipProps)`, `mergeProps(hoverProps, tooltipProps)`, or three-way `mergeProps(tooltipActivatorProps, hoverProps, buttonProps)`.
+
+```vue
+<v-menu>
+  <template #activator="{ props: menuProps }">
+    <v-tooltip text="Options">
+      <template #activator="{ props: tooltipProps }">
+        <v-btn icon="mdi-dots-vertical" :="mergeProps(menuProps, tooltipProps)" />
+      </template>
+    </v-tooltip>
+  </template>
+</v-menu>
+```
+
+**A custom dialog/menu button that exposes an `#activator` slot should merge its own tooltip into the slot props** so consumers don't have to:
+
+```vue
+<v-dialog>
+  <template #activator="{ props: dialogProps }">
+    <v-tooltip text="Settings">
+      <template #activator="{ props: tooltipProps }">
+        <slot name="activator" :="mergeProps(dialogProps, tooltipProps)" />
+      </template>
+    </v-tooltip>
+  </template>
+</v-dialog>
+```
+
+Consumers then bind the slot scope directly (`:="activatorProps"`) — **do not** wrap such an activator in a second `v-tooltip`; it already has one.
 
 ## Icon Buttons Inside Input Slots
 
@@ -111,7 +141,7 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true));
   <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid />
 </div>
 <v-form ref="editForm" v-model="isEditFormValid">
-  <v-text-field :rules="[formRules.required]" hide-details ... />
+  <v-text-field :rules="[rules.required()]" hide-details ... />
 </v-form>
 ```
 
@@ -131,9 +161,24 @@ Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navi
 
 ## Form Validation Rules
 
-- **Always use `formRules` from `@/services/vuetify/formRules`** — never inline arrow-function rules in templates (the linter strips them). E.g. `[formRules.required]`, `[formRules.isNotProfanity]`, `[formRules.requireAtMostNCharacters(n)]`, `[formRules.requireAtMostMaxFileSize]`.
-- Multiple rules combine naturally: `:rules="[formRules.required, formRules.requireAtMostNCharacters(100)]"`.
-- The `required` HTML attribute is not a Vuetify prop — use `:rules="[formRules.required]"`.
+- Use the auto-imported `useVRules()` composable (Vuetify's rules plugin; `prefixComposables: true` renames `useRules` → `useVRules`). Declare `const rules = useVRules();` at the top of `<script setup>` with the other composables, then reference rules as builders: `:rules="[rules.required(), rules.maxLength(100)]"`. Never inline arrow-function rules in templates (the linter strips them).
+- Built-in aliases (`required`, `maxLength`, `minLength`, `email`, `pattern`, …) come from Vuetify — don't reimplement them; their default messages live in Vuetify's locale (e.g. `required` → "This field is required", `maxLength` → "You must enter a maximum of {0} characters").
+- Custom stateless/parameterized rules live in `app/rules.config.ts` (wired via `vuetify.moduleOptions.rulesConfiguration.configFile`): currently `isNotProfanity`, `requireAtLeastN(n)`, `requireAtMostMaxFileSize`. Add new global rules there as `aliases` builders (`(err) => (value) => …` or `(options, err) => (value) => …`, threading `err` for a caller-supplied message), end the file with `satisfies RulesOptions`, then call `rules.<name>(...)`.
+- Declare each custom alias's type in `app/types/vuetify.d.ts` so it gets autocomplete + option-type checking — use Vuetify's canonical builder helpers, not hand-rolled signatures:
+
+```ts
+import type { ValidationRuleBuilderWithOptions, ValidationRuleBuilderWithoutOptions } from "vuetify/labs/rules";
+
+declare module "vuetify/labs/rules" {
+  interface RuleAliases {
+    myRule: ValidationRuleBuilderWithoutOptions; // (err?) => ValidationRule
+    myRuleWithOption: ValidationRuleBuilderWithOptions<number>; // (option, err?) => ValidationRule
+  }
+}
+```
+
+- Rules that depend on reactive component state (e.g. uniqueness against a live list) stay component composables instead — see vue-composable-patterns "Extract Duplicate Validation Rules".
+- The `required` HTML attribute is not a Vuetify prop — use `:rules="[rules.required()]"`.
 
 ## HTML Footprint
 
@@ -191,3 +236,25 @@ The CSS custom-property form (`var(--border-width)`) is only acceptable when a s
 ## Keyboard Shortcut Components
 
 A button and its keyboard shortcut are one component — see the **vue-component-patterns** skill (Maximal Component Granularity).
+
+## Scrollspy Sub-Nav (Two-Level List + `useElementVisibility` + `useVGoTo`)
+
+For a settings-style surface where a sidebar tracks the section scrolled into view:
+
+- **Two-level nav** — `v-list` with `:opened="[activeCategory]"` (controlled, so only the active category expands) + `v-list-group` per category. Sub-items render the active category's sections.
+- **Scroll tracking — `useElementVisibility` per section, active = topmost visible.** Each section reports its own visibility (`const isVisible = useElementVisibility(sectionRef)`) into a shared `Set` of visible section ids; the active section is the **first in section order that is in the set**. When the current section scrolls out of view the next visible one takes over. **Do NOT use `v-intersect` / `IntersectionObserver` for this** — the observer re-fires on _any_ layout change, so clicking a button in the content (a warning toggling, a slider expanding) reflows the page and spuriously moves the sidebar highlight. Visibility-driven topmost-selection only changes on real scroll. It also needs no `rootMargin` band math, no "only on `isIntersecting`" logic, and no bottom-edge special-casing.
+- **Keep the panel header _outside_ the scroll container**, not `sticky` inside it. Put it in a fixed bar above the scroll area (a `#header` slot on the shared content shell, which is `flex flex-col` with the scroll `div` as `flex-1`). This is what makes everything else simple: a section clipped above the scroll area is genuinely not visible, so "topmost visible" is the section sitting right under the header (header-aware for free), and `goTo` lands a section's title at the scroll-area top = below the header, with **no offset hack**. A sticky in-flow header overlaps the content and breaks both.
+- **Click-to-scroll** — `useVGoTo()` (auto-imported, `v` prefix — never `import { useGoTo } from "vuetify"`). Scroll within the panel's scroll container: `goTo(element, { container: '#<scroll-container-id>' })`. Resolve the target with `document.getElementById(id)` so section ids may contain spaces (enum values), avoiding selector escaping. The container id is still needed for this one reason (`goTo` must know the scroll element — it is not the window).
+- **Click vs. scrollspy race** — set the active id immediately on click, and guard the visibility watcher with an `isScrollingToSection` flag (true before `await goTo(...)`, false after) so the animated scroll keeps the clicked value and doesn't flicker the highlight through intermediate sections.
+
+Section identity comes from a **per-subsection enum** whose values double as titles and DOM ids (one enum per panel, e.g. `VoiceSettingsSection`); a `Record<ParentType, EnumValues[]>` map drives the sidebar sub-items. See the esbabbler `specs/user-settings.md` for the concrete wiring.
+
+### Animated active rail — `StyledSlideIndicator`
+
+For the sliding bar that follows the active item, reuse the generic `StyledSlideIndicator` component (`components/Styled/SlideIndicator.vue`) — don't hand-roll per sidebar. Drop-in contract:
+
+- Place it inside a `position: relative` container (in a `v-list-group`, that's `.v-list-group__items` — set it relative via a scoped `:deep`).
+- Give each item `data-slide-indicator-key="<key>"`.
+- Pass `:active-key="<activeKey>"`.
+
+It measures the active item's `offsetTop`/`offsetHeight` (so it handles varying item heights) and animates via `transform: translateY`, re-measuring on `activeKey` change and container resize (`useResizeObserver`). Works for any future vertical nav, not just settings.

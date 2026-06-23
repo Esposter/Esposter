@@ -1,0 +1,52 @@
+import ApplicationTags from "@/azure/constants/ApplicationTags";
+import AzureGlobalLocation from "@/azure/constants/AzureGlobalLocation";
+import { devAgEsposter002 } from "@/azure/resources/Microsoft.Insights/actionGroups/devAgEsposter002";
+import { devAppiEsposterAe001 } from "@/azure/resources/Microsoft.Insights/components/devAppiEsposterAe001";
+import { devRgEsposterAe001 } from "@/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { getSmartDetectorResourceId } from "@/azure/services/getSmartDetectorResourceId";
+import * as azure_native from "@pulumi/azure-native";
+
+const alertRuleName = "Failure Anomalies - dev-appi-esposter-ae-001";
+
+export const devAppiEsposterAe001FailureAnomalies: azure_native.alertsmanagement.SmartDetectorAlertRule =
+  new azure_native.alertsmanagement.SmartDetectorAlertRule(
+    alertRuleName,
+    {
+      actionGroups: {
+        groupIds: [
+          getSmartDetectorResourceId(
+            devRgEsposterAe001.name,
+            "microsoft.insights",
+            "actiongroups",
+            devAgEsposter002.name,
+          ),
+        ],
+      },
+      alertRuleName,
+      description:
+        "Failure Anomalies notifies you of an unusual rise in the rate of failed HTTP requests or dependency calls.",
+      detector: {
+        id: "FailureAnomaliesDetector",
+      },
+      frequency: "PT1M",
+      location: AzureGlobalLocation,
+      resourceGroupName: devRgEsposterAe001.name,
+      scope: [
+        getSmartDetectorResourceId(
+          devRgEsposterAe001.name,
+          "microsoft.insights",
+          "components",
+          devAppiEsposterAe001.name,
+        ),
+      ],
+      severity: azure_native.alertsmanagement.Severity.Sev3,
+      state: azure_native.alertsmanagement.AlertRuleState.Enabled,
+      tags: {
+        ...ApplicationTags,
+      },
+    },
+    {
+      parent: devAppiEsposterAe001,
+      protect: true,
+    },
+  );

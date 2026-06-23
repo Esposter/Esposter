@@ -53,11 +53,7 @@ const callRoute = computed(() =>
             {{ getStatusMessage(session.user.id) || getStatusEnum(session.user.id) }}
           </div>
         </div>
-        <MessageLeftSideBarSettingsDialogButton>
-          <template #activator="activatorProps">
-            <v-btn :="activatorProps" icon="mdi-cog" size="small" />
-          </template>
-        </MessageLeftSideBarSettingsDialogButton>
+        <MessageLeftSideBarSettingsButton />
       </div>
     </StyledCard>
   </div>

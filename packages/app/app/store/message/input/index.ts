@@ -1,3 +1,4 @@
+import type { Draft } from "@/models/message/Draft";
 import type { Editor } from "@tiptap/core";
 
 import { dayjs } from "#shared/services/dayjs";
@@ -15,43 +16,43 @@ export const useInputStore = defineStore("message/input", () => {
   const roomStore = useRoomStore();
   const { data: input, setData: setInput } = useDataMap(() => roomStore.currentRoomId, "");
   const uploadFileStore = useUploadFileStore();
-  const initializeDraftRoomIds = (): Set<string> => {
-    if (getIsServer()) return new Set();
-    const ids = new Set<string>();
+  const initializeDrafts = (): Map<string, Draft> => {
+    if (getIsServer()) return new Map();
+    const drafts = new Map<string, Draft>();
+    const draftKeys: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (!key?.startsWith(DRAFT_KEY_PREFIX)) continue;
+      if (key?.startsWith(DRAFT_KEY_PREFIX)) draftKeys.push(key);
+    }
+
+    for (const key of draftKeys) {
       const roomId = key.slice(DRAFT_KEY_PREFIX.length);
       const draft = getDraft(roomId);
       if (!draft || EMPTY_TEXT_REGEX.test(draft.content)) continue;
-      const sanitizedContent = setDraft(roomId, draft.content).content;
-      if (EMPTY_TEXT_REGEX.test(sanitizedContent)) {
+      const sanitizedDraft = setDraft(roomId, draft.content);
+      if (EMPTY_TEXT_REGEX.test(sanitizedDraft.content)) {
         removeDraft(roomId);
         continue;
       }
-      setInput(roomId, sanitizedContent);
-      ids.add(roomId);
+      setInput(roomId, sanitizedDraft.content);
+      drafts.set(roomId, sanitizedDraft);
     }
-    return ids;
+    return drafts;
   };
 
-  const draftRoomIds = ref(initializeDraftRoomIds());
+  const drafts = ref(initializeDrafts());
   const storeDraft = (roomId: string, content: string) => {
     if (getIsServer()) return;
     const draft = setDraft(roomId, content);
     if (EMPTY_TEXT_REGEX.test(draft.content)) {
       removeDraft(roomId);
       setInput(roomId, "");
-      if (draftRoomIds.value.has(roomId)) {
-        const updatedDraftRoomIds = new Set(draftRoomIds.value);
-        updatedDraftRoomIds.delete(roomId);
-        draftRoomIds.value = updatedDraftRoomIds;
-      }
+      drafts.value.delete(roomId);
       return;
     }
 
     setInput(roomId, draft.content);
-    if (!draftRoomIds.value.has(roomId)) draftRoomIds.value = new Set([...draftRoomIds.value, roomId]);
+    drafts.value.set(roomId, draft);
   };
 
   watchDebounced(
@@ -62,19 +63,11 @@ export const useInputStore = defineStore("message/input", () => {
         const draft = setDraft(roomId, newInput);
         if (EMPTY_TEXT_REGEX.test(draft.content)) {
           removeDraft(roomId);
-          if (draftRoomIds.value.has(roomId)) {
-            const updatedDraftRoomIds = new Set(draftRoomIds.value);
-            updatedDraftRoomIds.delete(roomId);
-            draftRoomIds.value = updatedDraftRoomIds;
-          }
-        } else if (!draftRoomIds.value.has(roomId)) draftRoomIds.value = new Set([...draftRoomIds.value, roomId]);
+          drafts.value.delete(roomId);
+        } else drafts.value.set(roomId, draft);
       } else {
         removeDraft(roomId);
-        if (draftRoomIds.value.has(roomId)) {
-          const updatedDraftRoomIds = new Set(draftRoomIds.value);
-          updatedDraftRoomIds.delete(roomId);
-          draftRoomIds.value = updatedDraftRoomIds;
-        }
+        drafts.value.delete(roomId);
       }
     },
     { debounce: dayjs.duration(0.3, "seconds").asMilliseconds() },
@@ -82,9 +75,7 @@ export const useInputStore = defineStore("message/input", () => {
 
   const clearDraft = (roomId: string) => {
     removeDraft(roomId);
-    const updatedDraftRoomIds = new Set(draftRoomIds.value);
-    updatedDraftRoomIds.delete(roomId);
-    draftRoomIds.value = updatedDraftRoomIds;
+    drafts.value.delete(roomId);
     setInput(roomId, "");
   };
 
@@ -101,7 +92,7 @@ export const useInputStore = defineStore("message/input", () => {
 
   return {
     clearDraft,
-    draftRoomIds,
+    drafts,
     input,
     storeDraft,
     validateInput,
