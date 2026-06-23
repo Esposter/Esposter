@@ -1,8 +1,6 @@
 # Architecture
 
-Cross-cutting implementation decisions for Esposter.
-
-Use this folder for architecture that applies to multiple packages or feature areas. Keep feature-specific file maps, workflows, and schemas in `features/<area>/architecture.md`; keep planned work and checklists in `features/`.
+Durable, cross-cutting decisions that span multiple packages or feature areas. Feature-specific maps, plans, and checklists live in `features/<area>/`; coding rules live in `.claude/skills/`.
 
 | File                  | Purpose                                                                                 |
 | --------------------- | --------------------------------------------------------------------------------------- |
@@ -10,16 +8,3 @@ Use this folder for architecture that applies to multiple packages or feature ar
 | `file-uploads.md`     | Two-step Azure Blob SAS upload pattern and upload procedure inventory                   |
 | `monorepo-tooling.md` | pnpm workspace orchestration, Lerna publishing boundary, installs, and CI runner policy |
 | `serialization.md`    | How class instances survive the three transport paths (Azure Table, Nuxt payload, tRPC) |
-
-## What Belongs Here
-
-- Durable decisions that are reused across multiple feature areas.
-- Service ownership maps and cross-package data flows.
-- Patterns that prevent repeated rediscovery, such as storage choice and upload mechanics.
-
-## What Stays Elsewhere
-
-- Feature plans, TODOs, and implementation phases: `features/<area>/` or `features/refactors/`.
-- Feature-specific architecture references: `features/<area>/architecture.md`.
-- Coding rules and style conventions: `.agents/skills/` and `.claude/skills/`.
-- Public project documentation: `README.md` and package-level README files.

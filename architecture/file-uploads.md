@@ -30,7 +30,7 @@ Client helper: `uploadBlocks(file, sasUrl)` in `app/services/azure/container/upl
 | `generateProfileImageUploadUrl()`                  | `user`    | `{userId}/ProfileImage`       | `MAX_FILE_REQUEST_SIZE` | authed       |
 | `generateProfileImageUploadUrl({ roomId })`        | `room`    | `rooms/{roomId}/ProfileImage` | `MAX_FILE_REQUEST_SIZE` | `ManageRoom` |
 
-Message attachments land in `AzureContainer.MessageAssets`; profile images (user + room) land in `AzureContainer.PublicUserAssets`. The separate container lets a lifecycle policy tier old attachments (Cool@30d → Cold@90d) without touching hot, small profile images — see `packages/infra` management policies.
+Message attachments land in `AzureContainer.MessageAssets`; profile images (user + room) land in `AzureContainer.PublicUserAssets`. The separate container lets a lifecycle policy tier old attachments without touching hot, small profile images.
 
 ---
 

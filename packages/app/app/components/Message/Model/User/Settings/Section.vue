@@ -10,20 +10,21 @@ interface UserSettingsSectionProps {
 defineSlots<{ default: () => VNode }>();
 const { title } = defineProps<UserSettingsSectionProps>();
 const userSettingsDialogStore = useUserSettingsDialogStore();
-const { activeSectionId, isScrollingToSection } = storeToRefs(userSettingsDialogStore);
+const { setSectionVisibility } = userSettingsDialogStore;
+const section = useTemplateRef("section");
+const isVisible = useElementVisibility(section);
+
+watchImmediate(isVisible, (newIsVisible) => {
+  setSectionVisibility(title, newIsVisible);
+});
+
+onUnmounted(() => {
+  setSectionVisibility(title, false);
+});
 </script>
 
 <template>
-  <section
-    :id="title"
-    v-intersect="{
-      handler: (isIntersecting: boolean) => {
-        if (isIntersecting && !isScrollingToSection) activeSectionId = title;
-      },
-      options: { rootMargin: '0px 0px -80% 0px' },
-    }"
-    mb-8
-  >
+  <section :id="title" ref="section" mb-8>
     <div font-bold mb-4 text-title-medium>{{ title }}</div>
     <slot />
   </section>

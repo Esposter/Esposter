@@ -91,7 +91,17 @@ const goToNext = () => {
           @click="findReplace(findValue, replaceValue)"
         />
         <v-spacer />
-        <v-btn density="compact" icon="mdi-close" variant="text" @click="isFindReplaceOpen = false" />
+        <v-tooltip text="Close">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn
+              :="tooltipProps"
+              density="compact"
+              icon="mdi-close"
+              variant="text"
+              @click="isFindReplaceOpen = false"
+            />
+          </template>
+        </v-tooltip>
       </div>
     </v-sheet>
   </v-expand-transition>

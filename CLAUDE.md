@@ -54,8 +54,6 @@ pnpm coverage         # run from repo root — vitest --coverage across all work
 
 Vitest runs on Windows. The former `spawn EPERM` / UnoCSS config-load crash was fixed by giving `packages/app/configuration/modules.ts` a minimal Nuxt module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO). If a new test needs an excluded module, add it to the Vitest branch there.
 
-When linting locally, run `pnpm lint:fix` directly. `pnpm lint` is mainly for CI/CD check-only verification.
-
 DB migrations (run from `packages/db-schema/`):
 
 ```bash

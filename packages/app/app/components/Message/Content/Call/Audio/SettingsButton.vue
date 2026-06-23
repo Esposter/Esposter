@@ -1,23 +1,22 @@
 <script setup lang="ts">
 import { useLiveKitStore } from "@/store/message/room/liveKit";
+import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import { mergeProps } from "vue";
 
 const liveKitStore = useLiveKitStore();
-const { selectedAudioInputDeviceId, selectedAudioOutputDeviceId } = storeToRefs(liveKitStore);
+const { setActiveDevice } = liveKitStore;
+const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
+const { inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
 const menu = ref(false);
-const {
-  deviceSections: audioDeviceSections,
-  refreshDevices,
-  selectDevice,
-} = useCallDeviceSettings([
+const { deviceSections: audioDeviceSections, refreshDevices } = useCallDeviceSettings([
   {
     kind: "audioinput",
-    selectedId: selectedAudioInputDeviceId,
+    selectedId: inputDeviceId,
     title: "Microphone",
   },
   {
     kind: "audiooutput",
-    selectedId: selectedAudioOutputDeviceId,
+    selectedId: outputDeviceId,
     title: "Speakers",
   },
 ]);
@@ -44,7 +43,7 @@ watch(menu, async (isOpen) => {
       </v-tooltip>
     </template>
     <StyledCard py-2 min-w-72>
-      <MessageContentCallDeviceSectionList :sections="audioDeviceSections" @select="selectDevice" />
+      <MessageContentCallDeviceSectionList :sections="audioDeviceSections" @select="setActiveDevice" />
     </StyledCard>
   </v-menu>
 </template>

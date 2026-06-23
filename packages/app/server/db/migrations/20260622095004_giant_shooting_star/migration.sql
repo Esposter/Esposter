@@ -1,0 +1,2 @@
+ALTER TABLE "message"."userSettings" DROP CONSTRAINT "user_settings_default_user_volume_percentage_check";--> statement-breakpoint
+ALTER TABLE "message"."userSettings" DROP COLUMN "defaultUserVolumePercentage";

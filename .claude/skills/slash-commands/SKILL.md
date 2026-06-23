@@ -24,10 +24,8 @@ export interface SlashCommand extends Description, ItemEntityType<SlashCommandTy
   parameters: SlashCommandParameter[];
 }
 
-// CORRECT — no params: empty array
+// no params: empty array — always present, never optional or omitted
 [SlashCommandType.Roll]: { parameters: [], ... }
-
-// WRONG — omitting the parameters field, or making it optional ❌
 ```
 
 ## Message Format
@@ -39,14 +37,12 @@ Messages use markdown via `marked.parse()`. Rich text applies: italic `*text*`, 
 `/me [message]` does NOT introduce `MessageType.Me`. Wrap the argument in `*...*` and post as a regular `MessageType.Message`:
 
 ```typescript
-// CORRECT
+// post as a regular MessageType.Message — never introduce MessageType.Me
 await createMessage({
   message: marked.parse(`*${sanitizeHtml(params.message)}*`, { async: false }),
   roomId,
   type: MessageType.Message,
 });
-
-// WRONG — unnecessary new MessageType: MessageType.Me ❌
 ```
 
 ## Parameterized Command UI
@@ -78,11 +74,7 @@ Derived from `slashCommand.parameters.length > 0`, not a separate `mode` field:
 Always use `SlashCommandType.X` enum values, never `"Me"`, `"Shrug"`, etc. Applies in `SlashCommandSuggestion.ts`, `SlashCommandParameters.vue`, and any switch over `slashCommand.type`:
 
 ```typescript
-// CORRECT
-case SlashCommandType.Me:
-
-// WRONG
-case "Me":
+case SlashCommandType.Me: // never case "Me"
 ```
 
 ## Adding a New Command

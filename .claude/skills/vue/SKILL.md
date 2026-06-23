@@ -56,10 +56,6 @@ Never leave a framework value composable (e.g. `useVDisplay`, `useRoute`) strand
 Prefer `v-model="ref"` over the split `:model-value` + `@update:model-value` whenever the update is a direct assignment to a single ref.
 
 ```vue
-<!-- WRONG — unnecessary split for a direct assignment -->
-<v-text-field :model-value="name" @update:model-value="name = $event" />
-
-<!-- CORRECT -->
 <v-text-field v-model="name" />
 ```
 
@@ -73,55 +69,15 @@ Keep the split form only when genuinely needed:
 
 ### `normalizeString` Never in Vue
 
-Never apply `normalizeString` (or any trimming) anywhere in Vue — not in `@update:model-value`, not in submit handlers. The Zod input schemas for tRPC mutations already normalize via `createNameSchema`/`createNormalizedStringSchema` (`.transform(normalizeString).pipe(...)`). Duplicating is redundant, and in `@update:model-value` actively harmful (trims mid-typing, swallows spaces).
+Never apply `normalizeString` (or any trimming) anywhere in Vue — not in `@update:model-value`, not in submit handlers. The Zod input schemas for tRPC mutations already normalize via `createNameSchema`/`createNormalizedStringSchema` (`.transform(normalizeString).pipe(...)`). Duplicating is redundant, and in `@update:model-value` actively harmful (trims mid-typing, swallows spaces). Let raw input flow through `v-model="name"`.
 
-```vue
-<!-- WRONG — trims while still typing -->
-<v-text-field :model-value="name" @update:model-value="name = normalizeString($event)" />
+Other consequences of trusting the server schema:
 
-<!-- CORRECT — raw input flows through; Zod handles normalization -->
-<v-text-field v-model="name" />
-<!-- emit('submit', name) -->
-```
+- **Validity / disabled-button checks** — use `safeParse` on the shared schema: `:disabled="!nameSchema.safeParse(name).success"`.
+- **Dirty-state comparisons** — parse both sides so normalized values compare: `topicSchema.safeParse(editedTopic).data !== storedTopic`.
+- **Submit/mutation handlers** — pass raw values; no `safeParse` guards, emptiness checks, or local normalization before mutating local state.
 
-To check validity or guard a disabled button, use the Zod schema's `safeParse` instead:
-
-```vue
-<!-- WRONG -->
-<v-btn :disabled="!normalizeString(name)" />
-<!-- CORRECT -->
-<v-btn :disabled="!nameSchema.safeParse(name).success" />
-```
-
-For dirty-state comparisons, parse both sides through the schema so normalized values are compared:
-
-```typescript
-// WRONG — compares raw input against stored normalized value
-normalizeString(editedTopic) !== storedTopic;
-// CORRECT — parse through the schema, then compare
-topicSchema.safeParse(editedTopic).data !== storedTopic;
-```
-
-`normalizeString` remains valid in non-Vue, non-form contexts (text-parsing utilities, CSV/XLSX deserialization, slash-command parsing) — anything not crossing a tRPC Zod boundary.
-
-Don't add client-side Zod validation guards in submit/mutation handlers (no `safeParse` guards, emptiness checks, or local normalization before mutating local state). Pass raw values; trust the server schema.
-
-```typescript
-// WRONG — second-guessing the server schema
-const createWord = () => {
-  const word = wordSchema.safeParse(newWord.value).data;
-  if (!word || list.value.includes(word)) return;
-  list.value = [...list.value, word];
-};
-
-// CORRECT — pass raw, let server Zod handle it
-const createWord = () => {
-  list.value = [...list.value, newWord.value];
-  newWord.value = "";
-};
-```
-
-The only acceptable client-side validation is Vuetify form field rules (inline errors) and disabled-button state driven by `safeParse().success` on a shared schema.
+The only acceptable client-side validation is Vuetify form field rules (inline errors) and disabled-button state driven by `safeParse().success` on a shared schema. `normalizeString` remains valid in non-Vue, non-form contexts (text-parsing utilities, CSV/XLSX deserialization, slash-command parsing) — anything not crossing a tRPC Zod boundary.
 
 ## Template Attribute Ordering
 
@@ -151,10 +107,7 @@ The only acceptable client-side validation is Vuetify form field rules (inline e
 - **No bare function references in `@event` bindings** — bare refs forward the event object as first arg (almost always unintended). Use `fn()` for zero-arg calls, an arrow function when args are needed:
 
   ```vue
-  <!-- CORRECT -->
   @click="onSave()" @complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"
-  <!-- WRONG — forwards Event object -->
-  @click="onSave"
   ```
 
 - **`v-for` destructuring** — destructure when properties are accessed: `v-for="{ value, icon, title } of items"` not `item.value`. Keep a full reference only when the whole object is needed (passed as prop or stored); name the loop var to match the target prop for `:propName` shorthand.
@@ -168,10 +121,7 @@ The only acceptable client-side validation is Vuetify form field rules (inline e
 When a ref is initially `undefined`, omit the argument — `ref<T>()` infers `Ref<T | undefined>`:
 
 ```typescript
-// WRONG — explicit undefined is redundant
-const callRoomId = ref<string | undefined>(undefined);
-// CORRECT
-const callRoomId = ref<string>();
+const callRoomId = ref<string>(); // not ref<string | undefined>(undefined)
 ```
 
 ## defineProps — Named `interface <ComponentName>Props`
@@ -179,18 +129,10 @@ const callRoomId = ref<string>();
 Declare a named interface suffixed `Props`, named after the component, then pass to `defineProps<...>()`. Never use an inline object-literal type or a plain `interface Props`.
 
 ```ts
-// CORRECT
 interface KnockerItemProps {
   knocker: CallParticipant;
 }
 const props = defineProps<KnockerItemProps>();
-
-// WRONG — anonymous type
-const props = defineProps<{ knocker: CallParticipant }>();
-// WRONG — generic name loses component identity
-interface Props {
-  knocker: CallParticipant;
-}
 ```
 
 Name after the component's identity (file/folder name, stripping `Index`): `PreJoin/Index.vue` → `PreJoinProps`; `JoinNotice/KnockerItem.vue` → `KnockerItemProps`.
@@ -202,10 +144,7 @@ Name after the component's identity (file/folder name, stripping `Index`): `PreJ
 - **Template refs** — always use `useTemplateRef`. Prefer no generic (Vue 3.5+ infers from the template). Never add a `Ref` suffix. Use a semantic name matching the `ref="..."` value (`"video"`, never `"videoRef"`). If a component type was imported only for the generic, remove that import.
 
   ```ts
-  // CORRECT — no generic, no "Ref" suffix
-  const video = useTemplateRef("video");
-  // Usually WRONG — redundant generic when inference works
-  const video = useTemplateRef<HTMLVideoElement>("video");
+  const video = useTemplateRef("video"); // no generic, no "Ref" suffix
   ```
 
   **Generic is justified only when template inference doesn't give the type you need**: (1) the element/component the `ref` sits on doesn't expose the property you actually want, or (2) the inferred type is an overly complex union you want to simplify.
@@ -217,15 +156,7 @@ Name after the component's identity (file/folder name, stripping `Index`): `PreJ
 - **Writable computed over watch + local ref** — when a local boolean ref is entirely derived from and writes back to a store value, replace the `ref` + `watch` with a writable `computed`:
 
   ```typescript
-  // WRONG — local ref + watch as indirect trigger
-  const isUpdateMode = ref(false);
-  watch(editingRowKey, (newEditingRowKey) => {
-    if (newEditingRowKey !== message.rowKey) return;
-    isUpdateMode.value = true;
-    editingRowKey.value = undefined;
-  });
-
-  // CORRECT — writable computed; no watch
+  // writable computed; no watch
   const isUpdateMode = computed({
     get: () => editingRowKey.value === message.rowKey,
     set: (value) => {
@@ -245,14 +176,20 @@ Branch on a type/discriminant in priority order:
 
 ## Auth Session
 
-Always pass `useFetch` to `authClient.useSession()` so better-auth uses Nuxt's SSR-aware `useFetch`:
+Two call forms, picked by context:
+
+- **Async SSR-relevant context** (component `<script setup>`, async composable, route middleware) — `await authClient.useSession(useFetch)` so better-auth fetches via Nuxt's SSR-aware `useFetch` and the session is populated during SSR/hydration. Destructure `data` and access as `session.value?.user.id`.
+- **Synchronous / client-only context** — `authClient.useSession()` (no `useFetch`, not awaited) returns a reactive ref accessed as `session.value.data?.user.id`. Required wherever you can't `await`: Pinia setup stores (synchronous) and synchronous composables; fine for client-only features (subscriptions, IndexedDB cache, WebRTC, action handlers) that never need the session at SSR time.
 
 ```ts
-// CORRECT — SSR-aware
+// async context — SSR-aware; note the destructure flips the access shape to session.value?.user.id
 const { data: session } = await authClient.useSession(useFetch);
-// WRONG — breaks SSR
-const { data: session } = await authClient.useSession();
+
+// synchronous store / client-only composable — no await possible; access session.value.data?.user.id
+const session = authClient.useSession();
 ```
+
+`useFetch` returns a promise, so it can only be passed where you can `await`. Don't make a synchronous composable `async` just to add `useFetch` unless it genuinely runs during SSR.
 
 ## Upsert Forms — Create vs Edit Mode
 
@@ -280,15 +217,6 @@ Reach for `watch` only after exhausting these:
 ### 1. Read-only derived value → `computed`
 
 ```typescript
-// WRONG — watch + local ref for read-only derivation
-const displayName = ref("");
-watchImmediate(
-  () => user.value?.name,
-  (name) => {
-    displayName.value = name ?? "";
-  },
-);
-// CORRECT
 const displayName = computed(() => user.value?.name ?? "");
 ```
 
@@ -297,31 +225,13 @@ const displayName = computed(() => user.value?.name ?? "");
 Local form state starting from a prop/store value but independently editable: initialize the `ref` directly. **Never use `watchImmediate` just to set an initial value** — always a code smell.
 
 ```typescript
-// WRONG — watchImmediate to initialize
-const selectedCategoryId = ref<null | string>(null);
-watchImmediate(
-  () => room.value?.categoryId,
-  (categoryId) => {
-    selectedCategoryId.value = categoryId ?? null;
-  },
-);
-// CORRECT — initialize directly
 const selectedCategoryId = ref(room.value?.categoryId ?? null);
 ```
 
 If the source can change externally while the form is open (e.g. real-time collaboration, an optimistic store that rolls back on failure), the local copy must **resync** when the source changes. Use VueUse's `useCloned` — never a hand-written `ref` + `watch` mirror:
 
 ```typescript
-// WRONG — manual ref + watch to mirror the source
-const selectedCategoryId = ref(room.value?.categoryId ?? null);
-watch(
-  () => room.value?.categoryId,
-  (categoryId) => {
-    selectedCategoryId.value = categoryId ?? null;
-  },
-);
-
-// CORRECT — useCloned owns the editable copy and resyncs automatically
+// useCloned owns the editable copy and resyncs automatically
 const { cloned: selectedCategoryId } = useCloned(() => room.value?.categoryId ?? null);
 ```
 
@@ -409,12 +319,7 @@ watch(throttledSearchQuery, async (newQuery) => {
 - Always use `watch` with explicit dependencies instead of `watchEffect` — implicit tracking is hard to audit and re-runs on unrelated changes. Wrap a prop dependency in a getter: `() => isActive`.
 
   ```typescript
-  // WRONG — implicit tracking
-  watchEffect(() => {
-    if (!gem.value) return;
-    gem.value.material.roughnessMap = roughnessMap.value;
-  });
-  // CORRECT — explicit dependencies
+  // explicit dependencies — not watchEffect's implicit tracking
   watch([gem, roughnessMap], ([newGem, newRoughnessMap]) => {
     if (!newGem) return;
     newGem.material.roughnessMap = newRoughnessMap;
@@ -435,13 +340,6 @@ watch(throttledSearchQuery, async (newQuery) => {
 Prefix browser-only globals with `window.` to make browser-only code explicit (won't run on server):
 
 ```typescript
-// WRONG
-document.getElementById(id);
-const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-const pc = new RTCPeerConnection({ iceServers });
-const frame = requestAnimationFrame(cb);
-
-// CORRECT
 window.document.getElementById(id);
 const stream = await window.navigator.mediaDevices.getUserMedia({ audio: true });
 const pc = new window.RTCPeerConnection({ iceServers });
@@ -455,10 +353,7 @@ Standard built-ins available in all environments (`Uint8Array`, `Map`, `Set`, `J
 Use `getIsServer()` from `@esposter/shared` to guard browser-only code. Never `import.meta.client` or `typeof window !== "undefined"` — `getIsServer()` is consistent across Nuxt, shared packages, and Azure Functions.
 
 ```typescript
-// WRONG
-if (import.meta.client) { ... }
-// CORRECT
-if (!getIsServer()) { ... }
+if (!getIsServer()) { ... } // not import.meta.client / typeof window
 
 useScript<typeof Desmos>(API_URL, {
   use: () => (getIsServer() ? undefined : window.Desmos) as typeof Desmos,

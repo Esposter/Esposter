@@ -10,10 +10,7 @@ description: Esposter tRPC conventions — procedure typing with generics, route
 Put the return type generic on the method, not as a callback return annotation. Same rule for `.mutation<T>(...)`.
 
 ```ts
-// CORRECT
 readFriends: standardAuthedProcedure.query<User[]>(async ({ ctx }) => { ... })
-// WRONG
-readFriends: standardAuthedProcedure.query(async ({ ctx }): Promise<User[]> => { ... })
 ```
 
 ## Async Procedures
@@ -47,10 +44,8 @@ readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => ctx.db.query.fri
 - **Omit optional UUID fields instead of passing `undefined`** — when the value comes from a ref defaulting to `""` (e.g. `currentRoomId`), use a conditional spread, not `|| undefined`:
 
   ```ts
-  // CORRECT — key absent when empty
+  // key absent when empty — not { roomId: currentRoomId.value || undefined }
   $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {});
-  // WRONG — passes undefined as a value
-  $trpc.room.readRooms.query({ roomId: currentRoomId.value || undefined });
   ```
 
 - **Guard required UUID fields with an early return** — add `if (!currentRoomId.value) return;` before the call rather than letting an empty string reach the UUID validator.
@@ -129,13 +124,8 @@ Three builders in `server/trpc/procedure/room/`:
 - **`if/else if` when an early-exit `if` is followed by a conditional** — if the first branch throws/returns, the next conditional must be `else if`, even when the conditions are logically independent:
 
   ```ts
-  // CORRECT
   if (inFilterRoomIds.some((value) => typeof value !== "string")) throw new TRPCError({ ... });
   else if (inFilterRoomIds.length > 0) await isMember(...);
-
-  // WRONG — two standalone ifs when first throws
-  if (inFilterRoomIds.some((value) => typeof value !== "string")) throw new TRPCError({ ... });
-  if (inFilterRoomIds.length > 0) await isMember(...);
   ```
 
 ## Blob Storage Mutations
@@ -179,9 +169,6 @@ const readRoomsInputSchema = z
 
 // CORRECT — offset: minimumSortBy=0, empty default is fine
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).prefault({});
-
-// WRONG — passing [] to cursor schema (TS error: non-empty tuple required)
-createCursorPaginationParamsSchema(sortKeySchema, []);
 ```
 
 ## Read Endpoints Must Accept Arrays (No N+1)
@@ -189,14 +176,11 @@ createCursorPaginationParamsSchema(sortKeySchema, []);
 Every `read*` procedure that may be called for multiple items **must** accept an array of IDs, not a single ID:
 
 ```ts
-// CORRECT — one request for N items; spread userIdsSchema (max baked in); chain .min(1) when required
+// one request for N items; spread userIdsSchema (max baked in); chain .min(1) when required
 export const readMemberRolesInputSchema = z.object({
   ...roomIdSchema.shape,
   userIds: userIdsSchema.shape.userIds.min(1),
 });
-
-// WRONG — forces N requests
-export const readMemberRolesInputSchema = z.object({ ...roomIdSchema.shape, ...userIdSchema.shape });
 ```
 
 Server: use `inArray(table.userId, userIds)` and include `userId` in the select so the client can group. Client: initialize all requested IDs to `[]` before grouping so users with no results are still set (clearing stale data):
@@ -218,11 +202,7 @@ const readMemberRoles = async (input: ReadMemberRolesInput) => {
 - **Always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`** — never an entity's own `PropertyNames`, never string literals:
 
   ```ts
-  // CORRECT
   { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }
-  // WRONG
-  { key: StandardMessageEntityPropertyNames.partitionKey, ... }
-  { key: "partitionKey", ... }
   ```
 
 - **Null clause helpers infer automatically — no explicit type arg:** `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, `getSearchNullClause(...)`. Never `getTableNullClause<ModerationLogEntity>(...)`.
@@ -234,10 +214,7 @@ const readMemberRoles = async (input: ReadMemberRolesInput) => {
 When a mutation emits to an event emitter and the subscription fires for **all** connected clients (including the caller — no `getIsSameDevice` filter), the subscription's `onData` handler is the single source of truth. Do NOT also call the `store*` action after the mutation returns.
 
 ```ts
-// WRONG — onUpdateRoom subscription fires for caller too; store updated twice
-const updatedRoom = await $trpc.room.updateRoom.mutate(input);
-storeUpdateRoom(updatedRoom); // ❌
-// CORRECT — let the subscription handle it
+// onUpdateRoom subscription fires for the caller too — let it handle the state change
 await $trpc.room.updateRoom.mutate(input);
 ```
 
@@ -274,12 +251,9 @@ In tests, `Promise.all([iterator.next(), mutation()])` exposes this: the mutatio
 - **Caller types always use `TRPCRouter` path notation** — never `typeof subRouter`:
 
   ```ts
-  // CORRECT
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomFilterCaller: DecorateRouterRecord<TRPCRouter["room"]["filter"]>;
   let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
-  // WRONG
-  let roomFilterCaller: DecorateRouterRecord<typeof filterRouter>;
   ```
 
 - **Name callers with domain prefix when multiple exist** — `roomCaller`, `directMessageCaller`, `knockerCaller`; never generic `caller`.

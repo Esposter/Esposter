@@ -26,16 +26,8 @@ All game object components follow the same 4-file pattern: `{Name}Configuration.
 When a configuration interface re-declares properties that exist on the Phaser game object, use `Pick<GameObjects.X, "prop1" | "prop2">` in `extends` instead of re-declaring each property individually:
 
 ```ts
-// ✅ Correct
 export interface ArcConfiguration
   extends ShapeConfiguration, Pick<GameObjects.Arc, "closePath" | "endAngle" | "radius" | "startAngle"> {}
-
-// ❌ Wrong — redundant re-declaration
-export interface ArcConfiguration extends ShapeConfiguration {
-  closePath: GameObjects.Arc["closePath"];
-  endAngle: GameObjects.Arc["endAngle"];
-  // ...
-}
 ```
 
 Keep explicit declarations only for `Parameters<GameObjects.X["method"]>` tuples and plain primitives (`number`, `string`) that are constructor args without a matching readable property.
@@ -45,11 +37,7 @@ Keep explicit declarations only for `Parameters<GameObjects.X["method"]>` tuples
 `SetterMap` types the inner setter function as returning `void`. When the setter body is a single method call that returns a value (Phaser fluent API), wrap it in braces — never use the `void` operator:
 
 ```ts
-// ✅ Correct
-x: (gameObject) => (value) => { gameObject.setX(value); },
-
-// ❌ Wrong — void operator banned
-x: (gameObject) => (value) => void gameObject.setX(value),
+x: (gameObject) => (value) => { gameObject.setX(value); }, // wrap in braces; never the void operator
 ```
 
 Multi-line setters already use braces naturally — no change needed.
@@ -61,11 +49,7 @@ Multi-line setters already use braces naturally — no change needed.
 Pinia devtools traverse store state via Vue's `traverse`. Phaser 3.85+ `Frame.get glTexture()` returns `null` before WebGL upload — crash in dev when traversed. `markRaw(obj)` sets `__v_skip = true` to skip traversal.
 
 ```ts
-// ✅ Correct — traverse-safe
-sprite.value = markRaw(newSprite);
-
-// ❌ Wrong — crashes in dev via traverse → Frame.get glTexture → null
-sprite.value = newSprite;
+sprite.value = markRaw(newSprite); // traverse-safe
 ```
 
 Any Phaser class that chains to `Scene → TextureManager → Texture → Frame → glTexture` is a risk:

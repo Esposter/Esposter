@@ -4,11 +4,9 @@ Messaging, calls, rooms, moderation, and DMs — a Discord clone.
 
 **Design rule: match Discord by default** — behaviour, structure, naming, defaults, and where each setting lives. Diverge only on visual styling (Vuetify-defined) and the infra/storage constraints below; when Discord's behaviour is unclear, note it as an open question rather than inventing. Full rule in [.claude/skills/esbabbler/SKILL.md](../../.claude/skills/esbabbler/SKILL.md). Goal: durable and polished without expensive infrastructure or undoing the Postgres / Azure Table storage split.
 
-This README is the index. Detail lives in the linked files; nothing is duplicated here.
-
 ## Now
 
-- **User-settings surface** — Discord-style fullscreen user-settings dialog (Account · Profile · Voice & Video · Notifications · Appearance · Keybinds), DB-backed via a new `userSettings` table. Surface + panels built; **migration pending** (`pnpm db:gen` + `db:up`). Gates push-to-talk, per-user volume default, and auto-idle. → [specs/user-settings.md](specs/user-settings.md), [specs/voice-video-settings.md](specs/voice-video-settings.md). Full backlog in **[roadmap.md](roadmap.md)**.
+- **User-settings surface** — Discord-style fullscreen user-settings dialog (Account · Profile · Voice & Video · Notifications · Appearance · Keybinds), DB-backed via a new `userSettings` table. Surface + panels built. The **Voice & Video** panel now mirrors Discord (devices two-up, mic/speaker volume, Input Profile noise suppression, gradient Input Sensitivity slider) and applies to live LiveKit calls (speaker volume, browser-native noise mode, native mic-gain + voice-activity gating via `MicrophoneProcessor`). **Migration generated; `db:up` pending** (`pnpm db:up`), and the live-call audio path needs real two-party verification. → [specs/user-settings.md](specs/user-settings.md), [specs/voice-video-settings.md](specs/voice-video-settings.md). Full backlog in **[roadmap.md](roadmap.md)**.
 
 ## Shipped
 

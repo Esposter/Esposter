@@ -14,11 +14,7 @@ Use `StyledButton` for primary call-to-action buttons (create, save, accept, req
 Vuetify composables are auto-imported with a `v` prefix. **Never import from `"vuetify"` directly** — they are globally available:
 
 ```typescript
-// WRONG
-import { useDisplay } from "vuetify";
-const { smAndDown } = useDisplay();
-
-// CORRECT — auto-import with v prefix
+// auto-imported with v prefix — never import { useDisplay } from "vuetify"
 const { smAndDown } = useVDisplay();
 ```
 
@@ -43,7 +39,7 @@ These variants are set globally and must **never** be repeated on individual com
 
 ## Button Conventions
 
-- **Every `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` + descriptive `text`. Applies to all buttons, including those with visible label text.
+- **Every icon-only `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` + descriptive `text` so the action is discoverable. A button with **visible label text** (`text="Remove"` or default-slot text) is self-describing and does **not** need a tooltip.
 - **`#activator` slot always first** in `v-tooltip` (and `v-menu`).
 - **Icon choice for create actions** — use the semantically specific MDI icon when available: `mdi-table-row-plus-after` (add rows), `mdi-table-column-plus-after` (add columns). Fall back to `mdi-plus` for generic create.
 
@@ -54,6 +50,40 @@ These variants are set globally and must **never** be repeated on individual com
   </template>
 </v-tooltip>
 ```
+
+## Nested Activators — `mergeProps`, Never Stacked `v-bind`
+
+When one button is the activator for **multiple** overlays (a `v-menu`/`v-dialog`/`v-hover` _and_ a `v-tooltip`), each overlay's `#activator` slot hands you its own props object. Combine them with `mergeProps(...)` from `vue` on a single `:=` — **never stack two `:=` binds** (`:="menuProps" :="tooltipProps"`). A second `v-bind` of the same key silently overrides the first, so the loser's `onClick` / `onMouseenter` / `class` is dropped; `mergeProps` chains event handlers and concatenates `class`/`style` instead.
+
+**Order: structural/outer activator(s) first, tooltip last** — e.g. `mergeProps(menuProps, tooltipProps)`, `mergeProps(dialogProps, tooltipProps)`, `mergeProps(hoverProps, tooltipProps)`, or three-way `mergeProps(tooltipActivatorProps, hoverProps, buttonProps)`.
+
+```vue
+<v-menu>
+  <template #activator="{ props: menuProps }">
+    <v-tooltip text="Options">
+      <template #activator="{ props: tooltipProps }">
+        <v-btn icon="mdi-dots-vertical" :="mergeProps(menuProps, tooltipProps)" />
+      </template>
+    </v-tooltip>
+  </template>
+</v-menu>
+```
+
+**A custom dialog/menu button that exposes an `#activator` slot should merge its own tooltip into the slot props** so consumers don't have to:
+
+```vue
+<v-dialog>
+  <template #activator="{ props: dialogProps }">
+    <v-tooltip text="Settings">
+      <template #activator="{ props: tooltipProps }">
+        <slot name="activator" :="mergeProps(dialogProps, tooltipProps)" />
+      </template>
+    </v-tooltip>
+  </template>
+</v-dialog>
+```
+
+Consumers then bind the slot scope directly (`:="activatorProps"`) — **do not** wrap such an activator in a second `v-tooltip`; it already has one.
 
 ## Icon Buttons Inside Input Slots
 
@@ -207,14 +237,15 @@ The CSS custom-property form (`var(--border-width)`) is only acceptable when a s
 
 A button and its keyboard shortcut are one component — see the **vue-component-patterns** skill (Maximal Component Granularity).
 
-## Scrollspy Sub-Nav (Two-Level List + `v-intersect` + `useVGoTo`)
+## Scrollspy Sub-Nav (Two-Level List + `useElementVisibility` + `useVGoTo`)
 
-For a settings-style surface where a sidebar tracks the section scrolled into view, reuse Vuetify's native primitives — **do not** pull in VueUse `useIntersectionObserver` or a scrollspy library:
+For a settings-style surface where a sidebar tracks the section scrolled into view:
 
 - **Two-level nav** — `v-list` with `:opened="[activeCategory]"` (controlled, so only the active category expands) + `v-list-group` per category. Sub-items render the active category's sections.
-- **Scroll tracking** — the `v-intersect` directive on each section. Use a top-of-viewport active band via `options: { rootMargin: '0px 0px -80% 0px' }` so at most one section is "intersecting" at a time; on `isIntersecting`, write the section id to shared state (a store ref).
-- **Click-to-scroll** — `useVGoTo()` (auto-imported, `v` prefix — never `import { useGoTo } from "vuetify"`). Scroll within the panel's scroll container: `goTo(element, { container: '#<scroll-container-id>' })`. Resolve the target with `document.getElementById(id)` so section ids may contain spaces (enum values), avoiding selector escaping.
-- **Click vs. scrollspy race** — set the active id immediately on click, and guard the `v-intersect` handler with an `isScrollingToSection` flag (set true before `await goTo(...)`, false after) so the animated scroll doesn't flicker the highlight through intermediate sections. The manual click-set also fixes the case where every section fits without scrolling (the band would otherwise pin the first one).
+- **Scroll tracking — `useElementVisibility` per section, active = topmost visible.** Each section reports its own visibility (`const isVisible = useElementVisibility(sectionRef)`) into a shared `Set` of visible section ids; the active section is the **first in section order that is in the set**. When the current section scrolls out of view the next visible one takes over. **Do NOT use `v-intersect` / `IntersectionObserver` for this** — the observer re-fires on _any_ layout change, so clicking a button in the content (a warning toggling, a slider expanding) reflows the page and spuriously moves the sidebar highlight. Visibility-driven topmost-selection only changes on real scroll. It also needs no `rootMargin` band math, no "only on `isIntersecting`" logic, and no bottom-edge special-casing.
+- **Keep the panel header _outside_ the scroll container**, not `sticky` inside it. Put it in a fixed bar above the scroll area (a `#header` slot on the shared content shell, which is `flex flex-col` with the scroll `div` as `flex-1`). This is what makes everything else simple: a section clipped above the scroll area is genuinely not visible, so "topmost visible" is the section sitting right under the header (header-aware for free), and `goTo` lands a section's title at the scroll-area top = below the header, with **no offset hack**. A sticky in-flow header overlaps the content and breaks both.
+- **Click-to-scroll** — `useVGoTo()` (auto-imported, `v` prefix — never `import { useGoTo } from "vuetify"`). Scroll within the panel's scroll container: `goTo(element, { container: '#<scroll-container-id>' })`. Resolve the target with `document.getElementById(id)` so section ids may contain spaces (enum values), avoiding selector escaping. The container id is still needed for this one reason (`goTo` must know the scroll element — it is not the window).
+- **Click vs. scrollspy race** — set the active id immediately on click, and guard the visibility watcher with an `isScrollingToSection` flag (true before `await goTo(...)`, false after) so the animated scroll keeps the clicked value and doesn't flicker the highlight through intermediate sections.
 
 Section identity comes from a **per-subsection enum** whose values double as titles and DOM ids (one enum per panel, e.g. `VoiceSettingsSection`); a `Record<ParentType, EnumValues[]>` map drives the sidebar sub-items. See the esbabbler `specs/user-settings.md` for the concrete wiring.
 

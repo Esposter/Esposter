@@ -45,6 +45,21 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
   const bar = parseLockfile(yaml);
   ```
 
+  - **Consecutive `//` lines are one comment block — never blank-separate them.** A multi-line explanation is a contiguous run of `//` lines with no gaps; a blank line _between_ two comment lines splits one thought into two and is wrong. This is the same rule as "no blank line after a comment" applied to a comment that is itself the next line.
+
+    ```ts
+    // CORRECT — one contiguous block
+    // Opens a local mic and exposes the live level.
+    // No shared analyser exists to reuse here.
+    export const useThing = () => {};
+
+    // WRONG — blank line splits one comment block
+    // Opens a local mic and exposes the live level.
+
+    // No shared analyser exists to reuse here.
+    export const useThing = () => {};
+    ```
+
   - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. `vitest.configs.all` (enabled in the eslint vitest plugin config) turns on the `vitest/padding-around-*` rules, which _require_ a blank line around `describe`/`test` blocks, hooks (`beforeEach`/`afterEach`), and expect groups. A leading comment on such a block sits after that mandatory blank line, so keep it. Still tighten the comment text itself.
 
 - **Avoid unnecessary comments** — prefer descriptive names. Keep comments that explain _why_ (non-obvious decisions, disable reasons, workarounds).

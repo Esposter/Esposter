@@ -91,7 +91,7 @@ Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfi
 
 New workspace packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 
-1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"main": "dist/index.js"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`. Standard scripts: `build`, `export:gen`, `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. Add `test`/`coverage` if it has tests.
+1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"main": "dist/index.js"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`. Standard scripts: `build` (`pnpm export:gen && rolldown --config rolldown.config.ts`), `export:gen`, `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add `test`/`coverage` scripts + `vitest`/`@vitest/coverage-v8`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (see testing skill).
 2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
 3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.json"] }`.
 4. **`rolldown.config.ts`** — use `rolldownConfigurationNode` (server-only), `rolldownConfigurationBrowser` (browser/isomorphic), or a custom extension if extra externals are needed.
