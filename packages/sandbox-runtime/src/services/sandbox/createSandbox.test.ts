@@ -2,6 +2,7 @@ import type { ExecResult } from "@/models/exec/ExecResult";
 
 import { createSandbox } from "@/services/sandbox/createSandbox";
 import { spawn } from "node:child_process";
+import { constants } from "node:os";
 import { describe, expect, test } from "vitest";
 // Baseline runner: execute the command natively, bypassing the sandbox entirely. The differential
 // Gate (specs/correctness.md) asserts the sandbox produces a byte-identical ExecResult. With the
@@ -19,8 +20,8 @@ const runNative = (command: string): Promise<ExecResult> =>
       stderr += chunk.toString();
     });
     child.on("error", reject);
-    child.on("close", (code) => {
-      resolve({ exitCode: code ?? 0, stderr, stdout });
+    child.on("close", (code, signal) => {
+      resolve({ exitCode: code ?? (signal ? 128 + constants.signals[signal] : 0), stderr, stdout });
     });
   });
 
