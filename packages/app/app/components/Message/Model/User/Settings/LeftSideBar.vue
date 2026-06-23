@@ -2,7 +2,7 @@
 import type { SettingsSection } from "@/models/message/user/settings/SettingsSection";
 import type { UserSettingsType } from "@/models/message/user/UserSettingsType";
 
-import { SETTINGS_CONTENT_ID, SETTINGS_HEADER_ID } from "@/services/message/settings/constants";
+import { SETTINGS_CONTENT_ID } from "@/services/message/settings/constants";
 import { UserSettingsListItemMap } from "@/services/message/user/settings/UserSettingsListItemMap";
 import { UserSettingsSectionMap } from "@/services/message/user/settings/UserSettingsSectionMap";
 import { useUserSettingsDialogStore } from "@/store/message/user/settings/dialog";
@@ -16,12 +16,9 @@ const scrollToSection = async (section: SettingsSection) => {
   activeSectionId.value = section;
   const element = document.getElementById(section);
   if (!element) return;
-  // Offset by the sticky header height so the section title lands below it, fully visible.
-  const header = document.getElementById(SETTINGS_HEADER_ID);
-  const offset = header ? -header.offsetHeight : 0;
   isScrollingToSection.value = true;
   await withFinalizerAsync(
-    () => goTo(element, { container: `#${SETTINGS_CONTENT_ID}`, offset }),
+    () => goTo(element, { container: `#${SETTINGS_CONTENT_ID}` }),
     () => {
       isScrollingToSection.value = false;
     },
