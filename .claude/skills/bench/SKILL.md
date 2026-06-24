@@ -23,7 +23,7 @@ Benchmarks run on Vitest's built-in `bench()` (tinybench under the hood). There 
 
 `pnpm bench` (per package) = `vitest bench --run`. Nothing else to chain.
 
-From the **repo root**, `pnpm bench` = `pnpm -r --if-present run bench` — runs every package's `bench` script recursively, **sequentially** (no `--parallel`: concurrent benches contend for CPU and skew the machine-dependent numbers). Each writes its own `bench/results.{json,md}` in its own cwd.
+From the **repo root**, `pnpm bench` = `pnpm -r --if-present run bench` — runs every package's `bench` script recursively, **sequentially** (no `--parallel`: concurrent benches contend for CPU and skew the machine-dependent numbers). Each package emits the colocated `*.bench.{json,md}` files described below, beside their source.
 
 ## Output — colocated per-file JSON + Markdown
 

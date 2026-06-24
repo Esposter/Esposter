@@ -42,9 +42,7 @@ export const runNodeInProcess = ({ code }: NodeInvocation, { cwd, stdio }: ExecO
         throw new ExitSignalError(resolved);
       }) as typeof process.exit;
       if (cwd !== "") process.chdir(cwd);
-      (globalThis as { require?: NodeJS.Require }).require = createRequire(
-        resolve(cwd === "" ? process.cwd() : cwd, "[eval].js"),
-      );
+      (globalThis as { require?: NodeJS.Require }).require = createRequire(resolve(process.cwd(), "[eval].js"));
       return getResult(() => runInThisContext(code, { displayErrors: false })).match(
         // A non-Promise completion ran to the end synchronously; an async result needs an event loop we
         // Will not spin, so defer it to native. process.exitCode picks up an explicit `process.exitCode =`.

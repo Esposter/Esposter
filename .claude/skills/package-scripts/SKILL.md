@@ -41,9 +41,19 @@ All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `
 | `pnpm catalog:check`   | Verify `pnpm-workspace.yaml` catalog specifiers match the lockfile.                                                          |
 | `pnpm depcruise:graph` | Generate `dependency-graph.svg` from dependency-cruiser via `graphviz-cli`.                                                  |
 
+## Check Suite (after edits)
+
+Run before declaring work done:
+
+1. `pnpm typecheck`
+2. `pnpm lint:fix` — **only for `packages/*` (non-app)**; skip when the change touches `packages/app` (slow), leave that to CI.
+3. `pnpm test -u --run` — **only when actual code changed** (not for test-only or doc edits). `-u` refreshes snapshots, `--run` forces a single non-watch run.
+
+Test-only changes: just run the affected test file(s) — no full `test -u --run` sweep needed.
+
 ## Key Rules
 
-- **Lint locally** with `pnpm lint:fix` directly — never hand-edit to satisfy the linter. Reserve `pnpm lint`/`pnpm lint:all` for CI.
+- **Lint locally** with `pnpm lint:fix` directly (packages only, not app) — never hand-edit to satisfy the linter. Reserve `pnpm lint`/`pnpm lint:all` for CI.
 - **Windows tests run**: the old `spawn EPERM` config-startup crash is fixed via the minimal Vitest module allowlist in `packages/app/configuration/modules.ts`.
 - **Long-running** (`dev`, `build`, `test`, `typecheck`): use `run_in_background: true` (2+ min).
 - **Never use `pnpm <script> -- <args>`**: pnpm forwards the literal `--`, so trailing flags become post-`--` positionals and are dropped. Use `pnpm exec <binary> <args>` or direct args (`pnpm test -u`).

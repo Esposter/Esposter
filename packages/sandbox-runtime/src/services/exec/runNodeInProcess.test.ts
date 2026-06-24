@@ -1,4 +1,6 @@
 import { runNodeInProcess } from "@/services/exec/runNodeInProcess";
+import { realpathSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { describe, expect, test } from "vitest";
 
 describe(runNodeInProcess, () => {
@@ -8,6 +10,31 @@ describe(runNodeInProcess, () => {
     const result = runNodeInProcess({ code: "process.stdout.write(' ')" }, { cwd: "", stdio: "pipe" });
 
     expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: " " });
+  });
+
+  test("captures stderr and a zero exit code", () => {
+    expect.hasAssertions();
+
+    const result = runNodeInProcess({ code: "process.stderr.write(' ')" }, { cwd: "", stdio: "pipe" });
+
+    expect(result).toStrictEqual({ exitCode: 0, stderr: " ", stdout: "" });
+  });
+
+  test("picks up an explicit process.exitCode without a process.exit call", () => {
+    expect.hasAssertions();
+
+    const result = runNodeInProcess({ code: "process.exitCode = 5" }, { cwd: "", stdio: "pipe" });
+
+    expect(result).toStrictEqual({ exitCode: 5, stderr: "", stdout: "" });
+  });
+
+  test("changes the working directory when cwd is provided", () => {
+    expect.hasAssertions();
+
+    const cwd = tmpdir();
+    const result = runNodeInProcess({ code: "process.stdout.write(process.cwd())" }, { cwd, stdio: "pipe" });
+
+    expect(result?.stdout).toBe(realpathSync(cwd));
   });
 
   test("propagates the code passed to process.exit", () => {
