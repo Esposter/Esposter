@@ -47,7 +47,7 @@ Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roa
 
 ## Reference
 
-- [architecture.md](architecture.md) — layer map, the five layers, reuse-vs-build, the subprocess wall.
+- [architecture.md](architecture.md) — system overview diagram, layer map, the five layers, reuse-vs-build, the subprocess wall.
 - [roadmap.md](roadmap.md) — phased, checkbox backlog.
 - [specs/virtual-fs.md](specs/virtual-fs.md) — FS layer (reuse node:vfs/platformatic + one-line-swap plan).
 - [specs/exec-isolation.md](specs/exec-isolation.md) — the core: real exec + isolation backends.
