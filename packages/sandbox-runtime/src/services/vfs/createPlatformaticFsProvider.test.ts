@@ -1,6 +1,6 @@
 import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
 import { withFinalizer } from "@esposter/shared";
-import { mkdtempSync, realpathSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -66,6 +66,8 @@ describe(createPlatformaticFsProvider, () => {
         dispose();
       },
     );
+
+    expect(readFileSync(file, "utf8")).toBe("");
   });
 
   test("dispose tears down the mount so interception stops", () => {

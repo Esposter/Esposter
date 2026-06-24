@@ -26,6 +26,12 @@ describe(parseNodeInvocation, () => {
     expect(parseNodeInvocation("node index.js")).toStrictEqual({ code: "", file: "index.js" });
   });
 
+  test("returns undefined for an empty file token", () => {
+    expect.hasAssertions();
+
+    expect(parseNodeInvocation(["node", ""])).toBeUndefined();
+  });
+
   test("returns undefined for a non-node command", () => {
     expect.hasAssertions();
 

@@ -14,5 +14,7 @@ export const parseNodeInvocation = (command: readonly string[] | string): NodeIn
   if (second === "-e" || second === "--eval")
     return third !== undefined && rest.length === 0 ? { code: third, file: "" } : undefined;
   // `node <file>`: a single non-flag argument with no script args (those are not emulated yet).
-  return third === undefined && rest.length === 0 && !second.startsWith("-") ? { code: "", file: second } : undefined;
+  return third === undefined && rest.length === 0 && second !== "" && !second.startsWith("-")
+    ? { code: "", file: second }
+    : undefined;
 };
