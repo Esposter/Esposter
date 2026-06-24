@@ -3,7 +3,7 @@ import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/
 import type { Router } from "vue-router";
 
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
 import { ID_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { TableEditorHookMap } from "@/services/tableEditor/TableEditorHookMap";
 import { useTableEditorStore } from "@/store/tableEditor";

@@ -1,5 +1,7 @@
 // @vitest-environment nuxt
-import { createColumn, createDataSource, createRow } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
+import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
 import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { takeOne } from "@esposter/shared";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";

@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T02:10:34.668Z
-- Commit: b0aa40fc4
+- Date: 2026-06-24T11:00:02.510Z
+- Commit: 344dec070
 - Node: v26.3.1
-- OS: win32 10.0.26200 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 15.6 GiB
 
 ## createSandbox exec vs native baseline
 
-| task    | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
-| ------- | ------- | --------- | ------- | -------- | ------- | ------- |
-| native  | 1.00×   | 206.6438  | ±13.71% | 259.8437 | 5       | 10      |
-| sandbox | 0.93×   | 222.0466  | ±21.90% | 393.8280 | 5       | 10      |
+| task    | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
+| ------- | ------- | --------- | ------ | -------- | ------- | ------- |
+| native  | 1.00×   | 28.4537   | ±2.74% | 32.4006  | 35      | 18      |
+| sandbox | 1.03×   | 27.5763   | ±2.82% | 31.8114  | 36      | 19      |

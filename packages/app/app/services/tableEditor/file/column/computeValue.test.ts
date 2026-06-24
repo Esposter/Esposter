@@ -1,12 +1,10 @@
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import {
-  createColumn,
-  createComputedColumn,
-  createDataSource,
-  createRow,
-} from "@/composables/tableEditor/file/commands/testUtils.test";
+import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
+import { createComputedColumn } from "@/composables/tableEditor/file/commands/createComputedColumn.test";
+import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
+import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
 import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { describe, expect, test } from "vitest";
 

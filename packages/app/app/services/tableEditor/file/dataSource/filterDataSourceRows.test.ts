@@ -1,12 +1,10 @@
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import {
-  createColumn,
-  createDataSource,
-  createNumberColumn,
-  createRow,
-} from "@/composables/tableEditor/file/commands/testUtils.test";
+import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
+import { createNumberColumn } from "@/composables/tableEditor/file/commands/createNumberColumn.test";
+import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
 import { checkIsActiveColumnFilter } from "@/services/tableEditor/file/column/checkIsActiveColumnFilter";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { takeOne } from "@esposter/shared";

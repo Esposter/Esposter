@@ -3,9 +3,9 @@ import {
   benchRows1k,
   benchRows10k,
   benchRows100,
-  createBenchItem,
-  createOriginalRowValues,
-} from "@/composables/tableEditor/file/commands/testUtils.bench";
+} from "@/composables/tableEditor/file/commands/constants.bench";
+import { createBenchItem } from "@/composables/tableEditor/file/commands/createBenchItem.bench";
+import { createOriginalRowValues } from "@/composables/tableEditor/file/commands/createOriginalRowValues.bench";
 import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
 import { takeOne } from "@esposter/shared";
 import { bench, describe } from "vitest";

@@ -28,7 +28,7 @@ export const runNodeInProcess = (
   const originalStderrWrite = process.stderr.write.bind(process.stderr);
   const originalExit = process.exit;
   const originalExitCode = process.exitCode;
-  const originalRequire = (globalThis as { require?: NodeJS.Require }).require;
+  const originalRequire = globalThis.require;
   const originalCwd = cwd === "" ? "" : process.cwd();
   const baseDir = cwd === "" ? process.cwd() : cwd;
   const fs = createPlatformaticFsProvider({ overlay: true });
@@ -39,22 +39,22 @@ export const runNodeInProcess = (
   let stderr = "";
   return withFinalizer(
     () => {
-      process.stdout.write = ((chunk: unknown) => {
+      process.stdout.write = (chunk) => {
         if (isPipe) stdout += String(chunk);
-        else originalStdoutWrite(chunk as string);
+        else originalStdoutWrite(chunk);
         return true;
-      }) as typeof process.stdout.write;
-      process.stderr.write = ((chunk: unknown) => {
+      };
+      process.stderr.write = (chunk) => {
         if (isPipe) stderr += String(chunk);
-        else originalStderrWrite(chunk as string);
+        else originalStderrWrite(chunk);
         return true;
-      }) as typeof process.stderr.write;
-      process.exit = ((code?: number) => {
+      };
+      process.exit = (code) => {
         const resolved = typeof code === "number" ? code : typeof process.exitCode === "number" ? process.exitCode : 0;
         throw new ExitSignalError(resolved);
-      }) as typeof process.exit;
+      };
       if (cwd !== "") process.chdir(cwd);
-      (globalThis as { require?: NodeJS.Require }).require = require;
+      globalThis.require = require;
       fs.mount(baseDir);
       // Inline code evaluates directly; a file run resolves against the working dir and loads through
       // The mounted vfs so its modules come from virtual files (or real disk via the overlay).
@@ -81,7 +81,7 @@ export const runNodeInProcess = (
       process.stderr.write = originalStderrWrite;
       process.exit = originalExit;
       process.exitCode = originalExitCode;
-      (globalThis as { require?: NodeJS.Require }).require = originalRequire;
+      globalThis.require = originalRequire;
       if (originalCwd !== "") process.chdir(originalCwd);
       for (const key of Object.keys(require.cache)) if (!cachedBefore.has(key)) delete require.cache[key];
     },

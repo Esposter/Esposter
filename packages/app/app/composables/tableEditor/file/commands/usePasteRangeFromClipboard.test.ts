@@ -1,11 +1,9 @@
 // @vitest-environment nuxt
-import {
-  createColumn,
-  createDataSource,
-  createNumberColumn,
-  createRow,
-  setupWithDataSource,
-} from "@/composables/tableEditor/file/commands/testUtils.test";
+import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
+import { createNumberColumn } from "@/composables/tableEditor/file/commands/createNumberColumn.test";
+import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
 import { usePasteRangeFromClipboard } from "@/composables/tableEditor/file/commands/usePasteRangeFromClipboard";
 import { PasteMode } from "@/models/tableEditor/file/commands/PasteMode";
 import { useCellStore } from "@/store/tableEditor/file/cell";

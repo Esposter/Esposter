@@ -27,7 +27,7 @@ describe(formatBenchmarkMarkdown, () => {
     expect(markdown).toContain("# Benchmark results");
     expect(markdown).toContain(environment);
     expect(markdown).toContain("##  ");
-    expect(markdown).toContain("|  | 1.00× | 1.0000 | ±0.00% | 0.0000 | 1 | 0 |");
+    expect(markdown).toContain("|      | 1.00×   | 1.0000    | ±0.00% | 0.0000   | 1       | 0       |");
   });
 
   test("derives the vs-base multiplier from the native baseline, faster above 1 and slower below", () => {
@@ -52,9 +52,9 @@ describe(formatBenchmarkMarkdown, () => {
     };
     const markdown = formatBenchmarkMarkdown(grouped, environment);
 
-    expect(markdown).toContain("| native | 1.00× | 2.0000 | ±0.00% | 0.0000 | 1 | 0 |");
-    expect(markdown).toContain("|   | 2.00× | 1.0000 | ±0.00% | 0.0000 | 2 | 0 |");
-    expect(markdown).toContain("|    | 0.5× | 4.0000 | ±0.00% | 0.0000 | 0 | 0 |");
+    expect(markdown).toContain("| native | 1.00×   | 2.0000    | ±0.00% | 0.0000   | 1       | 0       |");
+    expect(markdown).toContain("|        | 2.00×   | 1.0000    | ±0.00% | 0.0000   | 2       | 0       |");
+    expect(markdown).toContain("|        | 0.5×    | 4.0000    | ±0.00% | 0.0000   | 0       | 0       |");
   });
 
   test("escapes pipe delimiters in benchmark names", () => {
@@ -72,6 +72,6 @@ describe(formatBenchmarkMarkdown, () => {
     };
     const markdown = formatBenchmarkMarkdown(escaped, environment);
 
-    expect(markdown).toContain(String.raw`|  \|  | 1.00× | 1.0000 | ±0.00% | 1.0000 | 1 | 1 |`);
+    expect(markdown).toContain(String.raw`|  \|  | 1.00×   | 1.0000    | ±0.00% | 1.0000   | 1       | 1       |`);
   });
 });

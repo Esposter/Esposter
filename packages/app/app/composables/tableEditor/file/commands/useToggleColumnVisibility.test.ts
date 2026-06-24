@@ -1,11 +1,9 @@
 // @vitest-environment nuxt
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
-import {
-  createDataSource,
-  createRow,
-  setupEditedItem,
-  setupWithDataSource,
-} from "@/composables/tableEditor/file/commands/testUtils.test";
+import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
+import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
