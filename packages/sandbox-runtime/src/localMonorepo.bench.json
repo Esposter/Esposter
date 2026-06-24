@@ -1,7 +1,7 @@
 {
   "files": [
     {
-      "filepath": "src/services/exec/localMonorepo.bench.ts",
+      "filepath": "src/localMonorepo.bench.ts",
       "groups": [
         {
           "benchmarks": [
