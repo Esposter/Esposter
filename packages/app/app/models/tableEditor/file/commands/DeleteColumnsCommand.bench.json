@@ -1,0 +1,77 @@
+{
+  "files": [
+    {
+      "filepath": "app/models/tableEditor/file/commands/DeleteColumnsCommand.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "hz": 147370.55576875937,
+              "mean": 0.0067856159921735664,
+              "name": "execute — delete 1 of 5 columns, 100 rows",
+              "p99": 0.015499999994062819,
+              "rme": 0.6822095262258864,
+              "sampleCount": 73686,
+              "sd": 0.006411261302190284
+            },
+            {
+              "hz": 20143.838849286534,
+              "mean": 0.04964297061160309,
+              "name": "execute — delete 1 of 5 columns, 1000 rows",
+              "p99": 0.10390000000188593,
+              "rme": 0.7236091805836611,
+              "sampleCount": 10072,
+              "sd": 0.018393467825714906
+            },
+            {
+              "hz": 732.9372410004768,
+              "mean": 1.3643732970028597,
+              "name": "execute — delete 1 of 5 columns, 10000 rows",
+              "p99": 4.525199999996403,
+              "rme": 6.000742738937063,
+              "sampleCount": 367,
+              "sd": 0.8002306473491844
+            },
+            {
+              "hz": 8266.245902616263,
+              "mean": 0.12097389937111604,
+              "name": "execute — delete 3 of 5 columns, 1000 rows",
+              "p99": 0.23479999999835854,
+              "rme": 0.7124294547010541,
+              "sampleCount": 4134,
+              "sd": 0.02827240223645475
+            },
+            {
+              "hz": 223.5539619697013,
+              "mean": 4.4731929203542,
+              "name": "execute — delete 3 of 5 columns, 10000 rows",
+              "p99": 9.647699999994074,
+              "rme": 8.352476476257564,
+              "sampleCount": 113,
+              "sd": 2.004269502645514
+            },
+            {
+              "hz": 1524.8420349588368,
+              "mean": 0.6558056356486756,
+              "name": "undo — restore 1 column into 1000 rows",
+              "p99": 1.2789999999949941,
+              "rme": 1.3744914298427848,
+              "sampleCount": 763,
+              "sd": 0.12703499603476864
+            },
+            {
+              "hz": 105.43396720367019,
+              "mean": 9.48460943396228,
+              "name": "undo — restore 3 columns into 10000 rows",
+              "p99": 13.733200000002398,
+              "rme": 3.2470687102799474,
+              "sampleCount": 53,
+              "sd": 1.1170129729062017
+            }
+          ],
+          "fullName": "DeleteColumnsCommand"
+        }
+      ]
+    }
+  ]
+}

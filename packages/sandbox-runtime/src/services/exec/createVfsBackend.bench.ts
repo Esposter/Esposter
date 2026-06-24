@@ -5,7 +5,8 @@ import { bench, describe } from "vitest";
 // In-process runner exists to win: vfs evaluates the code in this process (microseconds) while native
 // Pays full node process startup (tens of ms) per call. The fall-back path runs a command vfs cannot
 // Handle (`node -p`) through both backends to confirm the parse-and-delegate adds ~no overhead — a
-// Backend that taxed the commands it punts on would be a net loss. Compare runs against bench/results.
+// Backend that taxed the commands it punts on would be a net loss. Compare runs against the colocated
+// createVfsBackend.bench.md.
 const EVAL_COMMAND = `node -e "process.stdout.write('bench')"`;
 const FALLBACK_COMMAND = `node -p "1 + 1"`;
 const native = createNativeBackend();

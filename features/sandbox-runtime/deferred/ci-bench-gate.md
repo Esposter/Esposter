@@ -12,4 +12,4 @@ The first real backend lands — `vfs` (Phase 1) — so a regression or divergen
 
 ## Cheaper interim
 
-`pnpm bench` writes a committed `packages/sandbox-runtime/bench/results.md` (environment metadata + latency stats). Regenerate it before committing and diff the ratio — a manual, zero-infra version of the regression gate that already tracks perf over time.
+`pnpm bench` writes committed colocated per-file `*.bench.md` (environment + commit metadata + latency stats with a `vs base` multiplier) beside each bench. Regenerate before committing and diff the multipliers — a manual, zero-infra version of the regression gate that already tracks perf over time.

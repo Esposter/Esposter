@@ -1,0 +1,55 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/exec/createVfsBackend.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "hz": 6.405211895298358,
+              "mean": 156.12285999999997,
+              "name": "native",
+              "p99": 182.40689999999995,
+              "rme": 7.608913274234134,
+              "sampleCount": 10,
+              "sd": 16.60720443871673
+            },
+            {
+              "hz": 32637.40858975742,
+              "mean": 0.03063968750000052,
+              "name": "vfs",
+              "p99": 0.0909999999998945,
+              "rme": 2.8131598368943562,
+              "sampleCount": 16320,
+              "sd": 0.05618013077452052
+            }
+          ],
+          "fullName": "createVfsBackend — in-process node -e vs native spawn (hot path)"
+        },
+        {
+          "benchmarks": [
+            {
+              "hz": 7.202789496316125,
+              "mean": 138.83510000000015,
+              "name": "native",
+              "p99": 144.48530000000028,
+              "rme": 2.1431921741522526,
+              "sampleCount": 10,
+              "sd": 4.1597553752862275
+            },
+            {
+              "hz": 6.890848952590956,
+              "mean": 145.12000000000006,
+              "name": "vfs",
+              "p99": 155.54510000000118,
+              "rme": 2.3292695973365323,
+              "sampleCount": 10,
+              "sd": 4.725572464321989
+            }
+          ],
+          "fullName": "createVfsBackend — fall-back command vs native (no added overhead)"
+        }
+      ]
+    }
+  ]
+}
