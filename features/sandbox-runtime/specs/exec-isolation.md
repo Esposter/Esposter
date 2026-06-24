@@ -18,8 +18,8 @@ Two pluggable backends behind one `ExecBackend` interface. The orchestrator pick
 
 Makes **every** process (including spawned native binaries) see the RAM FS, by moving the FS and isolation down to the OS:
 
-- **RAM filesystem**: `overlayfs` with `lowerdir` = source (read-only), `upperdir` = `tmpfs` (RAM, read-write). Reads hit the real source; all writes (`node_modules`, build output) stay in RAM.
-- **Isolation**: run the process tree inside a sandbox so it only sees the overlay. Evaluation order: `bubblewrap` (rootless, simplest) → `nsjail` → rootless `runc` → Firecracker microVM (strongest, for untrusted/multi-tenant).
+- **RAM filesystem** _(realized, Step A)_: `bubblewrap` supplies it directly — `--overlay-src <cwd>` is the read-only lower (source) and `--tmp-overlay <cwd>` overmounts the working dir with an overlay whose upper is an invisible `tmpfs` (RAM). Reads hit the real source; all writes (`node_modules`, build output) stay in RAM. No manual `overlayfs`/`tmpfs` root mounts and no CRIU needed for the core.
+- **Isolation** _(realized, Step A)_: `bubblewrap` chosen — one unprivileged tool collapses overlay + tmpfs + namespaces (`--unshare-all`, `--die-with-parent`). `nsjail` → rootless `runc` → Firecracker microVM (strongest, for untrusted/multi-tenant) stay deferred. Unlike `vfs`, the `os` backend never falls back to native: an unsupported host (non-Linux / no bubblewrap) throws, because a silent un-isolated run would be a wrong answer disguised as success.
 - **Dep store**: shared content-addressable store on the host, hardlinked into each sandbox's store so deps download once.
 - **Host bridge**: on Windows/macOS the backend runs inside WSL2 / a microVM; the orchestrator talks to it over a thin RPC.
 
@@ -34,14 +34,16 @@ Makes **every** process (including spawned native binaries) see the RAM FS, by m
 
 ## Key Files
 
-Realized (`vfs` + native); `os`/host-bridge rows are still planned.
+Realized (`vfs` + native + `os` Step A); the host-bridge row is still planned.
 
-| File                                   | Role                                                        |
-| -------------------------------------- | ----------------------------------------------------------- |
-| `models/exec/ExecBackend.ts`           | interface every backend implements                          |
-| `services/exec/createNativeBackend.ts` | native passthrough (the baseline + fallback)                |
-| `services/exec/createVfsBackend.ts`    | parse-and-delegate: in-process when recognised, else native |
-| `services/exec/parseNodeInvocation.ts` | recognise `node -e`/`--eval` and `node <file>`              |
-| `services/exec/runNodeInProcess.ts`    | in-process runner over the overlay-mounted FS layer         |
-| `exec/osBackend.ts` _(planned)_        | overlayfs+tmpfs+sandbox runner (Linux)                      |
-| `exec/hostBridge.ts` _(planned)_       | WSL2 / microVM RPC for non-Linux hosts                      |
+| File                                    | Role                                                        |
+| --------------------------------------- | ----------------------------------------------------------- |
+| `models/exec/ExecBackend.ts`            | interface every backend implements                          |
+| `services/exec/createNativeBackend.ts`  | native passthrough (the baseline + fallback)                |
+| `services/exec/createVfsBackend.ts`     | parse-and-delegate: in-process when recognised, else native |
+| `services/exec/parseNodeInvocation.ts`  | recognise `node -e`/`--eval` and `node <file>`              |
+| `services/exec/runNodeInProcess.ts`     | in-process runner over the overlay-mounted FS layer         |
+| `services/exec/createOsBackend.ts`      | spawns commands inside the bwrap RAM-overlay (Linux)        |
+| `services/exec/buildBwrapArgs.ts`       | pure builder for the bwrap overlay argv                     |
+| `services/exec/isOsBackendSupported.ts` | Linux + bubblewrap availability check                       |
+| `exec/hostBridge.ts` _(planned)_        | WSL2 / microVM RPC for non-Linux hosts                      |

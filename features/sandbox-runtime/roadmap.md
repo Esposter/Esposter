@@ -13,9 +13,9 @@ Phase 0 (foundations) and Phase 1 (the `vfs` backend — FS layer + in-process `
 
 ## Phase 2 — `os` backend (the native core, Linux)
 
-- [ ] RAM filesystem: `tmpfs` + `overlayfs` (lowerdir = source RO, upperdir = tmpfs RW) → [specs/exec-isolation.md](specs/exec-isolation.md).
-- [ ] Real process exec inside an isolation primitive (`bubblewrap` first; evaluate `nsjail` / rootless `runc`).
-- [ ] Verify the wall is broken: `pnpm install` + a native postinstall (sharp/esbuild) runs fully in RAM, isolated.
+- [x] RAM filesystem: supplied by `bubblewrap --overlay-src` (lowerdir = source RO) + `--tmp-overlay` (upperdir = tmpfs RW) in one unprivileged tool — no manual `tmpfs`/`overlayfs` root mounts → [specs/exec-isolation.md](specs/exec-isolation.md).
+- [x] Real process exec inside an isolation primitive — `bubblewrap` chosen (rootless; collapses overlay + tmpfs + namespaces into one tool); `nsjail` / rootless `runc` / Firecracker stay deferred. Step A wraps any command in the bwrap RAM-overlay, reusing the native spawn/capture plumbing.
+- [ ] Verify the wall is broken: `pnpm install` + a native postinstall (sharp/esbuild) runs fully in RAM, isolated (Step B; Step A already proves the wall on coreutils).
 - [ ] Shared content-addressable dep store, hardlinked across sandboxes.
 - [ ] WSL2 bridge so the backend is reachable from Windows/macOS hosts.
 

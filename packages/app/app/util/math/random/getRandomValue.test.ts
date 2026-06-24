@@ -12,16 +12,16 @@ describe(getRandomValue, () => {
   test("fails for empty values", () => {
     expect.hasAssertions();
 
-    expect(() => getRandomValue("")).toThrow(
-      new InvalidOperationError(Operation.Read, getRandomValue.name, "cannot pick random value from empty values"),
+    expect(() => getRandomValue("")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getRandomValue.name, "cannot pick random value from empty values").message}]`,
     );
   });
 
   test("fails for empty array", () => {
     expect.hasAssertions();
 
-    expect(() => getRandomValue([])).toThrow(
-      new InvalidOperationError(Operation.Read, getRandomValue.name, "cannot pick random value from empty values"),
+    expect(() => getRandomValue([])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getRandomValue.name, "cannot pick random value from empty values").message}]`,
     );
   });
 });

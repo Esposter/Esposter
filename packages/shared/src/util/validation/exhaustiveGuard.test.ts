@@ -9,8 +9,8 @@ describe(exhaustiveGuard, () => {
 
     const value = "" as never;
 
-    expect(() => exhaustiveGuard(value)).toThrow(
-      new InvalidOperationError(Operation.Read, exhaustiveGuard.name, JSON.stringify(value)),
+    expect(() => exhaustiveGuard(value)).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, exhaustiveGuard.name, JSON.stringify(value)).message}]`,
     );
   });
 });
