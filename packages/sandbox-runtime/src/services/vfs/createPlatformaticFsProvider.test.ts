@@ -31,6 +31,7 @@ describe(createPlatformaticFsProvider, () => {
         expect(fs.readFileSync("/mnt/data.txt", "utf8")).toBe(" ");
 
         writeFile("/mnt/index.js", 'module.exports = require("node:fs").readFileSync("/mnt/data.txt", "utf8")');
+
         // oxlint-disable-next-line import/no-absolute-path -- absolute mount path is the point: verifies the VFS module loader resolves mounted files
         expect(require("/mnt/index.js")).toBe(" ");
       },

@@ -11,10 +11,11 @@ import { runNodeInProcess } from "@/services/exec/runNodeInProcess";
 export const createVfsBackend = (): ExecBackend => {
   const native = createNativeBackend();
   return {
-    exec: async (command, options) => {
+    exec: (command, options) => {
       const invocation = parseNodeInvocation(command);
       if (!invocation) return native.exec(command, options);
-      return runNodeInProcess(invocation, options) ?? native.exec(command, options);
+      const result = runNodeInProcess(invocation, options);
+      return result ? Promise.resolve(result) : native.exec(command, options);
     },
     name: "vfs",
   };

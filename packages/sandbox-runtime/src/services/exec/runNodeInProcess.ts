@@ -2,7 +2,7 @@ import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
 import type { NodeInvocation } from "@/models/exec/NodeInvocation";
 
-import { ExitSignal } from "@/models/exec/ExitSignal";
+import { ExitSignalError } from "@/models/exec/ExitSignalError";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
@@ -20,7 +20,7 @@ export const runNodeInProcess = ({ code }: NodeInvocation, { cwd, stdio }: ExecO
   const originalStderrWrite = process.stderr.write.bind(process.stderr);
   const originalExit = process.exit;
   const originalExitCode = process.exitCode;
-  const originalRequire = (globalThis as { require?: NodeRequire }).require;
+  const originalRequire = (globalThis as { require?: NodeJS.Require }).require;
   const originalCwd = cwd === "" ? "" : process.cwd();
   const isPipe = stdio === "pipe";
   let stdout = "";
@@ -39,10 +39,10 @@ export const runNodeInProcess = ({ code }: NodeInvocation, { cwd, stdio }: ExecO
       }) as typeof process.stderr.write;
       process.exit = ((code?: number) => {
         const resolved = typeof code === "number" ? code : typeof process.exitCode === "number" ? process.exitCode : 0;
-        throw new ExitSignal(resolved);
+        throw new ExitSignalError(resolved);
       }) as typeof process.exit;
       if (cwd !== "") process.chdir(cwd);
-      (globalThis as { require?: NodeRequire }).require = createRequire(
+      (globalThis as { require?: NodeJS.Require }).require = createRequire(
         resolve(cwd === "" ? process.cwd() : cwd, "[eval].js"),
       );
       return getResult(() => runInThisContext(code, { displayErrors: false })).match(
@@ -55,7 +55,7 @@ export const runNodeInProcess = ({ code }: NodeInvocation, { cwd, stdio }: ExecO
         // A clean process.exit(n) is reproduced; any other throw defers to native, which emits node's
         // Exact stderr/exit code rather than an approximation that would diverge from the baseline.
         (error): ExecResult | undefined =>
-          error instanceof ExitSignal ? { exitCode: error.code, stderr, stdout } : undefined,
+          error instanceof ExitSignalError ? { exitCode: error.code, stderr, stdout } : undefined,
       );
     },
     () => {
@@ -63,7 +63,7 @@ export const runNodeInProcess = ({ code }: NodeInvocation, { cwd, stdio }: ExecO
       process.stderr.write = originalStderrWrite;
       process.exit = originalExit;
       process.exitCode = originalExitCode;
-      (globalThis as { require?: NodeRequire }).require = originalRequire;
+      (globalThis as { require?: NodeJS.Require }).require = originalRequire;
       if (originalCwd !== "") process.chdir(originalCwd);
     },
   );

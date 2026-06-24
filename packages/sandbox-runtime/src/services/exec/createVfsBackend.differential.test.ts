@@ -1,6 +1,7 @@
 import { createNativeBackend } from "@/services/exec/createNativeBackend";
 import { createVfsBackend } from "@/services/exec/createVfsBackend";
 import { describe, expect, test } from "vitest";
+
 // The correctness gate for the vfs backend: every command must produce the identical observable
 // Result (exit code + stdout + stderr) whether run natively or through vfs. The in-process path is
 // Where vfs can diverge, so it carries the corpus; the fall-through cases prove routing a command vfs

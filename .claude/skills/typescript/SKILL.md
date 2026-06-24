@@ -300,6 +300,7 @@ Prefer `undefined` for all absent/optional values in app-owned code. `null` is o
 - Uninitialised state, optional params, absent returns are all `undefined`.
 - Never `?? null` — if the left side is already `T | undefined`, drop the fallback.
 - `.nullable()` is **BANNED** in app-owned Zod schemas — use `.optional()`.
+- **Test object presence with a truthiness check, not `=== undefined`/`!== undefined`.** For an `Object | undefined` (or `| null`) value, the absent form is falsy, so `result ? Promise.resolve(result) : fallback` and `if (!entity) return` read cleaner than an explicit `=== undefined` comparison. Reserve explicit `=== undefined` for the rare value whose falsy members (`0`, `""`, `false`) are valid and must be distinguished from absent — but app-owned strings use the `""` sentinel and are compared with `=== ""`, not truthiness.
 
 **External boundary — keep `null` where required:**
 
