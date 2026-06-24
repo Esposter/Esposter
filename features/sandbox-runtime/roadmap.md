@@ -26,9 +26,12 @@ These run from the first backend onward, not as a phase. A change that fails eit
 - [x] Wrap `@platformatic/vfs` behind our `FsProvider` interface; the single adapter import doubles as the `node:vfs` swap shim → [specs/virtual-fs.md](specs/virtual-fs.md).
 - [x] Tests (cross-platform, incl. Windows + node 26): in-memory read/write/exists/mkdir; mount → global `require`/`fs` serve virtual files; dispose tears down. Contract: mount the prefix first, then read/write prefixed paths.
 
-### Step B1 — in-process runner (shipped)
+### Step B1 — in-process runner (implemented; pending the gates)
 
-- [x] `BackendType.Vfs` + in-process runner for `node -e`/`--eval`: a shell-aware tokenizer parses the invocation (native fallback on shell operators / other flags / file runs); inline code runs via `vm.runInThisContext` with patched global process streams + exit and an injected `require`, capturing stdout/stderr/exit-code. Falls back to native for anything not run faithfully in-process (syntax error, async result, unrecognised command), so the observable result always matches baseline. Wired into `backendFactories`.
+- [x] `BackendType.Vfs` + in-process runner for `node -e`/`--eval`: a shell-aware tokenizer parses the invocation (native fallback on shell operators / other flags / file runs); inline code runs via `vm.runInThisContext` with patched global process streams + exit and an injected `require`, capturing stdout/stderr/exit-code. Falls back to native for anything not run faithfully in-process (syntax error, async result, unrecognised command). Wired into `backendFactories`.
+- [ ] **Gate it before calling it shipped** (this is where the continuous gates first bite — a backend can now regress):
+  - [ ] Differential test: same command run native vs vfs → identical `ExecResult` (exit/stdout/stderr) across a `node -e` corpus, incl. fall-through commands. → [specs/correctness.md](specs/correctness.md)
+  - [ ] Bench vfs in-process `node -e` vs native spawn (the hot path), plus a fall-back command (assert vfs ≈ native, ~0 overhead) and a native-baseline sanity pass; record in [bench/results.md](../../packages/sandbox-runtime/bench/results.md). Any path not faster than native gets cut. → [specs/benchmarking.md](specs/benchmarking.md)
 
 ### Step B2 — FS integration + correctness (next)
 
