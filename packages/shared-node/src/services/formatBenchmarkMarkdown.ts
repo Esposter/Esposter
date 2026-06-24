@@ -1,13 +1,12 @@
-import type { BenchmarkResult } from "@/models/BenchmarkResult";
-
 import type { BenchmarkReport } from "@/models/BenchmarkReport";
+import type { BenchmarkResult } from "@/models/BenchmarkResult";
 // The baseline each group's `vs base` multiplier is measured against: the task named "native" when the
 // Group has one (the host-baseline benches), otherwise the first declared task. Mirrors how bench files
 // List the baseline first.
 const getBaseline = (benchmarks: BenchmarkResult[]): BenchmarkResult | undefined =>
   benchmarks.find(({ name }) => name === "native") ?? benchmarks[0];
-// baseline / row mean → a throughput multiplier: baseline reads 1.00×, faster tasks > 1, slower < 1.
-// toPrecision keeps significant digits for sub-1 ratios so a 200×-slower task never collapses to 0.00×.
+// Baseline / row mean → a throughput multiplier: baseline reads 1.00×, faster tasks > 1, slower < 1.
+// ToPrecision keeps significant digits for sub-1 ratios so a 200×-slower task never collapses to 0.00×.
 const formatRelative = (baselineMean: number, mean: number): string => {
   const ratio = baselineMean / mean;
   return `${ratio >= 1 ? ratio.toFixed(2) : Number(ratio.toPrecision(2))}×`;
