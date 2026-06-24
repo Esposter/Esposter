@@ -15,7 +15,7 @@ Phase 0 (foundations) and Phase 1 (the `vfs` backend — FS layer + in-process `
 
 - [x] RAM filesystem: supplied by `bubblewrap --overlay-src` (lowerdir = source RO) + `--tmp-overlay` (upperdir = tmpfs RW) in one unprivileged tool — no manual `tmpfs`/`overlayfs` root mounts → [specs/exec-isolation.md](specs/exec-isolation.md).
 - [x] Real process exec inside an isolation primitive — `bubblewrap` chosen (rootless; collapses overlay + tmpfs + namespaces into one tool); `nsjail` / rootless `runc` / Firecracker stay deferred. Step A wraps any command in the bwrap RAM-overlay, reusing the native spawn/capture plumbing.
-- [x] Verify the wall is broken (Step B): a real `pnpm install` of this monorepo's full dependency closure (manifest-mirror corpus) + a native binary (esbuild) runs fully in RAM, isolated — host disk untouched → [specs/exec-isolation.md](specs/exec-isolation.md). Speed measured against the native baseline over the real workspace corpus (install / typecheck / build / test); see `src/services/exec/localMonorepo.bench.md`.
+- [x] Verify the wall is broken (Step B): a real `pnpm install` of this monorepo's full dependency closure (manifest-mirror corpus) + a native binary (esbuild) runs fully in RAM, isolated — host disk untouched → [specs/exec-isolation.md](specs/exec-isolation.md). Speed measured against the native baseline over the real workspace corpus (install / typecheck / build / test); see `src/localMonorepo.bench.md`.
 - [ ] Shared content-addressable dep store, hardlinked across sandboxes.
 - [ ] WSL2 bridge so the backend is reachable from Windows/macOS hosts.
 
