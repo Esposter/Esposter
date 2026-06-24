@@ -3,6 +3,7 @@ import type { ExecResult } from "@/models/exec/ExecResult";
 import type { NodeInvocation } from "@/models/exec/NodeInvocation";
 
 import { ExitSignal } from "@/models/exec/ExitSignal";
+import { getResult, withFinalizer } from "@esposter/shared";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import process from "node:process";
@@ -10,9 +11,10 @@ import { runInThisContext } from "node:vm";
 // Run inline node code in the current process so it shares the (vfs-patched, Step B2) module loader
 // And core fs instead of spawning a child. Captures stdout/stderr/exit when stdio is "pipe" and
 // Streams live for "inherit", matching the native backend. Returns undefined when the code can't be
-// Run faithfully in-process — a compile error (e.g. top-level await), or an async result we will not
-// Wait on — so the caller falls back to native and the observable result always matches baseline.
-// Runs serially: it temporarily patches global process streams, exit, and require, restored in finally.
+// Run faithfully in-process — a compile error (e.g. top-level await), an uncaught error whose stderr
+// We won't reproduce byte-for-byte, or an async result we won't wait on — so the caller falls back to
+// Native and the observable result always matches baseline. Runs serially: it temporarily patches the
+// Global process streams, exit, and require inside withFinalizer, restored whether the run throws or not.
 export const runNodeInProcess = ({ code }: NodeInvocation, { cwd, stdio }: ExecOptions): ExecResult | undefined => {
   const originalStdoutWrite = process.stdout.write.bind(process.stdout);
   const originalStderrWrite = process.stderr.write.bind(process.stderr);
@@ -23,48 +25,46 @@ export const runNodeInProcess = ({ code }: NodeInvocation, { cwd, stdio }: ExecO
   const isPipe = stdio === "pipe";
   let stdout = "";
   let stderr = "";
-  let exitCode = 0;
-  let fellBack = false;
-  try {
-    process.stdout.write = ((chunk: unknown) => {
-      if (isPipe) stdout += String(chunk);
-      else originalStdoutWrite(chunk as string);
-      return true;
-    }) as typeof process.stdout.write;
-    process.stderr.write = ((chunk: unknown) => {
-      if (isPipe) stderr += String(chunk);
-      else originalStderrWrite(chunk as string);
-      return true;
-    }) as typeof process.stderr.write;
-    process.exit = ((code?: number) => {
-      const resolved = typeof code === "number" ? code : typeof process.exitCode === "number" ? process.exitCode : 0;
-      throw new ExitSignal(resolved);
-    }) as typeof process.exit;
-    if (cwd !== "") process.chdir(cwd);
-    (globalThis as { require?: NodeRequire }).require = createRequire(
-      resolve(cwd === "" ? process.cwd() : cwd, "[eval].js"),
-    );
-    try {
-      const result: unknown = runInThisContext(code, { displayErrors: false });
-      if (result instanceof Promise) fellBack = true;
-      else exitCode = typeof process.exitCode === "number" ? process.exitCode : 0;
-    } catch (error) {
-      if (error instanceof ExitSignal) exitCode = error.code;
-      else if (error instanceof SyntaxError) fellBack = true;
-      else {
-        const message = error instanceof Error ? `${error.stack ?? error.message}\n` : `${String(error)}\n`;
-        if (isPipe) stderr += message;
-        else originalStderrWrite(message);
-        exitCode = 1;
-      }
-    }
-  } finally {
-    process.stdout.write = originalStdoutWrite;
-    process.stderr.write = originalStderrWrite;
-    process.exit = originalExit;
-    process.exitCode = originalExitCode;
-    (globalThis as { require?: NodeRequire }).require = originalRequire;
-    if (originalCwd !== "") process.chdir(originalCwd);
-  }
-  return fellBack ? undefined : { exitCode, stderr, stdout };
+  return withFinalizer(
+    () => {
+      process.stdout.write = ((chunk: unknown) => {
+        if (isPipe) stdout += String(chunk);
+        else originalStdoutWrite(chunk as string);
+        return true;
+      }) as typeof process.stdout.write;
+      process.stderr.write = ((chunk: unknown) => {
+        if (isPipe) stderr += String(chunk);
+        else originalStderrWrite(chunk as string);
+        return true;
+      }) as typeof process.stderr.write;
+      process.exit = ((code?: number) => {
+        const resolved = typeof code === "number" ? code : typeof process.exitCode === "number" ? process.exitCode : 0;
+        throw new ExitSignal(resolved);
+      }) as typeof process.exit;
+      if (cwd !== "") process.chdir(cwd);
+      (globalThis as { require?: NodeRequire }).require = createRequire(
+        resolve(cwd === "" ? process.cwd() : cwd, "[eval].js"),
+      );
+      return getResult(() => runInThisContext(code, { displayErrors: false })).match(
+        // A non-Promise completion ran to the end synchronously; an async result needs an event loop we
+        // Will not spin, so defer it to native. process.exitCode picks up an explicit `process.exitCode =`.
+        (value): ExecResult | undefined =>
+          value instanceof Promise
+            ? undefined
+            : { exitCode: typeof process.exitCode === "number" ? process.exitCode : 0, stderr, stdout },
+        // A clean process.exit(n) is reproduced; any other throw defers to native, which emits node's
+        // Exact stderr/exit code rather than an approximation that would diverge from the baseline.
+        (error): ExecResult | undefined =>
+          error instanceof ExitSignal ? { exitCode: error.code, stderr, stdout } : undefined,
+      );
+    },
+    () => {
+      process.stdout.write = originalStdoutWrite;
+      process.stderr.write = originalStderrWrite;
+      process.exit = originalExit;
+      process.exitCode = originalExitCode;
+      (globalThis as { require?: NodeRequire }).require = originalRequire;
+      if (originalCwd !== "") process.chdir(originalCwd);
+    },
+  );
 };

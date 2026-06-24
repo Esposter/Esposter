@@ -13,6 +13,6 @@ describe("@esposter/sandbox-runtime", () => {
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 4.54 KB (4653 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 4.56 KB (4667 bytes)"`);
   });
 });

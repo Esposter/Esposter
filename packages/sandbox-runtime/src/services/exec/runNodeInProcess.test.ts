@@ -18,13 +18,10 @@ describe(runNodeInProcess, () => {
     expect(result).toStrictEqual({ exitCode: 3, stderr: "", stdout: "" });
   });
 
-  test("reports exit code 1 for an uncaught error", () => {
+  test("falls back (undefined) on an uncaught error so native emits the canonical stderr", () => {
     expect.hasAssertions();
 
-    const result = runNodeInProcess({ code: "throw new Error('')" }, { cwd: "", stdio: "pipe" });
-
-    expect(result?.exitCode).toBe(1);
-    expect(result?.stdout).toBe("");
+    expect(runNodeInProcess({ code: "throw new Error('')" }, { cwd: "", stdio: "pipe" })).toBeUndefined();
   });
 
   test("exposes require to the in-process code", () => {
