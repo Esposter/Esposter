@@ -7,7 +7,7 @@ const { isPoppedOut } = storeToRefs(mediaStore);
 
 <template>
   <div pb-2 flex shrink-0 justify-center>
-    <StyledCard px-3 py-1 rd-full flex gap-x-1 items-center overflow-visible="!">
+    <StyledCard px-3 py-1 rd-full flex flex-wrap gap-1 max-w-full items-center justify-center overflow-visible="!">
       <MessageContentCallAudioMuteButton />
       <MessageContentCallCameraButton />
       <MessageContentCallScreenShareButton />
