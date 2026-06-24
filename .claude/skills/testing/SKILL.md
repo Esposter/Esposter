@@ -302,7 +302,7 @@ describe(useMyComposable, () => {
 
 ## Type-Level Tests (.test-d.ts)
 
-- **Placement** — co-locate beside the type file.
+- **Placement** — colocate beside the type file.
 - **`describe` string** — `"{camelCaseName} type"`.
 - **`test` descriptions** — enum value or type arg directly.
 - **Assertion** — always `expectTypeOf(...).toEqualTypeOf<ExpectedType>()`.
@@ -314,5 +314,5 @@ describe(useMyComposable, () => {
 Shared test helpers live in `.test.ts` files (and bench helpers in `.bench.ts`) — both suffixes are excluded from the published barrel by `ctix` and from the `tsgo` build, so they never ship. The file-organisation rules apply unchanged: **one function per file, named after the function**, never a `testUtils`-style grab-bag.
 
 - **One helper function per file** — `createRow.test.ts` exports only `createRow`, `createWorkspaceCorpus.test.ts` only `createWorkspaceCorpus`. Follow the `create*` prefix convention for factories/builders. Cross-helper reuse is a normal import (`setupWithDataSource.test.ts` imports `createDataSource.test`).
-- **Shared constants/fixtures go in `constants.test.ts` / `constants.bench.ts`** — the test/bench equivalent of the `constants.ts` exception (see the `file-organization` skill). Group module-level fixture data here (e.g. derived bench data sources) instead of one trivial file per constant. A seed constant that a helper function is built around may co-locate with that function when grouping it in `constants.*` would create a circular import (the derived fixtures call the generator at module init).
+- **Shared constants/fixtures go in `constants.test.ts` / `constants.bench.ts`** — the test/bench equivalent of the `constants.ts` exception (see the `file-organization` skill). Group module-level fixture data here (e.g. derived bench data sources) instead of one trivial file per constant. A seed constant that a helper function is built around may colocate with that function when grouping it in `constants.*` would create a circular import (the derived fixtures call the generator at module init).
 - **`describe.todo` placeholder** — every helper-only `.test.ts` ends with `describe.todo("<fileName>")` (the function/file name, e.g. `describe.todo("createRow")`) so Vitest accepts the file without a real suite. Bench helper files (`.bench.ts`, `constants.bench.ts`) need no placeholder — Vitest's bench runner tolerates a file with no `bench()`.

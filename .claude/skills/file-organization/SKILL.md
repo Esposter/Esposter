@@ -16,9 +16,9 @@ description: Esposter file and folder organisation — one export per file, no e
 
 ## Files and Exports
 
-- **One export per file** — each exported function, class, or interface in its own file. Exception: Zod schemas may co-locate with their interface/type (tightly coupled).
+- **One export per file** — each exported function, class, or interface in its own file. Exception: Zod schemas may colocate with their interface/type (tightly coupled).
 - **Enums and shared model schemas get their own files** — exported enums, discriminated-union variants, payload types, and reusable Zod schemas belong in `models/` (or the relevant shared model folder), one named concern per file. Don't define an enum/reusable payload schema inside a Drizzle table file just because that table is the first consumer. Schema files import model enums/types/schemas and only define the table plus table-derived select schema/type.
-- **Co-locate single-use event/hook map types** — when an event/hook map interface (e.g. `AdminActionHookMap`, `MessageHookMap`) is imported only by its own service file (which creates the singleton), define the interface in the service file rather than a separate `models/` file. The service exports the instance; consumers import the instance, not the type. Do **not** apply to general type maps (`ColumnTypeColumnMap`, `DataSourceConfigurationTypeMap`) — those stay in `models/` regardless of consumer count.
+- **Colocate single-use event/hook map types** — when an event/hook map interface (e.g. `AdminActionHookMap`, `MessageHookMap`) is imported only by its own service file (which creates the singleton), define the interface in the service file rather than a separate `models/` file. The service exports the instance; consumers import the instance, not the type. Do **not** apply to general type maps (`ColumnTypeColumnMap`, `DataSourceConfigurationTypeMap`) — those stay in `models/` regardless of consumer count.
 - **Interfaces go in `models/`** — never define an exported interface inline in a `.vue` component. Extract to `app/models/<feature>/InterfaceName.ts` (app-local) or `shared/models/<feature>/InterfaceName.ts` (cross-package) for reuse.
 - **One class per file** — classes belong in a `models/` folder.
 - **Never use `export { }` syntax** — always inline `export const`/`class`/`interface`/`type`/`function` at the declaration site. Only valid exceptions: empty `export {}` in `.d.ts` files (module marker) and `ctix`-generated barrel files (pinned package). Hand-written `.ts` with `export { ... }` is wrong.
@@ -40,7 +40,7 @@ description: Esposter file and folder organisation — one export per file, no e
   - **Exception**: when consumers need optional interface fields visible after enum lookup (e.g. `Item.color` on a map where some entries omit it), use an explicit `const MapName: Record<Enum, Interface> = { ... }` annotation instead of `as const satisfies`. This widens lookup results to the shared interface while still enforcing every enum key.
 - **Reuse existing item interfaces for UI metadata maps** — when an entry is a UI display/action item with `title`, `icon`, optional `color`/`active`/`shortTitle`, use `Item` from `@/models/shared/Item` instead of re-declaring an inline shape. `Item.onClick` is optional so it covers both display-only metadata and actionable menu items. Use narrower item interfaces only when they match exactly — `SelectItemCategoryDefinition<T>` (value), `ListItemCategoryDefinition<T>` (value + icon).
 - **Destructure in `v-for` unless passing the base item as props** — `v-for="{ key, format } of ColumnStatisticsDefinitions"` preferred over `v-for="def of ..."` when only specific fields are needed. Exception: if the item itself must be passed as a prop (`<SomeCard :item="def" />`), don't destructure.
-- **One constant map per file, named after the constant** — `ColumnTypeFormSchemaMap.ts` exports only `ColumnTypeFormSchemaMap`. Never co-locate multiple maps. When a map transforms another (e.g. omitting a key), derive it: `[ColumnType.Boolean]: ColumnTypeFormSchemaMap[ColumnType.Boolean].omit({ name: true })`.
+- **One constant map per file, named after the constant** — `ColumnTypeFormSchemaMap.ts` exports only `ColumnTypeFormSchemaMap`. Never colocate multiple maps. When a map transforms another (e.g. omitting a key), derive it: `[ColumnType.Boolean]: ColumnTypeFormSchemaMap[ColumnType.Boolean].omit({ name: true })`.
 - **Generic type maps for polymorphic dispatch** — when a map associates a discriminant key (e.g. `DataSourceType`) with a type-parameterised generic, define an explicit type map first, then use a mapped type in `satisfies` for per-entry type safety without `as` casts:
   ```typescript
   // 1. Explicit type map (one file, in models/)
@@ -154,7 +154,7 @@ The alias pattern looks helpful but creates confusion: the old name stays discov
 
 - **Target 50-100 lines per file** (`.ts` and `.vue` alike) — consistently over 100 lines is a yellow flag that an extraction is overdue (helper/sub-service/model for `.ts`; slot/sub-component/composable for `.vue` — see the `vue-component-patterns` skill).
 - Each file should have a single clear responsibility. Split a file that handles multiple concerns.
-- Exceptions: generated files, large constant maps with many entries, complex/rare layout components, and files where co-location of tightly coupled logic (e.g. a Zod schema next to its interface) is intentional.
+- Exceptions: generated files, large constant maps with many entries, complex/rare layout components, and files where colocation of tightly coupled logic (e.g. a Zod schema next to its interface) is intentional.
 
 ## Line Endings
 
