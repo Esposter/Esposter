@@ -38,18 +38,16 @@
   },
   "devDependencies": {
     "@azure/data-tables": "catalog:",
-    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "@types/sanitize-html": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:",
     "type-fest": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vue": "catalog:"
   },
   "peerDependencies": {
-    "@vueuse/core": "catalog:",
-    "vue": "catalog:",
     "zod": "catalog:"
   }
 }

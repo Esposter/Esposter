@@ -1414,9 +1414,6 @@ importers:
         specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
@@ -1478,9 +1475,6 @@ importers:
         specifier: 'catalog:'
         version: 3.1.3
     devDependencies:
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
@@ -1624,9 +1618,6 @@ importers:
         specifier: 'catalog:'
         version: 8.0.3
     devDependencies:
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
@@ -1661,9 +1652,6 @@ importers:
         specifier: 'catalog:'
         version: 1.0.0-rc.2(@electric-sql/pglite@0.5.3)(@opentelemetry/api@1.9.1)(postgres@3.4.9)(valibot@1.4.1(typescript@6.0.3))(zod@4.4.3)
     devDependencies:
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
@@ -1704,9 +1692,6 @@ importers:
         specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
@@ -1747,9 +1732,6 @@ importers:
         specifier: 'catalog:'
         version: 3.247.0(typescript@6.0.3)
     devDependencies:
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
@@ -1781,9 +1763,6 @@ importers:
         specifier: 'catalog:'
         version: 1.11.21
     devDependencies:
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
@@ -1808,9 +1787,6 @@ importers:
 
   packages/shared:
     dependencies:
-      '@vueuse/core':
-        specifier: 'catalog:'
-        version: 14.3.0(vue@3.5.38(typescript@6.0.3))
       neverthrow:
         specifier: 'catalog:'
         version: 8.2.0
@@ -1820,9 +1796,6 @@ importers:
       sanitize-html:
         specifier: 'catalog:'
         version: 2.17.5
-      vue:
-        specifier: 'catalog:'
-        version: 3.5.38(typescript@6.0.3)
       zod:
         specifier: 'catalog:'
         version: 4.4.3
@@ -1830,9 +1803,6 @@ importers:
       '@azure/data-tables':
         specifier: 'catalog:'
         version: 13.3.2
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
@@ -1854,6 +1824,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.9(@opentelemetry/api@1.9.1)(@types/node@26.0.0)(@vitest/coverage-v8@4.1.9)(happy-dom@20.10.6)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.38(typescript@6.0.3)
 
   packages/shared-node:
     dependencies:
@@ -1867,9 +1840,6 @@ importers:
         specifier: 'catalog:'
         version: 4.4.3
     devDependencies:
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
@@ -1884,13 +1854,6 @@ importers:
         version: 1.1.3
 
   packages/virrun:
-    dependencies:
-      '@esposter/shared':
-        specifier: workspace:*
-        version: link:../shared
-      '@platformatic/vfs':
-        specifier: 'catalog:'
-        version: 0.4.0
     devDependencies:
       '@codspeed/vitest-plugin':
         specifier: 'catalog:'
@@ -1898,9 +1861,15 @@ importers:
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@esposter/shared-node':
         specifier: workspace:*
         version: link:../shared-node
+      '@platformatic/vfs':
+        specifier: 'catalog:'
+        version: 0.4.0
       '@types/node':
         specifier: 'catalog:'
         version: 26.0.0
@@ -1935,9 +1904,6 @@ importers:
         specifier: 'catalog:'
         version: 3.5.38(typescript@6.0.3)
     devDependencies:
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration
@@ -1978,9 +1944,6 @@ importers:
         specifier: 'catalog:'
         version: 4.0.3
     devDependencies:
-      '@codspeed/vitest-plugin':
-        specifier: 'catalog:'
-        version: 5.7.1(debug@4.4.3(supports-color@10.2.2))(tinybench@2.9.0)(vite@8.1.0(@types/node@26.0.0)(esbuild@0.28.1)(jiti@2.7.0)(sass-embedded@1.100.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vitest@4.1.9)
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../configuration

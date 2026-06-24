@@ -35,14 +35,12 @@
     "test": "vitest",
     "typecheck": "tsgo"
   },
-  "dependencies": {
-    "@esposter/shared": "workspace:*",
-    "@platformatic/vfs": "catalog:"
-  },
   "devDependencies": {
     "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
+    "@esposter/shared": "workspace:*",
     "@esposter/shared-node": "workspace:*",
+    "@platformatic/vfs": "catalog:",
     "@types/node": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:",

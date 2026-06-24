@@ -43,7 +43,6 @@
     "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
-    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "ctix": "catalog:",

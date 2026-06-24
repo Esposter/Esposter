@@ -47,7 +47,6 @@
     "typecheck": "tsgo"
   },
   "devDependencies": {
-    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@trpc/server": "catalog:",
     "ctix": "catalog:",
