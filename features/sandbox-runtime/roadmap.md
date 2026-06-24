@@ -15,7 +15,7 @@ Phase 0 (foundations) and Phase 1 (the `vfs` backend — FS layer + in-process `
 
 - [x] RAM filesystem: supplied by `bubblewrap --overlay-src` (lowerdir = source RO) + `--tmp-overlay` (upperdir = tmpfs RW) in one unprivileged tool — no manual `tmpfs`/`overlayfs` root mounts → [specs/exec-isolation.md](specs/exec-isolation.md).
 - [x] Real process exec inside an isolation primitive — `bubblewrap` chosen (rootless; collapses overlay + tmpfs + namespaces into one tool); `nsjail` / rootless `runc` / Firecracker stay deferred. Step A wraps any command in the bwrap RAM-overlay, reusing the native spawn/capture plumbing.
-- [ ] Verify the wall is broken: `pnpm install` + a native postinstall (sharp/esbuild) runs fully in RAM, isolated (Step B; Step A already proves the wall on coreutils).
+- [x] Verify the wall is broken (Step B): a real `pnpm install` of this monorepo's full dependency closure (manifest-mirror corpus) + a native binary (esbuild) runs fully in RAM, isolated — host disk untouched → [specs/exec-isolation.md](specs/exec-isolation.md). Honest baseline measured: cold install in the sandbox is ~2× slower than native (bwrap setup + the on-disk store can't be hardlinked into the RAM overlay, so it copies). The speed win is therefore deferred to warm-fork (Phase 3), not cold install.
 - [ ] Shared content-addressable dep store, hardlinked across sandboxes.
 - [ ] WSL2 bridge so the backend is reachable from Windows/macOS hosts.
 

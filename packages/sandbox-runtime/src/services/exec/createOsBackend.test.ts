@@ -22,12 +22,27 @@ describe(createOsBackend, () => {
     expect(stdout).toBe("ok\n");
   });
 
-  test.skipIf(!isOsBackendSupported())("propagates a non-zero exit code", async () => {
+  test.skipIf(!isOsBackendSupported())("propagates a non-zero exit code as a result, not a throw", async () => {
     expect.hasAssertions();
 
     const { exec } = createOsBackend();
     const { exitCode } = await exec(`exit 3`, { cwd: "", stdio: "pipe" });
 
     expect(exitCode).toBe(3);
+  });
+
+  // A command that exits non-zero is a result; a sandbox that can't even start is an error. A
+  // Non-existent overlay dir fails the mount before the command runs, so no child exit-code is
+  // Reported and the backend must reject rather than invent a result.
+  test.skipIf(!isOsBackendSupported())("rejects with a sandbox error when bubblewrap fails to set up", async () => {
+    expect.hasAssertions();
+
+    const { exec } = createOsBackend();
+
+    await expect(
+      exec(`echo hi`, { cwd: "", overlayDirs: ["/sandbox-runtime-no-such-dir"], stdio: "pipe" }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, createOsBackend.name, "bubblewrap failed to set up the sandbox").message}]`,
+    );
   });
 });

@@ -54,4 +54,34 @@ describe(buildBwrapArgs, () => {
 
     expect(args).toContain(process.cwd());
   });
+
+  test("re-adds the network namespace right after --unshare-all when network is on", () => {
+    expect.hasAssertions();
+
+    expect(buildBwrapArgs("pwd", "/work", { network: true }).slice(0, 2)).toStrictEqual([
+      "--unshare-all",
+      "--share-net",
+    ]);
+    expect(buildBwrapArgs("pwd", "/work").slice(0, 2)).toStrictEqual(["--unshare-all", "--die-with-parent"]);
+  });
+
+  test("gives each extra overlay dir its own RAM overlay alongside the working dir", () => {
+    expect.hasAssertions();
+
+    const args = buildBwrapArgs("pwd", "/work", { overlayDirs: ["/store"] });
+
+    expect(args).toStrictEqual(
+      expect.arrayContaining([
+        "--overlay-src",
+        "/work",
+        "--tmp-overlay",
+        "/work",
+        "--overlay-src",
+        "/store",
+        "--tmp-overlay",
+        "/store",
+      ]),
+    );
+    expect(args.filter((arg) => arg === "--tmp-overlay")).toHaveLength(2);
+  });
 });
