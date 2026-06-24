@@ -53,7 +53,6 @@
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@types/mime-types": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:",
     "type-fest": "catalog:",

@@ -45,7 +45,6 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "drizzle-kit": "catalog:",
     "rolldown": "catalog:",

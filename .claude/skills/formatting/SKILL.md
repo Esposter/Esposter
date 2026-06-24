@@ -30,7 +30,7 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 
 ## Comments
 
-- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only.
+- **No blank line before _or after_ a `//` comment** — a comment attaches directly to the code it describes and acts as the separator. Blank lines go between uncommented logical blocks only. This includes **functional/directive comments** (`// oxlint-disable-next-line ...`, `// @ts-expect-error ...`, etc.) — they attach directly to the line they govern with no surrounding blank line.
 
   ```ts
   // CORRECT — comment acts as separator

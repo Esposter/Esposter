@@ -77,7 +77,21 @@ Rules:
 - **Compose from existing schemas** — `.pick()` from `standardMessageEntitySchema` / `selectWebhookInMessageSchema`, reuse `webhookPayloadSchema`. Never hand-rewrite existing field validators.
 - **`.parse()` as the first line inside `getResultAsync(async () => { ... })`** (matching `processScheduledMessageJobHandler`) so a validation failure flows through the neverthrow `.match(noop, (error) => { context.error(...); throw error; })` path instead of throwing synchronously outside it. Let the parsed value's inferred type flow downstream — drop the redundant `import type { *EventGridData }`.
 - **`.nullish()` is allowed here** — the app-owned `.nullable()` ban doesn't apply at the external boundary. EventGrid `notificationOptions` fields are `null | string`, so `z.string().nullish()` is correct.
-- **Cross-package schemas need an explicit type annotation** — under `--isolatedDeclarations` (enabled for `packages/*` libraries), a `satisfies z.ZodType<T>` composed from **another package's** imported schemas fails declaration emit (TS9010/TS9013) — imported types can't be re-inferred. Annotate the export and drop `satisfies`: `export const webhookEventGridDataSchema: z.ZodType<WebhookEventGridData> = z.object({...});`. Schemas composed from **same-package** locals keep the normal `satisfies z.ZodType<T>` form.
+- **Under `--isolatedDeclarations`, annotate the concrete `z.ZodObject<{...}>` shape AND keep `satisfies`** — on for `packages/*` libraries (not the app; `db-schema` opts out via `isolatedDeclarations: false`). Emit can't re-infer a bare `z.object({...}) satisfies z.ZodType<T>`, so exports need an explicit annotation. **Never shortcut with `: z.ZodType<T>`** — it erases the shape, so the built `dist/*.d.ts` exposes no `.shape` and consumers spreading `...someSchema.shape` break against the published package (this bit `itemMetadataSchema`, spread in `AItemEntity` and `AzureEntity`). Write the full form:
+
+  ```typescript
+  export const itemMetadataSchema: z.ZodObject<{
+    createdAt: z.ZodDate;
+    deletedAt: z.ZodNullable<z.ZodDate>;
+    updatedAt: z.ZodDate;
+  }> = z.object({
+    createdAt: z.date(),
+    deletedAt: z.date().nullable(),
+    updatedAt: z.date(),
+  }) satisfies z.ZodType<ItemMetadata>;
+  ```
+
+  Annotation pins a portable shape (`.shape` survives emit); `satisfies` still enforces interface conformance. Match each field's zod type exactly (`z.array(x)`→`z.ZodArray<typeof x>`; reference an imported/`.pick()`-ed sub-schema via `typeof`, extracting an inline `.pick()` to a local `const` first). Canonical refs: `ItemMetadata.ts`, `shared-node/src/models/Benchmark*.ts`. Annotate unions/enums with their concrete type too (`z.ZodDiscriminatedUnion<...>`, `z.ZodEnum<...>`), never `z.ZodType<T>`. In the **app** and **db-schema** (no `--isolatedDeclarations`), keep plain `satisfies z.ZodType<T>` — inference emits the full `ZodObject`.
 
 ## Imports
 

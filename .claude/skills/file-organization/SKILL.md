@@ -91,7 +91,7 @@ Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfi
 
 New workspace packages follow existing patterns (e.g. `packages/db`, `packages/db-mock`):
 
-1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"main": "dist/index.js"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`. Standard scripts: `build` (`pnpm export:gen && rolldown --config rolldown.config.ts`), `export:gen`, `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add `test`/`coverage` scripts + `vitest`/`@vitest/coverage-v8`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (see testing skill).
+1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"main": "dist/index.js"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`. Standard scripts: `build` (`pnpm export:gen && rolldown --config rolldown.config.ts`), `export:gen`, `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. If it has tests, add a `test` script + `vitest`/`@types/node` devDeps and an `src/index.test.ts` bundle-size snapshot (see testing skill). Coverage runs only from the repo root, so don't add a per-package `coverage` script or `@vitest/coverage-v8`.
 2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
 3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.json"] }`.
 4. **`rolldown.config.ts`** — use `rolldownConfigurationNode` (server-only), `rolldownConfigurationBrowser` (browser/isomorphic), or a custom extension if extra externals are needed.
@@ -108,6 +108,10 @@ New workspace packages follow existing patterns (e.g. `packages/db`, `packages/d
 7. **`src/index.ts`** — minimal barrel; `ctix` regenerates it on `pnpm export:gen`.
 8. **Run plain `pnpm i`** from repo root to link the package. Follow `architecture/monorepo-tooling.md` for install safety.
 9. **Run `pnpm build`** in the new package to produce `dist/`.
+
+### Bin entrypoints — no shebang
+
+Don't add `#!/usr/bin/env node` to source files, including `bin` entrypoints (`src/cli.ts`). pnpm generates the bin shim that invokes `node` for the target, so the shebang is dead weight. Only add one if a file is genuinely meant to be executed directly (`chmod +x ./file`), which workspace bins are not.
 
 ### Rolldown externals
 

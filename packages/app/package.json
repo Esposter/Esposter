@@ -30,7 +30,6 @@
     "lint:all:fix": "oxlint --fix && NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --fix .",
     "lint:fix": "oxlint --fix && NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --config eslint.light.config.js --fix .",
     "phaser:gen": "tsx --tsconfig tsconfig.root.json scripts/phaser/index.ts",
-    "postbench": "node scripts/bench/index.ts",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
@@ -178,6 +177,7 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@json-layout/vocabulary": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
@@ -198,7 +198,6 @@
     "@types/ws": "catalog:",
     "@unocss/nuxt": "catalog:",
     "@vite-pwa/nuxt": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",

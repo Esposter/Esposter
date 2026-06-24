@@ -44,7 +44,6 @@
     "@esposter/configuration": "workspace:*",
     "@types/sax": "catalog:",
     "@types/xml2js": "catalog:",
-    "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:",
     "type-fest": "catalog:",
