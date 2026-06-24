@@ -1,0 +1,51 @@
+{
+  "name": "virrun",
+  "version": "2.30.0",
+  "description": "An ephemeral, in-memory virtual runner that runs a repo's real toolchain fast and isolated.",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/virrun#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bin": {
+    "virrun": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "bench": "vitest bench --run",
+    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsgo"
+  },
+  "dependencies": {
+    "@esposter/shared": "workspace:*",
+    "@platformatic/vfs": "catalog:"
+  },
+  "devDependencies": {
+    "@codspeed/vitest-plugin": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
+    "@types/node": "catalog:",
+    "ctix": "catalog:",
+    "rolldown": "catalog:",
+    "vitest": "catalog:"
+  }
+}

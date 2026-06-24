@@ -12,6 +12,9 @@ export const external: (RegExp | string)[] = [
   "@azure/eventgrid",
   "@azure/storage-queue",
   // @esposter/configuration
+  // getVitestConfiguration imports codspeedPlugin; never bundle it (or @codspeed/core it pulls) — it's a
+  // runtime dep resolved from the consumer's node_modules, only invoked when CODSPEED_ENV is set in CI.
+  /^@codspeed\//u,
   "@rolldown/plugin-node-polyfills",
   "@vitejs/plugin-vue",
   "rolldown",

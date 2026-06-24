@@ -34,6 +34,7 @@
     "typecheck": "tsgo"
   },
   "devDependencies": {
+    "@codspeed/vitest-plugin": "catalog:",
     "@dxup/nuxt": "catalog:",
     "@dxup/unimport": "catalog:",
     "@eslint/core": "catalog:",

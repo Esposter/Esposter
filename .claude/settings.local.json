@@ -139,6 +139,8 @@
       "Skill(dependency-updates)",
       "Skill(pulumi-infra)",
       "Skill(styling)",
+      "WebFetch(domain:codspeed.io)",
+      "WebFetch(domain:codspeed.mintlify.dev)",
       "WebFetch(domain:nuxt.com)",
       "WebFetch(domain:nuxt.vuetifyjs.com)",
       "WebFetch(domain:orm.drizzle.team)",

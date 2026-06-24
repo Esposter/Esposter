@@ -43,7 +43,7 @@ export const external: (RegExp | string)[] = [
 - Non-`@esposter/` workspace packages must be listed explicitly (`azure-mock`, `parse-tmx`, `vue-phaserjs` — not covered by the regex).
 - The external list is a build superset, not a per-package peer-dependency checklist — a package declares only the externalized packages it directly imports at runtime or exposes through its `.d.ts` surface.
 - Do not duplicate transitive peers — the package that directly imports a dependency owns the contract. If `azure-mock` imports `@esposter/db-schema` which imports `zod`, `zod` is `db-schema`'s peer, not `azure-mock`'s.
-- `dependencies` get bundled; `peerDependencies` are externalized. When a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and ensure the shared external list covers it. Exceptions: `@esposter/app` (root consumer, not a library) and the self-contained bundles `@esposter/azure-functions` / `@esposter/sandbox-runtime` (override the external list to bundle almost everything — see Self-Contained Bundle Packages).
+- `dependencies` get bundled; `peerDependencies` are externalized. When a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and ensure the shared external list covers it. Exceptions: `@esposter/app` (root consumer, not a library) and the self-contained bundles `@esposter/azure-functions` / `virrun` (override the external list to bundle almost everything — see Self-Contained Bundle Packages).
 - Vite builds: `viteConfiguration` lives in `packages/configuration/src/viteConfiguration.ts`. `packages/configuration/vite.config.js` imports it from source; consumers like `vue-phaserjs` import it from `@esposter/configuration`.
 
 ### Ordering convention
@@ -96,7 +96,7 @@ const externalPatterns = [
   /^unplugin-auto-import/,
   /^unplugin-dts/,
 ];
-const skip = new Set(["@esposter/app", "@esposter/azure-functions", "@esposter/sandbox-runtime"]); // intentional exceptions
+const skip = new Set(["@esposter/app", "@esposter/azure-functions", "virrun"]); // intentional exceptions
 const pkgsDir = "packages";
 for (const dir of fs.readdirSync(pkgsDir)) {
   const p = path.join(pkgsDir, dir, "package.json");
@@ -111,13 +111,13 @@ for (const dir of fs.readdirSync(pkgsDir)) {
 }
 ```
 
-## Self-Contained Bundle Packages (azure-functions, sandbox-runtime)
+## Self-Contained Bundle Packages (azure-functions, virrun)
 
 Both vendor everything except the vue framework peer deps plus one runtime-provided module, so consumers need **no peer deps**:
 
 ```ts
 external: [...externalVueFramework, "@azure/functions"],   // azure-functions — provided by the runtime
-external: [...externalVueFramework, "@platformatic/vfs"],  // sandbox-runtime — declared dependency
+external: [...externalVueFramework, "@platformatic/vfs"],  // virrun — declared dependency
 ```
 
 - `externalVueFramework` (`vue`, `@vueuse/core`, `pinia`) — neither package uses Vue, so these tree-shake out; keeping them external also stops rolldown parsing `@vueuse/core/dist/index.js` and emitting its harmless `INVALID_ANNOTATION` ("comment ignored due to position") warnings.
