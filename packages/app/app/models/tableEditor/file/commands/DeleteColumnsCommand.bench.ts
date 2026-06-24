@@ -3,10 +3,10 @@ import {
   benchRows1k,
   benchRows10k,
   benchRows100,
-  createBenchItem,
-  createBenchItemWithRows,
-  createOriginalRowValues,
-} from "@/composables/tableEditor/file/commands/testUtils.bench";
+} from "@/composables/tableEditor/file/commands/constants.bench";
+import { createBenchItem } from "@/composables/tableEditor/file/commands/createBenchItem.bench";
+import { createBenchItemWithRows } from "@/composables/tableEditor/file/commands/createBenchItemWithRows.bench";
+import { createOriginalRowValues } from "@/composables/tableEditor/file/commands/createOriginalRowValues.bench";
 import { DeleteColumnsCommand } from "@/models/tableEditor/file/commands/DeleteColumnsCommand";
 import { bench, describe } from "vitest";
 

@@ -1,7 +1,7 @@
 {
   "files": [
     {
-      "filepath": "src/services/exec/realWorkload.bench.ts",
+      "filepath": "src/services/exec/localMonorepo.bench.ts",
       "groups": [
         {
           "benchmarks": [

@@ -1,10 +1,6 @@
-import {
-  benchRows1k,
-  benchRows10k,
-  benchRows100,
-  createBenchItem,
-  generateBenchRows,
-} from "@/composables/tableEditor/file/commands/testUtils.bench";
+import { benchRows1k, benchRows10k, benchRows100 } from "@/composables/tableEditor/file/commands/constants.bench";
+import { createBenchItem } from "@/composables/tableEditor/file/commands/createBenchItem.bench";
+import { generateBenchRows } from "@/composables/tableEditor/file/commands/generateBenchRows.bench";
 import { CreateRowsCommand } from "@/models/tableEditor/file/commands/CreateRowsCommand";
 import { bench, describe } from "vitest";
 

@@ -16,7 +16,7 @@ import { spawn } from "node:child_process";
 // So a silent native fallback would run the command un-isolated: a wrong answer disguised as success.
 // An unsupported host (non-Linux, or no bubblewrap) therefore throws at construction instead.
 //
-// bwrap reports the sandboxed child's real exit code on a dedicated status fd (3). A child exit-code
+// Bwrap reports the sandboxed child's real exit code on a dedicated status fd (3). A child exit-code
 // There means the command actually ran; its absence means the sandbox failed to set up (bad flag,
 // Missing binary, overlay mount failure), so the backend rejects with a sandbox error instead of
 // Passing bwrap's own diagnostics off as the command's result — which would also poison a diff against

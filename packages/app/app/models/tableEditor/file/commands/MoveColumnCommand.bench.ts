@@ -1,10 +1,6 @@
-import {
-  BENCH_COLUMN_NAMES,
-  benchRows1k,
-  benchRows10k,
-  benchRows100,
-  createBenchItem,
-} from "@/composables/tableEditor/file/commands/testUtils.bench";
+import { benchRows1k, benchRows10k, benchRows100 } from "@/composables/tableEditor/file/commands/constants.bench";
+import { createBenchItem } from "@/composables/tableEditor/file/commands/createBenchItem.bench";
+import { BENCH_COLUMN_NAMES } from "@/composables/tableEditor/file/commands/generateBenchRows.bench";
 import { MoveColumnCommand } from "@/models/tableEditor/file/commands/MoveColumnCommand";
 import { bench, describe } from "vitest";
 
