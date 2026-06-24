@@ -26,7 +26,7 @@ Two pass/fail gates on every backend and speed feature — a violation is not sh
 
 ## Now
 
-Phase 1 (the `vfs` backend) is shipped. Next is **Phase 2 — the `os` backend** (the native core: tmpfs + overlayfs + isolated process exec) → [roadmap.md](roadmap.md). The real speedup is still gated on the **subprocess wall** — spawned native binaries can't see an in-process VFS → [architecture.md](architecture.md).
+Phase 1 (the `vfs` backend) is shipped. **Phase 2 — the `os` backend** is underway: **Step A landed** — `BackendType.Os` runs any command inside a `bubblewrap` RAM-overlay (reads fall through to the source, writes stay in an invisible tmpfs upper), breaking the **subprocess wall** the in-process VFS can't see past → [architecture.md](architecture.md). It is opt-in and Linux-only; it is held out of _Shipped_ below until the Linux-gated CI suite is green. Next is **Step B** — the acceptance test (`pnpm install` + a native postinstall running fully in RAM) → [roadmap.md](roadmap.md).
 
 ## Shipped
 

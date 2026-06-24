@@ -12,12 +12,8 @@ describe(getWeightedRandomValue, () => {
   test("fails for empty array", () => {
     expect.hasAssertions();
 
-    expect(() => getWeightedRandomValue([])).toThrow(
-      new InvalidOperationError(
-        Operation.Read,
-        getWeightedRandomValue.name,
-        "cannot pick weighted random value from empty values",
-      ),
+    expect(() => getWeightedRandomValue([])).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getWeightedRandomValue.name, "cannot pick weighted random value from empty values").message}]`,
     );
   });
 });

@@ -10,6 +10,8 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **`test` not `it`** — always `test(...)`.
 - **`describe(functionRef, ...)`** — pass the function reference directly; use a string only when no importable reference exists.
 - **Declare `const` inside `describe`** — all shared test constants scoped inside the `describe` callback.
+- **`describe.skipIf`/`test.skipIf` for capability/platform gating** — gate on the same capability probe the production code uses (e.g. `describe.skipIf(!isSupported())`), not a narrower proxy (e.g. `process.platform !== "linux"`); a host can pass the platform check yet still lack the underlying dependency, so the narrower gate lets an unsupported host through.
+- **Never construct a throw-on-unsupported resource in describe scope** — `describe.skipIf(...)` still executes its body at **collection time** even when the suite is skipped, so `const x = createThrowingThing()` at describe scope throws on unsupported hosts before the skip applies. Construct it **inside each test/bench callback** instead; only factories that never throw may stay at describe scope and be reused across tests.
 - **`createCallerFactory` double-call** — always inline: `caller = createCallerFactory(router)(mockContext)`. No intermediate variable.
 - **Caller naming** — single: `caller`. Multiple: descriptive (`roomCaller`, `roleCaller`).
 - **Declaration order in `describe`** — `let mockContext: Context` → caller `let`s → `const` test constants.
@@ -199,7 +201,8 @@ Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. Never `
     `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
   );
   ```
-- **Opaque third-party messages** (e.g. a Zod error string you can't cleanly reconstruct) — leave the snapshot empty `toThrowErrorMatchingInlineSnapshot()` and populate it with `pnpm test -u`. Still never `toBeInstanceOf`.
+- **Reconstruct first, empty-snapshot last.** Almost every error we throw is reproducible, so the snapshot argument should be **built from the same source of truth**, not pasted as a magic literal: our own errors via `new InvalidOperationError(...).message` (wrapped in `[ClassName: …]`), and native errors as `[TypeError: ${fn.name}: …]` / `[RangeError: …]` reusing the dynamic parts (`fn.name`, ids) directly. A reconstructed snapshot stays correct when the message format changes and reads as intentional rather than recorded. This also covers platform-gated tests skipped on the current OS — reconstruct the literal instead of leaving it empty for the other OS to fill.
+- **Opaque third-party messages only** (e.g. a Zod error string you can't cleanly reconstruct) — leave the snapshot empty `toThrowErrorMatchingInlineSnapshot()` and populate it with `pnpm test -u`. This is the exception, not the default. Still never `toBeInstanceOf`.
 
 ## Mocking Globals (navigator, window, etc.)
 
@@ -254,7 +257,15 @@ describe("@esposter/my-package", () => {
 ```
 
 - Import `getFileSize` from `@esposter/configuration` (the `configuration` package itself imports it locally from `./getFileSize`).
-- **Default to the simple unguarded form above.** Only split into an `isWindows` per-platform branch when you have **confirmed** the byte count actually differs across OSes (e.g. a large bundle where CRLF vs LF shifts the count, as `packages/azure-functions/src/index.test.ts` does) or its CI fails on the other OS — don't add the branch speculatively. When you do branch, fill the OS you're on and leave the other's snapshot empty (`toMatchInlineSnapshot()`) for that OS's CI to auto-populate. The branch needs `/* eslint-disable vitest/no-conditional-expect, vitest/no-conditional-in-test */`.
+- **Default to the simple unguarded form above.** Only split per-platform when you have **confirmed** the byte count actually differs across OSes (e.g. a large bundle where CRLF vs LF shifts the count, as `packages/azure-functions/src/index.test.ts` does) or its CI fails on the other OS — don't split speculatively. When you do split, write **two `test.skipIf` tests** — one per platform — each with its own snapshot, rather than one test with an `if (isWindows)` branch inside:
+
+  ```ts
+  test.skipIf(process.platform !== "win32")("bundle size (Windows)", () => { ... });
+  test.skipIf(process.platform === "win32")("bundle size (POSIX)", () => { ... });
+  ```
+
+  Only the matching OS's test runs; the other is skipped, so neither asserts conditionally — **no `/* eslint-disable vitest/no-conditional-expect, vitest/no-conditional-in-test */` is needed** (the disable was only required by the old in-test `if` form; prefer `skipIf` and drop it). Fill the OS you're on via `-u`; leave the other's snapshot empty (`toMatchInlineSnapshot()`) for that OS's CI to auto-populate. This is the general convention for any platform-specific test, not just bundle size: gate with `test.skipIf`/`describe.skipIf(process.platform …)` rather than an in-test conditional — `process.platform` reads directly, so a separate `isWindows` const is unnecessary.
+
 - Run `pnpm build` in the package first (the test reads compiled `dist/index.js` + `dist/index.d.ts`).
 - Auto-fill workflow: create the test with **empty** snapshots (`toMatchInlineSnapshot()`), then `pnpm build` + `pnpm test --run -u` to let Vitest write the sizes in.
 - `pnpm test --run -u` also updates the snapshots after any later build change.

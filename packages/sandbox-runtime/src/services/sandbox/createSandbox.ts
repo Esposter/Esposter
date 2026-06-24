@@ -5,6 +5,7 @@ import type { SandboxOptions } from "@/models/sandbox/SandboxOptions";
 import { BackendType } from "@/models/sandbox/BackendType";
 import { SourceType } from "@/models/source/SourceType";
 import { createNativeBackend } from "@/services/exec/createNativeBackend";
+import { createOsBackend } from "@/services/exec/createOsBackend";
 import { createVfsBackend } from "@/services/exec/createVfsBackend";
 import { loadSource } from "@/services/source/loadSource";
 // Maps each backend choice to its factory. Adding the future `os` backend is a one-line entry here —
@@ -12,6 +13,7 @@ import { loadSource } from "@/services/source/loadSource";
 const backendFactories: Record<BackendType, () => ExecBackend> = {
   [BackendType.Auto]: createNativeBackend,
   [BackendType.Native]: createNativeBackend,
+  [BackendType.Os]: createOsBackend,
   [BackendType.Vfs]: createVfsBackend,
 };
 // The orchestrator entrypoint. Resolves the source to a working directory, picks a backend, and hands

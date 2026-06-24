@@ -1,5 +1,6 @@
 import { SourceType } from "@/models/source/SourceType";
 import { loadFilesSource } from "@/services/source/loadFilesSource";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -35,17 +36,23 @@ describe(loadFilesSource, () => {
   test("rejects relative path that escapes the sandbox directory", async () => {
     expect.hasAssertions();
 
-    await expect(loadFilesSource({ files: { "../escape.txt": "" }, type: SourceType.Files })).rejects.toThrow(
-      "path escapes sandbox directory",
+    await expect(
+      loadFilesSource({ files: { "../escape.txt": "" }, type: SourceType.Files }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, "../escape.txt", "path escapes sandbox directory").message}]`,
     );
   });
 
   test("rejects absolute path that escapes the sandbox directory", async () => {
     expect.hasAssertions();
 
+    const absolutePath = join(tmpdir(), "escape.txt");
+
     await expect(
-      loadFilesSource({ files: { [join(tmpdir(), "escape.txt")]: "" }, type: SourceType.Files }),
-    ).rejects.toThrow("path escapes sandbox directory");
+      loadFilesSource({ files: { [absolutePath]: "" }, type: SourceType.Files }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, absolutePath, "path escapes sandbox directory").message}]`,
+    );
   });
 
   test("disposes the temp directory when a path escapes the sandbox", async () => {
@@ -53,8 +60,10 @@ describe(loadFilesSource, () => {
 
     const before = await readSandboxDirCount();
 
-    await expect(loadFilesSource({ files: { "../escape.txt": "" }, type: SourceType.Files })).rejects.toThrow(
-      "path escapes sandbox directory",
+    await expect(
+      loadFilesSource({ files: { "../escape.txt": "" }, type: SourceType.Files }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, "../escape.txt", "path escapes sandbox directory").message}]`,
     );
 
     await expect(readSandboxDirCount()).resolves.toBe(before);
