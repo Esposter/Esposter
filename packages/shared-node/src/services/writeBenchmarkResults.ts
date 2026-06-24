@@ -1,17 +1,25 @@
 import { benchmarkReportSchema } from "@/models/BenchmarkReport";
 import { formatBenchmarkMarkdown } from "@/services/formatBenchmarkMarkdown";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResult, getResultAsync, InvalidOperationError, normalizeString, Operation } from "@esposter/shared";
+import { execSync } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
 import { arch, cpus, platform, release, totalmem } from "node:os";
 import { dirname, resolve } from "node:path";
 import process from "node:process";
 
 const GIBIBYTE = 1024 ** 3;
+// The commit the numbers were produced on — provenance so a results.md can be tied back to the code that
+// Generated it (a bench can otherwise silently lag the implementation it benches). "unknown" outside a repo.
+const readCommit = (): string => {
+  const result = getResult(() => execSync("git rev-parse --short HEAD", { encoding: "utf8", stdio: "pipe" }));
+  return result.isErr() ? "unknown" : normalizeString(result.value);
+};
 // Node:os snapshot of the host — bench numbers are only comparable across runs on the same machine.
 const readEnvironment = (): string => {
   const cpu = cpus();
   return [
     `- Date: ${new Date().toISOString()}`,
+    `- Commit: ${readCommit()}`,
     `- Node: ${process.version}`,
     `- OS: ${platform()} ${release()} (${arch()})`,
     `- CPU: ${cpu[0]?.model ?? "unknown"} × ${cpu.length}`,
