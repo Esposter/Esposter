@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.30.0](https://github.com/Esposter/Esposter/compare/v2.29.0...v2.30.0) (2026-06-24)
+
+### Bug Fixes
+
+* emit oxfmt-aligned bench tables and guard empty bench samples ([640154c](https://github.com/Esposter/Esposter/commit/640154c2fba53330bb82259f40d9696c177112d1))
+* lint ([2a8bd20](https://github.com/Esposter/Esposter/commit/2a8bd2081be730f4c7ccf1f389884357fd3c79ea))
+* lint ([3f8a761](https://github.com/Esposter/Esposter/commit/3f8a7616392b1cd883edf3304d81bce145e57df0))
+* reset isScrollingToSection via withFinalizerAsync ([c13597f](https://github.com/Esposter/Esposter/commit/c13597fd52e773c1eb81745f9c9378a3626666d5))
+* settings scrollspy header overlap + simplify to visibility-driven ([367a695](https://github.com/Esposter/Esposter/commit/367a6950611eaf5fb9d40e23d856023c77d41c13)), closes [#header](https://github.com/Esposter/Esposter/issues/header)
+* wip ([b0aa40f](https://github.com/Esposter/Esposter/commit/b0aa40fc4865554a7ed6f3cb6b172409dcc0bfc8))
+* wip ([0f62fc7](https://github.com/Esposter/Esposter/commit/0f62fc73399c252422695a7385d39b6c9d7d33f0))
+* wip ([ffc3a67](https://github.com/Esposter/Esposter/commit/ffc3a67bc0c427dd76f5ac3fc2dea6f99fcacbce))
+* wrap pip control bar on overflow ([cc31d00](https://github.com/Esposter/Esposter/commit/cc31d007af9d8d4576e8c4e4e60be894f53d3e56))
+
+### Features
+
+* animated active-section rail + typed section ids for settings sub-nav ([08cc69b](https://github.com/Esposter/Esposter/commit/08cc69ba55c3335885fba5806e72ed54695e8362))
+* Discord-aligned Voice & Video settings + live-call wiring ([6997f2f](https://github.com/Esposter/Esposter/commit/6997f2ffab77643f91827915f5170ecb40601167))
+* root recursive bench script + vs-base multiplier in bench report ([ebb4afe](https://github.com/Esposter/Esposter/commit/ebb4afe18df064792017dffce39e0910082ebd08))
+* sandbox-runtime os backend MVP (bwrap RAM-overlay exec, Linux core) ([8741186](https://github.com/Esposter/Esposter/commit/8741186212042fcb03ba962b88eb438a6d875843))
+* shared-node bench reporter + migrate benches to vitest bench ([0e39cf7](https://github.com/Esposter/Esposter/commit/0e39cf713eea30d36d50879ba4d56a6bf00fe73e))
+* split user settings into message dialog + global route with scrollspy sub-nav ([3dcad0b](https://github.com/Esposter/Esposter/commit/3dcad0bd83372b84a5a98c579a7582dfbd66b185))
+* unify device selection as single source of truth across call surfaces ([775805f](https://github.com/Esposter/Esposter/commit/775805f33067fe2aa65c2766329d13cad5c6407d))
+* voice settings polish, screen-share stop + settings buttons ([64c9d23](https://github.com/Esposter/Esposter/commit/64c9d2342aff1bb565c381c53841afe7856597df))
+
 # [2.29.0](https://github.com/Esposter/Esposter/compare/v2.28.0...v2.29.0) (2026-06-21)
 
 ### Bug Fixes

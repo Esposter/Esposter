@@ -1,6 +1,6 @@
 {
   "name": "@esposter/sandbox-runtime",
-  "version": "0.0.0",
+  "version": "2.30.0",
   "private": true,
   "description": "An ephemeral, in-memory sandbox runtime that runs a repo's real toolchain fast and isolated.",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/sandbox-runtime#readme",

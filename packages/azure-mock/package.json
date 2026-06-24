@@ -1,6 +1,6 @@
 {
   "name": "azure-mock",
-  "version": "2.29.0",
+  "version": "2.30.0",
   "description": "A library that contains azure mock classes.",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "bugs": {
