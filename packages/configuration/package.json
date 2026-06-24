@@ -62,5 +62,10 @@
   },
   "peerDependencies": {
     "@codspeed/vitest-plugin": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@codspeed/vitest-plugin": {
+      "optional": true
+    }
   }
 }

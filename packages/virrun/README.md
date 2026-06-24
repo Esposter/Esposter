@@ -46,13 +46,13 @@ virrun -- pnpm test
 
 ```ts
 import { BackendType, createVirrun } from "virrun";
-import { withFinalizerAsync } from "@esposter/shared";
 
 const virrun = await createVirrun({ backend: BackendType.Auto });
-const { exitCode, stdout } = await withFinalizerAsync(
-  () => virrun.exec("pnpm build"),
-  () => virrun.dispose(),
-);
+try {
+  const { exitCode, stdout } = await virrun.exec("pnpm build");
+} finally {
+  await virrun.dispose();
+}
 ```
 
 `createVirrun` accepts a `source` (directory, in-memory file map, or git remote) and a `backend`; it returns a handle with `exec` and `dispose`. See [VirrunOptions](https://github.com/Esposter/Esposter/blob/main/packages/virrun/src/models/virrun/VirrunOptions.ts).

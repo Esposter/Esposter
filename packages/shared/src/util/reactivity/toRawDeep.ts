@@ -1,5 +1,5 @@
+import { checkIsPlainObject } from "@/util/object/checkIsPlainObject";
 import { getRawData } from "@/util/reactivity/getRawData";
-import { isObject } from "@vueuse/core";
 
 export const toRawDeep = <T extends object>(data: T): T => {
   const rawData = getRawData(data);
@@ -7,7 +7,7 @@ export const toRawDeep = <T extends object>(data: T): T => {
   for (const key in rawData)
     if (Object.hasOwn(rawData, key)) {
       const value = rawData[key];
-      if (!isObject(value) && !Array.isArray(value)) continue;
+      if (!checkIsPlainObject(value) && !Array.isArray(value)) continue;
       rawData[key] = toRawDeep(value);
     }
 

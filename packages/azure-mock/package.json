@@ -38,7 +38,6 @@
     "fast-deep-equal": "catalog:"
   },
   "devDependencies": {
-    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "ctix": "catalog:",
     "rolldown": "catalog:",

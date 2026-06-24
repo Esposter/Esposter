@@ -4,14 +4,13 @@ import { defineVitestProject } from "@nuxt/test-utils/config";
 import { dayjs } from "./shared/services/dayjs";
 
 export default await defineVitestProject({
-  // `defineVitestProject` doesn't call `getVitestConfiguration`, so wire CodSpeed's bench plugin via the
-  // Shared helper (inert unless the CodSpeed runner drives the run). Importing it from configuration means
-  // The app never declares `@codspeed/vitest-plugin` itself — it resolves from configuration's own dependency.
+  // `defineVitestProject` doesn't call `getVitestConfiguration`, so wire the bench plugin via the shared
+  // helper (inert unless the CodSpeed runner drives the run). The app benches, so it declares
+  // `@codspeed/vitest-plugin` as a devDependency to satisfy configuration's optional peer.
   plugins: getBenchmarkPlugins(),
   test: {
-    // `defineVitestProject` doesn't call `getVitestConfiguration`, so wire the reporter inline — same path
-    // String, resolved by Vitest in bench mode to shared-node's `./reporter` default export. No
-    // `outputJson`: the reporter writes colocated per-file results, not one merged file.
+    // Reporter wired inline (same reason): path string resolved by Vitest in bench mode to shared-node's
+    // `./reporter` default export, which writes colocated per-file results.
     benchmark: {
       reporters: ["@esposter/shared-node/reporter"],
     },

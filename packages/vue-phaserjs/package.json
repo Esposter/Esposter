@@ -36,7 +36,6 @@
     "typecheck": "vue-tsc"
   },
   "devDependencies": {
-    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@vitejs/plugin-vue": "catalog:",
     "@vue/test-utils": "catalog:",
