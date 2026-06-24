@@ -5,12 +5,14 @@ import type { SandboxOptions } from "@/models/sandbox/SandboxOptions";
 import { BackendType } from "@/models/sandbox/BackendType";
 import { SourceType } from "@/models/source/SourceType";
 import { createNativeBackend } from "@/services/exec/createNativeBackend";
+import { createVfsBackend } from "@/services/exec/createVfsBackend";
 import { loadSource } from "@/services/source/loadSource";
-// Maps each backend choice to its factory. Adding the future `vfs`/`os` backends is a one-line
-// Entry here — nothing else in the orchestrator changes. "auto" resolves to native until they exist.
+// Maps each backend choice to its factory. Adding the future `os` backend is a one-line entry here —
+// Nothing else in the orchestrator changes. "auto" resolves to native until vfs beats it on the gates.
 const backendFactories: Record<BackendType, () => ExecBackend> = {
   [BackendType.Auto]: createNativeBackend,
   [BackendType.Native]: createNativeBackend,
+  [BackendType.Vfs]: createVfsBackend,
 };
 // The orchestrator entrypoint. Resolves the source to a working directory, picks a backend, and hands
 // Back a handle whose exec routes every command through it. dispose() tears down any temp state the

@@ -39,7 +39,7 @@ Wall-clock (primary), plus peak RAM, disk written (should be ~0 for RAM FS), and
 
 ## Results file
 
-`pnpm bench` (harness: `packages/sandbox-runtime/src/bench/index.ts`, stats via `tinybench`) writes a committed `packages/sandbox-runtime/bench/results.md` — the tracked source of truth. It records environment metadata (date, Node version, OS + release, arch, CPU model + core count, RAM) and a latency table (mean / sd / p99 / samples per task) plus the sandbox-vs-native ratio and an OK/REGRESSION verdict. Regenerate it before committing and diff the ratio. Numbers are machine-dependent — only compare runs from the same host (one dev's Windows box today; CI Linux numbers will differ). The verdict is reported, never fatal, until the CI gate is un-deferred.
+`pnpm bench` (Vitest `bench`, stats via `tinybench`) writes **colocated per-file artifacts** — `Foo.bench.ts` → `Foo.bench.json` + `Foo.bench.md` beside it, each the tracked source of truth for that file (no merged `bench/results.*`). Each md records environment metadata (date, **commit**, Node version, OS + release, arch, CPU model + core count, RAM) and, per group, a latency table (mean / ±rme / p99 / ops-sec / samples per task) plus the `vs base` multiplier against the baseline task (native = `1.00×`). Regenerate before committing and diff the multipliers. Numbers are machine-dependent — only compare runs from the same host (one dev's Windows box today; CI Linux numbers will differ).
 
 ## Constraints / Notes
 

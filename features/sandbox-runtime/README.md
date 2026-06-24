@@ -20,18 +20,21 @@ Plus: **ephemeral** (spin up / throw away, no polluted machine state), **reprodu
 
 **Adoption is a goal, not an afterthought.** A repo moves commands onto the sandbox one at a time, behind a single `sandbox -- <cmd>` prefix, with auto-fallback to native — so trying it costs one token and reverting costs one token. See [specs/adoption.md](specs/adoption.md).
 
-## Non-negotiables (the gates)
+## Gates (non-negotiable)
 
-These are pass/fail. A feature that violates either is not shippable, no matter how clever.
-
-1. **Faster than baseline.** If a path is slower than just running the command normally, it has negative value — delete it. Every backend and every speed feature is gated on benchmarks vs native. See [specs/benchmarking.md](specs/benchmarking.md).
-2. **Correct.** Observable results (exit code, stdout/stderr, produced files, dependency tree) must match running the command natively. Correctness beats speed every time; a fast wrong answer is worthless. This demands an extensive test suite. See [specs/correctness.md](specs/correctness.md).
+Two pass/fail gates on every backend and speed feature — a violation is not shippable, however clever: **faster than the native baseline**, and **observably correct** (exit code, stdout/stderr, produced files, dependency tree) vs running the command natively. Correctness beats speed; a fast wrong answer is worthless. Detail: [benchmarking](specs/benchmarking.md) · [correctness](specs/correctness.md).
 
 ## Now
 
-- MVP foundation shipped: `@esposter/sandbox-runtime` (private) with the `ExecBackend` seam, a native passthrough backend, async `createSandbox`, source loaders (`dir`/`files`/`git` → working dir + `dispose`), the `sandbox -- <cmd>` CLI, and the benchmark foundation (`pnpm bench` → committed [results.md](../../packages/sandbox-runtime/bench/results.md) with env metadata + tinybench stats). CI-enforcement of the gates is deferred until a backend can regress.
-- `vfs` backend Phase 1 **Step A** shipped: the RAM-backed FS layer — `FsProvider` interface + `createPlatformaticFsProvider` adapter over `@platformatic/vfs` (the lone import, doubling as the `node:vfs` swap shim). Mounting patches `require`/`fs` so in-process code reads virtual files; verified cross-platform (Windows + node 26). Next up in [roadmap.md](roadmap.md): **Step B** — the in-process `vfs` exec backend.
-- Core open question that still gates the real speedup: making **spawned subprocesses and native binaries** see the RAM filesystem (node:vfs is in-process JS only). See [architecture.md](architecture.md) → "The subprocess wall".
+Phase 1 (the `vfs` backend) is shipped. Next is **Phase 2 — the `os` backend** (the native core: tmpfs + overlayfs + isolated process exec) → [roadmap.md](roadmap.md). The real speedup is still gated on the **subprocess wall** — spawned native binaries can't see an in-process VFS → [architecture.md](architecture.md).
+
+## Shipped
+
+Terse log; the linked spec holds the detail.
+
+- **Phase 0 — foundations**: `@esposter/sandbox-runtime` (private) — the `ExecBackend` seam, native passthrough backend, async `createSandbox`, `dir`/`files`/`git` source loaders, the `sandbox -- <cmd>` CLI, and the `pnpm bench` foundation (colocated per-file `*.bench.{json,md}`). → [orchestrator-api](specs/orchestrator-api.md) · [adoption](specs/adoption.md) · [benchmarking](specs/benchmarking.md)
+- **`vfs` Step A — FS layer**: `FsProvider` + `createPlatformaticFsProvider` over `@platformatic/vfs` (the lone import, doubling as the `node:vfs` swap shim); mounting patches `require`/`fs` to serve virtual files; cross-platform. → [virtual-fs](specs/virtual-fs.md)
+- **`vfs` Step B — in-process runner** (both gates passed): `BackendType.Vfs` runs `node -e`/`--eval` and `node <file>` in the current process over an overlay-mounted FS, falling back to native for anything it can't run faithfully. Opt-in only — no isolation yet, so `Auto` stays native. → [exec-isolation](specs/exec-isolation.md)
 
 ## Decisions
 
@@ -44,7 +47,7 @@ Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roa
 
 ## Reference
 
-- [architecture.md](architecture.md) — layer map, the five layers, reuse-vs-build, the subprocess wall.
+- [architecture.md](architecture.md) — system overview diagram, layer map, the five layers, reuse-vs-build, the subprocess wall.
 - [roadmap.md](roadmap.md) — phased, checkbox backlog.
 - [specs/virtual-fs.md](specs/virtual-fs.md) — FS layer (reuse node:vfs/platformatic + one-line-swap plan).
 - [specs/exec-isolation.md](specs/exec-isolation.md) — the core: real exec + isolation backends.

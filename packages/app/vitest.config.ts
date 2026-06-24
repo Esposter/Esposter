@@ -5,9 +5,9 @@ import { dayjs } from "./shared/services/dayjs";
 export default await defineVitestProject({
   test: {
     // `defineVitestProject` doesn't call `getVitestConfiguration`, so wire the reporter inline — same path
-    // String, resolved by Vitest in bench mode to shared-node's `./reporter` default export.
+    // String, resolved by Vitest in bench mode to shared-node's `./reporter` default export. No
+    // `outputJson`: the reporter writes colocated per-file results, not one merged file.
     benchmark: {
-      outputJson: "./bench/results.json",
       reporters: ["@esposter/shared-node/reporter"],
     },
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the

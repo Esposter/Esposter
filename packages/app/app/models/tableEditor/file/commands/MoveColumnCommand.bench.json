@@ -1,0 +1,59 @@
+{
+  "files": [
+    {
+      "filepath": "app/models/tableEditor/file/commands/MoveColumnCommand.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "hz": 24243.48837460447,
+              "mean": 0.04124818939206454,
+              "name": "execute — move col 0→4, 100 rows",
+              "p99": 0.11430000000018481,
+              "rme": 1.167728228811402,
+              "sampleCount": 12123,
+              "sd": 0.02705799735569588
+            },
+            {
+              "hz": 1865.9089436434815,
+              "mean": 0.5359318327974474,
+              "name": "execute — move col 0→4, 1000 rows",
+              "p99": 2.138300000000527,
+              "rme": 4.4242092633130214,
+              "sampleCount": 933,
+              "sd": 0.36951320657483755
+            },
+            {
+              "hz": 222.21296334874748,
+              "mean": 4.500187500000038,
+              "name": "execute — move col 0→4, 10000 rows",
+              "p99": 7.783100000000559,
+              "rme": 5.534609375605306,
+              "sampleCount": 112,
+              "sd": 1.3300463347022762
+            },
+            {
+              "hz": 982.9154510912658,
+              "mean": 1.0173815040650407,
+              "name": "undo — move col 0→4 then back, 1000 rows",
+              "p99": 2.047899999999572,
+              "rme": 3.184423734860289,
+              "sampleCount": 492,
+              "sd": 0.36664111939487365
+            },
+            {
+              "hz": 117.50813445081671,
+              "mean": 8.510049152542305,
+              "name": "undo — move col 0→4 then back, 10000 rows",
+              "p99": 13.088200000000143,
+              "rme": 6.785324947720584,
+              "sampleCount": 59,
+              "sd": 2.215685115292531
+            }
+          ],
+          "fullName": "MoveColumnCommand"
+        }
+      ]
+    }
+  ]
+}

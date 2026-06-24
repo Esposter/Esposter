@@ -7,12 +7,13 @@ description: Esposter oxlint + ESLint linting conventions — method-signature-s
 
 ## Running lint
 
-**Do not run lint manually — the user runs lint themselves.** Make edits, run `pnpm typecheck` if structural verification is needed, and leave `pnpm lint` / `pnpm lint:fix` to the user. Never hand-fix lint errors either.
+**Run `pnpm lint:fix` directly to verify — but only for `packages/*` (non-app), where it's fast.** Skip it whenever the change touches `packages/app` (Nuxt makes it slow); leave app lint to CI. `pnpm lint` is **CI-only** (check, no fix) — never run it locally. Never hand-fix lint errors either — let `lint:fix` do it.
 
 ```bash
-# Reference only (user-run):
-pnpm lint:fix   # oxlint --fix + eslint --fix (local; root also runs lerna lint:fix per package)
-pnpm lint       # check-only, for CI
+# packages/* only — run directly to verify:
+pnpm lint:fix   # oxlint --fix + eslint --fix
+# CI-only, do not run locally:
+pnpm lint       # check-only
 ```
 
 ## `typescript/method-signature-style` (oxlint)

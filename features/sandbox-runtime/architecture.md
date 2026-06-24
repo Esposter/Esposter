@@ -4,6 +4,46 @@ High-level system map for the sandbox runtime. Read alongside the specs in [spec
 
 ---
 
+## System overview
+
+One entrypoint (`createSandbox` / the `sandbox -- <cmd>` CLI) resolves a **source** to a working dir, picks an **exec backend**, and routes every command through it. The backend is the only axis that changes what actually runs — and it is the only place the **subprocess wall** (below) is solved differently. Solid = shipped, dashed = planned.
+
+```mermaid
+flowchart TB
+    subgraph pkg["@esposter/sandbox-runtime (one package today; → packages/sandbox-runtime* later)"]
+        cli["sandbox -- &lt;cmd&gt; CLI"]
+        api["createSandbox()\norchestrator API"]
+        cli --> api
+
+        subgraph src["source loaders → working dir"]
+            direction LR
+            dir["dir"]
+            files["files"]
+            git["git"]
+        end
+        api --> src
+
+        api --> pick{"BackendType\nselect"}
+        pick -->|Auto / Native| native["Native backend\nspawn on host"]
+        pick -->|Vfs · opt-in| vfs["Vfs backend\nin-process node -e / node &lt;file&gt;"]
+        pick -.->|Os · Phase 2| os["Os backend\nisolated process exec"]
+    end
+
+    native --> disk[("REAL disk\n(subprocesses see this)")]
+    vfs --> fsp["FsProvider\n→ @platformatic/vfs (reuse)\n→ node:vfs swap"]
+    fsp --> vmem[("in-process virtual FS\n(only this process sees it)")]
+    os --> sandboxprim["bubblewrap / nsjail / microVM"]
+    sandboxprim --> ram[("tmpfs + overlayfs\nRAM FS — every process sees it")]
+    os -.-> snap["snapshot + warm-fork\nPhase 3 · CRIU / microVM"]
+
+    classDef planned stroke-dasharray:4 4,opacity:0.75;
+    class os,sandboxprim,ram,snap planned;
+```
+
+Why the three FS endpoints differ is the **subprocess wall** — the single fact that splits the product into backends. See it spelled out below.
+
+---
+
 ## The five layers
 
 ```text
