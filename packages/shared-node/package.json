@@ -40,16 +40,17 @@
     "typecheck": "tsgo"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*",
-    "zod": "catalog:"
+    "@esposter/shared": "workspace:*"
   },
   "devDependencies": {
+    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "ctix": "catalog:",
     "rolldown": "catalog:"
   },
   "peerDependencies": {
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "zod": "catalog:"
   }
 }

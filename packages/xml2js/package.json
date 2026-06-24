@@ -41,6 +41,7 @@
     "xmlbuilder2": "catalog:"
   },
   "devDependencies": {
+    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/sax": "catalog:",
     "@types/xml2js": "catalog:",

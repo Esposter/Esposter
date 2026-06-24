@@ -40,6 +40,7 @@
     "@platformatic/vfs": "catalog:"
   },
   "devDependencies": {
+    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/shared-node": "workspace:*",
     "@types/node": "catalog:",

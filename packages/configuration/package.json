@@ -33,9 +33,6 @@
     "test": "vitest",
     "typecheck": "tsgo"
   },
-  "dependencies": {
-    "@codspeed/vitest-plugin": "catalog:"
-  },
   "devDependencies": {
     "@dxup/nuxt": "catalog:",
     "@dxup/unimport": "catalog:",
@@ -62,5 +59,8 @@
     "vite": "catalog:",
     "vite-plugin-mkcert": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "@codspeed/vitest-plugin": "catalog:"
   }
 }

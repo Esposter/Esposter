@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@azure/data-tables": "catalog:",
+    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "@types/sanitize-html": "catalog:",

@@ -8,7 +8,8 @@ import codspeedPlugin from "@codspeed/vitest-plugin";
 // Reporter renders into the committed `*.bench.md`. Gating the import this way keeps the plugin's bench-mode
 // Side effects (forks pool, profiling v8 flags, globalSetup) out of local runs. Shared so both
 // `getVitestConfiguration` (most packages) and the app's `defineVitestProject` config wire it identically.
-// `@codspeed/vitest-plugin` is a `dependency` of this package (kept external — see the external list: the
-// Plugin loads sibling runtime files + native prebuilds via __dirname and can't be bundled), so it resolves
-// From configuration's own node_modules for every consumer — no other package needs to declare it.
+// `@codspeed/vitest-plugin` is a `peerDependency` of this package (it's in the shared external list, and the
+// Critical rule is external imports are peerDependencies, never deps/devDeps — see the external list: the
+// Plugin loads sibling runtime files + native prebuilds via __dirname and can't be bundled). Every package
+// That runs `pnpm bench` under CodSpeed (app, virrun) installs it as a devDependency so it resolves there.
 export const getBenchmarkPlugins = (): Plugin[] => (process.env.CODSPEED_ENV === undefined ? [] : [codspeedPlugin()]);

@@ -50,6 +50,7 @@
     "node-html-parser": "catalog:"
   },
   "devDependencies": {
+    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@types/mime-types": "catalog:",

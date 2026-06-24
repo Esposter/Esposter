@@ -42,6 +42,7 @@
     "dayjs": "catalog:"
   },
   "devDependencies": {
+    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/data-urls": "catalog:",
     "@types/xml2js": "catalog:",

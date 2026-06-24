@@ -52,6 +52,8 @@ Group by owning `@esposter` package; sections in alphabetical package-name order
 
 ### Dependency declaration convention
 
+> **CRITICAL — external imports are `peerDependencies`, never `dependencies`/`devDependencies`.** If a library package directly imports a non-workspace package that is in the shared `external` list (so it's externalized, not bundled, and ships in that package's dist/declaration surface), it **must** be declared in `peerDependencies` — never in `dependencies` and never in `devDependencies`. We keep regressing on this: a fix that adds an externalized import as a `dependency` (so it resolves locally) silently ships the wrong contract. Audit with the script below after touching the external list or any manifest. The rule scopes to a package's **published runtime/declaration surface** — an externalized package a manifest pulls in only as build/test tooling (never imported by its shipped code) is correctly a `devDependency`, not a peer. Example: `@codspeed/vitest-plugin` is a `peerDependency` of `@esposter/configuration` (which directly imports it in `getBenchmarkPlugins`, part of its dist), but a `devDependency` of every package whose `vitest` config loads `getVitestConfiguration`/`getBenchmarkPlugins` — the static codspeed import there is test-time tooling, not shipped surface (see [Bench › Dependency placement](../bench/SKILL.md)). The self-contained bundles (`@esposter/app`, `@esposter/azure-functions`, `virrun` — see Self-Contained Bundle Packages) also opt out of external→peer for their bundled deps.
+
 - `dependencies`: direct runtime imports to bundle or auto-install for consumers. Workspace packages imported at runtime usually go here even though the external list keeps their code out of the bundle.
 - `peerDependencies`: direct runtime or declaration-surface imports that are externalized and must be supplied by the consumer — framework/runtime singletons (`vue`, `pinia`), SDKs mirrored in public APIs, Drizzle/Pulumi runtimes, package-plugin ecosystems.
 - `devDependencies`: build, lint, test, codegen, typecheck tools; test-only packages; packages used only by source types that don't appear in generated declarations.
@@ -90,11 +92,13 @@ const externalStrings = [
   "zod",
 ];
 const externalPatterns = [
+  /^@codspeed\//,
   /^drizzle-kit/,
   /^drizzle-orm/,
   /^phaser4-rex-plugins/,
   /^unplugin-auto-import/,
   /^unplugin-dts/,
+  /^vitest(\/|$)/,
 ];
 const skip = new Set(["@esposter/app", "@esposter/azure-functions", "virrun"]); // intentional exceptions
 const pkgsDir = "packages";
