@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T11:00:02.510Z
-- Commit: 344dec070
+- Date: 2026-06-24T14:32:44.383Z
+- Commit: 5e493e6bf
 - Node: v26.3.1
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 15.6 GiB
+- OS: linux 6.6.87.2-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 19.0 GiB
 
 ## createVirrun exec vs native baseline
 
-| task   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
-| ------ | ------- | --------- | ------ | -------- | ------- | ------- |
-| native | 1.00×   | 28.4537   | ±2.74% | 32.4006  | 35      | 18      |
-| virrun | 1.03×   | 27.5763   | ±2.82% | 31.8114  | 36      | 19      |
+| task   | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
+| ------ | ------- | --------- | ------- | -------- | ------- | ------- |
+| native | 1.00×   | 64.1967   | ±7.46%  | 77.7042  | 16      | 10      |
+| virrun | 0.91×   | 70.6022   | ±10.40% | 92.7757  | 14      | 10      |
