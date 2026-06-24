@@ -28,7 +28,7 @@ export const runNodeInProcess = (
   const originalStderrWrite = process.stderr.write.bind(process.stderr);
   const originalExit = process.exit;
   const originalExitCode = process.exitCode;
-  const originalRequire = (globalThis as { require?: NodeJS.Require }).require;
+  const originalRequire = globalThis.require;
   const originalCwd = cwd === "" ? "" : process.cwd();
   const baseDir = cwd === "" ? process.cwd() : cwd;
   const fs = createPlatformaticFsProvider({ overlay: true });
@@ -54,7 +54,7 @@ export const runNodeInProcess = (
         throw new ExitSignalError(resolved);
       };
       if (cwd !== "") process.chdir(cwd);
-      (globalThis as { require?: NodeJS.Require }).require = require;
+      globalThis.require = require;
       fs.mount(baseDir);
       // Inline code evaluates directly; a file run resolves against the working dir and loads through
       // The mounted vfs so its modules come from virtual files (or real disk via the overlay).
@@ -81,7 +81,7 @@ export const runNodeInProcess = (
       process.stderr.write = originalStderrWrite;
       process.exit = originalExit;
       process.exitCode = originalExitCode;
-      (globalThis as { require?: NodeJS.Require }).require = originalRequire;
+      globalThis.require = originalRequire;
       if (originalCwd !== "") process.chdir(originalCwd);
       for (const key of Object.keys(require.cache)) if (!cachedBefore.has(key)) delete require.cache[key];
     },
