@@ -1,5 +1,7 @@
 import type { BenchmarkReport } from "@/models/BenchmarkReport";
 import type { BenchmarkResult } from "@/models/BenchmarkResult";
+
+import { takeOne } from "@esposter/shared";
 // The baseline each group's `vs base` multiplier is measured against: the task named "native" when the
 // Group has one (the host-baseline benches), otherwise the first declared task. Mirrors how bench files
 // List the baseline first.
@@ -11,6 +13,24 @@ const formatRelative = (baselineMean: number, mean: number): string => {
   const ratio = baselineMean / mean;
   return `${ratio >= 1 ? ratio.toFixed(2) : Number(ratio.toPrecision(2))}×`;
 };
+const HEADER = ["task", "vs base", "mean (ms)", "±rme", "p99 (ms)", "ops/sec", "samples"];
+// Render a group's header + rows as a column-aligned GFM table. We pad here so the generated .bench.md is
+// Already in oxfmt's canonical table shape — otherwise `format:check` flags every freshly benched file and
+// The commit would need a separate format pass. Widths count by JS string length, which matches oxfmt's
+// Display width because the only non-ASCII glyphs we emit (×, ±, em dash) are each a single UTF-16 unit.
+const formatTable = (rows: string[][]): string[] => {
+  const widths = rows.reduce<number[]>(
+    (acc, row) => acc.map((width, i) => Math.max(width, takeOne(row, i).length)),
+    HEADER.map((header) => header.length),
+  );
+  const formatRow = (cells: string[]): string =>
+    `| ${cells.map((cell, i) => cell.padEnd(takeOne(widths, i))).join(" | ")} |`;
+  return [
+    formatRow(HEADER),
+    `| ${widths.map((width) => "-".repeat(width)).join(" | ")} |`,
+    ...rows.map((row) => formatRow(row)),
+  ];
+};
 // Renders a bench file's report into a committed, diffable table — the human-readable companion to the
 // Colocated .bench.json. Numbers are machine-dependent, so the environment block is rendered alongside;
 // Only compare runs from the same environment. One section per describe() group, in file order. The
@@ -20,18 +40,16 @@ export const formatBenchmarkMarkdown = (report: BenchmarkReport, environment: st
   const sections = report.files.flatMap((file) =>
     file.groups.map((group) => {
       const baselineMean = getBaseline(group.benchmarks)?.mean ?? Number.NaN;
-      const rows = group.benchmarks.map(
-        ({ hz, mean, name, p99, rme, sampleCount }) =>
-          `| ${name.replaceAll("|", String.raw`\|`)} | ${formatRelative(baselineMean, mean)} | ${mean.toFixed(4)} | ±${rme.toFixed(2)}% | ${p99.toFixed(4)} | ${hz.toFixed(0)} | ${sampleCount} |`,
-      );
-      return [
-        `## ${group.fullName}`,
-        "",
-        "| task | vs base | mean (ms) | ±rme | p99 (ms) | ops/sec | samples |",
-        "| ---- | ------- | --------- | ---- | -------- | ------- | ------- |",
-        ...rows,
-        "",
-      ].join("\n");
+      const rows = group.benchmarks.map(({ hz, mean, name, p99, rme, sampleCount }) => [
+        name.replaceAll("|", String.raw`\|`),
+        formatRelative(baselineMean, mean),
+        mean.toFixed(4),
+        `±${rme.toFixed(2)}%`,
+        p99.toFixed(4),
+        hz.toFixed(0),
+        `${sampleCount}`,
+      ]);
+      return [`## ${group.fullName}`, "", ...formatTable(rows), ""].join("\n");
     }),
   );
   return [

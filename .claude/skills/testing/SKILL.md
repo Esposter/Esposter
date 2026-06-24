@@ -21,7 +21,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **`toStrictEqual` always** — never `toEqual`/`toMatchObject`. Assert exact counts: no `.toBeGreaterThan(0)` on collections.
 - **`.toBe` for deterministic values** — when the full expected value is knowable (URL, ID, enum string), always `.toBe(fullValue)`, never `.toContain`/`.toMatch`. Inline the expected value in the `expect` call — never an intermediate `const expected*`.
 - **Minimize per-test setup** — shared mutable state as `let` inside `describe`, init in `beforeEach`. Mount helpers take no arguments when state is pre-initialized.
-- **Reuse utilities** — check `testUtils.test.ts` for existing helpers first.
+- **Reuse utilities** — check for an existing `<helper>.test.ts` (or `<helper>.bench.ts`) beside the code under test before writing a new one. See "Test Utility Files" below.
 - **`create*` prefix for test helpers** — all factory/builder functions (`createRow`, `createColumn`). Never `make*`.
 
 ## Shared Test Data (DRY)
@@ -302,7 +302,7 @@ describe(useMyComposable, () => {
 
 ## Type-Level Tests (.test-d.ts)
 
-- **Placement** — co-locate beside the type file.
+- **Placement** — colocate beside the type file.
 - **`describe` string** — `"{camelCaseName} type"`.
 - **`test` descriptions** — enum value or type arg directly.
 - **Assertion** — always `expectTypeOf(...).toEqualTypeOf<ExpectedType>()`.
@@ -311,4 +311,8 @@ describe(useMyComposable, () => {
 
 ## Test Utility Files
 
-Shared helpers live in `.test.ts` files. Add `describe.todo("testUtils")` at the bottom as a placeholder suite so Vitest accepts the file without a real test.
+Shared test helpers live in `.test.ts` files (and bench helpers in `.bench.ts`) — both suffixes are excluded from the published barrel by `ctix` and from the `tsgo` build, so they never ship. The file-organisation rules apply unchanged: **one function per file, named after the function**, never a `testUtils`-style grab-bag.
+
+- **One helper function per file** — `createRow.test.ts` exports only `createRow`, `createWorkspaceCorpus.test.ts` only `createWorkspaceCorpus`. Follow the `create*` prefix convention for factories/builders. Cross-helper reuse is a normal import (`setupWithDataSource.test.ts` imports `createDataSource.test`).
+- **Shared constants/fixtures go in `constants.test.ts` / `constants.bench.ts`** — the test/bench equivalent of the `constants.ts` exception (see the `file-organization` skill). Group module-level fixture data here (e.g. derived bench data sources) instead of one trivial file per constant. A seed constant that a helper function is built around may colocate with that function when grouping it in `constants.*` would create a circular import (the derived fixtures call the generator at module init).
+- **`describe.todo` placeholder** — every helper-only `.test.ts` ends with `describe.todo("<fileName>")` (the function/file name, e.g. `describe.todo("createRow")`) so Vitest accepts the file without a real suite. Bench helper files (`.bench.ts`, `constants.bench.ts`) need no placeholder — Vitest's bench runner tolerates a file with no `bench()`.

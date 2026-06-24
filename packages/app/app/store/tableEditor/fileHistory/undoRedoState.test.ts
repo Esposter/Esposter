@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";

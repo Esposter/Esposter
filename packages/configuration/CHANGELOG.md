@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.30.0](https://github.com/Esposter/Esposter/compare/v2.29.0...v2.30.0) (2026-06-24)
+
+### Bug Fixes
+
+* lint ([d3f4f0c](https://github.com/Esposter/Esposter/commit/d3f4f0c40fb00cea162eef682eb35a113564eebe))
+* wip ([b0aa40f](https://github.com/Esposter/Esposter/commit/b0aa40fc4865554a7ed6f3cb6b172409dcc0bfc8))
+
+### Features
+
+* shared-node bench reporter + migrate benches to vitest bench ([0e39cf7](https://github.com/Esposter/Esposter/commit/0e39cf713eea30d36d50879ba4d56a6bf00fe73e))
+
 # [2.29.0](https://github.com/Esposter/Esposter/compare/v2.28.0...v2.29.0) (2026-06-21)
 
 ### Bug Fixes

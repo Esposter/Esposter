@@ -1,6 +1,11 @@
 import type { ViteUserConfig } from "vitest/config";
 
+import { getBenchmarkPlugins } from "./getBenchmarkPlugins";
+
 export const getVitestConfiguration = (): ViteUserConfig => ({
+  // CodSpeed bench instrumentation for the hosted dashboard, only under the CodSpeed runner (CI); inert
+  // Locally. See getBenchmarkPlugins. The app wires the same helper inline since it skips this function.
+  plugins: getBenchmarkPlugins(),
   resolve: {
     tsconfigPaths: true,
   },
@@ -9,7 +14,8 @@ export const getVitestConfiguration = (): ViteUserConfig => ({
   // Consumer, only in bench mode) to shared-node's `./reporter` default export. Consumers that bench need
   // `@esposter/shared-node` as a devDependency for the string to resolve. No `outputJson`: the reporter
   // Writes colocated per-file results (Foo.bench.json + Foo.bench.md) from the in-memory run, not one
-  // Merged file.
+  // Merged file. Under CodSpeed (CODSPEED_ENV set) the reporter short-circuits — results go to the
+  // Dashboard, not the committed artifacts.
   test: {
     benchmark: { reporters: ["@esposter/shared-node/reporter"] },
     hookTimeout: 60_000,

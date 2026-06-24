@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.30.0](https://github.com/Esposter/Esposter/compare/v2.29.0...v2.30.0) (2026-06-24)
+
+### Bug Fixes
+
+* annotate webhook field shape inline to satisfy --isolatedDeclarations ([f8e5695](https://github.com/Esposter/Esposter/commit/f8e56953f20ee592492f595cf162b0879cf1ce66))
+* explicit ZodObject annotations for isolated-declaration schemas; self-contained sandbox-runtime bundle ([7bf39bc](https://github.com/Esposter/Esposter/commit/7bf39bcb60235cef870fc1dab9abba66fe313390))
+* snapshot ([5d9d2f4](https://github.com/Esposter/Esposter/commit/5d9d2f4b84753ff1fc383154157892b0907d519e))
+* snapshot ([0de95f8](https://github.com/Esposter/Esposter/commit/0de95f8d67220e1ade49e4c785a5fbe95b880be5))
+* snapshot ([7d7d23f](https://github.com/Esposter/Esposter/commit/7d7d23f9c66c66b051a5808e5c5c0c631979666b))
+
+### Features
+
+* sandbox-runtime os backend MVP (bwrap RAM-overlay exec, Linux core) ([8741186](https://github.com/Esposter/Esposter/commit/8741186212042fcb03ba962b88eb438a6d875843))
+* voice settings polish, screen-share stop + settings buttons ([64c9d23](https://github.com/Esposter/Esposter/commit/64c9d2342aff1bb565c381c53841afe7856597df))
+
 # [2.29.0](https://github.com/Esposter/Esposter/compare/v2.28.0...v2.29.0) (2026-06-21)
 
 ### Bug Fixes

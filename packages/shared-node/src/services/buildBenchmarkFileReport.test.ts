@@ -66,4 +66,34 @@ describe(buildBenchmarkFileReport, () => {
 
     expect(report).toStrictEqual({ files: [{ filepath: "empty.bench.ts", groups: [] }] });
   });
+
+  test("throws a named error for a bench that produced no samples", () => {
+    expect.hasAssertions();
+
+    const file: BenchmarkTaskNode = {
+      filepath: "/abs/broken.bench.ts",
+      meta: {},
+      name: "broken.bench.ts",
+      tasks: [
+        {
+          meta: {},
+          name: "group",
+          suite: { meta: {}, name: "broken.bench.ts", type: "suite" },
+          // A task that threw on every iteration: recorded with no finite stats (NaN mean here).
+          tasks: [
+            {
+              meta: { benchmark: true },
+              name: "os",
+              result: { benchmark: { ...benchmark, mean: Number.NaN, name: "os" } },
+              type: "test",
+            },
+          ],
+          type: "suite",
+        },
+      ],
+      type: "suite",
+    };
+
+    expect(() => buildBenchmarkFileReport(file)).toThrow(`benchmark "os" produced no samples`);
+  });
 });

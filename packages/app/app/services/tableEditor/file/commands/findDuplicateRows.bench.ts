@@ -8,7 +8,7 @@ import {
   benchDataSource100AllDuplicates,
   benchDataSource100AllUnique,
   benchDataSource100HalfDuplicates,
-} from "@/composables/tableEditor/file/commands/testUtils.bench";
+} from "@/composables/tableEditor/file/commands/constants.bench";
 import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";
 import { findDuplicateRows } from "@/services/tableEditor/file/commands/findDuplicateRows";
 import { bench, describe } from "vitest";

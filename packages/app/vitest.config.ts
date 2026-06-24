@@ -1,8 +1,13 @@
+import { getBenchmarkPlugins } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
 
 import { dayjs } from "./shared/services/dayjs";
 
 export default await defineVitestProject({
+  // `defineVitestProject` doesn't call `getVitestConfiguration`, so wire CodSpeed's bench plugin via the
+  // Shared helper (inert unless the CodSpeed runner drives the run). Importing it from configuration means
+  // The app never declares `@codspeed/vitest-plugin` itself — it resolves from configuration's own dependency.
+  plugins: getBenchmarkPlugins(),
   test: {
     // `defineVitestProject` doesn't call `getVitestConfiguration`, so wire the reporter inline — same path
     // String, resolved by Vitest in bench mode to shared-node's `./reporter` default export. No

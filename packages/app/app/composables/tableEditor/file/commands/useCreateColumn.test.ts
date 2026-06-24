@@ -3,13 +3,11 @@ import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import {
-  createColumn as baseCreateColumn,
-  createDataSource,
-  createRow,
-  setupEditedItem,
-  setupWithDataSource,
-} from "@/composables/tableEditor/file/commands/testUtils.test";
+import { createColumn as baseCreateColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
+import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";

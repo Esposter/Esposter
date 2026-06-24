@@ -3,6 +3,8 @@ import type { BenchmarkReport } from "@/models/BenchmarkReport";
 import type { BenchmarkResult } from "@/models/BenchmarkResult";
 import type { BenchmarkTaskNode } from "@/models/BenchmarkTaskNode";
 
+import { InvalidOperationError, Operation } from "@esposter/shared";
+
 const SUITE_TYPE = "suite";
 // Depth-first, file then nested describes — mirrors Vitest's own getTasks order so md sections stay in
 // Declaration order. A non-suite (a bench task itself) contributes nothing here; its stats are read from
@@ -33,6 +35,16 @@ export const buildBenchmarkFileReport = (file: BenchmarkTaskNode): BenchmarkRepo
     for (const task of suite.tasks ?? []) {
       const benchmark = task.result?.benchmark;
       if (!task.meta.benchmark || !benchmark) continue;
+      // A bench that threw on every iteration is recorded with zero samples — mean/hz/p99 come back
+      // Non-finite (undefined or NaN), which would later crash formatBenchmarkMarkdown on `mean.toFixed`
+      // With a misleading "failed to write .md" error. Fail loud and named here instead, before any
+      // Artifact is written, since Vitest's bench summary silently swallows the per-iteration throws.
+      if (!Number.isFinite(benchmark.mean))
+        throw new InvalidOperationError(
+          Operation.Read,
+          getFullName(suite),
+          `benchmark "${benchmark.name}" produced no samples — it likely threw on every iteration`,
+        );
       benchmarks.push({
         hz: benchmark.hz,
         mean: benchmark.mean,

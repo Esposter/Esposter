@@ -1,7 +1,6 @@
 import { getResult, normalizeString } from "@esposter/shared";
 import { execSync } from "node:child_process";
 import { arch, cpus, platform, release, totalmem } from "node:os";
-import process from "node:process";
 
 const GIBIBYTE = 1024 ** 3;
 // The commit the numbers were produced on — provenance so a results file can be tied back to the code that
