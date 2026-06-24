@@ -26,9 +26,13 @@ These run from the first backend onward, not as a phase. A change that fails eit
 - [x] Wrap `@platformatic/vfs` behind our `FsProvider` interface; the single adapter import doubles as the `node:vfs` swap shim → [specs/virtual-fs.md](specs/virtual-fs.md).
 - [x] Tests (cross-platform, incl. Windows + node 26): in-memory read/write/exists/mkdir; mount → global `require`/`fs` serve virtual files; dispose tears down. Contract: mount the prefix first, then read/write prefixed paths.
 
-### Step B — in-process exec (next)
+### Step B1 — in-process runner (shipped)
 
-- [ ] `BackendType.Vfs` + in-process JS runner over the FS layer: parse node-invocation commands, run in-process so module hooks + fs interception apply, capture stdout/stderr/exit-code, fall back to native otherwise; wire into `backendFactories`.
+- [x] `BackendType.Vfs` + in-process runner for `node -e`/`--eval`: a shell-aware tokenizer parses the invocation (native fallback on shell operators / other flags / file runs); inline code runs via `vm.runInThisContext` with patched global process streams + exit and an injected `require`, capturing stdout/stderr/exit-code. Falls back to native for anything not run faithfully in-process (syntax error, async result, unrecognised command), so the observable result always matches baseline. Wired into `backendFactories`.
+
+### Step B2 — FS integration + correctness (next)
+
+- [ ] Mount the `FsProvider` (overlay) around the in-process run so the vfs module hooks + fs interception apply; add `node <file>` execution loading modules from the vfs.
 - [ ] Overlay fall-through to real disk + differential tests vs native for a pure-JS workload.
 
 ## Phase 2 — `os` backend (the native core, Linux)
