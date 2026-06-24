@@ -10,6 +10,8 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **`test` not `it`** — always `test(...)`.
 - **`describe(functionRef, ...)`** — pass the function reference directly; use a string only when no importable reference exists.
 - **Declare `const` inside `describe`** — all shared test constants scoped inside the `describe` callback.
+- **`describe.skipIf`/`test.skipIf` for capability/platform gating** — gate on the same capability probe the production code uses (e.g. `describe.skipIf(!isSupported())`), not a narrower proxy (e.g. `process.platform !== "linux"`); a host can pass the platform check yet still lack the underlying dependency, so the narrower gate lets an unsupported host through.
+- **Never construct a throw-on-unsupported resource in describe scope** — `describe.skipIf(...)` still executes its body at **collection time** even when the suite is skipped, so `const x = createThrowingThing()` at describe scope throws on unsupported hosts before the skip applies. Construct it **inside each test/bench callback** instead; only factories that never throw may stay at describe scope and be reused across tests.
 - **`createCallerFactory` double-call** — always inline: `caller = createCallerFactory(router)(mockContext)`. No intermediate variable.
 - **Caller naming** — single: `caller`. Multiple: descriptive (`roomCaller`, `roleCaller`).
 - **Declaration order in `describe`** — `let mockContext: Context` → caller `let`s → `const` test constants.

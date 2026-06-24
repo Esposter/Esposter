@@ -17,7 +17,7 @@ import { spawn } from "node:child_process";
 // An unsupported host (non-Linux, or no bubblewrap) therefore throws at construction instead.
 export const createOsBackend = (): ExecBackend => {
   if (!isOsBackendSupported())
-    throw new InvalidOperationError(Operation.Create, "os backend", "requires Linux + bubblewrap");
+    throw new InvalidOperationError(Operation.Create, createOsBackend.name, "requires Linux + bubblewrap");
   return {
     exec: (command, options) =>
       new Promise((resolve, reject) => {

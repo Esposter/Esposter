@@ -1,16 +1,25 @@
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
+import { getResult } from "@esposter/shared";
+import { execSync } from "node:child_process";
 import { describe, expect, test } from "vitest";
 
+// Mirrors the implementation's `command -v bwrap` so the positive assertion only runs where bubblewrap
+// Is genuinely installed (the dev box, not bare CI).
+const isBubblewrapInstalled =
+  process.platform === "linux" &&
+  getResult(() => execSync("command -v bwrap", { stdio: "pipe" })).match(
+    () => true,
+    () => false,
+  );
+
 describe(isOsBackendSupported, () => {
-  // Windows-runnable: the os backend can never be supported off Linux, regardless of what is on PATH.
   test.skipIf(process.platform === "linux")("is false on non-Linux hosts", () => {
     expect.hasAssertions();
 
     expect(isOsBackendSupported()).toBe(false);
   });
 
-  // On this Linux box bubblewrap is installed (see roadmap/de-risk), so the probe resolves true.
-  test.skipIf(process.platform !== "linux")("is true on Linux with bubblewrap installed", () => {
+  test.skipIf(!isBubblewrapInstalled)("is true on Linux with bubblewrap installed", () => {
     expect.hasAssertions();
 
     expect(isOsBackendSupported()).toBe(true);
