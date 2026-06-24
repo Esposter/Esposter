@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T09:12:50.537Z
-- Commit: 5a063b683
+- Date: 2026-06-24T11:01:12.456Z
+- Commit: 344dec070
 - Node: v26.3.1
 - OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,8 +20,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task                                      | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
 | ----------------------------------------- | ------- | --------- | ------ | -------- | ------- | ------- |
-| execute — move col 0→4, 100 rows          | 1.00×   | 0.0254    | ±0.72% | 0.0468   | 39364   | 19683   |
-| execute — move col 0→4, 1000 rows         | 0.11×   | 0.2354    | ±0.78% | 0.3451   | 4249    | 2125    |
-| execute — move col 0→4, 10000 rows        | 0.011×  | 2.3610    | ±1.04% | 3.1663   | 424     | 212     |
-| undo — move col 0→4 then back, 1000 rows  | 0.054×  | 0.4678    | ±0.73% | 0.6313   | 2137    | 1069    |
-| undo — move col 0→4 then back, 10000 rows | 0.0054× | 4.7398    | ±1.69% | 6.3215   | 211     | 106     |
+| execute — move col 0→4, 100 rows          | 1.00×   | 0.0252    | ±0.73% | 0.0510   | 39702   | 19851   |
+| execute — move col 0→4, 1000 rows         | 0.11×   | 0.2327    | ±0.76% | 0.3530   | 4298    | 2149    |
+| execute — move col 0→4, 10000 rows        | 0.011×  | 2.2786    | ±0.84% | 3.0302   | 439     | 220     |
+| undo — move col 0→4 then back, 1000 rows  | 0.055×  | 0.4557    | ±0.81% | 0.5712   | 2194    | 1098    |
+| undo — move col 0→4 then back, 10000 rows | 0.0055× | 4.5579    | ±0.84% | 5.2329   | 219     | 110     |

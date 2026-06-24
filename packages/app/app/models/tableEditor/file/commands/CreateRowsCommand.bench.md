@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T09:12:50.537Z
-- Commit: 5a063b683
+- Date: 2026-06-24T11:01:12.456Z
+- Commit: 344dec070
 - Node: v26.3.1
 - OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,10 +20,10 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task                                   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
 | -------------------------------------- | ------- | --------- | ------ | -------- | ------- | ------- |
-| execute — insert 100 rows into 100     | 1.00×   | 0.0477    | ±0.70% | 0.0682   | 20983   | 10492   |
-| execute — insert 100 rows into 1000    | 0.93×   | 0.0512    | ±0.85% | 0.0784   | 19533   | 9767    |
-| execute — insert 1000 rows into 10000  | 0.098×  | 0.4884    | ±0.90% | 0.9436   | 2048    | 1024    |
-| execute — insert 10000 rows into 10000 | 0.01×   | 4.6762    | ±1.29% | 5.7017   | 214     | 107     |
-| undo — remove 100 rows from 200        | 0.5×    | 0.0962    | ±0.62% | 0.1462   | 10400   | 5200    |
-| undo — remove 1000 rows from 11000     | 0.049×  | 0.9784    | ±0.82% | 1.4889   | 1022    | 512     |
-| undo — remove 10000 rows from 20000    | 0.0051× | 9.3113    | ±1.04% | 10.3105  | 107     | 54      |
+| execute — insert 100 rows into 100     | 1.00×   | 0.0481    | ±0.82% | 0.0884   | 20808   | 10404   |
+| execute — insert 100 rows into 1000    | 0.92×   | 0.0525    | ±0.88% | 0.1118   | 19051   | 9526    |
+| execute — insert 1000 rows into 10000  | 0.099×  | 0.4854    | ±0.92% | 0.9152   | 2060    | 1031    |
+| execute — insert 10000 rows into 10000 | 0.011×  | 4.5730    | ±1.21% | 5.6960   | 219     | 110     |
+| undo — remove 100 rows from 200        | 0.51×   | 0.0946    | ±0.69% | 0.1579   | 10572   | 5287    |
+| undo — remove 1000 rows from 11000     | 0.047×  | 1.0210    | ±1.84% | 1.6992   | 979     | 490     |
+| undo — remove 10000 rows from 20000    | 0.0052× | 9.2563    | ±1.84% | 12.6990  | 108     | 55      |
