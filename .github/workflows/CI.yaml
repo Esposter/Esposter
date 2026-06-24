@@ -244,3 +244,48 @@ jobs:
 
       - name: ✅ Typecheck
         run: pnpm typecheck
+
+  # CodSpeed instruments the same colocated `*.bench.ts` files (no bench rewrite) and uploads to the hosted
+  # Dashboard for PR regression comments + flamegraphs. This is the rich-metrics path; the committed
+  # `*.bench.md` stay the offline walltime gate (the reporter self-disables under CODSPEED_ENV, which the
+  # Action sets, so these runs don't rewrite the artifacts). Each instrument is a separate run:
+  #   - simulation: CPU/cache simulation + flamegraphs, hardware-independent — free on `ubuntu-latest`.
+  #   - walltime / memory: real elapsed time + HW counters, and heap allocations (eBPF) — require CodSpeed's
+  #     bare-metal `codspeed-macro` runners (600 free min/mo + extra for open source).
+  # Auth is OIDC (`id-token: write`) via the CodSpeed GitHub App — no secret to manage; set a
+  # `CODSPEED_TOKEN` secret and pass it as `token:` instead if you prefer token auth.
+  bench:
+    name: Bench (${{ matrix.mode }})
+    needs: build-packages
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - mode: simulation
+            runner: ubuntu-latest
+          - mode: walltime
+            runner: codspeed-macro
+          - mode: memory
+            runner: codspeed-macro
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
+      # `pnpm bench` recursively runs each package's `vitest bench --run`; the action sets CODSPEED_ENV so
+      # The codspeed plugin (wired via getBenchmarkPlugins) instruments each run in the chosen mode.
+      - name: 🏎️ Run CodSpeed benchmarks
+        uses: CodSpeedHQ/action@a4a36bb07c0638b0b4ca52bf1f3dad1b4289e52f # v4.18.1
+        with:
+          mode: ${{ matrix.mode }}
+          run: pnpm bench

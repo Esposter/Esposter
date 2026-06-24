@@ -1,11 +1,16 @@
 ---
 name: bench
-description: Esposter benchmarking conventions — colocated *.bench.ts files, vitest bench, the BenchmarkMarkdownReporter that auto-writes results.md beside results.json, and where bench tooling lives (@esposter/shared-node). Apply when adding or editing benchmarks.
+description: Esposter benchmarking conventions — colocated *.bench.ts files, vitest bench, the BenchmarkMarkdownReporter that auto-writes results.md beside results.json, the CodSpeed dashboard layer, and where bench tooling lives (@esposter/shared-node). Apply when adding or editing benchmarks.
 ---
 
 # Benchmarking Conventions
 
 Benchmarks run on Vitest's built-in `bench()` (tinybench under the hood). There is no separate bench runner, bin, or `tinybench` direct dependency.
+
+There are **two layers** over the same colocated `*.bench.ts` files (see [CodSpeed](#codspeed-hosted-dashboard)):
+
+1. **Local committed `*.bench.md`** — the offline gate. `pnpm bench` runs plain tinybench and the `BenchmarkMarkdownReporter` writes colocated `*.bench.{json,md}` you commit and diff. Unchanged, cross-platform, no cloud.
+2. **CodSpeed hosted dashboard (CI only)** — the rich-metrics layer. `CodSpeedHQ/action` instruments the same benches for CPU/cache simulation, walltime, memory (heap), and flamegraphs, with PR regression comments.
 
 ## Writing benchmarks
 
@@ -55,3 +60,13 @@ Changing what's rendered means updating `BenchmarkResult` (schema + interface) a
 Node-only shared tooling (the bench schemas, `formatBenchmarkMarkdown`, `writeBenchmarkResults`, `BenchmarkMarkdownReporter`) lives in `@esposter/shared-node`. It can't go in `@esposter/configuration` (built first; can't import a later package's reporter — which is why `getVitestConfiguration` wires the reporter as a path string, not an import) nor in `@esposter/shared` (browser bundle; no `node:os`). Build order: `configuration → shared → shared-node`. Consumers depend on it as a **devDependency** (tooling only, never runtime).
 
 The reporter is the package's default export, exposed at the `@esposter/shared-node/reporter` subpath (a second rolldown entry → `dist/reporter.js`), because Vitest's `loadCustomReporterModule` requires a `.default` export. `vitest` is a **peerDependency** (not a devDependency — pnpm's auto-install-peers resolves it for shared-node's own typecheck/build/test): the reporter `extends BenchmarkReporter`, so it must bind to the _same_ vitest instance as the consumer's runner. Import the reporter type/value from `vitest/node`, not the deprecated `vitest/reporters`. Vitest is externalized centrally via `configuration`'s shared `external` list (`/^vitest(\/|$)/u`), so per-package rolldown configs don't repeat it — shared-node's rolldown config only adds the second `reporter` entry.
+
+## CodSpeed (hosted dashboard)
+
+CodSpeed is the **rich-metrics layer** over the same colocated `*.bench.ts` files — it does not replace the committed `*.bench.md` gate, it adds CPU/cache instruction counts (deterministic, <1% variance), walltime with hardware counters, memory/heap allocations, flamegraphs, and PR regression comments. It is **CI-only and zero-maintenance** (a hosted GitHub App; nothing to self-host).
+
+- **Wiring.** `@codspeed/vitest-plugin` is added to the Vitest config via `getBenchmarkPlugins()` in `@esposter/configuration` (`getVitestConfiguration` uses it; the app's `defineVitestProject` imports the same helper, so neither place redeclares the plugin). The helper returns `[]` unless `CODSPEED_ENV` is set — which only `CodSpeedHQ/action` does — so **local `pnpm bench` is byte-for-byte unchanged** (plain tinybench; no forks pool / profiling v8 flags / globalSetup). The plugin is also inert outside `mode === "benchmark"`, so `pnpm test`/coverage is untouched.
+- **The reporter self-disables under CodSpeed.** `BenchmarkMarkdownReporter` returns early when `CODSPEED_ENV` is set, so CI dashboard runs don't also rewrite the committed colocated artifacts (and the instruments run each bench once, not as a walltime sample).
+- **Dependency placement.** `@codspeed/vitest-plugin` is a **`dependency` of `configuration` only** — its dist imports it via `getBenchmarkPlugins`, so every consumer (app, virrun, …) resolves it from configuration's own `node_modules`; no other package declares it. It **must stay in the shared `external` list** (`/^@codspeed\//u`) — bundling it breaks the plugin, which loads sibling runtime files (`globalSetup`, the mode runners) and its native prebuilds via `__dirname` (a bundled build fails with `Failed to load …/configuration/dist/globalSetup.mjs`). So: `dependency` + external, never bundled, never a devDependency/peer.
+- **CI matrix** (`.github/workflows/CI.yaml`, `bench` job, `needs: build-packages`): one run per instrument via `CodSpeedHQ/action`, all running `pnpm bench`. `simulation` runs free on `ubuntu-latest`; `walltime` and `memory` require CodSpeed's bare-metal `codspeed-macro` runners (600 free min/mo + extra for open source). Auth is OIDC (`id-token: write`) via the CodSpeed GitHub App — set a `CODSPEED_TOKEN` secret and pass it as `token:` only if you prefer token auth.
+- **CodSpeed measures functions, not toolchain durations.** It instruments `bench()` code execution — it is _not_ for tracking `pnpm build`/`install`/`typecheck` wall-times (install is network-bound; CPU simulation caps at ~5s and can't do I/O). Track CI-job duration separately; keep CodSpeed for function/macro benches. The `virrun` end-to-end benches (`createVirrun`, `loadFilesSource`, `localMonorepo`) double as the legitimate "measure a real pipeline" macro/walltime benches.

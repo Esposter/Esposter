@@ -1,14 +1,11 @@
 import type { ViteUserConfig } from "vitest/config";
 
-import codspeedPlugin from "@codspeed/vitest-plugin";
+import { getBenchmarkPlugins } from "./getBenchmarkPlugins";
 
-// CodSpeed's plugin instruments `bench()` for the hosted dashboard (CPU/cache simulation, walltime,
-// Memory + flamegraphs). It is only wired when the CodSpeed runner is driving the run — `CODSPEED_ENV` is
-// Set by `CodSpeedHQ/action` in CI — so local `pnpm bench` stays the plain tinybench path that the
-// Colocated reporter renders into the committed `*.bench.md`. Gating the import this way also keeps the
-// Plugin's bench-mode side effects (forks pool, profiling v8 flags, globalSetup) out of local runs.
 export const getVitestConfiguration = (): ViteUserConfig => ({
-  plugins: process.env.CODSPEED_ENV === undefined ? [] : [codspeedPlugin()],
+  // CodSpeed bench instrumentation for the hosted dashboard, only under the CodSpeed runner (CI); inert
+  // Locally. See getBenchmarkPlugins. The app wires the same helper inline since it skips this function.
+  plugins: getBenchmarkPlugins(),
   resolve: {
     tsconfigPaths: true,
   },

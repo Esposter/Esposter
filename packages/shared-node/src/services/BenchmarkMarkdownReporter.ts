@@ -17,6 +17,11 @@ export default class BenchmarkMarkdownReporter extends BenchmarkReporter {
     reason: TestRunEndReason,
   ): Promise<void> {
     await super.onTestRunEnd(testModules, unhandledErrors, reason);
+    // Under the CodSpeed runner (CI, CODSPEED_ENV set) results go to the hosted dashboard, and the
+    // Instruments run each bench once rather than sampling — so the in-memory tinybench stats aren't the
+    // Walltime numbers the committed .md tracks. Skip writing the colocated artifacts in that case; locally
+    // (`pnpm bench`, no CodSpeed) this still emits Foo.bench.json + Foo.bench.md beside each source.
+    if (process.env.CODSPEED_ENV !== undefined) return;
     const environment = readBenchmarkEnvironment();
     for (const file of this.ctx.state.getFiles()) await writeBenchmarkReport(file, environment);
   }
