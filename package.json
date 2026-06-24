@@ -36,7 +36,7 @@
   },
   "type": "module",
   "scripts": {
-    "bench": "pnpm -r --if-present run bench",
+    "bench": "vitest bench --run --project scripts && pnpm -r --if-present run bench",
     "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",
     "build:app": "pnpm --filter @esposter/app run build",
     "build:docker": "pnpm crossOS copyfiles .gitignore .dockerignore && docker compose -f docker-compose.dev.yaml build",
@@ -67,6 +67,7 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@esposter/shared": "workspace:*",
+    "@esposter/shared-node": "workspace:*",
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
     "@types/node": "catalog:",

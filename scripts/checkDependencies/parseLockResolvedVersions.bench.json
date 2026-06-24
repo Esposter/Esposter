@@ -1,0 +1,32 @@
+{
+  "files": [
+    {
+      "filepath": "scripts/checkDependencies/parseLockResolvedVersions.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "hz": 6986.450405300167,
+              "mean": 0.1431342014882643,
+              "name": "catalogs section",
+              "p99": 0.328200000000038,
+              "rme": 1.0165364882691106,
+              "sampleCount": 3494,
+              "sd": 0.043880520518755906
+            },
+            {
+              "hz": 489017.8043929619,
+              "mean": 0.002044915320090117,
+              "name": "importers section",
+              "p99": 0.0040999999998803105,
+              "rme": 0.49668595902824625,
+              "sampleCount": 244509,
+              "sd": 0.002562409671947899
+            }
+          ],
+          "fullName": "parseLockResolvedVersions"
+        }
+      ]
+    }
+  ]
+}

@@ -782,6 +782,9 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:packages/shared
+      '@esposter/shared-node':
+        specifier: workspace:*
+        version: link:packages/shared-node
       '@lerna-lite/cli':
         specifier: 'catalog:'
         version: 5.3.0(@lerna-lite/publish@5.3.0(@types/node@26.0.0)(conventional-commits-filter@5.0.0))(@lerna-lite/version@5.3.0(@lerna-lite/publish@5.3.0(@types/node@26.0.0)(conventional-commits-filter@5.0.0))(@types/node@26.0.0)(conventional-commits-filter@5.0.0))(@types/node@26.0.0)

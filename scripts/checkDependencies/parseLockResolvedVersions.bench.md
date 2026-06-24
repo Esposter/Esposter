@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T23:39:44.064Z
+- Date: 2026-06-24T23:56:34.973Z
 - Commit: 23eeaa5de
 - Node: v26.3.1
 - OS: win32 10.0.26200 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
 - RAM: 38.8 GiB
 
-## createVirrun exec vs native baseline
+## parseLockResolvedVersions
 
-| task   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
-| ------ | ------- | --------- | ------ | -------- | ------- | ------- |
-| native | 1.00×   | 142.5610  | ±4.56% | 156.2750 | 7       | 10      |
-| virrun | 1.06×   | 134.1645  | ±4.40% | 144.8909 | 7       | 10      |
+| task              | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
+| ----------------- | ------- | --------- | ------ | -------- | ------- | ------- |
+| catalogs section  | 1.00×   | 0.1431    | ±1.02% | 0.3282   | 6986    | 3494    |
+| importers section | 70.00×  | 0.0020    | ±0.50% | 0.0041   | 489018  | 244509  |

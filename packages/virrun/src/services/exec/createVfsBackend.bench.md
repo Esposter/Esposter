@@ -9,30 +9,30 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T14:32:44.383Z
-- Commit: 5e493e6bf
+- Date: 2026-06-24T23:39:44.064Z
+- Commit: 23eeaa5de
 - Node: v26.3.1
-- OS: linux 6.6.87.2-microsoft-standard-WSL2 (x64)
+- OS: win32 10.0.26200 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 19.0 GiB
+- RAM: 38.8 GiB
 
 ## createVfsBackend — in-process node -e vs native spawn (hot path)
 
-| task   | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
-| ------ | ------- | --------- | ------- | -------- | ------- | ------- |
-| native | 1.00×   | 182.4874  | ±8.77%  | 218.6692 | 5       | 10      |
-| vfs    | 817.32× | 0.2233    | ±11.79% | 2.3223   | 4479    | 2240    |
+| task   | vs base  | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
+| ------ | -------- | --------- | ------ | -------- | ------- | ------- |
+| native | 1.00×    | 170.9572  | ±8.69% | 197.6800 | 6       | 10      |
+| vfs    | 4876.75× | 0.0351    | ±8.25% | 0.0960   | 28526   | 14474   |
 
 ## createVfsBackend — in-process node <file> vs native spawn (hot path)
 
-| task   | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
-| ------ | ------- | --------- | ------- | -------- | ------- | ------- |
-| native | 1.00×   | 127.0333  | ±52.81% | 392.4785 | 8       | 10      |
-| vfs    | 44.21×  | 2.8734    | ±16.63% | 14.9197  | 348     | 175     |
+| task   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
+| ------ | ------- | --------- | ------ | -------- | ------- | ------- |
+| native | 1.00×   | 151.0414  | ±3.78% | 157.4685 | 7       | 10      |
+| vfs    | 131.54× | 1.1483    | ±2.96% | 2.4312   | 871     | 436     |
 
 ## createVfsBackend — fall-back command vs native (no added overhead)
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
 | ------ | ------- | --------- | ------ | -------- | ------- | ------- |
-| native | 1.00×   | 79.6563   | ±8.43% | 94.5349  | 13      | 10      |
-| vfs    | 0.87×   | 91.1318   | ±8.19% | 106.4508 | 11      | 10      |
+| native | 1.00×   | 155.1096  | ±2.81% | 165.8694 | 6       | 10      |
+| vfs    | 1.02×   | 152.6759  | ±2.60% | 162.7269 | 7       | 10      |
