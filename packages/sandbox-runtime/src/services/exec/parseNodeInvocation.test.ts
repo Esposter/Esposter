@@ -5,19 +5,25 @@ describe(parseNodeInvocation, () => {
   test("parses a -e string command into its inline code", () => {
     expect.hasAssertions();
 
-    expect(parseNodeInvocation('node -e "process.exit(0)"')).toStrictEqual({ code: "process.exit(0)" });
+    expect(parseNodeInvocation('node -e "process.exit(0)"')).toStrictEqual({ code: "process.exit(0)", file: "" });
   });
 
   test("parses the --eval alias", () => {
     expect.hasAssertions();
 
-    expect(parseNodeInvocation('node --eval "process.exit(0)"')).toStrictEqual({ code: "process.exit(0)" });
+    expect(parseNodeInvocation('node --eval "process.exit(0)"')).toStrictEqual({ code: "process.exit(0)", file: "" });
   });
 
   test("parses an argv form unchanged", () => {
     expect.hasAssertions();
 
-    expect(parseNodeInvocation(["node", "-e", "process.exit(0)"])).toStrictEqual({ code: "process.exit(0)" });
+    expect(parseNodeInvocation(["node", "-e", "process.exit(0)"])).toStrictEqual({ code: "process.exit(0)", file: "" });
+  });
+
+  test("parses a file run into its file path", () => {
+    expect.hasAssertions();
+
+    expect(parseNodeInvocation("node index.js")).toStrictEqual({ code: "", file: "index.js" });
   });
 
   test("returns undefined for a non-node command", () => {
@@ -26,10 +32,10 @@ describe(parseNodeInvocation, () => {
     expect(parseNodeInvocation("ls -e x")).toBeUndefined();
   });
 
-  test("returns undefined for a file run (Step B2)", () => {
+  test("returns undefined for a file run with script args (not emulated yet)", () => {
     expect.hasAssertions();
 
-    expect(parseNodeInvocation("node index.js")).toBeUndefined();
+    expect(parseNodeInvocation("node index.js --flag")).toBeUndefined();
   });
 
   test("returns undefined for an unsupported flag", () => {

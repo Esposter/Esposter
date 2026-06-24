@@ -32,10 +32,11 @@ These run from the first backend onward, not as a phase. A change that fails eit
 - [x] **Correctness gate** — `createVfsBackend.differential.test.ts`: a `node -e` corpus (stdout/stderr writes, `process.exit(n)`, `require`, empty code, uncaught throw) plus fall-through commands (`node -p`, `node --version`) run native vs vfs → identical `ExecResult`. → [specs/correctness.md](specs/correctness.md)
 - [x] **Speed gate** — `createVfsBackend.bench.ts` (colocated [createVfsBackend.bench.md](../../packages/sandbox-runtime/src/services/exec/createVfsBackend.bench.md)): in-process `node -e` runs orders of magnitude faster than native spawn (the node-startup cost removed); the fall-back path ties native within noise (parse-and-delegate adds ~0). Absolute timings are machine-dependent and never pinned here — the regression check is regenerating + diffing that md, where each task's `vs base` multiplier (native = `1.00×`) makes a regression obvious. → [specs/benchmarking.md](specs/benchmarking.md)
 
-### Step B2 — FS integration + correctness (next)
+### Step B2 — FS integration + correctness (shipped; both gates passed)
 
-- [ ] Mount the `FsProvider` (overlay) around the in-process run so the vfs module hooks + fs interception apply; add `node <file>` execution loading modules from the vfs.
-- [ ] Overlay fall-through to real disk + differential tests vs native for a pure-JS workload.
+- [x] Mount an overlay `FsProvider` at the working dir around every in-process run so the vfs module hooks + core fs serve virtual files and fall through to real disk otherwise; add `node <file>` execution (a lone non-flag path, no script args yet) loading modules through the mount, with the require cache cleared back to its pre-run state so each run re-executes like a fresh process.
+- [x] **Correctness gate** — extended `createVfsBackend.differential.test.ts` with a multi-file `node <file>` workload (entry requires a second module from real disk) run native vs vfs under the overlay → identical `ExecResult`, proving overlay fall-through; `createPlatformaticFsProvider.test.ts` adds a direct overlay read fall-through + virtual-shadow test. → [specs/correctness.md](specs/correctness.md)
+- [x] **Speed gate** — `createVfsBackend.bench.ts` adds a `node <file>` hot-path task: in-process file runs stay orders of magnitude faster than native spawn even with the overlay mount; the `node -e` and fall-back tasks remain ahead. → [specs/benchmarking.md](specs/benchmarking.md)
 
 ## Phase 2 — `os` backend (the native core, Linux)
 

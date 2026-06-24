@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T02:10:34.668Z
-- Commit: b0aa40fc4
+- Date: 2026-06-24T03:07:24.462Z
+- Commit: 86ea4ff2f
 - Node: v26.3.1
 - OS: win32 10.0.26200 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
@@ -18,14 +18,21 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## createVfsBackend — in-process node -e vs native spawn (hot path)
 
-| task   | vs base  | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
-| ------ | -------- | --------- | ------ | -------- | ------- | ------- |
-| native | 1.00×    | 135.7011  | ±6.66% | 155.2039 | 7       | 10      |
-| vfs    | 6402.25× | 0.0212    | ±2.15% | 0.0693   | 47179   | 23590   |
+| task   | vs base  | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
+| ------ | -------- | --------- | ------- | -------- | ------- | ------- |
+| native | 1.00×    | 219.2870  | ±14.26% | 287.0774 | 5       | 10      |
+| vfs    | 3509.19× | 0.0625    | ±4.52%  | 0.2097   | 16003   | 8002    |
 
-## createVfsBackend — fall-back command vs native (no added overhead)
+## createVfsBackend — in-process node <file> vs native spawn (hot path)
 
 | task   | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
 | ------ | ------- | --------- | ------- | -------- | ------- | ------- |
-| native | 1.00×   | 137.4515  | ±7.12%  | 155.9465 | 7       | 10      |
-| vfs    | 0.77×   | 178.7386  | ±22.57% | 305.6479 | 6       | 10      |
+| native | 1.00×   | 177.1079  | ±14.84% | 265.1817 | 6       | 10      |
+| vfs    | 109.90× | 1.6115    | ±4.35%  | 4.0703   | 621     | 311     |
+
+## createVfsBackend — fall-back command vs native (no added overhead)
+
+| task   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
+| ------ | ------- | --------- | ------ | -------- | ------- | ------- |
+| native | 1.00×   | 191.0252  | ±8.93% | 232.9757 | 5       | 10      |
+| vfs    | 1.46×   | 130.9940  | ±4.75% | 142.0333 | 8       | 10      |
