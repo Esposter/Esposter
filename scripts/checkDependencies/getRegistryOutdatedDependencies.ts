@@ -9,8 +9,12 @@ import { isVersionOutdated } from "@/checkDependencies/isVersionOutdated";
 import { getResultAsync } from "@esposter/shared";
 
 const registryConcurrency = 4;
+const groupMetadata: Record<string, { dependencyType: string; dependent: string }> = {
+  configDependencies: { dependencyType: "config", dependent: "configDependencies" },
+  engines: { dependencyType: "engine", dependent: "engines" },
+};
 
-export const getConfigDependencyRegistryChecks = async (
+export const getRegistryOutdatedDependencies = async (
   entries: DependencyEntry[],
 ): Promise<{ errors: RegistryCheckError[]; outdatedDependencies: OutdatedDependency[] }> => {
   const outdatedDependencies: OutdatedDependency[] = [];
@@ -26,11 +30,12 @@ export const getConfigDependencyRegistryChecks = async (
       await getResultAsync(() => getLatestVersion(pkg)).match(
         (latest) => {
           const current = getSpecifierBase(specifier);
+          const metadata = groupMetadata[group];
           if (isVersionOutdated(current, latest))
             outdatedDependencies.push({
               current,
-              dependencyType: group === "configDependencies" ? "config" : "",
-              dependents: group === "configDependencies" ? ["configDependencies"] : [],
+              dependencyType: metadata?.dependencyType ?? "",
+              dependents: metadata ? [metadata.dependent] : [],
               latest,
               pkg,
               specifier,

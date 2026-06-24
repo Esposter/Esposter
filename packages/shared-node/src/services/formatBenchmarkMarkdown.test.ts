@@ -61,6 +61,6 @@ describe(formatBenchmarkMarkdown, () => {
     };
     const markdown = formatBenchmarkMarkdown(escaped, environment);
 
-    expect(markdown).toContain("|  \\|  | 1.0000 | 1.0000 | 1.0000 | 1 | 1 |");
+    expect(markdown).toContain(String.raw`|  \|  | 1.0000 | 1.0000 | 1.0000 | 1 | 1 |`);
   });
 });
