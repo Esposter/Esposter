@@ -9,27 +9,7 @@ These run from the first backend onward, not as a phase. A change that fails eit
 - [ ] **Speed harness** — native-baseline benchmark over a fixed repo corpus, cache-state matrix → [specs/benchmarking.md](specs/benchmarking.md). Any path slower than baseline gets cut. CI-enforcement is deferred until a backend can actually regress → [deferred/ci-bench-gate.md](deferred/ci-bench-gate.md).
 - [ ] **Differential correctness suite** — run each command natively vs sandbox, normalize, assert identical → [specs/correctness.md](specs/correctness.md). Grow the corpus on every gap; every fixed bug becomes a golden regression test. CI-enforcement deferred with the speed gate → [deferred/ci-bench-gate.md](deferred/ci-bench-gate.md).
 
-## Phase 0 — Foundations
-
-- [x] Lock package layout following monorepo convention: `@esposter/sandbox-runtime` (private for now). Sibling `-vfs`/`-os` packages split out when those backends land.
-- [x] Define the public API surface → `createSandbox` / `Sandbox.exec` / `ExecBackend` / `BackendType`, see [specs/orchestrator-api.md](specs/orchestrator-api.md).
-- [x] `ExecBackend` seam + native passthrough backend — the foundation every future backend implements.
-- [x] `sandbox -- <command>` prefix CLI with live stdio + exit-code propagation → [specs/adoption.md](specs/adoption.md). Routes through the sandbox; native passthrough today, so it is already dogfoodable on this repo.
-- [x] Stand up the benchmark + correctness harnesses against the native backend (differential test asserts identical-to-native; `pnpm bench` reports sandbox-vs-baseline) so every later phase is measured from day one.
-- [x] Source loaders: `{ dir }`, `{ files }`, `{ git }` (discriminated on `SourceType`) → normalized into a `LoadedSource` (working dir + `dispose`); `createSandbox` is now async and owns teardown.
-- [x] Benchmark foundation — `pnpm bench` writes a committed `bench/results.md` (environment metadata + tinybench latency stats: mean/sd/p99/samples + native-vs-sandbox ratio). Regenerate + diff pre-commit as a manual regression check. CI-enforcement deferred → [deferred/ci-bench-gate.md](deferred/ci-bench-gate.md).
-
-## Phase 1 — `vfs` backend (pure npm, cross-platform)
-
-### Step A — FS layer (shipped)
-
-- [x] Wrap `@platformatic/vfs` behind our `FsProvider` interface; the single adapter import doubles as the `node:vfs` swap shim → [specs/virtual-fs.md](specs/virtual-fs.md).
-- [x] Tests (cross-platform, incl. Windows + node 26): in-memory read/write/exists/mkdir; mount → global `require`/`fs` serve virtual files; dispose tears down. Contract: mount the prefix first, then read/write prefixed paths.
-
-### Step B — in-process exec (next)
-
-- [ ] `BackendType.Vfs` + in-process JS runner over the FS layer: parse node-invocation commands, run in-process so module hooks + fs interception apply, capture stdout/stderr/exit-code, fall back to native otherwise; wire into `backendFactories`.
-- [ ] Overlay fall-through to real disk + differential tests vs native for a pure-JS workload.
+Phase 0 (foundations) and Phase 1 (the `vfs` backend — FS layer + in-process `node -e`/`node <file>` runner, both gates passed) are shipped; see README `## Shipped` and the linked specs. Open work below.
 
 ## Phase 2 — `os` backend (the native core, Linux)
 

@@ -1,6 +1,9 @@
 import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
 import { withFinalizer } from "@esposter/shared";
+import { mkdtempSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const require = createRequire(import.meta.url);
@@ -31,6 +34,7 @@ describe(createPlatformaticFsProvider, () => {
         expect(fs.readFileSync("/mnt/data.txt", "utf8")).toBe(" ");
 
         writeFile("/mnt/index.js", 'module.exports = require("node:fs").readFileSync("/mnt/data.txt", "utf8")');
+
         // oxlint-disable-next-line import/no-absolute-path -- absolute mount path is the point: verifies the VFS module loader resolves mounted files
         expect(require("/mnt/index.js")).toBe(" ");
       },
@@ -38,6 +42,32 @@ describe(createPlatformaticFsProvider, () => {
         unmount();
       },
     );
+  });
+
+  test("overlay reads fall through to real disk until a virtual file shadows them", () => {
+    expect.hasAssertions();
+
+    const dir = realpathSync(mkdtempSync(join(tmpdir(), "vfs-overlay-")));
+    const file = join(dir, "real.txt");
+    writeFileSync(file, "");
+    const { dispose, mount, writeFile } = createPlatformaticFsProvider({ overlay: true });
+    mount(dir);
+    withFinalizer(
+      () => {
+        const fs = require("node:fs");
+
+        expect(fs.readFileSync(file, "utf8")).toBe("");
+
+        writeFile(file, " ");
+
+        expect(fs.readFileSync(file, "utf8")).toBe(" ");
+      },
+      () => {
+        dispose();
+      },
+    );
+
+    expect(readFileSync(file, "utf8")).toBe("");
   });
 
   test("dispose tears down the mount so interception stops", () => {
