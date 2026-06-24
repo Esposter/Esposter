@@ -248,6 +248,24 @@ import { IS_PRODUCTION } from "#shared/util/environment/constants";
 const baseUrl = IS_PRODUCTION ? PRODUCTION_URL : DEVELOPMENT_URL;
 ```
 
+## Options Argument Defaults
+
+- **Destructure with defaults in the parameter itself** — the most elegant form for an options/config argument. Never a separate `const { x = false } = options;` line, and never `options.x ?? false` at the use site.
+
+  ```ts
+  // CORRECT — defaults live in the destructured parameter
+  export const createThing = ({ overlay = false }: Partial<ThingOptions> = {}): Thing => { ... };
+
+  // WRONG — extra line
+  export const createThing = (options: Partial<ThingOptions> = {}): Thing => {
+    const { overlay = false } = options;
+    ...
+  };
+
+  // WRONG — default scattered to the use site
+  export const createThing = (options: Partial<ThingOptions> = {}): Thing => create({ overlay: options.overlay ?? false });
+  ```
+
 ## Enum Refs
 
 - **Never `ref<EnumType | null>(null)`** — default to a sensible first value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`.

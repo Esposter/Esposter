@@ -20,7 +20,8 @@ export const external: (RegExp | string)[] = [
   /^unplugin-dts/u,
   "vite",
   "vite-plugin-mkcert",
-  "vitest/config",
+  // Covers vitest, vitest/config, vitest/node — the reporter imports vitest/node; never bundle the runner
+  /^vitest(?:\/|$)/u,
   // @esposter/db
   "@azure/core-client",
   "@azure/data-tables",

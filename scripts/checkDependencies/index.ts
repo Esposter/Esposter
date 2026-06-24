@@ -1,9 +1,10 @@
 import { createColor } from "@/checkDependencies/createColor";
-import { getConfigDependencyRegistryChecks } from "@/checkDependencies/getConfigDependencyRegistryChecks";
+import { getEngineEntries } from "@/checkDependencies/getEngineEntries";
 import { getLockCatalogVersions } from "@/checkDependencies/getLockCatalogVersions";
 import { getLockConfigDependencyVersions } from "@/checkDependencies/getLockConfigDependencyVersions";
 import { getManifestDependencies } from "@/checkDependencies/getManifestDependencies";
 import { getMismatches } from "@/checkDependencies/getMismatches";
+import { getRegistryOutdatedDependencies } from "@/checkDependencies/getRegistryOutdatedDependencies";
 import { getRegularOutdatedDependencies } from "@/checkDependencies/getRegularOutdatedDependencies";
 import { getSection } from "@/checkDependencies/getSection";
 import { getUncatalogedManifestDependencies } from "@/checkDependencies/getUncatalogedManifestDependencies";
@@ -28,6 +29,7 @@ const configDependencyEntries = parseWorkspaceEntries(
   "configDependencies",
   getSection("configDependencies", workspaceYaml),
 );
+const engineEntries = getEngineEntries(root);
 const manifestDependencies = getManifestDependencies(root);
 const uncatalogedManifestDependencies = getUncatalogedManifestDependencies(manifestDependencies);
 const mismatches = [
@@ -38,12 +40,12 @@ const mismatches = [
 printUncatalogedManifestDependencies(uncatalogedManifestDependencies, color);
 printMismatches(mismatches, color);
 
-const [regularChecks, configDependencyChecks] = await Promise.all([
+const [regularChecks, registryChecks] = await Promise.all([
   getRegularOutdatedDependencies(root),
-  getConfigDependencyRegistryChecks(configDependencyEntries),
+  getRegistryOutdatedDependencies([...configDependencyEntries, ...engineEntries]),
 ]);
-const outdatedDependencies = [...regularChecks.outdatedDependencies, ...configDependencyChecks.outdatedDependencies];
-const errors = [...regularChecks.errors, ...configDependencyChecks.errors];
+const outdatedDependencies = [...regularChecks.outdatedDependencies, ...registryChecks.outdatedDependencies];
+const errors = [...regularChecks.errors, ...registryChecks.errors];
 const hasBlockingIssues = uncatalogedManifestDependencies.length > 0 || mismatches.length > 0 || errors.length > 0;
 printOutdatedDependencies(outdatedDependencies, color);
 printRegistryErrors(errors, color);

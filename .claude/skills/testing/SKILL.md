@@ -186,7 +186,8 @@ Always a plain no-op: `new InvocationContext({ logHandler: () => {} })`. Never `
 
 ## Error Assertions
 
-- **Always `.rejects.toThrowErrorMatchingInlineSnapshot(...)`** — the inline snapshot is the only accepted form; it captures the exact message for 100% accuracy. **Never `.rejects.toBeInstanceOf(...)`**, **never `.rejects.toThrow()`** without args, **never `.rejects.toThrow(arg)`**.
+- **CRITICAL — `toThrowErrorMatchingInlineSnapshot(...)` is the ONLY accepted error assertion**, for both async (`.rejects.`) and sync (`expect(() => fn())`) throws. It captures the exact message for 100% accuracy. **BANNED in every form**: `toThrow()`, `toThrow(arg)` (string/regex/class), `.rejects.toThrow(...)`, `toThrowError(...)`, `toBeInstanceOf(...)`, and hand-rolled `try { fn(); expect.fail() } catch`. If you typed anything other than `toThrowErrorMatchingInlineSnapshot`, it is wrong.
+- **Non-deterministic / OS-specific messages** — when the thrown message embeds something you cannot reconstruct portably (an absolute path that differs by OS, e.g. a Node `ENOENT` showing `C:\…` on Windows vs `/…` on Linux), do NOT snapshot the throw — it will pass locally and fail in CI. Restructure the assertion to observe the behavior portably instead (e.g. assert `fs.existsSync(path)` is `false`, or assert the returned value changed) rather than asserting the error.
 - **Reconstruct dynamic values into the snapshot argument** instead of falling back to `toBeInstanceOf`. When the message embeds a UUID/runtime value, interpolate that same value via the error's `.message` so the snapshot is exact every run:
   ```ts
   // tRPC-wrapped throw → [TRPCError: ...]
@@ -229,28 +230,36 @@ Default environment is `node` — do **not** add `// @vitest-environment node`.
 
 ## Bundle Size Snapshot Tests
 
-Every library package (`packages/*` except `app`) has `src/index.test.ts` with a bundle size snapshot:
+Every library package (`packages/*` except `app`) has `src/index.test.ts` with two snapshots — bundle size (`index.js`) and types size (`index.d.ts`):
 
 ```ts
-import { getCrossPlatformSize } from "@esposter/configuration";
+import { getFileSize } from "@esposter/configuration";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const distFile = resolve(import.meta.dirname, "../dist/index.js");
+const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
 
 describe("@esposter/my-package", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getCrossPlatformSize(distFile)).toMatchInlineSnapshot(`"index.js: 12.06 KB (12345 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 12.06 KB (12345 bytes)"`);
+  });
+
+  test("types size", () => {
+    expect.hasAssertions();
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 1.45 KB (1484 bytes)"`);
   });
 });
 ```
 
-- Run `pnpm build` in the package first (the test reads compiled `dist/index.js`).
-- Run `pnpm test --run -u` to update the snapshot after a build change.
-- Use `getCrossPlatformSize` so CRLF/LF differences don't change snapshots across OSes.
+- Import `getFileSize` from `@esposter/configuration` (the `configuration` package itself imports it locally from `./getFileSize`).
+- **Default to the simple unguarded form above.** Only split into an `isWindows` per-platform branch when you have **confirmed** the byte count actually differs across OSes (e.g. a large bundle where CRLF vs LF shifts the count, as `packages/azure-functions/src/index.test.ts` does) or its CI fails on the other OS — don't add the branch speculatively. When you do branch, fill the OS you're on and leave the other's snapshot empty (`toMatchInlineSnapshot()`) for that OS's CI to auto-populate. The branch needs `/* eslint-disable vitest/no-conditional-expect, vitest/no-conditional-in-test */`.
+- Run `pnpm build` in the package first (the test reads compiled `dist/index.js` + `dist/index.d.ts`).
+- Auto-fill workflow: create the test with **empty** snapshots (`toMatchInlineSnapshot()`), then `pnpm build` + `pnpm test --run -u` to let Vitest write the sizes in.
+- `pnpm test --run -u` also updates the snapshots after any later build change.
 - `app` is different — its root bundle-size suite is a `describe.todo` with `/* eslint-disable vitest/require-top-level-describe */` so CI doesn't require `packages/app/.output`.
-- To add to a new library package: add `test`/`coverage` scripts, add `vitest`, `@vitest/coverage-v8`, `@types/node` to `devDependencies`, create `src/index.test.ts`.
+- To add to a new library package: add a `test` script (`"test": "vitest"`), add `vitest` + `@types/node` to `devDependencies`, create `src/index.test.ts`. Do **not** add `@vitest/coverage-v8` per-package — coverage runs only from the repo root (`pnpm coverage` → `vitest run --coverage` across all projects), so the provider lives in the root `package.json` alone.
 
 ## Running Tests
 
