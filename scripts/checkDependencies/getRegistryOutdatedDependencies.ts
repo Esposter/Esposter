@@ -2,7 +2,7 @@ import type { DependencyEntry } from "@/checkDependencies/models/DependencyEntry
 import type { OutdatedDependency } from "@/checkDependencies/models/OutdatedDependency";
 import type { RegistryCheckError } from "@/checkDependencies/models/RegistryCheckError";
 
-import { getLatestVersion } from "@/checkDependencies/getLatestVersion";
+import { getLatestVersion } from "@/services/getLatestVersion";
 import { getSpecifierBase } from "@/checkDependencies/getSpecifierBase";
 import { getVersionChangeLevel } from "@/checkDependencies/getVersionChangeLevel";
 import { isVersionOutdated } from "@/checkDependencies/isVersionOutdated";
