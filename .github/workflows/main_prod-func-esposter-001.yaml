@@ -8,6 +8,12 @@ on:
     branches:
       - main
 
+# Serialize deploys per branch but never cancel an in-flight deploy — a half-applied
+# function deployment is worse than a stale one, so newer pushes queue behind the running deploy.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   FUNCTION_APP_NAME: prod-func-esposter-001
   OUTPUT_DIRECTORY: dist
