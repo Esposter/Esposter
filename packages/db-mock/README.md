@@ -6,13 +6,16 @@ In-memory PostgreSQL database factory for testing — server environment only. U
 
 ## Table of Contents
 
-- 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
 - ⚖️ [License](#license)
 
 ---
 
-## <a name="getting-started">🚀 Getting Started</a>
+## <a name="documentation">📖 Documentation</a>
+
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
+
+### Usage
 
 `@esposter/db-mock` is a `devDependency` — import it only in test files:
 
@@ -22,10 +25,6 @@ import { createMockDb } from "@esposter/db-mock";
 const db = await createMockDb();
 // db is a fully-typed PostgresJsDatabase with all Esposter schemas applied
 ```
-
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
 
 ### How It Works
 

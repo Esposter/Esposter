@@ -6,13 +6,16 @@ Drizzle ORM schemas, relations, and migrations for Esposter's PostgreSQL databas
 
 ## Table of Contents
 
-- 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
 - ⚖️ [License](#license)
 
 ---
 
-## <a name="getting-started">🚀 Getting Started</a>
+## <a name="documentation">📖 Documentation</a>
+
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
+
+### Migration Workflow
 
 After editing a schema file, generate and apply the migration:
 
@@ -24,10 +27,6 @@ pnpm db:studio  # open Drizzle Studio UI for visual inspection
 ```
 
 Migrations are output to `packages/app/server/db/migrations/`.
-
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
 
 ### Schema Domains
 

@@ -48,8 +48,8 @@ Run from `packages/azure-functions/`:
 
 ```bash
 pnpm build        # compile to dist/
-pnpm lint         # check
-pnpm lint:fix     # auto-fix
+pnpm test         # vitest watch mode (coverage is run from the repo root)
+pnpm lint:fix     # auto-fix lint
 pnpm typecheck    # type check
 ```
 

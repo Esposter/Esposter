@@ -7,18 +7,20 @@ description: Esposter pnpm script reference for packages/app — lint, typecheck
 
 All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `npx`.
 
-| Command             | Runs                                                             | When to use                                     |
-| ------------------- | ---------------------------------------------------------------- | ----------------------------------------------- |
-| `pnpm lint`         | `oxlint && eslint --config eslint.light.config.js .`             | CI/check-only lint verification                 |
-| `pnpm lint:fix`     | `oxlint --fix && eslint --config eslint.light.config.js --fix .` | **Local lint verification** — use this directly |
-| `pnpm lint:all`     | full ESLint (no `light` config)                                  | Full lint pass (slower)                         |
-| `pnpm lint:all:fix` | full ESLint fix                                                  | Fix all lint errors (full pass)                 |
-| `pnpm typecheck`    | `nuxt typecheck`                                                 | TypeScript type checking                        |
-| `pnpm test`         | `vitest` (watch mode)                                            | Run this package's tests in watch mode          |
-| `pnpm format`       | `oxfmt`                                                          | Format code                                     |
-| `pnpm format:check` | `oxfmt --check`                                                  | Check formatting without writing                |
-| `pnpm dev`          | `nuxt dev`                                                       | Start dev server                                |
-| `pnpm build`        | `nuxt build`                                                     | Build for production                            |
+| Command             | Runs                                             | When to use                                     |
+| ------------------- | ------------------------------------------------ | ----------------------------------------------- |
+| `pnpm lint`         | `eslint --config eslint.light.config.js .`       | CI/check-only lint verification                 |
+| `pnpm lint:fix`     | `eslint --config eslint.light.config.js --fix .` | **Local lint verification** — use this directly |
+| `pnpm lint:all`     | full ESLint (no `light` config)                  | Full lint pass (slower)                         |
+| `pnpm lint:all:fix` | full ESLint fix                                  | Fix all lint errors (full pass)                 |
+| `pnpm typecheck`    | `nuxt typecheck`                                 | TypeScript type checking                        |
+| `pnpm test`         | `vitest` (watch mode)                            | Run this package's tests in watch mode          |
+| `pnpm format`       | `oxfmt`                                          | Format code                                     |
+| `pnpm format:check` | `oxfmt --check`                                  | Check formatting without writing                |
+| `pnpm dev`          | `nuxt dev`                                       | Start dev server                                |
+| `pnpm build`        | `nuxt build`                                     | Build for production                            |
+
+> Oxlint is **not** part of any package's `lint` script — it runs as a single repo-wide pass from the **root** `pnpm lint` / `pnpm lint:fix` (one `.oxlintrc.json` at the repo root). Packages run ESLint only.
 
 ## Package Registry Commands
 

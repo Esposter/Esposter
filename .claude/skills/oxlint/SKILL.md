@@ -7,13 +7,18 @@ description: Esposter oxlint + ESLint linting conventions — method-signature-s
 
 ## Running lint
 
-**Run `pnpm lint:fix` directly to verify — but only for `packages/*` (non-app), where it's fast.** Skip it whenever the change touches `packages/app` (Nuxt makes it slow); leave app lint to CI. `pnpm lint` is **CI-only** (check, no fix) — never run it locally. Never hand-fix lint errors either — let `lint:fix` do it.
+Oxlint runs as **repo-wide passes**, never per-package — there are no per-package `.oxlintrc.json` files, only one `.oxlintrc.json` at the repo root. Per-package `lint`/`lint:fix` scripts (in each package's `package.json`) run **ESLint only**. Oxlint is wired into the **root** scripts instead:
+
+- `pnpm lint` / `pnpm lint:fix` (root) — `oxlint` over the whole repo, then ESLint.
+- `pnpm lint:fix:packages` / `pnpm lint:packages` (root) — `oxlint packages` (all packages), then ESLint over non-app packages.
+
+**To verify `packages/*` (non-app) changes, run `pnpm lint:fix:packages` from the repo root** — it's fast and includes both oxlint and eslint. Skip it whenever the change touches `packages/app` (Nuxt makes the eslint pass slow); leave app lint to CI. `pnpm lint` is **CI-only** (check, no fix) — never run it locally. Never hand-fix lint errors either — let the fix script do it.
 
 ```bash
-# packages/* only — run directly to verify:
-pnpm lint:fix   # oxlint --fix + eslint --fix
+# verify packages/* changes (oxlint + eslint, non-app, fast):
+pnpm lint:fix:packages
 # CI-only, do not run locally:
-pnpm lint       # check-only
+pnpm lint       # whole-repo check, no fix
 ```
 
 ## `typescript/method-signature-style` (oxlint)
