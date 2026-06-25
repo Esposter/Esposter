@@ -39,6 +39,10 @@
     "./reporter": {
       "types": "./dist/reporter.d.ts",
       "default": "./dist/reporter.js"
+    },
+    "./runner": {
+      "types": "./dist/runner.d.ts",
+      "default": "./dist/runner.js"
     }
   },
   "scripts": {

@@ -1,4 +1,4 @@
-import { getBenchmarkPlugins } from "@esposter/configuration";
+import { getBenchmarkPlugins, getBenchmarkRunner } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
 
 import { dayjs } from "./shared/services/dayjs";
@@ -14,6 +14,9 @@ export default await defineVitestProject({
     benchmark: {
       reporters: ["@esposter/shared-node/reporter"],
     },
+    // Custom benchmark runner wired inline (same reason as the reporter): bench mode only — see
+    // getBenchmarkRunner — it zeroes tinybench's time budget so benches run a fixed iteration count.
+    runner: getBenchmarkRunner(),
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
     // App don't resolve) — required now that the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },

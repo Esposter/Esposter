@@ -1,27 +1,27 @@
 {
   "files": [
     {
-      "filepath": "packages/virrun/src/services/virrun/createVirrun.bench.ts",
+      "filepath": "src/services/virrun/createVirrun.bench.ts",
       "groups": [
         {
           "benchmarks": [
             {
-              "hz": 7.014542127866966,
-              "mean": 142.56098,
+              "hz": 4.349221052334917,
+              "mean": 229.92622999999998,
               "name": "native",
-              "p99": 156.2750000000001,
-              "rme": 4.560641005860664,
+              "p99": 249.82770000000028,
+              "rme": 4.159784277173835,
               "sampleCount": 10,
-              "sd": 9.089373699949535
+              "sd": 13.371087379869742
             },
             {
-              "hz": 7.453534294531176,
-              "mean": 134.16454000000004,
+              "hz": 4.552540367603068,
+              "mean": 219.65757999999997,
               "name": "virrun",
-              "p99": 144.89089999999942,
-              "rme": 4.395622971085061,
+              "p99": 233.78570000000036,
+              "rme": 3.2244750190241414,
               "sampleCount": 10,
-              "sd": 8.244523868631884
+              "sd": 9.901764903041972
             }
           ],
           "fullName": "createVirrun exec vs native baseline"

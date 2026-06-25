@@ -9,9 +9,9 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T23:39:44.064Z
-- Commit: 23eeaa5de
-- Node: v26.3.1
+- Date: 2026-06-25T07:51:20.982Z
+- Commit: e9f93c29d
+- Node: v26.4.0
 - OS: win32 10.0.26200 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
 - RAM: 38.8 GiB
@@ -20,5 +20,5 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
 | ------ | ------- | --------- | ------ | -------- | ------- | ------- |
-| native | 1.00×   | 142.5610  | ±4.56% | 156.2750 | 7       | 10      |
-| virrun | 1.06×   | 134.1645  | ±4.40% | 144.8909 | 7       | 10      |
+| native | 1.00×   | 229.9262  | ±4.16% | 249.8277 | 4       | 10      |
+| virrun | 1.05×   | 219.6576  | ±3.22% | 233.7857 | 5       | 10      |
