@@ -3,8 +3,16 @@
   "version": "2.31.0",
   "description": "Simple XML to JavaScript object converter.",
   "keywords": [
+    "converter",
     "json",
-    "xml"
+    "json-to-xml",
+    "parser",
+    "sax",
+    "xml",
+    "xml-parser",
+    "xml-to-json",
+    "xml2js",
+    "xmlbuilder"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/xml2js#readme",
   "bugs": {

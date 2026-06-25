@@ -6,14 +6,19 @@
   "keywords": [
     "database",
     "drizzle",
+    "drizzle-orm",
+    "in-memory",
     "mock",
     "orm",
     "pg",
+    "pglite",
     "postgres",
     "postgresql",
     "test",
+    "testing",
     "ts",
-    "typescript"
+    "typescript",
+    "vitest"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/db-mock#readme",
   "bugs": {

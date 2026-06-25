@@ -4,9 +4,16 @@
   "private": true,
   "description": "A library that contains shared configuration.",
   "keywords": [
+    "build",
+    "configuration",
     "ctix",
     "eslint",
+    "formatting",
+    "linting",
+    "oxlint",
     "rolldown",
+    "shared-config",
+    "tsconfig",
     "typescript",
     "vite"
   ],

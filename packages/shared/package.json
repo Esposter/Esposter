@@ -2,6 +2,16 @@
   "name": "@esposter/shared",
   "version": "2.31.0",
   "description": "A library that contains shared typescript code.",
+  "keywords": [
+    "error-handling",
+    "html-sanitization",
+    "monorepo",
+    "neverthrow",
+    "shared",
+    "typescript",
+    "utilities",
+    "zod"
+  ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/shared#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"

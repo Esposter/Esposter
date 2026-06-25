@@ -3,8 +3,18 @@
   "version": "2.31.0",
   "description": "A component library to integrate Phaser Framework with Vue.",
   "keywords": [
+    "component-library",
+    "game-development",
+    "game-engine",
+    "gamedev",
+    "integration",
+    "nuxt",
     "phaser",
-    "vue"
+    "phaser4",
+    "pinia",
+    "typescript",
+    "vue",
+    "vue3"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-phaserjs#readme",
   "bugs": {

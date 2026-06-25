@@ -3,6 +3,28 @@
   "version": "2.31.0",
   "private": true,
   "description": "An approachable, performant and versatile javascript application powered by Vue.",
+  "keywords": [
+    "azure",
+    "chat",
+    "drizzle-orm",
+    "game",
+    "monorepo",
+    "nuxt",
+    "phaser",
+    "pinia",
+    "postgresql",
+    "pwa",
+    "realtime",
+    "serverless",
+    "social-platform",
+    "trpc",
+    "typescript",
+    "unocss",
+    "vite",
+    "vue",
+    "vuetify",
+    "zod"
+  ],
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"

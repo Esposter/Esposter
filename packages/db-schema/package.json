@@ -4,8 +4,12 @@
   "private": true,
   "description": "A library of database schemas and utilities using Drizzle ORM (PostgreSQL) that is available in both browser and server environments.",
   "keywords": [
+    "azure",
     "database",
     "drizzle",
+    "drizzle-kit",
+    "drizzle-orm",
+    "migrations",
     "orm",
     "pg",
     "postgres",
@@ -13,7 +17,8 @@
     "schema",
     "sql",
     "ts",
-    "typescript"
+    "typescript",
+    "zod"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/db-schema#readme",
   "bugs": {

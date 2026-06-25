@@ -2,6 +2,20 @@
   "name": "virrun",
   "version": "2.31.0",
   "description": "An ephemeral, in-memory virtual runner that runs a repo's real toolchain fast and isolated.",
+  "keywords": [
+    "ci",
+    "cli",
+    "in-memory",
+    "isolated",
+    "monorepo",
+    "runner",
+    "sandbox",
+    "testing",
+    "toolchain",
+    "typescript",
+    "vfs",
+    "virtual"
+  ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/virrun#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
