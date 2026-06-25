@@ -18,7 +18,7 @@ export default await defineVitestProject({
     // App don't resolve) — required now that the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
     // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
-    // on a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
+    // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
     hookTimeout: dayjs.duration(5, "minutes").asMilliseconds(),
     // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
     // Build their own happy-dom window, so no manual happy-dom registration is needed, and tests in
