@@ -13,77 +13,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Build every non-app package once and publish the `package-builds` artifact. Extracted into a reusable
+  # workflow so 🏗️ CI and 🏎️ Bench share one definition + one content-hash cache key (a build from either
+  # workflow warms the cache for the other). The job id stays `build-packages`, so every `needs: build-packages`
+  # below is unchanged.
   build-packages:
-    name: Build Packages
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-        with:
-          persist-credentials: false
-
-      - name: 🔧 Setup Project Dependencies
-        uses: ./.github/actions/setup-project-dependencies
-
-      - name: 📦 Install dependencies
-        run: pnpm i
-      # Cache key = a content hash (mode + blob hash + path) of only the TRACKED files that actually feed
-      # `pnpm build:packages` (ctix barrel gen + rolldown/vite bundle of each package's src/index.ts), plus the
-      # root package.json (infra bundles it via `import packageJson from "../../../../package.json"`), the lockfile
-      # and the catalog. This is an allowlist, not a denylist: every non-app package builds with the same fixed
-      # stack, so the build inputs are a small, stable set and we enumerate them explicitly rather than hashing
-      # everything and subtracting noise. Excluded by being absent from the allowlist: docs (README/CHANGELOG/
-      # docs/**), lint config (.oxlintrc.json, eslint.config.js, eslint/**), test files + vitest.config.ts, test
-      # fixtures (parse-tmx maps/, __snapshots__/), deploy/runtime config (host.json, Pulumi*.yaml,
-      # drizzle.config.ts), and build-glue scripts (db-mock/scripts/** only copies a snapshot that already lives
-      # in src/, so the script itself moves no untracked input) — none of which reach dist. Tracked files only, so
-      # generated output (dist, ctix barrels, *.tsbuildinfo, node_modules) is excluded by construction. NOTE:
-      # adding a build input of a new shape (e.g. a new root-level config a package's build reads) means adding
-      # it to the allowlist below.
-      #
-      # Allowed per non-app package: package.json, rolldown.config.ts, vite.config.ts, auto-imports.d.ts (any vue
-      # package's generated ambient imports), tsconfig*.json, src/** (minus *.test.ts/*.test-d.ts/*.bench.ts),
-      # types/**; plus configuration/.ctirc-* (drives every package's barrel gen).
-      - name: 🔑 Compute package build cache key
-        id: key
-        run: |
-          hash=$( {
-            git ls-tree -r HEAD packages | awk -F'\t' '
-              $2 ~ /^packages\/app\// { next }
-              $2 ~ /\.(test|test-d|bench)\.ts$/ { next }
-              $2 ~ /^packages\/[^/]+\/(package\.json|rolldown\.config\.ts|vite\.config\.ts|auto-imports\.d\.ts)$/ { print; next }
-              $2 ~ /^packages\/[^/]+\/tsconfig[^/]*\.json$/ { print; next }
-              $2 ~ /^packages\/[^/]+\/(src|types)\// { print; next }
-              $2 ~ /^packages\/configuration\/\.ctirc-/ { print; next }
-            '
-            git rev-parse HEAD:package.json HEAD:pnpm-lock.yaml HEAD:pnpm-workspace.yaml
-          } | sha256sum | cut -d' ' -f1 )
-          echo "hash=$hash" >> "$GITHUB_OUTPUT"
-      # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
-      # Barrels (gitignored, absent on a fresh checkout). Both are produced by `pnpm build:packages`.
-      - name: ♻️ Restore package builds
-        id: cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: |
-            packages/*/dist
-            packages/*/src/**/index.ts
-          key: package-builds-${{ steps.key.outputs.hash }}
-
-      - name: 🏗️ Build packages
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: pnpm build:packages
-      # Single gated build, then fan the output out to every consuming job as one artifact (dist + barrels share
-      # The `packages/` common ancestor, so consumers download into `packages`). No hidden-file flag needed —
-      # Neither `dist` nor `index.ts` is a dotfile.
-      - name: 📤 Upload package builds
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: package-builds
-          path: |
-            packages/*/dist
-            packages/*/src/**/index.ts
-          if-no-files-found: error
+    uses: ./.github/workflows/build-packages.yaml
 
   build:
     name: Build App

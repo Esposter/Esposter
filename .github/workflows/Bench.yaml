@@ -2,8 +2,11 @@ name: 🏎️ Bench
 
 # Benchmarks run as their own workflow (not part of 🏗️ CI) so they never block merges — they're a
 # nice-to-have signal, not a required check. The committed `*.bench.md` stay the offline walltime gate;
-# this workflow feeds the CodSpeed dashboard (PR regression comments + flamegraphs). Self-contained: it
-# builds packages inline rather than reusing CI's `package-builds` artifact (artifacts don't cross workflows).
+# this workflow feeds the CodSpeed dashboard (PR regression comments + flamegraphs). Packages are built once
+# by the shared `build-packages` reusable workflow and fanned out to every bench shard as the `package-builds`
+# artifact (so the build runs once per workflow, not once per shard). Artifacts are run-scoped, but that
+# reusable workflow's `actions/cache` key is shared repo-wide, so a 🏗️ CI build of the same content warms the
+# cache here for free (and vice versa).
 on:
   push:
     branches:
@@ -17,6 +20,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Build every non-app package once via the shared reusable workflow (same content-hash cache key as 🏗️ CI, so
+  # a CI build of the same content lets this skip the build). The `bench` shards below `needs` this and pull the
+  # `package-builds` artifact through `setup-packages` instead of each rebuilding inline.
+  build-packages:
+    uses: ./.github/workflows/build-packages.yaml
   # CodSpeed instruments the same colocated `*.bench.ts` files (no bench rewrite) and uploads to the hosted
   # dashboard for PR regression comments + flamegraphs. The reporter self-disables under CODSPEED_ENV (which the
   # Action sets), so these runs don't rewrite the committed `*.bench.md` artifacts. Each instrument runs as 8
@@ -28,6 +36,7 @@ jobs:
   # `CODSPEED_TOKEN` secret and pass it as `token:` instead if you prefer token auth.
   bench:
     name: Bench (${{ matrix.mode }} ${{ matrix.shard }}/${{ matrix.shards }})
+    needs: build-packages
     permissions:
       contents: read
       id-token: write
@@ -67,12 +76,11 @@ jobs:
         uses: ./.github/actions/setup-project-dependencies
         with:
           node-version: "24"
-
-      - name: 📦 Install dependencies
-        run: pnpm i
-
-      - name: 🏗️ Build packages
-        run: pnpm build:packages
+      # `pnpm i` + download the `package-builds` artifact built once by the `build-packages` job above — the
+      # bundles are node-agnostic rolldown output, so the build job's default Node is fine for these Node-24
+      # bench shards. Replaces the former inline `pnpm build:packages`, which rebuilt on every shard.
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
       # A bare root `vitest bench --run` discovers every project's `*.bench.ts` (packages/* + the scripts
       # project, per the root vitest.config.ts `projects`) as one file set, so `--shard=i/n` partitions that
       # global set across runners (n=8 for simulation, n=1 — the whole set — for walltime/memory). This replaces
