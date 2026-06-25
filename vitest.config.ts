@@ -12,8 +12,8 @@ const vitestConfiguration: ViteUserConfig = defineConfig({
       "packages/*",
       // The root `scripts/` suite is not a workspace package, so it needs its own project entry;
       // `extends: true` inherits this file's shared base (tsconfig paths, hook timeout). Scope both the
-      // test and benchmark globs to `scripts/` — `benchmark.include` defaults to `**/*.bench.ts`, which
-      // would otherwise pull every package's bench file into this project on `vitest bench --project scripts`.
+      // Test and benchmark globs to `scripts/` — `benchmark.include` defaults to `**/*.bench.ts`, which
+      // Would otherwise pull every package's bench file into this project on `vitest bench --project scripts`.
       {
         extends: true,
         test: {
