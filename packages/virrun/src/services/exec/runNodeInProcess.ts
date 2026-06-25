@@ -31,7 +31,7 @@ export const runNodeInProcess = (
   const originalRequire = globalThis.require;
   const originalCwd = cwd === "" ? "" : process.cwd();
   const baseDir = cwd === "" ? process.cwd() : cwd;
-  const fs = createPlatformaticFsProvider({ overlay: true });
+  const fs = createPlatformaticFsProvider({ isOverlayEnabled: true });
   const isPipe = stdio === "pipe";
   const require = createRequire(resolve(baseDir, "[eval].js"));
   const cachedBefore = new Set(Object.keys(require.cache));

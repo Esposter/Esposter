@@ -6,8 +6,10 @@ import { create } from "@platformatic/vfs";
 // In core (nodejs/node#61478); when it ships, this one file changes and nothing else does. moduleHooks
 // Is always on — patching require/import + core fs to serve virtual files is the whole point of the
 // FS layer. See features/virrun/specs/virtual-fs.md.
-export const createPlatformaticFsProvider = ({ overlay = false }: Partial<FsProviderOptions> = {}): FsProvider => {
-  const vfs = create({ moduleHooks: true, overlay });
+export const createPlatformaticFsProvider = ({
+  isOverlayEnabled = false,
+}: Partial<FsProviderOptions> = {}): FsProvider => {
+  const vfs = create({ moduleHooks: true, overlay: isOverlayEnabled });
   return {
     dispose: () => {
       if (vfs.mounted) vfs.unmount();

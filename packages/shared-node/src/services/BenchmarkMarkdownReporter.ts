@@ -3,7 +3,6 @@ import type { SerializedError, TestModule, TestRunEndReason } from "vitest/node"
 import { readBenchmarkEnvironment } from "@/services/readBenchmarkEnvironment";
 import { writeBenchmarkReport } from "@/services/writeBenchmarkReport";
 import { BenchmarkReporter } from "vitest/node";
-
 // Drop-in for Vitest's built-in benchmark reporter: super still prints the comparison table, then instead
 // Of one merged results.json per package we emit a colocated results pair beside every bench file
 // (Foo.bench.ts → Foo.bench.json + Foo.bench.md) — each bench scoped to its own file, like its test. The

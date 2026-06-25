@@ -3,7 +3,7 @@ export interface ExecOptions {
   cwd: string;
   // Whether the sandbox keeps network access (os backend only). Off by default for full isolation;
   // Real installs need it on for registry fetches and supply-chain verification.
-  network?: boolean;
+  isNetworkEnabled?: boolean;
   // Extra directories to mount as their own RAM overlay (os backend only) so a process can write into
   // Them without the write reaching the host disk — e.g. a package store whose index must stay writable.
   overlayDirs?: readonly string[];

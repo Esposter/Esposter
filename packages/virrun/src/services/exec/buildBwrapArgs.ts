@@ -5,7 +5,7 @@ import type { ExecOptions } from "@/models/exec/ExecOptions";
 // Overlay whose lower is the real source and whose upper is an invisible tmpfs (RAM) — so reads fall
 // Through to the source and every write stays in RAM, never touching the host disk. `--unshare-all`
 // Drops into fresh namespaces (no root, no net) and `--die-with-parent` ties the sandbox lifetime to
-// Ours. `network` re-adds just the network namespace (`--share-net`, only valid alongside
+// Ours. `isNetworkEnabled` re-adds just the network namespace (`--share-net`, only valid alongside
 // `--unshare-all`) for workloads that must fetch, e.g. a real install. `overlayDirs` each get their
 // Own RAM overlay so a process can write into them (e.g. a package store's index) without the write
 // Reaching the host disk. A string command runs through `/bin/sh -c` (operator passthrough); an argv
@@ -13,7 +13,7 @@ import type { ExecOptions } from "@/models/exec/ExecOptions";
 export const buildBwrapArgs = (
   command: readonly string[] | string,
   cwd: string,
-  { network = false, overlayDirs = [] }: Pick<ExecOptions, "network" | "overlayDirs"> = {},
+  { isNetworkEnabled = false, overlayDirs = [] }: Pick<ExecOptions, "isNetworkEnabled" | "overlayDirs"> = {},
 ): string[] => {
   const dir = cwd === "" ? process.cwd() : cwd;
   const commandArgs = Array.isArray(command) ? [...command] : ["/bin/sh", "-c", command];
@@ -25,7 +25,7 @@ export const buildBwrapArgs = (
   ]);
   return [
     "--unshare-all",
-    ...(network ? ["--share-net"] : []),
+    ...(isNetworkEnabled ? ["--share-net"] : []),
     "--die-with-parent",
     "--ro-bind",
     "/",

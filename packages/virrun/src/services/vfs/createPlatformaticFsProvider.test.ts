@@ -50,7 +50,7 @@ describe(createPlatformaticFsProvider, () => {
     const dir = realpathSync(mkdtempSync(join(tmpdir(), "vfs-overlay-")));
     const file = join(dir, "real.txt");
     writeFileSync(file, "");
-    const { dispose, mount, writeFile } = createPlatformaticFsProvider({ overlay: true });
+    const { dispose, mount, writeFile } = createPlatformaticFsProvider({ isOverlayEnabled: true });
     mount(dir);
     withFinalizer(
       () => {

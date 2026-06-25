@@ -41,7 +41,7 @@ describe.skipIf(process.env.RUN_ACCEPTANCE_TESTS !== "1" || !isOsBackendSupporte
       ].join(" && ");
       const { exitCode, stdout } = await exec(command, {
         cwd: corpus,
-        network: true,
+        isNetworkEnabled: true,
         overlayDirs: [store],
         stdio: "pipe",
       });
