@@ -33,6 +33,16 @@ description: Esposter file and folder organisation — one export per file, no e
 - **Feature folders** — group related models/services/components under a feature subfolder (e.g. `tableEditor/file/`).
 - **No magic strings** — always use enums for discriminants, command types, and other categorical values.
 
+## Symlinks
+
+Always create symlinks with PowerShell `New-Item -ItemType SymbolicLink -Path <link> -Target <target>` (needs Developer Mode or an elevated shell). **Never use `ln -s` on Windows** — Git Bash's `ln` copies the file instead of linking, silently defeating the single-source-of-truth goal and committing duplicate content. (`ln -s` is fine on Linux/macOS.) The repo has `core.symlinks=true` and stores symlinks as git mode `120000`; verify with `git ls-files -s <path>`. Delete the existing file before linking.
+
+Tracked symlinks in this repo:
+
+- **Agent guides** — `AGENTS.md` is the canonical guidance file; `CLAUDE.md` and `GEMINI.md` symlink to it.
+- **`.agents/skills`** → `.claude/skills` (one skill tree shared by both tools).
+- **Per-package `eslint.config.js`** → the shared `../configuration/eslint/index.{typescript,vue}.js` (see Creating a New Package).
+
 ## Constant Maps
 
 - **PascalCase matching the filename, with `as const satisfies`** — e.g. `export const DataSourceConfigurationMap = { ... } as const satisfies Record<...>`, `export const ColumnStatisticsDefinitions = [ ... ] as const satisfies readonly ColumnStatisticsDefinition[]`.
@@ -95,19 +105,14 @@ New workspace packages follow existing patterns (e.g. `packages/db`, `packages/d
 2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
 3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.json"] }`.
 4. **`rolldown.config.ts`** — use `rolldownConfigurationNode` (server-only), `rolldownConfigurationBrowser` (browser/isomorphic), or a custom extension if extra externals are needed.
-5. **`eslint.config.js`** — symlink to the shared config. On Windows (elevated PowerShell or Developer Mode):
+5. **`eslint.config.js`** — symlink to the shared config (`index.typescript.js` for TS-only, `index.vue.js` for Vue) per the **Symlinks** section:
    ```powershell
    New-Item -ItemType SymbolicLink -Path "packages\db-mock\eslint.config.js" -Target "..\configuration\eslint\index.typescript.js"
    ```
-   Use `index.typescript.js` (TS-only) or `index.vue.js` (Vue). Linux/macOS: `ln -s ../configuration/eslint/index.typescript.js eslint.config.js`.
-6. **`.oxlintrc.json`** — symlink to the shared oxlint config. Windows:
-   ```powershell
-   New-Item -ItemType SymbolicLink -Path "packages\db-mock\.oxlintrc.json" -Target "..\configuration\.oxlintrc.json"
-   ```
-   Linux/macOS: `ln -s ../configuration/.oxlintrc.json .oxlintrc.json`.
-7. **`src/index.ts`** — minimal barrel; `ctix` regenerates it on `pnpm export:gen`.
-8. **Run plain `pnpm i`** from repo root to link the package. Follow `architecture/monorepo-tooling.md` for install safety.
-9. **Run `pnpm build`** in the new package to produce `dist/`.
+   No per-package `.oxlintrc.json` — oxlint runs once from the repo root against the single root `.oxlintrc.json`.
+6. **`src/index.ts`** — minimal barrel; `ctix` regenerates it on `pnpm export:gen`.
+7. **Run plain `pnpm i`** from repo root to link the package. Follow `architecture/monorepo-tooling.md` for install safety.
+8. **Run `pnpm build`** in the new package to produce `dist/`.
 
 ### Bin entrypoints — no shebang
 

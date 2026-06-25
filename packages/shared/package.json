@@ -26,8 +26,8 @@
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "lint": "oxlint && eslint .",
-    "lint:fix": "oxlint --fix && eslint --fix .",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "test": "vitest",
     "typecheck": "tsgo"
   },
@@ -44,11 +44,10 @@
     "ctix": "catalog:",
     "rolldown": "catalog:",
     "type-fest": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "vue": "catalog:"
   },
   "peerDependencies": {
-    "@vueuse/core": "catalog:",
-    "vue": "catalog:",
     "zod": "catalog:"
   }
 }

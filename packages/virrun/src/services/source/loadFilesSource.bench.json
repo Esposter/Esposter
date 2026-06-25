@@ -1,0 +1,41 @@
+{
+  "files": [
+    {
+      "filepath": "packages/virrun/src/services/source/loadFilesSource.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "hz": 259.134131980772,
+              "mean": 3.859005343511448,
+              "name": "files:1",
+              "p99": 6.451999999999998,
+              "rme": 3.460529032631353,
+              "sampleCount": 131,
+              "sd": 0.7798255381136818
+            },
+            {
+              "hz": 9.80657318910347,
+              "mean": 101.97242000000014,
+              "name": "files:100",
+              "p99": 114.36700000000019,
+              "rme": 5.2793778728933445,
+              "sampleCount": 10,
+              "sd": 7.526150061515148
+            },
+            {
+              "hz": 1.145104098837141,
+              "mean": 873.28305,
+              "name": "files:1000",
+              "p99": 910.7749999999996,
+              "rme": 1.7069529072140204,
+              "sampleCount": 10,
+              "sd": 20.839340453908033
+            }
+          ],
+          "fullName": "loadFilesSource — load + dispose by file count"
+        }
+      ]
+    }
+  ]
+}

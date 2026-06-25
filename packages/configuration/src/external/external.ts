@@ -12,6 +12,11 @@ export const external: (RegExp | string)[] = [
   "@azure/eventgrid",
   "@azure/storage-queue",
   // @esposter/configuration
+  // GetBenchmarkPlugins imports codspeedPlugin: must stay external (never bundle) because the plugin loads
+  // Sibling runtime files (globalSetup, the mode runners) and its native prebuilds via __dirname — inlining
+  // Breaks those paths. As an externalized import it is a `peerDependency` of this package (external imports
+  // Are peers, never deps/devDeps); only invoked when CODSPEED_ENV is set (CI).
+  /^@codspeed\//u,
   "@rolldown/plugin-node-polyfills",
   "@vitejs/plugin-vue",
   "rolldown",

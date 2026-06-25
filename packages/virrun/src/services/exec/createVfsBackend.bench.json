@@ -1,0 +1,78 @@
+{
+  "files": [
+    {
+      "filepath": "packages/virrun/src/services/exec/createVfsBackend.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "hz": 5.84941659673689,
+              "mean": 170.95722000000004,
+              "name": "native",
+              "p99": 197.6800000000003,
+              "rme": 8.693359301966805,
+              "sampleCount": 10,
+              "sd": 20.776982599116785
+            },
+            {
+              "hz": 28526.149594564726,
+              "mean": 0.03505555478789667,
+              "name": "vfs",
+              "p99": 0.09600000000000364,
+              "rme": 8.247899704013664,
+              "sampleCount": 14474,
+              "sd": 0.17747550827268482
+            }
+          ],
+          "fullName": "createVfsBackend — in-process node -e vs native spawn (hot path)"
+        },
+        {
+          "benchmarks": [
+            {
+              "hz": 6.620701782471689,
+              "mean": 151.04138999999978,
+              "name": "native",
+              "p99": 157.46849999999995,
+              "rme": 3.7759326870317365,
+              "sampleCount": 10,
+              "sd": 7.973107445720339
+            },
+            {
+              "hz": 870.8567392726974,
+              "mean": 1.148294495412825,
+              "name": "vfs",
+              "p99": 2.43119999999999,
+              "rme": 2.957126323452691,
+              "sampleCount": 436,
+              "sd": 0.3617514940727752
+            }
+          ],
+          "fullName": "createVfsBackend — in-process node <file> vs native spawn (hot path)"
+        },
+        {
+          "benchmarks": [
+            {
+              "hz": 6.4470558745702125,
+              "mean": 155.10955999999987,
+              "name": "native",
+              "p99": 165.8693999999996,
+              "rme": 2.809629488012771,
+              "sampleCount": 10,
+              "sd": 6.092492701714521
+            },
+            {
+              "hz": 6.549823921083525,
+              "mean": 152.6758600000001,
+              "name": "vfs",
+              "p99": 162.72690000000148,
+              "rme": 2.5998685177944125,
+              "sampleCount": 10,
+              "sd": 5.5491844358135625
+            }
+          ],
+          "fullName": "createVfsBackend — fall-back command vs native (no added overhead)"
+        }
+      ]
+    }
+  ]
+}

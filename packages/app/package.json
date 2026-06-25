@@ -25,10 +25,10 @@
     "format:check": "oxfmt --check",
     "generate": "nuxt generate",
     "generate-pwa-assets": "pnpx pwa-asset-generator https://prodstesposter001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
-    "lint": "oxlint && NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --config eslint.light.config.js .",
-    "lint:all": "oxlint && NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint .",
-    "lint:all:fix": "oxlint --fix && NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --fix .",
-    "lint:fix": "oxlint --fix && NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --config eslint.light.config.js --fix .",
+    "lint": "NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --config eslint.light.config.js .",
+    "lint:all": "NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint .",
+    "lint:all:fix": "NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --fix .",
+    "lint:fix": "NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --config eslint.light.config.js --fix .",
     "phaser:gen": "tsx --tsconfig tsconfig.root.json scripts/phaser/index.ts",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
@@ -175,6 +175,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@esposter/shared-node": "workspace:*",

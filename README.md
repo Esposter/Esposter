@@ -335,8 +335,9 @@ pnpm depcruise:graph
 | [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)             | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                 |     —     |
 | [`packages/infra`](https://github.com/Esposter/Esposter/tree/main/packages/infra)                     | Pulumi infrastructure code and migration tools for Azure resources              |     —     |
 | [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)             | Parser for Tiled Map Editor `.tmx` files                                        |     ✓     |
-| [`packages/sandbox-runtime`](https://github.com/Esposter/Esposter/tree/main/packages/sandbox-runtime) | Ephemeral, in-memory sandbox runtime — runs a repo's real toolchain isolated    |     —     |
+| [`packages/virrun`](https://github.com/Esposter/Esposter/tree/main/packages/virrun)                   | Ephemeral, in-memory virtual runner — runs a repo's real toolchain isolated     |     ✓     |
 | [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                   | Shared TypeScript types, utilities, and error classes                           |     ✓     |
+| [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)         | Node-only shared tooling — benchmark reporting and dev scripts                  |     —     |
 | [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)       | Phaser 4 game engine integration for Vue 3                                      |     ✓     |
 | [`packages/xml2js`](https://github.com/Esposter/Esposter/tree/main/packages/xml2js)                   | TypeScript rewrite of xml2js — XML ↔ JSON conversion                            |     ✓     |
 

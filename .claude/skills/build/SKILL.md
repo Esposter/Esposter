@@ -43,7 +43,7 @@ export const external: (RegExp | string)[] = [
 - Non-`@esposter/` workspace packages must be listed explicitly (`azure-mock`, `parse-tmx`, `vue-phaserjs` — not covered by the regex).
 - The external list is a build superset, not a per-package peer-dependency checklist — a package declares only the externalized packages it directly imports at runtime or exposes through its `.d.ts` surface.
 - Do not duplicate transitive peers — the package that directly imports a dependency owns the contract. If `azure-mock` imports `@esposter/db-schema` which imports `zod`, `zod` is `db-schema`'s peer, not `azure-mock`'s.
-- `dependencies` get bundled; `peerDependencies` are externalized. When a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and ensure the shared external list covers it. Exceptions: `@esposter/app` (root consumer, not a library) and the self-contained bundles `@esposter/azure-functions` / `@esposter/sandbox-runtime` (override the external list to bundle almost everything — see Self-Contained Bundle Packages).
+- `dependencies` get bundled; `peerDependencies` are externalized. When a package directly imports a non-workspace package that should not be bundled, put it in `peerDependencies` and ensure the shared external list covers it. Exceptions: `@esposter/app` (root consumer, not a library) and the self-contained bundles `@esposter/azure-functions` / `virrun` (override the external list to bundle almost everything — see Self-Contained Bundle Packages).
 - Vite builds: `viteConfiguration` lives in `packages/configuration/src/viteConfiguration.ts`. `packages/configuration/vite.config.js` imports it from source; consumers like `vue-phaserjs` import it from `@esposter/configuration`.
 
 ### Ordering convention
@@ -51,6 +51,8 @@ export const external: (RegExp | string)[] = [
 Group by owning `@esposter` package; sections in alphabetical package-name order; entries alphabetical within each section. Section header comment is the bare package name (`// @esposter/db`). One exception: a final "Vue framework" group for always-consumer-provided deps not owned by a single package (`@vueuse/core`, `pinia`, `vue`).
 
 ### Dependency declaration convention
+
+> **CRITICAL — external imports are `peerDependencies`, never `dependencies`/`devDependencies`.** If a library package directly imports a non-workspace package that is in the shared `external` list (so it's externalized, not bundled, and ships in that package's dist/declaration surface), it **must** be declared in `peerDependencies` — never in `dependencies` and never in `devDependencies`. We keep regressing on this: a fix that adds an externalized import as a `dependency` (so it resolves locally) silently ships the wrong contract. Audit with the script below after touching the external list or any manifest. The rule scopes to a package's **published runtime/declaration surface** — an externalized package a manifest pulls in only as build/test tooling (never imported by its shipped code) is correctly a `devDependency`, not a peer. Example: `@codspeed/vitest-plugin` is an optional `peerDependency` of `@esposter/configuration` (which lazy-imports it in `getBenchmarkPlugins`), but a `devDependency` of only the packages that actually bench (`app`, `virrun`) — the lazy `CODSPEED_ENV`-gated import means non-bench packages never load it, so they declare no codspeed dep (see [Bench › Dependency placement](../bench/SKILL.md)). The self-contained bundles (`@esposter/app`, `@esposter/azure-functions`, `virrun` — see Self-Contained Bundle Packages) also opt out of external→peer for their bundled deps.
 
 - `dependencies`: direct runtime imports to bundle or auto-install for consumers. Workspace packages imported at runtime usually go here even though the external list keeps their code out of the bundle.
 - `peerDependencies`: direct runtime or declaration-surface imports that are externalized and must be supplied by the consumer — framework/runtime singletons (`vue`, `pinia`), SDKs mirrored in public APIs, Drizzle/Pulumi runtimes, package-plugin ecosystems.
@@ -90,13 +92,15 @@ const externalStrings = [
   "zod",
 ];
 const externalPatterns = [
+  /^@codspeed\//,
   /^drizzle-kit/,
   /^drizzle-orm/,
   /^phaser4-rex-plugins/,
   /^unplugin-auto-import/,
   /^unplugin-dts/,
+  /^vitest(\/|$)/,
 ];
-const skip = new Set(["@esposter/app", "@esposter/azure-functions", "@esposter/sandbox-runtime"]); // intentional exceptions
+const skip = new Set(["@esposter/app", "@esposter/azure-functions", "virrun"]); // intentional exceptions
 const pkgsDir = "packages";
 for (const dir of fs.readdirSync(pkgsDir)) {
   const p = path.join(pkgsDir, dir, "package.json");
@@ -111,13 +115,13 @@ for (const dir of fs.readdirSync(pkgsDir)) {
 }
 ```
 
-## Self-Contained Bundle Packages (azure-functions, sandbox-runtime)
+## Self-Contained Bundle Packages (azure-functions, virrun)
 
 Both vendor everything except the vue framework peer deps plus one runtime-provided module, so consumers need **no peer deps**:
 
 ```ts
 external: [...externalVueFramework, "@azure/functions"],   // azure-functions — provided by the runtime
-external: [...externalVueFramework, "@platformatic/vfs"],  // sandbox-runtime — declared dependency
+external: [...externalVueFramework, "@platformatic/vfs"],  // virrun — declared dependency
 ```
 
 - `externalVueFramework` (`vue`, `@vueuse/core`, `pinia`) — neither package uses Vue, so these tree-shake out; keeping them external also stops rolldown parsing `@vueuse/core/dist/index.js` and emitting its harmless `INVALID_ANNOTATION` ("comment ignored due to position") warnings.

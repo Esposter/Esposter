@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-packages:
     name: Build Packages
@@ -106,7 +110,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -119,14 +123,14 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
-      # `--shard=i/16` runs a distinct 1/16th of ALL test files (every package + scripts, via the root
+      # `--shard=i/8` runs a distinct 1/8th of ALL test files (every package + scripts, via the root
       # Vitest `projects` config) on this runner; `--reporter=blob` serialises this shard's results and
-      # Coverage data (vitest writes the per-shard `.vitest-reports/blob-i-16.json`) for the merge job.
+      # Coverage data (vitest writes the per-shard `.vitest-reports/blob-i-8.json`) for the merge job.
       # `--reporter=blob` serialises this shard's results + coverage for the merge job. We pair it with
       # `--reporter=default` so failing tests / unhandled errors are also printed to the console — the
       # blob reporter alone writes only the file and prints nothing, hiding why a shard exits non-zero.
       - name: 🧪 Test
-        run: pnpm exec vitest run --coverage --reporter=default --reporter=blob --shard=${{ matrix.shard }}/16
+        run: pnpm exec vitest run --coverage --reporter=default --reporter=blob --shard=${{ matrix.shard }}/8
 
       - name: 📤 Upload blob report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

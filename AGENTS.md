@@ -1,6 +1,6 @@
-# AGENTS.md
+# Agent Guide
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
+This file is the canonical guidance for AI coding agents working in this repository. `CLAUDE.md` and `GEMINI.md` are symlinks to it.
 
 ## Repository Overview
 
@@ -21,21 +21,28 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 - **API**: tRPC, Nuxt Server Routes
 - **Database**: Drizzle ORM (PostgreSQL), Azure Table Storage, Azure Blob Storage
 - **Server**: Azure Functions (Serverless)
+- **Cloud**: Microsoft Azure (Event Grid, Web PubSub, Search, Storage), LiveKit
 - **Testing**: Vitest
 - **Linting**: Oxlint + ESLint
 
 ## Monorepo Structure
 
-| Package Path               | Description                                                 |
-| :------------------------- | :---------------------------------------------------------- |
-| `packages/app`             | Main Nuxt 4 web application (frontend, server routes, tRPC) |
-| `packages/azure-functions` | Serverless backend (Azure Event Grid, Timers, HTTP)         |
-| `packages/db-schema`       | Source of truth for DB: Drizzle ORM schemas, migrations     |
-| `packages/db`              | Database connection logic                                   |
-| `packages/shared`          | Shared TypeScript types, utilities, constants               |
-| `packages/configuration`   | Shared config (TSConfig, ESLint, Prettier)                  |
-| `packages/vue-phaserjs`    | Phaser game engine Vue integration                          |
-| `packages/azure-mock`      | Mock Azure services for local dev/testing                   |
+| Package Path               | npm name                    | Description                                                                |
+| :------------------------- | :-------------------------- | :------------------------------------------------------------------------- |
+| `packages/app`             | `@esposter/app`             | Main Nuxt 4 web application (frontend, server routes, tRPC)                |
+| `packages/azure-functions` | `@esposter/azure-functions` | Serverless backend (EventGrid, Timers) — push notifications, webhooks      |
+| `packages/azure-mock`      | `azure-mock`                | Mock Azure service classes for local dev and testing                       |
+| `packages/configuration`   | `@esposter/configuration`   | Shared ESLint, TSConfig, and Rolldown build configs                        |
+| `packages/db`              | `@esposter/db`              | DB connection utilities (Drizzle ORM, Azure Table, Blob, WebPubSub)        |
+| `packages/db-mock`         | `@esposter/db-mock`         | In-memory PGlite database factory for unit/integration tests               |
+| `packages/db-schema`       | `@esposter/db-schema`       | **Source of truth** for DB: Drizzle ORM schemas, migrations                |
+| `packages/infra`           | `@esposter/infra`           | Pulumi infrastructure code and migration tools for Azure                   |
+| `packages/parse-tmx`       | `parse-tmx`                 | Parser for Tiled Map Editor `.tmx` files                                   |
+| `packages/shared`          | `@esposter/shared`          | Shared TypeScript types, utilities, and error classes                      |
+| `packages/shared-node`     | `@esposter/shared-node`     | Node-only shared tooling (benchmark reporting, dev scripts)                |
+| `packages/virrun`          | `virrun`                    | Ephemeral in-memory virtual runner — runs a repo's real toolchain isolated |
+| `packages/vue-phaserjs`    | `vue-phaserjs`              | Phaser 4 game engine integration for Vue 3                                 |
+| `packages/xml2js`          | `@esposter/xml2js`          | TypeScript rewrite of xml2js — XML ↔ JSON conversion                       |
 
 ## Commands
 
@@ -44,17 +51,15 @@ All commands run from `packages/app/` unless noted.
 ```bash
 pnpm dev              # start dev server
 pnpm typecheck        # vue-tsc type check
-pnpm lint             # oxlint + eslint (CI/check-only; avoid locally unless requested)
-pnpm lint:fix         # oxlint + eslint --fix (use this for local lint verification)
+pnpm lint             # eslint (CI/check-only; avoid locally unless requested). Oxlint runs once from repo root, not per-package.
+pnpm lint:fix         # eslint --fix (use this for local lint verification)
 pnpm test             # vitest watch mode
 pnpm test path/to/file.test.ts          # run single test file
 pnpm test -t "test description"         # run single test by name
-pnpm coverage         # vitest run --coverage
+pnpm coverage         # run from repo root — vitest --coverage across all workspace projects
 ```
 
 Vitest runs on Windows. The former `spawn EPERM` / UnoCSS config-load crash was fixed by giving `packages/app/configuration/modules.ts` a minimal Nuxt module allowlist under `process.env.VITEST` (no UnoCSS/PWA/security/SEO). If a new test needs an excluded module, add it to the Vitest branch there.
-
-When linting locally, run `pnpm lint:fix` directly. `pnpm lint` is mainly for CI/CD check-only verification.
 
 DB migrations (run from `packages/db-schema/`):
 
@@ -79,7 +84,7 @@ pnpm depcruise:graph  # generate dependency-graph.svg from package entrypoints
 
 Use plain `pnpm i` for dependency installs. See `architecture/monorepo-tooling.md` for install safety rules.
 
-`pnpm depcruise:graph` should pipe dependency-cruiser DOT output directly into `graphviz-cli` to produce `dependency-graph.svg`. Avoid committing intermediate DOT/Mermaid files unless explicitly needed for debugging.
+`pnpm depcruise:graph` pipes dependency-cruiser DOT output directly into `graphviz-cli` to produce `dependency-graph.svg`. Avoid committing intermediate DOT/Mermaid files unless explicitly needed for debugging.
 
 ## Architecture
 
@@ -109,6 +114,8 @@ To add a new router:
 
 1. Create `server/trpc/routers/myFeature.ts` exporting `myFeatureRouter`
 2. Import and register it in `server/trpc/routers/index.ts`
+
+See `.claude/skills/trpc/SKILL.md` for full conventions (structure, naming, test patterns, procedure helpers).
 
 ### tRPC Procedure Helpers
 

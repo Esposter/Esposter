@@ -9,20 +9,20 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T11:01:12.456Z
-- Commit: 344dec070
+- Date: 2026-06-24T23:39:44.064Z
+- Commit: 23eeaa5de
 - Node: v26.3.1
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 15.6 GiB
+- OS: win32 10.0.26200 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## DeleteRowsCommand
 
 | task                                  | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
 | ------------------------------------- | ------- | --------- | ------ | -------- | ------- | ------- |
-| execute — delete 50 rows from 100     | 1.00×   | 0.0252    | ±0.70% | 0.0415   | 39711   | 19856   |
-| execute — delete 500 rows from 1000   | 0.11×   | 0.2365    | ±0.65% | 0.3249   | 4228    | 2115    |
-| execute — delete 5000 rows from 10000 | 0.009×  | 2.7952    | ±2.71% | 4.4977   | 358     | 179     |
-| undo — re-insert 50 rows into 50      | 0.52×   | 0.0486    | ±0.64% | 0.0749   | 20558   | 10279   |
-| undo — re-insert 500 rows into 500    | 0.053×  | 0.4792    | ±0.87% | 0.7407   | 2087    | 1044    |
-| undo — re-insert 5000 rows into 5000  | 0.0048× | 5.2668    | ±2.74% | 9.4121   | 190     | 96      |
+| execute — delete 50 rows from 100     | 1.00×   | 0.0371    | ±0.91% | 0.0858   | 26941   | 13471   |
+| execute — delete 500 rows from 1000   | 0.14×   | 0.2680    | ±0.93% | 0.5389   | 3732    | 1866    |
+| execute — delete 5000 rows from 10000 | 0.012×  | 3.1598    | ±2.76% | 4.7333   | 316     | 159     |
+| undo — re-insert 50 rows into 50      | 0.73×   | 0.0508    | ±0.70% | 0.1039   | 19669   | 9835    |
+| undo — re-insert 500 rows into 500    | 0.076×  | 0.4896    | ±0.88% | 0.8884   | 2043    | 1022    |
+| undo — re-insert 5000 rows into 5000  | 0.0071× | 5.2295    | ±1.49% | 6.4419   | 191     | 96      |

@@ -9,21 +9,21 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T11:01:12.456Z
-- Commit: 344dec070
+- Date: 2026-06-24T23:39:44.064Z
+- Commit: 23eeaa5de
 - Node: v26.3.1
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 15.6 GiB
+- OS: win32 10.0.26200 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 38.8 GiB
 
 ## CreateRowsCommand
 
 | task                                   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
 | -------------------------------------- | ------- | --------- | ------ | -------- | ------- | ------- |
-| execute — insert 100 rows into 100     | 1.00×   | 0.0481    | ±0.82% | 0.0884   | 20808   | 10404   |
-| execute — insert 100 rows into 1000    | 0.92×   | 0.0525    | ±0.88% | 0.1118   | 19051   | 9526    |
-| execute — insert 1000 rows into 10000  | 0.099×  | 0.4854    | ±0.92% | 0.9152   | 2060    | 1031    |
-| execute — insert 10000 rows into 10000 | 0.011×  | 4.5730    | ±1.21% | 5.6960   | 219     | 110     |
-| undo — remove 100 rows from 200        | 0.51×   | 0.0946    | ±0.69% | 0.1579   | 10572   | 5287    |
-| undo — remove 1000 rows from 11000     | 0.047×  | 1.0210    | ±1.84% | 1.6992   | 979     | 490     |
-| undo — remove 10000 rows from 20000    | 0.0052× | 9.2563    | ±1.84% | 12.6990  | 108     | 55      |
+| execute — insert 100 rows into 100     | 1.00×   | 0.0563    | ±2.96% | 0.1510   | 17753   | 8877    |
+| execute — insert 100 rows into 1000    | 0.99×   | 0.0569    | ±0.83% | 0.1168   | 17590   | 8795    |
+| execute — insert 1000 rows into 10000  | 0.079×  | 0.7138    | ±2.33% | 1.4490   | 1401    | 701     |
+| execute — insert 10000 rows into 10000 | 0.008×  | 7.0202    | ±3.39% | 10.6245  | 142     | 72      |
+| undo — remove 100 rows from 200        | 0.41×   | 0.1367    | ±1.12% | 0.3156   | 7315    | 3658    |
+| undo — remove 1000 rows from 11000     | 0.037×  | 1.5371    | ±2.45% | 2.8921   | 651     | 326     |
+| undo — remove 10000 rows from 20000    | 0.0041× | 13.8709   | ±3.89% | 20.6375  | 72      | 37      |
