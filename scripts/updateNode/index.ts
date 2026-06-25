@@ -10,8 +10,8 @@ import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..", "..");
 // 1. Resolve target node version to a full published release (strip a leading `v`/`^`); a partial
-// request like `26` / `26.4` resolves to its highest release (`26.4.0`) so package.json pins a real
-// version. Default to the latest stable from npm.
+// Request like `X` / `X.Y` resolves to its highest release (`X.Y.Z`) so package.json pins a real
+// Version. Default to the latest stable from npm.
 const requested = process.argv[2]?.replace(/^[v^]/u, "");
 const version =
   requested === undefined ? await getLatestVersion("node") : await getRegistryLatestVersionForPrefix("node", requested);
