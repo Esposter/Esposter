@@ -6,5 +6,5 @@ export interface Virrun {
   readonly backend: string;
   // Tears down any temp state the source materialized. Always safe to call; a no-op for a dir source.
   dispose: () => Promise<void>;
-  exec: (command: string, stdio?: ExecStdio) => Promise<ExecResult>;
+  exec: (command: readonly string[] | string, stdio?: ExecStdio) => Promise<ExecResult>;
 }

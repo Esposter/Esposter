@@ -20,4 +20,16 @@ describe(createNativeBackend, () => {
 
     expect(exitCode).toBe(3);
   });
+
+  test("passes an argv array as discrete arguments so a token with spaces is not re-split", async () => {
+    expect.hasAssertions();
+
+    const { exec } = createNativeBackend();
+    const { stdout } = await exec(["node", "-e", "process.stdout.write(process.argv[1] ?? '')", "hello world.txt"], {
+      cwd: "",
+      stdio: "pipe",
+    });
+
+    expect(stdout).toBe("hello world.txt");
+  });
 });

@@ -5,7 +5,7 @@ import { dayjs } from "./shared/services/dayjs";
 
 export default await defineVitestProject({
   // `defineVitestProject` doesn't call `getVitestConfiguration`, so wire the bench plugin via the shared
-  // helper (inert unless the CodSpeed runner drives the run). The app benches, so it declares
+  // Helper (inert unless the CodSpeed runner drives the run). The app benches, so it declares
   // `@codspeed/vitest-plugin` as a devDependency to satisfy configuration's optional peer.
   plugins: getBenchmarkPlugins(),
   test: {

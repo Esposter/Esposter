@@ -9,21 +9,21 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T14:34:30.118Z
-- Commit: 5e493e6bf
+- Date: 2026-06-24T23:39:44.064Z
+- Commit: 23eeaa5de
 - Node: v26.3.1
-- OS: linux 6.6.87.2-microsoft-standard-WSL2 (x64)
+- OS: win32 10.0.26200 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 19.0 GiB
+- RAM: 38.8 GiB
 
 ## CreateRowsCommand
 
 | task                                   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
 | -------------------------------------- | ------- | --------- | ------ | -------- | ------- | ------- |
-| execute — insert 100 rows into 100     | 1.00×   | 0.0540    | ±1.17% | 0.1112   | 18515   | 9258    |
-| execute — insert 100 rows into 1000    | 0.91×   | 0.0594    | ±1.20% | 0.1320   | 16827   | 8414    |
-| execute — insert 1000 rows into 10000  | 0.1×    | 0.5360    | ±1.63% | 1.2315   | 1866    | 933     |
-| execute — insert 10000 rows into 10000 | 0.011×  | 5.0071    | ±1.52% | 5.9179   | 200     | 100     |
-| undo — remove 100 rows from 200        | 0.55×   | 0.0974    | ±0.86% | 0.1707   | 10266   | 5133    |
-| undo — remove 1000 rows from 11000     | 0.048×  | 1.1267    | ±1.70% | 2.0418   | 888     | 444     |
-| undo — remove 10000 rows from 20000    | 0.0051× | 10.6194   | ±3.32% | 14.8179  | 94      | 48      |
+| execute — insert 100 rows into 100     | 1.00×   | 0.0563    | ±2.96% | 0.1510   | 17753   | 8877    |
+| execute — insert 100 rows into 1000    | 0.99×   | 0.0569    | ±0.83% | 0.1168   | 17590   | 8795    |
+| execute — insert 1000 rows into 10000  | 0.079×  | 0.7138    | ±2.33% | 1.4490   | 1401    | 701     |
+| execute — insert 10000 rows into 10000 | 0.008×  | 7.0202    | ±3.39% | 10.6245  | 142     | 72      |
+| undo — remove 100 rows from 200        | 0.41×   | 0.1367    | ±1.12% | 0.3156   | 7315    | 3658    |
+| undo — remove 1000 rows from 11000     | 0.037×  | 1.5371    | ±2.45% | 2.8921   | 651     | 326     |
+| undo — remove 10000 rows from 20000    | 0.0041× | 13.8709   | ±3.89% | 20.6375  | 72      | 37      |
