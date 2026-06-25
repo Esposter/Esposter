@@ -12,6 +12,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # CodSpeed instruments the same colocated `*.bench.ts` files (no bench rewrite) and uploads to the hosted
   # dashboard for PR regression comments + flamegraphs. The reporter self-disables under CODSPEED_ENV (which the
