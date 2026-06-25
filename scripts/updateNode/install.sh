@@ -12,7 +12,7 @@ if ! command -v corepack >/dev/null 2>&1; then
 fi
 corepack enable
 # The old version's directory may be locked while this updater's node processes are alive. Launch a
-# detached process that retries `fnm uninstall` until the lock clears — i.e. once this call's node
+# detached process that retries `fnm uninstall` until the lock clears - i.e. once this call's node
 # processes exit. Self-cleaning, no process killing.
 if [ -n "$old" ] && [ "$old" != "$new" ]; then
   nohup sh -c 'for i in $(seq 60); do fnm uninstall "'"$old"'" 2>/dev/null && break; sleep 1; done' >/dev/null 2>&1 &
