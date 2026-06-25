@@ -9,17 +9,17 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T23:39:44.064Z
-- Commit: 23eeaa5de
-- Node: v26.3.1
-- OS: win32 10.0.26200 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- Date: 2026-06-25T09:24:10.220Z
+- Commit: 20d7229eb
+- Node: v26.4.0
+- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 15.6 GiB
 
 ## loadFilesSource — load + dispose by file count
 
-| task       | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
-| ---------- | ------- | --------- | ------ | -------- | ------- | ------- |
-| files:1    | 1.00×   | 3.8590    | ±3.46% | 6.4520   | 259     | 131     |
-| files:100  | 0.038×  | 101.9724  | ±5.28% | 114.3670 | 10      | 10      |
-| files:1000 | 0.0044× | 873.2831  | ±1.71% | 910.7750 | 1       | 10      |
+| task       | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ---------- | ------- | --------- | ------ | -------- | ------- |
+| files:1    | 1.00×   | 2.6992    | ±6.78% | 3.2136   | 10      |
+| files:100  | 0.065×  | 41.7129   | ±3.65% | 46.8843  | 10      |
+| files:1000 | 0.0078× | 347.4339  | ±1.93% | 365.5556 | 10      |

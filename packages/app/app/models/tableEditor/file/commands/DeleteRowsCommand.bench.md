@@ -9,20 +9,20 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T23:39:44.064Z
-- Commit: 23eeaa5de
-- Node: v26.3.1
-- OS: win32 10.0.26200 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- Date: 2026-06-25T09:24:50.666Z
+- Commit: 20d7229eb
+- Node: v26.4.0
+- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 15.6 GiB
 
 ## DeleteRowsCommand
 
-| task                                  | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
-| ------------------------------------- | ------- | --------- | ------ | -------- | ------- | ------- |
-| execute — delete 50 rows from 100     | 1.00×   | 0.0371    | ±0.91% | 0.0858   | 26941   | 13471   |
-| execute — delete 500 rows from 1000   | 0.14×   | 0.2680    | ±0.93% | 0.5389   | 3732    | 1866    |
-| execute — delete 5000 rows from 10000 | 0.012×  | 3.1598    | ±2.76% | 4.7333   | 316     | 159     |
-| undo — re-insert 50 rows into 50      | 0.73×   | 0.0508    | ±0.70% | 0.1039   | 19669   | 9835    |
-| undo — re-insert 500 rows into 500    | 0.076×  | 0.4896    | ±0.88% | 0.8884   | 2043    | 1022    |
-| undo — re-insert 5000 rows into 5000  | 0.0071× | 5.2295    | ±1.49% | 6.4419   | 191     | 96      |
+| task                                  | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ------------------------------------- | ------- | --------- | ------- | -------- | ------- |
+| execute — delete 50 rows from 100     | 1.00×   | 0.0657    | ±20.95% | 0.0927   | 10      |
+| execute — delete 500 rows from 1000   | 0.22×   | 0.2990    | ±5.28%  | 0.3531   | 10      |
+| execute — delete 5000 rows from 10000 | 0.023×  | 2.9006    | ±17.61% | 4.8780   | 10      |
+| undo — re-insert 50 rows into 50      | 0.72×   | 0.0915    | ±14.23% | 0.1195   | 10      |
+| undo — re-insert 500 rows into 500    | 0.12×   | 0.5257    | ±2.79%  | 0.5636   | 10      |
+| undo — re-insert 5000 rows into 5000  | 0.013×  | 5.1991    | ±2.18%  | 5.5501   | 10      |

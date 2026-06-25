@@ -1,6 +1,7 @@
 import type { ViteUserConfig } from "vitest/config";
 
 import { getBenchmarkPlugins } from "./getBenchmarkPlugins";
+import { getBenchmarkRunner } from "./getBenchmarkRunner";
 
 export const getVitestConfiguration = (): ViteUserConfig => ({
   plugins: getBenchmarkPlugins(),
@@ -13,5 +14,8 @@ export const getVitestConfiguration = (): ViteUserConfig => ({
   test: {
     benchmark: { reporters: ["@esposter/shared-node/reporter"] },
     hookTimeout: 60_000,
+    // Custom benchmark runner (bench mode only — see getBenchmarkRunner) that zeroes tinybench's time budget
+    // So benches run a fixed iteration count, keeping the committed `*.bench.md` sample counts machine-stable.
+    runner: getBenchmarkRunner(),
   },
 });

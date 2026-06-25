@@ -58,7 +58,7 @@ describe(buildBwrapArgs, () => {
   test("re-adds the network namespace right after --unshare-all when network is on", () => {
     expect.hasAssertions();
 
-    expect(buildBwrapArgs("pwd", "/work", { network: true }).slice(0, 2)).toStrictEqual([
+    expect(buildBwrapArgs("pwd", "/work", { isNetworkEnabled: true }).slice(0, 2)).toStrictEqual([
       "--unshare-all",
       "--share-net",
     ]);

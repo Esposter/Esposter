@@ -1,54 +1,44 @@
 {
   "files": [
     {
-      "filepath": "packages/app/app/models/tableEditor/file/commands/UpdateColumnCommand.bench.ts",
+      "filepath": "app/models/tableEditor/file/commands/UpdateColumnCommand.bench.ts",
       "groups": [
         {
           "benchmarks": [
             {
-              "hz": 326521.60817415314,
-              "mean": 0.003062584450664108,
+              "mean": 0.019039699999984804,
               "name": "execute (rename) — 100 rows",
-              "p99": 0.00680000000011205,
-              "rme": 0.8234950015205853,
-              "sampleCount": 163261,
-              "sd": 0.005199172123525229
+              "p99": 0.07089799999994284,
+              "rme": 77.51682357774247,
+              "sampleCount": 10
             },
             {
-              "hz": 71252.7744522623,
-              "mean": 0.01403454121874197,
+              "mean": 0.02156940000004397,
               "name": "execute (rename) — 1000 rows",
-              "p99": 0.0374999999994543,
-              "rme": 0.9709145877821089,
-              "sampleCount": 35627,
-              "sd": 0.013122385808499113
+              "p99": 0.05129900000019916,
+              "rme": 40.340415682950365,
+              "sampleCount": 10
             },
             {
-              "hz": 8788.36184935166,
-              "mean": 0.1137868486916902,
+              "mean": 0.11357709999988401,
               "name": "execute (rename) — 10000 rows",
-              "p99": 0.2426999999997861,
-              "rme": 0.9928065841389376,
-              "sampleCount": 4395,
-              "sd": 0.038210268275636915
+              "p99": 0.13739599999962593,
+              "rme": 6.934535795932928,
+              "sampleCount": 10
             },
             {
-              "hz": 1905.6238298560922,
-              "mean": 0.5247625393493938,
+              "mean": 0.7799699000000601,
               "name": "undo (rename) — 1000 rows",
-              "p99": 0.949800000000323,
-              "rme": 1.0603547739958188,
-              "sampleCount": 953,
-              "sd": 0.08764040986820938
+              "p99": 1.4291630000002442,
+              "rme": 28.700718396942715,
+              "sampleCount": 10
             },
             {
-              "hz": 188.0743816361807,
-              "mean": 5.317045263157869,
+              "mean": 5.234015500000032,
               "name": "undo (rename) — 10000 rows",
-              "p99": 8.702699999999822,
-              "rme": 2.5132840372970033,
-              "sampleCount": 95,
-              "sd": 0.6559008996514064
+              "p99": 6.35813700000017,
+              "rme": 7.496483492016248,
+              "sampleCount": 10
             }
           ],
           "fullName": "UpdateColumnCommand"

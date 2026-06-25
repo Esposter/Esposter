@@ -9,21 +9,21 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T23:39:44.064Z
-- Commit: 23eeaa5de
-- Node: v26.3.1
-- OS: win32 10.0.26200 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- Date: 2026-06-25T09:24:50.666Z
+- Commit: 20d7229eb
+- Node: v26.4.0
+- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 15.6 GiB
 
 ## DeleteColumnsCommand
 
-| task                                        | vs base  | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
-| ------------------------------------------- | -------- | --------- | ------ | -------- | ------- | ------- |
-| execute — delete 1 of 5 columns, 100 rows   | 1.00×    | 0.0084    | ±0.80% | 0.0214   | 118679  | 59340   |
-| execute — delete 1 of 5 columns, 1000 rows  | 0.14×    | 0.0609    | ±1.01% | 0.1454   | 16433   | 8217    |
-| execute — delete 1 of 5 columns, 10000 rows | 0.0093×  | 0.9027    | ±4.68% | 3.1066   | 1108    | 554     |
-| execute — delete 3 of 5 columns, 1000 rows  | 0.059×   | 0.1435    | ±1.08% | 0.2705   | 6971    | 3486    |
-| execute — delete 3 of 5 columns, 10000 rows | 0.0034×  | 2.4958    | ±6.19% | 5.8546   | 401     | 203     |
-| undo — restore 1 column into 1000 rows      | 0.0091×  | 0.9230    | ±2.66% | 1.8678   | 1083    | 542     |
-| undo — restore 3 columns into 10000 rows    | 0.00094× | 8.9312    | ±4.95% | 15.9984  | 112     | 56      |
+| task                                        | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ------------------------------------------- | ------- | --------- | ------- | -------- | ------- |
+| execute — delete 1 of 5 columns, 100 rows   | 1.00×   | 0.0383    | ±57.39% | 0.0997   | 10      |
+| execute — delete 1 of 5 columns, 1000 rows  | 0.52×   | 0.0731    | ±14.88% | 0.1018   | 10      |
+| execute — delete 1 of 5 columns, 10000 rows | 0.094×  | 0.4063    | ±3.85%  | 0.4513   | 10      |
+| execute — delete 3 of 5 columns, 1000 rows  | 0.31×   | 0.1251    | ±5.10%  | 0.1453   | 10      |
+| execute — delete 3 of 5 columns, 10000 rows | 0.031×  | 1.2205    | ±1.97%  | 1.2896   | 10      |
+| undo — restore 1 column into 1000 rows      | 0.035×  | 1.1075    | ±72.08% | 4.2073   | 10      |
+| undo — restore 3 columns into 10000 rows    | 0.0052× | 7.3318    | ±4.11%  | 8.0465   | 10      |

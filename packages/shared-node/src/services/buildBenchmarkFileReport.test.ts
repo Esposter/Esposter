@@ -5,7 +5,7 @@ import { buildBenchmarkFileReport } from "@/services/buildBenchmarkFileReport";
 import { describe, expect, test } from "vitest";
 
 describe(buildBenchmarkFileReport, () => {
-  const benchmark: BenchmarkResult = { hz: 1, mean: 1, name: "native", p99: 1, rme: 0, sampleCount: 1, sd: 0 };
+  const benchmark: BenchmarkResult = { mean: 1, name: "native", p99: 1, rme: 0, sampleCount: 1 };
   const createBenchTask = (name: string): BenchmarkTaskNode => ({
     meta: { benchmark: true },
     name,
@@ -41,8 +41,8 @@ describe(buildBenchmarkFileReport, () => {
           groups: [
             {
               benchmarks: [
-                { hz: 1, mean: 1, name: "native", p99: 1, rme: 0, sampleCount: 1, sd: 0 },
-                { hz: 1, mean: 1, name: " ", p99: 1, rme: 0, sampleCount: 1, sd: 0 },
+                { mean: 1, name: "native", p99: 1, rme: 0, sampleCount: 1 },
+                { mean: 1, name: " ", p99: 1, rme: 0, sampleCount: 1 },
               ],
               fullName: `${fileName} > group`,
             },

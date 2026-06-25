@@ -9,30 +9,30 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T23:39:44.064Z
-- Commit: 23eeaa5de
-- Node: v26.3.1
-- OS: win32 10.0.26200 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 38.8 GiB
+- Date: 2026-06-25T09:24:10.220Z
+- Commit: 20d7229eb
+- Node: v26.4.0
+- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 15.6 GiB
 
 ## createVfsBackend — in-process node -e vs native spawn (hot path)
 
-| task   | vs base  | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
-| ------ | -------- | --------- | ------ | -------- | ------- | ------- |
-| native | 1.00×    | 170.9572  | ±8.69% | 197.6800 | 6       | 10      |
-| vfs    | 4876.75× | 0.0351    | ±8.25% | 0.0960   | 28526   | 14474   |
+| task   | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ------ | ------- | --------- | ------- | -------- | ------- |
+| native | 1.00×   | 27.4541   | ±5.13%  | 31.7610  | 10      |
+| vfs    | 389.98× | 0.0704    | ±29.87% | 0.1208   | 10      |
 
 ## createVfsBackend — in-process node <file> vs native spawn (hot path)
 
-| task   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
-| ------ | ------- | --------- | ------ | -------- | ------- | ------- |
-| native | 1.00×   | 151.0414  | ±3.78% | 157.4685 | 7       | 10      |
-| vfs    | 131.54× | 1.1483    | ±2.96% | 2.4312   | 871     | 436     |
+| task   | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ------ | ------- | --------- | ------- | -------- | ------- |
+| native | 1.00×   | 26.8823   | ±2.49%  | 28.8399  | 10      |
+| vfs    | 86.27×  | 0.3116    | ±14.56% | 0.4435   | 10      |
 
 ## createVfsBackend — fall-back command vs native (no added overhead)
 
-| task   | vs base | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
-| ------ | ------- | --------- | ------ | -------- | ------- | ------- |
-| native | 1.00×   | 155.1096  | ±2.81% | 165.8694 | 6       | 10      |
-| vfs    | 1.02×   | 152.6759  | ±2.60% | 162.7269 | 7       | 10      |
+| task   | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------ | ------- | --------- | ------ | -------- | ------- |
+| native | 1.00×   | 29.3113   | ±4.37% | 32.5002  | 10      |
+| vfs    | 1.05×   | 27.9817   | ±2.47% | 30.1740  | 10      |
