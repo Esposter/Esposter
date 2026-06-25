@@ -26,84 +26,50 @@ const cleanModules = "find . -name node_modules -type d -prune -exec rm -rf {} +
 // Clear caches before each run so neither side benefits from incremental state.
 const SHARED = join(repoRoot, "packages/shared");
 const cold = (clean: string, command: string): string => `${clean} 2>/dev/null; ${command}`;
-const ITERATIONS = { iterations: 3, time: 0, warmupIterations: 0, warmupTime: 0 } as const;
-const INSTALL_ITERATIONS = { iterations: 2, time: 0, warmupIterations: 0, warmupTime: 0 } as const;
 
 afterAll(() => {
   for (const corpus of [nativeCorpus, osCorpus]) if (corpus) rmSync(corpus, { force: true, recursive: true });
 });
 
 describe.skipIf(!isOsSupported)("install — real workspace dependency closure (cold)", () => {
-  bench(
-    "native",
-    async () => {
-      await native.exec(`${cleanModules}; ${INSTALL}`, { cwd: nativeCorpus, stdio: "pipe" });
-    },
-    INSTALL_ITERATIONS,
-  );
+  bench("native", async () => {
+    await native.exec(`${cleanModules}; ${INSTALL}`, { cwd: nativeCorpus, stdio: "pipe" });
+  });
 
-  bench(
-    "os",
-    async () => {
-      await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: osCorpus });
-    },
-    INSTALL_ITERATIONS,
-  );
+  bench("os", async () => {
+    await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: osCorpus });
+  });
 });
 
 describe.skipIf(!isOsSupported)("typecheck — packages/shared (cold)", () => {
   const command = cold("rm -f *.tsbuildinfo", "pnpm typecheck");
-  bench(
-    "native",
-    async () => {
-      await native.exec(command, { cwd: SHARED, stdio: "pipe" });
-    },
-    ITERATIONS,
-  );
+  bench("native", async () => {
+    await native.exec(command, { cwd: SHARED, stdio: "pipe" });
+  });
 
-  bench(
-    "os",
-    async () => {
-      await createOsBackend().exec(command, { cwd: SHARED, overlayDirs: [store], stdio: "pipe" });
-    },
-    ITERATIONS,
-  );
+  bench("os", async () => {
+    await createOsBackend().exec(command, { cwd: SHARED, overlayDirs: [store], stdio: "pipe" });
+  });
 });
 
 describe.skipIf(!isOsSupported)("build — packages/shared (cold)", () => {
   const command = cold("rm -rf dist *.tsbuildinfo", "pnpm build");
-  bench(
-    "native",
-    async () => {
-      await native.exec(command, { cwd: SHARED, stdio: "pipe" });
-    },
-    ITERATIONS,
-  );
+  bench("native", async () => {
+    await native.exec(command, { cwd: SHARED, stdio: "pipe" });
+  });
 
-  bench(
-    "os",
-    async () => {
-      await createOsBackend().exec(command, { cwd: SHARED, overlayDirs: [store], stdio: "pipe" });
-    },
-    ITERATIONS,
-  );
+  bench("os", async () => {
+    await createOsBackend().exec(command, { cwd: SHARED, overlayDirs: [store], stdio: "pipe" });
+  });
 });
 
 describe.skipIf(!isOsSupported)("test — packages/shared", () => {
   const command = "pnpm test --run";
-  bench(
-    "native",
-    async () => {
-      await native.exec(command, { cwd: SHARED, stdio: "pipe" });
-    },
-    ITERATIONS,
-  );
+  bench("native", async () => {
+    await native.exec(command, { cwd: SHARED, stdio: "pipe" });
+  });
 
-  bench(
-    "os",
-    async () => {
-      await createOsBackend().exec(command, { cwd: SHARED, overlayDirs: [store], stdio: "pipe" });
-    },
-    ITERATIONS,
-  );
+  bench("os", async () => {
+    await createOsBackend().exec(command, { cwd: SHARED, overlayDirs: [store], stdio: "pipe" });
+  });
 });

@@ -9,42 +9,42 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-25T08:07:54.592Z
-- Commit: 6be447306
-- Node: v26.3.1
+- Date: 2026-06-25T09:24:50.666Z
+- Commit: 20d7229eb
+- Node: v26.4.0
 - OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 15.6 GiB
 
 ## findDuplicateRows > 100 rows
 
-| task                         | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
-| ---------------------------- | ------- | --------- | ------- | -------- | ------- | ------- |
-| All unique — First mode      | 1.00×   | 0.0659    | ±15.95% | 0.0951   | 15175   | 10      |
-| All unique — Last mode       | 1.56×   | 0.0421    | ±18.36% | 0.0721   | 23741   | 10      |
-| Half duplicates — First mode | 1.08×   | 0.0609    | ±8.55%  | 0.0731   | 16416   | 10      |
-| Half duplicates — Last mode  | 1.34×   | 0.0491    | ±19.56% | 0.0795   | 20383   | 10      |
-| All duplicates — First mode  | 1.80×   | 0.0366    | ±8.00%  | 0.0474   | 27296   | 10      |
-| All duplicates — Last mode   | 1.82×   | 0.0362    | ±7.71%  | 0.0454   | 27662   | 10      |
+| task                         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ---------------------------- | ------- | --------- | ------- | -------- | ------- |
+| All unique — First mode      | 1.00×   | 0.0578    | ±12.67% | 0.0825   | 10      |
+| All unique — Last mode       | 1.37×   | 0.0421    | ±9.35%  | 0.0546   | 10      |
+| Half duplicates — First mode | 1.03×   | 0.0559    | ±6.93%  | 0.0703   | 10      |
+| Half duplicates — Last mode  | 0.96×   | 0.0603    | ±19.25% | 0.0875   | 10      |
+| All duplicates — First mode  | 1.82×   | 0.0318    | ±2.83%  | 0.0348   | 10      |
+| All duplicates — Last mode   | 1.59×   | 0.0364    | ±12.87% | 0.0539   | 10      |
 
 ## findDuplicateRows > 1000 rows
 
-| task                         | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
-| ---------------------------- | ------- | --------- | ------- | -------- | ------- | ------- |
-| All unique — First mode      | 1.00×   | 0.4480    | ±4.05%  | 0.5033   | 2232    | 10      |
-| All unique — Last mode       | 0.82×   | 0.5466    | ±17.40% | 0.7574   | 1830    | 10      |
-| Half duplicates — First mode | 0.89×   | 0.5008    | ±16.14% | 0.6794   | 1997    | 10      |
-| Half duplicates — Last mode  | 1.19×   | 0.3765    | ±5.96%  | 0.4510   | 2656    | 10      |
-| All duplicates — First mode  | 1.08×   | 0.4155    | ±8.93%  | 0.5289   | 2407    | 10      |
-| All duplicates — Last mode   | 1.06×   | 0.4214    | ±9.39%  | 0.4764   | 2373    | 10      |
+| task                         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ---------------------------- | ------- | --------- | ------- | -------- | ------- |
+| All unique — First mode      | 1.00×   | 0.4372    | ±4.89%  | 0.4896   | 10      |
+| All unique — Last mode       | 0.92×   | 0.4745    | ±8.91%  | 0.5629   | 10      |
+| Half duplicates — First mode | 1.03×   | 0.4246    | ±3.55%  | 0.4745   | 10      |
+| Half duplicates — Last mode  | 1.16×   | 0.3781    | ±4.11%  | 0.4143   | 10      |
+| All duplicates — First mode  | 1.14×   | 0.3833    | ±16.15% | 0.5268   | 10      |
+| All duplicates — Last mode   | 1.53×   | 0.2849    | ±4.34%  | 0.3214   | 10      |
 
 ## findDuplicateRows > 10000 rows
 
-| task                         | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
-| ---------------------------- | ------- | --------- | ------- | -------- | ------- | ------- |
-| All unique — First mode      | 1.00×   | 5.2799    | ±17.17% | 7.7811   | 189     | 10      |
-| All unique — Last mode       | 0.97×   | 5.4168    | ±4.22%  | 6.0482   | 185     | 10      |
-| Half duplicates — First mode | 1.33×   | 3.9817    | ±6.60%  | 4.7888   | 251     | 10      |
-| Half duplicates — Last mode  | 1.10×   | 4.8145    | ±4.40%  | 5.4128   | 208     | 10      |
-| All duplicates — First mode  | 1.92×   | 2.7545    | ±10.06% | 3.8141   | 363     | 10      |
-| All duplicates — Last mode   | 1.72×   | 3.0649    | ±6.42%  | 3.8147   | 326     | 10      |
+| task                         | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ---------------------------- | ------- | --------- | ------- | -------- | ------- |
+| All unique — First mode      | 1.00×   | 4.9641    | ±12.21% | 6.3198   | 10      |
+| All unique — Last mode       | 0.93×   | 5.3361    | ±7.62%  | 6.2758   | 10      |
+| Half duplicates — First mode | 1.21×   | 4.1165    | ±8.10%  | 5.2563   | 10      |
+| Half duplicates — Last mode  | 1.04×   | 4.7560    | ±7.79%  | 5.8266   | 10      |
+| All duplicates — First mode  | 1.90×   | 2.6126    | ±10.89% | 3.6752   | 10      |
+| All duplicates — Last mode   | 1.72×   | 2.8877    | ±6.53%  | 3.4676   | 10      |

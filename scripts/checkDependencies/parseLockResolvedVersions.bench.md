@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-25T08:07:01.064Z
-- Commit: 6be447306
-- Node: v26.3.1
+- Date: 2026-06-25T09:18:44.256Z
+- Commit: 20d7229eb
+- Node: v26.4.0
 - OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 15.6 GiB
 
 ## parseLockResolvedVersions
 
-| task              | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
-| ----------------- | ------- | --------- | ------- | -------- | ------- | ------- |
-| catalogs section  | 1.00×   | 0.1361    | ±18.28% | 0.2029   | 7348    | 10      |
-| importers section | 47.66×  | 0.0029    | ±36.02% | 0.0065   | 350214  | 10      |
+| task              | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
+| ----------------- | ------- | --------- | ------- | -------- | ------- |
+| catalogs section  | 1.00×   | 0.1377    | ±14.15% | 0.1860   | 10      |
+| importers section | 45.90×  | 0.0030    | ±34.33% | 0.0068   | 10      |

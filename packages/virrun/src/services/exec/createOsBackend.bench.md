@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T14:32:44.383Z
-- Commit: 5e493e6bf
-- Node: v26.3.1
-- OS: linux 6.6.87.2-microsoft-standard-WSL2 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 19.0 GiB
+- Date: 2026-06-25T09:24:10.220Z
+- Commit: 20d7229eb
+- Node: v26.4.0
+- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 15.6 GiB
 
 ## createOsBackend — many small file writes + reads (I/O-class)
 
-| task   | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
-| ------ | ------- | --------- | ------- | -------- | ------- | ------- |
-| native | 1.00×   | 60.8745   | ±11.00% | 74.3465  | 16      | 10      |
-| os     | 0.58×   | 105.5127  | ±10.17% | 135.8455 | 9       | 10      |
+| task   | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------ | ------- | --------- | ------ | -------- | ------- |
+| native | 1.00×   | 31.6015   | ±0.89% | 32.2188  | 10      |
+| os     | 0.85×   | 37.0920   | ±1.26% | 38.2232  | 10      |

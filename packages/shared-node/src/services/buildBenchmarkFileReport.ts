@@ -35,7 +35,7 @@ export const buildBenchmarkFileReport = (file: BenchmarkTaskNode): BenchmarkRepo
     for (const task of suite.tasks ?? []) {
       const benchmark = task.result?.benchmark;
       if (!task.meta.benchmark || !benchmark) continue;
-      // A bench that threw on every iteration is recorded with zero samples — mean/hz/p99 come back
+      // A bench that threw on every iteration is recorded with zero samples — mean/p99 come back
       // Non-finite (undefined or NaN), which would later crash formatBenchmarkMarkdown on `mean.toFixed`
       // With a misleading "failed to write .md" error. Fail loud and named here instead, before any
       // Artifact is written, since Vitest's bench summary silently swallows the per-iteration throws.
@@ -46,13 +46,11 @@ export const buildBenchmarkFileReport = (file: BenchmarkTaskNode): BenchmarkRepo
           `benchmark "${benchmark.name}" produced no samples — it likely threw on every iteration`,
         );
       benchmarks.push({
-        hz: benchmark.hz,
         mean: benchmark.mean,
         name: benchmark.name,
         p99: benchmark.p99,
         rme: benchmark.rme,
         sampleCount: benchmark.sampleCount,
-        sd: benchmark.sd,
       });
     }
     if (benchmarks.length > 0) groups.push({ benchmarks, fullName: getFullName(suite) });
