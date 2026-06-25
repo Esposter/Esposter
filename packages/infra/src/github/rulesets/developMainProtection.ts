@@ -41,7 +41,7 @@ export const developMainProtection: github.RepositoryRuleset = new github.Reposi
       // Gate merges on CI. Contexts are the CI.yaml job names; the sharded Coverage matrix
       // Is gated via its single Merge Coverage fan-in job rather than 16 separate contexts.
       // `build-packages` runs via a reusable workflow (uses:), so its check context is
-      // prefixed with the caller job id — `build-packages / Build Packages`, not `Build Packages`.
+      // Prefixed with the caller job id — `build-packages / Build Packages`, not `Build Packages`.
       requiredStatusChecks: {
         requiredChecks: [
           { context: "build-packages / Build Packages" },
