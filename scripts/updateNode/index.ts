@@ -20,20 +20,23 @@ const { major } = getVersionParts(version);
 const packageJsonPath = resolve(root, "package.json");
 const packageJson = readFileSync(packageJsonPath, "utf8");
 const oldVersion = getEnginesNode(packageJson);
-if (oldVersion === version) {
-  console.info(`node is already ${version} — nothing to update.`);
-  process.exit(0);
-}
-console.info(`Updating node ${oldVersion} → ${version}\n`);
-writeFileSync(packageJsonPath, setEnginesNode(packageJson, version));
-console.info(`✔ package.json engines.node → ^${version}`);
-// 3. Bump the @types/node catalog entry to the highest release matching the new node major.
-const typesVersion = await getRegistryLatestVersionForPrefix("@types/node", String(major));
-const workspacePath = resolve(root, "pnpm-workspace.yaml");
-writeFileSync(workspacePath, setCatalogTypesNode(readFileSync(workspacePath, "utf8"), typesVersion));
-console.info(`✔ pnpm-workspace.yaml @types/node → ^${typesVersion}`);
+// engines.node / @types/node only need rewriting when the target differs. We still hand off to fnm
+// below even when it matches: a colleague pulling this repo may have an older node active in fnm (or
+// not have this version installed at all) and needs switching onto the pinned version.
+const isNewVersion = oldVersion !== version;
+if (isNewVersion) {
+  console.info(`Updating node ${oldVersion} → ${version}\n`);
+  writeFileSync(packageJsonPath, setEnginesNode(packageJson, version));
+  console.info(`✔ package.json engines.node → ^${version}`);
+  // 3. Bump the @types/node catalog entry to the highest release matching the new node major.
+  const typesVersion = await getRegistryLatestVersionForPrefix("@types/node", String(major));
+  const workspacePath = resolve(root, "pnpm-workspace.yaml");
+  writeFileSync(workspacePath, setCatalogTypesNode(readFileSync(workspacePath, "utf8"), typesVersion));
+  console.info(`✔ pnpm-workspace.yaml @types/node → ^${typesVersion}`);
+} else console.info(`node is already ${version} in package.json — ensuring fnm has it installed and active.\n`);
 // 4. Hand off install / switch / cleanup of the old version to the native (per-OS) script via crossOS.
-console.info("\nInstalling and switching via fnm…");
+// When the version is unchanged, `old === new`, so the native script's guard skips the removal step.
+console.info("Installing and switching via fnm…");
 const result = spawnSync(`pnpm crossOS update:node ${version} ${oldVersion}`, {
   cwd: root,
   shell: true,
@@ -41,4 +44,8 @@ const result = spawnSync(`pnpm crossOS update:node ${version} ${oldVersion}`, {
 });
 if (result.status !== 0) throw new Error("fnm install/switch failed");
 
-console.info("\nDone. Run `pnpm refresh:lockfile` to resolve the new @types/node (other open shells need `fnm use`).");
+console.info(
+  isNewVersion
+    ? "\nDone. Run `pnpm refresh:lockfile` to resolve the new @types/node (other open shells need `fnm use`)."
+    : "\nDone. Other open shells need `fnm use` to pick up the active version.",
+);
