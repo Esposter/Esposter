@@ -28,7 +28,9 @@ There are **two layers** over the same colocated `*.bench.ts` files (see [CodSpe
 
 `pnpm bench` (per package) = `vitest bench --run`. Nothing else to chain.
 
-From the **repo root**, `pnpm bench` = `pnpm -r --if-present run bench` — runs every package's `bench` script recursively, **sequentially** (no `--parallel`: concurrent benches contend for CPU and skew the machine-dependent numbers). Each package emits the colocated `*.bench.{json,md}` files described below, beside their source.
+From the **repo root**, `pnpm bench` = `vitest bench --run --project scripts && pnpm -r --if-present run bench` — the root `scripts/` suite runs first, then every package's `bench` script recursively, all **sequentially** (no `--parallel`: concurrent benches contend for CPU and skew the machine-dependent numbers). Each package emits the colocated `*.bench.{json,md}` files described below, beside their source.
+
+The leading `vitest bench --run --project scripts` exists because `scripts/` is **not** a workspace package, so `pnpm -r` skips it — it needs the root Vitest run instead. `--project scripts` isolates it: a bare root `vitest bench` would re-run every package's benches too, in parallel (the thing we avoid). The scripts project (in the root `vitest.config.ts`) scopes both globs to `scripts/` — crucially `benchmark.include: ["scripts/**/*.bench.ts"]`, since the default `**/*.bench.ts` would otherwise pull every package's bench file into the scripts project. Only deterministic, CPU-bound script units earn a bench (e.g. `parseLockResolvedVersions` over the lock yaml); the network/spawn helpers in `checkDependencies` (`pnpm outdated`, registry fetches) are I/O-bound and unbenchable.
 
 ## Output — colocated per-file JSON + Markdown
 
@@ -38,7 +40,7 @@ Results are **scoped to each bench file**, the way a test is — not one merged 
 - The reporter is referenced by **path string**, not import: `configuration` builds before `shared-node`, so it can't import the reporter — but a literal string stays build-first, and Vitest resolves it **in bench mode only** to shared-node's `./reporter` **default export**.
 - The reporter subclasses Vitest's `BenchmarkReporter`: `super.onTestRunEnd` prints the terminal comparison table, then `onTestRunEnd` reads the in-memory run via **`this.ctx.state.getFiles()`** and, per file, `writeBenchmarkReport` projects its task tree (`buildBenchmarkFileReport`) into a `BenchmarkReport`, validates it, and writes the colocated `.bench.json` (package-relative `filepath`, so no home-dir leak) + `.bench.md`. No bin, no merged file, no `outputJson` round-trip.
 - `buildBenchmarkFileReport` reads a small local structural contract (`BenchmarkTaskNode`), **not** Vitest's experimental bench task types — a real `File`/`Task` is structurally assignable to it, so the projection survives Vitest's bench-format churn. A bench file with no benchmarks (e.g. a shared bench helper) writes nothing.
-- Any package that runs `pnpm bench` needs `@esposter/shared-node` as a **devDependency** for the string to resolve; packages that never bench don't (the string is never loaded outside bench mode).
+- Any package that runs `pnpm bench` needs `@esposter/shared-node` as a **devDependency** for the string to resolve; packages that never bench don't (the string is never loaded outside bench mode). The **repo root** `package.json` also declares it (`workspace:*`), because the root drives the `scripts/` project's bench from the root cwd — without it the reporter string fails to resolve (`Failed to load custom Reporter`).
 - **Commit** every `*.bench.json` + `*.bench.md`. Numbers are machine-dependent (each md carries its own environment block); only compare runs from the same host. `defineVitestProject`-based packages (e.g. the app) don't call `getVitestConfiguration()`, so they set the same `reporters: ["@esposter/shared-node/reporter"]` string inline.
 
 ## The bench _is_ the speed gate — no `.speed.test.ts`
