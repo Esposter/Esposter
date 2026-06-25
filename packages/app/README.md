@@ -79,8 +79,8 @@ pnpm dev              # start dev server (http://localhost:3000)
 pnpm build            # production build
 pnpm preview          # preview production build locally
 pnpm typecheck        # vue-tsc type check
-pnpm lint             # oxlint + eslint (check only)
-pnpm lint:fix         # oxlint + eslint --fix (always use this; never fix manually)
+pnpm lint             # eslint (check only); oxlint runs once from the repo root
+pnpm lint:fix         # eslint --fix (always use this; never fix manually)
 pnpm test             # vitest watch mode (coverage is run from the repo root)
 ```
 

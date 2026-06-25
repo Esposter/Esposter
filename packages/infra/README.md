@@ -1,8 +1,8 @@
-# Esposter Infrastructure
+# @esposter/infra
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Pulumi infrastructure code for Esposter Azure resources.
+Pulumi infrastructure-as-code for Esposter's Azure resources — manages all cloud infrastructure from TypeScript via the Azure Native provider.
 
 ## Table of Contents
 
@@ -12,6 +12,8 @@ Pulumi infrastructure code for Esposter Azure resources.
 ---
 
 ## <a name="documentation">📖 Documentation</a>
+
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/) to level up.
 
 This private package contains Esposter's Azure infrastructure-as-code project. It uses [Pulumi](https://github.com/pulumi/pulumi) with the Azure Native provider to manage Azure resources from TypeScript.
 

@@ -76,6 +76,8 @@ Badge ref format (bottom of file):
 | infra           | `@esposter/infra`           |   yes   | `packages/infra/README.md`           |
 | parse-tmx       | `parse-tmx`                 |   no    | `packages/parse-tmx/README.md`       |
 | shared          | `@esposter/shared`          |   no    | `packages/shared/README.md`          |
+| shared-node     | `@esposter/shared-node`     |   yes   | `packages/shared-node/README.md`     |
+| virrun          | `virrun`                    |   no    | `packages/virrun/README.md`          |
 | vue-phaserjs    | `vue-phaserjs`              |   no    | `packages/vue-phaserjs/README.md`    |
 | xml2js          | `@esposter/xml2js`          |   no    | `packages/xml2js/README.md`          |
 
