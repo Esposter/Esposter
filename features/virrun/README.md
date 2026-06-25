@@ -44,6 +44,7 @@ Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roa
 - [deferred/wasm-runtime.md](deferred/wasm-runtime.md) — WebContainers-style WASM-node backend, parked with a revisit trigger.
 - [deferred/citty-cli.md](deferred/citty-cli.md) — delegate the CLI to unjs/citty once it grows real subcommands/flags.
 - [deferred/ci-bench-gate.md](deferred/ci-bench-gate.md) — enforce the bench + differential suites as required CI gates once a backend can actually regress.
+- [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md) — why "route every command at once" waits for warm-fork; adopt one command at a time instead.
 
 ## Reference
 
@@ -54,6 +55,7 @@ Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roa
 - [specs/snapshot-fork.md](specs/snapshot-fork.md) — warm snapshot + fork.
 - [specs/orchestrator-api.md](specs/orchestrator-api.md) — the TS, node-compatible public API.
 - [specs/adoption.md](specs/adoption.md) — incremental opt-in: prefix → script → config → shim, with auto-fallback; dogfooding ladder for this repo.
+- [specs/config-and-cache.md](specs/config-and-cache.md) — the on-disk surface: `virrun.config.json` allowlist (committed) + `.virrun/` cache (gitignored).
 - [specs/benchmarking.md](specs/benchmarking.md) — speed gate: baselines, metrics, methodology, must-beat-native rule.
 - [specs/correctness.md](specs/correctness.md) — correctness gate: differential testing vs native, test layers, coverage.
 - [reference/prior-art.md](reference/prior-art.md) — surveyed projects (node:vfs, platformatic, just-bash, WebContainers, e2b, Firecracker) and why each does/doesn't fit.

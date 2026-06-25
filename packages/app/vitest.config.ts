@@ -14,15 +14,15 @@ export default await defineVitestProject({
     benchmark: {
       reporters: ["@esposter/shared-node/reporter"],
     },
-    // Custom benchmark runner wired inline (same reason as the reporter): bench mode only — see
-    // GetBenchmarkRunner — it zeroes tinybench's time budget so benches run a fixed iteration count.
-    runner: getBenchmarkRunner(),
     // Root the Nuxt project at this package, not the vitest cwd (the repo root, where `@nuxt/kit` and the
     // App don't resolve) — required now that the run is driven by the root `projects` config.
     environmentOptions: { nuxt: { rootDir: import.meta.dirname } },
     // Cold `setupNuxt()` (the nuxt-env `beforeAll`) builds Nuxt on first use, which can exceed several minutes
     // On a loaded CI runner and trips "Hook timed out". 5 min gives the cold build ample headroom.
     hookTimeout: dayjs.duration(5, "minutes").asMilliseconds(),
+    // Custom benchmark runner wired inline (same reason as the reporter): bench mode only — see
+    // GetBenchmarkRunner — it zeroes tinybench's time budget so benches run a fixed iteration count.
+    runner: getBenchmarkRunner(),
     // DOM globals come from the nuxt environment itself: nuxt-env tests (`// @vitest-environment nuxt`)
     // Build their own happy-dom window, so no manual happy-dom registration is needed, and tests in
     // The node environment run without a DOM. `fake-indexeddb/auto` polyfills the IDB* global
