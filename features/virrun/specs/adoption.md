@@ -32,18 +32,7 @@ Ordered from lowest commitment to highest. A repo adopts left-to-right and can r
 
    Granularity is per-script. Adopt `test` first, leave `build` native until measured.
 
-3. **Config allowlist** — central file naming which commands route, so scripts stay clean:
-
-   ```jsonc
-   // virrun.config.json
-   {
-     "route": ["pnpm install", "vitest"], // matched commands go through sandbox
-     "backend": "auto",
-     "fallback": "native",
-   }
-   ```
-
-   A thin `virrun` wrapper (or shim) consults this. Removing an entry un-adopts that command repo-wide in one edit.
+3. **Config allowlist** — a central `virrun.config.json` names which commands route, so scripts stay clean. A thin `virrun` wrapper consults it; removing an entry un-adopts that command repo-wide in one edit. Schema, resolution, and the `.virrun/` cache it pairs with: [config-and-cache.md](config-and-cache.md).
 
 4. **PATH shim (transparent)** — for fully drop-in behaviour: shims earlier on `PATH` intercept known binaries and route per the allowlist. Gated behind an env flag so it is opt-in and instantly disablable:
    ```bash
