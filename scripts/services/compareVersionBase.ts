@@ -1,4 +1,4 @@
-import { getVersionParts } from "@/checkDependencies/getVersionParts";
+import { getVersionParts } from "@/services/getVersionParts";
 
 export const compareVersionBase = (left: string, right: string): number => {
   const leftParts = getVersionParts(left);

@@ -79,10 +79,11 @@ Dependency installs and graph generation (run from repo root):
 
 ```bash
 pnpm i                # refresh dependencies/lockfile after package.json changes
+pnpm update:node      # bump engines.node + @types/node, install/switch via fnm, remove old version
 pnpm depcruise:graph  # generate dependency-graph.svg from package entrypoints
 ```
 
-Use plain `pnpm i` for dependency installs. See `architecture/monorepo-tooling.md` for install safety rules.
+Use plain `pnpm i` for dependency installs. See `architecture/monorepo-tooling.md` for install safety rules. `pnpm update:node [version]` bumps the node version everywhere in one call (see the `dependency-updates` skill).
 
 `pnpm depcruise:graph` pipes dependency-cruiser DOT output directly into `graphviz-cli` to produce `dependency-graph.svg`. Avoid committing intermediate DOT/Mermaid files unless explicitly needed for debugging.
 

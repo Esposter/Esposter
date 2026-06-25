@@ -60,7 +60,7 @@ catalog:
   "@platformatic/vfs": ^0.4.0
   "@pulumi/azure-native": ^3.19.0
   "@pulumi/github": ^6.14.0
-  "@pulumi/pulumi": ^3.247.0
+  "@pulumi/pulumi": ^3.248.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^1.8.7
   "@tiptap/core": ^3.27.1

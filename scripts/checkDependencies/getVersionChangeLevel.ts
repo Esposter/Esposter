@@ -1,4 +1,4 @@
-import { getVersionParts } from "@/checkDependencies/getVersionParts";
+import { getVersionParts } from "@/services/getVersionParts";
 
 export const getVersionChangeLevel = (current: string, latest: string): number => {
   const currentParts = getVersionParts(current);

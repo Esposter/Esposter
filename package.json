@@ -58,6 +58,7 @@
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm format && pnpm typecheck:packages && lerna publish --yes",
     "start": "pnpm --filter @esposter/app run start",
+    "update:node": "tsx scripts/updateNode/index.ts",
     "test": "vitest run",
     "test:packages": "vitest run --project \"!@esposter/app\"",
     "typecheck": "tsgo && pnpm -r --parallel --aggregate-output run typecheck",
@@ -86,7 +87,7 @@
     "vitest": "catalog:"
   },
   "engines": {
-    "node": "^26.3.1"
+    "node": "^26.4.0"
   },
   "packageManager": "pnpm@11.6.0+sha512.9a36518224080c6fe5165afdcfe79bfa118c29be703f3f462b1e32efe1e98e47e8750b148e08286250aad4113cc7993ca413c4e2cd447752708c2ee5751bc95f",
   "crossOS": {
@@ -99,6 +100,11 @@
       "darwin": "sh ./scripts/refreshLockfile.sh",
       "linux": "./scripts/refreshLockfile.sh",
       "win32": "pnpm pwsh scripts/refreshLockfile.ps1"
+    },
+    "update:node": {
+      "darwin": "sh ./scripts/updateNode/install.sh",
+      "linux": "./scripts/updateNode/install.sh",
+      "win32": "pnpm pwsh scripts/updateNode/install.ps1"
     }
   }
 }
