@@ -23,22 +23,33 @@ jobs:
   # Auth is OIDC (`id-token: write`) via the CodSpeed GitHub App — no secret to manage; set a
   # `CODSPEED_TOKEN` secret and pass it as `token:` instead if you prefer token auth.
   bench:
-    name: Bench (${{ matrix.mode }} ${{ matrix.shard }}/8)
+    name: Bench (${{ matrix.mode }} ${{ matrix.shard }}/${{ matrix.shards }})
     permissions:
       contents: read
       id-token: write
-    # Cross-product every instrument with 8 file shards. `--shard=i/8` splits the full set of `*.bench.ts`
-    # (all projects, see run step) across 8 runners per mode, so a single slow mode (walltime samples each
-    # bench repeatedly) no longer serialises the whole >20-min run. CodSpeed aggregates the shard uploads by
-    # commit on the dashboard. `runs-on` is derived from the mode (can't carry a `runner` axis through a
-    # cross-product matrix): simulation is hardware-independent CPU simulation, free on `ubuntu-latest`;
-    # walltime / memory need CodSpeed's bare-metal `codspeed-macro` (free for open source).
+    # Only `simulation` is sharded — it runs free on `ubuntu-latest`, so 8 shards (`--shard=i/8`) just parallelise
+    # the >20-min run at no cost. `walltime` / `memory` need CodSpeed's bare-metal `codspeed-macro` runners, so
+    # sharding them would spawn 8 macro runners *each* (16 total) for no benefit — CodSpeed aggregates by commit
+    # on the dashboard regardless. They run unsharded (`--shard=1/1`, i.e. the whole `*.bench.ts` set on one
+    # runner). The matrix is an explicit `include` list (not a `mode × shard` cross-product) because the shard
+    # *denominator* differs per mode (8 vs 1) — a shared `shard` axis can't express that, and `exclude`-ing
+    # shards 2-8 would leave the denominator at /8, so walltime would run only 1/8 of the benches. `runs-on`
+    # rides on each entry for the same reason (can't carry a `runner` axis through a cross-product matrix).
     strategy:
       fail-fast: false
       matrix:
-        mode: [simulation, walltime, memory]
-        shard: [1, 2, 3, 4, 5, 6, 7, 8]
-    runs-on: ${{ matrix.mode == 'simulation' && 'ubuntu-latest' || 'codspeed-macro' }}
+        include:
+          - { mode: simulation, shards: 8, shard: 1, runs-on: ubuntu-latest }
+          - { mode: simulation, shards: 8, shard: 2, runs-on: ubuntu-latest }
+          - { mode: simulation, shards: 8, shard: 3, runs-on: ubuntu-latest }
+          - { mode: simulation, shards: 8, shard: 4, runs-on: ubuntu-latest }
+          - { mode: simulation, shards: 8, shard: 5, runs-on: ubuntu-latest }
+          - { mode: simulation, shards: 8, shard: 6, runs-on: ubuntu-latest }
+          - { mode: simulation, shards: 8, shard: 7, runs-on: ubuntu-latest }
+          - { mode: simulation, shards: 8, shard: 8, runs-on: ubuntu-latest }
+          - { mode: walltime, shards: 1, shard: 1, runs-on: codspeed-macro }
+          - { mode: memory, shards: 1, shard: 1, runs-on: codspeed-macro }
+    runs-on: ${{ matrix.runs-on }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -59,13 +70,14 @@ jobs:
       - name: 🏗️ Build packages
         run: pnpm build:packages
       # A bare root `vitest bench --run` discovers every project's `*.bench.ts` (packages/* + the scripts
-      # project, per the root vitest.config.ts `projects`) as one file set, so `--shard=i/8` partitions that
-      # global set across runners. This replaces the `pnpm bench` root script (`vitest bench --project scripts
-      # && pnpm -r run bench`) only in CI: that form is a multi-invocation chain a single `--shard` can't span.
-      # Local `pnpm bench` (committed `*.bench.md` gate) is unchanged. The action sets CODSPEED_ENV so the
-      # codspeed plugin (wired via getBenchmarkPlugins) instruments the run in the chosen mode.
+      # project, per the root vitest.config.ts `projects`) as one file set, so `--shard=i/n` partitions that
+      # global set across runners (n=8 for simulation, n=1 — the whole set — for walltime/memory). This replaces
+      # the `pnpm bench` root script (`vitest bench --project scripts && pnpm -r run bench`) only in CI: that
+      # form is a multi-invocation chain a single `--shard` can't span. Local `pnpm bench` (committed
+      # `*.bench.md` gate) is unchanged. The action sets CODSPEED_ENV so the codspeed plugin (wired via
+      # getBenchmarkPlugins) instruments the run in the chosen mode.
       - name: 🏎️ Run CodSpeed benchmarks
         uses: CodSpeedHQ/action@a4a36bb07c0638b0b4ca52bf1f3dad1b4289e52f # v4.18.1
         with:
           mode: ${{ matrix.mode }}
-          run: pnpm exec vitest bench --run --shard=${{ matrix.shard }}/8
+          run: pnpm exec vitest bench --run --shard=${{ matrix.shard }}/${{ matrix.shards }}
