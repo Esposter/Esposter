@@ -244,7 +244,6 @@ jobs:
 
       - name: ✅ Typecheck
         run: pnpm typecheck
-
   # CodSpeed instruments the same colocated `*.bench.ts` files (no bench rewrite) and uploads to the hosted
   # Dashboard for PR regression comments + flamegraphs. This is the rich-metrics path; the committed
   # `*.bench.md` stay the offline walltime gate (the reporter self-disables under CODSPEED_ENV, which the
@@ -276,9 +275,14 @@ jobs:
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-
+      # Pin to Node 24 (LTS) for benches only: `@codspeed/core`'s prebuilt native addon links the V8 symbol
+      # `v8::String::Utf8Length(v8::Isolate*)`, which was removed in the V8 shipped with Node 25+. Under the
+      # Repo's default Node 26 the addon fails to load with `symbol lookup error: ... undefined symbol`, which
+      # Hangs/aborts the run. The rest of CI stays on Node 26 (engines.node); benches don't need it.
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
+        with:
+          node-version: "24"
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
