@@ -20,9 +20,9 @@ const { major } = getVersionParts(version);
 const packageJsonPath = resolve(root, "package.json");
 const packageJson = readFileSync(packageJsonPath, "utf8");
 const oldVersion = getEnginesNode(packageJson);
-// engines.node / @types/node only need rewriting when the target differs. We still hand off to fnm
-// below even when it matches: a colleague pulling this repo may have an older node active in fnm (or
-// not have this version installed at all) and needs switching onto the pinned version.
+// Engines.node / @types/node only need rewriting when the target differs. We still hand off to fnm
+// Below even when it matches: a colleague pulling this repo may have an older node active in fnm (or
+// Not have this version installed at all) and needs switching onto the pinned version.
 const isNewVersion = oldVersion !== version;
 if (isNewVersion) {
   console.info(`Updating node ${oldVersion} → ${version}\n`);

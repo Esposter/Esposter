@@ -13,7 +13,7 @@ const formatRelative = (baselineMean: number, mean: number): string => {
   const ratio = baselineMean / mean;
   return `${ratio >= 1 ? ratio.toFixed(2) : Number(ratio.toPrecision(2))}×`;
 };
-const HEADER = ["task", "vs base", "mean (ms)", "±rme", "p99 (ms)", "ops/sec", "samples"];
+const HEADER = ["task", "vs base", "mean (ms)", "±rme", "p99 (ms)", "samples"];
 // Render a group's header + rows as a column-aligned GFM table. We pad here so the generated .bench.md is
 // Already in oxfmt's canonical table shape — otherwise `format:check` flags every freshly benched file and
 // The commit would need a separate format pass. Widths count by JS string length, which matches oxfmt's
@@ -40,13 +40,12 @@ export const formatBenchmarkMarkdown = (report: BenchmarkReport, environment: st
   const sections = report.files.flatMap((file) =>
     file.groups.map((group) => {
       const baselineMean = getBaseline(group.benchmarks)?.mean ?? Number.NaN;
-      const rows = group.benchmarks.map(({ hz, mean, name, p99, rme, sampleCount }) => [
+      const rows = group.benchmarks.map(({ mean, name, p99, rme, sampleCount }) => [
         name.replaceAll("|", String.raw`\|`),
         formatRelative(baselineMean, mean),
         mean.toFixed(4),
         `±${rme.toFixed(2)}%`,
         p99.toFixed(4),
-        hz.toFixed(0),
         `${sampleCount}`,
       ]);
       return [`## ${group.fullName}`, "", ...formatTable(rows), ""].join("\n");

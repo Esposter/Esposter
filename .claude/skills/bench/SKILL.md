@@ -49,10 +49,11 @@ Speed regressions are caught by regenerating + diffing the colocated `*.bench.md
 
 ## `*.bench.md` columns
 
-Per group: `task | vs base | mean (ms) | ±rme | p99 (ms) | ops/sec | samples`.
+Per group: `task | vs base | mean (ms) | ±rme | p99 (ms) | samples`. Each column carries a distinct facet — identity, relative comparison, central cost, confidence, tail, sample count — so none is redundant. Notably there is **no `ops/sec` column**: it is exactly `1000 / mean (ms)`, a pure reciprocal that adds no signal, so it was dropped (the JSON record omits `hz` too).
 
 - **`vs base`** — throughput multiplier the formatter derives: `baseline.mean / task.mean`. Baseline = the task named `native` if the group has one, else the first declared task (so list the baseline first). Baseline reads `1.00×`; faster `> 1`, slower `< 1` (sub-1 keeps significant digits via `toPrecision`, never collapsing to `0.00×`). This makes impact legible at a glance and a regression obvious on diff. **Never pin a specific multiplier in docs** — it's machine-dependent and changes every run; reference the colocated `*.bench.md` and describe magnitude qualitatively ("orders of magnitude").
 - **`±rme`** — relative margin of error (the standard benchmark.js confidence figure), from the bench result.
+- **`samples`** — the bench's measured iteration count. The fixed-iteration stable runner holds it constant by default, but it's kept as a baseline clarity/confidence indicator since a bench may override its iteration count.
 - The **Environment** block carries `Commit` (`git rev-parse --short HEAD`, `unknown` outside a repo) for provenance — so an artifact can be tied to the code that produced it, since a bench can otherwise silently lag its implementation.
 
 Changing what's rendered means updating `BenchmarkResult` (schema + interface) and `formatBenchmarkMarkdown`/`buildBenchmarkFileReport` (+ their tests). The reporter pipeline lives in `shared-node` and its wiring (`reporters`, dropping `outputJson`) in `configuration` — both are consumed as **built dist**, so **rebuild the changed package** (`pnpm build`) before `pnpm bench` or the edit won't take effect. The `shared-node` `index.test.ts` types-size snapshot moves when an exported interface changes (`-u`).

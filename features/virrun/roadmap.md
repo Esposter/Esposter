@@ -27,8 +27,13 @@ Phase 0 (foundations) and Phase 1 (the `vfs` backend — FS layer + in-process `
 
 ## Phase 4 — Distribution & CI
 
-- [ ] CLI (`virrun run`, `virrun exec`, `virrun snapshot`) — extends the Phase 0 prefix CLI.
-- [ ] Config allowlist (`virrun.config.json`) + opt-in PATH shim → [specs/adoption.md](specs/adoption.md). Higher adoption levels, once the prefix is trusted.
+- [ ] Migrate the CLI to [unjs/citty](https://github.com/unjs/citty) for declarative subcommands/flags/`--help`, then add `virrun run`, `virrun exec`, `virrun snapshot`, `virrun init`, `virrun cache` (ls/clean) — extends the Phase 0 prefix CLI → [deferred/citty-cli.md](deferred/citty-cli.md).
+- [ ] Config allowlist + local cache → [specs/config-and-cache.md](specs/config-and-cache.md). Higher adoption levels (3–4), once the prefix is trusted.
+  - [ ] Read `virrun.config.json` (route/backend/fallback) from repo root; absent = no-op to native.
+  - [ ] Route a command iff its leading tokens match `route`; gate-enforced auto-fallback to `fallback`.
+  - [ ] Materialize `.virrun/` (`store/`, `snapshots/`) lazily; add `/.virrun/` to the consuming repo's `.gitignore` on first write.
+  - [ ] Opt-in PATH shim behind an env flag (`VIRRUN=1`) intercepting known binaries per the allowlist.
+  - [ ] Whole-repo / always-on routing stays out until warm-fork lands → [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md).
 - [ ] Firecracker microVM backend for untrusted multi-tenant / CI fan-out.
 - [ ] Task cache (skip unchanged builds) — evaluate reusing Turborepo cache vs native.
 - [ ] CI recipe: ephemeral sandbox per PR from a warm snapshot.
