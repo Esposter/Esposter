@@ -1,6 +1,6 @@
 {
   "name": "@esposter/shared-node",
-  "version": "2.30.0",
+  "version": "2.31.0",
   "private": true,
   "description": "Node-only shared tooling (benchmark reporting, dev scripts) reused across packages.",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/shared-node#readme",

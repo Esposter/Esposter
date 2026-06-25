@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.31.0](https://github.com/Esposter/Esposter/compare/v2.30.0...v2.31.0) (2026-06-25)
+
+### Bug Fixes
+
+* deep-unwrap class instances in toRawDeep ([0c1644c](https://github.com/Esposter/Esposter/commit/0c1644c147fc53b99a0c9ad4138bebd8d64db5e5))
+* follow __v_raw recursively in getRawData to unwrap readonly and nested proxies ([2b47b66](https://github.com/Esposter/Esposter/commit/2b47b66f1ab2ecf0a4668c6cc3a218e398fa4e85))
+* forward virrun cli command as argv array to preserve arg boundaries ([e46dfa3](https://github.com/Esposter/Esposter/commit/e46dfa3a4f226b76b6e0ae69753cadc7236084b4))
+* lint ([2edafd9](https://github.com/Esposter/Esposter/commit/2edafd930e602607fbd5a2c9aab6b640bdda4962))
+* lint ([594135c](https://github.com/Esposter/Esposter/commit/594135c537ffbdf8dd856437fd9cab37c3fa2905))
+* snapshot ([0518107](https://github.com/Esposter/Esposter/commit/05181071af345cd7ac43d30e06995e4ea14a01a9))
+* snapshot ([1e71ddb](https://github.com/Esposter/Esposter/commit/1e71ddb78a3f3189b7b582c0dac308ee44891af8))
+* snapshot ([7cd9131](https://github.com/Esposter/Esposter/commit/7cd9131241b3ff293449168624a3f7c094084824))
+* snapshot ([fd92834](https://github.com/Esposter/Esposter/commit/fd928348f1649df901999e0d1dbacf557f577c82))
+* snapshot ([23eeaa5](https://github.com/Esposter/Esposter/commit/23eeaa5de540983ba42dcdcdffe53ae1cfaa756d))
+* svg graph ([9b85b78](https://github.com/Esposter/Esposter/commit/9b85b78ad8abd49e8f65fccadf25aa4a931206ea))
+* update perms ([362b962](https://github.com/Esposter/Esposter/commit/362b962eee76c753b37883b963869dcce2f81538))
+* wip ([1343361](https://github.com/Esposter/Esposter/commit/1343361ceec9f9638bb9aaaf4e9a30dc394563f3))
+
+### Features
+
+* add CodSpeed hosted benchmarking dashboard ([28efb0e](https://github.com/Esposter/Esposter/commit/28efb0e92eeb7865be9a54f52e25049dc08510fd))
+
 # [2.30.0](https://github.com/Esposter/Esposter/compare/v2.29.0...v2.30.0) (2026-06-24)
 
 ### Bug Fixes

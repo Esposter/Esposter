@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.31.0](https://github.com/Esposter/Esposter/compare/v2.30.0...v2.31.0) (2026-06-25)
+
+### Bug Fixes
+
+* forward virrun cli command as argv array to preserve arg boundaries ([e46dfa3](https://github.com/Esposter/Esposter/commit/e46dfa3a4f226b76b6e0ae69753cadc7236084b4))
+
+### Features
+
+* add CodSpeed hosted benchmarking dashboard ([28efb0e](https://github.com/Esposter/Esposter/commit/28efb0e92eeb7865be9a54f52e25049dc08510fd))
+
 # [2.30.0](https://github.com/Esposter/Esposter/compare/v2.29.0...v2.30.0) (2026-06-24)
 
 ### Bug Fixes
