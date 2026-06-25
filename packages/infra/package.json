@@ -1,13 +1,18 @@
 {
   "name": "@esposter/infra",
-  "version": "2.30.0",
+  "version": "2.31.1",
   "private": true,
   "description": "Pulumi infrastructure code for Esposter Azure resources.",
   "keywords": [
     "azure",
+    "azure-native",
+    "cloud",
+    "deployment",
+    "devops",
     "iac",
     "infrastructure",
     "pulumi",
+    "ts",
     "typescript"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/infra#readme",

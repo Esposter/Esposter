@@ -1,19 +1,24 @@
 {
   "name": "@esposter/db-mock",
-  "version": "2.30.0",
+  "version": "2.31.1",
   "private": true,
   "description": "A library of database mock utilities for testing, available in server environment only.",
   "keywords": [
     "database",
     "drizzle",
+    "drizzle-orm",
+    "in-memory",
     "mock",
     "orm",
     "pg",
+    "pglite",
     "postgres",
     "postgresql",
     "test",
+    "testing",
     "ts",
-    "typescript"
+    "typescript",
+    "vitest"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/db-mock#readme",
   "bugs": {

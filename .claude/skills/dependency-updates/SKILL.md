@@ -14,7 +14,21 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 3. **Tell the user to refresh the lockfile** — do NOT run it yourself. Have them run `pnpm refresh:lockfile` from the repo root.
 4. **Verify dependency sync** — after refresh, re-run `pnpm outdated:dependencies`. It checks manifests use `catalog:`/`workspace:`, catalog + configDependency specifiers against lockfile resolutions, and catalog/configDependency/`engines` entries against npm latest. Skip updates per the pinned/tracked-issue notes below; fix mismatches in `pnpm-workspace.yaml` and re-run `pnpm refresh:lockfile` until it passes.
 
-`engines` (e.g. `node`) is read from every `package.json` and checked against the matching npm package's latest version (`node` → the `node` npm package). Bump these directly in `package.json` — they are not catalog entries.
+`engines` (e.g. `node`) is read from every `package.json` and checked against the matching npm package's latest version (`node` → the `node` npm package). They are not catalog entries — for `node`, never hand-edit it; run `pnpm update:node` (see below).
+
+### Updating node
+
+Don't hand-edit the node version — run `pnpm update:node [version]` from the repo root. With no argument it targets the latest stable node from the npm registry. In one call it:
+
+1. Bumps `engines.node` in root `package.json` (CI reads this via `node-version-file: package.json`, so it's the single source of truth)
+2. Bumps the `@types/node` catalog entry to the highest release matching the new node major
+3. Installs the new version with fnm, sets it as the default, and switches the current shell to it (`fnm install`/`default`/`use`)
+4. Enables corepack on the new version (a freshly installed node ships it disabled, so `pnpm` would otherwise be missing)
+5. Schedules removal of the old version — fnm can't delete a node version while it's in use, so a detached process retries `fnm uninstall <old>` until this call's node processes exit, then removes it (self-cleaning, no process killing)
+
+The TS orchestration (`scripts/updateNode/`) resolves versions and edits the manifests; the per-OS `install.ps1`/`install.sh` (dispatched via `crossOS`, like `refresh:lockfile`) do the fnm work. Pure helpers (version selection, manifest editing) live beside them with unit tests; the generic registry/version utilities are shared from `scripts/services/`.
+
+It deliberately does **not** refresh the lockfile (per step 3 above). After it finishes, run `pnpm refresh:lockfile` to resolve the new `@types/node`, and `fnm use` in any other open shells.
 
 When `@electric-sql/pglite` changes between minor versions, regenerate the db-mock data directory snapshot from `packages/db-mock/` with `pnpm snapshot:gen`, then verify the db-mock tests. The committed `packages/db-mock/src/snapshot.tar.gz` is tied to PGlite's dump format and may need refreshing even without schema changes.
 

@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.31.1](https://github.com/Esposter/Esposter/compare/v2.31.0...v2.31.1) (2026-06-25)
+
+**Note:** Version bump only for package @esposter/azure-functions
+
+# [2.31.0](https://github.com/Esposter/Esposter/compare/v2.30.0...v2.31.0) (2026-06-25)
+
+### Bug Fixes
+
+* snapshot ([0518107](https://github.com/Esposter/Esposter/commit/05181071af345cd7ac43d30e06995e4ea14a01a9))
+* snapshot ([1e71ddb](https://github.com/Esposter/Esposter/commit/1e71ddb78a3f3189b7b582c0dac308ee44891af8))
+* snapshot ([7cd9131](https://github.com/Esposter/Esposter/commit/7cd9131241b3ff293449168624a3f7c094084824))
+* snapshot ([fd92834](https://github.com/Esposter/Esposter/commit/fd928348f1649df901999e0d1dbacf557f577c82))
+* snapshot ([23eeaa5](https://github.com/Esposter/Esposter/commit/23eeaa5de540983ba42dcdcdffe53ae1cfaa756d))
+* wip ([1343361](https://github.com/Esposter/Esposter/commit/1343361ceec9f9638bb9aaaf4e9a30dc394563f3))
+
 # [2.30.0](https://github.com/Esposter/Esposter/compare/v2.29.0...v2.30.0) (2026-06-24)
 
 ### Bug Fixes

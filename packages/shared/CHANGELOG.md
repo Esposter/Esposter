@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.31.1](https://github.com/Esposter/Esposter/compare/v2.31.0...v2.31.1) (2026-06-25)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.31.0](https://github.com/Esposter/Esposter/compare/v2.30.0...v2.31.0) (2026-06-25)
+
+### Bug Fixes
+
+* deep-unwrap class instances in toRawDeep ([0c1644c](https://github.com/Esposter/Esposter/commit/0c1644c147fc53b99a0c9ad4138bebd8d64db5e5))
+* follow __v_raw recursively in getRawData to unwrap readonly and nested proxies ([2b47b66](https://github.com/Esposter/Esposter/commit/2b47b66f1ab2ecf0a4668c6cc3a218e398fa4e85))
+* snapshot ([1e71ddb](https://github.com/Esposter/Esposter/commit/1e71ddb78a3f3189b7b582c0dac308ee44891af8))
+* snapshot ([23eeaa5](https://github.com/Esposter/Esposter/commit/23eeaa5de540983ba42dcdcdffe53ae1cfaa756d))
+* wip ([1343361](https://github.com/Esposter/Esposter/commit/1343361ceec9f9638bb9aaaf4e9a30dc394563f3))
+
 # [2.30.0](https://github.com/Esposter/Esposter/compare/v2.29.0...v2.30.0) (2026-06-24)
 
 ### Bug Fixes
