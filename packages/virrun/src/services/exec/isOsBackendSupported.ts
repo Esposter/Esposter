@@ -17,7 +17,7 @@ let isSupported: boolean | undefined;
 // Win32 absence of bwrap) into false rather than a throw, per the project's no-try/catch convention.
 export const isOsBackendSupported = (): boolean => {
   if (isSupported !== undefined) return isSupported;
-  if (process.platform !== "linux") {
+  else if (process.platform !== "linux") {
     isSupported = false;
     return isSupported;
   }
