@@ -9,19 +9,19 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-24T23:39:44.064Z
-- Commit: 23eeaa5de
-- Node: v26.3.1
+- Date: 2026-06-25T07:53:31.296Z
+- Commit: e9f93c29d
+- Node: v26.4.0
 - OS: win32 10.0.26200 (x64)
 - CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
 - RAM: 38.8 GiB
 
 ## UpdateColumnCommand
 
-| task                          | vs base  | mean (ms) | ±rme   | p99 (ms) | ops/sec | samples |
-| ----------------------------- | -------- | --------- | ------ | -------- | ------- | ------- |
-| execute (rename) — 100 rows   | 1.00×    | 0.0031    | ±0.82% | 0.0068   | 326522  | 163261  |
-| execute (rename) — 1000 rows  | 0.22×    | 0.0140    | ±0.97% | 0.0375   | 71253   | 35627   |
-| execute (rename) — 10000 rows | 0.027×   | 0.1138    | ±0.99% | 0.2427   | 8788    | 4395    |
-| undo (rename) — 1000 rows     | 0.0058×  | 0.5248    | ±1.06% | 0.9498   | 1906    | 953     |
-| undo (rename) — 10000 rows    | 0.00058× | 5.3170    | ±2.51% | 8.7027   | 188     | 95      |
+| task                          | vs base | mean (ms) | ±rme    | p99 (ms) | ops/sec | samples |
+| ----------------------------- | ------- | --------- | ------- | -------- | ------- | ------- |
+| execute (rename) — 100 rows   | 1.00×   | 0.0151    | ±43.36% | 0.0353   | 66181   | 10      |
+| execute (rename) — 1000 rows  | 0.76×   | 0.0199    | ±26.58% | 0.0405   | 50150   | 10      |
+| execute (rename) — 10000 rows | 0.11×   | 0.1321    | ±4.91%  | 0.1514   | 7572    | 10      |
+| undo (rename) — 1000 rows     | 0.015×  | 1.0259    | ±59.01% | 3.2725   | 975     | 10      |
+| undo (rename) — 10000 rows    | 0.0029× | 5.1575    | ±6.34%  | 5.9007   | 194     | 10      |
