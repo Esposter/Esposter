@@ -23,7 +23,7 @@
       "command": "pnpm prune --prod",
       "label": "pnpm prune (functions)",
       "options": {
-        "cwd": "${workspaceFolder}/packages\\azure-functions"
+        "cwd": "${workspaceFolder}/packages/azure-functions"
       },
       "type": "shell"
     }
