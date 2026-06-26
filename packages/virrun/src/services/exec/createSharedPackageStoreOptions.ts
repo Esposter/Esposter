@@ -23,9 +23,12 @@ export const createSharedPackageStoreOptions = (cwd: string): Pick<ExecOptions, 
   ensureGitIgnoreEntry(dir);
   return {
     bindDirs: [storeDir],
+    // pnpm 10+ no longer reads `npm_config_*` env vars; settings are overridden via `PNPM_CONFIG_*`
+    // (uppercased setting name). The copy import method is required because hardlinks can't cross from
+    // the on-disk store into the RAM overlay; the store dir points writes at the bind-mounted host cache.
     env: {
-      npm_config_package_import_method: "copy",
-      npm_config_store_dir: storeDir,
+      PNPM_CONFIG_PACKAGE_IMPORT_METHOD: "copy",
+      PNPM_CONFIG_STORE_DIR: storeDir,
     },
   };
 };

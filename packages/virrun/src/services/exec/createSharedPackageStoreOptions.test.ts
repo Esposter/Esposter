@@ -23,8 +23,8 @@ describe(createSharedPackageStoreOptions, () => {
     expect(options).toStrictEqual({
       bindDirs: [storeDir],
       env: {
-        npm_config_package_import_method: "copy",
-        npm_config_store_dir: storeDir,
+        PNPM_CONFIG_PACKAGE_IMPORT_METHOD: "copy",
+        PNPM_CONFIG_STORE_DIR: storeDir,
       },
     });
     expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe("/.virrun/\n");
