@@ -21,7 +21,8 @@
   },
   "javascript.updateImportsOnFileMove.enabled": "always",
   "oxc.enable": true,
-  "oxc.path.node": "${env:FNM_DIR}/aliases/default/node.exe",
+  // oxc.path.node lives in the gitignored Esposter.code-workspace (machine-specific fnm path).
+  // Reason: oxc cannot expand ${env:}/~ yet — https://github.com/oxc-project/oxc-vscode/issues/249
   "search.followSymlinks": false,
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.tsserver.maxTsServerMemory": 16384,
