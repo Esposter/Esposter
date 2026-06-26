@@ -2,22 +2,13 @@
   "[javascript][typescript][vue]": {
     "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.oxc", "source.fixAll.eslint"]
   },
-  "[properties]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
-  "[scss]": {
-    "editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
-  },
-  "[svg]": {
-    "editor.defaultFormatter": "jock.svg"
-  },
   "[xml]": {
     "editor.formatOnSave": false
   },
   "azureFunctions.deploySubpath": "packages\\azure-functions",
-  "azureFunctions.postDeployTask": "npm install (functions)",
-  "azureFunctions.preDeployTask": "npm prune (functions)",
-  "azureFunctions.projectLanguage": "JavaScript",
+  "azureFunctions.postDeployTask": "pnpm i (functions)",
+  "azureFunctions.preDeployTask": "pnpm prune (functions)",
+  "azureFunctions.projectLanguage": "TypeScript",
   "azureFunctions.projectRuntime": "~4",
   "debug.internalConsoleOptions": "neverOpen",
   "editor.defaultFormatter": "oxc.oxc-vscode",
@@ -30,10 +21,10 @@
   },
   "javascript.updateImportsOnFileMove.enabled": "always",
   "oxc.enable": true,
+  "oxc.path.node": "${env:FNM_DIR}/aliases/default/node.exe",
   "search.followSymlinks": false,
-  "symlink-follow.autoFollow": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.tsserver.maxTsServerMemory": 16384,
-  "typescript.tsserver.nodePath": "node",
+  "typescript.tsserver.nodePath": "${env:FNM_DIR}/aliases/default/node.exe",
   "typescript.updateImportsOnFileMove.enabled": "always"
 }

@@ -18,6 +18,14 @@
         "cwd": "${workspaceFolder}/packages/azure-functions"
       },
       "type": "shell"
+    },
+    {
+      "command": "pnpm prune --prod",
+      "label": "pnpm prune (functions)",
+      "options": {
+        "cwd": "${workspaceFolder}/packages\\azure-functions"
+      },
+      "type": "shell"
     }
   ],
   "version": "2.0.0"
