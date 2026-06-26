@@ -13,10 +13,10 @@ const runNative = (command: string): Promise<ExecResult> =>
     const child = spawn(command, { shell: true, stdio: "pipe" });
     let stdout = "";
     let stderr = "";
-    child.stdout.on("data", (chunk: Buffer) => {
+    child.stdout.on("data", (chunk) => {
       stdout += chunk.toString();
     });
-    child.stderr.on("data", (chunk: Buffer) => {
+    child.stderr.on("data", (chunk) => {
       stderr += chunk.toString();
     });
     child.on("error", reject);

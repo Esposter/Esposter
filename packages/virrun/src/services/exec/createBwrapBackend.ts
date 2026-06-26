@@ -27,10 +27,7 @@ export const createBwrapBackend = (
       // Stdio. Cwd lives inside the sandbox via --chdir, so it is not passed to spawn, and shell is
       // Always false — the overlay flags and command are an explicit argv that must never be
       // Reinterpreted by a host shell.
-      const bwrapCommand = createBwrapCommand(
-        ["--json-status-fd", "3", ...createBwrapArgs(command, options.cwd, options)],
-        options,
-      );
+      const bwrapCommand = createBwrapCommand(createBwrapArgs(command, options.cwd, options), options);
       const [file, ...args] = bwrapCommand.command;
       const stdio: StdioOptions =
         bwrapCommand.statusSource === "fd"

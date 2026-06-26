@@ -3,13 +3,24 @@ import { createSharedPackageStoreOptions } from "@/services/exec/createSharedPac
 import { createWorkspaceCorpus } from "@/services/exec/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/findRepoRoot.test";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
+import { getResult } from "@esposter/shared";
+import { execFileSync } from "node:child_process";
 import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
-// Heavy + networked + Linux-only, so it self-gates on host support: it runs wherever the os backend is
-// Supported (Linux + bubblewrap) and skips everywhere else. No opt-in flag — always exercised when it can.
-describe.skipIf(!isOsBackendSupported())("createOsBackend — real workspace install (acceptance)", () => {
+const isSandboxInstallSupported =
+  process.platform === "linux" &&
+  isOsBackendSupported() &&
+  getResult(() => execFileSync("sh", ["-lc", "command -v pnpm"], { stdio: "pipe" })).match(
+    () => true,
+    () => false,
+  );
+
+// Heavy + networked, so it self-gates on direct Linux sandbox support and a package manager inside that
+// Sandbox. WSL bridge correctness is covered by the differential/isolation suite; the full install path
+// Needs a deliberately provisioned Linux package-manager toolchain inside the distro.
+describe.skipIf(!isSandboxInstallSupported)("createOsBackend — real workspace install (acceptance)", () => {
   let corpus = "";
 
   beforeAll(() => {

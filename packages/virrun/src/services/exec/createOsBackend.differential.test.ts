@@ -1,4 +1,4 @@
-import { createNativeBackend } from "@/services/exec/createNativeBackend";
+import { createOsBaselineBackend } from "@/services/exec/createOsBaselineBackend.test";
 import { createOsBackend } from "@/services/exec/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
 import { existsSync, mkdtempSync, realpathSync } from "node:fs";
@@ -10,7 +10,7 @@ import { describe, expect, test } from "vitest";
 // Side-effects, since the os backend intentionally hides writes from the host. The isolation contract
 // Is asserted separately below. See features/virrun/specs/correctness.md.
 describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
-  const native = createNativeBackend();
+  const native = createOsBaselineBackend();
   const COMMANDS = [`echo hello`, `printf 'a\\nb'`, `pwd`, `cat /etc/hostname`, `false`, `sh -c 'exit 7'`];
 
   test.each(COMMANDS)("matches the native backend for %j", async (command) => {

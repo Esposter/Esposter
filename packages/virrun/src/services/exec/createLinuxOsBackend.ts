@@ -6,6 +6,6 @@ import { createBwrapBackend } from "@/services/exec/createBwrapBackend";
 export const createLinuxOsBackend = (errorName: string): ExecBackend =>
   createBwrapBackend(
     buildBwrapArgs,
-    (bwrapArgs) => ({ command: ["bwrap", ...bwrapArgs], statusSource: "fd" }),
+    (bwrapArgs) => ({ command: ["bwrap", "--json-status-fd", "3", ...bwrapArgs], statusSource: "fd" }),
     errorName,
   );

@@ -11,9 +11,9 @@ import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, bench, describe } from "vitest";
 // End-to-end speed gate: native vs os backend on real monorepo commands. Each group is a native-vs-os
-// Comparison, so the whole group is gated on isOsSupported — a host without overlayfs (Windows, some WSL2
-// Builds) can't run the os side, and a native-only group is an incomplete comparison we don't want to emit.
-const isOsSupported = isOsBackendSupported();
+// Comparison, so the whole group is gated on direct Linux support — a WSL host can benchmark the core
+// Backend in createOsBackend.bench.ts, but this macro path needs the full Linux package-manager toolchain.
+const isOsSupported = process.platform === "linux" && isOsBackendSupported();
 const native = createNativeBackend();
 const repoRoot = isOsSupported ? findRepoRoot() : "";
 // Bind the warm global pnpm store writable into the os sandbox (the shipped store mechanism) so it reuses
