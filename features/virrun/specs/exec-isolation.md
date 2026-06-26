@@ -20,7 +20,7 @@ Makes **every** process (including spawned native binaries) see the RAM FS, by m
 
 - **RAM filesystem** _(realized, Step A)_: `bubblewrap` supplies it directly — `--overlay-src <cwd>` is the read-only lower (source) and `--tmp-overlay <cwd>` overmounts the working dir with an overlay whose upper is an invisible `tmpfs` (RAM). Reads hit the real source; all writes (`node_modules`, build output) stay in RAM. No manual `overlayfs`/`tmpfs` root mounts and no CRIU needed for the core.
 - **Isolation** _(realized, Step A)_: `bubblewrap` chosen — one unprivileged tool collapses overlay + tmpfs + namespaces (`--unshare-all`, `--die-with-parent`). `nsjail` → rootless `runc` → Firecracker microVM (strongest, for untrusted/multi-tenant) stay deferred. Unlike `vfs`, the `os` backend never falls back to native: an unsupported host (non-Linux / no bubblewrap) throws, because a silent un-isolated run would be a wrong answer disguised as success.
-- **Dep store**: shared content-addressable store on the host, hardlinked into each sandbox's store so deps download once.
+- **Dep store** _(realized)_: `.virrun/store/pnpm` is created lazily in the consuming repo, added to `.gitignore`, bind-mounted writable into the sandbox, and exposed through pnpm env so deps download once. Package imports currently use copy because hardlinks cannot cross from the on-disk store into the RAM overlay; warm snapshots can revisit true hardlink imports once the install output layer is no longer a fresh tmpfs per run.
 - **Host bridge**: on Windows/macOS the backend runs inside WSL2 / a microVM; the orchestrator talks to it over a thin RPC.
 
 ## Acceptance test

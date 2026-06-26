@@ -6,6 +6,7 @@ import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/createNativeBackend";
 import { createOsBackend } from "@/services/exec/createOsBackend";
+import { createSharedPackageStoreOptions } from "@/services/exec/createSharedPackageStoreOptions";
 import { createVfsBackend } from "@/services/exec/createVfsBackend";
 import { loadSource } from "@/services/source/loadSource";
 // Maps each backend choice to its factory. Adding the future `os` backend is a one-line entry here —
@@ -27,6 +28,9 @@ export const createVirrun = async (options: Partial<VirrunOptions> = {}): Promis
   return {
     backend: execBackend.name,
     dispose,
-    exec: (command, stdio = "pipe") => execBackend.exec(command, { cwd, stdio }),
+    exec: (command, stdio = "pipe") => {
+      const sharedPackageStoreOptions = backend === BackendType.Os ? createSharedPackageStoreOptions(cwd) : {};
+      return execBackend.exec(command, { ...sharedPackageStoreOptions, cwd, stdio });
+    },
   };
 };

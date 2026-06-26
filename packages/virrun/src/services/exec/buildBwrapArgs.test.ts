@@ -65,10 +65,10 @@ describe(buildBwrapArgs, () => {
     expect(buildBwrapArgs("pwd", "/work").slice(0, 2)).toStrictEqual(["--unshare-all", "--die-with-parent"]);
   });
 
-  test("gives each extra overlay dir its own RAM overlay alongside the working dir", () => {
+  test("binds writable host cache dirs after RAM overlays", () => {
     expect.hasAssertions();
 
-    const args = buildBwrapArgs("pwd", "/work", { overlayDirs: ["/store"] });
+    const args = buildBwrapArgs("pwd", "/work", { bindDirs: ["/work/.virrun/store/pnpm"] });
 
     expect(args).toStrictEqual(
       expect.arrayContaining([
@@ -76,12 +76,12 @@ describe(buildBwrapArgs, () => {
         "/work",
         "--tmp-overlay",
         "/work",
-        "--overlay-src",
-        "/store",
-        "--tmp-overlay",
-        "/store",
+        "--bind",
+        "/work/.virrun/store/pnpm",
+        "/work/.virrun/store/pnpm",
       ]),
     );
-    expect(args.filter((arg) => arg === "--tmp-overlay")).toHaveLength(2);
+    expect(args.indexOf("--bind")).toBeGreaterThan(args.indexOf("--tmp-overlay"));
+    expect(args.indexOf("--chdir")).toBeGreaterThan(args.indexOf("--bind"));
   });
 });

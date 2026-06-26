@@ -9,37 +9,37 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-25T09:24:10.220Z
-- Commit: 20d7229eb
+- Date: 2026-06-26T04:45:13.545Z
+- Commit: 39ce2309e
 - Node: v26.4.0
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 15.6 GiB
+- OS: linux 6.6.87.2-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 19.0 GiB
 
 ## install — real workspace dependency closure (cold)
 
-| task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
-| ------ | ------- | --------- | ------ | --------- | ------- |
-| native | 1.00×   | 7073.1649 | ±1.70% | 7304.2916 | 10      |
-| os     | 1.61×   | 4384.8910 | ±2.01% | 4660.5303 | 10      |
+| task   | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
+| ------ | ------- | ---------- | ------ | ---------- | ------- |
+| native | 1.00×   | 11784.6539 | ±4.68% | 12848.5461 | 10      |
+| os     | 1.67×   | 7046.8185  | ±4.39% | 7945.5021  | 10      |
 
 ## typecheck — packages/shared (cold)
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | ------ | ------- | --------- | ------ | --------- | ------- |
-| native | 1.00×   | 975.7969  | ±1.85% | 1022.2557 | 10      |
-| os     | 1.69×   | 578.6589  | ±0.81% | 588.3740  | 10      |
+| native | 1.00×   | 1521.3984 | ±2.74% | 1625.6366 | 10      |
+| os     | 1.88×   | 807.5415  | ±3.74% | 870.7235  | 10      |
 
 ## build — packages/shared (cold)
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | ------ | ------- | --------- | ------ | --------- | ------- |
-| native | 1.00×   | 4491.9097 | ±0.69% | 4599.4226 | 10      |
-| os     | 7.85×   | 572.4811  | ±0.87% | 584.0462  | 10      |
+| native | 1.00×   | 5960.5542 | ±5.54% | 7110.5364 | 10      |
+| os     | 8.71×   | 684.5376  | ±0.89% | 697.3657  | 10      |
 
 ## test — packages/shared
 
-| task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
-| ------ | ------- | --------- | ------ | --------- | ------- |
-| native | 1.00×   | 1998.6968 | ±0.76% | 2035.1035 | 10      |
-| os     | 3.49×   | 572.8519  | ±0.74% | 585.6674  | 10      |
+| task   | vs base | mean (ms) | ±rme    | p99 (ms)  | samples |
+| ------ | ------- | --------- | ------- | --------- | ------- |
+| native | 1.00×   | 3247.9907 | ±9.60%  | 4460.0715 | 10      |
+| os     | 4.17×   | 779.0937  | ±13.50% | 1170.1813 | 10      |

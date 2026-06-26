@@ -15,9 +15,19 @@ import { afterAll, bench, describe } from "vitest";
 const isOsSupported = isOsBackendSupported();
 const native = createNativeBackend();
 const repoRoot = isOsSupported ? findRepoRoot() : "";
-// Overlay the pnpm store so writes land in RAM; copy import because hardlinks can't cross into the overlay.
+// Bind the warm global pnpm store writable into the os sandbox (the shipped store mechanism) so it reuses
+// Downloads like native does; copy import because hardlinks can't cross from the on-disk store into the overlay.
 const store = isOsSupported ? execFileSync("pnpm", ["store", "path"], { cwd: repoRoot, encoding: "utf8" }).trim() : "";
-const osInstallOptions: ExecOptions = { cwd: "", isNetworkEnabled: true, overlayDirs: [store], stdio: "pipe" };
+const osInstallOptions: ExecOptions = {
+  bindDirs: [store],
+  cwd: "",
+  env: {
+    npm_config_package_import_method: "copy",
+    npm_config_store_dir: store,
+  },
+  isNetworkEnabled: true,
+  stdio: "pipe",
+};
 // Separate corpora so native's on-disk node_modules don't warm the os run.
 const nativeCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const osCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
@@ -48,7 +58,7 @@ describe.skipIf(!isOsSupported)("typecheck — packages/shared (cold)", () => {
   });
 
   bench("os", async () => {
-    await createOsBackend().exec(command, { cwd: SHARED, overlayDirs: [store], stdio: "pipe" });
+    await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });
 
@@ -59,7 +69,7 @@ describe.skipIf(!isOsSupported)("build — packages/shared (cold)", () => {
   });
 
   bench("os", async () => {
-    await createOsBackend().exec(command, { cwd: SHARED, overlayDirs: [store], stdio: "pipe" });
+    await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });
 
@@ -70,6 +80,6 @@ describe.skipIf(!isOsSupported)("test — packages/shared", () => {
   });
 
   bench("os", async () => {
-    await createOsBackend().exec(command, { cwd: SHARED, overlayDirs: [store], stdio: "pipe" });
+    await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });

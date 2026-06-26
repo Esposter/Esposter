@@ -9,19 +9,19 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-25T09:24:50.666Z
-- Commit: 20d7229eb
+- Date: 2026-06-26T04:46:17.544Z
+- Commit: 39ce2309e
 - Node: v26.4.0
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 15.6 GiB
+- OS: linux 6.6.87.2-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 19.0 GiB
 
 ## MoveColumnCommand
 
 | task                                      | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ----------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute — move col 0→4, 100 rows          | 1.00×   | 0.0653    | ±21.36% | 0.1020   | 10      |
-| execute — move col 0→4, 1000 rows         | 0.23×   | 0.2902    | ±2.85%  | 0.3095   | 10      |
-| execute — move col 0→4, 10000 rows        | 0.025×  | 2.5895    | ±12.54% | 3.7646   | 10      |
-| undo — move col 0→4 then back, 1000 rows  | 0.12×   | 0.5444    | ±7.91%  | 0.6242   | 10      |
-| undo — move col 0→4 then back, 10000 rows | 0.014×  | 4.7930    | ±4.33%  | 5.5589   | 10      |
+| execute — move col 0→4, 100 rows          | 1.00×   | 0.0647    | ±20.46% | 0.0988   | 10      |
+| execute — move col 0→4, 1000 rows         | 0.28×   | 0.2274    | ±3.67%  | 0.2458   | 10      |
+| execute — move col 0→4, 10000 rows        | 0.028×  | 2.3368    | ±20.11% | 3.8173   | 10      |
+| undo — move col 0→4 then back, 1000 rows  | 0.17×   | 0.3812    | ±4.98%  | 0.4284   | 10      |
+| undo — move col 0→4 then back, 10000 rows | 0.018×  | 3.6045    | ±7.15%  | 4.6112   | 10      |

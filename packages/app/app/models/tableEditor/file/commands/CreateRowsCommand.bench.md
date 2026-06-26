@@ -9,21 +9,21 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-25T09:24:50.666Z
-- Commit: 20d7229eb
+- Date: 2026-06-26T04:46:17.544Z
+- Commit: 39ce2309e
 - Node: v26.4.0
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
-- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 15.6 GiB
+- OS: linux 6.6.87.2-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
+- RAM: 19.0 GiB
 
 ## CreateRowsCommand
 
 | task                                   | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute — insert 100 rows into 100     | 1.00×   | 0.0616    | ±12.61% | 0.0865   | 10      |
-| execute — insert 100 rows into 1000    | 0.93×   | 0.0662    | ±8.33%  | 0.0848   | 10      |
-| execute — insert 1000 rows into 10000  | 0.11×   | 0.5864    | ±4.22%  | 0.6567   | 10      |
-| execute — insert 10000 rows into 10000 | 0.011×  | 5.4003    | ±4.95%  | 6.0159   | 10      |
-| undo — remove 100 rows from 200        | 0.63×   | 0.0986    | ±3.46%  | 0.1083   | 10      |
-| undo — remove 1000 rows from 11000     | 0.061×  | 1.0099    | ±3.43%  | 1.0946   | 10      |
-| undo — remove 10000 rows from 20000    | 0.0063× | 9.7097    | ±2.50%  | 10.0743  | 10      |
+| execute — insert 100 rows into 100     | 1.00×   | 0.0531    | ±20.39% | 0.0933   | 10      |
+| execute — insert 100 rows into 1000    | 1.04×   | 0.0511    | ±6.02%  | 0.0610   | 10      |
+| execute — insert 1000 rows into 10000  | 0.1×    | 0.5205    | ±7.90%  | 0.6602   | 10      |
+| execute — insert 10000 rows into 10000 | 0.012×  | 4.3866    | ±3.43%  | 4.6404   | 10      |
+| undo — remove 100 rows from 200        | 0.48×   | 0.1107    | ±17.62% | 0.1719   | 10      |
+| undo — remove 1000 rows from 11000     | 0.06×   | 0.8907    | ±3.97%  | 0.9470   | 10      |
+| undo — remove 10000 rows from 20000    | 0.007×  | 7.5952    | ±2.40%  | 8.1937   | 10      |
