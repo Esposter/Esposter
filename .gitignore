@@ -1,19 +1,13 @@
+# Dependencies
+node_modules
+
+# Pnpm artifacts
+.pnpm-store
+
 # Build Artifacts
 **/src/index.ts
 **/src/components/index.ts
 **/public/docs
-
-# Testing
-coverage
-.vitest-reports
-vitest.config.*.timestamp*
-
-# Local db
-*.db
-*.db-journal
-
-# Tiled
-*.tiled-session
 
 # Nuxt
 .output
@@ -24,28 +18,35 @@ vitest.config.*.timestamp*
 dist
 nuxt-build.cpuprofile
 
-# Dependencies
-node_modules
-
 # Typescript build info
 *.tsbuildinfo
 
-# Logs
-logs
-*.log
-
-# Misc
-.DS_Store
-.fleet
-.idea
+# Testing
+coverage
+.vitest-reports
+vitest.config.*.timestamp*
 
 # Local env files
 .env
 .env.*
 !.env.example
 
+# Local db
+*.db
+*.db-journal
+
+# Logs
+logs
+*.log
+
+# Tiled
+*.tiled-session
+
+# VSCode local workspace
+*.code-workspace
+
 # Claude
 scheduled_tasks.lock
 
-# Pnpm artifacts
-.pnpm-store
+# OS
+.DS_Store
