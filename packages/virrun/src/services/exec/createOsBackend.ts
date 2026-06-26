@@ -33,6 +33,7 @@ export const createOsBackend = (): ExecBackend => {
         // Must never be reinterpreted by a host shell.
         const stdio: StdioOptions = [options.stdio, options.stdio, options.stdio, "pipe"];
         const child = spawn("bwrap", ["--json-status-fd", "3", ...buildBwrapArgs(command, options.cwd, options)], {
+          env: { ...process.env, ...options.env },
           shell: false,
           stdio,
         });

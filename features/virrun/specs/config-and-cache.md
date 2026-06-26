@@ -30,11 +30,11 @@ Local, machine-specific, fully disposable. Deleting it only forces the next rout
 
 ```text
 .virrun/
-  store/       # shared content-addressable dep store, hardlinked into each sandbox (Phase 2)
+  store/       # shared content-addressable dep store (Phase 2)
   snapshots/   # warm post-install snapshots, keyed by lockfile hash (Phase 3)
 ```
 
-- **`store/`** — deps downloaded once, hardlinked across sandboxes so repeated installs skip the network. → [architecture.md](../architecture.md#where-the-speed-comes-from)
+- **`store/`** — deps downloaded once so repeated installs skip the network. The Phase 2 `os` backend writes pnpm packages to `.virrun/store/pnpm` and bind-mounts that directory into each sandbox; package imports use copy until the snapshot layer can safely restore true hardlink-style installs. → [architecture.md](../architecture.md#where-the-speed-comes-from)
 - **`snapshots/`** — "clone + install" frozen once; each routed run `fork()`s the matching snapshot. Keyed by lockfile hash so a dependency change invalidates exactly the affected entry. → [snapshot-fork](snapshot-fork.md)
 - **`.gitignore`** — virrun adds `/.virrun/` to the consuming repo's ignore list on first write (and the line ships in this repo's root `.gitignore` when dogfooding begins). Subdirs are created lazily by the backend/snapshot layer that owns them — absent until that phase ships.
 
@@ -42,5 +42,5 @@ Local, machine-specific, fully disposable. Deleting it only forces the next rout
 
 - Config is committed and reviewable; cache is gitignored and disposable — the split is deliberate. Routing decisions are code; materialized bytes are not.
 - MVP is read-only of a hand-written config plus lazy cache dirs. Generation (`virrun init`), inspection (`virrun cache ls`), and cleanup (`virrun cache clean`) are CLI subcommands deferred to the citty migration. → [deferred/citty-cli.md](../deferred/citty-cli.md)
-- The cache only ever holds what a shipped backend produces: `store/` follows the Phase 2 CAS dep store, `snapshots/` follows Phase 3 warm-fork. Neither is written until its phase lands, so the layout is forward-declared, not pre-built.
+- The cache only ever holds what a shipped backend produces: `store/pnpm/` follows the Phase 2 CAS dep store, `snapshots/` follows Phase 3 warm-fork. Snapshot dirs stay absent until that phase lands.
 - Routing the whole repo at once is explicitly out — see [deferred/whole-repo-routing.md](../deferred/whole-repo-routing.md).
