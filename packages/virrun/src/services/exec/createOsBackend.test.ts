@@ -32,7 +32,7 @@ describe(createOsBackend, () => {
   });
 
   // A command that exits non-zero is a result; a sandbox that can't even start is an error. A
-  // Non-existent overlay dir fails the mount before the command runs, so no child exit-code is
+  // Non-existent bind source fails the mount before the command runs, so no child exit-code is
   // Reported and the backend must reject rather than invent a result.
   test.skipIf(!isOsBackendSupported())("rejects with a sandbox error when bubblewrap fails to set up", async () => {
     expect.hasAssertions();
@@ -40,7 +40,7 @@ describe(createOsBackend, () => {
     const { exec } = createOsBackend();
 
     await expect(
-      exec(`echo hi`, { cwd: "", overlayDirs: ["/virrun-no-such-dir"], stdio: "pipe" }),
+      exec(`echo hi`, { bindDirs: ["/virrun-no-such-dir"], cwd: "", stdio: "pipe" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, createOsBackend.name, "bubblewrap failed to set up the sandbox").message}]`,
     );

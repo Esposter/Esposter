@@ -87,7 +87,7 @@ See [specs/exec-isolation.md](specs/exec-isolation.md) for both.
 ## Where the speed comes from
 
 1. **RAM filesystem** (`tmpfs` upperdir) — `node_modules` never touches disk.
-2. **Shared content-addressable store** — deps downloaded once, hardlinked into every sandbox.
+2. **Shared content-addressable store** — deps downloaded once into `.virrun/store/pnpm`, then reused by each sandbox; installs copy from the on-disk store into the RAM overlay until snapshots make hardlink-style imports viable.
 3. **Snapshot + warm-fork** — "clone repo + install" happens once; each run `fork()`s the warm state → near-instant repeated runs. The biggest win. See [specs/snapshot-fork.md](specs/snapshot-fork.md).
 4. **Task cache** — skip unchanged builds (Turborepo-style), later phase.
 
