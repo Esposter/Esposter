@@ -11,7 +11,6 @@ import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
 import { getPropertyNames, getResultAsync, noop, takeOne } from "@esposter/shared";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
-import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
 export const useSurveyCreator = (survey: Ref<Survey>) => {
   const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showThemeTab: true, showTranslationTab: true });
@@ -105,8 +104,7 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
   const isDark = useIsDark();
 
   watchImmediate(isDark, (newIsDark) => {
-    if (newIsDark) creator.applyCreatorTheme(DefaultDark);
-    else creator.applyCreatorTheme(SC2020);
+    creator.preferredColorPalette = newIsDark ? "dark" : "light";
   });
 
   return { creator, dialog };

@@ -2,6 +2,7 @@
 import type { BufferGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial } from "three/webgpu";
 
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
+import { Vector3 } from "three/webgpu";
 
 const { state: gltf } = useGLTF(GEM_GLTF_PATH);
 const { state: roughnessMap } = useTexture(ROUGHNESS_TEXTURE_PATH);
@@ -26,7 +27,7 @@ watch([gem, roughnessMap], ([newGem, newRoughnessMap]) => {
 
 <template>
   <TresAmbientLight :intensity="4" />
-  <TresDirectionalLight :intensity="6" :position="[1, 1, 1]" />
-  <TresDirectionalLight :intensity="6" :position="[-1, -1, -1]" />
+  <TresDirectionalLight :intensity="6" :position="new Vector3(1, 1, 1)" />
+  <TresDirectionalLight :intensity="6" :position="new Vector3(-1, -1, -1)" />
   <primitive v-if="gem" :object="gem" dispose />
 </template>
