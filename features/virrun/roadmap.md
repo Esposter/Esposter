@@ -17,7 +17,8 @@ Phase 0 (foundations) and Phase 1 (the `vfs` backend — FS layer + in-process `
 - [x] Real process exec inside an isolation primitive — `bubblewrap` chosen (rootless; collapses overlay + tmpfs + namespaces into one tool); `nsjail` / rootless `runc` / Firecracker stay deferred. Step A wraps any command in the bwrap RAM-overlay, reusing the native spawn/capture plumbing.
 - [x] Verify the wall is broken (Step B): a real `pnpm install` of this monorepo's full dependency closure (manifest-mirror corpus) + a native binary (esbuild) runs fully in RAM, isolated — host disk untouched → [specs/exec-isolation.md](specs/exec-isolation.md). Speed measured against the native baseline over the real workspace corpus (install / typecheck / build / test); see `src/localMonorepo.bench.md`.
 - [x] Shared content-addressable dep store: `.virrun/store/pnpm` is created lazily, gitignored, bind-mounted writable into the `os` sandbox, and exposed to pnpm via env so downloads are reused. Package imports use copy for now because hardlinks cannot cross from the on-disk store into the RAM overlay.
-- [ ] WSL2 bridge so the backend is reachable from Windows/macOS hosts.
+- [x] WSL2 bridge so the backend is reachable from Windows hosts (`wsl.exe` + `wslpath`, same bwrap argv, Windows cwd/store paths translated before entering Linux).
+- [ ] macOS bridge through a lightweight Linux VM.
 
 ## Phase 3 — Snapshot + warm-fork
 

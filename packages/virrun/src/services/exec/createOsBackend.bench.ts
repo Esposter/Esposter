@@ -1,3 +1,4 @@
+import { OS_BACKEND_BENCH_TASK_NAME } from "@/services/exec/constants.bench";
 import { createNativeBackend } from "@/services/exec/createNativeBackend";
 import { createOsBackend } from "@/services/exec/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
@@ -18,7 +19,7 @@ describe.skipIf(!isOsBackendSupported())("createOsBackend — many small file wr
     await native.exec(IO_COMMAND, { cwd: dir, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     const os = createOsBackend();
     await os.exec(IO_COMMAND, { cwd: dir, stdio: "pipe" });
   });

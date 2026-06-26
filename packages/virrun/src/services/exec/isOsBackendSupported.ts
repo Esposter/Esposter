@@ -1,4 +1,5 @@
 import { buildBwrapArgs } from "@/services/exec/buildBwrapArgs";
+import { readWslPath } from "@/services/exec/readWslPath";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync } from "node:fs";
@@ -17,14 +18,28 @@ let isSupported: boolean | undefined;
 // Win32 absence of bwrap) into false rather than a throw, per the project's no-try/catch convention.
 export const isOsBackendSupported = (): boolean => {
   if (isSupported !== undefined) return isSupported;
-  else if (process.platform !== "linux") {
+  else if (process.platform === "linux") {
+    const dir = mkdtempSync(join(tmpdir(), "os-support-"));
+    isSupported = getResult(() => execFileSync("bwrap", buildBwrapArgs("true", dir), { stdio: "pipe" })).match(
+      () => true,
+      () => false,
+    );
+    return isSupported;
+  } else if (process.platform === "win32") {
+    const dir = mkdtempSync(join(tmpdir(), "os-support-"));
+    isSupported = getResult(() => readWslPath(dir))
+      .andThen((wslDir) =>
+        getResult(() =>
+          execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs("true", wslDir)], { stdio: "pipe" }),
+        ),
+      )
+      .match(
+        () => true,
+        () => false,
+      );
+    return isSupported;
+  } else {
     isSupported = false;
     return isSupported;
   }
-  const dir = mkdtempSync(join(tmpdir(), "os-support-"));
-  isSupported = getResult(() => execFileSync("bwrap", buildBwrapArgs("true", dir), { stdio: "pipe" })).match(
-    () => true,
-    () => false,
-  );
-  return isSupported;
 };

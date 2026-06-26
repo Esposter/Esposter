@@ -8,7 +8,7 @@ describe(createOsBackend, () => {
   test.skipIf(isOsBackendSupported())("throws on an unsupported host instead of falling back", () => {
     expect.hasAssertions();
     expect(() => createOsBackend()).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, createOsBackend.name, "requires Linux + bubblewrap").message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, createOsBackend.name, "requires Linux/WSL + bubblewrap").message}]`,
     );
   });
 

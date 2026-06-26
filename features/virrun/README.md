@@ -26,7 +26,7 @@ Two pass/fail gates on every backend and speed feature — a violation is not sh
 
 ## Now
 
-Phase 2 — the `os` backend is underway. The Bubblewrap RAM overlay, real `pnpm install` acceptance path, and shared `.virrun/store/pnpm` package store have landed; the remaining Phase 2 item is the WSL2 bridge so Windows/macOS hosts can reach the Linux backend → [roadmap.md](roadmap.md).
+Phase 2 — the `os` backend is underway. The Bubblewrap RAM overlay, real `pnpm install` acceptance path, shared `.virrun/store/pnpm` package store, and Windows→WSL2 bridge have landed; the remaining Phase 2 platform item is the macOS VM bridge → [roadmap.md](roadmap.md).
 
 ## Shipped
 

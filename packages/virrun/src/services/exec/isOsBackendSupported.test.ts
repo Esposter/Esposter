@@ -1,5 +1,6 @@
 import { buildBwrapArgs } from "@/services/exec/buildBwrapArgs";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
+import { readWslPath } from "@/services/exec/readWslPath";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync } from "node:fs";
@@ -20,15 +21,36 @@ const isOverlayCapable =
     () => true,
     () => false,
   );
+const isWslOverlayCapable =
+  process.platform === "win32" &&
+  getResult(() => readWslPath(mkdtempSync(join(tmpdir(), "os-support-test-"))))
+    .andThen((wslDir) =>
+      getResult(() =>
+        execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs("true", wslDir)], { stdio: "pipe" }),
+      ),
+    )
+    .match(
+      () => true,
+      () => false,
+    );
 
 describe(isOsBackendSupported, () => {
-  test.skipIf(process.platform === "linux")("is false on non-Linux hosts", () => {
-    expect.hasAssertions();
+  test.skipIf(process.platform === "linux" || isWslOverlayCapable)(
+    "is false on hosts without Linux or WSL support",
+    () => {
+      expect.hasAssertions();
 
-    expect(isOsBackendSupported()).toBe(false);
-  });
+      expect(isOsBackendSupported()).toBe(false);
+    },
+  );
 
   test.skipIf(!isOverlayCapable)("is true on a host with overlay-capable bubblewrap", () => {
+    expect.hasAssertions();
+
+    expect(isOsBackendSupported()).toBe(true);
+  });
+
+  test.skipIf(!isWslOverlayCapable)("is true on a Windows host with overlay-capable WSL bubblewrap", () => {
     expect.hasAssertions();
 
     expect(isOsBackendSupported()).toBe(true);

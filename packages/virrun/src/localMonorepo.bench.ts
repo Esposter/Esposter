@@ -2,6 +2,7 @@ import type { ExecOptions } from "@/models/exec/ExecOptions";
 
 import { createNativeBackend } from "@/services/exec/createNativeBackend";
 import { createOsBackend } from "@/services/exec/createOsBackend";
+import { OS_BACKEND_BENCH_TASK_NAME } from "@/services/exec/constants.bench";
 import { createWorkspaceCorpus } from "@/services/exec/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/findRepoRoot.test";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
@@ -46,7 +47,7 @@ describe.skipIf(!isOsSupported)("install — real workspace dependency closure (
     await native.exec(`${cleanModules}; ${INSTALL}`, { cwd: nativeCorpus, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: osCorpus });
   });
 });
@@ -57,7 +58,7 @@ describe.skipIf(!isOsSupported)("typecheck — packages/shared (cold)", () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });
@@ -68,7 +69,7 @@ describe.skipIf(!isOsSupported)("build — packages/shared (cold)", () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });
@@ -79,7 +80,7 @@ describe.skipIf(!isOsSupported)("test — packages/shared", () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });
