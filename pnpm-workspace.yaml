@@ -247,6 +247,8 @@ configDependencies:
 
 minimumReleaseAge: 0
 
+nodeOptions: --max-old-space-size=8192 --experimental-vfs
+
 overrides:
   crossws: ^0.4.6
   h3: ^1.15.11
