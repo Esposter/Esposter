@@ -32,7 +32,7 @@ describe.skipIf(!isOsBackendSupported())("createOsBackend — real workspace ins
     const command = [
       "pnpm install --frozen-lockfile",
       `test "$(find . -path '*/node_modules/*' -type f | wc -l)" -gt 100000`,
-      "ESBUILD=$(find node_modules/.pnpm -path '*@esbuild+linux-x64*/bin/esbuild' -type f | head -1)",
+      "ESBUILD=$(find node_modules/.pnpm -path '*/bin/esbuild' -type f | head -1)",
       `"$ESBUILD" --version`,
       "echo SANDBOX_OK",
     ].join(" && ");

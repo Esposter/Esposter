@@ -2,6 +2,7 @@
 
 [![Build Status][badge-ci]][url-ci]
 [![Repository Score][badge-score]][url-score]
+[![CodSpeed Badge][badge-codspeed]][url-codspeed]
 [![Apache-2.0 licensed][badge-license]][url-license]
 
 ## Table of Contents
@@ -355,4 +356,6 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
 [badge-score]: https://img.shields.io/badge/score-93%2F100-33c854
 [url-score]: https://github.com/Esposter/Esposter/blob/main/SCORE.md
+[badge-codspeed]: https://img.shields.io/endpoint?url=https://app.codspeed.io//badge.json
+[url-codspeed]: https://app.codspeed.io//Esposter/Esposter?utm_source=badge
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest
