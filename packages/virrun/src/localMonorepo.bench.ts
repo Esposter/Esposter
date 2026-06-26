@@ -22,8 +22,8 @@ const osInstallOptions: ExecOptions = {
   bindDirs: [store],
   cwd: "",
   env: {
-    npm_config_package_import_method: "copy",
-    npm_config_store_dir: store,
+    PNPM_CONFIG_PACKAGE_IMPORT_METHOD: "copy",
+    PNPM_CONFIG_STORE_DIR: store,
   },
   isNetworkEnabled: true,
   stdio: "pipe",
