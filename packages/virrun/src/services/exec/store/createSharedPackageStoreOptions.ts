@@ -1,6 +1,7 @@
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 
 import {
+  GITIGNORE_FILENAME,
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
   PNPM_CONFIG_STORE_DIR_KEY,
@@ -13,7 +14,7 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const ensureGitIgnoreEntry = (cwd: string) => {
-  const gitignore = join(cwd, ".gitignore");
+  const gitignore = join(cwd, GITIGNORE_FILENAME);
   const gitignoreContent = existsSync(gitignore) ? readFileSync(gitignore, "utf8") : "";
   if (gitignoreContent.split(/\r?\n/u).includes(VIRRUN_GITIGNORE_ENTRY)) return;
   appendFileSync(

@@ -1,4 +1,5 @@
 /* oxlint-disable no-inferrable-types */
+export const GITIGNORE_FILENAME = ".gitignore";
 export const VIRRUN_CACHE_DIRECTORY_NAME = ".virrun";
 export const VIRRUN_GITIGNORE_ENTRY: string = `/${VIRRUN_CACHE_DIRECTORY_NAME}/`;
 export const VIRRUN_STORE_DIRECTORY_NAME = "store";
