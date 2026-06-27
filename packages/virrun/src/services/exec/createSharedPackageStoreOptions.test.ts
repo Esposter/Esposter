@@ -1,4 +1,7 @@
 import {
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+  PNPM_CONFIG_STORE_DIR_KEY,
   VIRRUN_CACHE_DIRECTORY_NAME,
   VIRRUN_GITIGNORE_ENTRY,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
@@ -34,8 +37,8 @@ describe(createSharedPackageStoreOptions, () => {
     expect(options).toStrictEqual({
       bindDirs: [storeDir],
       env: {
-        PNPM_CONFIG_PACKAGE_IMPORT_METHOD: "copy",
-        PNPM_CONFIG_STORE_DIR: storeDir,
+        [PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY]: PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+        [PNPM_CONFIG_STORE_DIR_KEY]: storeDir,
       },
     });
     expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe(`${VIRRUN_GITIGNORE_ENTRY}\n`);

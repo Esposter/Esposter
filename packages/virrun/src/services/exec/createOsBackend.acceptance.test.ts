@@ -1,4 +1,5 @@
 import {
+  COREPACK_HOME_KEY,
   VIRRUN_CACHE_DIRECTORY_NAME,
   VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
@@ -71,7 +72,7 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend — real workspace 
       cwd: corpus,
       env: {
         ...sharedPackageStoreOptions.env,
-        COREPACK_HOME: corepackHome,
+        [COREPACK_HOME_KEY]: corepackHome,
       },
       isNetworkEnabled: true,
       stdio: "pipe",

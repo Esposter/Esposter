@@ -1,3 +1,9 @@
+import {
+  COREPACK_HOME_KEY,
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+  PNPM_CONFIG_STORE_DIR_KEY,
+} from "@/services/exec/constants";
 import { createWslEnvArgs } from "@/services/exec/createWslEnvArgs";
 import { describe, expect, test, vi } from "vitest";
 
@@ -12,14 +18,14 @@ describe(createWslEnvArgs, () => {
     expect(
       createWslEnvArgs({
         env: {
-          COREPACK_HOME: "C:\\repo\\.virrun\\store\\corepack",
-          PNPM_CONFIG_PACKAGE_IMPORT_METHOD: "copy",
-          PNPM_CONFIG_STORE_DIR: "C:\\repo\\.virrun\\store\\pnpm",
+          [COREPACK_HOME_KEY]: "C:\\repo\\.virrun\\store\\corepack",
+          [PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY]: PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+          [PNPM_CONFIG_STORE_DIR_KEY]: "C:\\repo\\.virrun\\store\\pnpm",
         },
       }),
     ).toStrictEqual([
       String.raw`COREPACK_HOME=/wsl/C:\repo\.virrun\store\corepack`,
-      "PNPM_CONFIG_PACKAGE_IMPORT_METHOD=copy",
+      `${PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY}=${PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE}`,
       String.raw`PNPM_CONFIG_STORE_DIR=/wsl/C:\repo\.virrun\store\pnpm`,
     ]);
   });

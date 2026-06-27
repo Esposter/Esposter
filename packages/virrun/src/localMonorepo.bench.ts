@@ -1,5 +1,10 @@
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 
+import {
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+  PNPM_CONFIG_STORE_DIR_KEY,
+} from "@/services/exec/constants";
 import { OS_BACKEND_BENCH_TASK_NAME } from "@/services/exec/constants.bench";
 import { createNativeBackend } from "@/services/exec/createNativeBackend";
 import { createOsBackend } from "@/services/exec/createOsBackend";
@@ -23,8 +28,8 @@ const osInstallOptions: ExecOptions = {
   bindDirs: [store],
   cwd: "",
   env: {
-    PNPM_CONFIG_PACKAGE_IMPORT_METHOD: "copy",
-    PNPM_CONFIG_STORE_DIR: store,
+    [PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY]: PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+    [PNPM_CONFIG_STORE_DIR_KEY]: store,
   },
   isNetworkEnabled: true,
   stdio: "pipe",

@@ -1,6 +1,9 @@
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 
 import {
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+  PNPM_CONFIG_STORE_DIR_KEY,
   VIRRUN_CACHE_DIRECTORY_NAME,
   VIRRUN_GITIGNORE_ENTRY,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
@@ -35,8 +38,8 @@ export const createSharedPackageStoreOptions = (cwd: string): Pick<ExecOptions, 
     // (uppercased setting name). The copy import method is required because hardlinks can't cross from
     // The on-disk store into the RAM overlay; the store dir points writes at the bind-mounted host cache.
     env: {
-      PNPM_CONFIG_PACKAGE_IMPORT_METHOD: "copy",
-      PNPM_CONFIG_STORE_DIR: storeDir,
+      [PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY]: PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+      [PNPM_CONFIG_STORE_DIR_KEY]: storeDir,
     },
   };
 };
