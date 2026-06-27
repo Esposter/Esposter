@@ -12,13 +12,15 @@ describe(createWslEnvArgs, () => {
     expect(
       createWslEnvArgs({
         env: {
-          npm_config_package_import_method: "copy",
-          npm_config_store_dir: "C:\\repo\\.virrun\\store\\pnpm",
+          COREPACK_HOME: "C:\\repo\\.virrun\\store\\corepack",
+          PNPM_CONFIG_PACKAGE_IMPORT_METHOD: "copy",
+          PNPM_CONFIG_STORE_DIR: "C:\\repo\\.virrun\\store\\pnpm",
         },
       }),
     ).toStrictEqual([
-      "npm_config_package_import_method=copy",
-      "npm_config_store_dir=/wsl/C:\\repo\\.virrun\\store\\pnpm",
+      "COREPACK_HOME=/wsl/C:\\repo\\.virrun\\store\\corepack",
+      "PNPM_CONFIG_PACKAGE_IMPORT_METHOD=copy",
+      "PNPM_CONFIG_STORE_DIR=/wsl/C:\\repo\\.virrun\\store\\pnpm",
     ]);
   });
 });

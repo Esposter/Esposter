@@ -5,21 +5,25 @@ import { findRepoRoot } from "@/services/exec/findRepoRoot.test";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
-import { existsSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 const isSandboxInstallSupported =
-  process.platform === "linux" &&
   isOsBackendSupported() &&
-  getResult(() => execFileSync("sh", ["-lc", "command -v pnpm"], { stdio: "pipe" })).match(
+  getResult(() =>
+    process.platform === "win32"
+      ? execFileSync("wsl.exe", ["--exec", "sh", "-lc", "command -v node && node --version && corepack --version"], {
+          stdio: "pipe",
+        })
+      : execFileSync("sh", ["-lc", "command -v pnpm"], { stdio: "pipe" }),
+  ).match(
     () => true,
     () => false,
   );
 
-// Heavy + networked, so it self-gates on direct Linux sandbox support and a package manager inside that
-// Sandbox. WSL bridge correctness is covered by the differential/isolation suite; the full install path
-// Needs a deliberately provisioned Linux package-manager toolchain inside the distro.
+// Heavy + networked, so it self-gates on sandbox support and a package-manager entrypoint inside that
+// Sandbox. On WSL, Corepack provides pnpm without mutating the distro; its cache is bind-mounted below.
 describe.skipIf(!isSandboxInstallSupported)("createOsBackend — real workspace install (acceptance)", () => {
   let corpus = "";
 
@@ -40,17 +44,25 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend — real workspace 
     // Hardlinks can't cross from the on-disk store into the RAM overlay. The compound proves: the
     // Install (native pacquet binary + build scripts) succeeds, node_modules fully materialized in
     // RAM, and a native binary (esbuild's Go executable) actually runs inside the sandbox.
+    const installCommand = process.platform === "win32" ? "corepack pnpm install" : "pnpm install";
     const command = [
-      "pnpm install --frozen-lockfile",
+      `${installCommand} --frozen-lockfile`,
       `test "$(find . -path '*/node_modules/*' -type f | wc -l)" -gt 100000`,
       "ESBUILD=$(find node_modules/.pnpm -path '*/bin/esbuild' -type f | head -1)",
       `"$ESBUILD" --version`,
       "echo SANDBOX_OK",
     ].join(" && ");
     const sharedPackageStoreOptions = createSharedPackageStoreOptions(corpus);
+    const corepackHome = join(corpus, ".virrun", "store", "corepack");
+    mkdirSync(corepackHome, { recursive: true });
     const { exitCode, stdout } = await exec(command, {
       ...sharedPackageStoreOptions,
+      bindDirs: [...(sharedPackageStoreOptions.bindDirs ?? []), corepackHome],
       cwd: corpus,
+      env: {
+        ...sharedPackageStoreOptions.env,
+        COREPACK_HOME: corepackHome,
+      },
       isNetworkEnabled: true,
       stdio: "pipe",
     });

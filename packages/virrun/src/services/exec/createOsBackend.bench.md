@@ -18,7 +18,7 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## createOsBackend — many small file writes + reads (I/O-class)
 
-| task   | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
-| ------ | ------- | --------- | ------ | -------- | ------- |
-| native | 1.00×   | 31.1973   | ±2.75% | 33.8674  | 10      |
-| os     | 0.54×   | 57.5172   | ±2.86% | 61.8462  | 10      |
+| task     | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| -------- | ------- | --------- | ------ | -------- | ------- |
+| native   | 1.00×   | 31.1973   | ±2.75% | 33.8674  | 10      |
+| os/linux | 0.54×   | 57.5172   | ±2.86% | 61.8462  | 10      |
