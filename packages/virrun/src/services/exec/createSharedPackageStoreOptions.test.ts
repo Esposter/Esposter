@@ -1,3 +1,9 @@
+import {
+  VIRRUN_CACHE_DIRECTORY_NAME,
+  VIRRUN_GITIGNORE_ENTRY,
+  VIRRUN_PNPM_STORE_DIRECTORY_NAME,
+  VIRRUN_STORE_DIRECTORY_NAME,
+} from "@/services/exec/constants";
 import { createSharedPackageStoreOptions } from "@/services/exec/createSharedPackageStoreOptions";
 import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -16,7 +22,12 @@ describe(createSharedPackageStoreOptions, () => {
     expect.hasAssertions();
 
     dir = realpathSync(mkdtempSync(join(tmpdir(), "virrun-store-")));
-    const storeDir = join(dir, ".virrun", "store", "pnpm");
+    const storeDir = join(
+      dir,
+      VIRRUN_CACHE_DIRECTORY_NAME,
+      VIRRUN_STORE_DIRECTORY_NAME,
+      VIRRUN_PNPM_STORE_DIRECTORY_NAME,
+    );
     const options = createSharedPackageStoreOptions(dir);
 
     expect(existsSync(storeDir)).toBe(true);
@@ -27,7 +38,7 @@ describe(createSharedPackageStoreOptions, () => {
         PNPM_CONFIG_STORE_DIR: storeDir,
       },
     });
-    expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe("/.virrun/\n");
+    expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe(`${VIRRUN_GITIGNORE_ENTRY}\n`);
   });
 
   test("does not duplicate the cache ignore entry", () => {
@@ -37,7 +48,7 @@ describe(createSharedPackageStoreOptions, () => {
     createSharedPackageStoreOptions(dir);
     createSharedPackageStoreOptions(dir);
 
-    expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe("/.virrun/\n");
+    expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe(`${VIRRUN_GITIGNORE_ENTRY}\n`);
   });
 
   test("adds the cache ignore entry on its own line after existing content", () => {
@@ -47,6 +58,6 @@ describe(createSharedPackageStoreOptions, () => {
     writeFileSync(join(dir, ".gitignore"), "dist");
     createSharedPackageStoreOptions(dir);
 
-    expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe("dist\n/.virrun/\n");
+    expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe(`dist\n${VIRRUN_GITIGNORE_ENTRY}\n`);
   });
 });

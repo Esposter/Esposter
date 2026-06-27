@@ -1,3 +1,8 @@
+import {
+  VIRRUN_CACHE_DIRECTORY_NAME,
+  VIRRUN_PNPM_STORE_DIRECTORY_NAME,
+  VIRRUN_STORE_DIRECTORY_NAME,
+} from "@/services/exec/constants";
 import { createWslBwrapArgs } from "@/services/exec/createWslBwrapArgs";
 import { describe, expect, test, vi } from "vitest";
 
@@ -9,7 +14,16 @@ describe(createWslBwrapArgs, () => {
   test("translates cwd and bind dirs before building the bubblewrap argv", () => {
     expect.hasAssertions();
 
-    const args = createWslBwrapArgs("pwd", "C:\\repo", { bindDirs: ["C:\\repo\\.virrun\\store\\pnpm"] });
+    const cwd = String.raw`C:\repo`;
+    const wslCwd = `/wsl/${cwd}`;
+    const bindDir = [
+      cwd,
+      VIRRUN_CACHE_DIRECTORY_NAME,
+      VIRRUN_STORE_DIRECTORY_NAME,
+      VIRRUN_PNPM_STORE_DIRECTORY_NAME,
+    ].join("\\");
+    const wslBindDir = `/wsl/${bindDir}`;
+    const args = createWslBwrapArgs("pwd", cwd, { bindDirs: [bindDir] });
 
     expect(args).toStrictEqual([
       "--unshare-all",
@@ -24,14 +38,14 @@ describe(createWslBwrapArgs, () => {
       "--tmpfs",
       "/tmp",
       "--overlay-src",
-      "/wsl/C:\\repo",
+      wslCwd,
       "--tmp-overlay",
-      "/wsl/C:\\repo",
+      wslCwd,
       "--bind",
-      "/wsl/C:\\repo\\.virrun\\store\\pnpm",
-      "/wsl/C:\\repo\\.virrun\\store\\pnpm",
+      wslBindDir,
+      wslBindDir,
       "--chdir",
-      "/wsl/C:\\repo",
+      wslCwd,
       "--",
       "/bin/sh",
       "-c",

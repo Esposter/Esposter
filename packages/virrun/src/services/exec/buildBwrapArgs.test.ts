@@ -1,4 +1,9 @@
 import { buildBwrapArgs } from "@/services/exec/buildBwrapArgs";
+import {
+  VIRRUN_CACHE_DIRECTORY_NAME,
+  VIRRUN_PNPM_STORE_DIRECTORY_NAME,
+  VIRRUN_STORE_DIRECTORY_NAME,
+} from "@/services/exec/constants";
 import { describe, expect, test } from "vitest";
 
 describe(buildBwrapArgs, () => {
@@ -68,18 +73,11 @@ describe(buildBwrapArgs, () => {
   test("binds writable host cache dirs after RAM overlays", () => {
     expect.hasAssertions();
 
-    const args = buildBwrapArgs("pwd", "/work", { bindDirs: ["/work/.virrun/store/pnpm"] });
+    const bindDir = `/work/${VIRRUN_CACHE_DIRECTORY_NAME}/${VIRRUN_STORE_DIRECTORY_NAME}/${VIRRUN_PNPM_STORE_DIRECTORY_NAME}`;
+    const args = buildBwrapArgs("pwd", "/work", { bindDirs: [bindDir] });
 
     expect(args).toStrictEqual(
-      expect.arrayContaining([
-        "--overlay-src",
-        "/work",
-        "--tmp-overlay",
-        "/work",
-        "--bind",
-        "/work/.virrun/store/pnpm",
-        "/work/.virrun/store/pnpm",
-      ]),
+      expect.arrayContaining(["--overlay-src", "/work", "--tmp-overlay", "/work", "--bind", bindDir, bindDir]),
     );
     expect(args.indexOf("--bind")).toBeGreaterThan(args.indexOf("--tmp-overlay"));
     expect(args.indexOf("--chdir")).toBeGreaterThan(args.indexOf("--bind"));

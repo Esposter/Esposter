@@ -1,8 +1,7 @@
 import { buildBwrapArgs } from "@/services/exec/buildBwrapArgs";
-import { readWslPath } from "@/services/exec/readWslPath";
-import { getResult } from "@esposter/shared";
+import { getResult, withFinalizer } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 // Memoized: a host's bubblewrap capability cannot change within a process, and createOsBackend (so the
@@ -20,26 +19,37 @@ export const isOsBackendSupported = (): boolean => {
   if (isSupported !== undefined) return isSupported;
   else if (process.platform === "linux") {
     const dir = mkdtempSync(join(tmpdir(), "os-support-"));
-    isSupported = getResult(() => execFileSync("bwrap", buildBwrapArgs("true", dir), { stdio: "pipe" })).match(
+    isSupported = getResult(() =>
+      withFinalizer(
+        () => execFileSync("bwrap", buildBwrapArgs("true", dir), { stdio: "pipe" }),
+        () => {
+          rmSync(dir, { force: true, recursive: true });
+        },
+      ),
+    ).match(
       () => true,
       () => false,
     );
-    return isSupported;
-  } else if (process.platform === "win32") {
-    const dir = mkdtempSync(join(tmpdir(), "os-support-"));
-    isSupported = getResult(() => readWslPath(dir))
+  } else if (process.platform === "win32")
+    isSupported = getResult(() => execFileSync("wsl.exe", ["--exec", "mktemp", "-d"], { stdio: "pipe" }))
+      .map((stdout) => stdout.toString().trim())
       .andThen((wslDir) =>
         getResult(() =>
-          execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs("true", wslDir)], { stdio: "pipe" }),
+          withFinalizer(
+            () => execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs("true", wslDir)], { stdio: "pipe" }),
+            () => {
+              getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
+                undefined,
+              );
+            },
+          ),
         ),
       )
       .match(
         () => true,
         () => false,
       );
-    return isSupported;
-  } else {
-    isSupported = false;
-    return isSupported;
-  }
+  else isSupported = false;
+
+  return isSupported;
 };

@@ -16,8 +16,8 @@ describe(readWslPath, () => {
   test("memoizes translated paths", () => {
     expect.hasAssertions();
 
-    expect(readWslPath("C:\\repo")).toBe("/wsl/C:\\repo");
-    expect(readWslPath("C:\\repo")).toBe("/wsl/C:\\repo");
+    expect(readWslPath(String.raw`C:\repo`)).toBe(String.raw`/wsl/C:\repo`);
+    expect(readWslPath(String.raw`C:\repo`)).toBe(String.raw`/wsl/C:\repo`);
     expect(execFileSync).toHaveBeenCalledTimes(1);
   });
 });

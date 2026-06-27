@@ -1,9 +1,8 @@
 import { buildBwrapArgs } from "@/services/exec/buildBwrapArgs";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
-import { readWslPath } from "@/services/exec/readWslPath";
-import { getResult } from "@esposter/shared";
+import { getResult, withFinalizer } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -13,20 +12,32 @@ import { describe, expect, test } from "vitest";
 // Runner nor a host whose bubblewrap lacks overlayfs support (e.g. some WSL2 builds).
 const isOverlayCapable =
   process.platform === "linux" &&
-  getResult(() =>
-    execFileSync("bwrap", buildBwrapArgs("true", mkdtempSync(join(tmpdir(), "os-support-test-"))), {
-      stdio: "pipe",
-    }),
-  ).match(
+  getResult(() => {
+    const dir = mkdtempSync(join(tmpdir(), "os-support-test-"));
+    return withFinalizer(
+      () => execFileSync("bwrap", buildBwrapArgs("true", dir), { stdio: "pipe" }),
+      () => {
+        rmSync(dir, { force: true, recursive: true });
+      },
+    );
+  }).match(
     () => true,
     () => false,
   );
 const isWslOverlayCapable =
   process.platform === "win32" &&
-  getResult(() => readWslPath(mkdtempSync(join(tmpdir(), "os-support-test-"))))
+  getResult(() => execFileSync("wsl.exe", ["--exec", "mktemp", "-d"], { stdio: "pipe" }))
+    .map((stdout) => stdout.toString().trim())
     .andThen((wslDir) =>
       getResult(() =>
-        execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs("true", wslDir)], { stdio: "pipe" }),
+        withFinalizer(
+          () => execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs("true", wslDir)], { stdio: "pipe" }),
+          () => {
+            getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
+              undefined,
+            );
+          },
+        ),
       ),
     )
     .match(

@@ -18,9 +18,9 @@ describe(createWslEnvArgs, () => {
         },
       }),
     ).toStrictEqual([
-      "COREPACK_HOME=/wsl/C:\\repo\\.virrun\\store\\corepack",
+      String.raw`COREPACK_HOME=/wsl/C:\repo\.virrun\store\corepack`,
       "PNPM_CONFIG_PACKAGE_IMPORT_METHOD=copy",
-      "PNPM_CONFIG_STORE_DIR=/wsl/C:\\repo\\.virrun\\store\\pnpm",
+      String.raw`PNPM_CONFIG_STORE_DIR=/wsl/C:\repo\.virrun\store\pnpm`,
     ]);
   });
 });

@@ -1,3 +1,8 @@
+import {
+  VIRRUN_CACHE_DIRECTORY_NAME,
+  VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
+  VIRRUN_STORE_DIRECTORY_NAME,
+} from "@/services/exec/constants";
 import { createOsBackend } from "@/services/exec/createOsBackend";
 import { createSharedPackageStoreOptions } from "@/services/exec/createSharedPackageStoreOptions";
 import { createWorkspaceCorpus } from "@/services/exec/createWorkspaceCorpus.test";
@@ -53,7 +58,12 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend — real workspace 
       "echo SANDBOX_OK",
     ].join(" && ");
     const sharedPackageStoreOptions = createSharedPackageStoreOptions(corpus);
-    const corepackHome = join(corpus, ".virrun", "store", "corepack");
+    const corepackHome = join(
+      corpus,
+      VIRRUN_CACHE_DIRECTORY_NAME,
+      VIRRUN_STORE_DIRECTORY_NAME,
+      VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
+    );
     mkdirSync(corepackHome, { recursive: true });
     const { exitCode, stdout } = await exec(command, {
       ...sharedPackageStoreOptions,
