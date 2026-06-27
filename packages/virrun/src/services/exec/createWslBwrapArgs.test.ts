@@ -1,29 +1,18 @@
-import {
-  VIRRUN_CACHE_DIRECTORY_NAME,
-  VIRRUN_PNPM_STORE_DIRECTORY_NAME,
-  VIRRUN_STORE_DIRECTORY_NAME,
-} from "@/services/exec/constants";
+import { TEST_PNPM_STORE_PATH_WIN, TEST_REPO_ROOT_WIN, TEST_WSL_PREFIX } from "@/services/exec/constants.test";
 import { createWslBwrapArgs } from "@/services/exec/createWslBwrapArgs";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/exec/readWslPath"), () => ({
-  readWslPath: (path: string) => `/wsl/${path}`,
+  readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
 }));
 
 describe(createWslBwrapArgs, () => {
   test("translates cwd and bind dirs before building the bubblewrap argv", () => {
     expect.hasAssertions();
 
-    const cwd = String.raw`C:\repo`;
-    const wslCwd = `/wsl/${cwd}`;
-    const bindDir = [
-      cwd,
-      VIRRUN_CACHE_DIRECTORY_NAME,
-      VIRRUN_STORE_DIRECTORY_NAME,
-      VIRRUN_PNPM_STORE_DIRECTORY_NAME,
-    ].join("\\");
-    const wslBindDir = `/wsl/${bindDir}`;
-    const args = createWslBwrapArgs("pwd", cwd, { bindDirs: [bindDir] });
+    const wslCwd = `${TEST_WSL_PREFIX}${TEST_REPO_ROOT_WIN}`;
+    const wslBindDir = `${TEST_WSL_PREFIX}${TEST_PNPM_STORE_PATH_WIN}`;
+    const args = createWslBwrapArgs("pwd", TEST_REPO_ROOT_WIN, { bindDirs: [TEST_PNPM_STORE_PATH_WIN] });
 
     expect(args).toStrictEqual([
       "--unshare-all",

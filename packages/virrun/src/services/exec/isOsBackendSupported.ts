@@ -1,4 +1,5 @@
 import { buildBwrapArgs } from "@/services/exec/buildBwrapArgs";
+import { VIRRUN_OS_SUPPORT_DIR_PREFIX } from "@/services/exec/constants";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
@@ -18,7 +19,7 @@ let isSupported: boolean | undefined;
 export const isOsBackendSupported = (): boolean => {
   if (isSupported !== undefined) return isSupported;
   else if (process.platform === "linux") {
-    const dir = mkdtempSync(join(tmpdir(), "os-support-"));
+    const dir = mkdtempSync(join(tmpdir(), VIRRUN_OS_SUPPORT_DIR_PREFIX));
     isSupported = getResult(() =>
       withFinalizer(
         () => execFileSync("bwrap", buildBwrapArgs("true", dir), { stdio: "pipe" }),

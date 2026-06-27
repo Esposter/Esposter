@@ -1,3 +1,4 @@
+import { TEST_NON_EXISTENT_DIR } from "@/services/exec/constants.test";
 import { createOsBackend } from "@/services/exec/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -40,7 +41,7 @@ describe(createOsBackend, () => {
     const { exec } = createOsBackend();
 
     await expect(
-      exec(`echo hi`, { bindDirs: ["/virrun-no-such-dir"], cwd: "", stdio: "pipe" }),
+      exec(`echo hi`, { bindDirs: [TEST_NON_EXISTENT_DIR], cwd: "", stdio: "pipe" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, createOsBackend.name, "bubblewrap failed to set up the sandbox").message}]`,
     );

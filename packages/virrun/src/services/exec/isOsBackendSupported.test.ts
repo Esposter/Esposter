@@ -1,4 +1,5 @@
 import { buildBwrapArgs } from "@/services/exec/buildBwrapArgs";
+import { TEST_WSL_SUPPORT_DIR_PREFIX } from "@/services/exec/constants.test";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
@@ -13,7 +14,7 @@ import { describe, expect, test } from "vitest";
 const isOverlayCapable =
   process.platform === "linux" &&
   getResult(() => {
-    const dir = mkdtempSync(join(tmpdir(), "os-support-test-"));
+    const dir = mkdtempSync(join(tmpdir(), TEST_WSL_SUPPORT_DIR_PREFIX));
     return withFinalizer(
       () => execFileSync("bwrap", buildBwrapArgs("true", dir), { stdio: "pipe" }),
       () => {
