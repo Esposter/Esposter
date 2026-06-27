@@ -1,4 +1,4 @@
-import { TEST_FILE_NAME, TEST_NON_EXISTENT_DIR, TEST_TEMP_DIR_PREFIX } from "@/services/exec/constants.test";
+import { TEST_DIR, TEST_FILE_NAME, TEST_TEMP_DIR_PREFIX } from "@/services/exec/constants.test";
 import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
 import { withFinalizer } from "@esposter/shared";
 import { mkdtempSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
@@ -14,24 +14,24 @@ describe(createPlatformaticFsProvider, () => {
     expect.hasAssertions();
 
     const { exists, mkdir, readFile, writeFile } = createPlatformaticFsProvider();
-    mkdir(TEST_NON_EXISTENT_DIR);
-    writeFile(`${TEST_NON_EXISTENT_DIR}/a`, "");
+    mkdir(TEST_DIR);
+    writeFile(`${TEST_DIR}/a`, "");
 
-    expect(readFile(`${TEST_NON_EXISTENT_DIR}/a`)).toBe("");
-    expect(exists(`${TEST_NON_EXISTENT_DIR}/a`)).toBe(true);
-    expect(exists(`${TEST_NON_EXISTENT_DIR}/b`)).toBe(false);
+    expect(readFile(`${TEST_DIR}/a`)).toBe("");
+    expect(exists(`${TEST_DIR}/a`)).toBe(true);
+    expect(exists(`${TEST_DIR}/b`)).toBe(false);
   });
 
   test("mount exposes virtual files to the global fs and module loader", () => {
     expect.hasAssertions();
 
     const { mount, unmount, writeFile } = createPlatformaticFsProvider();
-    mount(TEST_NON_EXISTENT_DIR);
+    mount(TEST_DIR);
     withFinalizer(
       () => {
         const fs = require("node:fs");
-        const dataPath = `${TEST_NON_EXISTENT_DIR}/a.txt`;
-        const indexPath = `${TEST_NON_EXISTENT_DIR}/a.js`;
+        const dataPath = `${TEST_DIR}/a.txt`;
+        const indexPath = `${TEST_DIR}/a.js`;
         writeFile(dataPath, " ");
 
         expect(fs.readFileSync(dataPath, "utf8")).toBe(" ");
@@ -77,9 +77,9 @@ describe(createPlatformaticFsProvider, () => {
     expect.hasAssertions();
 
     const { dispose, mount, writeFile } = createPlatformaticFsProvider();
-    mount(TEST_NON_EXISTENT_DIR);
+    mount(TEST_DIR);
     const fs = require("node:fs");
-    const testPath = `${TEST_NON_EXISTENT_DIR}/a.txt`;
+    const testPath = `${TEST_DIR}/a.txt`;
     writeFile(testPath, " ");
 
     expect(fs.existsSync(testPath)).toBe(true);

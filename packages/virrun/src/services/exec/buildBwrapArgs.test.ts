@@ -4,14 +4,14 @@ import {
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "@/services/exec/constants";
-import { TEST_NON_EXISTENT_DIR } from "@/services/exec/constants.test";
+import { TEST_DIR } from "@/services/exec/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe(buildBwrapArgs, () => {
   test("wraps a string command in /bin/sh -c after the overlay flags", () => {
     expect.hasAssertions();
 
-    expect(buildBwrapArgs("echo hi", TEST_NON_EXISTENT_DIR)).toStrictEqual([
+    expect(buildBwrapArgs("echo hi", TEST_DIR)).toStrictEqual([
       "--unshare-all",
       "--die-with-parent",
       "--ro-bind",
@@ -24,11 +24,11 @@ describe(buildBwrapArgs, () => {
       "--tmpfs",
       "/tmp",
       "--overlay-src",
-      TEST_NON_EXISTENT_DIR,
+      TEST_DIR,
       "--tmp-overlay",
-      TEST_NON_EXISTENT_DIR,
+      TEST_DIR,
       "--chdir",
-      TEST_NON_EXISTENT_DIR,
+      TEST_DIR,
       "--",
       "/bin/sh",
       "-c",
@@ -39,7 +39,7 @@ describe(buildBwrapArgs, () => {
   test("spreads an argv command unchanged so it is never reinterpreted by a shell", () => {
     expect.hasAssertions();
 
-    const args = buildBwrapArgs(["git", "clone", "--", "; rm -rf /"], TEST_NON_EXISTENT_DIR);
+    const args = buildBwrapArgs(["git", "clone", "--", "; rm -rf /"], TEST_DIR);
 
     expect(args.slice(-4)).toStrictEqual(["git", "clone", "--", "; rm -rf /"]);
   });
@@ -47,10 +47,10 @@ describe(buildBwrapArgs, () => {
   test("mounts the same dir as overlay source, upper, and chdir", () => {
     expect.hasAssertions();
 
-    const args = buildBwrapArgs("pwd", TEST_NON_EXISTENT_DIR);
+    const args = buildBwrapArgs("pwd", TEST_DIR);
 
     expect(args).toContain("--overlay-src");
-    expect(args.filter((arg) => arg === TEST_NON_EXISTENT_DIR)).toHaveLength(3);
+    expect(args.filter((arg) => arg === TEST_DIR)).toHaveLength(3);
   });
 
   test("falls back to the process cwd when the cwd is empty", () => {
@@ -64,32 +64,21 @@ describe(buildBwrapArgs, () => {
   test("re-adds the network namespace right after --unshare-all when network is on", () => {
     expect.hasAssertions();
 
-    expect(buildBwrapArgs("pwd", TEST_NON_EXISTENT_DIR, { isNetworkEnabled: true }).slice(0, 2)).toStrictEqual([
+    expect(buildBwrapArgs("pwd", TEST_DIR, { isNetworkEnabled: true }).slice(0, 2)).toStrictEqual([
       "--unshare-all",
       "--share-net",
     ]);
-    expect(buildBwrapArgs("pwd", TEST_NON_EXISTENT_DIR).slice(0, 2)).toStrictEqual([
-      "--unshare-all",
-      "--die-with-parent",
-    ]);
+    expect(buildBwrapArgs("pwd", TEST_DIR).slice(0, 2)).toStrictEqual(["--unshare-all", "--die-with-parent"]);
   });
 
   test("binds writable host cache dirs after RAM overlays", () => {
     expect.hasAssertions();
 
-    const bindDir = `${TEST_NON_EXISTENT_DIR}/${VIRRUN_CACHE_DIRECTORY_NAME}/${VIRRUN_STORE_DIRECTORY_NAME}/${VIRRUN_PNPM_STORE_DIRECTORY_NAME}`;
-    const args = buildBwrapArgs("pwd", TEST_NON_EXISTENT_DIR, { bindDirs: [bindDir] });
+    const bindDir = `${TEST_DIR}/${VIRRUN_CACHE_DIRECTORY_NAME}/${VIRRUN_STORE_DIRECTORY_NAME}/${VIRRUN_PNPM_STORE_DIRECTORY_NAME}`;
+    const args = buildBwrapArgs("pwd", TEST_DIR, { bindDirs: [bindDir] });
 
     expect(args).toStrictEqual(
-      expect.arrayContaining([
-        "--overlay-src",
-        TEST_NON_EXISTENT_DIR,
-        "--tmp-overlay",
-        TEST_NON_EXISTENT_DIR,
-        "--bind",
-        bindDir,
-        bindDir,
-      ]),
+      expect.arrayContaining(["--overlay-src", TEST_DIR, "--tmp-overlay", TEST_DIR, "--bind", bindDir, bindDir]),
     );
     expect(args.indexOf("--bind")).toBeGreaterThan(args.indexOf("--tmp-overlay"));
     expect(args.indexOf("--chdir")).toBeGreaterThan(args.indexOf("--bind"));

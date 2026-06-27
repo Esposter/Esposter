@@ -9,7 +9,7 @@ import { describe } from "vitest";
 
 export const TEST_REPO_ROOT_WIN: string = String.raw`C:\a`;
 export const TEST_WSL_PREFIX = "/wsl/";
-export const TEST_NON_EXISTENT_DIR = "/a";
+export const TEST_DIR = "/a";
 
 export const TEST_TEMP_DIR_PREFIX = "a-";
 export const TEST_FILE_NAME = "a";
