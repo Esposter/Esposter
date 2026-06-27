@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-27T03:34:18.206Z
-- Commit: a308465ee
+- Date: 2026-06-27T04:12:01.806Z
+- Commit: 666a4bcc8
 - Node: v26.4.0
 - OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,26 +20,26 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | -------- | ------- | --------- | ------ | --------- | ------- |
-| native   | 1.00×   | 7216.2369 | ±3.12% | 7766.7693 | 10      |
-| os/linux | 1.73×   | 4163.8273 | ±5.19% | 4997.7505 | 10      |
+| native   | 1.00×   | 6980.5480 | ±2.88% | 7660.3997 | 10      |
+| os/linux | 1.81×   | 3853.4414 | ±2.50% | 4188.3983 | 10      |
 
 ## typecheck — packages/shared (cold)
 
 | task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | -------- | ------- | --------- | ------ | --------- | ------- |
-| native   | 1.00×   | 1063.7510 | ±2.64% | 1138.0708 | 10      |
-| os/linux | 1.55×   | 684.6317  | ±4.73% | 765.0621  | 10      |
+| native   | 1.00×   | 978.3720  | ±1.62% | 1035.9224 | 10      |
+| os/linux | 1.67×   | 584.6310  | ±0.85% | 595.5367  | 10      |
 
 ## build — packages/shared (cold)
 
 | task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | -------- | ------- | --------- | ------ | --------- | ------- |
-| native   | 1.00×   | 5004.5772 | ±3.70% | 5695.6929 | 10      |
-| os/linux | 8.15×   | 613.9607  | ±1.10% | 622.0259  | 10      |
+| native   | 1.00×   | 4532.5287 | ±0.41% | 4573.1873 | 10      |
+| os/linux | 7.78×   | 582.6201  | ±0.58% | 591.5248  | 10      |
 
 ## test — packages/shared
 
 | task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | -------- | ------- | --------- | ------ | --------- | ------- |
-| native   | 1.00×   | 2118.5853 | ±2.24% | 2286.9710 | 10      |
-| os/linux | 3.47×   | 610.4097  | ±1.81% | 648.4887  | 10      |
+| native   | 1.00×   | 2039.5131 | ±0.96% | 2083.5854 | 10      |
+| os/linux | 3.21×   | 635.3844  | ±5.60% | 712.5394  | 10      |

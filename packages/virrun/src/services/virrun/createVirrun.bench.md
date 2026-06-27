@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-27T03:34:18.206Z
-- Commit: a308465ee
+- Date: 2026-06-27T04:12:01.806Z
+- Commit: 666a4bcc8
 - Node: v26.4.0
 - OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,5 +20,5 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------ | ------- | --------- | ------ | -------- | ------- |
-| native | 1.00×   | 29.7105   | ±3.74% | 32.6563  | 10      |
-| virrun | 0.99×   | 30.0183   | ±3.26% | 32.6931  | 10      |
+| native | 1.00×   | 30.1432   | ±4.02% | 33.0376  | 10      |
+| virrun | 0.99×   | 30.3990   | ±4.25% | 34.0095  | 10      |

@@ -9,21 +9,21 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-26T04:46:17.544Z
-- Commit: 39ce2309e
+- Date: 2026-06-27T04:12:46.498Z
+- Commit: 666a4bcc8
 - Node: v26.4.0
-- OS: linux 6.6.87.2-microsoft-standard-WSL2 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 19.0 GiB
+- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 15.6 GiB
 
 ## DeleteColumnsCommand
 
 | task                                        | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute — delete 1 of 5 columns, 100 rows   | 1.00×   | 0.0547    | ±68.60% | 0.1506   | 10      |
-| execute — delete 1 of 5 columns, 1000 rows  | 0.75×   | 0.0734    | ±16.92% | 0.1204   | 10      |
-| execute — delete 1 of 5 columns, 10000 rows | 0.13×   | 0.4319    | ±8.29%  | 0.5494   | 10      |
-| execute — delete 3 of 5 columns, 1000 rows  | 0.4×    | 0.1371    | ±9.05%  | 0.1819   | 10      |
-| execute — delete 3 of 5 columns, 10000 rows | 0.044×  | 1.2537    | ±14.90% | 1.9812   | 10      |
-| undo — restore 1 column into 1000 rows      | 0.043×  | 1.2792    | ±79.51% | 5.2472   | 10      |
-| undo — restore 3 columns into 10000 rows    | 0.0082× | 6.6380    | ±5.45%  | 7.8244   | 10      |
+| execute — delete 1 of 5 columns, 100 rows   | 1.00×   | 0.0395    | ±59.29% | 0.1087   | 10      |
+| execute — delete 1 of 5 columns, 1000 rows  | 0.58×   | 0.0680    | ±14.36% | 0.0990   | 10      |
+| execute — delete 1 of 5 columns, 10000 rows | 0.1×    | 0.3965    | ±11.56% | 0.5718   | 10      |
+| execute — delete 3 of 5 columns, 1000 rows  | 0.3×    | 0.1336    | ±10.46% | 0.1821   | 10      |
+| execute — delete 3 of 5 columns, 10000 rows | 0.027×  | 1.4379    | ±14.68% | 2.0064   | 10      |
+| undo — restore 1 column into 1000 rows      | 0.03×   | 1.3162    | ±56.30% | 3.8417   | 10      |
+| undo — restore 3 columns into 10000 rows    | 0.005×  | 7.9169    | ±4.70%  | 8.5949   | 10      |
