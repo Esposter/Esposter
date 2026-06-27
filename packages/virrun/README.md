@@ -48,9 +48,9 @@ virrun -- pnpm test
 ### Programmatic
 
 ```ts
-import { BackendType, createVirrun } from "virrun";
+import { createVirrun } from "virrun";
 
-const virrun = await createVirrun({ backend: BackendType.Auto });
+const virrun = await createVirrun();
 try {
   const { exitCode, stdout } = await virrun.exec("pnpm build");
 } finally {

@@ -75,7 +75,6 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
         with:
-          bubblewrap-sandbox: "false"
           node-version: "24"
       # `pnpm i` + download the `package-builds` artifact built once by the `build-packages` job above — the
       # bundles are node-agnostic rolldown output, so the build job's default Node is fine for these Node-24

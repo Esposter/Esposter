@@ -1,5 +1,5 @@
-import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/constants";
-import { TEST_DIR, TEST_FILE_NAME } from "@/services/exec/constants.test";
+import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { TEST_DIR, TEST_FILE_NAME } from "@/services/exec/util/constants.test";
 import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
 import { withFinalizer } from "@esposter/shared";
 import { mkdtempSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
