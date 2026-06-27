@@ -21,8 +21,10 @@ const backendFactories: Record<BackendType, () => ExecBackend> = {
 // Back a handle whose exec routes every command through it. dispose() tears down any temp state the
 // Source created. Today the backend is native passthrough, so the sandbox is still a thin wrapper
 // But it is the seam dogfooding and the gate harnesses are built against from day one.
-export const createVirrun = async (options: Partial<VirrunOptions> = {}): Promise<Virrun> => {
-  const { backend = BackendType.Auto, source = { dir: "", type: SourceType.Dir } } = options;
+export const createVirrun = async ({
+  backend = BackendType.Auto,
+  source = { dir: "", type: SourceType.Dir },
+}: Partial<VirrunOptions> = {}): Promise<Virrun> => {
   const execBackend = backendFactories[backend]();
   const { cwd, dispose } = await loadSource(source);
   const sharedPackageStoreOptions = backend === BackendType.Os ? createSharedPackageStoreOptions(cwd) : {};
