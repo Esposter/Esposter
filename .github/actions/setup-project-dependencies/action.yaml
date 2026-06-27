@@ -1,7 +1,7 @@
 name: Setup Project Dependencies
 description: Checkout repository, install pnpm and setup node
 inputs:
-  enable-bubblewrap-sandbox:
+  bubblewrap-sandbox:
     description: Install bubblewrap and enable unprivileged user namespaces for test/bench jobs that exercise the virrun os backend
     required: false
     default: "false"
@@ -35,7 +35,7 @@ runs:
     # virrun os-backend suites would self-gate and silently skip. Test/bench jobs opt into this so the
     # sandbox is available before Vitest collects host-capability checks.
     - name: 📦 Enable bubblewrap sandbox
-      if: ${{ inputs.enable-bubblewrap-sandbox == 'true' }}
+      if: ${{ inputs.bubblewrap-sandbox == 'true' }}
       shell: bash
       run: |
         sudo apt-get update
