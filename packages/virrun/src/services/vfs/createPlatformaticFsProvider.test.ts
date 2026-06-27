@@ -1,4 +1,5 @@
-import { TEST_DIR, TEST_FILE_NAME, TEST_TEMP_DIR_PREFIX } from "@/services/exec/constants.test";
+import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/constants";
+import { TEST_DIR, TEST_FILE_NAME } from "@/services/exec/constants.test";
 import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
 import { withFinalizer } from "@esposter/shared";
 import { mkdtempSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
@@ -50,7 +51,7 @@ describe(createPlatformaticFsProvider, () => {
   test("overlay reads fall through to real disk until a virtual file shadows them", () => {
     expect.hasAssertions();
 
-    const dir = realpathSync(mkdtempSync(join(tmpdir(), TEST_TEMP_DIR_PREFIX)));
+    const dir = realpathSync(mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX)));
     const file = join(dir, TEST_FILE_NAME);
     writeFileSync(file, "");
     const { dispose, mount, writeFile } = createPlatformaticFsProvider({ isOverlayEnabled: true });

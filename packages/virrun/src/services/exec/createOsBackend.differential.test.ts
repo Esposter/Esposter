@@ -1,4 +1,5 @@
-import { TEST_FILE_NAME, TEST_TEMP_DIR_PREFIX } from "@/services/exec/constants.test";
+import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/constants";
+import { TEST_FILE_NAME } from "@/services/exec/constants.test";
 import { createOsBackend } from "@/services/exec/createOsBackend";
 import { createOsBaselineBackend } from "@/services/exec/createOsBaselineBackend.test";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
@@ -27,7 +28,7 @@ describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
   test("a write inside the sandbox never touches the host disk", async () => {
     expect.hasAssertions();
 
-    const dir = realpathSync(mkdtempSync(join(tmpdir(), TEST_TEMP_DIR_PREFIX)));
+    const dir = realpathSync(mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX)));
     const os = createOsBackend();
 
     const writeResult = await os.exec(`echo x > ${TEST_FILE_NAME}`, { cwd: dir, stdio: "pipe" });

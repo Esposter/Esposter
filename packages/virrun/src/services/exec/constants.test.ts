@@ -10,8 +10,6 @@ import { describe } from "vitest";
 export const TEST_REPO_ROOT_WIN: string = String.raw`C:\a`;
 export const TEST_WSL_PREFIX = "/wsl/";
 export const TEST_DIR = "/a";
-
-export const TEST_TEMP_DIR_PREFIX = "a-";
 export const TEST_FILE_NAME = "a";
 
 export const TEST_PNPM_STORE_PATH_WIN: string = `${TEST_REPO_ROOT_WIN}\\${VIRRUN_CACHE_DIRECTORY_NAME}\\${VIRRUN_STORE_DIRECTORY_NAME}\\${VIRRUN_PNPM_STORE_DIRECTORY_NAME}`;

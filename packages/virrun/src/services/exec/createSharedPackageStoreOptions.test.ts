@@ -6,8 +6,8 @@ import {
   VIRRUN_GITIGNORE_ENTRY,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
+  VIRRUN_TEMP_DIR_PREFIX,
 } from "@/services/exec/constants";
-import { TEST_TEMP_DIR_PREFIX } from "@/services/exec/constants.test";
 import { createSharedPackageStoreOptions } from "@/services/exec/createSharedPackageStoreOptions";
 import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -25,7 +25,7 @@ describe(createSharedPackageStoreOptions, () => {
   test("creates a shared pnpm store and returns sandbox mount options", () => {
     expect.hasAssertions();
 
-    dir = realpathSync(mkdtempSync(join(tmpdir(), TEST_TEMP_DIR_PREFIX)));
+    dir = realpathSync(mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX)));
     const storeDir = join(
       dir,
       VIRRUN_CACHE_DIRECTORY_NAME,
@@ -48,7 +48,7 @@ describe(createSharedPackageStoreOptions, () => {
   test("does not duplicate the cache ignore entry", () => {
     expect.hasAssertions();
 
-    dir = realpathSync(mkdtempSync(join(tmpdir(), TEST_TEMP_DIR_PREFIX)));
+    dir = realpathSync(mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX)));
     createSharedPackageStoreOptions(dir);
     createSharedPackageStoreOptions(dir);
 
@@ -58,7 +58,7 @@ describe(createSharedPackageStoreOptions, () => {
   test("adds the cache ignore entry on its own line after existing content", () => {
     expect.hasAssertions();
 
-    dir = realpathSync(mkdtempSync(join(tmpdir(), TEST_TEMP_DIR_PREFIX)));
+    dir = realpathSync(mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX)));
     writeFileSync(join(dir, ".gitignore"), "dist");
     createSharedPackageStoreOptions(dir);
 
