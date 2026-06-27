@@ -1,4 +1,5 @@
 import { OS_BACKEND_BENCH_TASK_NAME } from "@/services/exec/constants.bench";
+import { TEST_TEMP_DIR_PREFIX } from "@/services/exec/constants.test";
 import { createNativeBackend } from "@/services/exec/createNativeBackend";
 import { createOsBackend } from "@/services/exec/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
@@ -11,7 +12,7 @@ import { bench, describe } from "vitest";
 // Backend is judged on I/O-heavy workloads where the RAM upper earns its keep, hence the many-small-file
 // Write-then-read workload here. Compare runs against the colocated .bench.md.
 const native = createNativeBackend();
-const dir = realpathSync(mkdtempSync(join(tmpdir(), "os-bench-")));
+const dir = realpathSync(mkdtempSync(join(tmpdir(), TEST_TEMP_DIR_PREFIX)));
 const IO_COMMAND = "for i in $(seq 1 500); do echo data > f$i; done; cat f* > /dev/null";
 
 describe.skipIf(!isOsBackendSupported())("createOsBackend — many small file writes + reads (I/O-class)", () => {

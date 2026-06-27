@@ -1,3 +1,4 @@
+import { TEST_TEMP_DIR_PREFIX } from "@/services/exec/constants.test";
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, symlinkSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -12,7 +13,7 @@ import { describe } from "vitest";
 export const createWorkspaceCorpus = (repoRoot: string): string => {
   const cache = join(homedir(), ".cache");
   mkdirSync(cache, { recursive: true });
-  const corpus = mkdtempSync(join(cache, "sandbox-corpus-"));
+  const corpus = mkdtempSync(join(cache, TEST_TEMP_DIR_PREFIX));
   for (const manifest of ["package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml"])
     symlinkSync(join(repoRoot, manifest), join(corpus, manifest));
   const packages = join(repoRoot, "packages");

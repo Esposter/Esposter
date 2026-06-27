@@ -36,6 +36,7 @@ Never repeat the same literal value or object across tests. If 2+ tests (or rows
 - **Repeated event/envelope wrappers** — extract a `create*` helper taking only the varying payload: `const createEvent = (data: EventGridEvent["data"]): EventGridEvent => ({ data, dataVersion: "1.0", ... })`. Call sites pass `createEvent({ ... } satisfies PayloadType)` so the payload stays type-checked.
 - **Scope correctly** — values built from `beforeAll`/`beforeEach` state stay as `let`. Runtime-independent values (UUIDs, literals, static objects) go at `describe` scope as `const`. Never regenerate a UUID per test unless each test needs a unique one.
 - **No single-use extraction** — only extract when used 2+ times. A value used once stays inline.
+- **Consolidate Path and Directory Fixtures** — when tests use temporary directory prefixes, non-existent directories, test file names, or test repo paths, consolidate them into `constants.test.ts` (or equivalent test constants file) using the simplest elegant values (e.g. `TEST_TEMP_DIR_PREFIX = "a-"`, `TEST_NON_EXISTENT_DIR = "/a"`, `TEST_FILE_NAME = "a"`). Reuse these constants across all tests instead of hardcoding raw path strings, file names, or using diverse custom prefixes.
 
 ## Canonical Test Values
 
