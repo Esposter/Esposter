@@ -56,7 +56,7 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
         with:
-          enable-bubblewrap-sandbox: "true"
+          bubblewrap-sandbox: "true"
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
