@@ -2,6 +2,7 @@
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { StdioOptions } from "node:child_process";
 
+import { BackendType } from "@/models/virrun/BackendType";
 import { parseBwrapExitCode } from "@/services/exec/bwrap/parseBwrapExitCode";
 import { parseBwrapStderrStatus } from "@/services/exec/bwrap/parseBwrapStderrStatus";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -60,5 +61,5 @@ export const createBwrapBackend = (
         else resolve({ exitCode, stderr: bwrapStderr.stderr, stdout });
       });
     }),
-  name: "os",
+  name: BackendType.Os,
 });

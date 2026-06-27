@@ -1,5 +1,6 @@
 ﻿import type { ExecBackend } from "@/models/exec/ExecBackend";
 
+import { BackendType } from "@/models/virrun/BackendType";
 import { toExitCode } from "@/services/exec/util/toExitCode";
 import { spawn } from "node:child_process";
 // The only backend today: run the real command on the host, unchanged. It does not isolate or
@@ -30,5 +31,5 @@ export const createNativeBackend = (): ExecBackend => ({
         resolve({ exitCode: toExitCode(code, signal), stderr, stdout });
       });
     }),
-  name: "native",
+  name: BackendType.Native,
 });

@@ -1,5 +1,6 @@
 ﻿import type { ExecOptions } from "@/models/exec/ExecOptions";
 
+import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
@@ -48,7 +49,7 @@ afterAll(() => {
 });
 
 describe.skipIf(!isOsSupported)("install - real workspace dependency closure (cold)", () => {
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(`${cleanModules}; ${INSTALL}`, { cwd: nativeCorpus, stdio: "pipe" });
   });
 
@@ -59,7 +60,7 @@ describe.skipIf(!isOsSupported)("install - real workspace dependency closure (co
 
 describe.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", () => {
   const command = cold("rm -f *.tsbuildinfo", "pnpm typecheck");
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
@@ -70,7 +71,7 @@ describe.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", () => {
 
 describe.skipIf(!isOsSupported)("build - packages/shared (cold)", () => {
   const command = cold("rm -rf dist *.tsbuildinfo", "pnpm build");
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
@@ -81,7 +82,7 @@ describe.skipIf(!isOsSupported)("build - packages/shared (cold)", () => {
 
 describe.skipIf(!isOsSupported)("test - packages/shared", () => {
   const command = "pnpm test --run";
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 

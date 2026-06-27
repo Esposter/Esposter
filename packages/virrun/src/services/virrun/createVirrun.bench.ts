@@ -1,3 +1,4 @@
+import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { bench, describe } from "vitest";
@@ -12,7 +13,7 @@ const nativeBackend = createNativeBackend();
 const virrun = await createVirrun();
 
 describe("createVirrun exec vs native baseline", () => {
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await nativeBackend.exec(COMMAND, { cwd: "", stdio: "pipe" });
   });
 

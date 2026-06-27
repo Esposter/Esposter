@@ -27,7 +27,9 @@ export const createVirrun = async ({
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
   const execBackend = backendFactories[backend]();
   const { cwd, dispose } = await loadSource(source);
-  const sharedPackageStoreOptions = backend === BackendType.Os ? createSharedPackageStoreOptions(cwd) : {};
+  // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store
+  // (bindDirs/PNPM_CONFIG_*) must still be injected, otherwise the os path runs without its host cache.
+  const sharedPackageStoreOptions = execBackend.name === BackendType.Os ? createSharedPackageStoreOptions(cwd) : {};
   return {
     backend: execBackend.name,
     dispose,

@@ -1,5 +1,6 @@
 import type { ExecResult } from "@/models/exec/ExecResult";
 
+import { BackendType } from "@/models/virrun/BackendType";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { spawn } from "node:child_process";
 import { constants } from "node:os";
@@ -44,6 +45,6 @@ describe(createVirrun, () => {
     const { backend, dispose } = await createVirrun();
     await dispose();
 
-    expect(backend).toBe("native");
+    expect(backend).toBe(BackendType.Native);
   });
 });

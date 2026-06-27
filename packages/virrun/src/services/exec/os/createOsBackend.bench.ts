@@ -1,4 +1,5 @@
-﻿import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
+﻿import { BackendType } from "@/models/virrun/BackendType";
+import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
@@ -15,7 +16,7 @@ const dir = realpathSync(mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX)));
 const IO_COMMAND = "for i in $(seq 1 500); do echo data > f$i; done; cat f* > /dev/null";
 
 describe.skipIf(!isOsBackendSupported())("createOsBackend - many small file writes + reads (I/O-class)", () => {
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(IO_COMMAND, { cwd: dir, stdio: "pipe" });
   });
 

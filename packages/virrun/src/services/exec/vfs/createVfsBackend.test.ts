@@ -1,3 +1,4 @@
+import { BackendType } from "@/models/virrun/BackendType";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { describe, expect, test } from "vitest";
 
@@ -24,6 +25,6 @@ describe(createVfsBackend, () => {
   test("identifies itself as the vfs backend", () => {
     expect.hasAssertions();
 
-    expect(createVfsBackend().name).toBe("vfs");
+    expect(createVfsBackend().name).toBe(BackendType.Vfs);
   });
 });

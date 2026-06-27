@@ -1,5 +1,6 @@
 ﻿import type { ExecBackend } from "@/models/exec/ExecBackend";
 
+import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { parseNodeInvocation } from "@/services/exec/vfs/parseNodeInvocation";
 import { runNodeInProcess } from "@/services/exec/vfs/runNodeInProcess";
@@ -17,6 +18,6 @@ export const createVfsBackend = (): ExecBackend => {
       const result = runNodeInProcess(invocation, options);
       return result ? Promise.resolve(result) : native.exec(command, options);
     },
-    name: "vfs",
+    name: BackendType.Vfs,
   };
 };

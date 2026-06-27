@@ -1,5 +1,6 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 
+import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { toExitCode } from "@/services/exec/util/toExitCode";
@@ -34,7 +35,7 @@ export const createOsBaselineBackend = (): ExecBackend => {
           resolve({ exitCode: toExitCode(code, signal), stderr, stdout });
         });
       }),
-    name: "os-baseline",
+    name: BackendType.Os,
   };
 };
 

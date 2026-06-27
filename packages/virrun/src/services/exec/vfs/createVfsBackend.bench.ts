@@ -1,4 +1,5 @@
-﻿import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
+﻿import { BackendType } from "@/models/virrun/BackendType";
+import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { mkdtempSync, realpathSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -19,31 +20,31 @@ writeFileSync(join(dir, "bench.cjs"), "process.stdout.write('bench')");
 const FILE_COMMAND = "node bench.cjs";
 
 describe("createVfsBackend - in-process node -e vs native spawn (hot path)", () => {
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(EVAL_COMMAND, { cwd: "", stdio: "pipe" });
   });
 
-  bench("vfs", async () => {
+  bench(BackendType.Vfs, async () => {
     await vfs.exec(EVAL_COMMAND, { cwd: "", stdio: "pipe" });
   });
 });
 
 describe("createVfsBackend - in-process node <file> vs native spawn (hot path)", () => {
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(FILE_COMMAND, { cwd: dir, stdio: "pipe" });
   });
 
-  bench("vfs", async () => {
+  bench(BackendType.Vfs, async () => {
     await vfs.exec(FILE_COMMAND, { cwd: dir, stdio: "pipe" });
   });
 });
 
 describe("createVfsBackend - fall-back command vs native (no added overhead)", () => {
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(FALLBACK_COMMAND, { cwd: "", stdio: "pipe" });
   });
 
-  bench("vfs", async () => {
+  bench(BackendType.Vfs, async () => {
     await vfs.exec(FALLBACK_COMMAND, { cwd: "", stdio: "pipe" });
   });
 });
