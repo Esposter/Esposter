@@ -1,3 +1,4 @@
+/* oxlint-disable no-inferrable-types */
 export const WSL_BWRAP_STATUS_BEGIN = "\n__VIRRUN_BWRAP_STATUS_BEGIN__\n";
 export const WSL_BWRAP_STATUS_END = "\n__VIRRUN_BWRAP_STATUS_END__\n";
 
