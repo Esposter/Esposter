@@ -9,37 +9,44 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-26T04:45:13.545Z
-- Commit: 39ce2309e
+- Date: 2026-06-28T07:08:35.035Z
+- Commit: 99b4ff094
 - Node: v26.4.0
-- OS: linux 6.6.87.2-microsoft-standard-WSL2 (x64)
-- CPU: AMD Ryzen 7 7730U with Radeon Graphics × 16
-- RAM: 19.0 GiB
+- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
+- RAM: 15.6 GiB
 
-## install — real workspace dependency closure (cold)
+## install - real workspace dependency closure (cold)
 
-| task   | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
-| ------ | ------- | ---------- | ------ | ---------- | ------- |
-| native | 1.00×   | 11784.6539 | ±4.68% | 12848.5461 | 10      |
-| os     | 1.67×   | 7046.8185  | ±4.39% | 7945.5021  | 10      |
+| task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
+| -------- | ------- | --------- | ------ | --------- | ------- |
+| native   | 1.00×   | 6896.9936 | ±1.68% | 7217.9279 | 10      |
+| os/linux | 1.76×   | 3927.5910 | ±2.11% | 4164.9381 | 10      |
 
-## typecheck — packages/shared (cold)
+## install - warm fork vs cold reinstall
 
-| task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
-| ------ | ------- | --------- | ------ | --------- | ------- |
-| native | 1.00×   | 1521.3984 | ±2.74% | 1625.6366 | 10      |
-| os     | 1.88×   | 807.5415  | ±3.74% | 870.7235  | 10      |
+| task | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
+| ---- | ------- | --------- | ------ | --------- | ------- |
+| cold | 1.00×   | 4130.2506 | ±5.00% | 4894.3918 | 10      |
+| warm | 5.80×   | 712.2315  | ±3.42% | 774.8889  | 10      |
 
-## build — packages/shared (cold)
+## typecheck - packages/shared (cold)
 
-| task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
-| ------ | ------- | --------- | ------ | --------- | ------- |
-| native | 1.00×   | 5960.5542 | ±5.54% | 7110.5364 | 10      |
-| os     | 8.71×   | 684.5376  | ±0.89% | 697.3657  | 10      |
+| task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
+| -------- | ------- | --------- | ------ | --------- | ------- |
+| native   | 1.00×   | 1107.8038 | ±5.41% | 1249.6178 | 10      |
+| os/linux | 1.85×   | 597.7209  | ±0.66% | 605.9723  | 10      |
 
-## test — packages/shared
+## build - packages/shared (cold)
 
-| task   | vs base | mean (ms) | ±rme    | p99 (ms)  | samples |
-| ------ | ------- | --------- | ------- | --------- | ------- |
-| native | 1.00×   | 3247.9907 | ±9.60%  | 4460.0715 | 10      |
-| os     | 4.17×   | 779.0937  | ±13.50% | 1170.1813 | 10      |
+| task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
+| -------- | ------- | --------- | ------ | --------- | ------- |
+| native   | 1.00×   | 4711.2869 | ±2.69% | 5129.1209 | 10      |
+| os/linux | 7.93×   | 594.0210  | ±1.25% | 611.0220  | 10      |
+
+## test - packages/shared
+
+| task     | vs base | mean (ms) | ±rme    | p99 (ms)  | samples |
+| -------- | ------- | --------- | ------- | --------- | ------- |
+| native   | 1.00×   | 2480.4010 | ±14.42% | 3447.3266 | 10      |
+| os/linux | 3.75×   | 661.0482  | ±7.79%  | 827.6722  | 10      |

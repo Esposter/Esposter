@@ -34,7 +34,7 @@ class MemoryStorage implements Storage {
 globalThis.localStorage = new MemoryStorage();
 globalThis.sessionStorage = new MemoryStorage();
 
-vi.mock("@@/server/composables/azure/container/useContainerBaseUrl", () => ({
+vi.mock(import("@@/server/composables/azure/container/useContainerBaseUrl"), () => ({
   useContainerBaseUrl: () => MOCK_BLOB_BASE_URL,
 }));
 

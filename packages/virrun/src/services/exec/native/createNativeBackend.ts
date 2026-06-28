@@ -1,0 +1,42 @@
+import type { ExecBackend } from "@/models/exec/ExecBackend";
+
+import { BackendType } from "@/models/virrun/BackendType";
+import { toExitCode } from "@/services/exec/util/toExitCode";
+import { spawn } from "node:child_process";
+// The only backend today: run the real command on the host, unchanged. It does not isolate or
+// Virtualize anything - it is the baseline the future `vfs`/`os` backends must beat on speed and
+// Match on correctness, and the fallback every higher backend defers to when it can't run a command.
+export const createNativeBackend = (): ExecBackend => ({
+  exec: (command, options) =>
+    new Promise((resolve, reject) => {
+      // A string runs through the shell (operator passthrough); an argv array runs the file directly
+      // With shell: false so data-built commands can't be reinterpreted as shell metacharacters or
+      // Git options. Both forms share the same capture + exit-code handling below.
+      const [file, ...args] = Array.isArray(command) ? command : [command];
+      const isWindows = process.platform === "win32";
+      const spawnFile = isWindows && Array.isArray(command) ? "cmd.exe" : file;
+      const spawnArgs = isWindows && Array.isArray(command) ? ["/d", "/s", "/c", file, ...args] : args;
+      const child = spawn(spawnFile, spawnArgs, {
+        cwd: options.cwd === "" ? undefined : options.cwd,
+        // Inherit the host env, with options.env merged over it (the `VIRRUN` signal, and anything else the
+        // Orchestrator passes) — the same contract the bwrap backend honors, so the native path and the
+        // Sandbox expose an identical environment to the command.
+        env: { ...process.env, ...options.env },
+        shell: !Array.isArray(command),
+        stdio: options.stdio,
+      });
+      let stdout = "";
+      let stderr = "";
+      child.stdout?.on("data", (chunk) => {
+        stdout += chunk.toString();
+      });
+      child.stderr?.on("data", (chunk) => {
+        stderr += chunk.toString();
+      });
+      child.on("error", reject);
+      child.on("close", (code, signal) => {
+        resolve({ exitCode: toExitCode(code, signal), stderr, stdout });
+      });
+    }),
+  name: BackendType.Native,
+});

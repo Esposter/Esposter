@@ -1,18 +1,29 @@
-import type { ExecOptions } from "@/models/exec/ExecOptions";
+﻿import type { ExecOptions } from "@/models/exec/ExecOptions";
 
-import { createNativeBackend } from "@/services/exec/createNativeBackend";
-import { createOsBackend } from "@/services/exec/createOsBackend";
-import { createWorkspaceCorpus } from "@/services/exec/createWorkspaceCorpus.test";
-import { findRepoRoot } from "@/services/exec/findRepoRoot.test";
-import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
+import { BackendType } from "@/models/virrun/BackendType";
+import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
+import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
+import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
+import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { removeSnapshotLocation } from "@/services/exec/snapshot/removeSnapshotLocation";
+import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
+import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
+import {
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+  PNPM_CONFIG_STORE_DIR_KEY,
+} from "@/services/exec/util/constants";
+import { OS_BACKEND_BENCH_TASK_NAME } from "@/services/exec/util/constants.bench";
 import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, bench, describe } from "vitest";
 // End-to-end speed gate: native vs os backend on real monorepo commands. Each group is a native-vs-os
-// Comparison, so the whole group is gated on isOsSupported — a host without overlayfs (Windows, some WSL2
-// Builds) can't run the os side, and a native-only group is an incomplete comparison we don't want to emit.
-const isOsSupported = isOsBackendSupported();
+// Comparison, so the whole group is gated on direct Linux support - a WSL host can benchmark the core
+// Backend in createOsBackend.bench.ts, but this macro path needs the full Linux package-manager toolchain.
+const isOsSupported = process.platform === "linux" && isOsBackendSupported();
 const native = createNativeBackend();
 const repoRoot = isOsSupported ? findRepoRoot() : "";
 // Bind the warm global pnpm store writable into the os sandbox (the shipped store mechanism) so it reuses
@@ -21,13 +32,17 @@ const store = isOsSupported ? execFileSync("pnpm", ["store", "path"], { cwd: rep
 const osInstallOptions: ExecOptions = {
   bindDirs: [store],
   cwd: "",
-  env: { npm_config_store_dir: store },
+  env: {
+    [PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY]: PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+    [PNPM_CONFIG_STORE_DIR_KEY]: store,
+  },
   isNetworkEnabled: true,
   stdio: "pipe",
 };
 // Separate corpora so native's on-disk node_modules don't warm the os run.
 const nativeCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const osCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
+const warmCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const INSTALL = "pnpm install --frozen-lockfile --config.package-import-method=copy";
 const cleanModules = "find . -name node_modules -type d -prune -exec rm -rf {} +";
 // Clear caches before each run so neither side benefits from incremental state.
@@ -35,48 +50,69 @@ const SHARED = join(repoRoot, "packages/shared");
 const cold = (clean: string, command: string): string => `${clean} 2>/dev/null; ${command}`;
 
 afterAll(() => {
-  for (const corpus of [nativeCorpus, osCorpus]) if (corpus) rmSync(corpus, { force: true, recursive: true });
+  // Resolve the snapshot before removing warmCorpus (its lockfile keys the cache entry), then clear it.
+  if (isOsSupported) removeSnapshotLocation(resolveSnapshotLocation(warmCorpus));
+  for (const corpus of [nativeCorpus, osCorpus, warmCorpus])
+    if (corpus) rmSync(corpus, { force: true, recursive: true });
 });
 
-describe.skipIf(!isOsSupported)("install — real workspace dependency closure (cold)", () => {
-  bench("native", async () => {
+describe.skipIf(!isOsSupported)("install - real workspace dependency closure (cold)", () => {
+  bench(BackendType.Native, async () => {
     await native.exec(`${cleanModules}; ${INSTALL}`, { cwd: nativeCorpus, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: osCorpus });
   });
 });
 
-describe.skipIf(!isOsSupported)("typecheck — packages/shared (cold)", () => {
+// The snapshot payoff: capture the install once, then a forked run reuses the dep tree instead of
+// Reinstalling. `cold` is the os backend reinstalling from a fresh tmpfs upper every run; `warm` forks the
+// Captured snapshot, so it should dwarf the cold baseline - that gap is the entire reason this layer exists.
+// Capture the warm snapshot at module scope, not in beforeAll: Vitest fires bench() callbacks before suite
+// Hooks resolve, so a beforeAll snapshot wouldn't exist yet when the warm fork runs - forkSnapshot would throw
+// And the empty sample set yields a NaN mean. Top-level await guarantees the upper layer is materialized first.
+if (isOsSupported) await createSnapshot(createOsBackend(), INSTALL, { ...osInstallOptions, cwd: warmCorpus });
+
+describe.skipIf(!isOsSupported)("install - warm fork vs cold reinstall", () => {
+  bench("cold", async () => {
+    await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: warmCorpus });
+  });
+
+  bench("warm", async () => {
+    await forkSnapshot(createOsBackend(), INSTALL, { ...osInstallOptions, cwd: warmCorpus });
+  });
+});
+
+describe.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", () => {
   const command = cold("rm -f *.tsbuildinfo", "pnpm typecheck");
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });
 
-describe.skipIf(!isOsSupported)("build — packages/shared (cold)", () => {
+describe.skipIf(!isOsSupported)("build - packages/shared (cold)", () => {
   const command = cold("rm -rf dist *.tsbuildinfo", "pnpm build");
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });
 
-describe.skipIf(!isOsSupported)("test — packages/shared", () => {
+describe.skipIf(!isOsSupported)("test - packages/shared", () => {
   const command = "pnpm test --run";
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });

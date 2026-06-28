@@ -39,7 +39,7 @@
   "scripts": {
     "analyze": "nuxt analyze",
     "bench": "vitest bench --run",
-    "build": "NODE_OPTIONS=--max-old-space-size=8192 nuxt build",
+    "build": "nuxt build",
     "cleanup": "nuxt cleanup",
     "dev": "nuxt dev",
     "env:gen": "pnpx gen-env-types .env -o shared/types/env.d.ts -e .",
@@ -47,10 +47,10 @@
     "format:check": "oxfmt --check",
     "generate": "nuxt generate",
     "generate-pwa-assets": "pnpx pwa-asset-generator https://prodstesposter001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
-    "lint": "NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --config eslint.light.config.js .",
-    "lint:all": "NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint .",
-    "lint:all:fix": "NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --fix .",
-    "lint:fix": "NODE_OPTIONS=--max-old-space-size=8192 TIMING=1 eslint --config eslint.light.config.js --fix .",
+    "lint": "TIMING=1 eslint --config eslint.light.config.js .",
+    "lint:all": "TIMING=1 eslint .",
+    "lint:all:fix": "TIMING=1 eslint --fix .",
+    "lint:fix": "TIMING=1 eslint --config eslint.light.config.js --fix .",
     "phaser:gen": "tsx --tsconfig tsconfig.root.json scripts/phaser/index.ts",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
@@ -58,7 +58,7 @@
     "start": "node .output/server/index.mjs",
     "test": "vitest",
     "tiled:gen": "tsx --tsconfig tsconfig.root.json scripts/tiled/index.ts",
-    "typecheck": "NODE_OPTIONS=--max-old-space-size=8192 nuxt typecheck"
+    "typecheck": "nuxt typecheck"
   },
   "dependencies": {
     "@2toad/profanity": "catalog:",

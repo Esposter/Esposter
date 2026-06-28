@@ -30,7 +30,8 @@
     "virrun": "dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "schema.json"
   ],
   "type": "module",
   "main": "dist/index.js",
@@ -57,6 +58,7 @@
     "@platformatic/vfs": "catalog:",
     "@types/node": "catalog:",
     "ctix": "catalog:",
+    "empathic": "catalog:",
     "rolldown": "catalog:",
     "vitest": "catalog:"
   }

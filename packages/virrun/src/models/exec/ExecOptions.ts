@@ -1,3 +1,5 @@
+import type { OverlayLayers } from "@/models/exec/OverlayLayers";
+
 export interface ExecOptions {
   // Host directories to bind writable into the sandbox (os backend only). Used for intentional host
   // Caches such as the shared package store.
@@ -10,6 +12,10 @@ export interface ExecOptions {
   // Whether the sandbox keeps network access (os backend only). Off by default for full isolation;
   // Real installs need it on for registry fetches and supply-chain verification.
   isNetworkEnabled?: boolean;
+  // How the working dir's RAM overlay is layered (os backend only). Default (omitted) is ephemeral — reads
+  // Fall through to the source, writes vanish in tmpfs. A capture run sets upperDir/workDir so post-install
+  // Writes persist into the snapshot; a fork run sets lowerDirs to stack a captured snapshot read-only.
+  overlayLayers?: OverlayLayers;
   stdio: ExecStdio;
 }
 

@@ -1,6 +1,10 @@
 name: Setup Project Dependencies
 description: Checkout repository, install pnpm and setup node
 inputs:
+  bubblewrap-sandbox:
+    description: Install bubblewrap and enable unprivileged user namespaces for test/bench jobs that exercise the virrun os backend
+    required: false
+    default: "false"
   node-version-file:
     description: Path to file containing node version
     required: false
@@ -27,7 +31,19 @@ runs:
 
     - name: 📦 Install pnpm
       uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
-
+    # GitHub's Ubuntu image ships neither bubblewrap nor permissive unprivileged user namespaces, so the
+    # virrun os-backend suites would self-gate and silently skip. Test/bench jobs opt into this so the
+    # sandbox is available before Vitest collects host-capability checks.
+    - name: 📦 Enable bubblewrap sandbox
+      if: ${{ inputs.bubblewrap-sandbox == 'true' }}
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y bubblewrap
+        sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+        dir="$(mktemp -d)"
+        bwrap --unshare-all --die-with-parent --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp \
+          --overlay-src "$dir" --tmp-overlay "$dir" --chdir "$dir" -- true
     # Re-run setup-node now that pnpm exists, solely to wire up the pnpm store cache (Node is already installed,
     # so this pass is effectively just the cache restore/save).
     - name: 🛠️ Setup node (pnpm cache)

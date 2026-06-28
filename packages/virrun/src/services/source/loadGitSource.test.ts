@@ -1,5 +1,5 @@
 import { SourceType } from "@/models/source/SourceType";
-import { createNativeBackend } from "@/services/exec/createNativeBackend";
+import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { loadGitSource } from "@/services/source/loadGitSource";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";

@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "src/services/exec/os/createOsBackend.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 20.6278448,
+              "name": "native",
+              "p99": 21.12134900000001,
+              "rme": 1.0070420249251781,
+              "sampleCount": 10
+            },
+            {
+              "mean": 38.56030439999999,
+              "name": "os/linux",
+              "p99": 40.27956199999994,
+              "rme": 1.792972554199428,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "createOsBackend - many small file writes + reads (I/O-class)"
+        }
+      ]
+    }
+  ]
+}

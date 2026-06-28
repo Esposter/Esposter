@@ -1,5 +1,6 @@
 import type { ExecResult } from "@/models/exec/ExecResult";
 
+import { BackendType } from "@/models/virrun/BackendType";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { spawn } from "node:child_process";
 import { constants } from "node:os";
@@ -13,10 +14,10 @@ const runNative = (command: string): Promise<ExecResult> =>
     const child = spawn(command, { shell: true, stdio: "pipe" });
     let stdout = "";
     let stderr = "";
-    child.stdout.on("data", (chunk: Buffer) => {
+    child.stdout.on("data", (chunk) => {
       stdout += chunk.toString();
     });
-    child.stderr.on("data", (chunk: Buffer) => {
+    child.stderr.on("data", (chunk) => {
       stderr += chunk.toString();
     });
     child.on("error", reject);
@@ -38,12 +39,36 @@ describe(createVirrun, () => {
     expect(sandboxResult).toStrictEqual(nativeResult);
   });
 
+  test("injects the VIRRUN presence signal into the command environment", async () => {
+    expect.hasAssertions();
+
+    const command = `node -e "process.stdout.write(process.env.VIRRUN ?? 'unset')"`;
+    const { dispose, exec } = await createVirrun();
+    const { stdout } = await exec(command);
+    await dispose();
+
+    expect(stdout).toBe("true");
+  });
+
   test("defaults to the native backend", async () => {
     expect.hasAssertions();
 
     const { backend, dispose } = await createVirrun();
     await dispose();
 
-    expect(backend).toBe("native");
+    expect(backend).toBe(BackendType.Native);
+  });
+
+  test("fork falls through to exec on a non-os backend, with no snapshot layer", async () => {
+    expect.hasAssertions();
+
+    const command = `node -e "process.stdout.write('forked')"`;
+    // Pin a non-os backend explicitly so this stays on the fallback branch even if Auto later resolves to Os.
+    const { dispose, fork } = await createVirrun({ backend: BackendType.Native });
+    const forkResult = await fork(command);
+    const nativeResult = await runNative(command);
+    await dispose();
+
+    expect(forkResult).toStrictEqual(nativeResult);
   });
 });
