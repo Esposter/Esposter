@@ -10,8 +10,8 @@ import { readFileSync } from "node:fs";
 // A fully valid state: the backend resolver then defaults to Auto (native today), so a prefixed command runs
 // Exactly as if no config were present. A present-but-malformed config throws (via the parser) so a typo fails
 // Loud instead of silently changing the backend.
-export const resolveVirrunConfiguration = (cwd: string): undefined | VirrunConfiguration => {
+export const resolveVirrunConfiguration = (cwd = ""): undefined | VirrunConfiguration => {
   const configurationFile = file(VIRRUN_CONFIGURATION_FILENAME, { cwd: resolveCwd(cwd) });
   if (configurationFile === undefined) return undefined;
-  return parseVirrunConfiguration(readFileSync(configurationFile, "utf8"));
+  else return parseVirrunConfiguration(readFileSync(configurationFile, "utf8"));
 };

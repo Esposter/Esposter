@@ -24,7 +24,8 @@ const main = async (): Promise<void> => {
     process.exitCode = 1;
     return;
   }
-  const backend = resolveBackend(resolveVirrunConfiguration(""));
+  const configuration = resolveVirrunConfiguration();
+  const backend = resolveBackend(configuration);
   const virrun = await createVirrun({ backend });
   const { exitCode } = await withFinalizerAsync(
     () => virrun.exec(command, "inherit"),

@@ -10,6 +10,6 @@ import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 // Host-support arm of the net.
 export const resolveBackend = (configuration: undefined | VirrunConfiguration): BackendType => {
   if (configuration === undefined) return BackendType.Auto;
-  if (configuration.backend === BackendType.Os && !isOsBackendSupported()) return configuration.fallback;
-  return configuration.backend;
+  else if (configuration.backend === BackendType.Os && !isOsBackendSupported()) return configuration.fallback;
+  else return configuration.backend;
 };
