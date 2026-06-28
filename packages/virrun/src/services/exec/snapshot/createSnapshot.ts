@@ -15,7 +15,7 @@ import { mkdirSync } from "node:fs";
 // Entry stays the key even if the install rewrote the lockfile — otherwise the captured upper would orphan
 // Under the old hash while we report the new one. On failure (non-zero exit or a throw) the partial/empty
 // Upper is removed so it is never read back as a usable snapshot.
-export const createSnapshot = async (
+export const createSnapshot = (
   backend: ExecBackend,
   command: readonly string[] | string,
   options: ExecOptions,
@@ -37,7 +37,7 @@ export const createSnapshot = async (
   }).match(
     (value) => value,
     (error) => {
-      // removeSnapshotLocation (not a plain rmSync) — capture leaves the overlay's `work/work` scratch at mode
+      // RemoveSnapshotLocation (not a plain rmSync) — capture leaves the overlay's `work/work` scratch at mode
       // 000, which a recursive remove EACCES-es on without the chmod-first teardown.
       removeSnapshotLocation(location);
       throw error;
