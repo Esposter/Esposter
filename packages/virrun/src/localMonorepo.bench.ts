@@ -19,7 +19,7 @@ import { OS_BACKEND_BENCH_TASK_NAME } from "@/services/exec/util/constants.bench
 import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { afterAll, beforeAll, bench, describe } from "vitest";
+import { afterAll, bench, describe } from "vitest";
 // End-to-end speed gate: native vs os backend on real monorepo commands. Each group is a native-vs-os
 // Comparison, so the whole group is gated on direct Linux support - a WSL host can benchmark the core
 // Backend in createOsBackend.bench.ts, but this macro path needs the full Linux package-manager toolchain.
@@ -69,11 +69,12 @@ describe.skipIf(!isOsSupported)("install - real workspace dependency closure (co
 // The snapshot payoff: capture the install once, then a forked run reuses the dep tree instead of
 // Reinstalling. `cold` is the os backend reinstalling from a fresh tmpfs upper every run; `warm` forks the
 // Captured snapshot, so it should dwarf the cold baseline - that gap is the entire reason this layer exists.
-describe.skipIf(!isOsSupported)("install - warm fork vs cold reinstall", () => {
-  beforeAll(async () => {
-    await createSnapshot(createOsBackend(), INSTALL, { ...osInstallOptions, cwd: warmCorpus });
-  });
+// Capture the warm snapshot at module scope, not in beforeAll: Vitest fires bench() callbacks before suite
+// Hooks resolve, so a beforeAll snapshot wouldn't exist yet when the warm fork runs - forkSnapshot would throw
+// And the empty sample set yields a NaN mean. Top-level await guarantees the upper layer is materialized first.
+if (isOsSupported) await createSnapshot(createOsBackend(), INSTALL, { ...osInstallOptions, cwd: warmCorpus });
 
+describe.skipIf(!isOsSupported)("install - warm fork vs cold reinstall", () => {
   bench("cold", async () => {
     await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: warmCorpus });
   });
