@@ -34,12 +34,12 @@ Wall-clock (primary), plus peak RAM, disk written (should be ~0 for RAM FS), and
 
 - Same host, same corpus, alternate sandbox vs baseline to cancel drift.
 - Control the OS page cache between cold runs (drop caches) so "cold" is honest.
-- Bench both backends; `vfs` and `os` have different cost profiles.
+- Bench both backends; `vfs` and `os` have different cost profiles. The `os` bench files stay shared across hosts, but label the sandbox task by bridge (`os/linux`, `os/wsl`) and rely on the markdown Environment block for the exact kernel/runner. Do not duplicate benchmark logic into `.linux.bench.ts` / `.wsl.bench.ts` files unless the workload itself must differ.
 - Track results over time (regressions are bugs). CI-enforcement is deferred until a backend can actually regress → [../deferred/ci-bench-gate.md](../deferred/ci-bench-gate.md); the committed results file (below) is the interim regression check.
 
 ## Results file
 
-`pnpm bench` (Vitest `bench`, stats via `tinybench`) writes **colocated per-file artifacts** — `Foo.bench.ts` → `Foo.bench.json` + `Foo.bench.md` beside it, each the tracked source of truth for that file (no merged `bench/results.*`). Each md records environment metadata (date, **commit**, Node version, OS + release, arch, CPU model + core count, RAM) and, per group, a latency table (mean / ±rme / p99 / ops-sec / samples per task) plus the `vs base` multiplier against the baseline task (native = `1.00×`). Regenerate before committing and diff the multipliers. Numbers are machine-dependent — only compare runs from the same host (one dev's Windows box today; CI Linux numbers will differ).
+`pnpm bench` (Vitest `bench`, stats via `tinybench`) writes **colocated per-file artifacts** — `Foo.bench.ts` → `Foo.bench.json` + `Foo.bench.md` beside it, each the tracked source of truth for that file (no merged `bench/results.*`). Each md records environment metadata (date, **commit**, Node version, OS + release, arch, CPU model + core count, RAM) and, per group, a latency table (mean / ±rme / p99 / samples per task) plus the `vs base` multiplier against the baseline task (native = `1.00×`). Regenerate before committing and diff the multipliers. Numbers are machine-dependent — only compare runs from the same host; Linux, WSL2, and future macOS VM results are intentionally separate datapoints even when produced by the same `.bench.ts` file.
 
 ## Constraints / Notes
 

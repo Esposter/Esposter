@@ -26,18 +26,18 @@ flowchart TB
         api --> pick{"BackendType\nselect"}
         pick -->|Auto / Native| native["Native backend\nspawn on host"]
         pick -->|Vfs · opt-in| vfs["Vfs backend\nin-process node -e / node &lt;file&gt;"]
-        pick -.->|Os · Phase 2| os["Os backend\nisolated process exec"]
+        pick -->|Os · Phase 2| os["Os backend\nisolated process exec"]
     end
 
     native --> disk[("REAL disk\n(subprocesses see this)")]
     vfs --> fsp["FsProvider\n→ @platformatic/vfs (reuse)\n→ node:vfs swap"]
     fsp --> vmem[("in-process virtual FS\n(only this process sees it)")]
-    os --> sandboxprim["bubblewrap / nsjail / microVM"]
+    os --> sandboxprim["bubblewrap\nLinux direct / Windows WSL2"]
     sandboxprim --> ram[("tmpfs + overlayfs\nRAM FS — every process sees it")]
     os -.-> snap["snapshot + warm-fork\nPhase 3 · CRIU / microVM"]
 
     classDef planned stroke-dasharray:4 4,opacity:0.75;
-    class os,sandboxprim,ram,snap planned;
+    class snap planned;
 ```
 
 Why the three FS endpoints differ is the **subprocess wall** — the single fact that splits the product into backends. See it spelled out below.
@@ -78,7 +78,7 @@ node process ──fs calls──► node:vfs        ✅ sees virtual files
 A real toolchain (`pnpm install`, native postinstall like sharp/esbuild) is mostly spawned subprocesses. So an in-process VFS alone **cannot** put a real install in RAM. This single fact splits the product into two execution backends:
 
 - **`vfs` backend** — in-process, node:vfs-backed. Pure-npm, cross-platform, no native subprocess. Good for sandboxing/evaluating pure-JS, module-loading tricks, lightweight runs.
-- **`os` backend** — OS-level RAM filesystem (`tmpfs` + `overlayfs`) under an OS sandbox (`bubblewrap`/`nsjail`/microVM). Every process, including native binaries, sees the RAM FS. This is the **generic any-repo** path. Linux-core; Windows/macOS run it inside WSL2 / a microVM.
+- **`os` backend** — OS-level RAM filesystem (`tmpfs` + `overlayfs`) under an OS sandbox (`bubblewrap` today; `nsjail`/microVM deferred). Every process, including native binaries, sees the RAM FS. This is the **generic any-repo** path. Linux-core; Windows reaches it through WSL2, while macOS still needs a VM bridge.
 
 See [specs/exec-isolation.md](specs/exec-isolation.md) for both.
 
@@ -98,7 +98,8 @@ See [specs/exec-isolation.md](specs/exec-isolation.md) for both.
 | Host              | Fast path                                  |
 | ----------------- | ------------------------------------------ |
 | Linux             | native: tmpfs + overlayfs + sandbox + CRIU |
-| Windows / macOS   | inside WSL2 or a Firecracker microVM       |
+| Windows           | WSL2 bridge into Linux bwrap               |
+| macOS             | Firecracker or lightweight Linux VM bridge |
 | Anywhere, JS-only | `vfs` backend, pure node, no OS features   |
 
 A pure-TS, cross-platform engine that runs **native** binaries against a RAM FS does not exist and cannot — accept Linux core + VM bridge elsewhere. The `vfs` backend is the only truly cross-platform mode, and it is JS-only by nature.

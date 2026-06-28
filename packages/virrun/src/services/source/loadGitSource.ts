@@ -1,7 +1,7 @@
 import type { GitSource } from "@/models/source/GitSource";
 import type { LoadedSource } from "@/models/source/LoadedSource";
 
-import { createNativeBackend } from "@/services/exec/createNativeBackend";
+import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";

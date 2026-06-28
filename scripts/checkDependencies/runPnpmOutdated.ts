@@ -27,10 +27,10 @@ export const runPnpmOutdated = (
     }, timeoutMs);
     child.stdout.setEncoding("utf8");
     child.stderr.setEncoding("utf8");
-    child.stdout.on("data", (chunk: string) => {
+    child.stdout.on("data", (chunk) => {
       stdout += chunk;
     });
-    child.stderr.on("data", (chunk: string) => {
+    child.stderr.on("data", (chunk) => {
       stderr += chunk;
     });
     child.on("error", (error) => {

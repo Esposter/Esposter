@@ -10,11 +10,11 @@ describe("@esposter/azure-functions", () => {
   // Runs, so neither needs a conditional inside the test (no vitest/no-conditional-* disable).
   test.skipIf(process.platform !== "win32")("bundle size (Windows)", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4658.01 KB (4769801 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4658.08 KB (4769872 bytes)"`);
   });
 
   test.skipIf(process.platform === "win32")("bundle size (POSIX)", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4664.09 KB (4776029 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 4664.16 KB (4776100 bytes)"`);
   });
 });

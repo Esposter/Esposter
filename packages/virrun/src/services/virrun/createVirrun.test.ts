@@ -1,5 +1,6 @@
 import type { ExecResult } from "@/models/exec/ExecResult";
 
+import { BackendType } from "@/models/virrun/BackendType";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { spawn } from "node:child_process";
 import { constants } from "node:os";
@@ -13,10 +14,10 @@ const runNative = (command: string): Promise<ExecResult> =>
     const child = spawn(command, { shell: true, stdio: "pipe" });
     let stdout = "";
     let stderr = "";
-    child.stdout.on("data", (chunk: Buffer) => {
+    child.stdout.on("data", (chunk) => {
       stdout += chunk.toString();
     });
-    child.stderr.on("data", (chunk: Buffer) => {
+    child.stderr.on("data", (chunk) => {
       stderr += chunk.toString();
     });
     child.on("error", reject);
@@ -44,6 +45,6 @@ describe(createVirrun, () => {
     const { backend, dispose } = await createVirrun();
     await dispose();
 
-    expect(backend).toBe("native");
+    expect(backend).toBe(BackendType.Native);
   });
 });

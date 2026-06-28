@@ -1,18 +1,25 @@
-import type { ExecOptions } from "@/models/exec/ExecOptions";
+﻿import type { ExecOptions } from "@/models/exec/ExecOptions";
 
-import { createNativeBackend } from "@/services/exec/createNativeBackend";
-import { createOsBackend } from "@/services/exec/createOsBackend";
-import { createWorkspaceCorpus } from "@/services/exec/createWorkspaceCorpus.test";
-import { findRepoRoot } from "@/services/exec/findRepoRoot.test";
-import { isOsBackendSupported } from "@/services/exec/isOsBackendSupported";
+import { BackendType } from "@/models/virrun/BackendType";
+import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
+import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
+import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
+import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
+import {
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
+  PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+  PNPM_CONFIG_STORE_DIR_KEY,
+} from "@/services/exec/util/constants";
+import { OS_BACKEND_BENCH_TASK_NAME } from "@/services/exec/util/constants.bench";
 import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, bench, describe } from "vitest";
 // End-to-end speed gate: native vs os backend on real monorepo commands. Each group is a native-vs-os
-// Comparison, so the whole group is gated on isOsSupported — a host without overlayfs (Windows, some WSL2
-// Builds) can't run the os side, and a native-only group is an incomplete comparison we don't want to emit.
-const isOsSupported = isOsBackendSupported();
+// Comparison, so the whole group is gated on direct Linux support - a WSL host can benchmark the core
+// Backend in createOsBackend.bench.ts, but this macro path needs the full Linux package-manager toolchain.
+const isOsSupported = process.platform === "linux" && isOsBackendSupported();
 const native = createNativeBackend();
 const repoRoot = isOsSupported ? findRepoRoot() : "";
 // Bind the warm global pnpm store writable into the os sandbox (the shipped store mechanism) so it reuses
@@ -22,8 +29,8 @@ const osInstallOptions: ExecOptions = {
   bindDirs: [store],
   cwd: "",
   env: {
-    npm_config_package_import_method: "copy",
-    npm_config_store_dir: store,
+    [PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY]: PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
+    [PNPM_CONFIG_STORE_DIR_KEY]: store,
   },
   isNetworkEnabled: true,
   stdio: "pipe",
@@ -41,45 +48,45 @@ afterAll(() => {
   for (const corpus of [nativeCorpus, osCorpus]) if (corpus) rmSync(corpus, { force: true, recursive: true });
 });
 
-describe.skipIf(!isOsSupported)("install — real workspace dependency closure (cold)", () => {
-  bench("native", async () => {
+describe.skipIf(!isOsSupported)("install - real workspace dependency closure (cold)", () => {
+  bench(BackendType.Native, async () => {
     await native.exec(`${cleanModules}; ${INSTALL}`, { cwd: nativeCorpus, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: osCorpus });
   });
 });
 
-describe.skipIf(!isOsSupported)("typecheck — packages/shared (cold)", () => {
+describe.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", () => {
   const command = cold("rm -f *.tsbuildinfo", "pnpm typecheck");
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });
 
-describe.skipIf(!isOsSupported)("build — packages/shared (cold)", () => {
+describe.skipIf(!isOsSupported)("build - packages/shared (cold)", () => {
   const command = cold("rm -rf dist *.tsbuildinfo", "pnpm build");
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });
 
-describe.skipIf(!isOsSupported)("test — packages/shared", () => {
+describe.skipIf(!isOsSupported)("test - packages/shared", () => {
   const command = "pnpm test --run";
-  bench("native", async () => {
+  bench(BackendType.Native, async () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench("os", async () => {
+  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });
