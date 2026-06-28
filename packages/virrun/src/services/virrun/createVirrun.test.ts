@@ -47,4 +47,16 @@ describe(createVirrun, () => {
 
     expect(backend).toBe(BackendType.Native);
   });
+
+  test("fork falls through to exec on a non-os backend, with no snapshot layer", async () => {
+    expect.hasAssertions();
+
+    const command = `node -e "process.stdout.write('forked')"`;
+    const { dispose, fork } = await createVirrun();
+    const forkResult = await fork(command);
+    const nativeResult = await runNative(command);
+    await dispose();
+
+    expect(forkResult).toStrictEqual(nativeResult);
+  });
 });

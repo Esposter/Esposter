@@ -1,4 +1,5 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecOptions, ExecStdio } from "@/models/exec/ExecOptions";
 import type { Virrun } from "@/models/virrun/Virrun";
 import type { VirrunOptions } from "@/models/virrun/VirrunOptions";
 
@@ -6,6 +7,9 @@ import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
+import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { loadSource } from "@/services/source/loadSource";
@@ -30,9 +34,21 @@ export const createVirrun = async ({
   // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store
   // (bindDirs/PNPM_CONFIG_*) must still be injected, otherwise the os path runs without its host cache.
   const sharedPackageStoreOptions = execBackend.name === BackendType.Os ? createSharedPackageStoreOptions(cwd) : {};
+  const toOptions = (stdio: ExecStdio): ExecOptions => ({ ...sharedPackageStoreOptions, cwd, stdio });
   return {
     backend: execBackend.name,
     dispose,
-    exec: (command, stdio = "pipe") => execBackend.exec(command, { ...sharedPackageStoreOptions, cwd, stdio }),
+    exec: (command, stdio = "pipe") => execBackend.exec(command, toOptions(stdio)),
+    fork: async (command, stdio = "pipe") => {
+      // Fork is the os backend's overlay-snapshot mechanism; other backends have no snapshot layer, so the
+      // Transparent fallback is a plain exec — fork is then identical to exec with no warm reuse.
+      if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
+      // Capture-or-reuse, keyed by lockfile hash: the first fork for this dependency set freezes the warm
+      // Post-run state into the snapshot upper, then every fork (this one included) stacks that upper
+      // Read-only and re-runs the command over it — so a re-install collapses to a frozen-lockfile no-op and
+      // Fork always returns the result of running in the forked, ephemeral sandbox.
+      if (!resolveSnapshotLocation(cwd).exists) await createSnapshot(execBackend, command, toOptions(stdio));
+      return forkSnapshot(execBackend, command, toOptions(stdio));
+    },
   };
 };
