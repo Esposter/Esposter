@@ -6,4 +6,4 @@ import { join } from "node:path";
 // Tree it is forked over (overlayfs forbids overlapping lower dirs), and a host-global, lockfile-hash-keyed
 // Location lets the same warm snapshot be reused across repos and CI runs (specs/snapshot-fork.md).
 export const getGlobalCacheDirectory = (): string =>
-  process.env[VIRRUN_CACHE_HOME_KEY] ?? join(homedir(), VIRRUN_CACHE_DIRECTORY_NAME);
+  process.env[VIRRUN_CACHE_HOME_KEY] || join(homedir(), VIRRUN_CACHE_DIRECTORY_NAME);

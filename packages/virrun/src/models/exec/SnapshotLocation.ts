@@ -1,8 +1,8 @@
-// The on-disk address of a warm snapshot inside a consuming repo's `.virrun/snapshots/`, resolved from the
+// The on-disk address of a warm snapshot in the host-global cache (`~/.virrun/snapshots/`), resolved from the
 // Lockfile hash. Pure addressing — produced by resolveSnapshotLocation before anything is captured; the
 // Capture run materializes upperDir/workDir, and a fork run stacks upperDir as a read-only lower.
 export interface SnapshotLocation {
-  // The snapshot root: `.virrun/snapshots/<lockfile-hash>`.
+  // The snapshot root: `~/.virrun/snapshots/<lockfile-hash>`.
   readonly dir: string;
   // Whether a snapshot has already been captured here (its upper layer exists on disk).
   readonly exists: boolean;

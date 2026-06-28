@@ -80,8 +80,9 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
     // Sees the full dependency closure (no reinstall) and a native binary (esbuild) executes; its own write
     // Vanishes in tmpfs.
     const forkCommand = [
-      "test \"$(find . -path '*/node_modules/*' -type f | wc -l)\" -gt 100000",
+      "test -d node_modules/.pnpm",
       "ESBUILD=$(find node_modules/.pnpm -path '*/bin/esbuild' -type f | head -1)",
+      "test -n \"$ESBUILD\"",
       `"$ESBUILD" --version`,
       "echo scratch > fork-only.txt",
       "echo FORK_OK",

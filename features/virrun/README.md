@@ -26,7 +26,7 @@ Two pass/fail gates on every backend and speed feature — a violation is not sh
 
 ## Now
 
-Phase 3 — snapshot + warm-fork. The FS-only overlay snapshot has landed: `createSnapshot` captures a warm post-install state into a lockfile-hash-keyed layer in the host-global `~/.virrun`, and a fork re-runs against it without reinstalling. Open: a public `fork()` handle on the orchestrator and the cold-vs-warm bench. Phase 2's `os` backend (Bubblewrap RAM overlay, real `pnpm install`, shared `.virrun/store/pnpm`, Windows→WSL2 bridge) is done bar the macOS VM bridge → [roadmap.md](roadmap.md).
+Phase 3 — snapshot + warm-fork. The FS-only overlay snapshot has landed: `createSnapshot` captures a warm post-install state into a lockfile-hash-keyed layer in the host-global `~/.virrun`, a fork re-runs against it without reinstalling, and the cold-vs-warm bench gates the win. Open: a public `fork()` handle on the orchestrator. Phase 2's `os` backend (Bubblewrap RAM overlay, real `pnpm install`, shared `.virrun/store/pnpm`, Windows→WSL2 bridge) is done bar the macOS VM bridge → [roadmap.md](roadmap.md).
 
 ## Shipped
 
