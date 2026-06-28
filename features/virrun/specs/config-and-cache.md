@@ -24,6 +24,8 @@ Repo-root config naming which commands route through the sandbox. Removing an en
 - **Matching** — a command routes if its leading tokens match a `route` entry; everything else stays native. Per-command granularity is the whole point.
 - **Auto-fallback** is config-driven but gate-enforced: unsupported host/backend, a benchmark-gate regression, or a differential-correctness divergence all defer to `fallback`. → [adoption](adoption.md#auto-fallback-the-safety-net) · [benchmarking](benchmarking.md) · [correctness](correctness.md)
 
+**Realized** (JSON config; `.ts`/`.js` config deferred with the loader that needs it): `resolveVirrunConfiguration` walks up via `empathic` (the standard parent-dir file search) and `parseVirrunConfiguration` validates + defaults; `matchesRoute` does the leading-token match; the CLI's `resolveCommandBackend` picks the backend, deferring an `os` route to `fallback` when the host lacks bubblewrap. The benchmark-gate and differential-correctness arms of auto-fallback are still future work.
+
 ## `.virrun/` (cache — gitignored)
 
 Local, machine-specific, fully disposable. Deleting it only forces the next routed run to repopulate. Never committed.

@@ -29,10 +29,10 @@ Phase 0 (foundations) and Phase 1 (the `vfs` backend — FS layer + in-process `
 ## Phase 4 — Distribution & CI
 
 - [ ] Migrate the CLI to [unjs/citty](https://github.com/unjs/citty) for declarative subcommands/flags/`--help`, then add `virrun run`, `virrun exec`, `virrun snapshot`, `virrun init`, `virrun cache` (ls/clean) — extends the Phase 0 prefix CLI → [deferred/citty-cli.md](deferred/citty-cli.md).
-- [ ] Config allowlist + local cache → [specs/config-and-cache.md](specs/config-and-cache.md). Higher adoption levels (3–4), once the prefix is trusted.
-  - [ ] Read `virrun.config.json` (route/backend/fallback) from repo root; absent = no-op to native.
-  - [ ] Route a command iff its leading tokens match `route`; gate-enforced auto-fallback to `fallback`.
-  - [ ] Materialize `.virrun/` (`store/`, `snapshots/`) lazily; add `/.virrun/` to the consuming repo's `.gitignore` on first write.
+- [~] Config allowlist + local cache → [specs/config-and-cache.md](specs/config-and-cache.md). Higher adoption levels (3–4), once the prefix is trusted. Level 3 (the allowlist) landed; the level-4 shim is still open.
+  - [x] Read `virrun.config.json` (route/backend/fallback) from repo root; absent = no-op to native. Resolution walks up via `empathic` (standard parent-dir search, JSON config); `parseVirrunConfiguration` validates and defaults (`resolveVirrunConfiguration`).
+  - [x] Route a command iff its leading tokens match `route` (`matchesRoute`); the CLI picks the backend via `resolveCommandBackend` and auto-falls-back to `fallback` when the chosen backend is unsupported on the host (e.g. `os` without bubblewrap). Benchmark-gate and differential-correctness fallbacks remain future work.
+  - [x] Materialize `.virrun/` (`store/`, `snapshots/`) lazily; add `/.virrun/` to the consuming repo's `.gitignore` on first write. (Shipped with the Phase 2 dep store / Phase 3 snapshots.)
   - [ ] Opt-in PATH shim behind an env flag (`VIRRUN=1`) intercepting known binaries per the allowlist.
   - [ ] Whole-repo / always-on routing stays out until warm-fork lands → [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md).
 - [ ] Firecracker microVM backend for untrusted multi-tenant / CI fan-out.

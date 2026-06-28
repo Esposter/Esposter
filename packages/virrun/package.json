@@ -57,6 +57,7 @@
     "@platformatic/vfs": "catalog:",
     "@types/node": "catalog:",
     "ctix": "catalog:",
+    "empathic": "catalog:",
     "rolldown": "catalog:",
     "vitest": "catalog:"
   }

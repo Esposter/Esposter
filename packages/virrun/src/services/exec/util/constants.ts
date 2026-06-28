@@ -12,6 +12,9 @@ export const VIRRUN_SNAPSHOTS_DIRECTORY_NAME = "snapshots";
 export const VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME = "upper";
 export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
 export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";
+// Repo-root routing allowlist (specs/config-and-cache.md): names which commands route through the sandbox.
+// Resolved by walking up from cwd; absent = nothing routes (the CLI no-ops to native).
+export const VIRRUN_CONFIGURATION_FILENAME = "virrun.config.json";
 
 export const COREPACK_HOME_KEY = "COREPACK_HOME";
 // Overrides the host-global cache root (default ~/.virrun) — lets CI and tests point the snapshot cache at
