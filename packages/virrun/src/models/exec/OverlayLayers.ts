@@ -3,7 +3,7 @@
 //   - ephemeral (default, `{}`): no extra lowers, writes vanish in an invisible tmpfs upper.
 //   - capture (`upperDir` + `workDir`): writes persist as real files in `upperDir` — the warm snapshot.
 //   - fork (`lowerDirs: [snapshotUpper]`): the frozen snapshot stacks above the source as a read-only lower
-//     and writes vanish again, so each forked run reuses the install without an upper of its own.
+//     And writes vanish again, so each forked run reuses the install without an upper of its own.
 export interface OverlayLayers {
   // Extra read-only lower layers stacked above the source dir, lowest-priority first. A fork run passes the
   // Captured snapshot's upper here so its files shadow the source while the working dir itself stays read-only.

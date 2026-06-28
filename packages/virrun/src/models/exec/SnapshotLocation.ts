@@ -6,9 +6,9 @@ export interface SnapshotLocation {
   readonly dir: string;
   // Whether a snapshot has already been captured here (its upper layer exists on disk).
   readonly exists: boolean;
-  // sha256 of the lockfile that keys this snapshot, so a dependency change invalidates exactly this entry.
+  // Sha256 of the lockfile that keys this snapshot, so a dependency change invalidates exactly this entry.
   readonly hash: string;
-  // overlayfs upper a capture run persists post-install writes into, reused as a read-only lower when forking.
+  // Overlayfs upper a capture run persists post-install writes into, reused as a read-only lower when forking.
   readonly upperDir: string;
   // Empty overlayfs working dir paired with upperDir during capture.
   readonly workDir: string;

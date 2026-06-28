@@ -16,10 +16,10 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 //
 // `overlayLayers` parametrizes the working-dir overlay for the snapshot layer (specs/snapshot-fork.md):
 //   - `lowerDirs` adds extra read-only `--overlay-src` lowers above the source, lowest-priority first — a
-//     fork run stacks the frozen snapshot upper here so its files shadow the source.
+//     Fork run stacks the frozen snapshot upper here so its files shadow the source.
 //   - `upperDir` + `workDir` switch the top mount to a persistent `--overlay <upperDir> <workDir> <dir>`, so
-//     a capture run's post-install writes land as real files on disk instead of vanishing in tmpfs. Both
-//     must be supplied together; one without the other is a misuse and throws.
+//     A capture run's post-install writes land as real files on disk instead of vanishing in tmpfs. Both
+//     Must be supplied together; one without the other is a misuse and throws.
 //
 // A string command runs through `/bin/sh -c` (operator passthrough); an argv array runs as-is. Pure
 // Function so the argv shape is unit-testable on any platform (incl. win32).

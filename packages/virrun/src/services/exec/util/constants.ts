@@ -6,7 +6,7 @@ export const VIRRUN_STORE_DIRECTORY_NAME = "store";
 export const VIRRUN_PNPM_STORE_DIRECTORY_NAME = "pnpm";
 export const VIRRUN_COREPACK_STORE_DIRECTORY_NAME = "corepack";
 export const VIRRUN_SNAPSHOTS_DIRECTORY_NAME = "snapshots";
-// overlayfs layers of a captured snapshot, under .virrun/snapshots/<lockfile-hash>/: `upper` persists the
+// Overlayfs layers of a captured snapshot, under .virrun/snapshots/<lockfile-hash>/: `upper` persists the
 // Post-install writes (and doubles as a read-only lower when forking), `work` is the empty scratch dir
 // Overlayfs requires alongside a writable upper.
 export const VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME = "upper";
