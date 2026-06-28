@@ -6,6 +6,7 @@ import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { removeSnapshotLocation } from "@/services/exec/snapshot/removeSnapshotLocation";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
@@ -50,7 +51,7 @@ const cold = (clean: string, command: string): string => `${clean} 2>/dev/null; 
 
 afterAll(() => {
   // Resolve the snapshot before removing warmCorpus (its lockfile keys the cache entry), then clear it.
-  if (isOsSupported) rmSync(resolveSnapshotLocation(warmCorpus).dir, { force: true, recursive: true });
+  if (isOsSupported) removeSnapshotLocation(resolveSnapshotLocation(warmCorpus));
   for (const corpus of [nativeCorpus, osCorpus, warmCorpus])
     if (corpus) rmSync(corpus, { force: true, recursive: true });
 });
