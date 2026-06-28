@@ -29,6 +29,14 @@ boot + install (once, slow) ─► snapshot ─► fork ─► run cmd ─► di
 - Start FS-only (overlay-layer / volume clone); add CRIU process-state forking only if measured warm-boot time justifies it.
 - Snapshot integrity must survive dep-store changes — bind the snapshot to the exact store content it was built against.
 
+## Concurrency safety (hardening — non-blocking follow-up)
+
+The realized capture has a publish race. `resolveSnapshotLocation` reports `exists: existsSync(upperDir)`, but `createSnapshot` does `mkdirSync(upperDir)` **before** running the long setup command in-place, and only sets `exists: true` on success. So once mkdir lands, a concurrent `forkSnapshot` / `resolveSnapshotLocation` sees `exists === true` mid-install and stacks a half-built upper read-only. No lock, ready-marker, or atomic promotion gates the window. (Failure teardown via `removeSnapshotLocation` is fine — the gap is during a *successful* in-progress capture.)
+
+- **Severity: low for the CLI flow.** One fork per `virrun` invocation, so it needs two separate virrun processes cold-starting against the same lockfile hash at nearly the same instant.
+- **Still real, not dismissable:** `fork` is public API (not CLI-only), and parallel CI/tasks can drive the inter-process race even with CLI-only usage.
+- **Fix:** capture into a temp dir (e.g. `<hash>/upper.tmp.<pid>`), then atomically `rename` it onto `<hash>/upper` — rename is the publish barrier; `existsSync(upperDir)` then only ever sees a finished layer. Optionally a per-hash lockfile/ready-marker so a second cold caller waits rather than racing a redundant capture. Build into the snapshot cache path rather than retrofitting.
+
 ## Key Files
 
 Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the overlay-layer argv, `createSnapshot` capture and `forkSnapshot` (Linux + WSL), the cold-vs-warm bench, and a transparent `fork()` on the `createVirrun` orchestrator (os captures-or-reuses; other backends fall through to `exec`). Still planned: always-on whole-repo routing on top of this handle, gated on a viable transparent-interception seam (the PATH shim is dropped as unviable).

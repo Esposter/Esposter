@@ -1,8 +1,11 @@
+import { formatVirrunBanner } from "@/services/cli/formatVirrunBanner";
+import { formatVirrunResult } from "@/services/cli/formatVirrunResult";
 import { parseCliCommand } from "@/services/cli/parseCliCommand";
 import { resolveBackend } from "@/services/configuration/resolveBackend";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { withFinalizerAsync } from "@esposter/shared";
+import { performance } from "node:perf_hooks";
 import process from "node:process";
 // The human-facing entrypoint and the adoption entry point (specs/adoption.md): `virrun -- <cmd>` runs a
 // Command through the sandbox with no other change. Output streams live (stdio "inherit") and the child's
@@ -27,9 +30,16 @@ const main = async (): Promise<void> => {
   const configuration = resolveVirrunConfiguration();
   const backend = resolveBackend(configuration);
   const virrun = await createVirrun({ backend });
+  // Bracket the run with a start + result line on stderr (never stdout — correctness diffs compare the child's
+  // Streams) so each `virrun -- <cmd>` is self-describing: resolved backend, node version, and wall-clock time.
+  process.stderr.write(`${formatVirrunBanner({ backend: virrun.backend, command, nodeVersion: process.version })}\n`);
+  const start = performance.now();
   const { exitCode } = await withFinalizerAsync(
     () => virrun.exec(command, "inherit"),
     () => virrun.dispose(),
+  );
+  process.stderr.write(
+    `${formatVirrunResult({ command, durationMs: Math.round(performance.now() - start), exitCode })}\n`,
   );
   process.exitCode = exitCode;
 };
