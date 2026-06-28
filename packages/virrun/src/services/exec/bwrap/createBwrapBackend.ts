@@ -17,7 +17,7 @@ export const createBwrapBackend = (
   createBwrapArgs: (
     command: readonly string[] | string,
     cwd: string,
-    options: Pick<ExecOptions, "bindDirs" | "isNetworkEnabled">,
+    options: Pick<ExecOptions, "bindDirs" | "isNetworkEnabled" | "overlayLayers">,
   ) => string[],
   createBwrapCommand: (bwrapArgs: readonly string[], options: ExecOptions) => BwrapCommand,
   errorName: string,

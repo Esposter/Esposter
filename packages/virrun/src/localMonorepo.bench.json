@@ -6,78 +6,97 @@
         {
           "benchmarks": [
             {
-              "mean": 6980.5479713999985,
+              "mean": 6896.993624499999,
               "name": "native",
-              "p99": 7660.399722999995,
-              "rme": 2.8795811950354193,
+              "p99": 7217.9279099999985,
+              "rme": 1.6839664499869025,
               "sampleCount": 10
             },
             {
-              "mean": 3853.4414318000054,
+              "mean": 3927.591003500004,
               "name": "os/linux",
-              "p99": 4188.398316000006,
-              "rme": 2.504440907934742,
+              "p99": 4164.938141999999,
+              "rme": 2.1058179299993154,
               "sampleCount": 10
             }
           ],
-          "fullName": "install — real workspace dependency closure (cold)"
+          "fullName": "install - real workspace dependency closure (cold)"
         },
         {
           "benchmarks": [
             {
-              "mean": 978.3719886000035,
-              "name": "native",
-              "p99": 1035.9224039999826,
-              "rme": 1.6166400701650658,
+              "mean": 4130.250571899992,
+              "name": "cold",
+              "p99": 4894.391826999985,
+              "rme": 4.997536190062705,
               "sampleCount": 10
             },
             {
-              "mean": 584.630978900005,
-              "name": "os/linux",
-              "p99": 595.5366599999834,
-              "rme": 0.8454413531410089,
+              "mean": 712.2315424000029,
+              "name": "warm",
+              "p99": 774.8888760000118,
+              "rme": 3.4213115765511697,
               "sampleCount": 10
             }
           ],
-          "fullName": "typecheck — packages/shared (cold)"
+          "fullName": "install - warm fork vs cold reinstall"
         },
         {
           "benchmarks": [
             {
-              "mean": 4532.528707600004,
+              "mean": 1107.8038453999993,
               "name": "native",
-              "p99": 4573.1872930000245,
-              "rme": 0.40592332256340546,
+              "p99": 1249.617792999954,
+              "rme": 5.410664432778882,
               "sampleCount": 10
             },
             {
-              "mean": 582.6200848000037,
+              "mean": 597.7208706000005,
               "name": "os/linux",
-              "p99": 591.5247550000204,
-              "rme": 0.5766365215905069,
+              "p99": 605.9723280000035,
+              "rme": 0.6580406883203426,
               "sampleCount": 10
             }
           ],
-          "fullName": "build — packages/shared (cold)"
+          "fullName": "typecheck - packages/shared (cold)"
         },
         {
           "benchmarks": [
             {
-              "mean": 2039.5131371999973,
+              "mean": 4711.286864399997,
               "name": "native",
-              "p99": 2083.5853999999817,
-              "rme": 0.96042885726696,
+              "p99": 5129.120897999965,
+              "rme": 2.689536084064791,
               "sampleCount": 10
             },
             {
-              "mean": 635.3844015000097,
+              "mean": 594.021038100007,
               "name": "os/linux",
-              "p99": 712.5393690000055,
-              "rme": 5.596432996075684,
+              "p99": 611.0219870000146,
+              "rme": 1.2502424626018989,
               "sampleCount": 10
             }
           ],
-          "fullName": "test — packages/shared"
+          "fullName": "build - packages/shared (cold)"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 2480.4009774000033,
+              "name": "native",
+              "p99": 3447.3265920000267,
+              "rme": 14.416671521250501,
+              "sampleCount": 10
+            },
+            {
+              "mean": 661.0481546000053,
+              "name": "os/linux",
+              "p99": 827.6722440000158,
+              "rme": 7.7876038964532155,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "test - packages/shared"
         }
       ]
     }

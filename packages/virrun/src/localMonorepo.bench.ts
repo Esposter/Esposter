@@ -4,6 +4,10 @@ import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
+import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
+import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { removeSnapshotLocation } from "@/services/exec/snapshot/removeSnapshotLocation";
+import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
 import {
@@ -38,6 +42,7 @@ const osInstallOptions: ExecOptions = {
 // Separate corpora so native's on-disk node_modules don't warm the os run.
 const nativeCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const osCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
+const warmCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const INSTALL = "pnpm install --frozen-lockfile --config.package-import-method=copy";
 const cleanModules = "find . -name node_modules -type d -prune -exec rm -rf {} +";
 // Clear caches before each run so neither side benefits from incremental state.
@@ -45,7 +50,10 @@ const SHARED = join(repoRoot, "packages/shared");
 const cold = (clean: string, command: string): string => `${clean} 2>/dev/null; ${command}`;
 
 afterAll(() => {
-  for (const corpus of [nativeCorpus, osCorpus]) if (corpus) rmSync(corpus, { force: true, recursive: true });
+  // Resolve the snapshot before removing warmCorpus (its lockfile keys the cache entry), then clear it.
+  if (isOsSupported) removeSnapshotLocation(resolveSnapshotLocation(warmCorpus));
+  for (const corpus of [nativeCorpus, osCorpus, warmCorpus])
+    if (corpus) rmSync(corpus, { force: true, recursive: true });
 });
 
 describe.skipIf(!isOsSupported)("install - real workspace dependency closure (cold)", () => {
@@ -55,6 +63,24 @@ describe.skipIf(!isOsSupported)("install - real workspace dependency closure (co
 
   bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: osCorpus });
+  });
+});
+
+// The snapshot payoff: capture the install once, then a forked run reuses the dep tree instead of
+// Reinstalling. `cold` is the os backend reinstalling from a fresh tmpfs upper every run; `warm` forks the
+// Captured snapshot, so it should dwarf the cold baseline - that gap is the entire reason this layer exists.
+// Capture the warm snapshot at module scope, not in beforeAll: Vitest fires bench() callbacks before suite
+// Hooks resolve, so a beforeAll snapshot wouldn't exist yet when the warm fork runs - forkSnapshot would throw
+// And the empty sample set yields a NaN mean. Top-level await guarantees the upper layer is materialized first.
+if (isOsSupported) await createSnapshot(createOsBackend(), INSTALL, { ...osInstallOptions, cwd: warmCorpus });
+
+describe.skipIf(!isOsSupported)("install - warm fork vs cold reinstall", () => {
+  bench("cold", async () => {
+    await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: warmCorpus });
+  });
+
+  bench("warm", async () => {
+    await forkSnapshot(createOsBackend(), INSTALL, { ...osInstallOptions, cwd: warmCorpus });
   });
 });
 

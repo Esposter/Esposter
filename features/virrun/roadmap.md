@@ -22,9 +22,9 @@ Phase 0 (foundations) and Phase 1 (the `vfs` backend — FS layer + in-process `
 
 ## Phase 3 — Snapshot + warm-fork
 
-- [ ] Snapshot warm state post-install (CRIU for process+fs, or microVM/overlay-layer snapshot) → [specs/snapshot-fork.md](specs/snapshot-fork.md).
-- [ ] `fork()` a snapshot into an isolated run; measure cold-vs-warm run time.
-- [ ] Snapshot cache keyed by lockfile hash.
+- [x] Snapshot warm state post-install — FS-only overlay-layer snapshot: `createSnapshot` runs a setup command in capture mode (`bwrap --overlay <upper> <work> <dir>`) so post-install writes persist into the snapshot upper (Linux + WSL). CRIU/microVM stay deferred → [specs/snapshot-fork.md](specs/snapshot-fork.md).
+- [x] `fork()` a snapshot into an isolated run — `forkSnapshot` stacks the captured upper read-only over the source with a fresh tmpfs upper (capture→fork validated end-to-end). `createSnapshot` + `forkSnapshot` are the programmatic pair; a cold-vs-warm bench (`localMonorepo.bench.ts` → "install - warm fork vs cold reinstall") measures the win on native Linux. Still open: a transparent `fork()` on the `createVirrun` orchestrator (deferred with config-driven routing → [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md)).
+- [x] Snapshot cache keyed by lockfile hash — `~/.virrun/snapshots/<sha256(pnpm-lock.yaml)>` (host-global, `VIRRUN_CACHE_HOME` override), so a dependency change invalidates exactly that entry and the same deps reuse one warm snapshot across repos/CI.
 
 ## Phase 4 — Distribution & CI
 

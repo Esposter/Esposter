@@ -29,14 +29,17 @@ Repo-root config naming which commands route through the sandbox. Removing an en
 Local, machine-specific, fully disposable. Deleting it only forces the next routed run to repopulate. Never committed.
 
 ```text
-.virrun/
-  store/       # shared content-addressable dep store (Phase 2)
-  snapshots/   # warm post-install snapshots, keyed by lockfile hash (Phase 3)
+<repo>/.virrun/        # repo-local, gitignored
+  store/               # shared content-addressable dep store (Phase 2)
+
+~/.virrun/             # host-global (VIRRUN_CACHE_HOME override), shared across repos/CI
+  snapshots/<hash>/    # warm post-install snapshots, keyed by lockfile hash (Phase 3)
+    upper/  work/       # overlayfs layers — upper persists the install, work is overlay scratch
 ```
 
-- **`store/`** — deps downloaded once so repeated installs skip the network. The Phase 2 `os` backend writes pnpm packages to `.virrun/store/pnpm` and bind-mounts that directory into each sandbox; package imports use copy until the snapshot layer can safely restore true hardlink-style installs. → [architecture.md](../architecture.md#where-the-speed-comes-from)
-- **`snapshots/`** — "clone + install" frozen once; each routed run `fork()`s the matching snapshot. Keyed by lockfile hash so a dependency change invalidates exactly the affected entry. → [snapshot-fork](snapshot-fork.md)
-- **`.gitignore`** — virrun adds `/.virrun/` to the consuming repo's ignore list on first write (and the line ships in this repo's root `.gitignore` when dogfooding begins). Subdirs are created lazily by the backend/snapshot layer that owns them — absent until that phase ships.
+- **`store/`** (repo-local) — deps downloaded once so repeated installs skip the network. The Phase 2 `os` backend writes pnpm packages to `<repo>/.virrun/store/pnpm` and bind-mounts that directory into each sandbox; package imports use copy until the snapshot layer can safely restore true hardlink-style installs. Repo-local is fine because it is a **bind** mount, and binds may overlap the working-dir overlay. → [architecture.md](../architecture.md#where-the-speed-comes-from)
+- **`snapshots/`** (host-global) — "clone + install" frozen once; each routed run `fork()`s the matching snapshot. Keyed by lockfile hash so a dependency change invalidates exactly the affected entry, and shared across repos/CI runs. It lives in `~/.virrun`, **not** the repo, because a fork stacks the snapshot as an **overlay lower** beside the source and overlayfs rejects a lower that nests inside another. → [snapshot-fork](snapshot-fork.md)
+- **`.gitignore`** — virrun adds `/.virrun/` to the consuming repo's ignore list on first write (and the line ships in this repo's root `.gitignore` when dogfooding begins). Subdirs are created lazily by the backend/snapshot layer that owns them — absent until that phase ships. The global `~/.virrun` needs no ignore entry.
 
 ## Constraints / Notes
 

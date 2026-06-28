@@ -5,11 +5,12 @@ import {
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
   PNPM_CONFIG_STORE_DIR_KEY,
-  VIRRUN_CACHE_DIRECTORY_NAME,
   VIRRUN_GITIGNORE_ENTRY,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "@/services/exec/util/constants";
+import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
+import { resolveCwd } from "@/services/exec/util/resolveCwd";
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -24,13 +25,8 @@ const ensureGitIgnoreEntry = (cwd: string) => {
 };
 
 export const createSharedPackageStoreOptions = (cwd: string): Pick<ExecOptions, "bindDirs" | "env"> => {
-  const dir = cwd === "" ? process.cwd() : cwd;
-  const storeDir = join(
-    dir,
-    VIRRUN_CACHE_DIRECTORY_NAME,
-    VIRRUN_STORE_DIRECTORY_NAME,
-    VIRRUN_PNPM_STORE_DIRECTORY_NAME,
-  );
+  const dir = resolveCwd(cwd);
+  const storeDir = join(getRepoCacheDirectory(dir), VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_PNPM_STORE_DIRECTORY_NAME);
   mkdirSync(storeDir, { recursive: true });
   ensureGitIgnoreEntry(dir);
   return {
