@@ -9,7 +9,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // Host disk. This is what breaks the subprocess wall the vfs backend can't see past. The command runs
 // As `bwrap <overlay flags> -- <command>` on Linux, or the same argv through `wsl.exe` on Windows.
 //
-// Unlike createVfsBackend, this backend NEVER falls back to native. vfs falls back for correctness - // A command it can't run in-process still produces the baseline result. Here isolation IS the result,
+// Unlike createVfsBackend, this backend NEVER falls back to native. vfs falls back for correctness -
+// A command it can't run in-process still produces the baseline result. Here isolation IS the result,
 // So a silent native fallback would run the command un-isolated: a wrong answer disguised as success.
 // An unsupported host (no Linux/WSL bridge, or no bubblewrap) therefore throws at construction instead.
 //

@@ -30,7 +30,8 @@
     "virrun": "dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "schema.json"
   ],
   "type": "module",
   "main": "dist/index.js",

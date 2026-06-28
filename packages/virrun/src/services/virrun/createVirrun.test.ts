@@ -52,7 +52,8 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     const command = `node -e "process.stdout.write('forked')"`;
-    const { dispose, fork } = await createVirrun();
+    // Pin a non-os backend explicitly so this stays on the fallback branch even if Auto later resolves to Os.
+    const { dispose, fork } = await createVirrun({ backend: BackendType.Native });
     const forkResult = await fork(command);
     const nativeResult = await runNative(command);
     await dispose();

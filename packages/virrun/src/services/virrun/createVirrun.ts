@@ -46,7 +46,9 @@ export const createVirrun = async ({
       // Capture-or-reuse, keyed by lockfile hash: the first fork for this dependency set freezes the warm
       // Post-run state into the snapshot upper, then every fork (this one included) stacks that upper
       // Read-only and re-runs the command over it — so a re-install collapses to a frozen-lockfile no-op and
-      // Fork always returns the result of running in the forked, ephemeral sandbox.
+      // Fork always returns the result of running in the forked, ephemeral sandbox. The cold path therefore
+      // Runs `command` twice (capture then fork); this is the documented setup-command contract (see Virrun.fork)
+      // And is only correct for idempotent commands like `pnpm install`, never arbitrary side-effecting ones.
       if (!resolveSnapshotLocation(cwd).exists) await createSnapshot(execBackend, command, toOptions(stdio));
       return forkSnapshot(execBackend, command, toOptions(stdio));
     },

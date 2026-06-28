@@ -26,7 +26,7 @@ Two pass/fail gates on every backend and speed feature — a violation is not sh
 
 ## Now
 
-Phase 4 — distribution & CI. Adoption level 3 (the config allowlist) has landed: a repo-root `virrun.config.json` names which commands route through the sandbox, the CLI resolves it (walking up via `empathic`) and picks the backend per command with auto-fallback to native on an unsupported host — so the `virrun -- <cmd>` prefix is safe on every command and only allowlisted ones sandbox. Open next: the opt-in `VIRRUN=1` PATH shim (level 4) and the citty CLI migration. Phase 3 (snapshot + warm-fork, incl. the transparent `fork()` handle on the orchestrator) and Phase 2's `os` backend are done bar the macOS VM bridge → [roadmap.md](roadmap.md).
+Phase 4 — distribution & CI. Adoption level 3 (the config allowlist) has landed and **this repo now dogfoods it**: a committed repo-root `virrun.config.json` routes the read-only verification commands (`eslint .`, `oxfmt --check`, `tsgo`, `vitest run`) through the `os` backend, and the package ships a `schema.json` so the config gets editor autocompletion/validation via `$schema` (oxlint-style). The CLI resolves the config (walking up via `empathic`) and picks the backend per command with auto-fallback to the configured `fallback` backend (typically native) on an unsupported host — so on a host without bubblewrap (e.g. Windows without WSL set up) every command transparently runs native. Open next: the opt-in `VIRRUN=1` PATH shim (level 4) for true zero-prefix routing in local dev + CI, and the citty CLI migration. Phase 3 (snapshot + warm-fork, incl. the transparent `fork()` handle on the orchestrator) and Phase 2's `os` backend are done bar the macOS VM bridge → [roadmap.md](roadmap.md).
 
 ## Shipped
 
@@ -46,7 +46,7 @@ Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roa
 - [deferred/wasm-runtime.md](deferred/wasm-runtime.md) — WebContainers-style WASM-node backend, parked with a revisit trigger.
 - [deferred/citty-cli.md](deferred/citty-cli.md) — delegate the CLI to unjs/citty once it grows real subcommands/flags.
 - [deferred/ci-bench-gate.md](deferred/ci-bench-gate.md) — enforce the bench + differential suites as required CI gates once a backend can actually regress.
-- [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md) — why "route every command at once" waits for warm-fork; adopt one command at a time instead.
+- [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md) — why "route every command at once" stays deferred (`Auto` still resolves to native; needs the opt-in PATH shim); adopt one command at a time instead.
 
 ## Reference
 

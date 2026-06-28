@@ -42,4 +42,16 @@ describe(resolveCommandBackend, () => {
 
     expect(resolveCommandBackend(["vitest"], configuration)).toBe(BackendType.Native);
   });
+
+  test("defers to a non-native fallback when configured", () => {
+    expect.hasAssertions();
+
+    vi.mocked(isOsBackendSupported).mockReturnValue(false);
+
+    // A non-native fallback locks the contract: the resolver returns `configuration.fallback`, not a hardcoded
+    // Native, so an `os` route can degrade to `vfs` (or any other backend) rather than always native.
+    const configuration = { backend: BackendType.Os, fallback: BackendType.Vfs, route: ["vitest"] };
+
+    expect(resolveCommandBackend(["vitest"], configuration)).toBe(BackendType.Vfs);
+  });
 });

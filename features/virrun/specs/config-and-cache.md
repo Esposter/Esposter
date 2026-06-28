@@ -26,6 +26,10 @@ Repo-root config naming which commands route through the sandbox. Removing an en
 
 **Realized** (JSON config; `.ts`/`.js` config deferred with the loader that needs it): `resolveVirrunConfiguration` walks up via `empathic` (the standard parent-dir file search) and `parseVirrunConfiguration` validates + defaults; `matchesRoute` does the leading-token match; the CLI's `resolveCommandBackend` picks the backend, deferring an `os` route to `fallback` when the host lacks bubblewrap. The benchmark-gate and differential-correctness arms of auto-fallback are still future work.
 
+- **Strict JSON, not jsonc** — the committed file is parsed with `JSON.parse`, so it carries no comments. Field docs come from the shipped `schema.json` (referenced via `$schema`), which renders descriptions/enums on hover in editors — the oxlint pattern (`"$schema": "./node_modules/virrun/schema.json"`). `schema.json` ships in the package `files`; the `backend`/`fallback` enums there mirror `BackendType` (the single source of truth in code), so an enum change updates both.
+- **Every field is optional** in the file: `parseVirrunConfiguration` defaults `backend → auto`, `fallback → native`, `route → []`, so a minimal `{ "route": [...] }` is valid and options exist only to override. The resolved `VirrunConfiguration` object stays fully populated — optionality is the input surface, not the internal contract.
+- **This repo dogfoods it** — the committed root `virrun.config.json` routes only read-only verification commands (`eslint .`, `oxfmt --check`, `tsgo`, `vitest run`) through `os`; mutating siblings (`oxfmt`, `eslint --fix .`) and watch-mode `vitest` are excluded because leading-token matching won't match them. `os` falls back to native on hosts without bubblewrap, so the config is a safe no-op until WSL/Linux is in play.
+
 ## `.virrun/` (cache — gitignored)
 
 Local, machine-specific, fully disposable. Deleting it only forces the next routed run to repopulate. Never committed.

@@ -12,5 +12,10 @@ export interface Virrun {
   // Snapshot upper, later calls stack it read-only and skip the heavy work (e.g. a re-install becomes a no-op).
   // The snapshot is keyed by lockfile hash in the host-global cache, so other repos with the same dependencies
   // Reuse it too. Os backend only — other backends have no overlay layer, so fork is identical to exec.
+  //
+  // Contract: fork is for idempotent setup commands (e.g. `pnpm install`), not arbitrary side-effecting ones.
+  // On a cold cache the os backend runs `command` twice — once to capture the warm upper, then again over the
+  // Frozen snapshot — which is harmless precisely because re-running collapses to a frozen-lockfile no-op. A
+  // Non-idempotent command would therefore execute its effects twice on the first fork; use exec for those.
   fork: (command: readonly string[] | string, stdio?: ExecStdio) => Promise<ExecResult>;
 }
