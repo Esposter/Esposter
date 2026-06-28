@@ -6,59 +6,59 @@
         {
           "benchmarks": [
             {
-              "mean": 29.802352900000017,
+              "mean": 30.525303699999995,
               "name": "native",
-              "p99": 33.59090400000002,
-              "rme": 5.28536880931614,
+              "p99": 34.486864999999966,
+              "rme": 4.8428133791201935,
               "sampleCount": 10
             },
             {
-              "mean": 0.08599000000000387,
+              "mean": 0.07329499999999597,
               "name": "vfs",
-              "p99": 0.1594000000000051,
-              "rme": 37.87247514043185,
+              "p99": 0.17241200000000845,
+              "rme": 40.06715336984942,
               "sampleCount": 10
             }
           ],
-          "fullName": "createVfsBackend — in-process node -e vs native spawn (hot path)"
+          "fullName": "createVfsBackend - in-process node -e vs native spawn (hot path)"
         },
         {
           "benchmarks": [
             {
-              "mean": 29.110532799999977,
+              "mean": 28.56669909999996,
               "name": "native",
-              "p99": 33.27160300000003,
-              "rme": 5.67782344928993,
+              "p99": 30.013357999999926,
+              "rme": 2.2561829432803515,
               "sampleCount": 10
             },
             {
-              "mean": 0.2954999999999927,
+              "mean": 0.27445880000000217,
               "name": "vfs",
-              "p99": 0.37969999999995707,
-              "rme": 12.303172698566154,
+              "p99": 0.33302200000002813,
+              "rme": 8.572053263790297,
               "sampleCount": 10
             }
           ],
-          "fullName": "createVfsBackend — in-process node <file> vs native spawn (hot path)"
+          "fullName": "createVfsBackend - in-process node <file> vs native spawn (hot path)"
         },
         {
           "benchmarks": [
             {
-              "mean": 30.202642900000022,
+              "mean": 30.26811590000002,
               "name": "native",
-              "p99": 33.281402999999955,
-              "rme": 4.289230864149621,
+              "p99": 32.83905200000004,
+              "rme": 3.9712363763799248,
               "sampleCount": 10
             },
             {
-              "mean": 30.465942900000005,
+              "mean": 29.301759400000016,
               "name": "vfs",
-              "p99": 36.234803000000056,
-              "rme": 6.613678895982988,
+              "p99": 32.176607000000104,
+              "rme": 4.079735743837668,
               "sampleCount": 10
             }
           ],
-          "fullName": "createVfsBackend — fall-back command vs native (no added overhead)"
+          "fullName": "createVfsBackend - fall-back command vs native (no added overhead)"
         }
       ]
     }

@@ -9,30 +9,30 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-27T04:12:01.806Z
-- Commit: 666a4bcc8
+- Date: 2026-06-28T07:08:35.035Z
+- Commit: 99b4ff094
 - Node: v26.4.0
 - OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 15.6 GiB
 
-## createVfsBackend — in-process node -e vs native spawn (hot path)
+## createVfsBackend - in-process node -e vs native spawn (hot path)
 
 | task   | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------ | ------- | --------- | ------- | -------- | ------- |
-| native | 1.00×   | 29.8024   | ±5.29%  | 33.5909  | 10      |
-| vfs    | 346.58× | 0.0860    | ±37.87% | 0.1594   | 10      |
+| native | 1.00×   | 30.5253   | ±4.84%  | 34.4869  | 10      |
+| vfs    | 416.47× | 0.0733    | ±40.07% | 0.1724   | 10      |
 
-## createVfsBackend — in-process node <file> vs native spawn (hot path)
-
-| task   | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
-| ------ | ------- | --------- | ------- | -------- | ------- |
-| native | 1.00×   | 29.1105   | ±5.68%  | 33.2716  | 10      |
-| vfs    | 98.51×  | 0.2955    | ±12.30% | 0.3797   | 10      |
-
-## createVfsBackend — fall-back command vs native (no added overhead)
+## createVfsBackend - in-process node <file> vs native spawn (hot path)
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------ | ------- | --------- | ------ | -------- | ------- |
-| native | 1.00×   | 30.2026   | ±4.29% | 33.2814  | 10      |
-| vfs    | 0.99×   | 30.4659   | ±6.61% | 36.2348  | 10      |
+| native | 1.00×   | 28.5667   | ±2.26% | 30.0134  | 10      |
+| vfs    | 104.08× | 0.2745    | ±8.57% | 0.3330   | 10      |
+
+## createVfsBackend - fall-back command vs native (no added overhead)
+
+| task   | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
+| ------ | ------- | --------- | ------ | -------- | ------- |
+| native | 1.00×   | 30.2681   | ±3.97% | 32.8391  | 10      |
+| vfs    | 1.03×   | 29.3018   | ±4.08% | 32.1766  | 10      |
