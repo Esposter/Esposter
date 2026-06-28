@@ -22,9 +22,9 @@ export const createSnapshot = (
 ): Promise<SnapshotLocation> => {
   const location = resolveSnapshotLocation(options.cwd);
   const { upperDir, workDir } = location;
-  mkdirSync(upperDir, { recursive: true });
-  mkdirSync(workDir, { recursive: true });
   return getResultAsync(async () => {
+    mkdirSync(upperDir, { recursive: true });
+    mkdirSync(workDir, { recursive: true });
     const { exitCode, stderr } = await backend.exec(command, { ...options, overlayLayers: { upperDir, workDir } });
     if (exitCode !== 0)
       throw new InvalidOperationError(
