@@ -40,4 +40,14 @@ describe(resolveBackend, () => {
     // Native, so an `os` backend can degrade to `vfs` (or any other backend) rather than always native.
     expect(resolveBackend({ backend: BackendType.Os, fallback: BackendType.Vfs })).toBe(BackendType.Vfs);
   });
+
+  test("degrades a self-referential os fallback to native", () => {
+    expect.hasAssertions();
+
+    vi.mocked(isOsBackendSupported).mockReturnValue(false);
+
+    // { backend: os, fallback: os } on an unsupported host must not return the still-unsupported os backend —
+    // That would break the "never errors the build" fallback contract. The resolver degrades to native instead.
+    expect(resolveBackend({ backend: BackendType.Os, fallback: BackendType.Os })).toBe(BackendType.Native);
+  });
 });

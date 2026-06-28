@@ -38,7 +38,7 @@ Ordered from lowest commitment to highest. A repo adopts left-to-right and can r
 
    Transparent routing was also the _only_ mechanism that would have needed a committed allowlist: a command intercepted with no prefix has nothing on it to read, so virrun would have had to look up "should this binary sandbox?" in a list. Since that path is off the table here, virrun carries **no allowlist** — the prefix's presence is the sole switch, and the config only selects the backend. If a viable spawn-interceptor ever lands, the allowlist returns _with_ it, not before.
 
-   **No on/off env flag.** The prefix's presence is the switch — add `virrun -- ` to adopt a command, remove it to drop it, per command and reviewable. virrun instead injects a vitest-style `VIRRUN=true` signal into every command's environment (read via `isVirrunEnabled`) so a test/config/tool can detect it runs under virrun; that is an **output** virrun sets, never an input that gates routing.
+   **No on/off env flag.** The prefix's presence is the switch — add `virrun --` to adopt a command, remove it to drop it, per command and reviewable. virrun instead injects a vitest-style `VIRRUN=true` signal into every command's environment (read via `isVirrunEnabled`) so a test/config/tool can detect it runs under virrun; that is an **output** virrun sets, never an input that gates routing.
 
 ## Auto-fallback (the safety net)
 
