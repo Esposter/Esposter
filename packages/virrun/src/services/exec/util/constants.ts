@@ -14,6 +14,9 @@ export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
 export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";
 
 export const COREPACK_HOME_KEY = "COREPACK_HOME";
+// Overrides the host-global cache root (default ~/.virrun) — lets CI and tests point the snapshot cache at
+// A disposable directory instead of polluting the real home.
+export const VIRRUN_CACHE_HOME_KEY = "VIRRUN_CACHE_HOME";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY = "PNPM_CONFIG_PACKAGE_IMPORT_METHOD";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE = "copy";
 export const PNPM_CONFIG_STORE_DIR_KEY = "PNPM_CONFIG_STORE_DIR";

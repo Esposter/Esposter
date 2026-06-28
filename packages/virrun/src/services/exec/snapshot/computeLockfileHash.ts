@@ -1,4 +1,5 @@
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
+import { resolveCwd } from "@/services/exec/util/resolveCwd";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
@@ -10,7 +11,7 @@ import { join } from "node:path";
 // Hashing an empty string and silently colliding every lockless repo onto one entry. (Base-image id is part
 // Of the eventual key but deferred until the os backend pins one.)
 export const computeLockfileHash = (cwd: string): string => {
-  const dir = cwd === "" ? process.cwd() : cwd;
+  const dir = resolveCwd(cwd);
   const lockfile = join(dir, PNPM_LOCKFILE_FILENAME);
   if (!existsSync(lockfile))
     throw new InvalidOperationError(Operation.Read, computeLockfileHash.name, `no ${PNPM_LOCKFILE_FILENAME} in ${dir}`);
