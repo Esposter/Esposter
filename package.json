@@ -84,6 +84,7 @@
     "tsx": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
+    "virrun": "workspace:*",
     "vitest": "catalog:"
   },
   "engines": {

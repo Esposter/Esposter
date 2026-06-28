@@ -146,8 +146,7 @@
       "WebFetch(domain:orm.drizzle.team)",
       "WebFetch(domain:vitest.dev)",
       "WebFetch(domain:vuetifyjs.com)",
-      "WebFetch(domain:vueuse.org)",
-      "Bash(node *)"
+      "WebFetch(domain:vueuse.org)"
     ]
   }
 }
