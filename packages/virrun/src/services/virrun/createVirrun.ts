@@ -11,6 +11,7 @@ import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
+import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { loadSource } from "@/services/source/loadSource";
 // Maps each backend choice to its factory. Adding the future `os` backend is a one-line entry here
@@ -33,8 +34,17 @@ export const createVirrun = async ({
   const { cwd, dispose } = await loadSource(source);
   // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store
   // (bindDirs/PNPM_CONFIG_*) must still be injected, otherwise the os path runs without its host cache.
-  const sharedPackageStoreOptions = execBackend.name === BackendType.Os ? createSharedPackageStoreOptions(cwd) : {};
-  const toOptions = (stdio: ExecStdio): ExecOptions => ({ ...sharedPackageStoreOptions, cwd, stdio });
+  const sharedPackageStoreOptions: Pick<ExecOptions, "bindDirs" | "env"> =
+    execBackend.name === BackendType.Os ? createSharedPackageStoreOptions(cwd) : {};
+  // Inject the vitest-style presence signal (VIRRUN_ENV_KEY) into every command virrun runs, merged over any
+  // Store env the os backend needs. Both the native backend and the bwrap sandbox apply options.env to the
+  // Child, so the command — and its tests/config/tooling — can detect it runs under virrun via process.env.
+  const toOptions = (stdio: ExecStdio): ExecOptions => ({
+    ...sharedPackageStoreOptions,
+    cwd,
+    env: { ...sharedPackageStoreOptions.env, [VIRRUN_ENV_KEY]: "true" },
+    stdio,
+  });
   return {
     backend: execBackend.name,
     dispose,
@@ -43,13 +53,12 @@ export const createVirrun = async ({
       // Fork is the os backend's overlay-snapshot mechanism; other backends have no snapshot layer, so the
       // Transparent fallback is a plain exec — fork is then identical to exec with no warm reuse.
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
-      // Capture-or-reuse, keyed by lockfile hash: the first fork for this dependency set freezes the warm
-      // Post-run state into the snapshot upper, then every fork (this one included) stacks that upper
-      // Read-only and re-runs the command over it — so a re-install collapses to a frozen-lockfile no-op and
-      // Fork always returns the result of running in the forked, ephemeral sandbox. The cold path therefore
-      // Runs `command` twice (capture then fork); this is the documented setup-command contract (see Virrun.fork)
-      // And is only correct for idempotent commands like `pnpm install`, never arbitrary side-effecting ones.
-      if (!resolveSnapshotLocation(cwd).exists) await createSnapshot(execBackend, command, toOptions(stdio));
+      // Capture-or-reuse, keyed by lockfile hash. On a cold cache the capture run is the command's one real
+      // Execution: its writes freeze into the snapshot upper and its result is returned directly, so `command`
+      // Runs exactly once. Every later fork stacks that frozen upper read-only and re-runs over it — so a
+      // Re-install collapses to a frozen-lockfile no-op and the run's own writes vanish in the ephemeral upper.
+      if (!resolveSnapshotLocation(cwd).exists)
+        return (await createSnapshot(execBackend, command, toOptions(stdio))).result;
       return forkSnapshot(execBackend, command, toOptions(stdio));
     },
   };

@@ -51,7 +51,7 @@ describe(createSnapshot, () => {
     expect.hasAssertions();
 
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
-    const location = await createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" });
+    const { location } = await createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" });
 
     expect(location).toStrictEqual(resolveSnapshotLocation(repo));
     expect(existsSync(location.upperDir)).toBe(true);
@@ -60,6 +60,15 @@ describe(createSnapshot, () => {
       upperDir: location.upperDir,
       workDir: location.workDir,
     });
+  });
+
+  test("returns the capture run's result so a cold-path fork reuses it instead of re-running", async () => {
+    expect.hasAssertions();
+
+    const backend = { ...createFakeBackend(0), name: BackendType.Os };
+    const { result } = await createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" });
+
+    expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: "" });
   });
 
   test("preserves the caller's exec options while adding capture overlay layers", async () => {

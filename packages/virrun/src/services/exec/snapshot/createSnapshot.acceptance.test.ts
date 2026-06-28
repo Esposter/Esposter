@@ -68,7 +68,7 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
     mkdirSync(corepackHome, { recursive: true });
     const installCommand = process.platform === "win32" ? "corepack pnpm install" : "pnpm install";
     // Capture: a real, networked install whose writes persist into the global snapshot upper.
-    const location = await createSnapshot(backend, `${installCommand} --frozen-lockfile`, {
+    const { location } = await createSnapshot(backend, `${installCommand} --frozen-lockfile`, {
       ...sharedPackageStoreOptions,
       bindDirs: [...(sharedPackageStoreOptions.bindDirs ?? []), corepackHome],
       cwd: corpus,

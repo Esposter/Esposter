@@ -53,3 +53,4 @@ scheduled_tasks.lock
 
 # OS
 .DS_Store
+/.virrun/

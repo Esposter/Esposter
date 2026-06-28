@@ -1,5 +1,4 @@
 {
   "$schema": "./node_modules/virrun/schema.json",
-  "route": ["eslint .", "oxfmt --check", "tsgo", "vitest run"],
   "backend": "os"
 }

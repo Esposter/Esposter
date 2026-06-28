@@ -7,8 +7,9 @@ import { file } from "empathic/find";
 import { readFileSync } from "node:fs";
 // Walks up from cwd to the first `virrun.config.json` (the repo root in a monorepo) via empathic's standard
 // Parent-directory file search, then parses it. Returns undefined when no config exists anywhere up the tree —
-// A fully valid state meaning nothing routes, so the CLI runs native exactly as if virrun weren't installed. A
-// Present-but-malformed config throws (via the parser) so a typo fails loud instead of silently un-routing.
+// A fully valid state: the backend resolver then defaults to Auto (native today), so a prefixed command runs
+// Exactly as if no config were present. A present-but-malformed config throws (via the parser) so a typo fails
+// Loud instead of silently changing the backend.
 export const resolveVirrunConfiguration = (cwd: string): undefined | VirrunConfiguration => {
   const configurationFile = file(VIRRUN_CONFIGURATION_FILENAME, { cwd: resolveCwd(cwd) });
   if (configurationFile === undefined) return undefined;

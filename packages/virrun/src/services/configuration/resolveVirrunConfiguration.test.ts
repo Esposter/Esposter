@@ -26,14 +26,13 @@ describe(resolveVirrunConfiguration, () => {
     expect.hasAssertions();
 
     const root = createTemporaryDirectory();
-    writeFileSync(join(root, VIRRUN_CONFIGURATION_FILENAME), JSON.stringify({ backend: "os", route: ["vitest"] }));
+    writeFileSync(join(root, VIRRUN_CONFIGURATION_FILENAME), JSON.stringify({ backend: "os" }));
     const nested = join(root, "packages", "app");
     mkdirSync(nested, { recursive: true });
 
     expect(resolveVirrunConfiguration(nested)).toStrictEqual({
       backend: BackendType.Os,
       fallback: BackendType.Native,
-      route: ["vitest"],
     });
   });
 

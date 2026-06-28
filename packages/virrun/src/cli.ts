@@ -1,5 +1,5 @@
 import { parseCliCommand } from "@/services/cli/parseCliCommand";
-import { resolveCommandBackend } from "@/services/configuration/resolveCommandBackend";
+import { resolveBackend } from "@/services/configuration/resolveBackend";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { withFinalizerAsync } from "@esposter/shared";
@@ -11,9 +11,12 @@ import process from "node:process";
 // And metacharacters reach the program literally instead of being re-tokenized by a shell. Operators inside
 // The sandbox are opt-in via `virrun -- sh -c "..."`.
 //
-// The backend is chosen by the repo's `virrun.config.json` allowlist (adoption level 3): a command in `route`
-// Runs through the configured backend, everything else (and any repo with no config) stays native. So the same
-// Prefix is safe on every command — only the allowlisted ones are actually sandboxed.
+// The prefix is the switch: every `virrun -- <cmd>` is sandboxed, and opting a command in or out is just adding
+// Or removing the `virrun -- ` prefix on it — there is no separate on/off flag or allowlist. The repo's
+// `virrun.config.json` (adoption level 3) only chooses *which* backend a sandboxed command runs through; with no
+// Config the backend defaults to auto (native today), so the prefix is safe everywhere. virrun does inject a
+// `VIRRUN=true` signal into the command's environment (see createVirrun), the way vitest sets `VITEST`, so the
+// Command can detect it.
 const main = async (): Promise<void> => {
   const command = parseCliCommand(process.argv.slice(2));
   if (command.length === 0) {
@@ -21,7 +24,7 @@ const main = async (): Promise<void> => {
     process.exitCode = 1;
     return;
   }
-  const backend = resolveCommandBackend(command, resolveVirrunConfiguration(""));
+  const backend = resolveBackend(resolveVirrunConfiguration(""));
   const virrun = await createVirrun({ backend });
   const { exitCode } = await withFinalizerAsync(
     () => virrun.exec(command, "inherit"),

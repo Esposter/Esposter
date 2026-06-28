@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "virrun configuration",
-  "description": "The repo-root virrun.config.json: a checked-in, reviewable allowlist of which commands run through the sandbox and which backend they use (adoption level 3). Every field is optional and falls back to a safe default, so a minimal { \"route\": [\"vitest run\"] } is valid; an absent file means nothing routes and virrun is a no-op.",
+  "description": "The repo-root virrun.config.json: a checked-in, reviewable selection of which backend a sandboxed command runs through (adoption level 3). The `virrun -- <cmd>` prefix is the switch for whether a command is sandboxed; this config only chooses how. Every field is optional and falls back to a safe default, so a minimal {} — or an absent file — is valid and the backend defaults to auto (native today).",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -9,14 +9,8 @@
       "type": "string",
       "description": "Path or URL to this JSON schema, for editor autocompletion and validation."
     },
-    "route": {
-      "type": "array",
-      "description": "Commands that route through the sandbox, matched by leading tokens — `vitest run` matches `vitest run --coverage` but not bare `vitest`. Everything not listed stays native (per-command granularity). Defaults to none.",
-      "items": { "type": "string" },
-      "default": []
-    },
     "backend": {
-      "description": "The backend a routed command runs through. Defaults to `auto` (resolves to native today). Mirror of the BackendType enum in src/models/virrun/BackendType.ts.",
+      "description": "The backend a sandboxed command runs through. Defaults to `auto` (resolves to native today). Mirror of the BackendType enum in src/models/virrun/BackendType.ts.",
       "default": "auto",
       "enum": ["auto", "native", "os", "vfs"],
       "enumDescriptions": [

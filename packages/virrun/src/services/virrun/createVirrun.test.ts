@@ -39,6 +39,17 @@ describe(createVirrun, () => {
     expect(sandboxResult).toStrictEqual(nativeResult);
   });
 
+  test("injects the VIRRUN presence signal into the command environment", async () => {
+    expect.hasAssertions();
+
+    const command = `node -e "process.stdout.write(process.env.VIRRUN ?? 'unset')"`;
+    const { dispose, exec } = await createVirrun();
+    const { stdout } = await exec(command);
+    await dispose();
+
+    expect(stdout).toBe("true");
+  });
+
   test("defaults to the native backend", async () => {
     expect.hasAssertions();
 

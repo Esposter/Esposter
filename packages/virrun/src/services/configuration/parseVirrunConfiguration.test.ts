@@ -6,20 +6,17 @@ describe(parseVirrunConfiguration, () => {
   test("parses a full config", () => {
     expect.hasAssertions();
 
-    const configuration = parseVirrunConfiguration(
-      JSON.stringify({ backend: "os", fallback: "native", route: ["vitest"] }),
-    );
+    const configuration = parseVirrunConfiguration(JSON.stringify({ backend: "os", fallback: "native" }));
 
-    expect(configuration).toStrictEqual({ backend: BackendType.Os, fallback: BackendType.Native, route: ["vitest"] });
+    expect(configuration).toStrictEqual({ backend: BackendType.Os, fallback: BackendType.Native });
   });
 
-  test("defaults omitted fields to an auto backend, native fallback, and no routes", () => {
+  test("defaults omitted fields to an auto backend and native fallback", () => {
     expect.hasAssertions();
 
     expect(parseVirrunConfiguration("{}")).toStrictEqual({
       backend: BackendType.Auto,
       fallback: BackendType.Native,
-      route: [],
     });
   });
 
@@ -35,11 +32,20 @@ describe(parseVirrunConfiguration, () => {
     expect(() => parseVirrunConfiguration(JSON.stringify({ backend: "rocket" }))).toThrow("`backend` must be one of");
   });
 
-  test("throws when route is not an array of strings", () => {
+  test("throws on an unknown key", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration(JSON.stringify({ route: [1, 2] }))).toThrow(
-      "`route` must be an array of strings",
+    expect(() => parseVirrunConfiguration(JSON.stringify({ commandPrefixes: ["vitest"] }))).toThrow(
+      "unknown key: commandPrefixes",
     );
+  });
+
+  test("accepts a $schema pointer", () => {
+    expect.hasAssertions();
+
+    expect(parseVirrunConfiguration(JSON.stringify({ $schema: "./schema.json", backend: "os" }))).toStrictEqual({
+      backend: BackendType.Os,
+      fallback: BackendType.Native,
+    });
   });
 });

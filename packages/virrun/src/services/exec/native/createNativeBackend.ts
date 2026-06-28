@@ -15,6 +15,10 @@ export const createNativeBackend = (): ExecBackend => ({
       const [file, ...args] = Array.isArray(command) ? command : [command];
       const child = spawn(file, args, {
         cwd: options.cwd === "" ? undefined : options.cwd,
+        // Inherit the host env, with options.env merged over it (the `VIRRUN` signal, and anything else the
+        // Orchestrator passes) — the same contract the bwrap backend honors, so the native path and the
+        // Sandbox expose an identical environment to the command.
+        env: { ...process.env, ...options.env },
         shell: !Array.isArray(command),
         stdio: options.stdio,
       });

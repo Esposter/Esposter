@@ -31,7 +31,7 @@ boot + install (once, slow) ─► snapshot ─► fork ─► run cmd ─► di
 
 ## Key Files
 
-Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the overlay-layer argv, `createSnapshot` capture and `forkSnapshot` (Linux + WSL), the cold-vs-warm bench, and a transparent `fork()` on the `createVirrun` orchestrator (os captures-or-reuses; other backends fall through to `exec`). Still planned: always-on whole-repo routing on top of this handle, gated on the config allowlist.
+Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the overlay-layer argv, `createSnapshot` capture and `forkSnapshot` (Linux + WSL), the cold-vs-warm bench, and a transparent `fork()` on the `createVirrun` orchestrator (os captures-or-reuses; other backends fall through to `exec`). Still planned: always-on whole-repo routing on top of this handle, gated on a viable transparent-interception seam (the PATH shim is dropped as unviable).
 
 | File | Role | Status |
 | ---- | ---- | ------ |
@@ -43,4 +43,4 @@ Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the o
 | `services/exec/snapshot/forkSnapshot.ts` | run a command over a captured snapshot (upper stacked read-only, writes vanish); guards that one exists | realized |
 | `localMonorepo.bench.ts` ("warm fork vs cold reinstall") | cold-vs-warm speed gate: reinstall every run vs fork the snapshot (native Linux) | realized |
 | `services/virrun/createVirrun.ts` (`fork`) | transparent `fork(command)` on the orchestrator handle — os captures-or-reuses the snapshot, other backends fall through to `exec` | realized |
-| always-on whole-repo routing | a single switch / PATH shim forking every command | planned (gated on config allowlist → [deferred/whole-repo-routing.md](../deferred/whole-repo-routing.md)) |
+| always-on whole-repo routing | a single switch / spawn-interceptor forking every command | planned (gated on a viable interception seam → [deferred/whole-repo-routing.md](../deferred/whole-repo-routing.md)) |
