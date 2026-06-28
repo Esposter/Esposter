@@ -83,4 +83,44 @@ describe(buildBwrapArgs, () => {
     expect(args.indexOf("--bind")).toBeGreaterThan(args.indexOf("--tmp-overlay"));
     expect(args.indexOf("--chdir")).toBeGreaterThan(args.indexOf("--bind"));
   });
+
+  test("persists writes to a host upper when capturing a snapshot", () => {
+    expect.hasAssertions();
+
+    const upperDir = `${TEST_DIR}/upper`;
+    const workDir = `${TEST_DIR}/work`;
+    const args = buildBwrapArgs("pnpm install", TEST_DIR, {}, { upperDir, workDir });
+
+    expect(args).toStrictEqual(
+      expect.arrayContaining(["--overlay-src", TEST_DIR, "--overlay", upperDir, workDir, TEST_DIR]),
+    );
+    expect(args).not.toContain("--tmp-overlay");
+  });
+
+  test("stacks extra lower layers above the source before the tmpfs upper when forking", () => {
+    expect.hasAssertions();
+
+    const snapshotUpper = `${TEST_DIR}/snapshot/upper`;
+    const args = buildBwrapArgs("vitest", TEST_DIR, {}, { lowerDirs: [snapshotUpper] });
+    const sourceLower = args.indexOf(TEST_DIR);
+    const snapshotLower = args.indexOf(snapshotUpper);
+
+    expect(args).toStrictEqual(
+      expect.arrayContaining(["--overlay-src", TEST_DIR, "--overlay-src", snapshotUpper, "--tmp-overlay", TEST_DIR]),
+    );
+    // The snapshot lower must stack after the source so its files shadow it, and both precede the upper.
+    expect(snapshotLower).toBeGreaterThan(sourceLower);
+    expect(args.indexOf("--tmp-overlay")).toBeGreaterThan(snapshotLower);
+  });
+
+  test("throws when only one of upperDir or workDir is supplied", () => {
+    expect.hasAssertions();
+
+    expect(() => buildBwrapArgs("pwd", TEST_DIR, {}, { upperDir: `${TEST_DIR}/upper` })).toThrow(
+      "a persistent overlay needs both upperDir and workDir",
+    );
+    expect(() => buildBwrapArgs("pwd", TEST_DIR, {}, { workDir: `${TEST_DIR}/work` })).toThrow(
+      "a persistent overlay needs both upperDir and workDir",
+    );
+  });
 });

@@ -29,9 +29,14 @@ boot + install (once, slow) ─► snapshot ─► fork ─► run cmd ─► di
 - Start FS-only (overlay-layer / volume clone); add CRIU process-state forking only if measured warm-boot time justifies it.
 - Snapshot integrity must survive dep-store changes — bind the snapshot to the exact store content it was built against.
 
-## Key Files (planned)
+## Key Files
 
-| File | Role |
-| ---- | ---- |
-| `snapshot/Snapshot.ts` | snapshot handle + `fork()` |
-| `snapshot/cache.ts` | lockfile-hash-keyed snapshot cache |
+Realized so far is the FS-only foundation: lockfile-hash cache addressing plus the overlay-layer argv the capture/fork runs will spawn (both gates-friendly, unit-tested cross-platform). The native capture/fork orchestration and a `Snapshot` handle are still planned.
+
+| File | Role | Status |
+| ---- | ---- | ------ |
+| `services/exec/snapshot/computeLockfileHash.ts` | sha256 of `pnpm-lock.yaml` — the snapshot cache key | realized |
+| `services/exec/snapshot/resolveSnapshotLocation.ts` | resolve `.virrun/snapshots/<hash>` (+ `upper`/`work` dirs, `exists`) | realized |
+| `services/exec/bwrap/buildBwrapArgs.ts` (`OverlayLayers`) | emit stacked `--overlay-src` lowers (fork) + persisted `--overlay` upper (capture) vs `--tmp-overlay` (ephemeral) | realized |
+| `services/exec/snapshot/createSnapshot.ts` | capture warm post-install state into the overlay upper (Linux + WSL) | planned |
+| `snapshot/Snapshot.ts` | snapshot handle + `fork()` wired into the orchestrator | planned |
