@@ -40,4 +40,6 @@ Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the o
 | `services/exec/util/getGlobalCacheDirectory.ts` | host-global cache root `~/.virrun` (`VIRRUN_CACHE_HOME` override) | realized |
 | `services/exec/bwrap/buildBwrapArgs.ts` (`OverlayLayers`) | emit stacked `--overlay-src` lowers (fork) + persisted `--overlay` upper (capture) vs `--tmp-overlay` (ephemeral) | realized |
 | `services/exec/snapshot/createSnapshot.ts` | run a setup command in capture mode, persisting post-install writes into the overlay upper (Linux + WSL) | realized |
-| `snapshot/Snapshot.ts` | snapshot handle + `fork()` wired into the orchestrator | planned |
+| `services/exec/snapshot/forkSnapshot.ts` | run a command over a captured snapshot (upper stacked read-only, writes vanish); guards that one exists | realized |
+| `localMonorepo.bench.ts` ("warm fork vs cold reinstall") | cold-vs-warm speed gate: reinstall every run vs fork the snapshot (native Linux) | realized |
+| `snapshot/Snapshot.ts` | transparent `fork()` on the `createVirrun` orchestrator | planned (with config routing) |

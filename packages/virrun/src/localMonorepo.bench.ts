@@ -4,6 +4,9 @@ import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
+import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
+import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
 import {
@@ -15,7 +18,7 @@ import { OS_BACKEND_BENCH_TASK_NAME } from "@/services/exec/util/constants.bench
 import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { afterAll, bench, describe } from "vitest";
+import { afterAll, beforeAll, bench, describe } from "vitest";
 // End-to-end speed gate: native vs os backend on real monorepo commands. Each group is a native-vs-os
 // Comparison, so the whole group is gated on direct Linux support - a WSL host can benchmark the core
 // Backend in createOsBackend.bench.ts, but this macro path needs the full Linux package-manager toolchain.
@@ -38,6 +41,7 @@ const osInstallOptions: ExecOptions = {
 // Separate corpora so native's on-disk node_modules don't warm the os run.
 const nativeCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const osCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
+const warmCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const INSTALL = "pnpm install --frozen-lockfile --config.package-import-method=copy";
 const cleanModules = "find . -name node_modules -type d -prune -exec rm -rf {} +";
 // Clear caches before each run so neither side benefits from incremental state.
@@ -45,7 +49,10 @@ const SHARED = join(repoRoot, "packages/shared");
 const cold = (clean: string, command: string): string => `${clean} 2>/dev/null; ${command}`;
 
 afterAll(() => {
-  for (const corpus of [nativeCorpus, osCorpus]) if (corpus) rmSync(corpus, { force: true, recursive: true });
+  // Resolve the snapshot before removing warmCorpus (its lockfile keys the cache entry), then clear it.
+  if (isOsSupported) rmSync(resolveSnapshotLocation(warmCorpus).dir, { force: true, recursive: true });
+  for (const corpus of [nativeCorpus, osCorpus, warmCorpus])
+    if (corpus) rmSync(corpus, { force: true, recursive: true });
 });
 
 describe.skipIf(!isOsSupported)("install - real workspace dependency closure (cold)", () => {
@@ -55,6 +62,23 @@ describe.skipIf(!isOsSupported)("install - real workspace dependency closure (co
 
   bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
     await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: osCorpus });
+  });
+});
+
+// The snapshot payoff: capture the install once, then a forked run reuses the dep tree instead of
+// Reinstalling. `cold` is the os backend reinstalling from a fresh tmpfs upper every run; `warm` forks the
+// Captured snapshot, so it should dwarf the cold baseline - that gap is the entire reason this layer exists.
+describe.skipIf(!isOsSupported)("install - warm fork vs cold reinstall", () => {
+  beforeAll(async () => {
+    await createSnapshot(createOsBackend(), INSTALL, { ...osInstallOptions, cwd: warmCorpus });
+  });
+
+  bench("cold", async () => {
+    await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: warmCorpus });
+  });
+
+  bench("warm", async () => {
+    await forkSnapshot(createOsBackend(), INSTALL, { ...osInstallOptions, cwd: warmCorpus });
   });
 });
 
