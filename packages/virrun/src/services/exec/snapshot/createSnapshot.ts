@@ -2,9 +2,10 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { SnapshotLocation } from "@/models/exec/SnapshotLocation";
 
+import { removeSnapshotLocation } from "@/services/exec/snapshot/removeSnapshotLocation";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync, rmSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 // Captures warm post-install state: runs `command` (e.g. `pnpm install`) through the os backend in capture
 // Mode, so its writes persist into the snapshot's overlay upper in the global cache instead of vanishing in
 // Tmpfs. The frozen upper, keyed by lockfile hash, is the layer every later fork stacks read-only over the
@@ -20,7 +21,7 @@ export const createSnapshot = async (
   options: ExecOptions,
 ): Promise<SnapshotLocation> => {
   const location = resolveSnapshotLocation(options.cwd);
-  const { dir, upperDir, workDir } = location;
+  const { upperDir, workDir } = location;
   mkdirSync(upperDir, { recursive: true });
   mkdirSync(workDir, { recursive: true });
   return getResultAsync(async () => {
@@ -36,7 +37,9 @@ export const createSnapshot = async (
   }).match(
     (value) => value,
     (error) => {
-      rmSync(dir, { force: true, recursive: true });
+      // removeSnapshotLocation (not a plain rmSync) — capture leaves the overlay's `work/work` scratch at mode
+      // 000, which a recursive remove EACCES-es on without the chmod-first teardown.
+      removeSnapshotLocation(location);
       throw error;
     },
   );
