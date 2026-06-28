@@ -26,7 +26,7 @@ Two pass/fail gates on every backend and speed feature — a violation is not sh
 
 ## Now
 
-Phase 2 — the `os` backend is underway. The Bubblewrap RAM overlay, real `pnpm install` acceptance path, shared `.virrun/store/pnpm` package store, and Windows→WSL2 bridge have landed; the remaining Phase 2 platform item is the macOS VM bridge → [roadmap.md](roadmap.md).
+Phase 3 — snapshot + warm-fork. The FS-only overlay snapshot has landed: `createSnapshot` captures a warm post-install state into a lockfile-hash-keyed layer in the host-global `~/.virrun`, and a fork re-runs against it without reinstalling. Open: a public `fork()` handle on the orchestrator and the cold-vs-warm bench. Phase 2's `os` backend (Bubblewrap RAM overlay, real `pnpm install`, shared `.virrun/store/pnpm`, Windows→WSL2 bridge) is done bar the macOS VM bridge → [roadmap.md](roadmap.md).
 
 ## Shipped
 
@@ -35,6 +35,7 @@ Terse log; the linked spec holds the detail.
 - **Phase 0 — foundations**: `virrun` (public, unscoped) — the `ExecBackend` seam, native passthrough backend, async `createVirrun`, `dir`/`files`/`git` source loaders, the `virrun -- <cmd>` CLI, and the `pnpm bench` foundation (colocated per-file `*.bench.{json,md}`). → [orchestrator-api](specs/orchestrator-api.md) · [adoption](specs/adoption.md) · [benchmarking](specs/benchmarking.md)
 - **`vfs` Step A — FS layer**: `FsProvider` + `createPlatformaticFsProvider` over `@platformatic/vfs` (the lone import, doubling as the `node:vfs` swap shim); mounting patches `require`/`fs` to serve virtual files; cross-platform. → [virtual-fs](specs/virtual-fs.md)
 - **`vfs` Step B — in-process runner** (both gates passed): `BackendType.Vfs` runs `node -e`/`--eval` and `node <file>` in the current process over an overlay-mounted FS, falling back to native for anything it can't run faithfully. Opt-in only — no isolation yet, so `Auto` stays native. → [exec-isolation](specs/exec-isolation.md)
+- **Phase 3 — FS-only overlay snapshot + fork**: lockfile-hash cache addressing (`~/.virrun/snapshots/<hash>`, `VIRRUN_CACHE_HOME` override), the `OverlayLayers` bwrap argv (stacked lowers for fork, persisted upper for capture), and `createSnapshot` capturing a warm post-install layer (Linux + WSL); a fork re-runs over it offline with writes vanishing. Capture→fork validated end-to-end. → [snapshot-fork](specs/snapshot-fork.md)
 
 ## Decisions
 

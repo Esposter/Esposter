@@ -22,9 +22,9 @@ Phase 0 (foundations) and Phase 1 (the `vfs` backend — FS layer + in-process `
 
 ## Phase 3 — Snapshot + warm-fork
 
-- [ ] Snapshot warm state post-install (CRIU for process+fs, or microVM/overlay-layer snapshot) → [specs/snapshot-fork.md](specs/snapshot-fork.md).
-- [ ] `fork()` a snapshot into an isolated run; measure cold-vs-warm run time.
-- [ ] Snapshot cache keyed by lockfile hash.
+- [x] Snapshot warm state post-install — FS-only overlay-layer snapshot: `createSnapshot` runs a setup command in capture mode (`bwrap --overlay <upper> <work> <dir>`) so post-install writes persist into the snapshot upper (Linux + WSL). CRIU/microVM stay deferred → [specs/snapshot-fork.md](specs/snapshot-fork.md).
+- [x] `fork()` a snapshot into an isolated run — same `exec` with `overlayLayers.lowerDirs` set to the captured upper, stacked read-only over the source with a fresh tmpfs upper (capture→fork validated end-to-end). Still open: a public `fork()`/`Snapshot` handle on the orchestrator, and a cold-vs-warm run-time bench.
+- [x] Snapshot cache keyed by lockfile hash — `~/.virrun/snapshots/<sha256(pnpm-lock.yaml)>` (host-global, `VIRRUN_CACHE_HOME` override), so a dependency change invalidates exactly that entry and the same deps reuse one warm snapshot across repos/CI.
 
 ## Phase 4 — Distribution & CI
 
