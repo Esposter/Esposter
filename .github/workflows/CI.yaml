@@ -67,7 +67,7 @@ jobs:
       # `--reporter=default` so failing tests / unhandled errors are also printed to the console — the
       # blob reporter alone writes only the file and prints nothing, hiding why a shard exits non-zero.
       - name: 🧪 Test
-        run: pnpm exec vitest run --coverage --reporter=default --reporter=blob --shard=${{ matrix.shard }}/8
+        run: pnpm exec virrun -- vitest run --coverage --reporter=default --reporter=blob --shard=${{ matrix.shard }}/8
 
       - name: 📤 Upload blob report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -102,7 +102,7 @@ jobs:
       # Recombine the sharded runs into one report with unified coverage from the blob data —
       # This re-emits the report only, it does not re-run any tests.
       - name: 🧪 Merge coverage
-        run: pnpm exec vitest run --merge-reports --coverage
+        run: pnpm exec virrun -- vitest run --merge-reports --coverage
 
       - name: 📊 Upload Coverage
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

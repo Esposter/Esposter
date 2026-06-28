@@ -19,22 +19,37 @@ An ephemeral, in-memory virtual runner: boot a repo into a RAM-backed filesystem
 
 ### Prerequisites
 
-The `os` backend runs every command inside a [bubblewrap](https://github.com/containers/bubblewrap) RAM-overlay. `bwrap` is a system-level namespace tool — it is **not** an npm dependency and is intentionally not bundled (a prebuilt binary would bypass the distro's setuid/AppArmor integration and the kernel's unprivileged-userns config it relies on). Install it from your package manager:
+To use the sandboxed `os` backend, your host environment must meet the following requirements. If any requirement is missing, `virrun` safely falls back to the native backend.
 
-```bash
-# Debian / Ubuntu / WSL2 distro
-sudo apt install bubblewrap
+#### 1. Bubblewrap (Linux / WSL2 Distro)
 
-# Fedora / RHEL
-sudo dnf install bubblewrap
+Bubblewrap is a system-level namespace tool and must be installed via your system package manager.
 
-# Arch
-sudo pacman -S bubblewrap
+- **Version Requirement:** Bubblewrap **`>= 0.10.0`** is required for RAM overlay support (`--overlay-src` and `--tmp-overlay`).
+- **Installation:**
 
-bwrap --version   # verify it is on PATH
-```
+  ```bash
+  # Debian / Ubuntu / WSL2 Distro
+  sudo apt update && sudo apt install -y bubblewrap
 
-The `os` backend is **Linux-core and opt-in**. It runs directly on Linux, and on Windows through WSL2 when `wsl.exe`, `wslpath`, and an overlay-capable `bwrap` are available inside the default distro. Unsupported hosts still keep `Auto` on the native backend, so the package is usable everywhere; only `BackendType.Os` requires the sandbox. `isOsBackendSupported()` reports whether the current host qualifies.
+  # Fedora / RHEL
+  sudo dnf install bubblewrap
+
+  # Arch Linux
+  sudo pacman -S bubblewrap
+  ```
+
+- **Verify installation:**
+  ```bash
+  bwrap --version
+  ```
+
+#### 2. Linux Node.js (For Windows/WSL2 users)
+
+If you are developing on Windows and want `virrun` to run commands inside the WSL2 sandbox:
+
+- **WSL2 Distro Requirement:** You must have a **Linux Node.js** binary installed inside your default WSL2 Linux distribution (e.g. via `nvm`, `fnm`, or `apt`).
+- **Why:** Windows executables (`node.exe`) cannot run inside the Linux bubblewrap sandbox. If no Linux `node` executable is found inside WSL2, the environment capability check fails and `virrun` will fall back to native Windows execution.
 
 ### CLI
 

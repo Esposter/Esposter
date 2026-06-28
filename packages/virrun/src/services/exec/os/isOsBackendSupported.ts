@@ -1,4 +1,4 @@
-﻿import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
+import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
 import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
@@ -22,7 +22,7 @@ export const isOsBackendSupported = (): boolean => {
     const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
     isSupported = getResult(() =>
       withFinalizer(
-        () => execFileSync("bwrap", buildBwrapArgs("true", dir), { stdio: "pipe" }),
+        () => execFileSync("bwrap", buildBwrapArgs(["node", "-v"], dir), { stdio: "pipe" }),
         () => {
           rmSync(dir, { force: true, recursive: true });
         },
@@ -37,7 +37,10 @@ export const isOsBackendSupported = (): boolean => {
       .andThen((wslDir) =>
         getResult(() =>
           withFinalizer(
-            () => execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs("true", wslDir)], { stdio: "pipe" }),
+            () =>
+              execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["node", "-v"], wslDir)], {
+                stdio: "pipe",
+              }),
             () => {
               getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
                 undefined,

@@ -1,4 +1,4 @@
-﻿import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
+import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
 import { getResult, withFinalizer } from "@esposter/shared";
@@ -15,7 +15,7 @@ const isOverlayCapable =
   getResult(() => {
     const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
     return withFinalizer(
-      () => execFileSync("bwrap", buildBwrapArgs("true", dir), { stdio: "pipe" }),
+      () => execFileSync("bwrap", buildBwrapArgs(["node", "-v"], dir), { stdio: "pipe" }),
       () => {
         rmSync(dir, { force: true, recursive: true });
       },
@@ -31,7 +31,8 @@ const isWslOverlayCapable =
     .andThen((wslDir) =>
       getResult(() =>
         withFinalizer(
-          () => execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs("true", wslDir)], { stdio: "pipe" }),
+          () =>
+            execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["node", "-v"], wslDir)], { stdio: "pipe" }),
           () => {
             getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
               undefined,

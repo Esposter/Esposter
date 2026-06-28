@@ -1,4 +1,4 @@
-﻿import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { StdioOptions } from "node:child_process";
 
