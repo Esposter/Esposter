@@ -7,26 +7,15 @@ import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
+import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
-import {
-  CI_ENV_KEY,
-  CI_ENV_VALUE,
-  COREPACK_HOME_KEY,
-  VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
-  VIRRUN_ENV_KEY,
-  VIRRUN_STORE_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
-import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
+import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
-import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
-import { readWslLoginPath } from "@/services/exec/wsl/readWslLoginPath";
 import { loadSource } from "@/services/source/loadSource";
-import { mkdirSync } from "node:fs";
-import { join } from "node:path";
 // Maps each backend choice to its factory. Adding the future `os` backend is a one-line entry here
 // Nothing else in the orchestrator changes. "auto" resolves to native until vfs beats it on the gates.
 const backendFactories: Record<BackendType, () => ExecBackend> = {
@@ -45,59 +34,15 @@ export const createVirrun = async ({
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
   const execBackend = backendFactories[backend]();
   const { cwd, dispose } = await loadSource(source);
-  // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store
-  // (bindDirs/PNPM_CONFIG_*) must still be injected, otherwise the os path runs without its host cache.
+  // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store, login PATH,
+  // And network re-enable must still be injected (see createOsExecOptions), otherwise the os path runs without
+  // Its host cache. A non-os backend runs in the caller's own shell env, so it needs none of that wiring — only
+  // The vitest-style VIRRUN presence signal, which both backends apply to the child so a command can detect it.
   const isOsBackend = execBackend.name === BackendType.Os;
-  // Where the os backend's write-heavy caches (pnpm store, corepack home) live. On win32 the sandbox runs through
-  // WSL, where the repo path resolves to /mnt/c (v9fs) — 15-64x slower for the many-small-file install — so route
-  // Them to the WSL distro's own ext4 home instead. On Linux they stay inside the repo's `.virrun`.
-  const cacheRoot = isOsBackend && process.platform === "win32" ? getWslNativeCacheRoot() : getRepoCacheDirectory(cwd);
-  const sharedPackageStoreOptions: Pick<ExecOptions, "bindDirs" | "env"> = isOsBackend
-    ? createSharedPackageStoreOptions(cwd, cacheRoot)
-    : {};
-  // The os backend's WSL bridge runs commands through `wsl.exe --exec`, which skips the login + rc files, so a
-  // Profile-bound node manager's node is off PATH. Capture the PATH a real WSL login+interactive shell sees
-  // (where the user's version manager already activates) and inject it as PATH into every os-backend command —
-  // Applied identically to the real backend and the differential baseline, so correctness diffs stay valid.
-  // Linux needs none of this: there virrun already runs in the caller's shell env, so node is inherited. ""
-  // (capture failed, or no win32 os backend) injects nothing, leaving the default PATH untouched.
-  const wslLoginPath = isOsBackend && process.platform === "win32" ? readWslLoginPath() : "";
-  // Inject the vitest-style presence signal (VIRRUN_ENV_KEY) into every command virrun runs, merged over any
-  // Store env the os backend needs. Both the native backend and the bwrap sandbox apply options.env to the
-  // Child, so the command — and its tests/config/tooling — can detect it runs under virrun via process.env.
-  //
-  // Re-enable network for the os backend (`--unshare-all` drops it): the os backend's guarantee is *filesystem*
-  // Isolation, not network isolation (specs/exec-isolation.md → "deps download once"). Without it pnpm cannot
-  // Reach the registry to bootstrap its config dependencies/deps, so every `virrun -- pnpm …` dies with
-  // "fetch failed" before the real command runs — the typecheck/lint output never appears and CI fails opaquely.
-  const toOptions = (stdio: ExecStdio): ExecOptions => ({
-    ...sharedPackageStoreOptions,
-    cwd,
-    env: {
-      ...(wslLoginPath === "" ? {} : { PATH: wslLoginPath }),
-      ...sharedPackageStoreOptions.env,
-      [VIRRUN_ENV_KEY]: "true",
-    },
-    isNetworkEnabled: isOsBackend,
-    stdio,
-  });
-  // The capture run that provisions the sandbox dep closure needs corepack's home writable on a stable path, so
-  // The WSL `corepack pnpm` bootstrap (and the pnpm it downloads) persists into the snapshot instead of vanishing
-  // In the tmpfs upper. Bound beside the pnpm store under the same cache root, so it is reused across runs.
-  const toInstallOptions = (stdio: ExecStdio): ExecOptions => {
-    const options = toOptions(stdio);
-    const corepackHome = join(cacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
-    mkdirSync(corepackHome, { recursive: true });
-    return {
-      ...options,
-      bindDirs: [...(options.bindDirs ?? []), corepackHome],
-      env: {
-        ...options.env,
-        [CI_ENV_KEY]: CI_ENV_VALUE,
-        [COREPACK_HOME_KEY]: corepackHome,
-      },
-    };
-  };
+  const toOptions = (stdio: ExecStdio): ExecOptions =>
+    isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio };
+  const toInstallOptions = (stdio: ExecStdio): ExecOptions =>
+    isOsBackend ? createOsInstallOptions(cwd, stdio) : toOptions(stdio);
   return {
     backend: execBackend.name,
     dispose,

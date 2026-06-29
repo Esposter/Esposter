@@ -12,9 +12,8 @@ import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test
 import { TEST_WSL_CACHE_DIR_NAME } from "@/services/exec/wsl/constants.test";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { withFinalizerAsync } from "@esposter/shared";
-import { spawn } from "node:child_process";
 import { rmSync } from "node:fs";
-import { constants, tmpdir } from "node:os";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Mock the os backend factory so the network/store wiring can be asserted without bubblewrap on the host.
@@ -43,27 +42,6 @@ const mockOsBackend = () =>
   });
 const snapshotLocation = (exists: boolean): SnapshotLocation => ({ dir: "", exists, hash: "hash", upperDir: "upper" });
 
-// Baseline runner: execute the command natively, bypassing the sandbox entirely. The differential
-// Gate (specs/correctness.md) asserts the sandbox produces a byte-identical ExecResult. With the
-// Native passthrough backend this is trivially true — the test exists so the harness is already in
-// Place to catch divergence the moment a real virtualizing backend lands.
-const runNative = (command: string): Promise<ExecResult> =>
-  new Promise((resolve, reject) => {
-    const child = spawn(command, { shell: true, stdio: "pipe" });
-    let stdout = "";
-    let stderr = "";
-    child.stdout.on("data", (chunk) => {
-      stdout += chunk.toString();
-    });
-    child.stderr.on("data", (chunk) => {
-      stderr += chunk.toString();
-    });
-    child.on("error", reject);
-    child.on("close", (code, signal) => {
-      resolve({ exitCode: code ?? (signal ? 128 + constants.signals[signal] : 0), stderr, stdout });
-    });
-  });
-
 describe(createVirrun, () => {
   beforeEach(() => {
     // Clear call counts between tests so the warm-snapshot case never sees the cold case's capture call.
@@ -75,16 +53,14 @@ describe(createVirrun, () => {
     rmSync(join(tmpdir(), TEST_WSL_CACHE_DIR_NAME), { force: true, recursive: true });
   });
 
-  test("produces a result identical to running the command natively", async () => {
+  test("runs the command and captures its result", async () => {
     expect.hasAssertions();
 
-    const command = `node -e "process.stdout.write('hello')"`;
     const { dispose, exec } = await createVirrun();
-    const sandboxResult = await exec(command);
-    const nativeResult = await runNative(command);
+    const result = await exec(`node -e "process.stdout.write('hello')"`);
     await dispose();
 
-    expect(sandboxResult).toStrictEqual(nativeResult);
+    expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: "hello" });
   });
 
   test("injects the VIRRUN presence signal into the command environment", async () => {
@@ -143,14 +119,15 @@ describe(createVirrun, () => {
   test("fork falls through to exec on a non-os backend, with no snapshot layer", async () => {
     expect.hasAssertions();
 
-    const command = `node -e "process.stdout.write('forked')"`;
     // Pin a non-os backend explicitly so this stays on the fallback branch even if Auto later resolves to Os.
     const { dispose, fork } = await createVirrun({ backend: BackendType.Native });
-    const forkResult = await fork(command);
-    const nativeResult = await runNative(command);
+    const result = await fork(`node -e "process.stdout.write('forked')"`);
     await dispose();
 
-    expect(forkResult).toStrictEqual(nativeResult);
+    // Fork on a non-os backend is a plain exec — no snapshot capture, the command's result passes straight through.
+    expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: "forked" });
+    expect(createSnapshot).not.toHaveBeenCalled();
+    expect(forkSnapshot).not.toHaveBeenCalled();
   });
 
   test("fork provisions the dependency snapshot on a cold cache, then runs the command over it", async () => {

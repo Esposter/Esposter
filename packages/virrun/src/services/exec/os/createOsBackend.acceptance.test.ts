@@ -1,18 +1,13 @@
 ﻿import { dayjs } from "@/services/dayjs.test";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
+import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
-import {
-  COREPACK_HOME_KEY,
-  VIRRUN_CACHE_DIRECTORY_NAME,
-  VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
-  VIRRUN_STORE_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, rmSync } from "node:fs";
+import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
@@ -49,33 +44,19 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace in
       expect.hasAssertions();
 
       const { exec } = createOsBackend();
-      // The shared store is writable on the host so downloads are reused; copy import is used because
-      // Hardlinks can't cross from the on-disk store into the RAM overlay. The compound proves: the
-      // Install (native pacquet binary + build scripts) succeeds, node_modules fully materialized in
-      // RAM, and a native binary (esbuild's Go executable) actually runs inside the sandbox.
-      const installCommand = process.platform === "win32" ? "corepack pnpm install" : "pnpm install";
+      // CreateOsInstallOptions wires the shared store (writable on the host so downloads are reused; copy import
+      // Because hardlinks can't cross from the on-disk store into the RAM overlay), the corepack home, network,
+      // And the login PATH — the same options createVirrun provisions a snapshot with. The compound proves: the
+      // Install (native pacquet binary + build scripts) succeeds, node_modules fully materialized in RAM, and a
+      // Native binary (esbuild's Go executable) actually runs inside the sandbox.
       const command = [
-        `${installCommand} --frozen-lockfile`,
+        resolveSetupCommand(),
         `test "$(find . -path '*/node_modules/*' -type f | wc -l)" -gt 100000`,
         "ESBUILD=$(find node_modules/.pnpm -path '*/bin/esbuild' -type f | head -1)",
         `"$ESBUILD" --version`,
         "echo SANDBOX_OK",
       ].join(" && ");
-      const cacheRoot = join(corpus, VIRRUN_CACHE_DIRECTORY_NAME);
-      const sharedPackageStoreOptions = createSharedPackageStoreOptions(corpus, cacheRoot);
-      const corepackHome = join(cacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
-      mkdirSync(corepackHome, { recursive: true });
-      const { exitCode, stdout } = await exec(command, {
-        ...sharedPackageStoreOptions,
-        bindDirs: [...(sharedPackageStoreOptions.bindDirs ?? []), corepackHome],
-        cwd: corpus,
-        env: {
-          ...sharedPackageStoreOptions.env,
-          [COREPACK_HOME_KEY]: corepackHome,
-        },
-        isNetworkEnabled: true,
-        stdio: "pipe",
-      });
+      const { exitCode, stdout } = await exec(command, createOsInstallOptions(corpus, "pipe"));
 
       expect(exitCode).toBe(0);
       expect(stdout).toContain("SANDBOX_OK");
