@@ -37,8 +37,8 @@ const cleanModulesNative = isWindows
   ? `for /d /r . %d in (node_modules) do @if exist "%d" rd /s /q "%d"`
   : "find . -name node_modules -type d -prune -exec rm -rf {} +";
 const nativeInstall = isWindows
-  ? `${cleanModulesNative} & ${resolveSetupCommand()}`
-  : `${cleanModulesNative}; ${resolveSetupCommand()}`;
+  ? `(${cleanModulesNative}) && ${resolveSetupCommand()}`
+  : `${cleanModulesNative} && ${resolveSetupCommand()}`;
 // The real workspace command both backends are timed on. Run from the repo root with a package filter so the os
 // Fork (which overlays the snapshot's root-level node_modules at the repo root) resolves the same closure the
 // Native host already has. The os side forks over a fresh tmpfs upper every run, so its writes (tsbuildinfo,
