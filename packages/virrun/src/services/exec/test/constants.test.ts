@@ -7,7 +7,10 @@ import { describe } from "vitest";
 export const PNPM_MODULES_DIRECTORY = "node_modules/.pnpm";
 // Locate esbuild's native (Go) binary in the installed closure, then print its version — the proof that a real
 // Native subprocess executes inside the sandbox. Split so a caller can interpose its own guards between them.
-export const FIND_ESBUILD_BINARY_COMMAND: string = `ESBUILD=$(find ${PNPM_MODULES_DIRECTORY} -path '*/bin/esbuild' -type f | head -1)`;
+// The closure pins several esbuild versions, so the matches are sorted before taking the first: `find` emits in
+// Raw readdir order, which is not stable across an overlayfs fork vs a tmpfs in-place install, and an unsorted
+// `head -1` would let the equivalence differential pick a different (equally valid) version on each side.
+export const FIND_ESBUILD_BINARY_COMMAND: string = `ESBUILD=$(find ${PNPM_MODULES_DIRECTORY} -path '*/bin/esbuild' -type f | LC_ALL=C sort | head -1)`;
 export const RUN_ESBUILD_VERSION_COMMAND: string = `"$ESBUILD" --version`;
 // Matches the dotted version esbuild prints (e.g. `0.21.5`), asserting the native binary actually ran.
 export const ESBUILD_VERSION_REGEX: RegExp = /\d+\.\d+\.\d+/u;
