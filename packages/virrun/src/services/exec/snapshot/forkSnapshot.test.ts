@@ -6,7 +6,6 @@ import { BackendType } from "@/models/virrun/BackendType";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
 import { VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdirSync } from "node:fs";
@@ -24,12 +23,12 @@ const createFakeBackend = (): { calls: ExecOptions[]; exec: ExecBackend["exec"] 
 };
 
 describe(forkSnapshot, () => {
-  const { cleanup, create, track } = createTemporaryDirectoryTracker();
+  const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
   let repo = "";
 
   beforeEach(() => {
     process.env[VIRRUN_CACHE_HOME_KEY] = create();
-    repo = track(createWorkspaceDir());
+    repo = createWorkspace();
   });
 
   afterEach(() => {
