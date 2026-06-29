@@ -4,7 +4,7 @@ import { execFileSync } from "node:child_process";
 // Is `/home/x`. wslpath can't translate these (it mangles the UNC into a bogus `/mnt/c/wsl.localhost...`), so
 // Map them here instead: strip the prefix + distro segment and flip the separators. This is what lets the
 // Native-ext4 cache (getWslNativeCacheRoot) reach bwrap as a real `/home/...` path.
-const WSL_UNC_REGEX = /^\\\\wsl(?:\.localhost|\$)\\[^\\]+(?<linuxPath>\\.*)?$/u;
+const WSL_UNC_REGEX = /^\\\\wsl(?:\.localhost|\$)\\[^\\]+(?<linuxPath>\\.*)?$/iu;
 
 const wslPaths = new Map<string, string>();
 

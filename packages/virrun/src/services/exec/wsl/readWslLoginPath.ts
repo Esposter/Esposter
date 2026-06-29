@@ -5,6 +5,10 @@ import { execFileSync } from "node:child_process";
 // PATH captured".
 const PATH_BEGIN = "__VIRRUN_LOGIN_PATH_BEGIN__";
 const PATH_END = "__VIRRUN_LOGIN_PATH_END__";
+// Cap the interactive-login capture: a blocking rc/profile (a prompt, a hung version-manager hook) would
+// Otherwise stall createVirrun indefinitely. On timeout execFileSync throws, getResult turns it into "", and the
+// Command falls back to the default PATH — the same degraded path as a missing WSL.
+const WSL_LOGIN_PATH_TIMEOUT_MS = 5000;
 // Resolve the user's own login shell (prefer $SHELL, fall back to the passwd entry, then /bin/sh) and run it as a
 // Login + interactive shell, so it sources the exact profile + rc files a real terminal would (~/.zprofile,
 // ~/.zshrc, ~/.bash_profile, ~/.bashrc…). That is where a version manager (fnm, nvm, asdf, volta…) activates and
@@ -30,7 +34,11 @@ let isLoginPathCached = false;
 export const readWslLoginPath = (): string => {
   if (isLoginPathCached) return cachedLoginPath;
   cachedLoginPath = getResult(() =>
-    execFileSync("wsl.exe", ["--exec", "sh", "-c", CAPTURE_SCRIPT], { encoding: "utf8", stdio: "pipe" }),
+    execFileSync("wsl.exe", ["--exec", "sh", "-c", CAPTURE_SCRIPT], {
+      encoding: "utf8",
+      stdio: "pipe",
+      timeout: WSL_LOGIN_PATH_TIMEOUT_MS,
+    }),
   )
     .map((stdout) => {
       const beginIndex = stdout.indexOf(PATH_BEGIN);

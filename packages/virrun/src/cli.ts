@@ -30,13 +30,14 @@ const main = async (): Promise<void> => {
     process.exitCode = 1;
     return;
   }
-  const backend = resolveBackend(resolveVirrunConfiguration());
   const start = performance.now();
-  // Capture the whole run — construction, provisioning, and exec — so any failure (no lockfile, bubblewrap
-  // Setup, a missing command, a failed install) surfaces as a clean error line and a propagated exit code instead
-  // Of an unhandled rejection that dumps a stack and skips the result line below. All outcomes converge on the
-  // Single formatVirrunResult write so timing is always reported and the success/failure paths never duplicate it.
+  // Capture the whole run — config/backend resolution, construction, provisioning, and exec — so any failure
+  // (malformed virrun.config.json, no lockfile, bubblewrap setup, a missing command, a failed install) surfaces
+  // As a clean error line and a propagated exit code instead of an unhandled rejection that dumps a stack and
+  // Skips the result line below. All outcomes converge on the single formatVirrunResult write so timing is always
+  // Reported and the success/failure paths never duplicate it.
   const result = await getResultAsync(async () => {
+    const backend = resolveBackend(resolveVirrunConfiguration());
     const virrun = await createVirrun({ backend });
     // Bracket the run with a start + result line on stderr (never stdout — correctness diffs compare the child's
     // Streams) so each `virrun -- <cmd>` is self-describing: resolved backend, node version, and wall-clock time.

@@ -2,7 +2,8 @@ import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHas
 import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
 import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
-import { rmSync } from "node:fs";
+import { mkdirSync, rmSync } from "node:fs";
+import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 const lockfileContent = "lockfileVersion: '9.0'\n";
@@ -36,6 +37,16 @@ describe(computeLockfileHash, () => {
     expect(computeLockfileHash(createRepo(lockfileContent))).not.toBe(
       computeLockfileHash(createRepo(`${lockfileContent}  added: true\n`)),
     );
+  });
+
+  test("hashes the workspace-root lockfile when invoked from a nested subdirectory", () => {
+    expect.hasAssertions();
+
+    const repo = createRepo(lockfileContent);
+    const nested = join(repo, "packages", "foo");
+    mkdirSync(nested, { recursive: true });
+
+    expect(computeLockfileHash(nested)).toBe(computeLockfileHash(repo));
   });
 
   test("throws when the repo has no lockfile to snapshot", () => {

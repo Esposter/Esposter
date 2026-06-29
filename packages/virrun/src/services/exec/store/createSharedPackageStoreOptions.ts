@@ -40,7 +40,10 @@ export const createSharedPackageStoreOptions = (
   const workspaceRoot = resolveWorkspaceRoot(cwd);
   const storeDir = join(cacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_PNPM_STORE_DIRECTORY_NAME);
   mkdirSync(storeDir, { recursive: true });
-  ensureGitIgnoreEntry(workspaceRoot);
+  // Only touch the repo's .gitignore when the store actually lives inside the repo cache (`<root>/.virrun`). On
+  // Win32 the os backend routes the cache to the WSL distro's ext4 home, so nothing is ever created under the
+  // Repo — rewriting its .gitignore there would leave a spurious, persistent change for a dir that never exists.
+  if (cacheRoot === join(workspaceRoot, VIRRUN_CACHE_DIRECTORY_NAME)) ensureGitIgnoreEntry(workspaceRoot);
   return {
     bindDirs: [storeDir],
     // For pnpm 10+, `npm_config_*` env vars are no longer read; settings are overridden via `PNPM_CONFIG_*`

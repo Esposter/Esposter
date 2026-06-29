@@ -15,15 +15,18 @@ import {
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
   PNPM_CONFIG_STORE_DIR_KEY,
 } from "@/services/exec/util/constants";
-import { OS_BACKEND_BENCH_TASK_NAME } from "@/services/exec/util/constants.bench";
 import { execFileSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, bench, describe } from "vitest";
-// End-to-end speed gate: native vs os backend on real monorepo commands. Each group is a native-vs-os
-// Comparison, so the whole group is gated on direct Linux support - a WSL host can benchmark the core
-// Backend in createOsBackend.bench.ts, but this macro path needs the full Linux package-manager toolchain.
-const isOsSupported = process.platform === "linux" && isOsBackendSupported();
+// End-to-end speed gate: native baseline vs os sandbox on real monorepo commands. Runs on any host that
+// Supports the os backend - the sandbox runs natively on Linux (os/linux) and bridged from win32 via WSL
+// (os/wsl) - so this is a `.platform.bench.ts`, writing one committed artifact per platform. The baseline
+// Is the real host shell (/bin/sh on Linux, cmd.exe on win32); the os sandbox always runs /bin/sh, so the
+// Cleanup prologues below fork to cmd on the native+win32 path only (see `cold` / `cleanModulesNative`).
+const isOsSupported = isOsBackendSupported();
+const isWindows = process.platform === "win32";
+const OS_TASK_NAME = isWindows ? `${BackendType.Os}/wsl` : `${BackendType.Os}/linux`;
 const native = createNativeBackend();
 const repoRoot = isOsSupported ? findRepoRoot() : "";
 // Bind the warm global pnpm store writable into the os sandbox (the shipped store mechanism) so it reuses
@@ -44,10 +47,18 @@ const nativeCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const osCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const warmCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const INSTALL = "pnpm install --frozen-lockfile --config.package-import-method=copy";
-const cleanModules = "find . -name node_modules -type d -prune -exec rm -rf {} +";
-// Clear caches before each run so neither side benefits from incremental state.
+// The native baseline clears node_modules in the host shell, so the prologue forks to cmd on win32.
+const cleanModulesNative = isWindows
+  ? `for /d /r . %d in (node_modules) do @if exist "%d" rd /s /q "%d"`
+  : "find . -name node_modules -type d -prune -exec rm -rf {} +";
+const installNative = isWindows ? `${cleanModulesNative} & ${INSTALL}` : `${cleanModulesNative}; ${INSTALL}`;
 const SHARED = join(repoRoot, "packages/shared");
-const cold = (clean: string, command: string): string => `${clean} 2>/dev/null; ${command}`;
+// Clear caches before each timed run so neither side benefits from incremental state. The os sandbox is
+// Always POSIX (/bin/sh); the native baseline forks its cleanup to cmd syntax on win32.
+const cold = (cleanPosix: string, cleanCmd: string, command: string): { native: string; os: string } => ({
+  native: isWindows ? `${cleanCmd} 2>nul & ${command}` : `${cleanPosix} 2>/dev/null; ${command}`,
+  os: `${cleanPosix} 2>/dev/null; ${command}`,
+});
 
 afterAll(() => {
   // Resolve the snapshot before removing warmCorpus (its lockfile keys the cache entry), then clear it.
@@ -58,10 +69,10 @@ afterAll(() => {
 
 describe.skipIf(!isOsSupported)("install - real workspace dependency closure (cold)", () => {
   bench(BackendType.Native, async () => {
-    await native.exec(`${cleanModules}; ${INSTALL}`, { cwd: nativeCorpus, stdio: "pipe" });
+    await native.exec(installNative, { cwd: nativeCorpus, stdio: "pipe" });
   });
 
-  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
+  bench(OS_TASK_NAME, async () => {
     await createOsBackend().exec(INSTALL, { ...osInstallOptions, cwd: osCorpus });
   });
 });
@@ -85,24 +96,32 @@ describe.skipIf(!isOsSupported)("install - warm fork vs cold reinstall", () => {
 });
 
 describe.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", () => {
-  const command = cold("rm -f *.tsbuildinfo", "pnpm typecheck");
+  const { native: nativeCommand, os: osCommand } = cold(
+    "rm -f *.tsbuildinfo",
+    "del /f /q *.tsbuildinfo",
+    "pnpm typecheck",
+  );
   bench(BackendType.Native, async () => {
-    await native.exec(command, { cwd: SHARED, stdio: "pipe" });
+    await native.exec(nativeCommand, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
-    await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
+  bench(OS_TASK_NAME, async () => {
+    await createOsBackend().exec(osCommand, { cwd: SHARED, stdio: "pipe" });
   });
 });
 
 describe.skipIf(!isOsSupported)("build - packages/shared (cold)", () => {
-  const command = cold("rm -rf dist *.tsbuildinfo", "pnpm build");
+  const { native: nativeCommand, os: osCommand } = cold(
+    "rm -rf dist *.tsbuildinfo",
+    "(if exist dist rd /s /q dist) & del /f /q *.tsbuildinfo",
+    "pnpm build",
+  );
   bench(BackendType.Native, async () => {
-    await native.exec(command, { cwd: SHARED, stdio: "pipe" });
+    await native.exec(nativeCommand, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
-    await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
+  bench(OS_TASK_NAME, async () => {
+    await createOsBackend().exec(osCommand, { cwd: SHARED, stdio: "pipe" });
   });
 });
 
@@ -112,7 +131,7 @@ describe.skipIf(!isOsSupported)("test - packages/shared", () => {
     await native.exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 
-  bench(OS_BACKEND_BENCH_TASK_NAME, async () => {
+  bench(OS_TASK_NAME, async () => {
     await createOsBackend().exec(command, { cwd: SHARED, stdio: "pipe" });
   });
 });

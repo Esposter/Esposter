@@ -16,7 +16,7 @@ const makeTraversable = (dir: string): void => {
 };
 // A `\\wsl.localhost\<distro>\...` or `\\wsl$\<distro>\...` UNC — the only dirs that need the WSL-side teardown
 // Below. Plain win32 temp paths (e.g. a test's C: dir) carry no overlay poison and remove fine via Node.
-const WSL_UNC_REGEX = /^\\\\wsl(?:\.localhost|\$)\\/u;
+const WSL_UNC_REGEX = /^\\\\wsl(?:\.localhost|\$)\\/iu;
 
 export const removeSnapshotDirectory = (dir: string): void => {
   // A snapshot on the WSL distro's ext4 (reached via a `\\wsl.localhost` UNC) has an overlay workDir whose
@@ -26,9 +26,13 @@ export const removeSnapshotDirectory = (dir: string): void => {
   // Dir is a no-op and needs no existence check.
   if (WSL_UNC_REGEX.test(dir)) {
     const linuxDir = readWslPath(dir);
-    execFileSync("wsl.exe", ["--exec", "sh", "-c", `chmod -R u+rwx '${linuxDir}' 2>/dev/null; rm -rf '${linuxDir}'`], {
-      stdio: "pipe",
-    });
+    // Pass the path as a positional arg ($1), never interpolated into the script body — a snapshot/cache path
+    // Containing a single quote would otherwise break the quoting and inject extra shell syntax.
+    execFileSync(
+      "wsl.exe",
+      ["--exec", "sh", "-c", 'chmod -R u+rwx -- "$1" 2>/dev/null; rm -rf -- "$1"', "sh", linuxDir],
+      { stdio: "pipe" },
+    );
     return;
   }
   if (existsSync(dir)) makeTraversable(dir);
