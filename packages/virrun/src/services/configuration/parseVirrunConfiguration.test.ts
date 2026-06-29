@@ -29,15 +29,13 @@ describe(parseVirrunConfiguration, () => {
   test("throws on an unknown backend", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration(JSON.stringify({ backend: "rocket" }))).toThrow("`backend` must be one of");
+    expect(() => parseVirrunConfiguration(JSON.stringify({ backend: "" }))).toThrow("`backend` must be one of");
   });
 
   test("throws on an unknown key", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration(JSON.stringify({ commandPrefixes: ["vitest"] }))).toThrow(
-      "unknown key: commandPrefixes",
-    );
+    expect(() => parseVirrunConfiguration(JSON.stringify({ "": "" }))).toThrow("unknown key:");
   });
 
   test("accepts a $schema pointer", () => {

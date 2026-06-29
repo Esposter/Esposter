@@ -64,6 +64,7 @@ describe(createSnapshot, () => {
     expect(existsSync(location.upperDir)).toBe(true);
 
     const { upperDir, workDir } = backend.calls[0]?.overlayLayers ?? {};
+
     // A per-invocation mkdtemp name under dir, distinct from the published upper it was renamed onto.
     expect(upperDir?.startsWith(join(location.dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
     expect(workDir?.startsWith(join(location.dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);

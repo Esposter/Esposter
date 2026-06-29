@@ -1,3 +1,4 @@
+import { dayjs } from "@/services/dayjs.test";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
@@ -102,5 +103,7 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
     expect(stdout).toContain("FORK_OK");
     expect(stdout).toMatch(/\d+\.\d+\.\d+/u);
     expect(existsSync(join(corpus, "fork-only.txt"))).toBe(false);
-  }, 300_000);
+    // The capture step is a real, networked, frozen-lockfile install of the whole workspace corpus on a cold
+    // Store; on a slow host that alone can exceed the smaller default caps, so allow up to 10 minutes.
+  }, dayjs.duration(10, "minutes").asMilliseconds());
 });

@@ -10,6 +10,12 @@ import { spawn } from "node:child_process";
 
 interface BwrapCommand {
   readonly command: readonly [string, ...string[]];
+  // Environment for the spawned runner process. The two backends diverge: the linux backend spreads
+  // `options.env` here because bwrap inherits the spawn env and passes it straight to the sandboxed child;
+  // The wsl backend must NOT — its runner is `wsl.exe`, found via the Windows PATH, and `options.env`
+  // (whose PATH is a *Linux* login PATH) would clobber it to ENOENT. The wsl backend instead delivers
+  // `options.env` to the Linux child through the `env KEY=val` args inside the command (createWslEnvArgs).
+  readonly env: NodeJS.ProcessEnv;
   readonly statusSource: "fd" | "stderr";
 }
 
@@ -35,7 +41,7 @@ export const createBwrapBackend = (
           ? [options.stdio, options.stdio, options.stdio, "pipe"]
           : [options.stdio, options.stdio, "pipe"];
       const child = spawn(file, args, {
-        env: { ...process.env, ...options.env },
+        env: bwrapCommand.env,
         shell: false,
         stdio,
       });

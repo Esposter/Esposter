@@ -15,7 +15,7 @@ const isOverlayCapable =
   getResult(() => {
     const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
     return withFinalizer(
-      () => execFileSync("bwrap", buildBwrapArgs(["node", "-v"], dir), { stdio: "pipe" }),
+      () => execFileSync("bwrap", buildBwrapArgs(["true"], dir), { stdio: "pipe" }),
       () => {
         rmSync(dir, { force: true, recursive: true });
       },
@@ -31,8 +31,7 @@ const isWslOverlayCapable =
     .andThen((wslDir) =>
       getResult(() =>
         withFinalizer(
-          () =>
-            execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["node", "-v"], wslDir)], { stdio: "pipe" }),
+          () => execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], { stdio: "pipe" }),
           () => {
             getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
               undefined,

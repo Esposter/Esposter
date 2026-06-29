@@ -13,6 +13,9 @@ import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
 // Mock the os backend factory so the network/store wiring can be asserted without bubblewrap on the host.
 vi.mock(import("@/services/exec/os/createOsBackend"));
+// Mock the WSL login-PATH capture so the os-backend wiring assertions stay pure and platform-independent: the
+// Real implementation spawns wsl.exe on win32, which a mocked-backend orchestration test must not depend on.
+vi.mock(import("@/services/exec/wsl/readWslLoginPath"), () => ({ readWslLoginPath: () => "" }));
 // Baseline runner: execute the command natively, bypassing the sandbox entirely. The differential
 // Gate (specs/correctness.md) asserts the sandbox produces a byte-identical ExecResult. With the
 // Native passthrough backend this is trivially true — the test exists so the harness is already in

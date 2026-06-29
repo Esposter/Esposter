@@ -13,6 +13,7 @@ import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapsho
 import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
 import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
+import { readWslLoginPath } from "@/services/exec/wsl/readWslLoginPath";
 import { loadSource } from "@/services/source/loadSource";
 // Maps each backend choice to its factory. Adding the future `os` backend is a one-line entry here
 // Nothing else in the orchestrator changes. "auto" resolves to native until vfs beats it on the gates.
@@ -38,6 +39,13 @@ export const createVirrun = async ({
   const sharedPackageStoreOptions: Pick<ExecOptions, "bindDirs" | "env"> = isOsBackend
     ? createSharedPackageStoreOptions(cwd)
     : {};
+  // The os backend's WSL bridge runs commands through `wsl.exe --exec`, which skips the login + rc files, so a
+  // Profile-bound node manager's node is off PATH. Capture the PATH a real WSL login+interactive shell sees
+  // (where the user's version manager already activates) and inject it as PATH into every os-backend command —
+  // Applied identically to the real backend and the differential baseline, so correctness diffs stay valid.
+  // Linux needs none of this: there virrun already runs in the caller's shell env, so node is inherited. ""
+  // (capture failed, or no win32 os backend) injects nothing, leaving the default PATH untouched.
+  const wslLoginPath = isOsBackend && process.platform === "win32" ? readWslLoginPath() : "";
   // Inject the vitest-style presence signal (VIRRUN_ENV_KEY) into every command virrun runs, merged over any
   // Store env the os backend needs. Both the native backend and the bwrap sandbox apply options.env to the
   // Child, so the command — and its tests/config/tooling — can detect it runs under virrun via process.env.
@@ -49,7 +57,11 @@ export const createVirrun = async ({
   const toOptions = (stdio: ExecStdio): ExecOptions => ({
     ...sharedPackageStoreOptions,
     cwd,
-    env: { ...sharedPackageStoreOptions.env, [VIRRUN_ENV_KEY]: "true" },
+    env: {
+      ...(wslLoginPath === "" ? {} : { PATH: wslLoginPath }),
+      ...sharedPackageStoreOptions.env,
+      [VIRRUN_ENV_KEY]: "true",
+    },
     isNetworkEnabled: isOsBackend,
     stdio,
   });
