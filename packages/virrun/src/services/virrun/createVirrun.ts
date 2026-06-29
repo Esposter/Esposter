@@ -7,10 +7,12 @@ import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
+import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
 import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { loadSource } from "@/services/source/loadSource";
@@ -32,27 +34,15 @@ export const createVirrun = async ({
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
   const execBackend = backendFactories[backend]();
   const { cwd, dispose } = await loadSource(source);
-  // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store
-  // (bindDirs/PNPM_CONFIG_*) must still be injected, otherwise the os path runs without its host cache.
+  // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store, login PATH,
+  // And network re-enable must still be injected (see createOsExecOptions), otherwise the os path runs without
+  // Its host cache. A non-os backend runs in the caller's own shell env, so it needs none of that wiring — only
+  // The vitest-style VIRRUN presence signal, which both backends apply to the child so a command can detect it.
   const isOsBackend = execBackend.name === BackendType.Os;
-  const sharedPackageStoreOptions: Pick<ExecOptions, "bindDirs" | "env"> = isOsBackend
-    ? createSharedPackageStoreOptions(cwd)
-    : {};
-  // Inject the vitest-style presence signal (VIRRUN_ENV_KEY) into every command virrun runs, merged over any
-  // Store env the os backend needs. Both the native backend and the bwrap sandbox apply options.env to the
-  // Child, so the command — and its tests/config/tooling — can detect it runs under virrun via process.env.
-  //
-  // Re-enable network for the os backend (`--unshare-all` drops it): the os backend's guarantee is *filesystem*
-  // Isolation, not network isolation (specs/exec-isolation.md → "deps download once"). Without it pnpm cannot
-  // Reach the registry to bootstrap its config dependencies/deps, so every `virrun -- pnpm …` dies with
-  // "fetch failed" before the real command runs — the typecheck/lint output never appears and CI fails opaquely.
-  const toOptions = (stdio: ExecStdio): ExecOptions => ({
-    ...sharedPackageStoreOptions,
-    cwd,
-    env: { ...sharedPackageStoreOptions.env, [VIRRUN_ENV_KEY]: "true" },
-    isNetworkEnabled: isOsBackend,
-    stdio,
-  });
+  const toOptions = (stdio: ExecStdio): ExecOptions =>
+    isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio };
+  const toInstallOptions = (stdio: ExecStdio): ExecOptions =>
+    isOsBackend ? createOsInstallOptions(cwd, stdio) : toOptions(stdio);
   return {
     backend: execBackend.name,
     dispose,
@@ -61,12 +51,13 @@ export const createVirrun = async ({
       // Fork is the os backend's overlay-snapshot mechanism; other backends have no snapshot layer, so the
       // Transparent fallback is a plain exec — fork is then identical to exec with no warm reuse.
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
-      // Capture-or-reuse, keyed by lockfile hash. On a cold cache the capture run is the command's one real
-      // Execution: its writes freeze into the snapshot upper and its result is returned directly, so `command`
-      // Runs exactly once. Every later fork stacks that frozen upper read-only and re-runs over it — so a
-      // Re-install collapses to a frozen-lockfile no-op and the run's own writes vanish in the ephemeral upper.
+      // The os backend is a Linux sandbox. We cannot tell from outside whether any dependency ships a
+      // Platform-specific binary, and on a Windows host the host's win32 node_modules can't run inside it — so
+      // Always provision the sandbox's own dep closure once, frozen into a lockfile-hash-keyed snapshot, then run
+      // The command over it. Cold: capture the frozen install (its node_modules persist into the upper). Warm:
+      // Reuse it. Either way `command` runs over a populated dep tree via forkSnapshot, never the bare source.
       if (!resolveSnapshotLocation(cwd).exists)
-        return (await createSnapshot(execBackend, command, toOptions(stdio))).result;
+        await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
       return forkSnapshot(execBackend, command, toOptions(stdio));
     },
   };

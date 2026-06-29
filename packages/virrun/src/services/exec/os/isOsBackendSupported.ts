@@ -16,13 +16,19 @@ let isSupported: boolean | undefined;
 // Throw at sandbox setup. We exercise the real argv from buildBwrapArgs against a throwaway dir so the
 // Predicate stays in lockstep with what the backend emits; getResult turns bwrap's non-zero exit (and the
 // Win32 absence of bwrap) into false rather than a throw, per the project's no-try/catch convention.
+//
+// The probed command is `true` - the cheapest thing every POSIX host has - because this predicate answers
+// Exactly one question: can the host set up the overlay sandbox? Whether the *toolchain* (node, pnpm, …) is
+// Reachable inside it is an orthogonal axis handled by the captured WSL login PATH (see readWslLoginPath), so
+// Probing a specific binary here would both conflate the two and hardcode one engine. `true` keeps the probe
+// Engine-agnostic and forward-compatible with a future configurable engine.
 export const isOsBackendSupported = (): boolean => {
   if (isSupported !== undefined) return isSupported;
   else if (process.platform === "linux") {
     const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
     isSupported = getResult(() =>
       withFinalizer(
-        () => execFileSync("bwrap", buildBwrapArgs(["node", "-v"], dir), { stdio: "pipe" }),
+        () => execFileSync("bwrap", buildBwrapArgs(["true"], dir), { stdio: "pipe" }),
         () => {
           rmSync(dir, { force: true, recursive: true });
         },
@@ -38,7 +44,7 @@ export const isOsBackendSupported = (): boolean => {
         getResult(() =>
           withFinalizer(
             () =>
-              execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["node", "-v"], wslDir)], {
+              execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], {
                 stdio: "pipe",
               }),
             () => {

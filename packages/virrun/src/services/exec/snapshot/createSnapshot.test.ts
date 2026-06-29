@@ -5,26 +5,18 @@ import type { ExecResult } from "@/models/exec/ExecResult";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
 import {
-  PNPM_LOCKFILE_FILENAME,
   VIRRUN_CACHE_HOME_KEY,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-  VIRRUN_TEMP_DIR_PREFIX,
+  VIRRUN_STORE_DIRECTORY_NAME,
 } from "@/services/exec/util/constants";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-
-const temporaryDirectories: string[] = [];
-let repo = "";
-
-const createTemporaryDirectory = (): string => {
-  const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
-  temporaryDirectories.push(dir);
-  return dir;
-};
 
 // Records the options each call received and returns the queued exit code, standing in for the os backend.
 const createFakeBackend = (exitCode: number): { calls: ExecOptions[]; exec: ExecBackend["exec"] } => {
@@ -39,31 +31,32 @@ const createFakeBackend = (exitCode: number): { calls: ExecOptions[]; exec: Exec
 };
 
 describe(createSnapshot, () => {
+  const { cleanup, create, track } = createTemporaryDirectoryTracker();
+  const command = "pnpm install";
+  let repo = "";
+
   beforeEach(() => {
-    process.env[VIRRUN_CACHE_HOME_KEY] = createTemporaryDirectory();
-    repo = createTemporaryDirectory();
-    writeFileSync(join(repo, PNPM_LOCKFILE_FILENAME), "lockfileVersion: '9.0'\n");
+    process.env[VIRRUN_CACHE_HOME_KEY] = create();
+    repo = track(createWorkspaceDir());
   });
 
   afterEach(() => {
     delete process.env[VIRRUN_CACHE_HOME_KEY];
-    while (temporaryDirectories.length > 0) {
-      const dir = temporaryDirectories.pop();
-      if (dir !== undefined) rmSync(dir, { force: true, recursive: true });
-    }
+    cleanup();
   });
 
   test("captures in a private temp upper and atomically publishes it onto the final upperDir", async () => {
     expect.hasAssertions();
 
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
-    const { location } = await createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" });
+    const { location } = await createSnapshot(backend, command, { cwd: repo, stdio: "pipe" });
 
     expect(location).toStrictEqual(resolveSnapshotLocation(repo));
     // The published upper exists; the private temps it was captured/scratched in are torn down.
     expect(existsSync(location.upperDir)).toBe(true);
 
     const { upperDir, workDir } = backend.calls[0]?.overlayLayers ?? {};
+
     // A per-invocation mkdtemp name under dir, distinct from the published upper it was renamed onto.
     expect(upperDir?.startsWith(join(location.dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
     expect(workDir?.startsWith(join(location.dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
@@ -81,7 +74,7 @@ describe(createSnapshot, () => {
     writeFileSync(join(publishedUpper, "marker"), "");
 
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
-    const { location } = await createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" });
+    const { location } = await createSnapshot(backend, command, { cwd: repo, stdio: "pipe" });
 
     expect(location.exists).toBe(true);
     // Theirs is kept untouched; our own temp upper is discarded.
@@ -93,7 +86,7 @@ describe(createSnapshot, () => {
     expect.hasAssertions();
 
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
-    const { result } = await createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" });
+    const { result } = await createSnapshot(backend, command, { cwd: repo, stdio: "pipe" });
 
     expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: "" });
   });
@@ -102,15 +95,11 @@ describe(createSnapshot, () => {
     expect.hasAssertions();
 
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
-    await createSnapshot(backend, "pnpm install", {
-      bindDirs: [join(repo, "store")],
-      cwd: repo,
-      isNetworkEnabled: true,
-      stdio: "pipe",
-    });
+    const store = join(repo, VIRRUN_STORE_DIRECTORY_NAME);
+    await createSnapshot(backend, command, { bindDirs: [store], cwd: repo, isNetworkEnabled: true, stdio: "pipe" });
 
     expect(backend.calls[0]).toStrictEqual(
-      expect.objectContaining({ bindDirs: [join(repo, "store")], cwd: repo, isNetworkEnabled: true }),
+      expect.objectContaining({ bindDirs: [store], cwd: repo, isNetworkEnabled: true }),
     );
   });
 
@@ -119,8 +108,8 @@ describe(createSnapshot, () => {
 
     const backend = { ...createFakeBackend(1), name: BackendType.Os };
 
-    await expect(createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" })).rejects.toThrow(
-      "snapshot setup command exited with 1",
+    await expect(createSnapshot(backend, command, { cwd: repo, stdio: "pipe" })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, createSnapshot.name, "snapshot setup command exited with 1: ").message}]`,
     );
   });
 });

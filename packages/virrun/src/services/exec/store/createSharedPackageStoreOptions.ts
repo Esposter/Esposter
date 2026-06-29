@@ -5,30 +5,45 @@ import {
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
   PNPM_CONFIG_STORE_DIR_KEY,
+  VIRRUN_CACHE_DIRECTORY_NAME,
   VIRRUN_GITIGNORE_ENTRY,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "@/services/exec/util/constants";
-import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
-import { resolveCwd } from "@/services/exec/util/resolveCwd";
+import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-const ensureGitIgnoreEntry = (cwd: string) => {
-  const gitignore = join(cwd, GITIGNORE_FILENAME);
+const ensureGitIgnoreEntry = (workspaceRoot: string) => {
+  const gitignore = join(workspaceRoot, GITIGNORE_FILENAME);
   const gitignoreContent = existsSync(gitignore) ? readFileSync(gitignore, "utf8") : "";
-  if (gitignoreContent.split(/\r?\n/u).includes(VIRRUN_GITIGNORE_ENTRY)) return;
+  // Idempotent against any form the cache dir is already ignored under — `.virrun`, `/.virrun`, `.virrun/`,
+  // `/.virrun/` — by normalizing each line to its bare name. Matching only the exact `/.virrun/` entry would
+  // Re-append a redundant line whenever a repo already lists the dir in a different (equally valid) form.
+  const isIgnored = gitignoreContent
+    .split(/\r?\n/u)
+    .some((line) => line.trim().replace(/^\/+/u, "").replace(/\/+$/u, "") === VIRRUN_CACHE_DIRECTORY_NAME);
+  if (isIgnored) return;
   appendFileSync(
     gitignore,
     `${gitignoreContent.endsWith("\n") || gitignoreContent === "" ? "" : "\n"}${VIRRUN_GITIGNORE_ENTRY}\n`,
   );
 };
 
-export const createSharedPackageStoreOptions = (cwd: string): Pick<ExecOptions, "bindDirs" | "env"> => {
-  const dir = resolveCwd(cwd);
-  const storeDir = join(getRepoCacheDirectory(dir), VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_PNPM_STORE_DIRECTORY_NAME);
+// `cacheRoot` is the `.virrun` directory the store lives under — the repo's own on Linux, but the WSL distro's
+// Ext4 home on win32 (see getWslNativeCacheRoot), since the repo path resolves to slow v9fs inside the sandbox.
+// The caller (createVirrun) owns that platform decision so this stays a pure function of its inputs.
+export const createSharedPackageStoreOptions = (
+  cwd: string,
+  cacheRoot: string,
+): Pick<ExecOptions, "bindDirs" | "env"> => {
+  const workspaceRoot = resolveWorkspaceRoot(cwd);
+  const storeDir = join(cacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_PNPM_STORE_DIRECTORY_NAME);
   mkdirSync(storeDir, { recursive: true });
-  ensureGitIgnoreEntry(dir);
+  // Only touch the repo's .gitignore when the store actually lives inside the repo cache (`<root>/.virrun`). On
+  // Win32 the os backend routes the cache to the WSL distro's ext4 home, so nothing is ever created under the
+  // Repo — rewriting its .gitignore there would leave a spurious, persistent change for a dir that never exists.
+  if (cacheRoot === join(workspaceRoot, VIRRUN_CACHE_DIRECTORY_NAME)) ensureGitIgnoreEntry(workspaceRoot);
   return {
     bindDirs: [storeDir],
     // For pnpm 10+, `npm_config_*` env vars are no longer read; settings are overridden via `PNPM_CONFIG_*`

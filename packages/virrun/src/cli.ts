@@ -1,8 +1,11 @@
+import { BackendType } from "@/models/virrun/BackendType";
 import { formatVirrunBanner } from "@/services/cli/formatVirrunBanner";
+import { formatVirrunProvisioning } from "@/services/cli/formatVirrunProvisioning";
 import { formatVirrunResult } from "@/services/cli/formatVirrunResult";
 import { parseCliCommand } from "@/services/cli/parseCliCommand";
 import { resolveBackend } from "@/services/configuration/resolveBackend";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
+import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
 import { performance } from "node:perf_hooks";
@@ -27,23 +30,29 @@ const main = async (): Promise<void> => {
     process.exitCode = 1;
     return;
   }
-  const configuration = resolveVirrunConfiguration();
-  const backend = resolveBackend(configuration);
-  const virrun = await createVirrun({ backend });
-  // Bracket the run with a start + result line on stderr (never stdout — correctness diffs compare the child's
-  // Streams) so each `virrun -- <cmd>` is self-describing: resolved backend, node version, and wall-clock time.
-  process.stderr.write(`${formatVirrunBanner({ backend: virrun.backend, command, nodeVersion: process.version })}\n`);
   const start = performance.now();
-  // Capture the run so a sandbox/exec failure (e.g. bubblewrap setup or a missing command) surfaces as a clean
-  // Error line and a propagated exit code, instead of an unhandled rejection that dumps a stack and skips the
-  // Result line below. Both outcomes converge on the single formatVirrunResult write so timing is always reported
-  // And the success/failure paths never duplicate it.
-  const result = await getResultAsync(() =>
-    withFinalizerAsync(
-      () => virrun.exec(command, "inherit"),
+  // Capture the whole run — config/backend resolution, construction, provisioning, and exec — so any failure
+  // (malformed virrun.config.json, no lockfile, bubblewrap setup, a missing command, a failed install) surfaces
+  // As a clean error line and a propagated exit code instead of an unhandled rejection that dumps a stack and
+  // Skips the result line below. All outcomes converge on the single formatVirrunResult write so timing is always
+  // Reported and the success/failure paths never duplicate it.
+  const result = await getResultAsync(async () => {
+    const backend = resolveBackend(resolveVirrunConfiguration());
+    const virrun = await createVirrun({ backend });
+    // Bracket the run with a start + result line on stderr (never stdout — correctness diffs compare the child's
+    // Streams) so each `virrun -- <cmd>` is self-describing: resolved backend, node version, and wall-clock time.
+    process.stderr.write(`${formatVirrunBanner({ backend: virrun.backend, command, nodeVersion: process.version })}\n`);
+    // The os backend runs over a frozen dependency snapshot (see Virrun.fork): announce whether this run reuses a
+    // Warm snapshot or pays the one-time install, so a multi-minute first run is explained, not a silent stall.
+    if (virrun.backend === BackendType.Os) {
+      const { exists, hash } = resolveSnapshotLocation("");
+      process.stderr.write(`${formatVirrunProvisioning({ exists, hash })}\n`);
+    }
+    return withFinalizerAsync(
+      () => (virrun.backend === BackendType.Os ? virrun.fork(command, "inherit") : virrun.exec(command, "inherit")),
       () => virrun.dispose(),
-    ),
-  );
+    );
+  });
   const exitCode = result.match(
     ({ exitCode }) => exitCode,
     (error) => {

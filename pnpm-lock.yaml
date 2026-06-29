@@ -1885,6 +1885,9 @@ importers:
       ctix:
         specifier: 'catalog:'
         version: 2.8.1(@types/node@26.0.1)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.5)(typescript@6.0.3)(vue-tsc@3.3.5(typescript@6.0.3)))(prettier@3.8.5)(typescript@6.0.3)
+      dayjs:
+        specifier: 'catalog:'
+        version: 1.11.21
       empathic:
         specifier: 'catalog:'
         version: 2.0.1

@@ -1,8 +1,8 @@
 ﻿import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
+import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
-import { mkdtempSync, realpathSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { bench, describe } from "vitest";
 // The speed gate for the vfs backend. The hot path - a short-lived `node -e` - is exactly what the
@@ -15,7 +15,7 @@ const EVAL_COMMAND = `node -e "process.stdout.write('bench')"`;
 const FALLBACK_COMMAND = `node -p "1 + 1"`;
 const native = createNativeBackend();
 const vfs = createVfsBackend();
-const dir = realpathSync(mkdtempSync(join(tmpdir(), "vfs-bench-")));
+const dir = createTemporaryDirectory();
 writeFileSync(join(dir, "bench.cjs"), "process.stdout.write('bench')");
 const FILE_COMMAND = "node bench.cjs";
 

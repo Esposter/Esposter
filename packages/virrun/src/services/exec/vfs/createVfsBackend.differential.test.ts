@@ -1,7 +1,7 @@
 ﻿import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
+import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
-import { mkdtempSync, realpathSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -38,7 +38,7 @@ describe(createVfsBackend, () => {
   test("matches the native backend for a multi-file file run", async () => {
     expect.hasAssertions();
 
-    const dir = realpathSync(mkdtempSync(join(tmpdir(), "vfs-diff-")));
+    const dir = createTemporaryDirectory();
     writeFileSync(join(dir, "helper.cjs"), "module.exports = ' '");
     writeFileSync(join(dir, "main.cjs"), "process.stdout.write(require('./helper.cjs'))");
     const command = "node main.cjs";

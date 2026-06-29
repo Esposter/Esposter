@@ -1,37 +1,18 @@
+import { dayjs } from "@/services/dayjs.test";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
+import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
+import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
-import {
-  COREPACK_HOME_KEY,
-  VIRRUN_CACHE_HOME_KEY,
-  VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
-  VIRRUN_TEMP_DIR_PREFIX,
-} from "@/services/exec/util/constants";
-import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
-import { getResult } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
+import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstallSupported.test";
+import { VIRRUN_CACHE_HOME_KEY, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
 import { existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-
-const isSandboxInstallSupported =
-  isOsBackendSupported() &&
-  getResult(() =>
-    process.platform === "win32"
-      ? execFileSync("wsl.exe", ["--exec", "sh", "-lc", "command -v node && node --version && corepack --version"], {
-          stdio: "pipe",
-        })
-      : execFileSync("sh", ["-lc", "command -v pnpm"], { stdio: "pipe" }),
-  ).match(
-    () => true,
-    () => false,
-  );
 
 // Proves the warm-fork promise: capture `pnpm install` once into the global snapshot upper, then fork a run
 // That sees the full node_modules WITHOUT reinstalling (offline, no network) and whose own writes vanish,
@@ -63,19 +44,9 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
     expect.hasAssertions();
 
     const backend = createOsBackend();
-    const sharedPackageStoreOptions = createSharedPackageStoreOptions(corpus);
-    const corepackHome = join(getRepoCacheDirectory(corpus), VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
-    mkdirSync(corepackHome, { recursive: true });
-    const installCommand = process.platform === "win32" ? "corepack pnpm install" : "pnpm install";
-    // Capture: a real, networked install whose writes persist into the global snapshot upper.
-    const { location } = await createSnapshot(backend, `${installCommand} --frozen-lockfile`, {
-      ...sharedPackageStoreOptions,
-      bindDirs: [...(sharedPackageStoreOptions.bindDirs ?? []), corepackHome],
-      cwd: corpus,
-      env: { ...sharedPackageStoreOptions.env, [COREPACK_HOME_KEY]: corepackHome },
-      isNetworkEnabled: true,
-      stdio: "pipe",
-    });
+    // Capture: a real, networked install whose writes persist into the global snapshot upper. Same install
+    // Options createVirrun provisions the snapshot with — store, corepack home, network, login PATH.
+    const { location } = await createSnapshot(backend, resolveSetupCommand(), createOsInstallOptions(corpus, "pipe"));
 
     expect(location.exists).toBe(true);
     // The install wrote into the snapshot, not the source corpus on disk.
@@ -102,5 +73,7 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
     expect(stdout).toContain("FORK_OK");
     expect(stdout).toMatch(/\d+\.\d+\.\d+/u);
     expect(existsSync(join(corpus, "fork-only.txt"))).toBe(false);
-  }, 300_000);
+    // The capture step is a real, networked, frozen-lockfile install of the whole workspace corpus on a cold
+    // Store; on a slow host that alone can exceed the smaller default caps, so allow up to 10 minutes.
+  }, dayjs.duration(10, "minutes").asMilliseconds());
 });

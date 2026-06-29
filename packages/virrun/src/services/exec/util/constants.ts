@@ -32,5 +32,13 @@ export const VIRRUN_CACHE_HOME_KEY = "VIRRUN_CACHE_HOME";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY = "PNPM_CONFIG_PACKAGE_IMPORT_METHOD";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE = "copy";
 export const PNPM_CONFIG_STORE_DIR_KEY = "PNPM_CONFIG_STORE_DIR";
+// The source tree's node_modules (the Windows host's, on win32) shows through the overlay lower, so a sandbox
+// `pnpm install` wants to purge the mismatched modules dir before reinstalling — and with no TTY it aborts asking
+// For confirmation (ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY). The capture is non-interactive and the purge
+// Lands in the overlay upper (never the real source), so run the install in CI mode: pnpm treats `CI=true` as a
+// Plain env signal (not a `PNPM_CONFIG_*` setting) to skip every confirmation prompt, which the per-setting
+// `confirmModulesPurge` override does not reliably do for a workspace purge.
+export const CI_ENV_KEY = "CI";
+export const CI_ENV_VALUE = "true";
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";

@@ -2,6 +2,7 @@ import type { GitSource } from "@/models/source/GitSource";
 import type { LoadedSource } from "@/models/source/LoadedSource";
 
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
+import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -10,7 +11,7 @@ import { join } from "node:path";
 // Non-zero clone exit fails loud with git's own stderr rather than handing back an empty directory.
 // `-q` drops the volatile "Cloning into '<dest>'" progress line, leaving the actionable fatal lines.
 export const loadGitSource = async (source: GitSource): Promise<LoadedSource> => {
-  const cwd = await mkdtemp(join(tmpdir(), "sandbox-"));
+  const cwd = await mkdtemp(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
   const dispose = () => rm(cwd, { force: true, recursive: true });
   // Argv form (shell: false): repo and ref are data, never shell-evaluated. The `--` terminates
   // Option parsing so a repo/ref like `--upload-pack=…` can't be smuggled in as a git flag either.

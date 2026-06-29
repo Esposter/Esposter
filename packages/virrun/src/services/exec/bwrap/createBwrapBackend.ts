@@ -3,6 +3,7 @@ import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { StdioOptions } from "node:child_process";
 
 import { BackendType } from "@/models/virrun/BackendType";
+import { createStderrLiveWriter } from "@/services/exec/bwrap/createStderrLiveWriter";
 import { parseBwrapExitCode } from "@/services/exec/bwrap/parseBwrapExitCode";
 import { parseBwrapStderrStatus } from "@/services/exec/bwrap/parseBwrapStderrStatus";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -10,6 +11,12 @@ import { spawn } from "node:child_process";
 
 interface BwrapCommand {
   readonly command: readonly [string, ...string[]];
+  // Environment for the spawned runner process. The two backends diverge: the linux backend spreads
+  // `options.env` here because bwrap inherits the spawn env and passes it straight to the sandboxed child;
+  // The wsl backend must NOT — its runner is `wsl.exe`, found via the Windows PATH, and `options.env`
+  // (whose PATH is a *Linux* login PATH) would clobber it to ENOENT. The wsl backend instead delivers
+  // `options.env` to the Linux child through the `env KEY=val` args inside the command (createWslEnvArgs).
+  readonly env: NodeJS.ProcessEnv;
   readonly statusSource: "fd" | "stderr";
 }
 
@@ -35,18 +42,24 @@ export const createBwrapBackend = (
           ? [options.stdio, options.stdio, options.stdio, "pipe"]
           : [options.stdio, options.stdio, "pipe"];
       const child = spawn(file, args, {
-        env: { ...process.env, ...options.env },
+        env: bwrapCommand.env,
         shell: false,
         stdio,
       });
       let stdout = "";
       let stderr = "";
       let status = "";
+      // The wsl backend pipes stderr to parse its appended status block, so under "inherit" it would otherwise
+      // Stay silent for the whole run. Stream the real child output live as it arrives, withholding the trailing
+      // Status block. The fd backend already inherits stderr directly under "inherit" (no "data" events), so this
+      // Only ever drives the wsl path; under "pipe" (capture) it stays undefined and nothing streams.
+      const writeStderrLive = options.stdio === "inherit" ? createStderrLiveWriter() : undefined;
       child.stdout?.on("data", (chunk) => {
         stdout += chunk.toString();
       });
       child.stderr?.on("data", (chunk) => {
         stderr += chunk.toString();
+        writeStderrLive?.(stderr);
       });
       child.stdio[3]?.on("data", (chunk) => {
         status += chunk.toString();
@@ -56,9 +69,29 @@ export const createBwrapBackend = (
         const bwrapStderr =
           bwrapCommand.statusSource === "stderr" ? parseBwrapStderrStatus(stderr) : { status, stderr };
         const exitCode = parseBwrapExitCode(bwrapStderr.status);
-        if (exitCode === undefined)
-          reject(new InvalidOperationError(Operation.Create, errorName, "bubblewrap failed to set up the sandbox"));
-        else resolve({ exitCode, stderr: bwrapStderr.stderr, stdout });
+        if (exitCode === undefined) {
+          // Sandbox setup failed (bad flag, missing binary, WSL bridge or overlay-mount error). The real
+          // Diagnostic is the captured stderr — fold it into the error so the user sees *why* it failed,
+          // Not just that it did. Without this the wsl backend collapses every setup failure into one
+          // Opaque line, leaving nothing to debug from.
+          reject(
+            new InvalidOperationError(
+              Operation.Create,
+              errorName,
+              `bubblewrap failed to set up the sandbox${bwrapStderr.stderr ? `\n${bwrapStderr.stderr}` : ""}`,
+            ),
+          );
+          return;
+        }
+        // "inherit" streams the child's output to the host. The wsl backend can't inherit stderr directly — it
+        // Carries the bwrap status block this backend has to parse — so writeStderrLive already surfaced the
+        // Cleaned output chunk-by-chunk above as the command ran; nothing is left to flush here. The fd backend
+        // (linux) inherited stderr live, so its captured remainder is "" too.
+        if (options.stdio === "inherit") {
+          resolve({ exitCode, stderr: "", stdout: "" });
+          return;
+        }
+        resolve({ exitCode, stderr: bwrapStderr.stderr, stdout });
       });
     }),
   name: BackendType.Os,

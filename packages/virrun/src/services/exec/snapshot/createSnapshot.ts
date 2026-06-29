@@ -9,7 +9,7 @@ import {
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
 } from "@/services/exec/util/constants";
 import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync, mkdtempSync, renameSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
 import { join } from "node:path";
 // Captures warm post-install state: runs `command` (e.g. `pnpm install`) through the os backend in capture
 // Mode, so its writes persist into the snapshot's overlay upper in the global cache instead of vanishing in
@@ -58,10 +58,14 @@ export const createSnapshot = (
     // Concurrent capturer already published an equivalent layer, renaming onto the now-populated `upperDir`
     // Fails, so we keep theirs and discard ours; otherwise ours lands atomically. Renaming-then-checking
     // Collapses the check-then-rename window where two capturers both saw `exists === false` and both renamed.
-    getResult(() => renameSync(captureUpperDir, upperDir)).match(
+    // Probe the already-resolved `upperDir` directly rather than re-resolving the location: the install may have
+    // Rewritten the lockfile, which would re-hash to a different snapshot key and check the wrong address.
+    getResult(() => {
+      renameSync(captureUpperDir, upperDir);
+    }).match(
       () => undefined,
       (error) => {
-        if (!resolveSnapshotLocation(options.cwd).exists) throw error;
+        if (!existsSync(upperDir)) throw error;
         removeSnapshotDirectory(captureUpperDir);
       },
     );

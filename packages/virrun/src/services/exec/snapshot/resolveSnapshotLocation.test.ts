@@ -1,45 +1,29 @@
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
 import {
-  PNPM_LOCKFILE_FILENAME,
   VIRRUN_CACHE_HOME_KEY,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
-  VIRRUN_TEMP_DIR_PREFIX,
 } from "@/services/exec/util/constants";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-const lockfileContent = "lockfileVersion: '9.0'\n";
-const temporaryDirectories: string[] = [];
-let cacheHome = "";
-
-const createTemporaryDirectory = (): string => {
-  const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
-  temporaryDirectories.push(dir);
-  return dir;
-};
-
-const createRepo = (): string => {
-  const dir = createTemporaryDirectory();
-  writeFileSync(join(dir, PNPM_LOCKFILE_FILENAME), lockfileContent);
-  return dir;
-};
-
 describe(resolveSnapshotLocation, () => {
+  const { cleanup, create, track } = createTemporaryDirectoryTracker();
+  const createRepo = (): string => track(createWorkspaceDir());
+  let cacheHome = "";
+
   beforeEach(() => {
-    cacheHome = createTemporaryDirectory();
+    cacheHome = create();
     process.env[VIRRUN_CACHE_HOME_KEY] = cacheHome;
   });
 
   afterEach(() => {
     delete process.env[VIRRUN_CACHE_HOME_KEY];
-    while (temporaryDirectories.length > 0) {
-      const dir = temporaryDirectories.pop();
-      if (dir !== undefined) rmSync(dir, { force: true, recursive: true });
-    }
+    cleanup();
   });
 
   test("addresses the snapshot in the global cache under snapshots/<lockfile-hash> with its upper dir", () => {
