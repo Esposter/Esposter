@@ -1,11 +1,7 @@
 import type { SnapshotLocation } from "@/models/exec/SnapshotLocation";
 
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
-import {
-  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
+import { VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/util/constants";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
@@ -13,8 +9,8 @@ import { join } from "node:path";
 // Under the host-global `~/.virrun/snapshots/<hash>`. It lives outside the repo (not under `<cwd>/.virrun`
 // Like the dep store) because the fork run stacks this dir as an overlay lower beside the source, and
 // Overlayfs rejects a lower that nests inside another. `exists` reflects whether the upper layer has been
-// Captured, so the orchestrator can fork it or fall through to a capture run. Pure addressing — the capture
-// Run owns creating upperDir/workDir lazily.
+// Captured (atomically renamed into place by the capture run), so the orchestrator can fork it or fall
+// Through to a capture run. Pure addressing — the capture run owns creating its temp upper/work lazily.
 export const resolveSnapshotLocation = (cwd: string): SnapshotLocation => {
   const hash = computeLockfileHash(cwd);
   const snapshotDir = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME, hash);
@@ -24,6 +20,5 @@ export const resolveSnapshotLocation = (cwd: string): SnapshotLocation => {
     exists: existsSync(upperDir),
     hash,
     upperDir,
-    workDir: join(snapshotDir, VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME),
   };
 };

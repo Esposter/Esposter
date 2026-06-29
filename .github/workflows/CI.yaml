@@ -39,6 +39,25 @@ jobs:
       - name: 🏗️ Build app
         run: pnpm build:app
 
+  build-docs:
+    name: Build Documentation
+    needs: build-packages
+    runs-on: ubuntu-26.04
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
+
+      - name: 🏗️ Build documentation
+        run: pnpm build:docs
+
   coverage:
     name: Coverage
     needs: build-packages
@@ -52,7 +71,10 @@ jobs:
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-
+      # The test suite itself exercises virrun's os backend (createOsBackend tests self-gate on bwrap), so the
+      # Sandbox must be installed here — but vitest runs natively below, NOT through virrun: the os backend's
+      # Ephemeral tmpfs upper is discarded on dispose(), so the blob reports + coverage/ dir the upload steps
+      # Need would never reach host disk. Coverage is the one command whose persisted output rules out the sandbox.
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
         with:
@@ -100,7 +122,8 @@ jobs:
           pattern: coverage-blob-*
           merge-multiple: true
       # Recombine the sharded runs into one report with unified coverage from the blob data —
-      # This re-emits the report only, it does not re-run any tests.
+      # This re-emits the report only, it does not re-run any tests. Native (not virrun): it writes the
+      # Uploaded coverage/ dir, which the os backend's ephemeral upper would discard.
       - name: 🧪 Merge coverage
         run: pnpm exec vitest run --merge-reports --coverage
 
@@ -111,8 +134,8 @@ jobs:
           path: coverage
           if-no-files-found: error
 
-  build-docs:
-    name: Build Documentation
+  format:
+    name: Format
     needs: build-packages
     runs-on: ubuntu-26.04
     steps:
@@ -120,15 +143,19 @@ jobs:
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-
+      # `pnpm format:check` runs `virrun -- oxfmt --check`, so it needs the built virrun bin (Setup Packages
+      # Pulls the build-packages artifact) and bubblewrap for the os sandbox the config pins — without bwrap it
+      # Would fall back to native instead of running isolated.
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
+        with:
+          bubblewrap-sandbox: "true"
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
 
-      - name: 🏗️ Build documentation
-        run: pnpm build:docs
+      - name: 📝 Format
+        run: pnpm format:check
 
   lint:
     name: Lint
@@ -139,33 +166,18 @@ jobs:
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-
+      # `pnpm lint` routes oxlint + eslint through `virrun --`; bubblewrap makes that run in the os sandbox
+      # The config pins, rather than silently falling back to native.
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
+        with:
+          bubblewrap-sandbox: "true"
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
 
       - name: 🔍 Lint
         run: pnpm lint
-
-  format:
-    name: Format
-    runs-on: ubuntu-26.04
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-        with:
-          persist-credentials: false
-
-      - name: 🔧 Setup Project Dependencies
-        uses: ./.github/actions/setup-project-dependencies
-
-      - name: 📦 Install dependencies
-        run: pnpm i
-
-      - name: 📝 Format
-        run: pnpm format:check
 
   typecheck:
     name: Typecheck
@@ -176,9 +188,12 @@ jobs:
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-
+      # `pnpm typecheck` routes tsgo through `virrun --`; bubblewrap makes that run in the os sandbox
+      # The config pins, rather than silently falling back to native.
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
+        with:
+          bubblewrap-sandbox: "true"
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages

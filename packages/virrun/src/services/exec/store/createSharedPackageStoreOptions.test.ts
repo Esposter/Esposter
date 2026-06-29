@@ -1,4 +1,5 @@
 import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
+import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
 import {
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY,
   PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE,
@@ -7,10 +8,8 @@ import {
   VIRRUN_GITIGNORE_ENTRY,
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
-  VIRRUN_TEMP_DIR_PREFIX,
 } from "@/services/exec/util/constants";
-import { existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -25,14 +24,10 @@ describe(createSharedPackageStoreOptions, () => {
   test("creates a shared pnpm store and returns sandbox mount options", () => {
     expect.hasAssertions();
 
-    dir = realpathSync(mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX)));
-    const storeDir = join(
-      dir,
-      VIRRUN_CACHE_DIRECTORY_NAME,
-      VIRRUN_STORE_DIRECTORY_NAME,
-      VIRRUN_PNPM_STORE_DIRECTORY_NAME,
-    );
-    const options = createSharedPackageStoreOptions(dir);
+    dir = createWorkspaceDir();
+    const cacheRoot = join(dir, VIRRUN_CACHE_DIRECTORY_NAME);
+    const storeDir = join(cacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_PNPM_STORE_DIRECTORY_NAME);
+    const options = createSharedPackageStoreOptions(dir, cacheRoot);
 
     expect(existsSync(storeDir)).toBe(true);
     expect(options).toStrictEqual({
@@ -48,9 +43,9 @@ describe(createSharedPackageStoreOptions, () => {
   test("does not duplicate the cache ignore entry", () => {
     expect.hasAssertions();
 
-    dir = realpathSync(mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX)));
-    createSharedPackageStoreOptions(dir);
-    createSharedPackageStoreOptions(dir);
+    dir = createWorkspaceDir();
+    createSharedPackageStoreOptions(dir, join(dir, VIRRUN_CACHE_DIRECTORY_NAME));
+    createSharedPackageStoreOptions(dir, join(dir, VIRRUN_CACHE_DIRECTORY_NAME));
 
     expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe(`${VIRRUN_GITIGNORE_ENTRY}\n`);
   });
@@ -58,10 +53,21 @@ describe(createSharedPackageStoreOptions, () => {
   test("adds the cache ignore entry on its own line after existing content", () => {
     expect.hasAssertions();
 
-    dir = realpathSync(mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX)));
+    dir = createWorkspaceDir();
     writeFileSync(join(dir, ".gitignore"), "dist");
-    createSharedPackageStoreOptions(dir);
+    createSharedPackageStoreOptions(dir, join(dir, VIRRUN_CACHE_DIRECTORY_NAME));
 
     expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe(`dist\n${VIRRUN_GITIGNORE_ENTRY}\n`);
+  });
+
+  test("leaves the gitignore untouched when the cache is already ignored in a different form", () => {
+    expect.hasAssertions();
+
+    dir = createWorkspaceDir();
+    const existing = `dist\n${VIRRUN_CACHE_DIRECTORY_NAME}\n`;
+    writeFileSync(join(dir, ".gitignore"), existing);
+    createSharedPackageStoreOptions(dir, join(dir, VIRRUN_CACHE_DIRECTORY_NAME));
+
+    expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe(existing);
   });
 });

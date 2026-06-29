@@ -29,6 +29,9 @@ export const createWslOsBackend = (errorName: string): ExecBackend =>
         "virrun-bwrap",
         ...bwrapArgs,
       ],
+      // Bare Windows env: wsl.exe is located via the Windows PATH, and options.env (Linux login PATH +
+      // Store vars) reaches the Linux child through the `env` args above, not this outer spawn env.
+      env: process.env,
       statusSource: "stderr",
     }),
     errorName,

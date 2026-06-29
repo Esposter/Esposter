@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "virrun configuration",
+  "description": "The repo-root virrun.config.json: a checked-in, reviewable selection of which backend a sandboxed command runs through (adoption level 3). The `virrun -- <cmd>` prefix is the switch for whether a command is sandboxed; this config only chooses how. Every field is optional and falls back to a safe default, so a minimal {} — or an absent file — is valid and the backend defaults to auto (native today).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path or URL to this JSON schema, for editor autocompletion and validation."
+    },
+    "backend": {
+      "description": "The backend a sandboxed command runs through. Defaults to `auto` (resolves to native today). Mirror of the BackendType enum in src/models/virrun/BackendType.ts.",
+      "default": "auto",
+      "enum": ["auto", "native", "os", "vfs"],
+      "enumDescriptions": [
+        "Pick the best backend the host supports — native today, until an isolating backend beats the gates.",
+        "Run the command directly on the host with no virtualization.",
+        "Run inside a bubblewrap RAM-overlay (Linux, or Windows via WSL2): reads fall through to source, writes vanish in tmpfs. Ephemeral — only safe for read-only verification commands.",
+        "Run recognised pure-JS node invocations in-process; falls back to native for everything else. Opt-in, no isolation."
+      ]
+    },
+    "fallback": {
+      "description": "The backend to defer to when `backend` can't run on this host (e.g. `os` off Linux/WSL). Never errors the build — worst case is no speedup. Defaults to `native`.",
+      "default": "native",
+      "enum": ["auto", "native", "os", "vfs"]
+    }
+  }
+}

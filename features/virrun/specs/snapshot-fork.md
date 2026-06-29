@@ -29,17 +29,26 @@ boot + install (once, slow) ─► snapshot ─► fork ─► run cmd ─► di
 - Start FS-only (overlay-layer / volume clone); add CRIU process-state forking only if measured warm-boot time justifies it.
 - Snapshot integrity must survive dep-store changes — bind the snapshot to the exact store content it was built against.
 
+## Concurrency safety (realized — atomic publish)
+
+`exists: existsSync(upperDir)` is the readiness signal every `resolveSnapshotLocation` / `forkSnapshot` reads, so it must only ever flip true on a **finished** layer. `createSnapshot` captures into per-pid temps under `<hash>/` (`upper.<pid>.tmp` + `work.<pid>.tmp`), runs the setup command there, then a single `renameSync` promotes the temp upper onto the final `<hash>/upper`. Rename is the publish barrier — a concurrent reader sees either no upper or the complete one, never a half-built install in place.
+
+- Both temp dirs are per-pid, so parallel capturers never share an overlay upper/work. A capturer that loses the race finds `upperDir` already published, keeps that equivalent layer, and drops its own temp.
+- Teardown removes **only the capturing process's own temps** (never the shared `<hash>/` root), so a failure or redundant capture can't delete a sibling's published or in-flight layer.
+
 ## Key Files
 
-Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the overlay-layer argv, and `createSnapshot` capture (Linux + WSL). Forking is the same `exec` with `overlayLayers.lowerDirs` set to the captured upper; wiring it into the public orchestrator (a `fork()`/`Snapshot` handle) and the cold-vs-warm bench are still planned.
+Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the overlay-layer argv, `createSnapshot` capture and `forkSnapshot` (Linux + WSL), the cold-vs-warm bench, and a transparent `fork()` on the `createVirrun` orchestrator (os captures-or-reuses; other backends fall through to `exec`). Still planned: always-on whole-repo routing on top of this handle, gated on a viable transparent-interception seam (the PATH shim is dropped as unviable).
 
 | File | Role | Status |
 | ---- | ---- | ------ |
 | `services/exec/snapshot/computeLockfileHash.ts` | sha256 of `pnpm-lock.yaml` — the snapshot cache key | realized |
-| `services/exec/snapshot/resolveSnapshotLocation.ts` | resolve `~/.virrun/snapshots/<hash>` (+ `upper`/`work` dirs, `exists`) | realized |
+| `services/exec/snapshot/resolveSnapshotLocation.ts` | resolve `~/.virrun/snapshots/<hash>` (+ `upper` dir, `exists`) — pure addressing | realized |
 | `services/exec/util/getGlobalCacheDirectory.ts` | host-global cache root `~/.virrun` (`VIRRUN_CACHE_HOME` override) | realized |
 | `services/exec/bwrap/buildBwrapArgs.ts` (`OverlayLayers`) | emit stacked `--overlay-src` lowers (fork) + persisted `--overlay` upper (capture) vs `--tmp-overlay` (ephemeral) | realized |
-| `services/exec/snapshot/createSnapshot.ts` | run a setup command in capture mode, persisting post-install writes into the overlay upper (Linux + WSL) | realized |
+| `services/exec/snapshot/createSnapshot.ts` | run a setup command in capture mode, persisting post-install writes into a per-pid temp upper then atomically renaming it into place (Linux + WSL) | realized |
 | `services/exec/snapshot/forkSnapshot.ts` | run a command over a captured snapshot (upper stacked read-only, writes vanish); guards that one exists | realized |
+| `services/exec/snapshot/removeSnapshotDirectory.ts` | recursively remove a snapshot dir (capture temp or `<hash>` root), chmod-ing the overlay `work/work` scratch traversable first | realized |
 | `localMonorepo.bench.ts` ("warm fork vs cold reinstall") | cold-vs-warm speed gate: reinstall every run vs fork the snapshot (native Linux) | realized |
-| `snapshot/Snapshot.ts` | transparent `fork()` on the `createVirrun` orchestrator | planned (with config routing) |
+| `services/virrun/createVirrun.ts` (`fork`) | transparent `fork(command)` on the orchestrator handle — os captures-or-reuses the snapshot, other backends fall through to `exec` | realized |
+| always-on whole-repo routing | a single switch / spawn-interceptor forking every command | planned (gated on a viable interception seam → [deferred/whole-repo-routing.md](../deferred/whole-repo-routing.md)) |

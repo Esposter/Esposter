@@ -18,25 +18,24 @@ const virrun = await createVirrun({
   backend: BackendType.Auto, // Auto resolves to the fastest supported backend (Native today).
 });
 
-await virrun.exec("pnpm install"); // real toolchain (os backend)
-const snapshot = await virrun.snapshot(); // freeze warm state
+// Run a command inside the runner environment
+const { stdout, exitCode } = await virrun.exec("pnpm build");
 
-const run = await snapshot.fork(); // near-instant clone
-const { stdout, exitCode } = await run.exec("pnpm test");
-await run.dispose();
+// Run a command over a warm snapshot of its post-run state (os backend only)
+const forkResult = await virrun.fork("pnpm test");
+
 await virrun.dispose();
 ```
 
-## Shape (types only — to be locked in Phase 0)
+## Shape (realized API)
 
-| Member                    | Purpose                                               |
-| ------------------------- | ----------------------------------------------------- |
-| `createVirrun(options)`   | resolve source → FS layer → backend; returns `Virrun` |
-| `Virrun.exec(cmd, opts?)` | run a command; returns `{ stdout, stderr, exitCode }` |
-| `Virrun.fs`               | direct FS access (read/write before/after runs)       |
-| `Virrun.snapshot()`       | freeze warm state → `Snapshot`                        |
-| `Snapshot.fork()`         | clone into a fresh isolated `Virrun`                  |
-| `*.dispose()`             | tear down; release RAM                                |
+| Member                     | Purpose                                                                     |
+| -------------------------- | --------------------------------------------------------------------------- |
+| `createVirrun(options)`    | resolve source → FS layer → backend; returns `Virrun`                       |
+| `Virrun.backend`           | resolved backend name                                                       |
+| `Virrun.exec(cmd, stdio?)` | run a command; returns `{ stdout, stderr, exitCode }`                       |
+| `Virrun.fork(cmd, stdio?)` | on `os`, captures/reuses a warm snapshot; other backends behave like `exec` |
+| `Virrun.dispose()`         | tear down; release RAM                                                      |
 
 ## Constraints / Notes
 

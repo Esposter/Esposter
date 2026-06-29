@@ -1,11 +1,9 @@
-﻿import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
+import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { rmSync } from "node:fs";
 import { describe, expect, test } from "vitest";
 // Mirrors the implementation's probe - bwrap present AND able to set up the RAM overlay - so the positive
 // Assertion only runs where the os backend genuinely works (an overlay-capable dev box), not a bare CI
@@ -13,9 +11,9 @@ import { describe, expect, test } from "vitest";
 const isOverlayCapable =
   process.platform === "linux" &&
   getResult(() => {
-    const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
+    const dir = createTemporaryDirectory();
     return withFinalizer(
-      () => execFileSync("bwrap", buildBwrapArgs("true", dir), { stdio: "pipe" }),
+      () => execFileSync("bwrap", buildBwrapArgs(["true"], dir), { stdio: "pipe" }),
       () => {
         rmSync(dir, { force: true, recursive: true });
       },
@@ -31,7 +29,7 @@ const isWslOverlayCapable =
     .andThen((wslDir) =>
       getResult(() =>
         withFinalizer(
-          () => execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs("true", wslDir)], { stdio: "pipe" }),
+          () => execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], { stdio: "pipe" }),
           () => {
             getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
               undefined,

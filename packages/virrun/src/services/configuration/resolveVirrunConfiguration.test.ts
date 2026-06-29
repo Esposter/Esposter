@@ -1,0 +1,35 @@
+import { BackendType } from "@/models/virrun/BackendType";
+import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { VIRRUN_CONFIGURATION_FILENAME } from "@/services/exec/util/constants";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { afterEach, describe, expect, test } from "vitest";
+
+describe(resolveVirrunConfiguration, () => {
+  const { cleanup, create } = createTemporaryDirectoryTracker();
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  test("walks up from a nested cwd to the repo-root config", () => {
+    expect.hasAssertions();
+
+    const root = create();
+    writeFileSync(join(root, VIRRUN_CONFIGURATION_FILENAME), JSON.stringify({ backend: "os" }));
+    const nested = join(root, "packages", "app");
+    mkdirSync(nested, { recursive: true });
+
+    expect(resolveVirrunConfiguration(nested)).toStrictEqual({
+      backend: BackendType.Os,
+      fallback: BackendType.Native,
+    });
+  });
+
+  test("returns undefined when no config exists in the tree", () => {
+    expect.hasAssertions();
+
+    expect(resolveVirrunConfiguration(create())).toBeUndefined();
+  });
+});

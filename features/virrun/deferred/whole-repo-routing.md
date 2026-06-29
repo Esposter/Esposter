@@ -13,8 +13,8 @@ Four shipped-state facts make this slower, wrong, or both today — not a design
 
 ## Revisit when
 
-Phase 3 warm-fork has landed (so an `os` run is faster than native, not slower) **and** the config allowlist (level 3) is boring and trusted with ≥2 commands routed. At that point the transparent PATH shim (adoption level 4) becomes the natural next rung — still opt-in behind an env flag, still per-command in the allowlist, never an all-or-nothing switch. The on-disk surface it needs is specced in [specs/config-and-cache.md](../specs/config-and-cache.md).
+Phase 3 warm-fork has landed (so an `os` run is faster than native, not slower) **and** a viable transparent-interception seam exists. The original PATH shim (adoption level 4) is measured unviable for pnpm-local tools and dropped, so the natural next rung would be a spawn-level interceptor (`NODE_OPTIONS`, or shimming `pnpm`) — and that, unlike the prefix, would need a committed allowlist to decide which no-prefix commands sandbox. Until such a seam proves out, per-command prefixing stays the mechanism. → [specs/adoption.md](../specs/adoption.md)
 
 ## Cheaper interim
 
-The dogfooding ladder already routes commands one at a time: `virrun -- <cmd>` prefix → promote to a `package.json` script → config allowlist. That delivers the "config + cache" the request is reaching for, scoped to commands proven on the gates. → [specs/adoption.md](../specs/adoption.md)
+The dogfooding ladder already adopts commands one at a time: `virrun -- <cmd>` prefix → promote to a `package.json` script → commit the `virrun.config.json` backend selection. That delivers the "config + cache" the request is reaching for, scoped to commands proven on the gates. → [specs/adoption.md](../specs/adoption.md)

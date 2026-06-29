@@ -16,10 +16,16 @@ export const writeBenchmarkReport = async (file: BenchmarkTaskNode, environment:
   const [benchmarkFile] = report.files;
   if (benchmarkFile === undefined || benchmarkFile.groups.length === 0) return;
   const basePath = file.filepath.replace(TS_EXTENSION_REGEX, "");
-  const jsonPath = `${basePath}.json`;
+  // A `*.platform.bench.ts` source opts its results into per-platform artifacts: its numbers differ by host
+  // (e.g. the os backend runs as `os/linux` natively and `os/wsl` bridged from win32), so a single committed
+  // File would clobber the other platform every run. Suffix such a file's artifacts with `process.platform`
+  // (Foo.platform.bench.win32.{json,md} / Foo.platform.bench.linux.{json,md}) so each platform's run updates
+  // Only its own file. Plain `*.bench.ts` files stay single-artifact and cross-platform.
+  const reportPath = basePath.endsWith(".platform.bench") ? `${basePath}.${process.platform}` : basePath;
+  const jsonPath = `${reportPath}.json`;
   const jsonResult = await getResultAsync(() => writeFile(jsonPath, `${JSON.stringify(report, null, 2)}\n`));
   if (jsonResult.isErr()) throw new InvalidOperationError(Operation.Create, jsonPath, jsonResult.error.message);
-  const markdownPath = `${basePath}.md`;
+  const markdownPath = `${reportPath}.md`;
   const markdownResult = await getResultAsync(() =>
     writeFile(markdownPath, formatBenchmarkMarkdown(report, environment)),
   );

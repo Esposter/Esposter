@@ -4,6 +4,9 @@ node_modules
 # Pnpm artifacts
 .pnpm-store
 
+# virrun local cache (repo-local store + warm snapshots; disposable, repopulated on next routed run)
+.virrun
+
 # Build Artifacts
 **/src/index.ts
 **/src/components/index.ts

@@ -19,22 +19,10 @@ An ephemeral, in-memory virtual runner: boot a repo into a RAM-backed filesystem
 
 ### Prerequisites
 
-The `os` backend runs every command inside a [bubblewrap](https://github.com/containers/bubblewrap) RAM-overlay. `bwrap` is a system-level namespace tool — it is **not** an npm dependency and is intentionally not bundled (a prebuilt binary would bypass the distro's setuid/AppArmor integration and the kernel's unprivileged-userns config it relies on). Install it from your package manager:
+The sandboxed `os` backend needs the following; if either is missing, `virrun` falls back to the native backend.
 
-```bash
-# Debian / Ubuntu / WSL2 distro
-sudo apt install bubblewrap
-
-# Fedora / RHEL
-sudo dnf install bubblewrap
-
-# Arch
-sudo pacman -S bubblewrap
-
-bwrap --version   # verify it is on PATH
-```
-
-The `os` backend is **Linux-core and opt-in**. It runs directly on Linux, and on Windows through WSL2 when `wsl.exe`, `wslpath`, and an overlay-capable `bwrap` are available inside the default distro. Unsupported hosts still keep `Auto` on the native backend, so the package is usable everywhere; only `BackendType.Os` requires the sandbox. `isOsBackendSupported()` reports whether the current host qualifies.
+- **Bubblewrap `>= 0.10.0`** (RAM overlay support: `--overlay-src` / `--tmp-overlay`), via your system package manager — e.g. `sudo apt install -y bubblewrap` (Debian/Ubuntu/WSL2), `sudo dnf install bubblewrap` (Fedora/RHEL), `sudo pacman -S bubblewrap` (Arch).
+- **A Linux `node` inside your default WSL2 distro** (Windows hosts only) — Windows `node.exe` can't run in the Linux sandbox, so without it the capability check fails and virrun runs natively on Windows.
 
 ### CLI
 

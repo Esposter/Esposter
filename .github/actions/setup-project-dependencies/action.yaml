@@ -44,7 +44,6 @@ runs:
         dir="$(mktemp -d)"
         bwrap --unshare-all --die-with-parent --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp \
           --overlay-src "$dir" --tmp-overlay "$dir" --chdir "$dir" -- true
-
     # Re-run setup-node now that pnpm exists, solely to wire up the pnpm store cache (Node is already installed,
     # so this pass is effectively just the cache restore/save).
     - name: 🛠️ Setup node (pnpm cache)

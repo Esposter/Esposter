@@ -1,11 +1,11 @@
+import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
 import { runNodeInProcess } from "@/services/exec/vfs/runNodeInProcess";
-import { mkdtempSync, realpathSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 describe(runNodeInProcess, () => {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "run-node-")));
+  const dir = createTemporaryDirectory();
   const writeScript = (name: string, source: string) => {
     const file = join(dir, name);
     writeFileSync(file, source);

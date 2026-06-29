@@ -26,7 +26,7 @@ Two pass/fail gates on every backend and speed feature — a violation is not sh
 
 ## Now
 
-Phase 3 — snapshot + warm-fork. The FS-only overlay snapshot has landed: `createSnapshot` captures a warm post-install state into a lockfile-hash-keyed layer in the host-global `~/.virrun`, a fork re-runs against it without reinstalling, and the cold-vs-warm bench gates the win. Open: a public `fork()` handle on the orchestrator. Phase 2's `os` backend (Bubblewrap RAM overlay, real `pnpm install`, shared `.virrun/store/pnpm`, Windows→WSL2 bridge) is done bar the macOS VM bridge → [roadmap.md](roadmap.md).
+Phase 4 — distribution & CI. Adoption level 3 (committed backend selection) has landed and **this repo now dogfoods it**: a committed repo-root `virrun.config.json` pins the `os` backend, and the package ships a `schema.json` so the config gets editor autocompletion/validation via `$schema` (oxlint-style). The CLI resolves the config (walking up via `empathic`) and picks the backend with auto-fallback to the configured `fallback` backend (typically native) on an unsupported host — so on a host without bubblewrap or Linux Node.js in WSL (e.g. Windows without WSL or without Linux Node set up) every command transparently runs native. **There is no allowlist** — the `virrun -- <cmd>` prefix **is** the per-command switch (add it to adopt, remove it to drop); the config only selects _which_ backend a sandboxed command runs through. virrun injects a vitest-style `VIRRUN=true` signal into every command's environment (read via `isVirrunEnabled`), so a test/config/tool can detect it runs under virrun — an output it sets, not an input that gates. The originally-planned transparent PATH shim (level 4) is measured-unviable for pnpm-local tools (pnpm prepends `.bin` ahead of any inherited shim dir) and dropped; since transparent no-prefix routing was the only thing an allowlist was for, the allowlist went with it. The citty CLI migration stays deferred until the CLI grows real subcommands/flags ([deferred/citty-cli.md](deferred/citty-cli.md)). Phase 3 (snapshot + warm-fork, incl. the transparent `fork()` handle on the orchestrator — its capture publishes atomically via a private temp + `rename`, so a concurrent fork never reads a half-built snapshot) and Phase 2's `os` backend are done bar the macOS VM bridge → [roadmap.md](roadmap.md).
 
 ## Shipped
 
@@ -35,7 +35,8 @@ Terse log; the linked spec holds the detail.
 - **Phase 0 — foundations**: `virrun` (public, unscoped) — the `ExecBackend` seam, native passthrough backend, async `createVirrun`, `dir`/`files`/`git` source loaders, the `virrun -- <cmd>` CLI, and the `pnpm bench` foundation (colocated per-file `*.bench.{json,md}`). → [orchestrator-api](specs/orchestrator-api.md) · [adoption](specs/adoption.md) · [benchmarking](specs/benchmarking.md)
 - **`vfs` Step A — FS layer**: `FsProvider` + `createPlatformaticFsProvider` over `@platformatic/vfs` (the lone import, doubling as the `node:vfs` swap shim); mounting patches `require`/`fs` to serve virtual files; cross-platform. → [virtual-fs](specs/virtual-fs.md)
 - **`vfs` Step B — in-process runner** (both gates passed): `BackendType.Vfs` runs `node -e`/`--eval` and `node <file>` in the current process over an overlay-mounted FS, falling back to native for anything it can't run faithfully. Opt-in only — no isolation yet, so `Auto` stays native. → [exec-isolation](specs/exec-isolation.md)
-- **Phase 3 — FS-only overlay snapshot + fork**: lockfile-hash cache addressing (`~/.virrun/snapshots/<hash>`, `VIRRUN_CACHE_HOME` override), the `OverlayLayers` bwrap argv (stacked lowers for fork, persisted upper for capture), and `createSnapshot` capturing a warm post-install layer (Linux + WSL); a fork re-runs over it offline with writes vanishing. Capture→fork validated end-to-end. → [snapshot-fork](specs/snapshot-fork.md)
+- **Phase 3 — FS-only overlay snapshot + fork**: lockfile-hash cache addressing (`~/.virrun/snapshots/<hash>`, `VIRRUN_CACHE_HOME` override), the `OverlayLayers` bwrap argv (stacked lowers for fork, persisted upper for capture), `createSnapshot` capturing a warm post-install layer + `forkSnapshot` re-running over it offline with writes vanishing, and a transparent `fork()` on the `createVirrun` handle (os captures-or-reuses; other backends fall through to `exec`). Capture→fork validated end-to-end; cold-vs-warm bench gates the win. → [snapshot-fork](specs/snapshot-fork.md)
+- **Phase 4 — config backend selection (adoption level 3)**: a committed repo-root `virrun.config.json` (`backend`/`fallback`) pins which backend a sandboxed command runs through — no allowlist; the `virrun -- <cmd>` prefix is the sole per-command switch. `resolveVirrunConfiguration` walks up via `empathic` (standard parent-dir search, JSON config), `parseVirrunConfiguration` validates + defaults, and the CLI's `resolveBackend` picks the backend with host-support auto-fallback. Absent config = auto (native today). → [config-and-cache](specs/config-and-cache.md) · [adoption](specs/adoption.md)
 
 ## Decisions
 
@@ -45,7 +46,7 @@ Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roa
 - [deferred/wasm-runtime.md](deferred/wasm-runtime.md) — WebContainers-style WASM-node backend, parked with a revisit trigger.
 - [deferred/citty-cli.md](deferred/citty-cli.md) — delegate the CLI to unjs/citty once it grows real subcommands/flags.
 - [deferred/ci-bench-gate.md](deferred/ci-bench-gate.md) — enforce the bench + differential suites as required CI gates once a backend can actually regress.
-- [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md) — why "route every command at once" waits for warm-fork; adopt one command at a time instead.
+- [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md) — why "route every command at once" stays deferred (`Auto` still resolves to native; needs a viable spawn-interceptor seam, the PATH shim being dropped); adopt one command at a time instead.
 
 ## Reference
 
@@ -55,8 +56,8 @@ Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roa
 - [specs/exec-isolation.md](specs/exec-isolation.md) — the core: real exec + isolation backends.
 - [specs/snapshot-fork.md](specs/snapshot-fork.md) — warm snapshot + fork.
 - [specs/orchestrator-api.md](specs/orchestrator-api.md) — the TS, node-compatible public API.
-- [specs/adoption.md](specs/adoption.md) — incremental opt-in: prefix → script → config → shim, with auto-fallback; dogfooding ladder for this repo.
-- [specs/config-and-cache.md](specs/config-and-cache.md) — the on-disk surface: `virrun.config.json` allowlist (committed) + `.virrun/` cache (gitignored).
+- [specs/adoption.md](specs/adoption.md) — incremental opt-in: prefix → script → config (backend selection), with auto-fallback; dogfooding ladder for this repo.
+- [specs/config-and-cache.md](specs/config-and-cache.md) — the on-disk surface: `virrun.config.json` backend selection (committed) + `.virrun/` cache (gitignored).
 - [specs/benchmarking.md](specs/benchmarking.md) — speed gate: baselines, metrics, methodology, must-beat-native rule.
 - [specs/correctness.md](specs/correctness.md) — correctness gate: differential testing vs native, test layers, coverage.
 - [reference/prior-art.md](reference/prior-art.md) — surveyed projects (node:vfs, platformatic, just-bash, WebContainers, e2b, Firecracker) and why each does/doesn't fit.
