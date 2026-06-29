@@ -1,3 +1,4 @@
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { parseNodeInvocation } from "@/services/exec/vfs/parseNodeInvocation";
 import { describe, expect, test } from "vitest";
 
@@ -23,7 +24,7 @@ describe(parseNodeInvocation, () => {
   test("parses a file run into its file path", () => {
     expect.hasAssertions();
 
-    expect(parseNodeInvocation("node index.js")).toStrictEqual({ code: "", file: "index.js" });
+    expect(parseNodeInvocation(`node ${TEST_FILENAME}`)).toStrictEqual({ code: "", file: TEST_FILENAME });
   });
 
   test("returns undefined for an empty file token", () => {
@@ -41,7 +42,7 @@ describe(parseNodeInvocation, () => {
   test("returns undefined for a file run with script args (not emulated yet)", () => {
     expect.hasAssertions();
 
-    expect(parseNodeInvocation("node index.js --flag")).toBeUndefined();
+    expect(parseNodeInvocation(`node ${TEST_FILENAME} --flag`)).toBeUndefined();
   });
 
   test("returns undefined for an unsupported flag", () => {

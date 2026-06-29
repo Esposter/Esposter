@@ -1,7 +1,7 @@
 import { SourceType } from "@/models/source/SourceType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_FILE_NAME } from "@/services/exec/util/constants.test";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { loadGitSource } from "@/services/source/loadGitSource";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile, writeFile } from "node:fs/promises";
@@ -11,7 +11,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 describe(loadGitSource, () => {
   const backend = createNativeBackend();
   const temporaryDirectories = createTemporaryDirectoryTracker();
-  const fileName = `${TEST_FILE_NAME}.txt`;
+  const fileName = `${TEST_FILENAME}.txt`;
   let origin = "";
 
   beforeAll(async () => {
@@ -53,7 +53,7 @@ describe(loadGitSource, () => {
     expect.hasAssertions();
 
     // A guaranteed-missing local path (a nonexistent child of a fresh empty temp dir).
-    const missing = join(temporaryDirectories.create(), TEST_FILE_NAME);
+    const missing = join(temporaryDirectories.create(), TEST_FILENAME);
     const dest = temporaryDirectories.create();
     // Reconstruct the expected message from a live `-q` clone of the same missing repo: stderr then
     // References only the source (known here), never the random dest, so the snapshot is exact on

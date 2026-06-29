@@ -1,30 +1,41 @@
+import type { rm as baseRm } from "node:fs/promises";
+
 import { SourceType } from "@/models/source/SourceType";
-import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { loadFilesSource } from "@/services/source/loadFilesSource";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { existsSync } from "node:fs";
-import { readdir, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const readTempDirectoryCount = async () =>
-  (await readdir(tmpdir())).filter((name) => name.startsWith(VIRRUN_TEMP_DIR_PREFIX)).length;
+// Wrap the real fs/promises with a call-through spy on rm, so the failure-path leak test can assert dispose
+// Actually removed the dir it created — deterministically, instead of counting shared-tmpdir entries that
+// Parallel tests pollute with the same prefix. Every other export (mkdir/writeFile/readFile) stays real.
+const { rm } = vi.hoisted(() => ({ rm: vi.fn<typeof baseRm>() }));
+
+vi.mock(import("node:fs/promises"), async (importOriginal) => {
+  const actual = await importOriginal();
+  rm.mockImplementation(actual.rm);
+  return { ...actual, rm };
+});
 
 describe(loadFilesSource, () => {
-  const escapePath = "../escape.txt";
+  const escapePath = `../${TEST_FILENAME}`;
   const escapeReason = "path escapes sandbox directory";
 
-  test("materializes files (including nested paths) into a temp directory", async () => {
+  beforeEach(() => {
+    rm.mockClear();
+  });
+
+  test("materializes a file at a nested path into a temp directory", async () => {
     expect.hasAssertions();
 
-    const { cwd, dispose } = await loadFilesSource({
-      files: { "a.txt": "", "nested/b.txt": " " },
-      type: SourceType.Files,
-    });
+    const nestedPath = `${TEST_FILENAME}/${TEST_FILENAME}`;
+    const { cwd, dispose } = await loadFilesSource({ files: { [nestedPath]: " " }, type: SourceType.Files });
 
-    await expect(readFile(join(cwd, "a.txt"), "utf8")).resolves.toBe("");
-    await expect(readFile(join(cwd, "nested/b.txt"), "utf8")).resolves.toBe(" ");
+    await expect(readFile(join(cwd, nestedPath), "utf8")).resolves.toBe(" ");
 
     await dispose();
   });
@@ -32,7 +43,7 @@ describe(loadFilesSource, () => {
   test("removes the temp directory on dispose", async () => {
     expect.hasAssertions();
 
-    const { cwd, dispose } = await loadFilesSource({ files: { "a.txt": " " }, type: SourceType.Files });
+    const { cwd, dispose } = await loadFilesSource({ files: { [TEST_FILENAME]: " " }, type: SourceType.Files });
     await dispose();
 
     expect(existsSync(cwd)).toBe(false);
@@ -51,7 +62,7 @@ describe(loadFilesSource, () => {
   test("rejects absolute path that escapes the sandbox directory", async () => {
     expect.hasAssertions();
 
-    const absolutePath = join(tmpdir(), "escape.txt");
+    const absolutePath = join(tmpdir(), TEST_FILENAME);
 
     await expect(
       loadFilesSource({ files: { [absolutePath]: "" }, type: SourceType.Files }),
@@ -63,14 +74,16 @@ describe(loadFilesSource, () => {
   test("disposes the temp directory when a path escapes the sandbox", async () => {
     expect.hasAssertions();
 
-    const before = await readTempDirectoryCount();
-
     await expect(
       loadFilesSource({ files: { [escapePath]: "" }, type: SourceType.Files }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, escapePath, escapeReason).message}]`,
     );
 
-    await expect(readTempDirectoryCount()).resolves.toBe(before);
+    expect(rm).toHaveBeenCalledTimes(1);
+
+    const [removedDirectory] = takeOne(rm.mock.calls, 0);
+
+    expect(existsSync(removedDirectory)).toBe(false);
   });
 });

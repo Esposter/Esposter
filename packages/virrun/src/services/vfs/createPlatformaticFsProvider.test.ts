@@ -1,5 +1,5 @@
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { TEST_DIR, TEST_FILE_NAME } from "@/services/exec/util/constants.test";
+import { TEST_DIR, TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
 import { withFinalizer } from "@esposter/shared";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -57,7 +57,7 @@ describe(createPlatformaticFsProvider, () => {
     expect.hasAssertions();
 
     const dir = temporaryDirectories.create();
-    const file = join(dir, TEST_FILE_NAME);
+    const file = join(dir, TEST_FILENAME);
     writeFileSync(file, "");
     const { dispose, mount, writeFile } = createPlatformaticFsProvider({ isOverlayEnabled: true });
     mount(dir);

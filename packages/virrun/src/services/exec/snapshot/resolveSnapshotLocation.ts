@@ -1,7 +1,7 @@
 import type { SnapshotLocation } from "@/models/exec/SnapshotLocation";
 
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
-import { VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/util/constants";
+import { VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { existsSync } from "node:fs";
 import { join } from "node:path";

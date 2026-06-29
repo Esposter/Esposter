@@ -5,10 +5,18 @@ import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import {
+    ACCEPTANCE_TIMEOUT_MINUTES,
+    ESBUILD_VERSION_REGEX,
+    FIND_ESBUILD_BINARY_COMMAND,
+    PNPM_MODULES_DIRECTORY,
+    RUN_ESBUILD_VERSION_COMMAND,
+} from "@/services/exec/test/constants.test";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
 import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstallSupported.test";
 import { VIRRUN_CACHE_HOME_KEY, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { HOME_CACHE_DIRECTORY_NAME, TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -20,12 +28,13 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 // Os-backend install acceptance. The snapshot cache is redirected under $HOME (not os.tmpdir) because the
 // Sandbox masks /tmp with --tmpfs, which would hide a /tmp overlay layer from the command inside.
 describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then fork (acceptance)", () => {
+  const forkOkMarker = "FORK_OK";
   let corpus = "";
   let cacheHome = "";
 
   beforeAll(() => {
     corpus = createWorkspaceCorpus(findRepoRoot());
-    const cache = join(homedir(), ".cache");
+    const cache = join(homedir(), HOME_CACHE_DIRECTORY_NAME);
     mkdirSync(cache, { recursive: true });
     cacheHome = mkdtempSync(join(cache, VIRRUN_TEMP_DIR_PREFIX));
     process.env[VIRRUN_CACHE_HOME_KEY] = cacheHome;
@@ -56,12 +65,12 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
     // Sees the full dependency closure (no reinstall) and a native binary (esbuild) executes; its own write
     // Vanishes in tmpfs.
     const forkCommand = [
-      "test -d node_modules/.pnpm",
-      "ESBUILD=$(find node_modules/.pnpm -path '*/bin/esbuild' -type f | head -1)",
-      "test -n \"$ESBUILD\"",
-      `"$ESBUILD" --version`,
-      "echo scratch > fork-only.txt",
-      "echo FORK_OK",
+      `test -d ${PNPM_MODULES_DIRECTORY}`,
+      FIND_ESBUILD_BINARY_COMMAND,
+      'test -n "$ESBUILD"',
+      RUN_ESBUILD_VERSION_COMMAND,
+      `echo scratch > ${TEST_FILENAME}`,
+      `echo ${forkOkMarker}`,
     ].join(" && ");
     const { exitCode, stdout } = await backend.exec(forkCommand, {
       cwd: corpus,
@@ -70,10 +79,10 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
     });
 
     expect(exitCode).toBe(0);
-    expect(stdout).toContain("FORK_OK");
-    expect(stdout).toMatch(/\d+\.\d+\.\d+/u);
-    expect(existsSync(join(corpus, "fork-only.txt"))).toBe(false);
+    expect(stdout).toContain(forkOkMarker);
+    expect(stdout).toMatch(ESBUILD_VERSION_REGEX);
+    expect(existsSync(join(corpus, TEST_FILENAME))).toBe(false);
     // The capture step is a real, networked, frozen-lockfile install of the whole workspace corpus on a cold
-    // Store; on a slow host that alone can exceed the smaller default caps, so allow up to 10 minutes.
-  }, dayjs.duration(10, "minutes").asMilliseconds());
+    // Store; on a slow host that alone can exceed the smaller default caps, so allow the long acceptance timeout.
+  }, dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds());
 });

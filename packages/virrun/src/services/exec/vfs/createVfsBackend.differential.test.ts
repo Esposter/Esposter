@@ -2,8 +2,9 @@ import { assertDifferential } from "@/services/exec/differential/assertDifferent
 import { NODE_DIFFERENTIAL_CORPUS } from "@/services/exec/differential/differentialCorpus.test";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -33,9 +34,15 @@ describe(createVfsBackend, () => {
     expect.hasAssertions();
 
     const dir = temporaryDirectories.create();
-    writeFileSync(join(dir, "helper.cjs"), "module.exports = ' '");
-    writeFileSync(join(dir, "main.cjs"), "process.stdout.write(require('./helper.cjs'))");
-    const command = "node main.cjs";
+    // The required dependency lives one directory down so both files reuse the canonical name instead of
+    // Inventing distinct ones; main reads it back through a relative require, exercising the overlay fall-through.
+    mkdirSync(join(dir, TEST_FILENAME));
+    writeFileSync(join(dir, TEST_FILENAME, `${TEST_FILENAME}.cjs`), "module.exports = ' '");
+    writeFileSync(
+      join(dir, `${TEST_FILENAME}.cjs`),
+      `process.stdout.write(require('./${TEST_FILENAME}/${TEST_FILENAME}.cjs'))`,
+    );
+    const command = `node ${TEST_FILENAME}.cjs`;
 
     const nativeResult = await native.exec(command, { cwd: dir, stdio: "pipe" });
     const vfsResult = await vfs.exec(command, { cwd: dir, stdio: "pipe" });

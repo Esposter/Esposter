@@ -1,6 +1,7 @@
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
@@ -35,7 +36,7 @@ describe(computeLockfileHash, () => {
     expect.hasAssertions();
 
     const repo = createRepo(lockfileContent);
-    const nested = join(repo, "packages", "foo");
+    const nested = join(repo, TEST_FILENAME, TEST_FILENAME);
     mkdirSync(nested, { recursive: true });
 
     expect(computeLockfileHash(nested)).toBe(computeLockfileHash(repo));
