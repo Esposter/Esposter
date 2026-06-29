@@ -11,7 +11,8 @@ import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupComman
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
-import { rmSync } from "node:fs";
+import { globSync, rmSync } from "node:fs";
+import { join } from "node:path";
 import { afterAll, bench, describe } from "vitest";
 // End-to-end speed gate: native baseline vs os sandbox on real monorepo commands. Runs on any host that
 // Supports the os backend - the sandbox runs natively on Linux (os/linux) and bridged from win32 via WSL
@@ -29,16 +30,13 @@ const repoRoot = isOsSupported ? findRepoRoot() : "";
 // The single warm snapshot below serve both the warm-fork group and the typecheck/build/test forks over the repo.
 const nativeCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const warmCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
-// The os sandbox always runs /bin/sh and provisions its own dep closure, so its install is platform-agnostic
-// (resolveSetupCommand forks corepack-vs-bare pnpm). The native baseline runs in the host shell (cmd.exe on
-// Win32, /bin/sh on Linux) and reuses one corpus across iterations, so it must clear node_modules to stay cold -
-// The only command that needs platform-forked syntax, since `rm`/`find` are POSIX and the win32 host is cmd.exe.
-const cleanModulesNative = isWindows
-  ? `for /d /r . %d in (node_modules) do @if exist "%d" rd /s /q "%d"`
-  : "find . -name node_modules -type d -prune -exec rm -rf {} +";
-const nativeInstall = isWindows
-  ? `${cleanModulesNative} & ${resolveSetupCommand()}`
-  : `${cleanModulesNative}; ${resolveSetupCommand()}`;
+// The native baseline reuses one corpus across iterations, so it must clear node_modules before each run to stay
+// Cold. Done in-process with fs (not a shell command) so it's platform-agnostic and rmSync throws on a failed
+// Delete - chaining the delete into the install via cmd's `for` loop would swallow the errorlevel, silently
+// Warming the install and recording it as cold.
+const cleanNativeModules = (corpus: string): void => {
+  for (const dir of globSync(join(corpus, "**/node_modules"))) rmSync(dir, { force: true, recursive: true });
+};
 // The real workspace command both backends are timed on. Run from the repo root with a package filter so the os
 // Fork (which overlays the snapshot's root-level node_modules at the repo root) resolves the same closure the
 // Native host already has. The os side forks over a fresh tmpfs upper every run, so its writes (tsbuildinfo,
@@ -54,7 +52,8 @@ afterAll(() => {
 
 describe.skipIf(!isOsSupported)("install - real workspace dependency closure (cold)", () => {
   bench(BackendType.Native, async () => {
-    await native.exec(nativeInstall, { cwd: nativeCorpus, stdio: "pipe" });
+    cleanNativeModules(nativeCorpus);
+    await native.exec(resolveSetupCommand(), { cwd: nativeCorpus, stdio: "pipe" });
   });
 
   bench(OS_TASK_NAME, async () => {
