@@ -8,8 +8,8 @@ import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
 } from "@/services/exec/util/constants";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdirSync, renameSync } from "node:fs";
+import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { mkdirSync, mkdtempSync, renameSync } from "node:fs";
 import { join } from "node:path";
 // Captures warm post-install state: runs `command` (e.g. `pnpm install`) through the os backend in capture
 // Mode, so its writes persist into the snapshot's overlay upper in the global cache instead of vanishing in
@@ -20,12 +20,13 @@ import { join } from "node:path";
 // Entry stays the key even if the install rewrote the lockfile — otherwise the captured upper would orphan
 // Under the old hash while we report the new one.
 //
-// Atomic publish: the install writes into a per-process temp upper, then a single `renameSync` promotes it
-// Onto the final `upperDir`. `existsSync(upperDir)` — the readiness signal every fork/resolve reads — is the
-// Last thing to flip, so a concurrent reader never sees a half-built upper mid-install (the rename is the
-// Publish barrier). Both temp dirs are per-pid, so parallel capturers never share an overlay upper/work; a
-// Capturer that loses the race finds `upperDir` already published, keeps that equivalent layer, and drops its
-// Own temp. On failure only this process's temps are torn down, never a sibling's published or in-flight work.
+// Atomic publish: the install writes into a private temp upper, then a single `renameSync` promotes it onto
+// The final `upperDir`. `existsSync(upperDir)` — the readiness signal every fork/resolve reads — is the last
+// Thing to flip, so a concurrent reader never sees a half-built upper mid-install (the rename is the publish
+// Barrier). Each capture mints its own temp upper/work via `mkdtempSync`, so even two captures in the same
+// Process never share an overlay dir; a capturer that loses the publish race renames onto an already-populated
+// `upperDir`, which fails — it then keeps the published equivalent layer and drops its own temp instead of
+// Erroring. On failure only this invocation's temps are torn down, never a sibling's published or in-flight work.
 // The capture run's result is returned alongside the location: it is a real execution, so the cold-path fork
 // Returns it directly rather than re-running the command over the frozen upper.
 export const createSnapshot = (
@@ -35,11 +36,14 @@ export const createSnapshot = (
 ): Promise<SnapshotCapture> => {
   const location = resolveSnapshotLocation(options.cwd);
   const { dir, upperDir } = location;
-  const captureUpperDir = join(dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${process.pid}.tmp`);
-  const captureWorkDir = join(dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.${process.pid}.tmp`);
+  // Lazily minted inside the run via mkdtempSync so each invocation gets a unique temp; "" until created so the
+  // Failure finalizer can tell whether there is anything to tear down (mkdtemp itself could be what threw).
+  let captureUpperDir = "";
+  let captureWorkDir = "";
   return getResultAsync(async () => {
-    mkdirSync(captureUpperDir, { recursive: true });
-    mkdirSync(captureWorkDir, { recursive: true });
+    mkdirSync(dir, { recursive: true });
+    captureUpperDir = mkdtempSync(join(dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`));
+    captureWorkDir = mkdtempSync(join(dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`));
     const result = await backend.exec(command, {
       ...options,
       overlayLayers: { upperDir: captureUpperDir, workDir: captureWorkDir },
@@ -50,19 +54,26 @@ export const createSnapshot = (
         createSnapshot.name,
         `snapshot setup command exited with ${result.exitCode}: ${result.stderr}`,
       );
-    // Promote the temp upper onto its final address — the publish barrier. If a concurrent capturer already
-    // Published an equivalent layer, keep theirs and discard ours; otherwise rename ours into place atomically.
-    if (resolveSnapshotLocation(options.cwd).exists) removeSnapshotDirectory(captureUpperDir);
-    else renameSync(captureUpperDir, upperDir);
+    // Promote the temp upper onto its final address — the publish barrier. The rename is the only check: if a
+    // Concurrent capturer already published an equivalent layer, renaming onto the now-populated `upperDir`
+    // Fails, so we keep theirs and discard ours; otherwise ours lands atomically. Renaming-then-checking
+    // Collapses the check-then-rename window where two capturers both saw `exists === false` and both renamed.
+    getResult(() => renameSync(captureUpperDir, upperDir)).match(
+      () => undefined,
+      (error) => {
+        if (!resolveSnapshotLocation(options.cwd).exists) throw error;
+        removeSnapshotDirectory(captureUpperDir);
+      },
+    );
     removeSnapshotDirectory(captureWorkDir);
     // Reuse the pre-resolved address; the upper now exists, so report it as a usable snapshot.
     return { location: { ...location, exists: true }, result };
   }).match(
     (value) => value,
     (error) => {
-      // Tear down only this process's temps — a sibling capturer's published or in-flight layer must survive.
-      removeSnapshotDirectory(captureUpperDir);
-      removeSnapshotDirectory(captureWorkDir);
+      // Tear down only this invocation's temps — a sibling capturer's published or in-flight layer must survive.
+      if (captureUpperDir) removeSnapshotDirectory(captureUpperDir);
+      if (captureWorkDir) removeSnapshotDirectory(captureWorkDir);
       throw error;
     },
   );
