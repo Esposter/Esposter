@@ -31,9 +31,9 @@ const repoRoot = isOsSupported ? findRepoRoot() : "";
 const nativeCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 const warmCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 // The native baseline reuses one corpus across iterations, so it must clear node_modules before each run to stay
-// cold. Done in-process with fs (not a shell command) so it's platform-agnostic and rmSync throws on a failed
-// delete - chaining the delete into the install via cmd's `for` loop would swallow the errorlevel, silently
-// warming the install and recording it as cold.
+// Cold. Done in-process with fs (not a shell command) so it's platform-agnostic and rmSync throws on a failed
+// Delete - chaining the delete into the install via cmd's `for` loop would swallow the errorlevel, silently
+// Warming the install and recording it as cold.
 const cleanNativeModules = (corpus: string): void => {
   for (const dir of globSync(join(corpus, "**/node_modules"))) rmSync(dir, { force: true, recursive: true });
 };
