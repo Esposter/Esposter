@@ -1,6 +1,6 @@
+import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
 import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
 import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
-import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
 import { rmSync } from "node:fs";
 import { afterEach, describe, expect, test } from "vitest";

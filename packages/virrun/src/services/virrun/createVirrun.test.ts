@@ -1,6 +1,5 @@
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
-
 import type { SnapshotLocation } from "@/models/exec/SnapshotLocation";
 
 import { SourceType } from "@/models/source/SourceType";
@@ -14,7 +13,7 @@ import { createVirrun } from "@/services/virrun/createVirrun";
 import { spawn } from "node:child_process";
 import { rmSync } from "node:fs";
 import { constants } from "node:os";
-import { describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 // Mock the os backend factory so the network/store wiring can be asserted without bubblewrap on the host.
 vi.mock(import("@/services/exec/os/createOsBackend"));
 // Mock the snapshot layer so the fork provisioning logic (capture-on-cold, reuse-on-warm) can be asserted
@@ -32,6 +31,12 @@ const mockOsBackend = () =>
     name: BackendType.Os,
   });
 const snapshotLocation = (exists: boolean): SnapshotLocation => ({ dir: "", exists, hash: "hash", upperDir: "upper" });
+
+beforeEach(() => {
+  // Clear call counts between tests so the warm-snapshot case never sees the cold case's capture call.
+  vi.clearAllMocks();
+});
+
 // Baseline runner: execute the command natively, bypassing the sandbox entirely. The differential
 // Gate (specs/correctness.md) asserts the sandbox produces a byte-identical ExecResult. With the
 // Native passthrough backend this is trivially true — the test exists so the harness is already in
@@ -121,5 +126,42 @@ describe(createVirrun, () => {
     await dispose();
 
     expect(forkResult).toStrictEqual(nativeResult);
+  });
+
+  test("fork provisions the dependency snapshot on a cold cache, then runs the command over it", async () => {
+    expect.hasAssertions();
+
+    mockOsBackend();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(false));
+    vi.mocked(createSnapshot).mockResolvedValue({
+      location: snapshotLocation(true),
+      result: { exitCode: 0, stderr: "", stdout: "" },
+    });
+    vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: "forked" });
+    const dir = createWorkspaceDir();
+    const { dispose, fork } = await createVirrun({ backend: BackendType.Os, source: { dir, type: SourceType.Dir } });
+    const result = await fork("tsgo");
+    await dispose();
+    rmSync(dir, { force: true, recursive: true });
+
+    expect(createSnapshot).toHaveBeenCalledOnceWith();
+    expect(forkSnapshot).toHaveBeenCalledOnceWith();
+    expect(result.stdout).toBe("forked");
+  });
+
+  test("fork reuses a warm snapshot without reinstalling", async () => {
+    expect.hasAssertions();
+
+    mockOsBackend();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true));
+    vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: "forked" });
+    const dir = createWorkspaceDir();
+    const { dispose, fork } = await createVirrun({ backend: BackendType.Os, source: { dir, type: SourceType.Dir } });
+    await fork("tsgo");
+    await dispose();
+    rmSync(dir, { force: true, recursive: true });
+
+    expect(createSnapshot).not.toHaveBeenCalled();
+    expect(forkSnapshot).toHaveBeenCalledOnceWith();
   });
 });
