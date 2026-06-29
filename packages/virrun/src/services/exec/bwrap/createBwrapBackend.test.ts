@@ -84,6 +84,36 @@ describe(createBwrapBackend, () => {
     expect(write).toHaveBeenCalledExactlyOnceWith(commandStderr);
   });
 
+  test("streams stderr to the host live across chunks under inherit, withholding the split status marker", async () => {
+    expect.hasAssertions();
+
+    const firstChunk = "resolving\n";
+    const secondChunk = "downloading\n";
+    const trailer = `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":0}\n${WSL_BWRAP_STATUS_END}`;
+    // Cut inside the BEGIN marker (< marker length into the trailer) so it genuinely spans two chunks.
+    const splitIndex = firstChunk.length + secondChunk.length + Math.floor(WSL_BWRAP_STATUS_BEGIN.length / 2);
+    const full = `${firstChunk}${secondChunk}${trailer}`;
+    const write = vi.spyOn(process.stderr, "write").mockReturnValue(true);
+    spawn.mockImplementation(() => {
+      const child = new EventEmitter();
+      const stderrStream = new EventEmitter();
+      Object.assign(child, { stderr: stderrStream, stdio: [null, null, stderrStream], stdout: null });
+      queueMicrotask(() => {
+        stderrStream.emit("data", Buffer.from(firstChunk));
+        stderrStream.emit("data", Buffer.from(secondChunk));
+        // The status marker is split mid-marker across two chunks; neither half may leak to the host.
+        stderrStream.emit("data", Buffer.from(full.slice(firstChunk.length + secondChunk.length, splitIndex)));
+        stderrStream.emit("data", Buffer.from(full.slice(splitIndex)));
+        child.emit("close");
+      });
+      return child as unknown as ChildProcess;
+    });
+    const { exitCode } = await exec("inherit");
+
+    expect(exitCode).toBe(0);
+    expect(write.mock.calls.map(([chunk]) => chunk).join("")).toBe(`${firstChunk}${secondChunk}`);
+  });
+
   test("returns the cleaned stderr in the result under pipe without writing to the host", async () => {
     expect.hasAssertions();
 

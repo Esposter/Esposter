@@ -58,7 +58,7 @@ export const createSnapshot = (
     // Concurrent capturer already published an equivalent layer, renaming onto the now-populated `upperDir`
     // Fails, so we keep theirs and discard ours; otherwise ours lands atomically. Renaming-then-checking
     // Collapses the check-then-rename window where two capturers both saw `exists === false` and both renamed.
-    getResult(() => renameSync(captureUpperDir, upperDir)).match(
+    getResult(() =>{  renameSync(captureUpperDir, upperDir); }).match(
       () => undefined,
       (error) => {
         if (!resolveSnapshotLocation(options.cwd).exists) throw error;

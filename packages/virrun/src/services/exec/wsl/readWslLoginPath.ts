@@ -13,13 +13,14 @@ const PATH_END = "__VIRRUN_LOGIN_PATH_END__";
 // Interactive, and activation usually lives there. Capturing the resulting PATH lets virrun mirror the user's
 // Real terminal environment with zero config — no per-machine setup field.
 const CAPTURE_SCRIPT = [
+  // oxlint-disable-next-line no-template-curly-in-string -- `${SHELL:-}` is shell parameter expansion, not a JS template placeholder
   'SHELL_BIN="${SHELL:-}"',
   '[ -x "$SHELL_BIN" ] || SHELL_BIN="$(getent passwd "$(id -un)" 2>/dev/null | cut -d: -f7)"',
   '[ -x "$SHELL_BIN" ] || SHELL_BIN=/bin/sh',
   `exec "$SHELL_BIN" -lic 'printf "${PATH_BEGIN}%s${PATH_END}" "$PATH"'`,
 ].join("; ");
 // Captures the PATH a WSL interactive login shell sees, so the os backend can run profile-bound toolchains.
-// getResult turns a missing WSL/shell (or a non-zero exit) into "" rather than a throw: the caller then injects
+// GetResult turns a missing WSL/shell (or a non-zero exit) into "" rather than a throw: the caller then injects
 // Nothing and the command runs under the default PATH, so a broken capture degrades to today's behaviour.
 // Memoized — a login shell's PATH cannot change within a process, and createVirrun would otherwise re-spawn the
 // Shell (whose interactive rc startup is not free) on every invocation.

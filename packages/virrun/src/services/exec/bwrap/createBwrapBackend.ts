@@ -3,6 +3,7 @@ import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { StdioOptions } from "node:child_process";
 
 import { BackendType } from "@/models/virrun/BackendType";
+import { createStderrLiveWriter } from "@/services/exec/bwrap/createStderrLiveWriter";
 import { parseBwrapExitCode } from "@/services/exec/bwrap/parseBwrapExitCode";
 import { parseBwrapStderrStatus } from "@/services/exec/bwrap/parseBwrapStderrStatus";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -48,11 +49,17 @@ export const createBwrapBackend = (
       let stdout = "";
       let stderr = "";
       let status = "";
+      // The wsl backend pipes stderr to parse its appended status block, so under "inherit" it would otherwise
+      // Stay silent for the whole run. Stream the real child output live as it arrives, withholding the trailing
+      // Status block. The fd backend already inherits stderr directly under "inherit" (no "data" events), so this
+      // Only ever drives the wsl path; under "pipe" (capture) it stays undefined and nothing streams.
+      const writeStderrLive = options.stdio === "inherit" ? createStderrLiveWriter() : undefined;
       child.stdout?.on("data", (chunk) => {
         stdout += chunk.toString();
       });
       child.stderr?.on("data", (chunk) => {
         stderr += chunk.toString();
+        writeStderrLive?.(stderr);
       });
       child.stdio[3]?.on("data", (chunk) => {
         status += chunk.toString();
@@ -64,9 +71,9 @@ export const createBwrapBackend = (
         const exitCode = parseBwrapExitCode(bwrapStderr.status);
         if (exitCode === undefined) {
           // Sandbox setup failed (bad flag, missing binary, WSL bridge or overlay-mount error). The real
-          // diagnostic is the captured stderr — fold it into the error so the user sees *why* it failed,
-          // not just that it did. Without this the wsl backend collapses every setup failure into one
-          // opaque line, leaving nothing to debug from.
+          // Diagnostic is the captured stderr — fold it into the error so the user sees *why* it failed,
+          // Not just that it did. Without this the wsl backend collapses every setup failure into one
+          // Opaque line, leaving nothing to debug from.
           reject(
             new InvalidOperationError(
               Operation.Create,
@@ -76,12 +83,11 @@ export const createBwrapBackend = (
           );
           return;
         }
-        // "inherit" must stream the child's output to the host. The wsl backend can't let stderr stream
-        // directly — it carries the bwrap status block this backend has to parse — so it captured stderr
-        // above; re-emit the cleaned remainder here so inherit actually surfaces it. The fd backend (linux)
-        // already streamed stderr live under inherit, so its remainder is "" and this is a no-op there.
+        // "inherit" streams the child's output to the host. The wsl backend can't inherit stderr directly — it
+        // Carries the bwrap status block this backend has to parse — so writeStderrLive already surfaced the
+        // Cleaned output chunk-by-chunk above as the command ran; nothing is left to flush here. The fd backend
+        // (linux) inherited stderr live, so its captured remainder is "" too.
         if (options.stdio === "inherit") {
-          if (bwrapStderr.stderr) process.stderr.write(bwrapStderr.stderr);
           resolve({ exitCode, stderr: "", stdout: "" });
           return;
         }
