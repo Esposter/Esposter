@@ -61,13 +61,9 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace in
         `"$ESBUILD" --version`,
         "echo SANDBOX_OK",
       ].join(" && ");
-      const sharedPackageStoreOptions = createSharedPackageStoreOptions(corpus);
-      const corepackHome = join(
-        corpus,
-        VIRRUN_CACHE_DIRECTORY_NAME,
-        VIRRUN_STORE_DIRECTORY_NAME,
-        VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
-      );
+      const cacheRoot = join(corpus, VIRRUN_CACHE_DIRECTORY_NAME);
+      const sharedPackageStoreOptions = createSharedPackageStoreOptions(corpus, cacheRoot);
+      const corepackHome = join(cacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
       mkdirSync(corepackHome, { recursive: true });
       const { exitCode, stdout } = await exec(command, {
         ...sharedPackageStoreOptions,

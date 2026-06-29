@@ -25,13 +25,9 @@ describe(createSharedPackageStoreOptions, () => {
     expect.hasAssertions();
 
     dir = createWorkspaceDir();
-    const storeDir = join(
-      dir,
-      VIRRUN_CACHE_DIRECTORY_NAME,
-      VIRRUN_STORE_DIRECTORY_NAME,
-      VIRRUN_PNPM_STORE_DIRECTORY_NAME,
-    );
-    const options = createSharedPackageStoreOptions(dir);
+    const cacheRoot = join(dir, VIRRUN_CACHE_DIRECTORY_NAME);
+    const storeDir = join(cacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_PNPM_STORE_DIRECTORY_NAME);
+    const options = createSharedPackageStoreOptions(dir, cacheRoot);
 
     expect(existsSync(storeDir)).toBe(true);
     expect(options).toStrictEqual({
@@ -48,8 +44,8 @@ describe(createSharedPackageStoreOptions, () => {
     expect.hasAssertions();
 
     dir = createWorkspaceDir();
-    createSharedPackageStoreOptions(dir);
-    createSharedPackageStoreOptions(dir);
+    createSharedPackageStoreOptions(dir, join(dir, VIRRUN_CACHE_DIRECTORY_NAME));
+    createSharedPackageStoreOptions(dir, join(dir, VIRRUN_CACHE_DIRECTORY_NAME));
 
     expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe(`${VIRRUN_GITIGNORE_ENTRY}\n`);
   });
@@ -59,7 +55,7 @@ describe(createSharedPackageStoreOptions, () => {
 
     dir = createWorkspaceDir();
     writeFileSync(join(dir, ".gitignore"), "dist");
-    createSharedPackageStoreOptions(dir);
+    createSharedPackageStoreOptions(dir, join(dir, VIRRUN_CACHE_DIRECTORY_NAME));
 
     expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe(`dist\n${VIRRUN_GITIGNORE_ENTRY}\n`);
   });
@@ -70,7 +66,7 @@ describe(createSharedPackageStoreOptions, () => {
     dir = createWorkspaceDir();
     const existing = `dist\n${VIRRUN_CACHE_DIRECTORY_NAME}\n`;
     writeFileSync(join(dir, ".gitignore"), existing);
-    createSharedPackageStoreOptions(dir);
+    createSharedPackageStoreOptions(dir, join(dir, VIRRUN_CACHE_DIRECTORY_NAME));
 
     expect(readFileSync(join(dir, ".gitignore"), "utf8")).toBe(existing);
   });

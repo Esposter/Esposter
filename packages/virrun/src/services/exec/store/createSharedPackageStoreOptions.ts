@@ -10,7 +10,6 @@ import {
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "@/services/exec/util/constants";
-import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
 import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -31,13 +30,15 @@ const ensureGitIgnoreEntry = (workspaceRoot: string) => {
   );
 };
 
-export const createSharedPackageStoreOptions = (cwd: string): Pick<ExecOptions, "bindDirs" | "env"> => {
+// `cacheRoot` is the `.virrun` directory the store lives under — the repo's own on Linux, but the WSL distro's
+// Ext4 home on win32 (see getWslNativeCacheRoot), since the repo path resolves to slow v9fs inside the sandbox.
+// The caller (createVirrun) owns that platform decision so this stays a pure function of its inputs.
+export const createSharedPackageStoreOptions = (
+  cwd: string,
+  cacheRoot: string,
+): Pick<ExecOptions, "bindDirs" | "env"> => {
   const workspaceRoot = resolveWorkspaceRoot(cwd);
-  const storeDir = join(
-    getRepoCacheDirectory(workspaceRoot),
-    VIRRUN_STORE_DIRECTORY_NAME,
-    VIRRUN_PNPM_STORE_DIRECTORY_NAME,
-  );
+  const storeDir = join(cacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_PNPM_STORE_DIRECTORY_NAME);
   mkdirSync(storeDir, { recursive: true });
   ensureGitIgnoreEntry(workspaceRoot);
   return {

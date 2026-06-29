@@ -12,8 +12,9 @@ import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { spawn } from "node:child_process";
 import { rmSync } from "node:fs";
-import { constants } from "node:os";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { constants, tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Mock the os backend factory so the network/store wiring can be asserted without bubblewrap on the host.
 vi.mock(import("@/services/exec/os/createOsBackend"));
 // Mock the snapshot layer so the fork provisioning logic (capture-on-cold, reuse-on-warm) can be asserted
@@ -24,6 +25,13 @@ vi.mock(import("@/services/exec/snapshot/resolveSnapshotLocation"));
 // Mock the WSL login-PATH capture so the os-backend wiring assertions stay pure and platform-independent: the
 // Real implementation spawns wsl.exe on win32, which a mocked-backend orchestration test must not depend on.
 vi.mock(import("@/services/exec/wsl/readWslLoginPath"), () => ({ readWslLoginPath: () => "" }));
+// Same reason for the WSL native cache root: on win32 the real one spawns wsl.exe and would create dirs in the
+// Live WSL home. Point it at an in-temp dir so the store/corepack mkdirs are harmless and platform-independent.
+vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), async () => {
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  return { getWslNativeCacheRoot: () => join(tmpdir(), "virrun-test-wsl-cache") };
+});
 
 const mockOsBackend = () =>
   vi.mocked(createOsBackend).mockReturnValue({
@@ -57,6 +65,11 @@ describe(createVirrun, () => {
   beforeEach(() => {
     // Clear call counts between tests so the warm-snapshot case never sees the cold case's capture call.
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    // The mocked WSL native cache root lands the os-path store/corepack mkdirs under temp on win32; clean it up.
+    rmSync(join(tmpdir(), "virrun-test-wsl-cache"), { force: true, recursive: true });
   });
 
   test("produces a result identical to running the command natively", async () => {

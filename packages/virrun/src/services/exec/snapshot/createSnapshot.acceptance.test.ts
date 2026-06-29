@@ -64,7 +64,7 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
     expect.hasAssertions();
 
     const backend = createOsBackend();
-    const sharedPackageStoreOptions = createSharedPackageStoreOptions(corpus);
+    const sharedPackageStoreOptions = createSharedPackageStoreOptions(corpus, getRepoCacheDirectory(corpus));
     const corepackHome = join(getRepoCacheDirectory(corpus), VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
     mkdirSync(corepackHome, { recursive: true });
     const installCommand = process.platform === "win32" ? "corepack pnpm install" : "pnpm install";

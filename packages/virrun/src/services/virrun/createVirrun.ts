@@ -13,6 +13,8 @@ import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupComman
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
 import {
+  CI_ENV_KEY,
+  CI_ENV_VALUE,
   COREPACK_HOME_KEY,
   VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
   VIRRUN_ENV_KEY,
@@ -20,6 +22,7 @@ import {
 } from "@/services/exec/util/constants";
 import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
+import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
 import { readWslLoginPath } from "@/services/exec/wsl/readWslLoginPath";
 import { loadSource } from "@/services/source/loadSource";
 import { mkdirSync } from "node:fs";
@@ -45,8 +48,12 @@ export const createVirrun = async ({
   // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store
   // (bindDirs/PNPM_CONFIG_*) must still be injected, otherwise the os path runs without its host cache.
   const isOsBackend = execBackend.name === BackendType.Os;
+  // Where the os backend's write-heavy caches (pnpm store, corepack home) live. On win32 the sandbox runs through
+  // WSL, where the repo path resolves to /mnt/c (v9fs) — 15-64x slower for the many-small-file install — so route
+  // Them to the WSL distro's own ext4 home instead. On Linux they stay inside the repo's `.virrun`.
+  const cacheRoot = isOsBackend && process.platform === "win32" ? getWslNativeCacheRoot() : getRepoCacheDirectory(cwd);
   const sharedPackageStoreOptions: Pick<ExecOptions, "bindDirs" | "env"> = isOsBackend
-    ? createSharedPackageStoreOptions(cwd)
+    ? createSharedPackageStoreOptions(cwd, cacheRoot)
     : {};
   // The os backend's WSL bridge runs commands through `wsl.exe --exec`, which skips the login + rc files, so a
   // Profile-bound node manager's node is off PATH. Capture the PATH a real WSL login+interactive shell sees
@@ -76,19 +83,19 @@ export const createVirrun = async ({
   });
   // The capture run that provisions the sandbox dep closure needs corepack's home writable on a stable path, so
   // The WSL `corepack pnpm` bootstrap (and the pnpm it downloads) persists into the snapshot instead of vanishing
-  // In the tmpfs upper. Bound and pointed at the repo store, beside the pnpm store, so it is reused across runs.
+  // In the tmpfs upper. Bound beside the pnpm store under the same cache root, so it is reused across runs.
   const toInstallOptions = (stdio: ExecStdio): ExecOptions => {
     const options = toOptions(stdio);
-    const corepackHome = join(
-      getRepoCacheDirectory(cwd),
-      VIRRUN_STORE_DIRECTORY_NAME,
-      VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
-    );
+    const corepackHome = join(cacheRoot, VIRRUN_STORE_DIRECTORY_NAME, VIRRUN_COREPACK_STORE_DIRECTORY_NAME);
     mkdirSync(corepackHome, { recursive: true });
     return {
       ...options,
       bindDirs: [...(options.bindDirs ?? []), corepackHome],
-      env: { ...options.env, [COREPACK_HOME_KEY]: corepackHome },
+      env: {
+        ...options.env,
+        [CI_ENV_KEY]: CI_ENV_VALUE,
+        [COREPACK_HOME_KEY]: corepackHome,
+      },
     };
   };
   return {
