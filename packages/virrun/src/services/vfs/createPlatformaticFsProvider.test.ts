@@ -56,7 +56,7 @@ describe(createPlatformaticFsProvider, () => {
   test("overlay reads fall through to real disk until a virtual file shadows them", () => {
     expect.hasAssertions();
 
-    const dir = createTemporaryDirectory();
+    const dir = temporaryDirectories.create();
     const file = join(dir, TEST_FILE_NAME);
     writeFileSync(file, "");
     const { dispose, mount, writeFile } = createPlatformaticFsProvider({ isOverlayEnabled: true });
