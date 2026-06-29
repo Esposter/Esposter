@@ -19,37 +19,10 @@ An ephemeral, in-memory virtual runner: boot a repo into a RAM-backed filesystem
 
 ### Prerequisites
 
-To use the sandboxed `os` backend, your host environment must meet the following requirements. If any requirement is missing, `virrun` safely falls back to the native backend.
+The sandboxed `os` backend needs the following; if either is missing, `virrun` falls back to the native backend.
 
-#### 1. Bubblewrap (Linux / WSL2 Distro)
-
-Bubblewrap is a system-level namespace tool and must be installed via your system package manager.
-
-- **Version Requirement:** Bubblewrap **`>= 0.10.0`** is required for RAM overlay support (`--overlay-src` and `--tmp-overlay`).
-- **Installation:**
-
-  ```bash
-  # Debian / Ubuntu / WSL2 Distro
-  sudo apt update && sudo apt install -y bubblewrap
-
-  # Fedora / RHEL
-  sudo dnf install bubblewrap
-
-  # Arch Linux
-  sudo pacman -S bubblewrap
-  ```
-
-- **Verify installation:**
-  ```bash
-  bwrap --version
-  ```
-
-#### 2. Linux Node.js (For Windows/WSL2 users)
-
-If you are developing on Windows and want `virrun` to run commands inside the WSL2 sandbox:
-
-- **WSL2 Distro Requirement:** You must have a **Linux Node.js** binary installed inside your default WSL2 Linux distribution (e.g. via `nvm`, `fnm`, or `apt`).
-- **Why:** Windows executables (`node.exe`) cannot run inside the Linux bubblewrap sandbox. If no Linux `node` executable is found inside WSL2, the environment capability check fails and `virrun` will fall back to native Windows execution.
+- **Bubblewrap `>= 0.10.0`** (RAM overlay support: `--overlay-src` / `--tmp-overlay`), via your system package manager — e.g. `sudo apt install -y bubblewrap` (Debian/Ubuntu/WSL2), `sudo dnf install bubblewrap` (Fedora/RHEL), `sudo pacman -S bubblewrap` (Arch).
+- **A Linux `node` inside your default WSL2 distro** (Windows hosts only) — Windows `node.exe` can't run in the Linux sandbox, so without it the capability check fails and virrun runs natively on Windows.
 
 ### CLI
 

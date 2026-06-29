@@ -1,4 +1,5 @@
 import { SourceType } from "@/models/source/SourceType";
+import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
 import { loadFilesSource } from "@/services/source/loadFilesSource";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -7,9 +8,13 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const readSandboxDirCount = async () => (await readdir(tmpdir())).filter((name) => name.startsWith("sandbox-")).length;
+const readTempDirectoryCount = async () =>
+  (await readdir(tmpdir())).filter((name) => name.startsWith(VIRRUN_TEMP_DIR_PREFIX)).length;
 
 describe(loadFilesSource, () => {
+  const escapePath = "../escape.txt";
+  const escapeReason = "path escapes sandbox directory";
+
   test("materializes files (including nested paths) into a temp directory", async () => {
     expect.hasAssertions();
 
@@ -37,9 +42,9 @@ describe(loadFilesSource, () => {
     expect.hasAssertions();
 
     await expect(
-      loadFilesSource({ files: { "../escape.txt": "" }, type: SourceType.Files }),
+      loadFilesSource({ files: { [escapePath]: "" }, type: SourceType.Files }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, "../escape.txt", "path escapes sandbox directory").message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, escapePath, escapeReason).message}]`,
     );
   });
 
@@ -51,21 +56,21 @@ describe(loadFilesSource, () => {
     await expect(
       loadFilesSource({ files: { [absolutePath]: "" }, type: SourceType.Files }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, absolutePath, "path escapes sandbox directory").message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, absolutePath, escapeReason).message}]`,
     );
   });
 
   test("disposes the temp directory when a path escapes the sandbox", async () => {
     expect.hasAssertions();
 
-    const before = await readSandboxDirCount();
+    const before = await readTempDirectoryCount();
 
     await expect(
-      loadFilesSource({ files: { "../escape.txt": "" }, type: SourceType.Files }),
+      loadFilesSource({ files: { [escapePath]: "" }, type: SourceType.Files }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, "../escape.txt", "path escapes sandbox directory").message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, escapePath, escapeReason).message}]`,
     );
 
-    await expect(readSandboxDirCount()).resolves.toBe(before);
+    await expect(readTempDirectoryCount()).resolves.toBe(before);
   });
 });

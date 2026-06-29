@@ -1,10 +1,12 @@
 import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
+import { TEST_WSL_CACHE_ROOT_LINUX } from "@/services/exec/wsl/constants.test";
+import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const WSL_NATIVE_CACHE_ROOT = String.raw`\\wsl.localhost\Ubuntu\home\jimmyc\.virrun`;
+const WSL_NATIVE_CACHE_ROOT = createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX);
 // On win32 the default routes to the WSL distro's ext4 home (which really spawns wsl.exe); stub it so the test
 // Stays hermetic and platform-independent.
 vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
@@ -12,6 +14,8 @@ vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
 }));
 
 describe(getGlobalCacheDirectory, () => {
+  const customCache = join(homedir(), "custom-cache");
+
   afterEach(() => {
     delete process.env[VIRRUN_CACHE_HOME_KEY];
   });
@@ -29,8 +33,8 @@ describe(getGlobalCacheDirectory, () => {
   test("honors the VIRRUN_CACHE_HOME override", () => {
     expect.hasAssertions();
 
-    process.env[VIRRUN_CACHE_HOME_KEY] = join(homedir(), "custom-cache");
+    process.env[VIRRUN_CACHE_HOME_KEY] = customCache;
 
-    expect(getGlobalCacheDirectory()).toBe(join(homedir(), "custom-cache"));
+    expect(getGlobalCacheDirectory()).toBe(customCache);
   });
 });

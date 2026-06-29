@@ -9,6 +9,7 @@ import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
+import { TEST_WSL_CACHE_DIR_NAME } from "@/services/exec/wsl/constants.test";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { spawn } from "node:child_process";
 import { rmSync } from "node:fs";
@@ -30,7 +31,8 @@ vi.mock(import("@/services/exec/wsl/readWslLoginPath"), () => ({ readWslLoginPat
 vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), async () => {
   const { tmpdir } = await import("node:os");
   const { join } = await import("node:path");
-  return { getWslNativeCacheRoot: () => join(tmpdir(), "virrun-test-wsl-cache") };
+  const { TEST_WSL_CACHE_DIR_NAME } = await import("@/services/exec/wsl/constants.test");
+  return { getWslNativeCacheRoot: () => join(tmpdir(), TEST_WSL_CACHE_DIR_NAME) };
 });
 
 const mockOsBackend = () =>
@@ -69,7 +71,7 @@ describe(createVirrun, () => {
 
   afterEach(() => {
     // The mocked WSL native cache root lands the os-path store/corepack mkdirs under temp on win32; clean it up.
-    rmSync(join(tmpdir(), "virrun-test-wsl-cache"), { force: true, recursive: true });
+    rmSync(join(tmpdir(), TEST_WSL_CACHE_DIR_NAME), { force: true, recursive: true });
   });
 
   test("produces a result identical to running the command natively", async () => {

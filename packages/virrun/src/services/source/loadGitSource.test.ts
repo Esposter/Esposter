@@ -1,21 +1,23 @@
 import { SourceType } from "@/models/source/SourceType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
+import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
+import { TEST_FILE_NAME } from "@/services/exec/util/constants.test";
 import { loadGitSource } from "@/services/source/loadGitSource";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 describe(loadGitSource, () => {
   const backend = createNativeBackend();
+  const fileName = `${TEST_FILE_NAME}.txt`;
   let origin = "";
 
   beforeAll(async () => {
-    origin = await mkdtemp(join(tmpdir(), "sandbox-origin-"));
+    origin = createTemporaryDirectory();
     await backend.exec("git init -b main", { cwd: origin, stdio: "pipe" });
-    await writeFile(join(origin, "a.txt"), " ");
-    await backend.exec("git add a.txt", { cwd: origin, stdio: "pipe" });
+    await writeFile(join(origin, fileName), " ");
+    await backend.exec(`git add ${fileName}`, { cwd: origin, stdio: "pipe" });
     await backend.exec(`git -c user.email=ci@example.com -c user.name=ci commit -m init`, {
       cwd: origin,
       stdio: "pipe",
@@ -31,7 +33,7 @@ describe(loadGitSource, () => {
 
     const { cwd, dispose } = await loadGitSource({ ref: "", repo: origin, type: SourceType.Git });
 
-    await expect(readFile(join(cwd, "a.txt"), "utf8")).resolves.toBe(" ");
+    await expect(readFile(join(cwd, fileName), "utf8")).resolves.toBe(" ");
 
     await dispose();
   });
@@ -41,7 +43,7 @@ describe(loadGitSource, () => {
 
     const { cwd, dispose } = await loadGitSource({ ref: "main", repo: origin, type: SourceType.Git });
 
-    await expect(readFile(join(cwd, "a.txt"), "utf8")).resolves.toBe(" ");
+    await expect(readFile(join(cwd, fileName), "utf8")).resolves.toBe(" ");
 
     await dispose();
   });
@@ -49,8 +51,9 @@ describe(loadGitSource, () => {
   test("throws InvalidOperationError with git's stderr when the clone fails", async () => {
     expect.hasAssertions();
 
-    const missing = join(tmpdir(), "sandbox-does-not-exist-xyz");
-    const dest = await mkdtemp(join(tmpdir(), "sandbox-clone-"));
+    // A guaranteed-missing local path (a nonexistent child of a fresh empty temp dir).
+    const missing = join(createTemporaryDirectory(), TEST_FILE_NAME);
+    const dest = createTemporaryDirectory();
     // Reconstruct the expected message from a live `-q` clone of the same missing repo: stderr then
     // References only the source (known here), never the random dest, so the snapshot is exact on
     // Every platform without hard-coding git's wording.

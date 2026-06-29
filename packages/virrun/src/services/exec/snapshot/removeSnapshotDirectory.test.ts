@@ -1,15 +1,37 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
-import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
+import {
+  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
+} from "@/services/exec/util/constants";
+import {
+  TEST_WSL_CACHE_ROOT_LINUX,
+  TEST_WSL_LEGACY_UNC_PREFIX,
+  TEST_WSL_UNC_PREFIX,
+} from "@/services/exec/wsl/constants.test";
+import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
 vi.mock(import("node:child_process"), () => ({ execFileSync: execFileSync as unknown as typeof baseExecFileSync }));
+
+// A snapshot leaf on the distro's ext4 (`/home/user/.virrun/snapshots/<hash>/<leaf>`); `h` is a stand-in hash.
+const snapshotLeaf = (leaf: string): string =>
+  `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SNAPSHOTS_DIRECTORY_NAME}/h/${leaf}`;
+// The WSL-side teardown removeSnapshotDirectory shells out for a UNC snapshot dir: chmod traversable, then rm -rf.
+const expectWslRemoval = (linuxDir: string) => {
+  expect(execFileSync).toHaveBeenCalledExactlyOnceWith(
+    "wsl.exe",
+    ["--exec", "sh", "-c", `chmod -R u+rwx '${linuxDir}' 2>/dev/null; rm -rf '${linuxDir}'`],
+    { stdio: "pipe" },
+  );
+};
 
 describe(removeSnapshotDirectory, () => {
   let dir = "";
@@ -26,7 +48,7 @@ describe(removeSnapshotDirectory, () => {
   test("removes a plain directory tree in-process without invoking WSL", () => {
     expect.hasAssertions();
 
-    dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
+    dir = createTemporaryDirectory();
     mkdirSync(join(dir, "nested"), { recursive: true });
     writeFileSync(join(dir, "nested", "f.txt"), "x");
 
@@ -36,27 +58,23 @@ describe(removeSnapshotDirectory, () => {
     expect(execFileSync).not.toHaveBeenCalled();
   });
 
-  test("tears down a \\\\wsl.localhost UNC snapshot dir inside WSL via a chmod + rm -rf", () => {
+  test(`tears down a ${TEST_WSL_UNC_PREFIX} UNC snapshot dir inside WSL via a chmod + rm -rf`, () => {
     expect.hasAssertions();
 
-    removeSnapshotDirectory(String.raw`\\wsl.localhost\Ubuntu\home\jimmyc\.virrun\snapshots\h\work.x`);
+    const linuxDir = snapshotLeaf(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.x`);
 
-    expect(execFileSync).toHaveBeenCalledExactlyOnceWith(
-      "wsl.exe",
-      ["--exec", "sh", "-c", "chmod -R u+rwx '/home/jimmyc/.virrun/snapshots/h/work.x' 2>/dev/null; rm -rf '/home/jimmyc/.virrun/snapshots/h/work.x'"],
-      { stdio: "pipe" },
-    );
+    removeSnapshotDirectory(createTestWslUnc(linuxDir));
+
+    expectWslRemoval(linuxDir);
   });
 
-  test("tears down a \\\\wsl$ UNC snapshot dir inside WSL", () => {
+  test(`tears down a ${TEST_WSL_LEGACY_UNC_PREFIX} UNC snapshot dir inside WSL`, () => {
     expect.hasAssertions();
 
-    removeSnapshotDirectory(String.raw`\\wsl$\Ubuntu\home\jimmyc\.virrun\snapshots\h\upper.y`);
+    const linuxDir = snapshotLeaf(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.y`);
 
-    expect(execFileSync).toHaveBeenCalledExactlyOnceWith(
-      "wsl.exe",
-      ["--exec", "sh", "-c", "chmod -R u+rwx '/home/jimmyc/.virrun/snapshots/h/upper.y' 2>/dev/null; rm -rf '/home/jimmyc/.virrun/snapshots/h/upper.y'"],
-      { stdio: "pipe" },
-    );
+    removeSnapshotDirectory(createTestWslUnc(linuxDir, TEST_WSL_LEGACY_UNC_PREFIX));
+
+    expectWslRemoval(linuxDir);
   });
 });

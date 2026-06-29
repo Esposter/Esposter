@@ -1,31 +1,22 @@
 import { BackendType } from "@/models/virrun/BackendType";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
-import { VIRRUN_CONFIGURATION_FILENAME, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { VIRRUN_CONFIGURATION_FILENAME } from "@/services/exec/util/constants";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-const temporaryDirectories: string[] = [];
-
-const createTemporaryDirectory = (): string => {
-  const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
-  temporaryDirectories.push(dir);
-  return dir;
-};
-
 describe(resolveVirrunConfiguration, () => {
+  const { cleanup, create } = createTemporaryDirectoryTracker();
+
   afterEach(() => {
-    while (temporaryDirectories.length > 0) {
-      const dir = temporaryDirectories.pop();
-      if (dir !== undefined) rmSync(dir, { force: true, recursive: true });
-    }
+    cleanup();
   });
 
   test("walks up from a nested cwd to the repo-root config", () => {
     expect.hasAssertions();
 
-    const root = createTemporaryDirectory();
+    const root = create();
     writeFileSync(join(root, VIRRUN_CONFIGURATION_FILENAME), JSON.stringify({ backend: "os" }));
     const nested = join(root, "packages", "app");
     mkdirSync(nested, { recursive: true });
@@ -39,6 +30,6 @@ describe(resolveVirrunConfiguration, () => {
   test("returns undefined when no config exists in the tree", () => {
     expect.hasAssertions();
 
-    expect(resolveVirrunConfiguration(createTemporaryDirectory())).toBeUndefined();
+    expect(resolveVirrunConfiguration(create())).toBeUndefined();
   });
 });
