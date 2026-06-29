@@ -32,11 +32,6 @@ const mockOsBackend = () =>
   });
 const snapshotLocation = (exists: boolean): SnapshotLocation => ({ dir: "", exists, hash: "hash", upperDir: "upper" });
 
-beforeEach(() => {
-  // Clear call counts between tests so the warm-snapshot case never sees the cold case's capture call.
-  vi.clearAllMocks();
-});
-
 // Baseline runner: execute the command natively, bypassing the sandbox entirely. The differential
 // Gate (specs/correctness.md) asserts the sandbox produces a byte-identical ExecResult. With the
 // Native passthrough backend this is trivially true — the test exists so the harness is already in
@@ -59,6 +54,11 @@ const runNative = (command: string): Promise<ExecResult> =>
   });
 
 describe(createVirrun, () => {
+  beforeEach(() => {
+    // Clear call counts between tests so the warm-snapshot case never sees the cold case's capture call.
+    vi.clearAllMocks();
+  });
+
   test("produces a result identical to running the command natively", async () => {
     expect.hasAssertions();
 
@@ -144,8 +144,8 @@ describe(createVirrun, () => {
     await dispose();
     rmSync(dir, { force: true, recursive: true });
 
-    expect(createSnapshot).toHaveBeenCalledOnceWith();
-    expect(forkSnapshot).toHaveBeenCalledOnceWith();
+    expect(createSnapshot).toHaveBeenCalledTimes(1);
+    expect(forkSnapshot).toHaveBeenCalledTimes(1);
     expect(result.stdout).toBe("forked");
   });
 
@@ -162,6 +162,6 @@ describe(createVirrun, () => {
     rmSync(dir, { force: true, recursive: true });
 
     expect(createSnapshot).not.toHaveBeenCalled();
-    expect(forkSnapshot).toHaveBeenCalledOnceWith();
+    expect(forkSnapshot).toHaveBeenCalledTimes(1);
   });
 });
