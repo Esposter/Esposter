@@ -1,0 +1,34 @@
+# virrun — CI
+
+How the two gates are enforced in CI, and how the warm snapshot is cached across runs. Design rationale lives in the [benchmarking](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/benchmarking.md) and [correctness](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/correctness.md) specs.
+
+## The two gates
+
+A change that fails either gate does not ship. Correctness beats speed — a fast wrong answer is worthless.
+
+| Gate                         | What it proves                                                            | How it's enforced                                                                                                                                                                       |
+| ---------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Differential correctness** | A backend is observably identical to native (exit code + stdout + stderr) | The `*.differential.test.ts` files are plain Vitest. They run in the 🏗️ CI coverage shards (bubblewrap enabled), so a divergence **hard-fails the build**.                              |
+| **Speed**                    | A sandbox path beats the native baseline                                  | **CodSpeed simulation** (🏎️ Bench, every push) — hardware-independent CPU/cache simulation → PR regression comments + flamegraphs. The committed `*.bench.md` is the offline diff gate. |
+
+A hard wall-clock CI fail was considered and rejected — shared-runner wall-clock is too noisy for a pass/fail bar (it would be flaky-red). CodSpeed simulation covers regression detection instead. To make the CodSpeed check blocking, mark it **required** in branch protection (a GitHub repo setting, not a workflow change). → [decision](https://github.com/Esposter/Esposter/blob/main/features/virrun/out-of-scope/ci-walltime-gate.md)
+
+### Run the gates locally
+
+```bash
+pnpm test path/to/foo.differential.test.ts   # one differential corpus
+pnpm bench                                    # regenerate the committed *.bench.md, then diff the vs-base multipliers
+```
+
+## Snapshot cache
+
+The `os` backend keys a warm post-install snapshot by the pnpm lockfile hash and stores it at `~/.virrun/snapshots/<hash>`. A `fork()` stacks that frozen overlay upper read-only beside the source, so a routed command reuses the dep tree instead of reinstalling.
+
+In CI this directory is persisted across runs with `actions/cache`, mirroring the repo's `build-packages` content-hash cache:
+
+- A reusable **`warm-snapshot.yaml`** job captures the snapshot **once** per run (`virrun -- true`, cold path = install) and the `actions/cache` entry — keyed by `hashFiles('pnpm-lock.yaml')` — persists `~/.virrun/snapshots` for this run and every later run.
+- The `format` / `lint` / `typecheck` jobs `needs: [build-packages, warm-snapshot]` and restore that cache read-only, so each `virrun -- <cmd>` forks the warm snapshot instead of cold-installing. One install per run, reused across runs.
+
+Only `~/.virrun/snapshots` is cached. The upper is built with pnpm `package-import-method=copy`, so it is self-contained — a fork never reads the repo-local `.virrun/store` (which is recreated empty if absent). The `coverage` job is the exception: it runs Vitest **natively**, not through `virrun`, because the os backend's ephemeral tmpfs upper would discard the coverage output the upload step needs.
+
+A dependency change yields a new lockfile hash → a new cache key and snapshot, so a stale snapshot is never reused.

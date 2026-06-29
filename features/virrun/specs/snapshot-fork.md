@@ -23,6 +23,7 @@ boot + install (once, slow) ─► snapshot ─► fork ─► run cmd ─► di
 
 - Snapshot cache keyed by **lockfile hash** (+ base image id, deferred) and stored in the **host-global** cache root `~/.virrun/snapshots/<hash>` (override with `VIRRUN_CACHE_HOME`) — not under the repo's `.virrun/`. Global both because the overlay layer may not nest inside the source tree (above) and because the same deps then reuse one warm snapshot across repos/CI runs. The repo-local `.virrun/store` (dep store) stays put — it is bind-mounted, and binds may overlap the overlay.
 - Evict by LRU + total RAM budget.
+- In CI the snapshot dir is persisted across runs by `actions/cache` keyed by the lockfile hash — a reusable `warm-snapshot.yaml` captures it once (cold install) and the os-backend jobs restore it read-only and `fork()`, so a run installs once instead of once per job. The copy-mode upper is self-contained, so only `~/.virrun/snapshots` is cached (not the repo-local `.virrun/store`, which a fork recreates empty). → [config-and-cache](config-and-cache.md#virrun-cache--gitignored)
 
 ## Constraints / Notes
 

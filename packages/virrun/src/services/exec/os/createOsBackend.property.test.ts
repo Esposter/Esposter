@@ -86,11 +86,20 @@ describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
           expect(existsSync(join(directory, SCRATCH_FILE))).toBe(false);
           expect(existsSync(join(directory, SCRATCH_DIR))).toBe(false);
 
-          // No cross-exec leakage: a fresh upper sees the source baseline, never a mid-sequence write to the canary.
+          // No cross-exec leakage: a fresh upper sees the source baseline, never a mid-sequence write to the canary,
+          // And the scratch artifacts a prior exec may have written/mkdir'd are absent inside the sandbox too — not
+          // Just on the host — so a leaked upper (the only way isolation breaks) cannot slip past unread.
           const finalRead = await exec(`cat ${CANARY}`, { cwd: directory, stdio: "pipe" });
 
           expect(finalRead.exitCode).toBe(0);
           expect(finalRead.stdout).toBe("");
+
+          const freshScratchCheck = await exec(`test ! -e ${SCRATCH_FILE} && test ! -d ${SCRATCH_DIR}`, {
+            cwd: directory,
+            stdio: "pipe",
+          });
+
+          expect(freshScratchCheck.exitCode).toBe(0);
         }),
         { numRuns: 10 },
       );

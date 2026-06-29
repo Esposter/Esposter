@@ -22,7 +22,7 @@ Plus: **ephemeral** (spin up / throw away, no polluted machine state), **reprodu
 
 ## Gates (non-negotiable)
 
-Two pass/fail gates on every backend and speed feature — a violation is not shippable, however clever: **faster than the native baseline**, and **observably correct** (exit code, stdout/stderr, produced files, dependency tree) vs running the command natively. Correctness beats speed; a fast wrong answer is worthless. The differential-correctness gate now has a shared harness — a growing command corpus, an explicit `normalizeExecResult` masking seam (nothing normalized implicitly), and the `assertDifferential` helper both backends run their corpus through. Detail: [benchmarking](specs/benchmarking.md) · [correctness](specs/correctness.md) → Realized.
+Two pass/fail gates on every backend and speed feature — a violation is not shippable, however clever: **faster than the native baseline**, and **observably correct** (exit code, stdout/stderr, produced files, dependency tree) vs running the command natively. Correctness beats speed; a fast wrong answer is worthless. Both are now **CI-enforced**: differential correctness is a shared Vitest harness (a growing command corpus, an explicit `normalizeExecResult` masking seam with nothing normalized implicitly, and the `assertDifferential` helper both backends run their corpus through) that hard-fails the 🏗️ CI coverage shards on any divergence; speed is tracked by hardware-independent **CodSpeed simulation** (🏎️ Bench) plus the committed `*.bench.md` offline diff (a hard wall-clock CI fail is rejected as runner-noise-flaky → [out-of-scope/ci-walltime-gate.md](out-of-scope/ci-walltime-gate.md)). Detail: [benchmarking](specs/benchmarking.md) · [correctness](specs/correctness.md).
 
 ## Now
 
@@ -38,15 +38,16 @@ Terse log; the linked spec holds the detail.
 - **Phase 2 — `os` backend (native core, Linux + WSL)**: real process exec inside a rootless `bubblewrap` RAM-overlay (source RO lower + tmpfs RW upper, one unprivileged tool), proven by a full monorepo `pnpm install` + a native binary (esbuild) running entirely in RAM with the host disk untouched; plus a lazy content-addressable pnpm dep store (`.virrun/store/pnpm`, bind-mounted + reused) and a WSL2 bridge reaching the backend from Windows hosts. macOS VM bridge still open. → [exec-isolation](specs/exec-isolation.md)
 - **Phase 3 — FS-only overlay snapshot + fork**: lockfile-hash cache addressing (`~/.virrun/snapshots/<hash>`, `VIRRUN_CACHE_HOME` override), the `OverlayLayers` bwrap argv (stacked lowers for fork, persisted upper for capture), `createSnapshot` capturing a warm post-install layer + `forkSnapshot` re-running over it offline with writes vanishing, and a transparent `fork()` on the `createVirrun` handle (os captures-or-reuses; other backends fall through to `exec`). Capture→fork validated end-to-end; cold-vs-warm bench gates the win; capture publishes atomically (per-pid temp + `rename`) so a concurrent fork never reads a half-built layer. → [snapshot-fork](specs/snapshot-fork.md)
 - **Phase 4 — config backend selection (adoption level 3)**: a committed repo-root `virrun.config.json` (`backend`/`fallback`) pins which backend a sandboxed command runs through — no allowlist; the `virrun -- <cmd>` prefix is the sole per-command switch. `resolveVirrunConfiguration` walks up via `empathic` (standard parent-dir search, JSON config), `parseVirrunConfiguration` validates + defaults, and the CLI's `resolveBackend` picks the backend with host-support auto-fallback. Absent config = auto (native today). → [config-and-cache](specs/config-and-cache.md) · [adoption](specs/adoption.md)
+- **Phase 4 — CI snapshot cache**: the warm `os`-backend snapshot is captured once per 🏗️ CI run by a reusable `warm-snapshot.yaml` job and persisted as a lockfile-hash-keyed `actions/cache` entry (`~/.virrun/snapshots`, mirroring the `build-packages` content-hash cache); the format/lint/typecheck jobs restore it read-only and `fork()` the warm dep tree instead of each cold-installing — one install per run, reused across runs. → [config-and-cache](specs/config-and-cache.md#virrun-cache--gitignored) · [snapshot-fork](specs/snapshot-fork.md)
 
 ## Decisions
 
 Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roadmap item.
 
 - [out-of-scope/pure-js-exec.md](out-of-scope/pure-js-exec.md) — why a pure-JS interpreter (just-bash style) can't be the exec engine.
+- [out-of-scope/ci-walltime-gate.md](out-of-scope/ci-walltime-gate.md) — why a hard wall-clock benchmark CI fail is rejected (runner noise); CodSpeed simulation + the Vitest differential suite cover it instead.
 - [deferred/wasm-runtime.md](deferred/wasm-runtime.md) — WebContainers-style WASM-node backend, parked with a revisit trigger.
 - [deferred/citty-cli.md](deferred/citty-cli.md) — delegate the CLI to unjs/citty once it grows real subcommands/flags.
-- [deferred/ci-bench-gate.md](deferred/ci-bench-gate.md) — enforce the bench + differential suites as required CI gates once a backend can actually regress.
 - [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md) — why "route every command at once" stays deferred (`Auto` still resolves to native; needs a viable spawn-interceptor seam, the PATH shim being dropped); adopt one command at a time instead.
 
 ## Reference
