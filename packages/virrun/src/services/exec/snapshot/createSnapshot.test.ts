@@ -5,7 +5,13 @@ import type { ExecResult } from "@/models/exec/ExecResult";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { PNPM_LOCKFILE_FILENAME, VIRRUN_CACHE_HOME_KEY, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import {
+  PNPM_LOCKFILE_FILENAME,
+  VIRRUN_CACHE_HOME_KEY,
+  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
+  VIRRUN_TEMP_DIR_PREFIX,
+} from "@/services/exec/util/constants";
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -47,20 +53,21 @@ describe(createSnapshot, () => {
     }
   });
 
-  test("captures in a per-pid temp upper and atomically publishes it onto the final upperDir", async () => {
+  test("captures in a private temp upper and atomically publishes it onto the final upperDir", async () => {
     expect.hasAssertions();
 
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
     const { location } = await createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" });
 
     expect(location).toStrictEqual(resolveSnapshotLocation(repo));
-    // The published upper exists; the per-pid temps it was captured/scratched in are torn down.
+    // The published upper exists; the private temps it was captured/scratched in are torn down.
     expect(existsSync(location.upperDir)).toBe(true);
 
     const { upperDir, workDir } = backend.calls[0]?.overlayLayers ?? {};
-
-    expect(upperDir).toBe(join(location.dir, `upper.${process.pid}.tmp`));
-    expect(workDir).toBe(join(location.dir, `work.${process.pid}.tmp`));
+    // A per-invocation mkdtemp name under dir, distinct from the published upper it was renamed onto.
+    expect(upperDir?.startsWith(join(location.dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`))).toBe(true);
+    expect(workDir?.startsWith(join(location.dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`))).toBe(true);
+    expect(upperDir).not.toBe(location.upperDir);
     expect(existsSync(upperDir ?? "")).toBe(false);
     expect(existsSync(workDir ?? "")).toBe(false);
   });
@@ -68,14 +75,18 @@ describe(createSnapshot, () => {
   test("keeps a snapshot a concurrent capturer already published and drops its own temp upper", async () => {
     expect.hasAssertions();
 
-    // Simulate the lost race: the final upper is already on disk before this capture publishes.
-    mkdirSync(resolveSnapshotLocation(repo).upperDir, { recursive: true });
+    // Simulate the lost race: a populated final upper is already on disk before this capture publishes.
+    const publishedUpper = resolveSnapshotLocation(repo).upperDir;
+    mkdirSync(publishedUpper, { recursive: true });
+    writeFileSync(join(publishedUpper, "marker"), "");
 
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
     const { location } = await createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" });
 
     expect(location.exists).toBe(true);
-    expect(existsSync(join(location.dir, `upper.${process.pid}.tmp`))).toBe(false);
+    // Theirs is kept untouched; our own temp upper is discarded.
+    expect(existsSync(join(publishedUpper, "marker"))).toBe(true);
+    expect(existsSync(backend.calls[0]?.overlayLayers?.upperDir ?? "")).toBe(false);
   });
 
   test("returns the capture run's result so a cold-path fork reuses it instead of re-running", async () => {
