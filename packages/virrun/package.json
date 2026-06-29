@@ -60,6 +60,7 @@
     "ctix": "catalog:",
     "dayjs": "catalog:",
     "empathic": "catalog:",
+    "fast-check": "catalog:",
     "rolldown": "catalog:",
     "vitest": "catalog:"
   }
