@@ -40,6 +40,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a cold in-place install (equivalence)", () => {
   let corpus = "";
   let cacheHome = "";
+  const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
 
   beforeAll(() => {
     corpus = createWorkspaceCorpus(findRepoRoot());
@@ -53,7 +54,8 @@ describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a 
     // Drop the captured snapshot first, while the cache override is still active and the corpus lockfile (which
     // Keys the snapshot) still exists.
     if (corpus) removeSnapshotDirectory(resolveSnapshotLocation(corpus).dir);
-    delete process.env[VIRRUN_CACHE_HOME_KEY];
+    if (previousCacheHome === undefined) delete process.env[VIRRUN_CACHE_HOME_KEY];
+    else process.env[VIRRUN_CACHE_HOME_KEY] = previousCacheHome;
     if (corpus) rmSync(corpus, { force: true, recursive: true });
     if (cacheHome) rmSync(cacheHome, { force: true, recursive: true });
   });

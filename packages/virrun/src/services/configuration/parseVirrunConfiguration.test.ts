@@ -6,18 +6,15 @@ describe(parseVirrunConfiguration, () => {
   test("parses a full config", () => {
     expect.hasAssertions();
 
-    const configuration = parseVirrunConfiguration(JSON.stringify({ backend: "os", fallback: "native" }));
+    const configuration = parseVirrunConfiguration(JSON.stringify({ backend: "os" }));
 
-    expect(configuration).toStrictEqual({ backend: BackendType.Os, fallback: BackendType.Native });
+    expect(configuration).toStrictEqual({ backend: BackendType.Os });
   });
 
-  test("defaults omitted fields to an auto backend and native fallback", () => {
+  test("defaults an omitted backend to auto", () => {
     expect.hasAssertions();
 
-    expect(parseVirrunConfiguration("{}")).toStrictEqual({
-      backend: BackendType.Auto,
-      fallback: BackendType.Native,
-    });
+    expect(parseVirrunConfiguration("{}")).toStrictEqual({ backend: BackendType.Auto });
   });
 
   test("throws on invalid JSON", () => {
@@ -43,7 +40,6 @@ describe(parseVirrunConfiguration, () => {
 
     expect(parseVirrunConfiguration(JSON.stringify({ $schema: "./schema.json", backend: "os" }))).toStrictEqual({
       backend: BackendType.Os,
-      fallback: BackendType.Native,
     });
   });
 });

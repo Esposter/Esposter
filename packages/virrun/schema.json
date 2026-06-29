@@ -19,11 +19,6 @@
         "Run inside a bubblewrap RAM-overlay (Linux, or Windows via WSL2): reads fall through to source, writes vanish in tmpfs. Ephemeral — only safe for read-only verification commands.",
         "Run recognised pure-JS node invocations in-process; falls back to native for everything else. Opt-in, no isolation."
       ]
-    },
-    "fallback": {
-      "description": "The backend to defer to when `backend` can't run on this host (e.g. `os` off Linux/WSL). Never errors the build — worst case is no speedup. Defaults to `native`.",
-      "default": "native",
-      "enum": ["auto", "native", "os", "vfs"]
     }
   }
 }
