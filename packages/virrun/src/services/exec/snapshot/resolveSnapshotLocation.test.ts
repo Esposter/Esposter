@@ -1,9 +1,9 @@
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
 } from "@/services/exec/snapshot/constants";
+import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
 import { mkdirSync } from "node:fs";

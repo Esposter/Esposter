@@ -4,7 +4,7 @@ import {
   VIRRUN_PNPM_STORE_DIRECTORY_NAME,
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "@/services/exec/util/constants";
-import { TEST_DIR } from "@/services/exec/util/constants.test";
+import { TEST_DIR, TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe(buildBwrapArgs, () => {
@@ -100,7 +100,7 @@ describe(buildBwrapArgs, () => {
   test("stacks extra lower layers above the source before the tmpfs upper when forking", () => {
     expect.hasAssertions();
 
-    const snapshotUpper = `${TEST_DIR}/snapshot/upper`;
+    const snapshotUpper = `${TEST_DIR}/${TEST_FILENAME}`;
     const args = buildBwrapArgs("vitest", TEST_DIR, {}, { lowerDirs: [snapshotUpper] });
     const sourceLower = args.indexOf(TEST_DIR);
     const snapshotLower = args.indexOf(snapshotUpper);

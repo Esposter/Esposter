@@ -2,12 +2,12 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { SnapshotCapture } from "@/models/exec/SnapshotCapture";
 
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
-import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
 } from "@/services/exec/snapshot/constants";
+import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
+import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
 import { join } from "node:path";

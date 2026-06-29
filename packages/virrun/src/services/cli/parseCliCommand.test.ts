@@ -1,4 +1,5 @@
 import { parseCliCommand } from "@/services/cli/parseCliCommand";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe(parseCliCommand, () => {
@@ -29,7 +30,10 @@ describe(parseCliCommand, () => {
   test("preserves a token containing spaces as a single element", () => {
     expect.hasAssertions();
 
-    expect(parseCliCommand(["--", "echo", "hello world.txt"])).toStrictEqual(["echo", "hello world.txt"]);
+    expect(parseCliCommand(["--", "echo", `${TEST_FILENAME} ${TEST_FILENAME}`])).toStrictEqual([
+      "echo",
+      `${TEST_FILENAME} ${TEST_FILENAME}`,
+    ]);
   });
 
   test("preserves shell metacharacters literally without re-tokenizing", () => {

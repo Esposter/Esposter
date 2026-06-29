@@ -1,16 +1,17 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
+import {
+    VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
+    VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
+    VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
+} from "@/services/exec/snapshot/constants";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import {
-  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
-} from "@/services/exec/snapshot/constants";
-import {
-  TEST_WSL_CACHE_ROOT_LINUX,
-  TEST_WSL_LEGACY_UNC_PREFIX,
-  TEST_WSL_UNC_PREFIX,
+    TEST_WSL_CACHE_ROOT_LINUX,
+    TEST_WSL_LEGACY_UNC_PREFIX,
+    TEST_WSL_UNC_PREFIX,
 } from "@/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -49,8 +50,8 @@ describe(removeSnapshotDirectory, () => {
     expect.hasAssertions();
 
     const dir = create();
-    mkdirSync(join(dir, "nested"), { recursive: true });
-    writeFileSync(join(dir, "nested", "f.txt"), "x");
+    mkdirSync(join(dir, TEST_FILENAME), { recursive: true });
+    writeFileSync(join(dir, TEST_FILENAME, TEST_FILENAME), "");
 
     removeSnapshotDirectory(dir);
 

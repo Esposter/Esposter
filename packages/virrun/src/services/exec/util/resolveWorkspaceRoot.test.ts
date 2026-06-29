@@ -1,5 +1,6 @@
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -24,7 +25,7 @@ describe(resolveWorkspaceRoot, () => {
     expect.hasAssertions();
 
     const root = createWorkspace();
-    const nested = join(root, "packages", "app");
+    const nested = join(root, TEST_FILENAME, TEST_FILENAME);
     mkdirSync(nested, { recursive: true });
 
     expect(resolveWorkspaceRoot(nested)).toBe(root);
