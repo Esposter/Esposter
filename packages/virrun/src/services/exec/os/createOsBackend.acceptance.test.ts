@@ -1,28 +1,13 @@
 ﻿import { dayjs } from "@/services/dayjs.test";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
-import { getResult } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
+import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstallSupported.test";
 import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-
-const isSandboxInstallSupported =
-  isOsBackendSupported() &&
-  getResult(() =>
-    process.platform === "win32"
-      ? execFileSync("wsl.exe", ["--exec", "sh", "-lc", "command -v node && node --version && corepack --version"], {
-          stdio: "pipe",
-        })
-      : execFileSync("sh", ["-lc", "command -v pnpm"], { stdio: "pipe" }),
-  ).match(
-    () => true,
-    () => false,
-  );
 
 // Heavy + networked, so it self-gates on sandbox support and a package-manager entrypoint inside that
 // Sandbox. On WSL, Corepack provides pnpm without mutating the distro; its cache is bind-mounted below.
