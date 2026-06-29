@@ -9,12 +9,21 @@ import { createNativeBackend } from "@/services/exec/native/createNativeBackend"
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
-import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
+import {
+  COREPACK_HOME_KEY,
+  VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
+  VIRRUN_ENV_KEY,
+  VIRRUN_STORE_DIRECTORY_NAME,
+} from "@/services/exec/util/constants";
+import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { readWslLoginPath } from "@/services/exec/wsl/readWslLoginPath";
 import { loadSource } from "@/services/source/loadSource";
+import { mkdirSync } from "node:fs";
+import { join } from "node:path";
 // Maps each backend choice to its factory. Adding the future `os` backend is a one-line entry here
 // Nothing else in the orchestrator changes. "auto" resolves to native until vfs beats it on the gates.
 const backendFactories: Record<BackendType, () => ExecBackend> = {
@@ -65,6 +74,23 @@ export const createVirrun = async ({
     isNetworkEnabled: isOsBackend,
     stdio,
   });
+  // The capture run that provisions the sandbox dep closure needs corepack's home writable on a stable path, so
+  // The WSL `corepack pnpm` bootstrap (and the pnpm it downloads) persists into the snapshot instead of vanishing
+  // In the tmpfs upper. Bound and pointed at the repo store, beside the pnpm store, so it is reused across runs.
+  const toInstallOptions = (stdio: ExecStdio): ExecOptions => {
+    const options = toOptions(stdio);
+    const corepackHome = join(
+      getRepoCacheDirectory(cwd),
+      VIRRUN_STORE_DIRECTORY_NAME,
+      VIRRUN_COREPACK_STORE_DIRECTORY_NAME,
+    );
+    mkdirSync(corepackHome, { recursive: true });
+    return {
+      ...options,
+      bindDirs: [...(options.bindDirs ?? []), corepackHome],
+      env: { ...options.env, [COREPACK_HOME_KEY]: corepackHome },
+    };
+  };
   return {
     backend: execBackend.name,
     dispose,
@@ -73,12 +99,13 @@ export const createVirrun = async ({
       // Fork is the os backend's overlay-snapshot mechanism; other backends have no snapshot layer, so the
       // Transparent fallback is a plain exec — fork is then identical to exec with no warm reuse.
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
-      // Capture-or-reuse, keyed by lockfile hash. On a cold cache the capture run is the command's one real
-      // Execution: its writes freeze into the snapshot upper and its result is returned directly, so `command`
-      // Runs exactly once. Every later fork stacks that frozen upper read-only and re-runs over it — so a
-      // Re-install collapses to a frozen-lockfile no-op and the run's own writes vanish in the ephemeral upper.
+      // The os backend is a Linux sandbox. We cannot tell from outside whether any dependency ships a
+      // Platform-specific binary, and on a Windows host the host's win32 node_modules can't run inside it — so
+      // Always provision the sandbox's own dep closure once, frozen into a lockfile-hash-keyed snapshot, then run
+      // The command over it. Cold: capture the frozen install (its node_modules persist into the upper). Warm:
+      // Reuse it. Either way `command` runs over a populated dep tree via forkSnapshot, never the bare source.
       if (!resolveSnapshotLocation(cwd).exists)
-        return (await createSnapshot(execBackend, command, toOptions(stdio))).result;
+        await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
       return forkSnapshot(execBackend, command, toOptions(stdio));
     },
   };

@@ -34,16 +34,17 @@ describe(createOsBackend, () => {
 
   // A command that exits non-zero is a result; a sandbox that can't even start is an error. A
   // Non-existent bind source fails the mount before the command runs, so no child exit-code is
-  // Reported and the backend must reject rather than invent a result.
+  // Reported and the backend must reject rather than invent a result. The reject message carries the
+  // Base sentinel plus bwrap's own (host-/version-specific) diagnostic appended, so match the stable
+  // Sentinel as a substring — the exact stderr-surfacing contract is pinned in createBwrapBackend.test.ts.
   test.skipIf(!isOsBackendSupported())("rejects with a sandbox error when bubblewrap fails to set up", async () => {
     expect.hasAssertions();
 
     const { exec } = createOsBackend();
 
-    await expect(
-      exec(`echo hi`, { bindDirs: [TEST_DIR], cwd: "", stdio: "pipe" }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, createOsBackend.name, "bubblewrap failed to set up the sandbox").message}]`,
+    await expect(exec(`echo hi`, { bindDirs: [TEST_DIR], cwd: "", stdio: "pipe" })).rejects.toThrow(
+      new InvalidOperationError(Operation.Create, createOsBackend.name, "bubblewrap failed to set up the sandbox")
+        .message,
     );
   });
 });

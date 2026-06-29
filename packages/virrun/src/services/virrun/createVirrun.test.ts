@@ -1,21 +1,37 @@
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
 
+import type { SnapshotLocation } from "@/models/exec/SnapshotLocation";
+
 import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
-import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
+import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { spawn } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
-import { constants, tmpdir } from "node:os";
-import { join } from "node:path";
+import { rmSync } from "node:fs";
+import { constants } from "node:os";
 import { describe, expect, test, vi } from "vitest";
 // Mock the os backend factory so the network/store wiring can be asserted without bubblewrap on the host.
 vi.mock(import("@/services/exec/os/createOsBackend"));
+// Mock the snapshot layer so the fork provisioning logic (capture-on-cold, reuse-on-warm) can be asserted
+// Without a real install: resolveSnapshotLocation drives the cold/warm branch, the other two are spied.
+vi.mock(import("@/services/exec/snapshot/createSnapshot"));
+vi.mock(import("@/services/exec/snapshot/forkSnapshot"));
+vi.mock(import("@/services/exec/snapshot/resolveSnapshotLocation"));
 // Mock the WSL login-PATH capture so the os-backend wiring assertions stay pure and platform-independent: the
 // Real implementation spawns wsl.exe on win32, which a mocked-backend orchestration test must not depend on.
 vi.mock(import("@/services/exec/wsl/readWslLoginPath"), () => ({ readWslLoginPath: () => "" }));
+
+const mockOsBackend = () =>
+  vi.mocked(createOsBackend).mockReturnValue({
+    exec: (): Promise<ExecResult> => Promise.resolve({ exitCode: 0, stderr: "", stdout: "" }),
+    name: BackendType.Os,
+  });
+const snapshotLocation = (exists: boolean): SnapshotLocation => ({ dir: "", exists, hash: "hash", upperDir: "upper" });
 // Baseline runner: execute the command natively, bypassing the sandbox entirely. The differential
 // Gate (specs/correctness.md) asserts the sandbox produces a byte-identical ExecResult. With the
 // Native passthrough backend this is trivially true — the test exists so the harness is already in
@@ -84,7 +100,8 @@ describe(createVirrun, () => {
       },
       name: BackendType.Os,
     });
-    const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
+    // The os path anchors its shared store to the workspace root (nearest lockfile), so use a lockfile-seeded dir.
+    const dir = createWorkspaceDir();
     const { dispose, exec } = await createVirrun({ backend: BackendType.Os, source: { dir, type: SourceType.Dir } });
     await exec("pnpm install");
     await dispose();

@@ -62,9 +62,30 @@ export const createBwrapBackend = (
         const bwrapStderr =
           bwrapCommand.statusSource === "stderr" ? parseBwrapStderrStatus(stderr) : { status, stderr };
         const exitCode = parseBwrapExitCode(bwrapStderr.status);
-        if (exitCode === undefined)
-          reject(new InvalidOperationError(Operation.Create, errorName, "bubblewrap failed to set up the sandbox"));
-        else resolve({ exitCode, stderr: bwrapStderr.stderr, stdout });
+        if (exitCode === undefined) {
+          // Sandbox setup failed (bad flag, missing binary, WSL bridge or overlay-mount error). The real
+          // diagnostic is the captured stderr — fold it into the error so the user sees *why* it failed,
+          // not just that it did. Without this the wsl backend collapses every setup failure into one
+          // opaque line, leaving nothing to debug from.
+          reject(
+            new InvalidOperationError(
+              Operation.Create,
+              errorName,
+              `bubblewrap failed to set up the sandbox${bwrapStderr.stderr ? `\n${bwrapStderr.stderr}` : ""}`,
+            ),
+          );
+          return;
+        }
+        // "inherit" must stream the child's output to the host. The wsl backend can't let stderr stream
+        // directly — it carries the bwrap status block this backend has to parse — so it captured stderr
+        // above; re-emit the cleaned remainder here so inherit actually surfaces it. The fd backend (linux)
+        // already streamed stderr live under inherit, so its remainder is "" and this is a no-op there.
+        if (options.stdio === "inherit") {
+          if (bwrapStderr.stderr) process.stderr.write(bwrapStderr.stderr);
+          resolve({ exitCode, stderr: "", stdout: "" });
+          return;
+        }
+        resolve({ exitCode, stderr: bwrapStderr.stderr, stdout });
       });
     }),
   name: BackendType.Os,

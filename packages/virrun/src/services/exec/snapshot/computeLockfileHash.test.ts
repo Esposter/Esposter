@@ -1,17 +1,17 @@
+import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
+import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
-import { PNPM_LOCKFILE_FILENAME, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
+import { rmSync } from "node:fs";
 import { afterEach, describe, expect, test } from "vitest";
 
 const lockfileContent = "lockfileVersion: '9.0'\n";
 const temporaryDirectories: string[] = [];
-
+// A lockfile-less dir exercises the throw path; any other content makes a workspace root. Both delegate to the
+// Shared fixtures and are tracked here for cleanup.
 const createRepo = (content?: string): string => {
-  const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
+  const dir = content === undefined ? createTemporaryDirectory() : createWorkspaceDir(content);
   temporaryDirectories.push(dir);
-  if (content !== undefined) writeFileSync(join(dir, PNPM_LOCKFILE_FILENAME), content);
   return dir;
 };
 

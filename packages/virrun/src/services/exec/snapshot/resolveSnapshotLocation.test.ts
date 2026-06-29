@@ -1,32 +1,25 @@
+import { createTemporaryDirectory as baseTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
+import { createWorkspaceDir as baseWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import {
-  PNPM_LOCKFILE_FILENAME,
   VIRRUN_CACHE_HOME_KEY,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
-  VIRRUN_TEMP_DIR_PREFIX,
 } from "@/services/exec/util/constants";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-const lockfileContent = "lockfileVersion: '9.0'\n";
 const temporaryDirectories: string[] = [];
 let cacheHome = "";
-
-const createTemporaryDirectory = (): string => {
-  const dir = mkdtempSync(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
+// Track every fixture dir for teardown; the shared helpers create them, this file owns their cleanup.
+const track = (dir: string): string => {
   temporaryDirectories.push(dir);
   return dir;
 };
-
-const createRepo = (): string => {
-  const dir = createTemporaryDirectory();
-  writeFileSync(join(dir, PNPM_LOCKFILE_FILENAME), lockfileContent);
-  return dir;
-};
+const createTemporaryDirectory = (): string => track(baseTemporaryDirectory());
+const createRepo = (): string => track(baseWorkspaceDir());
 
 describe(resolveSnapshotLocation, () => {
   beforeEach(() => {
