@@ -1,8 +1,8 @@
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
-import { getResult } from "@esposter/shared";
+import { getResult, withFinalizer } from "@esposter/shared";
 import * as fc from "fast-check";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -25,7 +25,6 @@ const toOutcome = (operation: () => boolean | string): { ok: boolean; value: boo
 
 describe(createPlatformaticFsProvider, () => {
   const temporaryDirectories = createTemporaryDirectoryTracker();
-  const providers: ReturnType<typeof createPlatformaticFsProvider>[] = [];
   // Absolute virtual root the provider operates under (POSIX-style; the provider's fs is virtual, not host-disk).
   const VROOT = "/p";
   // A pre-created sub-directory plus the never-written paths ("z", "d/z") that exercise the missing-file branch.
@@ -39,7 +38,6 @@ describe(createPlatformaticFsProvider, () => {
   );
 
   afterEach(() => {
-    for (const provider of providers.splice(0)) provider.dispose();
     temporaryDirectories.cleanup();
   });
 
@@ -48,41 +46,50 @@ describe(createPlatformaticFsProvider, () => {
 
     fc.assert(
       fc.property(fc.array(operationArb, { maxLength: 48, minLength: 1 }), (operations) => {
+        // Each fast-check run (including replay/shrinking) allocates its own provider + temp dir and frees them
+        // In the finalizer, so the randomized trace never stacks allocations across the run's many iterations.
         const provider = createPlatformaticFsProvider();
-        providers.push(provider);
         const directory = temporaryDirectories.create();
-        provider.mkdir(`${VROOT}/d`);
-        mkdirSync(join(directory, "d"), { recursive: true });
-        const virtualTrace = [];
-        const realTrace = [];
+        withFinalizer(
+          () => {
+            provider.mkdir(`${VROOT}/d`);
+            mkdirSync(join(directory, "d"), { recursive: true });
+            const virtualTrace = [];
+            const realTrace = [];
 
-        for (const operation of operations) {
-          const virtualPath = `${VROOT}/${operation.rel}`;
-          const realPath = join(directory, operation.rel);
-          if (operation.kind === "write") {
-            const { content } = operation;
-            virtualTrace.push(
-              toOutcome(() => {
-                provider.writeFile(virtualPath, content);
-                return provider.readFile(virtualPath);
-              }),
-            );
-            realTrace.push(
-              toOutcome(() => {
-                writeFileSync(realPath, content);
-                return readFileSync(realPath, "utf8");
-              }),
-            );
-          } else if (operation.kind === "read") {
-            virtualTrace.push(toOutcome(() => provider.readFile(virtualPath)));
-            realTrace.push(toOutcome(() => readFileSync(realPath, "utf8")));
-          } else {
-            virtualTrace.push(toOutcome(() => provider.exists(virtualPath)));
-            realTrace.push(toOutcome(() => existsSync(realPath)));
-          }
-        }
+            for (const operation of operations) {
+              const virtualPath = `${VROOT}/${operation.rel}`;
+              const realPath = join(directory, operation.rel);
+              if (operation.kind === "write") {
+                const { content } = operation;
+                virtualTrace.push(
+                  toOutcome(() => {
+                    provider.writeFile(virtualPath, content);
+                    return provider.readFile(virtualPath);
+                  }),
+                );
+                realTrace.push(
+                  toOutcome(() => {
+                    writeFileSync(realPath, content);
+                    return readFileSync(realPath, "utf8");
+                  }),
+                );
+              } else if (operation.kind === "read") {
+                virtualTrace.push(toOutcome(() => provider.readFile(virtualPath)));
+                realTrace.push(toOutcome(() => readFileSync(realPath, "utf8")));
+              } else {
+                virtualTrace.push(toOutcome(() => provider.exists(virtualPath)));
+                realTrace.push(toOutcome(() => existsSync(realPath)));
+              }
+            }
 
-        expect(virtualTrace).toStrictEqual(realTrace);
+            expect(virtualTrace).toStrictEqual(realTrace);
+          },
+          () => {
+            provider.dispose();
+            rmSync(directory, { force: true, recursive: true });
+          },
+        );
       }),
       { numRuns: 50 },
     );

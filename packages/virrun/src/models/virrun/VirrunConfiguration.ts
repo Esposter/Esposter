@@ -5,8 +5,7 @@ import type { BackendType } from "@/models/virrun/BackendType";
 // Default backend (auto → native today), so no config is a valid, fully-functional state.
 export interface VirrunConfiguration {
   // BackendType a sandboxed command runs through (auto | native | vfs | os). `auto` resolves to native today.
+  // When `backend` can't run on this host (e.g. `os` off Linux) the resolver degrades to native, so the worst
+  // Case of adopting a command is "no speedup", never "broken" — the degrade target is always native, not a knob.
   readonly backend: BackendType;
-  // BackendType to defer to when `backend` can't run on this host (e.g. `os` off Linux). Never errors the
-  // Build — the worst case of adopting a command is "no speedup", never "broken".
-  readonly fallback: BackendType;
 }
