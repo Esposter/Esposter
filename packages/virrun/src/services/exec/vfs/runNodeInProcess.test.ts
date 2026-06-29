@@ -1,11 +1,17 @@
-import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { runNodeInProcess } from "@/services/exec/vfs/runNodeInProcess";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import { afterAll, describe, expect, test } from "vitest";
 
 describe(runNodeInProcess, () => {
-  const dir = createTemporaryDirectory();
+  const temporaryDirectories = createTemporaryDirectoryTracker();
+  const dir = temporaryDirectories.create();
+
+  afterAll(() => {
+    temporaryDirectories.cleanup();
+  });
+
   const writeScript = (name: string, source: string) => {
     const file = join(dir, name);
     writeFileSync(file, source);

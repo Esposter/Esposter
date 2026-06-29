@@ -8,10 +8,9 @@ import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_WSL_CACHE_DIR_NAME } from "@/services/exec/wsl/constants.test";
 import { createVirrun } from "@/services/virrun/createVirrun";
-import { withFinalizerAsync } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -43,12 +42,15 @@ const mockOsBackend = () =>
 const snapshotLocation = (exists: boolean): SnapshotLocation => ({ dir: "", exists, hash: "hash", upperDir: "upper" });
 
 describe(createVirrun, () => {
+  const { cleanup, createWorkspace } = createTemporaryDirectoryTracker();
+
   beforeEach(() => {
     // Clear call counts between tests so the warm-snapshot case never sees the cold case's capture call.
     vi.clearAllMocks();
   });
 
   afterEach(() => {
+    cleanup();
     // The mocked WSL native cache root lands the os-path store/corepack mkdirs under temp on win32; clean it up.
     rmSync(join(tmpdir(), TEST_WSL_CACHE_DIR_NAME), { force: true, recursive: true });
   });
@@ -98,20 +100,13 @@ describe(createVirrun, () => {
       name: BackendType.Os,
     });
     // The os path anchors its shared store to the workspace root (nearest lockfile), so use a lockfile-seeded dir.
-    const dir = createWorkspaceDir();
-    await withFinalizerAsync(
-      async () => {
-        const { dispose, exec } = await createVirrun({
-          backend: BackendType.Os,
-          source: { dir, type: SourceType.Dir },
-        });
-        await exec("pnpm install");
-        await dispose();
-      },
-      () => {
-        rmSync(dir, { force: true, recursive: true });
-      },
-    );
+    const dir = createWorkspace();
+    const { dispose, exec } = await createVirrun({
+      backend: BackendType.Os,
+      source: { dir, type: SourceType.Dir },
+    });
+    await exec("pnpm install");
+    await dispose();
 
     expect(calls[0]).toStrictEqual(expect.objectContaining({ isNetworkEnabled: true }));
   });
@@ -140,21 +135,13 @@ describe(createVirrun, () => {
       result: { exitCode: 0, stderr: "", stdout: "" },
     });
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: "forked" });
-    const dir = createWorkspaceDir();
-    const result = await withFinalizerAsync(
-      async () => {
-        const { dispose, fork } = await createVirrun({
-          backend: BackendType.Os,
-          source: { dir, type: SourceType.Dir },
-        });
-        const forkResult = await fork("tsgo");
-        await dispose();
-        return forkResult;
-      },
-      () => {
-        rmSync(dir, { force: true, recursive: true });
-      },
-    );
+    const dir = createWorkspace();
+    const { dispose, fork } = await createVirrun({
+      backend: BackendType.Os,
+      source: { dir, type: SourceType.Dir },
+    });
+    const result = await fork("tsgo");
+    await dispose();
 
     expect(createSnapshot).toHaveBeenCalledTimes(1);
     expect(forkSnapshot).toHaveBeenCalledTimes(1);
@@ -167,20 +154,13 @@ describe(createVirrun, () => {
     mockOsBackend();
     vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true));
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: "forked" });
-    const dir = createWorkspaceDir();
-    await withFinalizerAsync(
-      async () => {
-        const { dispose, fork } = await createVirrun({
-          backend: BackendType.Os,
-          source: { dir, type: SourceType.Dir },
-        });
-        await fork("tsgo");
-        await dispose();
-      },
-      () => {
-        rmSync(dir, { force: true, recursive: true });
-      },
-    );
+    const dir = createWorkspace();
+    const { dispose, fork } = await createVirrun({
+      backend: BackendType.Os,
+      source: { dir, type: SourceType.Dir },
+    });
+    await fork("tsgo");
+    await dispose();
 
     expect(createSnapshot).not.toHaveBeenCalled();
     expect(forkSnapshot).toHaveBeenCalledTimes(1);

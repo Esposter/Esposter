@@ -1,7 +1,6 @@
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
 import {
   VIRRUN_CACHE_HOME_KEY,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
@@ -12,8 +11,7 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(resolveSnapshotLocation, () => {
-  const { cleanup, create, track } = createTemporaryDirectoryTracker();
-  const createRepo = (): string => track(createWorkspaceDir());
+  const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
   let cacheHome = "";
 
   beforeEach(() => {
@@ -29,7 +27,7 @@ describe(resolveSnapshotLocation, () => {
   test("addresses the snapshot in the global cache under snapshots/<lockfile-hash> with its upper dir", () => {
     expect.hasAssertions();
 
-    const dir = createRepo();
+    const dir = createWorkspace();
     const { dir: snapshotDir, hash, upperDir } = resolveSnapshotLocation(dir);
     const expectedDir = join(cacheHome, VIRRUN_SNAPSHOTS_DIRECTORY_NAME, hash);
 
@@ -41,7 +39,7 @@ describe(resolveSnapshotLocation, () => {
   test("lives outside the repo so a forked overlay lower never nests inside the source tree", () => {
     expect.hasAssertions();
 
-    const dir = createRepo();
+    const dir = createWorkspace();
 
     expect(resolveSnapshotLocation(dir).dir.startsWith(dir)).toBe(false);
   });
@@ -49,7 +47,7 @@ describe(resolveSnapshotLocation, () => {
   test("reports exists only once the upper layer has been captured on disk", () => {
     expect.hasAssertions();
 
-    const dir = createRepo();
+    const dir = createWorkspace();
 
     expect(resolveSnapshotLocation(dir).exists).toBe(false);
 

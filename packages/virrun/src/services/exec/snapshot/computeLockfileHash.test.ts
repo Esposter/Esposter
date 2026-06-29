@@ -1,27 +1,19 @@
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
-import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
-import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
-import { mkdirSync, rmSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 const lockfileContent = "lockfileVersion: '9.0'\n";
-const temporaryDirectories: string[] = [];
-// A lockfile-less dir exercises the throw path; any other content makes a workspace root. Both delegate to the
-// Shared fixtures and are tracked here for cleanup.
-const createRepo = (content?: string): string => {
-  const dir = content === undefined ? createTemporaryDirectory() : createWorkspaceDir(content);
-  temporaryDirectories.push(dir);
-  return dir;
-};
 
 describe(computeLockfileHash, () => {
+  const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
+  // A lockfile-less dir exercises the throw path; any other content makes a workspace root.
+  const createRepo = (content?: string): string => (content === undefined ? create() : createWorkspace(content));
+
   afterEach(() => {
-    while (temporaryDirectories.length > 0) {
-      const dir = temporaryDirectories.pop();
-      if (dir !== undefined) rmSync(dir, { force: true, recursive: true });
-    }
+    cleanup();
   });
 
   test("hashes the lockfile content to a sha256 hex digest", () => {

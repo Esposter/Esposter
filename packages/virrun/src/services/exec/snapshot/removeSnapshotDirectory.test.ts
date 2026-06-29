@@ -1,7 +1,7 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
-import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
@@ -13,7 +13,7 @@ import {
   TEST_WSL_UNC_PREFIX,
 } from "@/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

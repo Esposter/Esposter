@@ -6,7 +6,6 @@ import { BackendType } from "@/models/virrun/BackendType";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
 import {
   VIRRUN_CACHE_HOME_KEY,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
@@ -31,13 +30,13 @@ const createFakeBackend = (exitCode: number): { calls: ExecOptions[]; exec: Exec
 };
 
 describe(createSnapshot, () => {
-  const { cleanup, create, track } = createTemporaryDirectoryTracker();
+  const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
   const command = "pnpm install";
   let repo = "";
 
   beforeEach(() => {
     process.env[VIRRUN_CACHE_HOME_KEY] = create();
-    repo = track(createWorkspaceDir());
+    repo = createWorkspace();
   });
 
   afterEach(() => {
