@@ -7,7 +7,7 @@ import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapsho
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
+} from "@/services/exec/snapshot/constants";
 import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
 import { join } from "node:path";

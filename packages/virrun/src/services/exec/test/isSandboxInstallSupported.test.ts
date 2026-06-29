@@ -1,5 +1,6 @@
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { HOME_CACHE_DIRECTORY_NAME } from "@/services/exec/util/constants.test";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
@@ -15,7 +16,7 @@ import { describe } from "vitest";
 // EROFS throw into false, per the project's no-try/catch convention.
 const isCacheHomeWritable = (): boolean =>
   getResult(() => {
-    const cache = join(homedir(), ".cache");
+    const cache = join(homedir(), HOME_CACHE_DIRECTORY_NAME);
     mkdirSync(cache, { recursive: true });
     const dir = mkdtempSync(join(cache, VIRRUN_TEMP_DIR_PREFIX));
     rmSync(dir, { force: true, recursive: true });

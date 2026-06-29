@@ -6,7 +6,7 @@ import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
   VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
+} from "@/services/exec/snapshot/constants";
 import {
   TEST_WSL_CACHE_ROOT_LINUX,
   TEST_WSL_LEGACY_UNC_PREFIX,
@@ -35,21 +35,20 @@ const expectWslRemoval = (linuxDir: string) => {
 };
 
 describe(removeSnapshotDirectory, () => {
-  let dir = "";
+  const { cleanup, create } = createTemporaryDirectoryTracker();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    dir = "";
   });
 
   afterEach(() => {
-    if (dir && existsSync(dir)) rmSync(dir, { force: true, recursive: true });
+    cleanup();
   });
 
   test("removes a plain directory tree in-process without invoking WSL", () => {
     expect.hasAssertions();
 
-    dir = createTemporaryDirectory();
+    const dir = create();
     mkdirSync(join(dir, "nested"), { recursive: true });
     writeFileSync(join(dir, "nested", "f.txt"), "x");
 
