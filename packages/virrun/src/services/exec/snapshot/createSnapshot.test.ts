@@ -6,7 +6,7 @@ import { BackendType } from "@/models/virrun/BackendType";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { PNPM_LOCKFILE_FILENAME, VIRRUN_CACHE_HOME_KEY, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -47,19 +47,35 @@ describe(createSnapshot, () => {
     }
   });
 
-  test("runs the setup command in capture mode and materializes the snapshot overlay dirs", async () => {
+  test("captures in a per-pid temp upper and atomically publishes it onto the final upperDir", async () => {
     expect.hasAssertions();
 
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
     const { location } = await createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" });
 
     expect(location).toStrictEqual(resolveSnapshotLocation(repo));
+    // The published upper exists; the per-pid temps it was captured/scratched in are torn down.
     expect(existsSync(location.upperDir)).toBe(true);
-    expect(existsSync(location.workDir)).toBe(true);
-    expect(backend.calls[0]?.overlayLayers).toStrictEqual({
-      upperDir: location.upperDir,
-      workDir: location.workDir,
-    });
+
+    const { upperDir, workDir } = backend.calls[0]?.overlayLayers ?? {};
+
+    expect(upperDir).toBe(join(location.dir, `upper.${process.pid}.tmp`));
+    expect(workDir).toBe(join(location.dir, `work.${process.pid}.tmp`));
+    expect(existsSync(upperDir ?? "")).toBe(false);
+    expect(existsSync(workDir ?? "")).toBe(false);
+  });
+
+  test("keeps a snapshot a concurrent capturer already published and drops its own temp upper", async () => {
+    expect.hasAssertions();
+
+    // Simulate the lost race: the final upper is already on disk before this capture publishes.
+    mkdirSync(resolveSnapshotLocation(repo).upperDir, { recursive: true });
+
+    const backend = { ...createFakeBackend(0), name: BackendType.Os };
+    const { location } = await createSnapshot(backend, "pnpm install", { cwd: repo, stdio: "pipe" });
+
+    expect(location.exists).toBe(true);
+    expect(existsSync(join(location.dir, `upper.${process.pid}.tmp`))).toBe(false);
   });
 
   test("returns the capture run's result so a cold-path fork reuses it instead of re-running", async () => {

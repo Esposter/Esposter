@@ -1,7 +1,7 @@
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
-import { removeSnapshotLocation } from "@/services/exec/snapshot/removeSnapshotLocation";
+import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createSharedPackageStoreOptions } from "@/services/exec/store/createSharedPackageStoreOptions";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
@@ -52,8 +52,8 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
 
   afterAll(() => {
     // Drop the captured snapshot first, while the cache override is still active and the corpus lockfile (which
-    // Keys the snapshot) still exists; its overlay scratch dir is the only un-removable path under the cache.
-    if (corpus) removeSnapshotLocation(resolveSnapshotLocation(corpus));
+    // Keys the snapshot) still exists.
+    if (corpus) removeSnapshotDirectory(resolveSnapshotLocation(corpus).dir);
     delete process.env[VIRRUN_CACHE_HOME_KEY];
     if (corpus) rmSync(corpus, { force: true, recursive: true });
     if (cacheHome) rmSync(cacheHome, { force: true, recursive: true });

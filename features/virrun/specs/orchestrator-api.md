@@ -29,13 +29,13 @@ await virrun.dispose();
 
 ## Shape (realized API)
 
-| Member                     | Purpose                                                   |
-| -------------------------- | --------------------------------------------------------- |
-| `createVirrun(options)`    | resolve source → FS layer → backend; returns `Virrun`     |
-| `Virrun.backend`           | resolved backend name                                     |
-| `Virrun.exec(cmd, stdio?)` | run a command; returns `{ stdout, stderr, exitCode }`     |
-| `Virrun.fork(cmd, stdio?)` | runs a command over a warm snapshot of its post-run state |
-| `Virrun.dispose()`         | tear down; release RAM                                    |
+| Member                     | Purpose                                                                     |
+| -------------------------- | --------------------------------------------------------------------------- |
+| `createVirrun(options)`    | resolve source → FS layer → backend; returns `Virrun`                       |
+| `Virrun.backend`           | resolved backend name                                                       |
+| `Virrun.exec(cmd, stdio?)` | run a command; returns `{ stdout, stderr, exitCode }`                       |
+| `Virrun.fork(cmd, stdio?)` | on `os`, captures/reuses a warm snapshot; other backends behave like `exec` |
+| `Virrun.dispose()`         | tear down; release RAM                                                      |
 
 ## Constraints / Notes
 

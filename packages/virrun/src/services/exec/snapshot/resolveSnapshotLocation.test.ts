@@ -4,7 +4,6 @@ import {
   PNPM_LOCKFILE_FILENAME,
   VIRRUN_CACHE_HOME_KEY,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
   VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
   VIRRUN_TEMP_DIR_PREFIX,
 } from "@/services/exec/util/constants";
@@ -43,17 +42,16 @@ describe(resolveSnapshotLocation, () => {
     }
   });
 
-  test("addresses the snapshot in the global cache under snapshots/<lockfile-hash> with its overlay dirs", () => {
+  test("addresses the snapshot in the global cache under snapshots/<lockfile-hash> with its upper dir", () => {
     expect.hasAssertions();
 
     const dir = createRepo();
-    const { dir: snapshotDir, hash, upperDir, workDir } = resolveSnapshotLocation(dir);
+    const { dir: snapshotDir, hash, upperDir } = resolveSnapshotLocation(dir);
     const expectedDir = join(cacheHome, VIRRUN_SNAPSHOTS_DIRECTORY_NAME, hash);
 
     expect(hash).toBe(computeLockfileHash(dir));
     expect(snapshotDir).toBe(expectedDir);
     expect(upperDir).toBe(join(expectedDir, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME));
-    expect(workDir).toBe(join(expectedDir, VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME));
   });
 
   test("lives outside the repo so a forked overlay lower never nests inside the source tree", () => {

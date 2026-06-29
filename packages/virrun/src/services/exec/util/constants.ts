@@ -6,9 +6,10 @@ export const VIRRUN_STORE_DIRECTORY_NAME = "store";
 export const VIRRUN_PNPM_STORE_DIRECTORY_NAME = "pnpm";
 export const VIRRUN_COREPACK_STORE_DIRECTORY_NAME = "corepack";
 export const VIRRUN_SNAPSHOTS_DIRECTORY_NAME = "snapshots";
-// Overlayfs layers of a captured snapshot, under .virrun/snapshots/<lockfile-hash>/: `upper` persists the
-// Post-install writes (and doubles as a read-only lower when forking), `work` is the empty scratch dir
-// Overlayfs requires alongside a writable upper.
+// Overlayfs layer names of a captured snapshot, under .virrun/snapshots/<lockfile-hash>/: `upper` is the
+// Published layer that persists the post-install writes (and doubles as a read-only lower when forking);
+// `work` is the empty scratch dir overlayfs requires alongside a writable upper. A capture run writes into
+// Per-pid temps (`<name>.<pid>.tmp`) and renames the upper onto its final name as the atomic publish barrier.
 export const VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME = "upper";
 export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
 export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";

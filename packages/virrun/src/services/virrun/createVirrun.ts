@@ -34,15 +34,23 @@ export const createVirrun = async ({
   const { cwd, dispose } = await loadSource(source);
   // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store
   // (bindDirs/PNPM_CONFIG_*) must still be injected, otherwise the os path runs without its host cache.
-  const sharedPackageStoreOptions: Pick<ExecOptions, "bindDirs" | "env"> =
-    execBackend.name === BackendType.Os ? createSharedPackageStoreOptions(cwd) : {};
+  const isOsBackend = execBackend.name === BackendType.Os;
+  const sharedPackageStoreOptions: Pick<ExecOptions, "bindDirs" | "env"> = isOsBackend
+    ? createSharedPackageStoreOptions(cwd)
+    : {};
   // Inject the vitest-style presence signal (VIRRUN_ENV_KEY) into every command virrun runs, merged over any
   // Store env the os backend needs. Both the native backend and the bwrap sandbox apply options.env to the
   // Child, so the command — and its tests/config/tooling — can detect it runs under virrun via process.env.
+  //
+  // Re-enable network for the os backend (`--unshare-all` drops it): the os backend's guarantee is *filesystem*
+  // Isolation, not network isolation (specs/exec-isolation.md → "deps download once"). Without it pnpm cannot
+  // Reach the registry to bootstrap its config dependencies/deps, so every `virrun -- pnpm …` dies with
+  // "fetch failed" before the real command runs — the typecheck/lint output never appears and CI fails opaquely.
   const toOptions = (stdio: ExecStdio): ExecOptions => ({
     ...sharedPackageStoreOptions,
     cwd,
     env: { ...sharedPackageStoreOptions.env, [VIRRUN_ENV_KEY]: "true" },
+    isNetworkEnabled: isOsBackend,
     stdio,
   });
   return {
