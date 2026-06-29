@@ -1,4 +1,6 @@
-﻿import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
+import { assertDifferential } from "@/services/exec/differential/assertDifferential.test";
+import { NODE_DIFFERENTIAL_CORPUS } from "@/services/exec/differential/differentialCorpus.test";
+import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { writeFileSync } from "node:fs";
@@ -12,24 +14,11 @@ import { describe, expect, test } from "vitest";
 describe(createVfsBackend, () => {
   const native = createNativeBackend();
   const vfs = createVfsBackend();
-  const COMMANDS = [
-    `node -e "process.stdout.write(' ')"`,
-    `node -e "process.stderr.write(' ')"`,
-    `node -e "process.exit(3)"`,
-    `node -e "process.stdout.write(require('node:path').sep)"`,
-    `node -e ""`,
-    `node -e "throw new Error(' ')"`,
-    `node -p "1 + 1"`,
-    `node --version`,
-  ];
 
-  test.each(COMMANDS)("matches the native backend for %j", async (command) => {
+  test.each(NODE_DIFFERENTIAL_CORPUS)("matches the native backend for $name", async ({ command, rules }) => {
     expect.hasAssertions();
 
-    const nativeResult = await native.exec(command, { cwd: "", stdio: "pipe" });
-    const vfsResult = await vfs.exec(command, { cwd: "", stdio: "pipe" });
-
-    expect(vfsResult).toStrictEqual(nativeResult);
+    await assertDifferential(vfs, native, command, rules);
   });
 
   // A `node <file>` workload that loads a second module from real disk. vfs runs it in-process under an

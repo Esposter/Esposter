@@ -1,4 +1,6 @@
-﻿import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { assertDifferential } from "@/services/exec/differential/assertDifferential.test";
+import { SHELL_DIFFERENTIAL_CORPUS } from "@/services/exec/differential/differentialCorpus.test";
+import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
 import { TEST_FILE_NAME } from "@/services/exec/util/constants.test";
@@ -12,16 +14,11 @@ import { describe, expect, test } from "vitest";
 // Is asserted separately below. See features/virrun/specs/correctness.md.
 describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
   const native = createOsBaselineBackend();
-  const COMMANDS = [`echo hello`, `printf 'a\\nb'`, `pwd`, `cat /etc/hostname`, `false`, `sh -c 'exit 7'`];
 
-  test.each(COMMANDS)("matches the native backend for %j", async (command) => {
+  test.each(SHELL_DIFFERENTIAL_CORPUS)("matches the native backend for $name", async ({ command, rules }) => {
     expect.hasAssertions();
 
-    const os = createOsBackend();
-    const nativeResult = await native.exec(command, { cwd: "", stdio: "pipe" });
-    const osResult = await os.exec(command, { cwd: "", stdio: "pipe" });
-
-    expect(osResult).toStrictEqual(nativeResult);
+    await assertDifferential(createOsBackend(), native, command, rules);
   });
 
   test("a write inside the sandbox never touches the host disk", async () => {
