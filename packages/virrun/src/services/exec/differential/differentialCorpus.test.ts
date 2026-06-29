@@ -11,6 +11,8 @@ export const DIGIT_SEQUENCE_RULE: NormalizationRule = { pattern: DIGIT_SEQUENCE_
 // `node` workloads every backend can run — native, the os sandbox, and the vfs in-process runner. The vfs
 // Correctness gate is built on these because `node -e`/`node <file>` is the only class vfs executes itself.
 export const NODE_DIFFERENTIAL_CORPUS: readonly DifferentialCase[] = [
+  // Argv form (shell: false) so the gate also covers the no-shell path, not just shell strings.
+  { command: ["node", "--version"], name: "version argv" },
   { command: `node -e "process.stdout.write(' ')"`, name: "stdout write" },
   { command: `node -e "process.stderr.write(' ')"`, name: "stderr write" },
   { command: `node -e "process.exit(3)"`, name: "non-zero exit" },
