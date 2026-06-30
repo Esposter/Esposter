@@ -29,6 +29,20 @@ On an `os`-backend run the CLI prints a one-time provisioning line on stderr so 
 [virrun] reusing the sandbox dependency snapshot (lockfile a1b2c3d4e5f6)
 ```
 
+### Subcommands
+
+The bare `virrun -- <cmd>` prefix is shorthand for `virrun run`. The CLI (built on [unjs/citty](https://github.com/unjs/citty), so every command has `--help`) also exposes:
+
+| Command                      | What it does                                                                                                    |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `virrun -- <cmd>`            | Default passthrough — forks a warm snapshot on the `os` backend, else execs natively. Alias of `virrun run`.    |
+| `virrun run -- <cmd>`        | Explicit form of the default passthrough.                                                                       |
+| `virrun exec -- <cmd>`       | Forced plain exec — runs the command directly, skipping any warm-snapshot fork (the cold sibling of `run`).     |
+| `virrun snapshot`            | Provisions the `os` backend's warm dependency snapshot for the current lockfile ahead of time (the CI warm-up). |
+| `virrun init [--backend]`    | Writes a `virrun.config.json` selecting the backend (`--force` to overwrite an existing one).                   |
+| `virrun cache ls`            | Lists the repo-local dependency store and host-global warm snapshots.                                           |
+| `virrun cache clean [--all]` | Removes the repo-local `.virrun` cache; `--all` also clears the host-global `~/.virrun/snapshots`.              |
+
 ## Programmatic
 
 ```ts

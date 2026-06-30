@@ -57,6 +57,7 @@
     "@esposter/shared-node": "workspace:*",
     "@platformatic/vfs": "catalog:",
     "@types/node": "catalog:",
+    "citty": "catalog:",
     "ctix": "catalog:",
     "dayjs": "catalog:",
     "empathic": "catalog:",

@@ -1,0 +1,13 @@
+import type { CommandDef } from "citty";
+
+import { runPassthrough } from "@/services/cli/runPassthrough";
+import { defineCommand } from "citty";
+// `virrun exec -- <cmd>` — forced plain exec: runs the command directly through the resolved backend with no
+// Snapshot reuse, even on the os backend. The cold sibling of `run`, for debugging a run without warm-fork.
+export const execCommand: CommandDef = defineCommand({
+  meta: {
+    description: "Exec a command directly through the resolved backend, skipping any warm-snapshot fork.",
+    name: "exec",
+  },
+  run: ({ args, cmd }) => runPassthrough(args._, cmd, true),
+});

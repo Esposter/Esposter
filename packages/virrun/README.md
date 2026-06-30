@@ -23,7 +23,7 @@ virrun -- pnpm install
 virrun -- pnpm test
 ```
 
-The `virrun -- <cmd>` prefix sandboxes any command; the child's exit code is propagated and output streams live. On a capable host the `os` backend runs it in a bubblewrap RAM overlay, otherwise it falls back to native. Prerequisites, the programmatic API, and the package scripts are in the [Getting Started guide][doc-getting-started].
+The `virrun -- <cmd>` prefix sandboxes any command; the child's exit code is propagated and output streams live. On a capable host the `os` backend runs it in a bubblewrap RAM overlay, otherwise it falls back to native. The CLI (built on [unjs/citty](https://github.com/unjs/citty)) also has `run`/`exec`/`snapshot`/`init`/`cache` subcommands — run `virrun --help`. Prerequisites, the subcommand reference, the programmatic API, and the package scripts are in the [Getting Started guide][doc-getting-started].
 
 ## <a name="backends">🧱 Backends</a>
 

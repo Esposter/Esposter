@@ -11,6 +11,9 @@ export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";
 // Repo-root config (specs/config-and-cache.md): selects which backend a sandboxed command runs through.
 // Resolved by walking up from cwd; absent = the backend defaults to auto (native today).
 export const VIRRUN_CONFIGURATION_FILENAME = "virrun.config.json";
+// The `$schema` pointer `virrun init` writes into a generated config: the published schema.json resolved from the
+// Consumer's installed package, so editors render its field docs/enums on hover (the oxlint `$schema` pattern).
+export const VIRRUN_SCHEMA_RELATIVE_PATH: string = "./node_modules/virrun/schema.json";
 
 // The presence signal virrun injects into every command's environment (value `true`), the way vitest sets
 // `VITEST` and CI sets `CI`: it lets the running command — and its tests, configs, tooling — detect that it is
