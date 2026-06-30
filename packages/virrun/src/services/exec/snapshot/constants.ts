@@ -13,13 +13,13 @@ export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
 export const SETUP_COMMAND_WIN32 = "corepack pnpm install --frozen-lockfile";
 export const SETUP_COMMAND_LINUX = "pnpm install --frozen-lockfile";
 // Write-back runs Linux-side because a Windows host cannot read an overlay upper's char-device whiteouts or
-// user.overlay.* xattrs over the \\wsl.localhost 9p bridge (specs/write-back.md → "Execution locus"). These two
-// python3 programs are the only fs primitives that must run there; all classification + ordering stays in tested
+// User.overlay.* xattrs over the \\wsl.localhost 9p bridge (specs/write-back.md → "Execution locus"). These two
+// Python3 programs are the only fs primitives that must run there; all classification + ordering stays in tested
 // TS (parseOverlayEntryKind, buildFlushPlan). python3 is chosen over getfattr because it reads the opaque xattr
 // AND walks/copies in one ubiquitous tool — a documented os-backend prerequisite.
 //
 // PROBE (argv: upperDir, snapshotDir) emits a JSON manifest of raw facts per upper entry — including whether the
-// path is supplied by the snapshot lower (a dep-tree write to skip), computed here so the host never touches the
+// Path is supplied by the snapshot lower (a dep-tree write to skip), computed here so the host never touches the
 // WSL filesystem. The host validates this JSON with zod before trusting it (parseOverlayManifest).
 export const OVERLAY_PROBE_SCRIPT = `
 import json, os, stat, sys
@@ -50,9 +50,9 @@ for root, _dirs, _files in os.walk(up):
 json.dump(entries, sys.stdout)
 `;
 // APPLY (argv: upperDir, hostDir; stdin: the ordered FlushOp[] as JSON) reconciles the plan onto the host working
-// dir: a delete removes the host path; a copy recreates a symlink, mkdirs a directory (children arrive as their own
-// copies), or copy2's a file (preserving mode). The plan's deletes-before-copies, parent-first ordering is enforced
-// by buildFlushPlan, so apply just executes in order.
+// Dir: a delete removes the host path; a copy recreates a symlink, mkdirs a directory (children arrive as their own
+// Copies), or copy2's a file (preserving mode). The plan's deletes-before-copies, parent-first ordering is enforced
+// By buildFlushPlan, so apply just executes in order.
 export const OVERLAY_APPLY_SCRIPT = `
 import json, os, shutil, sys
 up, host = sys.argv[1], sys.argv[2]

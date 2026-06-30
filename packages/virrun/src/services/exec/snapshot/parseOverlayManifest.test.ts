@@ -28,18 +28,18 @@ describe(parseOverlayManifest, () => {
   test("throws on malformed JSON", () => {
     expect.hasAssertions();
 
-    expect(() => parseOverlayManifest("not json")).toThrow();
+    expect(() => parseOverlayManifest("not json")).toThrow(parseOverlayManifest.name);
   });
 
   test("throws when an entry is missing a field", () => {
     expect.hasAssertions();
 
-    expect(() => parseOverlayManifest(JSON.stringify([{ relativePath: " " }]))).toThrow();
+    expect(() => parseOverlayManifest(JSON.stringify([{ relativePath: " " }]))).toThrow(parseOverlayManifest.name);
   });
 
   test("throws when a field has the wrong type", () => {
     expect.hasAssertions();
 
-    expect(() => parseOverlayManifest(JSON.stringify([{ ...entry, rdev: "0" }]))).toThrow();
+    expect(() => parseOverlayManifest(JSON.stringify([{ ...entry, rdev: "0" }]))).toThrow(parseOverlayManifest.name);
   });
 });

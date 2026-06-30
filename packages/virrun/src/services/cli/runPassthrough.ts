@@ -1,5 +1,5 @@
-import type { ArgsDef, CommandDef } from "citty";
 import type { ExecutionMode } from "@/models/virrun/ExecutionMode";
+import type { ArgsDef, CommandDef } from "citty";
 
 import { runVirrunCommand } from "@/services/cli/runVirrunCommand";
 import { showUsage } from "citty";
