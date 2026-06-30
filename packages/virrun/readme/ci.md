@@ -29,7 +29,7 @@ In CI this directory is persisted across runs with `actions/cache`, mirroring th
 - A reusable **`warm-snapshot.yaml`** job captures the snapshot **once** per run (`virrun -- true`, cold path = install) and the `actions/cache` entry — keyed by `hashFiles('pnpm-lock.yaml')` — persists `~/.virrun/snapshots` for this run and every later run.
 - The `format` / `lint` / `typecheck` jobs `needs: [build-packages, warm-snapshot]` and restore that cache read-only, so each `virrun -- <cmd>` forks the warm snapshot instead of cold-installing. One install per run, reused across runs.
 
-These jobs (and the cold-path capture) run `setup-packages` with **`install: false`**: node*modules comes from the frozen snapshot \_inside the sandbox*, so a host `pnpm i` is redundant — it only ever served to resolve the `virrun` bin. Instead the action exposes a `virrun` launcher on `$GITHUB_PATH` (a one-line wrapper over the self-contained `dist/cli.js` delivered by the `build-packages` artifact), so the unchanged `virrun -- <cmd>` scripts still resolve without `node_modules/.bin`:
+These jobs (and the cold-path capture) run `setup-packages` with **`install: false`**: `node_modules` comes from the frozen snapshot inside the sandbox, so a host `pnpm i` is redundant — it only ever served to resolve the `virrun` bin. Instead the action exposes a `virrun` launcher on `$GITHUB_PATH` (a one-line wrapper over the self-contained `dist/cli.js` delivered by the `build-packages` artifact), so the unchanged `virrun -- <cmd>` scripts still resolve without `node_modules/.bin`:
 
 ```yaml
 - name: 📦 Setup Packages
