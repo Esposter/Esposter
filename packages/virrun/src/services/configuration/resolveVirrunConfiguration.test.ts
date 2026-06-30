@@ -2,6 +2,7 @@ import { BackendType } from "@/models/virrun/BackendType";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { VIRRUN_CONFIGURATION_FILENAME } from "@/services/exec/util/constants";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
@@ -17,14 +18,11 @@ describe(resolveVirrunConfiguration, () => {
     expect.hasAssertions();
 
     const root = create();
-    writeFileSync(join(root, VIRRUN_CONFIGURATION_FILENAME), JSON.stringify({ backend: "os" }));
-    const nested = join(root, "packages", "app");
+    writeFileSync(join(root, VIRRUN_CONFIGURATION_FILENAME), JSON.stringify({ backend: BackendType.Os }));
+    const nested = join(root, TEST_FILENAME, TEST_FILENAME);
     mkdirSync(nested, { recursive: true });
 
-    expect(resolveVirrunConfiguration(nested)).toStrictEqual({
-      backend: BackendType.Os,
-      fallback: BackendType.Native,
-    });
+    expect(resolveVirrunConfiguration(nested)).toStrictEqual({ backend: BackendType.Os });
   });
 
   test("returns undefined when no config exists in the tree", () => {

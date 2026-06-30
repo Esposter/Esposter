@@ -24,14 +24,14 @@ catalog:
   "@azure/storage-blob": ^12.33.0
   "@azure/storage-queue": ^12.31.0
   "@azure/web-pubsub": ^1.2.0
-  "@azure/web-pubsub-client": ^1.0.4
-  "@better-auth/drizzle-adapter": ^1.6.22
+  "@azure/web-pubsub-client": ^1.1.0
+  "@better-auth/drizzle-adapter": ^1.6.23
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.4
   "@codemirror/language-data": ^6.5.2
   "@codemirror/state": ^6.7.0
   "@codemirror/theme-one-dark": ^6.1.3
-  "@codemirror/view": ^6.43.3
+  "@codemirror/view": ^6.43.4
   "@codspeed/vitest-plugin": ^5.7.1
   "@dxup/nuxt": ^0.5.2
   "@dxup/unimport": ^0.1.2
@@ -92,9 +92,9 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260626.1
-  "@unocss/eslint-config": ^66.7.3
-  "@unocss/nuxt": ^66.7.3
+  "@typescript/native-preview": ^7.0.0-dev.20260629.1
+  "@unocss/eslint-config": ^66.7.4
+  "@unocss/nuxt": ^66.7.4
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.7
   "@vitest/coverage-v8": ^4.1.9
@@ -116,7 +116,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.15.2
-  better-auth: ^1.6.22
+  better-auth: ^1.6.23
   codemirror: ^6.0.2
   crossws: ^0.4.6
   ctix: ^2.8.1
@@ -138,8 +138,9 @@ catalog:
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
   fake-indexeddb: ^6.2.5
+  fast-check: ^4.8.0
   fast-deep-equal: ^3.1.3
-  fs-extra: ^11.3.5
+  fs-extra: ^11.3.6
   grapesjs: ^0.23.2
   grapesjs-blocks-basic: ^1.0.2
   grapesjs-component-countdown: ^1.0.2
@@ -173,10 +174,10 @@ catalog:
   marked: ^18.0.5
   mathjs: ^15.2.0
   mime-types: ^3.0.2
-  mjml-browser: ^5.3.0
+  mjml-browser: ^5.4.0
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
-  node-html-parser: ^8.0.3
+  node-html-parser: ^8.0.4
   nuxt: ^4.4.8
   nuxt-security: ^2.6.0
   oxfmt: ^0.56.0
@@ -184,7 +185,7 @@ catalog:
   oxlint-tsgolint: ^0.23.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
-  pdfjs-dist: ^6.0.227
+  pdfjs-dist: ^6.1.200
   phaser: ^4.2.0
   phaser4-rex-plugins: ^4.0.7
   pinia: ^3.0.4
@@ -213,8 +214,8 @@ catalog:
   type-fest: ^5.7.0
   typedoc: ^0.28.19
   typescript: ^6.0.3
-  typescript-eslint: ^8.62.0
-  unocss: ^66.7.3
+  typescript-eslint: ^8.62.1
+  unocss: ^66.7.4
   unocss-preset-vuetify: ^0.3.0
   unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.3
@@ -253,7 +254,7 @@ nodeOptions: --max-old-space-size=8192
 overrides:
   crossws: ^0.4.6
   h3: ^1.15.11
-  pdfjs-dist: ^6.0.227
+  pdfjs-dist: ^6.1.200
   vite: ^8.1.0
   vue-router: ^5.1.0
 

@@ -1,13 +1,20 @@
-import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_DIR, TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { runNodeInProcess } from "@/services/exec/vfs/runNodeInProcess";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import { afterAll, describe, expect, test } from "vitest";
 
 describe(runNodeInProcess, () => {
-  const dir = createTemporaryDirectory();
-  const writeScript = (name: string, source: string) => {
-    const file = join(dir, name);
+  const temporaryDirectories = createTemporaryDirectoryTracker();
+  const dir = temporaryDirectories.create();
+
+  afterAll(() => {
+    temporaryDirectories.cleanup();
+  });
+
+  const writeScript = (source: string) => {
+    const file = join(dir, `${TEST_FILENAME}.cjs`);
     writeFileSync(file, source);
     return file;
   };
@@ -95,7 +102,7 @@ describe(runNodeInProcess, () => {
   test("runs a file and captures its stdout", () => {
     expect.hasAssertions();
 
-    const file = writeScript("stdout.cjs", "process.stdout.write(' ')");
+    const file = writeScript("process.stdout.write(' ')");
     const result = runNodeInProcess({ code: "", file }, { cwd: "", stdio: "pipe" });
 
     expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: " " });
@@ -104,7 +111,7 @@ describe(runNodeInProcess, () => {
   test("propagates process.exit from a file run", () => {
     expect.hasAssertions();
 
-    const file = writeScript("exit.cjs", "process.exit(3)");
+    const file = writeScript("process.exit(3)");
     const result = runNodeInProcess({ code: "", file }, { cwd: "", stdio: "pipe" });
 
     expect(result).toStrictEqual({ exitCode: 3, stderr: "", stdout: "" });
@@ -113,7 +120,7 @@ describe(runNodeInProcess, () => {
   test("re-executes a file on each run (require cache is cleared)", () => {
     expect.hasAssertions();
 
-    const file = writeScript("twice.cjs", "process.stdout.write(' ')");
+    const file = writeScript("process.stdout.write(' ')");
     runNodeInProcess({ code: "", file }, { cwd: "", stdio: "pipe" });
     const result = runNodeInProcess({ code: "", file }, { cwd: "", stdio: "pipe" });
 
@@ -123,6 +130,8 @@ describe(runNodeInProcess, () => {
   test("falls back (undefined) for a missing file so native emits the canonical error", () => {
     expect.hasAssertions();
 
-    expect(runNodeInProcess({ code: "", file: join(dir, "missing.cjs") }, { cwd: "", stdio: "pipe" })).toBeUndefined();
+    expect(
+      runNodeInProcess({ code: "", file: join(TEST_DIR, `${TEST_FILENAME}.cjs`) }, { cwd: "", stdio: "pipe" }),
+    ).toBeUndefined();
   });
 });

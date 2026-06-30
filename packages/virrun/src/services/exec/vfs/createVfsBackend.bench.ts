@@ -1,10 +1,10 @@
 ﻿import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
-import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { bench, describe } from "vitest";
+import { afterAll, bench, describe } from "vitest";
 // The speed gate for the vfs backend. The hot path - a short-lived `node -e` - is exactly what the
 // In-process runner exists to win: vfs evaluates the code in this process (microseconds) while native
 // Pays full node process startup (tens of ms) per call. The file-run path is the same win for
@@ -15,9 +15,14 @@ const EVAL_COMMAND = `node -e "process.stdout.write('bench')"`;
 const FALLBACK_COMMAND = `node -p "1 + 1"`;
 const native = createNativeBackend();
 const vfs = createVfsBackend();
-const dir = createTemporaryDirectory();
+const temporaryDirectories = createTemporaryDirectoryTracker();
+const dir = temporaryDirectories.create();
 writeFileSync(join(dir, "bench.cjs"), "process.stdout.write('bench')");
 const FILE_COMMAND = "node bench.cjs";
+
+afterAll(() => {
+  temporaryDirectories.cleanup();
+});
 
 describe("createVfsBackend - in-process node -e vs native spawn (hot path)", () => {
   bench(BackendType.Native, async () => {

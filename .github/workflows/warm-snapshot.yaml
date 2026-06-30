@@ -1,0 +1,56 @@
+name: 🔥 Warm Snapshot
+# Reusable workflow: capture virrun's warm post-install snapshot ONCE and publish it as a host-global
+# `actions/cache` entry, so every os-backend job downstream forks it instead of cold-installing its own. The os
+# Backend keys a snapshot by the pnpm lockfile hash (computeLockfileHash → `~/.virrun/snapshots/<hash>`) and a
+# Fork stacks the frozen overlay upper read-only beside the source — the upper is self-contained (pnpm
+# `package-import-method=copy`, so it never reads `.virrun/store`), and the GitHub Linux runner workdir is stable
+# Across runs, so a cached upper restores and forks correctly on a fresh runner. Without this, format/lint/
+# Typecheck would each pay the multi-minute install on their own runner (3× per run, nothing persisted); here it
+# Runs once and the `actions/cache` entry (keyed by the lockfile, shared repo-wide) lets later runs skip it too.
+# Mirrors build-packages.yaml: single gated work, then fan the cached output out via `needs:` + a read-only
+# `actions/cache/restore` in each consumer.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  warm-snapshot:
+    name: Warm Snapshot
+    runs-on: ubuntu-26.04
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      # Key by the lockfile that virrun itself hashes for the snapshot address: same deps → same warm snapshot.
+      # `hashFiles` tracks the same file (its digest need not equal virrun's — the restored dir is addressed by
+      # Virrun's own hash internally; the cache key only has to invalidate when deps change). Restored first, before
+      # Any setup, so a warm hit skips the multi-minute dependency/package install below entirely.
+      - name: ♻️ Restore warm snapshot
+        id: cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/snapshots
+          key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+      # Cold path only: setup feeds the capture step below, so both are gated on the same cache miss.
+      # bubblewrap (+ unprivileged user namespaces) so the os backend runs isolated instead of falling back to
+      # Native — a native capture would write nothing to the overlay upper, so there would be no snapshot to cache.
+      - name: 🔧 Setup Project Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: ./.github/actions/setup-project-dependencies
+        with:
+          bubblewrap-sandbox: "true"
+      # Pulls the built `virrun` bin (packages/virrun/dist) from the build-packages artifact, so the caller must
+      # Run build-packages first (`needs: build-packages` on the calling job).
+      - name: 📦 Setup Packages
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: ./.github/actions/setup-packages
+      # Cold path only: `virrun -- true` resolves the os backend and forks — with no snapshot yet it runs the
+      # Install (resolveSetupCommand) into the overlay upper, atomically publishes it, then runs `true` over it.
+      # The `actions/cache` post step saves `~/.virrun/snapshots` for this and every later run. On a hit there is
+      # Nothing to do — the upper is already restored for the consumers below.
+      - name: 🔥 Capture warm snapshot
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pnpm exec virrun -- true

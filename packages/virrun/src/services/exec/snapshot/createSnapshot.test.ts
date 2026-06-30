@@ -3,16 +3,15 @@ import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
 
 import { BackendType } from "@/models/virrun/BackendType";
+import {
+    VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
+    VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
+} from "@/services/exec/snapshot/constants";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
-import {
-  VIRRUN_CACHE_HOME_KEY,
-  VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
-  VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
-  VIRRUN_STORE_DIRECTORY_NAME,
-} from "@/services/exec/util/constants";
+import { VIRRUN_CACHE_HOME_KEY, VIRRUN_STORE_DIRECTORY_NAME } from "@/services/exec/util/constants";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -31,13 +30,13 @@ const createFakeBackend = (exitCode: number): { calls: ExecOptions[]; exec: Exec
 };
 
 describe(createSnapshot, () => {
-  const { cleanup, create, track } = createTemporaryDirectoryTracker();
+  const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
   const command = "pnpm install";
   let repo = "";
 
   beforeEach(() => {
     process.env[VIRRUN_CACHE_HOME_KEY] = create();
-    repo = track(createWorkspaceDir());
+    repo = createWorkspace();
   });
 
   afterEach(() => {
@@ -71,14 +70,14 @@ describe(createSnapshot, () => {
     // Simulate the lost race: a populated final upper is already on disk before this capture publishes.
     const publishedUpper = resolveSnapshotLocation(repo).upperDir;
     mkdirSync(publishedUpper, { recursive: true });
-    writeFileSync(join(publishedUpper, "marker"), "");
+    writeFileSync(join(publishedUpper, TEST_FILENAME), "");
 
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
     const { location } = await createSnapshot(backend, command, { cwd: repo, stdio: "pipe" });
 
     expect(location.exists).toBe(true);
     // Theirs is kept untouched; our own temp upper is discarded.
-    expect(existsSync(join(publishedUpper, "marker"))).toBe(true);
+    expect(existsSync(join(publishedUpper, TEST_FILENAME))).toBe(true);
     expect(existsSync(backend.calls[0]?.overlayLayers?.upperDir ?? "")).toBe(false);
   });
 

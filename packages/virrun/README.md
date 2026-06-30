@@ -10,6 +10,7 @@ An ephemeral, in-memory virtual runner: boot a repo into a RAM-backed filesystem
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
+- 🧱 [Backends](#backends)
 - 📖 [Documentation](#documentation)
 - ⚖️ [License](#license)
 
@@ -17,44 +18,14 @@ An ephemeral, in-memory virtual runner: boot a repo into a RAM-backed filesystem
 
 ## <a name="getting-started">🚀 Getting Started</a>
 
-### Prerequisites
-
-The sandboxed `os` backend needs the following; if either is missing, `virrun` falls back to the native backend.
-
-- **Bubblewrap `>= 0.10.0`** (RAM overlay support: `--overlay-src` / `--tmp-overlay`), via your system package manager — e.g. `sudo apt install -y bubblewrap` (Debian/Ubuntu/WSL2), `sudo dnf install bubblewrap` (Fedora/RHEL), `sudo pacman -S bubblewrap` (Arch).
-- **A Linux `node` inside your default WSL2 distro** (Windows hosts only) — Windows `node.exe` can't run in the Linux sandbox, so without it the capability check fails and virrun runs natively on Windows.
-
-### CLI
-
-The lowest rung of adoption — wrap any single command, output streams live, the child's exit code is propagated:
-
 ```bash
 virrun -- pnpm install
 virrun -- pnpm test
 ```
 
-### Programmatic
+The `virrun -- <cmd>` prefix sandboxes any command; the child's exit code is propagated and output streams live. On a capable host the `os` backend runs it in a bubblewrap RAM overlay, otherwise it falls back to native. Prerequisites, the programmatic API, and the package scripts are in the [Getting Started guide][doc-getting-started].
 
-```ts
-import { createVirrun } from "virrun";
-
-const virrun = await createVirrun();
-try {
-  const { exitCode, stdout } = await virrun.exec("pnpm build");
-} finally {
-  await virrun.dispose();
-}
-```
-
-`createVirrun` accepts a `source` (directory, in-memory file map, or git remote) and a `backend`; it returns a handle with `exec` and `dispose`. See [VirrunOptions](https://github.com/Esposter/Esposter/blob/main/packages/virrun/src/models/virrun/VirrunOptions.ts).
-
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/virrun.html) to level up.
-
-Design docs incubate in [`features/virrun`](https://github.com/Esposter/Esposter/tree/main/features/virrun) — start with the [architecture overview](https://github.com/Esposter/Esposter/blob/main/features/virrun/architecture.md) and the [exec-isolation spec](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/exec-isolation.md).
-
-### Backends
+## <a name="backends">🧱 Backends</a>
 
 | Backend  | Isolation                           | Selected by `Auto` | Notes                                                                                  |
 | -------- | ----------------------------------- | :----------------: | -------------------------------------------------------------------------------------- |
@@ -63,22 +34,23 @@ Design docs incubate in [`features/virrun`](https://github.com/Esposter/Esposter
 | `os`     | bubblewrap RAM-overlay + namespaces |         —          | Linux or Windows/WSL2 + `bwrap`. Never falls back — an un-isolated run would be wrong. |
 | `auto`   | resolves to the best gate-proven    |         —          | Resolves to `native` until an isolating backend beats the gates.                       |
 
-### Commands
+## <a name="documentation">📖 Documentation</a>
 
-Run from `packages/virrun/`:
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/virrun.html) to level up.
 
-```bash
-pnpm build        # export:gen + rolldown bundle to dist/
-pnpm bench        # vitest bench (colocated *.bench.{json,md})
-pnpm test         # vitest watch mode
-pnpm lint:fix     # auto-fix lint
-pnpm typecheck    # type check
-```
+- 🚀 [Getting Started][doc-getting-started] — prerequisites, CLI, programmatic API, package scripts.
+- 🤖 [CI][doc-ci] — the two gates (differential correctness + speed) and the CI snapshot cache.
+- 🏎️ [Speed Harness][doc-speed-harness] — benchmarking conventions, committed `*.bench.md`, CodSpeed.
+
+Design docs incubate in [`features/virrun`](https://github.com/Esposter/Esposter/tree/main/features/virrun) — start with the [architecture overview](https://github.com/Esposter/Esposter/blob/main/features/virrun/architecture.md) and the [exec-isolation spec](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/exec-isolation.md).
 
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
+[doc-getting-started]: https://github.com/Esposter/Esposter/blob/main/packages/virrun/readme/getting-started.md
+[doc-ci]: https://github.com/Esposter/Esposter/blob/main/packages/virrun/readme/ci.md
+[doc-speed-harness]: https://github.com/Esposter/Esposter/blob/main/packages/virrun/readme/speed-harness.md
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
 [badge-npm-version]: https://img.shields.io/npm/v/virrun/latest?color=brightgreen

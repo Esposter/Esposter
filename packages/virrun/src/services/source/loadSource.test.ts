@@ -1,4 +1,5 @@
 import { SourceType } from "@/models/source/SourceType";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { loadSource } from "@/services/source/loadSource";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -16,9 +17,9 @@ describe(loadSource, () => {
   test(`routes ${SourceType.Files} to the files loader`, async () => {
     expect.hasAssertions();
 
-    const { cwd, dispose } = await loadSource({ files: { "a.txt": " " }, type: SourceType.Files });
+    const { cwd, dispose } = await loadSource({ files: { [TEST_FILENAME]: " " }, type: SourceType.Files });
 
-    await expect(readFile(join(cwd, "a.txt"), "utf8")).resolves.toBe(" ");
+    await expect(readFile(join(cwd, TEST_FILENAME), "utf8")).resolves.toBe(" ");
 
     await dispose();
   });

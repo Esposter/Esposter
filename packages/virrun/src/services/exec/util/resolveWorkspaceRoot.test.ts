@@ -1,23 +1,22 @@
-import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
-import { createWorkspaceDir } from "@/services/exec/test/createWorkspaceDir.test";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
-import { mkdirSync, rmSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(resolveWorkspaceRoot, () => {
-  let root = "";
+  const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
 
   afterEach(() => {
-    if (root) rmSync(root, { force: true, recursive: true });
-    root = "";
+    cleanup();
   });
 
   test("resolves to the directory holding the lockfile when invoked at the root", () => {
     expect.hasAssertions();
 
-    root = createWorkspaceDir();
+    const root = createWorkspace();
 
     expect(resolveWorkspaceRoot(root)).toBe(root);
   });
@@ -25,8 +24,8 @@ describe(resolveWorkspaceRoot, () => {
   test("walks up from a subdirectory to the lockfile root", () => {
     expect.hasAssertions();
 
-    root = createWorkspaceDir();
-    const nested = join(root, "packages", "app");
+    const root = createWorkspace();
+    const nested = join(root, TEST_FILENAME, TEST_FILENAME);
     mkdirSync(nested, { recursive: true });
 
     expect(resolveWorkspaceRoot(nested)).toBe(root);
@@ -35,7 +34,7 @@ describe(resolveWorkspaceRoot, () => {
   test("throws when no lockfile exists up the tree", () => {
     expect.hasAssertions();
 
-    root = createTemporaryDirectory();
+    const root = create();
 
     expect(() => resolveWorkspaceRoot(root)).toThrow(PNPM_LOCKFILE_FILENAME);
   });

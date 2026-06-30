@@ -19,6 +19,12 @@ jobs:
   # below is unchanged.
   build-packages:
     uses: ./.github/workflows/build-packages.yaml
+  # Capture virrun's warm post-install snapshot once and publish it as a lockfile-hash-keyed `actions/cache`
+  # Entry, so the os-backend jobs (format/lint/typecheck) fork it instead of each cold-installing their own.
+  # Mirrors build-packages: single gated work, fanned out via `needs:` + a read-only cache restore per consumer.
+  warm-snapshot:
+    needs: build-packages
+    uses: ./.github/workflows/warm-snapshot.yaml
 
   build:
     name: Build App
@@ -136,7 +142,7 @@ jobs:
 
   format:
     name: Format
-    needs: build-packages
+    needs: [build-packages, warm-snapshot]
     runs-on: ubuntu-26.04
     steps:
       - name: 📥 Checkout
@@ -153,13 +159,20 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
+      # Read-only restore of the snapshot the warm-snapshot job published (it owns the save), so `virrun --` forks
+      # The warm dep tree instead of cold-installing. Same lockfile-hash key.
+      - name: ♻️ Restore warm snapshot
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/snapshots
+          key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: 📝 Format
         run: pnpm format:check
 
   lint:
     name: Lint
-    needs: build-packages
+    needs: [build-packages, warm-snapshot]
     runs-on: ubuntu-26.04
     steps:
       - name: 📥 Checkout
@@ -175,13 +188,19 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
+      # Read-only restore of the warm-snapshot job's published snapshot so `virrun --` forks the warm dep tree.
+      - name: ♻️ Restore warm snapshot
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/snapshots
+          key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: 🔍 Lint
         run: pnpm lint
 
   typecheck:
     name: Typecheck
-    needs: build-packages
+    needs: [build-packages, warm-snapshot]
     runs-on: ubuntu-26.04
     steps:
       - name: 📥 Checkout
@@ -197,6 +216,12 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
+      # Read-only restore of the warm-snapshot job's published snapshot so `virrun --` forks the warm dep tree.
+      - name: ♻️ Restore warm snapshot
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/snapshots
+          key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: ✅ Typecheck
         run: pnpm typecheck

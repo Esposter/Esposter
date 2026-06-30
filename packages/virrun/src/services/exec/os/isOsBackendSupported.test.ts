@@ -1,21 +1,22 @@
 import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
-import { rmSync } from "node:fs";
 import { describe, expect, test } from "vitest";
+
+const temporaryDirectories = createTemporaryDirectoryTracker();
 // Mirrors the implementation's probe - bwrap present AND able to set up the RAM overlay - so the positive
 // Assertion only runs where the os backend genuinely works (an overlay-capable dev box), not a bare CI
 // Runner nor a host whose bubblewrap lacks overlayfs support (e.g. some WSL2 builds).
 const isOverlayCapable =
   process.platform === "linux" &&
   getResult(() => {
-    const dir = createTemporaryDirectory();
+    const dir = temporaryDirectories.create();
     return withFinalizer(
       () => execFileSync("bwrap", buildBwrapArgs(["true"], dir), { stdio: "pipe" }),
       () => {
-        rmSync(dir, { force: true, recursive: true });
+        temporaryDirectories.cleanup();
       },
     );
   }).match(

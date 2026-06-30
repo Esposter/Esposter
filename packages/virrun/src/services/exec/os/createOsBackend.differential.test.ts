@@ -1,42 +1,44 @@
-﻿import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { assertDifferential } from "@/services/exec/differential/assertDifferential.test";
+import { SHELL_DIFFERENTIAL_CORPUS } from "@/services/exec/differential/differentialCorpus.test";
+import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
-import { TEST_FILE_NAME } from "@/services/exec/util/constants.test";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { createOsBaselineBackend } from "@/services/exec/wsl/createOsBaselineBackend.test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test } from "vitest";
 
 // Compares the observable command result (exit code + stdout + stderr) against native - not host disk
 // Side-effects, since the os backend intentionally hides writes from the host. The isolation contract
 // Is asserted separately below. See features/virrun/specs/correctness.md.
 describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
   const native = createOsBaselineBackend();
-  const COMMANDS = [`echo hello`, `printf 'a\\nb'`, `pwd`, `cat /etc/hostname`, `false`, `sh -c 'exit 7'`];
+  const temporaryDirectories = createTemporaryDirectoryTracker();
 
-  test.each(COMMANDS)("matches the native backend for %j", async (command) => {
+  afterEach(() => {
+    temporaryDirectories.cleanup();
+  });
+
+  test.each(SHELL_DIFFERENTIAL_CORPUS)("matches the native backend for $name", async ({ command, rules }) => {
     expect.hasAssertions();
 
-    const os = createOsBackend();
-    const nativeResult = await native.exec(command, { cwd: "", stdio: "pipe" });
-    const osResult = await os.exec(command, { cwd: "", stdio: "pipe" });
-
-    expect(osResult).toStrictEqual(nativeResult);
+    await assertDifferential(createOsBackend(), native, command, rules);
   });
 
   test("a write inside the sandbox never touches the host disk", async () => {
     expect.hasAssertions();
 
-    const dir = createTemporaryDirectory();
+    const dir = temporaryDirectories.create();
     const os = createOsBackend();
 
-    const writeResult = await os.exec(`echo x > ${TEST_FILE_NAME}`, { cwd: dir, stdio: "pipe" });
+    const writeResult = await os.exec(`echo x > ${TEST_FILENAME}`, { cwd: dir, stdio: "pipe" });
 
     expect(writeResult.exitCode).toBe(0);
-    expect(existsSync(join(dir, TEST_FILE_NAME))).toBe(false);
+    expect(existsSync(join(dir, TEST_FILENAME))).toBe(false);
 
     // A fresh exec gets a fresh RAM upper, so the previous run's write is gone there too.
-    const readResult = await os.exec(`cat ${TEST_FILE_NAME}`, { cwd: dir, stdio: "pipe" });
+    const readResult = await os.exec(`cat ${TEST_FILENAME}`, { cwd: dir, stdio: "pipe" });
 
     expect(readResult.exitCode).not.toBe(0);
   });

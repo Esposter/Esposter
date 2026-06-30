@@ -35,7 +35,7 @@ Wall-clock (primary), plus peak RAM, disk written (should be ~0 for RAM FS), and
 - Same host, same corpus, alternate sandbox vs baseline to cancel drift.
 - Control the OS page cache between cold runs (drop caches) so "cold" is honest.
 - Bench both backends; `vfs` and `os` have different cost profiles. Keep **one** `.bench.ts` source per workload — never fork the logic into `.linux.bench.ts` / `.wsl.bench.ts` files. A workload whose numbers genuinely differ by host (the `os` backend runs `os/linux` natively and `os/wsl` bridged from win32) is named `*.platform.bench.ts`: the reporter then writes per-platform artifacts (`Foo.platform.bench.<platform>.md`, keyed by `process.platform`) so a win32 run and a linux run each update only their own committed file instead of clobbering each other. Plain `*.bench.ts` stays single-artifact and cross-platform. The sandbox task is still labelled by bridge (`os/linux`, `os/wsl`) and the markdown Environment block still records the exact kernel/runner.
-- Track results over time (regressions are bugs). CI-enforcement is deferred until a backend can actually regress → [../deferred/ci-bench-gate.md](../deferred/ci-bench-gate.md); the committed results file (below) is the interim regression check.
+- Track results over time (regressions are bugs). The CI signal is hardware-independent **CodSpeed simulation** (🏎️ Bench, every push — PR regression comments + flamegraphs); the committed results file (below) is the offline diff gate. A hard wall-clock CI fail is rejected as runner-noise-flaky → [../out-of-scope/ci-walltime-gate.md](../out-of-scope/ci-walltime-gate.md). To make CodSpeed simulation a blocking check, mark it required in branch protection (a GitHub repo setting, not a workflow change).
 
 ## Results file
 

@@ -1,15 +1,21 @@
-import { createTemporaryDirectory } from "@/services/exec/test/createTemporaryDirectory.test";
-import { TEST_DIR, TEST_FILE_NAME } from "@/services/exec/util/constants.test";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_DIR, TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticFsProvider";
 import { withFinalizer } from "@esposter/shared";
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test } from "vitest";
 
 const require = createRequire(import.meta.url);
 
 describe(createPlatformaticFsProvider, () => {
+  const temporaryDirectories = createTemporaryDirectoryTracker();
+
+  afterEach(() => {
+    temporaryDirectories.cleanup();
+  });
+
   test("stores, reads, and reports existence of files (unmounted)", () => {
     expect.hasAssertions();
 
@@ -50,8 +56,8 @@ describe(createPlatformaticFsProvider, () => {
   test("overlay reads fall through to real disk until a virtual file shadows them", () => {
     expect.hasAssertions();
 
-    const dir = createTemporaryDirectory();
-    const file = join(dir, TEST_FILE_NAME);
+    const dir = temporaryDirectories.create();
+    const file = join(dir, TEST_FILENAME);
     writeFileSync(file, "");
     const { dispose, mount, writeFile } = createPlatformaticFsProvider({ isOverlayEnabled: true });
     mount(dir);
