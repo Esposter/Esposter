@@ -68,6 +68,7 @@
     "azure-mock": "workspace:*",
     "ctix": "catalog:",
     "rolldown": "catalog:",
+    "typedoc": "catalog:",
     "vitest": "catalog:"
   }
 }

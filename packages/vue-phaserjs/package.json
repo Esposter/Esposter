@@ -51,6 +51,7 @@
     "@vue/test-utils": "catalog:",
     "ctix": "catalog:",
     "type-fest": "catalog:",
+    "typedoc": "catalog:",
     "unplugin-auto-import": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",

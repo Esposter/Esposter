@@ -18,9 +18,6 @@ const typedocConfiguration = {
   packageOptions: {
     entryPoints: ["src/index.ts"],
     includeVersion: true,
-    // Packages mode runs validation per-package conversion, so this must live here (not at the root, where it
-    // Applies only to the merged project) to suppress the ProcessProperties → NodeJS.ProcessEnv reference.
-    intentionallyNotExported: ["NodeJS.ProcessEnv"],
   },
 };
 
