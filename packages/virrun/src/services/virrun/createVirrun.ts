@@ -17,6 +17,7 @@ import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapsho
 import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { loadSource } from "@/services/source/loadSource";
+import { withReappliedPostinstall } from "@/services/virrun/withReappliedPostinstall";
 // "auto" resolves to native until vfs beats it on the gates.
 const backendFactories: Record<BackendType, () => ExecBackend> = {
   [BackendType.Auto]: createNativeBackend,
@@ -51,20 +52,22 @@ export const createVirrun = async ({
     dispose,
     exec: (command, stdio = "pipe") => execBackend.exec(command, toOptions(stdio)),
     fork: async (command, stdio = "pipe") => {
-      // Other backends have no snapshot layer, so fork falls back to a plain exec (no warm reuse).
+      // Other backends have no snapshot layer, so fork falls back to a plain exec (no warm reuse, host artifacts
+      // Already present — nothing to regenerate).
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
       // A Windows host's win32 node_modules can't run inside the Linux sandbox, so the command runs over the
-      // Sandbox's own frozen dep tree via forkSnapshot, never the bare source.
+      // Sandbox's own frozen dep tree via forkSnapshot, never the bare source. The deps-only snapshot omits
+      // Source-derived artifacts, so replay the workspace's postinstall lifecycle in this fork's upper first.
       await ensureSnapshot(stdio);
-      return forkSnapshot(execBackend, command, toOptions(stdio));
+      return forkSnapshot(execBackend, withReappliedPostinstall(command), toOptions(stdio));
     },
     persist: async (command, stdio = "pipe") => {
       // Other backends have no sandbox, so a plain exec writes straight to the host disk — nothing to flush.
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
-      // Same warm-snapshot provisioning as fork; persistRun then tops it with a real upper and reconciles the
-      // Command's writes onto the host.
+      // Same warm-snapshot provisioning and postinstall replay as fork; persistRun then tops it with a real upper
+      // And reconciles the command's writes onto the host.
       await ensureSnapshot(stdio);
-      return persistRun(execBackend, command, toOptions(stdio));
+      return persistRun(execBackend, withReappliedPostinstall(command), toOptions(stdio));
     },
   };
 };

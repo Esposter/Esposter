@@ -5,6 +5,7 @@ import type { SnapshotLocation } from "@/models/exec/SnapshotLocation";
 import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { REAPPLY_POSTINSTALL_COMMAND } from "@/services/exec/snapshot/constants";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
@@ -152,6 +153,28 @@ describe(createVirrun, () => {
     expect(createSnapshot).toHaveBeenCalledTimes(1);
     expect(forkSnapshot).toHaveBeenCalledTimes(1);
     expect(result.stdout).toBe(TEST_FILENAME);
+  });
+
+  test("fork replays the workspace postinstall ahead of the command to regenerate source-derived artifacts", async () => {
+    expect.hasAssertions();
+
+    mockOsBackend();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true));
+    vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
+    const dir = createWorkspace();
+    const { dispose, fork } = await createVirrun({
+      backend: BackendType.Os,
+      source: { dir, type: SourceType.Dir },
+    });
+    await fork([TEST_FILENAME]);
+    await dispose();
+
+    // The deps-only snapshot omits the artifacts, so the fork replays postinstall first and execs the argv verbatim.
+    expect(forkSnapshot).toHaveBeenCalledWith(
+      expect.anything(),
+      ["/bin/sh", "-c", `${REAPPLY_POSTINSTALL_COMMAND} && exec "$@"`, "sh", TEST_FILENAME],
+      expect.anything(),
+    );
   });
 
   test("fork reuses a warm snapshot without reinstalling", async () => {

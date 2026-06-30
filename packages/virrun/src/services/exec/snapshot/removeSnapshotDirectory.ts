@@ -1,6 +1,6 @@
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
 import { execFileSync } from "node:child_process";
-import { chmodSync, existsSync, readdirSync, rmSync } from "node:fs";
+import { chmodSync, existsSync, lstatSync, readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 // Removes a snapshot dir, restoring +rwx top-down first: a capture overlay's on-disk `work/work` scratch is left at
 // Mode 000 (un-traversable), and Node's recursive rmSync refuses to chmod before descending, so a plain remove
@@ -31,6 +31,9 @@ export const removeSnapshotDirectory = (dir: string): void => {
     );
     return;
   }
-  if (existsSync(dir)) makeTraversable(dir);
+  // Only a real directory needs the top-down +rwx restore before rmSync will descend it; a file or symlink (e.g. a
+  // Generated artifact pruneSnapshotUpper drops) is not traversable, and makeTraversable's readdir would ENOTDIR on
+  // It. lstat so a symlink is judged by the link, not its target. rmSync with force removes the leaf either way.
+  if (existsSync(dir) && lstatSync(dir).isDirectory()) makeTraversable(dir);
   rmSync(dir, { force: true, recursive: true });
 };
