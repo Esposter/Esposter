@@ -1,6 +1,6 @@
 import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
-import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { TEST_WSL_CACHE_ROOT_LINUX } from "@/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
 import { homedir } from "node:os";

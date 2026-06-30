@@ -24,9 +24,9 @@ describe(isUnderSnapshotLower, () => {
     // `pnpm install` puts a per-package node_modules under `a/a`, so the snapshot lower carries the shared parents
     // `a` and `a/a` (and the node_modules itself) — but the real source file `a/a/a` beneath them must still flush.
     const snapshotLowerPaths = new Set([
-      TEST_FILENAME,
-      `${TEST_FILENAME}/${TEST_FILENAME}`,
       `${TEST_FILENAME}/${TEST_FILENAME}/${NODE_MODULES_DIRECTORY}`,
+      `${TEST_FILENAME}/${TEST_FILENAME}`,
+      TEST_FILENAME,
     ]);
 
     expect(isUnderSnapshotLower(`${TEST_FILENAME}/${TEST_FILENAME}/${TEST_FILENAME}`, snapshotLowerPaths)).toBe(false);
