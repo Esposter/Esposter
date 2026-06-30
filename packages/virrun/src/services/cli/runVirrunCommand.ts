@@ -23,9 +23,8 @@ export const runVirrunCommand = async (
     const backend = resolveBackend(resolveVirrunConfiguration());
     const virrun = await createVirrun({ backend });
     process.stderr.write(`${formatVirrunBanner({ backend: virrun.backend, command, nodeVersion: process.version })}\n`);
-    // Persist and Fork both run over a frozen dependency snapshot (see Virrun.fork/persist): announce whether this
-    // Run reuses a warm snapshot or pays the one-time install, so a multi-minute first run is explained, not a
-    // Silent stall. Exec skips the snapshot, so it has nothing to announce.
+    // Announce whether this run reuses a warm snapshot or pays the one-time install, so a multi-minute first run is
+    // Explained, not a silent stall. Exec skips the snapshot, so it has nothing to announce.
     if (mode !== ExecutionMode.Exec && virrun.backend === BackendType.Os) {
       const { exists, hash } = resolveSnapshotLocation("");
       process.stderr.write(`${formatVirrunProvisioning({ exists, hash })}\n`);

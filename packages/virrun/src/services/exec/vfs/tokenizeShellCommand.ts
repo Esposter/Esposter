@@ -1,8 +1,6 @@
-// Split a command string into argv tokens, honouring single and double quotes. Minimal on purpose:
-// It exists only so parseNodeInvocation can recognise simple `node -e <code>` forms. Returns undefined
-// On an unbalanced quote, or on an unquoted shell control operator (pipe, redirect, subshell, …) that
-// Needs a real shell — so the caller falls back to native rather than guessing at a broken command.
-// Operators inside quotes are ordinary characters (e.g. `|` as a bitwise-or in the inline code).
+// Split a command string into argv tokens, honouring quotes. Minimal on purpose: only enough for
+// ParseNodeInvocation. Returns undefined on an unbalanced quote or an unquoted shell control operator (which needs
+// A real shell), so the caller falls back to native. Operators inside quotes are ordinary characters.
 const SHELL_OPERATORS = new Set(["$", "&", "(", ")", ";", "<", ">", "`", "|"]);
 
 export const tokenizeShellCommand = (input: string): string[] | undefined => {

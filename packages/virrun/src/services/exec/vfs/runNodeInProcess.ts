@@ -9,17 +9,11 @@ import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import process from "node:process";
 import { runInThisContext } from "node:vm";
-// Run a recognised node invocation in the current process instead of spawning a child: inline code
-// (`node -e`) via runInThisContext, or a file (`node <file>`) via require. The run happens inside an
-// Overlay vfs mounted at the working dir, so the module loader + core fs serve virtual files where
-// They exist and fall through to real disk otherwise — module loading therefore matches native.
-// Captures stdout/stderr/exit when stdio is "pipe" and streams live for "inherit". Returns undefined
-// When the code can't be run faithfully in-process — a compile error, an uncaught error whose stderr
-// We won't reproduce byte-for-byte, or an async result we won't wait on — so the caller falls back to
-// Native and the observable result always matches baseline. Runs serially: it temporarily patches the
-// Global process streams, exit, and require and mounts the vfs inside withFinalizer, all restored
-// Whether the run throws or not. The require cache is cleared back to its pre-run state so each run
-// Re-executes from scratch, matching a fresh native process.
+// Run a recognised node invocation in the current process instead of spawning a child, inside an overlay vfs
+// Mounted at the working dir so the module loader + core fs serve virtual files (falling through to real disk).
+// Returns undefined when the code can't run faithfully in-process so the caller falls back to native. Runs
+// Serially: it patches the global process streams, exit, and require and mounts the vfs inside withFinalizer, all
+// Restored whether the run throws or not, and resets the require cache so each run re-executes from scratch.
 export const runNodeInProcess = (
   { code, file }: NodeInvocation,
   { cwd, stdio }: ExecOptions,
@@ -56,21 +50,17 @@ export const runNodeInProcess = (
       if (cwd !== "") process.chdir(cwd);
       globalThis.require = require;
       fs.mount(baseDir);
-      // Inline code evaluates directly; a file run resolves against the working dir and loads through
-      // The mounted vfs so its modules come from virtual files (or real disk via the overlay).
       const run = () =>
         file === ""
           ? runInThisContext(code, { displayErrors: false })
           : require(require.resolve(resolve(baseDir, file)));
       return getResult(run).match(
-        // A non-Promise completion ran to the end synchronously; an async result needs an event loop we
-        // Will not spin, so defer it to native. process.exitCode picks up an explicit `process.exitCode =`.
+        // An async result needs an event loop we will not spin, so defer it to native.
         (value): ExecResult | undefined =>
           value instanceof Promise
             ? undefined
             : { exitCode: typeof process.exitCode === "number" ? process.exitCode : 0, stderr, stdout },
-        // A clean process.exit(n) is reproduced; any other throw defers to native, which emits node's
-        // Exact stderr/exit code rather than an approximation that would diverge from the baseline.
+        // A clean process.exit(n) is reproduced; any other throw defers to native for node's exact stderr/exit.
         (error): ExecResult | undefined =>
           error instanceof ExitSignalError ? { exitCode: error.code, stderr, stdout } : undefined,
       );

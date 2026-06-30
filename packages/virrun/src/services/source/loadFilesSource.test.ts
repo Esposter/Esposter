@@ -10,9 +10,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-// Wrap the real fs/promises with a call-through spy on rm, so the failure-path leak test can assert dispose
-// Actually removed the dir it created — deterministically, instead of counting shared-tmpdir entries that
-// Parallel tests pollute with the same prefix. Every other export (mkdir/writeFile/readFile) stays real.
+// Call-through spy on rm so the failure-path leak test asserts dispose removed its dir deterministically, not
+// By counting shared-tmpdir entries parallel tests pollute. Other fs exports stay real.
 const { rm } = vi.hoisted(() => ({ rm: vi.fn<typeof baseRm>() }));
 
 vi.mock(import("node:fs/promises"), async (importOriginal) => {

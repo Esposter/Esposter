@@ -2,12 +2,10 @@ import { VIRRUN_CACHE_DIRECTORY_NAME } from "@/services/exec/util/constants";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 // The default WSL distro's ext4 home as a Windows UNC (`\\wsl.localhost\<distro>\home\<user>\.virrun`). virrun's
-// Write-heavy cache — the snapshot overlay upper/work dirs, the pnpm store, the corepack home — lives here rather
-// Than under the repo or `~` on the Windows drive, because those resolve to `/mnt/c` (v9fs) inside WSL, which is
-// 15-64x slower for the many-small-file toolchain install (and silently never finishes capturing the snapshot).
-// The few host-side directory ops (mkdir/mkdtemp/rename/exists) Node runs over this UNC are cheap; the bulk node
-// _modules writes happen Linux-side at native ext4 speed once readWslPath maps the UNC back to its `/home/...` path.
-// Memoized — it shells out to wsl.exe twice (the distro list, then `$HOME`), and neither can change in-process.
+// Write-heavy cache (snapshot overlay dirs, pnpm store, corepack home) lives here rather than under the repo or `~`
+// On the Windows drive, because those resolve to `/mnt/c` (v9fs) inside WSL — 15-64x slower for the many-small-file
+// Install, and it silently never finishes capturing the snapshot. readWslPath later maps the UNC back to `/home/...`
+// So the bulk writes happen Linux-side at native ext4 speed.
 let wslNativeCacheRoot = "";
 
 export const getWslNativeCacheRoot = (): string => {

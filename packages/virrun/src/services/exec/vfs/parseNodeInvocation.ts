@@ -1,11 +1,8 @@
 ﻿import type { NodeInvocation } from "@/models/exec/NodeInvocation";
 
 import { tokenizeShellCommand } from "@/services/exec/vfs/tokenizeShellCommand";
-// Recognise `node -e <code>` / `node --eval <code>` (inline) and `node <file>` (a lone non-flag
-// Path, no script args yet) and return what the in-process runner should execute. Returns undefined
-// For anything we do not emulate - other flags, file runs with extra args, or shell features
-// (tokenizeShellCommand rejects unquoted operators) - so the vfs backend defers to native and
-// Correctness is preserved.
+// Recognise `node -e/--eval <code>` and a lone `node <file>` (no script args) and return what the in-process
+// Runner should execute. Returns undefined for anything not emulated, so the vfs backend defers to native.
 export const parseNodeInvocation = (command: readonly string[] | string): NodeInvocation | undefined => {
   const tokens = typeof command === "string" ? tokenizeShellCommand(command) : [...command];
   if (!tokens) return undefined;
