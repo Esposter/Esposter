@@ -1,3 +1,4 @@
+import type { InitArgs } from "@/models/cli/InitArgs";
 import type { ArgsDef, CommandDef } from "citty";
 
 import { BackendType } from "@/models/virrun/BackendType";
@@ -8,16 +9,13 @@ import { defineCommand } from "citty";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import process from "node:process";
-// Explicit annotation + `satisfies ArgsDef`: the annotation is what isolatedDeclarations emits (an exported
-// `CommandDef<typeof initArgs>` needs the const's type declared, not inferred — and a specific-args CommandDef is
+// Explicit InitArgs annotation + `satisfies ArgsDef`: the annotation is what isolatedDeclarations emits (an
+// Exported `CommandDef<InitArgs>` needs the const's type declared, not inferred — and a specific-args CommandDef is
 // Not assignable to the generic CommandDef), while `satisfies ArgsDef` validates the literal against citty's own
-// Arg-definition shape. The annotation keeps `options` a mutable `BackendType[]` (citty's EnumArgDef wants a mutable
+// Arg-definition shape. InitArgs keeps `options` a mutable `BackendType[]` (citty's EnumArgDef wants a mutable
 // Array, so a whole-object `as const` — which would make it readonly — is out) and pins the literal `type: "enum"`,
 // Together letting citty infer `args.backend` as BackendType rather than a widened string.
-const initArgs: {
-  backend: { default: BackendType; description: string; options: BackendType[]; type: "enum" };
-  force: { default: boolean; description: string; type: "boolean" };
-} = {
+const initArgs: InitArgs = {
   backend: {
     default: BackendType.Auto,
     description: "Backend a sandboxed command runs through.",
@@ -29,7 +27,7 @@ const initArgs: {
 // `virrun init [--backend] [--force]` — writes a `virrun.config.json` in the cwd selecting which backend sandboxed
 // Commands run through. Refuses to clobber an existing config unless `--force`, so a re-run never silently rewrites
 // A committed choice. The `$schema`-pointed content comes from buildVirrunConfigurationContent.
-export const initCommand: CommandDef<typeof initArgs> = defineCommand({
+export const initCommand: CommandDef<InitArgs> = defineCommand({
   args: initArgs,
   meta: {
     description: "Write a virrun.config.json selecting which backend sandboxed commands use.",

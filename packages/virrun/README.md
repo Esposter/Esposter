@@ -11,6 +11,7 @@ An ephemeral, in-memory virtual runner: boot a repo into a RAM-backed filesystem
 
 - 🚀 [Getting Started](#getting-started)
 - 🧱 [Backends](#backends)
+- ✅ [Shipped](#shipped)
 - 📖 [Documentation](#documentation)
 - ⚖️ [License](#license)
 
@@ -33,6 +34,18 @@ The `virrun -- <cmd>` prefix sandboxes any command; the child's exit code is pro
 | `vfs`    | none (in-process, no spawn)         |         —          | Recognised pure-JS `node` invocations in-process; falls back to native.                |
 | `os`     | bubblewrap RAM-overlay + namespaces |         —          | Linux or Windows/WSL2 + `bwrap`. Never falls back — an un-isolated run would be wrong. |
 | `auto`   | resolves to the best gate-proven    |         —          | Resolves to `native` until an isolating backend beats the gates.                       |
+
+## <a name="shipped">✅ Shipped</a>
+
+What's landed and dogfooded in this repo (the [roadmap](https://github.com/Esposter/Esposter/blob/main/features/virrun/roadmap.md) tracks open work; both gates — differential correctness + speed — run from the first backend onward):
+
+- **`vfs` backend** — recognised pure-JS `node` invocations run in-process, no spawn; falls back to native otherwise.
+- **`os` backend** — bubblewrap RAM-overlay exec with a shared CAS dep store and the WSL2 bridge (macOS bridge is the one open piece).
+- **Snapshot + warm-fork** — a lockfile-hash-keyed warm post-install snapshot, forked read-only per run so commands reuse the dep tree instead of reinstalling.
+- **Write-back persistence** — a normal `virrun -- <cmd>` flushes produced files to the host so disk matches native; the ephemeral fork stays for CI/verification. → [write-back.md](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/write-back.md)
+- **CLI (citty)** — `run` / `exec` / `snapshot` / `init` / `cache` subcommands with `--help`, the bare `virrun -- <cmd>` prefix preserved as the default.
+- **Config backend selection** — committed `virrun.config.json` picks the backend; the prefix stays the sole on/off switch (no allowlist).
+- **Dogfooded scripts** — `format`, `lint`/`lint:fix`, `test`, `typecheck`, and the producing `build:app` / `build:docs` route through the prefix; the matching 🏗️ CI jobs fork the warm snapshot. `build:packages` (bootstrap) and `coverage` (correctness gate) stay native by design — see [ci.md](https://github.com/Esposter/Esposter/blob/main/packages/virrun/readme/ci.md).
 
 ## <a name="documentation">📖 Documentation</a>
 

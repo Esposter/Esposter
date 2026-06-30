@@ -25,7 +25,8 @@ Ordered from lowest commitment to highest. A repo adopts left-to-right and can r
    {
      "scripts": {
        "test": "virrun -- vitest", // routed
-       "build": "nuxt build", // still native — not yet adopted
+       "build:app": "virrun -- nuxt build", // routed — output flushed via write-back
+       "build:packages": "rolldown …", // still native — bootstrap that produces the virrun bin
      },
    }
    ```
