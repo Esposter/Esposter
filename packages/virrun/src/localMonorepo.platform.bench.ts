@@ -62,25 +62,18 @@ describe.skipIf(!isOsSupported)("install - real workspace dependency closure (co
   });
 });
 
-// The snapshot payoff: capture the install once, then a forked run reuses the dep tree instead of reinstalling.
-// `cold` is the os backend reinstalling from a fresh tmpfs upper every run; `warm` forks the captured snapshot,
-// So it should dwarf the cold baseline - that gap is the entire reason this layer exists. Capture at module scope,
-// Not in beforeAll: Vitest fires bench() callbacks before suite hooks resolve, so a beforeAll snapshot wouldn't
-// Exist yet when the warm fork runs - forkSnapshot would throw and the empty sample set yields a NaN mean. Top
-// Level await guarantees the upper layer is materialized first. Keyed by the lockfile hash, this one snapshot also
-// Backs the typecheck/build/test forks below, which run over the real repo (same lockfile - same cache entry).
+// Capture the install once into a warm snapshot the forks below reuse. There is deliberately NO "warm install vs
+// Cold reinstall" group: re-running `pnpm install` over a snapshot that already holds node_modules measures pnpm
+// Stat/purge-storming that tree through the disk-backed overlay lower (CI=true forces the purge), not the snapshot
+// Payoff - so warm-install loses to a clean tmpfs cold-install and the number is pure noise. The real warm payoff
+// Is "run the real command without reinstalling", which the typecheck/build/test fork groups below already measure
+// Against the native baseline; the install win itself is the `install` group above (native vs os). Capture at module
+// Scope, not in beforeAll: Vitest fires bench() callbacks before suite hooks resolve, so a beforeAll snapshot would
+// Not exist yet when the first fork runs - forkSnapshot would throw and the empty sample set yields a NaN mean. Top
+// Level await guarantees the upper layer is materialized first. Keyed by the lockfile hash, this one snapshot backs
+// Every fork below, which runs over the real repo (same lockfile - same cache entry).
 if (isOsSupported)
   await createSnapshot(createOsBackend(), resolveSetupCommand(), createOsInstallOptions(warmCorpus, "pipe"));
-
-describe.skipIf(!isOsSupported)("install - warm fork vs cold reinstall", () => {
-  bench("cold", async () => {
-    await createOsBackend().exec(resolveSetupCommand(), createOsInstallOptions(warmCorpus, "pipe"));
-  });
-
-  bench("warm", async () => {
-    await forkSnapshot(createOsBackend(), resolveSetupCommand(), createOsInstallOptions(warmCorpus, "pipe"));
-  });
-});
 
 describe.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", () => {
   const command = SHARED_COMMAND("typecheck");

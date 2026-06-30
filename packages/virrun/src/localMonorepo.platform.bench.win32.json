@@ -25,25 +25,6 @@
         {
           "benchmarks": [
             {
-              "mean": 5299.692879999941,
-              "name": "cold",
-              "p99": 5535.6695999999065,
-              "rme": 1.8083019022284639,
-              "sampleCount": 10
-            },
-            {
-              "mean": 4935.0877800000135,
-              "name": "warm",
-              "p99": 5358.488799999934,
-              "rme": 2.688135325700004,
-              "sampleCount": 10
-            }
-          ],
-          "fullName": "install - warm fork vs cold reinstall"
-        },
-        {
-          "benchmarks": [
-            {
               "mean": 810.327249999973,
               "name": "native",
               "p99": 829.3573000000324,

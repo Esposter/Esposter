@@ -23,13 +23,6 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 | native   | 1.00×   | 6904.2868 | ±2.04% | 7281.1065 | 10      |
 | os/linux | 1.84×   | 3749.0268 | ±1.53% | 3949.4043 | 10      |
 
-## install - warm fork vs cold reinstall
-
-| task | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
-| ---- | ------- | --------- | ------ | --------- | ------- |
-| cold | 1.00×   | 4119.4560 | ±3.30% | 4409.8660 | 10      |
-| warm | 0.45×   | 9193.3118 | ±2.30% | 9774.6337 | 10      |
-
 ## typecheck - packages/shared (cold)
 
 | task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
