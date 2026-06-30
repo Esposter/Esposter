@@ -29,7 +29,6 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 // Os-backend install acceptance. The snapshot cache is redirected under $HOME (not os.tmpdir) because the
 // Sandbox masks /tmp with --tmpfs, which would hide a /tmp overlay layer from the command inside.
 describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then fork (acceptance)", () => {
-  const forkOkMarker = "FORK_OK";
   let corpus = "";
   let cacheHome = "";
 

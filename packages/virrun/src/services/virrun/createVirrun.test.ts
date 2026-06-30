@@ -9,6 +9,7 @@ import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { TEST_WSL_CACHE_DIR_NAME } from "@/services/exec/wsl/constants.test";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { rmSync } from "node:fs";
@@ -39,7 +40,12 @@ const mockOsBackend = () =>
     exec: (): Promise<ExecResult> => Promise.resolve({ exitCode: 0, stderr: "", stdout: "" }),
     name: BackendType.Os,
   });
-const snapshotLocation = (exists: boolean): SnapshotLocation => ({ dir: "", exists, hash: "hash", upperDir: "upper" });
+const snapshotLocation = (exists: boolean): SnapshotLocation => ({
+  dir: "",
+  exists,
+  hash: TEST_FILENAME,
+  upperDir: TEST_FILENAME,
+});
 
 describe(createVirrun, () => {
   const { cleanup, createWorkspace } = createTemporaryDirectoryTracker();
@@ -59,16 +65,16 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     const { dispose, exec } = await createVirrun();
-    const result = await exec(`node -e "process.stdout.write('hello')"`);
+    const result = await exec(`node -e "process.stdout.write('${TEST_FILENAME}')"`);
     await dispose();
 
-    expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: "hello" });
+    expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
   });
 
   test("injects the VIRRUN presence signal into the command environment", async () => {
     expect.hasAssertions();
 
-    const command = `node -e "process.stdout.write(process.env.VIRRUN ?? 'unset')"`;
+    const command = `node -e "process.stdout.write(process.env.VIRRUN ?? '${TEST_FILENAME}')"`;
     const { dispose, exec } = await createVirrun();
     const { stdout } = await exec(command);
     await dispose();
@@ -116,11 +122,11 @@ describe(createVirrun, () => {
 
     // Pin a non-os backend explicitly so this stays on the fallback branch even if Auto later resolves to Os.
     const { dispose, fork } = await createVirrun({ backend: BackendType.Native });
-    const result = await fork(`node -e "process.stdout.write('forked')"`);
+    const result = await fork(`node -e "process.stdout.write('${TEST_FILENAME}')"`);
     await dispose();
 
     // Fork on a non-os backend is a plain exec — no snapshot capture, the command's result passes straight through.
-    expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: "forked" });
+    expect(result).toStrictEqual({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     expect(createSnapshot).not.toHaveBeenCalled();
     expect(forkSnapshot).not.toHaveBeenCalled();
   });
@@ -134,7 +140,7 @@ describe(createVirrun, () => {
       location: snapshotLocation(true),
       result: { exitCode: 0, stderr: "", stdout: "" },
     });
-    vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: "forked" });
+    vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     const dir = createWorkspace();
     const { dispose, fork } = await createVirrun({
       backend: BackendType.Os,
@@ -145,7 +151,7 @@ describe(createVirrun, () => {
 
     expect(createSnapshot).toHaveBeenCalledTimes(1);
     expect(forkSnapshot).toHaveBeenCalledTimes(1);
-    expect(result.stdout).toBe("forked");
+    expect(result.stdout).toBe(TEST_FILENAME);
   });
 
   test("fork reuses a warm snapshot without reinstalling", async () => {
@@ -153,7 +159,7 @@ describe(createVirrun, () => {
 
     mockOsBackend();
     vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true));
-    vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: "forked" });
+    vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     const dir = createWorkspace();
     const { dispose, fork } = await createVirrun({
       backend: BackendType.Os,

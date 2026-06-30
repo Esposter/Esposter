@@ -6,7 +6,7 @@ import { describe } from "vitest";
 // The dependency directory an install materialises — the snapshot lower in a fork, never flushed back to the host.
 export const NODE_MODULES_DIRECTORY = "node_modules";
 // The pnpm content-addressed modules directory inside an installed workspace — where the per-package bins live.
-export const PNPM_MODULES_DIRECTORY = `${NODE_MODULES_DIRECTORY}/.pnpm`;
+export const PNPM_MODULES_DIRECTORY: string = `${NODE_MODULES_DIRECTORY}/.pnpm`;
 // Locate esbuild's native (Go) binary in the installed closure, then print its version — the proof that a real
 // Native subprocess executes inside the sandbox. Split so a caller can interpose its own guards between them.
 // The closure pins several esbuild versions, so the matches are sorted before taking the first: `find` emits in
