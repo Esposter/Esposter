@@ -7,7 +7,7 @@ import { resolveBackend } from "@/services/configuration/resolveBackend";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createVirrun } from "@/services/virrun/createVirrun";
-import { getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
 import { performance } from "node:perf_hooks";
 import process from "node:process";
 // The shared orchestration behind the passthrough commands (`virrun -- <cmd>`, `virrun run`, `virrun exec`):
@@ -40,9 +40,16 @@ export const runVirrunCommand = async (
     }
     return withFinalizerAsync(
       () => {
-        if (mode === ExecutionMode.Persist) return virrun.persist(command, "inherit");
-        else if (mode === ExecutionMode.Fork) return virrun.fork(command, "inherit");
-        else return virrun.exec(command, "inherit");
+        switch (mode) {
+          case ExecutionMode.Exec:
+            return virrun.exec(command, "inherit");
+          case ExecutionMode.Fork:
+            return virrun.fork(command, "inherit");
+          case ExecutionMode.Persist:
+            return virrun.persist(command, "inherit");
+          default:
+            return exhaustiveGuard(mode);
+        }
       },
       () => virrun.dispose(),
     );

@@ -44,6 +44,13 @@ export const createVirrun = async ({
     isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio };
   const toInstallOptions = (stdio: ExecStdio): ExecOptions =>
     isOsBackend ? createOsInstallOptions(cwd, stdio) : toOptions(stdio);
+  // Provision the sandbox's own dep closure once, frozen into a lockfile-hash-keyed snapshot. Cold: capture the
+  // Frozen install (its node_modules persist into the upper). Warm: the snapshot already exists, so this is a no-op.
+  // Shared by fork and persist so the two warm-snapshot paths can't drift on the next change.
+  const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {
+    if (!resolveSnapshotLocation(cwd).exists)
+      await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
+  };
   return {
     backend: execBackend.name,
     dispose,
@@ -54,11 +61,8 @@ export const createVirrun = async ({
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
       // The os backend is a Linux sandbox. We cannot tell from outside whether any dependency ships a
       // Platform-specific binary, and on a Windows host the host's win32 node_modules can't run inside it — so
-      // Always provision the sandbox's own dep closure once, frozen into a lockfile-hash-keyed snapshot, then run
-      // The command over it. Cold: capture the frozen install (its node_modules persist into the upper). Warm:
-      // Reuse it. Either way `command` runs over a populated dep tree via forkSnapshot, never the bare source.
-      if (!resolveSnapshotLocation(cwd).exists)
-        await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
+      // `command` runs over the sandbox's own frozen dep tree via forkSnapshot, never the bare source.
+      await ensureSnapshot(stdio);
       return forkSnapshot(execBackend, command, toOptions(stdio));
     },
     persist: async (command, stdio = "pipe") => {
@@ -67,8 +71,7 @@ export const createVirrun = async ({
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
       // Same warm-snapshot provisioning as fork (the dep closure the run stacks read-only); persistRun then tops it
       // With a real upper and reconciles the command's writes onto the host.
-      if (!resolveSnapshotLocation(cwd).exists)
-        await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
+      await ensureSnapshot(stdio);
       return persistRun(execBackend, command, toOptions(stdio));
     },
   };

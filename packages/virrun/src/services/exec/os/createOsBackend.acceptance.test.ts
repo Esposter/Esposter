@@ -6,6 +6,7 @@ import {
   ACCEPTANCE_TIMEOUT_MINUTES,
   ESBUILD_VERSION_REGEX,
   FIND_ESBUILD_BINARY_COMMAND,
+  NODE_MODULES_DIRECTORY,
   RUN_ESBUILD_VERSION_COMMAND,
 } from "@/services/exec/test/constants.test";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
@@ -46,7 +47,7 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace in
       // Native binary (esbuild's Go executable) actually runs inside the sandbox.
       const command = [
         resolveSetupCommand(),
-        `test "$(find . -path '*/node_modules/*' -type f | wc -l)" -gt ${minNodeModulesFileCount}`,
+        `test "$(find . -path '*/${NODE_MODULES_DIRECTORY}/*' -type f | wc -l)" -gt ${minNodeModulesFileCount}`,
         FIND_ESBUILD_BINARY_COMMAND,
         RUN_ESBUILD_VERSION_COMMAND,
         `echo ${sandboxOkMarker}`,
@@ -57,7 +58,7 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace in
       expect(stdout).toContain(sandboxOkMarker);
       expect(stdout).toMatch(ESBUILD_VERSION_REGEX);
       // The subprocess wall held: nothing the install wrote reached the host corpus on disk.
-      expect(existsSync(join(corpus, "node_modules"))).toBe(false);
+      expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
       // A real, frozen-lockfile install of the whole workspace corpus into a RAM overlay routinely runs past
       // The smaller default caps on a cold store, so allow the long acceptance timeout before failing.
     },

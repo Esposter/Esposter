@@ -3,10 +3,11 @@ import type { OverlayEntry } from "@/models/exec/OverlayEntry";
 import { FlushOpType } from "@/models/exec/FlushOp";
 import { OverlayEntryKind } from "@/models/exec/OverlayEntryKind";
 import { buildFlushPlan } from "@/services/exec/snapshot/buildFlushPlan";
+import { NODE_MODULES_DIRECTORY } from "@/services/exec/test/constants.test";
 import { describe, expect, test } from "vitest";
 
 const never = (): boolean => false;
-const isSnapshotLowerPath = (relativePath: string): boolean => relativePath.startsWith("node_modules/");
+const isSnapshotLowerPath = (relativePath: string): boolean => relativePath.startsWith(`${NODE_MODULES_DIRECTORY}/`);
 
 describe(buildFlushPlan, () => {
   test(`a ${OverlayEntryKind.Whiteout} becomes a single ${FlushOpType.Delete}`, () => {
@@ -40,7 +41,7 @@ describe(buildFlushPlan, () => {
     expect.hasAssertions();
 
     const entries: OverlayEntry[] = [
-      { kind: OverlayEntryKind.Regular, relativePath: "node_modules/.vite/x" },
+      { kind: OverlayEntryKind.Regular, relativePath: `${NODE_MODULES_DIRECTORY}/.vite/x` },
       { kind: OverlayEntryKind.Regular, relativePath: "a" },
     ];
 

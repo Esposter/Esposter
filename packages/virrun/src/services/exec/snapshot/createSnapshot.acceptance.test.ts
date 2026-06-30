@@ -9,6 +9,7 @@ import {
     ACCEPTANCE_TIMEOUT_MINUTES,
     ESBUILD_VERSION_REGEX,
     FIND_ESBUILD_BINARY_COMMAND,
+    NODE_MODULES_DIRECTORY,
     PNPM_MODULES_DIRECTORY,
     RUN_ESBUILD_VERSION_COMMAND,
 } from "@/services/exec/test/constants.test";
@@ -59,7 +60,7 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
 
     expect(location.exists).toBe(true);
     // The install wrote into the snapshot, not the source corpus on disk.
-    expect(existsSync(join(corpus, "node_modules"))).toBe(false);
+    expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
 
     // Fork: stack the frozen snapshot read-only over the source, offline and with no shared store. The run
     // Sees the full dependency closure (no reinstall) and a native binary (esbuild) executes; its own write
