@@ -1,6 +1,4 @@
-// The end-of-run line the CLI prints to stderr once the backend returns: the command that ran, the exit
-// Code it propagates, and the wall-clock duration. Pairs with formatVirrunBanner so each `virrun -- <cmd>`
-// Brackets its output with a start + result line, making timing and outcome visible in CI logs without a flag.
+// End-of-run line pairing with formatVirrunBanner so each run brackets its output with a start + result line.
 export const formatVirrunResult = ({
   command,
   durationMs,

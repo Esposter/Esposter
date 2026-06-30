@@ -27,8 +27,19 @@ The `os` backend keys a warm post-install snapshot by the pnpm lockfile hash and
 In CI this directory is persisted across runs with `actions/cache`, mirroring the repo's `build-packages` content-hash cache:
 
 - A reusable **`warm-snapshot.yaml`** job captures the snapshot **once** per run (`virrun -- true`, cold path = install) and the `actions/cache` entry — keyed by `hashFiles('pnpm-lock.yaml')` — persists `~/.virrun/snapshots` for this run and every later run.
-- The `format` / `lint` / `typecheck` jobs `needs: [build-packages, warm-snapshot]` and restore that cache read-only, so each `virrun -- <cmd>` forks the warm snapshot instead of cold-installing. One install per run, reused across runs.
+- The `format` / `lint` / `typecheck` / `build` / `build-docs` jobs `needs: [build-packages, warm-snapshot]` and restore that cache read-only, so each `virrun -- <cmd>` forks the warm snapshot instead of cold-installing. One install per run, reused across runs. (`build` / `build-docs` route the Nuxt + TypeDoc builds through the prefix now that write-back flushes produced files to host — see [write-back.md](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/write-back.md).)
 
-Only `~/.virrun/snapshots` is cached. The upper is built with pnpm `package-import-method=copy`, so it is self-contained — a fork never reads the repo-local `.virrun/store` (which is recreated empty if absent). The `coverage` job is the exception: it runs Vitest **natively**, not through `virrun`, because the os backend's ephemeral tmpfs upper would discard the coverage output the upload step needs.
+These jobs (and the cold-path capture) run `setup-packages` with **`install: false`**: `node_modules` comes from the frozen snapshot inside the sandbox, so a host `pnpm i` is redundant — it only ever served to resolve the `virrun` bin. Instead the action exposes a `virrun` launcher on `$GITHUB_PATH` (a one-line wrapper over the self-contained `dist/cli.js` delivered by the `build-packages` artifact), so the unchanged `virrun -- <cmd>` scripts still resolve without `node_modules/.bin`:
+
+```yaml
+- name: 📦 Setup Packages
+  uses: ./.github/actions/setup-packages
+  with:
+    install: false # skip the redundant host pnpm i; expose the virrun bin from the artifact
+```
+
+This drops the multi-minute host install from every verify job. The `package-builds` dist artifact is still downloaded — `typecheck` resolves `@esposter/*` to their built `main`.
+
+Only `~/.virrun/snapshots` is cached. The upper is built with pnpm `package-import-method=copy`, so it is self-contained — a fork never reads the repo-local `.virrun/store` (which is recreated empty if absent). The `coverage` job is the exception: it runs Vitest **natively**, not through `virrun`. Write-back now persists produced files, so the discarded-upper concern is moot — the real blocker is **nesting**: the suite exercises virrun's own os backend, and `isOsBackendSupported()` probes by spawning a nested `bwrap` + overlay. Inside a virrun sandbox that nested probe fails (unprivileged user namespaces forbid it), so the `*.differential.test.ts` files `describe.skipIf` themselves away — silently removing the correctness gate the coverage shards exist to enforce. Coverage stays native to keep that gate live.
 
 A dependency change yields a new lockfile hash → a new cache key and snapshot, so a stale snapshot is never reused.

@@ -5,12 +5,9 @@ import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterAll, bench, describe } from "vitest";
-// The speed gate for the vfs backend. The hot path - a short-lived `node -e` - is exactly what the
-// In-process runner exists to win: vfs evaluates the code in this process (microseconds) while native
-// Pays full node process startup (tens of ms) per call. The file-run path is the same win for
-// `node <file>`. The fall-back path runs a command vfs cannot handle (`node -p`) through both backends
-// To confirm the parse-and-delegate adds ~no overhead - a backend that taxed the commands it punts on
-// Would be a net loss. Compare runs against the colocated createVfsBackend.bench.md.
+// The speed gate for the vfs backend: the in-process runner evaluates a short-lived `node -e`/`node <file>` in
+// This process (microseconds) where native pays full process startup. The fall-back case (`node -p`) runs through
+// Both backends to confirm parse-and-delegate adds ~no overhead on commands vfs punts to native.
 const EVAL_COMMAND = `node -e "process.stdout.write('bench')"`;
 const FALLBACK_COMMAND = `node -p "1 + 1"`;
 const native = createNativeBackend();

@@ -57,11 +57,13 @@
     "@esposter/shared-node": "workspace:*",
     "@platformatic/vfs": "catalog:",
     "@types/node": "catalog:",
+    "citty": "catalog:",
     "ctix": "catalog:",
     "dayjs": "catalog:",
     "empathic": "catalog:",
     "fast-check": "catalog:",
     "rolldown": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "zod": "catalog:"
   }
 }

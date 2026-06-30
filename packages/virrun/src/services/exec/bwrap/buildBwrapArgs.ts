@@ -2,27 +2,17 @@ import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { OverlayLayers } from "@/models/exec/OverlayLayers";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
-// Builds the bubblewrap argv (excluding the `bwrap` binary itself — the factory spawns bwrap with
-// These args) that wraps a command in a RAM-overlay sandbox. `--ro-bind / /` gives the read-only
-// System view; `--overlay-src <dir>` sets the read-only lower (the real source) and the top mount over
-// The working dir is one of two shapes (see `overlayLayers`): by default `--tmp-overlay <dir>` makes the
-// Upper an invisible tmpfs (RAM) — so reads fall through to the source and every write stays in RAM,
-// Never touching the host disk. `--unshare-all` drops into fresh namespaces (no root, no net) and
-// `--die-with-parent` ties the sandbox lifetime to ours. `isNetworkEnabled` re-adds just the network
-// Namespace (`--share-net`, only valid alongside `--unshare-all`) for workloads that must fetch, e.g. a
-// Real install. `bindDirs` are bind-mounted writable at their own path after the RAM overlay (so they
-// Overmount it) — for intentional host caches like the shared package store, whose writes must persist on
-// Disk instead of vanishing in RAM.
+// Builds the bubblewrap argv (without the `bwrap` binary) wrapping a command in a RAM-overlay sandbox. Flag intent:
+//   - `--ro-bind / /` read-only system view; `--overlay-src <dir>` read-only lower (the real source).
+//   - default `--tmp-overlay <dir>` makes the upper an invisible tmpfs, so writes stay in RAM, never the host disk.
+//   - `--unshare-all` fresh namespaces (no root, no net); `--die-with-parent` ties sandbox lifetime to ours.
+//   - `isNetworkEnabled` re-adds only the network namespace (`--share-net`, valid only with `--unshare-all`).
+//   - `bindDirs` bind-mounted writable AFTER the overlay (overmounting it) for host caches whose writes must persist.
 //
-// `overlayLayers` parametrizes the working-dir overlay for the snapshot layer (specs/snapshot-fork.md):
-//   - `lowerDirs` adds extra read-only `--overlay-src` lowers above the source, lowest-priority first — a
-//     Fork run stacks the frozen snapshot upper here so its files shadow the source.
-//   - `upperDir` + `workDir` switch the top mount to a persistent `--overlay <upperDir> <workDir> <dir>`, so
-//     A capture run's post-install writes land as real files on disk instead of vanishing in tmpfs. Both
-//     Must be supplied together; one without the other is a misuse and throws.
-//
-// A string command runs through `/bin/sh -c` (operator passthrough); an argv array runs as-is. Pure
-// Function so the argv shape is unit-testable on any platform (incl. win32).
+// `overlayLayers` parametrizes the working-dir overlay (specs/snapshot-fork.md): `lowerDirs` adds extra read-only
+// Lowers (a fork stacks the frozen snapshot upper here to shadow the source); `upperDir`+`workDir` switch to a
+// Persistent `--overlay` so a capture's writes land on disk — both required together, one without the other throws.
+// A string command runs through `/bin/sh -c`; an argv array runs as-is.
 export const buildBwrapArgs = (
   command: readonly string[] | string,
   cwd: string,

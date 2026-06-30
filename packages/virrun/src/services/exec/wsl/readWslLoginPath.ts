@@ -1,3 +1,5 @@
+import { dayjs } from "@/services/dayjs";
+import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 // Markers bracketing the printed PATH so an interactive rc that writes to stdout itself (prompts, MOTD, version
@@ -8,21 +10,13 @@ const PATH_END = "__VIRRUN_LOGIN_PATH_END__";
 // Cap the interactive-login capture: a blocking rc/profile (a prompt, a hung version-manager hook) would
 // Otherwise stall createVirrun indefinitely. On timeout execFileSync throws, getResult turns it into "", and the
 // Command falls back to the default PATH — the same degraded path as a missing WSL.
-const WSL_LOGIN_PATH_TIMEOUT_MS = 5000;
-// Resolve the user's own login shell (prefer $SHELL, fall back to the passwd entry, then /bin/sh) and run it as a
-// Login + interactive shell, so it sources the exact profile + rc files a real terminal would (~/.zprofile,
-// ~/.zshrc, ~/.bash_profile, ~/.bashrc…). That is where a version manager (fnm, nvm, asdf, volta…) activates and
-// Puts node on PATH — and it is invisible to the bare `wsl.exe --exec` the os backend uses, which sources none of
-// Them. -i is required, not just -l: zsh/bash only source the interactive rc (~/.zshrc, ~/.bashrc) when
-// Interactive, and activation usually lives there. Capturing the resulting PATH lets virrun mirror the user's
-// Real terminal environment with zero config — no per-machine setup field.
-const CAPTURE_SCRIPT = [
-  // oxlint-disable-next-line no-template-curly-in-string -- `${SHELL:-}` is shell parameter expansion, not a JS template placeholder
-  'SHELL_BIN="${SHELL:-}"',
-  '[ -x "$SHELL_BIN" ] || SHELL_BIN="$(getent passwd "$(id -un)" 2>/dev/null | cut -d: -f7)"',
-  '[ -x "$SHELL_BIN" ] || SHELL_BIN=/bin/sh',
-  `exec "$SHELL_BIN" -lic 'printf "${PATH_BEGIN}%s${PATH_END}" "$PATH"'`,
-].join("; ");
+const WSL_LOGIN_PATH_TIMEOUT_MS = dayjs.duration(5, "seconds").asMilliseconds();
+// Run a marked `printf $PATH` inside the user's real login + interactive shell (buildWslLoginShellCommand), so it
+// Sources the exact profile + rc files a real terminal would — that is where a version manager (fnm, nvm, asdf,
+// Volta…) activates and puts node on PATH, invisible to the bare `wsl.exe --exec` the os backend uses. Capturing
+// The resulting PATH lets virrun mirror the user's real terminal environment with zero config — no per-machine
+// Setup field. The markers let us slice the PATH out even when the rc prints its own banner.
+const CAPTURE_SCRIPT = buildWslLoginShellCommand(`printf "${PATH_BEGIN}%s${PATH_END}" "$PATH"`);
 // Captures the PATH a WSL interactive login shell sees, so the os backend can run profile-bound toolchains.
 // GetResult turns a missing WSL/shell (or a non-zero exit) into "" rather than a throw: the caller then injects
 // Nothing and the command runs under the default PATH, so a broken capture degrades to today's behaviour.

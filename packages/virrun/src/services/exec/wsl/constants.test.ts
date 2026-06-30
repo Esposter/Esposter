@@ -9,13 +9,11 @@ import { describe } from "vitest";
 
 export const TEST_REPO_ROOT_WIN: string = String.raw`C:\a`;
 export const TEST_WSL_PREFIX = "/wsl/";
-// A fake default distro + a secondary, so the `wsl.exe -l -q` default-first parse can be exercised, plus the
-// Matching `$HOME`. Minimal stand-ins for real machine values (never a real distro name or username).
+// A fake default distro + a secondary, so the `wsl.exe -l -q` default-first parse can be exercised, plus `$HOME`.
 export const TEST_WSL_DISTRO = "a";
 export const TEST_WSL_DISTRO_SECONDARY = "b";
 export const TEST_WSL_HOME = "/a";
-// Fixed name of the in-temp dir the getWslNativeCacheRoot mock points at on win32, so store/corepack mkdirs
-// Stay harmless and platform-independent (joined under os.tmpdir() by the consumer).
+// Name of the in-temp dir the getWslNativeCacheRoot mock points at on win32 (joined under os.tmpdir() by the consumer).
 export const TEST_WSL_CACHE_DIR_NAME = "a";
 // `\\wsl.localhost` (and the legacy `\\wsl$`) UNC prefixes point straight at a distro's ext4 filesystem;
 // CreateTestWslUnc joins the distro segment on (no trailing separator here — it would escape the backtick).

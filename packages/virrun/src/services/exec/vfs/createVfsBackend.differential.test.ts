@@ -8,10 +8,8 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-// The correctness gate for the vfs backend: every command must produce the identical observable
-// Result (exit code + stdout + stderr) whether run natively or through vfs. The in-process path is
-// Where vfs can diverge, so it carries the corpus; the fall-through cases prove routing a command vfs
-// Cannot handle to native does not alter the result. See features/virrun/specs/correctness.md.
+// The correctness gate for the vfs backend: every command must produce the identical observable result whether
+// Run natively or through vfs. The in-process path is where vfs can diverge, so it carries the corpus.
 describe(createVfsBackend, () => {
   const native = createNativeBackend();
   const vfs = createVfsBackend();
@@ -27,15 +25,12 @@ describe(createVfsBackend, () => {
     await assertDifferential(vfs, native, command, rules);
   });
 
-  // A `node <file>` workload that loads a second module from real disk. vfs runs it in-process under an
-  // Overlay mounted at the working dir: neither file has a virtual shadow, so both reads fall through to
-  // Real disk - and the result must still match native, proving the overlay fall-through path.
+  // A `node <file>` that requires a second module with no virtual shadow, so both reads fall through to real disk
+  // — the result must still match native, proving the overlay fall-through path.
   test("matches the native backend for a multi-file file run", async () => {
     expect.hasAssertions();
 
     const dir = temporaryDirectories.create();
-    // The required dependency lives one directory down so both files reuse the canonical name instead of
-    // Inventing distinct ones; main reads it back through a relative require, exercising the overlay fall-through.
     mkdirSync(join(dir, TEST_FILENAME));
     writeFileSync(join(dir, TEST_FILENAME, `${TEST_FILENAME}.cjs`), "module.exports = ' '");
     writeFileSync(

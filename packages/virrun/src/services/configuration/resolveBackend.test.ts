@@ -28,8 +28,6 @@ describe(resolveBackend, () => {
 
     vi.mocked(isOsBackendSupported).mockReturnValue(false);
 
-    // Native is the only universally-available backend, so an unsupported `os` always degrades to it — there is
-    // No configurable target. This keeps the "never errors the build" contract: worst case is "no speedup".
     expect(resolveBackend({ backend: BackendType.Os })).toBe(BackendType.Native);
   });
 
@@ -38,7 +36,6 @@ describe(resolveBackend, () => {
 
     vi.mocked(isOsBackendSupported).mockReturnValue(false);
 
-    // The host-support degrade only fires for `os` — every other backend runs as configured regardless of host.
     expect(resolveBackend({ backend: BackendType.Vfs })).toBe(BackendType.Vfs);
   });
 });

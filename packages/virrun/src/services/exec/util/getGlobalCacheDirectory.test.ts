@@ -1,4 +1,5 @@
 import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { TEST_WSL_CACHE_ROOT_LINUX } from "@/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
@@ -14,7 +15,7 @@ vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
 }));
 
 describe(getGlobalCacheDirectory, () => {
-  const customCache = join(homedir(), "custom-cache");
+  const customCache = join(homedir(), TEST_FILENAME);
 
   afterEach(() => {
     delete process.env[VIRRUN_CACHE_HOME_KEY];

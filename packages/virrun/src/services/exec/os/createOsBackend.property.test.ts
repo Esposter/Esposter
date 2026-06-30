@@ -8,25 +8,15 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-// Correctness layer 5 — property/fuzz, second half (features/virrun/specs/correctness.md). The vfs half fuzzes FS
-// Ops against a node:fs oracle; this half fuzzes randomized *command* sequences against the os backend and proves
-// The sandbox state never corrupts under any ordering. The os backend gives each exec a fresh RAM overlay — reads
-// Fall through to the source, writes vanish in tmpfs — so the invariants are structural, not an oracle diff:
-//   1. Host isolation — no command, in any sequence, mutates the host working dir. The seeded canary keeps its
-//      Baseline content and is never deleted; files a command writes/mkdirs land only in the ephemeral upper, so
-//      They never appear on the host disk.
-//   2. No cross-exec leakage — because every exec gets a fresh upper, a write/append/delete from an earlier
-//      Command is invisible to a later one. A final fresh read of the canary always sees the source baseline,
-//      Never a mid-sequence write. A corrupted overlay (a leaked upper, or a delete propagating to the source)
-//      Is the only way this breaks.
-//   3. Well-formedness — every command yields a finite exit code and string stdio; the sandbox never wedges or
-//      Rejects (a reject throws out of the property → a shrunk counterexample), regardless of the ordering.
-// Real subprocesses (bwrap on Linux, the WSL bridge on Windows), so it is host-gated and kept to small run counts;
-// Fast-check still shrinks a failing sequence to its minimal counterexample, the whole reason to fuzz rather than
-// Hand-roll a fixed ordering.
+// Correctness layer 5 property/fuzz, os half (specs/correctness.md): fast-check drives randomized command sequences
+// And asserts the structural isolation invariants hold under every ordering —
+//   1. Host isolation — no command mutates the host working dir (the seeded canary keeps its baseline).
+//   2. No cross-exec leakage — each exec gets a fresh upper, so a final read of the canary sees the source baseline.
+//   3. Well-formedness — every command yields a finite exit code + string stdio; the sandbox never wedges.
+// Real subprocesses, so host-gated and kept to small run counts.
 
-// The canary is seeded empty (""), so any cross-exec write leak surfaces as a non-empty read; "x" is the distinct
-// Non-empty marker (a bare token, not " ", to stay free of shell-quoting fragility across the bwrap/WSL hops).
+// Seeded empty, so any cross-exec write leak surfaces as a non-empty read; LEAK_MARKER is a bare token (not " ") to
+// Avoid shell-quoting fragility across the bwrap/WSL hops.
 const CANARY = "a";
 // Never seeded on the host — a command that writes it must leave the host disk untouched.
 const SCRATCH_FILE = "b";

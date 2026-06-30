@@ -7,14 +7,13 @@ import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shar
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-// Shallow-clones a repo into a temp directory using the host's real git (via the native backend). A
-// Non-zero clone exit fails loud with git's own stderr rather than handing back an empty directory.
-// `-q` drops the volatile "Cloning into '<dest>'" progress line, leaving the actionable fatal lines.
+// Shallow-clones a repo into a temp dir via the host's real git, failing loud with git's own stderr on a
+// Non-zero exit. `-q` drops the volatile "Cloning into '<dest>'" progress line, leaving the fatal lines.
 export const loadGitSource = async (source: GitSource): Promise<LoadedSource> => {
   const cwd = await mkdtemp(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
   const dispose = () => rm(cwd, { force: true, recursive: true });
-  // Argv form (shell: false): repo and ref are data, never shell-evaluated. The `--` terminates
-  // Option parsing so a repo/ref like `--upload-pack=…` can't be smuggled in as a git flag either.
+  // Argv form (shell: false) keeps repo/ref as data; `--` ends option parsing so a `--upload-pack=…`-style
+  // Repo/ref can't be smuggled in as a git flag.
   const args = [
     "git",
     "clone",

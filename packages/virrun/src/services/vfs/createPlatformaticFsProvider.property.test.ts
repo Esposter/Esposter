@@ -6,14 +6,11 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-// Correctness layer 5 — property/fuzz (features/virrun/specs/correctness.md). fast-check generates randomized
-// FS operation sequences; each op runs against BOTH the vfs provider and a real node:fs temp directory, and the
-// Two observable outcomes must be identical. node:fs is the oracle — its semantics are never re-implemented here,
-// So a divergence is a real correctness bug in the provider, not a flaw in a hand-written model. When a sequence
-// Fails, fast-check shrinks it to the minimal counterexample, which is the whole reason to lean on the library
-// Rather than a hand-rolled PRNG walk. Pure in-memory (the provider is never mounted), so it runs everywhere.
-// The "d" sub-directory is pre-created on both sides so every write's parent exists by construction; that keeps
-// The compared scope to file read/write/exists semantics, where the provider must match native exactly.
+// Property/fuzz gate (features/virrun/specs/correctness.md): fast-check generates randomized FS op sequences,
+// Each run against BOTH the vfs provider and a real node:fs temp dir, asserting identical outcomes. node:fs is
+// The oracle (never re-implemented), so a divergence is a real provider bug; a failing sequence shrinks to its
+// Minimal counterexample. Pure in-memory (never mounted). The "d" sub-dir is pre-created on both sides so every
+// Write's parent exists, keeping the compared scope to read/write/exists semantics.
 
 // Normalize any op to a value comparable across the two filesystems: the success value, or a thrown marker.
 // Building outcomes outside the branch lets the whole randomized trace be diffed in one unconditional assert.
