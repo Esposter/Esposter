@@ -35,3 +35,6 @@ export const CI_ENV_KEY = "CI";
 export const CI_ENV_VALUE = "true";
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";
+// The host cache dir acceptance corpora/snapshots stage into, under $HOME never os.tmpdir (see createWorkspaceCorpus
+// For why). Non-test so the non-test vitest global teardown can resolve the shared cache home without it.
+export const HOME_CACHE_DIRECTORY_NAME = ".cache";

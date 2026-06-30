@@ -1,6 +1,5 @@
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
-import { HOME_CACHE_DIRECTORY_NAME } from "@/services/exec/util/constants.test";
+import { HOME_CACHE_DIRECTORY_NAME, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
