@@ -12,12 +12,12 @@ import process from "node:process";
 // No-op that says so rather than silently doing nothing. Forking the `true` no-op triggers the cold-path capture
 // (createVirrun → Virrun.fork): cold installs and freezes the snapshot, warm reuses it — either way `true` exits 0.
 export const warmSnapshot = async (): Promise<number> => {
-  const backend = resolveBackend(resolveVirrunConfiguration());
-  if (backend !== BackendType.Os) {
-    process.stderr.write(`[virrun] snapshot only applies to the os backend (current: ${backend})\n`);
-    return 0;
-  }
   const result = await getResultAsync(async () => {
+    const backend = resolveBackend(resolveVirrunConfiguration());
+    if (backend !== BackendType.Os) {
+      process.stderr.write(`[virrun] snapshot only applies to the os backend (current: ${backend})\n`);
+      return { exitCode: 0 };
+    }
     const virrun = await createVirrun({ backend });
     const { exists, hash } = resolveSnapshotLocation("");
     process.stderr.write(`${formatVirrunProvisioning({ exists, hash })}\n`);

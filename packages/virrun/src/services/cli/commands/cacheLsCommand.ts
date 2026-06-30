@@ -23,7 +23,7 @@ export const cacheLsCommand: CommandDef = defineCommand({
     getResult(() => {
       const repoStorePath = join(getRepoCacheDirectory(""), VIRRUN_STORE_DIRECTORY_NAME);
       const snapshotsPath = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
-      const snapshotHashes = existsSync(snapshotsPath) ? readdirSync(snapshotsPath) : [];
+      const snapshotHashes = existsSync(snapshotsPath) ? readdirSync(snapshotsPath).sort() : [];
       return formatCacheListing({
         isRepoStorePresent: existsSync(repoStorePath),
         repoStorePath,
