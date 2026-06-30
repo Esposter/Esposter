@@ -24,7 +24,6 @@ const isCacheHomeWritable = (): boolean =>
     () => true,
     () => false,
   );
-
 // Heavy + networked acceptance gate, shared by the os-backend install and the snapshot warm-fork tests. Proves
 // The host can set up the overlay sandbox, reach a package-manager entrypoint inside it, and write the cache
 // Home those tests stage the corpus into. Lives in a `.test.ts` so ctix keeps it out of the public barrel.

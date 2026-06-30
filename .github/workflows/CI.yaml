@@ -53,6 +53,7 @@ jobs:
         with:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
 
       - name: 🏗️ Build app
         run: pnpm build:app
@@ -84,6 +85,7 @@ jobs:
         with:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
 
       - name: 🏗️ Build documentation
         run: pnpm build:docs
@@ -198,6 +200,7 @@ jobs:
         with:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
 
       - name: 📝 Format
         run: pnpm format:check
@@ -231,6 +234,7 @@ jobs:
         with:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
 
       - name: 🔍 Lint
         run: pnpm lint
@@ -264,6 +268,7 @@ jobs:
         with:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
 
       - name: ✅ Typecheck
         run: pnpm typecheck

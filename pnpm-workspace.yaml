@@ -92,7 +92,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260629.1
+  "@typescript/native-preview": ^7.0.0-dev.20260630.1
   "@unocss/eslint-config": ^66.7.4
   "@unocss/nuxt": ^66.7.4
   "@vite-pwa/nuxt": ^1.1.1
@@ -134,7 +134,7 @@ catalog:
   empathic: ^2.0.1
   eslint: ^10.6.0
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.71.0
+  eslint-plugin-oxlint: ^1.72.0
   eslint-plugin-perfectionist: ^5.9.1
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
@@ -181,8 +181,8 @@ catalog:
   node-html-parser: ^8.0.4
   nuxt: ^4.4.8
   nuxt-security: ^2.6.0
-  oxfmt: ^0.56.0
-  oxlint: ^1.71.0
+  oxfmt: ^0.57.0
+  oxlint: ^1.72.0
   oxlint-tsgolint: ^0.23.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
