@@ -49,6 +49,8 @@ Terse log; the linked spec holds the detail.
 Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roadmap item.
 
 - [out-of-scope/pure-js-exec.md](out-of-scope/pure-js-exec.md) — why a pure-JS interpreter (just-bash style) can't be the exec engine.
+- [out-of-scope/rust-napi-orchestrator.md](out-of-scope/rust-napi-orchestrator.md) — why rewriting virrun's own orchestration in Rust/napi buys ~nothing (it's spawn/IO-bound; the "Rust speed" already comes from the oxlint/rolldown/oxfmt/tsgo toolchain swap).
+- [out-of-scope/hardlink-flush.md](out-of-scope/hardlink-flush.md) — why write-back can't hardlink/CAS the flush (tmpfs upper → host disk is cross-filesystem; produced files are new bytes).
 - [out-of-scope/ci-walltime-gate.md](out-of-scope/ci-walltime-gate.md) — why a hard wall-clock benchmark CI fail is rejected (runner noise); CodSpeed simulation + the Vitest differential suite cover it instead.
 - [deferred/wasm-runtime.md](deferred/wasm-runtime.md) — WebContainers-style WASM-node backend, parked with a revisit trigger.
 - [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md) — why "route every command at once" stays deferred (`Auto` still resolves to native; needs a viable spawn-interceptor seam, the PATH shim being dropped); adopt one command at a time instead.

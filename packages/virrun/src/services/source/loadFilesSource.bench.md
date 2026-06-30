@@ -9,17 +9,17 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-30T10:36:40.066Z
-- Commit: c08666a98
+- Date: 2026-06-30T11:26:55.978Z
+- Commit: 5d007480e
 - Node: v26.4.0
-- OS: linux 6.18.33.2-microsoft-standard-WSL2 (x64)
+- OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 15.6 GiB
+- RAM: 31.9 GiB
 
 ## loadFilesSource — load + dispose by file count
 
 | task       | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ---------- | ------- | --------- | ------- | -------- | ------- |
-| files:1    | 1.00×   | 1.6196    | ±10.39% | 2.0672   | 10      |
-| files:100  | 0.044×  | 37.1928   | ±4.35%  | 42.2336  | 10      |
-| files:1000 | 0.0044× | 365.7440  | ±3.91%  | 396.4234 | 10      |
+| files:1    | 1.00×   | 1.9340    | ±13.60% | 2.8784   | 10      |
+| files:100  | 0.04×   | 47.7600   | ±1.83%  | 49.4402  | 10      |
+| files:1000 | 0.0043× | 445.9210  | ±2.00%  | 465.0486 | 10      |

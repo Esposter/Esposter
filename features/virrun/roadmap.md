@@ -36,3 +36,21 @@ The last limitation before full adoption: sandbox writes vanish, so only read-on
 - [x] Config backend selection (adoption level 3) — committed `virrun.config.json` (`backend`/`fallback`) resolved via `empathic` with host-support auto-fallback; no allowlist (the `virrun -- <cmd>` prefix is the switch), lazy `.virrun/` materialization, and a `VIRRUN=true` output signal. Benchmark-gate / differential-correctness fallbacks remain future work. Shipped → README `## Shipped` · [specs/config-and-cache.md](specs/config-and-cache.md). The level-4 PATH shim and always-on whole-repo routing were measured unviable / stay deferred → [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md).
 - [ ] Firecracker microVM backend for untrusted multi-tenant / CI fan-out.
 - [ ] Task cache (skip unchanged builds) — evaluate reusing Turborepo cache vs native.
+
+## Phase 6 — Speed deepening (post-core)
+
+The `os` backend + warm-fork + write-back are shipped (3–8× on build/test/typecheck). These are the next speed levers, ranked by value/effort. Rejected levers — a napi/Rust rewrite of the orchestrator and hardlinking the flush — are recorded once in [out-of-scope/rust-napi-orchestrator.md](out-of-scope/rust-napi-orchestrator.md) and [out-of-scope/hardlink-flush.md](out-of-scope/hardlink-flush.md); the thesis is that virrun is spawn/IO-bound, so its own TS is never the bottleneck (the toolchain swap to oxlint/rolldown/oxfmt/tsgo is where "Rust speed" already comes from).
+
+- [ ] **Fix the warm-fork anomaly** — highest value, because the core win is currently _negative_. In `src/localMonorepo.platform.bench.linux.md` (commit `c08666a98`) warm fork is **9193ms vs cold 4119ms** — warm is 2.2× _slower_ than cold, contradicting `forkSnapshot`'s own design note ("should dwarf the cold baseline"; the `99b4ff094` run measured 712ms / 5.8×). `forkSnapshot` only stacks the frozen snapshot upper as a read-only lower with a fresh tmpfs upper — it must not reinstall, so a 9s warm run means something on that path regressed.
+  - [ ] Reproduce with `pnpm bench` in `packages/virrun`; the run reported ±2.3% rme, so it is likely real and not WSL2 host noise.
+  - [ ] Bisect `99b4ff094` → `c08666a98` for the regressing commit.
+  - [ ] Inspect the overlay layering in `forkSnapshot` / `createOsBackend`: is the snapshot upper landing on disk instead of tmpfs, or is the `node_modules` lowerdir being re-stat'd/copied per fork instead of stacked read-only?
+  - [ ] Delete the stale `src/localMonorepo.bench.{md,json}` artifacts — the bench file was renamed to `localMonorepo.platform.bench.ts`, so the old `.md`'s 5.8× number now misleads.
+
+- [ ] **Warm daemon** — large; high value for the dev loop; do _after_ the anomaly fix (a sick warm fork makes a resident one worse). Keep a forked snapshot + warm node resident between invocations so repeated `virrun -- pnpm test` amortizes the overlay mount + node boot instead of paying the per-run floor (~700ms healthy) each time.
+  - [ ] Resident process keyed by lockfile hash; invalidate + re-fork on lockfile change.
+  - [ ] IPC for command dispatch + streamed stdio + exit-code propagation.
+  - [ ] Lifecycle: idle timeout, `virrun daemon stop`, crash recovery.
+  - [ ] Security: a resident fork is a live sandbox — confirm it cannot outlive its isolation guarantees.
+
+- [ ] **vfs in-process async support** — medium effort; low–medium marginal value on top of the `os` fork; gated hard by the differential-correctness suite. Today `runNodeInProcess` bails to native on any `Promise` result ("an async result needs an event loop we will not spin"), so the no-spawn path only catches trivial _sync_ `node -e`. Draining a controlled microtask/timer loop in-process would let async pure-JS tools skip spawn — but it only saves node-boot (~50–100ms) over the `os` fork and risks the correctness gate (unhandled rejections, timer leaks, require-cache bleed across runs). Scope a spike and prove the gate holds before committing.
