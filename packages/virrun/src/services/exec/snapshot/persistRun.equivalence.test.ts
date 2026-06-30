@@ -73,7 +73,7 @@ describe.skipIf(!isSandboxInstallSupported)("persistRun - flushes produced files
   test("a new top-level file reaches the host; node_modules and writes into it do not", async () => {
     expect.hasAssertions();
 
-    // node_modules present (snapshot lower); a write into it (a dep-tree write to drop) plus a top-level file (the
+    // Node_modules present (snapshot lower); a write into it (a dep-tree write to drop) plus a top-level file (the
     // Produced output to flush).
     const command = [
       `test -d ${NODE_MODULES_DIRECTORY}`,
