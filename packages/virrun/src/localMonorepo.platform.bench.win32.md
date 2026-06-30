@@ -16,13 +16,6 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 31.9 GiB
 
-## install - real workspace dependency closure (cold)
-
-| task   | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
-| ------ | ------- | ---------- | ------ | ---------- | ------- |
-| native | 1.00×   | 85989.3663 | ±6.88% | 97787.2292 | 10      |
-| os/wsl | 15.92×  | 5400.8700  | ±1.93% | 5620.4268  | 10      |
-
 ## typecheck - packages/shared (cold)
 
 | task   | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |

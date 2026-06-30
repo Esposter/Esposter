@@ -5,7 +5,7 @@ import { readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 // Memoize the digest per resolved lockfile path, invalidated when the file's mtime or size changes. A single
 // `fork`/`persist` resolves the snapshot location 2-3 times (ensureSnapshot, then forkSnapshot/persistRun, plus
-// createSnapshot on a cold path), and a long-lived process (the warm daemon) re-resolves on every dispatch — each
+// CreateSnapshot on a cold path), and a long-lived process (the warm daemon) re-resolves on every dispatch — each
 // Otherwise re-reads and re-sha256s a multi-MB monorepo lockfile. The stat guard keeps the cache honest if the
 // Lockfile is rewritten in-process (an install regenerates it); size alone catches any content-length change even
 // On a filesystem whose mtime resolution is too coarse to register a fast rewrite.

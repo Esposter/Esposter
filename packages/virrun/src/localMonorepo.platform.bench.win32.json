@@ -6,25 +6,6 @@
         {
           "benchmarks": [
             {
-              "mean": 85989.36633000002,
-              "name": "native",
-              "p99": 97787.22919999994,
-              "rme": 6.878209794699318,
-              "sampleCount": 10
-            },
-            {
-              "mean": 5400.869959999994,
-              "name": "os/wsl",
-              "p99": 5620.426799999783,
-              "rme": 1.9301586825750954,
-              "sampleCount": 10
-            }
-          ],
-          "fullName": "install - real workspace dependency closure (cold)"
-        },
-        {
-          "benchmarks": [
-            {
               "mean": 810.327249999973,
               "name": "native",
               "p99": 829.3573000000324,
