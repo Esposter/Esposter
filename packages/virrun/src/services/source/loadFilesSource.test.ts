@@ -82,7 +82,7 @@ describe(loadFilesSource, () => {
 
     expect(rm).toHaveBeenCalledTimes(1);
 
-    const [removedDirectory] = takeOne(rm.mock.calls, 0);
+    const [removedDirectory] = takeOne(rm.mock.calls);
 
     expect(existsSync(removedDirectory)).toBe(false);
   });

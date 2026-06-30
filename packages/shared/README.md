@@ -41,7 +41,7 @@ throw new InvalidOperationError(Operation.Read, file.name, zodError.message);
 import { takeOne } from "@esposter/shared";
 
 // Safe index access — throws on out-of-bounds instead of returning undefined
-const first = takeOne(items, 0);
+const first = takeOne(items);
 ```
 
 #### Type Utilities

@@ -4,6 +4,7 @@ import {
   PNPM_WORKSPACE_FILENAME,
   VIRRUN_TEMP_DIR_PREFIX,
 } from "@/services/exec/util/constants";
+import { PACKAGES_DIRECTORY } from "@/services/exec/test/constants.test";
 import { HOME_CACHE_DIRECTORY_NAME } from "@/services/exec/util/constants.test";
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, symlinkSync } from "node:fs";
 import { homedir } from "node:os";
@@ -22,13 +23,13 @@ export const createWorkspaceCorpus = (repoRoot: string): string => {
   const corpus = mkdtempSync(join(cache, VIRRUN_TEMP_DIR_PREFIX));
   for (const manifest of [PACKAGE_JSON_FILENAME, PNPM_WORKSPACE_FILENAME, PNPM_LOCKFILE_FILENAME])
     symlinkSync(join(repoRoot, manifest), join(corpus, manifest));
-  const packages = join(repoRoot, "packages");
-  mkdirSync(join(corpus, "packages"));
+  const packages = join(repoRoot, PACKAGES_DIRECTORY);
+  mkdirSync(join(corpus, PACKAGES_DIRECTORY));
   for (const name of readdirSync(packages)) {
     const packageJson = join(packages, name, PACKAGE_JSON_FILENAME);
     if (!existsSync(packageJson)) continue;
-    mkdirSync(join(corpus, "packages", name));
-    symlinkSync(packageJson, join(corpus, "packages", name, PACKAGE_JSON_FILENAME));
+    mkdirSync(join(corpus, PACKAGES_DIRECTORY, name));
+    symlinkSync(packageJson, join(corpus, PACKAGES_DIRECTORY, name, PACKAGE_JSON_FILENAME));
   }
   return corpus;
 };

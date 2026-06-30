@@ -9,14 +9,13 @@ import {
     ACCEPTANCE_TIMEOUT_MINUTES,
     ESBUILD_VERSION_REGEX,
     FIND_ESBUILD_BINARY_COMMAND,
-    NODE_MODULES_DIRECTORY,
     PNPM_MODULES_DIRECTORY,
     RUN_ESBUILD_VERSION_COMMAND,
 } from "@/services/exec/test/constants.test";
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
 import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstallSupported.test";
-import { VIRRUN_CACHE_HOME_KEY, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { NODE_MODULES_DIRECTORY, VIRRUN_CACHE_HOME_KEY, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
 import { HOME_CACHE_DIRECTORY_NAME, TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
@@ -69,8 +68,8 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
       FIND_ESBUILD_BINARY_COMMAND,
       'test -n "$ESBUILD"',
       RUN_ESBUILD_VERSION_COMMAND,
-      `echo scratch > ${TEST_FILENAME}`,
-      `echo ${forkOkMarker}`,
+      `printf "" > ${TEST_FILENAME}`,
+      `echo ${TEST_FILENAME}`,
     ].join(" && ");
     const { exitCode, stdout } = await backend.exec(forkCommand, {
       cwd: corpus,
@@ -79,7 +78,7 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
     });
 
     expect(exitCode).toBe(0);
-    expect(stdout).toContain(forkOkMarker);
+    expect(stdout).toContain(TEST_FILENAME);
     expect(stdout).toMatch(ESBUILD_VERSION_REGEX);
     expect(existsSync(join(corpus, TEST_FILENAME))).toBe(false);
     // The capture step is a real, networked, frozen-lockfile install of the whole workspace corpus on a cold

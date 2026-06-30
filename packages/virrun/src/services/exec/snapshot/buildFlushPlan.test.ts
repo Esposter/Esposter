@@ -3,7 +3,7 @@ import type { OverlayEntry } from "@/models/exec/OverlayEntry";
 import { FlushOpType } from "@/models/exec/FlushOp";
 import { OverlayEntryKind } from "@/models/exec/OverlayEntryKind";
 import { buildFlushPlan } from "@/services/exec/snapshot/buildFlushPlan";
-import { NODE_MODULES_DIRECTORY } from "@/services/exec/test/constants.test";
+import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 

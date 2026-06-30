@@ -1,10 +1,12 @@
 /* oxlint-disable no-inferrable-types */
+import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { describe } from "vitest";
 // Shared fixtures for the heavy, host-gated acceptance tests (os-backend install + snapshot warm-fork), which
 // Both install the real dependency closure into a RAM sandbox and then prove a native binary runs inside it.
 // A `.test.ts` so ctix keeps these out of the public barrel.
-// The dependency directory an install materialises — the snapshot lower in a fork, never flushed back to the host.
-export const NODE_MODULES_DIRECTORY = "node_modules";
+// The workspace package root the corpus mirrors. `pnpm install` materialises a per-package node_modules under each
+// Child, so every `packages/<pkg>` becomes a snapshot-lower path even though it is real source the flush must keep.
+export const PACKAGES_DIRECTORY = "packages";
 // The pnpm content-addressed modules directory inside an installed workspace — where the per-package bins live.
 export const PNPM_MODULES_DIRECTORY: string = `${NODE_MODULES_DIRECTORY}/.pnpm`;
 // Locate esbuild's native (Go) binary in the installed closure, then print its version — the proof that a real

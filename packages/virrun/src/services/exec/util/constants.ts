@@ -8,6 +8,10 @@ export const VIRRUN_COREPACK_STORE_DIRECTORY_NAME = "corepack";
 export const PACKAGE_JSON_FILENAME = "package.json";
 export const PNPM_WORKSPACE_FILENAME = "pnpm-workspace.yaml";
 export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";
+// The dependency-closure directory every JS package manager materialises. The one structural marker of the deps a
+// Persist run must never flush to the host: node_modules is supplied by the snapshot lower, and new writes into it
+// (e.g. a build's node_modules/.vite cache) have no snapshot entry of their own but still must not leak out.
+export const NODE_MODULES_DIRECTORY = "node_modules";
 // Repo-root config (specs/config-and-cache.md): selects which backend a sandboxed command runs through.
 // Resolved by walking up from cwd; absent = the backend defaults to auto (native today).
 export const VIRRUN_CONFIGURATION_FILENAME = "virrun.config.json";
