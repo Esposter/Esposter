@@ -21,14 +21,14 @@ Done — bwrap RAM-overlay exec, in-RAM full-monorepo install proof, shared CAS 
 
 The last limitation before full adoption: sandbox writes vanish, so only read-only commands carry the prefix. Persist a mutation command's produced files back to the host so `virrun -- <cmd>` leaves disk exactly as native would, unblocking `eslint --fix` / `oxfmt` / `db:gen` / `export:gen` / `build` and letting every command move onto `virrun --`. Decouples warm-deps (always on) from persist (default for a normal run; the ephemeral fork stays for CI/verification). → [specs/write-back.md](specs/write-back.md)
 
-- [ ] `isPersisted` exec option + `persistRun` — fork the warm snapshot with a persistable top upper instead of `--tmp-overlay`.
-- [x] `parseOverlayEntryKind` + `buildFlushPlan` (pure, unit-tested) — classify an upper entry (regular vs char-dev `0:0` whiteout vs `user.overlay.opaque` dir) and order it into copy/delete ops, skipping snapshot-lower (dep-tree) paths. Overlay format empirically confirmed (userxattr, unprivileged reads).
-- [ ] `readOverlayOpaque` (xattr reader seam: `getfattr` → `python3`) + the overlay-upper walker feeding `buildFlushPlan`.
-- [ ] `flushUpperToHost` — apply the plan to `<cwd>` (Linux-side; via `wsl.exe` on win32).
-- [ ] WSL boundary flush — translate upper + host paths via memoized `readWslPath`, copy the changed subset Linux→Windows.
-- [ ] All-or-nothing on non-zero exit (flush nothing; never leave a half-written tree).
-- [ ] **Equivalence gate** — `assertEquivalent` (native vs `virrun --`, diff resulting host file trees) + a mutation-command corpus (`eslint --fix`, `oxfmt`, `db:gen`, `export:gen`, `build`); CI-enforced in the 🏗️ coverage shards beside the differential suite.
-- [ ] Dogfood: add the prefix to the mutating siblings in this repo's scripts once the gate holds; sweep to README `## Shipped`.
+- [x] `parseOverlayEntryKind` + `buildFlushPlan` (pure, unit-tested) — classify an upper entry (regular vs char-dev `0:0` whiteout vs `user.overlay.opaque` dir) and order it into copy/delete ops, skipping snapshot-lower (dep-tree) paths including descendants. Overlay format empirically confirmed (userxattr, unprivileged reads).
+- [x] Linux-side probe + apply (`OVERLAY_PROBE_SCRIPT`/`OVERLAY_APPLY_SCRIPT` python3) → `parseOverlayManifest` (zod-validated) → `runOverlayScript` (python3 directly / via `wsl.exe`, `readWslPath` translation) → `flushUpperToHost`. Verified: light integration test on win32 + manual WSL end-to-end (content + mode parity).
+- [x] `persistRun` + `Virrun.persist` + `createVirrun` wiring — fork the warm snapshot with a persistable upper, flush on a clean exit only (all-or-nothing), tear temps down always.
+- [x] CLI `ExecutionMode` — `run`/bare prefix → persist (default), `run --ephemeral` → vanish, `exec` → cold plain.
+- [x] Benchmark — `build` persist (write-back) vs native, beside the warm-fork/typecheck/build/test groups.
+- [x] Equivalence gate — `persistRun.equivalence.test.ts` (warm snapshot: top-level write flushed, node_modules + writes into it dropped); CI/Linux (win32 blocked by the shared `/mnt/c` install limitation, not write-back).
+- [ ] Broaden the equivalence corpus to the real mutating commands (`eslint --fix`, `oxfmt`, `db:gen`, `export:gen`) once running in the 🏗️ coverage shards.
+- [ ] Dogfood: add the prefix to the mutating siblings in this repo's scripts; sweep to README `## Shipped`.
 
 ## Phase 4 — Distribution & CI
 

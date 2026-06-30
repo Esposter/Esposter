@@ -1,3 +1,4 @@
+import { dayjs } from "@/services/dayjs.test";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { flushUpperToHost } from "@/services/exec/snapshot/flushUpperToHost";
@@ -86,5 +87,7 @@ describe.skipIf(!isOsBackendSupported())(flushUpperToHost, () => {
       "opaquedir/": DIRECTORY_MARKER,
       "opaquedir/new.txt": "new",
     });
-  });
+    // Generous: the win32 path spawns the WSL bridge three times (bwrap + probe + apply python), each with cold
+    // Process overhead; in-process on Linux CI it is near-instant.
+  }, dayjs.duration(1, "minute").asMilliseconds());
 });
