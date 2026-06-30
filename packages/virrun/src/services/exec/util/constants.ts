@@ -38,3 +38,6 @@ export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";
 // The host cache dir acceptance corpora/snapshots stage into, under $HOME never os.tmpdir (see createWorkspaceCorpus
 // For why). Non-test so the non-test vitest global teardown can resolve the shared cache home without it.
 export const HOME_CACHE_DIRECTORY_NAME = ".cache";
+// Leaf under the WSL-native/home cache root that isolates the heavy tests' shared warm snapshot, so global teardown
+// Removes only test data and never the real cache. Non-test so the vitest global teardown can resolve it.
+export const ACCEPTANCE_CACHE_DIRECTORY_NAME = "acceptance";

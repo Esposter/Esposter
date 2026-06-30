@@ -14,8 +14,8 @@ import {
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { ensureWarmSnapshot } from "@/services/exec/test/ensureWarmSnapshot.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
+import { getAcceptanceCacheHome } from "@/services/exec/test/getAcceptanceCacheHome";
 import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstallSupported.test";
-import { resolveAcceptanceCacheHome } from "@/services/exec/test/resolveAcceptanceCacheHome.test";
 import { VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
 import { rmSync } from "node:fs";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
@@ -30,7 +30,7 @@ describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a 
   const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
 
   beforeAll(async () => {
-    process.env[VIRRUN_CACHE_HOME_KEY] = resolveAcceptanceCacheHome();
+    process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
     corpus = createWorkspaceCorpus(findRepoRoot());
     await ensureWarmSnapshot(backend, corpus);
   }, dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds());

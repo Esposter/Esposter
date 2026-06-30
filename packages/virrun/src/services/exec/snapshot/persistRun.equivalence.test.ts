@@ -6,8 +6,8 @@ import { ACCEPTANCE_TIMEOUT_MINUTES, PACKAGES_DIRECTORY } from "@/services/exec/
 import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
 import { ensureWarmSnapshot } from "@/services/exec/test/ensureWarmSnapshot.test";
 import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
+import { getAcceptanceCacheHome } from "@/services/exec/test/getAcceptanceCacheHome";
 import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstallSupported.test";
-import { resolveAcceptanceCacheHome } from "@/services/exec/test/resolveAcceptanceCacheHome.test";
 import { NODE_MODULES_DIRECTORY, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { takeOne } from "@esposter/shared";
@@ -27,7 +27,7 @@ describe.skipIf(!isSandboxInstallSupported)("persistRun - flushes produced files
   const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
 
   beforeAll(async () => {
-    process.env[VIRRUN_CACHE_HOME_KEY] = resolveAcceptanceCacheHome();
+    process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
     corpus = createWorkspaceCorpus(findRepoRoot());
     packageDirectory = `${PACKAGES_DIRECTORY}/${takeOne(readdirSync(join(corpus, PACKAGES_DIRECTORY)), 0)}`;
     await ensureWarmSnapshot(backend, corpus);

@@ -13,7 +13,7 @@ import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
 import { join } from "node:path";
 // Captures warm post-install state into the snapshot's overlay upper (keyed by lockfile hash) instead of letting
 // `command`'s writes vanish in tmpfs (specs/snapshot-fork.md). Atomic publish: the install writes into a private
-// per-invocation temp upper, then a single `renameSync` promotes it onto the final `upperDir` — the last thing to
+// Per-invocation temp upper, then a single `renameSync` promotes it onto the final `upperDir` — the last thing to
 // Flip, so a concurrent reader (every fork/resolve reads `existsSync(upperDir)`) never sees a half-built upper, and
 // A capturer that loses the race renames onto a populated `upperDir`, fails, and keeps theirs. On any failure only
 // This invocation's temps are torn down. The capture result is returned so the cold-path fork need not re-run.

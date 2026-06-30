@@ -11,7 +11,7 @@ import {
 } from "@/services/exec/util/constants";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
-// createOsExecOptions plus the two things only the capture install needs: a writable corepack home on a stable
+// CreateOsExecOptions plus the two things only the capture install needs: a writable corepack home on a stable
 // Path (so the WSL `corepack pnpm` bootstrap persists into the snapshot instead of vanishing in the tmpfs upper),
 // And CI=true, which stops pnpm aborting the node_modules purge for lack of a TTY
 // (ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY) when the host's node_modules show through the overlay lower.
