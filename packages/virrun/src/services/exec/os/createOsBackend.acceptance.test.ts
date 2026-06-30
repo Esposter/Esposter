@@ -40,11 +40,8 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace in
       expect.hasAssertions();
 
       const { exec } = createOsBackend();
-      // CreateOsInstallOptions wires the shared store (writable on the host so downloads are reused; copy import
-      // Because hardlinks can't cross from the on-disk store into the RAM overlay), the corepack home, network,
-      // And the login PATH — the same options createVirrun provisions a snapshot with. The compound proves: the
-      // Install (native pacquet binary + build scripts) succeeds, node_modules fully materialized in RAM, and a
-      // Native binary (esbuild's Go executable) actually runs inside the sandbox.
+      // The compound proves: the install succeeds, node_modules fully materialized in RAM (file count), and a native
+      // Binary (esbuild's Go executable) actually runs inside the sandbox.
       const command = [
         resolveSetupCommand(),
         `test "$(find . -path '*/${NODE_MODULES_DIRECTORY}/*' -type f | wc -l)" -gt ${minNodeModulesFileCount}`,
@@ -59,8 +56,6 @@ describe.skipIf(!isSandboxInstallSupported)("createOsBackend - real workspace in
       expect(stdout).toMatch(ESBUILD_VERSION_REGEX);
       // The subprocess wall held: nothing the install wrote reached the host corpus on disk.
       expect(existsSync(join(corpus, NODE_MODULES_DIRECTORY))).toBe(false);
-      // A real, frozen-lockfile install of the whole workspace corpus into a RAM overlay routinely runs past
-      // The smaller default caps on a cold store, so allow the long acceptance timeout before failing.
     },
     dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds(),
   );
