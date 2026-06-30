@@ -17,6 +17,19 @@ Done — bwrap RAM-overlay exec, in-RAM full-monorepo install proof, shared CAS 
 
 - [ ] macOS bridge through a lightweight Linux VM.
 
+## Phase 5 — Write-back (native-equivalent persistence)
+
+The last limitation before full adoption: sandbox writes vanish, so only read-only commands carry the prefix. Persist a mutation command's produced files back to the host so `virrun -- <cmd>` leaves disk exactly as native would, unblocking `eslint --fix` / `oxfmt` / `db:gen` / `export:gen` / `build` and letting every command move onto `virrun --`. Decouples warm-deps (always on) from persist (default for a normal run; the ephemeral fork stays for CI/verification). → [specs/write-back.md](specs/write-back.md)
+
+- [ ] `isPersisted` exec option + `persistRun` — fork the warm snapshot with a persistable top upper instead of `--tmp-overlay`.
+- [x] `parseOverlayEntryKind` + `buildFlushPlan` (pure, unit-tested) — classify an upper entry (regular vs char-dev `0:0` whiteout vs `user.overlay.opaque` dir) and order it into copy/delete ops, skipping snapshot-lower (dep-tree) paths. Overlay format empirically confirmed (userxattr, unprivileged reads).
+- [ ] `readOverlayOpaque` (xattr reader seam: `getfattr` → `python3`) + the overlay-upper walker feeding `buildFlushPlan`.
+- [ ] `flushUpperToHost` — apply the plan to `<cwd>` (Linux-side; via `wsl.exe` on win32).
+- [ ] WSL boundary flush — translate upper + host paths via memoized `readWslPath`, copy the changed subset Linux→Windows.
+- [ ] All-or-nothing on non-zero exit (flush nothing; never leave a half-written tree).
+- [ ] **Equivalence gate** — `assertEquivalent` (native vs `virrun --`, diff resulting host file trees) + a mutation-command corpus (`eslint --fix`, `oxfmt`, `db:gen`, `export:gen`, `build`); CI-enforced in the 🏗️ coverage shards beside the differential suite.
+- [ ] Dogfood: add the prefix to the mutating siblings in this repo's scripts once the gate holds; sweep to README `## Shipped`.
+
 ## Phase 4 — Distribution & CI
 
 - [x] Migrate the CLI to [unjs/citty](https://github.com/unjs/citty) for declarative subcommands/flags/`--help`, then add `virrun run`, `virrun exec`, `virrun snapshot`, `virrun init`, `virrun cache` (ls/clean) — extends the Phase 0 prefix CLI. Shipped → README `## Shipped` · getting-started subcommand table. The bare `virrun -- <cmd>` prefix is preserved as citty's default subcommand (`run`).
