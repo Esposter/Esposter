@@ -63,7 +63,7 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
   - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. `vitest.configs.all` (enabled in the eslint vitest plugin config) turns on the `vitest/padding-around-*` rules, which _require_ a blank line around `describe`/`test` blocks, hooks (`beforeEach`/`afterEach`), and expect groups. A leading comment on such a block sits after that mandatory blank line, so keep it. Still tighten the comment text itself.
 
 - **CRITICAL — comment only _exceptional_ behaviour.** A comment earns its place only when it explains something a competent reader could not infer from the code, its names, or the project's own conventions. **Never restate an established pattern or anything already documented in a skill or feature doc.** The skill/doc is the single source of truth; duplicating it in a comment is noise that rots. Concretely, delete comments that:
-  - restate a convention covered by a skill (e.g. "a `.test.ts` so ctix keeps it out of the public barrel", "getResult turns the throw into false, per the no-try/catch convention", "memoized because…" when memoization is the obvious idiom);
+  - restate a convention covered by a skill (e.g. "a `.test.ts` so the barrel generator keeps it out of the public barrel", "the result helper turns the throw into false, per the error-handling convention", "memoized because…" when memoization is the obvious idiom);
   - paraphrase what a well-named function/variable already says ("// resolve the repo root" above `resolveRepoRoot()`);
   - duplicate a rationale already written in a sibling file — state it once at the source, not at every call site.
 
