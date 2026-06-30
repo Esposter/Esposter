@@ -6,6 +6,7 @@ import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOption
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { persistRun } from "@/services/exec/snapshot/persistRun";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
@@ -100,6 +101,20 @@ describe.skipIf(!isOsSupported)("build - packages/shared (cold)", () => {
 
   bench(OS_TASK_NAME, async () => {
     await forkSnapshot(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
+  });
+});
+
+// Write-back: the same build run through persistRun, which forks the warm snapshot and flushes the produced dist
+// Back to the host (specs/write-back.md). vs native shows the net win, and vs the `build` fork above isolates the
+// Flush cost — both must stay below the native baseline for write-back to be worth adopting on a mutation command.
+describe.skipIf(!isOsSupported)("build - write-back persist vs native (produces dist)", () => {
+  const command = SHARED_COMMAND("build");
+  bench(BackendType.Native, async () => {
+    await native.exec(command, { cwd: repoRoot, stdio: "pipe" });
+  });
+
+  bench(`${OS_TASK_NAME}/persist`, async () => {
+    await persistRun(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
   });
 });
 

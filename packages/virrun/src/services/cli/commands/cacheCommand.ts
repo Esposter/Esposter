@@ -1,5 +1,6 @@
 import type { CommandDef } from "citty";
 
+import { CommandType } from "@/models/virrun/CommandType";
 import { cacheCleanCommand } from "@/services/cli/commands/cacheCleanCommand";
 import { cacheLsCommand } from "@/services/cli/commands/cacheLsCommand";
 import { defineCommand } from "citty";
@@ -8,7 +9,7 @@ import { defineCommand } from "citty";
 export const cacheCommand: CommandDef = defineCommand({
   meta: {
     description: "Inspect or clear virrun's dependency store and warm snapshots.",
-    name: "cache",
+    name: CommandType.Cache,
   },
-  subCommands: { clean: cacheCleanCommand, ls: cacheLsCommand },
+  subCommands: { [CommandType.Clean]: cacheCleanCommand, [CommandType.Ls]: cacheLsCommand },
 });

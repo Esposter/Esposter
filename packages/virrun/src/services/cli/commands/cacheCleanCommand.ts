@@ -1,5 +1,6 @@
 import type { ArgsDef, CommandDef } from "citty";
 
+import { CommandType } from "@/models/virrun/CommandType";
 import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
@@ -22,7 +23,7 @@ export const cacheCleanCommand: CommandDef<typeof cleanArgs> = defineCommand({
   args: cleanArgs,
   meta: {
     description: "Remove the repo-local .virrun cache; --all also clears host-global warm snapshots.",
-    name: "clean",
+    name: CommandType.Clean,
   },
   run: ({ args }) => {
     getResult(() => {

@@ -8,6 +8,7 @@ The sandboxed `os` backend needs the following; if either is missing, `virrun` f
 
 - **Bubblewrap `>= 0.10.0`** (RAM overlay support: `--overlay-src` / `--tmp-overlay`), via your system package manager — e.g. `sudo apt install -y bubblewrap` (Debian/Ubuntu/WSL2), `sudo dnf install bubblewrap` (Fedora/RHEL), `sudo pacman -S bubblewrap` (Arch).
 - **A Linux `node` inside your default WSL2 distro** (Windows hosts only) — Windows `node.exe` can't run in the Linux sandbox, so without it the capability check fails and virrun runs natively on Windows.
+- **`python3`** (Linux/WSL) — used only by write-back (`run` persisting produced files) to reconcile the overlay upper onto the host; near-universal on Linux. Verification (`run --ephemeral`) and `exec` don't need it.
 
 The `vfs` and `native` backends need neither.
 

@@ -49,6 +49,7 @@ Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roa
 - [out-of-scope/ci-walltime-gate.md](out-of-scope/ci-walltime-gate.md) — why a hard wall-clock benchmark CI fail is rejected (runner noise); CodSpeed simulation + the Vitest differential suite cover it instead.
 - [deferred/wasm-runtime.md](deferred/wasm-runtime.md) — WebContainers-style WASM-node backend, parked with a revisit trigger.
 - [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md) — why "route every command at once" stays deferred (`Auto` still resolves to native; needs a viable spawn-interceptor seam, the PATH shim being dropped); adopt one command at a time instead.
+- [deferred/materialize-node-modules.md](deferred/materialize-node-modules.md) — why write-back doesn't flush `node_modules` to host disk (snapshot lower stays RO); revisit only if an editor flow proves it needs on-disk deps.
 
 ## Reference
 
@@ -57,6 +58,7 @@ Grep [out-of-scope/](out-of-scope) and [deferred/](deferred) before adding a roa
 - [specs/virtual-fs.md](specs/virtual-fs.md) — FS layer (reuse node:vfs/platformatic + one-line-swap plan).
 - [specs/exec-isolation.md](specs/exec-isolation.md) — the core: real exec + isolation backends.
 - [specs/snapshot-fork.md](specs/snapshot-fork.md) — warm snapshot + fork.
+- [specs/write-back.md](specs/write-back.md) — native-equivalent persistence: flush a mutation command's produced files back to host.
 - [specs/orchestrator-api.md](specs/orchestrator-api.md) — the TS, node-compatible public API.
 - [specs/adoption.md](specs/adoption.md) — incremental opt-in: prefix → script → config (backend selection), with auto-fallback; dogfooding ladder for this repo.
 - [specs/config-and-cache.md](specs/config-and-cache.md) — the on-disk surface: `virrun.config.json` backend selection (committed) + `.virrun/` cache (gitignored).
