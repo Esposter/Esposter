@@ -24,25 +24,29 @@ jobs:
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-      # bubblewrap (+ unprivileged user namespaces) so the os backend runs isolated instead of falling back to
-      # Native — a native capture would write nothing to the overlay upper, so there would be no snapshot to cache.
-      - name: 🔧 Setup Project Dependencies
-        uses: ./.github/actions/setup-project-dependencies
-        with:
-          bubblewrap-sandbox: "true"
-      # Pulls the built `virrun` bin (packages/virrun/dist) from the build-packages artifact, so the caller must
-      # Run build-packages first (`needs: build-packages` on the calling job).
-      - name: 📦 Setup Packages
-        uses: ./.github/actions/setup-packages
       # Key by the lockfile that virrun itself hashes for the snapshot address: same deps → same warm snapshot.
       # `hashFiles` tracks the same file (its digest need not equal virrun's — the restored dir is addressed by
-      # Virrun's own hash internally; the cache key only has to invalidate when deps change).
+      # Virrun's own hash internally; the cache key only has to invalidate when deps change). Restored first, before
+      # Any setup, so a warm hit skips the multi-minute dependency/package install below entirely.
       - name: ♻️ Restore warm snapshot
         id: cache
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+      # Cold path only: setup feeds the capture step below, so both are gated on the same cache miss.
+      # bubblewrap (+ unprivileged user namespaces) so the os backend runs isolated instead of falling back to
+      # Native — a native capture would write nothing to the overlay upper, so there would be no snapshot to cache.
+      - name: 🔧 Setup Project Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: ./.github/actions/setup-project-dependencies
+        with:
+          bubblewrap-sandbox: "true"
+      # Pulls the built `virrun` bin (packages/virrun/dist) from the build-packages artifact, so the caller must
+      # Run build-packages first (`needs: build-packages` on the calling job).
+      - name: 📦 Setup Packages
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: ./.github/actions/setup-packages
       # Cold path only: `virrun -- true` resolves the os backend and forks — with no snapshot yet it runs the
       # Install (resolveSetupCommand) into the overlay upper, atomically publishes it, then runs `true` over it.
       # The `actions/cache` post step saves `~/.virrun/snapshots` for this and every later run. On a hit there is
