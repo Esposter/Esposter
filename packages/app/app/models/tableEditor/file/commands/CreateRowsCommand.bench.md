@@ -9,10 +9,10 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-27T04:12:46.498Z
-- Commit: 666a4bcc8
+- Date: 2026-06-30T10:37:24.988Z
+- Commit: c08666a98
 - Node: v26.4.0
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- OS: linux 6.18.33.2-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 15.6 GiB
 
@@ -20,10 +20,10 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task                                   | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute — insert 100 rows into 100     | 1.00×   | 0.0627    | ±12.15% | 0.0889   | 10      |
-| execute — insert 100 rows into 1000    | 1.00×   | 0.0625    | ±4.42%  | 0.0696   | 10      |
-| execute — insert 1000 rows into 10000  | 0.11×   | 0.5836    | ±4.71%  | 0.6603   | 10      |
-| execute — insert 10000 rows into 10000 | 0.011×  | 5.6960    | ±5.73%  | 6.5335   | 10      |
-| undo — remove 100 rows from 200        | 0.62×   | 0.1020    | ±4.58%  | 0.1169   | 10      |
-| undo — remove 1000 rows from 11000     | 0.055×  | 1.1458    | ±13.29% | 1.7403   | 10      |
-| undo — remove 10000 rows from 20000    | 0.006×  | 10.4286   | ±2.88%  | 10.8732  | 10      |
+| execute — insert 100 rows into 100     | 1.00×   | 0.0608    | ±12.04% | 0.0832   | 10      |
+| execute — insert 100 rows into 1000    | 0.99×   | 0.0614    | ±8.05%  | 0.0769   | 10      |
+| execute — insert 1000 rows into 10000  | 0.11×   | 0.5635    | ±4.82%  | 0.6302   | 10      |
+| execute — insert 10000 rows into 10000 | 0.011×  | 5.5724    | ±4.75%  | 6.5206   | 10      |
+| undo — remove 100 rows from 200        | 0.55×   | 0.1114    | ±15.88% | 0.1586   | 10      |
+| undo — remove 1000 rows from 11000     | 0.056×  | 1.0915    | ±12.13% | 1.5771   | 10      |
+| undo — remove 10000 rows from 20000    | 0.0057× | 10.6440   | ±8.59%  | 13.2368  | 10      |

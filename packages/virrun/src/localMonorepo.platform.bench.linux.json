@@ -1,0 +1,123 @@
+{
+  "files": [
+    {
+      "filepath": "src/localMonorepo.platform.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 6904.286835699997,
+              "name": "native",
+              "p99": 7281.1064719999995,
+              "rme": 2.0355834857310793,
+              "sampleCount": 10
+            },
+            {
+              "mean": 3749.026828800002,
+              "name": "os/linux",
+              "p99": 3949.4042740000004,
+              "rme": 1.5323403518396062,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "install - real workspace dependency closure (cold)"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 4119.456026999996,
+              "name": "cold",
+              "p99": 4409.865990999999,
+              "rme": 3.2963525464907635,
+              "sampleCount": 10
+            },
+            {
+              "mean": 9193.311829600007,
+              "name": "warm",
+              "p99": 9774.633681999985,
+              "rme": 2.2952193009150332,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "install - warm fork vs cold reinstall"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 740.6574764999968,
+              "name": "native",
+              "p99": 806.9510550000123,
+              "rme": 2.410923574165869,
+              "sampleCount": 10
+            },
+            {
+              "mean": 976.3426219000015,
+              "name": "os/linux",
+              "p99": 1139.336632999999,
+              "rme": 5.859607519229726,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "typecheck - packages/shared (cold)"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 4557.2209913,
+              "name": "native",
+              "p99": 5041.399239999999,
+              "rme": 3.3692628868404046,
+              "sampleCount": 10
+            },
+            {
+              "mean": 4790.434110900014,
+              "name": "os/linux",
+              "p99": 5228.019501000061,
+              "rme": 2.905679714154812,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "build - packages/shared (cold)"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 4464.532109999995,
+              "name": "native",
+              "p99": 4570.838943999959,
+              "rme": 1.0910997379625447,
+              "sampleCount": 10
+            },
+            {
+              "mean": 4786.782479199965,
+              "name": "os/linux/persist",
+              "p99": 5018.338909999933,
+              "rme": 1.4342238745507132,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "build - write-back persist vs native (produces dist)"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 2003.2768390000333,
+              "name": "native",
+              "p99": 2081.854464000091,
+              "rme": 1.2064551253716815,
+              "sampleCount": 10
+            },
+            {
+              "mean": 2297.197552700003,
+              "name": "os/linux",
+              "p99": 2389.0861409999197,
+              "rme": 2.639301866507968,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "test - packages/shared"
+        }
+      ]
+    }
+  ]
+}

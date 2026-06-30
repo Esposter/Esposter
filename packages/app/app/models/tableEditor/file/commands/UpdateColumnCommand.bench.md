@@ -9,10 +9,10 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-27T04:12:46.498Z
-- Commit: 666a4bcc8
+- Date: 2026-06-30T10:37:24.988Z
+- Commit: c08666a98
 - Node: v26.4.0
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- OS: linux 6.18.33.2-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 15.6 GiB
 
@@ -20,8 +20,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task                          | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ----------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute (rename) — 100 rows   | 1.00×   | 0.0219    | ±58.07% | 0.0532   | 10      |
-| execute (rename) — 1000 rows  | 1.10×   | 0.0199    | ±41.83% | 0.0521   | 10      |
-| execute (rename) — 10000 rows | 0.19×   | 0.1181    | ±11.38% | 0.1627   | 10      |
-| undo (rename) — 1000 rows     | 0.02×   | 1.1118    | ±52.77% | 3.1639   | 10      |
-| undo (rename) — 10000 rows    | 0.004×  | 5.4026    | ±7.50%  | 6.4015   | 10      |
+| execute (rename) — 100 rows   | 1.00×   | 0.0219    | ±94.52% | 0.0991   | 10      |
+| execute (rename) — 1000 rows  | 1.08×   | 0.0203    | ±48.02% | 0.0584   | 10      |
+| execute (rename) — 10000 rows | 0.19×   | 0.1136    | ±5.88%  | 0.1372   | 10      |
+| undo (rename) — 1000 rows     | 0.027×  | 0.8161    | ±25.19% | 1.3948   | 10      |
+| undo (rename) — 10000 rows    | 0.0042× | 5.2381    | ±7.83%  | 6.4586   | 10      |

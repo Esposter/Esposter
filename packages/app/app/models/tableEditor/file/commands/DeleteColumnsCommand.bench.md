@@ -9,10 +9,10 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-27T04:12:46.498Z
-- Commit: 666a4bcc8
+- Date: 2026-06-30T10:37:24.988Z
+- Commit: c08666a98
 - Node: v26.4.0
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- OS: linux 6.18.33.2-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
 - RAM: 15.6 GiB
 
@@ -20,10 +20,10 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task                                        | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute — delete 1 of 5 columns, 100 rows   | 1.00×   | 0.0395    | ±59.29% | 0.1087   | 10      |
-| execute — delete 1 of 5 columns, 1000 rows  | 0.58×   | 0.0680    | ±14.36% | 0.0990   | 10      |
-| execute — delete 1 of 5 columns, 10000 rows | 0.1×    | 0.3965    | ±11.56% | 0.5718   | 10      |
-| execute — delete 3 of 5 columns, 1000 rows  | 0.3×    | 0.1336    | ±10.46% | 0.1821   | 10      |
-| execute — delete 3 of 5 columns, 10000 rows | 0.027×  | 1.4379    | ±14.68% | 2.0064   | 10      |
-| undo — restore 1 column into 1000 rows      | 0.03×   | 1.3162    | ±56.30% | 3.8417   | 10      |
-| undo — restore 3 columns into 10000 rows    | 0.005×  | 7.9169    | ±4.70%  | 8.5949   | 10      |
+| execute — delete 1 of 5 columns, 100 rows   | 1.00×   | 0.0383    | ±50.85% | 0.0861   | 10      |
+| execute — delete 1 of 5 columns, 1000 rows  | 0.56×   | 0.0683    | ±12.31% | 0.0992   | 10      |
+| execute — delete 1 of 5 columns, 10000 rows | 0.097×  | 0.3956    | ±4.84%  | 0.4598   | 10      |
+| execute — delete 3 of 5 columns, 1000 rows  | 0.31×   | 0.1247    | ±4.61%  | 0.1391   | 10      |
+| execute — delete 3 of 5 columns, 10000 rows | 0.024×  | 1.5844    | ±40.44% | 4.0530   | 10      |
+| undo — restore 1 column into 1000 rows      | 0.035×  | 1.0796    | ±59.85% | 3.5640   | 10      |
+| undo — restore 3 columns into 10000 rows    | 0.0043× | 8.8325    | ±16.14% | 13.0558  | 10      |
