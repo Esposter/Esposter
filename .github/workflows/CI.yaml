@@ -84,7 +84,7 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
         with:
-          bubblewrap-sandbox: "true"
+          bubblewrap-sandbox: true
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
@@ -155,10 +155,15 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
         with:
-          bubblewrap-sandbox: "true"
+          bubblewrap-sandbox: true
 
+      # install: false — node_modules comes from the warm snapshot inside the sandbox, so a host `pnpm i` is
+      # Redundant; Setup Packages exposes the `virrun` bin from the artifact instead. Only the dist artifact is
+      # Needed (typecheck resolves `@esposter/*` to their built `main`).
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
+        with:
+          install: false
       # Read-only restore of the snapshot the warm-snapshot job published (it owns the save), so `virrun --` forks
       # The warm dep tree instead of cold-installing. Same lockfile-hash key.
       - name: ♻️ Restore warm snapshot
@@ -184,10 +189,15 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
         with:
-          bubblewrap-sandbox: "true"
+          bubblewrap-sandbox: true
 
+      # install: false — node_modules comes from the warm snapshot inside the sandbox, so a host `pnpm i` is
+      # Redundant; Setup Packages exposes the `virrun` bin from the artifact instead. Only the dist artifact is
+      # Needed (typecheck resolves `@esposter/*` to their built `main`).
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
+        with:
+          install: false
       # Read-only restore of the warm-snapshot job's published snapshot so `virrun --` forks the warm dep tree.
       - name: ♻️ Restore warm snapshot
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
@@ -212,10 +222,15 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
         with:
-          bubblewrap-sandbox: "true"
+          bubblewrap-sandbox: true
 
+      # install: false — node_modules comes from the warm snapshot inside the sandbox, so a host `pnpm i` is
+      # Redundant; Setup Packages exposes the `virrun` bin from the artifact instead. Only the dist artifact is
+      # Needed (typecheck resolves `@esposter/*` to their built `main`).
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
+        with:
+          install: false
       # Read-only restore of the warm-snapshot job's published snapshot so `virrun --` forks the warm dep tree.
       - name: ♻️ Restore warm snapshot
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
