@@ -21,10 +21,8 @@ export const createBwrapBackend = (
 ): ExecBackend => ({
   exec: (command, options) =>
     new Promise((resolve, reject) => {
-      // Fd 3 is an extra pipe bwrap writes its JSON status to; stdin/out/err follow the requested
-      // Stdio. Cwd lives inside the sandbox via --chdir, so it is not passed to spawn, and shell is
-      // Always false - the overlay flags and command are an explicit argv that must never be
-      // Reinterpreted by a host shell.
+      // Fd 3 is an extra pipe bwrap writes its JSON status to. shell:false — the overlay flags and command are an
+      // Explicit argv that a host shell must never reinterpret; cwd lives inside the sandbox via --chdir.
       const bwrapCommand = createBwrapCommand(createBwrapArgs(command, options.cwd, options), options);
       const [file, ...args] = bwrapCommand.command;
       const stdio: StdioOptions =
@@ -39,10 +37,9 @@ export const createBwrapBackend = (
       let stdout = "";
       let stderr = "";
       let status = "";
-      // The wsl backend pipes stderr to parse its appended status block, so under "inherit" it would otherwise
-      // Stay silent for the whole run. Stream the real child output live as it arrives, withholding the trailing
-      // Status block. The fd backend already inherits stderr directly under "inherit" (no "data" events), so this
-      // Only ever drives the wsl path; under "pipe" (capture) it stays undefined and nothing streams.
+      // The wsl backend pipes stderr to parse its appended status block, so under "inherit" it would otherwise stay
+      // Silent for the whole run; stream the real output live, withholding the trailing status block. Only drives
+      // The wsl path — the fd backend inherits stderr directly (no "data" events).
       const writeStderrLive = options.stdio === "inherit" ? createStderrLiveWriter() : undefined;
       child.stdout?.on("data", (chunk) => {
         stdout += chunk.toString();
@@ -60,10 +57,8 @@ export const createBwrapBackend = (
           bwrapCommand.statusSource === "stderr" ? parseBwrapStderrStatus(stderr) : { status, stderr };
         const exitCode = parseBwrapExitCode(bwrapStderr.status);
         if (exitCode === undefined) {
-          // Sandbox setup failed (bad flag, missing binary, WSL bridge or overlay-mount error). The real
-          // Diagnostic is the captured stderr — fold it into the error so the user sees *why* it failed,
-          // Not just that it did. Without this the wsl backend collapses every setup failure into one
-          // Opaque line, leaving nothing to debug from.
+          // Sandbox setup failed (bad flag, missing binary, WSL bridge or overlay-mount error); fold the captured
+          // Stderr into the error so the user sees why, not just that it did.
           reject(
             new InvalidOperationError(
               Operation.Create,
@@ -73,10 +68,8 @@ export const createBwrapBackend = (
           );
           return;
         }
-        // "inherit" streams the child's output to the host. The wsl backend can't inherit stderr directly — it
-        // Carries the bwrap status block this backend has to parse — so writeStderrLive already surfaced the
-        // Cleaned output chunk-by-chunk above as the command ran; nothing is left to flush here. The fd backend
-        // (linux) inherited stderr live, so its captured remainder is "" too.
+        // Under "inherit" the output already reached the host live (writeStderrLive above, or the fd backend's
+        // Direct inherit), so nothing is left to flush.
         if (options.stdio === "inherit") {
           resolve({ exitCode, stderr: "", stdout: "" });
           return;

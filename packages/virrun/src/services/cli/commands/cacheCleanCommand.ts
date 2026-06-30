@@ -10,16 +10,11 @@ import { getResult, toAppError } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { join } from "node:path";
 import process from "node:process";
-// Explicit CleanArgs annotation (what isolatedDeclarations emits for the exported `CommandDef<CleanArgs>`; a
-// Specific-args CommandDef is not assignable to the generic CommandDef) + `satisfies ArgsDef` to validate the
-// Literal against citty's arg-definition shape.
+// Explicit annotation for isolatedDeclarations + `satisfies ArgsDef` to validate the literal.
 const cleanArgs: CleanArgs = {
   all: { default: false, description: "Also remove the host-global ~/.virrun/snapshots.", type: "boolean" },
 } satisfies ArgsDef;
-// `virrun cache clean [--all]` — removes the repo-local `<root>/.virrun` cache (store; repopulated on the next
-// Routed run). `--all` also clears the host-global `~/.virrun/snapshots`, which is shared across repos, so it is
-// Opt-in. removeSnapshotDirectory is the safe teardown primitive (handles WSL-UNC paths + overlay-poisoned dirs,
-// Harmless on a plain tree).
+// `--all` also clears the host-global snapshots, which are shared across repos, so it is opt-in.
 export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
   args: cleanArgs,
   meta: {

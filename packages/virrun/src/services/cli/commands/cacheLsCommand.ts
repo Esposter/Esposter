@@ -11,10 +11,8 @@ import { defineCommand } from "citty";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import process from "node:process";
-// `virrun cache ls` — reports the two on-disk caches: the repo-local dep store (`<root>/.virrun/store`) and the
-// Host-global warm-snapshot dir (`~/.virrun/snapshots`, one `<lockfile-hash>` entry per captured snapshot). The IO
-// (existence + dir read) lives here; the rendering is the pure formatCacheListing. Resolving the repo store needs a
-// Lockfile, so run outside a repo surfaces as a clean error line and exit 1 rather than an uncaught stack trace.
+// Reports the two on-disk caches: the repo-local dep store and the host-global warm-snapshot dir (one
+// `<lockfile-hash>` entry per captured snapshot). IO lives here; rendering is the pure formatCacheListing.
 export const cacheLsCommand: CommandDef = defineCommand({
   meta: {
     description: "List the repo-local dependency store and host-global warm snapshots.",

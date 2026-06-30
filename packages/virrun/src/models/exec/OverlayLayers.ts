@@ -5,11 +5,11 @@
 //   - fork (`lowerDirs: [snapshotUpper]`): the frozen snapshot stacks above the source as a read-only lower
 //     And writes vanish again, so each forked run reuses the install without an upper of its own.
 export interface OverlayLayers {
-  // Extra read-only lower layers stacked above the source dir, lowest-priority first. A fork run passes the
-  // Captured snapshot's upper here so its files shadow the source while the working dir itself stays read-only.
+  // Extra read-only lower layers stacked above the source dir, lowest-priority first (a fork run passes the
+  // Captured snapshot's upper here).
   lowerDirs?: readonly string[];
-  // Host dir that captures writes as real files (a capture run); must be paired with workDir. Omitted means
-  // Writes go to an invisible tmpfs upper (the default ephemeral run and every fork run).
+  // Host dir that captures writes as real files (a capture run); must be paired with workDir. Omitted → writes
+  // Go to an invisible tmpfs upper.
   upperDir?: string;
   // Empty scratch dir on the same filesystem as upperDir, required by overlayfs whenever upperDir is set.
   workDir?: string;
