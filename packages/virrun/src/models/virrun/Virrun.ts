@@ -15,4 +15,10 @@ export interface Virrun {
   // The snapshot is keyed by lockfile hash in the host-global cache, so other repos with the same dependencies
   // Reuse it too. Os backend only — other backends have no overlay layer, so fork is identical to exec.
   fork: (command: readonly string[] | string, stdio?: ExecStdio) => Promise<ExecResult>;
+  // Like fork (warm snapshot, provisioned first if needed) but PERSISTS the command's produced files back to the
+  // Host working dir, so a mutation command (eslint --fix, db:gen, build) leaves disk exactly as native would
+  // (specs/write-back.md). The snapshot supplies node_modules as a read-only lower, so only writes beyond that warm
+  // Baseline are flushed — node_modules never touches the host. Os backend only; other backends plain-exec (native
+  // Already writes straight to disk, so it is native-equivalent with no flush needed).
+  persist: (command: readonly string[] | string, stdio?: ExecStdio) => Promise<ExecResult>;
 }

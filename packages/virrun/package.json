@@ -63,6 +63,7 @@
     "empathic": "catalog:",
     "fast-check": "catalog:",
     "rolldown": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "zod": "catalog:"
   }
 }

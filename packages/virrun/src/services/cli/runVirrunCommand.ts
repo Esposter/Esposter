@@ -1,4 +1,5 @@
 import { BackendType } from "@/models/virrun/BackendType";
+import { ExecutionMode } from "@/models/virrun/ExecutionMode";
 import { formatVirrunBanner } from "@/services/cli/formatVirrunBanner";
 import { formatVirrunProvisioning } from "@/services/cli/formatVirrunProvisioning";
 import { formatVirrunResult } from "@/services/cli/formatVirrunResult";
@@ -16,29 +17,33 @@ import process from "node:process";
 // Error line and a propagated exit code instead of an unhandled rejection. All outcomes converge on the single
 // FormatVirrunResult write so timing is always reported and the success/failure paths never duplicate it.
 //
-// `isExec` picks the execution mode: the smart default (false) forks a warm snapshot on the os backend and plain-
-// Execs elsewhere; `exec` (true) always plain-execs, skipping any snapshot reuse. Stderr-only for the banner/
-// Result/provisioning lines — never stdout — so correctness diffs that compare the child's streams are untouched.
+// `mode` picks the execution path (ExecutionMode): Persist (the default) forks a warm snapshot and flushes the
+// Command's produced files back to the host so disk matches native; Fork forks the same warm snapshot but lets
+// Writes vanish (ephemeral verification/CI); Exec plain-execs with no snapshot reuse. All three plain-exec on a
+// Non-os backend. Stderr-only for the banner/result/provisioning lines — never stdout — so correctness diffs that
+// Compare the child's streams are untouched.
 export const runVirrunCommand = async (
   command: readonly string[],
-  { isExec }: { isExec: boolean },
+  { mode }: { mode: ExecutionMode },
 ): Promise<number> => {
   const start = performance.now();
   const result = await getResultAsync(async () => {
     const backend = resolveBackend(resolveVirrunConfiguration());
     const virrun = await createVirrun({ backend });
     process.stderr.write(`${formatVirrunBanner({ backend: virrun.backend, command, nodeVersion: process.version })}\n`);
-    // The os backend runs over a frozen dependency snapshot (see Virrun.fork): announce whether this run reuses a
-    // Warm snapshot or pays the one-time install, so a multi-minute first run is explained, not a silent stall.
-    if (!isExec && virrun.backend === BackendType.Os) {
+    // Persist and Fork both run over a frozen dependency snapshot (see Virrun.fork/persist): announce whether this
+    // Run reuses a warm snapshot or pays the one-time install, so a multi-minute first run is explained, not a
+    // Silent stall. Exec skips the snapshot, so it has nothing to announce.
+    if (mode !== ExecutionMode.Exec && virrun.backend === BackendType.Os) {
       const { exists, hash } = resolveSnapshotLocation("");
       process.stderr.write(`${formatVirrunProvisioning({ exists, hash })}\n`);
     }
     return withFinalizerAsync(
-      () =>
-        !isExec && virrun.backend === BackendType.Os
-          ? virrun.fork(command, "inherit")
-          : virrun.exec(command, "inherit"),
+      () => {
+        if (mode === ExecutionMode.Persist) return virrun.persist(command, "inherit");
+        else if (mode === ExecutionMode.Fork) return virrun.fork(command, "inherit");
+        else return virrun.exec(command, "inherit");
+      },
       () => virrun.dispose(),
     );
   });

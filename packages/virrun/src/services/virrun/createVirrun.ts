@@ -11,6 +11,7 @@ import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { persistRun } from "@/services/exec/snapshot/persistRun";
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
@@ -59,6 +60,16 @@ export const createVirrun = async ({
       if (!resolveSnapshotLocation(cwd).exists)
         await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
       return forkSnapshot(execBackend, command, toOptions(stdio));
+    },
+    persist: async (command, stdio = "pipe") => {
+      // Write-back is the os backend's overlay mechanism. Other backends have no sandbox, so a plain exec already
+      // Writes straight to the host disk — native-equivalent with nothing to flush.
+      if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
+      // Same warm-snapshot provisioning as fork (the dep closure the run stacks read-only); persistRun then tops it
+      // With a real upper and reconciles the command's writes onto the host.
+      if (!resolveSnapshotLocation(cwd).exists)
+        await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
+      return persistRun(execBackend, command, toOptions(stdio));
     },
   };
 };
