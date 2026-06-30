@@ -1,9 +1,17 @@
 name: Setup Packages
 description: Install dependencies, then download the compiled package output (dist + generated barrels) produced by the build-packages job
+inputs:
+  install:
+    description: >-
+      Run `pnpm i`. Set to false for virrun verify jobs (format/lint/typecheck): they get node_modules
+      from the warm snapshot inside the sandbox, so a host install is redundant. When false we still
+      expose a `virrun` bin (normally created by `pnpm i`) so the `virrun --` scripts resolve.
+    default: true
 runs:
   using: composite
   steps:
     - name: 📦 Install dependencies
+      if: ${{ fromJSON(inputs.install) }}
       run: pnpm i
       shell: bash
     # `packages/*/dist` is the published build output and `packages/*/src/**/index.ts` are the ctix-generated
@@ -14,3 +22,13 @@ runs:
       with:
         name: package-builds
         path: packages
+    # When install is skipped there is no `node_modules/.bin/virrun`, so put a launcher on PATH that runs the
+    # Self-contained bundle the artifact just delivered. Lets the unchanged `virrun -- <cmd>` scripts resolve.
+    - name: 🔗 Expose virrun bin
+      if: ${{ !fromJSON(inputs.install) }}
+      run: |
+        mkdir -p "$RUNNER_TEMP/bin"
+        printf '#!/usr/bin/env bash\nexec node "%s/packages/virrun/dist/cli.js" "$@"\n' "$GITHUB_WORKSPACE" > "$RUNNER_TEMP/bin/virrun"
+        chmod +x "$RUNNER_TEMP/bin/virrun"
+        echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      shell: bash

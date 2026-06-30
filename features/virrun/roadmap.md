@@ -19,7 +19,7 @@ Done — bwrap RAM-overlay exec, in-RAM full-monorepo install proof, shared CAS 
 
 ## Phase 4 — Distribution & CI
 
-- [ ] Migrate the CLI to [unjs/citty](https://github.com/unjs/citty) for declarative subcommands/flags/`--help`, then add `virrun run`, `virrun exec`, `virrun snapshot`, `virrun init`, `virrun cache` (ls/clean) — extends the Phase 0 prefix CLI → [deferred/citty-cli.md](deferred/citty-cli.md).
+- [x] Migrate the CLI to [unjs/citty](https://github.com/unjs/citty) for declarative subcommands/flags/`--help`, then add `virrun run`, `virrun exec`, `virrun snapshot`, `virrun init`, `virrun cache` (ls/clean) — extends the Phase 0 prefix CLI. Shipped → README `## Shipped` · getting-started subcommand table. The bare `virrun -- <cmd>` prefix is preserved as citty's default subcommand (`run`).
 - [x] Config backend selection (adoption level 3) — committed `virrun.config.json` (`backend`/`fallback`) resolved via `empathic` with host-support auto-fallback; no allowlist (the `virrun -- <cmd>` prefix is the switch), lazy `.virrun/` materialization, and a `VIRRUN=true` output signal. Benchmark-gate / differential-correctness fallbacks remain future work. Shipped → README `## Shipped` · [specs/config-and-cache.md](specs/config-and-cache.md). The level-4 PATH shim and always-on whole-repo routing were measured unviable / stay deferred → [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md).
 - [ ] Firecracker microVM backend for untrusted multi-tenant / CI fan-out.
 - [ ] Task cache (skip unchanged builds) — evaluate reusing Turborepo cache vs native.

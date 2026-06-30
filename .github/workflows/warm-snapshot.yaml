@@ -41,16 +41,20 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         uses: ./.github/actions/setup-project-dependencies
         with:
-          bubblewrap-sandbox: "true"
+          bubblewrap-sandbox: true
       # Pulls the built `virrun` bin (packages/virrun/dist) from the build-packages artifact, so the caller must
-      # Run build-packages first (`needs: build-packages` on the calling job).
+      # Run build-packages first (`needs: build-packages` on the calling job). install: false — the cold capture
+      # Installs inside the sandbox (resolveSetupCommand), so a host `pnpm i` is redundant.
       - name: 📦 Setup Packages
         if: steps.cache.outputs.cache-hit != 'true'
         uses: ./.github/actions/setup-packages
+        with:
+          install: false
       # Cold path only: `virrun -- true` resolves the os backend and forks — with no snapshot yet it runs the
       # Install (resolveSetupCommand) into the overlay upper, atomically publishes it, then runs `true` over it.
       # The `actions/cache` post step saves `~/.virrun/snapshots` for this and every later run. On a hit there is
-      # Nothing to do — the upper is already restored for the consumers below.
+      # Nothing to do — the upper is already restored for the consumers below. `virrun` resolves to the bin
+      # Setup Packages exposed from the artifact (install skipped, so no node_modules/.bin).
       - name: 🔥 Capture warm snapshot
         if: steps.cache.outputs.cache-hit != 'true'
-        run: pnpm exec virrun -- true
+        run: virrun -- true

@@ -6,7 +6,7 @@ The two on-disk artifacts virrun reads and writes inside a consuming repo: `virr
 
 The `virrun -- <cmd>` prefix is the switch: every prefixed command is sandboxed, and that needs nothing on disk. The config exists only to answer the second question — _which backend_ a sandboxed command runs through — once a repo wants that pinned and reviewable rather than left to the `auto` default (adoption level 3). virrun also keeps (b) a local cache holding the shared dependency store and warm snapshots so sandboxed runs are fast. This spec fixes the schema and layout for both so they are stable before any code reads them. → [adoption](adoption.md)
 
-Keep the MVP minimal: the first config is a single `backend` field, and the first cache holds only what the shipped backends produce. The richer surface (`virrun init`, `virrun cache clean`, schema validation, `--help`) arrives with the citty CLI migration, not before — see [deferred/citty-cli.md](../deferred/citty-cli.md).
+Keep the MVP minimal: the first config is a single `backend` field, and the first cache holds only what the shipped backends produce. The richer surface (`virrun init`, `virrun cache ls`/`clean`, `--help`) shipped with the citty CLI migration — see [getting-started subcommands](https://github.com/Esposter/Esposter/blob/main/packages/virrun/readme/getting-started.md#subcommands).
 
 ## `virrun.config.json` (committed)
 
@@ -49,6 +49,6 @@ Local, machine-specific, fully disposable. Deleting it only forces the next rout
 ## Constraints / Notes
 
 - Config is committed and reviewable; cache is gitignored and disposable — the split is deliberate. The backend choice is code; materialized bytes are not.
-- MVP is read-only of a hand-written config plus lazy cache dirs. Generation (`virrun init`), inspection (`virrun cache ls`), and cleanup (`virrun cache clean`) are CLI subcommands deferred to the citty migration. → [deferred/citty-cli.md](../deferred/citty-cli.md)
+- Generation (`virrun init`), inspection (`virrun cache ls`), and cleanup (`virrun cache clean [--all]`) shipped as citty subcommands; `init` writes the `$schema`-pointed config, `cache clean` removes the repo-local `.virrun` (and host-global snapshots with `--all`) via the safe `removeSnapshotDirectory` teardown. → [getting-started subcommands](https://github.com/Esposter/Esposter/blob/main/packages/virrun/readme/getting-started.md#subcommands)
 - The cache only ever holds what a shipped backend produces: `store/pnpm/` follows the Phase 2 CAS dep store, `snapshots/` follows Phase 3 warm-fork. Snapshot dirs stay absent until that phase lands.
 - Routing the whole repo at once is explicitly out — see [deferred/whole-repo-routing.md](../deferred/whole-repo-routing.md).
