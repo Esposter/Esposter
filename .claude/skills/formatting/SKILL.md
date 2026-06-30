@@ -62,6 +62,13 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 
   - **Exception — `.test.ts`/`.test-d.ts` files**: do NOT strip these blank lines. `vitest.configs.all` (enabled in the eslint vitest plugin config) turns on the `vitest/padding-around-*` rules, which _require_ a blank line around `describe`/`test` blocks, hooks (`beforeEach`/`afterEach`), and expect groups. A leading comment on such a block sits after that mandatory blank line, so keep it. Still tighten the comment text itself.
 
+- **CRITICAL — comment only _exceptional_ behaviour.** A comment earns its place only when it explains something a competent reader could not infer from the code, its names, or the project's own conventions. **Never restate an established pattern or anything already documented in a skill or feature doc.** The skill/doc is the single source of truth; duplicating it in a comment is noise that rots. Concretely, delete comments that:
+  - restate a convention covered by a skill (e.g. "a `.test.ts` so ctix keeps it out of the public barrel", "getResult turns the throw into false, per the no-try/catch convention", "memoized because…" when memoization is the obvious idiom);
+  - paraphrase what a well-named function/variable already says ("// resolve the repo root" above `resolveRepoRoot()`);
+  - duplicate a rationale already written in a sibling file — state it once at the source, not at every call site.
+
+  Keep comments for genuinely non-obvious _why_: a workaround for a specific external bug/quirk, a subtle ordering/race constraint, an overlayfs/kernel/platform footgun, a security boundary. When in doubt, prefer deleting — a wrong-but-confident comment is worse than none.
+
 - **Avoid unnecessary comments** — prefer descriptive names. Keep comments that explain _why_ (non-obvious decisions, disable reasons, workarounds).
 - **Keep comments tight and generic** — explain the _why_ in general terms; don't bake in specific example values (versions, IDs, payloads, magic numbers). Prefer a single line, but keep a bulleted list (one item per `//` line) when enumerating distinct items rather than cramming them into one sentence. If an example helps, show only the minimal fragment. Applies to `//`, `/* */`, and Vue `<!-- -->` alike.
 - **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Trim it to the minimal identifying fragment; drop surrounding example values.

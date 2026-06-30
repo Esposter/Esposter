@@ -1,4 +1,5 @@
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
+import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
 import { HOME_CACHE_DIRECTORY_NAME } from "@/services/exec/util/constants.test";
 import { getResult } from "@esposter/shared";
@@ -27,13 +28,20 @@ const isCacheHomeWritable = (): boolean =>
 // Heavy + networked acceptance gate, shared by the os-backend install and the snapshot warm-fork tests. Proves
 // The host can set up the overlay sandbox, reach a package-manager entrypoint inside it, and write the cache
 // Home those tests stage the corpus into. Lives in a `.test.ts` so ctix keeps it out of the public barrel.
+// On win32 the toolchain probe must use the SAME login + interactive shell the os backend captures its PATH from
+// (buildWslLoginShellCommand) — a profile/rc-bound node manager (fnm, nvm…) is off the bare `wsl.exe --exec sh -lc`
+// PATH, so a plain probe would skip the suite even though the backend can reach node. Probing through the login
+// Shell keeps the gate in lockstep with what readWslLoginPath injects, so the gate passes exactly when the backend
+// Can actually install.
 export const isSandboxInstallSupported: boolean =
   isOsBackendSupported() &&
   getResult(() =>
     process.platform === "win32"
-      ? execFileSync("wsl.exe", ["--exec", "sh", "-lc", "command -v node && node --version && corepack --version"], {
-          stdio: "pipe",
-        })
+      ? execFileSync(
+          "wsl.exe",
+          ["--exec", "sh", "-c", buildWslLoginShellCommand("command -v node && node --version && corepack --version")],
+          { stdio: "pipe" },
+        )
       : execFileSync("sh", ["-lc", "command -v pnpm"], { stdio: "pipe" }),
   ).match(
     () => true,
