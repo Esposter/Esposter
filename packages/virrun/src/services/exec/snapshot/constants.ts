@@ -12,13 +12,6 @@ export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
 // Already exposes pnpm, so it is invoked directly. See resolveSetupCommand.
 export const SETUP_COMMAND_WIN32 = "corepack pnpm install --frozen-lockfile";
 export const SETUP_COMMAND_LINUX = "pnpm install --frozen-lockfile";
-// Replays the workspace's own postinstall lifecycle (the app's `nuxt prepare`, etc.) inside each fork before the
-// Sandboxed command. The setup install runs these once to generate source-derived artifacts (e.g. .nuxt), but
-// PruneSnapshotUpper drops them from the lockfile-keyed snapshot since they derive from source, not the lockfile —
-// So replaying regenerates them fresh against *this* source, the per-run freshness the snapshot can't carry.
-// Recursive run is lenient: a package with no postinstall is skipped, so a repo without one is a clean no-op. No
-// Custom config — virrun reuses the same lifecycle the install already defines.
-export const REAPPLY_POSTINSTALL_COMMAND = "pnpm --recursive run postinstall";
 // Linux-side fs primitives for write-back (specs/write-back.md → "Execution locus"); classification + ordering stay
 // In tested TS. python3 over getfattr — it reads the opaque xattr and walks in one ubiquitous tool.
 // PROBE (argv: upperDir, snapshotDir) emits a JSON manifest of raw facts per upper entry, including whether each

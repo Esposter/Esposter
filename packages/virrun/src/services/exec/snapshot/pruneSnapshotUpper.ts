@@ -15,8 +15,9 @@ const hasNodeModules = (dir: string): boolean =>
 // Serve a stale copy that shadows the host's fresh one the moment source moves on — silently diverging the sandboxed
 // Toolchain from native (a type-aware linter reads the stale graph, collapses types to `any`, and misfires). Prune
 // The upper down to the closure: keep every node_modules tree (and the directories on the path to one), drop
-// Everything else in a single rm per discarded subtree. A `prepare` hook regenerates the dropped artifacts fresh per
-// Fork, so the lockfile-keyed snapshot only ever owns what the lockfile actually determines.
+// Everything else in a single rm per discarded subtree. The fork reads the dropped artifacts from the host source
+// Tree stacked underneath as the `--overlay-src` lower, so the lockfile-keyed snapshot only ever owns what the
+// Lockfile actually determines.
 export const pruneSnapshotUpper = (dir: string): void => {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const entryPath = join(dir, entry.name);

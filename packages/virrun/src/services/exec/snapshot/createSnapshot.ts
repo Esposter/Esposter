@@ -45,7 +45,8 @@ export const createSnapshot = (
     // The snapshot is keyed only on the lockfile, so it must freeze only what the lockfile determines: the
     // Dependency closure. Strip the source-derived artifacts the install's postinstall hooks wrote (e.g. .nuxt)
     // Before publishing, or a fork would serve a stale copy that shadows the host's fresh one once source moves
-    // On (a `prepare` hook regenerates them per fork). Prune the private temp upper, never the published one.
+    // On — instead the fork reads them from the host source tree stacked underneath as the `--overlay-src` lower.
+    // Prune the private temp upper, never the published one.
     pruneSnapshotUpper(captureUpperDir);
     // Rename-then-check (not check-then-rename) collapses the window where two capturers both saw `exists === false`.
     // Probe the pre-resolved `upperDir`, not a re-resolve: the install may have rewritten the lockfile, re-hashing to
