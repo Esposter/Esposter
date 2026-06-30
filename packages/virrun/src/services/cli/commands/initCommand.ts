@@ -1,6 +1,7 @@
 import type { ArgsDef, CommandDef } from "citty";
 
 import { BackendType } from "@/models/virrun/BackendType";
+import { CommandType } from "@/models/virrun/CommandType";
 import { buildVirrunConfigurationContent } from "@/services/configuration/buildVirrunConfigurationContent";
 import { VIRRUN_CONFIGURATION_FILENAME } from "@/services/exec/util/constants";
 import { defineCommand } from "citty";
@@ -32,7 +33,7 @@ export const initCommand: CommandDef<typeof initArgs> = defineCommand({
   args: initArgs,
   meta: {
     description: "Write a virrun.config.json selecting which backend sandboxed commands use.",
-    name: "init",
+    name: CommandType.Init,
   },
   run: ({ args }) => {
     const path = join(process.cwd(), VIRRUN_CONFIGURATION_FILENAME);

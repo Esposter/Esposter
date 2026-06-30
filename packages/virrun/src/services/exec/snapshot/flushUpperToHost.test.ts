@@ -1,5 +1,5 @@
-import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { flushUpperToHost } from "@/services/exec/snapshot/flushUpperToHost";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
@@ -10,9 +10,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-// Read a tree into a flat { relativePath: content } map — directories as the marker, files as their text — so two
-// Trees can be compared structurally. mtime/mode are deliberately ignored (mtime always differs; mode is unreliable
-// Over the win32 \\wsl.localhost bridge), and the end-to-end WSL verification already asserts mode parity.
+// Flat { relativePath: content } map (dirs as the marker) for structural comparison; mtime/mode ignored.
 const DIRECTORY_MARKER = "<dir>";
 const readTree = (root: string): Record<string, string> => {
   const tree: Record<string, string> = {};
@@ -30,16 +28,15 @@ const readTree = (root: string): Record<string, string> => {
   return tree;
 };
 
-// The overlay upper must live on a real fs with xattr/whiteout support — never /mnt/c (v9fs) on win32 — so the test
-// Roots go on the WSL distro's ext4 home there, mirroring the snapshot cache. On Linux $HOME/.cache is already ext4.
+// Overlay upper needs ext4 (xattr/whiteout) — WSL home on win32, $HOME/.cache on Linux; never /mnt/c (v9fs).
 const createOverlayRoot = (): string => {
   const cacheBase = process.platform === "win32" ? getWslNativeCacheRoot() : join(homedir(), HOME_CACHE_DIRECTORY_NAME);
   mkdirSync(cacheBase, { recursive: true });
   return mkdtempSync(join(cacheBase, VIRRUN_TEMP_DIR_PREFIX));
 };
 
-// A mutation that exercises every flush case at once: a created file, an in-place modification, a deletion
-// (whiteout), a removed-and-recreated directory (opaque), and a new nested tree.
+// Exercises every flush case: created file, in-place modification, deletion (whiteout), removed-and-recreated dir
+// (opaque), and a new nested tree.
 const MUTATE_COMMAND =
   "printf created > created.txt; printf X >> existing.txt; rm tracked.txt; rm -rf opaquedir; mkdir opaquedir; printf new > opaquedir/new.txt; mkdir -p nested/deep; printf d > nested/deep/f.txt";
 
@@ -73,6 +70,7 @@ describe.skipIf(!isOsBackendSupported())(flushUpperToHost, () => {
       overlayLayers: { upperDir, workDir },
       stdio: "pipe",
     });
+
     expect(result.exitCode).toBe(0);
 
     flushUpperToHost(upperDir, source, "");

@@ -1,5 +1,6 @@
 import type { CommandDef } from "citty";
 
+import { CommandType } from "@/models/virrun/CommandType";
 import { warmSnapshot } from "@/services/cli/warmSnapshot";
 import { defineCommand } from "citty";
 import process from "node:process";
@@ -8,7 +9,7 @@ import process from "node:process";
 export const snapshotCommand: CommandDef = defineCommand({
   meta: {
     description: "Provision the os backend's warm dependency snapshot for the current lockfile.",
-    name: "snapshot",
+    name: CommandType.Snapshot,
   },
   run: async () => {
     process.exitCode = await warmSnapshot();

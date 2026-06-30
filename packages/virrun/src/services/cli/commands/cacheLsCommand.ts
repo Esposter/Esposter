@@ -1,5 +1,6 @@
 import type { CommandDef } from "citty";
 
+import { CommandType } from "@/models/virrun/CommandType";
 import { formatCacheListing } from "@/services/cli/formatCacheListing";
 import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { VIRRUN_STORE_DIRECTORY_NAME } from "@/services/exec/util/constants";
@@ -17,7 +18,7 @@ import process from "node:process";
 export const cacheLsCommand: CommandDef = defineCommand({
   meta: {
     description: "List the repo-local dependency store and host-global warm snapshots.",
-    name: "ls",
+    name: CommandType.Ls,
   },
   run: () => {
     getResult(() => {

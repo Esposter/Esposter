@@ -1,13 +1,9 @@
-// Which execution path a passthrough command (`virrun -- <cmd>`, `virrun run`, `virrun exec`) takes on the os
-// Backend. All three are native-equivalent in their observable result; they differ in dependency reuse and whether
-// The command's writes reach the host. See specs/write-back.md and specs/snapshot-fork.md.
+// Execution path a passthrough command takes on the os backend (specs/write-back.md, specs/snapshot-fork.md).
 export enum ExecutionMode {
-  // Cold plain exec — run directly through the resolved backend with no warm-snapshot reuse (`virrun exec`).
+  // Cold plain exec, no warm-snapshot reuse (`virrun exec`).
   Exec = "exec",
-  // Warm snapshot, writes vanish — ephemeral verification where no output is wanted, e.g. CI lint/test
-  // (`virrun run --ephemeral`).
+  // Warm snapshot, writes vanish — ephemeral verification (`virrun run --ephemeral`).
   Fork = "fork",
-  // Warm snapshot, produced files flushed back to the host so disk matches native — the default mutation path that
-  // Lets every command move onto the prefix (`virrun -- <cmd>`, `virrun run`).
+  // Warm snapshot, produced files flushed to the host so disk matches native — the default (`virrun -- <cmd>`).
   Persist = "persist",
 }

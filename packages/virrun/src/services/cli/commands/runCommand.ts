@@ -1,5 +1,6 @@
 import type { ArgsDef, CommandDef } from "citty";
 
+import { CommandType } from "@/models/virrun/CommandType";
 import { ExecutionMode } from "@/models/virrun/ExecutionMode";
 import { runPassthrough } from "@/services/cli/runPassthrough";
 import { defineCommand } from "citty";
@@ -21,7 +22,7 @@ export const runCommand: CommandDef<typeof runArgs> = defineCommand({
   args: runArgs,
   meta: {
     description: "Run a command in the sandbox (warm snapshot; persists produced files to the host on the os backend).",
-    name: "run",
+    name: CommandType.Run,
   },
   run: ({ args, cmd }) => runPassthrough(args._, cmd, args.ephemeral ? ExecutionMode.Fork : ExecutionMode.Persist),
 });

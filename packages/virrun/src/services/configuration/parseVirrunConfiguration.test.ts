@@ -1,5 +1,6 @@
 import { BackendType } from "@/models/virrun/BackendType";
 import { parseVirrunConfiguration } from "@/services/configuration/parseVirrunConfiguration";
+import { InvalidOperationError } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(parseVirrunConfiguration, () => {
@@ -20,19 +21,19 @@ describe(parseVirrunConfiguration, () => {
   test("throws on invalid JSON", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration("{ not json")).toThrow("not valid JSON");
+    expect(() => parseVirrunConfiguration("{ not json")).toThrow(InvalidOperationError);
   });
 
   test("throws on an unknown backend", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration(JSON.stringify({ backend: "" }))).toThrow("`backend` must be one of");
+    expect(() => parseVirrunConfiguration(JSON.stringify({ backend: "" }))).toThrow(InvalidOperationError);
   });
 
   test("throws on an unknown key", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration(JSON.stringify({ "": "" }))).toThrow("unknown key:");
+    expect(() => parseVirrunConfiguration(JSON.stringify({ "": "" }))).toThrow(InvalidOperationError);
   });
 
   test("accepts a $schema pointer", () => {

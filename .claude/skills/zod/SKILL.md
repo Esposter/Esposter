@@ -57,7 +57,9 @@ TS infers `T` from the schema, so a non-existent key is a type error. In Zod 4, 
 
 ## External Event / Boundary Payloads — Validate, Never Cast
 
-Runtime data from external systems (EventGrid `event.data`, Storage Queue messages, webhook bodies) is untyped. **Never** assert with `event.data as unknown as SomeType` — a malformed payload throws deep in the handler. Define a co-located Zod schema and `.parse()` at the boundary.
+Runtime data crossing any trust boundary — EventGrid `event.data`, Storage Queue messages, webhook bodies, **subprocess stdout, and committed config files** (`virrun.config.json`) — is untyped. **Never** assert with `x as unknown as SomeType` or hand-roll type guards + casts (`as Record<string, unknown>`, `Object.values(E) as string[]`); a malformed payload then throws deep in the handler instead of at the edge. Define a co-located Zod schema and `.parse()` at the boundary.
+
+For untrusted JSON that arrives as a string (subprocess output, file contents), parse + validate in **one** `getResult`/`getResultAsync` and wrap the failure in `InvalidOperationError(Operation.Read, fn.name, …)` so malformed JSON and a schema mismatch surface identically at the call site — canonical refs: `virrun/src/services/exec/snapshot/parseOverlayManifest.ts` (process stdout) and `virrun/src/services/configuration/parseVirrunConfiguration.ts` (config file). Use `z.strictObject` for closed configs so an unknown key (a typo) fails loud rather than being silently stripped.
 
 ```typescript
 // schema co-located next to the interface, parsed at the boundary — never `event.data as unknown as T`
@@ -77,9 +79,12 @@ Rules:
 - **Compose from existing schemas** — `.pick()` from `standardMessageEntitySchema` / `selectWebhookInMessageSchema`, reuse `webhookPayloadSchema`. Never hand-rewrite existing field validators.
 - **`.parse()` as the first line inside `getResultAsync(async () => { ... })`** (matching `processScheduledMessageJobHandler`) so a validation failure flows through the neverthrow `.match(noop, (error) => { context.error(...); throw error; })` path instead of throwing synchronously outside it. Let the parsed value's inferred type flow downstream — drop the redundant `import type { *EventGridData }`.
 - **`.nullish()` is allowed here** — the app-owned `.nullable()` ban doesn't apply at the external boundary. EventGrid `notificationOptions` fields are `null | string`, so `z.string().nullish()` is correct.
-- **Under `--isolatedDeclarations`, annotate the concrete `z.ZodObject<{...}>` shape AND keep `satisfies`** — on for `packages/*` libraries (not the app; `db-schema` opts out via `isolatedDeclarations: false`). Emit can't re-infer a bare `z.object({...}) satisfies z.ZodType<T>`, so exports need an explicit annotation. **Never shortcut with `: z.ZodType<T>`** — it erases the shape, so the built `dist/*.d.ts` exposes no `.shape` and consumers spreading `...someSchema.shape` break against the published package (this bit `itemMetadataSchema`, spread in `AItemEntity` and `AzureEntity`). Write the full form:
+- **Under `--isolatedDeclarations` (on for `packages/*` libraries; not the app, and `db-schema` opts out via `isolatedDeclarations: false`), annotate the concrete `z.ZodObject<{...}>` shape AND keep `satisfies`.** **Never shortcut with `: z.ZodType<T>`** — it erases the shape, so the built `dist/*.d.ts` exposes no `.shape` and consumers spreading `...someSchema.shape` break against the published package (this bit `itemMetadataSchema`, spread in `AItemEntity` and `AzureEntity`).
+
+  **The annotation is always required for an exported schema const** — `tsgo` cannot emit a `z.object({...})` expression's type without the checker, so even an all-primitive `z.object({ a: z.boolean(), b: z.string() })` fails with TS9010/9013 (verified). There is no "simple schema needs no annotation" exception; a primitive-field object still gets the full `z.ZodObject<{ a: z.ZodBoolean; b: z.ZodString }>` annotation (canonical: `virrun/src/models/exec/OverlayManifestEntry.ts`).
 
   ```typescript
+  // Wrappers present (.nullable) → annotate. Canonical: ItemMetadata.ts, shared-node/src/models/Benchmark*.ts
   export const itemMetadataSchema: z.ZodObject<{
     createdAt: z.ZodDate;
     deletedAt: z.ZodNullable<z.ZodDate>;
@@ -89,9 +94,19 @@ Rules:
     deletedAt: z.date().nullable(),
     updatedAt: z.date(),
   }) satisfies z.ZodType<ItemMetadata>;
+
+  // strictObject + .optional() + .default(z.enum(...)) → annotate, incl. the `z.core.$strict` config param.
+  // Canonical: virrun/src/models/virrun/VirrunConfiguration.ts
+  export const virrunConfigurationSchema: z.ZodObject<
+    { $schema: z.ZodOptional<z.ZodString>; backend: z.ZodDefault<z.ZodEnum<typeof BackendType>> },
+    z.core.$strict
+  > = z.strictObject({
+    $schema: z.string().optional(),
+    backend: z.enum(BackendType).default(BackendType.Auto),
+  }) satisfies z.ZodType<VirrunConfiguration>;
   ```
 
-  Annotation pins a portable shape (`.shape` survives emit); `satisfies` still enforces interface conformance. Match each field's zod type exactly (`z.array(x)`→`z.ZodArray<typeof x>`; reference an imported/`.pick()`-ed sub-schema via `typeof`, extracting an inline `.pick()` to a local `const` first). Canonical refs: `ItemMetadata.ts`, `shared-node/src/models/Benchmark*.ts`, `virrun/src/models/exec/OverlayManifestEntry.ts`. Annotate unions/enums with their concrete type too (`z.ZodDiscriminatedUnion<...>`, `z.ZodEnum<...>`), never `z.ZodType<T>`. In the **app** and **db-schema** (no `--isolatedDeclarations`), keep plain `satisfies z.ZodType<T>` — inference emits the full `ZodObject`.
+  Annotation pins a portable shape (`.shape` survives emit); `satisfies` still enforces interface conformance. Match each field's zod type exactly (`z.array(x)`→`z.ZodArray<typeof x>`; `z.enum(MyEnum)`→`z.ZodEnum<typeof MyEnum>`; `z.strictObject` carries a second `z.core.$strict` config param; reference an imported/`.pick()`-ed sub-schema via `typeof`, extracting an inline `.pick()` to a local `const` first). Annotate unions/enums with their concrete type too (`z.ZodDiscriminatedUnion<...>`, `z.ZodEnum<...>`), never `z.ZodType<T>`. **To discover the exact type to write**, temporarily assign the schema to `const _: null = mySchema;` and run the package's `typecheck` — the `TS2322` error prints the full inferred `ZodObject<...>` type verbatim; paste it into the annotation and delete the probe. In the **app** and **db-schema** (no `--isolatedDeclarations`), keep plain `satisfies z.ZodType<T>` — inference emits the full `ZodObject`.
 
 ## Imports
 

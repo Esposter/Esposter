@@ -1,12 +1,9 @@
-// How a single entry in an overlayfs upper layer must be reconciled onto the host working dir during write-back
-// (specs/write-back.md). Determined from the entry's lstat + the user.overlay.opaque xattr — both readable
-// Unprivileged because a rootless bubblewrap overlay mounts with userxattr.
+// How an overlayfs upper entry is reconciled onto the host during write-back (specs/write-back.md).
 export enum OverlayEntryKind {
-  // A directory the command removed and recreated (carries user.overlay.opaque="y"). The lower's contents are
-  // Fully masked, so the host copy must be cleared before the upper's children are copied in.
+  // Directory removed-and-recreated (user.overlay.opaque): clear the host copy before copying its children.
   OpaqueDir = "opaqueDir",
-  // A created or copied-up file/dir — copy it over the host path as-is.
+  // Created or modified file/dir — copy over the host path.
   Regular = "regular",
-  // A deletion marker: a character device with rdev 0:0. The command removed this path, so remove it on the host.
+  // Deletion marker (character device, rdev 0:0) — remove the host path.
   Whiteout = "whiteout",
 }
