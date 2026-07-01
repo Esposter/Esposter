@@ -40,11 +40,7 @@ describe("readWslLoginPath", () => {
     const script = takeOne(args ?? [], 3);
 
     expect(file).toBe("wsl.exe");
-    expect([takeOne(args ?? [], 0), takeOne(args ?? [], 1), takeOne(args ?? [], 2)]).toStrictEqual([
-      "--exec",
-      "sh",
-      "-c",
-    ]);
+    expect([takeOne(args ?? []), takeOne(args ?? [], 1), takeOne(args ?? [], 2)]).toStrictEqual(["--exec", "sh", "-c"]);
     expect(script).toContain("-lic");
     expect(script).toContain("getent passwd");
   });

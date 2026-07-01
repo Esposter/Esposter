@@ -1,17 +1,24 @@
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
 import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-// The snapshot cache key: a sha256 (hex) of the repo's pnpm lockfile content. Same deps → same hash → the
-// Same warm snapshot is reused, and any dependency change yields a new hash so the stale snapshot is never
-// Picked up (specs/snapshot-fork.md). Hashing the lockfile bytes rather than parsing keeps it cheap and
-// Format-agnostic. The lockfile is located at the workspace root (walking up from cwd), so the key is the same
-// Whether virrun runs from the repo root or a subpackage. A missing lockfile anywhere up the tree is misuse —
-// There is nothing to snapshot — so resolveWorkspaceRoot throws rather than hashing an empty string and silently
-// Colliding every lockless repo onto one entry. (Base-image id is part of the eventual key but deferred until
-// The os backend pins one.)
-export const computeLockfileHash = (cwd: string): string =>
-  createHash("sha256")
-    .update(readFileSync(join(resolveWorkspaceRoot(cwd), PNPM_LOCKFILE_FILENAME)))
-    .digest("hex");
+// Memoize the digest per resolved lockfile path, invalidated when the file's mtime or size changes. A single
+// `fork`/`persist` resolves the snapshot location 2-3 times (ensureSnapshot, then forkSnapshot/persistRun, plus
+// CreateSnapshot on a cold path), and a long-lived process (the warm daemon) re-resolves on every dispatch — each
+// Otherwise re-reads and re-sha256s a multi-MB monorepo lockfile. The stat guard keeps the cache honest if the
+// Lockfile is rewritten in-process (an install regenerates it); size alone catches any content-length change even
+// On a filesystem whose mtime resolution is too coarse to register a fast rewrite.
+const lockfileHashCache = new Map<string, { hash: string; mtimeMs: number; size: number }>();
+// The snapshot cache key: a sha256 of the lockfile bytes (cheap, format-agnostic), resolved from the workspace root
+// So the key is identical whether virrun runs from the repo root or a subpackage (specs/snapshot-fork.md). A missing
+// Lockfile throws (via resolveWorkspaceRoot) rather than hashing "" and colliding every lockless repo onto one entry.
+export const computeLockfileHash = (cwd: string): string => {
+  const lockfilePath = join(resolveWorkspaceRoot(cwd), PNPM_LOCKFILE_FILENAME);
+  const { mtimeMs, size } = statSync(lockfilePath);
+  const cached = lockfileHashCache.get(lockfilePath);
+  if (cached?.mtimeMs === mtimeMs && cached.size === size) return cached.hash;
+  const hash = createHash("sha256").update(readFileSync(lockfilePath)).digest("hex");
+  lockfileHashCache.set(lockfilePath, { hash, mtimeMs, size });
+  return hash;
+};

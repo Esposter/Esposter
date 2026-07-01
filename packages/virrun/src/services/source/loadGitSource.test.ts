@@ -52,12 +52,11 @@ describe(loadGitSource, () => {
   test("throws InvalidOperationError with git's stderr when the clone fails", async () => {
     expect.hasAssertions();
 
-    // A guaranteed-missing local repo path (a nonexistent child of a fresh empty temp dir).
     const missingRepo = join(temporaryDirectories.create(), TEST_FILENAME);
     const destination = temporaryDirectories.create();
-    // Reconstruct the expected message from a live `-q` clone of the same missing repo: stderr then
-    // References only the source (known here), never the random destination, so the snapshot is exact on
-    // Every platform without hard-coding git's wording.
+    // Reconstruct the expected message from a live `-q` clone of the same missing repo: its stderr references
+    // Only the source, never the random destination, so the snapshot is exact on every platform without
+    // Hard-coding git's wording.
     const { exitCode, stderr } = await backend.exec(
       ["git", "clone", "-q", "--depth", "1", "--", missingRepo, destination],
       { cwd: "", stdio: "pipe" },

@@ -2,7 +2,7 @@ import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHas
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -40,6 +40,19 @@ describe(computeLockfileHash, () => {
     mkdirSync(nested, { recursive: true });
 
     expect(computeLockfileHash(nested)).toBe(computeLockfileHash(repo));
+  });
+
+  test("re-reads the same lockfile path when its content changes (memoization stays honest)", () => {
+    expect.hasAssertions();
+
+    const repo = createRepo(lockfileContent);
+    const lockfile = join(repo, PNPM_LOCKFILE_FILENAME);
+    const before = computeLockfileHash(repo);
+    // An in-process rewrite (an install regenerating the lockfile) must invalidate the cached digest; the size
+    // Change alone defeats the stat guard even where the mtime resolution can't see a fast back-to-back write.
+    writeFileSync(lockfile, `${lockfileContent}  added: true\n`);
+
+    expect(computeLockfileHash(repo)).not.toBe(before);
   });
 
   test("throws when the repo has no lockfile to snapshot", () => {

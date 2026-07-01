@@ -6,9 +6,8 @@ import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shar
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
-// Materializes an in-memory file map into a fresh temp directory so a backend has something on disk
-// To run against. dispose() removes the directory so callers never leak temp state - and a failure
-// Mid-materialization tears down the partial directory before rethrowing so nothing leaks either.
+// Materializes an in-memory file map into a fresh temp dir for a backend to run against; a failure
+// Mid-write tears down the partial dir before rethrowing.
 export const loadFilesSource = async (source: FilesSource): Promise<LoadedSource> => {
   const cwd = await mkdtemp(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
   const dispose = () => rm(cwd, { force: true, recursive: true });

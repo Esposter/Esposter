@@ -1,9 +1,7 @@
 import type { BackendType } from "@/models/virrun/BackendType";
-// The start-of-run line the CLI prints to stderr before handing off to the backend, so a `virrun -- <cmd>`
-// Invocation is self-describing in a terminal or CI log: which command is running, which backend actually
-// Resolved (os sandbox vs the native fallback on an unsupported host), and the node version it runs under.
-// Stderr-only and CLI-only — the programmatic exec path stays silent so correctness diffs (which compare
-// Child stdout/stderr) are untouched.
+// Start-of-run line, stderr-only — the programmatic exec path stays silent so correctness diffs that compare child
+// Stdout/stderr are untouched. Reports the resolved backend (os sandbox vs native fallback) so an unsupported-host
+// Degrade is visible.
 export const formatVirrunBanner = ({
   backend,
   command,

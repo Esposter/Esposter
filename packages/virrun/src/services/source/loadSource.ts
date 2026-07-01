@@ -6,8 +6,7 @@ import { loadDirSource } from "@/services/source/loadDirSource";
 import { loadFilesSource } from "@/services/source/loadFilesSource";
 import { loadGitSource } from "@/services/source/loadGitSource";
 import { exhaustiveGuard } from "@esposter/shared";
-// Normalizes any source spec into a LoadedSource (working directory + teardown). The switch narrows
-// The discriminated union so each loader receives its exact type; the default guards exhaustiveness.
+// Normalizes any source spec into a LoadedSource (working dir + teardown) by dispatching on its type.
 export const loadSource = (source: Source): Promise<LoadedSource> => {
   switch (source.type) {
     case SourceType.Dir:

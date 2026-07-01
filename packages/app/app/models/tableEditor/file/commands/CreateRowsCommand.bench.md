@@ -9,21 +9,21 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-27T04:12:46.498Z
-- Commit: 666a4bcc8
+- Date: 2026-06-30T11:29:00.304Z
+- Commit: 5d007480e
 - Node: v26.4.0
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 15.6 GiB
+- RAM: 31.9 GiB
 
 ## CreateRowsCommand
 
 | task                                   | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | -------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute — insert 100 rows into 100     | 1.00×   | 0.0627    | ±12.15% | 0.0889   | 10      |
-| execute — insert 100 rows into 1000    | 1.00×   | 0.0625    | ±4.42%  | 0.0696   | 10      |
-| execute — insert 1000 rows into 10000  | 0.11×   | 0.5836    | ±4.71%  | 0.6603   | 10      |
-| execute — insert 10000 rows into 10000 | 0.011×  | 5.6960    | ±5.73%  | 6.5335   | 10      |
-| undo — remove 100 rows from 200        | 0.62×   | 0.1020    | ±4.58%  | 0.1169   | 10      |
-| undo — remove 1000 rows from 11000     | 0.055×  | 1.1458    | ±13.29% | 1.7403   | 10      |
-| undo — remove 10000 rows from 20000    | 0.006×  | 10.4286   | ±2.88%  | 10.8732  | 10      |
+| execute — insert 100 rows into 100     | 1.00×   | 0.0580    | ±9.99%  | 0.0798   | 10      |
+| execute — insert 100 rows into 1000    | 0.98×   | 0.0591    | ±7.23%  | 0.0743   | 10      |
+| execute — insert 1000 rows into 10000  | 0.11×   | 0.5480    | ±3.20%  | 0.6122   | 10      |
+| execute — insert 10000 rows into 10000 | 0.012×  | 4.9286    | ±2.87%  | 5.3807   | 10      |
+| undo — remove 100 rows from 200        | 0.49×   | 0.1183    | ±10.39% | 0.1530   | 10      |
+| undo — remove 1000 rows from 11000     | 0.054×  | 1.0815    | ±6.04%  | 1.2040   | 10      |
+| undo — remove 10000 rows from 20000    | 0.006×  | 9.6196    | ±4.41%  | 11.0118  | 10      |

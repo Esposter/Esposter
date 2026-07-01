@@ -5,15 +5,13 @@ import { z } from "zod";
 // Is sandboxed (add it to adopt, remove it to drop); this config only chooses *how*. An absent file means the
 // Default backend (auto → native today), so no config is a valid, fully-functional state.
 export interface VirrunConfiguration {
-  // BackendType a sandboxed command runs through (auto | native | vfs | os). `auto` resolves to native today.
-  // When `backend` can't run on this host (e.g. `os` off Linux) the resolver degrades to native, so the worst
-  // Case of adopting a command is "no speedup", never "broken" — the degrade target is always native, not a knob.
+  // BackendType a sandboxed command runs through. When it can't run on this host (e.g. `os` off Linux) the
+  // Resolver degrades to native — the worst case of adopting a command is "no speedup", never "broken".
   readonly backend: BackendType;
 }
-// Validates the raw `virrun.config.json` text (untrusted committed input) into a VirrunConfiguration, like
-// ParseOverlayManifest validates the probe's JSON. strictObject so a typo'd key fails loud rather than silently
-// Changing the sandbox; the editor-only `$schema` pointer is the one extra key allowed (stripped from the result by
-// The parser). An omitted `backend` takes the safe default (auto), so a minimal `{}` — or no file at all — is valid.
+// Validates the committed `virrun.config.json` text into a VirrunConfiguration. strictObject so a typo'd key fails
+// Loud rather than silently changing the sandbox; the editor-only `$schema` pointer is the one extra key allowed.
+// An omitted `backend` defaults to auto, so `{}` — or no file at all — is valid.
 export const virrunConfigurationSchema: z.ZodObject<
   { $schema: z.ZodOptional<z.ZodString>; backend: z.ZodDefault<z.ZodEnum<typeof BackendType>> },
   z.core.$strict

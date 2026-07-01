@@ -61,9 +61,11 @@ for op in json.load(sys.stdin):
         continue
     src = os.path.join(up, *op["relativePath"].split("/"))
     os.makedirs(os.path.dirname(dest), exist_ok=True)
+    # A pre-existing symlink at dest must go first: os.path.isdir/isfile follow links, so a dir/file copy onto a
+    # Host symlink would otherwise write *through* it and escape hostDir. After this every isdir(dest) below is honest.
+    if os.path.islink(dest):
+        os.remove(dest)
     if os.path.islink(src):
-        if os.path.lexists(dest):
-            shutil.rmtree(dest) if os.path.isdir(dest) and not os.path.islink(dest) else os.remove(dest)
         os.symlink(os.readlink(src), dest)
     elif os.path.isdir(src):
         if os.path.lexists(dest) and not os.path.isdir(dest):
@@ -71,7 +73,7 @@ for op in json.load(sys.stdin):
         os.makedirs(dest, exist_ok=True)
         shutil.copystat(src, dest)
     else:
-        if os.path.isdir(dest) and not os.path.islink(dest):
+        if os.path.isdir(dest):
             shutil.rmtree(dest)
         shutil.copy2(src, dest)
 `;

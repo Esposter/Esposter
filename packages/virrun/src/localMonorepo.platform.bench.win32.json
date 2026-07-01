@@ -1,0 +1,85 @@
+{
+  "files": [
+    {
+      "filepath": "src/localMonorepo.platform.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 810.327249999973,
+              "name": "native",
+              "p99": 829.3573000000324,
+              "rme": 1.121285995429933,
+              "sampleCount": 10
+            },
+            {
+              "mean": 13072.570600000025,
+              "name": "os/wsl",
+              "p99": 13852.148500000127,
+              "rme": 2.386861610280218,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "typecheck - packages/shared (cold)"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 5472.043910000008,
+              "name": "native",
+              "p99": 5656.25,
+              "rme": 1.3105823915649428,
+              "sampleCount": 10
+            },
+            {
+              "mean": 17890.451470000018,
+              "name": "os/wsl",
+              "p99": 18327.976099999854,
+              "rme": 1.5553949020346423,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "build - packages/shared (cold)"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 5166.769380000001,
+              "name": "native",
+              "p99": 5355.86950000003,
+              "rme": 1.1473487261067417,
+              "sampleCount": 10
+            },
+            {
+              "mean": 20937.414990000056,
+              "name": "os/wsl/persist",
+              "p99": 21978.79259999981,
+              "rme": 1.5729369886088502,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "build - write-back persist vs native (produces dist)"
+        },
+        {
+          "benchmarks": [
+            {
+              "mean": 2701.1814399999566,
+              "name": "native",
+              "p99": 2968.9525999999605,
+              "rme": 2.611879852091899,
+              "sampleCount": 10
+            },
+            {
+              "mean": 14263.96100999997,
+              "name": "os/wsl",
+              "p99": 14675.505799999926,
+              "rme": 1.604425667082514,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "test - packages/shared"
+        }
+      ]
+    }
+  ]
+}

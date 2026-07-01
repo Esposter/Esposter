@@ -60,29 +60,26 @@ After the command exits 0, reconcile the top upper into the host working dir (`<
 
 ## Equivalence gate (the forcing function)
 
-Write-back is unprovable by inspection — it is gated by **equivalence tests**, an extension of the differential corpus to mutation commands:
+Write-back is unprovable by inspection — it is gated by an **equivalence test**, an extension of the differential corpus to mutation commands:
 
-- Run `<cmd>` natively in a throwaway copy of a fixture repo; snapshot the resulting file tree (content + mode + deletions).
-- Run `virrun -- <cmd>` over a fresh copy; snapshot its tree.
-- Assert the two trees are byte-identical (modulo the explicit `normalizeExecResult` masking seam — e.g. absolute paths in generated files), via an `assertEquivalent` helper paralleling `assertDifferential`.
-- Seed the corpus with the real blocked commands: `eslint --fix`, `oxfmt`, `db:gen`, `export:gen`, and a `build`. Every fixed bug becomes a golden regression case.
+- Capture one warm dependency snapshot of the workspace corpus, then run a command over it with `persistRun` and assert the produced host files match a native run, while `node_modules` (the snapshot lower) never reaches the host.
+- Rather than drive each real tool through its own config — which the manifest-only corpus can't resolve — the corpus exercises the flush **mechanism** every tool relies on, one overlay-entry shape per case: a new top-level file, an in-place edit of an existing source file (the `oxfmt`/`eslint --fix` shape), a newly created nested file under a new directory (the ctix-barrel / `db:gen`-migration shape), a whiteout delete, the `node_modules` drop, and the all-or-nothing rollback on a non-zero exit. Every fixed bug becomes a golden regression case.
 - CI-enforced in the 🏗️ coverage shards alongside `*.differential.test.ts` — a divergence hard-fails the build.
 
 ## Key Files
 
-All planned.
+All realized. The probe/apply seam shipped as a single python3 script pair (`runOverlayScript` + `parseOverlayManifest`) rather than a per-entry xattr reader, and the equivalence test asserts produced files directly rather than via a separate `assertEquivalent` helper.
 
-| File                                                     | Role                                                                                                                  |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `models/exec/OverlayEntryKind.ts`                        | enum `Regular`/`Whiteout`/`OpaqueDir` (+ schema) — the classification result                                          |
-| `services/exec/snapshot/parseOverlayEntryKind.ts`        | pure: classify an upper entry from injected `lstat` + opaque-xattr lookup                                             |
-| `services/exec/snapshot/buildFlushPlan.ts`               | pure: turn an upper walk into an ordered `FlushOp[]` (copy / delete / clear-then-copy), skipping snapshot-lower paths |
-| `services/exec/snapshot/readOverlayOpaque.ts`            | xattr reader seam — `getfattr` → `python3` fallback (Linux/WSL only)                                                  |
-| `services/exec/snapshot/flushUpperToHost.ts`             | apply a flush plan to `<cwd>` (Linux-side; via `wsl.exe` on win32)                                                    |
-| `services/exec/snapshot/persistRun.ts`                   | orchestrate: ensure snapshot → fork with a persistable upper → exec → `flushUpperToHost` on exit 0 → tear down upper  |
-| `services/exec/wsl/readWslPath.ts` (reuse)               | translate upper + host paths across the WSL boundary for the flush copy                                               |
-| `services/exec/differential/assertEquivalent.ts`         | run `<cmd>` native vs `virrun --`, diff the resulting host file trees                                                 |
-| `services/exec/os/createOsBackend.*.equivalence.test.ts` | the mutation-command equivalence corpus (`eslint --fix`, `oxfmt`, `db:gen`, `export:gen`, `build`)                    |
+| File                                                    | Role                                                                                                                                           |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `models/exec/OverlayEntryKind.ts`                       | enum `Regular`/`Whiteout`/`OpaqueDir` (+ schema) — the classification result                                                                   |
+| `services/exec/snapshot/parseOverlayEntryKind.ts`       | pure: classify an upper entry from a parsed manifest entry + its opaque flag                                                                   |
+| `services/exec/snapshot/buildFlushPlan.ts`              | pure: turn an upper walk into an ordered `FlushOp[]` (copy / delete / clear-then-copy), skipping snapshot-lower paths                          |
+| `services/exec/snapshot/runOverlayScript.ts`            | run the `OVERLAY_PROBE_SCRIPT` / `OVERLAY_APPLY_SCRIPT` python3 seam (direct on Linux; via `wsl.exe` on win32, with `readWslPath` translation) |
+| `services/exec/snapshot/parseOverlayManifest.ts`        | zod-validate the probe script's JSON manifest (relative path, opaque flag, snapshot-lower flag) into typed entries                             |
+| `services/exec/snapshot/flushUpperToHost.ts`            | probe the upper → classify + order in TS → apply the plan to `<cwd>` Linux-side                                                                |
+| `services/exec/snapshot/persistRun.ts`                  | orchestrate: ensure snapshot → fork with a persistable upper → exec → `flushUpperToHost` on exit 0 → tear down upper                           |
+| `services/exec/snapshot/persistRun.equivalence.test.ts` | the host-gated write-back equivalence corpus — one overlay-entry shape per case, asserting host parity vs native                               |
 
 Reuses the realized Phase 3 capture machinery (`buildBwrapArgs` `OverlayLayers` persistent-upper shape, per-pid temp dirs, `removeSnapshotDirectory`). The persist-vs-ephemeral choice lives in the orchestrator (`persistRun` parallels `forkSnapshot`), **not** an `ExecOptions` flag — the backend stays a pure executor of an `overlayLayers` shape.
 

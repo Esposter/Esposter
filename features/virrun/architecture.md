@@ -26,7 +26,7 @@ flowchart TB
         api --> pick{"BackendType\nselect"}
         pick -->|Auto / Native| native["Native backend\nspawn on host"]
         pick -->|Vfs · opt-in| vfs["Vfs backend\nin-process node -e / node &lt;file&gt;"]
-        pick -->|Os · Phase 2| os["Os backend\nisolated process exec"]
+        pick -->|Os · opt-in| os["Os backend\nisolated process exec"]
     end
 
     native --> disk[("REAL disk\n(subprocesses see this)")]
@@ -34,16 +34,12 @@ flowchart TB
     fsp --> vmem[("in-process virtual FS\n(only this process sees it)")]
     os --> sandboxprim["bubblewrap\nLinux direct / Windows WSL2"]
     sandboxprim --> ram[("tmpfs + overlayfs\nRAM FS — every process sees it")]
-    os -.-> snap["snapshot + warm-fork\nPhase 3 · CRIU / microVM"]
-    os -.-> wb["write-back\nflush top upper → host\nPhase 5 · mutation runs only"]
-    wb -.-> disk
-
-    classDef planned stroke-dasharray:4 4,opacity:0.75;
-    class snap planned;
-    class wb planned;
+    os --> snap["snapshot + warm-fork\nlockfile-hash keyed"]
+    os --> wb["write-back\nflush top upper → host\nmutation runs only"]
+    wb --> disk
 ```
 
-The two os-backend dashed paths are the persist axis: a **mutation run** flushes its produced files back to the real disk (`write-back`), while a **verification/CI fork** lets writes vanish in RAM (`snapshot + warm-fork`). Both fork the warm snapshot — only the top mount differs. See [Write-back](#write-back-native-equivalent-persistence) below.
+The two os-backend persist paths are the persist axis: a **mutation run** flushes its produced files back to the real disk (`write-back`), while a **verification/CI fork** lets writes vanish in RAM (`snapshot + warm-fork`). Both fork the warm snapshot — only the top mount differs. See [Write-back](#write-back-native-equivalent-persistence) below.
 
 Why the three FS endpoints differ is the **subprocess wall** — the single fact that splits the product into backends. See it spelled out below.
 
@@ -104,7 +100,7 @@ A persist (write-back) run keeps these wins: the toolchain still does its random
 
 ## Write-back (native-equivalent persistence)
 
-_Planned, Phase 5._ The last limitation before full adoption. Verification commands (`vitest run`, `eslint .`) want writes to vanish; **mutation** commands (`eslint --fix`, `oxfmt`, `db:gen`, `export:gen`, `build`) need their output on disk. Write-back makes a normal `virrun -- <cmd>` leave disk exactly as native would, so every command can move onto the prefix.
+_Shipped._ The last limitation before full adoption. Verification commands (`vitest run`, `eslint .`) want writes to vanish; **mutation** commands (`eslint --fix`, `oxfmt`, `db:gen`, `export:gen`, `build`) need their output on disk. Write-back makes a normal `virrun -- <cmd>` leave disk exactly as native would, so every command can move onto the prefix.
 
 Every os run forks the warm snapshot; **only the top mount differs** — persist vs vanish:
 
@@ -119,14 +115,11 @@ flowchart LR
 
     up --> flush["flushUpperToHost\nfiles · whiteout deletes · opaque dirs"]
     flush -->|"skip snapshot-lower paths"| host[("host working dir\n(native-equivalent)")]
-
-    classDef planned stroke-dasharray:4 4,opacity:0.75;
-    class up,flush,host planned;
 ```
 
 Two facts make this native-equivalent without virrun ever guessing which files matter:
 
-- **The upper _is_ the native diff** — overlayfs records changed/new files, char-dev `0:0` whiteouts for deletes, and `trusted.overlay.opaque` markers for replaced dirs. Replaying it onto the host reproduces native's on-disk result.
+- **The upper _is_ the native diff** — overlayfs records changed/new files, char-dev `0:0` whiteouts for deletes, and (in rootless userxattr mode) `user.overlay.opaque` markers for replaced dirs. Replaying it onto the host reproduces native's on-disk result.
 - **`node_modules` is structurally excluded** — it lives in the RO snapshot lower, so it is never in the top upper's flush set. "node_modules never touches disk" survives even while output persists. Upper entries that shadow a snapshot-lower path (a dep-tree write) are skipped — layer membership, not a name guess.
 
 Correctness is proven by **equivalence tests** (native vs `virrun --`, diffing the resulting host file trees), CI-enforced beside the differential suite. Detail: [specs/write-back.md](specs/write-back.md).

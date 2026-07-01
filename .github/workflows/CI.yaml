@@ -28,38 +28,64 @@ jobs:
 
   build:
     name: Build App
-    needs: build-packages
+    needs: [build-packages, warm-snapshot]
     runs-on: ubuntu-26.04
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-
+      # `pnpm build:app` routes the Nuxt build through `virrun --`; bubblewrap makes it run in the os sandbox the
+      # Config pins (the build output is flushed to host via write-back) rather than falling back to native.
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
-
+        with:
+          bubblewrap-sandbox: true
+      # install: false — node_modules comes from the warm snapshot inside the sandbox, so a host `pnpm i` is
+      # Redundant; Setup Packages exposes the `virrun` bin from the artifact instead.
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
+        with:
+          install: false
+      # Read-only restore of the warm-snapshot job's published snapshot so `virrun --` forks the warm dep tree.
+      - name: ♻️ Restore warm snapshot
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/snapshots
+          key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
 
       - name: 🏗️ Build app
         run: pnpm build:app
 
   build-docs:
     name: Build Documentation
-    needs: build-packages
+    needs: [build-packages, warm-snapshot]
     runs-on: ubuntu-26.04
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-
+      # `pnpm build:docs` routes TypeDoc through `virrun --`; bubblewrap makes it run in the os sandbox the config
+      # Pins (the generated docs are flushed to host via write-back) rather than falling back to native.
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
-
+        with:
+          bubblewrap-sandbox: true
+      # install: false — node_modules comes from the warm snapshot inside the sandbox, so a host `pnpm i` is
+      # Redundant; Setup Packages exposes the `virrun` bin from the artifact instead.
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
+        with:
+          install: false
+      # Read-only restore of the warm-snapshot job's published snapshot so `virrun --` forks the warm dep tree.
+      - name: ♻️ Restore warm snapshot
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/snapshots
+          key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
 
       - name: 🏗️ Build documentation
         run: pnpm build:docs
@@ -78,9 +104,12 @@ jobs:
         with:
           persist-credentials: false
       # The test suite itself exercises virrun's os backend (createOsBackend tests self-gate on bwrap), so the
-      # Sandbox must be installed here — but vitest runs natively below, NOT through virrun: the os backend's
-      # Ephemeral tmpfs upper is discarded on dispose(), so the blob reports + coverage/ dir the upload steps
-      # Need would never reach host disk. Coverage is the one command whose persisted output rules out the sandbox.
+      # Sandbox must be installed here — but vitest runs natively below, NOT through virrun. Write-back now
+      # Persists produced files, so the old "discarded upper" reason is moot; the real blocker is nesting:
+      # Routing coverage through virrun would run the suite *inside* bwrap, and isOsBackendSupported() probes by
+      # Spawning a nested bwrap+overlay, which unprivileged userns rejects → the os-backend differential tests
+      # Silently skip via describe.skipIf, deleting the correctness gate. Coverage is the one command that must
+      # Stay native to keep that gate live.
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
         with:
@@ -128,8 +157,8 @@ jobs:
           pattern: coverage-blob-*
           merge-multiple: true
       # Recombine the sharded runs into one report with unified coverage from the blob data —
-      # This re-emits the report only, it does not re-run any tests. Native (not virrun): it writes the
-      # Uploaded coverage/ dir, which the os backend's ephemeral upper would discard.
+      # This re-emits the report only, it does not re-run any tests. Native (not virrun): a pure merge step has
+      # No toolchain to accelerate, and it stays native alongside the coverage shards that feed it.
       - name: 🧪 Merge coverage
         run: pnpm exec vitest run --merge-reports --coverage
 
@@ -171,6 +200,7 @@ jobs:
         with:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
 
       - name: 📝 Format
         run: pnpm format:check
@@ -204,6 +234,7 @@ jobs:
         with:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
 
       - name: 🔍 Lint
         run: pnpm lint
@@ -237,6 +268,7 @@ jobs:
         with:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
 
       - name: ✅ Typecheck
         run: pnpm typecheck

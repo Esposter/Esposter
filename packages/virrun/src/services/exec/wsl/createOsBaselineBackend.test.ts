@@ -3,6 +3,7 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { toExitCode } from "@/services/exec/util/toExitCode";
 import { createWslEnvArgs } from "@/services/exec/wsl/createWslEnvArgs";
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
@@ -46,10 +47,10 @@ describe(createOsBaselineBackend, () => {
       expect.hasAssertions();
 
       const { exec } = createOsBaselineBackend();
-      const { exitCode, stdout } = await exec(`echo ok`, { cwd: "", stdio: "pipe" });
+      const { exitCode, stdout } = await exec(`echo ${TEST_FILENAME}`, { cwd: "", stdio: "pipe" });
 
       expect(exitCode).toBe(0);
-      expect(stdout.trim()).toBe("ok");
+      expect(stdout.trim()).toBe(TEST_FILENAME);
     },
   );
 
@@ -59,9 +60,9 @@ describe(createOsBaselineBackend, () => {
       expect.hasAssertions();
 
       const { exec } = createOsBaselineBackend();
-      const { exitCode } = await exec(`sh -c 'exit 3'`, { cwd: "", stdio: "pipe" });
+      const { exitCode } = await exec(`sh -c 'exit 1'`, { cwd: "", stdio: "pipe" });
 
-      expect(exitCode).toBe(3);
+      expect(exitCode).toBe(1);
     },
   );
 
@@ -71,12 +72,12 @@ describe(createOsBaselineBackend, () => {
       expect.hasAssertions();
 
       const { exec } = createOsBaselineBackend();
-      const { stdout } = await exec(["printf", "%s", "hello world.txt"], {
+      const { stdout } = await exec(["printf", "%s", " "], {
         cwd: "",
         stdio: "pipe",
       });
 
-      expect(stdout).toBe("hello world.txt");
+      expect(stdout).toBe(" ");
     },
   );
 
@@ -89,12 +90,12 @@ describe(createOsBaselineBackend, () => {
       const { stdout } = await exec(["sh", "-c", "echo $TEST_VAR"], {
         cwd: "",
         env: {
-          TEST_VAR: "hello_env",
+          TEST_VAR: TEST_FILENAME,
         },
         stdio: "pipe",
       });
 
-      expect(stdout.trim()).toBe("hello_env");
+      expect(stdout.trim()).toBe(TEST_FILENAME);
     },
   );
 });

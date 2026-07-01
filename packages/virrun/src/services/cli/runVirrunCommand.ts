@@ -7,21 +7,13 @@ import { resolveBackend } from "@/services/configuration/resolveBackend";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createVirrun } from "@/services/virrun/createVirrun";
-import { getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
+import { exhaustiveGuard, getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
 import { performance } from "node:perf_hooks";
 import process from "node:process";
-// The shared orchestration behind the passthrough commands (`virrun -- <cmd>`, `virrun run`, `virrun exec`):
-// Resolve config/backend, construct the sandbox, bracket the run with a banner + result line on stderr, and
-// Propagate the child's exit code. Captures the whole run in getResultAsync so any failure (malformed
-// Virrun.config.json, no lockfile, bubblewrap setup, a missing command, a failed install) surfaces as a clean
-// Error line and a propagated exit code instead of an unhandled rejection. All outcomes converge on the single
-// FormatVirrunResult write so timing is always reported and the success/failure paths never duplicate it.
-//
-// `mode` picks the execution path (ExecutionMode): Persist (the default) forks a warm snapshot and flushes the
-// Command's produced files back to the host so disk matches native; Fork forks the same warm snapshot but lets
-// Writes vanish (ephemeral verification/CI); Exec plain-execs with no snapshot reuse. All three plain-exec on a
-// Non-os backend. Stderr-only for the banner/result/provisioning lines — never stdout — so correctness diffs that
-// Compare the child's streams are untouched.
+// Shared orchestration behind the passthrough commands: resolve config/backend, construct the sandbox, bracket the
+// Run with a banner + result line, propagate the child's exit code. All outcomes converge on the single
+// FormatVirrunResult write so timing is always reported and neither path duplicates it. Banner/result/provisioning
+// Lines go to stderr only — never stdout — so correctness diffs comparing the child's streams are untouched.
 export const runVirrunCommand = async (
   command: readonly string[],
   { mode }: { mode: ExecutionMode },
@@ -31,18 +23,24 @@ export const runVirrunCommand = async (
     const backend = resolveBackend(resolveVirrunConfiguration());
     const virrun = await createVirrun({ backend });
     process.stderr.write(`${formatVirrunBanner({ backend: virrun.backend, command, nodeVersion: process.version })}\n`);
-    // Persist and Fork both run over a frozen dependency snapshot (see Virrun.fork/persist): announce whether this
-    // Run reuses a warm snapshot or pays the one-time install, so a multi-minute first run is explained, not a
-    // Silent stall. Exec skips the snapshot, so it has nothing to announce.
+    // Announce whether this run reuses a warm snapshot or pays the one-time install, so a multi-minute first run is
+    // Explained, not a silent stall. Exec skips the snapshot, so it has nothing to announce.
     if (mode !== ExecutionMode.Exec && virrun.backend === BackendType.Os) {
       const { exists, hash } = resolveSnapshotLocation("");
       process.stderr.write(`${formatVirrunProvisioning({ exists, hash })}\n`);
     }
     return withFinalizerAsync(
       () => {
-        if (mode === ExecutionMode.Persist) return virrun.persist(command, "inherit");
-        else if (mode === ExecutionMode.Fork) return virrun.fork(command, "inherit");
-        else return virrun.exec(command, "inherit");
+        switch (mode) {
+          case ExecutionMode.Exec:
+            return virrun.exec(command, "inherit");
+          case ExecutionMode.Fork:
+            return virrun.fork(command, "inherit");
+          case ExecutionMode.Persist:
+            return virrun.persist(command, "inherit");
+          default:
+            return exhaustiveGuard(mode);
+        }
       },
       () => virrun.dispose(),
     );
