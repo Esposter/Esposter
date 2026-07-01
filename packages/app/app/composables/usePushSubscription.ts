@@ -1,3 +1,5 @@
+/* oxlint-disable @typescript-eslint/no-unnecessary-type-assertion */
+// @TODO: remove when we switch to vue-tsgo — slight difference between ts6 and tsgo (ts7) behaviour
 import type { PushSubscription as WebPushSubscription } from "web-push";
 
 export const usePushSubscription = () => {
