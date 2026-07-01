@@ -57,7 +57,7 @@ Esposter is the first consumer. Climb the ladder here, measured at each rung:
 
 1. Wrap one cheap, isolated command with the prefix (e.g. `virrun -- pnpm vitest <one file>`); benchmark vs native; confirm identical output.
 2. Promote it to a package.json script once it wins.
-3. Add the next command (`pnpm install`, then `build`) only after the previous one holds across the benchmark + correctness gates.
+3. Add the next command (`typecheck`, then `build`) only after the previous one holds across the benchmark + correctness gates. (`install` is not on the ladder — the os install feeds the fork snapshot, not host disk, so it can't replace a native `pnpm install` → [out-of-scope/materialize-node-modules.md](../out-of-scope/materialize-node-modules.md).)
 4. Commit the `virrun.config.json` backend selection once ≥2 commands carry the prefix, so the backend choice is reviewed in one place instead of riding the host default.
 5. Transparent zero-prefix routing (the PATH shim) is dropped as unviable for pnpm-local tools — the prefix is the mechanism. Revisit only if a spawn-interceptor seam proves out.
 

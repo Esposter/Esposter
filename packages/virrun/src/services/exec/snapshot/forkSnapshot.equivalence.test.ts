@@ -1,3 +1,5 @@
+import type { ExecBackend } from "@/models/exec/ExecBackend";
+
 import { dayjs } from "@/services/dayjs.test";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
@@ -25,11 +27,16 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 // Warm fork (frozen overlay upper stacked read-only) vs cold in-place install. Install output is discarded so only
 // The verify command's output is diffed; nothing is normalized, so no real divergence can hide.
 describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a cold in-place install (equivalence)", () => {
-  const backend = createOsBackend();
+  // Constructed lazily in beforeAll (which never runs for a skipped describe) rather than here in the factory:
+  // Vitest still executes a skipIf'd describe body to collect its tests, and createOsBackend throws on a host that
+  // Can't set up the overlay (e.g. this suite running nested inside the os-backend sandbox), which would fail
+  // Collection instead of skipping.
+  let backend: ExecBackend;
   let corpus = "";
   const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
 
   beforeAll(async () => {
+    backend = createOsBackend();
     process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
     corpus = createWorkspaceCorpus(findRepoRoot());
     await ensureWarmSnapshot(backend, corpus);

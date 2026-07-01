@@ -50,6 +50,6 @@ Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the o
 | `services/exec/snapshot/createSnapshot.ts` | run a setup command in capture mode, persisting post-install writes into a per-pid temp upper then atomically renaming it into place (Linux + WSL) | realized |
 | `services/exec/snapshot/forkSnapshot.ts` | run a command over a captured snapshot (upper stacked read-only, writes vanish); guards that one exists | realized |
 | `services/exec/snapshot/removeSnapshotDirectory.ts` | recursively remove a snapshot dir (capture temp or `<hash>` root), chmod-ing the overlay `work/work` scratch traversable first | realized |
-| `localMonorepo.bench.ts` ("warm fork vs cold reinstall") | cold-vs-warm speed gate: reinstall every run vs fork the snapshot (native Linux) | realized |
+| `localMonorepo.platform.bench.ts` (typecheck/build/test fork groups) | speed gate: fork the warm snapshot to run the real command vs the native baseline, one committed artifact per platform | realized |
 | `services/virrun/createVirrun.ts` (`fork`) | transparent `fork(command)` on the orchestrator handle — os captures-or-reuses the snapshot, other backends fall through to `exec` | realized |
 | always-on whole-repo routing | a single switch / spawn-interceptor forking every command | planned (gated on a viable interception seam → [deferred/whole-repo-routing.md](../deferred/whole-repo-routing.md)) |

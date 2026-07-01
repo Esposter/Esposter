@@ -54,15 +54,17 @@ export const createVirrun = async ({
       // Other backends have no snapshot layer, so fork falls back to a plain exec (no warm reuse).
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
       // A Windows host's win32 node_modules can't run inside the Linux sandbox, so the command runs over the
-      // Sandbox's own frozen dep tree via forkSnapshot, never the bare source.
+      // Sandbox's own frozen dep tree via forkSnapshot, never the bare source. The snapshot is deps-only (pruneSnapshotUpper),
+      // So any source-derived artifact (e.g. .nuxt) is served from the host source tree stacked underneath as the
+      // `--overlay-src` lower — matching native staleness, with no per-fork postinstall replay.
       await ensureSnapshot(stdio);
       return forkSnapshot(execBackend, command, toOptions(stdio));
     },
     persist: async (command, stdio = "pipe") => {
       // Other backends have no sandbox, so a plain exec writes straight to the host disk — nothing to flush.
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
-      // Same warm-snapshot provisioning as fork; persistRun then tops it with a real upper and reconciles the
-      // Command's writes onto the host.
+      // Same warm-snapshot provisioning as fork (deps-only snapshot over the host source lower); persistRun then
+      // Tops it with a real upper and reconciles the command's writes onto the host.
       await ensureSnapshot(stdio);
       return persistRun(execBackend, command, toOptions(stdio));
     },

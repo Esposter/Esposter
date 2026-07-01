@@ -6,6 +6,7 @@ import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
 } from "@/services/exec/snapshot/constants";
+import { pruneSnapshotUpper } from "@/services/exec/snapshot/pruneSnapshotUpper";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
@@ -41,6 +42,12 @@ export const createSnapshot = (
         createSnapshot.name,
         `snapshot setup command exited with ${result.exitCode}: ${result.stderr}`,
       );
+    // The snapshot is keyed only on the lockfile, so it must freeze only what the lockfile determines: the
+    // Dependency closure. Strip the source-derived artifacts the install's postinstall hooks wrote (e.g. .nuxt)
+    // Before publishing, or a fork would serve a stale copy that shadows the host's fresh one once source moves
+    // On — instead the fork reads them from the host source tree stacked underneath as the `--overlay-src` lower.
+    // Prune the private temp upper, never the published one.
+    pruneSnapshotUpper(captureUpperDir);
     // Rename-then-check (not check-then-rename) collapses the window where two capturers both saw `exists === false`.
     // Probe the pre-resolved `upperDir`, not a re-resolve: the install may have rewritten the lockfile, re-hashing to
     // A different key and checking the wrong address.

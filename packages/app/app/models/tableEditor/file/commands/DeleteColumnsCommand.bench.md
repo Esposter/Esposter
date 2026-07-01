@@ -9,21 +9,21 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-27T04:12:46.498Z
-- Commit: 666a4bcc8
+- Date: 2026-06-30T11:29:00.304Z
+- Commit: 5d007480e
 - Node: v26.4.0
-- OS: linux 6.18.33.1-microsoft-standard-WSL2 (x64)
+- OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
-- RAM: 15.6 GiB
+- RAM: 31.9 GiB
 
 ## DeleteColumnsCommand
 
 | task                                        | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------------------------------------------- | ------- | --------- | ------- | -------- | ------- |
-| execute — delete 1 of 5 columns, 100 rows   | 1.00×   | 0.0395    | ±59.29% | 0.1087   | 10      |
-| execute — delete 1 of 5 columns, 1000 rows  | 0.58×   | 0.0680    | ±14.36% | 0.0990   | 10      |
-| execute — delete 1 of 5 columns, 10000 rows | 0.1×    | 0.3965    | ±11.56% | 0.5718   | 10      |
-| execute — delete 3 of 5 columns, 1000 rows  | 0.3×    | 0.1336    | ±10.46% | 0.1821   | 10      |
-| execute — delete 3 of 5 columns, 10000 rows | 0.027×  | 1.4379    | ±14.68% | 2.0064   | 10      |
-| undo — restore 1 column into 1000 rows      | 0.03×   | 1.3162    | ±56.30% | 3.8417   | 10      |
-| undo — restore 3 columns into 10000 rows    | 0.005×  | 7.9169    | ±4.70%  | 8.5949   | 10      |
+| execute — delete 1 of 5 columns, 100 rows   | 1.00×   | 0.0355    | ±37.22% | 0.0771   | 10      |
+| execute — delete 1 of 5 columns, 1000 rows  | 0.52×   | 0.0684    | ±9.83%  | 0.0914   | 10      |
+| execute — delete 1 of 5 columns, 10000 rows | 0.07×   | 0.5094    | ±3.59%  | 0.5300   | 10      |
+| execute — delete 3 of 5 columns, 1000 rows  | 0.22×   | 0.1607    | ±10.34% | 0.1908   | 10      |
+| execute — delete 3 of 5 columns, 10000 rows | 0.019×  | 1.8559    | ±17.84% | 2.6672   | 10      |
+| undo — restore 1 column into 1000 rows      | 0.025×  | 1.4271    | ±49.44% | 4.1200   | 10      |
+| undo — restore 3 columns into 10000 rows    | 0.0037× | 9.5583    | ±8.82%  | 11.2370  | 10      |

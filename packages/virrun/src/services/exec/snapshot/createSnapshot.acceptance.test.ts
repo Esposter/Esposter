@@ -1,3 +1,5 @@
+import type { ExecBackend } from "@/models/exec/ExecBackend";
+
 import { dayjs } from "@/services/dayjs.test";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
@@ -27,12 +29,17 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 // Os.tmpdir) because the sandbox masks /tmp with --tmpfs, which would hide a /tmp overlay layer from the command
 // Inside; the shared global teardown drops it.
 describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then fork (acceptance)", () => {
-  const backend = createOsBackend();
+  // Constructed lazily in beforeAll (which never runs for a skipped describe) rather than here in the factory:
+  // Vitest still executes a skipIf'd describe body to collect its tests, and createOsBackend throws on a host that
+  // Can't set up the overlay (e.g. this suite running nested inside the os-backend sandbox), which would fail
+  // Collection instead of skipping.
+  let backend: ExecBackend;
   const acceptanceTimeoutMs = dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds();
   let corpus = "";
   const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
 
   beforeAll(async () => {
+    backend = createOsBackend();
     process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
     corpus = createWorkspaceCorpus(findRepoRoot());
     await ensureWarmSnapshot(backend, corpus);
