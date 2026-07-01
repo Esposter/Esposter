@@ -3,7 +3,6 @@ import type { CommandDef } from "citty";
 import { CommandType } from "@/models/virrun/CommandType";
 import { warmSnapshot } from "@/services/cli/warmSnapshot";
 import { defineCommand } from "citty";
-import process from "node:process";
 // Provisions the warm snapshot ahead of time (the CI warm-up, equivalent to `virrun -- true`); a no-op announcing
 // Itself on any non-os backend.
 export const snapshotCommand: CommandDef = defineCommand({

@@ -3,7 +3,6 @@ import type { VirrunConfiguration } from "@/models/virrun/VirrunConfiguration";
 import { BackendType } from "@/models/virrun/BackendType";
 import { isVirrunEnabled } from "@/services/configuration/isVirrunEnabled";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import process from "node:process";
 // No config defaults to Auto (native today); an `os` backend on a host without bubblewrap degrades to Native so
 // Adoption never errors the build (worst case "no speedup", never "broken"). A nested run — one already inside a
 // Virrun sandbox, so the injected `VIRRUN` signal is set — degrades to Native unconditionally: the outer sandbox

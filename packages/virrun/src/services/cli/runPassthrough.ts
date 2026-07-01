@@ -3,7 +3,6 @@ import type { ArgsDef, CommandDef } from "citty";
 
 import { runVirrunCommand } from "@/services/cli/runVirrunCommand";
 import { showUsage } from "citty";
-import process from "node:process";
 // Shared body of the three passthrough commands. An empty command argv is a usage error — print citty's generated
 // Help and exit non-zero rather than hand an empty command to the backend. Generic over the caller's arg shape so a
 // Specific-args command (run's `--ephemeral`) is accepted without a cast.

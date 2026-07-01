@@ -6,7 +6,7 @@ import { ExecutionMode } from "@/models/virrun/ExecutionMode";
 import { runPassthrough } from "@/services/cli/runPassthrough";
 import { VIRRUN_NO_CACHE_KEY } from "@/services/exec/util/constants";
 import { defineCommand } from "citty";
-import process from "node:process";
+import dedent from "dedent";
 
 const runArgs: RunArgs = {
   cache: {
@@ -25,7 +25,10 @@ const runArgs: RunArgs = {
 export const runCommand: CommandDef<RunArgs> = defineCommand({
   args: runArgs,
   meta: {
-    description: "Run a command in the sandbox (warm snapshot; persists produced files to the host on the os backend).",
+    description: dedent`
+      Run an executable in the sandbox — warm snapshot, persists produced files to the host on the os backend.
+      The command is a binary + args, not a package script: \`virrun run -- pnpm test\`, not \`virrun run test\`.
+    `,
     name: CommandType.Run,
   },
   run: ({ args, cmd }) => {

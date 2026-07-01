@@ -10,7 +10,6 @@ import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirector
 import { getResult, toAppError } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { join } from "node:path";
-import process from "node:process";
 
 const cleanArgs: CleanArgs = {
   all: {

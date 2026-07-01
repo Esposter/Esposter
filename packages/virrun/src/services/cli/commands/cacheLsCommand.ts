@@ -11,7 +11,6 @@ import { getResult, toAppError } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import process from "node:process";
 // Reports the two on-disk caches: the repo-local dep store and the host-global warm-snapshot dir (one
 // `<lockfile-hash>` entry per captured snapshot). IO lives here; rendering is the pure formatCacheListing.
 export const cacheLsCommand: CommandDef = defineCommand({
