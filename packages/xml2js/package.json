@@ -1,6 +1,6 @@
 {
   "name": "@esposter/xml2js",
-  "version": "2.32.0",
+  "version": "2.32.1",
   "description": "Simple XML to JavaScript object converter.",
   "keywords": [
     "converter",
