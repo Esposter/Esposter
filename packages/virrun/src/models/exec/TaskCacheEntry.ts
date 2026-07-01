@@ -19,7 +19,7 @@ export const taskCacheEntrySchema: z.ZodObject<{
   stderr: z.ZodString;
   stdout: z.ZodString;
 }> = z.object({
-  exitCode: z.number(),
+  exitCode: z.int().min(0).max(255),
   plan: z.array(
     z.object({
       // The entry is persisted, hand-editable meta.json replayed onto the host via applyFlushPlan, so reject any
