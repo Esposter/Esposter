@@ -24,6 +24,13 @@ export const VIRRUN_ENV_KEY = "VIRRUN";
 export const COREPACK_HOME_KEY = "COREPACK_HOME";
 // Lets CI and tests point the snapshot cache at a disposable dir instead of the real home.
 export const VIRRUN_CACHE_HOME_KEY = "VIRRUN_CACHE_HOME";
+// Host-global file caching the os-backend capability probe's verdict so a fresh `virrun -- <cmd>` process reuses it
+// Instead of re-spawning the bwrap probe (on win32, three `wsl.exe` round-trips) every command. See isOsBackendSupported.
+export const CAPABILITY_CACHE_FILENAME = "capability.json";
+// Set (to any value) to bypass the persisted capability cache and force a fresh probe — the escape hatch for a host
+// Whose bubblewrap/kernel capability changed without a kernel-release change the cache key would catch (e.g. bwrap
+// Was just installed). `virrun cache clean --all` also drops the cached verdict.
+export const VIRRUN_FORCE_PROBE_KEY = "VIRRUN_FORCE_PROBE";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY = "PNPM_CONFIG_PACKAGE_IMPORT_METHOD";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE = "copy";
 export const PNPM_CONFIG_STORE_DIR_KEY = "PNPM_CONFIG_STORE_DIR";
