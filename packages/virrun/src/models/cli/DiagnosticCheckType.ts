@@ -4,7 +4,7 @@
 export enum DiagnosticCheckType {
   // The bubblewrap binary at an overlay-capable version.
   Bubblewrap = "bubblewrap",
-  // python3, used by write-back to flush produced files back to host.
+  // Python3, used by write-back to flush produced files back to host.
   Python3 = "python3",
   // The real overlay-mount probe (isOsBackendSupported) — the authoritative "would fall back to native" verdict.
   Sandbox = "sandbox",

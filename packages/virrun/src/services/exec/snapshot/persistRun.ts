@@ -15,9 +15,9 @@ import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 // Run a command over the warm snapshot with a persistable upper, then flush that upper to the host on a clean exit
-// only (all-or-nothing; specs/write-back.md). The persist sibling of forkSnapshot: same read-only snapshot lower, so
-// node_modules is never in the upper and never flushed. Requires a captured snapshot; the temp upper/work are always
-// torn down. `onPersist` fires after the host flush with the still-live upper and the built plan, so the task cache
+// Only (all-or-nothing; specs/write-back.md). The persist sibling of forkSnapshot: same read-only snapshot lower, so
+// Node_modules is never in the upper and never flushed. Requires a captured snapshot; the temp upper/work are always
+// Torn down. `onPersist` fires after the host flush with the still-live upper and the built plan, so the task cache
 // Can record the output diff without re-probing (persistWithCache).
 export const persistRun = (
   backend: ExecBackend,

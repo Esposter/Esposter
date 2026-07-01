@@ -58,7 +58,9 @@ describe(forwardTerminationSignals, () => {
     const beforeSigint = process.listeners("SIGINT");
     forwardTerminationSignals(child, onTerminate);
 
-    expect(() => getAddedSignalListener("SIGINT", beforeSigint)?.("SIGINT")).not.toThrow();
+    expect(() => {
+      getAddedSignalListener("SIGINT", beforeSigint)?.("SIGINT");
+    }).not.toThrow();
     expect(onTerminate).toHaveBeenCalledTimes(1);
     expect(kill).toHaveBeenCalledWith("SIGINT");
   });

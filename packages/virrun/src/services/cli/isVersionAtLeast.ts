@@ -1,7 +1,7 @@
 // Extracts the leading major.minor.patch triple from a version string — accepts a bare "0.11.1" or a
 // `bwrap --version` line ("bubblewrap 0.11.1"); null when no triple is present so a garbled `--version` reads as
 // Unknown, never as satisfying the gate.
-const VERSION_REGEX = /(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)/;
+const VERSION_REGEX = /(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)/u;
 
 const parseVersionTriple = (version: string): [number, number, number] | null => {
   const groups = VERSION_REGEX.exec(version)?.groups;
@@ -17,6 +17,6 @@ export const isVersionAtLeast = (version: string, minimum: string): boolean => {
   const [actualMajor, actualMinor, actualPatch] = actual;
   const [minimumMajor, minimumMinor, minimumPatch] = required;
   if (actualMajor !== minimumMajor) return actualMajor > minimumMajor;
-  else if (actualMinor !== minimumMinor) return actualMinor > minimumMinor;
-  else return actualPatch >= minimumPatch;
+  if (actualMinor !== minimumMinor) return actualMinor > minimumMinor;
+  return actualPatch >= minimumPatch;
 };

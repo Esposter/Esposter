@@ -25,7 +25,7 @@ const backendFactories: Record<BackendType, () => ExecBackend> = {
   [BackendType.Vfs]: createVfsBackend,
 };
 // The orchestrator entrypoint: resolve the source to a working dir, pick a backend, and return a handle whose
-// exec/fork/persist route through it; dispose() tears down any temp state the source created.
+// Exec/fork/persist route through it; dispose() tears down any temp state the source created.
 export const createVirrun = async ({
   backend = BackendType.Auto,
   source = { dir: "", type: SourceType.Dir },

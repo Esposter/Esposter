@@ -37,15 +37,15 @@ const probeBubblewrap = (): DiagnosticCheck => {
       status: DiagnosticStatus.Missing,
       type,
     };
-  else if (!isVersionAtLeast(output, MINIMUM_BUBBLEWRAP_VERSION))
-    return {
-      fix: `upgrade bubblewrap to >= ${MINIMUM_BUBBLEWRAP_VERSION} for RAM-overlay support`,
-      label,
-      note: `${output} is too old`,
-      status: DiagnosticStatus.Missing,
-      type,
-    };
-  else return { fix: "", label, note: output, status: DiagnosticStatus.Ok, type };
+  if (isVersionAtLeast(output, MINIMUM_BUBBLEWRAP_VERSION))
+    return { fix: "", label, note: output, status: DiagnosticStatus.Ok, type };
+  return {
+    fix: `upgrade bubblewrap to >= ${MINIMUM_BUBBLEWRAP_VERSION} for RAM-overlay support`,
+    label,
+    note: `${output} is too old`,
+    status: DiagnosticStatus.Missing,
+    type,
+  };
 };
 // Off win32 the host's own node runs the sandbox, so the check is N/A. On win32 it probes node via the user's real
 // WSL login + interactive shell (buildWslLoginShellCommand), matching how readWslLoginPath captures the toolchain the

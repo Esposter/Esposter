@@ -3,12 +3,13 @@ import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemp
 import { execFileSync } from "node:child_process";
 import { afterEach, describe, expect, test } from "vitest";
 
+const initRepository = (directory: string): void => {
+  execFileSync("git", ["init", "-q"], { cwd: directory });
+};
+
 describe(computeTaskCacheKey, () => {
   const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
   const command = "";
-  const initRepository = (directory: string): void => {
-    execFileSync("git", ["init", "-q"], { cwd: directory });
-  };
 
   afterEach(() => {
     cleanup();

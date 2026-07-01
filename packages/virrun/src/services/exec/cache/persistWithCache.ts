@@ -11,7 +11,7 @@ import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCache
 import { persistRun } from "@/services/exec/snapshot/persistRun";
 import { resolveCwd } from "@/services/exec/util/resolveCwd";
 import process from "node:process";
-// persistRun wrapped with the task cache — the "skip unchanged builds" dev-loop lever (roadmap.md). On a hit the
+// PersistRun wrapped with the task cache — the "skip unchanged builds" dev-loop lever (roadmap.md). On a hit the
 // Sandbox is skipped: the recorded diff is flushed to the host and the recorded streams + exit code reproduced. On a
 // Miss the run executes (capturing output) and its exit-0 result is recorded. Falls back to a plain persistRun when
 // The cache is off or the key can't be computed (not a git repo / no lockfile).

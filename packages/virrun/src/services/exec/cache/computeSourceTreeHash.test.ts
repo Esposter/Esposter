@@ -6,11 +6,12 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
+const initRepository = (directory: string): void => {
+  execFileSync("git", ["init", "-q"], { cwd: directory });
+};
+
 describe(computeSourceTreeHash, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  const initRepository = (directory: string): void => {
-    execFileSync("git", ["init", "-q"], { cwd: directory });
-  };
 
   afterEach(() => {
     cleanup();

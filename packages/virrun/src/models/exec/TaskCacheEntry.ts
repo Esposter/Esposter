@@ -20,7 +20,19 @@ export const taskCacheEntrySchema: z.ZodObject<{
   stdout: z.ZodString;
 }> = z.object({
   exitCode: z.number(),
-  plan: z.array(z.object({ relativePath: z.string(), type: z.enum(FlushOpType) })),
+  plan: z.array(
+    z.object({
+      // The entry is persisted, hand-editable meta.json replayed onto the host via applyFlushPlan, so reject any
+      // Path that would escape hostDir (absolute, or a `..` segment) before it reaches the host-write script.
+      relativePath: z
+        .string()
+        .refine(
+          (relativePath) => !relativePath.startsWith("/") && !relativePath.split("/").includes(".."),
+          "relativePath must stay within the host directory",
+        ),
+      type: z.enum(FlushOpType),
+    }),
+  ),
   stderr: z.string(),
   stdout: z.string(),
 }) satisfies z.ZodType<TaskCacheEntry>;
