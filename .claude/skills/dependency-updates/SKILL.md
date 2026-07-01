@@ -36,7 +36,6 @@ When `@electric-sql/pglite` changes between minor versions, regenerate the db-mo
 
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
 - **`@vue/language-core`, `vue-tsc`** — pinned to `3.3.5` (no caret); 3.3.6+ broken. Keep majors matched.
-- **`oxlint-tsgolint`** — pinned to `0.23.0` (no caret); 0.24.0 gives issues.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 

@@ -183,7 +183,7 @@ catalog:
   nuxt-security: ^2.6.0
   oxfmt: ^0.57.0
   oxlint: ^1.72.0
-  oxlint-tsgolint: 0.23.0
+  oxlint-tsgolint: ^0.24.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^6.1.200
