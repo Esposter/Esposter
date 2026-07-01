@@ -49,7 +49,7 @@
     "format": "virrun -- oxfmt",
     "format:check": "virrun -- oxfmt --check",
     "lint": "virrun -- oxlint && virrun -- eslint . && virrun -- pnpm -r --parallel --aggregate-output run lint",
-    "lint:fix": "eslint --fix . && pnpm -r --parallel --aggregate-output run lint:fix",
+    "lint:fix": "virrun -- oxlint --fix && virrun -- eslint --fix . && virrun -- pnpm -r --parallel --aggregate-output run lint:fix",
     "lint:fix:packages": "virrun -- oxlint --fix --ignore-pattern \"packages/app/**\" packages && virrun -- pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint:fix",
     "lint:packages": "virrun -- oxlint --ignore-pattern \"packages/app/**\" packages && virrun -- pnpm -r --filter \"!@esposter/app\" --parallel --aggregate-output run lint",
     "outdated:dependencies": "virrun -- tsx scripts/checkDependencies/index.ts",
