@@ -11,11 +11,15 @@ describe(formatCacheListing, () => {
         repoStorePath: "/repo/.virrun/store",
         snapshotHashes: ["", " "],
         snapshotsPath: "/home/.virrun/snapshots",
+        taskCount: 3,
+        tasksPath: "/home/.virrun/tasks",
       }),
-    ).toBe("[virrun] repo store /repo/.virrun/store (present)\n[virrun] snapshots /home/.virrun/snapshots (2): ,  ");
+    ).toBe(
+      "[virrun] repo store /repo/.virrun/store (present)\n[virrun] snapshots /home/.virrun/snapshots (2): ,  \n[virrun] tasks /home/.virrun/tasks (3)",
+    );
   });
 
-  test("reports an absent store and no snapshots", () => {
+  test("reports an absent store, no snapshots, and no tasks", () => {
     expect.hasAssertions();
 
     expect(
@@ -24,7 +28,11 @@ describe(formatCacheListing, () => {
         repoStorePath: "/repo/.virrun/store",
         snapshotHashes: [],
         snapshotsPath: "/home/.virrun/snapshots",
+        taskCount: 0,
+        tasksPath: "/home/.virrun/tasks",
       }),
-    ).toBe("[virrun] repo store /repo/.virrun/store (absent)\n[virrun] snapshots /home/.virrun/snapshots (none)");
+    ).toBe(
+      "[virrun] repo store /repo/.virrun/store (absent)\n[virrun] snapshots /home/.virrun/snapshots (none)\n[virrun] tasks /home/.virrun/tasks (none)",
+    );
   });
 });

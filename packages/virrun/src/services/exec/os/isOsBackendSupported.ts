@@ -22,34 +22,37 @@ let isSupported: boolean | undefined;
 // (engine-agnostic): toolchain reachability is an orthogonal axis handled by the captured WSL login PATH
 // (readWslLoginPath), so probing a specific binary here would conflate the two and hardcode an engine.
 const probeOsBackendSupported = (): boolean => {
-  if (process.platform === "linux")
-    return getResult(() => execFileSync("bwrap", buildBwrapArgs(["true"], process.cwd()), { stdio: "pipe" })).match(
-      () => true,
-      () => false,
-    );
-  else if (process.platform === "win32")
-    return getResult(() => execFileSync("wsl.exe", ["--exec", "mktemp", "-d"], { stdio: "pipe" }))
-      .map((stdout) => stdout.toString().trim())
-      .andThen((wslDir) =>
-        getResult(() =>
-          withFinalizer(
-            () =>
-              execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], {
-                stdio: "pipe",
-              }),
-            () => {
-              getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
-                undefined,
-              );
-            },
-          ),
-        ),
-      )
-      .match(
+  switch (process.platform) {
+    case "linux":
+      return getResult(() => execFileSync("bwrap", buildBwrapArgs(["true"], process.cwd()), { stdio: "pipe" })).match(
         () => true,
         () => false,
       );
-  else return false;
+    case "win32":
+      return getResult(() => execFileSync("wsl.exe", ["--exec", "mktemp", "-d"], { stdio: "pipe" }))
+        .map((stdout) => stdout.toString().trim())
+        .andThen((wslDir) =>
+          getResult(() =>
+            withFinalizer(
+              () =>
+                execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], {
+                  stdio: "pipe",
+                }),
+              () => {
+                getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
+                  undefined,
+                );
+              },
+            ),
+          ),
+        )
+        .match(
+          () => true,
+          () => false,
+        );
+    default:
+      return false;
+  }
 };
 // Three-tier so a fresh `virrun -- <cmd>` process (one per command) never re-pays the probe on a warm host: the
 // In-process memo short-circuits repeat calls within a run (resolveBackend + createOsBackend both ask, and the bench

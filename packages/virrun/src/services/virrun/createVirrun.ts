@@ -5,13 +5,13 @@ import type { VirrunOptions } from "@/models/virrun/VirrunOptions";
 
 import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
+import { persistWithCache } from "@/services/exec/cache/persistWithCache";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
-import { persistRun } from "@/services/exec/snapshot/persistRun";
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
@@ -24,24 +24,23 @@ const backendFactories: Record<BackendType, () => ExecBackend> = {
   [BackendType.Os]: createOsBackend,
   [BackendType.Vfs]: createVfsBackend,
 };
-// The orchestrator entrypoint: resolve the source to a working dir, pick a backend, and return a handle
-// Whose exec/fork/persist route through it; dispose() tears down any temp state the source created.
+// The orchestrator entrypoint: resolve the source to a working dir, pick a backend, and return a handle whose
+// exec/fork/persist route through it; dispose() tears down any temp state the source created.
 export const createVirrun = async ({
   backend = BackendType.Auto,
   source = { dir: "", type: SourceType.Dir },
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
   const execBackend = backendFactories[backend]();
   const { cwd, dispose } = await loadSource(source);
-  // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store, login PATH,
-  // And network re-enable must still be injected (createOsExecOptions). Non-os backends run in the caller's own
-  // Shell env, so they need only the VIRRUN presence signal.
+  // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store, login PATH, and
+  // Network re-enable must still be injected (createOsExecOptions). Non-os backends need only the VIRRUN signal.
   const isOsBackend = execBackend.name === BackendType.Os;
   const toOptions = (stdio: ExecStdio): ExecOptions =>
     isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio };
   const toInstallOptions = (stdio: ExecStdio): ExecOptions =>
     isOsBackend ? createOsInstallOptions(cwd, stdio) : toOptions(stdio);
-  // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op). Shared by fork
-  // And persist so the two warm-snapshot paths can't drift.
+  // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op). Shared by fork and
+  // Persist so the two warm-snapshot paths can't drift.
   const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {
     if (!resolveSnapshotLocation(cwd).exists)
       await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
@@ -54,8 +53,8 @@ export const createVirrun = async ({
       // Other backends have no snapshot layer, so fork falls back to a plain exec (no warm reuse).
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
       // A Windows host's win32 node_modules can't run inside the Linux sandbox, so the command runs over the
-      // Sandbox's own frozen dep tree via forkSnapshot, never the bare source. The snapshot is deps-only (pruneSnapshotUpper),
-      // So any source-derived artifact (e.g. .nuxt) is served from the host source tree stacked underneath as the
+      // Sandbox's own frozen dep tree via forkSnapshot. The snapshot is deps-only (pruneSnapshotUpper), so any
+      // Source-derived artifact (e.g. .nuxt) is served from the host source tree stacked underneath as the
       // `--overlay-src` lower — matching native staleness, with no per-fork postinstall replay.
       await ensureSnapshot(stdio);
       return forkSnapshot(execBackend, command, toOptions(stdio));
@@ -63,10 +62,10 @@ export const createVirrun = async ({
     persist: async (command, stdio = "pipe") => {
       // Other backends have no sandbox, so a plain exec writes straight to the host disk — nothing to flush.
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
-      // Same warm-snapshot provisioning as fork (deps-only snapshot over the host source lower); persistRun then
-      // Tops it with a real upper and reconciles the command's writes onto the host.
+      // Same warm-snapshot provisioning as fork; persistWithCache tops it with a real upper and reconciles the
+      // Command's writes onto the host, short-circuiting to a recorded result when the task cache holds the run.
       await ensureSnapshot(stdio);
-      return persistRun(execBackend, command, toOptions(stdio));
+      return persistWithCache(execBackend, command, toOptions(stdio));
     },
   };
 };
