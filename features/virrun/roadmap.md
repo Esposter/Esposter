@@ -4,7 +4,7 @@ What to work on next. Shipped work lives in [README.md](README.md) `## Shipped`;
 
 ## Now
 
-- **`virrun doctor`** — a diagnostic subcommand that probes the `os`-backend prerequisites (bubblewrap `>= 0.10.0`, a Linux `node` inside WSL2 on win32, `python3` for write-back) and reports, per check, ok / missing + the fix, exiting non-zero when the backend would fall back to native. Turns the silent capability probe into an actionable UX surface. → [specs/adoption.md](specs/adoption.md)
+Nothing open on the shipped Linux/WSL `os` path. Promote one item from **Next** when its trigger fires.
 
 ## Next
 

@@ -7,6 +7,7 @@ import { BackendType } from "@/models/virrun/BackendType";
 import { createStderrLiveWriter } from "@/services/exec/bwrap/createStderrLiveWriter";
 import { parseBwrapExitCode } from "@/services/exec/bwrap/parseBwrapExitCode";
 import { parseBwrapStderrStatus } from "@/services/exec/bwrap/parseBwrapStderrStatus";
+import { forwardTerminationSignals } from "@/services/exec/util/forwardTerminationSignals";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "node:child_process";
 
@@ -34,6 +35,7 @@ export const createBwrapBackend = (
         shell: false,
         stdio,
       });
+      forwardTerminationSignals(child, bwrapCommand.onTerminate);
       let stdout = "";
       let stderr = "";
       let status = "";
