@@ -1,3 +1,5 @@
+import type { ExecBackend } from "@/models/exec/ExecBackend";
+
 import { dayjs } from "@/services/dayjs.test";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
@@ -18,7 +20,11 @@ import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 // Correctness layer 4 write-back equivalence (specs/write-back.md): a persist run leaves the host disk exactly as
 // The same command run natively would. One overlay-entry kind per case; one warm snapshot reused across cases.
 describe.skipIf(!isSandboxInstallSupported)("persistRun - flushes produced files but never node_modules (write-back equivalence)", () => {
-  const backend = createOsBackend();
+  // Constructed lazily in beforeAll (which never runs for a skipped describe) rather than here in the factory:
+  // Vitest still executes a skipIf'd describe body to collect its tests, and createOsBackend throws on a host that
+  // Can't set up the overlay (e.g. this suite running nested inside the os-backend sandbox), which would fail
+  // Collection instead of skipping.
+  let backend: ExecBackend;
   const acceptanceTimeoutMs = dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds();
   let corpus = "";
   // A real package directory in the corpus (e.g. `packages/virrun`); its per-package node_modules lands in the
@@ -27,6 +33,7 @@ describe.skipIf(!isSandboxInstallSupported)("persistRun - flushes produced files
   const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
 
   beforeAll(async () => {
+    backend = createOsBackend();
     process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
     corpus = createWorkspaceCorpus(findRepoRoot());
     packageDirectory = `${PACKAGES_DIRECTORY}/${takeOne(readdirSync(join(corpus, PACKAGES_DIRECTORY)), 0)}`;
