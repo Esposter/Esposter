@@ -64,7 +64,7 @@ export const createVirrun = async ({
       // Other backends have no sandbox, so a plain exec writes straight to the host disk — nothing to flush.
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
       // Same warm-snapshot provisioning as fork (deps-only snapshot over the host source lower); persistRun then
-      // tops it with a real upper and reconciles the command's writes onto the host.
+      // Tops it with a real upper and reconciles the command's writes onto the host.
       await ensureSnapshot(stdio);
       return persistRun(execBackend, command, toOptions(stdio));
     },

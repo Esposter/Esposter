@@ -35,11 +35,17 @@ const warmCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 // Dist) vanish and each run is cold without touching the source; the native side regenerates those gitignored
 // Build artifacts in place (idempotent), so it needs no cleanup and stays realistically warm/incremental.
 const SHARED_COMMAND = (script: string): string => `pnpm --filter @esposter/shared ${script}`;
+// Whether the host-global snapshot cache entry already existed before this bench ran. warmCorpus mirrors the real
+// Repo's lockfile, so it resolves to the same lockfile-hash-keyed entry every real virrun run on this repo reuses.
+// If it pre-existed, createSnapshot reuses it (rename-loses-race keeps the existing upper) and teardown must leave
+// It — evicting it would force the next real run to pay a full reinstall for state this bench never owned.
+const isSnapshotPreexisting = isOsSupported && resolveSnapshotLocation(warmCorpus).exists;
 
 afterAll(() => {
   if (!isOsSupported) return;
-  // Resolve the snapshot before removing warmCorpus (its lockfile keys the cache entry), then clear it.
-  removeSnapshotDirectory(resolveSnapshotLocation(warmCorpus).dir);
+  // Evict the snapshot only if this bench captured it. Resolve before removing warmCorpus (its lockfile keys the
+  // Cache entry), then clear the private temp mirror unconditionally.
+  if (!isSnapshotPreexisting) removeSnapshotDirectory(resolveSnapshotLocation(warmCorpus).dir);
   rmSync(warmCorpus, { force: true, recursive: true });
 });
 
