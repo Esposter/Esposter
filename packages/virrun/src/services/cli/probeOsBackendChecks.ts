@@ -7,7 +7,6 @@ import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
-import process from "node:process";
 // The oldest bubblewrap exposing `--overlay-src` / `--tmp-overlay` (the RAM-overlay flags the os backend needs).
 const MINIMUM_BUBBLEWRAP_VERSION = "0.10.0";
 // Run a probe command the same place the os backend runs it — directly on Linux, via `wsl.exe --exec` on win32 — so
