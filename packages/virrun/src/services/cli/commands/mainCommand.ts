@@ -2,6 +2,7 @@ import type { CommandDef } from "citty";
 
 import { CommandType } from "@/models/virrun/CommandType";
 import { cacheCommand } from "@/services/cli/commands/cacheCommand";
+import { doctorCommand } from "@/services/cli/commands/doctorCommand";
 import { execCommand } from "@/services/cli/commands/execCommand";
 import { initCommand } from "@/services/cli/commands/initCommand";
 import { runCommand } from "@/services/cli/commands/runCommand";
@@ -19,6 +20,7 @@ export const mainCommand: CommandDef = defineCommand({
   },
   subCommands: {
     [CommandType.Cache]: cacheCommand,
+    [CommandType.Doctor]: doctorCommand,
     [CommandType.Exec]: execCommand,
     [CommandType.Init]: initCommand,
     [CommandType.Run]: runCommand,

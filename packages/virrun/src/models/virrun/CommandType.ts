@@ -5,6 +5,8 @@ export enum CommandType {
   Cache = "cache",
   // `virrun cache clean [--all]` — remove the repo-local .virrun cache.
   Clean = "clean",
+  // `virrun doctor` — diagnose the os backend's prerequisites and report what's missing.
+  Doctor = "doctor",
   // `virrun exec -- <cmd>` — forced cold plain exec, no warm-snapshot reuse.
   Exec = "exec",
   // `virrun init [--backend] [--force]` — write a virrun.config.json.

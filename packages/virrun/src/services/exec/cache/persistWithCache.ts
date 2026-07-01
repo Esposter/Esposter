@@ -2,6 +2,7 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
 
+import { formatVirrunCacheHit } from "@/services/cli/formatVirrunCacheHit";
 import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
 import { isTaskCacheEnabled } from "@/services/exec/cache/isTaskCacheEnabled";
 import { recordTaskCache } from "@/services/exec/cache/recordTaskCache";
@@ -28,6 +29,7 @@ export const persistWithCache = async (
   if (resolveTaskCacheLocation(key).exists) {
     const cached = replayTaskCache(key, resolveCwd(options.cwd));
     if (options.stdio === "inherit") {
+      process.stderr.write(`${formatVirrunCacheHit(command)}\n`);
       process.stdout.write(cached.stdout);
       process.stderr.write(cached.stderr);
     }
