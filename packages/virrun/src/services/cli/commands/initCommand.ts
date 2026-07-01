@@ -9,9 +9,8 @@ import { defineCommand } from "citty";
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import process from "node:process";
-// Explicit annotation for isolatedDeclarations + `satisfies ArgsDef` to validate the literal. InitArgs keeps
-// `options` a mutable `BackendType[]` (citty's EnumArgDef rejects a readonly array) and pins `type: "enum"` so
-// Citty infers `args.backend` as BackendType, not a widened string.
+// InitArgs keeps `options` a mutable `BackendType[]` (citty's EnumArgDef rejects a readonly array) and pins
+// `type: "enum"` so citty infers `args.backend` as BackendType, not a widened string.
 const initArgs: InitArgs = {
   backend: {
     default: BackendType.Auto,

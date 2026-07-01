@@ -1,4 +1,8 @@
 import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
+import { getCapabilityCacheKey } from "@/services/exec/os/getCapabilityCacheKey";
+import { readCapabilityCache } from "@/services/exec/os/readCapabilityCache";
+import { writeCapabilityCache } from "@/services/exec/os/writeCapabilityCache";
+import { VIRRUN_FORCE_PROBE_KEY } from "@/services/exec/util/constants";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 // Memoized — a host's bubblewrap capability can't change within a process, and the os bench reconstructs the
@@ -17,38 +21,58 @@ let isSupported: boolean | undefined;
 // To cwd (the upper is a discarded tmpfs), so the probe is side-effect-free. The probed command is `true`
 // (engine-agnostic): toolchain reachability is an orthogonal axis handled by the captured WSL login PATH
 // (readWslLoginPath), so probing a specific binary here would conflate the two and hardcode an engine.
-export const isOsBackendSupported = (): boolean => {
-  if (isSupported !== undefined) return isSupported;
-  else if (process.platform === "linux")
-    isSupported = getResult(() =>
-      execFileSync("bwrap", buildBwrapArgs(["true"], process.cwd()), { stdio: "pipe" }),
-    ).match(
-      () => true,
-      () => false,
-    );
-  else if (process.platform === "win32")
-    isSupported = getResult(() => execFileSync("wsl.exe", ["--exec", "mktemp", "-d"], { stdio: "pipe" }))
-      .map((stdout) => stdout.toString().trim())
-      .andThen((wslDir) =>
-        getResult(() =>
-          withFinalizer(
-            () =>
-              execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], {
-                stdio: "pipe",
-              }),
-            () => {
-              getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
-                undefined,
-              );
-            },
-          ),
-        ),
-      )
-      .match(
+const probeOsBackendSupported = (): boolean => {
+  switch (process.platform) {
+    case "linux":
+      return getResult(() => execFileSync("bwrap", buildBwrapArgs(["true"], process.cwd()), { stdio: "pipe" })).match(
         () => true,
         () => false,
       );
-  else isSupported = false;
-
+    case "win32":
+      return getResult(() => execFileSync("wsl.exe", ["--exec", "mktemp", "-d"], { stdio: "pipe" }))
+        .map((stdout) => stdout.toString().trim())
+        .andThen((wslDir) =>
+          getResult(() =>
+            withFinalizer(
+              () =>
+                execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], {
+                  stdio: "pipe",
+                }),
+              () => {
+                getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
+                  undefined,
+                );
+              },
+            ),
+          ),
+        )
+        .match(
+          () => true,
+          () => false,
+        );
+    default:
+      return false;
+  }
+};
+// Three-tier so a fresh `virrun -- <cmd>` process (one per command) never re-pays the probe on a warm host: the
+// In-process memo short-circuits repeat calls within a run (resolveBackend + createOsBackend both ask, and the bench
+// Reconstructs the backend every iteration); the persisted cross-process cache (keyed by getCapabilityCacheKey, so it
+// Self-invalidates on a kernel change) reuses a prior process's verdict — the real win, since the probe is otherwise
+// A bwrap overlay mount on Linux and three `wsl.exe` round-trips on win32; only a cold cache runs the actual probe,
+// Then writes its verdict back. VIRRUN_FORCE_PROBE bypasses the persisted cache (not the in-process memo, which is
+// Always sound) for a host whose capability changed with no kernel-release bump. A missing/corrupt/mismatched cache
+// Reads as undefined and falls through to the probe, so the cache is self-healing.
+export const isOsBackendSupported = (): boolean => {
+  if (isSupported !== undefined) return isSupported;
+  const key = getCapabilityCacheKey();
+  if (process.env[VIRRUN_FORCE_PROBE_KEY] === undefined) {
+    const cached = readCapabilityCache(key);
+    if (cached !== undefined) {
+      isSupported = cached;
+      return cached;
+    }
+  }
+  isSupported = probeOsBackendSupported();
+  writeCapabilityCache({ key, supported: isSupported });
   return isSupported;
 };

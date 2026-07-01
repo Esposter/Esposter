@@ -2,6 +2,7 @@ import type { CommandDef } from "citty";
 
 import { CommandType } from "@/models/virrun/CommandType";
 import { formatCacheListing } from "@/services/cli/formatCacheListing";
+import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
 import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { VIRRUN_STORE_DIRECTORY_NAME } from "@/services/exec/util/constants";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
@@ -23,11 +24,14 @@ export const cacheLsCommand: CommandDef = defineCommand({
       const repoStorePath = join(getRepoCacheDirectory(""), VIRRUN_STORE_DIRECTORY_NAME);
       const snapshotsPath = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
       const snapshotHashes = existsSync(snapshotsPath) ? readdirSync(snapshotsPath).toSorted() : [];
+      const tasksPath = join(getGlobalCacheDirectory(), VIRRUN_TASKS_DIRECTORY_NAME);
       return formatCacheListing({
         isRepoStorePresent: existsSync(repoStorePath),
         repoStorePath,
         snapshotHashes,
         snapshotsPath,
+        taskCount: existsSync(tasksPath) ? readdirSync(tasksPath).length : 0,
+        tasksPath,
       });
     }).match(
       (listing) => process.stderr.write(`${listing}\n`),

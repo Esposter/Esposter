@@ -15,22 +15,30 @@ import { afterEach, describe, expect, test } from "vitest";
 //   3. Well-formedness — every command yields a finite exit code + string stdio; the sandbox never wedges.
 // Real subprocesses, so host-gated and kept to small run counts.
 
-// Seeded empty, so any cross-exec write leak surfaces as a non-empty read; LEAK_MARKER is a bare token (not " ") to
-// Avoid shell-quoting fragility across the bwrap/WSL hops.
+// Seeded empty, so any cross-exec write leak surfaces as a non-empty read.
 const CANARY = "a";
 // Never seeded on the host — a command that writes it must leave the host disk untouched.
 const SCRATCH_FILE = "b";
 // Never created on the host — a mkdir must land only in the ephemeral upper.
 const SCRATCH_DIR = "d";
-const LEAK_MARKER = "x";
 
+// Write/append the file's own name as its (non-empty) content — a bare token, so the command stays unquoted without
+// Shell-quoting fragility across the bwrap/WSL hops.
 const toCommand = (operation: { file: string; kind: string }): string => {
-  if (operation.kind === "write") return `printf ${LEAK_MARKER} > ${operation.file}`;
-  else if (operation.kind === "append") return `printf ${LEAK_MARKER} >> ${operation.file}`;
-  else if (operation.kind === "delete") return `rm -f ${operation.file}`;
-  else if (operation.kind === "read") return `cat ${operation.file} 2>/dev/null || true`;
-  else if (operation.kind === "mkdir") return `mkdir -p ${SCRATCH_DIR}`;
-  else return `exit 1`;
+  switch (operation.kind) {
+    case "append":
+      return `printf ${operation.file} >> ${operation.file}`;
+    case "delete":
+      return `rm -f ${operation.file}`;
+    case "mkdir":
+      return `mkdir -p ${SCRATCH_DIR}`;
+    case "read":
+      return `cat ${operation.file} 2>/dev/null || true`;
+    case "write":
+      return `printf ${operation.file} > ${operation.file}`;
+    default:
+      return `exit 1`;
+  }
 };
 
 describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {

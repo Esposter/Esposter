@@ -7,6 +7,7 @@ import { BackendType } from "@/models/virrun/BackendType";
 import { createStderrLiveWriter } from "@/services/exec/bwrap/createStderrLiveWriter";
 import { parseBwrapExitCode } from "@/services/exec/bwrap/parseBwrapExitCode";
 import { parseBwrapStderrStatus } from "@/services/exec/bwrap/parseBwrapStderrStatus";
+import { forwardTerminationSignals } from "@/services/exec/util/forwardTerminationSignals";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawn } from "node:child_process";
 
@@ -22,7 +23,7 @@ export const createBwrapBackend = (
   exec: (command, options) =>
     new Promise((resolve, reject) => {
       // Fd 3 is an extra pipe bwrap writes its JSON status to. shell:false — the overlay flags and command are an
-      // Explicit argv that a host shell must never reinterpret; cwd lives inside the sandbox via --chdir.
+      // Explicit argv a host shell must never reinterpret.
       const bwrapCommand = createBwrapCommand(createBwrapArgs(command, options.cwd, options), options);
       const [file, ...args] = bwrapCommand.command;
       const stdio: StdioOptions =
@@ -34,19 +35,27 @@ export const createBwrapBackend = (
         shell: false,
         stdio,
       });
+      forwardTerminationSignals(child, bwrapCommand.onTerminate);
       let stdout = "";
       let stderr = "";
       let status = "";
-      // The wsl backend pipes stderr to parse its appended status block, so under "inherit" it would otherwise stay
-      // Silent for the whole run; stream the real output live, withholding the trailing status block. Only drives
-      // The wsl path — the fd backend inherits stderr directly (no "data" events).
-      const writeStderrLive = options.stdio === "inherit" ? createStderrLiveWriter() : undefined;
+      const isTee = options.tee === true && options.stdio === "pipe";
+      // The wsl backend pipes stderr to parse its appended status block, so under "inherit" (or a wsl tee) stream the
+      // Real output live, withholding the trailing status block; the fd backend's stderr is clean and tees raw.
+      const writeStderrLive =
+        (options.stdio === "inherit" || isTee) && bwrapCommand.statusSource === "stderr"
+          ? createStderrLiveWriter()
+          : undefined;
       child.stdout?.on("data", (chunk) => {
-        stdout += chunk.toString();
+        const text = chunk.toString();
+        stdout += text;
+        if (isTee) process.stdout.write(text);
       });
       child.stderr?.on("data", (chunk) => {
-        stderr += chunk.toString();
-        writeStderrLive?.(stderr);
+        const text = chunk.toString();
+        stderr += text;
+        if (writeStderrLive) writeStderrLive(stderr);
+        else if (isTee) process.stderr.write(text);
       });
       child.stdio[3]?.on("data", (chunk) => {
         status += chunk.toString();
@@ -58,7 +67,7 @@ export const createBwrapBackend = (
         const exitCode = parseBwrapExitCode(bwrapStderr.status);
         if (exitCode === undefined) {
           // Sandbox setup failed (bad flag, missing binary, WSL bridge or overlay-mount error); fold the captured
-          // Stderr into the error so the user sees why, not just that it did.
+          // Stderr into the error so the user sees why.
           reject(
             new InvalidOperationError(
               Operation.Create,
@@ -68,8 +77,7 @@ export const createBwrapBackend = (
           );
           return;
         }
-        // Under "inherit" the output already reached the host live (writeStderrLive above, or the fd backend's
-        // Direct inherit), so nothing is left to flush.
+        // Under "inherit" the output already reached the host live, so nothing is left to flush.
         if (options.stdio === "inherit") {
           resolve({ exitCode, stderr: "", stdout: "" });
           return;
