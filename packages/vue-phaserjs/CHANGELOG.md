@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.32.0](https://github.com/Esposter/Esposter/compare/v2.31.1...v2.32.0) (2026-07-01)
+
+### Bug Fixes
+
+* cleanup configs ([ae8c975](https://github.com/Esposter/Esposter/commit/ae8c975eefa0c621834a8bc23e726a62bade7272))
+* disable linting for vue-tsc for now ([1986687](https://github.com/Esposter/Esposter/commit/1986687fbd26b1a12d15adb5f11eec2a65f0ee3a))
+* typedoc ([b2c36fd](https://github.com/Esposter/Esposter/commit/b2c36fd9e5899bba54dd55fe5fdd54c9a2ccf606))
+
 ## [2.31.1](https://github.com/Esposter/Esposter/compare/v2.31.0...v2.31.1) (2026-06-25)
 
 **Note:** Version bump only for package vue-phaserjs

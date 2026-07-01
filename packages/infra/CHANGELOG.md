@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.32.0](https://github.com/Esposter/Esposter/compare/v2.31.1...v2.32.0) (2026-07-01)
+
+### Bug Fixes
+
+* correct Build Packages required check context for reusable workflow ([938ac99](https://github.com/Esposter/Esposter/commit/938ac995c80421f2e949bf82bf3d9134a38cd2e6))
+* lint ([e9f93c2](https://github.com/Esposter/Esposter/commit/e9f93c29d3ab8c559a2c4cec00245149df1ac54e))
+
 ## [2.31.1](https://github.com/Esposter/Esposter/compare/v2.31.0...v2.31.1) (2026-06-25)
 
 **Note:** Version bump only for package @esposter/infra

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.32.0](https://github.com/Esposter/Esposter/compare/v2.31.1...v2.32.0) (2026-07-01)
+
+### Bug Fixes
+
+* cleanup configs ([ae8c975](https://github.com/Esposter/Esposter/commit/ae8c975eefa0c621834a8bc23e726a62bade7272))
+* snapshot ([5edffe4](https://github.com/Esposter/Esposter/commit/5edffe4988baa8eb26a94ba70daae53ff2c502e6))
+* snapshot ([b383bd3](https://github.com/Esposter/Esposter/commit/b383bd394881916ed8fecbbffc639cc7b068dad5))
+* snapshot ([241ee84](https://github.com/Esposter/Esposter/commit/241ee8435a9cfa3a524bab20c6b828e8aa883b61))
+* snapshot size ([36993db](https://github.com/Esposter/Esposter/commit/36993dbfea849005e0655dfd5684e069cdf35f50))
+* test snapshot ([3868551](https://github.com/Esposter/Esposter/commit/386855178a02928c7dfbca551613d7c8566b4c91))
+* typedoc ([b2c36fd](https://github.com/Esposter/Esposter/commit/b2c36fd9e5899bba54dd55fe5fdd54c9a2ccf606))
+
 ## [2.31.1](https://github.com/Esposter/Esposter/compare/v2.31.0...v2.31.1) (2026-06-25)
 
 **Note:** Version bump only for package @esposter/azure-functions

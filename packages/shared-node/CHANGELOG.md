@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.32.0](https://github.com/Esposter/Esposter/compare/v2.31.1...v2.32.0) (2026-07-01)
+
+### Features
+
+* fixed-iteration benchmark runner for machine-stable results ([6be4473](https://github.com/Esposter/Esposter/commit/6be4473066c634fd57ab854c59175316d24f9dde))
+
 ## [2.31.1](https://github.com/Esposter/Esposter/compare/v2.31.0...v2.31.1) (2026-06-25)
 
 **Note:** Version bump only for package @esposter/shared-node
