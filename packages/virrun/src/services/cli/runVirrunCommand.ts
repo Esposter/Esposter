@@ -50,7 +50,7 @@ export const runVirrunCommand = async (
     (error) => {
       const message = toAppError(error).message;
       // A bare package-script name (e.g. `virrun run typecheck`) reaches the backend as a missing executable; swap
-      // the raw sandbox-setup error for a hint that points at the working `virrun -- pnpm <script>` form.
+      // The raw sandbox-setup error for a hint that points at the working `virrun -- pnpm <script>` form.
       process.stderr.write(`${getCommandNotFoundHint(command, message, process.cwd()) ?? message}\n`);
       return 1;
     },
