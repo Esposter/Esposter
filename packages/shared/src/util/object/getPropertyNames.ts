@@ -6,4 +6,4 @@ export const getPropertyNames = <T>(): PropertyNames<T> =>
     {
       get: (_target, property) => property,
     },
-  ) as PropertyNames<T>;
+  );

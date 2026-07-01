@@ -1,3 +1,5 @@
+/* oxlint-disable @typescript-eslint/no-unnecessary-type-assertion */
+// @TODO: remove when we switch to vue-tsgo — slight difference between ts6 and tsgo (ts7) behaviour
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 import type { GameObjects } from "phaser";
 
