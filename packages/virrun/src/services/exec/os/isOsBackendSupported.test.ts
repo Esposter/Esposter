@@ -1,59 +1,29 @@
-import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
+import { isVirrunEnabled } from "@/services/configuration/isVirrunEnabled";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
-import { getResult, withFinalizer } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
+import { probeOsBackendSupported } from "@/services/exec/os/probeOsBackendSupported";
 import { describe, expect, test } from "vitest";
 
-// Mirrors the implementation's probe - bwrap present AND able to set up the RAM overlay on the real working dir - so
-// The positive assertion only runs where the os backend genuinely works (an overlay-capable dev box running the suite
-// UN-nested), not a bare CI runner, a host whose bubblewrap lacks overlayfs support (e.g. some WSL2 builds), nor a run
-// Nested inside the os-backend sandbox (`virrun -- vitest`), where overlaying the already-overlaid cwd is rejected.
-const isOverlayCapable =
-  process.platform === "linux" &&
-  getResult(() => execFileSync("bwrap", buildBwrapArgs(["true"], process.cwd()), { stdio: "pipe" })).match(
-    () => true,
-    () => false,
-  );
-const isWslOverlayCapable =
-  process.platform === "win32" &&
-  getResult(() => execFileSync("wsl.exe", ["--exec", "mktemp", "-d"], { stdio: "pipe" }))
-    .map((stdout) => stdout.toString().trim())
-    .andThen((wslDir) =>
-      getResult(() =>
-        withFinalizer(
-          () => execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], { stdio: "pipe" }),
-          () => {
-            getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
-              undefined,
-            );
-          },
-        ),
-      ),
-    )
-    .match(
-      () => true,
-      () => false,
-    );
+// isOsBackendSupported layers a nesting guard + in-process memo + persisted cache over the raw host probe, so derive
+// The expected verdict from the SAME two inputs the wrapper reads — the raw overlay probe and the VIRRUN nesting
+// Signal. The two assertions are complementary (exactly one runs per environment: a capable un-nested dev box, a bare
+// CI runner, a WSL2 build without overlayfs, or a nested `virrun -- vitest`), which pins the wrapper against the probe
+// Without re-mirroring the bwrap/wsl.exe argv the probe already owns. The nested guard is a hard gate, not a probe
+// Outcome: some kernels happily overlay the already-overlaid cwd, yet the backend still can't run nested (its
+// Persist/snapshot writes hit the outer read-only ~/.virrun), so the wrapper degrades on the VIRRUN signal regardless
+// Of what the probe reports.
+const isHostCapable = probeOsBackendSupported();
+const isNested = isVirrunEnabled(process.env);
 
 describe(isOsBackendSupported, () => {
-  test.skipIf(process.platform === "linux" || isWslOverlayCapable)(
-    "is false on hosts without Linux or WSL support",
-    () => {
-      expect.hasAssertions();
-
-      expect(isOsBackendSupported()).toBe(false);
-    },
-  );
-
-  test.skipIf(!isOverlayCapable)("is true on a host with overlay-capable bubblewrap", () => {
+  test.skipIf(!(isHostCapable && !isNested))("is true on a capable, un-nested host", () => {
     expect.hasAssertions();
 
     expect(isOsBackendSupported()).toBe(true);
   });
 
-  test.skipIf(!isWslOverlayCapable)("is true on a Windows host with overlay-capable WSL bubblewrap", () => {
+  test.skipIf(isHostCapable && !isNested)("is false on an incapable or nested host", () => {
     expect.hasAssertions();
 
-    expect(isOsBackendSupported()).toBe(true);
+    expect(isOsBackendSupported()).toBe(false);
   });
 });

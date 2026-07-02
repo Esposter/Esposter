@@ -146,7 +146,8 @@
       "WebFetch(domain:orm.drizzle.team)",
       "WebFetch(domain:vitest.dev)",
       "WebFetch(domain:vuetifyjs.com)",
-      "WebFetch(domain:vueuse.org)"
+      "WebFetch(domain:vueuse.org)",
+      "Read(//home/jimmyc/.virrun/**)"
     ]
   }
 }
