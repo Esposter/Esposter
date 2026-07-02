@@ -34,6 +34,7 @@ The deps snapshot is keyed on the **lockfile** and must freeze only what the loc
 - **Stacked last** in the fork/persist `lowerDirs` (`[depsUpper, prepareUpper]`): the last `--overlay-src` wins, so it shadows both the deps lower and the host's source copy. The WSL source mirror excludes the outputs so the host copy never enters the sandbox and the capture is complete (nothing read through a host lower).
 - **Selected by the `environment` preset** — `none` (default) means no layer; `nuxt` → `resolvePrepareStep` detects the nuxt package by its git-tracked `nuxt.config`. Preset-driven, no overrides. Persist write-back masks the outputs like `node_modules` (cache-owned, never flushed to the host). → [config-and-cache](config-and-cache.md#virrun-cache--gitignored) · [write-back](write-back.md)
 - Superseded entries are swept by `pruneStalePrepareLayers`, pinning the cache to the live source state.
+- **Resolved once per fork/persist.** `ensurePrepareLayer` calls `resolvePrepareLocation` a single time, prunes superseded entries, re-reads `existsSync(upperDir)` **after** the prune (not the pre-prune `exists` snapshot), builds via `createPrepareLayer` if absent — passing that same location so the layer publishes exactly where it will be mounted — and returns that `upperDir` as the lower to stack. One resolve means fork/persist can never key off a source-tree hash that shifted between a "does it exist" check and the mount, which would otherwise stack a `prepare/<key>/upper` that was never built (bwrap then fails with `Can't find source path`).
 
 ## Constraints / Notes
 
@@ -64,7 +65,7 @@ Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the o
 | `localMonorepo.platform.bench.ts` (typecheck/build/test fork groups) | speed gate: fork the warm snapshot to run the real command vs the native baseline, one committed artifact per platform | realized |
 | `services/virrun/createVirrun.ts` (`fork`) | transparent `fork(command)` on the orchestrator handle — os captures-or-reuses the snapshot (and the prepare layer), other backends fall through to `exec` | realized |
 | `services/exec/snapshot/resolvePrepareLocation.ts` | resolve `~/.virrun/prepare/<key>` (lockfile + source-tree + prepare-step key) — pure addressing | realized |
-| `services/exec/snapshot/createPrepareLayer.ts` | fork the deps snapshot, run the prepare command, keep only `outputs`, atomically publish | realized |
+| `services/exec/snapshot/createPrepareLayer.ts` | fork the deps snapshot, run the prepare command, keep only `outputs`, atomically publish to the caller's resolved location (not a re-resolve) | realized |
 | `services/exec/snapshot/pruneToOutputs.ts` | strip a prepare capture down to the declared output subtrees (inverse of `pruneSnapshotUpper`) | realized |
 | `services/exec/snapshot/pruneStalePrepareLayers.ts` | evict superseded source-keyed prepare layers | realized |
 | `services/configuration/resolvePrepareStep.ts` (`Environment`) | resolve the `environment` preset to a `{ command, outputs }` step (nuxt → detect `nuxt.config`) | realized |
