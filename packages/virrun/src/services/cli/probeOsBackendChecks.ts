@@ -9,20 +9,16 @@ import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 // The oldest bubblewrap exposing `--overlay-src` / `--tmp-overlay` (the RAM-overlay flags the os backend needs).
 const MINIMUM_BUBBLEWRAP_VERSION = "0.10.0";
-// Run a probe command the same place the os backend runs it — directly on Linux, via `wsl.exe --exec` on win32 — so
-// The doctor's verdict matches the backend's real reach. Returns trimmed stdout, or null when the command is absent
-// Or errors (getResult swallows the throw; a missing tool has no partial result to report).
-const readProbeOutput = (file: string, args: readonly string[]): null | string => {
-  const isWin32 = process.platform === "win32";
-  return getResult(() =>
-    execFileSync(isWin32 ? "wsl.exe" : file, isWin32 ? ["--exec", file, ...args] : [...args], {
-      encoding: "utf8",
-      stdio: "pipe",
-    }),
-  )
+// Resolve a command to where the os backend actually runs it — directly on Linux, or through `wsl.exe --exec` on
+// Win32 — so every doctor probe reaches the same place the backend does. Returns the [binary, args] pair to spawn.
+const resolveHostCommand = (file: string, args: readonly string[]): [string, string[]] =>
+  process.platform === "win32" ? ["wsl.exe", ["--exec", file, ...args]] : [file, [...args]];
+// Run a probe command on the host (via resolveHostCommand) and return trimmed stdout, or null when the command is
+// Absent or errors (getResult swallows the throw; a missing tool has no partial result to report).
+const readProbeOutput = (file: string, args: readonly string[]): null | string =>
+  getResult(() => execFileSync(...resolveHostCommand(file, args), { encoding: "utf8", stdio: "pipe" }))
     .map((stdout) => stdout.trim())
     .unwrapOr(null);
-};
 
 const probeBubblewrap = (): DiagnosticCheck => {
   const label = `bubblewrap >= ${MINIMUM_BUBBLEWRAP_VERSION}`;
@@ -61,7 +57,7 @@ const probeWslNode = (): DiagnosticCheck => {
       type,
     };
   const nodePath = getResult(() =>
-    execFileSync("wsl.exe", ["--exec", "sh", "-c", buildWslLoginShellCommand("command -v node")], {
+    execFileSync(...resolveHostCommand("sh", ["-c", buildWslLoginShellCommand("command -v node")]), {
       encoding: "utf8",
       stdio: "pipe",
     }),
