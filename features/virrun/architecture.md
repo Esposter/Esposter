@@ -132,14 +132,15 @@ Every stderr diagnostic goes through one helper, `formatVirrunLine(message)` (`s
 
 The semantic color vocabulary is decided once, on the `Color` enum (`models/cli/Color.ts`) — call sites pick by meaning, not by eye:
 
-| Color        | Role                                                                                                                                                 |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Cyan (+Bold) | the `[virrun]` tag only                                                                                                                              |
-| Yellow       | commands / argv / executables / flags; the "expect a wait" one-time-install notice                                                                   |
-| Blue         | concrete values & locations — paths, backend type, lockfile hash, counts                                                                             |
-| Green        | success & positive state — exit 0, "present", durations, node version                                                                                |
-| Red          | failure & destructive — errors, non-zero exit, "absent", a path being **removed**                                                                    |
-| Dim          | routine auto-emitted metadata & absence only — the snapshot-reuse notice, doctor note column, "none"/"n/a". **Never dim a path or primary content.** |
+| Color        | Role                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Cyan (+Bold) | the `[virrun]` tag only                                                                                                                          |
+| Blue (+Bold) | a fast-route cache/snapshot **hit** label — `snapshot cache hit` / `task cache hit` (via `formatCacheHitLabel`), so the fast path stands out     |
+| Yellow       | commands / argv / executables / flags; the "expect a wait" cache-**miss** / one-time-install notice                                              |
+| Blue         | concrete values & locations — paths, backend type, lockfile hash, counts                                                                         |
+| Green        | success & positive state — exit 0, "present", durations, node version                                                                            |
+| Red          | failure & destructive — errors, non-zero exit, "absent", a path being **removed**                                                                |
+| Dim          | routine auto-emitted metadata & absence only — doctor note column, "none"/"n/a". **Never dim a path, a cache/snapshot hit, or primary content.** |
 
 The child command's own stdout/stderr is never colorized (raw bytes flow through so correctness diffs stay byte-exact); only virrun's own framing lines are.
 

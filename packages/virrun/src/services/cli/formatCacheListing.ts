@@ -2,8 +2,8 @@ import { Color } from "@/models/cli/Color";
 import { colorize } from "@/services/cli/colorize";
 import { formatVirrunLine } from "@/services/cli/formatVirrunLine";
 // Pure string-building over already-resolved paths so the IO stays in the command and the formatting is testable.
-// Paths are dimmed (context, not the point), presence is green/absence red, and counts are blue so the populated-
-// Vs-empty state of each cache tier reads at a glance.
+// Paths and counts are blue (the nouns), presence is green / absence red, and an empty tier's "none" is dimmed so the
+// Populated-vs-empty state of each cache tier reads at a glance.
 export const formatCacheListing = ({
   isRepoStorePresent,
   repoStorePath,

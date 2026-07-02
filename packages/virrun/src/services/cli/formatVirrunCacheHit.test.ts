@@ -5,12 +5,12 @@ describe(formatVirrunCacheHit, () => {
   test("joins a multi-token argv command", () => {
     expect.hasAssertions();
 
-    expect(formatVirrunCacheHit(["oxfmt", "--check"])).toBe('[virrun] cache hit, replaying "oxfmt --check"');
+    expect(formatVirrunCacheHit(["oxfmt", "--check"])).toBe('[virrun] task cache hit — replaying "oxfmt --check"');
   });
 
   test("renders a pre-joined string command as-is", () => {
     expect.hasAssertions();
 
-    expect(formatVirrunCacheHit("pnpm lint")).toBe('[virrun] cache hit, replaying "pnpm lint"');
+    expect(formatVirrunCacheHit("pnpm lint")).toBe('[virrun] task cache hit — replaying "pnpm lint"');
   });
 });
