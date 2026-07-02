@@ -34,7 +34,7 @@ flowchart TB
     fsp --> vmem[("in-process virtual FS\n(only this process sees it)")]
     os --> sandboxprim["bubblewrap\nLinux direct / Windows WSL2"]
     sandboxprim --> ram[("tmpfs + overlayfs\nRAM FS — every process sees it")]
-    os --> snap["snapshot + warm-fork\nlockfile-hash keyed"]
+    os --> snap["snapshot + warm-fork\ndeps: lockfile-hash · prepare: source-hash"]
     os --> wb["write-back\nflush top upper → host\nmutation runs only"]
     wb --> disk
 ```
@@ -108,19 +108,20 @@ Every os run forks the warm snapshot; **only the top mount differs** — persist
 flowchart LR
     src[("source\n(RO lower)")] --> ov{{"overlayfs\nstack"}}
     snap[("warm snapshot\nnode_modules (RO lower)")] --> ov
+    prep[("prepare layer\n.nuxt (RO lower, source-keyed)")] --> ov
 
     ov --> top{"top mount"}
     top -->|"mutation run\n--overlay upper"| up[("persistable upper\n= dist / migrations / fixed src")]
     top -->|"CI / verification fork\n--tmp-overlay"| vanish[("tmpfs\nwrites vanish")]
 
     up --> flush["flushUpperToHost\nfiles · whiteout deletes · opaque dirs"]
-    flush -->|"skip snapshot-lower paths"| host[("host working dir\n(native-equivalent)")]
+    flush -->|"skip snapshot-lower + prepare-output paths"| host[("host working dir\n(native-equivalent)")]
 ```
 
 Two facts make this native-equivalent without virrun ever guessing which files matter:
 
 - **The upper _is_ the native diff** — overlayfs records changed/new files, char-dev `0:0` whiteouts for deletes, and (in rootless userxattr mode) `user.overlay.opaque` markers for replaced dirs. Replaying it onto the host reproduces native's on-disk result.
-- **`node_modules` is structurally excluded** — it lives in the RO snapshot lower, so it is never in the top upper's flush set. "node_modules never touches disk" survives even while output persists. Upper entries that shadow a snapshot-lower path (a dep-tree write) are skipped — layer membership, not a name guess.
+- **`node_modules` is structurally excluded** — it lives in the RO snapshot lower, so it is never in the top upper's flush set. "node_modules never touches disk" survives even while output persists. Upper entries that shadow a snapshot-lower path (a dep-tree write) are skipped — layer membership, not a name guess. An `environment`'s prepare outputs (e.g. `.nuxt`) are excluded the same structural way.
 
 Correctness is proven by **equivalence tests** (native vs `virrun --`, diffing the resulting host file trees), CI-enforced beside the differential suite. Detail: [specs/write-back.md](specs/write-back.md).
 

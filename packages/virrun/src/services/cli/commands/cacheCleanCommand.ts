@@ -6,7 +6,7 @@ import { CommandType } from "@/models/virrun/CommandType";
 import { colorize } from "@/services/cli/color/colorize";
 import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
-import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
+import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
@@ -39,6 +39,9 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
         const snapshotsPath = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
         removeSnapshotDirectory(snapshotsPath);
         process.stderr.write(`${formatVirrunLine(`removed ${colorize(snapshotsPath, Color.Red)}`)}\n`);
+        const preparePath = join(getGlobalCacheDirectory(), VIRRUN_PREPARE_DIRECTORY_NAME);
+        removeSnapshotDirectory(preparePath);
+        process.stderr.write(`${formatVirrunLine(`removed ${colorize(preparePath, Color.Red)}`)}\n`);
         const tasksPath = join(getGlobalCacheDirectory(), VIRRUN_TASKS_DIRECTORY_NAME);
         removeSnapshotDirectory(tasksPath);
         process.stderr.write(`${formatVirrunLine(`removed ${colorize(tasksPath, Color.Red)}`)}\n`);

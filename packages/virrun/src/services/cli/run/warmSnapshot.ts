@@ -12,14 +12,15 @@ import { getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared
 // Freezes the snapshot, warm reuses it — either way `true` exits 0, so the first real routed run pays nothing.
 export const warmSnapshot = async (): Promise<number> => {
   const result = await getResultAsync(async () => {
-    const backend = resolveBackend(resolveVirrunConfiguration());
+    const configuration = resolveVirrunConfiguration();
+    const backend = resolveBackend(configuration);
     if (backend !== BackendType.Os) {
       process.stderr.write(
         `${formatVirrunLine(`snapshot only applies to the os backend (current: ${colorize(backend, Color.Blue)})`)}\n`,
       );
       return { exitCode: 0 };
     }
-    const virrun = await createVirrun({ backend });
+    const virrun = await createVirrun({ backend, environment: configuration?.environment });
     const { exists, hash } = resolveSnapshotLocation("");
     process.stderr.write(`${formatVirrunProvisioning({ exists, hash })}\n`);
     return withFinalizerAsync(

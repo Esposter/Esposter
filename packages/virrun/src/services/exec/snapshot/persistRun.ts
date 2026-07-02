@@ -15,14 +15,18 @@ import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 // Run a command over the warm snapshot with a persistable upper, then flush that upper to the host on a clean exit
-// Only (all-or-nothing; specs/write-back.md). The persist sibling of forkSnapshot: same read-only snapshot lower, so
-// Node_modules is never in the upper and never flushed. Requires a captured snapshot; the temp upper/work are always
-// Torn down. `onPersist` fires after the host flush with the still-live upper and the built plan, so the task cache
-// Can record the output diff without re-probing (persistWithCache).
+// Only (all-or-nothing; specs/write-back.md). The persist sibling of forkSnapshot: the deps snapshot (and any
+// `extraLowerDirs`, e.g. the prepare layer) stack as read-only lowers, so node_modules is never in the upper and
+// Never flushed. `outputDirs` (an environment's prepare outputs, e.g. `.nuxt`) are masked from the flush like
+// Node_modules — cache-owned, so a persist run never writes them back to the host. Requires a captured snapshot; the
+// Temp upper/work are always torn down. `onPersist` fires after the host flush with the still-live upper and the
+// Built plan, so the task cache can record the output diff without re-probing (persistWithCache).
 export const persistRun = (
   backend: ExecBackend,
   command: readonly string[] | string,
   options: ExecOptions,
+  extraLowerDirs: readonly string[] = [],
+  outputDirs: readonly string[] = [],
   onPersist?: (upperDir: string, plan: readonly FlushOp[], result: ExecResult) => void,
 ): Promise<ExecResult> => {
   const { dir, exists, upperDir } = resolveSnapshotLocation(options.cwd);
@@ -39,12 +43,12 @@ export const persistRun = (
     async () => {
       const result = await backend.exec(command, {
         ...options,
-        overlayLayers: { lowerDirs: [upperDir], upperDir: persistUpperDir, workDir: persistWorkDir },
+        overlayLayers: { lowerDirs: [upperDir, ...extraLowerDirs], upperDir: persistUpperDir, workDir: persistWorkDir },
       });
       if (result.exitCode === 0) {
         // Build the plan once: apply to the host, then hand the same plan to onPersist so the task cache records the
         // Diff without a second Linux-side probe.
-        const plan = buildHostFlushPlan(persistUpperDir, upperDir);
+        const plan = buildHostFlushPlan(persistUpperDir, upperDir, outputDirs);
         applyFlushPlan(persistUpperDir, hostDir, plan);
         onPersist?.(persistUpperDir, plan, result);
       }

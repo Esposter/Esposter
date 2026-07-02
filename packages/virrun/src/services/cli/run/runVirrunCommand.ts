@@ -23,8 +23,9 @@ export const runVirrunCommand = async (
 ): Promise<number> => {
   const start = performance.now();
   const result = await getResultAsync(async () => {
-    const backend = resolveBackend(resolveVirrunConfiguration());
-    const virrun = await createVirrun({ backend });
+    const configuration = resolveVirrunConfiguration();
+    const backend = resolveBackend(configuration);
+    const virrun = await createVirrun({ backend, environment: configuration?.environment });
     process.stderr.write(`${formatVirrunBanner({ backend: virrun.backend, command, nodeVersion: process.version })}\n`);
     // Announce whether this run reuses a warm snapshot or pays the one-time install, so a multi-minute first run is
     // Explained, not a silent stall. Exec skips the snapshot, so it has nothing to announce.

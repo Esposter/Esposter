@@ -4,6 +4,7 @@ import type { ArgsDef, CommandDef } from "citty";
 import { Color } from "@/models/cli/Color";
 import { BackendType } from "@/models/virrun/BackendType";
 import { CommandType } from "@/models/virrun/CommandType";
+import { Environment } from "@/models/virrun/Environment";
 import { colorize } from "@/services/cli/color/colorize";
 import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 import { buildVirrunConfigurationContent } from "@/services/configuration/buildVirrunConfigurationContent";
@@ -18,6 +19,12 @@ const initArgs: InitArgs = {
     default: BackendType.Auto,
     description: "Backend a sandboxed command runs through.",
     options: [BackendType.Auto, BackendType.Native, BackendType.Os, BackendType.Vfs],
+    type: "enum",
+  },
+  environment: {
+    default: Environment.None,
+    description: "Framework whose generated artifacts the sandbox regenerates (e.g. nuxt → .nuxt).",
+    options: [Environment.None, Environment.Nuxt],
     type: "enum",
   },
   force: { default: false, description: "Overwrite an existing virrun.config.json.", type: "boolean" },
@@ -38,9 +45,9 @@ export const initCommand: CommandDef<InitArgs> = defineCommand({
       process.exitCode = 1;
       return;
     }
-    writeFileSync(path, buildVirrunConfigurationContent(args.backend));
+    writeFileSync(path, buildVirrunConfigurationContent(args.backend, args.environment));
     process.stderr.write(
-      `${formatVirrunLine(`wrote ${colorize(path, Color.Blue)} (backend=${colorize(args.backend, Color.Blue)})`)}\n`,
+      `${formatVirrunLine(`wrote ${colorize(path, Color.Blue)} (backend=${colorize(args.backend, Color.Blue)}, environment=${colorize(args.environment, Color.Blue)})`)}\n`,
     );
   },
 });

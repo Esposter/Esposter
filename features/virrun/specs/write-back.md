@@ -49,7 +49,7 @@ After the command exits 0, reconcile the top upper into the host working dir (`<
    - **regular file / dir** → copy to the same relative path under `<cwd>`, overwriting (overlay copy-up already holds the full new content).
    - **whiteout** → `rm -rf` the host path.
    - **opaque dir** → clear the host dir, then copy the upper's children.
-2. **Skip snapshot-lower-shadowing paths.** An upper entry whose path is supplied by the warm snapshot lower (a `node_modules`/dep-tree path) is a sandbox-internal write (postinstall patch, `node_modules/.vite` cache), not host state — do not flush it. _Structural_ (layer membership), not a name guess. Source-tree paths and genuinely new repo content always flush.
+2. **Skip snapshot-lower-shadowing paths.** An upper entry whose path is supplied by the warm snapshot lower (a `node_modules`/dep-tree path) is a sandbox-internal write (postinstall patch, `node_modules/.vite` cache), not host state — do not flush it. _Structural_ (layer membership), not a name guess. An active `environment`'s prepare `outputs` (e.g. `.nuxt`) are masked the same structural way — owned by the source-keyed prepare layer, regenerated in-sandbox, never host state. Source-tree paths and genuinely new repo content always flush.
 3. **Bulk copy-out, last.** Copy is sequential over the (small) diff, far cheaper than the random I/O the toolchain did in RAM. Flush runs only after a clean exit; a non-zero exit flushes nothing (all-or-nothing, see Constraints).
 
 ## Execution locus & xattr reader
@@ -86,7 +86,7 @@ Reuses the realized snapshot-capture machinery (`buildBwrapArgs` `OverlayLayers`
 ## Constraints / Notes
 
 - **Always warm, persist is the only axis.** Decoupling warm-deps from persist is the core decision — a cold-install-per-mutation design would defeat "speedup everywhere", and re-flushing `node_modules` would defeat "never touches disk". Both are avoided by forking the snapshot and flushing only the top upper.
-- **`node_modules` is structurally excluded**, not name-filtered — it lives in the RO snapshot lower, so it is never in the top upper's flush set. A repo that genuinely wants `node_modules` materialized on host (IDE intellisense) is a separate need → [deferred/materialize-node-modules.md](../deferred/materialize-node-modules.md).
+- **`node_modules` is structurally excluded**, not name-filtered — it lives in the RO snapshot lower, so it is never in the top upper's flush set. An `environment`'s prepare `outputs` are excluded the same structural way (`isUnderSnapshotLower` treats a configured output dir like `node_modules`), so a persist run never writes a regenerated `.nuxt` back to the host. A repo that genuinely wants `node_modules` materialized on host (IDE intellisense) is a separate need → [deferred/materialize-node-modules.md](../deferred/materialize-node-modules.md).
 - **`pnpm install` is the snapshot-creation path, not a persist run.** Its "output" is the warm snapshot (`createSnapshot` / `virrun snapshot`), not host `node_modules`; it does not go through write-back.
 - **All-or-nothing flush.** A non-zero exit flushes nothing, so a failed command never leaves a half-written tree. This is a deliberate, documented divergence from native (which can leave partial output) — equivalence tests assert only the success path.
 - **No new config or per-command list.** Persist is the default behavior of a normal `virrun -- <cmd>`; the ephemeral fast path stays reachable for CI/verification. The prefix remains the sole switch (no allowlist), consistent with [adoption.md](adoption.md).

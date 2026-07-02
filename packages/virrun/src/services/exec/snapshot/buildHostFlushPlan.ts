@@ -9,7 +9,11 @@ import { runOverlayScript } from "@/services/exec/snapshot/runOverlayScript";
 // Probe a persist run's overlay upper Linux-side and classify + order its entries into a host flush plan
 // (specs/write-back.md), skipping anything the snapshot lower supplies so node_modules never flushes. Pure of any
 // Host mutation (applyFlushPlan performs it), so the plan can be reused for both the host flush and the task cache.
-export const buildHostFlushPlan = (upperDir: string, snapshotUpperDir: string): FlushOp[] => {
+export const buildHostFlushPlan = (
+  upperDir: string,
+  snapshotUpperDir: string,
+  outputDirs: readonly string[] = [],
+): FlushOp[] => {
   const manifest = parseOverlayManifest(runOverlayScript(OVERLAY_PROBE_SCRIPT, [upperDir, snapshotUpperDir]));
   const snapshotLowerPaths = new Set(
     manifest.filter((entry) => entry.isSnapshotLowerPath).map((entry) => entry.relativePath),
@@ -18,5 +22,5 @@ export const buildHostFlushPlan = (upperDir: string, snapshotUpperDir: string): 
     kind: parseOverlayEntryKind(entry, entry.isOpaque),
     relativePath: entry.relativePath,
   }));
-  return buildFlushPlan(entries, (relativePath) => isUnderSnapshotLower(relativePath, snapshotLowerPaths));
+  return buildFlushPlan(entries, (relativePath) => isUnderSnapshotLower(relativePath, snapshotLowerPaths, outputDirs));
 };
