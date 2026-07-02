@@ -1,6 +1,6 @@
 import type { ExecResult } from "@/models/exec/ExecResult";
 import type { FlushOp } from "@/models/exec/FlushOp";
-import type { TaskCacheEntry } from "@/models/exec/TaskCacheEntry";
+import type { TaskCacheEntry } from "@/models/exec/cache/TaskCacheEntry";
 
 import { FlushOpType } from "@/models/exec/FlushOp";
 import { TASK_CACHE_META_FILENAME, TASK_CACHE_PAYLOAD_DIRECTORY_NAME } from "@/services/exec/cache/constants";

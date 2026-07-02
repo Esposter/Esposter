@@ -1,4 +1,4 @@
-import type { SnapshotLocation } from "@/models/exec/SnapshotLocation";
+import type { SnapshotLocation } from "@/models/exec/snapshot/SnapshotLocation";
 
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
 import { VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";

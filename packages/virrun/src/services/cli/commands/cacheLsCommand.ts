@@ -2,9 +2,9 @@ import type { CommandDef } from "citty";
 
 import { Color } from "@/models/cli/Color";
 import { CommandType } from "@/models/virrun/CommandType";
-import { colorize } from "@/services/cli/colorize";
-import { formatCacheListing } from "@/services/cli/formatCacheListing";
-import { formatVirrunLine } from "@/services/cli/formatVirrunLine";
+import { colorize } from "@/services/cli/color/colorize";
+import { formatCacheListing } from "@/services/cli/cache/formatCacheListing";
+import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
 import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { VIRRUN_STORE_DIRECTORY_NAME } from "@/services/exec/util/constants";

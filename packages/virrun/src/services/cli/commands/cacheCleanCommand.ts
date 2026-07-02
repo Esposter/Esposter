@@ -3,8 +3,8 @@ import type { ArgsDef, CommandDef } from "citty";
 
 import { Color } from "@/models/cli/Color";
 import { CommandType } from "@/models/virrun/CommandType";
-import { colorize } from "@/services/cli/colorize";
-import { formatVirrunLine } from "@/services/cli/formatVirrunLine";
+import { colorize } from "@/services/cli/color/colorize";
+import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
 import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";

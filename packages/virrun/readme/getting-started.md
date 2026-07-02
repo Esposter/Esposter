@@ -28,8 +28,8 @@ The `virrun -- <cmd>` prefix **is** the switch: every prefixed command is sandbo
 On an `os`-backend run the CLI prints a one-time provisioning line on stderr so a multi-minute first install is explained, not a silent stall:
 
 ```text
-[virrun] no sandbox dependency snapshot for lockfile a1b2c3d4e5f6 — installing the toolchain inside the sandbox once (this run may take a few minutes); later runs reuse it
-[virrun] reusing the sandbox dependency snapshot (lockfile a1b2c3d4e5f6)
+[virrun] snapshot cache miss (lockfile a1b2c3d4e5f6) — installing toolchain once (may take minutes); later runs reuse it
+[virrun] snapshot cache hit (lockfile a1b2c3d4e5f6)
 ```
 
 ### Subcommands

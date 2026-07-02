@@ -2,7 +2,7 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
 
-import { formatVirrunCacheHit } from "@/services/cli/formatVirrunCacheHit";
+import { formatVirrunCacheHit } from "@/services/cli/format/formatVirrunCacheHit";
 import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
 import { isTaskCacheEnabled } from "@/services/exec/cache/isTaskCacheEnabled";
 import { recordTaskCache } from "@/services/exec/cache/recordTaskCache";

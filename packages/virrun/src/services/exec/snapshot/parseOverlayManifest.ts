@@ -1,6 +1,6 @@
-import type { OverlayManifestEntry } from "@/models/exec/OverlayManifestEntry";
+import type { OverlayManifestEntry } from "@/models/exec/snapshot/OverlayManifestEntry";
 
-import { overlayManifestEntrySchema } from "@/models/exec/OverlayManifestEntry";
+import { overlayManifestEntrySchema } from "@/models/exec/snapshot/OverlayManifestEntry";
 import { parseJsonWithSchema } from "@/services/exec/util/parseJsonWithSchema";
 import { z } from "zod";
 

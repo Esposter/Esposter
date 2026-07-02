@@ -1,6 +1,6 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { SnapshotCapture } from "@/models/exec/SnapshotCapture";
+import type { SnapshotCapture } from "@/models/exec/snapshot/SnapshotCapture";
 
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,

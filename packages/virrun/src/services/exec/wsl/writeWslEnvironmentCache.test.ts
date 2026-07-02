@@ -1,4 +1,4 @@
-import { keyedStringCacheSchema } from "@/models/exec/KeyedStringCache";
+import { keyedStringCacheSchema } from "@/models/exec/wsl/KeyedStringCache";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { VIRRUN_CACHE_HOME_KEY, WSL_LOGIN_PATH_CACHE_FILENAME } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";

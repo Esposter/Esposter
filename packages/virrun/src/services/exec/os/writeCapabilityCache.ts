@@ -1,4 +1,4 @@
-import type { CapabilityCache } from "@/models/exec/CapabilityCache";
+import type { CapabilityCache } from "@/models/exec/os/CapabilityCache";
 
 import { CAPABILITY_CACHE_FILENAME } from "@/services/exec/util/constants";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
