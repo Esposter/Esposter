@@ -2,6 +2,7 @@ import type { DiagnosticCheck } from "@/models/cli/DiagnosticCheck";
 
 import { DiagnosticCheckType } from "@/models/cli/DiagnosticCheckType";
 import { DiagnosticStatus } from "@/models/cli/DiagnosticStatus";
+import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
 import { formatDoctorReport } from "@/services/cli/doctor/formatDoctorReport";
 import { describe, expect, test } from "vitest";
 
@@ -25,7 +26,7 @@ describe(formatDoctorReport, () => {
   test("renders an aligned ok row and a ready summary", () => {
     expect.hasAssertions();
 
-    expect(formatDoctorReport({ checks: [okBubblewrap, okSandbox], platform })).toBe(
+    expect(stripAnsi(formatDoctorReport({ checks: [okBubblewrap, okSandbox], platform }))).toBe(
       [
         "[virrun] doctor — os backend prerequisites (win32)",
         "  bubblewrap >= 0.10.0   ok       bubblewrap 0.11.1",
@@ -46,7 +47,7 @@ describe(formatDoctorReport, () => {
       type: DiagnosticCheckType.Sandbox,
     };
 
-    expect(formatDoctorReport({ checks: [okBubblewrap, missingSandbox], platform })).toBe(
+    expect(stripAnsi(formatDoctorReport({ checks: [okBubblewrap, missingSandbox], platform }))).toBe(
       [
         "[virrun] doctor — os backend prerequisites (win32)",
         "  bubblewrap >= 0.10.0   ok       bubblewrap 0.11.1",
@@ -68,7 +69,7 @@ describe(formatDoctorReport, () => {
       type: DiagnosticCheckType.Python3,
     };
 
-    expect(formatDoctorReport({ checks: [missingPython, okSandbox], platform })).toContain(
+    expect(stripAnsi(formatDoctorReport({ checks: [missingPython, okSandbox], platform }))).toContain(
       "[virrun] os backend mounts, but some commands will fail — see the checks above",
     );
   });

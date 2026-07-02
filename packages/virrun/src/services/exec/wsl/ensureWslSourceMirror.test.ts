@@ -21,6 +21,12 @@ vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
 vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
   readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
 }));
+// The fake cwd resolves no config on disk, so resolveMirrorExcludes would walk up to the real repo's
+// virrun.config.json (environment nuxt) and fire `git ls-files` ahead of the wsl.exe sync. Pin it undefined so the
+// Environment defaults to none and the mirror excludes stay the base node_modules/.git pair.
+vi.mock(import("@/services/configuration/resolveVirrunConfiguration"), () => ({
+  resolveVirrunConfiguration: () => undefined,
+}));
 
 describe(ensureWslSourceMirror, () => {
   const sourceLinux = `${TEST_WSL_PREFIX}${TEST_REPO_ROOT_WIN}`;
@@ -44,7 +50,7 @@ describe(ensureWslSourceMirror, () => {
     expect(file).toBe("wsl.exe");
     expect([takeOne(args ?? []), takeOne(args ?? [], 1), takeOne(args ?? [], 2)]).toStrictEqual(["--exec", "sh", "-c"]);
     expect(script).toBe(
-      `mkdir -p '${mirrorPath}' && flock '${mirrorPath}.lock' rsync -a --delete --exclude=node_modules --exclude=.git '${sourceLinux}/' '${mirrorPath}/'`,
+      `mkdir -p '${mirrorPath}' && flock '${mirrorPath}.lock' rsync -a --delete --exclude='node_modules' --exclude='.git' '${sourceLinux}/' '${mirrorPath}/'`,
     );
   });
 

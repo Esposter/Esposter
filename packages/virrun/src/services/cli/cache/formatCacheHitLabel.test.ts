@@ -1,10 +1,11 @@
 import { formatCacheHitLabel } from "@/services/cli/cache/formatCacheHitLabel";
+import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
 import { describe, expect, test } from "vitest";
 
 describe(formatCacheHitLabel, () => {
-  test("passes the label through unchanged when color is off", () => {
+  test("leaves the label text intact (color aside)", () => {
     expect.hasAssertions();
 
-    expect(formatCacheHitLabel("snapshot cache hit")).toBe("snapshot cache hit");
+    expect(stripAnsi(formatCacheHitLabel("snapshot cache hit"))).toBe("snapshot cache hit");
   });
 });
