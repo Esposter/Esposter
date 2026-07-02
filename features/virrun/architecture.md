@@ -126,6 +126,23 @@ Correctness is proven by **equivalence tests** (native vs `virrun --`, diffing t
 
 ---
 
+## CLI output palette
+
+Every stderr diagnostic goes through one helper, `formatVirrunLine(message)` (`services/cli/formatVirrunLine.ts`), which prepends the bold-cyan `[virrun]` tag — the tag's text + styling live in exactly one place, and command writes are colorized identically to the `format*` helpers instead of hardcoding a plain tag. `colorize` is a no-op when color is off (a pipe, `NO_COLOR`, vitest), so lines degrade to plain text and the format tests still assert plain strings.
+
+The semantic color vocabulary is decided once, on the `Color` enum (`models/cli/Color.ts`) — call sites pick by meaning, not by eye:
+
+| Color        | Role                                                                                                                                                 |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cyan (+Bold) | the `[virrun]` tag only                                                                                                                              |
+| Yellow       | commands / argv / executables / flags; the "expect a wait" one-time-install notice                                                                   |
+| Blue         | concrete values & locations — paths, backend type, lockfile hash, counts                                                                             |
+| Green        | success & positive state — exit 0, "present", durations, node version                                                                                |
+| Red          | failure & destructive — errors, non-zero exit, "absent", a path being **removed**                                                                    |
+| Dim          | routine auto-emitted metadata & absence only — the snapshot-reuse notice, doctor note column, "none"/"n/a". **Never dim a path or primary content.** |
+
+The child command's own stdout/stderr is never colorized (raw bytes flow through so correctness diffs stay byte-exact); only virrun's own framing lines are.
+
 ## Platform reality
 
 | Host              | Fast path                                  |

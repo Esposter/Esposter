@@ -6,7 +6,7 @@ import { isVersionAtLeast } from "@/services/cli/isVersionAtLeast";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
-import { getResult } from "@esposter/shared";
+import { getResult, takeOne } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 // The oldest bubblewrap exposing `--overlay-src` / `--tmp-overlay` (the RAM-overlay flags the os backend needs).
 const MINIMUM_BUBBLEWRAP_VERSION = "0.10.0";
@@ -93,6 +93,30 @@ const probePython3 = (): DiagnosticCheck => {
       }
     : { fix: "", label, note: output, status: DiagnosticStatus.Ok, type };
 };
+// Off win32 the source already lives on the host FS, so no mirror and no rsync — the check is N/A. On win32 the source
+// Is synced onto the ext4 mirror (ensureWslSourceMirror) with rsync inside WSL, so a missing rsync aborts every os run.
+const probeRsync = (): DiagnosticCheck => {
+  const label = "WSL rsync (source mirror)";
+  const type = DiagnosticCheckType.Rsync;
+  if (process.platform !== "win32")
+    return {
+      fix: "",
+      label,
+      note: "not needed off win32 — the source is read in place, not mirrored",
+      status: DiagnosticStatus.NotApplicable,
+      type,
+    };
+  const output = readProbeOutput("rsync", ["--version"]);
+  return output === null
+    ? {
+        fix: "install rsync inside your default WSL2 distro (e.g. `sudo apt install -y rsync`)",
+        label,
+        note: "not found — the repo source can't be mirrored onto ext4, so os runs abort",
+        status: DiagnosticStatus.Missing,
+        type,
+      }
+    : { fix: "", label, note: takeOne(output.split("\n"), 0), status: DiagnosticStatus.Ok, type };
+};
 // The authoritative verdict: the real overlay-mount probe resolveBackend consults. bwrap can be present and new
 // Enough yet fail here (unprivileged user namespaces disabled, or nested inside another overlay).
 const probeSandbox = (): DiagnosticCheck => {
@@ -114,5 +138,6 @@ export const probeOsBackendChecks = (): DiagnosticCheck[] => [
   probeBubblewrap(),
   probeWslNode(),
   probePython3(),
+  probeRsync(),
   probeSandbox(),
 ];

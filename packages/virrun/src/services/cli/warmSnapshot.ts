@@ -1,4 +1,7 @@
+import { Color } from "@/models/cli/Color";
 import { BackendType } from "@/models/virrun/BackendType";
+import { colorize } from "@/services/cli/colorize";
+import { formatVirrunLine } from "@/services/cli/formatVirrunLine";
 import { formatVirrunProvisioning } from "@/services/cli/formatVirrunProvisioning";
 import { resolveBackend } from "@/services/configuration/resolveBackend";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
@@ -11,7 +14,9 @@ export const warmSnapshot = async (): Promise<number> => {
   const result = await getResultAsync(async () => {
     const backend = resolveBackend(resolveVirrunConfiguration());
     if (backend !== BackendType.Os) {
-      process.stderr.write(`[virrun] snapshot only applies to the os backend (current: ${backend})\n`);
+      process.stderr.write(
+        `${formatVirrunLine(`snapshot only applies to the os backend (current: ${colorize(backend, Color.Blue)})`)}\n`,
+      );
       return { exitCode: 0 };
     }
     const virrun = await createVirrun({ backend });
@@ -25,7 +30,7 @@ export const warmSnapshot = async (): Promise<number> => {
   return result.match(
     ({ exitCode }) => exitCode,
     (error) => {
-      process.stderr.write(`${toAppError(error).message}\n`);
+      process.stderr.write(`${formatVirrunLine(colorize(toAppError(error).message, Color.Red))}\n`);
       return 1;
     },
   );

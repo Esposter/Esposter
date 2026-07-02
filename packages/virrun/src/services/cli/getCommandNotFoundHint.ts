@@ -1,3 +1,6 @@
+import { Color } from "@/models/cli/Color";
+import { colorize } from "@/services/cli/colorize";
+import { formatVirrunLine } from "@/services/cli/formatVirrunLine";
 import { getResult, takeOne } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -27,8 +30,11 @@ export const getCommandNotFoundHint = (
   // Only hint when the missing binary is the command the user actually asked to run — never an inner tool a
   // Legitimately-resolved executable failed to find — so the "did you mean pnpm" advice can't misfire.
   if (missingCommand !== takeOne(command, 0)) return undefined;
-  const lead = `[virrun] "${missingCommand}" is not an executable — virrun runs commands, not package scripts.`;
+  const suggestion = colorize(`virrun -- pnpm ${missingCommand}`, Color.Yellow);
+  const lead = formatVirrunLine(
+    `"${colorize(missingCommand, Color.Yellow)}" is not an executable — virrun runs commands, not package scripts.`,
+  );
   return readPackageScripts(cwd).includes(missingCommand)
-    ? `${lead}\n[virrun] Did you mean:  virrun -- pnpm ${missingCommand}`
-    : `${lead}\n[virrun] Pass a real executable, e.g. \`virrun -- pnpm ${missingCommand}\`, and check it is installed and spelled correctly.`;
+    ? `${lead}\n${formatVirrunLine(`Did you mean:  ${suggestion}`)}`
+    : `${lead}\n${formatVirrunLine(`Pass a real executable, e.g. \`${suggestion}\`, and check it is installed and spelled correctly.`)}`;
 };

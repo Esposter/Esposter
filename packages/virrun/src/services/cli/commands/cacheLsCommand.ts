@@ -1,7 +1,10 @@
 import type { CommandDef } from "citty";
 
+import { Color } from "@/models/cli/Color";
 import { CommandType } from "@/models/virrun/CommandType";
+import { colorize } from "@/services/cli/colorize";
 import { formatCacheListing } from "@/services/cli/formatCacheListing";
+import { formatVirrunLine } from "@/services/cli/formatVirrunLine";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
 import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { VIRRUN_STORE_DIRECTORY_NAME } from "@/services/exec/util/constants";
@@ -35,7 +38,7 @@ export const cacheLsCommand: CommandDef = defineCommand({
     }).match(
       (listing) => process.stderr.write(`${listing}\n`),
       (error) => {
-        process.stderr.write(`${toAppError(error).message}\n`);
+        process.stderr.write(`${formatVirrunLine(colorize(toAppError(error).message, Color.Red))}\n`);
         process.exitCode = 1;
       },
     );

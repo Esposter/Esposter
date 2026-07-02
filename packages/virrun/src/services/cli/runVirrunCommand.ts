@@ -1,6 +1,9 @@
+import { Color } from "@/models/cli/Color";
 import { BackendType } from "@/models/virrun/BackendType";
 import { ExecutionMode } from "@/models/virrun/ExecutionMode";
+import { colorize } from "@/services/cli/colorize";
 import { formatVirrunBanner } from "@/services/cli/formatVirrunBanner";
+import { formatVirrunLine } from "@/services/cli/formatVirrunLine";
 import { formatVirrunProvisioning } from "@/services/cli/formatVirrunProvisioning";
 import { formatVirrunResult } from "@/services/cli/formatVirrunResult";
 import { getCommandNotFoundHint } from "@/services/cli/getCommandNotFoundHint";
@@ -50,8 +53,11 @@ export const runVirrunCommand = async (
     (error) => {
       const message = toAppError(error).message;
       // A bare package-script name (e.g. `virrun run typecheck`) reaches the backend as a missing executable; swap
-      // The raw sandbox-setup error for a hint that points at the working `virrun -- pnpm <script>` form.
-      process.stderr.write(`${getCommandNotFoundHint(command, message, process.cwd()) ?? message}\n`);
+      // The raw sandbox-setup error for a hint that points at the working `virrun -- pnpm <script>` form. The hint is
+      // Already tagged + colored; the raw-message fallback gets the same [virrun] tag and a red body.
+      process.stderr.write(
+        `${getCommandNotFoundHint(command, message, process.cwd()) ?? formatVirrunLine(colorize(message, Color.Red))}\n`,
+      );
       return 1;
     },
   );

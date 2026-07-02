@@ -1,8 +1,11 @@
 import type { InitArgs } from "@/models/cli/InitArgs";
 import type { ArgsDef, CommandDef } from "citty";
 
+import { Color } from "@/models/cli/Color";
 import { BackendType } from "@/models/virrun/BackendType";
 import { CommandType } from "@/models/virrun/CommandType";
+import { colorize } from "@/services/cli/colorize";
+import { formatVirrunLine } from "@/services/cli/formatVirrunLine";
 import { buildVirrunConfigurationContent } from "@/services/configuration/buildVirrunConfigurationContent";
 import { VIRRUN_CONFIGURATION_FILENAME } from "@/services/exec/util/constants";
 import { defineCommand } from "citty";
@@ -29,11 +32,15 @@ export const initCommand: CommandDef<InitArgs> = defineCommand({
   run: ({ args }) => {
     const path = join(process.cwd(), VIRRUN_CONFIGURATION_FILENAME);
     if (existsSync(path) && !args.force) {
-      process.stderr.write(`[virrun] ${VIRRUN_CONFIGURATION_FILENAME} already exists (use --force to overwrite)\n`);
+      process.stderr.write(
+        `${formatVirrunLine(`${colorize(VIRRUN_CONFIGURATION_FILENAME, Color.Blue)} already exists (use ${colorize("--force", Color.Yellow)} to overwrite)`)}\n`,
+      );
       process.exitCode = 1;
       return;
     }
     writeFileSync(path, buildVirrunConfigurationContent(args.backend));
-    process.stderr.write(`[virrun] wrote ${path} (backend=${args.backend})\n`);
+    process.stderr.write(
+      `${formatVirrunLine(`wrote ${colorize(path, Color.Blue)} (backend=${colorize(args.backend, Color.Blue)})`)}\n`,
+    );
   },
 });

@@ -4,6 +4,7 @@ import { Color } from "@/models/cli/Color";
 import { DiagnosticCheckType } from "@/models/cli/DiagnosticCheckType";
 import { DiagnosticStatus } from "@/models/cli/DiagnosticStatus";
 import { colorize } from "@/services/cli/colorize";
+import { formatVirrunLine } from "@/services/cli/formatVirrunLine";
 // The status column word for each outcome; padded to the widest ("MISSING") so the note column aligns.
 const STATUS_LABEL_MAP = {
   [DiagnosticStatus.Missing]: "MISSING",
@@ -33,13 +34,14 @@ const formatSummary = (checks: readonly DiagnosticCheck[]): string => {
   const isSandboxMissing = checks.some(
     (check) => check.type === DiagnosticCheckType.Sandbox && check.status === DiagnosticStatus.Missing,
   );
-  const tag = colorize(colorize("[virrun]", Color.Cyan), Color.Bold);
   if (isSandboxMissing)
-    return `${tag} ${colorize("os backend unavailable — commands fall back to native (un-isolated)", Color.Red)}`;
+    return formatVirrunLine(colorize("os backend unavailable — commands fall back to native (un-isolated)", Color.Red));
   else if (checks.every((check) => check.status !== DiagnosticStatus.Missing))
-    return `${tag} ${colorize("os backend ready — `virrun -- <cmd>` runs sandboxed", Color.Green)}`;
+    return formatVirrunLine(colorize("os backend ready — `virrun -- <cmd>` runs sandboxed", Color.Green));
   else
-    return `${tag} ${colorize("os backend mounts, but some commands will fail — see the checks above", Color.Yellow)}`;
+    return formatVirrunLine(
+      colorize("os backend mounts, but some commands will fail — see the checks above", Color.Yellow),
+    );
 };
 // Renders the doctor report: a platform-stamped header, one aligned row per check, and the verdict. Pure over
 // Already-probed checks so the IO stays in probeOsBackendChecks and the layout is unit-tested.
@@ -52,6 +54,6 @@ export const formatDoctorReport = ({
 }): string => {
   const labelWidth = Math.max(...checks.map((check) => check.label.length));
   const lines = checks.map((check) => formatCheckLine(check, labelWidth));
-  const header = `${colorize(colorize("[virrun]", Color.Cyan), Color.Bold)} doctor — os backend prerequisites (${colorize(platform, Color.Blue)})`;
+  const header = formatVirrunLine(`doctor — os backend prerequisites (${colorize(platform, Color.Blue)})`);
   return [header, ...lines, formatSummary(checks)].join("\n");
 };
