@@ -31,21 +31,8 @@ describe(parseTaskCacheEntry, () => {
     const invalid = JSON.stringify({ ...entry, plan: [{ relativePath: TEST_FILENAME, type: " " }] });
 
     expect(() => parseTaskCacheEntry(invalid)).toThrowErrorMatchingInlineSnapshot(`
-      [InvalidOperationError: Invalid operation: Read, name: parseTaskCacheEntry, [
-        {
-          "code": "invalid_value",
-          "values": [
-            "copy",
-            "delete"
-          ],
-          "path": [
-            "plan",
-            0,
-            "type"
-          ],
-          "message": "Invalid option: expected one of \\"copy\\"|\\"delete\\""
-        }
-      ]]
+      [InvalidOperationError: Invalid operation: Read, name: parseTaskCacheEntry, ✖ Invalid option: expected one of "copy"|"delete"
+        → at plan[0].type]
     `);
   });
 });

@@ -15,6 +15,7 @@ import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
+import { withColorEnv } from "@/services/exec/util/withColorEnv";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { loadSource } from "@/services/source/loadSource";
 // "auto" resolves to native until vfs beats it on the gates.
@@ -36,9 +37,9 @@ export const createVirrun = async ({
   // Network re-enable must still be injected (createOsExecOptions). Non-os backends need only the VIRRUN signal.
   const isOsBackend = execBackend.name === BackendType.Os;
   const toOptions = (stdio: ExecStdio): ExecOptions =>
-    isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio };
+    withColorEnv(isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio });
   const toInstallOptions = (stdio: ExecStdio): ExecOptions =>
-    isOsBackend ? createOsInstallOptions(cwd, stdio) : toOptions(stdio);
+    isOsBackend ? withColorEnv(createOsInstallOptions(cwd, stdio)) : toOptions(stdio);
   // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op). Shared by fork and
   // Persist so the two warm-snapshot paths can't drift.
   const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {
