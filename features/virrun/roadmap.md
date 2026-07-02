@@ -4,11 +4,12 @@ What to work on next. Shipped work lives in [README.md](README.md) `## Shipped`;
 
 ## Now
 
-- [ ] **WSL ext4 source mirror** — read the repo source from a WSL-native ext4 mirror instead of `/mnt/c`, killing the v9fs read tax that makes win32 `os`/wsl 0.06–0.31× native (vs Linux 0.76–0.95×). The earlier "overhead is inherent" verdict was ext4-only and never covered this. → [specs/wsl-source-sync.md](specs/wsl-source-sync.md)
-  - [x] `ensureWslSourceMirror` — `<cache>/sources/<sha256(hostCwd)>`, per-mirror `flock`, incremental `rsync -a --delete` (excludes `node_modules` + `.git`), returns the ext4 `/home/...` path
-  - [x] Wire into `createWslBwrapArgs` — uses the mirror for `--overlay-src`/`--chdir`; `persistRun` flush target stays `options.cwd` (host-side, unchanged — verified)
-  - [x] Added an `rsync` presence check to `virrun doctor` (`probeRsync`); `cache clean --all` sweeps `sources/`
-  - [ ] Re-run `pnpm bench` on win32, record the lift in `localMonorepo.platform.bench.win32.md` (honest numbers — no overclaim) — **blocked**: this host's WSL sandbox errors (`node.exe: Invalid argument`), so the bench can't capture; needs a healthy WSL host
+- [ ] **Platform-correct warm snapshots** — a snapshot captured on a win32 host must own the full _Linux_ dependency closure, never the host's win32-only optional binaries. Today a snapshot captured under the old `/mnt/c` source-lower semantics survives the ext4-mirror change (which excludes `node_modules` from the source lower) and is silently reused, exposing `@esbuild/win32-x64` / `@typescript/native-preview-win32-x64` to the Linux sandbox — which crashes (`needs the "@esbuild/linux-x64" package instead`). Root cause: the snapshot key is `sha256(lockfile)` **only** (`resolveSnapshotLocation.ts`), so a capture-strategy change doesn't invalidate the cache. → [specs/platform-correct-snapshots.md](specs/platform-correct-snapshots.md)
+  - [ ] Version the snapshot cache address (`<hash>.v<SNAPSHOT_SEMANTICS_VERSION>`) so a capture-strategy change orphans old snapshots instead of reusing them; bump it on this fix so every existing snapshot re-captures once
+  - [ ] Differential/equivalence test that seeds a **foreign-platform `node_modules`** in the source corpus and asserts the fork still exposes the current platform's native binary — the case the node_modules-free `createWorkspaceCorpus` never exercised (the test gap that let this ship)
+  - [ ] `virrun doctor` (or first-fork) warns when the host `node_modules` platform ≠ sandbox platform, so a leak surfaces as a diagnostic, not a native-binary crash mid-run
+
+- [ ] **WSL mirror bench** — re-run `pnpm bench` on win32, record the lift in `localMonorepo.platform.bench.win32.md` (honest numbers — no overclaim). **Blocked**: this host's WSL sandbox errors (`node.exe: Invalid argument`), so the bench can't capture; needs a healthy WSL host.
 
 ## Next
 
