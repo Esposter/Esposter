@@ -81,7 +81,7 @@ All realized. The probe/apply seam shipped as a single python3 script pair (`run
 | `services/exec/snapshot/persistRun.ts`                  | orchestrate: ensure snapshot → fork with a persistable upper → exec → `flushUpperToHost` on exit 0 → tear down upper                           |
 | `services/exec/snapshot/persistRun.equivalence.test.ts` | the host-gated write-back equivalence corpus — one overlay-entry shape per case, asserting host parity vs native                               |
 
-Reuses the realized Phase 3 capture machinery (`buildBwrapArgs` `OverlayLayers` persistent-upper shape, per-pid temp dirs, `removeSnapshotDirectory`). The persist-vs-ephemeral choice lives in the orchestrator (`persistRun` parallels `forkSnapshot`), **not** an `ExecOptions` flag — the backend stays a pure executor of an `overlayLayers` shape.
+Reuses the realized snapshot-capture machinery (`buildBwrapArgs` `OverlayLayers` persistent-upper shape, per-pid temp dirs, `removeSnapshotDirectory`). The persist-vs-ephemeral choice lives in the orchestrator (`persistRun` parallels `forkSnapshot`), **not** an `ExecOptions` flag — the backend stays a pure executor of an `overlayLayers` shape.
 
 ## Constraints / Notes
 

@@ -92,7 +92,7 @@ See [specs/exec-isolation.md](specs/exec-isolation.md) for both.
 1. **RAM filesystem** (`tmpfs` upperdir) — `node_modules` never touches disk.
 2. **Shared content-addressable store** — deps downloaded once into `.virrun/store/pnpm`, then reused by each sandbox; installs copy from the on-disk store into the RAM overlay until snapshots make hardlink-style imports viable.
 3. **Snapshot + warm-fork** — "clone repo + install" happens once; each run `fork()`s the warm state → near-instant repeated runs. The biggest win. See [specs/snapshot-fork.md](specs/snapshot-fork.md).
-4. **Task cache** — _shipped (Phase 7)._ Skip a persist run whose inputs are unchanged: keyed by `sha256(lockfile-hash + working-tree-hash + command)`, a hit skips the sandbox and replays the recorded output diff + streams. Native content-hash, not Turborepo (which needs a per-repo pipeline graph). A dev-loop lever — off in CI, where a fresh commit means ~0 hits. See [specs/config-and-cache.md](specs/config-and-cache.md#virrun--cache--gitignored).
+4. **Task cache** — _shipped._ Skip a persist run whose inputs are unchanged: keyed by `sha256(lockfile-hash + working-tree-hash + command)`, a hit skips the sandbox and replays the recorded output diff + streams. Native content-hash, not Turborepo (which needs a per-repo pipeline graph). A dev-loop lever — off in CI, where a fresh commit means ~0 hits. See [specs/config-and-cache.md](specs/config-and-cache.md#virrun--cache--gitignored).
 
 A persist (write-back) run keeps these wins: the toolchain still does its random I/O in RAM, and persistence is a single bulk copy-out of the final diff at the end — far cheaper than letting the command thrash the disk throughout. See [Write-back](#write-back-native-equivalent-persistence).
 
