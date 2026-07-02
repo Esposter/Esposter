@@ -26,7 +26,7 @@ Two pass/fail gates on every backend and speed feature — a violation is not sh
 
 ## Now
 
-**Nothing open on the shipped Linux/WSL `os` path — it is drained.** Speed, correctness, and adoption levels 0–3 all shipped (Phases 0–7 below); write-back closed the mutating-command loop (Phase 5) and this repo dogfoods it across the read-only _and_ mutating dev-loop scripts. Profiling settled that the per-command residue is inherent overlayfs read cost, not setup, so it can't be squeezed without abandoning the overlay model — virrun is marginally slower **per cold command** by design, and the wins are the task cache **skipping** unchanged re-runs and the install-once fork. Matching native per cold command, and broadening the isolation surface (macOS bridge, Firecracker), are deferred/out-of-scope, not `Now` items → [roadmap.md](roadmap.md).
+**Close the win32 v9fs source-read gap — [WSL ext4 source mirror](specs/wsl-source-sync.md).** The Linux `os` path is drained; the open work is Windows. The earlier "per-command residue is inherent overlayfs cost, stop squeezing" finding was measured on **ext4 only** — on win32 the source lower is still `/mnt/c`, so every fork re-reads the source tree over v9fs (15–64× slower), which is why win32 benches at 0.06–0.31× native vs Linux's 0.76–0.95×. Mirroring the source onto WSL ext4 and pointing `--overlay-src` at it moves the reads to native speed; write-back is unaffected (its flush target is derived independently). Detail + rollout in [roadmap.md](roadmap.md). Broadening the isolation surface (macOS bridge, Firecracker) stays deferred, not a `Now` item.
 
 ## Shipped
 
@@ -56,6 +56,7 @@ Grep [out-of-scope/](out-of-scope) (won't do) and [deferred/](deferred) (not yet
 - [specs/virtual-fs.md](specs/virtual-fs.md) — FS layer (reuse node:vfs/platformatic + one-line-swap plan).
 - [specs/exec-isolation.md](specs/exec-isolation.md) — the core: real exec + isolation backends.
 - [specs/snapshot-fork.md](specs/snapshot-fork.md) — warm snapshot + fork.
+- [specs/wsl-source-sync.md](specs/wsl-source-sync.md) — win32: mirror the source onto WSL ext4 to kill the v9fs read tax.
 - [specs/write-back.md](specs/write-back.md) — native-equivalent persistence: flush a mutation command's produced files back to host.
 - [specs/orchestrator-api.md](specs/orchestrator-api.md) — the TS, node-compatible public API.
 - [specs/adoption.md](specs/adoption.md) — incremental opt-in: prefix → script → config (backend selection), with auto-fallback; dogfooding ladder for this repo.
