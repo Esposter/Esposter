@@ -26,6 +26,11 @@ export const VIRRUN_CACHE_HOME_KEY = "VIRRUN_CACHE_HOME";
 // Host-global file caching the os-backend capability probe's verdict so a fresh `virrun -- <cmd>` process reuses it
 // Instead of re-spawning the bwrap probe every command. See isOsBackendSupported.
 export const CAPABILITY_CACHE_FILENAME = "capability.json";
+// Windows-side files caching the win32 WSL environment probes so a fresh `virrun -- <cmd>` process reuses them instead
+// Of re-spawning wsl.exe (an interactive-login shell for the PATH, two round-trips for the cache root). Stored via
+// GetLocalCacheDirectory (the Windows `~`), not the WSL-ext4 cache root. See readWslEnvironmentCache.
+export const WSL_LOGIN_PATH_CACHE_FILENAME = "wsl-login-path.json";
+export const WSL_CACHE_ROOT_CACHE_FILENAME = "wsl-cache-root.json";
 // Set (to any value) to bypass the persisted capability cache and force a fresh probe — the escape hatch for a host
 // Whose bubblewrap/kernel capability changed without a cache-key change (e.g. bwrap was just installed).
 export const VIRRUN_FORCE_PROBE_KEY = "VIRRUN_FORCE_PROBE";

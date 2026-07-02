@@ -4,7 +4,7 @@ What to work on next. Shipped work lives in [README.md](README.md) `## Shipped`;
 
 ## Now
 
-- [ ] **WSL ext4 source mirror** — read the repo source from a WSL-native ext4 mirror instead of `/mnt/c`, killing the v9fs read tax that makes win32 `os`/wsl 0.06–0.31× native (vs Linux 0.76–0.95×). The Phase 7 "overhead is inherent" verdict was ext4-only and never covered this. → [specs/wsl-source-sync.md](specs/wsl-source-sync.md)
+- [ ] **WSL ext4 source mirror** — read the repo source from a WSL-native ext4 mirror instead of `/mnt/c`, killing the v9fs read tax that makes win32 `os`/wsl 0.06–0.31× native (vs Linux 0.76–0.95×). The earlier "overhead is inherent" verdict was ext4-only and never covered this. → [specs/wsl-source-sync.md](specs/wsl-source-sync.md)
   - [ ] `ensureWslSourceMirror` — `<cache>/sources/<sha256(hostCwd)>`, per-mirror `flock`, incremental `rsync -a --delete` (excludes `node_modules` + `.git`), returns the ext4 `/home/...` path
   - [ ] Wire into `createWslBwrapArgs` — use the mirror for `--overlay-src`/`--chdir` (`:24`); verify `persistRun` flush target stays `options.cwd` (host-side, unchanged)
   - [ ] Add an `rsync` presence check to `virrun doctor` (`probeOsBackendChecks`); extend `cache clean` to sweep `sources/`

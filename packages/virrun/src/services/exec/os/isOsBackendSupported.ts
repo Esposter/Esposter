@@ -1,8 +1,8 @@
 import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
-import { getCapabilityCacheKey } from "@/services/exec/os/getCapabilityCacheKey";
 import { readCapabilityCache } from "@/services/exec/os/readCapabilityCache";
 import { writeCapabilityCache } from "@/services/exec/os/writeCapabilityCache";
 import { VIRRUN_FORCE_PROBE_KEY } from "@/services/exec/util/constants";
+import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 // Memoized — a host's bubblewrap capability can't change within a process, and the os bench reconstructs the
@@ -56,7 +56,7 @@ const probeOsBackendSupported = (): boolean => {
 };
 // Three-tier so a fresh `virrun -- <cmd>` process (one per command) never re-pays the probe on a warm host: the
 // In-process memo short-circuits repeat calls within a run (resolveBackend + createOsBackend both ask, and the bench
-// Reconstructs the backend every iteration); the persisted cross-process cache (keyed by getCapabilityCacheKey, so it
+// Reconstructs the backend every iteration); the persisted cross-process cache (keyed by getHostFingerprint, so it
 // Self-invalidates on a kernel change) reuses a prior process's verdict — the real win, since the probe is otherwise
 // A bwrap overlay mount on Linux and three `wsl.exe` round-trips on win32; only a cold cache runs the actual probe,
 // Then writes its verdict back. VIRRUN_FORCE_PROBE bypasses the persisted cache (not the in-process memo, which is
@@ -64,7 +64,7 @@ const probeOsBackendSupported = (): boolean => {
 // Reads as undefined and falls through to the probe, so the cache is self-healing.
 export const isOsBackendSupported = (): boolean => {
   if (isSupported !== undefined) return isSupported;
-  const key = getCapabilityCacheKey();
+  const key = getHostFingerprint();
   if (process.env[VIRRUN_FORCE_PROBE_KEY] === undefined) {
     const cached = readCapabilityCache(key);
     if (cached !== undefined) {
