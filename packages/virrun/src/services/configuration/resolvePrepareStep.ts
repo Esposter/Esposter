@@ -9,15 +9,21 @@ import { basename, dirname } from "node:path";
 // Matches nuxt.config.{js,ts,mjs,cjs,mts,cts} — the config file whose owning package `nuxt prepare` regenerates.
 const NUXT_CONFIG_PATTERN = /^nuxt\.config\.[cm]?[jt]s$/u;
 // Resolve the concrete prepare step for an environment preset (there are no user overrides — every field is
-// Preset-derived). `none` has no prepare step. `nuxt` locates the git-tracked nuxt.config (git ls-files avoids a
-// Glob dependency and is already the source-hash mechanism), targets its package by path filter so the command is
-// Name-independent, and owns that package's `.nuxt`. Throws if `nuxt` is selected but no nuxt.config exists — a
-// Misconfiguration to surface loudly rather than silently skipping the layer and serving the host copy.
-export const resolvePrepareStep = (environment: Environment, cwd: string): PrepareStep | undefined => {
-  if (environment === Environment.None) return undefined;
+// Preset-derived). An absent (`undefined`) environment has no prepare step. `nuxt` locates the git-tracked nuxt.config
+// (git ls-files avoids a glob dependency and is already the source-hash mechanism), targets its package by path filter
+// So the command is name-independent, and owns that package's `.nuxt`. Throws if `nuxt` is selected but no nuxt.config
+// Exists — a misconfiguration to surface loudly rather than silently skipping the layer and serving the host copy.
+export const resolvePrepareStep = (environment: Environment | undefined, cwd: string): PrepareStep | undefined => {
+  if (!environment) return undefined;
   const workspaceRoot = resolveWorkspaceRoot(cwd);
+  // Piping git's stderr (the stdio option) rather than inheriting it, so a non-repo workspace's "fatal: not a git
+  // Repository" (which the getResult below already falls back on) never leaks to the console.
   const configPath = getResult(() =>
-    execFileSync("git", ["ls-files", "--", "*nuxt.config.*"], { cwd: workspaceRoot, encoding: "utf8" }),
+    execFileSync("git", ["ls-files", "--", "*nuxt.config.*"], {
+      cwd: workspaceRoot,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    }),
   )
     .match(
       (output) => output.split("\n").map((line) => line.trim()),

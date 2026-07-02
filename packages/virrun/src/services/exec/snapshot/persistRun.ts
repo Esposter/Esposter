@@ -14,13 +14,15 @@ import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapsho
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
-// Run a command over the warm snapshot with a persistable upper, then flush that upper to the host on a clean exit
-// Only (all-or-nothing; specs/write-back.md). The persist sibling of forkSnapshot: the deps snapshot (and any
+// Run a command over the warm snapshot with a persistable upper, then flush that upper to the host whatever the exit
+// Code (native-equivalence; specs/write-back.md) — a non-zero mutation still wrote real files. The persist sibling of
+// ForkSnapshot: the deps snapshot (and any
 // `extraLowerDirs`, e.g. the prepare layer) stack as read-only lowers, so node_modules is never in the upper and
 // Never flushed. `outputDirs` (an environment's prepare outputs, e.g. `.nuxt`) are masked from the flush like
 // Node_modules — cache-owned, so a persist run never writes them back to the host. Requires a captured snapshot; the
 // Temp upper/work are always torn down. `onPersist` fires after the host flush with the still-live upper and the
-// Built plan, so the task cache can record the output diff without re-probing (persistWithCache).
+// Built plan (only on a clean exit — a failed run is flushed but never cached), so the task cache can record the
+// Output diff without re-probing (persistWithCache).
 export const persistRun = (
   backend: ExecBackend,
   command: readonly string[] | string,
@@ -45,13 +47,14 @@ export const persistRun = (
         ...options,
         overlayLayers: { lowerDirs: [upperDir, ...extraLowerDirs], upperDir: persistUpperDir, workDir: persistWorkDir },
       });
-      if (result.exitCode === 0) {
-        // Build the plan once: apply to the host, then hand the same plan to onPersist so the task cache records the
-        // Diff without a second Linux-side probe.
-        const plan = buildHostFlushPlan(persistUpperDir, upperDir, outputDirs);
-        applyFlushPlan(persistUpperDir, hostDir, plan);
-        onPersist?.(persistUpperDir, plan, result);
-      }
+      // Build the plan once and always flush it, whatever the exit code: native-equivalence taken literally means the
+      // Host is left exactly as the tool left it, and a mutation tool that exits non-zero (eslint --fix / oxfmt with
+      // Remaining unfixable errors, a build that half-writes dist/) still wrote real files that must reach the host.
+      const plan = buildHostFlushPlan(persistUpperDir, upperDir, outputDirs);
+      applyFlushPlan(persistUpperDir, hostDir, plan);
+      // Only a clean exit is recorded to the task cache — replaying a failed run would skip a genuine re-attempt — but
+      // The same plan is reused so the cache records the output diff without a second Linux-side probe.
+      if (result.exitCode === 0) onPersist?.(persistUpperDir, plan, result);
       return result;
     },
     () => {

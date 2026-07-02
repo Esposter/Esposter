@@ -1,7 +1,9 @@
+import { dayjs } from "@/services/dayjs.test";
 import { assertDifferential } from "@/services/exec/differential/assertDifferential.test";
 import { SHELL_DIFFERENTIAL_CORPUS } from "@/services/exec/differential/differentialCorpus.test";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
+import { ACCEPTANCE_TIMEOUT_MINUTES } from "@/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { createOsBaselineBackend } from "@/services/exec/wsl/createOsBaselineBackend.test";
@@ -15,31 +17,44 @@ import { afterEach, describe, expect, test } from "vitest";
 describe.skipIf(!isOsBackendSupported())(createOsBackend, () => {
   const native = createOsBaselineBackend();
   const temporaryDirectories = createTemporaryDirectoryTracker();
+  // Each case spawns a real bwrap sandbox (win32: over the wsl.exe bridge). In isolation that is ~1-3s, but the suite
+  // Runs test files across 16 workers all contending for the one shared WSL bridge, so a single exec can wait well
+  // Past vitest's 5s default. Use the same hang-ceiling the acceptance/property os tests already carry — the exec is
+  // Not the slow part, the contention is.
+  const acceptanceTimeoutMs = dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds();
 
   afterEach(() => {
     temporaryDirectories.cleanup();
   });
 
-  test.each(SHELL_DIFFERENTIAL_CORPUS)("matches the native backend for $name", async ({ command, rules }) => {
-    expect.hasAssertions();
+  test.each(SHELL_DIFFERENTIAL_CORPUS)(
+    "matches the native backend for $name",
+    async ({ command, rules }) => {
+      expect.hasAssertions();
 
-    await assertDifferential(createOsBackend(), native, command, rules);
-  });
+      await assertDifferential(createOsBackend(), native, command, rules);
+    },
+    acceptanceTimeoutMs,
+  );
 
-  test("a write inside the sandbox never touches the host disk", async () => {
-    expect.hasAssertions();
+  test(
+    "a write inside the sandbox never touches the host disk",
+    async () => {
+      expect.hasAssertions();
 
-    const dir = temporaryDirectories.create();
-    const os = createOsBackend();
+      const dir = temporaryDirectories.create();
+      const os = createOsBackend();
 
-    const writeResult = await os.exec(`echo x > ${TEST_FILENAME}`, { cwd: dir, stdio: "pipe" });
+      const writeResult = await os.exec(`echo x > ${TEST_FILENAME}`, { cwd: dir, stdio: "pipe" });
 
-    expect(writeResult.exitCode).toBe(0);
-    expect(existsSync(join(dir, TEST_FILENAME))).toBe(false);
+      expect(writeResult.exitCode).toBe(0);
+      expect(existsSync(join(dir, TEST_FILENAME))).toBe(false);
 
-    // A fresh exec gets a fresh RAM upper, so the previous run's write is gone there too.
-    const readResult = await os.exec(`cat ${TEST_FILENAME}`, { cwd: dir, stdio: "pipe" });
+      // A fresh exec gets a fresh RAM upper, so the previous run's write is gone there too.
+      const readResult = await os.exec(`cat ${TEST_FILENAME}`, { cwd: dir, stdio: "pipe" });
 
-    expect(readResult.exitCode).not.toBe(0);
-  });
+      expect(readResult.exitCode).not.toBe(0);
+    },
+    acceptanceTimeoutMs,
+  );
 });

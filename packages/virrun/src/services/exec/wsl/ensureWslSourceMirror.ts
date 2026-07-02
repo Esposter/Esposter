@@ -1,4 +1,3 @@
-import { Environment } from "@/models/virrun/Environment";
 import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { SOURCE_MIRROR_TIMEOUT_MS } from "@/services/exec/util/constants";
@@ -38,7 +37,7 @@ const shellQuote = (value: string): string => `'${value.replaceAll("'", `'\\''`)
 // Than reading unchanged files through a host lower. Best-effort: a resolution hiccup falls back to the base excludes
 // (the prepare layer still shadows the host copy when forking).
 const resolveMirrorExcludes = (cwd: string): readonly string[] => {
-  const environment = resolveVirrunConfiguration(cwd)?.environment ?? Environment.None;
+  const environment = resolveVirrunConfiguration(cwd)?.environment;
   const outputs = getResult(() => resolvePrepareStep(environment, cwd)?.outputs ?? []).unwrapOr([]);
   return ["node_modules", ".git", ...outputs];
 };

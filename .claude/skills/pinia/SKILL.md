@@ -80,14 +80,16 @@ When a component tree has a "selected item" concept (e.g. `selectedRoleId`), put
 
 ```typescript
 // store/message/room/role.ts
-const selectedRoleId = ref<string | null>(null);
+// Track the selection by id with "" as the "nothing selected" sentinel (never string | null) — a stale id is
+// Harmless, and the computed resolves the object, returning undefined (not null) when absent.
+const selectedRoleId = ref("");
 const selectedRole = computed(() => {
-  if (!selectedRoleId.value) return null;
+  if (selectedRoleId.value === "") return undefined;
   for (const roles of rolesMap.value.values()) {
     const role = roles.find(({ id }) => id === selectedRoleId.value);
     if (role) return role;
   }
-  return null;
+  return undefined;
 });
 const selectRole = (id: string) => {
   selectedRoleId.value = id;

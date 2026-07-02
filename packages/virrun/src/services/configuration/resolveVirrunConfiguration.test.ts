@@ -1,5 +1,4 @@
 import { BackendType } from "@/models/virrun/BackendType";
-import { Environment } from "@/models/virrun/Environment";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { VIRRUN_CONFIGURATION_FILENAME } from "@/services/exec/util/constants";
@@ -23,10 +22,7 @@ describe(resolveVirrunConfiguration, () => {
     const nested = join(root, TEST_FILENAME, TEST_FILENAME);
     mkdirSync(nested, { recursive: true });
 
-    expect(resolveVirrunConfiguration(nested)).toStrictEqual({
-      backend: BackendType.Os,
-      environment: Environment.None,
-    });
+    expect(resolveVirrunConfiguration(nested)).toStrictEqual({ backend: BackendType.Os });
   });
 
   test("returns undefined when no config exists in the tree", () => {

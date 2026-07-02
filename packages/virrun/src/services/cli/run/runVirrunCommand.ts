@@ -4,14 +4,17 @@ import { ExecutionMode } from "@/models/virrun/ExecutionMode";
 import { colorize } from "@/services/cli/color/colorize";
 import { formatVirrunBanner } from "@/services/cli/format/formatVirrunBanner";
 import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
+import { formatVirrunPrepare } from "@/services/cli/format/formatVirrunPrepare";
 import { formatVirrunProvisioning } from "@/services/cli/format/formatVirrunProvisioning";
 import { formatVirrunResult } from "@/services/cli/format/formatVirrunResult";
 import { getCommandNotFoundHint } from "@/services/cli/run/getCommandNotFoundHint";
 import { resolveBackend } from "@/services/configuration/resolveBackend";
+import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
+import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createVirrun } from "@/services/virrun/createVirrun";
-import { exhaustiveGuard, getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
+import { exhaustiveGuard, getResult, getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
 import { performance } from "node:perf_hooks";
 // Shared orchestration behind the passthrough commands: resolve config/backend, construct the sandbox, bracket the
 // Run with a banner + result line, propagate the child's exit code. All outcomes converge on the single
@@ -32,6 +35,18 @@ export const runVirrunCommand = async (
     if (mode !== ExecutionMode.Exec && virrun.backend === BackendType.Os) {
       const { exists, hash } = resolveSnapshotLocation("");
       process.stderr.write(`${formatVirrunProvisioning({ exists, hash })}\n`);
+      // When an environment preset regenerates framework artifacts (e.g. .nuxt), report whether this run reuses the
+      // Source-keyed prepare layer or rebuilds it (expected on a source edit — the key tracks the working-tree hash),
+      // So prepare is as observable as the deps snapshot instead of a silent stall. resolvePrepareStep already returns
+      // Undefined when no preset is set, so no separate none-check is needed. A read-only resolve for the log only —
+      // CreateVirrun owns the authoritative build — wrapped so a resolve throw never masks the run.
+      getResult(() => {
+        const prepareStep = resolvePrepareStep(configuration?.environment, "");
+        if (prepareStep) process.stderr.write(`${formatVirrunPrepare(resolvePrepareLocation("", prepareStep))}\n`);
+      }).match(
+        () => undefined,
+        () => undefined,
+      );
     }
     return withFinalizerAsync(
       () => {

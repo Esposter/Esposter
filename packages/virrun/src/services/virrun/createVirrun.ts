@@ -5,7 +5,6 @@ import type { VirrunOptions } from "@/models/virrun/VirrunOptions";
 
 import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
-import { Environment } from "@/models/virrun/Environment";
 import { persistWithCache } from "@/services/exec/cache/persistWithCache";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
@@ -36,7 +35,7 @@ const backendFactories: Record<BackendType, () => ExecBackend> = {
 // Exec/fork/persist route through it; dispose() tears down any temp state the source created.
 export const createVirrun = async ({
   backend = BackendType.Auto,
-  environment = Environment.None,
+  environment,
   source = { dir: "", type: SourceType.Dir },
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
   const execBackend = backendFactories[backend]();

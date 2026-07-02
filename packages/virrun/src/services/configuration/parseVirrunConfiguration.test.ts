@@ -13,13 +13,10 @@ describe(parseVirrunConfiguration, () => {
     expect(configuration).toStrictEqual({ backend: BackendType.Os, environment: Environment.Nuxt });
   });
 
-  test("defaults an omitted backend to auto and environment to none", () => {
+  test("defaults an omitted backend to auto and leaves an omitted environment undefined (no preset)", () => {
     expect.hasAssertions();
 
-    expect(parseVirrunConfiguration("{}")).toStrictEqual({
-      backend: BackendType.Auto,
-      environment: Environment.None,
-    });
+    expect(parseVirrunConfiguration("{}")).toStrictEqual({ backend: BackendType.Auto });
   });
 
   test("throws on invalid JSON", () => {
@@ -40,6 +37,12 @@ describe(parseVirrunConfiguration, () => {
     expect(() => parseVirrunConfiguration(JSON.stringify({ environment: "" }))).toThrow(InvalidOperationError);
   });
 
+  test("throws on the removed 'none' environment — absence is expressed by omitting the key, not a none value", () => {
+    expect.hasAssertions();
+
+    expect(() => parseVirrunConfiguration(JSON.stringify({ environment: "none" }))).toThrow(InvalidOperationError);
+  });
+
   test("throws on an unknown key", () => {
     expect.hasAssertions();
 
@@ -51,7 +54,6 @@ describe(parseVirrunConfiguration, () => {
 
     expect(parseVirrunConfiguration(JSON.stringify({ $schema: "./schema.json", backend: "os" }))).toStrictEqual({
       backend: BackendType.Os,
-      environment: Environment.None,
     });
   });
 });
