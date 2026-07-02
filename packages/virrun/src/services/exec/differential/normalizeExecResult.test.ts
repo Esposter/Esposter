@@ -1,4 +1,4 @@
-import type { NormalizationRule } from "@/models/exec/NormalizationRule";
+import type { NormalizationRule } from "@/models/exec/differential/NormalizationRule";
 
 import { normalizeExecResult } from "@/services/exec/differential/normalizeExecResult";
 import { describe, expect, test } from "vitest";

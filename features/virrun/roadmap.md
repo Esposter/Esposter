@@ -4,7 +4,7 @@ What to work on next. Shipped work lives in [README.md](README.md) `## Shipped`;
 
 ## Now
 
-Nothing open on the shipped Linux/WSL `os` path. Promote one item from **Next** when its trigger fires.
+- [ ] **WSL mirror bench** — re-run `pnpm bench` on win32, record the lift in `localMonorepo.platform.bench.win32.md` (honest numbers — no overclaim). **Blocked**: this host's WSL sandbox errors (`node.exe: Invalid argument`), so the bench can't capture; needs a healthy WSL host.
 
 ## Next
 

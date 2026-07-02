@@ -19,6 +19,15 @@
         "Run inside a bubblewrap RAM-overlay (Linux, or Windows via WSL2): reads fall through to source, writes vanish in tmpfs. Ephemeral — only safe for read-only verification commands.",
         "Run recognised pure-JS node invocations in-process; falls back to native for everything else. Opt-in, no isolation."
       ]
+    },
+    "environment": {
+      "description": "The framework whose source-derived artifacts the sandbox regenerates into a source-keyed prepare layer (e.g. Nuxt's .nuxt), so type-aware tooling reads a platform-correct, fresh copy instead of the host's. Defaults to `none`. Mirror of the Environment enum in src/models/virrun/Environment.ts.",
+      "default": "none",
+      "enum": ["none", "nuxt"],
+      "enumDescriptions": [
+        "No framework prepare step; the warm cache is deps-only and any source-derived postinstall artifact is pruned.",
+        "A Nuxt app: capture `nuxt prepare` output (.nuxt) into a source-keyed prepare layer, refreshed only when source changes."
+      ]
     }
   }
 }

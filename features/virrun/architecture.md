@@ -34,7 +34,7 @@ flowchart TB
     fsp --> vmem[("in-process virtual FS\n(only this process sees it)")]
     os --> sandboxprim["bubblewrap\nLinux direct / Windows WSL2"]
     sandboxprim --> ram[("tmpfs + overlayfs\nRAM FS — every process sees it")]
-    os --> snap["snapshot + warm-fork\nlockfile-hash keyed"]
+    os --> snap["snapshot + warm-fork\ndeps: lockfile-hash · prepare: source-hash"]
     os --> wb["write-back\nflush top upper → host\nmutation runs only"]
     wb --> disk
 ```
@@ -92,7 +92,7 @@ See [specs/exec-isolation.md](specs/exec-isolation.md) for both.
 1. **RAM filesystem** (`tmpfs` upperdir) — `node_modules` never touches disk.
 2. **Shared content-addressable store** — deps downloaded once into `.virrun/store/pnpm`, then reused by each sandbox; installs copy from the on-disk store into the RAM overlay until snapshots make hardlink-style imports viable.
 3. **Snapshot + warm-fork** — "clone repo + install" happens once; each run `fork()`s the warm state → near-instant repeated runs. The biggest win. See [specs/snapshot-fork.md](specs/snapshot-fork.md).
-4. **Task cache** — _shipped (Phase 7)._ Skip a persist run whose inputs are unchanged: keyed by `sha256(lockfile-hash + working-tree-hash + command)`, a hit skips the sandbox and replays the recorded output diff + streams. Native content-hash, not Turborepo (which needs a per-repo pipeline graph). A dev-loop lever — off in CI, where a fresh commit means ~0 hits. See [specs/config-and-cache.md](specs/config-and-cache.md#virrun--cache--gitignored).
+4. **Task cache** — _shipped._ Skip a persist run whose inputs are unchanged: keyed by `sha256(lockfile-hash + working-tree-hash + command)`, a hit skips the sandbox and replays the recorded output diff + streams. Native content-hash, not Turborepo (which needs a per-repo pipeline graph). A dev-loop lever — off in CI, where a fresh commit means ~0 hits. See [specs/config-and-cache.md](specs/config-and-cache.md#virrun--cache--gitignored).
 
 A persist (write-back) run keeps these wins: the toolchain still does its random I/O in RAM, and persistence is a single bulk copy-out of the final diff at the end — far cheaper than letting the command thrash the disk throughout. See [Write-back](#write-back-native-equivalent-persistence).
 
@@ -108,23 +108,42 @@ Every os run forks the warm snapshot; **only the top mount differs** — persist
 flowchart LR
     src[("source\n(RO lower)")] --> ov{{"overlayfs\nstack"}}
     snap[("warm snapshot\nnode_modules (RO lower)")] --> ov
+    prep[("prepare layer\n.nuxt (RO lower, source-keyed)")] --> ov
 
     ov --> top{"top mount"}
     top -->|"mutation run\n--overlay upper"| up[("persistable upper\n= dist / migrations / fixed src")]
     top -->|"CI / verification fork\n--tmp-overlay"| vanish[("tmpfs\nwrites vanish")]
 
     up --> flush["flushUpperToHost\nfiles · whiteout deletes · opaque dirs"]
-    flush -->|"skip snapshot-lower paths"| host[("host working dir\n(native-equivalent)")]
+    flush -->|"skip snapshot-lower + prepare-output paths"| host[("host working dir\n(native-equivalent)")]
 ```
 
 Two facts make this native-equivalent without virrun ever guessing which files matter:
 
 - **The upper _is_ the native diff** — overlayfs records changed/new files, char-dev `0:0` whiteouts for deletes, and (in rootless userxattr mode) `user.overlay.opaque` markers for replaced dirs. Replaying it onto the host reproduces native's on-disk result.
-- **`node_modules` is structurally excluded** — it lives in the RO snapshot lower, so it is never in the top upper's flush set. "node_modules never touches disk" survives even while output persists. Upper entries that shadow a snapshot-lower path (a dep-tree write) are skipped — layer membership, not a name guess.
+- **`node_modules` is structurally excluded** — it lives in the RO snapshot lower, so it is never in the top upper's flush set. "node_modules never touches disk" survives even while output persists. Upper entries that shadow a snapshot-lower path (a dep-tree write) are skipped — layer membership, not a name guess. An `environment`'s prepare outputs (e.g. `.nuxt`) are excluded the same structural way.
 
 Correctness is proven by **equivalence tests** (native vs `virrun --`, diffing the resulting host file trees), CI-enforced beside the differential suite. Detail: [specs/write-back.md](specs/write-back.md).
 
 ---
+
+## CLI output palette
+
+Every stderr diagnostic goes through one helper, `formatVirrunLine(message)` (`services/cli/format/formatVirrunLine.ts`), which prepends the bold-cyan `[virrun]` tag — the tag's text + styling live in exactly one place, and command writes are colorized identically to the `format*` helpers instead of hardcoding a plain tag. `colorize` is a no-op when color is off (a pipe, `NO_COLOR`, vitest), so lines degrade to plain text and the format tests still assert plain strings.
+
+The semantic color vocabulary is decided once, on the `Color` enum (`models/cli/Color.ts`) — call sites pick by meaning, not by eye:
+
+| Color        | Role                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Cyan (+Bold) | the `[virrun]` tag only                                                                                                                          |
+| Blue (+Bold) | a fast-route cache/snapshot **hit** label — `snapshot cache hit` / `task cache hit` (via `formatCacheHitLabel`), so the fast path stands out     |
+| Yellow       | commands / argv / executables / flags; the "expect a wait" cache-**miss** / one-time-install notice                                              |
+| Blue         | concrete values & locations — paths, backend type, lockfile hash, counts                                                                         |
+| Green        | success & positive state — exit 0, "present", durations, node version                                                                            |
+| Red          | failure & destructive — errors, non-zero exit, "absent", a path being **removed**                                                                |
+| Dim          | routine auto-emitted metadata & absence only — doctor note column, "none"/"n/a". **Never dim a path, a cache/snapshot hit, or primary content.** |
+
+The child command's own stdout/stderr is never colorized (raw bytes flow through so correctness diffs stay byte-exact); only virrun's own framing lines are.
 
 ## Platform reality
 

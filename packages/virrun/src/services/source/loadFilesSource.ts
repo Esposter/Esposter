@@ -1,4 +1,4 @@
-﻿import type { FilesSource } from "@/models/source/FilesSource";
+import type { FilesSource } from "@/models/source/FilesSource";
 import type { LoadedSource } from "@/models/source/LoadedSource";
 
 import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";

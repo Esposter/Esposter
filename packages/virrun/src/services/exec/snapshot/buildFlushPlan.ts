@@ -1,8 +1,8 @@
 import type { FlushOp } from "@/models/exec/FlushOp";
-import type { OverlayEntry } from "@/models/exec/OverlayEntry";
+import type { OverlayEntry } from "@/models/exec/snapshot/OverlayEntry";
 
 import { FlushOpType } from "@/models/exec/FlushOp";
-import { OverlayEntryKind } from "@/models/exec/OverlayEntryKind";
+import { OverlayEntryKind } from "@/models/exec/snapshot/OverlayEntryKind";
 import { exhaustiveGuard } from "@esposter/shared";
 // Path depth = its "/" count; decorate-sort-undecorate below computes it once per copy (a build's upper can hold thousands).
 const countSeparators = (relativePath: string): number => {

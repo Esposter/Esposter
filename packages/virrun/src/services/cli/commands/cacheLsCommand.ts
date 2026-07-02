@@ -1,9 +1,12 @@
 import type { CommandDef } from "citty";
 
+import { Color } from "@/models/cli/Color";
 import { CommandType } from "@/models/virrun/CommandType";
-import { formatCacheListing } from "@/services/cli/formatCacheListing";
+import { colorize } from "@/services/cli/color/colorize";
+import { formatCacheListing } from "@/services/cli/cache/formatCacheListing";
+import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
-import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
+import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { VIRRUN_STORE_DIRECTORY_NAME } from "@/services/exec/util/constants";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
@@ -23,9 +26,13 @@ export const cacheLsCommand: CommandDef = defineCommand({
       const repoStorePath = join(getRepoCacheDirectory(""), VIRRUN_STORE_DIRECTORY_NAME);
       const snapshotsPath = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
       const snapshotHashes = existsSync(snapshotsPath) ? readdirSync(snapshotsPath).toSorted() : [];
+      const preparePath = join(getGlobalCacheDirectory(), VIRRUN_PREPARE_DIRECTORY_NAME);
+      const prepareKeys = existsSync(preparePath) ? readdirSync(preparePath).toSorted() : [];
       const tasksPath = join(getGlobalCacheDirectory(), VIRRUN_TASKS_DIRECTORY_NAME);
       return formatCacheListing({
         isRepoStorePresent: existsSync(repoStorePath),
+        prepareKeys,
+        preparePath,
         repoStorePath,
         snapshotHashes,
         snapshotsPath,
@@ -35,7 +42,7 @@ export const cacheLsCommand: CommandDef = defineCommand({
     }).match(
       (listing) => process.stderr.write(`${listing}\n`),
       (error) => {
-        process.stderr.write(`${toAppError(error).message}\n`);
+        process.stderr.write(`${formatVirrunLine(colorize(toAppError(error).message, Color.Red))}\n`);
         process.exitCode = 1;
       },
     );

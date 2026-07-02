@@ -1,6 +1,6 @@
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
-import type { SnapshotLocation } from "@/models/exec/SnapshotLocation";
+import type { SnapshotLocation } from "@/models/exec/snapshot/SnapshotLocation";
 
 import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";

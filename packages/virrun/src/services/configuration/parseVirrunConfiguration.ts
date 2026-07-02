@@ -7,7 +7,7 @@ import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
 // Into the runtime config.
 export const parseVirrunConfiguration = (content: string): VirrunConfiguration =>
   getResult(() => virrunConfigurationSchema.parse(JSON.parse(content))).match(
-    ({ backend }) => ({ backend }),
+    ({ backend, environment }) => ({ backend, environment }),
     (error) => {
       throw new InvalidOperationError(
         Operation.Read,

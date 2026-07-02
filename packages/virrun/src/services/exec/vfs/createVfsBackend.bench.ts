@@ -1,4 +1,4 @@
-﻿import { BackendType } from "@/models/virrun/BackendType";
+import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";

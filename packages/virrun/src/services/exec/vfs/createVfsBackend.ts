@@ -1,4 +1,4 @@
-﻿import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecBackend } from "@/models/exec/ExecBackend";
 
 import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";

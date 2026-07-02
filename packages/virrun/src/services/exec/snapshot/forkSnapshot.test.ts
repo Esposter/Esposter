@@ -48,6 +48,18 @@ describe(forkSnapshot, () => {
     expect(backend.calls[0]?.overlayLayers).toStrictEqual({ lowerDirs: [upperDir] });
   });
 
+  test("stacks extra lower dirs above the deps upper, in order, so the last one wins", async () => {
+    expect.hasAssertions();
+
+    const { upperDir } = resolveSnapshotLocation(repo);
+    mkdirSync(upperDir, { recursive: true });
+    const prepareUpperDir = create();
+    const backend = { ...createFakeBackend(), name: BackendType.Os };
+    await forkSnapshot(backend, "vitest", { cwd: repo, stdio: "pipe" }, [prepareUpperDir]);
+
+    expect(backend.calls[0]?.overlayLayers).toStrictEqual({ lowerDirs: [upperDir, prepareUpperDir] });
+  });
+
   test("throws when no snapshot has been captured yet", () => {
     expect.hasAssertions();
 
