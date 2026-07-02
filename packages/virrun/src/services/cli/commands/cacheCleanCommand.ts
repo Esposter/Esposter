@@ -44,7 +44,7 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
         process.stderr.write(`${formatVirrunLine(`removed ${colorize(tasksPath, Color.Red)}`)}\n`);
         // The win32 ext4 source mirrors live under the WSL-native cache root (ensureWslSourceMirror ignores the
         // VIRRUN_CACHE_HOME override to stay on ext4), so clean from there — not getGlobalCacheDirectory. Absent off
-        // win32, where the source is read in place and never mirrored.
+        // Win32, where the source is read in place and never mirrored.
         if (process.platform === "win32") {
           const sourcesPath = join(getWslNativeCacheRoot(), VIRRUN_SOURCES_DIRECTORY_NAME);
           removeSnapshotDirectory(sourcesPath);
