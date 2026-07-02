@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.32.1](https://github.com/Esposter/Esposter/compare/v2.32.0...v2.32.1) (2026-07-01)
+
+**Note:** Version bump only for package @esposter/app
+
+# [2.32.0](https://github.com/Esposter/Esposter/compare/v2.31.1...v2.32.0) (2026-07-01)
+
+### Bug Fixes
+
+* bench ([b23a8c1](https://github.com/Esposter/Esposter/commit/b23a8c1b287e519bbbca5c27e2fb921ea33dec65))
+* disable linting for vue-tsc for now ([1986687](https://github.com/Esposter/Esposter/commit/1986687fbd26b1a12d15adb5f11eec2a65f0ee3a))
+* lint ([4c80dc2](https://github.com/Esposter/Esposter/commit/4c80dc2ced8c814d232ba9b93e0f1a8b83fd95d3))
+* lint ([47cca52](https://github.com/Esposter/Esposter/commit/47cca525b3cf3d1f27ba5cc794ce5da0e096edd3))
+* lint ([fd3dbc8](https://github.com/Esposter/Esposter/commit/fd3dbc8cc876c1b95dfca869f447428c51a2c921))
+* remaining disable comment ([d55a7f8](https://github.com/Esposter/Esposter/commit/d55a7f86e8551f85fcc47d64c2d1e13dfc37b6c0))
+* warmup nuxt env ([0162d21](https://github.com/Esposter/Esposter/commit/0162d21c21d9f1c8914eb574023b0c31eff685f7))
+
+### Features
+
+* Add wsl backend ([518b045](https://github.com/Esposter/Esposter/commit/518b04533cd761b5ab2dbc72af7d6323e051b486))
+* fixed-iteration benchmark runner for machine-stable results ([6be4473](https://github.com/Esposter/Esposter/commit/6be4473066c634fd57ab854c59175316d24f9dde))
+
 ## [2.31.1](https://github.com/Esposter/Esposter/compare/v2.31.0...v2.31.1) (2026-06-25)
 
 **Note:** Version bump only for package @esposter/app

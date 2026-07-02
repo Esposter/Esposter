@@ -11,7 +11,12 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const createOsBackend = (): ExecBackend => {
   if (!isOsBackendSupported())
     throw new InvalidOperationError(Operation.Create, createOsBackend.name, "requires Linux/WSL + bubblewrap");
-  if (process.platform === "linux") return createLinuxOsBackend(createOsBackend.name);
-  else if (process.platform === "win32") return createWslOsBackend(createOsBackend.name);
-  throw new InvalidOperationError(Operation.Create, createOsBackend.name, "requires Linux/WSL + bubblewrap");
+  switch (process.platform) {
+    case "linux":
+      return createLinuxOsBackend(createOsBackend.name);
+    case "win32":
+      return createWslOsBackend(createOsBackend.name);
+    default:
+      throw new InvalidOperationError(Operation.Create, createOsBackend.name, "requires Linux/WSL + bubblewrap");
+  }
 };

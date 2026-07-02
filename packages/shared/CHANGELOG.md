@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.32.1](https://github.com/Esposter/Esposter/compare/v2.32.0...v2.32.1) (2026-07-01)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.32.0](https://github.com/Esposter/Esposter/compare/v2.31.1...v2.32.0) (2026-07-01)
+
+### Bug Fixes
+
+* disable linting for vue-tsc for now ([1986687](https://github.com/Esposter/Esposter/commit/1986687fbd26b1a12d15adb5f11eec2a65f0ee3a))
+* flushing ([9d91c72](https://github.com/Esposter/Esposter/commit/9d91c725bb9ecc4c0f57b8f8fac2f57217b11d3c))
+* remove unnecessary cast ([f1aae12](https://github.com/Esposter/Esposter/commit/f1aae129f70b563c78f268b97534a36ae861c8b0))
+* remove unnecessary cast ([662f6fc](https://github.com/Esposter/Esposter/commit/662f6fc0c01c943b2e0738f7e5020c43b3ceb241))
+* snapshot size ([36993db](https://github.com/Esposter/Esposter/commit/36993dbfea849005e0655dfd5684e069cdf35f50))
+
 ## [2.31.1](https://github.com/Esposter/Esposter/compare/v2.31.0...v2.31.1) (2026-06-25)
 
 **Note:** Version bump only for package @esposter/shared

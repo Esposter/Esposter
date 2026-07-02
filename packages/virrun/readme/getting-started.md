@@ -7,8 +7,10 @@ Wrap any command in the sandbox, or drive it programmatically. The overview live
 The sandboxed `os` backend needs the following; if either is missing, `virrun` falls back to the native backend (so every command still runs — just un-isolated).
 
 - **Bubblewrap `>= 0.10.0`** (RAM overlay support: `--overlay-src` / `--tmp-overlay`), via your system package manager — e.g. `sudo apt install -y bubblewrap` (Debian/Ubuntu/WSL2), `sudo dnf install bubblewrap` (Fedora/RHEL), `sudo pacman -S bubblewrap` (Arch).
-- **A Linux `node` inside your default WSL2 distro** (Windows hosts only) — Windows `node.exe` can't run in the Linux sandbox, so without it the capability check fails and virrun runs natively on Windows.
+- **A Linux `node` inside your default WSL2 distro** (Windows hosts only) — Windows `node.exe` can't run in the Linux sandbox, so without it the sandbox still mounts but node-based commands (`pnpm`, `vitest`, …) can't resolve `node` inside it. virrun reads it from your real WSL login shell, so a version manager (fnm/nvm) counts.
 - **`python3`** (Linux/WSL) — used only by write-back (`run` persisting produced files) to reconcile the overlay upper onto the host; near-universal on Linux. Verification (`run --ephemeral`) and `exec` don't need it.
+
+Run **`virrun doctor`** to check all of the above at once — it reports each prerequisite as ok / missing with the fix, and exits non-zero when the `os` backend isn't fully available.
 
 The `vfs` and `native` backends need neither.
 
@@ -34,15 +36,16 @@ On an `os`-backend run the CLI prints a one-time provisioning line on stderr so 
 
 The bare `virrun -- <cmd>` prefix is shorthand for `virrun run`. The CLI (built on [unjs/citty](https://github.com/unjs/citty), so every command has `--help`) also exposes:
 
-| Command                      | What it does                                                                                                    |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `virrun -- <cmd>`            | Default passthrough — forks a warm snapshot on the `os` backend, else execs natively. Alias of `virrun run`.    |
-| `virrun run -- <cmd>`        | Explicit form of the default passthrough.                                                                       |
-| `virrun exec -- <cmd>`       | Forced plain exec — runs the command directly, skipping any warm-snapshot fork (the cold sibling of `run`).     |
-| `virrun snapshot`            | Provisions the `os` backend's warm dependency snapshot for the current lockfile ahead of time (the CI warm-up). |
-| `virrun init [--backend]`    | Writes a `virrun.config.json` selecting the backend (`--force` to overwrite an existing one).                   |
-| `virrun cache ls`            | Lists the repo-local dependency store and host-global warm snapshots.                                           |
-| `virrun cache clean [--all]` | Removes the repo-local `.virrun` cache; `--all` also clears the host-global `~/.virrun/snapshots`.              |
+| Command                      | What it does                                                                                                        |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `virrun -- <cmd>`            | Default passthrough — forks a warm snapshot on the `os` backend, else execs natively. Alias of `virrun run`.        |
+| `virrun run -- <cmd>`        | Explicit form of the default passthrough.                                                                           |
+| `virrun exec -- <cmd>`       | Forced plain exec — runs the command directly, skipping any warm-snapshot fork (the cold sibling of `run`).         |
+| `virrun snapshot`            | Provisions the `os` backend's warm dependency snapshot for the current lockfile ahead of time (the CI warm-up).     |
+| `virrun doctor`              | Diagnoses the `os` backend's prerequisites (bubblewrap, WSL node, python3, overlay mount); exits non-zero on a gap. |
+| `virrun init [--backend]`    | Writes a `virrun.config.json` selecting the backend (`--force` to overwrite an existing one).                       |
+| `virrun cache ls`            | Lists the repo-local dependency store and host-global warm snapshots.                                               |
+| `virrun cache clean [--all]` | Removes the repo-local `.virrun` cache; `--all` also clears the host-global `~/.virrun/snapshots`.                  |
 
 ## Programmatic
 

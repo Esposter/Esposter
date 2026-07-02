@@ -42,6 +42,7 @@ What's landed and dogfooded in this repo (the [roadmap](https://github.com/Espos
 - **`vfs` backend** — recognised pure-JS `node` invocations run in-process, no spawn; falls back to native otherwise.
 - **`os` backend** — bubblewrap RAM-overlay exec with a shared CAS dep store and the WSL2 bridge (macOS bridge is the one open piece).
 - **Snapshot + warm-fork** — a lockfile-hash-keyed warm post-install snapshot, forked read-only per run so commands reuse the dep tree instead of reinstalling.
+- **Task cache** — a persist run whose inputs are unchanged (keyed by lockfile hash + working-tree hash + command) skips the sandbox entirely and replays the recorded output, so re-running an unchanged build/test/lint is near-instant. Default-on locally, off in CI (a fresh commit means ~0 hits) and under `--no-cache`. The capability probe is likewise cached across processes so each `virrun -- <cmd>` skips re-probing.
 - **Write-back persistence** — a normal `virrun -- <cmd>` flushes produced files to the host so disk matches native; the ephemeral fork stays for CI/verification. → [write-back.md](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/write-back.md)
 - **CLI (citty)** — `run` / `exec` / `snapshot` / `init` / `cache` subcommands with `--help`, the bare `virrun -- <cmd>` prefix preserved as the default.
 - **Config backend selection** — committed `virrun.config.json` picks the backend; the prefix stays the sole on/off switch (no allowlist).

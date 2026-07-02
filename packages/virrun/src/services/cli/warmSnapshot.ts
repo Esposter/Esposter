@@ -5,7 +5,6 @@ import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirr
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
-import process from "node:process";
 // Backs `virrun snapshot`. Forking the `true` no-op triggers the cold-path capture (Virrun.fork): cold installs and
 // Freezes the snapshot, warm reuses it — either way `true` exits 0, so the first real routed run pays nothing.
 export const warmSnapshot = async (): Promise<number> => {

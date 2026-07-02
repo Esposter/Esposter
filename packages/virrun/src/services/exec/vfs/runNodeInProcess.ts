@@ -7,7 +7,6 @@ import { createPlatformaticFsProvider } from "@/services/vfs/createPlatformaticF
 import { getResult, withFinalizer } from "@esposter/shared";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
-import process from "node:process";
 import { runInThisContext } from "node:vm";
 // Run a recognised node invocation in the current process instead of spawning a child, inside an overlay vfs
 // Mounted at the working dir so the module loader + core fs serve virtual files (falling through to real disk).

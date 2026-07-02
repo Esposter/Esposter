@@ -3,13 +3,13 @@ import { ExecutionMode } from "@/models/virrun/ExecutionMode";
 import { formatVirrunBanner } from "@/services/cli/formatVirrunBanner";
 import { formatVirrunProvisioning } from "@/services/cli/formatVirrunProvisioning";
 import { formatVirrunResult } from "@/services/cli/formatVirrunResult";
+import { getCommandNotFoundHint } from "@/services/cli/getCommandNotFoundHint";
 import { resolveBackend } from "@/services/configuration/resolveBackend";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { exhaustiveGuard, getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
 import { performance } from "node:perf_hooks";
-import process from "node:process";
 // Shared orchestration behind the passthrough commands: resolve config/backend, construct the sandbox, bracket the
 // Run with a banner + result line, propagate the child's exit code. All outcomes converge on the single
 // FormatVirrunResult write so timing is always reported and neither path duplicates it. Banner/result/provisioning
@@ -48,7 +48,10 @@ export const runVirrunCommand = async (
   const exitCode = result.match(
     ({ exitCode }) => exitCode,
     (error) => {
-      process.stderr.write(`${toAppError(error).message}\n`);
+      const message = toAppError(error).message;
+      // A bare package-script name (e.g. `virrun run typecheck`) reaches the backend as a missing executable; swap
+      // The raw sandbox-setup error for a hint that points at the working `virrun -- pnpm <script>` form.
+      process.stderr.write(`${getCommandNotFoundHint(command, message, process.cwd()) ?? message}\n`);
       return 1;
     },
   );

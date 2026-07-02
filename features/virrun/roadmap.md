@@ -1,9 +1,16 @@
 # virrun — Roadmap
 
-Open work only. Shipped features live in [README.md](README.md) `## Shipped`; the two non-negotiable gates (faster-than-native, differential-correct) live in README `## Gates`. Grep [out-of-scope/](out-of-scope) + [deferred/](deferred) before adding an item — decided ideas aren't re-argued.
+What to work on next. Shipped work lives in [README.md](README.md) `## Shipped`; decided ideas live in [out-of-scope/](out-of-scope) + [deferred/](deferred) — grep both before adding an item.
 
-## Now — speed & UX
+## Now
 
-Make the shipped Linux/WSL `os` path as fast and as useful as possible before broadening the isolation surface (the macOS bridge + Firecracker microVM backend are deferred → [deferred/additional-isolation-targets.md](deferred/additional-isolation-targets.md)).
+Nothing open on the shipped Linux/WSL `os` path. Promote one item from **Next** when its trigger fires.
 
-- [ ] **Task cache (skip unchanged builds)** — evaluate reusing the Turborepo cache vs a native content-hash cache; the biggest remaining dev-loop speed lever now that warm-fork + write-back are shipped.
+## Next
+
+Deferred until a trigger fires (each file states its own):
+
+- **Broaden the isolation surface** — macOS bridge (Linux VM) + Firecracker microVM backend. → [deferred/additional-isolation-targets.md](deferred/additional-isolation-targets.md)
+- **Snapshot upper on tmpfs** — warm forks read `node_modules` from RAM. → [deferred/snapshot-upper-tmpfs.md](deferred/snapshot-upper-tmpfs.md)
+- **Whole-repo routing** — one switch instead of per-command prefixing. → [deferred/whole-repo-routing.md](deferred/whole-repo-routing.md)
+- **WASM runtime backend** — zero host setup, no native addons. → [deferred/wasm-runtime.md](deferred/wasm-runtime.md)
