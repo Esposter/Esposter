@@ -5,6 +5,7 @@ import {
   VIRRUN_STORE_DIRECTORY_NAME,
 } from "@/services/exec/util/constants";
 import { TEST_DIR, TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(buildBwrapArgs, () => {
@@ -111,6 +112,21 @@ describe(buildBwrapArgs, () => {
     // The snapshot lower must stack after the source so its files shadow it, and both precede the upper.
     expect(snapshotLower).toBeGreaterThan(sourceLower);
     expect(args.indexOf("--tmp-overlay")).toBeGreaterThan(snapshotLower);
+  });
+
+  test("overlays a distinct sourceDir as the lower while mounting and chdiring at cwd", () => {
+    expect.hasAssertions();
+
+    const mirror = `${TEST_DIR}/${TEST_FILENAME}`;
+    const args = buildBwrapArgs("pwd", TEST_DIR, {}, {}, mirror);
+
+    // The source content comes from the mirror, but the overlay is mounted at — and the sandbox chdir's into — cwd,
+    // So pwd reports the logical path, not the mirror's.
+    expect(args).toStrictEqual(
+      expect.arrayContaining(["--overlay-src", mirror, "--tmp-overlay", TEST_DIR, "--chdir", TEST_DIR]),
+    );
+    // The lone source lower is the mirror, not cwd — otherwise pwd would leak the mirror path.
+    expect(takeOne(args, args.indexOf("--overlay-src") + 1)).toBe(mirror);
   });
 
   test("throws when only one of upperDir or workDir is supplied", () => {

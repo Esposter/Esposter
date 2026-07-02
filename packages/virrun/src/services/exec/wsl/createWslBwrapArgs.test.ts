@@ -7,9 +7,11 @@ import {
 } from "@/services/exec/wsl/constants.test";
 import { createWslBwrapArgs } from "@/services/exec/wsl/createWslBwrapArgs";
 import { describe, expect, test, vi } from "vitest";
-// The ext4 mirror path createWslBwrapArgs uses for --overlay-src/--chdir; distinct from the readWslPath translation
-// So the assertions prove the source lower comes from the mirror while bind/overlay dirs still translate via wslpath.
+// The ext4 mirror path createWslBwrapArgs uses for the --overlay-src source lower (fast reads), and the logical
+// /mnt/c path it mounts/chdir's into so pwd matches native. The assertions prove the two are decoupled: content comes
+// From the mirror, but the mountpoint is the wslpath-translated repo path.
 const TEST_WSL_MIRROR = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_SOURCES_DIRECTORY_NAME}`;
+const TEST_WSL_LOGICAL = `${TEST_WSL_PREFIX}${TEST_REPO_ROOT_WIN}`;
 
 vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
   readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
@@ -20,7 +22,7 @@ vi.mock(import("@/services/exec/wsl/ensureWslSourceMirror"), () => ({
 }));
 
 describe(createWslBwrapArgs, () => {
-  test("mirrors the source to ext4 for cwd and translates bind dirs before building the bubblewrap argv", () => {
+  test("sources reads from the ext4 mirror but mounts and chdirs at the logical repo path", () => {
     expect.hasAssertions();
 
     const wslBindDir = `${TEST_WSL_PREFIX}${TEST_PNPM_STORE_PATH_WIN}`;
@@ -41,12 +43,12 @@ describe(createWslBwrapArgs, () => {
       "--overlay-src",
       TEST_WSL_MIRROR,
       "--tmp-overlay",
-      TEST_WSL_MIRROR,
+      TEST_WSL_LOGICAL,
       "--bind",
       wslBindDir,
       wslBindDir,
       "--chdir",
-      TEST_WSL_MIRROR,
+      TEST_WSL_LOGICAL,
       "--",
       "/bin/sh",
       "-c",
@@ -66,7 +68,7 @@ describe(createWslBwrapArgs, () => {
         "--overlay",
         `${TEST_WSL_PREFIX}${upperDir}`,
         `${TEST_WSL_PREFIX}${workDir}`,
-        TEST_WSL_MIRROR,
+        TEST_WSL_LOGICAL,
       ]),
     );
     expect(args).not.toContain("--tmp-overlay");

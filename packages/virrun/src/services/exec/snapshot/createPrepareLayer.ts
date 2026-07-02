@@ -1,3 +1,4 @@
+import type { PrepareLocation } from "@/models/exec/snapshot/PrepareLocation";
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { PrepareStep } from "@/models/virrun/PrepareStep";
@@ -8,7 +9,6 @@ import {
 } from "@/services/exec/snapshot/constants";
 import { pruneToOutputs } from "@/services/exec/snapshot/pruneToOutputs";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
-import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
@@ -18,8 +18,15 @@ import { join } from "node:path";
 // The prepare command, keeps only the declared `outputs` (pruneToOutputs — the inverse of pruneSnapshotUpper), then
 // Atomically publishes via a per-pid temp + rename, the same barrier createSnapshot uses: a concurrent reader never
 // Sees a half-built upper, and a capturer that loses the rename race keeps the published one. On any failure only
-// This invocation's temps are torn down. Requires the deps snapshot to exist (the caller provisions it first).
-export const createPrepareLayer = (backend: ExecBackend, prepareStep: PrepareStep, options: ExecOptions): Promise<void> => {
+// This invocation's temps are torn down. Requires the deps snapshot to exist (the caller provisions it first). The
+// Publish target is the caller's already-resolved `location`, not a re-resolve: the layer is published to the exact
+// Path the caller will mount, so a source-hash shift between resolves can never leave the mounted upper unbuilt.
+export const createPrepareLayer = (
+  backend: ExecBackend,
+  prepareStep: PrepareStep,
+  options: ExecOptions,
+  { dir, upperDir }: PrepareLocation,
+): Promise<void> => {
   const depsLocation = resolveSnapshotLocation(options.cwd);
   if (!depsLocation.exists)
     throw new InvalidOperationError(
@@ -27,7 +34,6 @@ export const createPrepareLayer = (backend: ExecBackend, prepareStep: PrepareSte
       createPrepareLayer.name,
       "no captured deps snapshot to fork for the prepare layer; run createSnapshot first",
     );
-  const { dir, upperDir } = resolvePrepareLocation(options.cwd, prepareStep);
   // "" until created so the failure finalizer knows whether there is anything to tear down.
   let captureUpperDir = "";
   let captureWorkDir = "";

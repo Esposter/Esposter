@@ -62,7 +62,7 @@ describe(createPrepareLayer, () => {
 
     mkdirSync(resolveSnapshotLocation(repo).upperDir, { recursive: true });
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
-    await createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" });
+    await createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep));
 
     const { exists, upperDir } = resolvePrepareLocation(repo, prepareStep);
 
@@ -77,7 +77,7 @@ describe(createPrepareLayer, () => {
     const depsUpperDir = resolveSnapshotLocation(repo).upperDir;
     mkdirSync(depsUpperDir, { recursive: true });
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
-    await createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" });
+    await createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep));
 
     const { dir } = resolvePrepareLocation(repo, prepareStep);
     const { lowerDirs, upperDir, workDir } = backend.calls[0]?.overlayLayers ?? {};
@@ -92,7 +92,7 @@ describe(createPrepareLayer, () => {
 
     const backend = { ...createFakeBackend(0), name: BackendType.Os };
 
-    expect(() => createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" })).toThrow(
+    expect(() => createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep))).toThrow(
       new InvalidOperationError(
         Operation.Create,
         createPrepareLayer.name,
@@ -107,7 +107,7 @@ describe(createPrepareLayer, () => {
     mkdirSync(resolveSnapshotLocation(repo).upperDir, { recursive: true });
     const backend = { ...createFakeBackend(1), name: BackendType.Os };
 
-    await expect(createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" })).rejects.toThrow(
+    await expect(createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep))).rejects.toThrow(
       InvalidOperationError,
     );
     expect(resolvePrepareLocation(repo, prepareStep).exists).toBe(false);

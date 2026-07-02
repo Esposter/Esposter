@@ -24,6 +24,7 @@ import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
 import { withColorEnv } from "@/services/exec/util/withColorEnv";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { loadSource } from "@/services/source/loadSource";
+import { existsSync } from "node:fs";
 // "auto" resolves to native until vfs beats it on the gates.
 const backendFactories: Record<BackendType, () => ExecBackend> = {
   [BackendType.Auto]: createNativeBackend,
@@ -60,18 +61,21 @@ export const createVirrun = async ({
     if (!exists) await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
   };
   // Provision the source-keyed prepare layer (the framework's Linux-generated artifacts, e.g. .nuxt) once per source
-  // State, forked over the deps snapshot. Sweeps superseded entries so the cache stays pinned to the live source
-  // Hash. A no-op when there is no environment preset.
-  const ensurePrepareLayer = async (stdio: ExecStdio): Promise<void> => {
-    if (prepareStep === undefined) return;
-    const { exists, key } = resolvePrepareLocation(cwd, prepareStep);
-    pruneStalePrepareLayers(key);
-    if (!exists) await createPrepareLayer(execBackend, prepareStep, toInstallOptions(stdio));
+  // State, forked over the deps snapshot, and return the read-only lower(s) fork/persist stacks above the deps
+  // Snapshot so its fresh Linux artifacts shadow the host's copy (and, being last, shadow the deps lower and source
+  // Too). The location is resolved exactly once here and threaded into createPrepareLayer and the returned lower, so
+  // The path we guarantee exists is the path that gets mounted — never a second resolve that could key off a shifted
+  // Source hash and mount a layer that was never built. existsSync is re-read after the prune (not the location.exists
+  // Snapshot taken before it) so a layer the sweep reclaimed is rebuilt rather than assumed present. A no-op ([] ) when
+  // There is no environment preset.
+  const ensurePrepareLayer = async (stdio: ExecStdio): Promise<readonly string[]> => {
+    if (prepareStep === undefined) return [];
+    const location = resolvePrepareLocation(cwd, prepareStep);
+    pruneStalePrepareLayers(location.key);
+    if (!existsSync(location.upperDir))
+      await createPrepareLayer(execBackend, prepareStep, toInstallOptions(stdio), location);
+    return [location.upperDir];
   };
-  // The extra read-only lower a fork/persist stacks above the deps snapshot: the prepare layer's upper, so its
-  // Fresh Linux artifacts shadow the host's copy (and, being last, shadow the deps lower and source too).
-  const prepareLowerDirs = (): readonly string[] =>
-    prepareStep === undefined ? [] : [resolvePrepareLocation(cwd, prepareStep).upperDir];
   return {
     backend: execBackend.name,
     dispose,
@@ -83,8 +87,8 @@ export const createVirrun = async ({
       // Sandbox's own frozen dep tree (forkSnapshot) plus, when an environment is set, a source-keyed prepare layer
       // Holding the framework's Linux-generated artifacts (e.g. .nuxt) that shadow the host's platform-specific copy.
       await ensureSnapshot(stdio);
-      await ensurePrepareLayer(stdio);
-      return forkSnapshot(execBackend, command, toOptions(stdio), prepareLowerDirs());
+      const prepareLowerDirs = await ensurePrepareLayer(stdio);
+      return forkSnapshot(execBackend, command, toOptions(stdio), prepareLowerDirs);
     },
     persist: async (command, stdio = "pipe") => {
       // Other backends have no sandbox, so a plain exec writes straight to the host disk — nothing to flush.
@@ -93,8 +97,8 @@ export const createVirrun = async ({
       // Reconciles the command's writes onto the host, masking the prepare outputs (they are cache-owned, never
       // Flushed) and short-circuiting to a recorded result when the task cache holds the run.
       await ensureSnapshot(stdio);
-      await ensurePrepareLayer(stdio);
-      return persistWithCache(execBackend, command, toOptions(stdio), prepareLowerDirs(), prepareStep?.outputs ?? []);
+      const prepareLowerDirs = await ensurePrepareLayer(stdio);
+      return persistWithCache(execBackend, command, toOptions(stdio), prepareLowerDirs, prepareStep?.outputs ?? []);
     },
   };
 };

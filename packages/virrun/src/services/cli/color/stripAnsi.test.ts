@@ -1,4 +1,4 @@
-// oxlint-disable unicorn/no-hex-escape -- \x1b is the conventional, readable spelling of the ANSI ESC in the pattern
+// oxlint-disable no-control-regex, unicorn/no-hex-escape -- \x1b is the ANSI ESC this pattern matches, intentionally
 import { describe } from "vitest";
 // Shared test helper: drops every ANSI SGR sequence from a string so a format-function assertion checks the message
 // Content alone, independent of whether color is on (isColorEnabled reads the ambient terminal/env, which differs

@@ -22,14 +22,18 @@ export const createWslBwrapArgs = (
     overlayLayers,
   }: Pick<ExecOptions, "bindDirs" | "isNetworkEnabled" | "overlayLayers"> = {},
 ): string[] => {
-  // The working dir the sandbox chdir's into and overlays as the read-only source lower is the ext4 MIRROR, not the
-  // Raw /mnt/c path — ensureWslSourceMirror syncs the source there so those reads hit native ext4 instead of v9fs.
-  const wslDir = ensureWslSourceMirror(resolveCwd(cwd));
+  // Split the overlay's source from its mountpoint. The read-only source lower is the ext4 MIRROR (ensureWslSourceMirror
+  // Syncs the tree there so reads hit native ext4, not v9fs), but the sandbox mounts it at — and chdir's into — the
+  // Repo's logical /mnt/c path, so `pwd` and every absolute path a tool emits match the native baseline instead of
+  // Leaking the mirror's `/home/.../sources/<hash>` path (this is what the working-directory differential pins).
+  const mirrorDir = ensureWslSourceMirror(resolveCwd(cwd));
+  const logicalDir = readWslPath(resolveCwd(cwd));
   const wslBindDirs = bindDirs.map((bindDir) => readWslPath(bindDir));
   return buildBwrapArgs(
     command,
-    wslDir,
+    logicalDir,
     { bindDirs: wslBindDirs, isNetworkEnabled },
     overlayLayers === undefined ? undefined : readWslOverlayLayers(overlayLayers),
+    mirrorDir,
   );
 };
