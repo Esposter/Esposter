@@ -44,7 +44,7 @@ describe(ensureWslSourceMirror, () => {
     expect(file).toBe("wsl.exe");
     expect([takeOne(args ?? []), takeOne(args ?? [], 1), takeOne(args ?? [], 2)]).toStrictEqual(["--exec", "sh", "-c"]);
     expect(script).toBe(
-      `mkdir -p "${mirrorPath}" && flock "${mirrorPath}.lock" rsync -a --delete --exclude=node_modules --exclude=.git "${sourceLinux}/" "${mirrorPath}/"`,
+      `mkdir -p '${mirrorPath}' && flock '${mirrorPath}.lock' rsync -a --delete --exclude=node_modules --exclude=.git '${sourceLinux}/' '${mirrorPath}/'`,
     );
   });
 

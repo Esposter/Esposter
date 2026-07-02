@@ -6,16 +6,6 @@ export const VIRRUN_SNAPSHOTS_DIRECTORY_NAME = "snapshots";
 // Per-pid temps (`<name>.<pid>.tmp`) and renames the upper onto its final name as the atomic publish barrier.
 export const VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME = "upper";
 export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
-// Bumped whenever the capture *strategy* changes what a warm snapshot owns for a given lockfile — the source-lower
-// Composition, the prune rules, or the setup install command. The snapshot address is `<lockfile-hash>.v<this>`, so a
-// Bump orphans every snapshot captured under the old semantics (swept by `cache clean --all`) and forces a one-time
-// Re-capture, instead of silently forking a stale closure. Reason for v2: the win32 source lower became an ext4 mirror
-// That excludes node_modules (ensureWslSourceMirror), so a pre-mirror snapshot — captured with the host's win32-only
-// Node_modules as its base layer — no longer carries the Linux dependency closure the sandbox needs, and forking it
-// Leaked win32 native binaries (@esbuild/win32-x64, @typescript/native-preview-win32-x64) into the Linux sandbox.
-// See specs/platform-correct-snapshots.md. Deliberately a hand-set semantics token, not a source hash (which would
-// Churn the cache on unrelated edits).
-export const SNAPSHOT_SEMANTICS_VERSION = 2;
 // Pnpm's virtual-store dir name for a package with peer deps is truncated once it exceeds this length, replacing the
 // Peer chain with a hash — and pnpm's default is OS-dependent (60 on Windows, 120 elsewhere). On a win32 host the
 // Sandbox is a Linux guest, so its default (120) yields longer `.pnpm/<pkg>@<ver>_<hash>` dir names than the ones the

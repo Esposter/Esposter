@@ -1,9 +1,8 @@
-import { VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
-import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
+import { SOURCE_MIRROR_TIMEOUT_MS } from "@/services/exec/util/constants";
+import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
 import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
-import { createHash } from "node:crypto";
 // Before a win32 os run, incrementally sync the repo source onto a WSL-native ext4 mirror and return that mirror's
 // Linux path, so createWslBwrapArgs points `--overlay-src`/`--chdir` at ext4 instead of /mnt/c. The whole win32 os
 // Gap is that reads of the source lower cross v9fs (15-64x slower); the mirror moves them to native ext4 speed. The
@@ -23,17 +22,25 @@ import { createHash } from "node:crypto";
 // Mirror, and the mirror reproduces the host tree layout exactly so an upper entry's relative path maps back 1:1. A
 // Failed sync (rsync missing, ext4 full) aborts the run here — the os backend never falls back — surfaced ahead of
 // Time by `virrun doctor`.
+//
+// Paths are single-quoted before embedding in the sh -c script: double quotes still expand $(), backticks, and $VAR,
+// So a repo path or WSL home with shell metacharacters would otherwise be interpreted (CWE-78). Single quotes suppress
+// All expansion; an embedded `'` is closed, escaped, and reopened.
+const shellQuote = (value: string): string => `'${value.replaceAll("'", `'\\''`)}'`;
+
 export const ensureWslSourceMirror = (cwd: string): string => {
   const sourcePath = readWslPath(cwd);
-  const cacheRoot = readWslPath(getWslNativeCacheRoot());
-  const key = createHash("sha256").update(cwd).digest("hex");
-  const mirrorPath = `${cacheRoot}/${VIRRUN_SOURCES_DIRECTORY_NAME}/${key}`;
+  const mirrorPath = getWslSourceMirrorPath(cwd);
   const script = [
-    `mkdir -p "${mirrorPath}"`,
-    `flock "${mirrorPath}.lock" rsync -a --delete --exclude=node_modules --exclude=.git "${sourcePath}/" "${mirrorPath}/"`,
+    `mkdir -p ${shellQuote(mirrorPath)}`,
+    `flock ${shellQuote(`${mirrorPath}.lock`)} rsync -a --delete --exclude=node_modules --exclude=.git ${shellQuote(`${sourcePath}/`)} ${shellQuote(`${mirrorPath}/`)}`,
   ].join(" && ");
   return getResult(() =>
-    execFileSync("wsl.exe", ["--exec", "sh", "-c", script], { encoding: "utf8", stdio: "pipe" }),
+    execFileSync("wsl.exe", ["--exec", "sh", "-c", script], {
+      encoding: "utf8",
+      stdio: "pipe",
+      timeout: SOURCE_MIRROR_TIMEOUT_MS,
+    }),
   ).match(
     () => mirrorPath,
     (error) => {

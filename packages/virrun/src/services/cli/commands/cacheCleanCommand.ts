@@ -11,6 +11,7 @@ import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshot
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
 import { VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
+import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
 import { getResult, toAppError } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { join } from "node:path";
@@ -41,10 +42,14 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
         const tasksPath = join(getGlobalCacheDirectory(), VIRRUN_TASKS_DIRECTORY_NAME);
         removeSnapshotDirectory(tasksPath);
         process.stderr.write(`${formatVirrunLine(`removed ${colorize(tasksPath, Color.Red)}`)}\n`);
-        // The win32 ext4 source mirrors (absent off win32, so a harmless no-op there).
-        const sourcesPath = join(getGlobalCacheDirectory(), VIRRUN_SOURCES_DIRECTORY_NAME);
-        removeSnapshotDirectory(sourcesPath);
-        process.stderr.write(`${formatVirrunLine(`removed ${colorize(sourcesPath, Color.Red)}`)}\n`);
+        // The win32 ext4 source mirrors live under the WSL-native cache root (ensureWslSourceMirror ignores the
+        // VIRRUN_CACHE_HOME override to stay on ext4), so clean from there — not getGlobalCacheDirectory. Absent off
+        // win32, where the source is read in place and never mirrored.
+        if (process.platform === "win32") {
+          const sourcesPath = join(getWslNativeCacheRoot(), VIRRUN_SOURCES_DIRECTORY_NAME);
+          removeSnapshotDirectory(sourcesPath);
+          process.stderr.write(`${formatVirrunLine(`removed ${colorize(sourcesPath, Color.Red)}`)}\n`);
+        }
       }
     }).match(
       () => undefined,

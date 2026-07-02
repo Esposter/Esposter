@@ -128,7 +128,7 @@ Correctness is proven by **equivalence tests** (native vs `virrun --`, diffing t
 
 ## CLI output palette
 
-Every stderr diagnostic goes through one helper, `formatVirrunLine(message)` (`services/cli/formatVirrunLine.ts`), which prepends the bold-cyan `[virrun]` tag — the tag's text + styling live in exactly one place, and command writes are colorized identically to the `format*` helpers instead of hardcoding a plain tag. `colorize` is a no-op when color is off (a pipe, `NO_COLOR`, vitest), so lines degrade to plain text and the format tests still assert plain strings.
+Every stderr diagnostic goes through one helper, `formatVirrunLine(message)` (`services/cli/format/formatVirrunLine.ts`), which prepends the bold-cyan `[virrun]` tag — the tag's text + styling live in exactly one place, and command writes are colorized identically to the `format*` helpers instead of hardcoding a plain tag. `colorize` is a no-op when color is off (a pipe, `NO_COLOR`, vitest), so lines degrade to plain text and the format tests still assert plain strings.
 
 The semantic color vocabulary is decided once, on the `Color` enum (`models/cli/Color.ts`) — call sites pick by meaning, not by eye:
 

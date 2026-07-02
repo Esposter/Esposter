@@ -59,15 +59,7 @@ const probeWslNode = (): DiagnosticCheck => {
       status: DiagnosticStatus.NotApplicable,
       type,
     };
-  const nodePath = getResult(() =>
-    execFileSync(...resolveHostCommand("sh", ["-c", buildWslLoginShellCommand("command -v node")]), {
-      encoding: "utf8",
-      stdio: "pipe",
-      timeout: PROBE_TIMEOUT_MS,
-    }),
-  )
-    .map((stdout) => stdout.trim())
-    .unwrapOr("");
+  const nodePath = readProbeOutput("sh", ["-c", buildWslLoginShellCommand("command -v node")]) ?? "";
   return nodePath === ""
     ? {
         fix: "install node inside your default WSL2 distro (e.g. via fnm/nvm)",

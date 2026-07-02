@@ -1,6 +1,5 @@
 import { computeLockfileHash } from "@/services/exec/snapshot/computeLockfileHash";
 import {
-  SNAPSHOT_SEMANTICS_VERSION,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
 } from "@/services/exec/snapshot/constants";
@@ -25,14 +24,13 @@ describe(resolveSnapshotLocation, () => {
     cleanup();
   });
 
-  test("addresses the snapshot in the global cache under snapshots/<lockfile-hash>.v<version> with its upper dir", () => {
+  test("addresses the snapshot in the global cache under snapshots/<lockfile-hash> with its upper dir", () => {
     expect.hasAssertions();
 
     const dir = createWorkspace();
     const { dir: snapshotDir, hash, upperDir } = resolveSnapshotLocation(dir);
-    const expectedDir = join(cacheHome, VIRRUN_SNAPSHOTS_DIRECTORY_NAME, `${hash}.v${SNAPSHOT_SEMANTICS_VERSION}`);
+    const expectedDir = join(cacheHome, VIRRUN_SNAPSHOTS_DIRECTORY_NAME, hash);
 
-    // `hash` stays the raw lockfile sha for the diagnostic; the semantics version lives only in the on-disk address.
     expect(hash).toBe(computeLockfileHash(dir));
     expect(snapshotDir).toBe(expectedDir);
     expect(upperDir).toBe(join(expectedDir, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME));

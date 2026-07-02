@@ -13,6 +13,9 @@ export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";
 // The dependency-closure dir. The persist flush must never leak it: it comes from the snapshot lower, and writes
 // Into it (e.g. node_modules/.vite) must not reach the host.
 export const NODE_MODULES_DIRECTORY = "node_modules";
+// The dir pnpm/npm link executables into; prepended to the sandbox PATH so a bare command resolves the overlaid
+// (current-platform) binary ahead of any host `.bin` the WSL login PATH leaks in. See createOsExecOptions.
+export const NODE_MODULES_BIN_DIRECTORY: string = `${NODE_MODULES_DIRECTORY}/.bin`;
 // Repo-root config selecting which backend a sandboxed command runs through; absent means auto (native today).
 export const VIRRUN_CONFIGURATION_FILENAME = "virrun.config.json";
 // Resolved from the consumer's installed package so editors render the config's field docs on hover.
@@ -50,6 +53,11 @@ export const CI_ENV_VALUE = "true";
 // Are sub-second on a healthy host; a corrupt/unresponsive WSL distro can hang execFileSync forever, so the cap lets
 // The probe fail (degrade to unsupported) instead of blocking the whole CLI.
 export const PROBE_TIMEOUT_MS: number = dayjs.duration(10, "seconds").asMilliseconds();
+
+// Upper bound for the win32 source-mirror rsync (ensureWslSourceMirror). Generous — the first cold materialize reads
+// The whole source lower across v9fs (15-64x slower) — but bounded so a stalled ext4 volume or hung flock aborts the
+// Run instead of hanging the CLI forever.
+export const SOURCE_MIRROR_TIMEOUT_MS: number = dayjs.duration(5, "minutes").asMilliseconds();
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";
 // The host cache dir acceptance corpora/snapshots stage into, under $HOME never os.tmpdir (see createWorkspaceCorpus).
