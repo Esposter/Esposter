@@ -3,7 +3,7 @@ import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { probeOsBackendSupported } from "@/services/exec/os/probeOsBackendSupported";
 import { describe, expect, test } from "vitest";
 
-// isOsBackendSupported layers a nesting guard + in-process memo + persisted cache over the raw host probe, so derive
+// IsOsBackendSupported layers a nesting guard + in-process memo + persisted cache over the raw host probe, so derive
 // The expected verdict from the SAME two inputs the wrapper reads — the raw overlay probe and the VIRRUN nesting
 // Signal. The two assertions are complementary (exactly one runs per environment: a capable un-nested dev box, a bare
 // CI runner, a WSL2 build without overlayfs, or a nested `virrun -- vitest`), which pins the wrapper against the probe

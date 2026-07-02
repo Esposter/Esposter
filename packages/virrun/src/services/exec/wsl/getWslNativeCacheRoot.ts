@@ -1,4 +1,5 @@
 import {
+  PROBE_TIMEOUT_MS,
   VIRRUN_CACHE_DIRECTORY_NAME,
   VIRRUN_FORCE_PROBE_KEY,
   WSL_CACHE_ROOT_CACHE_FILENAME,
@@ -32,7 +33,9 @@ export const getWslNativeCacheRoot = (): string => {
   }
   // `wsl.exe -l -q` lists installed distros (default first) as UTF-16LE; the first non-empty line is the distro
   // `wsl.exe --exec` runs commands in, so its `$HOME` is the matching home directory.
-  const distro = getResult(() => execFileSync("wsl.exe", ["-l", "-q"], { encoding: "utf16le", stdio: "pipe" }))
+  const distro = getResult(() =>
+    execFileSync("wsl.exe", ["-l", "-q"], { encoding: "utf16le", stdio: "pipe", timeout: PROBE_TIMEOUT_MS }),
+  )
     .map(
       (output) =>
         output
@@ -42,7 +45,11 @@ export const getWslNativeCacheRoot = (): string => {
     )
     .unwrapOr("");
   const home = getResult(() =>
-    execFileSync("wsl.exe", ["--exec", "sh", "-c", "echo $HOME"], { encoding: "utf8", stdio: "pipe" }),
+    execFileSync("wsl.exe", ["--exec", "sh", "-c", "echo $HOME"], {
+      encoding: "utf8",
+      stdio: "pipe",
+      timeout: PROBE_TIMEOUT_MS,
+    }),
   )
     .map((output) => output.trim())
     .unwrapOr("");

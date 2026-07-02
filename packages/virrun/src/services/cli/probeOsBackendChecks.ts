@@ -4,6 +4,7 @@ import { DiagnosticCheckType } from "@/models/cli/DiagnosticCheckType";
 import { DiagnosticStatus } from "@/models/cli/DiagnosticStatus";
 import { isVersionAtLeast } from "@/services/cli/isVersionAtLeast";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
+import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
@@ -16,7 +17,9 @@ const resolveHostCommand = (file: string, args: readonly string[]): [string, str
 // Run a probe command on the host (via resolveHostCommand) and return trimmed stdout, or null when the command is
 // Absent or errors (getResult swallows the throw; a missing tool has no partial result to report).
 const readProbeOutput = (file: string, args: readonly string[]): null | string =>
-  getResult(() => execFileSync(...resolveHostCommand(file, args), { encoding: "utf8", stdio: "pipe" }))
+  getResult(() =>
+    execFileSync(...resolveHostCommand(file, args), { encoding: "utf8", stdio: "pipe", timeout: PROBE_TIMEOUT_MS }),
+  )
     .map((stdout) => stdout.trim())
     .unwrapOr(null);
 
@@ -60,6 +63,7 @@ const probeWslNode = (): DiagnosticCheck => {
     execFileSync(...resolveHostCommand("sh", ["-c", buildWslLoginShellCommand("command -v node")]), {
       encoding: "utf8",
       stdio: "pipe",
+      timeout: PROBE_TIMEOUT_MS,
     }),
   )
     .map((stdout) => stdout.trim())

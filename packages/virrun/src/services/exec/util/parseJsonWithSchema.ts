@@ -1,6 +1,5 @@
-import type { z } from "zod";
-
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
+import { z } from "zod";
 // Parse untrusted JSON text (a probe's stdout, an on-disk cache/manifest file) into a typed value in one step:
 // JSON-parse then zod-validate inside a single getResult, throwing an InvalidOperationError named for the caller when
 // The content is missing, malformed, or an unexpected shape — so garbage surfaces as a diagnosed read failure rather
@@ -14,6 +13,11 @@ export const parseJsonWithSchema = <TSchema extends z.ZodType>(
   getResult(() => schema.parse(JSON.parse(json))).match(
     (value) => value,
     (error) => {
-      throw new InvalidOperationError(Operation.Read, name, error instanceof Error ? error.message : String(error));
+      // getResult preserves the thrown value when it is an Error (toAppError returns Error instances as-is), and
+      // ZodError extends Error — so a schema failure is still a ZodError here. z.prettifyError turns it into a
+      // readable multi-line message; other errors fall back to their own message.
+      const message =
+        error instanceof z.ZodError ? z.prettifyError(error) : error instanceof Error ? error.message : String(error);
+      throw new InvalidOperationError(Operation.Read, name, message);
     },
   );

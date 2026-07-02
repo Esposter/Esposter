@@ -1,4 +1,5 @@
 import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
+import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { getResult, withFinalizer } from "@esposter/shared";
 import { execFileSync } from "node:child_process";
 // Whether this host can actually SET UP the overlay sandbox — not merely whether bwrap is on PATH. A `command -v
@@ -19,12 +20,16 @@ import { execFileSync } from "node:child_process";
 export const probeOsBackendSupported = (): boolean => {
   switch (process.platform) {
     case "linux":
-      return getResult(() => execFileSync("bwrap", buildBwrapArgs(["true"], process.cwd()), { stdio: "pipe" })).match(
+      return getResult(() =>
+        execFileSync("bwrap", buildBwrapArgs(["true"], process.cwd()), { stdio: "pipe", timeout: PROBE_TIMEOUT_MS }),
+      ).match(
         () => true,
         () => false,
       );
     case "win32":
-      return getResult(() => execFileSync("wsl.exe", ["--exec", "mktemp", "-d"], { stdio: "pipe" }))
+      return getResult(() =>
+        execFileSync("wsl.exe", ["--exec", "mktemp", "-d"], { stdio: "pipe", timeout: PROBE_TIMEOUT_MS }),
+      )
         .map((stdout) => stdout.toString().trim())
         .andThen((wslDir) =>
           getResult(() =>
@@ -32,11 +37,15 @@ export const probeOsBackendSupported = (): boolean => {
               () =>
                 execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], {
                   stdio: "pipe",
+                  timeout: PROBE_TIMEOUT_MS,
                 }),
               () => {
-                getResult(() => execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], { stdio: "pipe" })).unwrapOr(
-                  undefined,
-                );
+                getResult(() =>
+                  execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], {
+                    stdio: "pipe",
+                    timeout: PROBE_TIMEOUT_MS,
+                  }),
+                ).unwrapOr(undefined);
               },
             ),
           ),
