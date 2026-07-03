@@ -1,14 +1,14 @@
 import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { createLease } from "@/services/exec/snapshot/createLease";
+import { DEAD_PID } from "@/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { writeLeaseFile } from "@/services/exec/test/writeLeaseFile.test";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(createLease, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  // A pid far above any real one, so a pre-existing lease reads as a dead owner's corpse.
-  const DEAD_PID = 2 ** 30;
   let hashDir = "";
   const leaseFileFor = (pid: number): string => join(hashDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, String(pid));
 
@@ -31,10 +31,7 @@ describe(createLease, () => {
   test(`self-heals a dead lease left in the live dir`, () => {
     expect.hasAssertions();
 
-    const leasesDir = join(hashDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME);
-    mkdirSync(leasesDir, { recursive: true });
-    const deadLease = leaseFileFor(DEAD_PID);
-    writeFileSync(deadLease, "");
+    const deadLease = writeLeaseFile(join(hashDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME), DEAD_PID);
 
     createLease(hashDir);
 

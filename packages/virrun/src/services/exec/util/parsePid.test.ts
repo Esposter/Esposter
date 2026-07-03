@@ -1,15 +1,13 @@
+import { PID } from "@/services/exec/test/constants.test";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { parsePid } from "@/services/exec/util/parsePid";
 import { describe, expect, test } from "vitest";
 
 describe(parsePid, () => {
-  const PID = 1234;
-  // Stands in for the tail after the pid; irrelevant to the parse.
-  const MKDTEMP_SUFFIX = "test";
-
   test(`reads the leading pid from a temp owner segment`, () => {
     expect.hasAssertions();
 
-    expect(parsePid(`${PID}.${MKDTEMP_SUFFIX}`)).toBe(PID);
+    expect(parsePid(`${PID}.${TEST_FILENAME}`)).toBe(PID);
   });
 
   test(`reads a bare pid lease name`, () => {
@@ -21,6 +19,6 @@ describe(parsePid, () => {
   test(`returns undefined for a non-integer name`, () => {
     expect.hasAssertions();
 
-    expect(parsePid(MKDTEMP_SUFFIX)).toBeUndefined();
+    expect(parsePid(TEST_FILENAME)).toBeUndefined();
   });
 });

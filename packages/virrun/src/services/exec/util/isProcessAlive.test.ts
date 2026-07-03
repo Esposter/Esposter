@@ -1,10 +1,8 @@
+import { DEAD_PID } from "@/services/exec/test/constants.test";
 import { isProcessAlive } from "@/services/exec/util/isProcessAlive";
 import { describe, expect, test } from "vitest";
 
 describe(isProcessAlive, () => {
-  // A pid far above any real one, so the OS reports no such process (ESRCH).
-  const DEAD_PID = 2 ** 30;
-
   test(`the current process reads as alive`, () => {
     expect.hasAssertions();
 

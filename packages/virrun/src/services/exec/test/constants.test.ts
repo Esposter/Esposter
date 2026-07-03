@@ -1,6 +1,11 @@
 /* oxlint-disable no-inferrable-types */
 import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { describe } from "vitest";
+// A pid far above any real one, so the OS reports no such process (ESRCH) — the shared "this owner is dead" sentinel
+// Every lease/temp reaping test seeds a hard-killed run's corpse with (process.pid is the live-runner counterpart).
+export const DEAD_PID: number = 2 ** 30;
+// A valid, in-range pid the parse helpers read back out of a temp/lease name.
+export const PID = 0;
 // Shared fixtures for the heavy, host-gated acceptance tests (os-backend install + snapshot warm-fork).
 // `pnpm install` materialises a per-package node_modules under each child, so every `packages/<pkg>` becomes a
 // Snapshot-lower path even though it is real source the flush must keep.

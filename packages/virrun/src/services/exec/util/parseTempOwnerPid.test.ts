@@ -4,26 +4,24 @@ import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
 } from "@/services/exec/snapshot/constants";
+import { PID } from "@/services/exec/test/constants.test";
 import { parseTempOwnerPid } from "@/services/exec/util/parseTempOwnerPid";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { describe, expect, test } from "vitest";
 
 describe(parseTempOwnerPid, () => {
-  const PID = 1234;
-  // Stands in for the tail mkdtempSync appends after the pid-tagged prefix; its value is irrelevant to the parse.
-  const MKDTEMP_SUFFIX = "test";
-
   test(`reads the owner pid from a capture temp`, () => {
     expect.hasAssertions();
 
     expect(
       parseTempOwnerPid(
-        `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${PID}.${MKDTEMP_SUFFIX}`,
+        `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${PID}.${TEST_FILENAME}`,
         VIRRUN_SNAPSHOT_TEMP_PREFIXES,
       ),
     ).toBe(PID);
     expect(
       parseTempOwnerPid(
-        `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.${PID}.${MKDTEMP_SUFFIX}`,
+        `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.${PID}.${TEST_FILENAME}`,
         VIRRUN_SNAPSHOT_TEMP_PREFIXES,
       ),
     ).toBe(PID);
@@ -34,13 +32,13 @@ describe(parseTempOwnerPid, () => {
 
     expect(
       parseTempOwnerPid(
-        `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.${PID}.${MKDTEMP_SUFFIX}`,
+        `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.${PID}.${TEST_FILENAME}`,
         VIRRUN_SNAPSHOT_TEMP_PREFIXES,
       ),
     ).toBe(PID);
     expect(
       parseTempOwnerPid(
-        `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.${PID}.${MKDTEMP_SUFFIX}`,
+        `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.${PID}.${TEST_FILENAME}`,
         VIRRUN_SNAPSHOT_TEMP_PREFIXES,
       ),
     ).toBe(PID);
@@ -52,7 +50,7 @@ describe(parseTempOwnerPid, () => {
     expect(parseTempOwnerPid(VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME, VIRRUN_SNAPSHOT_TEMP_PREFIXES)).toBeUndefined();
     expect(parseTempOwnerPid(VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME, VIRRUN_SNAPSHOT_TEMP_PREFIXES)).toBeUndefined();
     expect(
-      parseTempOwnerPid(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${MKDTEMP_SUFFIX}`, VIRRUN_SNAPSHOT_TEMP_PREFIXES),
+      parseTempOwnerPid(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${TEST_FILENAME}`, VIRRUN_SNAPSHOT_TEMP_PREFIXES),
     ).toBeUndefined();
     expect(parseTempOwnerPid(VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, VIRRUN_SNAPSHOT_TEMP_PREFIXES)).toBeUndefined();
   });

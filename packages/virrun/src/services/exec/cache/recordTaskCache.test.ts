@@ -2,8 +2,10 @@ import { TASK_CACHE_TEMP_PREFIX, VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/
 import { recordTaskCache } from "@/services/exec/cache/recordTaskCache";
 import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCacheLocation";
 import { applyFlushPlan } from "@/services/exec/snapshot/applyFlushPlan";
+import { DEAD_PID } from "@/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -13,16 +15,12 @@ vi.mock(import("@/services/exec/snapshot/applyFlushPlan"), () => ({ applyFlushPl
 
 describe(recordTaskCache, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  // A pid far above any real one, so a stranded temp reads as a hard-killed recorder's corpse.
-  const DEAD_PID = 2 ** 30;
   // Content-hash-shaped key the entry publishes under.
   const KEY = "0";
-  // Stands in for the tail mkdtempSync appends; irrelevant to the reap.
-  const MKDTEMP_SUFFIX = "test";
   let cacheHome = "";
   const tasksRoot = (): string => join(cacheHome, VIRRUN_TASKS_DIRECTORY_NAME);
   const seedTemp = (pid: number): string => {
-    const dir = join(tasksRoot(), `${TASK_CACHE_TEMP_PREFIX}${pid}.${MKDTEMP_SUFFIX}`);
+    const dir = join(tasksRoot(), `${TASK_CACHE_TEMP_PREFIX}${pid}.${TEST_FILENAME}`);
     mkdirSync(dir, { recursive: true });
     return dir;
   };

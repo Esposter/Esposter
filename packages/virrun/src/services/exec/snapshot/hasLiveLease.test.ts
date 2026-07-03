@@ -1,22 +1,17 @@
 import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { hasLiveLease } from "@/services/exec/snapshot/hasLiveLease";
+import { DEAD_PID } from "@/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { writeLeaseFile } from "@/services/exec/test/writeLeaseFile.test";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(hasLiveLease, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  // A pid far above any real one, so its owner reads as dead (ESRCH).
-  const DEAD_PID = 2 ** 30;
   let hashDir = "";
-  const seedLease = (pid: number): string => {
-    const leasesDir = join(hashDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME);
-    mkdirSync(leasesDir, { recursive: true });
-    const file = join(leasesDir, String(pid));
-    writeFileSync(file, "");
-    return file;
-  };
+  const seedLease = (pid: number): string =>
+    writeLeaseFile(join(hashDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME), pid);
 
   beforeEach(() => {
     hashDir = create();
