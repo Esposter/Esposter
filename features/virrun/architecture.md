@@ -141,7 +141,7 @@ flowchart TB
 
     subgraph next["next run — off the critical path, best-effort"]
         prune["pruneStale* → sweepStaleEntries<br/>evict non-current hash/key dirs"]
-        reap["reapStaleTemps → sweepStaleEntries<br/>remove upper./work./virrun-temp- corpses"]
+        reap["reapStaleTemps → sweepStaleEntries<br/>remove upper./work. corpses in the live hash dir"]
         orphan["reapOrphanedWslRuns<br/>group-kill trees reparented off the Relay"]
     end
 
