@@ -11,7 +11,7 @@ import { pruneToOutputs } from "@/services/exec/snapshot/pruneToOutputs";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
-import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
 import { join } from "node:path";
 // Captures a framework's generated artifacts into the source-keyed prepare layer. Forks the deps snapshot as a
@@ -57,7 +57,7 @@ export const createPrepareLayer = (
     getResult(() => {
       renameSync(captureUpperDir, upperDir);
     }).match(
-      () => undefined,
+      noop,
       (error) => {
         if (!existsSync(upperDir)) throw error;
         removeSnapshotDirectory(captureUpperDir);
@@ -65,7 +65,7 @@ export const createPrepareLayer = (
     );
     removeSnapshotDirectory(captureWorkDir);
   }).match(
-    () => undefined,
+    noop,
     (error) => {
       if (captureUpperDir) removeSnapshotDirectory(captureUpperDir);
       if (captureWorkDir) removeSnapshotDirectory(captureWorkDir);

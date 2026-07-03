@@ -1,6 +1,6 @@
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { getAcceptanceCacheHome } from "@/services/exec/test/getAcceptanceCacheHome";
-import { getResult } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 import { existsSync, rmSync } from "node:fs";
 // Cleans the warm snapshot the heavy acceptance/equivalence tests share. They capture it lazily (ensureWarmSnapshot)
 // Into one cache home, so no single file can own removing it. Setup is a no-op: capturing here would force a full
@@ -18,9 +18,6 @@ export default function setup(): () => void {
     getResult(() => {
       removeSnapshotDirectory(acceptanceCacheHome);
       rmSync(acceptanceCacheHome, { force: true, recursive: true });
-    }).match(
-      () => undefined,
-      () => undefined,
-    );
+    }).match(noop, noop);
   };
 }
