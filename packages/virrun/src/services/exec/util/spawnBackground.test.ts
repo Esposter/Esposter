@@ -37,6 +37,6 @@ describe(spawnBackground, () => {
     spawnBackground("wsl.exe", []);
 
     expect(child.on).toHaveBeenCalledWith("error", expect.any(Function));
-    expect(child.unref).toHaveBeenCalledOnceWith();
+    expect(child.unref).toHaveBeenCalledExactlyOnceWith();
   });
 });

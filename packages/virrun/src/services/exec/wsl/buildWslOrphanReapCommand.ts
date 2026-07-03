@@ -6,13 +6,15 @@
 // By the `wsl.exe` `Relay(<pid>)` process; once its client dies the shell is reparented to init, so a non-`Relay`
 // Parent means orphaned. That never matches a concurrent live run, so no TTL and no risk to another dev's build.
 // `self=$$` excludes this reaper's own shell (its `-c` text also carries the marker); TERM (not KILL) lets bwrap
-// Unwind. Every lookup is `2>/dev/null`-guarded so a process that exits mid-scan is silently skipped.
+// Unwind. Every lookup is `2>/dev/null`-guarded so a process that exits mid-scan is silently skipped; an unreadable
+// Ppid (transient stat race on a still-live pid) fails *closed* — skip rather than kill an unconfirmed process.
 export const buildWslOrphanReapCommand = (marker: string): [string, ...string[]] => {
   const script = [
     "self=$$",
     `for pid in $(pgrep -f "${marker}" 2>/dev/null); do`,
     '  [ "$pid" = "$self" ] && continue',
     '  ppid=$(cut -d" " -f4 /proc/"$pid"/stat 2>/dev/null)',
+    '  [ -z "$ppid" ] && continue',
     '  case "$(cat /proc/"$ppid"/comm 2>/dev/null)" in Relay*) continue;; esac',
     '  pgid=$(ps -o pgid= -p "$pid" 2>/dev/null | tr -d " ")',
     '  [ -n "$pgid" ] && kill -TERM "-$pgid" 2>/dev/null',

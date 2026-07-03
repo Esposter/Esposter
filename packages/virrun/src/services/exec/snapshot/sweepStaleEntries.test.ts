@@ -1,5 +1,6 @@
 import { sweepStaleEntries } from "@/services/exec/snapshot/sweepStaleEntries";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
@@ -26,7 +27,7 @@ describe(sweepStaleEntries, () => {
     expect.hasAssertions();
 
     const stale = seedDirectory(" ");
-    const live = seedDirectory("");
+    const live = seedDirectory(TEST_FILENAME);
 
     sweepStaleEntries(dir, isStale);
 

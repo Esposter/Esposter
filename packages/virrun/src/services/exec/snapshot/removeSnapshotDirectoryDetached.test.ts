@@ -59,6 +59,6 @@ describe(removeSnapshotDirectoryDetached, () => {
       { stdio: "ignore", windowsHide: true },
     );
     expect(child.on).toHaveBeenCalledWith("error", expect.any(Function));
-    expect(child.unref).toHaveBeenCalledOnceWith();
+    expect(child.unref).toHaveBeenCalledExactlyOnceWith();
   });
 });
