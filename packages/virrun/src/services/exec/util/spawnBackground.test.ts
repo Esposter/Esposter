@@ -1,7 +1,6 @@
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
 import { spawnBackground } from "@/services/exec/util/spawnBackground";
-import { takeOne } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
@@ -22,13 +21,12 @@ describe(spawnBackground, () => {
     spawnBackground("wsl.exe", ["--exec", "true"]);
 
     // The regression this guards: `detached` makes win32 ignore windowsHide and flash an empty console
-    // (nodejs#21825), so the options must be exactly stdio-ignore + windowsHide with no detach flag.
+    // (nodejs#21825). toHaveBeenCalledExactlyOnceWith matches the options object exactly, so this fails if a
+    // `detached` (or any other) key is ever reintroduced — the shape must stay stdio-ignore + windowsHide.
     expect(spawn).toHaveBeenCalledExactlyOnceWith("wsl.exe", ["--exec", "true"], {
       stdio: "ignore",
       windowsHide: true,
     });
-    const [, , options] = takeOne(spawn.mock.calls, 0);
-    expect(options).not.toHaveProperty("detached");
   });
 
   test("swallows the async error and unrefs so the parent can exit while it runs", () => {

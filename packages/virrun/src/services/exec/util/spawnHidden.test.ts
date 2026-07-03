@@ -1,7 +1,6 @@
-import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
+import type { spawn as baseSpawn } from "node:child_process";
 
 import { spawnHidden } from "@/services/exec/util/spawnHidden";
-import { takeOne } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
@@ -29,7 +28,7 @@ describe(spawnHidden, () => {
 
     spawnHidden(file, args, { stdio: "ignore", windowsHide: false });
 
-    const [, , options] = takeOne(spawn.mock.calls, 0);
-    expect(options?.windowsHide).toBe(true);
+    // Spread last, windowsHide overrides the caller's false — the exact-match proves the window stays hidden.
+    expect(spawn).toHaveBeenCalledExactlyOnceWith(file, args, { stdio: "ignore", windowsHide: true });
   });
 });
