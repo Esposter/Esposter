@@ -119,7 +119,7 @@ catalog:
   better-auth: ^1.6.23
   citty: ^0.2.2
   codemirror: ^6.0.2
-  crossws: ^0.4.8
+  crossws: ^0.4.9
   ctix: ^2.8.1
   data-urls: ^7.0.0
   dayjs: ^1.11.21
@@ -253,7 +253,7 @@ minimumReleaseAge: 0
 nodeOptions: --max-old-space-size=8192
 
 overrides:
-  crossws: ^0.4.8
+  crossws: ^0.4.9
   h3: ^1.15.11
   pdfjs-dist: ^6.1.200
   vite: ^8.1.3

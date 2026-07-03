@@ -13,7 +13,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // The flush machinery walks real overlay internals via a python seam (Linux-only), so the host-parity assertions live
 // In persistRun.equivalence.test. This unit test locks the orchestration contract on any OS: the host flush runs on
 // EVERY exit code (native-equivalence — a failed eslint --fix still wrote real files), while the task-cache record
-// (onPersist) fires only on a clean exit. A regression to the old all-or-nothing gate flips both assertions.
+// (onPersist) fires only on a clean exit. An all-or-nothing gate coupling both to one exit-code check flips one of
+// These assertions.
 vi.mock(import("@/services/exec/snapshot/resolveSnapshotLocation"), () => ({
   resolveSnapshotLocation: vi.fn<typeof resolveSnapshotLocation>(),
 }));

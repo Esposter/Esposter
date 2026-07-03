@@ -26,8 +26,20 @@ The `os` backend keys a warm post-install snapshot by the pnpm lockfile hash and
 
 In CI this directory is persisted across runs with `actions/cache`, mirroring the repo's `build-packages` content-hash cache:
 
-- A reusable **`warm-snapshot.yaml`** job captures the snapshot **once** per run (`virrun -- true`, cold path = install) and the `actions/cache` entry — keyed by `hashFiles('pnpm-lock.yaml')` — persists `~/.virrun/snapshots` for this run and every later run.
+- A reusable **`warm-snapshot.yaml`** job captures the snapshot **once** per run (via `virrun snapshot`, the purpose-built warm-up — cold path = install) and the `actions/cache` entry — keyed by `hashFiles('pnpm-lock.yaml')` — persists `~/.virrun/snapshots` for this run and every later run.
 - The `format` / `lint` / `typecheck` / `build` / `build-docs` jobs `needs: [build-packages, warm-snapshot]` and restore that cache read-only, so each `virrun -- <cmd>` forks the warm snapshot instead of cold-installing. One install per run, reused across runs. (`build` / `build-docs` route the Nuxt + TypeDoc builds through the prefix now that write-back flushes produced files to host — see [write-back.md](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/write-back.md).)
+
+## Prepare layer cache
+
+With an `environment` preset set (`virrun.config.json` selects `nuxt`), every os-backend fork also provisions a source-keyed [prepare layer](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/config-and-cache.md) at `~/.virrun/prepare/<key>` — the framework's Linux-generated `.nuxt`, regenerated via `nuxt prepare`. Left alone, all six os-backend jobs (`warm-snapshot` + the five consumers) would each re-run `nuxt prepare` on their own runner.
+
+The same `warm-snapshot.yaml` job captures it once and `actions/cache` persists it, exactly like the snapshot — with one difference in the **key**:
+
+- The snapshot is keyed by the lockfile, but the prepare layer is keyed by `lockfile + source-tree hash + prepare step`, so it changes on **every source edit**, not just a dependency bump. Its `actions/cache` key is therefore `github.sha` (unique per commit, stable across the jobs of one run), not the lockfile. On a clean CI checkout the source-tree hash reduces to the HEAD tree — `git ls-files --others --exclude-standard` excludes the gitignored `dist`/barrel artifacts — so every job in a run computes the identical prepare key and forks the one captured layer.
+- Because the layer is SHA-keyed, a **code-only commit** (deps unchanged) is a snapshot _hit_ but a prepare _miss_: `virrun snapshot` then skips the warm install and only regenerates `.nuxt`. The capture step runs whenever **either** layer is cold.
+- The five consumers restore `~/.virrun/prepare` read-only with `fail-on-cache-miss: true` — `warm-snapshot` captures it every commit, so a miss is a regression, not an expected cold start.
+
+Cross-run reuse is intentionally none (a new commit = a new SHA = a new entry, LRU-evicted); the win is deduping `nuxt prepare` from six runs down to one per commit.
 
 These jobs (and the cold-path capture) run `setup-packages` with **`install: false`**: `node_modules` comes from the frozen snapshot inside the sandbox, so a host `pnpm i` is redundant — it only ever served to resolve the `virrun` bin. Instead the action exposes a `virrun` launcher on `$GITHUB_PATH` (a one-line wrapper over the self-contained `dist/cli.js` delivered by the `build-packages` artifact), so the unchanged `virrun -- <cmd>` scripts still resolve without `node_modules/.bin`:
 
@@ -40,7 +52,7 @@ These jobs (and the cold-path capture) run `setup-packages` with **`install: fal
 
 This drops the multi-minute host install from every verify job. The `package-builds` dist artifact is still downloaded — `typecheck` resolves `@esposter/*` to their built `main`.
 
-Only `~/.virrun/snapshots` is cached. The upper is built with pnpm `package-import-method=copy`, so it is self-contained — a fork never reads the repo-local `.virrun/store` (which is recreated empty if absent). The `coverage` job is the exception: it runs Vitest **natively**, not through `virrun`. Write-back now persists produced files, so the discarded-upper concern is moot — the real blocker is **nesting**: the suite exercises virrun's own os backend, and `isOsBackendSupported()` probes by spawning a nested `bwrap` + overlay. Inside a virrun sandbox that nested probe fails (unprivileged user namespaces forbid it), so the `*.differential.test.ts` files `describe.skipIf` themselves away — silently removing the correctness gate the coverage shards exist to enforce. Coverage stays native to keep that gate live.
+The snapshot upper is built with pnpm `package-import-method=copy`, so it is self-contained — a fork never reads the repo-local `.virrun/store` (which is recreated empty if absent). The `coverage` job is the exception: it runs Vitest **natively**, not through `virrun`, because of **nesting**: the suite exercises virrun's own os backend, and `isOsBackendSupported()` probes by spawning a nested `bwrap` + overlay. Inside a virrun sandbox that nested probe fails (unprivileged user namespaces forbid it), so the `*.differential.test.ts` files `describe.skipIf` themselves away — silently removing the correctness gate the coverage shards exist to enforce. Coverage stays native to keep that gate live.
 
 A dependency change yields a new lockfile hash → a new cache key and snapshot, so a stale snapshot is never reused.
 
