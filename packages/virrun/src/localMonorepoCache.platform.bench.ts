@@ -14,7 +14,7 @@ import { createVirrun } from "@/services/virrun/createVirrun";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { afterAll, bench, describe } from "vitest";
-// End-to-end value of the os backend's warm-cache LAYERS, as a 3-way comparison on a real nuxt command:
+// End-to-end value of the os backend's warm-cache LAYERS, as a 3-way comparison on a real workspace command:
 // Cold (empty cache) vs +snapshot (deps warm, prepare cold) vs +snapshot+prepare (both warm). Complements
 // LocalMonorepo.platform.bench.ts (native vs os), which answers the orthogonal "is the warm sandbox competitive
 // With native?"; this one answers "what is each cache layer worth?". Baseline = cold (declared first, no `native`
@@ -24,10 +24,14 @@ import { afterAll, bench, describe } from "vitest";
 // Reachable and $HOME writable). A `.platform.bench.ts`: the os backend runs os/linux natively and os/wsl bridged
 // From win32, so each host writes its own committed artifact.
 
-// The command must exercise the framework's generated `.nuxt`, or +snapshot and +snapshot+prepare would be
-// Identical — a `@esposter/shared` command never reads `.nuxt`. `typecheck` consumes it and is lighter than a full
-// Nuxt build; a type error doesn't skew timing (forkSnapshot returns an ExecResult on nonzero, never throws).
-const APP_TYPECHECK_COMMAND = "pnpm --filter @esposter/app typecheck";
+// The prepare-layer delta does NOT depend on the command reading `.nuxt`: createVirrun.fork builds the prepare layer
+// From the `environment` preset (ensurePrepareLayer gates on prepareStep, set by resolvePrepareStep(environment)),
+// Independent of the command it then forks — so with environment: Nuxt, +snapshot builds `.nuxt` and +snapshot+prepare
+// Reuses it whatever the command is. A lightweight `@esposter/shared typecheck` is therefore the better probe: it
+// Isolates the layer-provisioning costs (install, prepare) instead of drowning them in a heavy app typecheck, and it
+// Mirrors this repo's global environment: nuxt config, under which every virrun command warms the prepare layer. A
+// Type error doesn't skew timing (forkSnapshot returns an ExecResult on nonzero, never throws).
+const SHARED_TYPECHECK_COMMAND = "pnpm --filter @esposter/shared typecheck";
 const repoRoot = isSandboxInstallSupported ? findRepoRoot() : "";
 // Two throwaway cache homes on the same filesystem getGlobalCacheDirectory picks (win32 → WSL ext4, never /mnt/c
 // V9fs where snapshot capture stalls; else ~/.virrun), under a bench-owned leaf so eviction can never touch the
@@ -50,7 +54,7 @@ const run = async (home: string): Promise<void> => {
     source: { dir: repoRoot, type: SourceType.Dir },
   });
   try {
-    await virrun.fork(APP_TYPECHECK_COMMAND, "pipe");
+    await virrun.fork(SHARED_TYPECHECK_COMMAND, "pipe");
   } finally {
     await virrun.dispose();
   }
@@ -76,7 +80,7 @@ afterAll(() => {
   removeSnapshotDirectory(SNAPSHOT_HOME);
 });
 
-describe.skipIf(!isSandboxInstallSupported)("app typecheck - cache layers", () => {
+describe.skipIf(!isSandboxInstallSupported)("shared typecheck - cache layers", () => {
   // Cold and +snapshot each mutate global cache state (install / prepare build), so a second run would be warm: run
   // Exactly once. createStableBench already floors { time: 0, warmupTime: 0 }, but that only zeroes the time BUDGETS —
   // WarmupIterations still defaults to 5, and with warmupTime 0 tinybench falls back to that count, so warmup would run
