@@ -13,7 +13,7 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 - **No blank line before a `return`** that immediately follows a `const` in a small function (including composables that return a function directly — `return` follows the last setup line with no gap).
 - **Blank line after a closing `}`** of an `if`/`for`/block statement — unless it is the last statement in its scope or immediately followed by another opening block. (Exception: consecutive top-level `watch`/lifecycle-hook registrations in a Vue `<script setup>` each get a blank line between them — see the `vue` skill.)
 - **No blank lines within Vue templates.** A blank line inserted to visually separate template sections is a smell that the component owns more than one responsibility — extract each section into its own focused child component rather than spacing them apart. See the `vue-component-patterns` skill (maximal granularity / one concern per component).
-- **Imports** — a single blank line separates the `import type` group from the value `import` group. That is the _only_ blank line allowed among imports. Never insert a blank line **between two `import type` lines** (the whole type group stays contiguous, even when mixing external and `@/` alias sources) nor between value imports; all imports of the same kind stay contiguous regardless of source (`@tiptap/core`, `#shared`, `@vueuse/*`, `@/`).
+- **Imports** — a single blank line separates the `import type` group from the value `import` group. That is the _only_ blank line allowed among imports. Never insert a blank line **between two `import type` lines** (the whole type group stays contiguous, even when mixing external and `@/` alias sources) nor between value imports; all imports of the same kind stay contiguous regardless of source (`external-pkg`, `#shared`, `@vueuse/*`, `@/`).
 
   ```ts
   // CORRECT — type group contiguous, single blank before value group
@@ -34,15 +34,15 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 
   ```ts
   // CORRECT — comment acts as separator
-  const foo = parseWorkspace(yaml);
-  // Parse lockfile
-  const bar = parseLockfile(yaml);
+  const foo = readFoo(input);
+  // Read bar
+  const bar = readBar(input);
 
   // WRONG — blank line + comment is redundant
-  const foo = parseWorkspace(yaml);
+  const foo = readFoo(input);
 
-  // Parse lockfile
-  const bar = parseLockfile(yaml);
+  // Read bar
+  const bar = readBar(input);
   ```
 
   - **Consecutive `//` lines are one comment block — never blank-separate them.** A multi-line explanation is a contiguous run of `//` lines with no gaps; a blank line _between_ two comment lines splits one thought into two and is wrong. This is the same rule as "no blank line after a comment" applied to a comment that is itself the next line.
@@ -90,7 +90,7 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 
 ## Skill Doc Examples
 
-- **Code examples in skill docs must use generic placeholders** — `Foo`/`Bar`/`baz`, `external-pkg`, `@/models/Bar`, etc. NEVER paste the concrete identifiers, package names, or file paths from the change that prompted the note (e.g. `Editor`, `@tiptap/core`, `useDraftItems`). A skill is a reusable convention, not a changelog; task-specific names make the rule read as a one-off. Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine since they describe a class of import, not a specific symbol.
+- **Code examples in skill docs must use generic placeholders** — `Foo`/`Bar`/`baz`, `external-pkg`, `@/models/Bar`, etc. NEVER paste the concrete identifiers, package names, or file paths from the change that prompted the note. A skill is a reusable convention, not a changelog; task-specific names make the rule read as a one-off. Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine since they describe a class of import, not a specific symbol.
 
 ## Declaration Layout
 
