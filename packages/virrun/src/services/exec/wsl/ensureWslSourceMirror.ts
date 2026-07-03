@@ -2,6 +2,8 @@ import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep"
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { SOURCE_MIRROR_TIMEOUT_MS } from "@/services/exec/util/constants";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
+import { VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME } from "@/services/exec/wsl/constants";
+import { getWslSourceMirrorEntryPath } from "@/services/exec/wsl/getWslSourceMirrorEntryPath";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
 import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
@@ -45,12 +47,20 @@ const resolveMirrorExcludes = (cwd: string): readonly string[] => {
 export const ensureWslSourceMirror = (cwd: string): string => {
   const sourcePath = readWslPath(cwd);
   const mirrorPath = getWslSourceMirrorPath(cwd);
+  const originPath = `${getWslSourceMirrorEntryPath(cwd)}/${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}`;
   const excludeArgs = resolveMirrorExcludes(cwd)
     .map((exclude) => `--exclude=${shellQuote(exclude)}`)
     .join(" ");
+  // Record the host cwd this entry was cloned from so reapAbandonedSourceMirrors can reclaim the whole entry once that
+  // Path is gone. Written via a pid-unique temp + `mv` (atomic same-fs rename) so a concurrent reaper reads either the
+  // Old or the complete new marker, never a half-written path it would misjudge as a dead source. `$$` stays unquoted
+  // To expand to the shell pid; the cwd is single-quoted (shellQuote) so its backslashes/metacharacters can't inject.
+  const originTempPath = `${shellQuote(`${originPath}.`)}"$$"`;
   const script = [
     `mkdir -p ${shellQuote(mirrorPath)}`,
     `flock ${shellQuote(`${mirrorPath}.lock`)} rsync -a --delete ${excludeArgs} ${shellQuote(`${sourcePath}/`)} ${shellQuote(`${mirrorPath}/`)}`,
+    `printf %s ${shellQuote(cwd)} > ${originTempPath}`,
+    `mv ${originTempPath} ${shellQuote(originPath)}`,
   ].join(" && ");
   return getResult(() =>
     execFileHidden("wsl.exe", ["--exec", "sh", "-c", script], { timeout: SOURCE_MIRROR_TIMEOUT_MS }),

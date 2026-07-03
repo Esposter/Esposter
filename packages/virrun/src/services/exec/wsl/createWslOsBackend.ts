@@ -7,12 +7,16 @@ import { buildWslReapCommand } from "@/services/exec/wsl/buildWslReapCommand";
 import { createWslBwrapArgs } from "@/services/exec/wsl/createWslBwrapArgs";
 import { createWslEnvArgs } from "@/services/exec/wsl/createWslEnvArgs";
 import { createWslProcessMarker } from "@/services/exec/wsl/createWslProcessMarker";
+import { reapAbandonedSourceMirrors } from "@/services/exec/wsl/reapAbandonedSourceMirrors";
 import { reapOrphanedWslRuns } from "@/services/exec/wsl/reapOrphanedWslRuns";
 
 export const createWslOsBackend = (errorName: string): ExecBackend => {
   // Reap any bwrap tree a previous hard-killed run left orphaned (its onTerminate reaper never fired) before this
   // Backend spawns its own — off the critical path, and scoped to true orphans so a concurrent live run is untouched.
   reapOrphanedWslRuns();
+  // Reap ext4 source mirrors whose host repo/worktree was deleted — the one cache entry with no lockfile/source key to
+  // Supersede it, so it needs its own origin-marker sweep. Also best-effort, off the critical path, spares live repos.
+  reapAbandonedSourceMirrors();
   return createBwrapBackend(
     createWslBwrapArgs,
     (bwrapArgs, options) => {
