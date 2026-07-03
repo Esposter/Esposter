@@ -18,9 +18,8 @@ export const createStderrLiveWriter = (): ((stderr: string) => void) => {
       const safeEnd = stderr.length - (WSL_BWRAP_STATUS_BEGIN.length - 1);
       const lastNewlineIndex = stderr.lastIndexOf("\n", safeEnd - 1);
       liveEnd = lastNewlineIndex < writtenIndex ? writtenIndex : lastNewlineIndex + 1;
-    } else {
-      liveEnd = beginIndex;
-    }
+    } else liveEnd = beginIndex;
+
     if (liveEnd <= writtenIndex) return;
     process.stderr.write(stderr.slice(writtenIndex, liveEnd));
     writtenIndex = liveEnd;
