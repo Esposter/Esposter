@@ -1,4 +1,4 @@
-import { VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
+import { VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME, VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
 import { TEST_REPO_ROOT_WIN, TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_PREFIX } from "@/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
@@ -17,13 +17,13 @@ vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
 describe(getWslSourceMirrorPath, () => {
   const cacheRootLinux = `${TEST_WSL_PREFIX}${createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX)}`;
 
-  test("addresses the ext4 mirror under sources/<sha256(hostCwd)> so distinct repos never collide", () => {
+  test("addresses the mirror tree under sources/<sha256(hostCwd)>/tree so distinct repos never collide", () => {
     expect.hasAssertions();
 
     const key = createHash("sha256").update(TEST_REPO_ROOT_WIN).digest("hex");
 
     expect(getWslSourceMirrorPath(TEST_REPO_ROOT_WIN)).toBe(
-      `${cacheRootLinux}/${VIRRUN_SOURCES_DIRECTORY_NAME}/${key}`,
+      `${cacheRootLinux}/${VIRRUN_SOURCES_DIRECTORY_NAME}/${key}/${VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME}`,
     );
   });
 

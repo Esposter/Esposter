@@ -1,0 +1,87 @@
+import {
+  VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
+  VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
+  VIRRUN_SOURCES_DIRECTORY_NAME,
+} from "@/services/exec/wsl/constants";
+import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { reapAbandonedSourceMirrors } from "@/services/exec/wsl/reapAbandonedSourceMirrors";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+// GetWslNativeCacheRoot resolves the ext4 cache root the mirrors live under; point it at a per-test temp dir (a plain
+// Local path, so removeSnapshotDirectoryDetached teardown stays synchronous and deterministic — no WSL round-trip).
+const { cacheRootHolder } = vi.hoisted(() => ({ cacheRootHolder: { value: "" } }));
+
+vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({
+  getWslNativeCacheRoot: () => cacheRootHolder.value,
+}));
+
+describe(reapAbandonedSourceMirrors, () => {
+  const { cleanup, create } = createTemporaryDirectoryTracker();
+  const sourcesDir = (): string => join(cacheRootHolder.value, VIRRUN_SOURCES_DIRECTORY_NAME);
+  // Seed a mirror entry (`sources/<hash>/tree` + an optional `origin` marker) and return its entry dir.
+  const seedMirror = (hash: string, origin?: string): string => {
+    const entry = join(sourcesDir(), hash);
+    mkdirSync(join(entry, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { recursive: true });
+    if (origin !== undefined) writeFileSync(join(entry, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME), origin);
+    return entry;
+  };
+
+  beforeEach(() => {
+    cacheRootHolder.value = create();
+  });
+
+  afterEach(() => {
+    cacheRootHolder.value = "";
+    cleanup();
+  });
+
+  test("reaps a mirror whose origin host dir no longer exists", () => {
+    expect.hasAssertions();
+
+    const abandoned = seedMirror("0", join(cacheRootHolder.value, "deleted-worktree"));
+
+    reapAbandonedSourceMirrors();
+
+    expect(existsSync(abandoned)).toBe(false);
+  });
+
+  test("keeps a mirror whose origin host dir still exists", () => {
+    expect.hasAssertions();
+
+    const live = seedMirror("0", create());
+
+    reapAbandonedSourceMirrors();
+
+    expect(existsSync(live)).toBe(true);
+  });
+
+  test("keeps a mirror with no origin marker so an unproven entry is never reaped", () => {
+    expect.hasAssertions();
+
+    const unmarked = seedMirror("0");
+
+    reapAbandonedSourceMirrors();
+
+    expect(existsSync(unmarked)).toBe(true);
+  });
+
+  test("keeps a mirror whose origin marker is blank so a mid-write partial is never reaped", () => {
+    expect.hasAssertions();
+
+    const midWrite = seedMirror("0", "  ");
+
+    reapAbandonedSourceMirrors();
+
+    expect(existsSync(midWrite)).toBe(true);
+  });
+
+  test("is a no-op when the sources directory does not exist yet", () => {
+    expect.hasAssertions();
+
+    reapAbandonedSourceMirrors();
+
+    expect(existsSync(sourcesDir())).toBe(false);
+  });
+});
