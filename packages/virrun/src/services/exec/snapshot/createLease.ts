@@ -2,7 +2,7 @@ import type { Lease } from "@/models/exec/snapshot/Lease";
 
 import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { reapDeadLeases } from "@/services/exec/snapshot/reapDeadLeases";
-import { getResult } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 // Take a live-user lease on a snapshot/prepare hash dir by writing `leases/<pid>`, so a concurrent run on a different
@@ -20,10 +20,7 @@ export const createLease = (hashDir: string): Lease => {
     release: () => {
       getResult(() => {
         rmSync(leaseFile, { force: true });
-      }).match(
-        () => undefined,
-        () => undefined,
-      );
+      }).match(noop, noop);
     },
   };
 };

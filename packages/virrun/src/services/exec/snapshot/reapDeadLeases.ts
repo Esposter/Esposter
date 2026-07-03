@@ -1,6 +1,6 @@
 import { isProcessAlive } from "@/services/exec/util/isProcessAlive";
 import { parsePid } from "@/services/exec/util/parsePid";
-import { getResult } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 import { readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 // Walk a hash dir's `leases/`, dropping every lease whose owner pid has died (a hard-killed run never released its
@@ -19,10 +19,7 @@ export const reapDeadLeases = (leasesDir: string): boolean => {
     }
     getResult(() => {
       rmSync(join(leasesDir, entry), { force: true });
-    }).match(
-      () => undefined,
-      () => undefined,
-    );
+    }).match(noop, noop);
   }
   return isLeaseLive;
 };

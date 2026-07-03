@@ -1,5 +1,5 @@
 import { removeSnapshotDirectoryDetached } from "@/services/exec/snapshot/removeSnapshotDirectoryDetached";
-import { getResult } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 // The shared sweep behind pruneStaleSnapshots / pruneStalePrepareLayers / reapStaleTemps: list a cache dir's child
@@ -13,8 +13,5 @@ export const sweepStaleEntries = (dir: string, isStale: (name: string) => boolea
     if (entry.isDirectory() && isStale(entry.name))
       getResult(() => {
         removeSnapshotDirectoryDetached(join(dir, entry.name));
-      }).match(
-        () => undefined,
-        () => undefined,
-      );
+      }).match(noop, noop);
 };
