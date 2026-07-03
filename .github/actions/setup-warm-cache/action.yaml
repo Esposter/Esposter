@@ -8,6 +8,15 @@ description: >-
 runs:
   using: composite
   steps:
+    # These jobs run `pnpm <script>` with install: false (no host node_modules) purely to launch `virrun -- <tool>`,
+    # But pnpm's verify-deps-before-run would full-install the workspace just to start the script — the exact cost the
+    # Sandbox exists to avoid. Disable it CI-only (not committed, so local dev keeps auto-reinstall). pnpm reads the
+    # Npm_config_* env; written to $GITHUB_ENV so it applies to every later step in the calling job. The nested
+    # `pnpm -r run …` inside the sandbox needs no equivalent: the restored snapshot overlay is a complete frozen
+    # Install, so its verify matches the lockfile hash and reinstalls nothing.
+    - name: 🚫 Disable pnpm verify-deps-before-run
+      shell: bash
+      run: echo "npm_config_verify_deps_before_run=false" >> "$GITHUB_ENV"
     # bubblewrap (+ unprivileged user namespaces) so the os backend the config pins runs isolated rather than
     # Silently falling back to native.
     - name: 🔧 Setup Project Dependencies

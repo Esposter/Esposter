@@ -77,12 +77,15 @@ afterAll(() => {
 });
 
 describe.skipIf(!isSandboxInstallSupported)("app typecheck - cache layers", () => {
-  // Cold and +snapshot each mutate global cache state (install / prepare build), so a second iteration would be warm:
-  // Run exactly once (iterations 1, no warmup, no time budget). +snapshot must precede +snapshot+prepare — it builds
-  // The prepare layer the latter reuses (tasks run sequentially in declaration order).
-  bench("cold", () => run(COLD_HOME), { iterations: 1, time: 0, warmupIterations: 0, warmupTime: 0 });
-  bench("+snapshot", () => run(SNAPSHOT_HOME), { iterations: 1, time: 0, warmupIterations: 0, warmupTime: 0 });
+  // Cold and +snapshot each mutate global cache state (install / prepare build), so a second run would be warm: run
+  // Exactly once. createStableBench already floors { time: 0, warmupTime: 0 }, but that only zeroes the time BUDGETS —
+  // WarmupIterations still defaults to 5, and with warmupTime 0 tinybench falls back to that count, so warmup would run
+  // The callback 5× and warm the cache before measurement. warmupIterations: 0 is what actually pins the once-only run;
+  // Iterations: 1 caps the measured sample. +snapshot must precede +snapshot+prepare — it builds the prepare layer the
+  // Latter reuses (tasks run sequentially in declaration order).
+  bench("cold", () => run(COLD_HOME), { iterations: 1, warmupIterations: 0 });
+  bench("+snapshot", () => run(SNAPSHOT_HOME), { iterations: 1, warmupIterations: 0 });
   // The steady-state hot path: both layers warm, so every fork is read-only over the frozen overlay. Repeatable, so a
-  // Small sample gives a stable mean/rme.
-  bench("+snapshot+prepare", () => run(SNAPSHOT_HOME), { iterations: 3, time: 0, warmupIterations: 0 });
+  // Small sample gives a stable mean/rme; warmupIterations: 0 skips 5 wasted read-only typecheck runs.
+  bench("+snapshot+prepare", () => run(SNAPSHOT_HOME), { iterations: 3, warmupIterations: 0 });
 });
