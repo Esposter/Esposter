@@ -1,4 +1,5 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecOptions } from "@/models/exec/ExecOptions";
 
 import { dayjs } from "@/services/dayjs.test";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
@@ -34,6 +35,11 @@ describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a 
   let backend: ExecBackend;
   let corpus = "";
   const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
+  const runWarmVsCold = async (command: string, warmOptions: ExecOptions, coldOptions: ExecOptions) => {
+    const warmResult = await forkSnapshot(backend, command, warmOptions);
+    const coldResult = await backend.exec(`${resolveSetupCommand()} > /dev/null 2>&1 && ${command}`, coldOptions);
+    return { coldResult, warmResult };
+  };
 
   beforeAll(async () => {
     backend = createOsBackend();
@@ -62,12 +68,9 @@ describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a 
       RUN_ESBUILD_VERSION_COMMAND,
     ].join(" && ");
 
-    // Warm: fork the verify over the shared frozen snapshot (no reinstall).
-    const warmResult = await forkSnapshot(backend, verifyCommand, createOsExecOptions(corpus, "pipe"));
-
-    // Cold: a fresh ephemeral session installs in place then runs the same verify; reuses the now-warm shared store.
-    const coldResult = await backend.exec(
-      `${resolveSetupCommand()} > /dev/null 2>&1 && ${verifyCommand}`,
+    const { coldResult, warmResult } = await runWarmVsCold(
+      verifyCommand,
+      createOsExecOptions(corpus, "pipe"),
       createOsInstallOptions(corpus, "pipe"),
     );
 
@@ -77,13 +80,8 @@ describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a 
     expect(warmResult).toStrictEqual(coldResult);
   }, dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds());
 
-  // The regression guard for the verify-deps-before-run fix. `pnpm exec` is the exact path that broke: unsuppressed,
-  // Pnpm's pre-run dependency verification fires an auto-install inside the sandbox and dies writing bin shims into the
-  // Overlay upper (ENOENT node_modules/.bin/*) — the prepare step runs `pnpm exec nuxt prepare`. createOsExecOptions
-  // Now disables that check, so a warm fork resolves the binary straight from the frozen snapshot without re-installing.
-  // Diffing against a cold in-place install of the same `pnpm exec` proves skipping verification is byte-equivalent: a
-  // Fork whose deps are already frozen-correct produces the identical binary output an actual install would, and — the
-  // Point of the fix — succeeds at all rather than crashing in the auto-install's shim write.
+  // Pnpm's pre-run dependency verification may auto-install inside the sandbox and fail when writing bin shims into the
+  // Overlay upper (ENOENT node_modules/.bin/*). A warm fork resolves the binary from the frozen snapshot instead.
   test("a forked warm `pnpm exec` runs over the frozen deps without re-installing and matches a cold install", async () => {
     expect.hasAssertions();
 
@@ -92,9 +90,9 @@ describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a 
     // Pre-run verification tripped an install, not a missing hoisted bin. createOsInstallOptions binds the corepack home
     // Both sides need to resolve `corepack pnpm`. ESBUILD_VERSION_REGEX is a bare semver, so it matches node's `vX.Y.Z`.
     const execCommand = "corepack pnpm exec node --version";
-    const warmResult = await forkSnapshot(backend, execCommand, createOsInstallOptions(corpus, "pipe"));
-    const coldResult = await backend.exec(
-      `${resolveSetupCommand()} > /dev/null 2>&1 && ${execCommand}`,
+    const { coldResult, warmResult } = await runWarmVsCold(
+      execCommand,
+      createOsInstallOptions(corpus, "pipe"),
       createOsInstallOptions(corpus, "pipe"),
     );
 

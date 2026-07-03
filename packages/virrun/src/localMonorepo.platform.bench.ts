@@ -18,8 +18,9 @@ import { afterAll, bench, describe } from "vitest";
 // Supports the os backend - the sandbox runs natively on Linux (os/linux) and bridged from win32 via WSL
 // (os/wsl) - so this is a `.platform.bench.ts`, writing one committed artifact per platform. Every os run goes
 // Through the same option builders createVirrun uses (createOsExecOptions / createOsInstallOptions): the store
-// Bind, the WSL login PATH, network, corepack home and CI=true. Hand-rolling those here is what previously made
-// The bench drift from production and die with `node: not found` (the WSL bridge resolved the Windows pnpm shim).
+// Bind, the WSL login PATH, network, corepack home and CI=true. Routing through those builders keeps the bench from
+// Drifting from production — hand-rolled options miss e.g. the WSL login PATH and die with `node: not found` (the
+// WSL bridge resolves the Windows pnpm shim instead).
 const isOsSupported = isOsBackendSupported();
 const isWindows = process.platform === "win32";
 const OS_TASK_NAME = isWindows ? `${BackendType.Os}/wsl` : `${BackendType.Os}/linux`;

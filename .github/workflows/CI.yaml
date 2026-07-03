@@ -54,6 +54,15 @@ jobs:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
           fail-on-cache-miss: true
+      # Read-only restore of the prepare layer the warm-snapshot job captured for this commit — SHA-keyed because
+      # `.nuxt` is source-derived and moves every commit — so each `virrun --` forks it instead of re-running
+      # `nuxt prepare`. warm-snapshot captures it per commit, so a miss here is a regression: fail loud.
+      - name: ♻️ Restore prepare layer
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/prepare
+          key: virrun-prepare-${{ github.sha }}
+          fail-on-cache-miss: true
 
       - name: 🏗️ Build app
         run: pnpm build:app
@@ -86,6 +95,15 @@ jobs:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
           fail-on-cache-miss: true
+      # Read-only restore of the prepare layer the warm-snapshot job captured for this commit — SHA-keyed because
+      # `.nuxt` is source-derived and moves every commit — so each `virrun --` forks it instead of re-running
+      # `nuxt prepare`. warm-snapshot captures it per commit, so a miss here is a regression: fail loud.
+      - name: ♻️ Restore prepare layer
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/prepare
+          key: virrun-prepare-${{ github.sha }}
+          fail-on-cache-miss: true
 
       - name: 🏗️ Build documentation
         run: pnpm build:docs
@@ -104,12 +122,10 @@ jobs:
         with:
           persist-credentials: false
       # The test suite itself exercises virrun's os backend (createOsBackend tests self-gate on bwrap), so the
-      # Sandbox must be installed here — but vitest runs natively below, NOT through virrun. Write-back now
-      # Persists produced files, so the old "discarded upper" reason is moot; the real blocker is nesting:
-      # Routing coverage through virrun would run the suite *inside* bwrap, and isOsBackendSupported() probes by
-      # Spawning a nested bwrap+overlay, which unprivileged userns rejects → the os-backend differential tests
-      # Silently skip via describe.skipIf, deleting the correctness gate. Coverage is the one command that must
-      # Stay native to keep that gate live.
+      # Sandbox must be installed here — but vitest runs natively below, NOT through virrun. Routing coverage through
+      # virrun would run the suite *inside* bwrap, and isOsBackendSupported() probes by spawning a nested
+      # bwrap+overlay, which unprivileged userns rejects → the os-backend differential tests silently skip via
+      # describe.skipIf, deleting the correctness gate. Coverage stays native to keep that gate live.
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
         with:
@@ -201,6 +217,15 @@ jobs:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
           fail-on-cache-miss: true
+      # Read-only restore of the prepare layer the warm-snapshot job captured for this commit — SHA-keyed because
+      # `.nuxt` is source-derived and moves every commit — so each `virrun --` forks it instead of re-running
+      # `nuxt prepare`. warm-snapshot captures it per commit, so a miss here is a regression: fail loud.
+      - name: ♻️ Restore prepare layer
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/prepare
+          key: virrun-prepare-${{ github.sha }}
+          fail-on-cache-miss: true
 
       - name: 📝 Format
         run: pnpm format:check
@@ -235,6 +260,15 @@ jobs:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
           fail-on-cache-miss: true
+      # Read-only restore of the prepare layer the warm-snapshot job captured for this commit — SHA-keyed because
+      # `.nuxt` is source-derived and moves every commit — so each `virrun --` forks it instead of re-running
+      # `nuxt prepare`. warm-snapshot captures it per commit, so a miss here is a regression: fail loud.
+      - name: ♻️ Restore prepare layer
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/prepare
+          key: virrun-prepare-${{ github.sha }}
+          fail-on-cache-miss: true
 
       - name: 🔍 Lint
         run: pnpm lint
@@ -268,6 +302,15 @@ jobs:
         with:
           path: ~/.virrun/snapshots
           key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
+      # Read-only restore of the prepare layer the warm-snapshot job captured for this commit — SHA-keyed because
+      # `.nuxt` is source-derived and moves every commit — so each `virrun --` forks it instead of re-running
+      # `nuxt prepare`. warm-snapshot captures it per commit, so a miss here is a regression: fail loud.
+      - name: ♻️ Restore prepare layer
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.virrun/prepare
+          key: virrun-prepare-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: ✅ Typecheck

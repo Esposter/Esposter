@@ -33,7 +33,7 @@ export const createWslBwrapArgs = (
     command,
     logicalDir,
     { bindDirs: wslBindDirs, isNetworkEnabled },
-    overlayLayers === undefined ? undefined : readWslOverlayLayers(overlayLayers),
+    overlayLayers ? readWslOverlayLayers(overlayLayers) : undefined,
     mirrorDir,
   );
 };

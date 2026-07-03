@@ -63,13 +63,14 @@ import {
   MessageEntityMap,
   MessageType,
   roomIdSchema,
-  selectRoomInMessageSchema,
+  roomIdsSchema,
   standardCreateMessageInputSchema,
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
 } from "@esposter/db-schema";
 import {
+  createUniqueArraySchema,
   InvalidOperationError,
   ItemMetadataPropertyNames,
   MAX_READ_LIMIT,
@@ -97,15 +98,19 @@ export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const readMessagesByRowKeysInputSchema = z.object({
   ...roomIdSchema.shape,
-  rowKeys: standardMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
+  rowKeys: createUniqueArraySchema(standardMessageEntitySchema.shape.rowKey).min(1).max(MAX_READ_LIMIT),
 });
 const generateUploadFileSasEntitiesInputSchema = z.object({
-  files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
+  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true }), "filename")
+    .min(1)
+    .max(MAX_READ_LIMIT),
   ...roomIdSchema.shape,
 });
 
 const generateDownloadFileSasUrlsInputSchema = z.object({
-  files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
+  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, id: true, mimetype: true }), "id")
+    .min(1)
+    .max(MAX_READ_LIMIT),
   ...roomIdSchema.shape,
 });
 
@@ -129,7 +134,7 @@ const onDeleteMessageInputSchema = roomIdSchema;
 
 export const forwardMessageInputSchema = z.object({
   ...standardMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
-  roomIds: selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  roomIds: roomIdsSchema.shape.roomIds.min(1),
 });
 
 export const pinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
