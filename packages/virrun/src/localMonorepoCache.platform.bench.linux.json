@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "filepath": "src/localMonorepoCache.platform.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 968.7097010000143,
+              "name": "cold",
+              "p99": 968.7097010000143,
+              "rme": 0,
+              "sampleCount": 1
+            },
+            {
+              "mean": 1510.095197000017,
+              "name": "+snapshot",
+              "p99": 1510.095197000017,
+              "rme": 0,
+              "sampleCount": 1
+            },
+            {
+              "mean": 945.1924303333313,
+              "name": "+snapshot+prepare",
+              "p99": 955.144197000016,
+              "rme": 2.719378165784109,
+              "sampleCount": 3
+            }
+          ],
+          "fullName": "shared typecheck - cache layers"
+        }
+      ]
+    }
+  ]
+}
