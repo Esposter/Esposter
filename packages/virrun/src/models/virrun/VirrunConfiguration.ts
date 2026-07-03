@@ -4,12 +4,12 @@ import { z } from "zod";
 // The repo-root `virrun.config.json` (specs/config-and-cache.md): a checked-in, reviewable selection of which
 // Backend a sandboxed command runs through and which framework environment it targets. The `virrun -- <cmd>` prefix
 // Is the switch for *whether* a command is sandboxed (add it to adopt, remove it to drop); this config only chooses
-// *How*. An absent file means the defaults (backend auto → native today, environment undefined → no preset), so no config is a valid,
-// Fully-functional state.
+// *How*. An absent file means the defaults (backend os → native where unsupported, environment undefined → no
+// Preset), so no config is a valid, fully-functional state.
 export interface VirrunConfiguration {
   // BackendType a sandboxed command runs through. When it can't run on this host (e.g. `os` off Linux) the
   // Resolver degrades to native — the worst case of adopting a command is "no speedup", never "broken". Optional: the
-  // Schema defaults it to auto, so `{}` (or an absent file) is valid and a consumer defaults an omitted value.
+  // Schema defaults it to os, so `{}` (or an absent file) is valid and a consumer defaults an omitted value.
   readonly backend?: BackendType;
   // Framework whose source-derived artifacts (e.g. Nuxt's `.nuxt`) the sandbox regenerates into a source-keyed
   // Prepare layer, so type-aware tooling reads a platform-correct, fresh copy instead of the host's. Every field is
@@ -19,7 +19,7 @@ export interface VirrunConfiguration {
 }
 // Validates the committed `virrun.config.json` text into a VirrunConfiguration. strictObject so a typo'd key fails
 // Loud rather than silently changing the sandbox; the editor-only `$schema` pointer is the one extra key allowed.
-// An omitted `backend` defaults to auto; an omitted `environment` stays undefined (no preset), so `{}` — or no file at
+// An omitted `backend` defaults to os; an omitted `environment` stays undefined (no preset), so `{}` — or no file at
 // All — is valid.
 export const virrunConfigurationSchema: z.ZodObject<
   {
@@ -30,6 +30,6 @@ export const virrunConfigurationSchema: z.ZodObject<
   z.core.$strict
 > = z.strictObject({
   $schema: z.string().optional(),
-  backend: z.enum(BackendType).default(BackendType.Auto),
+  backend: z.enum(BackendType).default(BackendType.Os),
   environment: z.enum(Environment).optional(),
 }) satisfies z.ZodType<VirrunConfiguration>;

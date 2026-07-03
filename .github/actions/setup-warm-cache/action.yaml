@@ -1,0 +1,39 @@
+name: Setup Warm Cache
+description: >-
+  Shared setup for the os-backend verify/build jobs (format/lint/typecheck/build/build-docs): install the
+  bubblewrap sandbox, expose the virrun bin from the build-packages artifact (no host pnpm i), and restore
+  the warm-cache job's two published layers (dependency snapshot + prepare `.nuxt`) read-only. After this,
+  every `virrun -- <cmd>` forks the warm layers instead of cold-installing and re-running `nuxt prepare`.
+  The caller must run `needs: [build-packages, warm-cache]` and check out the repo before using this action.
+runs:
+  using: composite
+  steps:
+    # bubblewrap (+ unprivileged user namespaces) so the os backend the config pins runs isolated rather than
+    # Silently falling back to native.
+    - name: 🔧 Setup Project Dependencies
+      uses: ./.github/actions/setup-project-dependencies
+      with:
+        bubblewrap-sandbox: true
+    # install: false — node_modules comes from the warm snapshot inside the sandbox, so a host `pnpm i` is
+    # Redundant; Setup Packages exposes the `virrun` bin from the build-packages artifact instead.
+    - name: 📦 Setup Packages
+      uses: ./.github/actions/setup-packages
+      with:
+        install: false
+    # Read-only restore of the warm-cache job's published snapshot so `virrun --` forks the warm dep tree
+    # Instead of cold-installing. Same lockfile-hash key.
+    - name: ♻️ Restore snapshot layer
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: ~/.virrun/snapshots
+        key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+        fail-on-cache-miss: true
+    # Read-only restore of the prepare layer the warm-cache job captured for this commit — SHA-keyed because
+    # `.nuxt` is source-derived and moves every commit — so each `virrun --` forks it instead of re-running
+    # `nuxt prepare`. warm-cache captures it per commit, so a miss here is a regression: fail loud.
+    - name: ♻️ Restore prepare layer
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: ~/.virrun/prepare
+        key: virrun-prepare-${{ github.sha }}
+        fail-on-cache-miss: true

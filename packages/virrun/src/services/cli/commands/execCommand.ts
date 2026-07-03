@@ -9,7 +9,7 @@ import dedent from "dedent";
 export const execCommand: CommandDef = defineCommand({
   meta: {
     description: dedent`
-      Exec an executable directly through the resolved backend — the cold sibling of \`run\`: no warm-snapshot fork
+      Exec an executable directly through the resolved backend — the cold sibling of \`run\`: no warm-cache fork
       and no write-back. Same shape as run: \`virrun exec -- pnpm build\`, not \`virrun exec build\`.
     `,
     name: CommandType.Exec,

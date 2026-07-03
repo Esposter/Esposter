@@ -59,7 +59,7 @@ export const createVirrun = async ({
   const toInstallOptions = (stdio: ExecStdio): ExecOptions =>
     isOsBackend ? withColorEnv(createOsInstallOptions(cwd, stdio)) : toOptions(stdio);
   // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op). Shared by fork and
-  // Persist so the two warm-snapshot paths can't drift.
+  // Persist so the two warm-cache paths can't drift.
   const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {
     const { dir, exists, hash } = resolveSnapshotLocation(cwd);
     // Announce this process as a live user of the snapshot BEFORE the prune/mint — a concurrent run on a different

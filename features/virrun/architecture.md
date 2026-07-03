@@ -57,13 +57,13 @@ Why the three FS endpoints differ is the **subprocess wall** — the single fact
 
 Write-back is a reconciliation step on the snapshot/fork layer: it reuses the same persistable overlay upper the snapshot capture uses, but flushes it to the host working dir instead of freezing it as a cache layer.
 
-| Layer            | Build or reuse                     | Source                                   |
-| ---------------- | ---------------------------------- | ---------------------------------------- |
-| Orchestrator API | **Build**                          | new                                      |
-| Shell            | **Reuse** (optional)               | just-bash (parser + builtins only)       |
-| Exec + isolation | **Build — this is the novel work** | new                                      |
-| Snapshot / fork  | **Build**                          | new (over CRIU / microVM snapshot)       |
-| Virtual FS       | **Reuse**                          | `@platformatic/vfs` → swap to `node:vfs` |
+| Layer            | Build or reuse                     | Source                                                       |
+| ---------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Orchestrator API | **Build**                          | new                                                          |
+| Shell            | **Reuse** (optional)               | just-bash (parser + builtins only)                           |
+| Exec + isolation | **Build — this is the novel work** | new                                                          |
+| Snapshot / fork  | **Build**                          | new — own overlayfs FS-only snapshot (CRIU/microVM deferred) |
+| Virtual FS       | **Reuse**                          | `@platformatic/vfs` → swap to `node:vfs`                     |
 
 The only layer no existing package solves is **exec + isolation**. Everything else is glue or reuse.
 
@@ -178,7 +178,7 @@ The child command's own stdout/stderr is never colorized (raw bytes flow through
 
 | Host              | Fast path                                  |
 | ----------------- | ------------------------------------------ |
-| Linux             | native: tmpfs + overlayfs + sandbox + CRIU |
+| Linux             | native: tmpfs + overlayfs + bwrap sandbox  |
 | Windows           | WSL2 bridge into Linux bwrap               |
 | macOS             | Firecracker or lightweight Linux VM bridge |
 | Anywhere, JS-only | `vfs` backend, pure node, no OS features   |
