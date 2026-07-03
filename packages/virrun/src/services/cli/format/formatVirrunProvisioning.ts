@@ -1,6 +1,6 @@
 import { Color } from "@/models/cli/Color";
-import { colorize } from "@/services/cli/color/colorize";
 import { formatCacheHitLabel } from "@/services/cli/cache/formatCacheHitLabel";
+import { colorize } from "@/services/cli/color/colorize";
 import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 // Printed before an os-backend run so the (sometimes minutes-long) one-time install is never a silent stall: the
 // First run for a given lockfile installs the toolchain inside the sandbox, later runs reuse the frozen snapshot.

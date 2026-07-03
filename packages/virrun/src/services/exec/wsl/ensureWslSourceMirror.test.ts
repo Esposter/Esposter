@@ -1,6 +1,10 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
+import {
+  VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
+  VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
+  VIRRUN_SOURCES_DIRECTORY_NAME,
+} from "@/services/exec/wsl/constants";
 import { TEST_REPO_ROOT_WIN, TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_PREFIX } from "@/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
 import { ensureWslSourceMirror } from "@/services/exec/wsl/ensureWslSourceMirror";
@@ -32,7 +36,11 @@ describe(ensureWslSourceMirror, () => {
   const sourceLinux = `${TEST_WSL_PREFIX}${TEST_REPO_ROOT_WIN}`;
   const cacheRootLinux = `${TEST_WSL_PREFIX}${createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX)}`;
   const key = createHash("sha256").update(TEST_REPO_ROOT_WIN).digest("hex");
-  const mirrorPath = `${cacheRootLinux}/${VIRRUN_SOURCES_DIRECTORY_NAME}/${key}`;
+  const entryPath = `${cacheRootLinux}/${VIRRUN_SOURCES_DIRECTORY_NAME}/${key}`;
+  const mirrorPath = `${entryPath}/${VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME}`;
+  const originPath = `${entryPath}/${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}`;
+  // The origin marker is written to a pid-unique temp (`origin.`"$$") then atomically renamed onto `origin`.
+  const originTemp = `'${originPath}.'"$$"`;
 
   beforeEach(() => {
     execFileSync.mockReset();
@@ -50,7 +58,7 @@ describe(ensureWslSourceMirror, () => {
     expect(file).toBe("wsl.exe");
     expect([takeOne(args ?? []), takeOne(args ?? [], 1), takeOne(args ?? [], 2)]).toStrictEqual(["--exec", "sh", "-c"]);
     expect(script).toBe(
-      `mkdir -p '${mirrorPath}' && flock '${mirrorPath}.lock' rsync -a --delete --exclude='node_modules' --exclude='.git' '${sourceLinux}/' '${mirrorPath}/'`,
+      `mkdir -p '${mirrorPath}' && flock '${mirrorPath}.lock' rsync -a --delete --exclude='node_modules' --exclude='.git' '${sourceLinux}/' '${mirrorPath}/' && printf %s '${TEST_REPO_ROOT_WIN}' > ${originTemp} && mv ${originTemp} '${originPath}'`,
     );
   });
 

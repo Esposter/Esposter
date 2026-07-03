@@ -127,6 +127,35 @@ Correctness is proven by **equivalence tests** (native vs `virrun --`, diffing t
 
 ---
 
+## Cache lifecycle & cleanup
+
+_Shipped._ A cache write must be disposable **and** self-cleaning: a run that dies before its finalizer never leaks disk permanently, and — since the host-global cache is shared across repos, worktrees, and branch switches — concurrent runs never delete each other's files. Every temp follows the same lifecycle: a private **pid-tagged** `mkdtemp` capture, an atomic `renameSync` publish, and teardown gated on **process liveness** — a prune skips a superseded hash/key dir any run still **leases** (`leases/<pid>`), and a reap reclaims a temp corpse only once its owner pid is dead. Prune and reap share one primitive, `sweepStaleEntries`; a process-level reaper collapses the same leak on WSL, and a startup sweep reclaims win32 ext4 source mirrors whose host repo/worktree was deleted (keyed on the mirror's `origin` marker, not a lockfile hash). Detail: [specs/config-and-cache.md](specs/config-and-cache.md#cleanup--self-healing).
+
+```mermaid
+flowchart TB
+    start["run captures into<br/>pid-tagged mkdtemp temp (upper.&lt;pid&gt;.&lt;rand&gt;)"] --> exit{"how does the run end?"}
+    exit -->|"clean exit / handled error"| fin["finalizer: renameSync publish<br/>+ remove own temp"]
+    exit -->|"hard kill (SIGKILL, crash,<br/>wsl --shutdown)"| leak[("temp corpse stranded<br/>+ orphaned bwrap tree")]
+
+    fin --> live[("live cache:<br/>leased upper(s) per hash/key")]
+    gone[("host worktree deleted /<br/>repo moved → mirror origin dangling")]
+
+    subgraph next["next run / os-backend startup — off the critical path, best-effort"]
+        prune["pruneStale* → sweepStaleEntries<br/>evict superseded hash/key dirs<br/>(spare any with a live lease)"]
+        reap["reapStaleTemps → sweepStaleEntries<br/>remove dead-owner upper./work. corpses<br/>(pid liveness)"]
+        orphan["reapOrphanedWslRuns<br/>group-kill trees reparented off the Relay"]
+        mirror["reapAbandonedSourceMirrors → sweepStaleEntries<br/>remove win32 mirrors whose origin host dir is gone<br/>(spare live/blank/missing)"]
+    end
+
+    leak -.reaped by.-> reap
+    leak -.killed by.-> orphan
+    live -.superseded entries evicted by.-> prune
+    gone -.reclaimed by.-> mirror
+    reap --> live
+    orphan --> live
+    mirror --> live
+```
+
 ## CLI output palette
 
 Every stderr diagnostic goes through one helper, `formatVirrunLine(message)` (`services/cli/format/formatVirrunLine.ts`), which prepends the bold-cyan `[virrun]` tag — the tag's text + styling live in exactly one place, and command writes are colorized identically to the `format*` helpers instead of hardcoding a plain tag. `colorize` is a no-op when color is off (a pipe, `NO_COLOR`, vitest), so lines degrade to plain text and the format tests still assert plain strings.

@@ -25,10 +25,10 @@ describe(resolvePrepareStep, () => {
     cleanup();
   });
 
-  test(`is undefined for ${Environment.None}`, () => {
+  test("is undefined when no environment preset is set", () => {
     expect.hasAssertions();
 
-    expect(resolvePrepareStep(Environment.None, createWorkspace())).toBeUndefined();
+    expect(resolvePrepareStep(undefined, createWorkspace())).toBeUndefined();
   });
 
   test(`targets a nested nuxt package by path filter for ${Environment.Nuxt}`, () => {

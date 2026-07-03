@@ -5,9 +5,9 @@ import { DiagnosticStatus } from "@/models/cli/DiagnosticStatus";
 import { isVersionAtLeast } from "@/services/cli/run/isVersionAtLeast";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
+import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult, takeOne } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
 // The oldest bubblewrap exposing `--overlay-src` / `--tmp-overlay` (the RAM-overlay flags the os backend needs).
 const MINIMUM_BUBBLEWRAP_VERSION = "0.10.0";
 // Resolve a command to where the os backend actually runs it — directly on Linux, or through `wsl.exe --exec` on
@@ -17,9 +17,7 @@ const resolveHostCommand = (file: string, args: readonly string[]): [string, str
 // Run a probe command on the host (via resolveHostCommand) and return trimmed stdout, or null when the command is
 // Absent or errors (getResult swallows the throw; a missing tool has no partial result to report).
 const readProbeOutput = (file: string, args: readonly string[]): null | string =>
-  getResult(() =>
-    execFileSync(...resolveHostCommand(file, args), { encoding: "utf8", stdio: "pipe", timeout: PROBE_TIMEOUT_MS }),
-  )
+  getResult(() => execFileHidden(...resolveHostCommand(file, args), { timeout: PROBE_TIMEOUT_MS }))
     .map((stdout) => stdout.trim())
     .unwrapOr(null);
 

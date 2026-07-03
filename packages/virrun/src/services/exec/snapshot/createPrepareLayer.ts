@@ -1,6 +1,6 @@
-import type { PrepareLocation } from "@/models/exec/snapshot/PrepareLocation";
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
+import type { PrepareLocation } from "@/models/exec/snapshot/PrepareLocation";
 import type { PrepareStep } from "@/models/virrun/PrepareStep";
 
 import {
@@ -10,7 +10,8 @@ import {
 import { pruneToOutputs } from "@/services/exec/snapshot/pruneToOutputs";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
+import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
 import { join } from "node:path";
 // Captures a framework's generated artifacts into the source-keyed prepare layer. Forks the deps snapshot as a
@@ -39,8 +40,8 @@ export const createPrepareLayer = (
   let captureWorkDir = "";
   return getResultAsync(async () => {
     mkdirSync(dir, { recursive: true });
-    captureUpperDir = mkdtempSync(join(dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`));
-    captureWorkDir = mkdtempSync(join(dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`));
+    captureUpperDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`)));
+    captureWorkDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`)));
     const result = await backend.exec(prepareStep.command, {
       ...options,
       overlayLayers: { lowerDirs: [depsLocation.upperDir], upperDir: captureUpperDir, workDir: captureWorkDir },
@@ -56,7 +57,7 @@ export const createPrepareLayer = (
     getResult(() => {
       renameSync(captureUpperDir, upperDir);
     }).match(
-      () => undefined,
+      noop,
       (error) => {
         if (!existsSync(upperDir)) throw error;
         removeSnapshotDirectory(captureUpperDir);
@@ -64,7 +65,7 @@ export const createPrepareLayer = (
     );
     removeSnapshotDirectory(captureWorkDir);
   }).match(
-    () => undefined,
+    noop,
     (error) => {
       if (captureUpperDir) removeSnapshotDirectory(captureUpperDir);
       if (captureWorkDir) removeSnapshotDirectory(captureWorkDir);

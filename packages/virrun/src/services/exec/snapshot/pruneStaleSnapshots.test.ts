@@ -1,6 +1,11 @@
-import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
+import {
+  VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME,
+  VIRRUN_SNAPSHOTS_DIRECTORY_NAME,
+} from "@/services/exec/snapshot/constants";
 import { pruneStaleSnapshots } from "@/services/exec/snapshot/pruneStaleSnapshots";
+import { DEAD_PID } from "@/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { writeLeaseFile } from "@/services/exec/test/writeLeaseFile.test";
 import { VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
 import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -19,6 +24,8 @@ describe(pruneStaleSnapshots, () => {
     mkdirSync(dir, { recursive: true });
     return dir;
   };
+  const seedLease = (hash: string, pid: number): string =>
+    writeLeaseFile(join(seedSnapshot(hash), VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME), pid);
 
   beforeEach(() => {
     cacheHome = create();
@@ -48,5 +55,29 @@ describe(pruneStaleSnapshots, () => {
     pruneStaleSnapshots(CURRENT_HASH);
 
     expect(existsSync(snapshotsDir())).toBe(false);
+  });
+
+  test("keeps a superseded snapshot a live run still leases", () => {
+    expect.hasAssertions();
+
+    const current = seedSnapshot(CURRENT_HASH);
+    const stale = seedSnapshot(STALE_HASH);
+    seedLease(STALE_HASH, process.pid);
+
+    pruneStaleSnapshots(CURRENT_HASH);
+
+    expect(existsSync(current)).toBe(true);
+    expect(existsSync(stale)).toBe(true);
+  });
+
+  test("removes a superseded snapshot whose leases are all dead", () => {
+    expect.hasAssertions();
+
+    const stale = seedSnapshot(STALE_HASH);
+    seedLease(STALE_HASH, DEAD_PID);
+
+    pruneStaleSnapshots(CURRENT_HASH);
+
+    expect(existsSync(stale)).toBe(false);
   });
 });

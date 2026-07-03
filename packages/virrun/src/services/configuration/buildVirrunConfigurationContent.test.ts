@@ -12,11 +12,11 @@ describe(buildVirrunConfigurationContent, () => {
     );
   });
 
-  test(`defaults round-trip the ${BackendType.Auto} backend and ${Environment.None} environment`, () => {
+  test(`omits the environment key entirely when no preset is passed, defaulting the ${BackendType.Auto} backend`, () => {
     expect.hasAssertions();
 
-    expect(buildVirrunConfigurationContent(BackendType.Auto, Environment.None)).toBe(
-      `{\n  "$schema": "./node_modules/virrun/schema.json",\n  "backend": "auto",\n  "environment": "none"\n}\n`,
+    expect(buildVirrunConfigurationContent(BackendType.Auto)).toBe(
+      `{\n  "$schema": "./node_modules/virrun/schema.json",\n  "backend": "auto"\n}\n`,
     );
   });
 });

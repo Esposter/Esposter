@@ -1,18 +1,15 @@
 import { VIRRUN_PREPARE_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
-import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
+import { hasLiveLease } from "@/services/exec/snapshot/hasLiveLease";
+import { sweepStaleEntries } from "@/services/exec/snapshot/sweepStaleEntries";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
-import { getResult } from "@esposter/shared";
-import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-// Only the current source-state's prepare layer is ever reused, so evict every superseded `prepare/<key>` to keep the
-// Host-global cache pinned to the single live entry (each source edit mints a new key). Best-effort per dir: a failed
-// Removal must not abort the run.
+// Only the current source-state's prepare layer is reused by THIS run, so evict every superseded `prepare/<key>` to
+// Keep the host-global cache small (each source edit mints a new key) — but spare a superseded layer a concurrent run
+// Still leases (hasLiveLease, which also reaps that dir's dead-pid leases in passing). Because the key moves on every
+// Edit, active dev strands a superseded layer on nearly every run — so the removals run detached (via sweepStaleEntries
+// → removeSnapshotDirectoryDetached) off the command's critical path rather than blocking on an rm -rf of the previous
+// .nuxt closure. Best-effort per dir.
 export const pruneStalePrepareLayers = (currentKey: string): void => {
   const prepareDir = join(getGlobalCacheDirectory(), VIRRUN_PREPARE_DIRECTORY_NAME);
-  if (!existsSync(prepareDir)) return;
-  for (const entry of readdirSync(prepareDir, { withFileTypes: true }))
-    if (entry.isDirectory() && entry.name !== currentKey)
-      getResult(() => {
-        removeSnapshotDirectory(join(prepareDir, entry.name));
-      });
+  sweepStaleEntries(prepareDir, (name) => name !== currentKey && !hasLiveLease(join(prepareDir, name)));
 };

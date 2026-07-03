@@ -76,10 +76,11 @@ When a component's model value (or other prop) type depends on an enum/discrimin
 
 ```vue
 <script setup lang="ts" generic="TKey extends SomeEnum">
-// SomeEnum is a string enum (e.g. SomeEnum.A = "A"), so interface keys are string literals:
+// SomeEnum is a string enum (e.g. SomeEnum.A = "A"), so interface keys are string literals.
+// Model values use "" as the empty-string sentinel and never `| null` (see the typescript / string-utils skills):
 interface ModelValueMap {
-  A: boolean | null;
-  B: string | null;
+  A: boolean;
+  B: string;
 }
 
 const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });

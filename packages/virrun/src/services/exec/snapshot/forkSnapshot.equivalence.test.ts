@@ -76,4 +76,31 @@ describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a 
     expect(warmResult.stdout).toMatch(ESBUILD_VERSION_REGEX);
     expect(warmResult).toStrictEqual(coldResult);
   }, dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds());
+
+  // The regression guard for the verify-deps-before-run fix. `pnpm exec` is the exact path that broke: unsuppressed,
+  // Pnpm's pre-run dependency verification fires an auto-install inside the sandbox and dies writing bin shims into the
+  // Overlay upper (ENOENT node_modules/.bin/*) — the prepare step runs `pnpm exec nuxt prepare`. createOsExecOptions
+  // Now disables that check, so a warm fork resolves the binary straight from the frozen snapshot without re-installing.
+  // Diffing against a cold in-place install of the same `pnpm exec` proves skipping verification is byte-equivalent: a
+  // Fork whose deps are already frozen-correct produces the identical binary output an actual install would, and — the
+  // Point of the fix — succeeds at all rather than crashing in the auto-install's shim write.
+  test("a forked warm `pnpm exec` runs over the frozen deps without re-installing and matches a cold install", async () => {
+    expect.hasAssertions();
+
+    // Corepack pnpm (not the raw binary find the case above uses) so the run actually traverses verify-deps-before-run,
+    // Then `node --version` as the payload — a command pnpm exec always resolves off PATH, so a non-zero exit means the
+    // Pre-run verification tripped an install, not a missing hoisted bin. createOsInstallOptions binds the corepack home
+    // Both sides need to resolve `corepack pnpm`. ESBUILD_VERSION_REGEX is a bare semver, so it matches node's `vX.Y.Z`.
+    const execCommand = "corepack pnpm exec node --version";
+    const warmResult = await forkSnapshot(backend, execCommand, createOsInstallOptions(corpus, "pipe"));
+    const coldResult = await backend.exec(
+      `${resolveSetupCommand()} > /dev/null 2>&1 && ${execCommand}`,
+      createOsInstallOptions(corpus, "pipe"),
+    );
+
+    expect(warmResult.exitCode).toBe(0);
+    expect(coldResult.exitCode).toBe(0);
+    expect(warmResult.stdout).toMatch(ESBUILD_VERSION_REGEX);
+    expect(warmResult.stdout).toBe(coldResult.stdout);
+  }, dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds());
 });

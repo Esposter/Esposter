@@ -1,7 +1,7 @@
 import { buildBwrapArgs } from "@/services/exec/bwrap/buildBwrapArgs";
 import { PROBE_TIMEOUT_MS } from "@/services/exec/util/constants";
+import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { getResult, withFinalizer } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
 // Whether this host can actually SET UP the overlay sandbox — not merely whether bwrap is on PATH. A `command -v
 // Bwrap` probe is insufficient: bubblewrap built without overlayfs support (some WSL2 builds), or a kernel with
 // Unprivileged user namespaces disabled, has bwrap present yet rejects the overlay flags. So we run the real argv
@@ -21,30 +21,24 @@ export const probeOsBackendSupported = (): boolean => {
   switch (process.platform) {
     case "linux":
       return getResult(() =>
-        execFileSync("bwrap", buildBwrapArgs(["true"], process.cwd()), { stdio: "pipe", timeout: PROBE_TIMEOUT_MS }),
+        execFileHidden("bwrap", buildBwrapArgs(["true"], process.cwd()), { timeout: PROBE_TIMEOUT_MS }),
       ).match(
         () => true,
         () => false,
       );
     case "win32":
-      return getResult(() =>
-        execFileSync("wsl.exe", ["--exec", "mktemp", "-d"], { stdio: "pipe", timeout: PROBE_TIMEOUT_MS }),
-      )
-        .map((stdout) => stdout.toString().trim())
+      return getResult(() => execFileHidden("wsl.exe", ["--exec", "mktemp", "-d"], { timeout: PROBE_TIMEOUT_MS }))
+        .map((stdout) => stdout.trim())
         .andThen((wslDir) =>
           getResult(() =>
             withFinalizer(
               () =>
-                execFileSync("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], {
-                  stdio: "pipe",
+                execFileHidden("wsl.exe", ["--exec", "bwrap", ...buildBwrapArgs(["true"], wslDir)], {
                   timeout: PROBE_TIMEOUT_MS,
                 }),
               () => {
                 getResult(() =>
-                  execFileSync("wsl.exe", ["--exec", "rm", "-rf", wslDir], {
-                    stdio: "pipe",
-                    timeout: PROBE_TIMEOUT_MS,
-                  }),
+                  execFileHidden("wsl.exe", ["--exec", "rm", "-rf", wslDir], { timeout: PROBE_TIMEOUT_MS }),
                 ).unwrapOr(undefined);
               },
             ),

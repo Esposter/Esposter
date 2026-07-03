@@ -22,9 +22,9 @@ const initArgs: InitArgs = {
     type: "enum",
   },
   environment: {
-    default: Environment.None,
-    description: "Framework whose generated artifacts the sandbox regenerates (e.g. nuxt → .nuxt).",
-    options: [Environment.None, Environment.Nuxt],
+    description: "Framework whose generated artifacts the sandbox regenerates (e.g. nuxt → .nuxt); omit for none.",
+    options: [Environment.Nuxt],
+    required: false,
     type: "enum",
   },
   force: { default: false, description: "Overwrite an existing virrun.config.json.", type: "boolean" },
@@ -47,7 +47,7 @@ export const initCommand: CommandDef<InitArgs> = defineCommand({
     }
     writeFileSync(path, buildVirrunConfigurationContent(args.backend, args.environment));
     process.stderr.write(
-      `${formatVirrunLine(`wrote ${colorize(path, Color.Blue)} (backend=${colorize(args.backend, Color.Blue)}, environment=${colorize(args.environment, Color.Blue)})`)}\n`,
+      `${formatVirrunLine(`wrote ${colorize(path, Color.Blue)} (backend=${colorize(args.backend, Color.Blue)}, environment=${colorize(args.environment ?? "none", Color.Blue)})`)}\n`,
     );
   },
 });

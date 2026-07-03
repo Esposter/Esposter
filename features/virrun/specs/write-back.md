@@ -43,14 +43,14 @@ A `build` that cleans its output dir (`rm -rf dist && rebuild`) produces an **op
 
 ## Flush algorithm
 
-After the command exits 0, reconcile the top upper into the host working dir (`<cwd>`):
+After the command exits, reconcile the top upper into the host working dir (`<cwd>`) — whatever the exit code:
 
 1. **Walk the upper**, classifying each entry per the table above (`parseOverlayEntryKind`):
    - **regular file / dir** → copy to the same relative path under `<cwd>`, overwriting (overlay copy-up already holds the full new content).
    - **whiteout** → `rm -rf` the host path.
    - **opaque dir** → clear the host dir, then copy the upper's children.
 2. **Skip snapshot-lower-shadowing paths.** An upper entry whose path is supplied by the warm snapshot lower (a `node_modules`/dep-tree path) is a sandbox-internal write (postinstall patch, `node_modules/.vite` cache), not host state — do not flush it. _Structural_ (layer membership), not a name guess. An active `environment`'s prepare `outputs` (e.g. `.nuxt`) are masked the same structural way — owned by the source-keyed prepare layer, regenerated in-sandbox, never host state. Source-tree paths and genuinely new repo content always flush.
-3. **Bulk copy-out, last.** Copy is sequential over the (small) diff, far cheaper than the random I/O the toolchain did in RAM. Flush runs only after a clean exit; a non-zero exit flushes nothing (all-or-nothing, see Constraints).
+3. **Bulk copy-out, last.** Copy is sequential over the (small) diff, far cheaper than the random I/O the toolchain did in RAM. Flush runs **whatever the exit code** — a non-zero mutation (`eslint --fix`/`oxfmt` with unfixable errors left, a build that half-writes `dist/`) still produced real files, and native leaves them on disk, so the flush does too (see Constraints). Only the _task cache_ is gated on exit 0 — a failed run is flushed but never recorded, so the next invocation genuinely re-attempts it.
 
 ## Execution locus & xattr reader
 
@@ -63,23 +63,23 @@ After the command exits 0, reconcile the top upper into the host working dir (`<
 Write-back is unprovable by inspection — it is gated by an **equivalence test**, an extension of the differential corpus to mutation commands:
 
 - Capture one warm dependency snapshot of the workspace corpus, then run a command over it with `persistRun` and assert the produced host files match a native run, while `node_modules` (the snapshot lower) never reaches the host.
-- Rather than drive each real tool through its own config — which the manifest-only corpus can't resolve — the corpus exercises the flush **mechanism** every tool relies on, one overlay-entry shape per case: a new top-level file, an in-place edit of an existing source file (the `oxfmt`/`eslint --fix` shape), a newly created nested file under a new directory (the ctix-barrel / `db:gen`-migration shape), a whiteout delete, the `node_modules` drop, and the all-or-nothing rollback on a non-zero exit. Every fixed bug becomes a golden regression case.
+- Rather than drive each real tool through its own config — which the manifest-only corpus can't resolve — the corpus exercises the flush **mechanism** every tool relies on, one overlay-entry shape per case: a new top-level file, an in-place edit of an existing source file (the `oxfmt`/`eslint --fix` shape), a newly created nested file under a new directory (the ctix-barrel / `db:gen`-migration shape), a whiteout delete, the `node_modules` drop, and the partial write a non-zero exit still flushes (the `eslint --fix`-with-remaining-errors shape). Every fixed bug becomes a golden regression case.
 - CI-enforced in the 🏗️ coverage shards alongside `*.differential.test.ts` — a divergence hard-fails the build.
 
 ## Key Files
 
 All realized. The probe/apply seam shipped as a single python3 script pair (`runOverlayScript` + `parseOverlayManifest`) rather than a per-entry xattr reader, and the equivalence test asserts produced files directly rather than via a separate `assertEquivalent` helper.
 
-| File                                                    | Role                                                                                                                                           |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `models/exec/OverlayEntryKind.ts`                       | enum `Regular`/`Whiteout`/`OpaqueDir` (+ schema) — the classification result                                                                   |
-| `services/exec/snapshot/parseOverlayEntryKind.ts`       | pure: classify an upper entry from a parsed manifest entry + its opaque flag                                                                   |
-| `services/exec/snapshot/buildFlushPlan.ts`              | pure: turn an upper walk into an ordered `FlushOp[]` (copy / delete / clear-then-copy), skipping snapshot-lower paths                          |
-| `services/exec/snapshot/runOverlayScript.ts`            | run the `OVERLAY_PROBE_SCRIPT` / `OVERLAY_APPLY_SCRIPT` python3 seam (direct on Linux; via `wsl.exe` on win32, with `readWslPath` translation) |
-| `services/exec/snapshot/parseOverlayManifest.ts`        | zod-validate the probe script's JSON manifest (relative path, opaque flag, snapshot-lower flag) into typed entries                             |
-| `services/exec/snapshot/flushUpperToHost.ts`            | probe the upper → classify + order in TS → apply the plan to `<cwd>` Linux-side                                                                |
-| `services/exec/snapshot/persistRun.ts`                  | orchestrate: ensure snapshot → fork with a persistable upper → exec → `flushUpperToHost` on exit 0 → tear down upper                           |
-| `services/exec/snapshot/persistRun.equivalence.test.ts` | the host-gated write-back equivalence corpus — one overlay-entry shape per case, asserting host parity vs native                               |
+| File                                                    | Role                                                                                                                                                             |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `models/exec/OverlayEntryKind.ts`                       | enum `Regular`/`Whiteout`/`OpaqueDir` (+ schema) — the classification result                                                                                     |
+| `services/exec/snapshot/parseOverlayEntryKind.ts`       | pure: classify an upper entry from a parsed manifest entry + its opaque flag                                                                                     |
+| `services/exec/snapshot/buildFlushPlan.ts`              | pure: turn an upper walk into an ordered `FlushOp[]` (copy / delete / clear-then-copy), skipping snapshot-lower paths                                            |
+| `services/exec/snapshot/runOverlayScript.ts`            | run the `OVERLAY_PROBE_SCRIPT` / `OVERLAY_APPLY_SCRIPT` python3 seam (direct on Linux; via `wsl.exe` on win32, with `readWslPath` translation)                   |
+| `services/exec/snapshot/parseOverlayManifest.ts`        | zod-validate the probe script's JSON manifest (relative path, opaque flag, snapshot-lower flag) into typed entries                                               |
+| `services/exec/snapshot/flushUpperToHost.ts`            | probe the upper → classify + order in TS → apply the plan to `<cwd>` Linux-side                                                                                  |
+| `services/exec/snapshot/persistRun.ts`                  | orchestrate: ensure snapshot → fork with a persistable upper → exec → `flushUpperToHost` (any exit code) → record to task cache only on exit 0 → tear down upper |
+| `services/exec/snapshot/persistRun.equivalence.test.ts` | the host-gated write-back equivalence corpus — one overlay-entry shape per case, asserting host parity vs native                                                 |
 
 Reuses the realized snapshot-capture machinery (`buildBwrapArgs` `OverlayLayers` persistent-upper shape, per-pid temp dirs, `removeSnapshotDirectory`). The persist-vs-ephemeral choice lives in the orchestrator (`persistRun` parallels `forkSnapshot`), **not** an `ExecOptions` flag — the backend stays a pure executor of an `overlayLayers` shape.
 
@@ -88,6 +88,6 @@ Reuses the realized snapshot-capture machinery (`buildBwrapArgs` `OverlayLayers`
 - **Always warm, persist is the only axis.** Decoupling warm-deps from persist is the core decision — a cold-install-per-mutation design would defeat "speedup everywhere", and re-flushing `node_modules` would defeat "never touches disk". Both are avoided by forking the snapshot and flushing only the top upper.
 - **`node_modules` is structurally excluded**, not name-filtered — it lives in the RO snapshot lower, so it is never in the top upper's flush set. An `environment`'s prepare `outputs` are excluded the same structural way (`isUnderSnapshotLower` treats a configured output dir like `node_modules`), so a persist run never writes a regenerated `.nuxt` back to the host. A repo that genuinely wants `node_modules` materialized on host (IDE intellisense) is a separate need → [deferred/materialize-node-modules.md](../deferred/materialize-node-modules.md).
 - **`pnpm install` is the snapshot-creation path, not a persist run.** Its "output" is the warm snapshot (`createSnapshot` / `virrun snapshot`), not host `node_modules`; it does not go through write-back.
-- **All-or-nothing flush.** A non-zero exit flushes nothing, so a failed command never leaves a half-written tree. This is a deliberate, documented divergence from native (which can leave partial output) — equivalence tests assert only the success path.
+- **Flush is native-equivalent, not all-or-nothing.** The flush runs whatever the exit code, because native-equivalence taken literally means the host is left exactly as the tool left it: `eslint --fix`/`oxfmt` exit non-zero when unfixable errors remain yet still rewrote the files they _could_ fix, and a failed build can leave partial `dist/` — native persists both, so the flush does too. Discarding those writes was the divergence. Only the **task cache** is gated on a clean exit (`onPersist`/`recordTaskCache` fire only on exit 0), so a failed run is flushed but never replayed — the next invocation genuinely re-attempts it. The equivalence corpus asserts both the success shapes and the non-zero-exit partial flush.
 - **No new config or per-command list.** Persist is the default behavior of a normal `virrun -- <cmd>`; the ephemeral fast path stays reachable for CI/verification. The prefix remains the sole switch (no allowlist), consistent with [adoption.md](adoption.md).
-- **Concurrency.** Two persist runs touching the same host paths are last-writer-wins; acceptable — developers don't run two formatters over the same tree at once. The snapshot lower is RO and shared safely (per [snapshot-fork.md](snapshot-fork.md) atomic publish).
+- **Concurrency.** The snapshot lower is RO and shared safely, and the host-global cache is concurrency-safe by process liveness (per [snapshot-fork.md](snapshot-fork.md) atomic publish · [config-and-cache](config-and-cache.md#cleanup--self-healing)). Write-back's only remaining race is two persist runs flushing the **same host path** at once — last-writer-wins, exactly as native (running two mutators over one tree races there too).

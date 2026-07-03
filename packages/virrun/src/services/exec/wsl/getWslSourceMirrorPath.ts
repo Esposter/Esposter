@@ -1,13 +1,10 @@
-import { VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
-import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
-import { readWslPath } from "@/services/exec/wsl/readWslPath";
-import { createHash } from "node:crypto";
-// The ext4 mirror's Linux path for a host cwd: `<wslNativeCacheRoot>/sources/<sha256(cwd)>`, keyed by the absolute
-// Host path so distinct repos/worktrees never collide. Pure (no sync) — ensureWslSourceMirror calls this then rsyncs
-// Into it, while createOsExecOptions calls it to prepend the mirror's node_modules/.bin to the sandbox PATH so a bare
-// Command resolves the overlaid (correct-platform) binary before the /mnt/c host bin that WSL interop leaks onto PATH.
-export const getWslSourceMirrorPath = (cwd: string): string => {
-  const cacheRoot = readWslPath(getWslNativeCacheRoot());
-  const key = createHash("sha256").update(cwd).digest("hex");
-  return `${cacheRoot}/${VIRRUN_SOURCES_DIRECTORY_NAME}/${key}`;
-};
+import { VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
+import { getWslSourceMirrorEntryPath } from "@/services/exec/wsl/getWslSourceMirrorEntryPath";
+// The ext4 mirror's Linux path for a host cwd: `<entry>/tree`, the `--overlay-src` read-only lower and the base for the
+// PATH prepend. It is the `tree/` leaf of the self-contained mirror entry (getWslSourceMirrorEntryPath) rather than the
+// Entry root, so the lower stays a byte-exact copy of the working tree — the sibling `origin` marker the reaper keys on
+// Never shows through into the sandbox source view. ensureWslSourceMirror rsyncs into it; createOsExecOptions prepends
+// Its `node_modules/.bin` so a bare command resolves the overlaid (correct-platform) binary before the /mnt/c host bin
+// That WSL interop leaks onto PATH.
+export const getWslSourceMirrorPath = (cwd: string): string =>
+  `${getWslSourceMirrorEntryPath(cwd)}/${VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME}`;

@@ -5,6 +5,7 @@ import type { SnapshotLocation } from "@/models/exec/snapshot/SnapshotLocation";
 import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
@@ -12,7 +13,7 @@ import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemp
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { TEST_WSL_CACHE_DIR_NAME } from "@/services/exec/wsl/constants.test";
 import { createVirrun } from "@/services/virrun/createVirrun";
-import { rmSync } from "node:fs";
+import { existsSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -40,15 +41,15 @@ const mockOsBackend = () =>
     exec: (): Promise<ExecResult> => Promise.resolve({ exitCode: 0, stderr: "", stdout: "" }),
     name: BackendType.Os,
   });
-const snapshotLocation = (exists: boolean): SnapshotLocation => ({
-  dir: "",
+const snapshotLocation = (exists: boolean, dir: string): SnapshotLocation => ({
+  dir,
   exists,
   hash: TEST_FILENAME,
   upperDir: TEST_FILENAME,
 });
 
 describe(createVirrun, () => {
-  const { cleanup, createWorkspace } = createTemporaryDirectoryTracker();
+  const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
 
   beforeEach(() => {
     // Clear call counts between tests so the warm-snapshot case never sees the cold case's capture call.
@@ -135,9 +136,10 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     mockOsBackend();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(false));
+    const snapshotDir = create();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(false, snapshotDir));
     vi.mocked(createSnapshot).mockResolvedValue({
-      location: snapshotLocation(true),
+      location: snapshotLocation(true, snapshotDir),
       result: { exitCode: 0, stderr: "", stdout: "" },
     });
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
@@ -158,7 +160,8 @@ describe(createVirrun, () => {
     expect.hasAssertions();
 
     mockOsBackend();
-    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true));
+    const snapshotDir = create();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDir));
     vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
     const dir = createWorkspace();
     const { dispose, fork } = await createVirrun({
@@ -170,5 +173,28 @@ describe(createVirrun, () => {
 
     expect(createSnapshot).not.toHaveBeenCalled();
     expect(forkSnapshot).toHaveBeenCalledTimes(1);
+  });
+
+  test("leases the snapshot for the run so a concurrent prune can't evict it, and releases it on dispose", async () => {
+    expect.hasAssertions();
+
+    mockOsBackend();
+    const snapshotDir = create();
+    vi.mocked(resolveSnapshotLocation).mockReturnValue(snapshotLocation(true, snapshotDir));
+    vi.mocked(forkSnapshot).mockResolvedValue({ exitCode: 0, stderr: "", stdout: TEST_FILENAME });
+    const dir = createWorkspace();
+    const { dispose, fork } = await createVirrun({
+      backend: BackendType.Os,
+      source: { dir, type: SourceType.Dir },
+    });
+    await fork("tsgo");
+
+    const leaseFile = join(snapshotDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, String(process.pid));
+
+    expect(existsSync(leaseFile)).toBe(true);
+
+    await dispose();
+
+    expect(existsSync(leaseFile)).toBe(false);
   });
 });

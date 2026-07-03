@@ -12,7 +12,7 @@ import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDire
 import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
 import { VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
 import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
-import { getResult, toAppError } from "@esposter/shared";
+import { getResult, noop, toAppError } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { join } from "node:path";
 
@@ -54,12 +54,9 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
           process.stderr.write(`${formatVirrunLine(`removed ${colorize(sourcesPath, Color.Red)}`)}\n`);
         }
       }
-    }).match(
-      () => undefined,
-      (error) => {
-        process.stderr.write(`${formatVirrunLine(colorize(toAppError(error).message, Color.Red))}\n`);
-        process.exitCode = 1;
-      },
-    );
+    }).match(noop, (error) => {
+      process.stderr.write(`${formatVirrunLine(colorize(toAppError(error).message, Color.Red))}\n`);
+      process.exitCode = 1;
+    });
   },
 });
