@@ -62,14 +62,16 @@ export const createVirrun = async ({
   // Persist so the two warm-snapshot paths can't drift.
   const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {
     const { dir, exists, hash } = resolveSnapshotLocation(cwd);
+    // Announce this process as a live user of the snapshot BEFORE the prune/mint — a concurrent run on a different
+    // lockfile hash prunes every dir that isn't its own hash and holds no live lease, so leasing first is what stops it
+    // reclaiming this dir in the window between minting it and mounting it. Released on dispose; a hard-killed run's
+    // lease is reaped later. createLease mkdirs the leases dir, so the lease exists even on a cold (not-yet-minted) run.
+    leases.push(createLease(dir));
     // Sweep superseded snapshots, then reap any temp a hard-killed run stranded in the live dir (its finalizer never
     // Ran), before hitting or minting this one — so the cache never grows past the live entry plus its published layers.
     pruneStaleSnapshots(hash);
     reapStaleTemps(dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
     if (!exists) await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
-    // Announce this process as a live user of the (now warm) snapshot — even on a cache hit — so a concurrent run on a
-    // Different lockfile hash can't prune it mid-mount. Released on dispose; a hard-killed run's lease is reaped later.
-    leases.push(createLease(dir));
   };
   // Provision the source-keyed prepare layer (the framework's Linux-generated artifacts, e.g. .nuxt) once per source
   // State, forked over the deps snapshot, and return the read-only lower(s) fork/persist stacks above the deps
@@ -82,12 +84,14 @@ export const createVirrun = async ({
   const ensurePrepareLayer = async (stdio: ExecStdio): Promise<readonly string[]> => {
     if (prepareStep === undefined) return [];
     const location = resolvePrepareLocation(cwd, prepareStep);
+    // Same live-user lease as the deps snapshot, on the source-keyed prepare dir, and taken FIRST for the same reason:
+    // a concurrent run on a different key prunes any layer that isn't its own key and has no live lease, so leasing
+    // before the prune/materialize is what stops it reclaiming this freshly-built layer in the window before we mount it.
+    leases.push(createLease(location.dir));
     pruneStalePrepareLayers(location.key);
     reapStaleTemps(location.dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
     if (!existsSync(location.upperDir))
       await createPrepareLayer(execBackend, prepareStep, toInstallOptions(stdio), location);
-    // Same live-user lease as the deps snapshot, on the source-keyed prepare dir.
-    leases.push(createLease(location.dir));
     return [location.upperDir];
   };
   return {

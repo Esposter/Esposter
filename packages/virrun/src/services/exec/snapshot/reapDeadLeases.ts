@@ -1,4 +1,5 @@
 import { isProcessAlive } from "@/services/exec/util/isProcessAlive";
+import { parsePid } from "@/services/exec/util/parsePid";
 import { getResult } from "@esposter/shared";
 import { readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
@@ -11,8 +12,8 @@ export const reapDeadLeases = (leasesDir: string): boolean => {
   if (entries.isErr()) return false;
   let isLeaseLive = false;
   for (const entry of entries.value) {
-    const pid = Number.parseInt(entry, 10);
-    if (Number.isInteger(pid) && isProcessAlive(pid)) {
+    const pid = parsePid(entry);
+    if (pid !== undefined && isProcessAlive(pid)) {
       isLeaseLive = true;
       continue;
     }

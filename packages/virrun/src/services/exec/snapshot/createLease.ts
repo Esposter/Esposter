@@ -17,12 +17,13 @@ export const createLease = (hashDir: string): Lease => {
   const leaseFile = join(leasesDir, String(process.pid));
   writeFileSync(leaseFile, "");
   return {
-    release: () =>
+    release: () => {
       getResult(() => {
         rmSync(leaseFile, { force: true });
       }).match(
         () => undefined,
         () => undefined,
-      ),
+      );
+    },
   };
 };

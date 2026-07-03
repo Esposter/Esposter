@@ -55,7 +55,7 @@ describe(persistRun, () => {
 
     expect(result.exitCode).toBe(0);
     expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(expect.any(String), HOST_DIR, PLAN);
-    expect(onPersist).toHaveBeenCalledExactlyOnceWith();
+    expect(onPersist).toHaveBeenCalledExactlyOnceWith(expect.any(String), PLAN, { exitCode: 0, stderr: "", stdout: "" });
   });
 
   test("still flushes on a non-zero exit (native leaves partial output) but never records the task cache", async () => {

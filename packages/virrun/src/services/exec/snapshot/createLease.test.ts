@@ -48,6 +48,8 @@ describe(createLease, () => {
     const lease = createLease(hashDir);
     lease.release();
 
-    expect(() => lease.release()).not.toThrow();
+    expect(() => {
+      lease.release();
+    }).not.toThrow();
   });
 });

@@ -46,14 +46,14 @@ describe(parseTempOwnerPid, () => {
     ).toBe(PID);
   });
 
-  test(`returns null for published bare layers, legacy random-only temps, and non-temps`, () => {
+  test(`returns undefined for published bare layers, legacy random-only temps, and non-temps`, () => {
     expect.hasAssertions();
 
-    expect(parseTempOwnerPid(VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME, VIRRUN_SNAPSHOT_TEMP_PREFIXES)).toBeNull();
-    expect(parseTempOwnerPid(VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME, VIRRUN_SNAPSHOT_TEMP_PREFIXES)).toBeNull();
+    expect(parseTempOwnerPid(VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME, VIRRUN_SNAPSHOT_TEMP_PREFIXES)).toBeUndefined();
+    expect(parseTempOwnerPid(VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME, VIRRUN_SNAPSHOT_TEMP_PREFIXES)).toBeUndefined();
     expect(
       parseTempOwnerPid(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${MKDTEMP_SUFFIX}`, VIRRUN_SNAPSHOT_TEMP_PREFIXES),
-    ).toBeNull();
-    expect(parseTempOwnerPid(VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, VIRRUN_SNAPSHOT_TEMP_PREFIXES)).toBeNull();
+    ).toBeUndefined();
+    expect(parseTempOwnerPid(VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, VIRRUN_SNAPSHOT_TEMP_PREFIXES)).toBeUndefined();
   });
 });
