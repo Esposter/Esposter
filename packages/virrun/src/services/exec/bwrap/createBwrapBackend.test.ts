@@ -141,8 +141,10 @@ describe(createBwrapBackend, () => {
     const { exitCode } = await exec("inherit");
 
     expect(exitCode).toBe(0);
+
     // Every flushed chunk ends on a newline — the line is never surfaced half-written.
     for (const [chunk] of write.mock.calls) expect(String(chunk).endsWith("\n")).toBe(true);
+
     expect(write.mock.calls.map(([chunk]) => chunk).join("")).toBe(line);
   });
 
