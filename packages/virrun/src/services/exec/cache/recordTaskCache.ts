@@ -3,10 +3,16 @@ import type { ExecResult } from "@/models/exec/ExecResult";
 import type { FlushOp } from "@/models/exec/FlushOp";
 
 import { FlushOpType } from "@/models/exec/FlushOp";
-import { TASK_CACHE_META_FILENAME, TASK_CACHE_PAYLOAD_DIRECTORY_NAME } from "@/services/exec/cache/constants";
+import {
+  TASK_CACHE_META_FILENAME,
+  TASK_CACHE_PAYLOAD_DIRECTORY_NAME,
+  TASK_CACHE_TEMP_PREFIX,
+} from "@/services/exec/cache/constants";
 import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCacheLocation";
 import { applyFlushPlan } from "@/services/exec/snapshot/applyFlushPlan";
+import { reapStaleTemps } from "@/services/exec/snapshot/reapStaleTemps";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
+import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
 import { getResult } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -23,7 +29,10 @@ export const recordTaskCache = (key: string, upperDir: string, plan: readonly Fl
   getResult(() => {
     const tasksRoot = dirname(location.dir);
     mkdirSync(tasksRoot, { recursive: true });
-    tempDir = mkdtempSync(join(tasksRoot, `${key}.`));
+    // Reclaim any hard-killed recorder's pid-tagged temp stranded here (no other sweep touches the tasks dir), then
+    // Mint this run's own — pid-tagged so a concurrent recorder's live temp is never mistaken for a corpse.
+    reapStaleTemps(tasksRoot, [TASK_CACHE_TEMP_PREFIX]);
+    tempDir = mkdtempSync(join(tasksRoot, withPidTempPrefix(TASK_CACHE_TEMP_PREFIX)));
     const payloadDir = join(tempDir, TASK_CACHE_PAYLOAD_DIRECTORY_NAME);
     mkdirSync(payloadDir, { recursive: true });
     applyFlushPlan(
