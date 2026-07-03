@@ -13,13 +13,13 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
 
-// Only spawn (the detached teardown) is mocked; readWslPath maps a UNC via its regex without a subprocess, and the
+// Only spawn (the background teardown) is mocked; readWslPath maps a UNC via its regex without a subprocess, and the
 // Local branch's removeSnapshotDirectory uses node:fs, so no other child_process export is exercised here.
 vi.mock(import("node:child_process"), () => ({ spawn: spawn as unknown as typeof baseSpawn }));
 
 describe(removeSnapshotDirectoryDetached, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
-  // A detached child never blocks — assert its lifecycle hooks are wired (error swallowed, unref'd so it outlives us).
+  // A background child never blocks — assert its lifecycle hooks are wired (error swallowed, unref'd so it outlives us).
   const child = { on: vi.fn<() => void>(), unref: vi.fn<() => void>() };
 
   beforeEach(() => {
@@ -31,7 +31,7 @@ describe(removeSnapshotDirectoryDetached, () => {
     cleanup();
   });
 
-  test("removes a plain directory tree in-process without spawning a detached process", () => {
+  test("removes a plain directory tree in-process without spawning a background process", () => {
     expect.hasAssertions();
 
     const dir = create();
@@ -44,17 +44,19 @@ describe(removeSnapshotDirectoryDetached, () => {
     expect(spawn).not.toHaveBeenCalled();
   });
 
-  test("tears down a WSL-UNC snapshot dir in a detached, unref'd WSL process off the critical path", () => {
+  test("tears down a WSL-UNC snapshot dir in a hidden, unref'd WSL process off the critical path", () => {
     expect.hasAssertions();
 
     const linuxDir = `${TEST_WSL_CACHE_ROOT_LINUX}/${VIRRUN_PREPARE_DIRECTORY_NAME}/stale`;
 
     removeSnapshotDirectoryDetached(createTestWslUnc(linuxDir, TEST_WSL_LEGACY_UNC_PREFIX));
 
+    // Never `detached`: on win32 that flag makes Windows ignore windowsHide and flash an empty console (see
+    // SpawnBackground / nodejs#21825). windowsHide alone hides it, so assert exactly that shape with no detach.
     expect(spawn).toHaveBeenCalledExactlyOnceWith(
       "wsl.exe",
       ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir],
-      { detached: true, stdio: "ignore" },
+      { stdio: "ignore", windowsHide: true },
     );
     expect(child.on).toHaveBeenCalledWith("error", expect.any(Function));
     expect(child.unref).toHaveBeenCalledOnceWith();
