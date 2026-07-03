@@ -15,6 +15,8 @@ import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { pruneStalePrepareLayers } from "@/services/exec/snapshot/pruneStalePrepareLayers";
 import { pruneStaleSnapshots } from "@/services/exec/snapshot/pruneStaleSnapshots";
+import { reapStaleTemps } from "@/services/exec/snapshot/reapStaleTemps";
+import { VIRRUN_SNAPSHOT_TEMP_PREFIXES } from "@/services/exec/snapshot/constants";
 import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
@@ -54,9 +56,11 @@ export const createVirrun = async ({
   // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op). Shared by fork and
   // Persist so the two warm-snapshot paths can't drift.
   const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {
-    const { exists, hash } = resolveSnapshotLocation(cwd);
-    // Sweep superseded snapshots before hitting or minting this one, so the cache never grows past the live entry.
+    const { dir, exists, hash } = resolveSnapshotLocation(cwd);
+    // Sweep superseded snapshots, then reap any temp a hard-killed run stranded in the live dir (its finalizer never
+    // Ran), before hitting or minting this one — so the cache never grows past the live entry plus its published layers.
     pruneStaleSnapshots(hash);
+    reapStaleTemps(dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
     if (!exists) await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
   };
   // Provision the source-keyed prepare layer (the framework's Linux-generated artifacts, e.g. .nuxt) once per source
@@ -71,6 +75,7 @@ export const createVirrun = async ({
     if (prepareStep === undefined) return [];
     const location = resolvePrepareLocation(cwd, prepareStep);
     pruneStalePrepareLayers(location.key);
+    reapStaleTemps(location.dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
     if (!existsSync(location.upperDir))
       await createPrepareLayer(execBackend, prepareStep, toInstallOptions(stdio), location);
     return [location.upperDir];

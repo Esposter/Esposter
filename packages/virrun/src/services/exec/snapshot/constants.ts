@@ -11,6 +11,13 @@ export const VIRRUN_PREPARE_DIRECTORY_NAME = "prepare";
 // Per-pid temps (`<name>.<pid>.tmp`) and renames the upper onto its final name as the atomic publish barrier.
 export const VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME = "upper";
 export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
+// The mkdtemp prefixes every capture/persist temp starts with inside a snapshot/prepare hash dir. `upper.`/`work.`
+// Also cover the persist siblings (`upper.persist.<rand>`, `work.persist.<rand>`) by prefix, and never match the
+// Published bare `upper`/`work` (no trailing `.`). reapStaleTemps sweeps a hard-killed run's corpses by these.
+export const VIRRUN_SNAPSHOT_TEMP_PREFIXES: readonly string[] = [
+  `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`,
+  `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`,
+];
 // The command captured into the warm snapshot to provision the sandbox's own dependency closure: a frozen
 // Install of the lockfile. On Windows the sandbox is a Linux (WSL) guest installing via corepack's pnpm
 // (the login PATH brings node + corepack, not necessarily a global pnpm); on Linux the caller's shell

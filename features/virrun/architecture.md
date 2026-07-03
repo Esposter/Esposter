@@ -127,6 +127,31 @@ Correctness is proven by **equivalence tests** (native vs `virrun --`, diffing t
 
 ---
 
+## Cache lifecycle & cleanup
+
+_Shipped._ A cache write must be disposable **and** self-cleaning: a run that dies before its finalizer never leaks disk permanently. Every temp follows the same lifecycle — a private `mkdtemp` capture, an atomic `renameSync` publish, and teardown by whichever of three mechanisms applies. The prune (stale hash/key dirs) and reap (temp corpses in the live dir + the source-temp root) share one primitive, `sweepStaleEntries`; a fourth reaper collapses the same leak at the process level on WSL. Detail + the concurrency assumption: [specs/config-and-cache.md](specs/config-and-cache.md#cleanup--self-healing).
+
+```mermaid
+flowchart TB
+    start["run captures into<br/>mkdtemp temp (upper.&lt;rand&gt;)"] --> exit{"how does the run end?"}
+    exit -->|"clean exit / handled error"| fin["finalizer: renameSync publish<br/>+ remove own temp"]
+    exit -->|"hard kill (SIGKILL, crash,<br/>wsl --shutdown)"| leak[("temp corpse stranded<br/>+ orphaned bwrap tree")]
+
+    fin --> live[("live cache:<br/>one upper per hash/key")]
+
+    subgraph next["next run — off the critical path, best-effort"]
+        prune["pruneStale* → sweepStaleEntries<br/>evict non-current hash/key dirs"]
+        reap["reapStaleTemps → sweepStaleEntries<br/>remove upper./work./virrun-temp- corpses"]
+        orphan["reapOrphanedWslRuns<br/>group-kill trees reparented off the Relay"]
+    end
+
+    leak -.reaped by.-> reap
+    leak -.killed by.-> orphan
+    live -.superseded entries evicted by.-> prune
+    reap --> live
+    orphan --> live
+```
+
 ## CLI output palette
 
 Every stderr diagnostic goes through one helper, `formatVirrunLine(message)` (`services/cli/format/formatVirrunLine.ts`), which prepends the bold-cyan `[virrun]` tag — the tag's text + styling live in exactly one place, and command writes are colorized identically to the `format*` helpers instead of hardcoding a plain tag. `colorize` is a no-op when color is off (a pipe, `NO_COLOR`, vitest), so lines degrade to plain text and the format tests still assert plain strings.

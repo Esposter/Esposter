@@ -6,10 +6,14 @@ import { buildWslReapCommand } from "@/services/exec/wsl/buildWslReapCommand";
 import { createWslBwrapArgs } from "@/services/exec/wsl/createWslBwrapArgs";
 import { createWslEnvArgs } from "@/services/exec/wsl/createWslEnvArgs";
 import { createWslProcessMarker } from "@/services/exec/wsl/createWslProcessMarker";
+import { reapOrphanedWslRuns } from "@/services/exec/wsl/reapOrphanedWslRuns";
 import { spawn } from "node:child_process";
 
-export const createWslOsBackend = (errorName: string): ExecBackend =>
-  createBwrapBackend(
+export const createWslOsBackend = (errorName: string): ExecBackend => {
+  // Reap any bwrap tree a previous hard-killed run left orphaned (its onTerminate reaper never fired) before this
+  // Backend spawns its own — off the critical path, and scoped to true orphans so a concurrent live run is untouched.
+  reapOrphanedWslRuns();
+  return createBwrapBackend(
     createWslBwrapArgs,
     (bwrapArgs, options) => {
       // Tag this run's shell with a unique `$0` so Ctrl+C can find and group-kill exactly its process tree.
@@ -53,3 +57,4 @@ export const createWslOsBackend = (errorName: string): ExecBackend =>
     },
     errorName,
   );
+};
