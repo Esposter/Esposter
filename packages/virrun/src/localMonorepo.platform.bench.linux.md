@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-06-30T10:36:40.066Z
-- Commit: c08666a98
+- Date: 2026-07-03T12:47:27.235Z
+- Commit: b6c69a46d
 - Node: v26.4.0
 - OS: linux 6.18.33.2-microsoft-standard-WSL2 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,26 +20,26 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | -------- | ------- | --------- | ------ | --------- | ------- |
-| native   | 1.00×   | 740.6575  | ±2.41% | 806.9511  | 10      |
-| os/linux | 0.76×   | 976.3426  | ±5.86% | 1139.3366 | 10      |
+| native   | 1.00×   | 836.1127  | ±3.64% | 897.3457  | 10      |
+| os/linux | 0.84×   | 995.0802  | ±3.72% | 1096.9270 | 10      |
 
 ## build - packages/shared (cold)
 
 | task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | -------- | ------- | --------- | ------ | --------- | ------- |
-| native   | 1.00×   | 4557.2210 | ±3.37% | 5041.3992 | 10      |
-| os/linux | 0.95×   | 4790.4341 | ±2.91% | 5228.0195 | 10      |
+| native   | 1.00×   | 4616.3906 | ±0.51% | 4671.6453 | 10      |
+| os/linux | 0.95×   | 4871.7791 | ±0.44% | 4919.1584 | 10      |
 
 ## build - write-back persist vs native (produces dist)
 
 | task             | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | ---------------- | ------- | --------- | ------ | --------- | ------- |
-| native           | 1.00×   | 4464.5321 | ±1.09% | 4570.8389 | 10      |
-| os/linux/persist | 0.93×   | 4786.7825 | ±1.43% | 5018.3389 | 10      |
+| native           | 1.00×   | 4645.4542 | ±0.61% | 4708.5116 | 10      |
+| os/linux/persist | 0.94×   | 4932.6584 | ±1.10% | 5063.9618 | 10      |
 
 ## test - packages/shared
 
 | task     | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | -------- | ------- | --------- | ------ | --------- | ------- |
-| native   | 1.00×   | 2003.2768 | ±1.21% | 2081.8545 | 10      |
-| os/linux | 0.87×   | 2297.1976 | ±2.64% | 2389.0861 | 10      |
+| native   | 1.00×   | 2167.1109 | ±1.16% | 2224.4950 | 10      |
+| os/linux | 0.9×    | 2409.5587 | ±0.90% | 2470.6930 | 10      |
