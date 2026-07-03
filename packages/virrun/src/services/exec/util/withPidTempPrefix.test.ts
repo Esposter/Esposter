@@ -16,6 +16,7 @@ describe(withPidTempPrefix, () => {
     expect.hasAssertions();
 
     const name = `${withPidTempPrefix(prefix)}test`;
+
     expect(parseTempOwnerPid(name, [prefix])).toBe(process.pid);
   });
 });

@@ -1,6 +1,6 @@
 import type { ChildProcess } from "node:child_process";
 
-import { getResult } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 
 // Bridge the parent's termination signals to the spawned child so Ctrl+C actually stops the run. Killing the
 // Child alone is not enough on every backend: the native and linux-bwrap children are the process tree's root
@@ -14,11 +14,7 @@ import { getResult } from "@esposter/shared";
 export const forwardTerminationSignals = (child: ChildProcess, onTerminate?: () => void): void => {
   const onSignal = (signal: NodeJS.Signals): void => {
     // The reaper is best-effort cleanup (it spawns another process); never let it throw out of a signal handler.
-    if (onTerminate)
-      getResult(onTerminate).match(
-        () => undefined,
-        () => undefined,
-      );
+    if (onTerminate) getResult(onTerminate).match(noop, noop);
     child.kill(signal);
   };
   process.once("SIGINT", onSignal);

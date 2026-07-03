@@ -13,7 +13,7 @@ import { applyFlushPlan } from "@/services/exec/snapshot/applyFlushPlan";
 import { reapStaleTemps } from "@/services/exec/snapshot/reapStaleTemps";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
-import { getResult } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 // Record one exit-0 persist run so an identical later run replays instead of re-executing (replayTaskCache). The
@@ -44,18 +44,12 @@ export const recordTaskCache = (key: string, upperDir: string, plan: readonly Fl
     writeFileSync(join(tempDir, TASK_CACHE_META_FILENAME), JSON.stringify(entry));
     getResult(() => {
       renameSync(tempDir, location.dir);
-    }).match(
-      () => undefined,
-      (error) => {
-        // A race-loser renames onto a populated dir and fails; keep the winner's entry and drop our temp.
-        if (!existsSync(location.metaFile)) throw error;
-        removeSnapshotDirectory(tempDir);
-      },
-    );
-  }).match(
-    () => undefined,
-    () => {
-      if (tempDir) removeSnapshotDirectory(tempDir);
-    },
-  );
+    }).match(noop, (error) => {
+      // A race-loser renames onto a populated dir and fails; keep the winner's entry and drop our temp.
+      if (!existsSync(location.metaFile)) throw error;
+      removeSnapshotDirectory(tempDir);
+    });
+  }).match(noop, () => {
+    if (tempDir) removeSnapshotDirectory(tempDir);
+  });
 };

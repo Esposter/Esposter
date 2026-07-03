@@ -10,7 +10,7 @@ import { pruneSnapshotUpper } from "@/services/exec/snapshot/pruneSnapshotUpper"
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
-import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResult, getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
 import { join } from "node:path";
 // Captures warm post-install state into the snapshot's overlay upper (keyed by lockfile hash) instead of letting
@@ -55,7 +55,7 @@ export const createSnapshot = (
     getResult(() => {
       renameSync(captureUpperDir, upperDir);
     }).match(
-      () => undefined,
+      noop,
       (error) => {
         if (!existsSync(upperDir)) throw error;
         removeSnapshotDirectory(captureUpperDir);

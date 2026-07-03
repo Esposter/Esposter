@@ -14,7 +14,7 @@ import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirr
 import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createVirrun } from "@/services/virrun/createVirrun";
-import { exhaustiveGuard, getResult, getResultAsync, toAppError, withFinalizerAsync } from "@esposter/shared";
+import { exhaustiveGuard, getResult, getResultAsync, noop, toAppError, withFinalizerAsync } from "@esposter/shared";
 import { performance } from "node:perf_hooks";
 // Shared orchestration behind the passthrough commands: resolve config/backend, construct the sandbox, bracket the
 // Run with a banner + result line, propagate the child's exit code. All outcomes converge on the single
@@ -43,10 +43,7 @@ export const runVirrunCommand = async (
       getResult(() => {
         const prepareStep = resolvePrepareStep(configuration?.environment, "");
         if (prepareStep) process.stderr.write(`${formatVirrunPrepare(resolvePrepareLocation("", prepareStep))}\n`);
-      }).match(
-        () => undefined,
-        () => undefined,
-      );
+      }).match(noop, noop);
     }
     return withFinalizerAsync(
       () => {

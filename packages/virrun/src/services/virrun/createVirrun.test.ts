@@ -5,13 +5,13 @@ import type { SnapshotLocation } from "@/models/exec/snapshot/SnapshotLocation";
 import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
+import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { TEST_WSL_CACHE_DIR_NAME } from "@/services/exec/wsl/constants.test";
-import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { createVirrun } from "@/services/virrun/createVirrun";
 import { existsSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -190,6 +190,7 @@ describe(createVirrun, () => {
     await fork("tsgo");
 
     const leaseFile = join(snapshotDir, VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME, String(process.pid));
+
     expect(existsSync(leaseFile)).toBe(true);
 
     await dispose();

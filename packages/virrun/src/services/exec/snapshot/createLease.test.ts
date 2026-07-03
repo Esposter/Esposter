@@ -23,8 +23,11 @@ describe(createLease, () => {
 
     const lease = createLease(hashDir);
     const leaseFile = leaseFileFor(process.pid);
+
     expect(existsSync(leaseFile)).toBe(true);
+
     lease.release();
+
     expect(existsSync(leaseFile)).toBe(false);
   });
 
