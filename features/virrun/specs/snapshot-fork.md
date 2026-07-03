@@ -44,14 +44,15 @@ The deps snapshot is keyed on the **lockfile** and must freeze only what the loc
 
 ## Concurrency safety (realized — atomic publish)
 
-`exists: existsSync(upperDir)` is the readiness signal every `resolveSnapshotLocation` / `forkSnapshot` reads, so it must only ever flip true on a **finished** layer. `createSnapshot` captures into per-pid temps under `<hash>/` (`upper.<pid>.tmp` + `work.<pid>.tmp`), runs the setup command there, then a single `renameSync` promotes the temp upper onto the final `<hash>/upper`. Rename is the publish barrier — a concurrent reader sees either no upper or the complete one, never a half-built install in place.
+`exists: existsSync(upperDir)` is the readiness signal every `resolveSnapshotLocation` / `forkSnapshot` reads, so it must only ever flip true on a **finished** layer. `createSnapshot` captures into pid-tagged `mkdtemp` temps under `<hash>/` (`upper.<pid>.<rand>` + `work.<pid>.<rand>`), runs the setup command there, then a single `renameSync` promotes the temp upper onto the final `<hash>/upper`. Rename is the publish barrier — a concurrent reader sees either no upper or the complete one, never a half-built install in place.
 
-- Both temp dirs are per-pid, so parallel capturers never share an overlay upper/work. A capturer that loses the race finds `upperDir` already published, keeps that equivalent layer, and drops its own temp.
+- Both temp dirs are pid-tagged, so parallel capturers never share an overlay upper/work. A capturer that loses the race finds `upperDir` already published, keeps that equivalent layer, and drops its own temp.
 - Teardown removes **only the capturing process's own temps** (never the shared `<hash>/` root), so a failure or redundant capture can't delete a sibling's published or in-flight layer.
+- **Cleanup is gated on process liveness, not a serial-run assumption.** A hard-killed run's temp corpse is reaped only once its owner pid is dead (`reapStaleTemps` → `parseTempOwnerPid`/`isProcessAlive`), and a published hash dir a concurrent run on a _different_ lockfile hash still needs is pinned by a `leases/<pid>` file the host-global prune honors (`createLease`/`hasLiveLease`). So two live runs sharing — or racing across — hash dirs never delete each other's files. → [config-and-cache](config-and-cache.md#cleanup--self-healing)
 
 ## Key Files
 
-Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the overlay-layer argv, `createSnapshot` capture and `forkSnapshot` (Linux + WSL), the cold-vs-warm bench, and a transparent `fork()` on the `createVirrun` orchestrator (os captures-or-reuses; other backends fall through to `exec`). Still planned: always-on whole-repo routing on top of this handle, gated on a viable transparent-interception seam (the PATH shim is dropped as unviable).
+Realized: the FS-only overlay snapshot — lockfile-hash cache addressing, the overlay-layer argv, `createSnapshot` capture and `forkSnapshot` (Linux + WSL), the cold-vs-warm bench, and a transparent `fork()` on the `createVirrun` orchestrator (os captures-or-reuses; other backends fall through to `exec`).
 
 | File | Role | Status |
 | ---- | ---- | ------ |

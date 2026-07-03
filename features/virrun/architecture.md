@@ -129,19 +129,19 @@ Correctness is proven by **equivalence tests** (native vs `virrun --`, diffing t
 
 ## Cache lifecycle & cleanup
 
-_Shipped._ A cache write must be disposable **and** self-cleaning: a run that dies before its finalizer never leaks disk permanently. Every temp follows the same lifecycle — a private `mkdtemp` capture, an atomic `renameSync` publish, and teardown by whichever of three mechanisms applies. The prune (stale hash/key dirs) and reap (temp corpses in the live dir + the source-temp root) share one primitive, `sweepStaleEntries`; a fourth reaper collapses the same leak at the process level on WSL. Detail + the concurrency assumption: [specs/config-and-cache.md](specs/config-and-cache.md#cleanup--self-healing).
+_Shipped._ A cache write must be disposable **and** self-cleaning: a run that dies before its finalizer never leaks disk permanently, and — since the host-global cache is shared across repos, worktrees, and branch switches — concurrent runs never delete each other's files. Every temp follows the same lifecycle: a private **pid-tagged** `mkdtemp` capture, an atomic `renameSync` publish, and teardown gated on **process liveness** — a prune skips a superseded hash/key dir any run still **leases** (`leases/<pid>`), and a reap reclaims a temp corpse only once its owner pid is dead. Prune and reap share one primitive, `sweepStaleEntries`; a process-level reaper collapses the same leak on WSL. Detail: [specs/config-and-cache.md](specs/config-and-cache.md#cleanup--self-healing).
 
 ```mermaid
 flowchart TB
-    start["run captures into<br/>mkdtemp temp (upper.&lt;rand&gt;)"] --> exit{"how does the run end?"}
+    start["run captures into<br/>pid-tagged mkdtemp temp (upper.&lt;pid&gt;.&lt;rand&gt;)"] --> exit{"how does the run end?"}
     exit -->|"clean exit / handled error"| fin["finalizer: renameSync publish<br/>+ remove own temp"]
     exit -->|"hard kill (SIGKILL, crash,<br/>wsl --shutdown)"| leak[("temp corpse stranded<br/>+ orphaned bwrap tree")]
 
-    fin --> live[("live cache:<br/>one upper per hash/key")]
+    fin --> live[("live cache:<br/>leased upper(s) per hash/key")]
 
     subgraph next["next run — off the critical path, best-effort"]
-        prune["pruneStale* → sweepStaleEntries<br/>evict non-current hash/key dirs"]
-        reap["reapStaleTemps → sweepStaleEntries<br/>remove upper./work. corpses in the live hash dir"]
+        prune["pruneStale* → sweepStaleEntries<br/>evict superseded hash/key dirs<br/>(spare any with a live lease)"]
+        reap["reapStaleTemps → sweepStaleEntries<br/>remove dead-owner upper./work. corpses<br/>(pid liveness)"]
         orphan["reapOrphanedWslRuns<br/>group-kill trees reparented off the Relay"]
     end
 
