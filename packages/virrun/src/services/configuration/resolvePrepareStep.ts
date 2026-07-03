@@ -2,9 +2,9 @@ import type { PrepareStep } from "@/models/virrun/PrepareStep";
 
 import { Environment } from "@/models/virrun/Environment";
 import { NUXT_OUTPUT_DIRECTORY, NUXT_PREPARE_COMMAND } from "@/services/configuration/constants";
+import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { resolveWorkspaceRoot } from "@/services/exec/util/resolveWorkspaceRoot";
 import { getResult, InvalidOperationError, Operation } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
 import { basename, dirname } from "node:path";
 // Matches nuxt.config.{js,ts,mjs,cjs,mts,cts} — the config file whose owning package `nuxt prepare` regenerates.
 const NUXT_CONFIG_PATTERN = /^nuxt\.config\.[cm]?[jt]s$/u;
@@ -19,9 +19,8 @@ export const resolvePrepareStep = (environment: Environment | undefined, cwd: st
   // Piping git's stderr (the stdio option) rather than inheriting it, so a non-repo workspace's "fatal: not a git
   // Repository" (which the getResult below already falls back on) never leaks to the console.
   const configPath = getResult(() =>
-    execFileSync("git", ["ls-files", "--", "*nuxt.config.*"], {
+    execFileHidden("git", ["ls-files", "--", "*nuxt.config.*"], {
       cwd: workspaceRoot,
-      encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
     }),
   )

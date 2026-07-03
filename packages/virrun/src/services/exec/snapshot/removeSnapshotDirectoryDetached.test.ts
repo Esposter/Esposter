@@ -1,4 +1,4 @@
-import type { ChildProcess, spawn as baseSpawn } from "node:child_process";
+import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
 import { VIRRUN_PREPARE_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { removeSnapshotDirectoryDetached } from "@/services/exec/snapshot/removeSnapshotDirectoryDetached";
@@ -57,6 +57,6 @@ describe(removeSnapshotDirectoryDetached, () => {
       { detached: true, stdio: "ignore" },
     );
     expect(child.on).toHaveBeenCalledWith("error", expect.any(Function));
-    expect(child.unref).toHaveBeenCalledOnce();
+    expect(child.unref).toHaveBeenCalledOnceWith();
   });
 });

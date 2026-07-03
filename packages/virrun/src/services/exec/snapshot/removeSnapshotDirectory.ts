@@ -1,6 +1,6 @@
+import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { WSL_REMOVE_SCRIPT, WSL_UNC_REGEX } from "@/services/exec/wsl/constants";
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
-import { execFileSync } from "node:child_process";
 import { chmodSync, existsSync, lstatSync, readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 // Removes a snapshot dir, restoring +rwx top-down first: a capture overlay's on-disk `work/work` scratch is left at
@@ -18,7 +18,7 @@ export const removeSnapshotDirectory = (dir: string): void => {
   // Instead, where the distro user owns it (WSL_REMOVE_SCRIPT). rm -rf is idempotent, so a missing dir is a no-op.
   if (WSL_UNC_REGEX.test(dir)) {
     const linuxDir = readWslPath(dir);
-    execFileSync("wsl.exe", ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir], { stdio: "pipe" });
+    execFileHidden("wsl.exe", ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir]);
     return;
   }
   // Only a real directory needs the top-down +rwx restore before rmSync will descend it; a file or symlink (e.g. a

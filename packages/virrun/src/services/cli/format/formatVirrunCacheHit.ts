@@ -1,6 +1,6 @@
 import { Color } from "@/models/cli/Color";
-import { colorize } from "@/services/cli/color/colorize";
 import { formatCacheHitLabel } from "@/services/cli/cache/formatCacheHitLabel";
+import { colorize } from "@/services/cli/color/colorize";
 import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 // Task-cache hit line, stderr-only — printed just before the recorded output is replayed so a hit is visibly distinct
 // From a real run (the replayed streams are otherwise byte-identical). Brackets inside the banner/result pair like the

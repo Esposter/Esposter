@@ -11,6 +11,7 @@ describe(createOsBackend, () => {
   // Fans test files across 16 workers, so a ~1-3s exec can exceed vitest's 5s default. Same hang-ceiling the sibling
   // Acceptance/property os tests carry; the exec is not slow, the cross-file contention is.
   const acceptanceTimeoutMs = dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds();
+
   // No-fallback contract: on an unsupported host, construction throws rather than running un-isolated.
   test.skipIf(isOsBackendSupported())("throws on an unsupported host instead of falling back", () => {
     expect.hasAssertions();

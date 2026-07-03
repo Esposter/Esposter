@@ -48,17 +48,19 @@ describe(persistRun, () => {
 
   test("flushes the produced files to the host and records the task cache on a clean exit", async () => {
     expect.hasAssertions();
+
     exec.mockResolvedValue({ exitCode: 0, stderr: "", stdout: "" });
 
     const result = await persistRun(backend, "oxfmt", { cwd: HOST_DIR, stdio: "pipe" }, [], [], onPersist);
 
     expect(result.exitCode).toBe(0);
     expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(expect.any(String), HOST_DIR, PLAN);
-    expect(onPersist).toHaveBeenCalledOnce();
+    expect(onPersist).toHaveBeenCalledOnceWith();
   });
 
   test("still flushes on a non-zero exit (native leaves partial output) but never records the task cache", async () => {
     expect.hasAssertions();
+
     exec.mockResolvedValue({ exitCode: 1, stderr: "", stdout: "" });
 
     const result = await persistRun(backend, "eslint --fix", { cwd: HOST_DIR, stdio: "pipe" }, [], [], onPersist);
@@ -70,6 +72,7 @@ describe(persistRun, () => {
 
   test("always tears down the per-run temp upper and work dirs", async () => {
     expect.hasAssertions();
+
     exec.mockResolvedValue({ exitCode: 1, stderr: "", stdout: "" });
 
     await persistRun(backend, "eslint --fix", { cwd: HOST_DIR, stdio: "pipe" });

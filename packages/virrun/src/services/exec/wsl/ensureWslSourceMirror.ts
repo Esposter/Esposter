@@ -1,10 +1,10 @@
 import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep";
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { SOURCE_MIRROR_TIMEOUT_MS } from "@/services/exec/util/constants";
+import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { getWslSourceMirrorPath } from "@/services/exec/wsl/getWslSourceMirrorPath";
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
 import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
 // Before a win32 os run, incrementally sync the repo source onto a WSL-native ext4 mirror and return that mirror's
 // Linux path, so createWslBwrapArgs points `--overlay-src`/`--chdir` at ext4 instead of /mnt/c. The whole win32 os
 // Gap is that reads of the source lower cross v9fs (15-64x slower); the mirror moves them to native ext4 speed. The
@@ -53,11 +53,7 @@ export const ensureWslSourceMirror = (cwd: string): string => {
     `flock ${shellQuote(`${mirrorPath}.lock`)} rsync -a --delete ${excludeArgs} ${shellQuote(`${sourcePath}/`)} ${shellQuote(`${mirrorPath}/`)}`,
   ].join(" && ");
   return getResult(() =>
-    execFileSync("wsl.exe", ["--exec", "sh", "-c", script], {
-      encoding: "utf8",
-      stdio: "pipe",
-      timeout: SOURCE_MIRROR_TIMEOUT_MS,
-    }),
+    execFileHidden("wsl.exe", ["--exec", "sh", "-c", script], { timeout: SOURCE_MIRROR_TIMEOUT_MS }),
   ).match(
     () => mirrorPath,
     (error) => {

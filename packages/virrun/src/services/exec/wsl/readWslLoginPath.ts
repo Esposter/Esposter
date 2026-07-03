@@ -1,11 +1,11 @@
 import { dayjs } from "@/services/dayjs";
 import { VIRRUN_FORCE_PROBE_KEY, WSL_LOGIN_PATH_CACHE_FILENAME } from "@/services/exec/util/constants";
+import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import { readWslEnvironmentCache } from "@/services/exec/wsl/readWslEnvironmentCache";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
 import { getResult } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
 // Markers bracketing the printed PATH so an interactive rc that writes to stdout itself (prompts, MOTD, version
 // Manager banners…) can't corrupt the result — we slice strictly between them and treat their absence as "no
 // PATH captured".
@@ -20,7 +20,21 @@ const WSL_LOGIN_PATH_TIMEOUT_MS = dayjs.duration(5, "seconds").asMilliseconds();
 // Volta…) activates and puts node on PATH, invisible to the bare `wsl.exe --exec` the os backend uses. Capturing
 // The resulting PATH lets virrun mirror the user's real terminal environment with zero config — no per-machine
 // Setup field. The markers let us slice the PATH out even when the rc prints its own banner.
-const CAPTURE_SCRIPT = buildWslLoginShellCommand(`printf "${PATH_BEGIN}%s${PATH_END}" "$PATH"`);
+//
+// Before printing, prepend the *stable* directory that holds `node`: fnm activates by putting an ephemeral
+// `/run/user/<uid>/fnm_multishells/<pid>_<ts>/bin` (a per-shell symlink dir) on PATH, which fnm's exit hook deletes
+// The instant this capture shell ends — so the raw captured entry is already dead by the time the sandbox (or a
+// Later process reading the persisted cache) runs the command, giving `corepack: command not found` (exit 127).
+// `readlink -f` dereferences that ephemeral symlink to its backing install dir (…/fnm/node-versions/vX/installation/
+// Bin, which also carries corepack/npm/pnpm) and we lead PATH with it. Idempotent for stable managers (nvm/volta):
+// `readlink -f` on an already-real path is a no-op and re-prepending a dir already on PATH is harmless.
+const CAPTURE_SCRIPT = buildWslLoginShellCommand(
+  [
+    `nodeBin="$(command -v node 2>/dev/null)"`,
+    `[ -n "$nodeBin" ] && PATH="$(dirname "$(readlink -f "$nodeBin")"):$PATH"`,
+    `printf "${PATH_BEGIN}%s${PATH_END}" "$PATH"`,
+  ].join("; "),
+);
 // Captures the PATH a WSL interactive login shell sees, so the os backend can run profile-bound toolchains.
 // GetResult turns a missing WSL/shell (or a non-zero exit) into "" rather than a throw: the caller then injects
 // Nothing and the command runs under the default PATH, so a broken capture degrades to today's behaviour.
@@ -45,11 +59,7 @@ export const readWslLoginPath = (): string => {
     }
   }
   cachedLoginPath = getResult(() =>
-    execFileSync("wsl.exe", ["--exec", "sh", "-c", CAPTURE_SCRIPT], {
-      encoding: "utf8",
-      stdio: "pipe",
-      timeout: WSL_LOGIN_PATH_TIMEOUT_MS,
-    }),
+    execFileHidden("wsl.exe", ["--exec", "sh", "-c", CAPTURE_SCRIPT], { timeout: WSL_LOGIN_PATH_TIMEOUT_MS }),
   )
     .map((stdout) => {
       const beginIndex = stdout.indexOf(PATH_BEGIN);

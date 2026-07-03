@@ -1,7 +1,7 @@
 import { SOURCE_TREE_HASH_MAX_BUFFER } from "@/services/exec/cache/constants";
+import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { resolveCwd } from "@/services/exec/util/resolveCwd";
 import { getResult } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { lstatSync, readFileSync, readlinkSync } from "node:fs";
 import { join } from "node:path";
@@ -29,9 +29,8 @@ export const computeSourceTreeHash = (cwd: string): null | string => {
   // "fatal: not a git repository" to fd 2 before exiting non-zero, which the getResult below already tolerates —
   // Piping keeps that expected fatal off the console (it otherwise leaks into vitest output for the not-a-repo cases).
   const runGit = (args: readonly string[]): string =>
-    execFileSync("git", args, {
+    execFileHidden("git", args, {
       cwd: dir,
-      encoding: "utf8",
       maxBuffer: SOURCE_TREE_HASH_MAX_BUFFER,
       stdio: ["ignore", "pipe", "pipe"],
     });
