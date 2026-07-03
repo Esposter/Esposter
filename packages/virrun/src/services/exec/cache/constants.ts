@@ -7,6 +7,10 @@ export const VIRRUN_TASKS_DIRECTORY_NAME = "tasks";
 // Mirrors the snapshot layout so both caches read the same way; it holds the copy-op payload the replay flushes.
 export const TASK_CACHE_META_FILENAME = "meta.json";
 export const TASK_CACHE_PAYLOAD_DIRECTORY_NAME = "upper";
+// The reap prefix every pid-tagged task-cache temp starts with, sitting beside the published `tasks/<key>` entries.
+// Content-hash keys are dotless, so a published entry never collides with this dotted prefix; reapStaleTemps reclaims a
+// Hard-killed recorder's `.tmp.<pid>.<rand>` corpse (no other sweep touches the tasks dir).
+export const TASK_CACHE_TEMP_PREFIX = ".tmp.";
 // Cap above the default 1 MB so a large unstaged working-tree diff (the source-tree hash reads `git diff --binary`)
 // Never overflows the exec buffer.
 export const SOURCE_TREE_HASH_MAX_BUFFER: number = 256 * 1024 * 1024;

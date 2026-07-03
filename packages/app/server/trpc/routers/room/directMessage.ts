@@ -27,13 +27,14 @@ import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
   friends,
+  roomIdsSchema,
   roomsInMessage,
   RoomType,
   selectRoomInMessageSchema,
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, MAX_READ_LIMIT, Operation } from "@esposter/shared";
+import { InvalidOperationError, ItemMetadataPropertyNames, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -46,7 +47,7 @@ const readDirectMessagesInputSchema = z
     ]).shape,
   })
   .prefault({});
-const readDirectMessageParticipantsInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const readDirectMessageParticipantsInputSchema = roomIdsSchema.shape.roomIds.min(1);
 
 export const directMessageRouter = router({
   createDirectMessage: standardAuthedProcedure

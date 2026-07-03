@@ -292,16 +292,22 @@ Prefer `string` with `""` as the absent/empty sentinel. Do not use `string | und
 
 ## `null` vs `undefined`
 
-Prefer `undefined` for all absent/optional values in app-owned code. `null` is only permitted at the external system boundary.
+`undefined` is **banned in app-owned code unless it carries a meaning distinct from every real value** — including the `""` string sentinel and an absent optional property. Only reach for it when absence must be told apart from a valid value (e.g. a cache read where a stored `""` is real and `undefined` means "miss"). `null` is only permitted at the external system boundary.
 
-**App-owned code — always `undefined`:**
+**App-owned code — prefer absence over an explicit `undefined`:**
 
 - String refs use `ref("")` (see above), not `ref<string>()`.
 - Optional interface fields use `?:` (implies `| undefined`), not `| null`.
-- Uninitialised state, optional params, absent returns are all `undefined`.
-- Never `?? null` — if the left side is already `T | undefined`, drop the fallback.
+- **Never synthesize an explicit `undefined` value.** Model absence as the _missing optional key_, not `{ key: undefined }` — build the object conditionally (`environment ? { backend, environment } : { backend }`) so no `undefined` literal is ever written, and tests `toStrictEqual({ backend })` rather than `{ backend, key: undefined }`.
+- Uninitialised state, optional params, absent returns lean on `""`/omission; add `| undefined` to a type **only** when the distinct-from-`""` rule above applies.
+- Never `?? null` — if the left side is already `T | undefined`, drop the fallback. Likewise never `?? SomeEnum.None` (see enums below).
 - `.nullable()` is **BANNED** in app-owned Zod schemas — use `.optional()`.
 - **Test object presence with a truthiness check, not `=== undefined`/`!== undefined`.** For an `Object | undefined` (or `| null`) value, the absent form is falsy, so `result ? Promise.resolve(result) : fallback` and `if (!entity) return` read cleaner than an explicit `=== undefined` comparison. Reserve explicit `=== undefined` for the rare value whose falsy members (`0`, `""`, `false`) are valid and must be distinguished from absent — but app-owned strings use the `""` sentinel and are compared with `=== ""`, not truthiness.
+
+**Enums — no `None`/sentinel member for "absent":**
+
+- An enum lists only _real_ variants. Represent "nothing selected / no preset" as an **optional, omitted field** (`environment?: Environment`), not a fake `Environment.None` member — the same "absence is the missing key" rule. Resolvers accept `Environment | undefined` and guard `if (!environment)`; config schemas use `z.enum(E).optional()`, not `.default(E.None)`; generators/CLI pickers omit the key rather than writing a `none` value.
+- Keep a sentinel member only when that value is a genuinely distinct, selectable state the domain acts on (rare) — not merely "not chosen".
 
 **External boundary — keep `null` where required:**
 

@@ -1,24 +1,39 @@
 /* oxlint-disable no-inferrable-types */
 export const VIRRUN_SNAPSHOTS_DIRECTORY_NAME = "snapshots";
+// Sibling of snapshots/: source-keyed prepare layers holding a framework's generated artifacts (e.g. Nuxt's .nuxt),
+// Keyed by lockfile + source-tree hash + the resolved prepare step, so a source change invalidates exactly this
+// Layer while the deps snapshot is untouched. Host-global for the same reason snapshots are — an overlay lower can't
+// Nest inside the source tree.
+export const VIRRUN_PREPARE_DIRECTORY_NAME = "prepare";
 // Overlayfs layer names of a captured snapshot, under .virrun/snapshots/<lockfile-hash>/: `upper` is the
 // Published layer that persists the post-install writes (and doubles as a read-only lower when forking);
-// `work` is the empty scratch dir overlayfs requires alongside a writable upper. A capture run writes into
-// Per-pid temps (`<name>.<pid>.tmp`) and renames the upper onto its final name as the atomic publish barrier.
+// `work` is the empty scratch dir overlayfs requires alongside a writable upper. A capture/persist run writes into
+// A pid-tagged mkdtemp temp (`<base>.<pid>.<rand>`, withPidTempPrefix) and renames the upper onto its final name as
+// The atomic publish barrier.
 export const VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME = "upper";
 export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
-// Pnpm's virtual-store dir name for a package with peer deps is truncated once it exceeds this length, replacing the
-// Peer chain with a hash — and pnpm's default is OS-dependent (60 on Windows, 120 elsewhere). On a win32 host the
-// Sandbox is a Linux guest, so its default (120) yields longer `.pnpm/<pkg>@<ver>_<hash>` dir names than the ones the
-// Windows host (60) baked as absolute imports into gitignored, source-tree artifacts (e.g. Nuxt's generated
-// `.nuxt/eslint.config.mjs`). Those host paths overlay into the sandbox and 404. Pinning the win32 sandbox install to
-// 60 makes its virtual-store names match what the Windows host emits, so any host-generated absolute `.pnpm` path
-// Resolves. See docs.pnpm.io "virtual-store-dir-max-length".
-export const WINDOWS_VIRTUAL_STORE_DIR_MAX_LENGTH = 60;
+// A published snapshot/prepare hash dir carries a `leases/<pid>` file per live run mounting it. pruneStale* keeps a
+// Superseded dir while any lease pid is alive, so a concurrent run on a different lockfile hash can't evict a layer
+// Another live run is still reading. Dead-pid leases are reaped in place (acquireLease / hasLiveLease). The dir sits
+// Beside `upper`/`work`, invisible to the mount (which names only those), the reap, and the flush.
+export const VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME = "leases";
+// The reap prefixes every pid-tagged capture/persist temp starts with inside a snapshot/prepare hash dir, ordered
+// Longest-first so a persist temp (`upper.persist.<pid>.<rand>`) matches its own prefix rather than the shorter
+// `upper.`. They never match the published bare `upper`/`work` (no trailing `.`) or the `leases/` sibling.
+// ReapStaleTemps reads the owner pid back out of each match (parseTempOwnerPid) and reclaims only a dead owner's corpse.
+export const VIRRUN_SNAPSHOT_TEMP_PREFIXES: readonly string[] = [
+  `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`,
+  `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`,
+  `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`,
+  `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`,
+];
 // The command captured into the warm snapshot to provision the sandbox's own dependency closure: a frozen
 // Install of the lockfile. On Windows the sandbox is a Linux (WSL) guest installing via corepack's pnpm
 // (the login PATH brings node + corepack, not necessarily a global pnpm); on Linux the caller's shell
-// Already exposes pnpm, so it is invoked directly. See resolveSetupCommand.
-export const SETUP_COMMAND_WIN32: string = `corepack pnpm install --frozen-lockfile --config.virtual-store-dir-max-length=${WINDOWS_VIRTUAL_STORE_DIR_MAX_LENGTH}`;
+// Already exposes pnpm, so it is invoked directly. See resolveSetupCommand. The sandbox installs at pnpm's own
+// Linux default virtual-store-dir length — the win32 host's `.nuxt` (which baked host-length `.pnpm` paths) is no
+// Longer read in-sandbox: the prepare layer regenerates a Linux `.nuxt` that shadows it.
+export const SETUP_COMMAND_WIN32 = "corepack pnpm install --frozen-lockfile";
 export const SETUP_COMMAND_LINUX = "pnpm install --frozen-lockfile";
 // Linux-side fs primitives for write-back (specs/write-back.md → "Execution locus"); classification + ordering stay
 // In tested TS. python3 over getfattr — it reads the opaque xattr and walks in one ubiquitous tool.

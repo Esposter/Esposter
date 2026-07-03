@@ -40,7 +40,7 @@ import {
   surveyResponseEntitySchema,
   surveys,
 } from "@esposter/db-schema";
-import { InvalidOperationError, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
+import { createUniqueArraySchema, InvalidOperationError, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -52,12 +52,16 @@ const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySc
 const readSurveyModelInputSchema = selectSurveySchema.shape.id;
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
-  files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
+  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, mimetype: true }), "filename")
+    .min(1)
+    .max(MAX_READ_LIMIT),
   surveyId: selectSurveySchema.shape.id,
 });
 
 const generateDownloadFileSasUrlsInputSchema = z.object({
-  files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
+  files: createUniqueArraySchema(fileEntitySchema.pick({ filename: true, id: true, mimetype: true }), "id")
+    .min(1)
+    .max(MAX_READ_LIMIT),
   surveyId: selectSurveySchema.shape.id,
 });
 

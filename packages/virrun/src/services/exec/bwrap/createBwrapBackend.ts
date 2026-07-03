@@ -1,4 +1,4 @@
-import type { BwrapCommand } from "@/models/exec/BwrapCommand";
+import type { BwrapCommand } from "@/models/exec/bwrap/BwrapCommand";
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { StdioOptions } from "node:child_process";
@@ -8,8 +8,8 @@ import { createStderrLiveWriter } from "@/services/exec/bwrap/createStderrLiveWr
 import { parseBwrapExitCode } from "@/services/exec/bwrap/parseBwrapExitCode";
 import { parseBwrapStderrStatus } from "@/services/exec/bwrap/parseBwrapStderrStatus";
 import { forwardTerminationSignals } from "@/services/exec/util/forwardTerminationSignals";
+import { spawnHidden } from "@/services/exec/util/spawnHidden";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawn } from "node:child_process";
 
 export const createBwrapBackend = (
   createBwrapArgs: (
@@ -30,7 +30,7 @@ export const createBwrapBackend = (
         bwrapCommand.statusSource === "fd"
           ? [options.stdio, options.stdio, options.stdio, "pipe"]
           : [options.stdio, options.stdio, "pipe"];
-      const child = spawn(file, args, {
+      const child = spawnHidden(file, args, {
         env: bwrapCommand.env,
         shell: false,
         stdio,

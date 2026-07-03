@@ -6,20 +6,19 @@ import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { roomIdSchema, selectRoomInMessageSchema } from "@esposter/db-schema";
-import { MAX_READ_LIMIT } from "@esposter/shared";
+import { roomIdSchema, roomIdsSchema, userIdsSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 const readNicknamesInputSchema = z.object({
   ...roomIdSchema.shape,
-  userIds: z.string().array().min(1).max(MAX_READ_LIMIT),
+  userIds: userIdsSchema.shape.userIds.min(1),
 });
 
 const readMyUsersToRoomsInputSchema = z.object({
-  roomIds: selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  roomIds: roomIdsSchema.shape.roomIds.min(1),
 });
 
-const onUpdateUserToRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const onUpdateUserToRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
 
 export const userToRoomRouter = router({
   onUpdateUserToRoom: standardAuthedProcedure.input(onUpdateUserToRoomInputSchema).subscription(async function* ({

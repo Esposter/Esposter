@@ -114,13 +114,14 @@ describe.skipIf(!isSandboxInstallSupported)("persistRun - flushes produced files
     expect(readFileSync(join(corpus, packageDirectory, TEST_FILENAME), "utf8")).toBe(" ");
   }, acceptanceTimeoutMs);
 
-  test("a non-zero exit flushes nothing — all-or-nothing (the failed-command shape)", async () => {
+  test("a non-zero exit still flushes the files it produced (native leaves partial output; the eslint --fix remaining-errors shape)", async () => {
     expect.hasAssertions();
 
-    // Persist only reconciles on a clean exit, so a partial write never lands.
+    // Native-equivalence taken literally: a mutation tool that exits non-zero (eslint --fix / oxfmt with unfixable
+    // Errors left, a build that half-writes) still wrote real files, so persist reconciles them onto the host too.
     const result = await persistRun(backend, `printf " " > ${TEST_FILENAME} && exit 1`, createOsExecOptions(corpus, "pipe"));
 
     expect(result.exitCode).toBe(1);
-    expect(existsSync(join(corpus, TEST_FILENAME))).toBe(false);
+    expect(readFileSync(join(corpus, TEST_FILENAME), "utf8")).toBe(" ");
   }, acceptanceTimeoutMs);
 });

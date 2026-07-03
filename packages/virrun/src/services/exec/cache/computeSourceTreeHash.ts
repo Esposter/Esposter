@@ -1,7 +1,7 @@
 import { SOURCE_TREE_HASH_MAX_BUFFER } from "@/services/exec/cache/constants";
+import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { resolveCwd } from "@/services/exec/util/resolveCwd";
 import { getResult } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { lstatSync, readFileSync, readlinkSync } from "node:fs";
 import { join } from "node:path";
@@ -25,8 +25,15 @@ const hashUntrackedEntry = (fullPath: string): string =>
 // Every non-repo onto one key.
 export const computeSourceTreeHash = (cwd: string): null | string => {
   const dir = resolveCwd(cwd);
+  // Piping git's stderr (the stdio option) instead of letting it inherit the parent's: on a non-repo dir git prints
+  // "fatal: not a git repository" to fd 2 before exiting non-zero, which the getResult below already tolerates —
+  // Piping keeps that expected fatal off the console (it otherwise leaks into vitest output for the not-a-repo cases).
   const runGit = (args: readonly string[]): string =>
-    execFileSync("git", args, { cwd: dir, encoding: "utf8", maxBuffer: SOURCE_TREE_HASH_MAX_BUFFER });
+    execFileHidden("git", args, {
+      cwd: dir,
+      maxBuffer: SOURCE_TREE_HASH_MAX_BUFFER,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
   return getResult(() => {
     const indexed = runGit(["ls-files", "-s"]);
     const workingDelta = runGit(["diff", "--binary"]);

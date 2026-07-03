@@ -1,8 +1,8 @@
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { HOME_CACHE_DIRECTORY_NAME, VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
+import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
 import { getResult } from "@esposter/shared";
-import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -29,12 +29,13 @@ export const isSandboxInstallSupported: boolean =
   isOsBackendSupported() &&
   getResult(() =>
     process.platform === "win32"
-      ? execFileSync(
-          "wsl.exe",
-          ["--exec", "sh", "-c", buildWslLoginShellCommand("command -v node && node --version && corepack --version")],
-          { stdio: "pipe" },
-        )
-      : execFileSync("sh", ["-lc", "command -v pnpm"], { stdio: "pipe" }),
+      ? execFileHidden("wsl.exe", [
+          "--exec",
+          "sh",
+          "-c",
+          buildWslLoginShellCommand("command -v node && node --version && corepack --version"),
+        ])
+      : execFileHidden("sh", ["-lc", "command -v pnpm"]),
   ).match(
     () => true,
     () => false,

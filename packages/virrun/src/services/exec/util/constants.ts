@@ -1,4 +1,6 @@
 /* oxlint-disable no-inferrable-types */
+import { dayjs } from "@/services/dayjs";
+
 export const GITIGNORE_FILENAME = ".gitignore";
 export const VIRRUN_CACHE_DIRECTORY_NAME = ".virrun";
 export const VIRRUN_GITIGNORE_ENTRY: string = `/${VIRRUN_CACHE_DIRECTORY_NAME}/`;
@@ -11,11 +13,13 @@ export const PNPM_LOCKFILE_FILENAME = "pnpm-lock.yaml";
 // The dependency-closure dir. The persist flush must never leak it: it comes from the snapshot lower, and writes
 // Into it (e.g. node_modules/.vite) must not reach the host.
 export const NODE_MODULES_DIRECTORY = "node_modules";
+// The dir pnpm/npm link executables into; prepended to the sandbox PATH so a bare command resolves the overlaid
+// (current-platform) binary ahead of any host `.bin` the WSL login PATH leaks in. See createOsExecOptions.
+export const NODE_MODULES_BIN_DIRECTORY: string = `${NODE_MODULES_DIRECTORY}/.bin`;
 // Repo-root config selecting which backend a sandboxed command runs through; absent means auto (native today).
 export const VIRRUN_CONFIGURATION_FILENAME = "virrun.config.json";
 // Resolved from the consumer's installed package so editors render the config's field docs on hover.
 export const VIRRUN_SCHEMA_RELATIVE_PATH: string = "./node_modules/virrun/schema.json";
-
 // Signals to the running command that it is executing under virrun — true for any backend including the native
 // Fallback, so it means "running under virrun", not "sandboxed".
 export const VIRRUN_ENV_KEY = "VIRRUN";
@@ -26,6 +30,11 @@ export const VIRRUN_CACHE_HOME_KEY = "VIRRUN_CACHE_HOME";
 // Host-global file caching the os-backend capability probe's verdict so a fresh `virrun -- <cmd>` process reuses it
 // Instead of re-spawning the bwrap probe every command. See isOsBackendSupported.
 export const CAPABILITY_CACHE_FILENAME = "capability.json";
+// Windows-side files caching the win32 WSL environment probes so a fresh `virrun -- <cmd>` process reuses them instead
+// Of re-spawning wsl.exe (an interactive-login shell for the PATH, two round-trips for the cache root). Stored via
+// GetLocalCacheDirectory (the Windows `~`), not the WSL-ext4 cache root. See readWslEnvironmentCache.
+export const WSL_LOGIN_PATH_CACHE_FILENAME = "wsl-login-path.json";
+export const WSL_CACHE_ROOT_CACHE_FILENAME = "wsl-cache-root.json";
 // Set (to any value) to bypass the persisted capability cache and force a fresh probe — the escape hatch for a host
 // Whose bubblewrap/kernel capability changed without a cache-key change (e.g. bwrap was just installed).
 export const VIRRUN_FORCE_PROBE_KEY = "VIRRUN_FORCE_PROBE";
@@ -34,10 +43,25 @@ export const VIRRUN_NO_CACHE_KEY = "VIRRUN_NO_CACHE";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY = "PNPM_CONFIG_PACKAGE_IMPORT_METHOD";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE = "copy";
 export const PNPM_CONFIG_STORE_DIR_KEY = "PNPM_CONFIG_STORE_DIR";
+// Pnpm's verify-deps-before-run makes `pnpm run`/`pnpm exec` fire an auto-install when it decides node_modules is out
+// Of sync with the lockfile. Inside the sandbox node_modules comes frozen from the snapshot lower, so that check both
+// Misfires (the overlay's merged tree never matches pnpm's on-disk expectation) and, when it installs, pacquet dies
+// Writing bin shims into the overlay upper (ENOENT node_modules/.bin/*). Disable it so a sandboxed pnpm only runs the
+// Command over the frozen deps and never re-installs them — the prepare step (`pnpm exec nuxt prepare`) is the hot path.
+export const PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN_KEY = "PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN";
+export const PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN_VALUE = "false";
 // The host's node_modules shows through the overlay lower, so a sandbox `pnpm install` wants to purge it and, with
 // No TTY, aborts for confirmation (ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY). `CI=true` skips that prompt.
 export const CI_ENV_KEY = "CI";
 export const CI_ENV_VALUE = "true";
+// Upper bound for a synchronous capability probe's child process. bwrap running `true` and the wsl.exe round-trips
+// Are sub-second on a healthy host; a corrupt/unresponsive WSL distro can hang execFileSync forever, so the cap lets
+// The probe fail (degrade to unsupported) instead of blocking the whole CLI.
+export const PROBE_TIMEOUT_MS: number = dayjs.duration(10, "seconds").asMilliseconds();
+// Upper bound for the win32 source-mirror rsync (ensureWslSourceMirror). Generous — the first cold materialize reads
+// The whole source lower across v9fs (15-64x slower) — but bounded so a stalled ext4 volume or hung flock aborts the
+// Run instead of hanging the CLI forever.
+export const SOURCE_MIRROR_TIMEOUT_MS: number = dayjs.duration(5, "minutes").asMilliseconds();
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";
 // The host cache dir acceptance corpora/snapshots stage into, under $HOME never os.tmpdir (see createWorkspaceCorpus).

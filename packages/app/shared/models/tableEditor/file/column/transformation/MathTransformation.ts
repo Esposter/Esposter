@@ -3,7 +3,7 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { mathVariableSchema } from "#shared/models/tableEditor/file/column/transformation/MathVariable";
-import { createItemEntityTypeSchema, getResult, noop } from "@esposter/shared";
+import { createItemEntityTypeSchema, createUniqueArraySchema, getResult, noop } from "@esposter/shared";
 import { parse } from "mathjs";
 import { z } from "zod";
 
@@ -16,7 +16,7 @@ export const mathTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.Math).readonly()).shape,
     expression: z.string(),
-    variables: z.array(mathVariableSchema),
+    variables: createUniqueArraySchema(mathVariableSchema, "name"),
   })
   .superRefine(({ expression }, ctx) => {
     getResult(() => parse(expression)).match(noop, (error) => {

@@ -1,4 +1,4 @@
-import { capabilityCacheSchema } from "@/models/exec/CapabilityCache";
+import { capabilityCacheSchema } from "@/models/exec/os/CapabilityCache";
 import { writeCapabilityCache } from "@/services/exec/os/writeCapabilityCache";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { CAPABILITY_CACHE_FILENAME, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";

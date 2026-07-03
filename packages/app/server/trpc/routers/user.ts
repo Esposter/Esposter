@@ -21,26 +21,26 @@ import {
   DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
   DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
   NoiseSuppressionMode,
-  selectUserSchema,
   selectUserStatusInMessageSchema,
+  userIdsSchema,
   users,
   userSettingsInMessage,
   UserStatus,
   userStatusesInMessage,
   VoiceInputMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, MAX_READ_LIMIT, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { eq, inArray } from "drizzle-orm";
 
-const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const readStatusesInputSchema = userIdsSchema.shape.userIds.min(1);
 
 const upsertStatusInputSchema = refineAtLeastOne(
   selectUserStatusInMessageSchema.pick({ message: true, status: true }).partial(),
   ["message", "status"],
 );
 
-const onUpsertStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const onUpsertStatusInputSchema = userIdsSchema.shape.userIds.min(1);
 
 export const userRouter = router({
   connect: standardAuthedProcedure.mutation(async ({ ctx }) => {

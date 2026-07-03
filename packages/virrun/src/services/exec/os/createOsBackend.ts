@@ -1,4 +1,4 @@
-﻿import type { ExecBackend } from "@/models/exec/ExecBackend";
+import type { ExecBackend } from "@/models/exec/ExecBackend";
 
 import { createLinuxOsBackend } from "@/services/exec/bwrap/createLinuxOsBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";

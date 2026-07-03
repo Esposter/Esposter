@@ -2,7 +2,7 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
 
-import { formatVirrunCacheHit } from "@/services/cli/formatVirrunCacheHit";
+import { formatVirrunCacheHit } from "@/services/cli/format/formatVirrunCacheHit";
 import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
 import { isTaskCacheEnabled } from "@/services/exec/cache/isTaskCacheEnabled";
 import { recordTaskCache } from "@/services/exec/cache/recordTaskCache";
@@ -18,9 +18,11 @@ export const persistWithCache = async (
   backend: ExecBackend,
   command: readonly string[] | string,
   options: ExecOptions,
+  extraLowerDirs: readonly string[] = [],
+  outputDirs: readonly string[] = [],
 ): Promise<ExecResult> => {
   const key = isTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd) : null;
-  if (key === null) return persistRun(backend, command, options);
+  if (key === null) return persistRun(backend, command, options, extraLowerDirs, outputDirs);
   // Reproduce a result under the caller's stdio convention, matching createBwrapBackend: "inherit" already put its
   // Output on the terminal so it returns empty streams; "pipe" returns the captured streams.
   const toResult = (result: ExecResult): ExecResult =>
@@ -40,6 +42,8 @@ export const persistWithCache = async (
     backend,
     command,
     { ...options, stdio: "pipe", tee: options.stdio === "inherit" },
+    extraLowerDirs,
+    outputDirs,
     (upperDir, plan, persistResult) => {
       recordTaskCache(key, upperDir, plan, persistResult);
     },

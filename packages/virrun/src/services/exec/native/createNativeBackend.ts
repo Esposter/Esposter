@@ -2,8 +2,8 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 
 import { BackendType } from "@/models/virrun/BackendType";
 import { forwardTerminationSignals } from "@/services/exec/util/forwardTerminationSignals";
+import { spawnHidden } from "@/services/exec/util/spawnHidden";
 import { toExitCode } from "@/services/exec/util/toExitCode";
-import { spawn } from "node:child_process";
 // The only backend today: run the real command on the host, unchanged. It does not isolate or
 // Virtualize anything - it is the baseline the future `vfs`/`os` backends must beat on speed and
 // Match on correctness, and the fallback every higher backend defers to when it can't run a command.
@@ -17,7 +17,7 @@ export const createNativeBackend = (): ExecBackend => ({
       const isWindows = process.platform === "win32";
       const spawnFile = isWindows && Array.isArray(command) ? "cmd.exe" : file;
       const spawnArgs = isWindows && Array.isArray(command) ? ["/d", "/s", "/c", file, ...args] : args;
-      const child = spawn(spawnFile, spawnArgs, {
+      const child = spawnHidden(spawnFile, spawnArgs, {
         cwd: options.cwd === "" ? undefined : options.cwd,
         // Inherit the host env, with options.env merged over it (the `VIRRUN` signal, and anything else the
         // Orchestrator passes) — the same contract the bwrap backend honors, so the native path and the

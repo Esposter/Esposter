@@ -19,7 +19,14 @@ import {
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, MAX_READ_LIMIT, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import {
+  createUniqueArraySchema,
+  InvalidOperationError,
+  MAX_READ_LIMIT,
+  NotFoundError,
+  Operation,
+  takeOne,
+} from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, eq, getColumns, inArray } from "drizzle-orm";
 import { z } from "zod";
@@ -28,7 +35,7 @@ const readWebhooksInputSchema = roomIdSchema;
 
 const readAppUsersByIdsInputSchema = z.object({
   ...roomIdSchema.shape,
-  ids: selectAppUserInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  ids: createUniqueArraySchema(selectAppUserInMessageSchema.shape.id).min(1).max(MAX_READ_LIMIT),
 });
 
 export const webhookRouter = router({

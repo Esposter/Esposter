@@ -78,16 +78,16 @@ jobs:
           node-version: "24"
       # `pnpm i` + download the `package-builds` artifact built once by the `build-packages` job above — the
       # bundles are node-agnostic rolldown output, so the build job's default Node is fine for these Node-24
-      # bench shards. Replaces the former inline `pnpm build:packages`, which rebuilt on every shard.
+      # bench shards.
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
       # A bare root `vitest bench --run` discovers every project's `*.bench.ts` (packages/* + the scripts
       # project, per the root vitest.config.ts `projects`) as one file set, so `--shard=i/n` partitions that
-      # global set across runners (n=8 for simulation, n=1 — the whole set — for walltime/memory). This replaces
-      # the `pnpm bench` root script (`vitest bench --project scripts && pnpm -r run bench`) only in CI: that
-      # form is a multi-invocation chain a single `--shard` can't span. Local `pnpm bench` (committed
-      # `*.bench.md` gate) is unchanged. The action sets CODSPEED_ENV so the codspeed plugin (wired via
-      # getBenchmarkPlugins) instruments the run in the chosen mode.
+      # global set across runners (n=8 for simulation, n=1 — the whole set — for walltime/memory). CI uses this bare
+      # sharded invocation rather than the `pnpm bench` root script (`vitest bench --project scripts && pnpm -r run
+      # bench`) because that script is a multi-invocation chain a single `--shard` can't span; local `pnpm bench`
+      # (the committed `*.bench.md` gate) uses the script. The action sets CODSPEED_ENV so the codspeed plugin (wired
+      # via getBenchmarkPlugins) instruments the run in the chosen mode.
       - name: 🏎️ Run CodSpeed benchmarks
         uses: CodSpeedHQ/action@a4a36bb07c0638b0b4ca52bf1f3dad1b4289e52f # v4.18.1
         with:

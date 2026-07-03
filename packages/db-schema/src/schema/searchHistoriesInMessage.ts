@@ -6,10 +6,10 @@ import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { check, jsonb, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const searchHistoriesInMessage = pgTable(
   "searchHistories",
@@ -35,6 +35,6 @@ export const searchHistoriesInMessage = pgTable(
 export type SearchHistoryInMessage = typeof searchHistoriesInMessage.$inferSelect;
 
 export const selectSearchHistoryInMessageSchema = createSelectSchema(searchHistoriesInMessage, {
-  filters: z.array(filterSchema),
+  filters: createUniqueArraySchema(filterSchema, "type"),
   query: (schema) => schema.max(MESSAGE_MAX_LENGTH),
 });

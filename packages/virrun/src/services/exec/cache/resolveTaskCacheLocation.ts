@@ -1,4 +1,4 @@
-import type { TaskCacheLocation } from "@/models/exec/TaskCacheLocation";
+import type { TaskCacheLocation } from "@/models/exec/cache/TaskCacheLocation";
 
 import {
   TASK_CACHE_META_FILENAME,

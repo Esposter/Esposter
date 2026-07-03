@@ -8,6 +8,7 @@ import { columnSchema } from "#shared/models/tableEditor/file/column/Column";
 import { dataSourceStatisticsSchema } from "#shared/models/tableEditor/file/datasource/DataSourceStatistics";
 import { metadataSchema } from "#shared/models/tableEditor/file/datasource/Metadata";
 import { rowSchema } from "#shared/models/tableEditor/file/datasource/Row";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface DataSource {
@@ -18,8 +19,8 @@ export interface DataSource {
 }
 
 export const dataSourceSchema = z.object({
-  columns: z.array(columnSchema),
+  columns: createUniqueArraySchema(columnSchema, "id"),
   metadata: metadataSchema,
-  rows: z.array(rowSchema),
+  rows: createUniqueArraySchema(rowSchema, "id"),
   statistics: dataSourceStatisticsSchema,
 }) satisfies z.ZodType<ToData<DataSource>>;

@@ -1,7 +1,7 @@
-import type { OverlayEntry } from "@/models/exec/OverlayEntry";
+import type { OverlayEntry } from "@/models/exec/snapshot/OverlayEntry";
 
 import { FlushOpType } from "@/models/exec/FlushOp";
-import { OverlayEntryKind } from "@/models/exec/OverlayEntryKind";
+import { OverlayEntryKind } from "@/models/exec/snapshot/OverlayEntryKind";
 import { buildFlushPlan } from "@/services/exec/snapshot/buildFlushPlan";
 import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
