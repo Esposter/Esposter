@@ -129,6 +129,12 @@ afterEach(async () => {
 
 When a file mixes `vi.spyOn` spies AND a module-level `vi.fn()` whose count is asserted — use `vi.clearAllMocks()` (clears the `vi.fn()`) plus `vi.restoreAllMocks()` (restores the spies); neither alone covers both.
 
+## Call-Count Matchers
+
+- **Once + args → `toHaveBeenCalledExactlyOnceWith(...)`** — the canonical matcher for "called exactly once with these args" (also `toHaveBeenCalledExactlyOnceWith()` for no-arg calls). This is native Vitest and typechecks.
+- **`toHaveBeenCalledOnceWith` is BANNED** — a jest-extended matcher that does NOT exist in Vitest 4. It typechecks-fails with `TS2551: Property 'toHaveBeenCalledOnceWith' does not exist`. Always use `toHaveBeenCalledExactlyOnceWith`.
+- **Fallback when the exactly-once form doesn't fit** — split into `toHaveBeenCalledTimes(1)` + `toHaveBeenCalledWith(...)`.
+
 ## Colocated Module Mocks (`vi.mock` import pattern)
 
 When a service is mocked across multiple test files, create a colocated `*.test.ts` next to the service. Import via `vi.mock(import(...), () => import(...))` — **no `async` keyword** (`import()` already returns a Promise).

@@ -7,14 +7,23 @@ export const VIRRUN_SNAPSHOTS_DIRECTORY_NAME = "snapshots";
 export const VIRRUN_PREPARE_DIRECTORY_NAME = "prepare";
 // Overlayfs layer names of a captured snapshot, under .virrun/snapshots/<lockfile-hash>/: `upper` is the
 // Published layer that persists the post-install writes (and doubles as a read-only lower when forking);
-// `work` is the empty scratch dir overlayfs requires alongside a writable upper. A capture run writes into
-// Per-pid temps (`<name>.<pid>.tmp`) and renames the upper onto its final name as the atomic publish barrier.
+// `work` is the empty scratch dir overlayfs requires alongside a writable upper. A capture/persist run writes into
+// A pid-tagged mkdtemp temp (`<base>.<pid>.<rand>`, withPidTempPrefix) and renames the upper onto its final name as
+// The atomic publish barrier.
 export const VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME = "upper";
 export const VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME = "work";
-// The mkdtemp prefixes every capture/persist temp starts with inside a snapshot/prepare hash dir. `upper.`/`work.`
-// Also cover the persist siblings (`upper.persist.<rand>`, `work.persist.<rand>`) by prefix, and never match the
-// Published bare `upper`/`work` (no trailing `.`). reapStaleTemps sweeps a hard-killed run's corpses by these.
+// A published snapshot/prepare hash dir carries a `leases/<pid>` file per live run mounting it. pruneStale* keeps a
+// Superseded dir while any lease pid is alive, so a concurrent run on a different lockfile hash can't evict a layer
+// Another live run is still reading. Dead-pid leases are reaped in place (acquireLease / hasLiveLease). The dir sits
+// Beside `upper`/`work`, invisible to the mount (which names only those), the reap, and the flush.
+export const VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME = "leases";
+// The reap prefixes every pid-tagged capture/persist temp starts with inside a snapshot/prepare hash dir, ordered
+// Longest-first so a persist temp (`upper.persist.<pid>.<rand>`) matches its own prefix rather than the shorter
+// `upper.`. They never match the published bare `upper`/`work` (no trailing `.`) or the `leases/` sibling.
+// ReapStaleTemps reads the owner pid back out of each match (parseTempOwnerPid) and reclaims only a dead owner's corpse.
 export const VIRRUN_SNAPSHOT_TEMP_PREFIXES: readonly string[] = [
+  `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`,
+  `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`,
   `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`,
   `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`,
 ];

@@ -1,4 +1,5 @@
 import {
+  VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_TEMP_PREFIXES,
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
   VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME,
@@ -11,6 +12,10 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(reapStaleTemps, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
+  // A pid far above any real one, so the reap sees its owner as dead (ESRCH).
+  const DEAD_PID = 2 ** 30;
+  // Stands in for the tail mkdtempSync appends after the pid-tagged prefix; irrelevant to the reap.
+  const MKDTEMP_SUFFIX = "test";
   let dir = "";
   const seed = (name: string): string => {
     const entry = join(dir, name);
@@ -24,19 +29,39 @@ describe(reapStaleTemps, () => {
 
   afterEach(cleanup);
 
-  test("reaps every mkdtemp temp sibling while keeping the published layers", () => {
+  test(`reaps a hard-killed run's temps while keeping a live run's temps and the published entries`, () => {
     expect.hasAssertions();
 
-    const captureUpper = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.aBcDeF`);
-    const captureWork = seed(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.aBcDeF`);
-    const persistUpper = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.gHiJkL`);
+    const deadCaptureUpper = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${DEAD_PID}.${MKDTEMP_SUFFIX}`);
+    const deadCaptureWork = seed(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.${DEAD_PID}.${MKDTEMP_SUFFIX}`);
+    const deadPersistUpper = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.${DEAD_PID}.${MKDTEMP_SUFFIX}`);
+    const deadPersistWork = seed(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.${DEAD_PID}.${MKDTEMP_SUFFIX}`);
+    const liveCaptureUpper = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${process.pid}.${MKDTEMP_SUFFIX}`);
+    const livePersistUpper = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.${process.pid}.${MKDTEMP_SUFFIX}`);
     const publishedUpper = seed(VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME);
+    const publishedWork = seed(VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME);
+    const leases = seed(VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME);
 
     reapStaleTemps(dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
 
-    expect(existsSync(captureUpper)).toBe(false);
-    expect(existsSync(captureWork)).toBe(false);
-    expect(existsSync(persistUpper)).toBe(false);
+    expect(existsSync(deadCaptureUpper)).toBe(false);
+    expect(existsSync(deadCaptureWork)).toBe(false);
+    expect(existsSync(deadPersistUpper)).toBe(false);
+    expect(existsSync(deadPersistWork)).toBe(false);
+    expect(existsSync(liveCaptureUpper)).toBe(true);
+    expect(existsSync(livePersistUpper)).toBe(true);
     expect(existsSync(publishedUpper)).toBe(true);
+    expect(existsSync(publishedWork)).toBe(true);
+    expect(existsSync(leases)).toBe(true);
+  });
+
+  test(`keeps a legacy random-only temp it can't attribute to a dead owner`, () => {
+    expect.hasAssertions();
+
+    const legacyTemp = seed(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.${MKDTEMP_SUFFIX}`);
+
+    reapStaleTemps(dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
+
+    expect(existsSync(legacyTemp)).toBe(true);
   });
 });

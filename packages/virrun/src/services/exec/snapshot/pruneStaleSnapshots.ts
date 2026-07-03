@@ -1,11 +1,14 @@
 import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
+import { hasLiveLease } from "@/services/exec/snapshot/hasLiveLease";
 import { sweepStaleEntries } from "@/services/exec/snapshot/sweepStaleEntries";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { join } from "node:path";
-// Only the current lockfile hash's dir is ever reused, so evict every superseded `snapshots/<hash>` to keep the
-// Host-global cache pinned to the single live entry. The removals are pure cache hygiene the current run never
-// Depends on, so they run detached (via sweepStaleEntries → removeSnapshotDirectoryDetached) off the command's
-// Critical path, best-effort per dir.
+// Only the current lockfile hash's dir is reused by THIS run, so evict every superseded `snapshots/<hash>` to keep the
+// Host-global cache small — but that cache is shared across repos/worktrees, so spare a superseded dir a concurrent run
+// On a different hash still leases (hasLiveLease, which also reaps that dir's dead-pid leases in passing). The removals
+// Are pure cache hygiene the current run never depends on, so they run detached (via sweepStaleEntries →
+// RemoveSnapshotDirectoryDetached) off the command's critical path, best-effort per dir.
 export const pruneStaleSnapshots = (currentHash: string): void => {
-  sweepStaleEntries(join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME), (name) => name !== currentHash);
+  const snapshotsDir = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
+  sweepStaleEntries(snapshotsDir, (name) => name !== currentHash && !hasLiveLease(join(snapshotsDir, name)));
 };

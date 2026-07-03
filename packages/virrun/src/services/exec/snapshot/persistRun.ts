@@ -11,6 +11,7 @@ import {
 } from "@/services/exec/snapshot/constants";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
@@ -39,8 +40,8 @@ export const persistRun = (
       "no captured snapshot to persist over; provision one first",
     );
   const hostDir = options.cwd === "" ? process.cwd() : options.cwd;
-  const persistUpperDir = mkdtempSync(join(dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`));
-  const persistWorkDir = mkdtempSync(join(dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`));
+  const persistUpperDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.persist.`)));
+  const persistWorkDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.persist.`)));
   return withFinalizerAsync(
     async () => {
       const result = await backend.exec(command, {

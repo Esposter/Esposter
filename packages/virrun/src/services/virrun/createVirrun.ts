@@ -1,5 +1,6 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions, ExecStdio } from "@/models/exec/ExecOptions";
+import type { Lease } from "@/models/exec/snapshot/Lease";
 import type { Virrun } from "@/models/virrun/Virrun";
 import type { VirrunOptions } from "@/models/virrun/VirrunOptions";
 
@@ -12,6 +13,7 @@ import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
 import { VIRRUN_SNAPSHOT_TEMP_PREFIXES } from "@/services/exec/snapshot/constants";
+import { createLease } from "@/services/exec/snapshot/createLease";
 import { createPrepareLayer } from "@/services/exec/snapshot/createPrepareLayer";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
@@ -41,7 +43,10 @@ export const createVirrun = async ({
   source = { dir: "", type: SourceType.Dir },
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
   const execBackend = backendFactories[backend]();
-  const { cwd, dispose } = await loadSource(source);
+  const { cwd, dispose: disposeSource } = await loadSource(source);
+  // Leases this run holds on the snapshot/prepare hash dirs it mounts — released on dispose so pruneStale* can reclaim
+  // A superseded layer once no live run is reading it.
+  const leases: Lease[] = [];
   // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store, login PATH, and
   // Network re-enable must still be injected (createOsExecOptions). Non-os backends need only the VIRRUN signal.
   const isOsBackend = execBackend.name === BackendType.Os;
@@ -62,6 +67,9 @@ export const createVirrun = async ({
     pruneStaleSnapshots(hash);
     reapStaleTemps(dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
     if (!exists) await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
+    // Announce this process as a live user of the (now warm) snapshot — even on a cache hit — so a concurrent run on a
+    // Different lockfile hash can't prune it mid-mount. Released on dispose; a hard-killed run's lease is reaped later.
+    leases.push(createLease(dir));
   };
   // Provision the source-keyed prepare layer (the framework's Linux-generated artifacts, e.g. .nuxt) once per source
   // State, forked over the deps snapshot, and return the read-only lower(s) fork/persist stacks above the deps
@@ -78,11 +86,18 @@ export const createVirrun = async ({
     reapStaleTemps(location.dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
     if (!existsSync(location.upperDir))
       await createPrepareLayer(execBackend, prepareStep, toInstallOptions(stdio), location);
+    // Same live-user lease as the deps snapshot, on the source-keyed prepare dir.
+    leases.push(createLease(location.dir));
     return [location.upperDir];
   };
   return {
     backend: execBackend.name,
-    dispose,
+    dispose: async () => {
+      // Drop every lease this run took before tearing down the source; a hard kill skips this and the dead-pid reap
+      // Reclaims the lease later.
+      for (const lease of leases) lease.release();
+      await disposeSource();
+    },
     exec: (command, stdio = "pipe") => execBackend.exec(command, toOptions(stdio)),
     fork: async (command, stdio = "pipe") => {
       // Other backends have no snapshot layer, so fork falls back to a plain exec (no warm reuse).

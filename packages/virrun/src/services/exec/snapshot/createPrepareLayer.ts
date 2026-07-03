@@ -10,6 +10,7 @@ import {
 import { pruneToOutputs } from "@/services/exec/snapshot/pruneToOutputs";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { withPidTempPrefix } from "@/services/exec/util/withPidTempPrefix";
 import { getResult, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, mkdirSync, mkdtempSync, renameSync } from "node:fs";
 import { join } from "node:path";
@@ -39,8 +40,8 @@ export const createPrepareLayer = (
   let captureWorkDir = "";
   return getResultAsync(async () => {
     mkdirSync(dir, { recursive: true });
-    captureUpperDir = mkdtempSync(join(dir, `${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`));
-    captureWorkDir = mkdtempSync(join(dir, `${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`));
+    captureUpperDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME}.`)));
+    captureWorkDir = mkdtempSync(join(dir, withPidTempPrefix(`${VIRRUN_SNAPSHOT_WORK_DIRECTORY_NAME}.`)));
     const result = await backend.exec(prepareStep.command, {
       ...options,
       overlayLayers: { lowerDirs: [depsLocation.upperDir], upperDir: captureUpperDir, workDir: captureWorkDir },
