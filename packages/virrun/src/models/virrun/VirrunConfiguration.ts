@@ -4,7 +4,7 @@ import { z } from "zod";
 // The repo-root `virrun.config.json` (specs/config-and-cache.md): a checked-in, reviewable selection of which
 // Backend a sandboxed command runs through and which framework environment it targets. The `virrun -- <cmd>` prefix
 // Is the switch for *whether* a command is sandboxed (add it to adopt, remove it to drop); this config only chooses
-// *How*. An absent file means the defaults (backend auto → native today, environment none), so no config is a valid,
+// *How*. An absent file means the defaults (backend auto → native today, environment undefined → no preset), so no config is a valid,
 // Fully-functional state.
 export interface VirrunConfiguration {
   // BackendType a sandboxed command runs through. When it can't run on this host (e.g. `os` off Linux) the
