@@ -1,6 +1,7 @@
 import type { FlushOp } from "@/models/exec/FlushOp";
 
 import { FlushOpType } from "@/models/exec/FlushOp";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 // The recorded outcome of one exit-0 persist run, replayed verbatim on a later cache hit so the sandbox is skipped
 // (specs/config-and-cache.md). `plan` is the write-back FlushOp[] (buildHostFlushPlan) that reconciles the entry's
@@ -20,7 +21,7 @@ export const taskCacheEntrySchema: z.ZodObject<{
   stdout: z.ZodString;
 }> = z.object({
   exitCode: z.int().min(0).max(255),
-  plan: z.array(
+  plan: createUniqueArraySchema(
     z.object({
       // The entry is persisted, hand-editable meta.json replayed onto the host via applyFlushPlan, so reject any
       // Path that would escape hostDir (absolute, or a `..` segment) before it reaches the host-write script.
@@ -32,6 +33,7 @@ export const taskCacheEntrySchema: z.ZodObject<{
         ),
       type: z.enum(FlushOpType),
     }),
+    "relativePath",
   ),
   stderr: z.string(),
   stdout: z.string(),

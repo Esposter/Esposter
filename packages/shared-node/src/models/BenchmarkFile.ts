@@ -1,6 +1,7 @@
 import type { BenchmarkGroup } from "@/models/BenchmarkGroup";
 
 import { benchmarkGroupSchema } from "@/models/BenchmarkGroup";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 // One .bench.ts file's results: its path plus every describe() group it ran.
 export interface BenchmarkFile {
@@ -13,5 +14,5 @@ export const benchmarkFileSchema: z.ZodObject<{
   groups: z.ZodArray<typeof benchmarkGroupSchema>;
 }> = z.object({
   filepath: z.string(),
-  groups: z.array(benchmarkGroupSchema),
+  groups: createUniqueArraySchema(benchmarkGroupSchema, "fullName"),
 }) satisfies z.ZodType<BenchmarkFile>;

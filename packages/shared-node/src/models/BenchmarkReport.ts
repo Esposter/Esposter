@@ -1,6 +1,7 @@
 import type { BenchmarkFile } from "@/models/BenchmarkFile";
 
 import { benchmarkFileSchema } from "@/models/BenchmarkFile";
+import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 // The root of `vitest bench --outputJson`: every .bench.ts file Vitest ran in the suite.
 export interface BenchmarkReport {
@@ -10,5 +11,5 @@ export interface BenchmarkReport {
 export const benchmarkReportSchema: z.ZodObject<{
   files: z.ZodArray<typeof benchmarkFileSchema>;
 }> = z.object({
-  files: z.array(benchmarkFileSchema),
+  files: createUniqueArraySchema(benchmarkFileSchema, "filepath"),
 }) satisfies z.ZodType<BenchmarkReport>;

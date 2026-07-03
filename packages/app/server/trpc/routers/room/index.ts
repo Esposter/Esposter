@@ -47,6 +47,7 @@ import {
   invitesInMessage,
   refineRoomSchema,
   roomIdSchema,
+  roomIdsSchema,
   RoomPermission,
   roomRolesInMessage,
   roomsInMessage,
@@ -55,6 +56,7 @@ import {
   selectRoomInMessageSchema,
   selectUserSchema,
   userIdSchema,
+  userIdsSchema,
   users,
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
@@ -85,13 +87,13 @@ const readRoomsInputSchema = z
     filter: refineRoomSchema(selectRoomInMessageSchema.pick({ name: true })).optional(),
   })
   .prefault({});
-const onUpdateRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const onUpdateRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
 
-const onDeleteRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const onDeleteRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
 
-const onJoinRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const onJoinRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
 
-const onLeaveRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const onLeaveRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
 
 const readMembersInputSchema = z.object({
   ...roomIdSchema.shape,
@@ -102,7 +104,7 @@ const readMembersInputSchema = z.object({
 });
 const readMembersByIdsInputSchema = z.object({
   ...roomIdSchema.shape,
-  ids: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  ids: userIdsSchema.shape.userIds.min(1),
 });
 
 const countMembersInputSchema = roomIdSchema;
