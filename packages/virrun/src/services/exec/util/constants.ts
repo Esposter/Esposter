@@ -43,7 +43,7 @@ export const VIRRUN_NO_CACHE_KEY = "VIRRUN_NO_CACHE";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY = "PNPM_CONFIG_PACKAGE_IMPORT_METHOD";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE = "copy";
 export const PNPM_CONFIG_STORE_DIR_KEY = "PNPM_CONFIG_STORE_DIR";
-// pnpm's verify-deps-before-run makes `pnpm run`/`pnpm exec` fire an auto-install when it decides node_modules is out
+// Pnpm's verify-deps-before-run makes `pnpm run`/`pnpm exec` fire an auto-install when it decides node_modules is out
 // Of sync with the lockfile. Inside the sandbox node_modules comes frozen from the snapshot lower, so that check both
 // Misfires (the overlay's merged tree never matches pnpm's on-disk expectation) and, when it installs, pacquet dies
 // Writing bin shims into the overlay upper (ENOENT node_modules/.bin/*). Disable it so a sandboxed pnpm only runs the
