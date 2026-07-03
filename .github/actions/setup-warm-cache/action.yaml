@@ -8,21 +8,23 @@ description: >-
 runs:
   using: composite
   steps:
-    # These jobs run `pnpm <script>` with install: false (no host node_modules) purely to launch `virrun -- <tool>`,
-    # But pnpm's verify-deps-before-run would full-install the workspace just to start the script — the exact cost the
-    # Sandbox exists to avoid. Disable it CI-only (not committed, so local dev keeps auto-reinstall). pnpm reads the
-    # Npm_config_* env; written to $GITHUB_ENV so it applies to every later step in the calling job. The nested
-    # `pnpm -r run …` inside the sandbox needs no equivalent: the restored snapshot overlay is a complete frozen
-    # Install, so its verify matches the lockfile hash and reinstalls nothing.
-    - name: 🚫 Disable pnpm verify-deps-before-run
-      shell: bash
-      run: echo "npm_config_verify_deps_before_run=false" >> "$GITHUB_ENV"
     # bubblewrap (+ unprivileged user namespaces) so the os backend the config pins runs isolated rather than
     # Silently falling back to native.
     - name: 🔧 Setup Project Dependencies
       uses: ./.github/actions/setup-project-dependencies
       with:
         bubblewrap-sandbox: true
+    # These jobs run `pnpm <script>` with install: false (no host node_modules) purely to launch `virrun -- <tool>`,
+    # But pnpm's verify-deps-before-run would full-install the workspace just to start the script — the exact cost the
+    # Sandbox exists to avoid. Disable it CI-only (ephemeral runner; local dev keeps auto-reinstall). NOT via env
+    # (pnpm 11 ignores npm_config_* for this pnpm-native setting) and NOT in the repo tree (.npmrc / pnpm-workspace.yaml):
+    # Virrun keys its prepare layer on a source-tree hash, and the warm-cache job captures it on the CLEAN tree, so
+    # Mutating the tree here would diverge the hash and force a `.nuxt` rebuild. `pnpm config set` (default = global/user
+    # Config) leaves the tree untouched and covers the host launch — the only place that reinstalls; the nested
+    # `pnpm -r run …` inside the sandbox is a no-op over the restored frozen snapshot. Runs after pnpm is on PATH.
+    - name: 🚫 Disable pnpm verify-deps-before-run
+      shell: bash
+      run: pnpm config set verify-deps-before-run false
     # install: false — node_modules comes from the warm snapshot inside the sandbox, so a host `pnpm i` is
     # Redundant; Setup Packages exposes the `virrun` bin from the build-packages artifact instead.
     - name: 📦 Setup Packages
