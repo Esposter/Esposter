@@ -80,14 +80,16 @@ When a component tree has a "selected item" concept (e.g. `selectedRoleId`), put
 
 ```typescript
 // store/message/room/role.ts
-const selectedRoleId = ref<string | null>(null);
+// Track the selection by id with "" as the "nothing selected" sentinel (never string | null) — a stale id is
+// harmless, and the computed resolves the object, returning undefined (not null) when absent.
+const selectedRoleId = ref("");
 const selectedRole = computed(() => {
-  if (!selectedRoleId.value) return null;
+  if (selectedRoleId.value === "") return undefined;
   for (const roles of rolesMap.value.values()) {
     const role = roles.find(({ id }) => id === selectedRoleId.value);
     if (role) return role;
   }
-  return null;
+  return undefined;
 });
 const selectRole = (id: string) => {
   selectedRoleId.value = id;
@@ -97,7 +99,7 @@ const selectRole = (id: string) => {
 const readRoles = async (input: ReadRolesInput) => {
   const result = await $trpc.role.readRoles.query(input);
   rolesMap.value.set(input.roomId, result);
-  selectedRoleId.value = result[0]?.id ?? null; // init selection
+  selectedRoleId.value = result[0]?.id ?? ""; // init selection
 };
 const createRole = async (input: CreateRoleInput) => {
   const newRole = await $trpc.role.createRole.mutate(input);
@@ -107,7 +109,7 @@ const createRole = async (input: CreateRoleInput) => {
 };
 ```
 
-Children read `selectedRoleId`/`selectedRole` from the store directly — no prop threading, no `defineModel` + `watchImmediate`. Deletion reflects automatically (computed returns `null` when the role is gone). No component-level watches to reset on selection change.
+Children read `selectedRoleId`/`selectedRole` from the store directly — no prop threading, no `defineModel` + `watchImmediate`. Deletion reflects automatically (computed returns `undefined` when the role is gone). No component-level watches to reset on selection change.
 
 ### Eliminating Watches with `:key`
 

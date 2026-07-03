@@ -1,4 +1,4 @@
-import type { KeyedStringCache } from "@/models/exec/KeyedStringCache";
+import type { KeyedStringCache } from "@/models/exec/wsl/KeyedStringCache";
 
 import { getLocalCacheDirectory } from "@/services/exec/util/getLocalCacheDirectory";
 import { writeFileAtomicSync } from "@/services/exec/util/writeFileAtomicSync";

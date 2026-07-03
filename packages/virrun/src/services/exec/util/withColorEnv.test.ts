@@ -26,22 +26,20 @@ describe(withColorEnv, () => {
     restore("getColorDepth", originalGetColorDepth);
   });
 
-  test(`returns the options unchanged for a captured (pipe) run even on a TTY`, () => {
+  test(`pins FORCE_COLOR off for a captured (pipe) run even on a TTY so the capture stays byte-clean`, () => {
     expect.hasAssertions();
 
     stubStdout(true, 24);
-    const options = createOptions("pipe");
 
-    expect(withColorEnv(options)).toBe(options);
+    expect(withColorEnv(createOptions("pipe")).env).toStrictEqual({ FORCE_COLOR: "0", [VIRRUN_ENV_KEY]: "true" });
   });
 
-  test(`returns the options unchanged for an inherit run when stdout is not a TTY`, () => {
+  test(`pins FORCE_COLOR off for an inherit run when stdout is not a TTY`, () => {
     expect.hasAssertions();
 
     stubStdout(false, 24);
-    const options = createOptions("inherit");
 
-    expect(withColorEnv(options)).toBe(options);
+    expect(withColorEnv(createOptions("inherit")).env).toStrictEqual({ FORCE_COLOR: "0", [VIRRUN_ENV_KEY]: "true" });
   });
 
   test(`forwards FORCE_COLOR at the host color level for a live inherit run on a TTY`, () => {

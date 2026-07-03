@@ -4,10 +4,10 @@ import { BackendType } from "@/models/virrun/BackendType";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { isOsBackendSupported } from "@/services/exec/os/isOsBackendSupported";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
+import { spawnHidden } from "@/services/exec/util/spawnHidden";
 import { toExitCode } from "@/services/exec/util/toExitCode";
 import { createWslEnvArgs } from "@/services/exec/wsl/createWslEnvArgs";
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
-import { spawn } from "node:child_process";
 import { describe, expect, test } from "vitest";
 
 export const createOsBaselineBackend = (): ExecBackend => {
@@ -19,7 +19,7 @@ export const createOsBaselineBackend = (): ExecBackend => {
         const commandArgs = Array.isArray(command)
           ? ["sh", "-c", `cd "$1" && shift && exec "$@"`, "virrun-baseline", cwd, ...command]
           : ["sh", "-c", `cd "$1" && ${command}`, "virrun-baseline", cwd];
-        const child = spawn("wsl.exe", ["--exec", "env", ...createWslEnvArgs(options), ...commandArgs], {
+        const child = spawnHidden("wsl.exe", ["--exec", "env", ...createWslEnvArgs(options), ...commandArgs], {
           env: { ...process.env, ...options.env },
           stdio: options.stdio,
         });

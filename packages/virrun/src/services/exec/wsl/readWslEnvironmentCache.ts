@@ -1,4 +1,4 @@
-import { keyedStringCacheSchema } from "@/models/exec/KeyedStringCache";
+import { keyedStringCacheSchema } from "@/models/exec/wsl/KeyedStringCache";
 import { getLocalCacheDirectory } from "@/services/exec/util/getLocalCacheDirectory";
 import { getResult } from "@esposter/shared";
 import { readFileSync } from "node:fs";

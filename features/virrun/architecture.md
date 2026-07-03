@@ -34,7 +34,7 @@ flowchart TB
     fsp --> vmem[("in-process virtual FS\n(only this process sees it)")]
     os --> sandboxprim["bubblewrap\nLinux direct / Windows WSL2"]
     sandboxprim --> ram[("tmpfs + overlayfs\nRAM FS — every process sees it")]
-    os --> snap["snapshot + warm-fork\nlockfile-hash keyed"]
+    os --> snap["snapshot + warm-fork\ndeps: lockfile-hash · prepare: source-hash"]
     os --> wb["write-back\nflush top upper → host\nmutation runs only"]
     wb --> disk
 ```
@@ -108,23 +108,67 @@ Every os run forks the warm snapshot; **only the top mount differs** — persist
 flowchart LR
     src[("source\n(RO lower)")] --> ov{{"overlayfs\nstack"}}
     snap[("warm snapshot\nnode_modules (RO lower)")] --> ov
+    prep[("prepare layer\n.nuxt (RO lower, source-keyed)")] --> ov
 
     ov --> top{"top mount"}
     top -->|"mutation run\n--overlay upper"| up[("persistable upper\n= dist / migrations / fixed src")]
     top -->|"CI / verification fork\n--tmp-overlay"| vanish[("tmpfs\nwrites vanish")]
 
     up --> flush["flushUpperToHost\nfiles · whiteout deletes · opaque dirs"]
-    flush -->|"skip snapshot-lower paths"| host[("host working dir\n(native-equivalent)")]
+    flush -->|"skip snapshot-lower + prepare-output paths"| host[("host working dir\n(native-equivalent)")]
 ```
 
 Two facts make this native-equivalent without virrun ever guessing which files matter:
 
 - **The upper _is_ the native diff** — overlayfs records changed/new files, char-dev `0:0` whiteouts for deletes, and (in rootless userxattr mode) `user.overlay.opaque` markers for replaced dirs. Replaying it onto the host reproduces native's on-disk result.
-- **`node_modules` is structurally excluded** — it lives in the RO snapshot lower, so it is never in the top upper's flush set. "node_modules never touches disk" survives even while output persists. Upper entries that shadow a snapshot-lower path (a dep-tree write) are skipped — layer membership, not a name guess.
+- **`node_modules` is structurally excluded** — it lives in the RO snapshot lower, so it is never in the top upper's flush set. "node_modules never touches disk" survives even while output persists. Upper entries that shadow a snapshot-lower path (a dep-tree write) are skipped — layer membership, not a name guess. An `environment`'s prepare outputs (e.g. `.nuxt`) are excluded the same structural way.
 
 Correctness is proven by **equivalence tests** (native vs `virrun --`, diffing the resulting host file trees), CI-enforced beside the differential suite. Detail: [specs/write-back.md](specs/write-back.md).
 
 ---
+
+## Cache lifecycle & cleanup
+
+_Shipped._ A cache write must be disposable **and** self-cleaning: a run that dies before its finalizer never leaks disk permanently, and — since the host-global cache is shared across repos, worktrees, and branch switches — concurrent runs never delete each other's files. Every temp follows the same lifecycle: a private **pid-tagged** `mkdtemp` capture, an atomic `renameSync` publish, and teardown gated on **process liveness** — a prune skips a superseded hash/key dir any run still **leases** (`leases/<pid>`), and a reap reclaims a temp corpse only once its owner pid is dead. Prune and reap share one primitive, `sweepStaleEntries`; a process-level reaper collapses the same leak on WSL. Detail: [specs/config-and-cache.md](specs/config-and-cache.md#cleanup--self-healing).
+
+```mermaid
+flowchart TB
+    start["run captures into<br/>pid-tagged mkdtemp temp (upper.&lt;pid&gt;.&lt;rand&gt;)"] --> exit{"how does the run end?"}
+    exit -->|"clean exit / handled error"| fin["finalizer: renameSync publish<br/>+ remove own temp"]
+    exit -->|"hard kill (SIGKILL, crash,<br/>wsl --shutdown)"| leak[("temp corpse stranded<br/>+ orphaned bwrap tree")]
+
+    fin --> live[("live cache:<br/>leased upper(s) per hash/key")]
+
+    subgraph next["next run — off the critical path, best-effort"]
+        prune["pruneStale* → sweepStaleEntries<br/>evict superseded hash/key dirs<br/>(spare any with a live lease)"]
+        reap["reapStaleTemps → sweepStaleEntries<br/>remove dead-owner upper./work. corpses<br/>(pid liveness)"]
+        orphan["reapOrphanedWslRuns<br/>group-kill trees reparented off the Relay"]
+    end
+
+    leak -.reaped by.-> reap
+    leak -.killed by.-> orphan
+    live -.superseded entries evicted by.-> prune
+    reap --> live
+    orphan --> live
+```
+
+## CLI output palette
+
+Every stderr diagnostic goes through one helper, `formatVirrunLine(message)` (`services/cli/format/formatVirrunLine.ts`), which prepends the bold-cyan `[virrun]` tag — the tag's text + styling live in exactly one place, and command writes are colorized identically to the `format*` helpers instead of hardcoding a plain tag. `colorize` is a no-op when color is off (a pipe, `NO_COLOR`, vitest), so lines degrade to plain text and the format tests still assert plain strings.
+
+The semantic color vocabulary is decided once, on the `Color` enum (`models/cli/Color.ts`) — call sites pick by meaning, not by eye:
+
+| Color        | Role                                                                                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Cyan (+Bold) | the `[virrun]` tag only                                                                                                                          |
+| Blue (+Bold) | a fast-route cache/snapshot **hit** label — `snapshot cache hit` / `task cache hit` (via `formatCacheHitLabel`), so the fast path stands out     |
+| Yellow       | commands / argv / executables / flags; the "expect a wait" cache-**miss** / one-time-install notice                                              |
+| Blue         | concrete values & locations — paths, backend type, lockfile hash, counts                                                                         |
+| Green        | success & positive state — exit 0, "present", durations, node version                                                                            |
+| Red          | failure & destructive — errors, non-zero exit, "absent", a path being **removed**                                                                |
+| Dim          | routine auto-emitted metadata & absence only — doctor note column, "none"/"n/a". **Never dim a path, a cache/snapshot hit, or primary content.** |
+
+The child command's own stdout/stderr is never colorized (raw bytes flow through so correctness diffs stay byte-exact); only virrun's own framing lines are.
 
 ## Platform reality
 

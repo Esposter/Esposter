@@ -1,5 +1,5 @@
+import type { NormalizationRule } from "@/models/exec/differential/NormalizationRule";
 import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { NormalizationRule } from "@/models/exec/NormalizationRule";
 
 import { normalizeExecResult } from "@/services/exec/differential/normalizeExecResult";
 import { describe, expect } from "vitest";

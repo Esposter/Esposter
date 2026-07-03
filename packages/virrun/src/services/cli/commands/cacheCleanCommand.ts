@@ -1,12 +1,17 @@
 import type { CleanArgs } from "@/models/cli/CleanArgs";
 import type { ArgsDef, CommandDef } from "citty";
 
+import { Color } from "@/models/cli/Color";
 import { CommandType } from "@/models/virrun/CommandType";
+import { colorize } from "@/services/cli/color/colorize";
+import { formatVirrunLine } from "@/services/cli/format/formatVirrunLine";
 import { VIRRUN_TASKS_DIRECTORY_NAME } from "@/services/exec/cache/constants";
-import { VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
+import { VIRRUN_PREPARE_DIRECTORY_NAME, VIRRUN_SNAPSHOTS_DIRECTORY_NAME } from "@/services/exec/snapshot/constants";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { getGlobalCacheDirectory } from "@/services/exec/util/getGlobalCacheDirectory";
 import { getRepoCacheDirectory } from "@/services/exec/util/getRepoCacheDirectory";
+import { VIRRUN_SOURCES_DIRECTORY_NAME } from "@/services/exec/wsl/constants";
+import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
 import { getResult, toAppError } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { join } from "node:path";
@@ -29,19 +34,30 @@ export const cacheCleanCommand: CommandDef<CleanArgs> = defineCommand({
     getResult(() => {
       const repoCacheDirectory = getRepoCacheDirectory("");
       removeSnapshotDirectory(repoCacheDirectory);
-      process.stderr.write(`[virrun] removed ${repoCacheDirectory}\n`);
+      process.stderr.write(`${formatVirrunLine(`removed ${colorize(repoCacheDirectory, Color.Red)}`)}\n`);
       if (args.all) {
         const snapshotsPath = join(getGlobalCacheDirectory(), VIRRUN_SNAPSHOTS_DIRECTORY_NAME);
         removeSnapshotDirectory(snapshotsPath);
-        process.stderr.write(`[virrun] removed ${snapshotsPath}\n`);
+        process.stderr.write(`${formatVirrunLine(`removed ${colorize(snapshotsPath, Color.Red)}`)}\n`);
+        const preparePath = join(getGlobalCacheDirectory(), VIRRUN_PREPARE_DIRECTORY_NAME);
+        removeSnapshotDirectory(preparePath);
+        process.stderr.write(`${formatVirrunLine(`removed ${colorize(preparePath, Color.Red)}`)}\n`);
         const tasksPath = join(getGlobalCacheDirectory(), VIRRUN_TASKS_DIRECTORY_NAME);
         removeSnapshotDirectory(tasksPath);
-        process.stderr.write(`[virrun] removed ${tasksPath}\n`);
+        process.stderr.write(`${formatVirrunLine(`removed ${colorize(tasksPath, Color.Red)}`)}\n`);
+        // The win32 ext4 source mirrors live under the WSL-native cache root (ensureWslSourceMirror ignores the
+        // VIRRUN_CACHE_HOME override to stay on ext4), so clean from there — not getGlobalCacheDirectory. Absent off
+        // Win32, where the source is read in place and never mirrored.
+        if (process.platform === "win32") {
+          const sourcesPath = join(getWslNativeCacheRoot(), VIRRUN_SOURCES_DIRECTORY_NAME);
+          removeSnapshotDirectory(sourcesPath);
+          process.stderr.write(`${formatVirrunLine(`removed ${colorize(sourcesPath, Color.Red)}`)}\n`);
+        }
       }
     }).match(
       () => undefined,
       (error) => {
-        process.stderr.write(`${toAppError(error).message}\n`);
+        process.stderr.write(`${formatVirrunLine(colorize(toAppError(error).message, Color.Red))}\n`);
         process.exitCode = 1;
       },
     );

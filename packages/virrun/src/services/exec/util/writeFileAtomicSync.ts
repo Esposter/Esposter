@@ -1,4 +1,5 @@
-import { renameSync, writeFileSync } from "node:fs";
+import { getResult } from "@esposter/shared";
+import { renameSync, unlinkSync, writeFileSync } from "node:fs";
 // Atomic file write: write the payload to a pid-suffixed temp sibling, then rename it over the target. rename is
 // Atomic within a single filesystem, so a reader — or a racing writer from another `virrun -- <cmd>` process — never
 // Observes a half-written file, and two concurrent writers can't truncate each other's output. The temp sits in the
@@ -7,5 +8,12 @@ import { renameSync, writeFileSync } from "node:fs";
 export const writeFileAtomicSync = (filePath: string, data: string): void => {
   const temporaryPath = `${filePath}.${process.pid}.tmp`;
   writeFileSync(temporaryPath, data);
-  renameSync(temporaryPath, filePath);
+  // If the rename fails the temp sibling would be orphaned, so unlink it before rethrowing.
+  const result = getResult(() => {
+    renameSync(temporaryPath, filePath);
+  });
+  if (result.isErr()) {
+    unlinkSync(temporaryPath);
+    throw result.error;
+  }
 };

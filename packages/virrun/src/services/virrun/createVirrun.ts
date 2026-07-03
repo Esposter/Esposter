@@ -1,23 +1,33 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions, ExecStdio } from "@/models/exec/ExecOptions";
+import type { Lease } from "@/models/exec/snapshot/Lease";
 import type { Virrun } from "@/models/virrun/Virrun";
 import type { VirrunOptions } from "@/models/virrun/VirrunOptions";
 
 import { SourceType } from "@/models/source/SourceType";
 import { BackendType } from "@/models/virrun/BackendType";
+import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep";
 import { persistWithCache } from "@/services/exec/cache/persistWithCache";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
+import { VIRRUN_SNAPSHOT_TEMP_PREFIXES } from "@/services/exec/snapshot/constants";
+import { createLease } from "@/services/exec/snapshot/createLease";
+import { createPrepareLayer } from "@/services/exec/snapshot/createPrepareLayer";
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
+import { pruneStalePrepareLayers } from "@/services/exec/snapshot/pruneStalePrepareLayers";
+import { pruneStaleSnapshots } from "@/services/exec/snapshot/pruneStaleSnapshots";
+import { reapStaleTemps } from "@/services/exec/snapshot/reapStaleTemps";
+import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
 import { resolveSetupCommand } from "@/services/exec/snapshot/resolveSetupCommand";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { VIRRUN_ENV_KEY } from "@/services/exec/util/constants";
 import { withColorEnv } from "@/services/exec/util/withColorEnv";
 import { createVfsBackend } from "@/services/exec/vfs/createVfsBackend";
 import { loadSource } from "@/services/source/loadSource";
+import { existsSync } from "node:fs";
 // "auto" resolves to native until vfs beats it on the gates.
 const backendFactories: Record<BackendType, () => ExecBackend> = {
   [BackendType.Auto]: createNativeBackend,
@@ -29,13 +39,21 @@ const backendFactories: Record<BackendType, () => ExecBackend> = {
 // Exec/fork/persist route through it; dispose() tears down any temp state the source created.
 export const createVirrun = async ({
   backend = BackendType.Auto,
+  environment,
   source = { dir: "", type: SourceType.Dir },
 }: Partial<VirrunOptions> = {}): Promise<Virrun> => {
   const execBackend = backendFactories[backend]();
-  const { cwd, dispose } = await loadSource(source);
+  const { cwd, dispose: disposeSource } = await loadSource(source);
+  // Leases this run holds on the snapshot/prepare hash dirs it mounts — released on dispose so pruneStale* can reclaim
+  // A superseded layer once no live run is reading it.
+  const leases: Lease[] = [];
   // Key off the resolved backend, not the requested enum: when Auto resolves to Os the shared store, login PATH, and
   // Network re-enable must still be injected (createOsExecOptions). Non-os backends need only the VIRRUN signal.
   const isOsBackend = execBackend.name === BackendType.Os;
+  // Resolve the framework prepare step once (preset-driven, no overrides). Only the os backend has overlay layers;
+  // Other backends run in-place with the host's own artifacts, so there is nothing to regenerate. Throws loudly if
+  // `environment` is set to a framework whose config file is absent — a misconfiguration, not a silent skip.
+  const prepareStep = isOsBackend ? resolvePrepareStep(environment, cwd) : undefined;
   const toOptions = (stdio: ExecStdio): ExecOptions =>
     withColorEnv(isOsBackend ? createOsExecOptions(cwd, stdio) : { cwd, env: { [VIRRUN_ENV_KEY]: "true" }, stdio });
   const toInstallOptions = (stdio: ExecStdio): ExecOptions =>
@@ -43,30 +61,67 @@ export const createVirrun = async ({
   // Provision the sandbox's dep closure once into a lockfile-hash-keyed snapshot (warm = no-op). Shared by fork and
   // Persist so the two warm-snapshot paths can't drift.
   const ensureSnapshot = async (stdio: ExecStdio): Promise<void> => {
-    if (!resolveSnapshotLocation(cwd).exists)
-      await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
+    const { dir, exists, hash } = resolveSnapshotLocation(cwd);
+    // Announce this process as a live user of the snapshot BEFORE the prune/mint — a concurrent run on a different
+    // Lockfile hash prunes every dir that isn't its own hash and holds no live lease, so leasing first is what stops it
+    // Reclaiming this dir in the window between minting it and mounting it. Released on dispose; a hard-killed run's
+    // Lease is reaped later. createLease mkdirs the leases dir, so the lease exists even on a cold (not-yet-minted) run.
+    leases.push(createLease(dir));
+    // Sweep superseded snapshots, then reap any temp a hard-killed run stranded in the live dir (its finalizer never
+    // Ran), before hitting or minting this one — so the cache never grows past the live entry plus its published layers.
+    pruneStaleSnapshots(hash);
+    reapStaleTemps(dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
+    if (!exists) await createSnapshot(execBackend, resolveSetupCommand(), toInstallOptions(stdio));
+  };
+  // Provision the source-keyed prepare layer (the framework's Linux-generated artifacts, e.g. .nuxt) once per source
+  // State, forked over the deps snapshot, and return the read-only lower(s) fork/persist stacks above the deps
+  // Snapshot so its fresh Linux artifacts shadow the host's copy (and, being last, shadow the deps lower and source
+  // Too). The location is resolved exactly once here and threaded into createPrepareLayer and the returned lower, so
+  // The path we guarantee exists is the path that gets mounted — never a second resolve that could key off a shifted
+  // Source hash and mount a layer that was never built. existsSync is re-read after the prune (not the location.exists
+  // Snapshot taken before it) so a layer the sweep reclaimed is rebuilt rather than assumed present. A no-op ([] ) when
+  // There is no environment preset.
+  const ensurePrepareLayer = async (stdio: ExecStdio): Promise<readonly string[]> => {
+    if (prepareStep === undefined) return [];
+    const location = resolvePrepareLocation(cwd, prepareStep);
+    // Same live-user lease as the deps snapshot, on the source-keyed prepare dir, and taken FIRST for the same reason:
+    // A concurrent run on a different key prunes any layer that isn't its own key and has no live lease, so leasing
+    // Before the prune/materialize is what stops it reclaiming this freshly-built layer in the window before we mount it.
+    leases.push(createLease(location.dir));
+    pruneStalePrepareLayers(location.key);
+    reapStaleTemps(location.dir, VIRRUN_SNAPSHOT_TEMP_PREFIXES);
+    if (!existsSync(location.upperDir))
+      await createPrepareLayer(execBackend, prepareStep, toInstallOptions(stdio), location);
+    return [location.upperDir];
   };
   return {
     backend: execBackend.name,
-    dispose,
+    dispose: async () => {
+      // Drop every lease this run took before tearing down the source; a hard kill skips this and the dead-pid reap
+      // Reclaims the lease later.
+      for (const lease of leases) lease.release();
+      await disposeSource();
+    },
     exec: (command, stdio = "pipe") => execBackend.exec(command, toOptions(stdio)),
     fork: async (command, stdio = "pipe") => {
       // Other backends have no snapshot layer, so fork falls back to a plain exec (no warm reuse).
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
       // A Windows host's win32 node_modules can't run inside the Linux sandbox, so the command runs over the
-      // Sandbox's own frozen dep tree via forkSnapshot. The snapshot is deps-only (pruneSnapshotUpper), so any
-      // Source-derived artifact (e.g. .nuxt) is served from the host source tree stacked underneath as the
-      // `--overlay-src` lower — matching native staleness, with no per-fork postinstall replay.
+      // Sandbox's own frozen dep tree (forkSnapshot) plus, when an environment is set, a source-keyed prepare layer
+      // Holding the framework's Linux-generated artifacts (e.g. .nuxt) that shadow the host's platform-specific copy.
       await ensureSnapshot(stdio);
-      return forkSnapshot(execBackend, command, toOptions(stdio));
+      const prepareLowerDirs = await ensurePrepareLayer(stdio);
+      return forkSnapshot(execBackend, command, toOptions(stdio), prepareLowerDirs);
     },
     persist: async (command, stdio = "pipe") => {
       // Other backends have no sandbox, so a plain exec writes straight to the host disk — nothing to flush.
       if (execBackend.name !== BackendType.Os) return execBackend.exec(command, toOptions(stdio));
-      // Same warm-snapshot provisioning as fork; persistWithCache tops it with a real upper and reconciles the
-      // Command's writes onto the host, short-circuiting to a recorded result when the task cache holds the run.
+      // Same warm-snapshot + prepare-layer provisioning as fork; persistWithCache tops it with a real upper and
+      // Reconciles the command's writes onto the host, masking the prepare outputs (they are cache-owned, never
+      // Flushed) and short-circuiting to a recorded result when the task cache holds the run.
       await ensureSnapshot(stdio);
-      return persistWithCache(execBackend, command, toOptions(stdio));
+      const prepareLowerDirs = await ensurePrepareLayer(stdio);
+      return persistWithCache(execBackend, command, toOptions(stdio), prepareLowerDirs, prepareStep?.outputs ?? []);
     },
   };
 };
