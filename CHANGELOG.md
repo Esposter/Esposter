@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.33.0](https://github.com/Esposter/Esposter/compare/v2.32.1...v2.33.0) (2026-07-03)
+
+### Bug Fixes
+
+* add wsl env cache ([1632818](https://github.com/Esposter/Esposter/commit/1632818acd99c9c4a209a201abc88ec9ce48abf8))
+* atomic sync ([01311f2](https://github.com/Esposter/Esposter/commit/01311f29cc1fa6a799948a9837ee99b0f7ab6678))
+* cleanup debug logs ([fa0a35d](https://github.com/Esposter/Esposter/commit/fa0a35daae80aadf3d32745aec9b4e5c165cc614))
+* cleanup docs and equivalence test ([3e6de6e](https://github.com/Esposter/Esposter/commit/3e6de6e85b5422de66330497e5a967992eb2cfb2))
+* code review comments ([a84595d](https://github.com/Esposter/Esposter/commit/a84595d857e48e4183f07932d9aef13b574d0bf3))
+* code review comments ([d57fc88](https://github.com/Esposter/Esposter/commit/d57fc88b237310982bb2dce7f2ea0046cd69de6a))
+* colorize remaining console lines ([63b44c8](https://github.com/Esposter/Esposter/commit/63b44c8b12614941cba5d7fff5a98c21058625f7))
+* comments etc and cross-ws ver ([dc8b3f7](https://github.com/Esposter/Esposter/commit/dc8b3f74fcd577d6400d8de9238b64fe8b552657))
+* get color from child process ([b11a2ca](https://github.com/Esposter/Esposter/commit/b11a2ca63728448c321b0802a73ec86ef65d8085))
+* improve errors and remove unnecessary imports ([60d654a](https://github.com/Esposter/Esposter/commit/60d654ab47e84c67020048e9dedcf5b3706f8047))
+* issues ([18668f3](https://github.com/Esposter/Esposter/commit/18668f3fc99c0f44b38629d7e8be972e702d423d))
+* lint ([af35ae4](https://github.com/Esposter/Esposter/commit/af35ae44f91d4047fdf8c9d1ef5945e7f8486dea))
+* lint ([32b7fd2](https://github.com/Esposter/Esposter/commit/32b7fd2cffb75b7c8c0abc5cd11a4487ad511705))
+* lint ([c55e9cc](https://github.com/Esposter/Esposter/commit/c55e9cc2a78e2c8fa12c80ce7c312c201386a940))
+* lint ([a3d2a6c](https://github.com/Esposter/Esposter/commit/a3d2a6c85a3f5e190f5d80ea3a3525cfc9a1f6f1))
+* parse id ([7a87678](https://github.com/Esposter/Esposter/commit/7a87678f97bc2f3fcc5455f9757f42bb6f1b241f))
+* prepare outputs for artifacts from nuxt env ([ee633ab](https://github.com/Esposter/Esposter/commit/ee633ab6613d403116447bc889eca63425c1a3bc))
+* prepend path ([31df33c](https://github.com/Esposter/Esposter/commit/31df33c96ed5287e3c0c536b9acfd7f762bdcaae))
+* reclaim mirror ([668a50f](https://github.com/Esposter/Esposter/commit/668a50f4f4fbde2d216176dbce89f7644a1ccfc5))
+* remaining snapshots ([630ff68](https://github.com/Esposter/Esposter/commit/630ff68bd1e30a248195e8baf803ac9a9113600e))
+* snapshot ([3db69f5](https://github.com/Esposter/Esposter/commit/3db69f58d0075b7ce4e1e4613fb1440cc90d6da6))
+* snapshot ([cfae1ea](https://github.com/Esposter/Esposter/commit/cfae1ea63019e0b185f29cb25a383f4a05e8d65d))
+* snapshot ([343491d](https://github.com/Esposter/Esposter/commit/343491dba3911b3f4f2abae5d1a91609177a29cb))
+* snapshot semantic ver ([612b60d](https://github.com/Esposter/Esposter/commit/612b60d9a5ed035f5067024b502db52c2fe0cced))
+* specs and snapshot ([a1050ad](https://github.com/Esposter/Esposter/commit/a1050ad67c4d3a7115ce41a7c2b4cab2a1d63c8f))
+* test lint ([1f7b1d9](https://github.com/Esposter/Esposter/commit/1f7b1d9a19485939d60ebb3db7fc5b49dd4eb4c0))
+* tests ([73c4fec](https://github.com/Esposter/Esposter/commit/73c4fec2ae6189dd46bd015d5e0d58a9eda6508a))
+* tests ([57d63ef](https://github.com/Esposter/Esposter/commit/57d63ef9c15ae3381966ecb5cfbd0b6cc34bedc0))
+* tests + add equivalent test ([dce460c](https://github.com/Esposter/Esposter/commit/dce460ced931f719d7b3dbd15ce7cfb2d48500d1))
+* tests and snapshot ([ecf9684](https://github.com/Esposter/Esposter/commit/ecf9684d78fe741545cb785392a5dab40be237c3))
+* tests wip ([9a1883c](https://github.com/Esposter/Esposter/commit/9a1883c1abaf9d5f3395f983400b3ca5f4cb8be0))
+* tests wip ([a2f80a8](https://github.com/Esposter/Esposter/commit/a2f80a8ab51913ffc9c4a2f75f18c26ec2311553))
+* things ([3cc03fd](https://github.com/Esposter/Esposter/commit/3cc03fda727d544ab339bcd10e40e798c7cb05b7))
+* wip ([16e20c7](https://github.com/Esposter/Esposter/commit/16e20c79f68f85fdbd615b603af105357bb94452))
+
+### Features
+
+* Add cleanup wip ([36131e2](https://github.com/Esposter/Esposter/commit/36131e2daeb57dd804d36a8875cab2995d36dc20))
+* Add colors ([4767963](https://github.com/Esposter/Esposter/commit/47679632bad4c534624e875ae94d16729849630b))
+* Add remaining concurrent code ([15d8624](https://github.com/Esposter/Esposter/commit/15d86240afbad69ecac186a14db14c7a773c28e3))
+* Add wsl ext4 ([2d5a779](https://github.com/Esposter/Esposter/commit/2d5a779c805cdd389c38eb57f5b8e9b97dd8704d))
+* make things concurrent-safe wip ([98acabd](https://github.com/Esposter/Esposter/commit/98acabdda91a21e09798fb13058356ad1f8a43f0))
+
 ## [2.32.1](https://github.com/Esposter/Esposter/compare/v2.32.0...v2.32.1) (2026-07-01)
 
 ### Bug Fixes

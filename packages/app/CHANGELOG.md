@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.33.0](https://github.com/Esposter/Esposter/compare/v2.32.1...v2.33.0) (2026-07-03)
+
+### Bug Fixes
+
+* tests and snapshot ([ecf9684](https://github.com/Esposter/Esposter/commit/ecf9684d78fe741545cb785392a5dab40be237c3))
+
 ## [2.32.1](https://github.com/Esposter/Esposter/compare/v2.32.0...v2.32.1) (2026-07-01)
 
 **Note:** Version bump only for package @esposter/app
