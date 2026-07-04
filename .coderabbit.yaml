@@ -3,6 +3,154 @@ reviews:
     - "!pnpm-lock.yaml"
     # auto-generated migrations
     - "!packages/app/server/db/migrations/**"
+
+    # ── vue-phaserjs emit models: identical mechanical refactor ──
+    # All 43 replace inline mapped type with EmitsOptionsFor<T> utility type.
+    # The new EmitsOptionsFor.ts is kept for review.
+    - "!packages/vue-phaserjs/src/models/emit/ArcEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/BitmapTextEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/ContainerEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/CurveEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/EllipseEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/GraphicsEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/ImageEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/IsoBoxEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/IsoTriangleEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/LineEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/NinesliceEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/ParticlesEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/PathFollowerEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/PolygonEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/RectangleEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/RenderTextureEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/SpriteEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/StarEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/TextEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/TileSpriteEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/TriangleEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/VideoEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/ZoneEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/AlphaEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/AlphaSingleEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/BaseTextureEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/BlendModeEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/ComputedSizeEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/DepthEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/FlipEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/MaskEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/OriginEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/PathFollowerComponentEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/RenderNodesEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/ScrollFactorEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/SizeEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/TextureCropEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/TextureEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/TintEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/TransformEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/components/VisibleEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/global/GameObjectEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/global/TweenEventEmitsOptions.ts"
+    - "!packages/vue-phaserjs/src/models/emit/shared/ShapeEventEmitsOptions.ts"
+
+    # ── Bundle-size snapshot updates: only inline byte-count number changes ──
+    - "!packages/azure-functions/src/index.test.ts"
+    - "!packages/azure-mock/src/index.test.ts"
+    - "!packages/configuration/src/index.test.ts"
+    - "!packages/db-schema/src/index.test.ts"
+    - "!packages/db/src/index.test.ts"
+    - "!packages/parse-tmx/src/index.test.ts"
+    - "!packages/shared/src/index.test.ts"
+    - "!packages/vue-phaserjs/src/index.test.ts"
+    - "!packages/xml2js/src/index.test.ts"
+
+    # ── Deleted 1-line constants: consolidated into blobState/constants.ts ──
+    - "!packages/app/server/services/dashboard/constants.ts"
+    - "!packages/app/server/services/dungeons/constants.ts"
+    - "!packages/app/server/services/emailEditor/constants.ts"
+    - "!packages/app/server/services/flowchartEditor/constants.ts"
+    - "!packages/app/server/services/tableEditor/constants.ts"
+    - "!packages/app/server/services/webpageEditor/constants.ts"
+
+    # ── Router consumers: identical refactor to createRead/SaveBlobStateProcedure ──
+    # clicker.ts and tableEditor.ts kept as representative examples.
+    - "!packages/app/server/trpc/routers/dashboard.ts"
+    - "!packages/app/server/trpc/routers/dungeons.ts"
+    - "!packages/app/server/trpc/routers/emailEditor.ts"
+    - "!packages/app/server/trpc/routers/flowchartEditor.ts"
+    - "!packages/app/server/trpc/routers/webpageEditor.ts"
+
+    # ── Router test consumers: identical "reads" test removal + comment addition ──
+    # webpageEditor.test.ts and tableEditor.test.ts kept as representative examples.
+    - "!packages/app/server/trpc/routers/clicker.test.ts"
+    - "!packages/app/server/trpc/routers/dashboard.test.ts"
+    - "!packages/app/server/trpc/routers/dungeons.test.ts"
+    - "!packages/app/server/trpc/routers/emailEditor.test.ts"
+    - "!packages/app/server/trpc/routers/flowchartEditor.test.ts"
+
+    # ── azure-functions handlers: identical refactor to createEventGridNotificationHandler ──
+    # The factory itself and processWebhookHandler.ts (different pattern) are kept.
+    - "!packages/azure-functions/src/handlers/processFriendRequestNotificationHandler.ts"
+    - "!packages/azure-functions/src/handlers/processPushNotificationHandler.ts"
+    - "!packages/azure-functions/src/handlers/processScheduledMessageJobHandler.ts"
+
+    # ── azure-functions: identical inline webpush → sendWebPushNotifications extraction ──
+    # sendWebPushNotifications.ts (the new helper) is kept.
+    - "!packages/azure-functions/src/services/sendFriendRequestNotification.ts"
+    - "!packages/azure-functions/src/services/sendPushNotification.ts"
+    - "!packages/azure-functions/src/services/sendReminderNotification.ts"
+
+    # ── azure-functions test files: identical mock restructure to setupWebPushSuite ──
+    # setupWebPushSuite.test.ts and sendWebPushNotifications.test.ts are kept.
+    - "!packages/azure-functions/src/services/sendFriendRequestNotification.test.ts"
+    - "!packages/azure-functions/src/services/sendPushNotification.test.ts"
+    - "!packages/azure-functions/src/services/sendReminderNotification.test.ts"
+
+    # ── Virrun deleted models: replaced by generic KeyedCache.ts (kept) ──
+    - "!packages/virrun/src/models/exec/os/CapabilityCache.ts"
+    - "!packages/virrun/src/models/exec/wsl/KeyedStringCache.ts"
+
+    # ── Virrun cache consumers: identical refactor to readKeyedCache/writeKeyedCache ──
+    # The generic helpers (readKeyedCache.ts, writeKeyedCache.ts) are kept.
+    - "!packages/virrun/src/services/exec/os/readCapabilityCache.ts"
+    - "!packages/virrun/src/services/exec/os/writeCapabilityCache.ts"
+    - "!packages/virrun/src/services/exec/wsl/readWslEnvironmentCache.ts"
+    - "!packages/virrun/src/services/exec/wsl/writeWslEnvironmentCache.ts"
+
+    # ── Virrun test files: identical fixture extraction / setup helper refactors ──
+    # New test fixtures (setupTemporaryCacheHome, setupWarmSnapshotSuite, etc.) and
+    # new feature tests (readKeyedCache, writeKeyedCache, pruneSupersededEntries, etc.) are kept.
+    - "!packages/virrun/src/services/exec/os/readCapabilityCache.test.ts"
+    - "!packages/virrun/src/services/exec/os/writeCapabilityCache.test.ts"
+    - "!packages/virrun/src/services/exec/wsl/readWslEnvironmentCache.test.ts"
+    - "!packages/virrun/src/services/exec/wsl/writeWslEnvironmentCache.test.ts"
+    - "!packages/virrun/src/services/exec/wsl/readWslLoginPath.test.ts"
+    - "!packages/virrun/src/services/exec/wsl/getWslNativeCacheRoot.test.ts"
+    - "!packages/virrun/src/services/exec/wsl/reapAbandonedSourceMirrors.test.ts"
+    - "!packages/virrun/src/services/exec/wsl/reapStaleSourceMirrorTemps.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/createPrepareLayer.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/createSnapshot.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/createSnapshot.acceptance.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/forkSnapshot.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/forkSnapshot.equivalence.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/persistRun.equivalence.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/pruneSnapshotUpper.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/pruneStalePrepareLayers.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/pruneStaleSnapshots.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/reapStaleTemps.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/resolvePrepareLocation.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/resolveSnapshotLocation.test.ts"
+    - "!packages/virrun/src/services/exec/snapshot/sweepStaleEntries.test.ts"
+    - "!packages/virrun/src/services/exec/cache/recordTaskCache.test.ts"
+    - "!packages/virrun/src/services/exec/cache/resolveTaskCacheLocation.test.ts"
+    - "!packages/virrun/src/services/exec/cache/taskCache.equivalence.test.ts"
+    - "!packages/virrun/src/services/virrun/createVirrun.test.ts"
+    - "!packages/virrun/src/services/exec/test/writeLeaseFile.test.ts"
+
+    # ── Trivial 1-line changes ──
+    # getRender.ts: removes 1 unused import; blobState/constants.ts: renamed from clicker/constants.ts
+    - "!packages/app/app/services/message/getRender.ts"
+    - "!packages/app/server/services/blobState/constants.ts"
+
   auto_review:
     ignore_usernames:
       - renovate[bot]
