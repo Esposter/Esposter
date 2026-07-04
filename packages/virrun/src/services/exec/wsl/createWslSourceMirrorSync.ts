@@ -19,6 +19,7 @@ import { readSourceMirrorManifest } from "@/services/exec/wsl/readSourceMirrorMa
 import { readWslPath } from "@/services/exec/wsl/readWslPath";
 import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
 import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
+import { shellQuote } from "@/services/exec/wsl/shellQuote";
 import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
 import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -31,6 +32,10 @@ import { join } from "node:path";
 //
 // - A fresh host-side walk (buildSourceMirrorManifest) is diffed against the manifest published beside the mirror
 //   After the last successful sync. No delta and a present tree ⇒ script "" — the run pays no wsl.exe sync at all.
+//   The walk runs unconditionally and synchronously by design: it IS the change detector (the skip decision needs the
+//   Current side of the diff, and every sync path publishes that same manifest), and virrun is a one-shot CLI whose
+//   Event loop has nothing else to run during planning — off-threading it would add IPC without cutting wall time.
+//   Measured ~330ms warm for a ~10k-entry repo on NTFS vs the ~12.5s 9p stat-walk it replaced.
 // - A delta stages pid-tagged temps in the entry dir (over the UNC): the next manifest plus null-delimited copy and
 //   Delete lists. The script applies them under the mirror lock — `xargs -0 rm -rf` for removals, then rsync
 //   `--files-from` reading only the changed files across v9fs — instead of a whole-tree `rsync -a --delete`
@@ -42,13 +47,11 @@ import { join } from "node:path";
 // State the mirror doesn't hold and a concurrent planner reads either the old or the new manifest, never a torn one.
 // The exclusive flock still serializes concurrent syncs (`pnpm -r --parallel` at one repo root); `flock -w` +
 // `timeout` bound a stalled lock or ext4 volume Linux-side now that there is no execFileSync timeout wrapping a
-// Separate spawn. Write-back is unaffected: persistRun flushes to `options.cwd` (the host /mnt/c path), derived
+// Separate spawn. Readers hold the other side of the same lock: createWslOsBackend wraps every run (skip included) in
+// A shared flock on lockPath for bwrap's whole duration, so this script's deletes/renames can never land under a live
+// Same-cwd reader — the exclusive acquire waits for readers to drain (bounded by the same -w). Write-back is unaffected: persistRun flushes to `options.cwd` (the host /mnt/c path), derived
 // Independently of this mirror. A failed sync fails the folded script before bwrap — the os backend never falls back.
 //
-// Paths are single-quoted before embedding in the sh script: double quotes still expand $(), backticks, and $VAR,
-// So a repo path or WSL home with shell metacharacters would otherwise be interpreted (CWE-78). Single quotes suppress
-// All expansion; an embedded `'` is closed, escaped, and reopened.
-const shellQuote = (value: string): string => `'${value.replaceAll("'", `'\\''`)}'`;
 // Null-delimited so any filename (spaces, newlines) survives the list files; consumed with `xargs -0` / `--from0`.
 const joinNullDelimited = (paths: readonly string[]): string => paths.map((path) => `${path}\0`).join("");
 
@@ -57,6 +60,7 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
   const entryPath = getWslSourceMirrorEntryPath(cwd);
   const entryUnc = getWslSourceMirrorEntryUnc(cwd);
   const mirrorPath = getWslSourceMirrorPath(cwd);
+  const lockPath = `${mirrorPath}.lock`;
   const excludes = resolveMirrorExcludes(cwd);
   const manifest = buildSourceMirrorManifest(cwd, excludes);
   reapStaleSourceMirrorTemps(entryUnc);
@@ -67,7 +71,7 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     ? readSourceMirrorManifest(cwd)
     : undefined;
   const delta = previousManifest === undefined ? undefined : diffSourceMirrorManifests(previousManifest, manifest);
-  if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) return { mirrorPath, script: "" };
+  if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) return { lockPath, mirrorPath, script: "" };
   return getResult(() => {
     const tag = `${process.pid}.${randomUUID()}`;
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
@@ -81,7 +85,7 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     writeFileSync(join(entryUnc, originTempFilename), cwd);
     const publish = `mv ${shellQuote(`${entryPath}/${originTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}`)} && mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
     const withMirrorLock = (sync: string): string =>
-      `mkdir -p ${shellQuote(mirrorPath)} && { flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 && ${sync} && ${publish}; } 9> ${shellQuote(`${mirrorPath}.lock`)}`;
+      `mkdir -p ${shellQuote(mirrorPath)} && { flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 && ${sync} && ${publish}; } 9> ${shellQuote(lockPath)}`;
     if (delta === undefined) {
       const excludeArgs = excludes.map((exclude) => `--exclude=${shellQuote(exclude)}`).join(" ");
       return withMirrorLock(
@@ -99,7 +103,7 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     // ReapStaleSourceMirrorTemps to reclaim once this process is dead.
     return `${withMirrorLock(sync)} && rm -f ${shellQuote(copyListPath)} ${shellQuote(deleteListPath)}`;
   }).match(
-    (script) => ({ mirrorPath, script }),
+    (script) => ({ lockPath, mirrorPath, script }),
     (error) => {
       throw new InvalidOperationError(Operation.Create, createWslSourceMirrorSync.name, toAppError(error).message);
     },

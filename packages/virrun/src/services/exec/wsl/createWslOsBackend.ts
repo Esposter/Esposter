@@ -2,6 +2,7 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 
 import { WSL_BWRAP_STATUS_BEGIN, WSL_BWRAP_STATUS_END } from "@/services/exec/bwrap/constants";
 import { createBwrapBackend } from "@/services/exec/bwrap/createBwrapBackend";
+import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
 import { resolveCwd } from "@/services/exec/util/resolveCwd";
 import { spawnBackground } from "@/services/exec/util/spawnBackground";
 import { buildWslReapCommand } from "@/services/exec/wsl/buildWslReapCommand";
@@ -11,6 +12,7 @@ import { createWslProcessMarker } from "@/services/exec/wsl/createWslProcessMark
 import { createWslSourceMirrorSync } from "@/services/exec/wsl/createWslSourceMirrorSync";
 import { reapAbandonedSourceMirrors } from "@/services/exec/wsl/reapAbandonedSourceMirrors";
 import { reapOrphanedWslRuns } from "@/services/exec/wsl/reapOrphanedWslRuns";
+import { shellQuote } from "@/services/exec/wsl/shellQuote";
 
 export const createWslOsBackend = (errorName: string): ExecBackend => {
   // Reap any bwrap tree a previous hard-killed run left orphaned (its onTerminate reaper never fired) before this
@@ -28,7 +30,12 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
       // Already current) prepends nothing, a delta/full sync runs ahead of bwrap and a failure exits with its own
       // Code before the sandbox starts — surfaced by the close handler with the sync's stderr, never a stale mirror.
       // On success the sync is silent (rsync without -v), so the child's stdout/stderr stay byte-exact vs native.
-      const { script } = createWslSourceMirrorSync(resolveCwd(options.cwd));
+      // The whole body then runs under a shared flock on the mirror lock (fd 9, held until sh exits): bwrap reads the
+      // Mirror lower for the run's full duration, and a concurrent same-cwd sync takes the exclusive side of the same
+      // Lock — so its deletes/renames wait for readers to drain instead of tearing a live run's source tree. Shared
+      // Holders don't block each other, and the sync prelude's own exclusive flock uses a nested fd-9 redirect (a
+      // Separate open file description), released before this shared acquire — `flock -s -w` bounds a stuck writer.
+      const { lockPath, script } = createWslSourceMirrorSync(resolveCwd(options.cwd));
       return {
         command: [
           "wsl.exe",
@@ -37,8 +44,9 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
           ...createWslEnvArgs(options),
           "sh",
           "-c",
-          [
+          `{ ${[
             ...(script === "" ? [] : [`{ ${script}; } || exit "$?"`]),
+            `flock -s -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 || exit "$?"`,
             `status="$(mktemp)"`,
             `bwrap --json-status-fd 3 "$@" 3>"$status"`,
             `bwrapExitCode=$?`,
@@ -47,7 +55,7 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
             `printf '${WSL_BWRAP_STATUS_END.replaceAll("\n", String.raw`\n`)}' >&2`,
             `rm -f "$status"`,
             `exit "$bwrapExitCode"`,
-          ].join("; "),
+          ].join("; ")}; } 9> ${shellQuote(lockPath)}`,
           marker,
           ...bwrapArgs,
         ],

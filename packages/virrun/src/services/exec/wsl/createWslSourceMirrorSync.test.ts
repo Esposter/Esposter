@@ -64,9 +64,10 @@ describe(createWslSourceMirrorSync, () => {
   test("first run falls back to a locked full rsync and stages the manifest for publish", () => {
     expect.hasAssertions();
 
-    const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
+    const { lockPath, mirrorPath, script } = createWslSourceMirrorSync(cwd);
 
     expect(mirrorPath).toBe(getWslSourceMirrorPath(cwd));
+    expect(lockPath).toBe(`${mirrorPath}.lock`);
     expect(script).toContain(`mkdir -p '${mirrorPath}'`);
     expect(script).toContain(`flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9`);
     expect(script).toContain(
@@ -87,9 +88,11 @@ describe(createWslSourceMirrorSync, () => {
 
     publish();
 
-    const { script } = createWslSourceMirrorSync(cwd);
+    const { lockPath, mirrorPath, script } = createWslSourceMirrorSync(cwd);
 
     expect(script).toBe("");
+    // The skip path still returns the lock path — the run holds a shared flock on it while bwrap reads the mirror.
+    expect(lockPath).toBe(`${mirrorPath}.lock`);
     // Nothing is staged on the skip path — the run pays no sync at all.
     expect(readStaged(VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX)).toBe("");
   });
