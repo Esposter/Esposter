@@ -1,14 +1,14 @@
 /* eslint-disable vitest/require-top-level-describe */
 import type { ComponentMountingOptions, VueWrapper } from "@vue/test-utils";
-
-// Mount returns a wrapper typed against the concrete component instance, which is not assignable
-// To the default VueWrapper<ComponentPublicInstance>; teardown only ever needs unmount.
-type UnmountableWrapper = Pick<VueWrapper, "unmount">;
+import type { Component } from "vue";
 
 import { getTestPinia, removeTestScene } from "@/test/fixtures/headlessGame.test";
 import { InjectionKeyMap } from "@/util/InjectionKeyMap";
 import { mount } from "@vue/test-utils";
 import { afterEach, describe } from "vitest";
+// Mount returns a wrapper typed against the concrete component instance, which is not assignable
+// To the default VueWrapper<ComponentPublicInstance>; teardown only ever needs unmount.
+type UnmountableWrapper = Pick<VueWrapper, "unmount">;
 
 export const setupGameObjectSuite = () => {
   const sceneKey = "sceneKey";

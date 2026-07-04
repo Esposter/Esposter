@@ -24,6 +24,7 @@ vi.mock(import("@/services/db"), () => ({
 }));
 
 vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
+
 // The generic web-push send/expiry matrix lives in sendWebPushNotifications.test.ts; here only the wiring.
 describe(sendPushNotification, () => {
   const context = new InvocationContext();
