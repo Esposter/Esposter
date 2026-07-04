@@ -1,7 +1,7 @@
 import type { execFileSync as baseExecFileSync } from "node:child_process";
 
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { VIRRUN_CACHE_HOME_KEY, WSL_CACHE_ROOT_CACHE_FILENAME } from "@/services/exec/util/constants";
+import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
+import { WSL_CACHE_ROOT_CACHE_FILENAME } from "@/services/exec/util/constants";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
 import {
   TEST_WSL_CACHE_ROOT_LINUX,
@@ -14,7 +14,7 @@ import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmen
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
@@ -24,23 +24,15 @@ const mockWsl = (distro: string, home: string) =>
   execFileSync.mockImplementation((_file, args) => (args?.includes("-l") ? distro : home));
 
 describe("getWslNativeCacheRoot", () => {
-  const { cleanup, create } = createTemporaryDirectoryTracker();
+  // The shared cache-home fixture isolates the persisted cross-process cache per test.
+  const { getCacheHome } = setupTemporaryCacheHome();
   // `wsl.exe -l -q` lists installed distros default-first; only the first non-empty line is taken.
   const distroList = `${TEST_WSL_DISTRO}\n${TEST_WSL_DISTRO_SECONDARY}\n`;
   const cacheRoot = createTestWslUnc(TEST_WSL_CACHE_ROOT_LINUX);
-  let cacheHome = "";
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.resetModules();
-    // Isolate the persisted cross-process cache in a fresh temp dir so a real ~/.virrun never leaks into a case.
-    cacheHome = create();
-    process.env[VIRRUN_CACHE_HOME_KEY] = cacheHome;
-  });
-
-  afterEach(() => {
-    delete process.env[VIRRUN_CACHE_HOME_KEY];
-    cleanup();
   });
 
   test("builds the UNC cache root from the default distro and its home, memoizes, then persists it", async () => {
@@ -52,7 +44,7 @@ describe("getWslNativeCacheRoot", () => {
     expect(getWslNativeCacheRoot()).toBe(cacheRoot);
     expect(getWslNativeCacheRoot()).toBe(cacheRoot);
     expect(execFileSync).toHaveBeenCalledTimes(2);
-    expect(existsSync(join(cacheHome, WSL_CACHE_ROOT_CACHE_FILENAME))).toBe(true);
+    expect(existsSync(join(getCacheHome(), WSL_CACHE_ROOT_CACHE_FILENAME))).toBe(true);
   });
 
   test("reuses the persisted cache root across processes without re-probing", async () => {
@@ -97,6 +89,6 @@ describe("getWslNativeCacheRoot", () => {
     expect(() => getWslNativeCacheRoot()).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getWslNativeCacheRoot.name, "could not resolve the WSL distro or home directory").message}]`,
     );
-    expect(existsSync(join(cacheHome, WSL_CACHE_ROOT_CACHE_FILENAME))).toBe(false);
+    expect(existsSync(join(getCacheHome(), WSL_CACHE_ROOT_CACHE_FILENAME))).toBe(false);
   });
 });

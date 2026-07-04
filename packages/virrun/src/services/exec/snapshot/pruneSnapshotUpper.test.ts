@@ -1,9 +1,10 @@
 import { pruneSnapshotUpper } from "@/services/exec/snapshot/pruneSnapshotUpper";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedFile } from "@/services/exec/test/seedFile.test";
 import { NODE_MODULES_DIRECTORY, PNPM_LOCKFILE_FILENAME } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 // A file inside the repo-root dependency closure — the canonical thing the lockfile determines, so the prune keeps it.
@@ -28,15 +29,8 @@ describe(pruneSnapshotUpper, () => {
   const seedUpper = (): { resolve: (relativePath: string) => string; upper: string } => {
     const upper = create();
     const resolve = (relativePath: string): string => join(upper, relativePath);
-    const write = (relativePath: string): void => {
-      const path = resolve(relativePath);
-      mkdirSync(dirname(path), { recursive: true });
-      writeFileSync(path, "");
-    };
-    write(ROOT_DEPENDENCY);
-    write(NESTED_DEPENDENCY);
-    write(GENERATED_ARTIFACT);
-    write(PNPM_LOCKFILE_FILENAME);
+    for (const relativePath of [ROOT_DEPENDENCY, NESTED_DEPENDENCY, GENERATED_ARTIFACT, PNPM_LOCKFILE_FILENAME])
+      seedFile(resolve(relativePath));
     return { resolve, upper };
   };
 

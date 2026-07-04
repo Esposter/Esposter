@@ -6,29 +6,17 @@ import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
 } from "@/services/exec/snapshot/constants";
 import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
+import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 const step: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [NUXT_OUTPUT_DIRECTORY] };
 
 describe(resolvePrepareLocation, () => {
-  const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
-  let cacheHome = "";
-
-  beforeEach(() => {
-    cacheHome = create();
-    process.env[VIRRUN_CACHE_HOME_KEY] = cacheHome;
-  });
-
-  afterEach(() => {
-    delete process.env[VIRRUN_CACHE_HOME_KEY];
-    cleanup();
-  });
+  const { createWorkspace, getCacheHome } = setupTemporaryCacheHome();
 
   test("addresses the layer under prepare/<key> with its upper dir, outside the repo", () => {
     expect.hasAssertions();
@@ -36,7 +24,7 @@ describe(resolvePrepareLocation, () => {
     const workspace = createWorkspace();
     const { dir, upperDir } = resolvePrepareLocation(workspace, step);
 
-    expect(dir.startsWith(join(cacheHome, VIRRUN_PREPARE_DIRECTORY_NAME))).toBe(true);
+    expect(dir.startsWith(join(getCacheHome(), VIRRUN_PREPARE_DIRECTORY_NAME))).toBe(true);
     expect(upperDir).toBe(join(dir, VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME));
     expect(dir.startsWith(workspace)).toBe(false);
   });

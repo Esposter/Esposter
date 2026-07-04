@@ -1,4 +1,3 @@
-import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
 import type { SnapshotLocation } from "@/models/exec/snapshot/SnapshotLocation";
 
@@ -9,6 +8,7 @@ import { VIRRUN_SNAPSHOT_LEASES_DIRECTORY_NAME } from "@/services/exec/snapshot/
 import { createSnapshot } from "@/services/exec/snapshot/createSnapshot";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
+import { createRecordingBackend } from "@/services/exec/test/createRecordingBackend.test";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { TEST_WSL_CACHE_DIR_NAME } from "@/services/exec/wsl/constants.test";
@@ -98,14 +98,8 @@ describe(createVirrun, () => {
     // `--unshare-all` drops the network namespace; without re-enabling it pnpm dies bootstrapping its config
     // Dependencies ("fetch failed") before the real command runs. The os backend isolates the filesystem, not
     // The network — so the orchestrator must turn it back on.
-    const calls: ExecOptions[] = [];
-    vi.mocked(createOsBackend).mockReturnValue({
-      exec: (_command, options): Promise<ExecResult> => {
-        calls.push(options);
-        return Promise.resolve({ exitCode: 0, stderr: "", stdout: "" });
-      },
-      name: BackendType.Os,
-    });
+    const backend = createRecordingBackend();
+    vi.mocked(createOsBackend).mockReturnValue(backend);
     // The os path anchors its shared store to the workspace root (nearest lockfile), so use a lockfile-seeded dir.
     const dir = createWorkspace();
     const { dispose, exec } = await createVirrun({
@@ -115,7 +109,7 @@ describe(createVirrun, () => {
     await exec("pnpm install");
     await dispose();
 
-    expect(calls[0]).toStrictEqual(expect.objectContaining({ isNetworkEnabled: true }));
+    expect(backend.calls[0]).toStrictEqual(expect.objectContaining({ isNetworkEnabled: true }));
   });
 
   test("fork falls through to exec on a non-os backend, with no snapshot layer", async () => {

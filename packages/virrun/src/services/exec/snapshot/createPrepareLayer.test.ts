@@ -1,9 +1,6 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
-import type { ExecOptions } from "@/models/exec/ExecOptions";
-import type { ExecResult } from "@/models/exec/ExecResult";
 import type { PrepareStep } from "@/models/virrun/PrepareStep";
 
-import { BackendType } from "@/models/virrun/BackendType";
 import { NUXT_PREPARE_COMMAND } from "@/services/configuration/constants";
 import {
   VIRRUN_SNAPSHOT_UPPER_DIRECTORY_NAME,
@@ -12,56 +9,43 @@ import {
 import { createPrepareLayer } from "@/services/exec/snapshot/createPrepareLayer";
 import { resolvePrepareLocation } from "@/services/exec/snapshot/resolvePrepareLocation";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
-import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
-import { NODE_MODULES_DIRECTORY, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
+import { createRecordingBackend } from "@/services/exec/test/createRecordingBackend.test";
+import { seedFile } from "@/services/exec/test/seedFile.test";
+import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
+import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
 // A two-segment output dir (`a/a`) the fake prepare command populates, alongside a node_modules tree it churns.
 const OUTPUT = `${TEST_FILENAME}/${TEST_FILENAME}`;
 const prepareStep: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [OUTPUT] };
 // Stands in for the os backend running `nuxt prepare`: on success it writes the declared output plus incidental
 // Dep-tree churn into the capture upper, so the test can assert only the output survives the publish.
-const createFakeBackend = (exitCode: number): { calls: ExecOptions[]; exec: ExecBackend["exec"] } => {
-  const calls: ExecOptions[] = [];
-  return {
-    calls,
-    exec: (_command, options): Promise<ExecResult> => {
-      calls.push(options);
-      const upperDir = options.overlayLayers?.upperDir;
-      if (exitCode === 0 && upperDir !== undefined) {
-        mkdirSync(join(upperDir, TEST_FILENAME, TEST_FILENAME), { recursive: true });
-        writeFileSync(join(upperDir, TEST_FILENAME, TEST_FILENAME, TEST_FILENAME), "");
-        mkdirSync(join(upperDir, NODE_MODULES_DIRECTORY), { recursive: true });
-        writeFileSync(join(upperDir, NODE_MODULES_DIRECTORY, TEST_FILENAME), "");
-      }
-      return Promise.resolve({ exitCode, stderr: "", stdout: "" });
-    },
-  };
-};
+const createFakeBackend = (exitCode: number): ReturnType<typeof createRecordingBackend> & ExecBackend =>
+  createRecordingBackend({ exitCode, stderr: "", stdout: "" }, (options) => {
+    const upperDir = options.overlayLayers?.upperDir;
+    if (exitCode === 0 && upperDir !== undefined) {
+      seedFile(join(upperDir, TEST_FILENAME, TEST_FILENAME, TEST_FILENAME));
+      seedFile(join(upperDir, NODE_MODULES_DIRECTORY, TEST_FILENAME));
+    }
+  });
 
 describe(createPrepareLayer, () => {
-  const { cleanup, create, createWorkspace } = createTemporaryDirectoryTracker();
+  const { createWorkspace } = setupTemporaryCacheHome();
   let repo = "";
 
   beforeEach(() => {
-    process.env[VIRRUN_CACHE_HOME_KEY] = create();
     repo = createWorkspace();
-  });
-
-  afterEach(() => {
-    delete process.env[VIRRUN_CACHE_HOME_KEY];
-    cleanup();
   });
 
   test("captures only the declared outputs, dropping dep-tree churn, and publishes the layer", async () => {
     expect.hasAssertions();
 
     mkdirSync(resolveSnapshotLocation(repo).upperDir, { recursive: true });
-    const backend = { ...createFakeBackend(0), name: BackendType.Os };
+    const backend = createFakeBackend(0);
     await createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep));
 
     const { exists, upperDir } = resolvePrepareLocation(repo, prepareStep);
@@ -76,7 +60,7 @@ describe(createPrepareLayer, () => {
 
     const depsUpperDir = resolveSnapshotLocation(repo).upperDir;
     mkdirSync(depsUpperDir, { recursive: true });
-    const backend = { ...createFakeBackend(0), name: BackendType.Os };
+    const backend = createFakeBackend(0);
     await createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep));
 
     const { dir } = resolvePrepareLocation(repo, prepareStep);
@@ -90,7 +74,7 @@ describe(createPrepareLayer, () => {
   test("throws when there is no deps snapshot to fork", () => {
     expect.hasAssertions();
 
-    const backend = { ...createFakeBackend(0), name: BackendType.Os };
+    const backend = createFakeBackend(0);
 
     expect(() => createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep))).toThrow(
       new InvalidOperationError(
@@ -105,7 +89,7 @@ describe(createPrepareLayer, () => {
     expect.hasAssertions();
 
     mkdirSync(resolveSnapshotLocation(repo).upperDir, { recursive: true });
-    const backend = { ...createFakeBackend(1), name: BackendType.Os };
+    const backend = createFakeBackend(1);
 
     await expect(createPrepareLayer(backend, prepareStep, { cwd: repo, stdio: "pipe" }, resolvePrepareLocation(repo, prepareStep))).rejects.toThrow(
       InvalidOperationError,
