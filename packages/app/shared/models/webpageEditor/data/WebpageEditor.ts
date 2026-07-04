@@ -1,13 +1,11 @@
 import type { ToData } from "@esposter/shared";
-import type { ProjectData } from "grapesjs";
+import type { z } from "zod";
 
-import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
+import { AGrapesJsEditor, grapesJsEditorSchema } from "#shared/models/grapesjs/AGrapesJsEditor";
 import { GRAPESJS_BASE_URL, PLACEHOLD_BASE_URL } from "#shared/services/grapesjs/constants";
 import { css, html } from "@esposter/shared";
-import { z } from "zod";
 
-export class WebpageEditor extends AItemEntity implements ProjectData {
-  [key: string]: unknown;
+export class WebpageEditor extends AGrapesJsEditor {
   pages: unknown[] = [
     {
       component: html`
@@ -735,9 +733,4 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
   }
 }
 
-export const webpageEditorSchema = z
-  .object({
-    ...aItemEntitySchema.shape,
-    pages: z.unknown().array().min(1),
-  })
-  .catchall(z.unknown()) satisfies z.ZodType<ToData<WebpageEditor>>;
+export const webpageEditorSchema = grapesJsEditorSchema satisfies z.ZodType<ToData<WebpageEditor>>;

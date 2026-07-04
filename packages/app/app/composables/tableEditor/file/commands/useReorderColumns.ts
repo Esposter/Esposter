@@ -1,19 +1,11 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
-import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { MoveColumnCommand } from "@/models/tableEditor/file/commands/MoveColumnCommand";
-import { useTableEditorStore } from "@/store/tableEditor";
-import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 
-export const useReorderColumns = () => {
-  const tableEditorStore = useTableEditorStore<DataSourceItem>();
-  const { editedItem } = storeToRefs(tableEditorStore);
-  const fileHistoryStore = useFileHistoryStore();
-  const { push } = fileHistoryStore;
-  return (newColumns: Column[]) => {
-    if (!editedItem.value?.dataSource) return;
-    const oldColumns = editedItem.value.dataSource.columns;
+export const useReorderColumns = () =>
+  useTableEditorCommand((editedItem, newColumns: Column[]) => {
+    const oldColumns = editedItem.dataSource.columns;
     let fromIndex = -1;
     let toIndex = -1;
     let maxDisplacement = 0;
@@ -26,11 +18,8 @@ export const useReorderColumns = () => {
         toIndex = newIndex;
       }
     }
-    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
+    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return undefined;
     const movedColumn = takeOne(oldColumns, fromIndex);
     const toColumnName = oldColumns[toIndex]?.name ?? "";
-    const command = new MoveColumnCommand(fromIndex, toIndex, movedColumn.name, toColumnName);
-    command.execute(editedItem.value);
-    push(command);
-  };
-};
+    return new MoveColumnCommand(fromIndex, toIndex, movedColumn.name, toColumnName);
+  });

@@ -1,22 +1,10 @@
-import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
-
 import { DeleteRowCommand } from "@/models/tableEditor/file/commands/DeleteRowCommand";
-import { useTableEditorStore } from "@/store/tableEditor";
-import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
-export const useDeleteRow = () => {
-  const tableEditorStore = useTableEditorStore<DataSourceItem>();
-  const { editedItem } = storeToRefs(tableEditorStore);
-  const fileHistoryStore = useFileHistoryStore();
-  const { push } = fileHistoryStore;
-  return (id: string) => {
-    if (!editedItem.value?.dataSource) return;
-    const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === id);
-    if (index === -1) return;
-    const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
-    const command = new DeleteRowCommand(index, originalRow);
-    command.execute(editedItem.value);
-    push(command);
-  };
-};
+export const useDeleteRow = () =>
+  useTableEditorCommand((editedItem, id: string) => {
+    const index = editedItem.dataSource.rows.findIndex((row) => row.id === id);
+    if (index === -1) return undefined;
+    const originalRow = structuredClone(toRawDeep(takeOne(editedItem.dataSource.rows, index)));
+    return new DeleteRowCommand(index, originalRow);
+  });

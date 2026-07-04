@@ -2,17 +2,15 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { RoomIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration";
-import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
+import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { RoomType, StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { afterEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(writeIndexedDb, () => {
-  const message1 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
-  const message2 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
-  const message3 = new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() });
+  const { message1, message2, message3 } = setupIndexedDbSuite();
   const userId = crypto.randomUUID();
   const room = {
     categoryId: null,
@@ -29,10 +27,6 @@ describe(writeIndexedDb, () => {
     updatedAt: new Date(),
     userId,
   } satisfies RoomInMessage;
-
-  afterEach(async () => {
-    await resetIndexedDb();
-  });
 
   test("writes items for a given partitionKey successfully", async () => {
     expect.hasAssertions();

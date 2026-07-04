@@ -1,17 +1,15 @@
 import type { ToData } from "@esposter/shared";
-import type { ProjectData } from "grapesjs";
+import type { z } from "zod";
 
-import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
+import { AGrapesJsEditor, grapesJsEditorSchema } from "#shared/models/grapesjs/AGrapesJsEditor";
 import {
   BLOGSPOT_BASE_URL,
   PLACEHOLD_BASE_URL,
   WORDPRESS_DESIGNSPELL_BASE_URL,
 } from "#shared/services/grapesjs/constants";
 import { html } from "@esposter/shared";
-import { z } from "zod";
 
-export class EmailEditor extends AItemEntity implements ProjectData {
-  [key: string]: unknown;
+export class EmailEditor extends AGrapesJsEditor {
   pages: unknown[] = [
     {
       component: html`
@@ -97,9 +95,4 @@ export class EmailEditor extends AItemEntity implements ProjectData {
   }
 }
 
-export const emailEditorSchema = z
-  .object({
-    ...aItemEntitySchema.shape,
-    pages: z.unknown().array().min(1),
-  })
-  .catchall(z.unknown()) satisfies z.ZodType<ToData<EmailEditor>>;
+export const emailEditorSchema = grapesJsEditorSchema satisfies z.ZodType<ToData<EmailEditor>>;
