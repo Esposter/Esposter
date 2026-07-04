@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-An ephemeral, in-memory virtual runner: boot a repo into a RAM-backed filesystem, run its real toolchain (pnpm/npm, native addons, scripts) fast and isolated, then snapshot and fork the warm state so repeated runs are near-instant.
+An ephemeral, in-memory virtual runner: boot a repo into a RAM-backed filesystem and run its real toolchain (pnpm/npm, native addons, scripts) isolated at native-parity speed. The speed story is honest: a cold command costs about what it costs natively (the RAM overlay buys isolation, not per-command wins — the page cache already serves warm reads from RAM) — the wins come from _skipping work_: install once and fork the warm snapshot, replay unchanged runs from the task cache near-instantly.
 
 ## Table of Contents
 
@@ -44,6 +44,7 @@ What's landed and dogfooded in this repo (the [roadmap](https://github.com/Espos
 - **Snapshot + warm-fork** — a lockfile-hash-keyed warm post-install snapshot, forked read-only per run so commands reuse the dep tree instead of reinstalling.
 - **Task cache** — a persist run whose inputs are unchanged (keyed by lockfile hash + working-tree hash + command) skips the sandbox entirely and replays the recorded output, so re-running an unchanged build/test/lint is near-instant. Default-on locally, off in CI (a fresh commit means ~0 hits) and under `--no-cache`. The capability probe is likewise cached across processes so each `virrun -- <cmd>` skips re-probing.
 - **Write-back persistence** — a normal `virrun -- <cmd>` flushes produced files to the host so disk matches native; the ephemeral fork stays for CI/verification. → [write-back.md](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/write-back.md)
+- **Source-mirror manifest delta (win32)** — the WSL bridge reads source from an ext4 mirror, and a host-side manifest diff syncs only changed files into it — folded into the run's own `wsl.exe` invocation, skipped entirely on a clean tree. This removed the per-run whole-tree rsync stat-walk over 9p (~12.5s on this repo with zero changes) that was the win32 floor. → [wsl-source-sync.md](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/wsl-source-sync.md)
 - **CLI (citty)** — `run` / `exec` / `warm` / `init` / `cache` subcommands with `--help`, the bare `virrun -- <cmd>` prefix preserved as the default.
 - **Config backend selection** — committed `virrun.config.json` picks the backend; the prefix stays the sole on/off switch (no allowlist).
 - **Dogfooded scripts** — `format`, `lint`/`lint:fix`, `test`, `typecheck`, and the producing `build:app` / `build:docs` route through the prefix; the matching 🏗️ CI jobs fork the warm snapshot. `build:packages` (bootstrap) and `coverage` (correctness gate) stay native by design — see [ci.md](https://github.com/Esposter/Esposter/blob/main/packages/virrun/readme/ci.md).

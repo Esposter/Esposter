@@ -8,6 +8,7 @@ import {
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME,
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
+  VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
   VIRRUN_SOURCES_DIRECTORY_NAME,
 } from "@/services/exec/wsl/constants";
@@ -73,10 +74,12 @@ describe(createWslSourceMirrorSync, () => {
     );
     expect(script).toContain(`9> '${mirrorPath}.lock'`);
     expect(script).toContain(`/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}'`);
-    // The next manifest is staged host-side as a pid-tagged temp the script publishes via atomic mv.
+    // The next manifest and the origin marker are staged host-side as pid-tagged temps the script publishes via
+    // Atomic mv — the origin content is the host cwd the abandonment reaper keys on.
     expect(JSON.parse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toHaveProperty(
       TEST_FILENAME,
     );
+    expect(readStaged(`${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${process.pid}.`)).toBe(cwd);
   });
 
   test("returns an empty script when the published manifest matches the working tree", () => {

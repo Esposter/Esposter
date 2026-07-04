@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-07-04T05:58:42.417Z
-- Commit: 3f0fb4283
+- Date: 2026-07-04T08:22:37.367Z
+- Commit: 19b13e90c
 - Node: v26.4.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,26 +20,26 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | ------ | ------- | --------- | ------ | --------- | ------- |
-| native | 1.00×   | 834.5799  | ±1.12% | 852.1391  | 10      |
-| os/wsl | 0.46×   | 1809.3218 | ±0.68% | 1828.2003 | 10      |
+| native | 1.00×   | 910.1152  | ±2.22% | 961.1603  | 10      |
+| os/wsl | 0.46×   | 1963.8211 | ±0.39% | 1979.1588 | 10      |
 
 ## build - packages/shared (cold)
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | ------ | ------- | --------- | ------ | --------- | ------- |
-| native | 1.00×   | 5290.9716 | ±2.02% | 5714.0908 | 10      |
-| os/wsl | 0.88×   | 6024.4144 | ±1.47% | 6330.3879 | 10      |
+| native | 1.00×   | 5685.7639 | ±1.01% | 5854.2505 | 10      |
+| os/wsl | 0.88×   | 6453.0943 | ±1.28% | 6720.8761 | 10      |
 
 ## build - write-back persist vs native (produces dist)
 
 | task           | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | -------------- | ------- | --------- | ------ | --------- | ------- |
-| native         | 1.00×   | 5304.4810 | ±1.78% | 5572.6406 | 10      |
-| os/wsl/persist | 0.79×   | 6675.0186 | ±0.97% | 6911.7787 | 10      |
+| native         | 1.00×   | 5645.1724 | ±0.32% | 5685.0659 | 10      |
+| os/wsl/persist | 0.79×   | 7136.5016 | ±0.35% | 7201.5601 | 10      |
 
 ## test - packages/shared
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | ------ | ------- | --------- | ------ | --------- | ------- |
-| native | 1.00×   | 2587.4547 | ±1.05% | 2686.4991 | 10      |
-| os/wsl | 0.87×   | 2974.5161 | ±0.63% | 3024.0723 | 10      |
+| native | 1.00×   | 2863.8383 | ±1.20% | 2945.3745 | 10      |
+| os/wsl | 0.91×   | 3131.4393 | ±2.57% | 3372.6652 | 10      |

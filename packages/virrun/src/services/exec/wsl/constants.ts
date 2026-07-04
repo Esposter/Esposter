@@ -19,10 +19,13 @@ export const VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME = "origin";
 // Sync's flock, via an atomic `mv` from a staged temp, so it never claims a state the mirror doesn't hold.
 export const VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME = "manifest.json";
 // Pid-tagged temp leaves (`<prefix><pid>.<uuid>`) the planner stages into the entry dir for the folded sync script to
-// Consume: the next manifest plus the null-delimited copy (rsync --files-from) and delete (xargs -0 rm -rf) lists.
-// The script removes them on success; a hard-killed run's corpses are reclaimed by reapStaleSourceMirrorTemps once
-// The owner pid is dead (same lifecycle as the snapshot upper temps).
+// Consume: the next manifest and origin marker (each published via atomic `mv`) plus the null-delimited copy
+// (rsync --files-from) and delete (xargs -0 rm -rf) lists. The host pid tag is load-bearing: staging host-side keeps
+// Every temp in the Windows pid domain, so a hard-killed run's corpses are reclaimed by reapStaleSourceMirrorTemps
+// Once the owner pid is dead (same lifecycle as the snapshot upper temps) — a Linux-side `$$`-tagged temp would be
+// Unattributable from the host.
 export const VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX: string = `${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}.`;
+export const VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX: string = `${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}.`;
 export const VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX = "copy.";
 export const VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX = "delete.";
 // A `\\wsl.localhost\<distro>\...` or `\\wsl$\<distro>\...` UNC. It already points at the distro's own Linux

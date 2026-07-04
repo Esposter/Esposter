@@ -45,6 +45,8 @@ export const buildSourceMirrorManifest = (cwd: string, excludes: readonly string
       }
     }
   };
+  // The root read is deliberately unguarded: an unreadable working-tree root must abort the plan — degrading to an
+  // Empty manifest would diff as "delete everything" against the published manifest and wipe the mirror.
   walk(cwd, "");
   return manifest;
 };

@@ -7,6 +7,7 @@ import {
   VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME,
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
+  VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
 } from "@/services/exec/wsl/constants";
 import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
 import { existsSync, writeFileSync } from "node:fs";
@@ -32,6 +33,7 @@ describe(reapStaleSourceMirrorTemps, () => {
     expect.hasAssertions();
 
     const deadManifest = seed(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
+    const deadOrigin = seed(`${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
     const deadCopy = seed(`${VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
     const deadDelete = seed(`${VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
     const liveManifest = seed(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.${TEST_FILENAME}`);
@@ -41,6 +43,7 @@ describe(reapStaleSourceMirrorTemps, () => {
     reapStaleSourceMirrorTemps(entryUnc);
 
     expect(existsSync(deadManifest)).toBe(false);
+    expect(existsSync(deadOrigin)).toBe(false);
     expect(existsSync(deadCopy)).toBe(false);
     expect(existsSync(deadDelete)).toBe(false);
     expect(existsSync(liveManifest)).toBe(true);

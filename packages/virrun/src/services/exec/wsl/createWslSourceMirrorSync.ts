@@ -8,6 +8,7 @@ import {
   VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME,
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
+  VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
 } from "@/services/exec/wsl/constants";
 import { diffSourceMirrorManifests } from "@/services/exec/wsl/diffSourceMirrorManifests";
@@ -70,14 +71,15 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
   return getResult(() => {
     const tag = `${process.pid}.${randomUUID()}`;
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
+    const originTempFilename = `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${tag}`;
     mkdirSync(entryUnc, { recursive: true });
     writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify(manifest));
-    const originPath = `${entryPath}/${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}`;
-    // The origin marker is written via a pid-unique temp + `mv` (atomic same-fs rename) so a concurrent reaper reads
-    // Either the old or the complete new marker, never a half-written path it would misjudge as a dead source. `$$`
-    // Stays unquoted to expand to the shell pid; the cwd is single-quoted (shellQuote) so it can't inject.
-    const originTempPath = `${shellQuote(`${originPath}.`)}"$$"`;
-    const publish = `printf %s ${shellQuote(cwd)} > ${originTempPath} && mv ${originTempPath} ${shellQuote(originPath)} && mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
+    // The origin marker is staged host-side like the manifest and published via `mv` (atomic same-fs rename), so a
+    // Concurrent reaper reads either the old or the complete new marker, never a half-written path it would misjudge
+    // As a dead source — and the temp carries the *host* pid reapStaleSourceMirrorTemps can actually attribute (a
+    // Linux-side `$$` temp would sit in the wrong pid domain forever).
+    writeFileSync(join(entryUnc, originTempFilename), cwd);
+    const publish = `mv ${shellQuote(`${entryPath}/${originTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}`)} && mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
     const withMirrorLock = (sync: string): string =>
       `mkdir -p ${shellQuote(mirrorPath)} && { flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 && ${sync} && ${publish}; } 9> ${shellQuote(`${mirrorPath}.lock`)}`;
     if (delta === undefined) {

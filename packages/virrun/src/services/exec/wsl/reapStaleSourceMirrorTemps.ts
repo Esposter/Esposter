@@ -4,6 +4,7 @@ import {
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
+  VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
 } from "@/services/exec/wsl/constants";
 import { getResult, noop } from "@esposter/shared";
 import { readdirSync, unlinkSync } from "node:fs";
@@ -15,6 +16,7 @@ import { join } from "node:path";
 // Matching pid tag and are always kept. Best-effort per entry — hygiene must never abort the run.
 const TEMP_PREFIXES = [
   VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX,
+  VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
 ];
