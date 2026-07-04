@@ -1,6 +1,5 @@
 /* eslint-disable vitest/require-top-level-describe */
 import type { ComponentMountingOptions, VueWrapper } from "@vue/test-utils";
-import type { Component } from "vue";
 
 import { getTestPinia, removeTestScene } from "@/test/fixtures/headlessGame.test";
 import { InjectionKeyMap } from "@/util/InjectionKeyMap";
