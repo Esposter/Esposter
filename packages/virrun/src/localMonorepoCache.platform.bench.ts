@@ -12,6 +12,7 @@ import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstall
 import { VIRRUN_CACHE_DIRECTORY_NAME, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
 import { getWslNativeCacheRoot } from "@/services/exec/wsl/getWslNativeCacheRoot";
 import { createVirrun } from "@/services/virrun/createVirrun";
+import { withFinalizerAsync } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -64,7 +65,7 @@ const restoreCacheHome = (): void => {
 // One createVirrun run over the clean checkout through the production fork path (ensureSnapshot → ensurePrepareLayer →
 // ForkSnapshot), so each state is realized purely from what its cache home holds — and the per-invocation lease/
 // Prune/loadSource cost a real `virrun -- <cmd>` pays is inside the timing. The cache-home redirect is restored in the
-// Finally so a throw mid-run (createVirrun/fork) can't strand the wrong home for the next task or bench file.
+// Finalizer so a throw mid-run (createVirrun/fork) can't strand the wrong home for the next task or bench file.
 const run = async (home: string): Promise<void> => {
   process.env[VIRRUN_CACHE_HOME_KEY] = home;
   const virrun = await createVirrun({
@@ -72,12 +73,13 @@ const run = async (home: string): Promise<void> => {
     environment: Environment.Nuxt,
     source: { dir: cleanSource, type: SourceType.Dir },
   });
-  try {
-    await virrun.fork(SHARED_TYPECHECK_COMMAND, "pipe");
-  } finally {
-    await virrun.dispose();
-    restoreCacheHome();
-  }
+  await withFinalizerAsync(
+    () => virrun.fork(SHARED_TYPECHECK_COMMAND, "pipe"),
+    async () => {
+      await virrun.dispose();
+      restoreCacheHome();
+    },
+  );
 };
 // Pre-seed SNAPSHOT_HOME with the DEPS layer only (one full install). createSnapshot directly — not createVirrun.fork
 // — so no prepare layer is built here, leaving the +snapshot task to build it as its measured work. This same install

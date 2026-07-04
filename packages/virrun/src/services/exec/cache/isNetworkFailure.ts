@@ -4,6 +4,6 @@
 // User at --no-cache instead of leaving them with the tool's own opaque error (the buried "fetch failed" table in a
 // `pnpm outdated` run). A pure test over combined stdout+stderr, so a non-capturing alternation with no groups to name.
 const NETWORK_FAILURE_REGEX =
-  /fetch failed|getaddrinfo|ENETUNREACH|ENETDOWN|EAI_AGAIN|ENOTFOUND|ECONNREFUSED|ECONNRESET|EHOSTUNREACH/u;
+  /fetch failed|getaddrinfo|ENETUNREACH|ENETDOWN|EAI_AGAIN|ENOTFOUND|ECONNREFUSED|ECONNRESET|EHOSTUNREACH|ETIMEDOUT/u;
 
 export const isNetworkFailure = (output: string): boolean => NETWORK_FAILURE_REGEX.test(output);
