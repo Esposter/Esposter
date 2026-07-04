@@ -1,4 +1,5 @@
 import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
+import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test, vi } from "vitest";
 
 describe(getConcurrentFunction, () => {
@@ -12,7 +13,11 @@ describe(getConcurrentFunction, () => {
 
     await concurrentFn(0, "");
 
-    expect(fn).toHaveBeenCalledWith(expect.any(Function), 0, "");
+    // getConcurrentFunction injects a generated checkIsStale as the first arg; capture it to assert the exact call.
+    const [checkIsStale] = takeOne(vi.mocked(fn).mock.calls);
+
+    expect(checkIsStale).toBeTypeOf("function");
+    expect(fn).toHaveBeenCalledExactlyOnceWith(checkIsStale, 0, "");
   });
 
   test("checkIsStale returns false when no newer call has been made", async () => {

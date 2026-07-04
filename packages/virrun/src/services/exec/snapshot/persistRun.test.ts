@@ -8,6 +8,7 @@ import { persistRun } from "@/services/exec/snapshot/persistRun";
 import { removeSnapshotDirectory } from "@/services/exec/snapshot/removeSnapshotDirectory";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { takeOne } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The flush machinery walks real overlay internals via a python seam (Linux-only), so the host-parity assertions live
@@ -55,8 +56,12 @@ describe(persistRun, () => {
     const result = await persistRun(backend, "oxfmt", { cwd: HOST_DIR, stdio: "pipe" }, [], [], onPersist);
 
     expect(result.exitCode).toBe(0);
-    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(expect.any(String), HOST_DIR, PLAN);
-    expect(onPersist).toHaveBeenCalledExactlyOnceWith(expect.any(String), PLAN, { exitCode: 0, stderr: "", stdout: "" });
+
+    // The per-run upper dir is a random mkdtemp path; capture it to assert the same dir threads into onPersist.
+    const [upperDir] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
+
+    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIR, PLAN);
+    expect(onPersist).toHaveBeenCalledExactlyOnceWith(upperDir, PLAN, { exitCode: 0, stderr: "", stdout: "" });
   });
 
   test("still flushes on a non-zero exit (native leaves partial output) but never records the task cache", async () => {
@@ -67,7 +72,10 @@ describe(persistRun, () => {
     const result = await persistRun(backend, "eslint --fix", { cwd: HOST_DIR, stdio: "pipe" }, [], [], onPersist);
 
     expect(result.exitCode).toBe(1);
-    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(expect.any(String), HOST_DIR, PLAN);
+
+    const [upperDir] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
+
+    expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIR, PLAN);
     expect(onPersist).not.toHaveBeenCalled();
   });
 
