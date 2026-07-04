@@ -53,6 +53,7 @@ export class MockBlobBatchClient implements BlobBatchClient {
           statusMessage,
         });
         subResponsesFailedCount++;
+        continue;
       }
 
       const containerName = takeOne(pathSegments);

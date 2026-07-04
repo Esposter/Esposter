@@ -56,13 +56,9 @@ export const parseTileLayer = async (
   }
 
   if (translateFlips) {
-    layer.flips = [];
     layer.data ??= [];
-
-    for (const gid of layer.data) {
-      layer.flips.push(parseFlips(gid));
-      layer.data.push(parseTileId(gid));
-    }
+    layer.flips = layer.data.map((gid) => parseFlips(gid));
+    layer.data = layer.data.map((gid) => parseTileId(gid));
   }
 
   return layer;
