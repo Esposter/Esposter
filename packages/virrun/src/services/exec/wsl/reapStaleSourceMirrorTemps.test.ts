@@ -1,5 +1,6 @@
 import { DEAD_PID } from "@/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedFile } from "@/services/exec/test/seedFile.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import {
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
@@ -10,18 +11,14 @@ import {
   VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX,
 } from "@/services/exec/wsl/constants";
 import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceMirrorTemps";
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(reapStaleSourceMirrorTemps, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   let entryUnc = "";
-  const seed = (name: string): string => {
-    const path = join(entryUnc, name);
-    writeFileSync(path, "");
-    return path;
-  };
+  const seed = (name: string): string => seedFile(join(entryUnc, name));
 
   beforeEach(() => {
     entryUnc = create();

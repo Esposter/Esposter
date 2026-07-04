@@ -7,19 +7,16 @@ import {
 import { reapStaleTemps } from "@/services/exec/snapshot/reapStaleTemps";
 import { DEAD_PID } from "@/services/exec/test/constants.test";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(reapStaleTemps, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   let dir = "";
-  const seed = (name: string): string => {
-    const entry = join(dir, name);
-    mkdirSync(entry, { recursive: true });
-    return entry;
-  };
+  const seed = (name: string): string => seedDirectory(join(dir, name));
 
   beforeEach(() => {
     dir = create();
