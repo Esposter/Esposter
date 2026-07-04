@@ -57,13 +57,13 @@ Why the three FS endpoints differ is the **subprocess wall** — the single fact
 
 Write-back is a reconciliation step on the snapshot/fork layer: it reuses the same persistable overlay upper the snapshot capture uses, but flushes it to the host working dir instead of freezing it as a cache layer.
 
-| Layer            | Build or reuse                     | Source                                   |
-| ---------------- | ---------------------------------- | ---------------------------------------- |
-| Orchestrator API | **Build**                          | new                                      |
-| Shell            | **Reuse** (optional)               | just-bash (parser + builtins only)       |
-| Exec + isolation | **Build — this is the novel work** | new                                      |
-| Snapshot / fork  | **Build**                          | new (over CRIU / microVM snapshot)       |
-| Virtual FS       | **Reuse**                          | `@platformatic/vfs` → swap to `node:vfs` |
+| Layer            | Build or reuse                     | Source                                                       |
+| ---------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Orchestrator API | **Build**                          | new                                                          |
+| Shell            | **Reuse** (optional)               | just-bash (parser + builtins only)                           |
+| Exec + isolation | **Build — this is the novel work** | new                                                          |
+| Snapshot / fork  | **Build**                          | new — own overlayfs FS-only snapshot (CRIU/microVM deferred) |
+| Virtual FS       | **Reuse**                          | `@platformatic/vfs` → swap to `node:vfs`                     |
 
 The only layer no existing package solves is **exec + isolation**. Everything else is glue or reuse.
 
@@ -92,7 +92,7 @@ See [specs/exec-isolation.md](specs/exec-isolation.md) for both.
 1. **RAM filesystem** (`tmpfs` upperdir) — `node_modules` never touches disk.
 2. **Shared content-addressable store** — deps downloaded once into `.virrun/store/pnpm`, then reused by each sandbox; installs copy from the on-disk store into the RAM overlay until snapshots make hardlink-style imports viable.
 3. **Snapshot + warm-fork** — "clone repo + install" happens once; each run `fork()`s the warm state → near-instant repeated runs. The biggest win. See [specs/snapshot-fork.md](specs/snapshot-fork.md).
-4. **Task cache** — _shipped._ Skip a persist run whose inputs are unchanged: keyed by `sha256(lockfile-hash + working-tree-hash + command)`, a hit skips the sandbox and replays the recorded output diff + streams. Native content-hash, not Turborepo (which needs a per-repo pipeline graph). A dev-loop lever — off in CI, where a fresh commit means ~0 hits. See [specs/config-and-cache.md](specs/config-and-cache.md#virrun--cache--gitignored).
+4. **Task cache** — _shipped._ Skip a persist run whose inputs are unchanged: keyed by `sha256(lockfile-hash + working-tree-hash + command)`, a hit skips the sandbox and replays the recorded output diff + streams. Native content-hash, not Turborepo (which needs a per-repo pipeline graph). A dev-loop lever — off in CI, where a fresh commit means ~0 hits. The key is only honest because the cached command runs **hermetically** (network namespace unshared, so registry state can't be a hidden input a read-network command like `pnpm outdated` would smuggle in — it fails offline and is never recorded) and because a **write-network** install that rewrites `pnpm-lock.yaml` is dropped from recording (`hasDependencyClosureMutation`) — installs are the snapshot layer's job, not the cache's. See [specs/config-and-cache.md](specs/config-and-cache.md#virrun--cache--gitignored).
 
 A persist (write-back) run keeps these wins: the toolchain still does its random I/O in RAM, and persistence is a single bulk copy-out of the final diff at the end — far cheaper than letting the command thrash the disk throughout. See [Write-back](#write-back-native-equivalent-persistence).
 
@@ -178,7 +178,7 @@ The child command's own stdout/stderr is never colorized (raw bytes flow through
 
 | Host              | Fast path                                  |
 | ----------------- | ------------------------------------------ |
-| Linux             | native: tmpfs + overlayfs + sandbox + CRIU |
+| Linux             | native: tmpfs + overlayfs + bwrap sandbox  |
 | Windows           | WSL2 bridge into Linux bwrap               |
 | macOS             | Firecracker or lightweight Linux VM bridge |
 | Anywhere, JS-only | `vfs` backend, pure node, no OS features   |

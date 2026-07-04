@@ -49,7 +49,6 @@ afterAll(() => {
   if (!isSnapshotPreexisting) removeSnapshotDirectory(resolveSnapshotLocation(warmCorpus).dir);
   rmSync(warmCorpus, { force: true, recursive: true });
 });
-
 // Capture the install once into a warm snapshot the forks below reuse. There is deliberately NO install bench: the
 // Os install writes node_modules only into the snapshot (for forking), never to host disk, so it is not a drop-in
 // For a native `pnpm install` and a head-to-head would imply a swap that can't be made. Materializing the tree back

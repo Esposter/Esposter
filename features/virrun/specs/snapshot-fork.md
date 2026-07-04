@@ -14,10 +14,8 @@ boot + install (once, slow) ─► snapshot ─► fork ─► run cmd ─► di
 ## Mechanisms by backend
 
 - **`vfs` backend**: serialize the in-memory FS volume; fork = clone the volume (copy-on-write where possible). Process state is not preserved — only files.
-- **`os` backend**: two options to evaluate —
-  - **overlay-layer snapshot** _(realized, FS-only)_: a capture run persists the post-install writes into a real overlay upper (`bwrap --overlay <upper> <work> <dir>`); a fork run stacks that frozen upper as a read-only `--overlay-src` lower beside the source and tops it with a fresh `--tmp-overlay` so its own writes vanish. Cheap, no CRIU. **The snapshot upper must live outside the source tree** — overlayfs rejects a lower that nests inside another, so a `<cwd>/.virrun/snapshots` layer fails at fork; it lives in the host-global cache instead (see Caching).
-  - **CRIU** (checkpoint/restore): freeze the whole process tree + FS for a truly warm fork (daemons already running). Stronger, heavier.
-  - microVM snapshot (Firecracker) for the multi-tenant path.
+- **`os` backend** — the realized mechanism is a custom **overlay-layer snapshot** _(FS-only, no CRIU)_: a capture run persists the post-install writes into a real overlay upper (`bwrap --overlay <upper> <work> <dir>`); a fork run stacks that frozen upper as a read-only `--overlay-src` lower beside the source and tops it with a fresh `--tmp-overlay` so its own writes vanish. Cheap, minimal, no external checkpoint/restore engine. **The snapshot upper must live outside the source tree** — overlayfs rejects a lower that nests inside another, so a `<cwd>/.virrun/snapshots` layer fails at fork; it lives in the host-global cache instead (see Caching).
+  - _Deferred alternatives (not used):_ **CRIU** (checkpoint/restore) freezes the whole process tree + FS for a truly warm fork with daemons already running — stronger but heavier; **microVM snapshot** (Firecracker) for the multi-tenant path. → [deferred/additional-isolation-targets.md](../deferred/additional-isolation-targets.md)
 
 ## Caching
 
@@ -38,7 +36,7 @@ The deps snapshot is keyed on the **lockfile** and must freeze only what the loc
 
 ## Constraints / Notes
 
-- Start FS-only (overlay-layer / volume clone); add CRIU process-state forking only if measured warm-boot time justifies it.
+- FS-only (overlay-layer / volume clone) is the realized approach; CRIU process-state forking stays deferred unless measured warm-boot time justifies it.
 - Snapshot integrity must survive dep-store changes — bind the snapshot to the exact store content it was built against.
 - Generated artifacts that are both source- and platform-specific never belong in the lockfile-keyed deps snapshot: they go in the source-keyed prepare layer, regenerated in-sandbox for the sandbox's own platform (the win32-host `.nuxt` phantom is the motivating case).
 

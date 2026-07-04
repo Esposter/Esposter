@@ -36,16 +36,16 @@ On an `os`-backend run the CLI prints a one-time provisioning line on stderr so 
 
 The bare `virrun -- <cmd>` prefix is shorthand for `virrun run`. The CLI (built on [unjs/citty](https://github.com/unjs/citty), so every command has `--help`) also exposes:
 
-| Command                      | What it does                                                                                                        |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `virrun -- <cmd>`            | Default passthrough — forks a warm snapshot on the `os` backend, else execs natively. Alias of `virrun run`.        |
-| `virrun run -- <cmd>`        | Explicit form of the default passthrough.                                                                           |
-| `virrun exec -- <cmd>`       | Forced plain exec — runs the command directly, skipping any warm-snapshot fork (the cold sibling of `run`).         |
-| `virrun snapshot`            | Provisions the `os` backend's warm dependency snapshot for the current lockfile ahead of time (the CI warm-up).     |
-| `virrun doctor`              | Diagnoses the `os` backend's prerequisites (bubblewrap, WSL node, python3, overlay mount); exits non-zero on a gap. |
-| `virrun init [--backend]`    | Writes a `virrun.config.json` selecting the backend (`--force` to overwrite an existing one).                       |
-| `virrun cache ls`            | Lists the repo-local dependency store and host-global warm snapshots.                                               |
-| `virrun cache clean [--all]` | Removes the repo-local `.virrun` cache; `--all` also clears the host-global `~/.virrun/snapshots`.                  |
+| Command                      | What it does                                                                                                                            |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `virrun -- <cmd>`            | Default passthrough — forks a warm snapshot on the `os` backend, else execs natively. Alias of `virrun run`.                            |
+| `virrun run -- <cmd>`        | Explicit form of the default passthrough.                                                                                               |
+| `virrun exec -- <cmd>`       | Forced plain exec — runs the command directly, skipping any warm-cache fork (the cold sibling of `run`).                                |
+| `virrun warm`                | Provisions the `os` backend's warm cache (dependency snapshot + prepare layer) for the current lockfile ahead of time (the CI warm-up). |
+| `virrun doctor`              | Diagnoses the `os` backend's prerequisites (bubblewrap, WSL node, python3, overlay mount); exits non-zero on a gap.                     |
+| `virrun init [--backend]`    | Writes a `virrun.config.json` selecting the backend (`--force` to overwrite an existing one).                                           |
+| `virrun cache ls`            | Lists the repo-local dependency store and host-global warm snapshots.                                                                   |
+| `virrun cache clean [--all]` | Removes the repo-local `.virrun` cache; `--all` also clears the host-global `~/.virrun/snapshots`.                                      |
 
 ## Programmatic
 
@@ -60,7 +60,7 @@ try {
 }
 ```
 
-`createVirrun` accepts a `source` (directory, in-memory file map, or git remote) and a `backend`; it returns a handle with `exec`, `fork` (os-backend warm-snapshot reuse), and `dispose`. See [VirrunOptions](https://github.com/Esposter/Esposter/blob/main/packages/virrun/src/models/virrun/VirrunOptions.ts).
+`createVirrun` accepts a `source` (directory, in-memory file map, or git remote) and a `backend`; it returns a handle with `exec`, `fork` (os-backend warm-cache reuse), and `dispose`. See [VirrunOptions](https://github.com/Esposter/Esposter/blob/main/packages/virrun/src/models/virrun/VirrunOptions.ts).
 
 ## Commands
 

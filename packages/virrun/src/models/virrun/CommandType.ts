@@ -7,14 +7,14 @@ export enum CommandType {
   Clean = "clean",
   // `virrun doctor` — diagnose the os backend's prerequisites and report what's missing.
   Doctor = "doctor",
-  // `virrun exec -- <cmd>` — forced cold plain exec, no warm-snapshot reuse.
+  // `virrun exec -- <cmd>` — forced cold plain exec, no warm-cache reuse.
   Exec = "exec",
   // `virrun init [--backend] [--force]` — write a virrun.config.json.
   Init = "init",
   // `virrun cache ls` — list the dep store and warm snapshots.
   Ls = "ls",
-  // `virrun run -- <cmd>` — warm-snapshot passthrough, the default subcommand.
+  // `virrun run -- <cmd>` — warm-cache passthrough, the default subcommand.
   Run = "run",
-  // `virrun snapshot` — provision the os backend's warm dependency snapshot.
-  Snapshot = "snapshot",
+  // `virrun warm` — provision the os backend's warm cache (dependency snapshot + prepare layer) ahead of time.
+  Warm = "warm",
 }

@@ -13,10 +13,10 @@ describe(parseVirrunConfiguration, () => {
     expect(configuration).toStrictEqual({ backend: BackendType.Os, environment: Environment.Nuxt });
   });
 
-  test("defaults an omitted backend to auto and leaves an omitted environment undefined (no preset)", () => {
+  test(`defaults an omitted backend to ${BackendType.Os} and leaves an omitted environment undefined (no preset)`, () => {
     expect.hasAssertions();
 
-    expect(parseVirrunConfiguration("{}")).toStrictEqual({ backend: BackendType.Auto });
+    expect(parseVirrunConfiguration("{}")).toStrictEqual({ backend: BackendType.Os });
   });
 
   test("throws on invalid JSON", () => {

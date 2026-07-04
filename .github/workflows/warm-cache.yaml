@@ -1,4 +1,4 @@
-name: 🔥 Warm Snapshot
+name: 🔥 Warm Cache
 # Reusable workflow: capture virrun's two warm os-backend layers ONCE and publish each as a host-global
 # `actions/cache` entry, so every os-backend job downstream forks them instead of rebuilding its own. (1) The warm
 # Post-install SNAPSHOT — the os backend keys it by the pnpm lockfile hash (computeLockfileHash →
@@ -18,8 +18,8 @@ permissions:
   contents: read
 
 jobs:
-  warm-snapshot:
-    name: Warm Snapshot
+  warm-cache:
+    name: Warm Cache
     runs-on: ubuntu-26.04
     steps:
       - name: 📥 Checkout
@@ -30,7 +30,7 @@ jobs:
       # `hashFiles` tracks the same file (its digest need not equal virrun's — the restored dir is addressed by
       # Virrun's own hash internally; the cache key only has to invalidate when deps change). Restored first, before
       # Any setup, so a warm hit skips the multi-minute dependency/package install below entirely.
-      - name: ♻️ Restore warm snapshot
+      - name: ♻️ Restore snapshot layer
         id: snapshot-cache
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
@@ -48,7 +48,7 @@ jobs:
           path: ~/.virrun/prepare
           key: virrun-prepare-${{ github.sha }}
       # Run whenever EITHER layer is cold. The prepare layer is SHA-keyed, so a code-only commit (deps unchanged) is a
-      # Snapshot hit but a prepare miss — `virrun snapshot` then skips the warm install and only regenerates `.nuxt`.
+      # Snapshot hit but a prepare miss — `virrun warm` then skips the warm install and only regenerates `.nuxt`.
       # bubblewrap (+ unprivileged user namespaces) so the os backend runs isolated instead of falling back to native
       # — a native capture would write nothing to the overlay upper, so there would be nothing to cache.
       - name: 🔧 Setup Project Dependencies
@@ -64,11 +64,11 @@ jobs:
         uses: ./.github/actions/setup-packages
         with:
           install: false
-      # `virrun snapshot` (the purpose-built warm-up) provisions BOTH layers:
+      # `virrun warm` (the purpose-built warm-up) provisions BOTH layers:
       # It resolves the os backend and forks, cold-installing the deps snapshot if absent then regenerating the `.nuxt`
       # Prepare layer over it. Warm deps + cold prepare (the common commit) only pays `nuxt prepare`. Each layer's
       # `actions/cache` post step saves its dir for this and every later run/job. `virrun` resolves to the bin Setup
       # Packages exposed from the artifact (install skipped, so no node_modules/.bin).
-      - name: 🔥 Capture warm snapshot
+      - name: 🔥 Capture warm cache
         if: steps.snapshot-cache.outputs.cache-hit != 'true' || steps.prepare-cache.outputs.cache-hit != 'true'
-        run: virrun snapshot
+        run: virrun warm
