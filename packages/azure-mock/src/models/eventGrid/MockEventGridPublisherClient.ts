@@ -2,6 +2,7 @@ import type { EventGridEvent, EventGridPublisherClient } from "@azure/eventgrid"
 import type { Except } from "type-fest";
 
 import { MockEventGridDatabase } from "@/store/MockEventGridDatabase";
+import { getOrCreate } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure EventGridPublisherClient.
  * It uses a Map to simulate event grid storage and correctly implements the EventGridPublisherClient interface.
@@ -19,9 +20,7 @@ export class MockEventGridPublisherClient implements Except<EventGridPublisherCl
   }
 
   send(newEvents: EventGridEvent<unknown>[]): Promise<void> {
-    const events = MockEventGridDatabase.get(this.endpointUrl) ?? [];
-    events.push(...newEvents);
-    MockEventGridDatabase.set(this.endpointUrl, events);
+    getOrCreate(MockEventGridDatabase, this.endpointUrl, () => []).push(...newEvents);
     return Promise.resolve();
   }
 }

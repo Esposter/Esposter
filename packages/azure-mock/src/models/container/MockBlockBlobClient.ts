@@ -14,9 +14,7 @@ import type { Except } from "type-fest";
 
 import { MockBlobClient } from "@/models/container/MockBlobClient";
 import { bodyToBuffer } from "@/services/container/bodyToBuffer";
-import { toWebResourceLike } from "@/services/container/toWebResourceLike";
-import { toHttpHeadersLike } from "@azure/core-http-compat";
-import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
+import { createMockResponse } from "@/services/createMockResponse";
 
 export class MockBlockBlobClient extends MockBlobClient implements Except<BlockBlobClient, "accountName"> {
   commitBlockList(): Promise<BlockBlobCommitBlockListResponse> {
@@ -45,14 +43,7 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
 
   async upload(body: HttpRequestBody, _contentLength: number): Promise<BlockBlobUploadResponse> {
     this.container.set(this.name, await bodyToBuffer(body));
-    return {
-      _response: {
-        headers: toHttpHeadersLike(createHttpHeaders()),
-        parsedHeaders: {},
-        request: toWebResourceLike(createPipelineRequest({ url: "" })),
-        status: 201,
-      },
-    };
+    return { _response: createMockResponse(201) };
   }
 
   uploadBrowserData(): Promise<BlobUploadCommonResponse> {

@@ -19,8 +19,7 @@ export const parseTileLayer = async (
   const { data, properties } = node;
   if (!data) throw new Error("TMXLayer data corrupted!");
 
-  const layer = structuredClone(node.$) as TMXLayerParsed;
-  layer.type = node["#name"] as string;
+  const layer = cloneNodeWithType<TMXLayerParsed>(node);
   if (properties) layer.properties = parseProperties(properties);
 
   const nodeData = takeOne(data);

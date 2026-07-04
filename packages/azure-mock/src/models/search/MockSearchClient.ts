@@ -24,6 +24,7 @@ import { MOCK_SEARCH_BASE_URL } from "@/constants";
 import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
 import { MockSearchDatabase } from "@/store/MockSearchDatabase";
 import { deserializeKey } from "@esposter/db";
+import { getOrCreate } from "@esposter/shared";
 
 const toComparable = (value: unknown): number | string => {
   if (value instanceof Date) return value.getTime();
@@ -95,12 +96,7 @@ export class MockSearchClient<TModel extends object = Record<string, unknown>> i
   readonly serviceVersion: string = "";
 
   get documents(): MapValue<typeof MockSearchDatabase> {
-    let documents = MockSearchDatabase.get(this.indexName);
-    if (!documents) {
-      documents = [];
-      MockSearchDatabase.set(this.indexName, documents);
-    }
-    return documents;
+    return getOrCreate(MockSearchDatabase, this.indexName, () => []);
   }
 
   constructor(indexName: string) {

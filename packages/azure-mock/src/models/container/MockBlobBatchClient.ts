@@ -9,11 +9,11 @@ import type {
 import type { MapValue } from "@esposter/shared";
 
 import { getAzureErrorXml } from "@/services/container/getAzureErrorXml";
-import { toWebResourceLike } from "@/services/container/toWebResourceLike";
+import { createMockResponse } from "@/services/createMockResponse";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
-import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
-import { takeOne } from "@esposter/shared";
+import { createHttpHeaders } from "@azure/core-rest-pipeline";
+import { getOrCreate, takeOne } from "@esposter/shared";
 
 export class MockBlobBatchClient implements BlobBatchClient {
   url: string;
@@ -86,12 +86,10 @@ export class MockBlobBatchClient implements BlobBatchClient {
     // The success of individual operations is detailed in the sub-responses.
     return Promise.resolve({
       _response: {
+        ...createMockResponse(202, this.url),
         headers: toHttpHeadersLike(
           createHttpHeaders({ "content-type": "multipart/mixed", "x-ms-request-id": crypto.randomUUID() }),
         ),
-        parsedHeaders: {},
-        request: toWebResourceLike(createPipelineRequest({ url: this.url })),
-        status: 202,
       },
       subResponses,
       subResponsesFailedCount,
@@ -100,11 +98,6 @@ export class MockBlobBatchClient implements BlobBatchClient {
   }
 
   getContainer(containerName: string): MapValue<typeof MockContainerDatabase> {
-    let container = MockContainerDatabase.get(containerName);
-    if (!container) {
-      container = new Map();
-      MockContainerDatabase.set(containerName, container);
-    }
-    return container;
+    return getOrCreate(MockContainerDatabase, containerName, () => new Map());
   }
 }

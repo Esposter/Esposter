@@ -1,0 +1,36 @@
+import { stripAnsi } from "@/services/cli/color/stripAnsi.test";
+import { writeVirrunDebug } from "@/services/cli/debug/writeVirrunDebug";
+import { VIRRUN_DEBUG_KEY } from "@/services/exec/util/constants";
+import { afterEach, describe, expect, test, vi } from "vitest";
+
+describe(writeVirrunDebug, () => {
+  const message = "task cache off";
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
+
+  test("writes the formatted line to stderr when the debug env is set", () => {
+    expect.hasAssertions();
+
+    vi.stubEnv(VIRRUN_DEBUG_KEY, "true");
+    const write = vi.spyOn(process.stderr, "write").mockReturnValue(true);
+
+    writeVirrunDebug(message);
+
+    expect(write).toHaveBeenCalledExactlyOnceWith(expect.anything());
+    expect(stripAnsi(String(write.mock.lastCall?.[0]))).toBe(`[virrun] debug — ${message}\n`);
+  });
+
+  test("is silent when the debug env is unset", () => {
+    expect.hasAssertions();
+
+    vi.stubEnv(VIRRUN_DEBUG_KEY, undefined);
+    const write = vi.spyOn(process.stderr, "write").mockReturnValue(true);
+
+    writeVirrunDebug(message);
+
+    expect(write).not.toHaveBeenCalled();
+  });
+});
