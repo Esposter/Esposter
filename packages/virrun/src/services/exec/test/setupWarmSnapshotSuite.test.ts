@@ -1,3 +1,4 @@
+/* eslint-disable vitest/require-top-level-describe */
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 
 import { dayjs } from "@/services/dayjs.test";

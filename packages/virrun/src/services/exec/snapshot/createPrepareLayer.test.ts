@@ -24,7 +24,7 @@ const OUTPUT = `${TEST_FILENAME}/${TEST_FILENAME}`;
 const prepareStep: PrepareStep = { command: NUXT_PREPARE_COMMAND, outputs: [OUTPUT] };
 // Stands in for the os backend running `nuxt prepare`: on success it writes the declared output plus incidental
 // Dep-tree churn into the capture upper, so the test can assert only the output survives the publish.
-const createFakeBackend = (exitCode: number): ReturnType<typeof createRecordingBackend> & ExecBackend =>
+const createFakeBackend = (exitCode: number): ExecBackend & ReturnType<typeof createRecordingBackend> =>
   createRecordingBackend({ exitCode, stderr: "", stdout: "" }, (options) => {
     const upperDir = options.overlayLayers?.upperDir;
     if (exitCode === 0 && upperDir !== undefined) {
