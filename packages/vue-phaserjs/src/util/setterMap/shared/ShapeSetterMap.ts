@@ -5,8 +5,8 @@ import type { GameObjects } from "phaser";
 
 import { AlphaSingleSetterMap } from "@/util/setterMap/components/AlphaSingleSetterMap";
 import { BlendModeSetterMap } from "@/util/setterMap/components/BlendModeSetterMap";
-import { ComputedSizeSetterMap } from "@/util/setterMap/components/ComputedSizeSetterMap";
 import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
+import { DisplaySizeSetterMap } from "@/util/setterMap/components/DisplaySizeSetterMap";
 import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
 import { OriginSetterMap } from "@/util/setterMap/components/OriginSetterMap";
 import { RenderNodesSetterMap } from "@/util/setterMap/components/RenderNodesSetterMap";
@@ -18,6 +18,7 @@ export const ShapeSetterMap = {
   ...AlphaSingleSetterMap,
   ...BlendModeSetterMap,
   ...DepthSetterMap,
+  ...DisplaySizeSetterMap,
   ...MaskSetterMap,
   ...OriginSetterMap,
   ...RenderNodesSetterMap,
@@ -28,8 +29,6 @@ export const ShapeSetterMap = {
     if (value === undefined) return;
     gameObject.setActive(value);
   },
-  displayHeight: ComputedSizeSetterMap.displayHeight,
-  displayWidth: ComputedSizeSetterMap.displayWidth,
   fillAlpha: (gameObject) => (value) => {
     gameObject.setFillStyle(gameObject.fillColor, value);
   },

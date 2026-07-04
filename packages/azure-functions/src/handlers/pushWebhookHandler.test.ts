@@ -32,6 +32,18 @@ describe(pushWebhookHandler, () => {
   const name = "name";
   const token = "token";
   const context = new InvocationContext();
+  const seedWebhook = async () => {
+    const userId = crypto.randomUUID();
+    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
+    const appUser = takeOne(await mockDb.insert(appUsersInMessage).values({ name: "Bot" }).returning());
+    return takeOne(
+      await mockDb
+        .insert(webhooksInMessage)
+        .values({ creatorId: userId, name, roomId: room.id, token, userId: appUser.id })
+        .returning(),
+    );
+  };
 
   beforeAll(async () => {
     mockDb = await createMockDb();
@@ -62,16 +74,7 @@ describe(pushWebhookHandler, () => {
   test("returns 400 when body is malformed JSON", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
-    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
-    const appUser = takeOne(await mockDb.insert(appUsersInMessage).values({ name: "Bot" }).returning());
-    const webhook = takeOne(
-      await mockDb
-        .insert(webhooksInMessage)
-        .values({ creatorId: userId, name, roomId: room.id, token, userId: appUser.id })
-        .returning(),
-    );
+    const webhook = await seedWebhook();
 
     const result = await pushWebhookHandler(createMockRequest({ id: webhook.id, token }, "{invalid"), context);
 
@@ -82,16 +85,7 @@ describe(pushWebhookHandler, () => {
     expect.hasAssertions();
 
     const content = "content";
-    const userId = crypto.randomUUID();
-    await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
-    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
-    const appUser = takeOne(await mockDb.insert(appUsersInMessage).values({ name: "Bot" }).returning());
-    const webhook = takeOne(
-      await mockDb
-        .insert(webhooksInMessage)
-        .values({ creatorId: userId, name, roomId: room.id, token, userId: appUser.id })
-        .returning(),
-    );
+    const webhook = await seedWebhook();
 
     const result = await pushWebhookHandler(
       createMockRequest({ id: webhook.id, token }, JSON.stringify({ content })),
