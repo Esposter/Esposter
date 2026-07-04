@@ -17,8 +17,8 @@ vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
   readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
 }));
 
-vi.mock(import("@/services/exec/wsl/ensureWslSourceMirror"), () => ({
-  ensureWslSourceMirror: () => TEST_WSL_MIRROR,
+vi.mock(import("@/services/exec/wsl/getWslSourceMirrorPath"), () => ({
+  getWslSourceMirrorPath: () => TEST_WSL_MIRROR,
 }));
 
 describe(createWslBwrapArgs, () => {

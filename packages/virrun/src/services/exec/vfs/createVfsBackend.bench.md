@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-07-04T03:47:18.828Z
-- Commit: 0f5ba91ba
+- Date: 2026-07-04T05:58:42.417Z
+- Commit: 3f0fb4283
 - Node: v26.4.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,19 +20,19 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task   | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------ | ------- | --------- | ------- | -------- | ------- |
-| native | 1.00×   | 68.1223   | ±2.62%  | 72.5190  | 10      |
-| vfs    | 731.24× | 0.0932    | ±44.10% | 0.2182   | 10      |
+| native | 1.00×   | 77.2646   | ±1.50%  | 79.7041  | 10      |
+| vfs    | 819.35× | 0.0943    | ±35.50% | 0.1700   | 10      |
 
 ## createVfsBackend - in-process node <file> vs native spawn (hot path)
 
 | task   | vs base | mean (ms) | ±rme    | p99 (ms) | samples |
 | ------ | ------- | --------- | ------- | -------- | ------- |
-| native | 1.00×   | 65.1470   | ±1.45%  | 66.6305  | 10      |
-| vfs    | 121.88× | 0.5345    | ±18.16% | 0.8487   | 10      |
+| native | 1.00×   | 79.0898   | ±1.63%  | 83.5308  | 10      |
+| vfs    | 144.93× | 0.5457    | ±23.87% | 1.0101   | 10      |
 
 ## createVfsBackend - fall-back command vs native (no added overhead)
 
 | task   | vs base | mean (ms) | ±rme   | p99 (ms) | samples |
 | ------ | ------- | --------- | ------ | -------- | ------- |
-| native | 1.00×   | 64.0330   | ±2.26% | 67.2411  | 10      |
-| vfs    | 1.00×   | 63.9459   | ±2.72% | 67.5062  | 10      |
+| native | 1.00×   | 80.1598   | ±1.57% | 82.8314  | 10      |
+| vfs    | 1.06×   | 75.3220   | ±2.15% | 80.4333  | 10      |

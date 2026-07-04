@@ -1,6 +1,6 @@
 # virrun — WSL ext4 Source Mirror
 
-On win32, read the repo source from a WSL-native ext4 mirror instead of straight from `/mnt/c`, so an `os`/wsl run stops paying the v9fs read tax on every source file.
+On win32, read the repo source from a WSL-native ext4 mirror instead of straight from `/mnt/c`, so an `os`/wsl run stops paying the v9fs read tax on every source file — and keep that mirror fresh with a host-side manifest delta, so the _sync itself_ never stat-walks the tree over v9fs either.
 
 ## Overview
 

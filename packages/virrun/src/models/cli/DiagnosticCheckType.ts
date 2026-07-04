@@ -6,7 +6,7 @@ export enum DiagnosticCheckType {
   Bubblewrap = "bubblewrap",
   // Python3, used by write-back to flush produced files back to host.
   Python3 = "python3",
-  // Rsync inside WSL2 (win32 only), used to sync the repo source onto the ext4 mirror (ensureWslSourceMirror).
+  // Rsync inside WSL2 (win32 only), used to sync the repo source onto the ext4 mirror (createWslSourceMirrorSync).
   Rsync = "rsync",
   // The real overlay-mount probe (isOsBackendSupported) — the authoritative "would fall back to native" verdict.
   Sandbox = "sandbox",
