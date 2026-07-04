@@ -5,6 +5,7 @@ What to work on next. Shipped work lives in [README.md](README.md) `## Shipped`;
 ## Now
 
 - [ ] **WSL mirror bench** — re-run `pnpm bench` on win32, record the lift in `localMonorepo.platform.bench.win32.md` (honest numbers — no overclaim). **Blocked**: this host's WSL sandbox errors (`node.exe: Invalid argument`), so the bench can't capture; needs a healthy WSL host.
+- [ ] **Bench the wins, not just the worst case** — the committed bench only measures single cold os runs (0.84–0.95× native, the design-bounded overlay tax), so the story reads as "just slower". The shipped wins live in unbenchmarked scenarios. Added the `test - task cache hit vs native` group (primes one entry at module scope, times a pure `replayTaskCache` — the sandbox-skip that should beat native by a wide margin, now regression-gated). Re-run `pnpm bench` on a healthy os host to capture the numbers into `localMonorepo.platform.bench.<platform>.md`. The fork groups already cover warm-fork-vs-native, so a separate "repeated runs" group would only duplicate them — deliberately not added.
 
 ## Next
 

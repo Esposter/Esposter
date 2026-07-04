@@ -1,4 +1,8 @@
 import { BackendType } from "@/models/virrun/BackendType";
+import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
+import { recordTaskCache } from "@/services/exec/cache/recordTaskCache";
+import { replayTaskCache } from "@/services/exec/cache/replayTaskCache";
+import { resolveTaskCacheLocation } from "@/services/exec/cache/resolveTaskCacheLocation";
 import { createNativeBackend } from "@/services/exec/native/createNativeBackend";
 import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
@@ -36,6 +40,9 @@ const warmCorpus = isOsSupported ? createWorkspaceCorpus(repoRoot) : "";
 // Dist) vanish and each run is cold without touching the source; the native side regenerates those gitignored
 // Build artifacts in place (idempotent), so it needs no cleanup and stays realistically warm/incremental.
 const SHARED_COMMAND = (script: string): string => `pnpm --filter @esposter/shared ${script}`;
+// The verification command the task-cache hit group replays. `test --run` produces no persistable diff (vitest writes
+// Only under node_modules, masked from the flush), so a replay is the pure "skip the sandbox" cost with an empty flush.
+const TASK_CACHE_COMMAND = SHARED_COMMAND("test --run");
 // Whether the host-global snapshot cache entry already existed before this bench ran. warmCorpus mirrors the real
 // Repo's lockfile, so it resolves to the same lockfile-hash-keyed entry every real virrun run on this repo reuses.
 // If it pre-existed, createSnapshot reuses it (rename-loses-race keeps the existing upper) and teardown must leave
@@ -47,6 +54,9 @@ afterAll(() => {
   // Evict the snapshot only if this bench captured it. Resolve before removing warmCorpus (its lockfile keys the
   // Cache entry), then clear the private temp mirror unconditionally.
   if (!isSnapshotPreexisting) removeSnapshotDirectory(resolveSnapshotLocation(warmCorpus).dir);
+  // Evict the task-cache entry only if this bench recorded it, mirroring the snapshot rule.
+  if (taskCacheKey !== null && !isTaskCachePreexisting)
+    removeSnapshotDirectory(resolveTaskCacheLocation(taskCacheKey).dir);
   rmSync(warmCorpus, { force: true, recursive: true });
 });
 // Capture the install once into a warm snapshot the forks below reuse. There is deliberately NO install bench: the
@@ -61,6 +71,24 @@ afterAll(() => {
 // First. Keyed by the lockfile hash, this one snapshot backs every fork below (same lockfile - same cache entry).
 if (isOsSupported)
   await createSnapshot(createOsBackend(), resolveSetupCommand(), createOsInstallOptions(warmCorpus, "pipe"));
+// Prime one task-cache entry so the hit group below times a pure replay, isolated from the miss that recorded it.
+// Record directly through persistRun's onPersist (not persistWithCache) so the entry lands regardless of the CI
+// Opt-out (isTaskCacheEnabled): the bench measures the replay MECHANISM, not the on/off policy. Keyed over the real
+// RepoRoot tree + command, so the native baseline and the replay are the same command over the same tree. Preserve a
+// Pre-existing entry (leave it in afterAll) exactly like the warm snapshot above — it belongs to real runs on this repo.
+const taskCacheKey = isOsSupported ? computeTaskCacheKey(TASK_CACHE_COMMAND, repoRoot) : null;
+const isTaskCachePreexisting = taskCacheKey !== null && resolveTaskCacheLocation(taskCacheKey).exists;
+if (isOsSupported && taskCacheKey !== null && !isTaskCachePreexisting)
+  await persistRun(
+    createOsBackend(),
+    TASK_CACHE_COMMAND,
+    createOsExecOptions(repoRoot, "pipe"),
+    [],
+    [],
+    (upperDir, plan, result) => {
+      recordTaskCache(taskCacheKey, upperDir, plan, result);
+    },
+  );
 
 describe.skipIf(!isOsSupported)("typecheck - packages/shared (cold)", () => {
   const command = SHARED_COMMAND("typecheck");
@@ -106,5 +134,20 @@ describe.skipIf(!isOsSupported)("test - packages/shared", () => {
 
   bench(OS_TASK_NAME, async () => {
     await forkSnapshot(createOsBackend(), command, createOsExecOptions(repoRoot, "pipe"));
+  });
+});
+
+// The task-cache dev-loop win (specs/config-and-cache.md): re-running an unchanged verification command skips the
+// Sandbox entirely — replayTaskCache reads the recorded outcome and flushes its (here empty) diff to the host, with no
+// Toolchain spawn. The fork groups above measure the install-once win (still ~native per run); this is the only path
+// That beats native by a wide margin, and the headline the roadmap wants visible + regression-gated. Skipped when the
+// Key can't be computed (not a git repo / no lockfile) — the same fallback the real cache takes.
+describe.skipIf(!isOsSupported || taskCacheKey === null)("test - task cache hit vs native (unchanged tree)", () => {
+  bench(BackendType.Native, async () => {
+    await native.exec(TASK_CACHE_COMMAND, { cwd: repoRoot, stdio: "pipe" });
+  });
+
+  bench(`${OS_TASK_NAME}/cache`, () => {
+    replayTaskCache(taskCacheKey ?? "", repoRoot);
   });
 });

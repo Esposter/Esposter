@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-07-03T12:33:48.543Z
-- Commit: ecf9684d7
+- Date: 2026-07-04T03:47:18.828Z
+- Commit: 0f5ba91ba
 - Node: v26.4.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -20,26 +20,33 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task   | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
 | ------ | ------- | ---------- | ------ | ---------- | ------- |
-| native | 1.00×   | 830.3512   | ±2.36% | 879.3718   | 10      |
-| os/wsl | 0.072×  | 11467.8689 | ±1.33% | 11888.2324 | 10      |
+| native | 1.00×   | 785.5019   | ±1.07% | 804.6573   | 10      |
+| os/wsl | 0.072×  | 10911.1640 | ±0.59% | 11059.1399 | 10      |
 
 ## build - packages/shared (cold)
 
 | task   | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
 | ------ | ------- | ---------- | ------ | ---------- | ------- |
-| native | 1.00×   | 5780.4005  | ±4.97% | 6435.9867  | 10      |
-| os/wsl | 0.37×   | 15669.2080 | ±0.68% | 15934.9802 | 10      |
+| native | 1.00×   | 5080.5786  | ±0.86% | 5230.4718  | 10      |
+| os/wsl | 0.34×   | 14976.2772 | ±0.63% | 15231.1747 | 10      |
 
 ## build - write-back persist vs native (produces dist)
 
 | task           | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
 | -------------- | ------- | ---------- | ------ | ---------- | ------- |
-| native         | 1.00×   | 5361.0971  | ±0.46% | 5415.9066  | 10      |
-| os/wsl/persist | 0.33×   | 16155.8924 | ±1.34% | 16707.9755 | 10      |
+| native         | 1.00×   | 5084.0181  | ±0.73% | 5214.5276  | 10      |
+| os/wsl/persist | 0.33×   | 15438.4777 | ±0.52% | 15684.6784 | 10      |
 
 ## test - packages/shared
 
 | task   | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
 | ------ | ------- | ---------- | ------ | ---------- | ------- |
-| native | 1.00×   | 2591.3745  | ±1.02% | 2655.2062  | 10      |
-| os/wsl | 0.21×   | 12511.9616 | ±0.79% | 12793.2716 | 10      |
+| native | 1.00×   | 2485.5057  | ±1.17% | 2549.3526  | 10      |
+| os/wsl | 0.21×   | 12039.6135 | ±0.43% | 12225.6563 | 10      |
+
+## test - task cache hit vs native (unchanged tree)
+
+| task         | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
+| ------------ | ------- | --------- | ------ | --------- | ------- |
+| native       | 1.00×   | 2458.7872 | ±0.59% | 2489.0941 | 10      |
+| os/wsl/cache | 431.45× | 5.6989    | ±2.67% | 6.0418    | 10      |
