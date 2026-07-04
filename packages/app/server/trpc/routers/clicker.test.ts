@@ -8,6 +8,7 @@ import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
+// The generic blob-state matrix lives in webpageEditor.test.ts; here only the wiring.
 describe("clicker", () => {
   let caller: DecorateRouterRecord<TRPCRouter["clicker"]>;
 
@@ -18,15 +19,6 @@ describe("clicker", () => {
 
   afterEach(() => {
     MockContainerDatabase.clear();
-  });
-
-  test("reads", async () => {
-    expect.hasAssertions();
-
-    const clicker = await caller.readClicker();
-    const { createdAt, id, updatedAt } = clicker;
-
-    expect(clicker).toStrictEqual(new Clicker({ createdAt, id, updatedAt }));
   });
 
   test("saves and reads", async () => {

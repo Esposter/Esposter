@@ -8,6 +8,7 @@ import { flowchartEditorRouter } from "@@/server/trpc/routers/flowchartEditor";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
+// The generic blob-state matrix lives in webpageEditor.test.ts; here only the wiring.
 describe("flowchartEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["flowchartEditor"]>;
 
@@ -18,15 +19,6 @@ describe("flowchartEditor", () => {
 
   afterEach(() => {
     MockContainerDatabase.clear();
-  });
-
-  test("reads", async () => {
-    expect.hasAssertions();
-
-    const flowchartEditor = await caller.readFlowchartEditor();
-    const { createdAt, id, updatedAt } = flowchartEditor;
-
-    expect(flowchartEditor).toStrictEqual(new FlowchartEditor({ createdAt, id, updatedAt }));
   });
 
   test("saves and reads", async () => {
