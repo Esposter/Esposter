@@ -1,9 +1,10 @@
 import type { ComputedSizeConfiguration } from "@/models/configuration/components/ComputedSizeConfiguration";
 import type { ComputedSizeEventEmitsOptions } from "@/models/emit/components/ComputedSizeEventEmitsOptions";
 import type { SetterMap } from "@/models/setterMap/SetterMap";
-import type { GameObjects } from "phaser";
 
-// Only requires setDisplaySize so it is reusable by shapes (e.g. Arc, Star) that have no setSize.
+// Only requires setDisplaySize so it is reusable by shapes (e.g. Arc, Star) that have no setSize. The game object
+// Is typed structurally (setDisplaySize returning unknown) because Pick<ComputedSize, ...> pins the method's `this`
+// Return type to ComputedSize, which shapes without setSize can never satisfy.
 export const DisplaySizeSetterMap = {
   displayHeight: (gameObject) => (value) => {
     if (value === undefined) return;
@@ -15,6 +16,6 @@ export const DisplaySizeSetterMap = {
   },
 } as const satisfies SetterMap<
   Pick<ComputedSizeConfiguration, "displayHeight" | "displayWidth">,
-  Pick<GameObjects.Components.ComputedSize, "displayHeight" | "displayWidth" | "setDisplaySize">,
+  { displayHeight: number; displayWidth: number; setDisplaySize: (width: number, height: number) => unknown },
   ComputedSizeEventEmitsOptions
 >;

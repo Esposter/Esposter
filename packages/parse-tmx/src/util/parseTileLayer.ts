@@ -3,6 +3,7 @@ import type { TMXLayerParsed } from "@/models/tmx/parsed/TMXLayerParsed";
 
 import { Compression } from "@/models/Compression";
 import { Encoding } from "@/models/Encoding";
+import { cloneNodeWithType } from "@/util/cloneNodeWithType";
 import { getDecompressedBytes } from "@/util/getDecompressedBytes";
 import { isTMXEmbeddedTilesetNode } from "@/util/isTMXEmbeddedTilesetNode";
 import { parseFlips } from "@/util/parseFlips";
