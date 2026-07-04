@@ -5,7 +5,7 @@
 export const VIRRUN_WSL_PROCESS_MARKER = "virrun-bwrap";
 // Leaf under the WSL native ext4 cache root holding one per-repo source mirror (`sources/<sha256(hostCwd)>`), a
 // Sibling of `snapshots/` and `tasks/`. On win32 the sandbox reads the repo source from this ext4 mirror instead of
-// Straight from /mnt/c (v9fs, 15-64x slower); `cache clean --all` sweeps it. See ensureWslSourceMirror.
+// Straight from /mnt/c (v9fs, 15-64x slower); `cache clean --all` sweeps it. See createWslSourceMirrorSync.
 export const VIRRUN_SOURCES_DIRECTORY_NAME = "sources";
 // A source mirror is a self-contained entry dir (`sources/<sha256(hostCwd)>/`) like `snapshots/<hash>`: the rsync'd
 // Repo lives in `tree/` (so the `--overlay-src` lower stays a byte-exact copy of the working tree, unpolluted by
@@ -13,6 +13,21 @@ export const VIRRUN_SOURCES_DIRECTORY_NAME = "sources";
 // Reads that marker to reclaim a whole entry once its source path is gone (deleted worktree / moved repo).
 export const VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME = "tree";
 export const VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME = "origin";
+// The manifest published beside `tree/` after every successful sync: the working tree's per-entry change signature
+// (SourceMirrorManifest) at the moment it was mirrored. The next run diffs its own host-side walk against this to
+// Sync only what changed — the fix for the per-run whole-tree rsync stat-walk over v9fs. Published last, inside the
+// Sync's flock, via an atomic `mv` from a staged temp, so it never claims a state the mirror doesn't hold.
+export const VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME = "manifest.json";
+// Pid-tagged temp leaves (`<prefix><pid>.<uuid>`) the planner stages into the entry dir for the folded sync script to
+// Consume: the next manifest and origin marker (each published via atomic `mv`) plus the null-delimited copy
+// (rsync --files-from) and delete (xargs -0 rm -rf) lists. The host pid tag is load-bearing: staging host-side keeps
+// Every temp in the Windows pid domain, so a hard-killed run's corpses are reclaimed by reapStaleSourceMirrorTemps
+// Once the owner pid is dead (same lifecycle as the snapshot upper temps) — a Linux-side `$$`-tagged temp would be
+// Unattributable from the host.
+export const VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX: string = `${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}.`;
+export const VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX: string = `${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}.`;
+export const VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX = "copy.";
+export const VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX = "delete.";
 // A `\\wsl.localhost\<distro>\...` or `\\wsl$\<distro>\...` UNC. It already points at the distro's own Linux
 // Filesystem, so the path inside it is just the Linux path with backslashes (`\\wsl.localhost\<distro>\home\x` is
 // `/home/x`) — the optional `linuxPath` group captures that tail for readWslPath. Doubling as a boolean guard

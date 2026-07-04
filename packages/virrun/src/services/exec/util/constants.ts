@@ -58,10 +58,11 @@ export const CI_ENV_VALUE = "true";
 // Are sub-second on a healthy host; a corrupt/unresponsive WSL distro can hang execFileSync forever, so the cap lets
 // The probe fail (degrade to unsupported) instead of blocking the whole CLI.
 export const PROBE_TIMEOUT_MS: number = dayjs.duration(10, "seconds").asMilliseconds();
-// Upper bound for the win32 source-mirror rsync (ensureWslSourceMirror). Generous — the first cold materialize reads
-// The whole source lower across v9fs (15-64x slower) — but bounded so a stalled ext4 volume or hung flock aborts the
-// Run instead of hanging the CLI forever.
-export const SOURCE_MIRROR_TIMEOUT_MS: number = dayjs.duration(5, "minutes").asMilliseconds();
+// Upper bound the folded sync script enforces Linux-side — `flock -w` on the mirror lock plus `timeout` on rsync
+// (createWslSourceMirrorSync). Generous — the first cold materialize reads the whole source lower across v9fs
+// (15-64x slower) — but bounded so a stalled ext4 volume or hung lock aborts the run instead of hanging the CLI
+// Forever. Seconds, not ms: the consumers are Linux shell utilities, not execFileSync.
+export const SOURCE_MIRROR_TIMEOUT_SECONDS: number = dayjs.duration(5, "minutes").asSeconds();
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";
 // The host cache dir acceptance corpora/snapshots stage into, under $HOME never os.tmpdir (see createWorkspaceCorpus).

@@ -84,7 +84,8 @@ const probePython3 = (): DiagnosticCheck => {
     : { fix: "", label, note: output, status: DiagnosticStatus.Ok, type };
 };
 // Off win32 the source already lives on the host FS, so no mirror and no rsync — the check is N/A. On win32 the source
-// Is synced onto the ext4 mirror (ensureWslSourceMirror) with rsync inside WSL, so a missing rsync aborts every os run.
+// Is synced onto the ext4 mirror (createWslSourceMirrorSync) with rsync inside WSL, so a missing rsync aborts every
+// Os run that has a delta to apply.
 const probeRsync = (): DiagnosticCheck => {
   const label = "WSL rsync (source mirror)";
   const type = DiagnosticCheckType.Rsync;

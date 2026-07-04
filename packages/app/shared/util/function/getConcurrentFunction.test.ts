@@ -13,7 +13,7 @@ describe(getConcurrentFunction, () => {
 
     await concurrentFn(0, "");
 
-    // getConcurrentFunction injects a generated checkIsStale as the first arg; capture it to assert the exact call.
+    // GetConcurrentFunction injects a generated checkIsStale as the first arg; capture it to assert the exact call.
     const [checkIsStale] = takeOne(vi.mocked(fn).mock.calls);
 
     expect(checkIsStale).toBeTypeOf("function");
