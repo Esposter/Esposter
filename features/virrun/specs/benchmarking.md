@@ -20,8 +20,7 @@ Run across a fixed corpus of real repos (small / medium / monorepo; with and wit
 - `test` — typical test command.
 - `boot` — time to a ready sandbox.
 - `fork` — time to clone a warm snapshot to a runnable state (the headline number).
-- `repeated runs` — N sequential `test` runs (where warm-fork should dominate baseline). Realized as the fork groups in `localMonorepo.platform.bench.ts`: each `os/*` bench iteration is an independent warm fork over the shared snapshot, so the group's mean already _is_ the amortized repeated-run cost vs the native baseline — no separate group needed.
-- `task cache hit` — re-run an unchanged verification command; the hit skips the sandbox entirely (`replayTaskCache`) and should beat native by a wide margin. Realized as the `test - task cache hit vs native` group: one entry is primed at module scope (recorded via `persistRun`'s `onPersist`, bypassing the CI opt-out so it measures the replay _mechanism_) and keyed over the real repo tree + command, so `native` and the `os/*/cache` replay are the same command over the same tree. This is the only group expected to post a `vs base` well above `1.00×`.
+- `repeated runs` — N sequential `test` runs (where warm-fork should dominate baseline).
 
 ## Cache states (measure each explicitly)
 

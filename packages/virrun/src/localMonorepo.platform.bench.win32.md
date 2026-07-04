@@ -43,10 +43,3 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 | ------ | ------- | ---------- | ------ | ---------- | ------- |
 | native | 1.00×   | 2485.5057  | ±1.17% | 2549.3526  | 10      |
 | os/wsl | 0.21×   | 12039.6135 | ±0.43% | 12225.6563 | 10      |
-
-## test - task cache hit vs native (unchanged tree)
-
-| task         | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
-| ------------ | ------- | --------- | ------ | --------- | ------- |
-| native       | 1.00×   | 2458.7872 | ±0.59% | 2489.0941 | 10      |
-| os/wsl/cache | 431.45× | 5.6989    | ±2.67% | 6.0418    | 10      |

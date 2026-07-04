@@ -78,25 +78,6 @@
             }
           ],
           "fullName": "test - packages/shared"
-        },
-        {
-          "benchmarks": [
-            {
-              "mean": 2458.7872099999804,
-              "name": "native",
-              "p99": 2489.094099999871,
-              "rme": 0.5864779186114311,
-              "sampleCount": 10
-            },
-            {
-              "mean": 5.698920000018552,
-              "name": "os/wsl/cache",
-              "p99": 6.041800000006333,
-              "rme": 2.6677369764972516,
-              "sampleCount": 10
-            }
-          ],
-          "fullName": "test - task cache hit vs native (unchanged tree)"
         }
       ]
     }
