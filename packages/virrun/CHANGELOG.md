@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.34.1](https://github.com/Esposter/Esposter/compare/v2.34.0...v2.34.1) (2026-07-04)
+
+### Bug Fixes
+
+* cleanup docs ([3f0fb42](https://github.com/Esposter/Esposter/commit/3f0fb4283953b0c3e26242b00356e469430b3a77))
+* code review comments ([d226957](https://github.com/Esposter/Esposter/commit/d2269573a334b1d12f2cddb7995e74e3a1caa48e))
+* code review comments ([e848577](https://github.com/Esposter/Esposter/commit/e8485770ad3ccafe723073613d82bf31a17f4d59))
+* lint warnings ([0f5ba91](https://github.com/Esposter/Esposter/commit/0f5ba91bab503102af6772f53cf19eeb6efe3315))
+
+### Performance Improvements
+
+* improve windows mirror ops ([19b13e9](https://github.com/Esposter/Esposter/commit/19b13e90cf9b3c76e2df271bcf8c56ab07abd1ed))
+
 # [2.34.0](https://github.com/Esposter/Esposter/compare/v2.33.0...v2.34.0) (2026-07-04)
 
 ### Bug Fixes
