@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.34.0](https://github.com/Esposter/Esposter/compare/v2.33.0...v2.34.0) (2026-07-04)
+
+### Bug Fixes
+
+* bench ([05f2348](https://github.com/Esposter/Esposter/commit/05f234875094d96648e5d013f23702eaa0a52c06))
+* CI ([de54019](https://github.com/Esposter/Esposter/commit/de54019dbcb6cd1dc8c8271ff2d84cfc18949e0d))
+* lint ([b9ef894](https://github.com/Esposter/Esposter/commit/b9ef8944146b4c0aa22205cec36492a927207995))
+* lint and snapshot ([f22e19e](https://github.com/Esposter/Esposter/commit/f22e19efc0ac1daf3e48609a555de2ee07e1464f))
+* network errors + bench ([885ba8e](https://github.com/Esposter/Esposter/commit/885ba8eda8718504c47b8d395034adb692757d8d))
+* tests and network ([a975df3](https://github.com/Esposter/Esposter/commit/a975df3b351679db8df08e9daa1dd2e669c1d25a))
+
+### Features
+
+* Add bench files ([358cfce](https://github.com/Esposter/Esposter/commit/358cfcee65291515d50a0e5a7399ec3545625be8))
+
+### Performance Improvements
+
+* optimize CI don't need to re-install ([abecda6](https://github.com/Esposter/Esposter/commit/abecda6756ed6d1bba6384008728ecea3058a6f7))
+
 # [2.33.0](https://github.com/Esposter/Esposter/compare/v2.32.1...v2.33.0) (2026-07-03)
 
 ### Bug Fixes
