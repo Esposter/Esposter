@@ -1,22 +1,17 @@
 import Text from "@/components/Text.vue";
 import { useTextStore } from "@/store/text";
-import { getTestPinia, removeTestScene, startTestScene } from "@/test/fixtures/headlessGame.test";
-import { InjectionKeyMap } from "@/util/InjectionKeyMap";
-import { mount } from "@vue/test-utils";
+import { startTestScene } from "@/test/fixtures/headlessGame.test";
+import { setupGameObjectSuite } from "@/test/fixtures/setupGameObjectSuite.test";
 import { GameObjects } from "phaser";
 import { assert, describe, expect, test } from "vitest";
 
 describe("text", () => {
-  const sceneKey = "sceneKey";
+  const { mountGameObject, sceneKey } = setupGameObjectSuite();
 
   test("merges defaultTextStyle from store with the provided style", () => {
     expect.hasAssertions();
 
-    const wrapper = mount(Text, {
-      global: {
-        plugins: [getTestPinia()],
-        provide: { [InjectionKeyMap.SceneKey]: sceneKey },
-      },
+    mountGameObject(Text, {
       props: {
         configuration: { style: { fontSize: "24px" }, text: "", x: 0, y: 0 },
       },
@@ -33,8 +28,6 @@ describe("text", () => {
     // Provided style.fontSize overrides the default
     expect(capturedText.style.fontSize).toBe("24px");
 
-    wrapper.unmount();
-    removeTestScene(sceneKey);
     textStore.defaultTextStyle = undefined;
   });
 });

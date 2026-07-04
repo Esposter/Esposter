@@ -1,7 +1,4 @@
 import type { BlendModeConfiguration } from "@/models/configuration/components/BlendModeConfiguration";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type BlendModeEventEmitsOptions = {
-  [P in UpdateEvent<keyof BlendModeConfiguration>]: [BlendModeConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type BlendModeEventEmitsOptions = EmitsOptionsFor<BlendModeConfiguration>;

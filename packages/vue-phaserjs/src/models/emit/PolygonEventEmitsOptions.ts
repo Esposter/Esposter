@@ -1,8 +1,5 @@
 import type { PolygonConfiguration } from "@/models/configuration/PolygonConfiguration";
 import type { GameObjectEventMapEmitsOptions } from "@/models/emit/shared/GameObjectEventMapEmitsOptions";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type PolygonEventEmitsOptions = GameObjectEventMapEmitsOptions & {
-  [P in UpdateEvent<keyof PolygonConfiguration>]: [PolygonConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type PolygonEventEmitsOptions = EmitsOptionsFor<PolygonConfiguration> & GameObjectEventMapEmitsOptions;

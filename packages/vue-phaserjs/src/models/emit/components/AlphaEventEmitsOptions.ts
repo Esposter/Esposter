@@ -1,7 +1,4 @@
 import type { AlphaConfiguration } from "@/models/configuration/components/AlphaConfiguration";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type AlphaEventEmitsOptions = {
-  [P in UpdateEvent<keyof AlphaConfiguration>]: [AlphaConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type AlphaEventEmitsOptions = EmitsOptionsFor<AlphaConfiguration>;

@@ -3,24 +3,19 @@ import type { GameObjects } from "phaser";
 
 import Sprite from "@/components/Sprite.vue";
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { getTestPinia, removeTestScene, startTestScene, stepScene } from "@/test/fixtures/headlessGame.test";
-import { InjectionKeyMap } from "@/util/InjectionKeyMap";
-import { mount } from "@vue/test-utils";
+import { startTestScene, stepScene } from "@/test/fixtures/headlessGame.test";
+import { setupGameObjectSuite } from "@/test/fixtures/setupGameObjectSuite.test";
 import { assert, describe, expect, test } from "vitest";
 
 describe(useInitializeGameObject, () => {
-  const sceneKey = "sceneKey";
+  const { mountGameObject, sceneKey, unmountGameObject } = setupGameObjectSuite();
 
   test("applies the initial configuration via the SetterMap to the game object on init", () => {
     expect.hasAssertions();
 
     let capturedSprite: GameObjects.Sprite | undefined;
 
-    const wrapper = mount(Sprite, {
-      global: {
-        plugins: [getTestPinia()],
-        provide: { [InjectionKeyMap.SceneKey]: sceneKey },
-      },
+    mountGameObject(Sprite, {
       props: {
         configuration: { depth: 5, texture: "", x: 0, y: 0 },
         onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
@@ -34,9 +29,6 @@ describe(useInitializeGameObject, () => {
     assert.exists(capturedSprite);
 
     expect(capturedSprite.depth).toBe(5);
-
-    wrapper.unmount();
-    removeTestScene(sceneKey);
   });
 
   test("calls the Phaser setter and reflects the new value when a configuration property changes", async () => {
@@ -44,11 +36,7 @@ describe(useInitializeGameObject, () => {
 
     let capturedSprite: GameObjects.Sprite | undefined;
 
-    const wrapper = mount(Sprite, {
-      global: {
-        plugins: [getTestPinia()],
-        provide: { [InjectionKeyMap.SceneKey]: sceneKey },
-      },
+    const wrapper = mountGameObject(Sprite, {
       props: {
         configuration: { depth: 5, texture: "", x: 0, y: 0 },
         onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
@@ -64,9 +52,6 @@ describe(useInitializeGameObject, () => {
     stepScene(scene);
 
     expect(capturedSprite.depth).toBe(10);
-
-    wrapper.unmount();
-    removeTestScene(sceneKey);
   });
 
   test("destroys the game object and removes it from the scene display list on unmount", () => {
@@ -74,11 +59,7 @@ describe(useInitializeGameObject, () => {
 
     let capturedSprite: GameObjects.Sprite | undefined;
 
-    const wrapper = mount(Sprite, {
-      global: {
-        plugins: [getTestPinia()],
-        provide: { [InjectionKeyMap.SceneKey]: sceneKey },
-      },
+    mountGameObject(Sprite, {
       props: {
         configuration: { texture: "", x: 0, y: 0 },
         onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
@@ -92,11 +73,9 @@ describe(useInitializeGameObject, () => {
 
     expect(scene.children.list).toContain(capturedSprite);
 
-    wrapper.unmount();
+    unmountGameObject();
 
     expect(scene.children.list).not.toContain(capturedSprite);
-
-    removeTestScene(sceneKey);
   });
 
   test("creates the game object immediately without waiting for onCreate when the immediate flag is set", () => {
@@ -106,11 +85,7 @@ describe(useInitializeGameObject, () => {
 
     let capturedSprite: GameObjects.Sprite | undefined;
 
-    const wrapper = mount(Sprite, {
-      global: {
-        plugins: [getTestPinia()],
-        provide: { [InjectionKeyMap.SceneKey]: sceneKey },
-      },
+    mountGameObject(Sprite, {
       props: {
         configuration: { texture: "", x: 0, y: 0 },
         immediate: true,
@@ -123,8 +98,5 @@ describe(useInitializeGameObject, () => {
     assert.exists(capturedSprite);
 
     expect(scene.children.list).toContain(capturedSprite);
-
-    wrapper.unmount();
-    removeTestScene(sceneKey);
   });
 });

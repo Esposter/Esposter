@@ -1,8 +1,5 @@
 import type { PathFollowerConfiguration } from "@/models/configuration/PathFollowerConfiguration";
 import type { GameObjectEventMapEmitsOptions } from "@/models/emit/shared/GameObjectEventMapEmitsOptions";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type PathFollowerEventEmitsOptions = GameObjectEventMapEmitsOptions & {
-  [P in UpdateEvent<keyof PathFollowerConfiguration>]: [PathFollowerConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type PathFollowerEventEmitsOptions = EmitsOptionsFor<PathFollowerConfiguration> & GameObjectEventMapEmitsOptions;

@@ -1,15 +1,14 @@
+import type { NotificationOptions } from "@/models/azure/eventGrid/NotificationOptions";
 import type { MessageEntity } from "@/models/message/MessageEntity";
 
+import { notificationOptionsSchema } from "@/models/azure/eventGrid/NotificationOptions";
 import { standardMessageEntitySchema } from "@/models/message/StandardMessageEntity";
 import { webhookMessageEntitySchema } from "@/models/message/WebhookMessageEntity";
 import { z } from "zod";
 
 export interface PushNotificationEventGridData {
   message: Pick<MessageEntity, "message" | "partitionKey" | "rowKey" | "userId">;
-  notificationOptions: {
-    icon?: null | string;
-    title?: null | string;
-  };
+  notificationOptions: NotificationOptions;
 }
 
 const pushNotificationMessageFields = { message: true, partitionKey: true, rowKey: true, userId: true } as const;
@@ -21,8 +20,5 @@ export const pushNotificationEventGridDataSchema = z.object({
     standardMessageEntitySchema.pick(pushNotificationMessageFields),
     webhookMessageEntitySchema.pick(pushNotificationMessageFields),
   ]),
-  notificationOptions: z.object({
-    icon: z.string().nullish(),
-    title: z.string().nullish(),
-  }),
+  notificationOptions: notificationOptionsSchema,
 }) satisfies z.ZodType<PushNotificationEventGridData>;

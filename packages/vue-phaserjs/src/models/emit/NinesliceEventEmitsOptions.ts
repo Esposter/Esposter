@@ -1,8 +1,5 @@
 import type { NinesliceConfiguration } from "@/models/configuration/NinesliceConfiguration";
 import type { GameObjectEventMapEmitsOptions } from "@/models/emit/shared/GameObjectEventMapEmitsOptions";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type NinesliceEventEmitsOptions = GameObjectEventMapEmitsOptions & {
-  [P in UpdateEvent<keyof NinesliceConfiguration>]: [NinesliceConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type NinesliceEventEmitsOptions = EmitsOptionsFor<NinesliceConfiguration> & GameObjectEventMapEmitsOptions;
