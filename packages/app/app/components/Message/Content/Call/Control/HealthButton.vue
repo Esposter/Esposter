@@ -3,7 +3,6 @@ import { ConnectionQualityMetadataMap } from "@/services/message/room/liveKit/Co
 import { ConnectionStateMetadataMap } from "@/services/message/room/liveKit/ConnectionStateMetadataMap";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
-import { mergeProps } from "vue";
 
 const liveKitStore = useLiveKitStore();
 const { connectionQuality, connectionState } = storeToRefs(liveKitStore);
@@ -15,21 +14,17 @@ const title = computed(() => `${connectionStateMetadata.value.title} - ${connect
 </script>
 
 <template>
-  <v-menu location="top" :close-on-content-click="false">
-    <template #activator="{ props: menuProps }">
-      <v-tooltip :text="title">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn
-            :="mergeProps(menuProps, tooltipProps)"
-            :color="connectionQualityMetadata.color ?? connectionStateMetadata.color"
-            :icon="connectionQualityMetadata.icon"
-            size="default"
-            variant="plain"
-            :ripple="false"
-          />
-        </template>
-      </v-tooltip>
-    </template>
+  <StyledTooltipMenuIconButton
+    :button-props="{
+      color: connectionQualityMetadata.color ?? connectionStateMetadata.color,
+      ripple: false,
+      size: 'default',
+      variant: 'plain',
+    }"
+    :icon="connectionQualityMetadata.icon"
+    :menu-props="{ closeOnContentClick: false, location: 'top' }"
+    :text="title"
+  >
     <StyledCard py-2 min-w-72>
       <v-list density="compact">
         <v-list-item
@@ -56,5 +51,5 @@ const title = computed(() => `${connectionStateMetadata.value.title} - ${connect
         <v-list-item prepend-icon="mdi-video" :subtitle="cameraDeviceId || 'Default'" title="Camera" />
       </v-list>
     </StyledCard>
-  </v-menu>
+  </StyledTooltipMenuIconButton>
 </template>

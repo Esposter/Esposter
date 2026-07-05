@@ -42,9 +42,12 @@ const roomParticipantMap = computed(
       </v-list>
     </StyledCard>
   </v-menu>
-  <v-tooltip v-else location="bottom" text="Start Call">
-    <template #activator="{ props }">
-      <v-btn :="props" :loading="isConnecting" icon="mdi-phone" size="small" @click="joinCallByRoomId()" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    v-else
+    :button-props="{ loading: isConnecting, size: 'small' }"
+    icon="mdi-phone"
+    text="Start Call"
+    :tooltip-props="{ location: 'bottom' }"
+    @click="joinCallByRoomId()"
+  />
 </template>

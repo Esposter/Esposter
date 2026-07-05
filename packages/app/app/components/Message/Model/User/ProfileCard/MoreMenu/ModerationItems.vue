@@ -4,7 +4,7 @@ import type { User } from "@esposter/db-schema";
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { useRoleStore } from "@/store/message/room/role";
-import { RoomPermission } from "@esposter/db-schema";
+import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
 interface ModerationItemsProps {
   roomId: string;
@@ -34,41 +34,40 @@ const manageablePermissions = computed(() => {
     return null;
   return manageablePermissions;
 });
-const isBannable = computed(
-  () =>
+const checkHasManageablePermission = (permission: RoomPermission) =>
+  Boolean(
     manageablePermissions.value &&
-    hasPermission(
-      manageablePermissions.value.permissions,
-      RoomPermission.BanMembers,
-      manageablePermissions.value.isRoomOwner,
-    ),
-);
-const isKickable = computed(
-  () =>
-    manageablePermissions.value &&
-    hasPermission(
-      manageablePermissions.value.permissions,
-      RoomPermission.KickMembers,
-      manageablePermissions.value.isRoomOwner,
-    ),
-);
-const isWarnable = computed(
-  () =>
-    manageablePermissions.value &&
-    hasPermission(
-      manageablePermissions.value.permissions,
-      RoomPermission.ManageMessages,
-      manageablePermissions.value.isRoomOwner,
-    ),
-);
+    hasPermission(manageablePermissions.value.permissions, permission, manageablePermissions.value.isRoomOwner),
+  );
+const isBannable = computed(() => checkHasManageablePermission(RoomPermission.BanMembers));
+const isKickable = computed(() => checkHasManageablePermission(RoomPermission.KickMembers));
+const isWarnable = computed(() => checkHasManageablePermission(RoomPermission.ManageMessages));
 const hasModActions = computed(() => isBannable.value || isKickable.value || isWarnable.value);
 </script>
 
 <template>
   <template v-if="hasModActions">
-    <MessageModelUserProfileCardMoreMenuBanDialog v-if="isBannable" :user />
-    <MessageModelUserProfileCardMoreMenuSoftBanDialog v-if="isBannable" :user />
-    <MessageModelUserProfileCardMoreMenuKickDialog v-if="isKickable" :user />
+    <MessageModelUserProfileCardMoreMenuConfirmActionDialog
+      v-if="isBannable"
+      :text="`Are you sure you want to ban ${user.name}?`"
+      title="Ban User"
+      :type="AdminActionType.CreateBan"
+      :user
+    />
+    <MessageModelUserProfileCardMoreMenuConfirmActionDialog
+      v-if="isBannable"
+      :text="`Are you sure you want to soft-ban ${user.name}? They will be kicked and their recent messages deleted, but can rejoin via invite.`"
+      title="Soft Ban Member"
+      :type="AdminActionType.SoftBan"
+      :user
+    />
+    <MessageModelUserProfileCardMoreMenuConfirmActionDialog
+      v-if="isKickable"
+      :text="`Are you sure you want to kick ${user.name}?`"
+      title="Kick Member"
+      :type="AdminActionType.KickFromRoom"
+      :user
+    />
     <MessageModelUserProfileCardMoreMenuTimeoutDialog v-if="isKickable" :user />
     <MessageModelUserProfileCardMoreMenuWarnDialog v-if="isWarnable" :user />
     <v-list-item py-2 min-height="auto">
