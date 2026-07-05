@@ -35,12 +35,18 @@ export const usePaginationCache = <
 }: PaginationCacheOptions<TStore, TIndex, TItem>) => {
   const online = useOnline();
   let pendingOperation: Promise<void> = Promise.resolve();
+  let loadedPartitionKey: "" | IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> | undefined;
 
   watchDeep(
     () => toValue(items),
     (newItems) => {
       const partitionKeyValue = toValue(partitionKey);
-      if (!partitionKeyValue || newItems.length === 0) return;
+      if (!partitionKeyValue) return;
+      // Only persist an empty array once this partition has actually produced data — clearing the cache on
+      // emptied items lets deletions propagate offline, while a transient empty array during initial load or a
+      // partition switch (before its data arrives) must not clobber a partition we have not loaded yet.
+      if (newItems.length > 0) loadedPartitionKey = partitionKeyValue;
+      else if (loadedPartitionKey !== partitionKeyValue) return;
       const previousOperation = pendingOperation;
       pendingOperation = getResultAsync(async () => {
         await previousOperation;

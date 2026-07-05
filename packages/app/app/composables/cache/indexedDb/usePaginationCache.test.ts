@@ -101,6 +101,41 @@ describe.each<PaginationCacheVariant>([
     expect(takeOne(cachedItems).message).toStrictEqual(message);
   });
 
+  test("clears cache when items are emptied after being loaded", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await mountCache();
+    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
+    await flushCache();
+    items.value = [];
+    await flushCache();
+    const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
+
+    expect(cachedItems).toHaveLength(0);
+  });
+
+  test("does not clear cache when items are empty for a partition that has not loaded", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [new StandardMessageEntity({ message, partitionKey: secondPartitionKey, rowKey, userId })],
+      secondPartitionKey,
+    );
+    goOnline();
+    await mountCache();
+    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
+    await flushCache();
+    partitionKeyRef.value = secondPartitionKey;
+    items.value = [];
+    await flushCache();
+    const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, secondPartitionKey);
+
+    expect(cachedItems).toHaveLength(1);
+  });
+
   test("does not clear cache when items become empty on partition key switch", async () => {
     expect.hasAssertions();
 
