@@ -23,7 +23,11 @@ export const sendWebPushNotifications = async (
         if (error instanceof WebPushError)
           if (error.statusCode === 410) {
             context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
-            await db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id));
+            await getResultAsync(() =>
+              db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id)),
+            ).match(noop, (deleteError) => {
+              context.error(`Failed to delete expired subscription ${endpoint}: `, deleteError);
+            });
           } else context.error(`Failed to send push notification to ${endpoint}: `, error);
         else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
       }),

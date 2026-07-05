@@ -18,7 +18,7 @@ export const setupWebPushSuite = (
   });
 
   afterAll(async () => {
-    await getMockDb().delete(users);
+    await getMockDb().delete(users).where(eq(users.id, userId));
   });
 
   return { pushSubscription: { auth: "", endpoint: MOCK_ENDPOINT, p256dh: "", userId } };

@@ -117,8 +117,7 @@ describe(copyToClipboard, () => {
       const htmlText = await htmlBlob.text();
       const tsvText = await tsvBlob.text();
 
-      expect(htmlText).not.toContain("<th>");
-      expect(htmlText).toContain("<td>42</td>");
+      expect(htmlText).toMatchInlineSnapshot();
       expect(tsvText).toBe("42");
     });
   });

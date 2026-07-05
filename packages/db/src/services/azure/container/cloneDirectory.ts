@@ -13,8 +13,13 @@ export const cloneDirectory = async (
   if (sourceBlobNames.length === 0) return undefined;
 
   return Promise.all(
-    sourceBlobNames.map((sourceBlobName) =>
-      copyBlob(containerClient, `${containerClient.url}/${sourceBlobName}`, `${destinationPrefix}/${sourceBlobName}`),
-    ),
+    sourceBlobNames.map((sourceBlobName) => {
+      const relativeBlobName = sourceBlobName.slice(`${sourcePrefix}/`.length);
+      return copyBlob(
+        containerClient,
+        `${containerClient.url}/${sourceBlobName}`,
+        `${destinationPrefix}/${relativeBlobName}`,
+      );
+    }),
   );
 };

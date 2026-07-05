@@ -27,6 +27,8 @@ export const writeBenchmarkReport = async (file: BenchmarkTaskNode, environment:
   // (Foo.platform.bench.win32.{json,md} / Foo.platform.bench.linux.{json,md}) so each platform's run updates
   // Only its own file. Plain `*.bench.ts` files stay single-artifact and cross-platform.
   const reportPath = basePath.endsWith(".platform.bench") ? `${basePath}.${process.platform}` : basePath;
-  await writeFileOrThrow(`${reportPath}.json`, `${JSON.stringify(report, null, 2)}\n`);
-  await writeFileOrThrow(`${reportPath}.md`, formatBenchmarkMarkdown(report, environment));
+  await Promise.all([
+    writeFileOrThrow(`${reportPath}.json`, `${JSON.stringify(report, null, 2)}\n`),
+    writeFileOrThrow(`${reportPath}.md`, formatBenchmarkMarkdown(report, environment)),
+  ]);
 };

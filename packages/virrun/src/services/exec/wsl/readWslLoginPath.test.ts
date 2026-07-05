@@ -51,8 +51,9 @@ describe("readWslLoginPath", () => {
 
     expect(file).toBe("wsl.exe");
     expect([takeOne(args ?? []), takeOne(args ?? [], 1), takeOne(args ?? [], 2)]).toStrictEqual(["--exec", "sh", "-c"]);
-    expect(script).toContain("-lic");
-    expect(script).toContain("getent passwd");
+    expect(script).toMatchInlineSnapshot(
+      `"SHELL_BIN="\${SHELL:-}"; [ -x "$SHELL_BIN" ] || SHELL_BIN="$(getent passwd "$(id -un)" 2>/dev/null | cut -d: -f7)"; [ -x "$SHELL_BIN" ] || SHELL_BIN=/bin/sh; exec "$SHELL_BIN" -lic 'nodeBin="$(command -v node 2>/dev/null)"; [ -n "$nodeBin" ] && PATH="$(dirname "$(readlink -f "$nodeBin")"):$PATH"; printf "__VIRRUN_LOGIN_PATH_BEGIN__%s__VIRRUN_LOGIN_PATH_END__" "$PATH"'"`,
+    );
   });
 
   test("reuses the persisted PATH across processes without re-probing", async () => {

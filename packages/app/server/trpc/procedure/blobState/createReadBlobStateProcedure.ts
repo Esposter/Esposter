@@ -13,7 +13,7 @@ export const createReadBlobStateProcedure = <TData>(container: AzureContainer, M
       const { readableStreamBody } = await useDownload(container, getSaveBlobName(ctx.getSessionPayload.user.id));
       if (!readableStreamBody) return new Model();
       const json = await streamToText(readableStreamBody);
-      return new Model(jsonDateParse(json) as never);
+      return new Model(jsonDateParse(json));
     })
       .orTee(console.error)
       .unwrapOr(new Model()),
