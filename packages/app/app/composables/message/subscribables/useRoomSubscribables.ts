@@ -1,4 +1,5 @@
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { useRoomStore } from "@/store/message/room";
 import { useMemberStore } from "@/store/message/user/member";
 
@@ -11,11 +12,7 @@ export const useRoomSubscribables = () => {
   const { storeCreateMember, storeDeleteMember } = memberStore;
 
   useOnlineSubscribable(
-    () =>
-      rooms.value
-        .map(({ id }) => id)
-        .toSorted()
-        .join(","),
+    () => getIdsKey(rooms.value),
     (roomIdsString) => {
       if (!roomIdsString) return undefined;
 

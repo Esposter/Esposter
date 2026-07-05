@@ -1,14 +1,9 @@
-import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
-
 import { useRoomStore } from "@/store/message/room";
 import { useCallStore } from "@/store/message/room/call";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 
 export const useCallSubscribables = () => {
-  const onlineSubscribableContext: OnlineSubscribableContext = {
-    instance: getCurrentInstance(),
-    scope: getCurrentScope(),
-  };
+  const onlineSubscribableContext = getOnlineSubscribableContext();
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);

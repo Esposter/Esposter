@@ -1,4 +1,3 @@
-/* eslint-disable vitest/require-top-level-describe */
 import { describe, vi } from "vitest";
 // The shared navigator.onLine simulation for offline/online cache and subscribable tests.
 export const goOffline = () => {

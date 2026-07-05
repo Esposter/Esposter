@@ -1,14 +1,10 @@
-import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
-
 import { authClient } from "@/services/auth/authClient";
+import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { useMemberStore } from "@/store/message/user/member";
 import { useStatusStore } from "@/store/message/user/status";
 
 export const useUserSubscribables = async () => {
-  const onlineSubscribableContext: OnlineSubscribableContext = {
-    instance: getCurrentInstance(),
-    scope: getCurrentScope(),
-  };
+  const onlineSubscribableContext = getOnlineSubscribableContext();
   const { data: session } = await authClient.useSession(useFetch);
   const { $trpc } = useNuxtApp();
   const memberStore = useMemberStore();
@@ -17,14 +13,7 @@ export const useUserSubscribables = async () => {
   const { statusMap } = storeToRefs(statusStore);
 
   useOnlineSubscribable(
-    [
-      () =>
-        members.value
-          .map(({ id }) => id)
-          .toSorted()
-          .join(","),
-      session,
-    ],
+    [() => getIdsKey(members.value), session],
     ([memberIdsString, newSession]) => {
       if (!newSession) return undefined;
 

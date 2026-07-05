@@ -1,5 +1,6 @@
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
+import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { RoutePath, takeOne } from "@esposter/shared";
 
@@ -12,11 +13,7 @@ export const useDirectMessageSubscribables = () => {
   const router = useRouter();
 
   useOnlineSubscribable(
-    () =>
-      directMessages.value
-        .map(({ id }) => id)
-        .toSorted()
-        .join(","),
+    () => getIdsKey(directMessages.value),
     (roomIdsString) => {
       if (!roomIdsString) return undefined;
 
