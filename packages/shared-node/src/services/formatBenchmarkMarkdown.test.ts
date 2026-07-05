@@ -65,6 +65,7 @@ describe(formatBenchmarkMarkdown, () => {
         },
       ],
     };
+
     expect(formatBenchmarkMarkdown(grouped, environment)).toMatchInlineSnapshot(`
       "# Benchmark results
 
@@ -101,6 +102,7 @@ describe(formatBenchmarkMarkdown, () => {
         },
       ],
     };
+
     expect(formatBenchmarkMarkdown(escaped, environment)).toMatchInlineSnapshot(`
       "# Benchmark results
 

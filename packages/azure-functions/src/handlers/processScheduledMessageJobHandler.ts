@@ -68,7 +68,7 @@ export const processScheduledMessageJobHandler: StorageQueueHandler = (message, 
       });
     else {
       await assertCanCreateMessage(processingJob.userId, processingJob.roomId, payload.message);
-      const newMessage = await createAndBroadcastMessage({
+      const newMessage = await createAndBroadcastMessage(context, {
         message: payload.message,
         roomId: processingJob.roomId,
         type: MessageType.Message,

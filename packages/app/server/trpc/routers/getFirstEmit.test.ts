@@ -14,19 +14,16 @@ export const getFirstEmit = async <T>(
   return result.value;
 };
 
+const createIterator = (): AsyncIterable<string> => ({
+  [Symbol.asyncIterator]: () => ({
+    next: () => Promise.resolve<IteratorResult<string>>({ done: false, value: "" }),
+  }),
+});
+
 describe(getFirstEmit, () => {
   test("resolves the first emitted value alongside the trigger", async () => {
     expect.hasAssertions();
 
-    async function* createIterator() {
-      yield "";
-    }
-
-    await expect(
-      getFirstEmit(
-        () => createIterator(),
-        () => Promise.resolve(),
-      ),
-    ).resolves.toBe("");
+    await expect(getFirstEmit(createIterator, () => Promise.resolve())).resolves.toBe("");
   });
 });

@@ -7,7 +7,7 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 type EditedDataSourceItem = DataSourceItem & { dataSource: NonNullable<DataSourceItem["dataSource"]> };
 
 // Owns the shared command scaffold: the store wiring, the edited-dataSource guard, and the execute+push tail.
-// createCommand returns undefined for no-op cases (e.g. target not found), which skips execution entirely.
+// CreateCommand returns undefined for no-op cases (e.g. target not found), which skips execution entirely.
 export const useTableEditorCommand = <TArgs extends unknown[]>(
   createCommand: (editedItem: EditedDataSourceItem, ...args: TArgs) => ADataSourceCommand | undefined,
 ) => {

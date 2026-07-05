@@ -8,15 +8,16 @@ import { assertNode } from "@/test/assertNode.test";
 import { parseTileLayer } from "@/util/parseTileLayer";
 import { describe, expect, test } from "vitest";
 
+const createNode = (data: string) =>
+  assertNode<TMXLayerNode>({
+    "#name": TMXNodeType.Layer,
+    $: { height: 0, id: 0, name: "", type: "", width: 0 },
+    $$: [],
+    data: [assertNode<TMXDataNode>({ $: { encoding: Encoding.Csv }, $$: undefined, _: data })],
+  });
+
 describe(parseTileLayer, () => {
   const gid = 1;
-  const createNode = (data: string) =>
-    assertNode<TMXLayerNode>({
-      "#name": TMXNodeType.Layer,
-      $: { height: 0, id: 0, name: "", type: "", width: 0 },
-      $$: [],
-      data: [assertNode<TMXDataNode>({ $: { encoding: Encoding.Csv }, $$: undefined, _: data })],
-    });
 
   test("parses csv data without translating flips", async () => {
     expect.hasAssertions();
