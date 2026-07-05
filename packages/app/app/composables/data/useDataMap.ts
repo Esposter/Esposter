@@ -19,7 +19,10 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
 
       const newDefaultValue = createDefaultValue();
       dataMap.value.set(currentIdValue, newDefaultValue);
-      return newDefaultValue;
+      // Return the value read back from the reactive map, not the raw object we just created — the map
+      // Wraps object values in a reactive proxy on read, so returning newDefaultValue directly would hand
+      // Callers (and deep watchers) a non-reactive object whose later mutations never trigger reactivity.
+      return dataMap.value.get(currentIdValue) ?? newDefaultValue;
     },
     set: (newData) => {
       const currentIdValue = toValue(currentId);
