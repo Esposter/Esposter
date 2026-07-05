@@ -4,12 +4,13 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { userRouter } from "@@/server/trpc/routers/user";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { AzureContainer, DatabaseEntityType, UserStatus, userStatusesInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL, MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("user", () => {
   let mockContext: Context;
@@ -165,18 +166,13 @@ describe("user", () => {
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
     const status = UserStatus.Online;
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onUpsertStatus,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), caller.upsertStatus({ status })]);
-        return result;
-      },
+      () => caller.upsertStatus({ status }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.status).toBe(status);
-    expect(data.value.userId).toBe(user.id);
+    expect(data.status).toBe(status);
+    expect(data.userId).toBe(user.id);
   });
 
   test(`on upserts status ${UserStatus.Online} with connect`, async () => {
@@ -186,18 +182,13 @@ describe("user", () => {
     getMockSession();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onUpsertStatus,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), caller.connect()]);
-        return result;
-      },
+      () => caller.connect(),
     );
 
-    assert(!data.done);
-
-    expect(data.value.status).toBe(UserStatus.Online);
-    expect(data.value.userId).toBe(user.id);
+    expect(data.status).toBe(UserStatus.Online);
+    expect(data.userId).toBe(user.id);
   });
 
   test(`on upserts status ${UserStatus.Offline} with disconnect`, async () => {
@@ -207,18 +198,13 @@ describe("user", () => {
     getMockSession();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onUpsertStatus,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), caller.disconnect()]);
-        return result;
-      },
+      () => caller.disconnect(),
     );
 
-    assert(!data.done);
-
-    expect(data.value.status).toBe(UserStatus.Offline);
-    expect(data.value.userId).toBe(user.id);
+    expect(data.status).toBe(UserStatus.Offline);
+    expect(data.userId).toBe(user.id);
   });
 
   test("fails on upserts status with self", async () => {

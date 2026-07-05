@@ -7,11 +7,11 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("friendRequest", () => {
   let mockContext: Context;
@@ -232,19 +232,14 @@ describe("friendRequest", () => {
     const receiverUser = getMockSession().user;
     const onSendFriendRequest = await friendRequestCaller.onSendFriendRequest();
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onSendFriendRequest,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), friendRequestCaller.sendFriendRequest(receiverUser.id)]);
-        return result;
-      },
+      () => friendRequestCaller.sendFriendRequest(receiverUser.id),
     );
 
-    assert(!data.done);
-
-    expect(data.value.senderId).toBe(senderUser.id);
-    expect(data.value.receiverId).toBe(receiverUser.id);
-    expect(data.value.sender.id).toBe(senderUser.id);
+    expect(data.senderId).toBe(senderUser.id);
+    expect(data.receiverId).toBe(receiverUser.id);
+    expect(data.sender.id).toBe(senderUser.id);
   });
 
   test("on send friend request notifies caller", async () => {
@@ -255,19 +250,14 @@ describe("friendRequest", () => {
     const { user: senderUser } = senderPayload;
     const onSendFriendRequest = await friendRequestCaller.onSendFriendRequest();
     replayMockSession(senderPayload);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onSendFriendRequest,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), friendRequestCaller.sendFriendRequest(receiverUser.id)]);
-        return result;
-      },
+      () => friendRequestCaller.sendFriendRequest(receiverUser.id),
     );
 
-    assert(!data.done);
-
-    expect(data.value.senderId).toBe(senderUser.id);
-    expect(data.value.receiverId).toBe(receiverUser.id);
-    expect(data.value.receiver.id).toBe(receiverUser.id);
+    expect(data.senderId).toBe(senderUser.id);
+    expect(data.receiverId).toBe(receiverUser.id);
+    expect(data.receiver.id).toBe(receiverUser.id);
   });
 
   test("on accept friend request notifies sender", async () => {
@@ -278,17 +268,12 @@ describe("friendRequest", () => {
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
     await mockSessionOnce(mockContext.db, senderUser);
     const onAcceptFriendRequest = await friendRequestCaller.onAcceptFriendRequest();
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onAcceptFriendRequest,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), friendRequestCaller.acceptFriendRequest(senderUser.id)]);
-        return result;
-      },
+      () => friendRequestCaller.acceptFriendRequest(senderUser.id),
     );
 
-    assert(!data.done);
-
-    expect(data.value.id).toBe(receiverUser.id);
+    expect(data.id).toBe(receiverUser.id);
   });
 
   test("on accept friend request notifies caller", async () => {
@@ -298,17 +283,12 @@ describe("friendRequest", () => {
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
     const onAcceptFriendRequest = await friendRequestCaller.onAcceptFriendRequest();
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onAcceptFriendRequest,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), friendRequestCaller.acceptFriendRequest(senderUser.id)]);
-        return result;
-      },
+      () => friendRequestCaller.acceptFriendRequest(senderUser.id),
     );
 
-    assert(!data.done);
-
-    expect(data.value.id).toBe(senderUser.id);
+    expect(data.id).toBe(senderUser.id);
   });
 
   test("on decline friend request notifies sender", async () => {
@@ -319,17 +299,12 @@ describe("friendRequest", () => {
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
     await mockSessionOnce(mockContext.db, senderUser);
     const onDeclineFriendRequest = await friendRequestCaller.onDeclineFriendRequest();
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onDeclineFriendRequest,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), friendRequestCaller.declineFriendRequest(senderUser.id)]);
-        return result;
-      },
+      () => friendRequestCaller.declineFriendRequest(senderUser.id),
     );
 
-    assert(!data.done);
-
-    expect(data.value).toBe(receiverUser.id);
+    expect(data).toBe(receiverUser.id);
   });
 
   test("on decline friend request notifies caller", async () => {
@@ -339,16 +314,11 @@ describe("friendRequest", () => {
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
     const onDeclineFriendRequest = await friendRequestCaller.onDeclineFriendRequest();
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onDeclineFriendRequest,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), friendRequestCaller.declineFriendRequest(senderUser.id)]);
-        return result;
-      },
+      () => friendRequestCaller.declineFriendRequest(senderUser.id),
     );
 
-    assert(!data.done);
-
-    expect(data.value).toBe(senderUser.id);
+    expect(data).toBe(senderUser.id);
   });
 });

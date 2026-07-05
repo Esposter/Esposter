@@ -7,10 +7,10 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("friend", () => {
   let mockContext: Context;
@@ -121,17 +121,12 @@ describe("friend", () => {
     await friendRequestCaller.acceptFriendRequest(receiverUser.id);
     const onDeleteFriend = await friendCaller.onDeleteFriend();
     await mockSessionOnce(mockContext.db, receiverUser);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onDeleteFriend,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), friendCaller.deleteFriend(senderPayload.user.id)]);
-        return result;
-      },
+      () => friendCaller.deleteFriend(senderPayload.user.id),
     );
 
-    assert(!data.done);
-
-    expect(data.value).toBe(receiverUser.id);
+    expect(data).toBe(receiverUser.id);
   });
 
   test("on delete friend notifies caller", async () => {
@@ -144,16 +139,11 @@ describe("friend", () => {
     const receiverPayload = await mockSessionOnce(mockContext.db, receiverUser);
     const onDeleteFriend = await friendCaller.onDeleteFriend();
     replayMockSession(receiverPayload);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onDeleteFriend,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), friendCaller.deleteFriend(senderPayload.user.id)]);
-        return result;
-      },
+      () => friendCaller.deleteFriend(senderPayload.user.id),
     );
 
-    assert(!data.done);
-
-    expect(data.value).toBe(senderPayload.user.id);
+    expect(data).toBe(senderPayload.user.id);
   });
 });

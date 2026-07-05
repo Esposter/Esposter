@@ -5,10 +5,10 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient.test";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import {
   AdminActionType,
   AzureTable,
@@ -339,25 +339,18 @@ describe("moderation", () => {
       await mockSessionOnce(mockContext.db, member);
       const onAdminAction = await moderationCaller.onAdminAction({ roomId });
 
-      const data = await withAsyncIterator(
+      const data = await getFirstEmit(
         () => onAdminAction,
-        async (iterator) => {
-          const [result] = await Promise.all([
-            iterator.next(),
-            moderationCaller.executeAdminAction({
-              roomId,
-              targetUserId: member.id,
-              type: AdminActionType.KickFromCall,
-            }),
-          ]);
-          return result;
-        },
+        () =>
+          moderationCaller.executeAdminAction({
+            roomId,
+            targetUserId: member.id,
+            type: AdminActionType.KickFromCall,
+          }),
       );
 
-      assert(!data.done);
-
-      expect(data.value.type).toBe(AdminActionType.KickFromCall);
-      expect(data.value.durationMs).toBeUndefined();
+      expect(data.type).toBe(AdminActionType.KickFromCall);
+      expect(data.durationMs).toBeUndefined();
     });
   });
 });

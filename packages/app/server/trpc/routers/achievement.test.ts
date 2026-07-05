@@ -8,7 +8,7 @@ import { AchievementDefinitionMap } from "#shared/services/achievement/achieveme
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import {
   achievements,
   roomsInMessage,
@@ -84,24 +84,16 @@ describe("achievement", () => {
     expect.hasAssertions();
 
     const onUpdateAchievement = await caller.achievement.onUpdateAchievement();
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onUpdateAchievement,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          caller.webpageEditor.saveWebpageEditor(new WebpageEditor()),
-        ]);
-        return result;
-      },
+      () => caller.webpageEditor.saveWebpageEditor(new WebpageEditor()),
     );
 
     const unlockedAchievements: UserAchievementWithRelations[] = [];
 
-    assert(!data.done);
+    expect(data).toHaveLength(updatedAchievements.length);
 
-    expect(data.value).toHaveLength(updatedAchievements.length);
-
-    for (const achievement of data.value) {
+    for (const achievement of data) {
       expect(updatedAchievements).toContain(achievement.achievement.name);
 
       if (achievement.unlockedAt) unlockedAchievements.push(achievement);

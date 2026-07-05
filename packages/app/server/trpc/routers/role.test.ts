@@ -6,7 +6,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { DatabaseEntityType, RoomPermission, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -306,21 +306,13 @@ describe("role", () => {
     expect.hasAssertions();
 
     const onCreateRole = await roleCaller.onCreateRole({ roomId });
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onCreateRole,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          roleCaller.createRole({ name, permissions: 0n, position: 1, roomId }),
-        ]);
-        return result;
-      },
+      () => roleCaller.createRole({ name, permissions: 0n, position: 1, roomId }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.name).toBe(name);
-    expect(data.value.roomId).toBe(roomId);
+    expect(data.name).toBe(name);
+    expect(data.roomId).toBe(roomId);
   });
 
   test("on updates role", async () => {
@@ -328,21 +320,13 @@ describe("role", () => {
 
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
     const onUpdateRole = await roleCaller.onUpdateRole({ roomId });
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onUpdateRole,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          roleCaller.updateRole({ id: role.id, name: updatedName, roomId }),
-        ]);
-        return result;
-      },
+      () => roleCaller.updateRole({ id: role.id, name: updatedName, roomId }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.id).toBe(role.id);
-    expect(data.value.name).toBe(updatedName);
+    expect(data.id).toBe(role.id);
+    expect(data.name).toBe(updatedName);
   });
 
   test("on deletes role", async () => {
@@ -350,18 +334,13 @@ describe("role", () => {
 
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
     const onDeleteRole = await roleCaller.onDeleteRole({ roomId });
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onDeleteRole,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), roleCaller.deleteRole({ id: role.id, roomId })]);
-        return result;
-      },
+      () => roleCaller.deleteRole({ id: role.id, roomId }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.id).toBe(role.id);
-    expect(data.value.roomId).toBe(roomId);
+    expect(data.id).toBe(role.id);
+    expect(data.roomId).toBe(roomId);
   });
 
   test("on assigns role", async () => {
@@ -370,22 +349,14 @@ describe("role", () => {
     const targetMember = await createMember();
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
     const onAssignRole = await roleCaller.onAssignRole({ roomId });
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onAssignRole,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id }),
-        ]);
-        return result;
-      },
+      () => roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.id).toBe(role.id);
-    expect(data.value.userId).toBe(targetMember.id);
-    expect(data.value.roomId).toBe(roomId);
+    expect(data.id).toBe(role.id);
+    expect(data.userId).toBe(targetMember.id);
+    expect(data.roomId).toBe(roomId);
   });
 
   test("on revokes role", async () => {
@@ -395,21 +366,13 @@ describe("role", () => {
     const role = await roleCaller.createRole({ name, permissions: 0n, position: 1, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
     const onRevokeRole = await roleCaller.onRevokeRole({ roomId });
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onRevokeRole,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id }),
-        ]);
-        return result;
-      },
+      () => roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.roleId).toBe(role.id);
-    expect(data.value.userId).toBe(targetMember.id);
-    expect(data.value.roomId).toBe(roomId);
+    expect(data.roleId).toBe(role.id);
+    expect(data.userId).toBe(targetMember.id);
+    expect(data.roomId).toBe(roomId);
   });
 });
