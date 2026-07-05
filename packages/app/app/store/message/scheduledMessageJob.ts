@@ -2,9 +2,8 @@ import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/mes
 import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
 
 export const useScheduledMessageJobStore = defineStore("message/scheduledMessageJob", () => {
-  const items = ref<ScheduledMessageJobInMessageWithRoom[]>([]);
+  const { hasMore, items, ...restData } = useOffsetPaginationData<ScheduledMessageJobInMessageWithRoom>();
   const count = ref(0);
-  const hasMore = ref(false);
   const isPending = ref(true);
   const removeScheduledMessageJob = (id: ScheduledMessageJobInMessage["id"]) => {
     if (!items.value.some((scheduledMessageJob) => scheduledMessageJob.id === id)) return;
@@ -12,5 +11,5 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
     items.value = items.value.filter((scheduledMessageJob) => scheduledMessageJob.id !== id);
     count.value = Math.max(0, count.value - 1);
   };
-  return { count, hasMore, isPending, items, removeScheduledMessageJob };
+  return { count, hasMore, isPending, items, removeScheduledMessageJob, ...restData };
 });

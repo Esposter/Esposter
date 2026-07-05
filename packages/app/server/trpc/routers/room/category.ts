@@ -3,12 +3,12 @@ import type { RoomCategoryInMessage } from "@esposter/db-schema";
 import { createRoomCategoryInputSchema } from "#shared/models/db/roomCategory/CreateRoomCategoryInput";
 import { deleteRoomCategoryInputSchema } from "#shared/models/db/roomCategory/DeleteRoomCategoryInput";
 import { updateRoomCategoryInputSchema } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
+import { ownedBy } from "@@/server/services/db/ownedBy";
 import { router } from "@@/server/trpc";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { and, eq } from "drizzle-orm";
 
 export const categoryRouter = router({
   createRoomCategory: standardAuthedProcedure
@@ -34,12 +34,7 @@ export const categoryRouter = router({
         (
           await ctx.db
             .delete(roomCategoriesInMessage)
-            .where(
-              and(
-                eq(roomCategoriesInMessage.id, input),
-                eq(roomCategoriesInMessage.userId, ctx.getSessionPayload.user.id),
-              ),
-            )
+            .where(ownedBy(roomCategoriesInMessage, input, ctx.getSessionPayload.user.id))
             .returning()
         )[0],
         Operation.Delete,
@@ -63,12 +58,7 @@ export const categoryRouter = router({
           await ctx.db
             .update(roomCategoriesInMessage)
             .set(rest)
-            .where(
-              and(
-                eq(roomCategoriesInMessage.id, id),
-                eq(roomCategoriesInMessage.userId, ctx.getSessionPayload.user.id),
-              ),
-            )
+            .where(ownedBy(roomCategoriesInMessage, id, ctx.getSessionPayload.user.id))
             .returning()
         )[0],
         Operation.Update,

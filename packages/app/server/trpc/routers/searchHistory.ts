@@ -6,6 +6,7 @@ import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/
 import { updateSearchHistoryInputSchema } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { ownedBy } from "@@/server/services/db/ownedBy";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -15,7 +16,6 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, searchHistoriesInMessage, selectSearchHistoryInMessageSchema } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames, Operation } from "@esposter/shared";
-import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const readSearchHistoriesInputSchema = z.object({
@@ -49,12 +49,7 @@ export const searchHistoryRouter = router({
         (
           await ctx.db
             .delete(searchHistoriesInMessage)
-            .where(
-              and(
-                eq(searchHistoriesInMessage.id, input),
-                eq(searchHistoriesInMessage.userId, ctx.getSessionPayload.user.id),
-              ),
-            )
+            .where(ownedBy(searchHistoriesInMessage, input, ctx.getSessionPayload.user.id))
             .returning()
         )[0],
         Operation.Delete,
@@ -85,12 +80,7 @@ export const searchHistoryRouter = router({
           await ctx.db
             .update(searchHistoriesInMessage)
             .set({ query })
-            .where(
-              and(
-                eq(searchHistoriesInMessage.id, id),
-                eq(searchHistoriesInMessage.userId, ctx.getSessionPayload.user.id),
-              ),
-            )
+            .where(ownedBy(searchHistoriesInMessage, id, ctx.getSessionPayload.user.id))
             .returning()
         )[0],
         Operation.Update,

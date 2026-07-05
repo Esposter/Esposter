@@ -1,17 +1,17 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 
+import { ownedBy } from "@@/server/services/db/ownedBy";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
 
 export const deleteRoom = async (db: Context["db"], { session, user }: GetSessionPayload, id: string) => {
   const deletedRoom = (
     await db
       .delete(roomsInMessage)
-      .where(and(eq(roomsInMessage.id, id), eq(roomsInMessage.userId, user.id)))
+      .where(ownedBy(roomsInMessage, id, user.id))
       .returning()
   )[0];
   if (!deletedRoom)

@@ -4,68 +4,44 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient.test";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
-import { roleRouter } from "@@/server/trpc/routers/role";
-import { roomRouter } from "@@/server/trpc/routers/room";
+import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import {
   AdminActionType,
   AzureTable,
   bansInMessage,
   RoomPermission,
-  roomsInMessage,
   StandardMessageEntity,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("moderation", () => {
+  const { createMember, getMockContext, getRoomId, setupMemberWithRole } = setupRoomSuite();
   let mockContext: Context;
   let moderationCaller: DecorateRouterRecord<TRPCRouter["message"]["moderation"]>;
-  let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
-  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
   const durationMs = 1;
-  const name = "name";
 
-  const createMember = async () => {
-    const inviteCode = await roomCaller.createInvite({ roomId });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(inviteCode);
-    return user;
-  };
-
-  const setupMemberWithRole = async (permissions: bigint, position: number) => {
-    const member = await createMember();
-    const role = await roleCaller.createRole({ name: crypto.randomUUID(), permissions, position, roomId });
-    await roleCaller.assignRole({ roleId: role.id, roomId, userId: member.id });
-    return { member, role };
-  };
-
-  beforeAll(async () => {
-    mockContext = await createMockContext();
+  beforeAll(() => {
+    mockContext = getMockContext();
     moderationCaller = createCallerFactory(moderationRouter)(mockContext);
-    roleCaller = createCallerFactory(roleRouter)(mockContext);
-    roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.useFakeTimers({
       toFake: ["Date", "setTimeout", "clearTimeout", "setInterval", "clearInterval", "setImmediate", "clearImmediate"],
     });
     vi.setSystemTime(0);
-    const room = await roomCaller.createRoom({ name });
-    roomId = room.id;
+    roomId = getRoomId();
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     vi.useRealTimers();
-    MockTableDatabase.clear();
-    await mockContext.db.delete(roomsInMessage);
   });
 
   describe("executeAdminAction", () => {

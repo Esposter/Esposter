@@ -144,6 +144,8 @@ This also drops the emit chain — `RoleListItem` calls `selectRole()` directly 
 
 Use `useDataMap<T>(currentId, defaultValue)` for state keyed by an id **when there's a meaningful "current" id** (e.g. `currentRoomId`). It provides `getDataMap`, `setDataMap`, `data`, `initializeData`, `resetData`; `data` is tied to the current key.
 
+**Default value: plain value or factory.** A plain default is `structuredClone`d per key so keys never share state. Pass a **factory** (`() => new CursorPaginationData()`) when the default is a class instance — `structuredClone` strips prototypes, so a plain class-instance default is a bug. `useCursorPaginationDataMap`/`useOffsetPaginationDataMap` are thin wrappers doing exactly this.
+
 **Do NOT use** `useDataMap` when the store reads/writes arbitrary keys with no "current" concept — use a plain `ref(new Map<string, T>())` with a manual getter.
 
 ```typescript
@@ -175,11 +177,11 @@ const { data: trailingMessage } = useDataMap(() => roomStore.currentRoomId, "");
 
 Three helpers — pick by type and keying needs:
 
-| Helper                                       | When to use                                                                        |
-| -------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `useCursorPaginationData<T>()`               | `T extends ToData<AEntity>` (has top-level `id` or `partitionKey`/`rowKey`)        |
-| `useCursorPaginationOperationData(ref(...))` | Any `T` — wrap the ref yourself; layer `createOperationData` on top for typed CRUD |
-| `useCursorPaginationDataMap<T>(currentId)`   | same store holds per-key lists (e.g. pinned messages per room)                     |
+| Helper                                       | When to use                                                                           |
+| -------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `useCursorPaginationData<T>()`               | single list per store; any `T` (unconstrained)                                        |
+| `useCursorPaginationOperationData(ref(...))` | you already own the ref (e.g. from a keyed map); layer `createOperationData` for CRUD |
+| `useCursorPaginationDataMap<T>(currentId)`   | same store holds per-key lists (e.g. pinned messages per room); built on `useDataMap` |
 
 `createOperationData` supports any entity type — `EntityIdKeys<T>` resolves to `["id"]` (SQL entities extending `AItemEntity`), `["partitionKey","rowKey"]` (Azure entities), or `(keyof T & string)[]` as a fallback. `Ban` uses `(roomId, userId)` composite PK — always pass both keys exactly matching the DB primary key:
 

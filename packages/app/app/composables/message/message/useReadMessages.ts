@@ -3,10 +3,11 @@ import type { MessageEntity, StandardMessageEntity, WebhookMessageEntity } from 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
+import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { CompositeKeyPropertyNames, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 
 export const useReadMessages = () => {
   const route = useRoute();
@@ -43,9 +44,7 @@ export const useReadMessages = () => {
   };
 
   const readMessages = () => {
-    const roomId = currentRoomId.value;
-    if (!roomId)
-      throw new InvalidOperationError(Operation.Read, readMessages.name, CompositeKeyPropertyNames.partitionKey);
+    const roomId = requirePartitionKey(currentRoomId.value, readMessages.name);
     return readItems(async () => {
       const rowKey = route.params.rowKey as string | undefined;
       if (rowKey) {
@@ -72,9 +71,7 @@ export const useReadMessages = () => {
   };
 
   const readMoreMessages = (onComplete: () => void) => {
-    const roomId = currentRoomId.value;
-    if (!roomId)
-      throw new InvalidOperationError(Operation.Read, readMoreMessages.name, CompositeKeyPropertyNames.partitionKey);
+    const roomId = requirePartitionKey(currentRoomId.value, readMoreMessages.name);
     return readMoreItems(async (cursor) => {
       const response = await $trpc.message.readMessages.query({ cursor, roomId });
       await readMetadata(response.items);

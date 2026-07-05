@@ -50,6 +50,10 @@ outputToCssLayers: {
 
 Layer declaration order is in `app/assets/css/layers.css`. All `uno-*` layers appear after the `vuetify-*` layers so UnoCSS utilities can override Vuetify defaults.
 
+## Shortcuts for recurring utility pairs
+
+When the same attributify utility combination recurs across components (e.g. `op-medium-emphasis text-body-small` for hint text), define a named shortcut in `uno.config.ts` (`"text-hint": "op-medium-emphasis text-body-small"`) and use it everywhere instead of the raw pair. Update the `uno.config.test.ts` snapshot after adding one.
+
 ## Snapshot test
 
 `packages/app/uno.config.test.ts` snapshots `rules`, `safelist`, `shortcuts`, and `theme`, and separately tests the `cssLayerName` function. Run it to update the snapshots after intentional changes:
