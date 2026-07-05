@@ -97,11 +97,7 @@ export const scheduledMessageJobRouter = router({
           .select({ count: count() })
           .from(scheduledMessageJobsInMessage)
           .where(
-            and(
-              eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-              isNull(scheduledMessageJobsInMessage.cancelledAt),
-              isNull(scheduledMessageJobsInMessage.completedAt),
-            ),
+            and(eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id), isActiveScheduledMessageJob),
           )
       )[0]?.count ?? 0,
   ),
@@ -211,15 +207,7 @@ export const scheduledMessageJobRouter = router({
           await ctx.db
             .update(scheduledMessageJobsInMessage)
             .set({ cancelledAt: new Date() })
-            .where(
-              and(
-                eq(scheduledMessageJobsInMessage.id, input.id),
-                eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-                isNull(scheduledMessageJobsInMessage.cancelledAt),
-                isNull(scheduledMessageJobsInMessage.completedAt),
-                sql`${scheduledMessageJobsInMessage.payload}->>'type' = ${ScheduledMessageJobType.ScheduledMessage}`,
-              ),
-            )
+            .where(isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id))
             .returning()
         )[0],
         Operation.Update,
