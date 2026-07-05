@@ -42,18 +42,12 @@ const createWord = () => {
             @keydown.enter.prevent="createWord()"
           >
             <template #append-inner>
-              <v-tooltip text="Add word">
-                <template #activator="{ props: tooltipProps }">
-                  <v-btn
-                    :="tooltipProps"
-                    :disabled="isAtMaxWords"
-                    icon="mdi-plus"
-                    size="x-small"
-                    variant="plain"
-                    @click="createWord()"
-                  />
-                </template>
-              </v-tooltip>
+              <StyledTooltipIconButton
+                :button-props="{ disabled: isAtMaxWords, size: 'x-small', variant: 'plain' }"
+                icon="mdi-plus"
+                text="Add word"
+                @click="createWord()"
+              />
             </template>
           </v-text-field>
           <div v-if="words.length > 0" mt-1 flex flex-wrap gap-2>

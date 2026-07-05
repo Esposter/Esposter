@@ -52,17 +52,12 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
                 @update:model-value="options[index] = $event"
               />
               <template #append>
-                <v-tooltip text="Remove option">
-                  <template #activator="{ props: tooltipProps }">
-                    <v-btn
-                      :disabled="options.length <= 2"
-                      icon="mdi-close"
-                      size="small"
-                      :="tooltipProps"
-                      @click="options.splice(index, 1)"
-                    />
-                  </template>
-                </v-tooltip>
+                <StyledTooltipIconButton
+                  :button-props="{ disabled: options.length <= 2, size: 'small' }"
+                  icon="mdi-close"
+                  text="Remove option"
+                  @click="options.splice(index, 1)"
+                />
               </template>
             </v-list-item>
           </v-list>

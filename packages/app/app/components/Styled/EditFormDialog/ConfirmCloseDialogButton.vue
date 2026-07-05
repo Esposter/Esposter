@@ -18,20 +18,16 @@ const displayItemType = computed(() => prettify(editedItem.type));
 <template>
   <v-dialog v-model="dialog">
     <template #activator>
-      <v-tooltip text="Close">
-        <template #activator="{ props }">
-          <v-btn
-            icon="mdi-close"
-            :="props"
-            @click="
-              () => {
-                if (isDirty) dialog = true;
-                else emit('update:edit-form-dialog', false);
-              }
-            "
-          />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton
+        icon="mdi-close"
+        text="Close"
+        @click="
+          () => {
+            if (isDirty) dialog = true;
+            else emit('update:edit-form-dialog', false);
+          }
+        "
+      />
     </template>
     <StyledCard
       :card-props="{

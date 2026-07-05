@@ -3,7 +3,6 @@ import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/
 
 import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { DataSourceTypeItemCategoryDefinitions } from "@/services/tableEditor/file/dataSource/DataSourceTypeItemCategoryDefinitions";
-import { mergeProps } from "vue";
 
 interface ExportButtonProps {
   editedItem: TDataSourceItem;
@@ -15,14 +14,7 @@ const dataSourceType = ref(DataSourceType.Csv);
 </script>
 
 <template>
-  <v-menu>
-    <template #activator="{ props: menuProps }">
-      <v-tooltip text="Export">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-download" :disabled="!editedItem.dataSource" :="mergeProps(menuProps, tooltipProps)" />
-        </template>
-      </v-tooltip>
-    </template>
+  <StyledTooltipMenuIconButton :button-props="{ disabled: !editedItem.dataSource }" icon="mdi-download" text="Export">
     <v-list>
       <v-list-item
         v-for="{ value, icon, title } of DataSourceTypeItemCategoryDefinitions"
@@ -38,6 +30,6 @@ const dataSourceType = ref(DataSourceType.Csv);
         {{ title }}
       </v-list-item>
     </v-list>
-  </v-menu>
+  </StyledTooltipMenuIconButton>
   <TableEditorFileCrudViewExportDialog v-model="isExportDialogOpen" :edited-item :data-source-type />
 </template>

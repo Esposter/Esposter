@@ -10,10 +10,12 @@ const isOpen = ref(false);
 </script>
 
 <template>
-  <v-tooltip location="bottom" text="Add People">
-    <template #activator="{ props }">
-      <v-btn icon="mdi-account-plus" size="small" :="props" @click="isOpen = true" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ size: 'small' }"
+    icon="mdi-account-plus"
+    text="Add People"
+    :tooltip-props="{ location: 'bottom' }"
+    @click="isOpen = true"
+  />
   <MessageContentHeaderCreateDirectMessageParticipantDialog v-model="isOpen" :room-id />
 </template>

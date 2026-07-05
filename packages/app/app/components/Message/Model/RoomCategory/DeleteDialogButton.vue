@@ -23,11 +23,12 @@ const { deleteRoomCategory } = roomCategoryStore;
     "
   >
     <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Delete Category">
-        <template #activator="{ props }">
-          <v-btn icon="mdi-delete" size="x-small" variant="plain" :="props" @click.stop="updateIsOpen(true)" />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton
+        :button-props="{ size: 'x-small', variant: 'plain' }"
+        icon="mdi-delete"
+        text="Delete Category"
+        @click.stop="updateIsOpen(true)"
+      />
     </template>
   </StyledDeleteFormDialog>
 </template>

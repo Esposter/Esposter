@@ -21,19 +21,17 @@ const submit = async () => {
 <template>
   <v-text-field v-model="name" label="New role name" density="compact" hide-details @keyup.enter="submit()">
     <template #append-inner>
-      <v-tooltip text="Create role">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn
-            :disabled="!createRoleInputSchema.shape.name.safeParse(name).success"
-            density="compact"
-            icon="mdi-plus"
-            size="small"
-            variant="plain"
-            :="tooltipProps"
-            @click="submit()"
-          />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton
+        :button-props="{
+          density: 'compact',
+          disabled: !createRoleInputSchema.shape.name.safeParse(name).success,
+          size: 'small',
+          variant: 'plain',
+        }"
+        icon="mdi-plus"
+        text="Create role"
+        @click="submit()"
+      />
     </template>
   </v-text-field>
 </template>

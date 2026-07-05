@@ -35,11 +35,12 @@ const duplicateHeaders = computed(() => {
 </script>
 
 <template>
-  <v-tooltip text="Remove Duplicate Rows">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn icon="mdi-table-row-remove" size="small" tile m-0 :="tooltipProps" @click.stop="isOpen = true" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ class: 'm-0', size: 'small', tile: true }"
+    icon="mdi-table-row-remove"
+    text="Remove Duplicate Rows"
+    @click.stop="isOpen = true"
+  />
   <TableEditorDialog v-model="isOpen" close-button-text="Cancel" title="Duplicate Rows">
     <span v-if="duplicateCount === 0">No duplicate rows found.</span>
     <template v-else>

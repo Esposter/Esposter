@@ -14,17 +14,10 @@ const { deleteRole } = roleStore;
 </script>
 
 <template>
-  <v-tooltip text="Delete Role">
-    <template #activator="{ props }">
-      <v-btn
-        :="props"
-        color="error"
-        density="compact"
-        icon="mdi-trash-can-outline"
-        size="x-small"
-        variant="plain"
-        @click.stop="deleteRole({ roomId, id: roleId })"
-      />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ color: 'error', density: 'compact', size: 'x-small', variant: 'plain' }"
+    icon="mdi-trash-can-outline"
+    text="Delete Role"
+    @click.stop="deleteRole({ roomId, id: roleId })"
+  />
 </template>
