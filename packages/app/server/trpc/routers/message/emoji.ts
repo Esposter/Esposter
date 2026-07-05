@@ -11,13 +11,11 @@ import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataI
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
-import { on } from "@@/server/services/events/on";
 import { emojiEventEmitter } from "@@/server/services/message/events/emojiEventEmitter";
-import { isRoomId } from "@@/server/services/message/isRoomId";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
 import { createEntity, deleteEntity, getEntity, getTopNEntities, serializeClauses, updateEntity } from "@esposter/db";
 import {
   AZURE_MAX_PAGE_SIZE,
@@ -25,16 +23,9 @@ import {
   BinaryOperator,
   CompositeKeyPropertyNames,
   MessageMetadataType,
-  roomIdSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-
-const onCreateEmojiInputSchema = roomIdSchema;
-
-const onUpdateEmojiInputSchema = roomIdSchema;
-
-const onDeleteEmojiInputSchema = roomIdSchema;
 
 export const emojiRouter = router({
   createEmoji: getMemberProcedure(createEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
@@ -95,30 +86,9 @@ export const emojiRouter = router({
       ]);
     },
   ),
-  onCreateEmoji: getMemberProcedure(onCreateEmojiInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    for await (const [[data, device]] of on(emojiEventEmitter, "createEmoji", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
-  }),
-  onDeleteEmoji: getMemberProcedure(onDeleteEmojiInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    for await (const [[data, device]] of on(emojiEventEmitter, "deleteEmoji", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
-  }),
-  onUpdateEmoji: getMemberProcedure(onUpdateEmojiInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    for await (const [[data, device]] of on(emojiEventEmitter, "updateEmoji", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
-  }),
+  onCreateEmoji: getRoomEventSubscription(emojiEventEmitter, "createEmoji", ({ partitionKey }) => partitionKey),
+  onDeleteEmoji: getRoomEventSubscription(emojiEventEmitter, "deleteEmoji", ({ partitionKey }) => partitionKey),
+  onUpdateEmoji: getRoomEventSubscription(emojiEventEmitter, "updateEmoji", ({ partitionKey }) => partitionKey),
   readEmojis: getMemberProcedure(readMetadataInputSchema, "roomId").query(
     async ({ input: { messageRowKeys, roomId } }) => {
       const messagesMetadataClient = (await useTableClient(

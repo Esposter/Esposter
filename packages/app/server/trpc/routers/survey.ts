@@ -9,6 +9,7 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useUpdateBlobUrls } from "@@/server/composables/survey/useUpdateBlobUrls";
+import { ownedBy } from "@@/server/services/db/ownedBy";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { SURVEY_MODEL_FILENAME } from "@@/server/services/survey/constants";
@@ -42,7 +43,7 @@ import {
 } from "@esposter/db-schema";
 import { createUniqueArraySchema, InvalidOperationError, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const readSurveyInputSchema = z.object({ id: selectSurveySchema.shape.id });
@@ -132,7 +133,7 @@ export const surveyRouter = router({
       (
         await ctx.db
           .delete(surveys)
-          .where(and(eq(surveys.id, input), eq(surveys.userId, ctx.getSessionPayload.user.id)))
+          .where(ownedBy(surveys, input, ctx.getSessionPayload.user.id))
           .returning()
       )[0],
       Operation.Delete,
@@ -225,7 +226,7 @@ export const surveyRouter = router({
           await ctx.db
             .update(surveys)
             .set(rest)
-            .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.getSessionPayload.user.id)))
+            .where(ownedBy(surveys, id, ctx.getSessionPayload.user.id))
             .returning()
         )[0],
         Operation.Update,
@@ -258,7 +259,7 @@ export const surveyRouter = router({
           await ctx.db
             .update(surveys)
             .set(rest)
-            .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.getSessionPayload.user.id)))
+            .where(ownedBy(surveys, id, ctx.getSessionPayload.user.id))
             .returning()
         )[0],
         Operation.Update,

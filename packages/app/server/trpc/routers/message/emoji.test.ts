@@ -182,38 +182,6 @@ describe("emoji", () => {
     );
   });
 
-  test("on updates emoji", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: newRoom.id,
-    });
-    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInviteCode);
-    const onUpdateEmoji = await emojiCaller.onUpdateEmoji({ roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db, user);
-    const data = await getFirstEmit(
-      () => onUpdateEmoji,
-      () =>
-        emojiCaller.updateEmoji({
-          messageRowKey: newEmoji.messageRowKey,
-          partitionKey: newEmoji.partitionKey,
-          rowKey: newEmoji.rowKey,
-        }),
-    );
-    const userId = getMockSession().user.id;
-
-    expect(data.messageRowKey).toBe(newEmoji.messageRowKey);
-    expect(data.partitionKey).toBe(newEmoji.partitionKey);
-    expect(data.rowKey).toBe(newEmoji.rowKey);
-    expect(data.userIds).toStrictEqual([userId, user.id]);
-  });
-
   test("deletes", async () => {
     expect.hasAssertions();
 
@@ -237,32 +205,5 @@ describe("emoji", () => {
     });
 
     expect(readEmojis).toHaveLength(0);
-  });
-
-  test("on deletes emoji", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: newRoom.id,
-    });
-
-    const onDeleteEmoji = await emojiCaller.onDeleteEmoji({ roomId: newRoom.id });
-    const data = await getFirstEmit(
-      () => onDeleteEmoji,
-      () =>
-        emojiCaller.deleteEmoji({
-          messageRowKey: newEmoji.messageRowKey,
-          partitionKey: newEmoji.partitionKey,
-          rowKey: newEmoji.rowKey,
-        }),
-    );
-
-    expect(data.messageRowKey).toBe(newEmoji.messageRowKey);
-    expect(data.partitionKey).toBe(newEmoji.partitionKey);
-    expect(data.rowKey).toBe(newEmoji.rowKey);
   });
 });

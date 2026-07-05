@@ -4,37 +4,38 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
-import { roomRouter } from "@@/server/trpc/routers/room";
+import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
-import { roomsInMessage, searchHistoriesInMessage } from "@esposter/db-schema";
+import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import { searchHistoriesInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("searchHistory", () => {
+  const { getMockContext, getRoomId } = setupRoomSuite();
   let mockContext: Context;
   let searchHistoryCaller: DecorateRouterRecord<TRPCRouter["searchHistory"]>;
-  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  const name = "name";
+  let roomId: string;
   const query = "query";
   const updatedQuery = "updatedQuery";
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
+  beforeAll(() => {
+    mockContext = getMockContext();
     searchHistoryCaller = createCallerFactory(searchHistoryRouter)(mockContext);
-    roomCaller = createCallerFactory(roomRouter)(mockContext);
+  });
+
+  beforeEach(() => {
+    roomId = getRoomId();
   });
 
   afterEach(async () => {
     await mockContext.db.delete(searchHistoriesInMessage);
-    await mockContext.db.delete(roomsInMessage);
   });
 
   test("reads empty search histories", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name });
-    const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId: newRoom.id });
+    const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
 
     expect(readSearchHistories).toStrictEqual(getCursorPaginationData([], 0, []));
   });
@@ -42,13 +43,12 @@ describe("searchHistory", () => {
   test("reads search histories", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name });
-    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId: newRoom.id });
-    const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId: newRoom.id });
+    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
+    const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
 
     expect(readSearchHistories.items).toHaveLength(1);
     expect(takeOne(readSearchHistories.items).id).toBe(newSearchHistory.id);
-    expect(takeOne(readSearchHistories.items).roomId).toBe(newRoom.id);
+    expect(takeOne(readSearchHistories.items).roomId).toBe(roomId);
     expect(takeOne(readSearchHistories.items).query).toBe(query);
   });
 
@@ -63,29 +63,26 @@ describe("searchHistory", () => {
   test("fails read search histories with non-existent member", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db);
 
-    await expect(
-      searchHistoryCaller.readSearchHistories({ roomId: newRoom.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(searchHistoryCaller.readSearchHistories({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 
   test("creates", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name });
-    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId: newRoom.id });
+    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
 
     expect(newSearchHistory.query).toBe(query);
-    expect(newSearchHistory.roomId).toBe(newRoom.id);
+    expect(newSearchHistory.roomId).toBe(roomId);
   });
 
   test("updates", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name });
-    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId: newRoom.id });
+    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
     const updated = await searchHistoryCaller.updateSearchHistory({ id: newSearchHistory.id, query: updatedQuery });
 
     expect(updated.id).toBe(newSearchHistory.id);
@@ -95,8 +92,7 @@ describe("searchHistory", () => {
   test("deletes", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name });
-    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId: newRoom.id });
+    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId });
     const deletedSearchHistory = await searchHistoryCaller.deleteSearchHistory(newSearchHistory.id);
 
     expect(deletedSearchHistory.id).toBe(newSearchHistory.id);
