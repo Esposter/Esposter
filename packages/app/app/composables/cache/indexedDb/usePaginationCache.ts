@@ -35,6 +35,11 @@ export const usePaginationCache = <
 }: PaginationCacheOptions<TStore, TIndex, TItem>) => {
   const online = useOnline();
   let pendingOperation: Promise<void> = Promise.resolve();
+  // @TODO: loadedPartitionKey only flips after a non-empty page,
+  // So an empty first load leaves stale IndexedDB rows behind,
+  // And a later revisit can treat a transient empty array as loaded
+  // And overwrite cached data before fresh items arrive. Use an explicit
+  // Ready/loaded signal instead.
   let loadedPartitionKey: "" | IndexKey<IndexedDbDatabaseSchema, TStore, TIndex> | undefined;
 
   watchDeep(
