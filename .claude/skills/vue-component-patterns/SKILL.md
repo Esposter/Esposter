@@ -250,6 +250,10 @@ When **multiple list components** (different data sources/stores) render the sam
 
 Trigger: the same `v-list-item` + prepend block copy-pasted across 2+ lists (friends / blocked / requests / search).
 
+### Shell attrs passthrough
+
+When the shell's consumers need different root interactions (one passes `@click`, another `tabindex`), do NOT add props for them — declare `defineOptions({ inheritAttrs: false })` and spread onto the actual interactive element: `<v-list-item :="{ ...props, ...$attrs }">` (here `props` comes from a wrapping `v-hover` slot). Render optional chrome only when the consumer supplies it: `v-if="$slots.default"` around the hover/focus action toolbar. Use VueUse `useFocusWithin(useTemplateRef(...))` for focus-visibility instead of hand-rolled focusin/focusout handlers (a `@ts-expect-error TS2590` may be needed on Vuetify component refs). Examples: `Message/DraftsAndSent/BaseListItem.vue` (Draft/Scheduled/Sent), `TableEditor/File/SelectionToolbar.vue` (Row/Column TopSlots), `Message/RightSideBar/Search/Filter/PickerList.vue` (User/Room pickers — a skeleton slot referenced twice: pending state and waypoint loader).
+
 ## Permission-Filtered Action Items: Composable + v-for
 
 When list items or icon buttons are guarded by `v-if` permission checks, **move filtering into a composable** — the template gets a plain `v-for` with no conditions.
