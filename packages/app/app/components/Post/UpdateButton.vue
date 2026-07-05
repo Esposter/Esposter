@@ -10,10 +10,6 @@ const { postId } = defineProps<PostUpdateButtonProps>();
 
 <template>
   <NuxtInvisibleLink :to="RoutePath.PostUpdate(postId)">
-    <v-tooltip text="Edit Post">
-      <template #activator="{ props }">
-        <v-btn icon="mdi-pencil" size="small" tile :="props" />
-      </template>
-    </v-tooltip>
+    <StyledTooltipIconButton :button-props="{ size: 'small', tile: true }" icon="mdi-pencil" text="Edit Post" />
   </NuxtInvisibleLink>
 </template>

@@ -23,18 +23,7 @@ const { clearDraft } = inputStore;
     "
   >
     <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Delete draft">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn
-            :="tooltipProps"
-            density="comfortable"
-            icon="mdi-delete-outline"
-            size="small"
-            variant="text"
-            @click.stop="updateIsOpen(true)"
-          />
-        </template>
-      </v-tooltip>
+      <MessageDraftsAndSentActionButton icon="mdi-delete-outline" text="Delete draft" @click="updateIsOpen(true)" />
     </template>
   </StyledDeleteFormDialog>
 </template>

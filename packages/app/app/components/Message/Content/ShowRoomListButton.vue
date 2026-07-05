@@ -6,9 +6,12 @@ const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 </script>
 
 <template>
-  <v-tooltip v-if="!isLeftDrawerOpenAuto" location="bottom" text="Show Room List">
-    <template #activator="{ props }">
-      <v-btn icon="mdi-menu" size="small" :="props" @click="isLeftDrawerOpen = true" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    v-if="!isLeftDrawerOpenAuto"
+    :button-props="{ size: 'small' }"
+    icon="mdi-menu"
+    text="Show Room List"
+    :tooltip-props="{ location: 'bottom' }"
+    @click="isLeftDrawerOpen = true"
+  />
 </template>

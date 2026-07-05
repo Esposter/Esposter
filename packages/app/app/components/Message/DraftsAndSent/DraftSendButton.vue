@@ -17,28 +17,21 @@ const { clearDraft } = inputStore;
 </script>
 
 <template>
-  <v-tooltip text="Send message">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn
-        :="tooltipProps"
-        density="comfortable"
-        icon="mdi-send-outline"
-        size="small"
-        variant="text"
-        @click.stop="
-          async () => {
-            if (
-              await createMessage({
-                files: [],
-                message: draftItem.content,
-                roomId: draftItem.room.id,
-                type: MessageType.Message,
-              })
-            )
-              clearDraft(draftItem.room.id);
-          }
-        "
-      />
-    </template>
-  </v-tooltip>
+  <MessageDraftsAndSentActionButton
+    icon="mdi-send-outline"
+    text="Send message"
+    @click="
+      async () => {
+        if (
+          await createMessage({
+            files: [],
+            message: draftItem.content,
+            roomId: draftItem.room.id,
+            type: MessageType.Message,
+          })
+        )
+          clearDraft(draftItem.room.id);
+      }
+    "
+  />
 </template>

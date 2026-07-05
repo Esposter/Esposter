@@ -25,10 +25,12 @@ onKeyStroke(["y", "Y"], (event) => {
 </script>
 
 <template>
-  <v-tooltip location="bottom">
-    <template #activator="{ props }">
-      <v-btn :disabled="!isRedoable" icon="mdi-redo" variant="text" :="props" @click="redo(editedItem)" />
-    </template>
+  <StyledTooltipIconButton
+    :button-props="{ disabled: !isRedoable, variant: 'text' }"
+    icon="mdi-redo"
+    :tooltip-props="{ location: 'bottom' }"
+    @click="redo(editedItem)"
+  >
     <div v-html="tooltipHtml" />
-  </v-tooltip>
+  </StyledTooltipIconButton>
 </template>

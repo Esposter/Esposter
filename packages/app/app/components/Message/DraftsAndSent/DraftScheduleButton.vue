@@ -13,16 +13,9 @@ const { open } = scheduleDialogStore;
 </script>
 
 <template>
-  <v-tooltip text="Schedule message">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn
-        :="tooltipProps"
-        density="comfortable"
-        icon="mdi-clock-plus-outline"
-        size="small"
-        variant="text"
-        @click.stop="open({ content: draftItem.content, roomId: draftItem.room.id })"
-      />
-    </template>
-  </v-tooltip>
+  <MessageDraftsAndSentActionButton
+    icon="mdi-clock-plus-outline"
+    text="Schedule message"
+    @click="open({ content: draftItem.content, roomId: draftItem.room.id })"
+  />
 </template>
