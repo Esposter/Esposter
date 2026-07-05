@@ -3,15 +3,12 @@ import type { execFileSync as baseExecFileSync } from "node:child_process";
 import { setupTemporaryCacheHome } from "@/services/exec/test/setupTemporaryCacheHome.test";
 import { WSL_LOGIN_PATH_CACHE_FILENAME } from "@/services/exec/util/constants";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
+import { VIRRUN_LOGIN_PATH_BEGIN_MARKER, VIRRUN_LOGIN_PATH_END_MARKER } from "@/services/exec/wsl/constants";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
 import { takeOne } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-// The implementation brackets the captured PATH with these private markers; mirror them here so the mocked
-// Capture output is shaped like the real interactive-login-shell output the parser slices between.
-const PATH_BEGIN = "__VIRRUN_LOGIN_PATH_BEGIN__";
-const PATH_END = "__VIRRUN_LOGIN_PATH_END__";
 
 const { execFileSync } = vi.hoisted(() => ({ execFileSync: vi.fn<typeof baseExecFileSync>() }));
 
@@ -26,7 +23,7 @@ describe("readWslLoginPath", () => {
     // Reset the module so its memoized PATH does not leak between cases, and seed the default capture output.
     vi.resetModules();
     execFileSync.mockReset();
-    execFileSync.mockReturnValue(`noise\n${PATH_BEGIN}${loginPath}${PATH_END}`);
+    execFileSync.mockReturnValue(`noise\n${VIRRUN_LOGIN_PATH_BEGIN_MARKER}${loginPath}${VIRRUN_LOGIN_PATH_END_MARKER}`);
   });
 
   test("extracts the PATH between the markers, memoizes it, and persists the capture", async () => {
