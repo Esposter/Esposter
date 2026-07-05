@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { MessageEntity } from "@esposter/db-schema";
@@ -11,9 +10,9 @@ import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { getBlobName } from "@esposter/db";
 import {
@@ -651,7 +650,6 @@ describe("message", () => {
           rowKey: newMessage.rowKey,
         }),
     );
-
     const [, data] = trackedData as unknown as TrackedEnvelope<MessageEntity[]>;
 
     expect(data).toHaveLength(1);
@@ -673,7 +671,6 @@ describe("message", () => {
     const userId = getMockSession().user.id;
     const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-
     const id = crypto.randomUUID();
 
     await expect(
