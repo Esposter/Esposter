@@ -2,6 +2,7 @@ import type { PaginationCacheOptions } from "@/composables/cache/indexedDb/usePa
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { IndexNames } from "idb";
+import type { Except } from "type-fest";
 
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 
@@ -9,7 +10,7 @@ interface OffsetPaginationCacheOptions<
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
   TSourceItem,
-> extends Omit<PaginationCacheOptions<TStore, TIndex, TSourceItem>, "initializeItems"> {
+> extends Except<PaginationCacheOptions<TStore, TIndex, TSourceItem>, "initializeItems"> {
   initializeOffsetPaginationData: (data: OffsetPaginationData<IndexedDbDatabaseSchema[TStore]["value"]>) => void;
 }
 

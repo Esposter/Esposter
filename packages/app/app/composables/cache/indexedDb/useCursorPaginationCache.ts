@@ -2,6 +2,7 @@ import type { PaginationCacheOptions } from "@/composables/cache/indexedDb/usePa
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { IndexNames } from "idb";
+import type { Except } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 
@@ -9,7 +10,7 @@ interface CursorPaginationCacheOptions<
   TStore extends IndexedDbStoreName,
   TIndex extends IndexNames<IndexedDbDatabaseSchema, TStore>,
   TItem,
-> extends Omit<PaginationCacheOptions<TStore, TIndex, TItem>, "initializeItems"> {
+> extends Except<PaginationCacheOptions<TStore, TIndex, TItem>, "initializeItems"> {
   initializeCursorPaginationData: (data: CursorPaginationData<IndexedDbDatabaseSchema[TStore]["value"]>) => void;
 }
 
