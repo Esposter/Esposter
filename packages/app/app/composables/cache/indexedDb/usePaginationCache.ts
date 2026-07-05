@@ -43,8 +43,8 @@ export const usePaginationCache = <
       const partitionKeyValue = toValue(partitionKey);
       if (!partitionKeyValue) return;
       // Only persist an empty array once this partition has actually produced data — clearing the cache on
-      // emptied items lets deletions propagate offline, while a transient empty array during initial load or a
-      // partition switch (before its data arrives) must not clobber a partition we have not loaded yet.
+      // Emptied items lets deletions propagate offline, while a transient empty array during initial load or a
+      // Partition switch (before its data arrives) must not clobber a partition we have not loaded yet.
       if (newItems.length > 0) loadedPartitionKey = partitionKeyValue;
       else if (loadedPartitionKey !== partitionKeyValue) return;
       const previousOperation = pendingOperation;
