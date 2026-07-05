@@ -1,20 +1,15 @@
-<script setup lang="ts">
-import { mergeProps } from "vue";
-</script>
-
 <template>
-  <v-menu location="bottom end">
-    <template #activator="{ props }">
-      <v-tooltip location="bottom" text="More">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn :="mergeProps(props, tooltipProps)" icon="mdi-dots-vertical" size="small" />
-        </template>
-      </v-tooltip>
-    </template>
+  <StyledTooltipMenuIconButton
+    :button-props="{ size: 'small' }"
+    icon="mdi-dots-vertical"
+    :menu-props="{ location: 'bottom end' }"
+    text="More"
+    :tooltip-props="{ location: 'bottom' }"
+  >
     <StyledCard>
       <div pa-1 flex>
         <MessageContentHeaderActionButtons />
       </div>
     </StyledCard>
-  </v-menu>
+  </StyledTooltipMenuIconButton>
 </template>

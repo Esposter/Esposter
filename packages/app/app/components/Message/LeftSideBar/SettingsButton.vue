@@ -6,9 +6,10 @@ const { isVisible } = storeToRefs(userSettingsDialogStore);
 </script>
 
 <template>
-  <v-tooltip text="User Settings">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn :="tooltipProps" icon="mdi-cog" size="small" @click="isVisible = true" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ size: 'small' }"
+    icon="mdi-cog"
+    text="User Settings"
+    @click="isVisible = true"
+  />
 </template>

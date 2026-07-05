@@ -97,7 +97,7 @@ const vote = async (optionId: null | string) => {
               <template #label>
                 <div flex w-full>
                   <div flex-1>{{ label }}</div>
-                  <div op-medium-emphasis text-body-small>
+                  <div text-hint>
                     {{ getVoteDescription(voteCountMap.get(id) ?? 0) }} · {{ getVotePercentage(id) }}%
                   </div>
                 </div>

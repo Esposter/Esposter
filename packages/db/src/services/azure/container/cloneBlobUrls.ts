@@ -1,5 +1,7 @@
 import type { ContainerClient } from "@azure/storage-blob";
 
+import { copyBlob } from "@/services/azure/container/copyBlob";
+
 export const cloneBlobUrls = (
   containerClient: ContainerClient,
   blobUrls: string[],
@@ -9,12 +11,9 @@ export const cloneBlobUrls = (
   if (blobUrls.length === 0) return undefined;
   else
     return Promise.all(
-      blobUrls.map(async (blobUrl) => {
+      blobUrls.map((blobUrl) => {
         const destinationBlobPath = blobUrl.slice(`${containerClient.url}/${sourcePrefix}/`.length);
-        const destinationBlobName = `${destinationPrefix}/${destinationBlobPath}`;
-        const destinationBlockBlobClient = containerClient.getBlockBlobClient(destinationBlobName);
-        const poller = await destinationBlockBlobClient.beginCopyFromURL(blobUrl);
-        await poller.pollUntilDone();
+        return copyBlob(containerClient, blobUrl, `${destinationPrefix}/${destinationBlobPath}`);
       }),
     );
 };

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { usePinStore } from "@/store/message/pin";
-import { mergeProps } from "vue";
 
 const { readMorePinnedMessages, readPinnedMessages } = useReadPinnedMessages();
 const { isPending } = await readPinnedMessages();
@@ -10,14 +9,13 @@ const { hasMore, messages } = storeToRefs(pinStore);
 </script>
 
 <template>
-  <v-menu location="bottom" :close-on-content-click="false">
-    <template #activator="{ props: menuProps }">
-      <v-tooltip location="bottom" text="Pinned Messages">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-pin" size="small" :="mergeProps(menuProps, tooltipProps)" />
-        </template>
-      </v-tooltip>
-    </template>
+  <StyledTooltipMenuIconButton
+    :button-props="{ size: 'small' }"
+    icon="mdi-pin"
+    :menu-props="{ closeOnContentClick: false, location: 'bottom' }"
+    text="Pinned Messages"
+    :tooltip-props="{ location: 'bottom' }"
+  >
     <StyledCard flex flex-col>
       <v-card-title>
         <v-icon icon="mdi-pin" />
@@ -36,5 +34,5 @@ const { hasMore, messages } = storeToRefs(pinStore);
         </template>
       </MessageModelMessageSearchList>
     </StyledCard>
-  </v-menu>
+  </StyledTooltipMenuIconButton>
 </template>

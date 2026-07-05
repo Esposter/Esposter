@@ -1,7 +1,4 @@
 import type { SizeConfiguration } from "@/models/configuration/components/SizeConfiguration";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type SizeEventEmitsOptions = {
-  [P in UpdateEvent<keyof SizeConfiguration>]: [SizeConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type SizeEventEmitsOptions = EmitsOptionsFor<SizeConfiguration>;

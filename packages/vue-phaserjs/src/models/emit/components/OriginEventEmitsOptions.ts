@@ -1,7 +1,4 @@
 import type { OriginConfiguration } from "@/models/configuration/components/OriginConfiguration";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type OriginEventEmitsOptions = {
-  [P in UpdateEvent<keyof OriginConfiguration>]: [OriginConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type OriginEventEmitsOptions = EmitsOptionsFor<OriginConfiguration>;

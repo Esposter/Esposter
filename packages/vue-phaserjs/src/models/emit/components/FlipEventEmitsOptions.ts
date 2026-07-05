@@ -1,7 +1,4 @@
 import type { FlipConfiguration } from "@/models/configuration/components/FlipConfiguration";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type FlipEventEmitsOptions = {
-  [P in UpdateEvent<keyof FlipConfiguration>]: [FlipConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type FlipEventEmitsOptions = EmitsOptionsFor<FlipConfiguration>;

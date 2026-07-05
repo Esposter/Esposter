@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import { NullStrategyItemCategoryDefinitions } from "@/services/tableEditor/file/commands/NullStrategyItemCategoryDefinitions";
-import { mergeProps } from "vue";
 
 const nullStrategy = useNullStrategy();
 </script>
 
 <template>
-  <v-menu>
-    <template #activator="{ props: menuProps }">
-      <v-tooltip text="Null Strategy">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-null" size="small" tile m-0 :="mergeProps(menuProps, tooltipProps)" />
-        </template>
-      </v-tooltip>
-    </template>
+  <StyledTooltipMenuIconButton
+    :button-props="{ class: 'm-0', size: 'small', tile: true }"
+    icon="mdi-null"
+    text="Null Strategy"
+  >
     <v-list density="compact">
       <v-list-item
         v-for="{ title, value } of NullStrategyItemCategoryDefinitions"
@@ -22,5 +18,5 @@ const nullStrategy = useNullStrategy();
         @click="nullStrategy(value)"
       />
     </v-list>
-  </v-menu>
+  </StyledTooltipMenuIconButton>
 </template>

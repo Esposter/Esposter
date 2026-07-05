@@ -1,15 +1,10 @@
-import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
-
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { getResultAsync } from "@esposter/shared";
 
 export const useCallIdSubscribables = async (callId: string) => {
-  const onlineSubscribableContext: OnlineSubscribableContext = {
-    instance: getCurrentInstance(),
-    scope: getCurrentScope(),
-  };
+  const onlineSubscribableContext = getOnlineSubscribableContext();
   const { $trpc } = useNuxtApp();
   const callStore = useCallStore();
   const { activeCallSessionId } = storeToRefs(callStore);

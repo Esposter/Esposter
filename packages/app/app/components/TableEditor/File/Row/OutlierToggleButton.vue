@@ -6,18 +6,16 @@ const { isOutlierHighlightEnabled } = storeToRefs(outlierStore);
 </script>
 
 <template>
-  <v-tooltip :text="isOutlierHighlightEnabled ? 'Hide Outlier Highlighting' : 'Show Outlier Highlighting'">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn
-        size="small"
-        tile
-        m-0
-        variant="text"
-        :color="isOutlierHighlightEnabled ? 'warning' : undefined"
-        :icon="isOutlierHighlightEnabled ? 'mdi-alert-circle' : 'mdi-alert-circle-outline'"
-        :="tooltipProps"
-        @click.stop="isOutlierHighlightEnabled = !isOutlierHighlightEnabled"
-      />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{
+      class: 'm-0',
+      color: isOutlierHighlightEnabled ? 'warning' : undefined,
+      size: 'small',
+      tile: true,
+      variant: 'text',
+    }"
+    :icon="isOutlierHighlightEnabled ? 'mdi-alert-circle' : 'mdi-alert-circle-outline'"
+    :text="isOutlierHighlightEnabled ? 'Hide Outlier Highlighting' : 'Show Outlier Highlighting'"
+    @click.stop="isOutlierHighlightEnabled = !isOutlierHighlightEnabled"
+  />
 </template>

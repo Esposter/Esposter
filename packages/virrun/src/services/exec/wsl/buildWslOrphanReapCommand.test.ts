@@ -12,16 +12,21 @@ describe(buildWslOrphanReapCommand, () => {
     expect(command.slice(0, 4)).toStrictEqual(["wsl.exe", "--exec", "sh", "-c"]);
   });
 
+  // Group-kills only orphans: matched by marker, off the Relay parent (a live run's shell is Relay-parented, so
+  // Skipping those keeps the kill to orphans), with the TERM group kill and the reaper's self-exclusion guard.
   test("group-kills only orphans — matched by marker, off the Relay parent, excluding the reaper's own shell", () => {
     expect.hasAssertions();
 
-    const script = takeOne(buildWslOrphanReapCommand(VIRRUN_WSL_PROCESS_MARKER), 4);
-
-    expect(script).toContain(`pgrep -f "${VIRRUN_WSL_PROCESS_MARKER}"`);
-    // A live run's shell is parented by the wsl.exe Relay; skipping Relay-parented pids keeps the kill to orphans only.
-    expect(script).toContain("Relay*) continue");
-    // Group kill (negative pgid) with TERM so bwrap unwinds, and self-exclusion so the reaper never kills itself.
-    expect(script).toContain('kill -TERM "-$pgid"');
-    expect(script).toContain('[ "$pid" = "$self" ] && continue');
+    expect(takeOne(buildWslOrphanReapCommand(VIRRUN_WSL_PROCESS_MARKER), 4)).toMatchInlineSnapshot(`
+      "self=$$
+      for pid in $(pgrep -f "virrun-bwrap" 2>/dev/null); do
+        [ "$pid" = "$self" ] && continue
+        ppid=$(cut -d" " -f4 /proc/"$pid"/stat 2>/dev/null)
+        [ -z "$ppid" ] && continue
+        case "$(cat /proc/"$ppid"/comm 2>/dev/null)" in Relay*) continue;; esac
+        pgid=$(ps -o pgid= -p "$pid" 2>/dev/null | tr -d " ")
+        [ -n "$pgid" ] && kill -TERM "-$pgid" 2>/dev/null
+      done"
+    `);
   });
 });

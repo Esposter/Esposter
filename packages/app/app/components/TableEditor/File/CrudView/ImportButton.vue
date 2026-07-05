@@ -30,21 +30,17 @@ const previewRows = computed(() => previewDataSource.value?.rows.slice(0, 5) ?? 
 </script>
 
 <template>
-  <v-tooltip :text="`Import ${modelValue.type}`">
-    <template #activator="{ props }">
-      <v-btn
-        icon="mdi-upload"
-        :="props"
-        @click="
-          importFile(dataSourceConfiguration.mimeType, dataSourceConfiguration.accept, async (file) => {
-            const result = await dataSourceConfiguration.deserialize(file, modelValue);
-            pendingName = trimFileExtension(result.metadata.name);
-            previewDataSource = result;
-          })
-        "
-      />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    icon="mdi-upload"
+    :text="`Import ${modelValue.type}`"
+    @click="
+      importFile(dataSourceConfiguration.mimeType, dataSourceConfiguration.accept, async (file) => {
+        const result = await dataSourceConfiguration.deserialize(file, modelValue);
+        pendingName = trimFileExtension(result.metadata.name);
+        previewDataSource = result;
+      })
+    "
+  />
   <StyledDialog
     v-model="isPreviewOpen"
     :card-props="{ title: `Preview: ${pendingName}` }"

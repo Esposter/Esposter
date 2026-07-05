@@ -215,6 +215,7 @@ describe(defineConfig, () => {
               "line-height": 1.3333333333,
             },
           ],
+          "text-hint": "op-medium-emphasis text-body-small",
           "text-label-large": [
             {
               "font-family": "var(--v-font-body)",

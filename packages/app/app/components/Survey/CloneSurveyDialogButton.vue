@@ -13,11 +13,12 @@ const { group, model, name } = defineProps<CloneSurveyDialogButton>();
 <template>
   <SurveyCreateSurveyDialog :initial-value="{ name, group, model }" :card-props="{ title: 'Clone Survey' }">
     <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Clone Survey">
-        <template #activator="{ props }">
-          <v-btn icon="mdi-file-multiple" size="small" tile m-0 :="props" @click.stop="updateIsOpen(true)" />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton
+        :button-props="{ class: 'm-0', size: 'small', tile: true }"
+        icon="mdi-file-multiple"
+        text="Clone Survey"
+        @click.stop="updateIsOpen(true)"
+      />
     </template>
   </SurveyCreateSurveyDialog>
 </template>

@@ -9,11 +9,12 @@ const { isCallViewOpen } = storeToRefs(callStore);
   <v-dialog v-model="isCallViewOpen" fullscreen :scrim="false">
     <MessageContentCallView>
       <template #append>
-        <v-tooltip location="bottom" text="Close call view">
-          <template #activator="{ props }">
-            <v-btn :="props" icon="mdi-close" @click="isCallViewOpen = false" />
-          </template>
-        </v-tooltip>
+        <StyledTooltipIconButton
+          icon="mdi-close"
+          text="Close call view"
+          :tooltip-props="{ location: 'bottom' }"
+          @click="isCallViewOpen = false"
+        />
       </template>
     </MessageContentCallView>
   </v-dialog>

@@ -11,9 +11,5 @@ const onClick = async () => {
 </script>
 
 <template>
-  <v-tooltip text="Upload a File">
-    <template #activator="{ props }">
-      <v-btn icon="mdi-plus" size="small" :="props" @click="onClick()" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton :button-props="{ size: 'small' }" icon="mdi-plus" text="Upload a File" @click="onClick()" />
 </template>

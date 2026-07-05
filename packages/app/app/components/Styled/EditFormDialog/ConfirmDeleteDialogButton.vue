@@ -17,11 +17,7 @@ const isDeletable = computed(() => nameTyped.value === name);
   <!-- We don't need to show the delete button if user is creating a new item -->
   <v-dialog v-if="originalItem" v-model="dialog">
     <template #activator>
-      <v-tooltip text="Delete">
-        <template #activator="{ props }">
-          <v-btn icon="mdi-delete" :="props" @click="dialog = true" />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton icon="mdi-delete" text="Delete" @click="dialog = true" />
     </template>
     <StyledCard>
       <v-card-title flex flex-wrap whitespace-normal items-center>

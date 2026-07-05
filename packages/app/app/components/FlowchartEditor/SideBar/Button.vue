@@ -7,10 +7,6 @@ const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 
 <template>
   <div v-if="!isLeftDrawerOpenAuto" class="vue-flow__panel">
-    <v-tooltip text="Components">
-      <template #activator="{ props }">
-        <v-btn icon="mdi-chevron-double-right" :="props" @click="isLeftDrawerOpen = true" />
-      </template>
-    </v-tooltip>
+    <StyledTooltipIconButton icon="mdi-chevron-double-right" text="Components" @click="isLeftDrawerOpen = true" />
   </div>
 </template>

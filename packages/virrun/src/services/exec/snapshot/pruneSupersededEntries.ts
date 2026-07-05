@@ -1,0 +1,12 @@
+import { hasLiveLease } from "@/services/exec/snapshot/hasLiveLease";
+import { sweepStaleEntries } from "@/services/exec/snapshot/sweepStaleEntries";
+import { join } from "node:path";
+// The shared eviction behind pruneStaleSnapshots / pruneStalePrepareLayers: only `dir/<currentName>` is reused by
+// THIS run, so evict every superseded sibling to keep the host-global cache small — but that cache is shared across
+// Repos/worktrees, so spare a superseded entry a concurrent run still leases (hasLiveLease, which also reaps that
+// Entry's dead-pid leases in passing). The removals are pure cache hygiene the current run never depends on, so they
+// Run detached (via sweepStaleEntries → removeSnapshotDirectoryDetached) off the command's critical path,
+// Best-effort per entry.
+export const pruneSupersededEntries = (dir: string, currentName: string): void => {
+  sweepStaleEntries(dir, (name) => name !== currentName && !hasLiveLease(join(dir, name)));
+};

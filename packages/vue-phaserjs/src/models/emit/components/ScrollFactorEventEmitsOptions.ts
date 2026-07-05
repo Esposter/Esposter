@@ -1,7 +1,4 @@
 import type { ScrollFactorConfiguration } from "@/models/configuration/components/ScrollFactorConfiguration";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type ScrollFactorEventEmitsOptions = {
-  [P in UpdateEvent<keyof ScrollFactorConfiguration>]: [ScrollFactorConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type ScrollFactorEventEmitsOptions = EmitsOptionsFor<ScrollFactorConfiguration>;

@@ -33,17 +33,12 @@ const roomParticipantMap = computed(
     <MessageContentCallControlHandButton />
     <MessageContentCallControlHealthButton />
     <MessageContentCallControlLeaveButton />
-    <v-tooltip location="bottom" text="Open call view">
-      <template #activator="{ props }">
-        <v-btn
-          :="props"
-          icon="mdi-fullscreen"
-          size="x-small"
-          variant="text"
-          :ripple="false"
-          @click="isCallViewOpen = true"
-        />
-      </template>
-    </v-tooltip>
+    <StyledTooltipIconButton
+      :button-props="{ ripple: false, size: 'x-small', variant: 'text' }"
+      icon="mdi-fullscreen"
+      text="Open call view"
+      :tooltip-props="{ location: 'bottom' }"
+      @click="isCallViewOpen = true"
+    />
   </div>
 </template>

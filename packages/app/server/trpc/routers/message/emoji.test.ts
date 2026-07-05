@@ -4,14 +4,14 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { MessageMetadataType, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("emoji", () => {
   let mockContext: Context;
@@ -103,22 +103,14 @@ describe("emoji", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const onCreateEmoji = await emojiCaller.onCreateEmoji({ roomId: newRoom.id });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onCreateEmoji,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: newRoom.id }),
-        ]);
-        return result;
-      },
+      () => emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: newRoom.id }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.emojiTag).toBe(emojiTag);
-    expect(data.value.messageRowKey).toBe(newMessage.rowKey);
-    expect(data.value.partitionKey).toBe(newRoom.id);
+    expect(data.emojiTag).toBe(emojiTag);
+    expect(data.messageRowKey).toBe(newMessage.rowKey);
+    expect(data.partitionKey).toBe(newRoom.id);
   });
 
   test("updates", async () => {
@@ -205,28 +197,21 @@ describe("emoji", () => {
     await roomCaller.joinRoom(newInviteCode);
     const onUpdateEmoji = await emojiCaller.onUpdateEmoji({ roomId: newRoom.id });
     await mockSessionOnce(mockContext.db, user);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onUpdateEmoji,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          emojiCaller.updateEmoji({
-            messageRowKey: newEmoji.messageRowKey,
-            partitionKey: newEmoji.partitionKey,
-            rowKey: newEmoji.rowKey,
-          }),
-        ]);
-        return result;
-      },
+      () =>
+        emojiCaller.updateEmoji({
+          messageRowKey: newEmoji.messageRowKey,
+          partitionKey: newEmoji.partitionKey,
+          rowKey: newEmoji.rowKey,
+        }),
     );
     const userId = getMockSession().user.id;
 
-    assert(!data.done);
-
-    expect(data.value.messageRowKey).toBe(newEmoji.messageRowKey);
-    expect(data.value.partitionKey).toBe(newEmoji.partitionKey);
-    expect(data.value.rowKey).toBe(newEmoji.rowKey);
-    expect(data.value.userIds).toStrictEqual([userId, user.id]);
+    expect(data.messageRowKey).toBe(newEmoji.messageRowKey);
+    expect(data.partitionKey).toBe(newEmoji.partitionKey);
+    expect(data.rowKey).toBe(newEmoji.rowKey);
+    expect(data.userIds).toStrictEqual([userId, user.id]);
   });
 
   test("deletes", async () => {
@@ -266,25 +251,18 @@ describe("emoji", () => {
     });
 
     const onDeleteEmoji = await emojiCaller.onDeleteEmoji({ roomId: newRoom.id });
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onDeleteEmoji,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          emojiCaller.deleteEmoji({
-            messageRowKey: newEmoji.messageRowKey,
-            partitionKey: newEmoji.partitionKey,
-            rowKey: newEmoji.rowKey,
-          }),
-        ]);
-        return result;
-      },
+      () =>
+        emojiCaller.deleteEmoji({
+          messageRowKey: newEmoji.messageRowKey,
+          partitionKey: newEmoji.partitionKey,
+          rowKey: newEmoji.rowKey,
+        }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.messageRowKey).toBe(newEmoji.messageRowKey);
-    expect(data.value.partitionKey).toBe(newEmoji.partitionKey);
-    expect(data.value.rowKey).toBe(newEmoji.rowKey);
+    expect(data.messageRowKey).toBe(newEmoji.messageRowKey);
+    expect(data.partitionKey).toBe(newEmoji.partitionKey);
+    expect(data.rowKey).toBe(newEmoji.rowKey);
   });
 });

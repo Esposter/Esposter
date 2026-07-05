@@ -31,12 +31,11 @@ import type { Except } from "type-fest";
 
 import { MOCK_BLOB_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
-import { toWebResourceLike } from "@/services/container/toWebResourceLike";
+import { createMockResponse } from "@/services/createMockResponse";
+import { getMockSasUrl } from "@/services/getMockSasUrl";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
-import { toHttpHeadersLike } from "@azure/core-http-compat";
-import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
-import { noop, takeOne } from "@esposter/shared";
+import { getOrCreate, noop, takeOne } from "@esposter/shared";
 import { Readable } from "node:stream";
 
 export class MockBlobClient implements Except<BlobClient, "accountName"> {
@@ -47,12 +46,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   url: string;
 
   get container(): MapValue<typeof MockContainerDatabase> {
-    let container = MockContainerDatabase.get(this.containerName);
-    if (!container) {
-      container = new Map();
-      MockContainerDatabase.set(this.containerName, container);
-    }
-    return container;
+    return getOrCreate(MockContainerDatabase, this.containerName, () => new Map());
   }
 
   constructor(connectionString: string, containerName: string, blobName: string) {
@@ -86,14 +80,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     if (!sourceData) throw new MockRestError("Source blob not found", 404);
 
     this.container.set(this.name, Buffer.from(sourceData));
-    const response: BlobBeginCopyFromURLResponse = {
-      _response: {
-        headers: toHttpHeadersLike(createHttpHeaders()),
-        parsedHeaders: {},
-        request: toWebResourceLike(createPipelineRequest({ url: `${this.url}?comp=copy` })),
-        status: 202,
-      },
-    };
+    const response: BlobBeginCopyFromURLResponse = { _response: createMockResponse(202, `${this.url}?comp=copy`) };
     return Promise.resolve({
       cancelOperation: () => Promise.resolve(),
       getOperationState: () => ({ isCompleted: true, result: response }),
@@ -114,28 +101,13 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   delete(): Promise<BlobDeleteResponse> {
     if (!this.container.has(this.name)) throw new MockRestError("The specified blob does not exist.", 404);
     this.container.delete(this.name);
-    return Promise.resolve({
-      _response: {
-        headers: toHttpHeadersLike(createHttpHeaders()),
-        parsedHeaders: {},
-        request: toWebResourceLike(createPipelineRequest({ url: "" })),
-        status: 200,
-      },
-    });
+    return Promise.resolve({ _response: createMockResponse(200) });
   }
 
   deleteIfExists(): Promise<BlobDeleteIfExistsResponse> {
     const succeeded = this.container.has(this.name);
     if (succeeded) this.container.delete(this.name);
-    return Promise.resolve({
-      _response: {
-        headers: toHttpHeadersLike(createHttpHeaders()),
-        parsedHeaders: {},
-        request: toWebResourceLike(createPipelineRequest({ url: "" })),
-        status: succeeded ? 200 : 404,
-      },
-      succeeded,
-    });
+    return Promise.resolve({ _response: createMockResponse(succeeded ? 200 : 404), succeeded });
   }
 
   deleteImmutabilityPolicy(): Promise<BlobDeleteImmutabilityPolicyResponse> {
@@ -145,12 +117,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   download(): Promise<BlobDownloadResponseParsed> {
     const buffer = this.container.get(this.name);
     return Promise.resolve({
-      _response: {
-        headers: toHttpHeadersLike(createHttpHeaders()),
-        parsedHeaders: {},
-        request: toWebResourceLike(createPipelineRequest({ url: "" })),
-        status: buffer ? 200 : 404,
-      },
+      _response: createMockResponse(buffer ? 200 : 404),
       readableStreamBody: buffer ? Readable.from(buffer) : undefined,
     });
   }
@@ -174,10 +141,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   generateSasUrl(options: BlobGenerateSasUrlOptions): Promise<string> {
-    const sp = options.permissions?.toString() ?? "r";
-    return Promise.resolve(
-      `${MOCK_BLOB_BASE_URL}/${this.containerName}/${this.name}?sv=2025-11-05&sr=b&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=${sp}`,
-    );
+    return Promise.resolve(getMockSasUrl(this.url, options.permissions, "b"));
   }
 
   generateUserDelegationSasStringToSign(): string {

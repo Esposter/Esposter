@@ -69,8 +69,14 @@ describe(formatDoctorReport, () => {
       type: DiagnosticCheckType.Python3,
     };
 
-    expect(stripAnsi(formatDoctorReport({ checks: [missingPython, okSandbox], platform }))).toContain(
-      "[virrun] os backend mounts, but some commands will fail — see the checks above",
+    expect(stripAnsi(formatDoctorReport({ checks: [missingPython, okSandbox], platform }))).toBe(
+      [
+        "[virrun] doctor — os backend prerequisites (win32)",
+        "  python3 (write-back)   MISSING  not found — write-back (persist) can't reconcile produced files",
+        "      → install python3",
+        "  overlay sandbox mount  ok       bubblewrap RAM overlay mounts",
+        "[virrun] os backend mounts, but some commands will fail — see the checks above",
+      ].join("\n"),
     );
   });
 });

@@ -24,11 +24,12 @@ const name = ref("");
     "
   >
     <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Create Category">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn :="tooltipProps" icon="mdi-folder-plus-outline" size="small" @click.stop="updateIsOpen(true)" />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton
+        :button-props="{ size: 'small' }"
+        icon="mdi-folder-plus-outline"
+        text="Create Category"
+        @click.stop="updateIsOpen(true)"
+      />
     </template>
     <v-container>
       <v-text-field

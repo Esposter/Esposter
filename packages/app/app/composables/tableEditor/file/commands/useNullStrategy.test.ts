@@ -4,24 +4,16 @@ import { createColumn } from "@/composables/tableEditor/file/commands/createColu
 import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
 import { createNumberColumn } from "@/composables/tableEditor/file/commands/createNumberColumn.test";
 import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
 import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
 import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
 import { NullStrategy } from "@/models/tableEditor/file/commands/NullStrategy";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
-import { afterEach, assert, beforeEach, describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(useNullStrategy, () => {
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
-  afterEach(() => {
-    const fileHistoryStore = useFileHistoryStore();
-    const { clear } = fileHistoryStore;
-    clear();
-  });
+  setupCommandTest();
 
   test(`${NullStrategy.ReplaceWithNA} replaces null in string columns with "N/A"`, () => {
     expect.hasAssertions();

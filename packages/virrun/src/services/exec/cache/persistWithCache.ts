@@ -2,6 +2,7 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
 
+import { writeVirrunDebug } from "@/services/cli/debug/writeVirrunDebug";
 import { formatVirrunCacheHit } from "@/services/cli/format/formatVirrunCacheHit";
 import { formatVirrunNetworkHint } from "@/services/cli/format/formatVirrunNetworkHint";
 import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
@@ -25,7 +26,14 @@ export const persistWithCache = async (
   outputDirs: readonly string[] = [],
 ): Promise<ExecResult> => {
   const key = isTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd) : null;
-  if (key === null) return persistRun(backend, command, options, extraLowerDirs, outputDirs);
+  if (key === null) {
+    writeVirrunDebug(
+      isTaskCacheEnabled()
+        ? "task cache off — no key (not a git repo or no lockfile)"
+        : "task cache off — disabled (CI or VIRRUN_NO_CACHE)",
+    );
+    return persistRun(backend, command, options, extraLowerDirs, outputDirs);
+  }
   // Reproduce a result under the caller's stdio convention, matching createBwrapBackend: "inherit" already put its
   // Output on the terminal so it returns empty streams; "pipe" returns the captured streams.
   const toResult = (result: ExecResult): ExecResult =>
@@ -56,7 +64,10 @@ export const persistWithCache = async (
       // A write-network install (`pnpm install`/`add`/`update`) can still succeed offline from the warm store, so the
       // Net-unshare gate alone would cache it. Its output isn't determined by the key it mutates, so skip recording —
       // The run is flushed and correct, just uncached.
-      if (hasDependencyClosureMutation(plan)) return;
+      if (hasDependencyClosureMutation(plan)) {
+        writeVirrunDebug("task cache record skipped — run mutated the dependency closure");
+        return;
+      }
       recordTaskCache(key, upperDir, plan, persistResult);
     },
   );

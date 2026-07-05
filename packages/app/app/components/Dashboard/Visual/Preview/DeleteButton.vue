@@ -15,9 +15,10 @@ const { deleteVisual } = visualStore;
 </script>
 
 <template>
-  <v-tooltip :text="`Delete ${prettify(type)} Visual`">
-    <template #activator="{ props }">
-      <v-btn right-0 top-0 absolute icon="mdi-close" size="small" :="props" @click="deleteVisual({ id })" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ class: 'right-0 top-0 absolute', size: 'small' }"
+    icon="mdi-close"
+    :text="`Delete ${prettify(type)} Visual`"
+    @click="deleteVisual({ id })"
+  />
 </template>

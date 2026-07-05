@@ -35,15 +35,14 @@ const menuItems = computed<Item[]>(() => [
 <template>
   <StyledCard :card-props="{ elevation: isHovering ? 12 : 2, ...hoverProps }">
     <v-card-actions p-0 gap-0 min-h-auto>
-      <v-tooltip
+      <StyledTooltipIconButton
         v-for="{ color, icon, shortTitle, title, onClick } of menuItems"
         :key="title"
+        :button-props="{ class: 'm-0', color, density: 'comfortable', size: 'small', tile: true }"
+        :icon
         :text="shortTitle ?? title"
-      >
-        <template #activator="{ props }">
-          <v-btn :color density="comfortable" :icon size="small" tile m-0 :="props" @click.stop="onClick?.($event)" />
-        </template>
-      </v-tooltip>
+        @click.stop="onClick?.($event)"
+      />
     </v-card-actions>
   </StyledCard>
 </template>

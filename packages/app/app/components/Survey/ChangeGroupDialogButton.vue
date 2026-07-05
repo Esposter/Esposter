@@ -29,11 +29,12 @@ const group = ref(survey.group);
     "
   >
     <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Change Group">
-        <template #activator="{ props }">
-          <v-btn icon="mdi-folder-arrow-left-right" size="small" tile m-0 :="props" @click.stop="updateIsOpen(true)" />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton
+        :button-props="{ class: 'm-0', size: 'small', tile: true }"
+        icon="mdi-folder-arrow-left-right"
+        text="Change Group"
+        @click.stop="updateIsOpen(true)"
+      />
     </template>
     <v-container fluid>
       <v-row>

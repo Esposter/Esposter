@@ -45,31 +45,25 @@ const isDismissing = ref(false);
         />
       </template>
     </v-tooltip>
-    <v-tooltip text="Dismiss">
-      <template #activator="{ props: tooltipProps }">
-        <v-btn
-          :="tooltipProps"
-          :loading="isDismissing"
-          icon="mdi-close"
-          size="small"
-          variant="plain"
-          @click="
+    <StyledTooltipIconButton
+      :button-props="{ loading: isDismissing, size: 'small', variant: 'plain' }"
+      icon="mdi-close"
+      text="Dismiss"
+      @click="
+        async () => {
+          const callSessionId = activeCallSessionId;
+          if (!callSessionId) return;
+          isDismissing = true;
+          await withFinalizerAsync(
             async () => {
-              const callSessionId = activeCallSessionId;
-              if (!callSessionId) return;
-              isDismissing = true;
-              await withFinalizerAsync(
-                async () => {
-                  await dismissKnocker(callSessionId, knocker.id);
-                },
-                () => {
-                  isDismissing = false;
-                },
-              );
-            }
-          "
-        />
-      </template>
-    </v-tooltip>
+              await dismissKnocker(callSessionId, knocker.id);
+            },
+            () => {
+              isDismissing = false;
+            },
+          );
+        }
+      "
+    />
   </div>
 </template>

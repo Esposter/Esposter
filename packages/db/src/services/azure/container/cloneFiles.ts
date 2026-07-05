@@ -1,6 +1,7 @@
 import type { ContainerClient } from "@azure/storage-blob";
 import type { FileEntity } from "@esposter/db-schema";
 
+import { copyBlob } from "@/services/azure/container/copyBlob";
 import { getBlobName } from "@/services/azure/container/getBlobName";
 
 export const cloneFiles = (
@@ -14,12 +15,9 @@ export const cloneFiles = (
     return Promise.all(
       files.map(async ({ filename, id }) => {
         const sourceBlobName = getBlobName(`${sourcePrefix}/${id}`, filename);
-        const sourceBlobUrl = `${containerClient.url}/${sourceBlobName}`;
         const newId: string = crypto.randomUUID();
         const destinationBlobName = getBlobName(`${destinationPrefix}/${newId}`, filename);
-        const destinationBlockBlobClient = containerClient.getBlockBlobClient(destinationBlobName);
-        const poller = await destinationBlockBlobClient.beginCopyFromURL(sourceBlobUrl);
-        await poller.pollUntilDone();
+        await copyBlob(containerClient, `${containerClient.url}/${sourceBlobName}`, destinationBlobName);
         return newId;
       }),
     );

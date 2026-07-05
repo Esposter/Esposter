@@ -39,11 +39,12 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || (!isCreat
     @submit="(_event, onComplete) => emit('submit', onComplete)"
   >
     <template #activator="{ updateIsOpen }">
-      <v-tooltip :text="tooltipText">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn :icon size="small" tile m-0 :="tooltipProps" @click.stop="updateIsOpen(true)" />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton
+        :button-props="{ class: 'm-0', size: 'small', tile: true }"
+        :icon
+        :text="tooltipText"
+        @click.stop="updateIsOpen(true)"
+      />
     </template>
     <template #prepend-actions>
       <StyledEditFormDialogErrorIcon

@@ -1,26 +1,10 @@
 import { Dungeons, dungeonsSchema } from "#shared/models/dungeons/data/Dungeons";
-import { useDownload } from "@@/server/composables/azure/container/useDownload";
-import { useUpload } from "@@/server/composables/azure/container/useUpload";
-import { SAVE_FILENAME } from "@@/server/services/dungeons/constants";
 import { router } from "@@/server/trpc";
-import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { createReadBlobStateProcedure } from "@@/server/trpc/procedure/blobState/createReadBlobStateProcedure";
+import { createSaveBlobStateProcedure } from "@@/server/trpc/procedure/blobState/createSaveBlobStateProcedure";
 import { AzureContainer } from "@esposter/db-schema";
-import { getResultAsync, jsonDateParse, streamToText } from "@esposter/shared";
 
 export const dungeonsRouter = router({
-  readDungeons: standardAuthedProcedure.query<Dungeons>(({ ctx }) => {
-    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
-    return getResultAsync(async () => {
-      const { readableStreamBody } = await useDownload(AzureContainer.DungeonsAssets, blobName);
-      if (!readableStreamBody) return new Dungeons();
-      const json = await streamToText(readableStreamBody);
-      return new Dungeons(jsonDateParse(json));
-    })
-      .orTee(console.error)
-      .unwrapOr(new Dungeons());
-  }),
-  saveDungeons: standardAuthedProcedure.input(dungeonsSchema).mutation(async ({ ctx, input }) => {
-    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
-    await useUpload(AzureContainer.DungeonsAssets, blobName, JSON.stringify(input));
-  }),
+  readDungeons: createReadBlobStateProcedure(AzureContainer.DungeonsAssets, Dungeons),
+  saveDungeons: createSaveBlobStateProcedure(AzureContainer.DungeonsAssets, dungeonsSchema),
 });

@@ -5,9 +5,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <v-tooltip text="Delete Post">
-    <template #activator="{ props }">
-      <v-btn icon="mdi-delete" size="small" tile :="props" @click="emit('update:delete-mode', true)" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ size: 'small', tile: true }"
+    icon="mdi-delete"
+    text="Delete Post"
+    @click="emit('update:delete-mode', true)"
+  />
 </template>

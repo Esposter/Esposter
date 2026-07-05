@@ -1,12 +1,6 @@
 import type { GameObjectConfiguration } from "@/models/configuration/global/GameObjectConfiguration";
-import type { GameObjectEventMap } from "@/util/emit/GameObjectEventMap";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
-import type { Types } from "phaser";
+import type { GameObjectEventMapEmitsOptions } from "@/models/emit/shared/GameObjectEventMapEmitsOptions";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 // Phaser-specific game object events, so the setter map doesn't implement them; we just redirect
 // Our vue events to the equivalent phaser event.
-export type GameObjectEventEmitsOptions = {
-  [P in keyof typeof GameObjectEventMap]: Types.Input.EventData[];
-} & {
-  [P in UpdateEvent<keyof GameObjectConfiguration>]: [GameObjectConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type GameObjectEventEmitsOptions = EmitsOptionsFor<GameObjectConfiguration> & GameObjectEventMapEmitsOptions;

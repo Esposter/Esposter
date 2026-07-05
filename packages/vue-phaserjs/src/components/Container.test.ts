@@ -2,26 +2,21 @@ import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
 
 import Container from "@/components/Container.vue";
 import Sprite from "@/components/Sprite.vue";
-import { getTestPinia, removeTestScene, startTestScene } from "@/test/fixtures/headlessGame.test";
-import { InjectionKeyMap } from "@/util/InjectionKeyMap";
-import { mount } from "@vue/test-utils";
+import { startTestScene } from "@/test/fixtures/headlessGame.test";
+import { setupGameObjectSuite } from "@/test/fixtures/setupGameObjectSuite.test";
 import { GameObjects } from "phaser";
 import { assert, describe, expect, test } from "vitest";
 import { h } from "vue";
 
 describe("container", () => {
-  const sceneKey = "sceneKey";
+  const { mountGameObject, sceneKey } = setupGameObjectSuite();
 
   test("child sprite is placed inside the phaser container", () => {
     expect.hasAssertions();
 
     let capturedSprite: GameObjects.Sprite | undefined;
 
-    const wrapper = mount(Container, {
-      global: {
-        plugins: [getTestPinia()],
-        provide: { [InjectionKeyMap.SceneKey]: sceneKey },
-      },
+    mountGameObject(Container, {
       slots: {
         default: () =>
           h(Sprite, {
@@ -38,8 +33,5 @@ describe("container", () => {
     assert.exists(capturedSprite);
 
     expect(capturedSprite.parentContainer).not.toBeNull();
-
-    wrapper.unmount();
-    removeTestScene(sceneKey);
   });
 });

@@ -61,12 +61,15 @@ export default defineConfig({
     ...allColorKeys.flatMap((key) => [`bg-${key}`, `text-${key}`]),
     ...Object.keys(opacityUtilities),
   ],
-  shortcuts: Object.fromEntries(
-    Object.entries(typographyPresets.md3).map(([name, styles]) => [
-      `text-${toKebabCase(name)}`,
-      [Object.fromEntries(Object.entries(styles).map(([k, v]) => [toKebabCase(k), v]))],
-    ]),
-  ),
+  shortcuts: {
+    ...Object.fromEntries(
+      Object.entries(typographyPresets.md3).map(([name, styles]) => [
+        `text-${toKebabCase(name)}`,
+        [Object.fromEntries(Object.entries(styles).map(([k, v]) => [toKebabCase(k), v]))],
+      ]),
+    ),
+    "text-hint": "op-medium-emphasis text-body-small",
+  },
   theme: {
     breakpoint: forUnoCSS,
     colors: Object.fromEntries(allColorKeys.map((key) => [key, `rgb(var(--v-theme-${key}))`])),

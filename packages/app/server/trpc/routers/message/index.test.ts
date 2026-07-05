@@ -11,6 +11,7 @@ import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
@@ -297,22 +298,14 @@ describe("message", () => {
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
     const message = getMessage(user.id);
     await mockSessionOnce(mockContext.db, user);
-    const trackedData = await withAsyncIterator(
+    const trackedData = await getFirstEmit(
       () => onCreateMessage,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          messageCaller.createMessage({ message, roomId: newRoom.id }),
-        ]);
-        return result;
-      },
+      () => messageCaller.createMessage({ message, roomId: newRoom.id }),
     );
 
-    assert(!trackedData.done);
+    expect(trackedData).toHaveLength(3);
 
-    expect(trackedData.value).toHaveLength(3);
-
-    const [id, data] = trackedData.value as unknown as TrackedEnvelope<MessageEntity[]>;
+    const [id, data] = trackedData as unknown as TrackedEnvelope<MessageEntity[]>;
 
     expect(id).toBe(takeOne(data).rowKey);
     expect(data).toHaveLength(1);
@@ -370,24 +363,17 @@ describe("message", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const onCreateTyping = await messageCaller.onCreateTyping({ roomId: newRoom.id });
     const mockSession = getMockSession();
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onCreateTyping,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          messageCaller.createTyping({
-            roomId: newRoom.id,
-            userId: mockSession.user.id,
-            username: mockSession.user.name,
-          }),
-        ]);
-        return result;
-      },
+      () =>
+        messageCaller.createTyping({
+          roomId: newRoom.id,
+          userId: mockSession.user.id,
+          username: mockSession.user.name,
+        }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.roomId).toBe(newRoom.id);
+    expect(data.roomId).toBe(newRoom.id);
   });
 
   test("updates", async () => {
@@ -440,24 +426,17 @@ describe("message", () => {
     const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const onUpdateMessage = await messageCaller.onUpdateMessage({ roomId: newRoom.id });
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onUpdateMessage,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          messageCaller.updateMessage({
-            message: updatedMessage,
-            partitionKey: newMessage.partitionKey,
-            rowKey: newMessage.rowKey,
-          }),
-        ]);
-        return result;
-      },
+      () =>
+        messageCaller.updateMessage({
+          message: updatedMessage,
+          partitionKey: newMessage.partitionKey,
+          rowKey: newMessage.rowKey,
+        }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.message).toBe(updatedMessage);
+    expect(data.message).toBe(updatedMessage);
   });
 
   test("deletes", async () => {
@@ -496,24 +475,17 @@ describe("message", () => {
     const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId: newRoom.id });
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onDeleteMessage,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          messageCaller.deleteMessage({
-            partitionKey: newMessage.partitionKey,
-            rowKey: newMessage.rowKey,
-          }),
-        ]);
-        return result;
-      },
+      () =>
+        messageCaller.deleteMessage({
+          partitionKey: newMessage.partitionKey,
+          rowKey: newMessage.rowKey,
+        }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.partitionKey).toBe(newMessage.partitionKey);
-    expect(data.value.rowKey).toBe(newMessage.rowKey);
+    expect(data.partitionKey).toBe(newMessage.partitionKey);
+    expect(data.rowKey).toBe(newMessage.rowKey);
   });
 
   test("forwards message", async () => {
@@ -670,24 +642,17 @@ describe("message", () => {
       new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
     );
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
-    const trackedData = await withAsyncIterator(
+    const trackedData = await getFirstEmit(
       () => onCreateMessage,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          messageCaller.forwardMessage({
-            partitionKey: newMessage.partitionKey,
-            roomIds: [newRoom.id],
-            rowKey: newMessage.rowKey,
-          }),
-        ]);
-        return result;
-      },
+      () =>
+        messageCaller.forwardMessage({
+          partitionKey: newMessage.partitionKey,
+          roomIds: [newRoom.id],
+          rowKey: newMessage.rowKey,
+        }),
     );
 
-    assert(!trackedData.done);
-
-    const [, data] = trackedData.value as unknown as TrackedEnvelope<MessageEntity[]>;
+    const [, data] = trackedData as unknown as TrackedEnvelope<MessageEntity[]>;
 
     expect(data).toHaveLength(1);
     await expect(

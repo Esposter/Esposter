@@ -8,6 +8,8 @@ import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
+// The generic blob-state matrix for createReadBlobStateProcedure/createSaveBlobStateProcedure (cold read defaults +
+// Save/read roundtrip) lives here; the sibling editor/game router tests keep only the wiring roundtrip.
 describe("webpageEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["webpageEditor"]>;
 

@@ -13,9 +13,7 @@ const hasInputDevice = computed(() => permissionGranted.value && audioInputs.val
 </script>
 
 <template>
-  <div mb-3 op-medium-emphasis text-body-small>
-    Controls how much sound {{ MESSAGE_DISPLAY_NAME }} transmits from your mic.
-  </div>
+  <div mb-3 text-hint>Controls how much sound {{ MESSAGE_DISPLAY_NAME }} transmits from your mic.</div>
   <MessageModelUserSettingsTypeVoiceInputSensitivityThresholdSlider v-if="hasInputDevice" :user-settings />
   <MessageModelUserSettingsTypeVoiceInputSensitivityNoDeviceWarning v-else @grant="ensurePermissions()" />
 </template>

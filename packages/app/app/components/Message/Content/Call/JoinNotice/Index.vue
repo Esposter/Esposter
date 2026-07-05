@@ -12,7 +12,7 @@ const { joinNoticeParticipant } = storeToRefs(participantStore);
 <template>
   <StyledCard v-if="knockers.length > 0" px-4 py-3 max-w-sm right-4 top-4 absolute>
     <div flex flex-col gap-y-3>
-      <span op-medium-emphasis text-body-small>Waiting to join</span>
+      <span text-hint>Waiting to join</span>
       <MessageContentCallJoinNoticeKnockerItem v-for="knocker of knockers" :key="knocker.id" :knocker />
     </div>
   </StyledCard>

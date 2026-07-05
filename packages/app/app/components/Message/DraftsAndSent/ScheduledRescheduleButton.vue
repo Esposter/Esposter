@@ -14,22 +14,15 @@ const { open } = scheduleDialogStore;
 </script>
 
 <template>
-  <v-tooltip text="Reschedule message">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn
-        :="tooltipProps"
-        density="comfortable"
-        icon="mdi-clock-edit-outline"
-        size="small"
-        variant="text"
-        @click.stop="
-          open({
-            content: getScheduledMessageJobText(scheduledMessageJob),
-            roomId: scheduledMessageJob.roomId,
-            scheduledMessageJobId: scheduledMessageJob.id,
-          })
-        "
-      />
-    </template>
-  </v-tooltip>
+  <MessageDraftsAndSentActionButton
+    icon="mdi-clock-edit-outline"
+    text="Reschedule message"
+    @click="
+      open({
+        content: getScheduledMessageJobText(scheduledMessageJob),
+        roomId: scheduledMessageJob.roomId,
+        scheduledMessageJobId: scheduledMessageJob.id,
+      })
+    "
+  />
 </template>

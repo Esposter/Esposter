@@ -1,34 +1,15 @@
 <script setup lang="ts">
 import { RightDrawer } from "@/models/message/RightDrawer";
-import { useLayoutStore } from "@/store/layout";
-import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
 
-const layoutStore = useLayoutStore();
-const { isRightDrawerOpen } = storeToRefs(layoutStore);
-const messageLayoutStore = useMessageLayoutStore();
-const { rightDrawer } = storeToRefs(messageLayoutStore);
+const { isOpen, toggle } = useToggleRightDrawer(RightDrawer.Member);
 </script>
 
 <template>
-  <v-tooltip
-    location="bottom"
-    :text="`${isRightDrawerOpen && rightDrawer === RightDrawer.Member ? 'Hide' : 'Show'} Member List`"
-  >
-    <template #activator="{ props }">
-      <v-btn
-        icon="mdi-account-multiple"
-        size="small"
-        :="props"
-        @click="
-          () => {
-            if (rightDrawer === RightDrawer.Member) isRightDrawerOpen = !isRightDrawerOpen;
-            else {
-              rightDrawer = RightDrawer.Member;
-              isRightDrawerOpen = true;
-            }
-          }
-        "
-      />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ size: 'small' }"
+    icon="mdi-account-multiple"
+    :text="`${isOpen ? 'Hide' : 'Show'} Member List`"
+    :tooltip-props="{ location: 'bottom' }"
+    @click="toggle"
+  />
 </template>
