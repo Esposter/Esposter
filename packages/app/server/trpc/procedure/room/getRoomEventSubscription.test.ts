@@ -3,12 +3,14 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
 import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
-import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+
+const createDevice = (): Device => ({ sessionId: crypto.randomUUID(), userId: crypto.randomUUID() });
 
 describe(getRoomEventSubscription, () => {
   const { getMockContext, getRoleCaller, getRoomCaller, getRoomId } = setupRoomSuite();
@@ -17,8 +19,6 @@ describe(getRoomEventSubscription, () => {
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
   const name = "name";
-
-  const createDevice = (): Device => ({ sessionId: crypto.randomUUID(), userId: crypto.randomUUID() });
 
   beforeAll(() => {
     mockContext = getMockContext();

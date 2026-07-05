@@ -12,7 +12,7 @@ import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, beforeEach, describe } from "vitest";
 
 // Room-suite fixture: owns the mock context, room/role callers, a fresh room per test, and the
-// standard cleanup. Suite-specific hooks compose — before-hooks run after these, after-hooks before.
+// Standard cleanup. Suite-specific hooks compose — before-hooks run after these, after-hooks before.
 export const setupRoomSuite = () => {
   let mockContext: Context;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
