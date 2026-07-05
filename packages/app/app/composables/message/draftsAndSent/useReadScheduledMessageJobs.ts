@@ -4,17 +4,17 @@ import { withFinalizerAsync } from "@esposter/shared";
 export const useReadScheduledMessageJobs = () => {
   const { $trpc } = useNuxtApp();
   const scheduledMessageJobStore = useScheduledMessageJobStore();
+  const { readItems } = scheduledMessageJobStore;
   const { count, hasMore, isPending, items } = storeToRefs(scheduledMessageJobStore);
   const readScheduledMessageJobs = () =>
-    withFinalizerAsync(
+    readItems(
       async () => {
         const [data, total] = await Promise.all([
           $trpc.message.scheduledMessageJob.readMyScheduledJobs.query(),
           $trpc.message.scheduledMessageJob.readMyScheduledJobsCount.query(),
         ]);
-        items.value = data.items;
         count.value = total;
-        hasMore.value = data.hasMore;
+        return data;
       },
       () => {
         isPending.value = false;

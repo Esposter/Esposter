@@ -4,15 +4,15 @@ import { withFinalizerAsync } from "@esposter/shared";
 export const useReadSentMessages = () => {
   const { $trpc } = useNuxtApp();
   const sentMessageStore = useSentMessageStore();
+  const { readItems } = sentMessageStore;
   const { count, hasMore, isPending, items, offset } = storeToRefs(sentMessageStore);
   const readSentMessages = () =>
-    withFinalizerAsync(
+    readItems(
       async () => {
         const { count: total, data } = await $trpc.message.readMySentMessages.query();
-        items.value = data.items;
         count.value = total;
-        hasMore.value = data.hasMore;
         offset.value = data.items.length;
+        return data;
       },
       () => {
         isPending.value = false;
