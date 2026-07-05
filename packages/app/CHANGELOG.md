@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
+
+### Bug Fixes
+
+* lint ([d668291](https://github.com/Esposter/Esposter/commit/d66829181390e45f6fdf9f30ef379b8d2494804a))
+* lint ([44f820b](https://github.com/Esposter/Esposter/commit/44f820b06ecbd6454b6a8f994decd1bc802dff05))
+* lint ([15b9814](https://github.com/Esposter/Esposter/commit/15b98148685d815e3f1d9b10a3f0ff58ad79c743))
+* lint and skip test for now ([3558dca](https://github.com/Esposter/Esposter/commit/3558dcaf3084b13b8c05cb7857f983bcf781329e))
+* lint and snapshot ([f97bf86](https://github.com/Esposter/Esposter/commit/f97bf867b5e420c861754bfb0cd9c2a48e9ee1cc))
+* pagination ([e605637](https://github.com/Esposter/Esposter/commit/e605637d7675c514a13e8b354f97147cdd4da22f))
+* reactive value ([21ff8bf](https://github.com/Esposter/Esposter/commit/21ff8bf45e3cd27b938efb352d9976f54ef6abf1))
+* snapshots ([5a04f18](https://github.com/Esposter/Esposter/commit/5a04f18c732cd3e7028e901823b515aff6c3cb7a))
+* tests ([f882fb5](https://github.com/Esposter/Esposter/commit/f882fb5c4e6dbbbfb031a5f9b3d5ffe29b82bdbb))
+* types ([4a3ec57](https://github.com/Esposter/Esposter/commit/4a3ec57ac7cf9eb0a3b3a5104af57402596d941f))
+* types and skills md ([be7f6c9](https://github.com/Esposter/Esposter/commit/be7f6c95a01c853505e49b52608db63db5f0a7af))
+
 ## [2.34.1](https://github.com/Esposter/Esposter/compare/v2.34.0...v2.34.1) (2026-07-04)
 
 ### Bug Fixes
