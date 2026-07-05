@@ -1,5 +1,9 @@
-export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultValue: TItem) => {
+export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultValue: TItem | (() => TItem)) => {
   const dataMap: Ref<Map<string, TItem>> = ref(new Map());
+  // A factory creates a fresh default per key (required for class instances, which structuredClone
+  // would strip to plain objects); a plain value is cloned so keys never share state.
+  const createDefaultValue = () =>
+    typeof defaultValue === "function" ? (defaultValue as () => TItem)() : structuredClone(defaultValue);
   const getData = (key: string) => dataMap.value.get(key);
   const setData = (key: string, value: TItem) => {
     dataMap.value.set(key, value);
@@ -8,16 +12,13 @@ export const useDataMap = <TItem>(currentId: MaybeRefOrGetter<string>, defaultVa
   const data = computed({
     get: () => {
       const currentIdValue = toValue(currentId);
-      if (!currentIdValue) {
-        const clonedDefaultValue = structuredClone(defaultValue);
-        return clonedDefaultValue;
-      }
+      if (!currentIdValue) return createDefaultValue();
 
       const value = dataMap.value.get(currentIdValue);
       if (!value) {
-        const clonedDefaultValue = structuredClone(defaultValue);
-        dataMap.value.set(currentIdValue, clonedDefaultValue);
-        return dataMap.value.get(currentIdValue) ?? clonedDefaultValue;
+        const newDefaultValue = createDefaultValue();
+        dataMap.value.set(currentIdValue, newDefaultValue);
+        return dataMap.value.get(currentIdValue) ?? newDefaultValue;
       }
       return value;
     },

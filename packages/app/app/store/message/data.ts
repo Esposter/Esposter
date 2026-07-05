@@ -5,6 +5,7 @@ import type { MessageEvents } from "#shared/models/message/events/MessageEvents"
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
+import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -12,7 +13,7 @@ import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
-import { AzureEntityType, CompositeKeyPropertyNames, createMessageEntity, MessageType } from "@esposter/db-schema";
+import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
@@ -25,11 +26,7 @@ export const useDataStore = defineStore("message/data", () => {
     deleteMessage: baseStoreDeleteMessage,
     updateMessage: baseStoreUpdateMessage,
     ...restOperationData
-  } = createOperationData(
-    items,
-    [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey],
-    AzureEntityType.Message,
-  );
+  } = createOperationData(items, CompositeAzureKeyPath, AzureEntityType.Message);
   const files = computed(() => items.value.flatMap(({ files }) => files));
   const hasMoreNewer = ref(false);
   const nextCursorNewer = ref("");
