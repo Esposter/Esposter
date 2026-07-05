@@ -1,10 +1,11 @@
 // @vitest-environment nuxt
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
+import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { VueWrapper } from "@vue/test-utils";
 
-import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
+import { useCursorPaginationCache } from "@/composables/cache/indexedDb/useCursorPaginationCache";
 import { useOffsetPaginationCache } from "@/composables/cache/indexedDb/useOffsetPaginationCache";
-import { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
+import { goOffline, goOnline } from "@/composables/shared/network.test";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
@@ -16,32 +17,48 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const goOffline = () => {
-  vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-  window.dispatchEvent(new Event("offline"));
-};
+type MessageValue = IndexedDbDatabaseSchema[IndexedDbStoreName.Messages]["value"];
 
-const goOnline = () => {
-  vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
-  window.dispatchEvent(new Event("online"));
-};
+interface PaginationCacheVariant {
+  name: string;
+  useCache: (
+    initializeItems: (data: { items: MessageValue[] }) => void,
+    items: Ref<MessageValue[]>,
+    partitionKey: Ref<string>,
+  ) => { flush: () => Promise<void> };
+}
 
-describe(useOffsetPaginationCache, () => {
+describe.each<PaginationCacheVariant>([
+  {
+    name: useCursorPaginationCache.name,
+    useCache: (initializeItems, items, partitionKey) =>
+      useCursorPaginationCache({
+        configuration: MessageIndexedDbStoreConfiguration,
+        initializeCursorPaginationData: initializeItems,
+        items,
+        partitionKey,
+      }),
+  },
+  {
+    name: useOffsetPaginationCache.name,
+    useCache: (initializeItems, items, partitionKey) =>
+      useOffsetPaginationCache({
+        configuration: MessageIndexedDbStoreConfiguration,
+        initializeOffsetPaginationData: initializeItems,
+        items,
+        partitionKey,
+      }),
+  },
+])("$name", ({ useCache }) => {
   let wrapper: VueWrapper;
   let flush: () => Promise<void>;
-  const items = ref<IndexedDbDatabaseSchema[IndexedDbStoreName.Messages]["value"][]>([]);
+  const items = ref<MessageValue[]>([]);
   const partitionKeyRef = ref("");
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
   const rowKey = crypto.randomUUID();
   const message = "message";
-  const offsetPaginationData = ref(
-    new OffsetPaginationData<IndexedDbDatabaseSchema[IndexedDbStoreName.Messages]["value"]>(),
-  );
-  const initializeOffsetPaginationData = (
-    data: OffsetPaginationData<IndexedDbDatabaseSchema[IndexedDbStoreName.Messages]["value"]>,
-  ) => {
-    offsetPaginationData.value = data;
+  const initializeItems = (data: { items: MessageValue[] }) => {
     items.value = data.items;
   };
   const flushCache = async () => {
@@ -54,12 +71,7 @@ describe(useOffsetPaginationCache, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          ({ flush } = useOffsetPaginationCache({
-            configuration: MessageIndexedDbStoreConfiguration,
-            initializeOffsetPaginationData,
-            items,
-            partitionKey: partitionKeyRef,
-          }));
+          ({ flush } = useCache(initializeItems, items, partitionKeyRef));
         },
       }),
     );
@@ -67,7 +79,6 @@ describe(useOffsetPaginationCache, () => {
 
   beforeEach(() => {
     items.value = [];
-    offsetPaginationData.value = new OffsetPaginationData();
     goOffline();
   });
 

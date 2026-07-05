@@ -15,11 +15,15 @@ const { currentRoom } = storeToRefs(roomStore);
 </script>
 
 <template>
-  <v-list density="compact" py-0 overflow-y-auto>
-    <template v-if="isPending">
+  <MessageRightSideBarSearchFilterPickerList
+    :has-more="Boolean(currentRoom) && hasMore"
+    :is-pending
+    @read-more="readMoreMembers"
+  >
+    <template #skeleton>
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
-    <template v-else-if="currentRoom">
+    <template v-if="currentRoom">
       <MessageModelMemberListItem
         v-for="member of members"
         :key="member.id"
@@ -31,9 +35,6 @@ const { currentRoom } = storeToRefs(roomStore);
           <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
         </template>
       </MessageModelMemberListItem>
-      <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
-        <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-      </StyledWaypoint>
     </template>
-  </v-list>
+  </MessageRightSideBarSearchFilterPickerList>
 </template>

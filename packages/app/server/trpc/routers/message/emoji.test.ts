@@ -4,10 +4,10 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { MessageMetadataType, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";

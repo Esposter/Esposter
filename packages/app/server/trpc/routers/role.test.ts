@@ -4,9 +4,9 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { DatabaseEntityType, RoomPermission, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";

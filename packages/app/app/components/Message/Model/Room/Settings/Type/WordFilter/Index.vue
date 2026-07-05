@@ -61,9 +61,7 @@ const createWord = () => {
               {{ word }}
             </v-chip>
           </div>
-          <span op-medium-emphasis text-body-small>
-            Messages containing these words will be blocked. Comparisons are case-insensitive.
-          </span>
+          <span text-hint> Messages containing these words will be blocked. Comparisons are case-insensitive. </span>
           <StyledButton
             :button-props="{ disabled: !isDirty, text: 'Save Changes', variant: 'tonal' }"
             @click="

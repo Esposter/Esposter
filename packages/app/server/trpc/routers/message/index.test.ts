@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { MessageEntity } from "@esposter/db-schema";
@@ -650,6 +651,7 @@ describe("message", () => {
           rowKey: newMessage.rowKey,
         }),
     );
+
     const [, data] = trackedData as unknown as TrackedEnvelope<MessageEntity[]>;
 
     expect(data).toHaveLength(1);
@@ -671,6 +673,7 @@ describe("message", () => {
     const userId = getMockSession().user.id;
     const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+
     const id = crypto.randomUUID();
 
     await expect(

@@ -3,19 +3,10 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { Promisable } from "type-fest";
 
+import { goOffline, goOnline } from "@/composables/shared/network.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-const goOffline = () => {
-  vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-  window.dispatchEvent(new Event("offline"));
-};
-
-const goOnline = () => {
-  vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
-  window.dispatchEvent(new Event("online"));
-};
 
 describe(useOnlineSubscribable, () => {
   let wrapper: VueWrapper;

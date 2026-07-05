@@ -53,7 +53,7 @@ const { cloned: editedImage } = useCloned(() => currentRoom.value?.image ?? "");
       <StyledAvatar :image="currentRoom.image" :name="roomName" :avatar-props="{ size: 'x-small' }" />
       <div pl-2 flex flex-col>
         <span>{{ roomName }}</span>
-        <span v-if="currentRoom.topic" truncate op-medium-emphasis text-body-small>{{ currentRoom.topic }}</span>
+        <span v-if="currentRoom.topic" truncate text-hint>{{ currentRoom.topic }}</span>
       </div>
     </StyledEditableNameDialogButton>
     <template #append>

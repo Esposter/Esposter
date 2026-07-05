@@ -3,6 +3,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
+import { goOffline, goOnline } from "@/composables/shared/network.test";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
@@ -14,16 +15,6 @@ import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-const goOffline = () => {
-  vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-  window.dispatchEvent(new Event("offline"));
-};
-
-const goOnline = () => {
-  vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
-  window.dispatchEvent(new Event("online"));
-};
 
 describe(useMessageCache, () => {
   let router: Router;

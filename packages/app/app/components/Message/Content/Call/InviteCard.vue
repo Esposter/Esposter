@@ -23,7 +23,7 @@ onMounted(() => {
           @click="isOpen = false"
         />
       </div>
-      <span op-medium-emphasis text-body-small>Share this call link with others you want in the call.</span>
+      <span text-hint>Share this call link with others you want in the call.</span>
       <div px-3 py-2 rd bg-background flex gap-x-2 items-center>
         <span truncate text-body-small>{{ callLink }}</span>
         <StyledClipboardIconButton :source="callLink" text="Copy call link" />
