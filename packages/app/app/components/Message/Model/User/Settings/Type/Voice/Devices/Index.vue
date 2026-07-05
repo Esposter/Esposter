@@ -19,10 +19,18 @@ const { userSettings } = defineProps<DevicesProps>();
   </v-row>
   <v-row>
     <v-col cols="6">
-      <MessageModelUserSettingsTypeVoiceVolumeMicrophoneVolumeSlider :user-settings />
+      <MessageModelUserSettingsTypeVoiceVolumeUserVolumeSlider
+        field="microphoneVolumePercentage"
+        label="Microphone Volume"
+        :user-settings
+      />
     </v-col>
     <v-col cols="6">
-      <MessageModelUserSettingsTypeVoiceVolumeSpeakerVolumeSlider :user-settings />
+      <MessageModelUserSettingsTypeVoiceVolumeUserVolumeSlider
+        field="speakerVolumePercentage"
+        label="Speaker Volume"
+        :user-settings
+      />
     </v-col>
   </v-row>
   <MessageModelUserSettingsTypeVoiceDevicesCameraSelect mt-2 />

@@ -1,10 +1,10 @@
+// oxlint-disable typescript/no-unnecessary-type-assertion
 import type { AzureContainer } from "@esposter/db-schema";
 
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { getSaveBlobName } from "@@/server/services/blobState/getSaveBlobName";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { getResultAsync, jsonDateParse, streamToText } from "@esposter/shared";
-
 // The init parameter is typed never so every state class with an optional-init constructor is accepted
 // (their init types vary: Partial<X> vs PartialDeep<X>); the single `as never` below is the centralized cost.
 export const createReadBlobStateProcedure = <TData>(container: AzureContainer, Model: new (init?: never) => TData) =>
@@ -13,7 +13,7 @@ export const createReadBlobStateProcedure = <TData>(container: AzureContainer, M
       const { readableStreamBody } = await useDownload(container, getSaveBlobName(ctx.getSessionPayload.user.id));
       if (!readableStreamBody) return new Model();
       const json = await streamToText(readableStreamBody);
-      return new Model(jsonDateParse(json));
+      return new Model(jsonDateParse(json) as never);
     })
       .orTee(console.error)
       .unwrapOr(new Model()),

@@ -3,20 +3,22 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { useUserSettingsStore } from "@/store/message/user/settings";
 
-interface SpeakerVolumeSliderProps {
+interface UserVolumeSliderProps {
+  field: "microphoneVolumePercentage" | "speakerVolumePercentage";
+  label: string;
   userSettings: UserSettingsInMessage;
 }
 
-const { userSettings } = defineProps<SpeakerVolumeSliderProps>();
+const { field, label, userSettings } = defineProps<UserVolumeSliderProps>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
-const { cloned: speakerVolumePercentage } = useCloned(() => userSettings.speakerVolumePercentage);
+const { cloned: volumePercentage } = useCloned(() => userSettings[field]);
 </script>
 
 <template>
   <MessageModelUserSettingsTypeVoiceVolumeSlider
-    v-model="speakerVolumePercentage"
-    label="Speaker Volume"
-    @end="updateUserSettings({ speakerVolumePercentage: $event })"
+    v-model="volumePercentage"
+    :label
+    @end="updateUserSettings({ [field]: $event })"
   />
 </template>

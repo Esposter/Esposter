@@ -14,7 +14,7 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { execFileSync } from "node:child_process";
 import { existsSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 
 // Task-cache equivalence (specs/config-and-cache.md): a cache HIT is observably identical to the MISS that recorded
 // It — same exit code, stdout, stderr, and produced host files — while skipping the sandbox entirely. The command's
@@ -69,8 +69,7 @@ describe.skipIf(!isSandboxInstallSupported)(
 
         const key = computeTaskCacheKey(command, corpus);
 
-        // Guard: a null key would silently fall back to uncached, making the hit assertion meaningless.
-        expect(key).not.toBeNull();
+        assert.exists(key);
 
         execCount = 0;
         const miss = await runCached();
@@ -78,7 +77,7 @@ describe.skipIf(!isSandboxInstallSupported)(
         expect(miss.exitCode).toBe(0);
         expect(miss.stdout).toBe(" ");
         expect(execCount).toBe(1);
-        expect(resolveTaskCacheLocation(key ?? "").exists).toBe(true);
+        expect(resolveTaskCacheLocation(key).exists).toBe(true);
 
         // Remove the produced output so the replay must re-materialise it (and the source tree matches the miss exactly).
         rmSync(join(corpus, TEST_FILENAME), { force: true });
