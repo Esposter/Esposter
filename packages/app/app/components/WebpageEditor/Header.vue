@@ -11,8 +11,8 @@ const { currentDocument, documents } = storeToRefs(webpageEditorStore);
 </script>
 
 <template>
-  <v-toolbar v-if="session.data" height="auto">
-    <div px-4 py-2 flex gap-2 w-full items-center>
+  <StyledPageHeader>
+    <template v-if="session.data" #controls>
       <DocumentPicker
         :current-document
         :documents
@@ -21,13 +21,14 @@ const { currentDocument, documents } = storeToRefs(webpageEditorStore);
         @rename="(id, name) => renameDocument(id, name)"
         @select="selectDocument($event)"
       />
+    </template>
+    <template v-if="session.data && currentDocument" #actions>
       <DocumentPublishButton
-        v-if="currentDocument"
         :document="currentDocument"
         :view-path="RoutePath.ViewWebpage"
         @publish="publishWebpage()"
         @unpublish="unpublishWebpage()"
       />
-    </div>
-  </v-toolbar>
+    </template>
+  </StyledPageHeader>
 </template>

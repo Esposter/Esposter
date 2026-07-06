@@ -15,6 +15,7 @@ export const RoutePath: {
   readonly Dashboard: "/dashboard";
   readonly DashboardEditor: "/dashboard/editor";
   readonly Docs: "/docs";
+  readonly Documents: "/documents";
   readonly Dungeons: "/dungeons";
   readonly EmailEditor: "/email-editor";
   readonly FlowchartEditor: "/flowchart-editor";
@@ -51,6 +52,7 @@ export const RoutePath: {
   Dashboard: "/dashboard",
   DashboardEditor: "/dashboard/editor",
   Docs: "/docs",
+  Documents: "/documents",
   Dungeons: "/dungeons",
   EmailEditor: "/email-editor",
   FlowchartEditor: "/flowchart-editor",

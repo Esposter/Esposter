@@ -13,7 +13,7 @@ An email document optionally binds one dataset (`EmailEditor.datasetReference`).
 ## Components
 
 - `EmailEditor/Header.vue` — `DocumentPicker` + shared `Dataset/ReferencePicker` + export button, mounted above the GrapesJS canvas
-- `EmailEditor/ExportPersonalizedHtmlButton.vue` — readDataset → one `.html` per row into a user-picked directory (`window.showDirectoryPicker`, Chromium-only; unsupported browsers get an alert)
+- `EmailEditor/ExportPersonalizedHtmlButton.vue` — readDataset → downloads one `.html` per row via the shared `downloadFile` helper (anchor-based blob download)
 
 ## Key Files
 

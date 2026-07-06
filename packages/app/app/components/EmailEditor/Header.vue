@@ -16,8 +16,8 @@ const { currentDocument, datasetReference, documents } = storeToRefs(emailEditor
 </script>
 
 <template>
-  <v-toolbar v-if="session.data" height="auto">
-    <div px-4 py-2 flex gap-2 w-full items-center>
+  <StyledPageHeader>
+    <template v-if="session.data" #controls>
       <DocumentPicker
         :current-document
         :documents
@@ -28,6 +28,6 @@ const { currentDocument, datasetReference, documents } = storeToRefs(emailEditor
       />
       <DatasetReferencePicker :model-value="datasetReference" @update:model-value="saveDatasetReference($event)" />
       <EmailEditorExportPersonalizedHtmlButton :editor />
-    </div>
-  </v-toolbar>
+    </template>
+  </StyledPageHeader>
 </template>

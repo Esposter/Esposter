@@ -5,6 +5,7 @@ import type { ItemMetadata } from "@esposter/shared";
 import type { z } from "zod";
 
 import { authClient } from "@/services/auth/authClient";
+import { DOCUMENT_ID_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { useAlertStore } from "@/store/alert";
 import { getResultAsync, jsonDateParse, noop, takeOne } from "@esposter/shared";
@@ -22,6 +23,7 @@ export const useDocumentState = <TContent extends ItemMetadata>(
   { defaultName, localStorageKey, schema }: UseDocumentStateOptions,
 ) => {
   const session = authClient.useSession();
+  const route = useRoute();
   const alertStore = useAlertStore();
   const saveToLocalStorage = useSaveToLocalStorage();
   const documents = ref<Document[]>([]);
@@ -44,7 +46,13 @@ export const useDocumentState = <TContent extends ItemMetadata>(
   const load = async () => {
     documents.value = await procedures.readDocuments();
     if (documents.value.length === 0) documents.value = [await procedures.createDocument({ name: defaultName })];
-    await selectDocument(takeOne(documents.value).id);
+    // The documents hub deep-links a specific document via query param; fall back to the most recent otherwise
+    const requestedId = route.query[DOCUMENT_ID_QUERY_PARAMETER_KEY];
+    const requestedDocument =
+      typeof requestedId === "string"
+        ? documents.value.find((foundDocument) => foundDocument.id === requestedId)
+        : undefined;
+    await selectDocument((requestedDocument ?? takeOne(documents.value)).id);
   };
   const save = (): Promise<boolean> => {
     saveItemMetadata(content.value);
