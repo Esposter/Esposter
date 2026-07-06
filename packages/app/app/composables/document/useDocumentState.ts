@@ -101,14 +101,18 @@ export const useDocumentState = <TContent extends ItemMetadata>(
     if (!document) return;
     await getResultAsync(async () => {
       setCurrentDocument(await procedures.publishDocument({ id: document.id }));
-    }).orTee((error) => alertStore.createAlert(error.message, "error"));
+    }).orTee((error) => {
+      alertStore.createAlert(error.message, "error");
+    });
   };
   const unpublish = async () => {
     const document = currentDocument.value;
     if (!document) return;
     await getResultAsync(async () => {
       setCurrentDocument(await procedures.unpublishDocument({ id: document.id }));
-    }).orTee((error) => alertStore.createAlert(error.message, "error"));
+    }).orTee((error) => {
+      alertStore.createAlert(error.message, "error");
+    });
   };
   return {
     content,
