@@ -14,6 +14,7 @@ Layer contracts all shipped; reopened after the 2026-07-06 cross-product audit. 
 - Phase 4 — document publish lifecycle with baked dataset snapshots + public `/view/dashboard/[id]` (`/architecture/publishing.md`)
 - Phase 5 — email personalization: merge-field blocks, survey invite blocks, per-row HTML export ([spec](specs/email-personalization.md))
 - Polish — dashboard binding form gained table-document sources + multi-series editing ([spec](specs/dashboard-data-binding.md)); public `/view/webpage/[id]` render + published-view OG meta tags (`/architecture/publishing.md`)
+- Survey distribution fixes (2026-07-06 audit) — `publishSurvey` sets `publishedAt` and snapshots the model to the publish dir; the public `/survey/{id}` page serves that snapshot and 404s for unpublished surveys (creators preview via the SurveyJS editor); `RoutePath.Survey(id)` now points at the public respondent page (creator route renamed `SurveyerEdit`), so email survey-invite blocks link correctly
 
 ## Decisions
 

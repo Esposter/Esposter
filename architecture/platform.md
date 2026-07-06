@@ -69,7 +69,7 @@ flowchart TB
 
 ## Business-Logic User Journey
 
-The headline cross-product flow — **create a survey → collect responses → extract/transform → visualise → publish** — as it runs across products today. Steps marked ⚠ are known breaks tracked in [`features/platform/roadmap.md`](../features/platform/roadmap.md).
+The headline cross-product flow — **create a survey → collect responses → extract/transform → visualise → publish**. Both halves now match the publishing standard: a survey, like any document, is a stable public artifact only once published. Remaining cross-product navigation gaps are tracked in [`features/platform/roadmap.md`](../features/platform/roadmap.md).
 
 ```mermaid
 sequenceDiagram
@@ -82,20 +82,20 @@ sequenceDiagram
   participant DB as Dashboard
   participant PUB as Public /view
 
-  Creator->>SV: 1. Author survey (SurveyJS, autosave)
-  Creator->>SV: 2. Publish — bumps publishVersion, clones assets
-  Note over SV: ⚠ publishedAt never set; ⚠ respondents are served the live draft, not the snapshot
+  Creator->>SV: 1. Author survey (SurveyJS, autosave); preview drafts in the editor's Preview tab
+  Creator->>SV: 2. Publish — sets publishedAt, bumps publishVersion, snapshots model + assets to the publish dir
   Creator->>EM: 3. Compose invite email; bind dataset → merge-field blocks
-  Note over EM: ⚠ invite link resolves to /surveyer/{id} (auth wall) + never renders (publishedAt filter)
+  Note over EM: Invite block links to /survey/{id} and appears once the survey is published
   EM-->>Respondent: 4. Distribute link (email sending deferred → share manually / via esbabbler)
   Respondent->>AT: 5. Fill /survey/{id} → response rows (partitionKey = surveyId)
+  Note over SV,AT: Respondents are served the published snapshot; an unpublished survey 404s
   Creator->>TE: 6. Import survey responses (one-time snapshot into a table document)
   TE->>TE: 7. Computed columns — Aggregation / Math / Regex / String (the extract/transform layer)
   Creator->>DB: 8. Bind visual to a dataset reference + aggregation (live re-resolve on load)
   DB->>PUB: 9. Publish dashboard — bakes dataset snapshot → shareable public /view URL
 ```
 
-The **producer → dataset → consumer** contract (steps 6–9) is solid: `dataset.readDataset` + provider map, table-editor import, dashboard binding, and baked publish snapshots all work. The weak links are the **distribution half** (steps 2–5): survey publish/versioning does not reach respondents, and the invite path is doubly broken. See the roadmap for the ordered fixes and the cross-product navigation gaps.
+The **producer → dataset → consumer** contract (steps 6–9) is solid: `dataset.readDataset` + provider map, table-editor import, dashboard binding, and baked publish snapshots all work. The **distribution half** (steps 2–5) is now consistent with it — publish pins a versioned model snapshot that respondents read, the public page 404s for unpublished surveys, and the email invite points at the public `/survey/{id}` page. What remains is cross-product **navigation**: the loops exist as data but not yet as links (Surveyer → "view responses" / "build dashboard", share-to-esbabbler, the orphaned calendar). See the roadmap.
 
 ---
 

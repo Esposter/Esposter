@@ -2,16 +2,11 @@
 
 Reopened after the 2026-07-06 cross-product audit. The layer contracts (documents, datasets, publishing, events) are shipped and solid; the open work is the **distribution half of the survey journey** (broken today), **cross-product navigation** (the loops exist as data but not as links), and **shell cohesion**. Grep [out-of-scope/](out-of-scope) + [deferred/](deferred) before adding items.
 
-## Distribution-flow fixes — survey → respond → analyse loop is broken end to end
+## Distribution-flow fixes — survey → respond → analyse loop
 
-These are confirmed bugs on the journey in [`/architecture/platform.md`](../../architecture/platform.md), ordered by how early they break the flow.
+The three confirmed bugs that broke the survey distribution half are fixed (see [`## Shipped`](README.md) for the summary). The design decision: a survey is a **published artifact** like any document — the public `/survey/{id}` page serves only the versioned snapshot and 404s for unpublished surveys; creators preview drafts via the SurveyJS editor's built-in Preview tab. Remaining polish:
 
-- [ ] **Public survey link is unreachable and the email invite points at the auth wall.** `RoutePath.Survey(id)` resolves to `/surveyer/{id}` — the auth-gated _creator_ page (`packages/shared/src/models/router/RoutePath.ts:68`, `uncapitalize(SURVEY_DISPLAY_NAME="Surveyer")`). The public respondent page is `/survey/{id}` (`pages/survey/[id].vue`, no auth) and **no `RoutePath` builder emits it**. Recipients of an email invite hit login.
-  - [ ] Add a `RoutePath.SurveyRespond(id) => /survey/{id}` builder (resolve the `Survey`/`Surveyer` naming collision — see the `survey/` dir vs `Surveyer` display name).
-  - [ ] Point the email survey-invite block at it (`pages/email-editor.vue:70`).
-- [ ] **`publishSurvey` never sets `publishedAt`** (`server/trpc/routers/survey.ts:160-185` sets only `publishVersion`; only the `documents` factory sets it, `createDocumentProcedures.ts:105`). The email editor gates invite blocks on `publishedAt` truthiness (`email-editor.vue:46`), so **survey-invite blocks never render at all**. Set `publishedAt` on publish.
-- [ ] **Public survey page serves the live draft, not the published snapshot.** `readSurveyModel` (`survey.ts:191-200`) reads the working `surveys.model`; `publishVersion` + `cloneBlobUrls` produce versioned asset copies nothing reads. Either serve the `publish/` snapshot to respondents, or decide live-is-intended and drop the versioned clone (converge surveys onto the `documents` publishing standard).
-- [ ] **Copy-link on survey publish.** `PublishSurveyDialog` only bumps the version; add the copy-public-link affordance the `Document/PublishButton` already has for dashboard/webpage.
+- [ ] **Copy-link on survey publish.** `PublishSurveyDialog` only bumps the version; add the copy-public-link affordance the `Document/PublishButton` already has for dashboard/webpage, pointing at `RoutePath.Survey(id)`.
 
 ## Next — cross-product navigation (no new infra, extends shipped features)
 
