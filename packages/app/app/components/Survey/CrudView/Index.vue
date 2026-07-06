@@ -9,7 +9,7 @@ import { RoutePath } from "@esposter/shared";
 const { isLoading, readSurveys } = useReadSurveys();
 const surveyStore = useSurveyStore();
 const { count, items, searchQuery } = storeToRefs(surveyStore);
-const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateTo(RoutePath.Survey(item.id));
+const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateTo(RoutePath.SurveyerEdit(item.id));
 </script>
 
 <template>

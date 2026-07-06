@@ -6,6 +6,7 @@ import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyIn
 import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useUpdateBlobUrls } from "@@/server/composables/survey/useUpdateBlobUrls";
@@ -41,7 +42,14 @@ import {
   surveyResponseEntitySchema,
   surveys,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, InvalidOperationError, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
+import {
+  createUniqueArraySchema,
+  InvalidOperationError,
+  MAX_READ_LIMIT,
+  Operation,
+  streamToText,
+  takeOne,
+} from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { count, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -171,16 +179,22 @@ export const surveyRouter = router({
         });
 
       const updatedSurvey = requireMutation(
-        (await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id)).returning())[0],
+        (
+          await ctx.db
+            .update(surveys)
+            .set({ ...rest, publishedAt: new Date() })
+            .where(eq(surveys.id, id))
+            .returning()
+        )[0],
         Operation.Update,
         DatabaseEntityType.Survey,
         id,
       );
-
       const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
       const blobUrls = extractBlobUrls(updatedSurvey.model);
       const publishDirectory = getPublishDirectory(updatedSurvey);
       await cloneBlobUrls(containerClient, blobUrls, updatedSurvey.id, publishDirectory);
+      await useUpload(AzureContainer.SurveyAssets, `${publishDirectory}/${SURVEY_MODEL_FILENAME}`, updatedSurvey.model);
       return updatedSurvey;
     },
   ),
@@ -196,7 +210,17 @@ export const surveyRouter = router({
         DatabaseEntityType.Survey,
         input,
       );
-      return useUpdateBlobUrls(survey, true);
+      // The public respondent page only ever serves a published snapshot; creators preview drafts in the SurveyJS editor.
+      if (!survey.publishedAt) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const { readableStreamBody } = await useDownload(
+        AzureContainer.SurveyAssets,
+        `${getPublishDirectory(survey)}/${SURVEY_MODEL_FILENAME}`,
+      );
+      if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const publishedModel = await streamToText(readableStreamBody);
+      return useUpdateBlobUrls({ ...survey, model: publishedModel }, true);
     }),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)

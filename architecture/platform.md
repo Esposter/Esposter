@@ -67,6 +67,38 @@ flowchart TB
 
 ---
 
+## Business-Logic User Journey
+
+The headline cross-product flow — **create a survey → collect responses → extract/transform → visualise → publish** — as it runs across products today. Steps marked ⚠ are known breaks tracked in [`features/platform/roadmap.md`](../features/platform/roadmap.md).
+
+```mermaid
+sequenceDiagram
+  actor Creator
+  actor Respondent
+  participant SV as Surveyer
+  participant AT as Azure Table<br/>(SurveyResponses)
+  participant EM as Email editor
+  participant TE as Table editor
+  participant DB as Dashboard
+  participant PUB as Public /view
+
+  Creator->>SV: 1. Author survey (SurveyJS, autosave)
+  Creator->>SV: 2. Publish — bumps publishVersion, clones assets
+  Note over SV: ⚠ publishedAt never set; ⚠ respondents are served the live draft, not the snapshot
+  Creator->>EM: 3. Compose invite email; bind dataset → merge-field blocks
+  Note over EM: ⚠ invite link resolves to /surveyer/{id} (auth wall) + never renders (publishedAt filter)
+  EM-->>Respondent: 4. Distribute link (email sending deferred → share manually / via esbabbler)
+  Respondent->>AT: 5. Fill /survey/{id} → response rows (partitionKey = surveyId)
+  Creator->>TE: 6. Import survey responses (one-time snapshot into a table document)
+  TE->>TE: 7. Computed columns — Aggregation / Math / Regex / String (the extract/transform layer)
+  Creator->>DB: 8. Bind visual to a dataset reference + aggregation (live re-resolve on load)
+  DB->>PUB: 9. Publish dashboard — bakes dataset snapshot → shareable public /view URL
+```
+
+The **producer → dataset → consumer** contract (steps 6–9) is solid: `dataset.readDataset` + provider map, table-editor import, dashboard binding, and baked publish snapshots all work. The weak links are the **distribution half** (steps 2–5): survey publish/versioning does not reach respondents, and the invite path is doubly broken. See the roadmap for the ordered fixes and the cross-product navigation gaps.
+
+---
+
 ## Where Each Product Sits Today
 
 | Product           | Persistence today                                                          | Platform role                                            |

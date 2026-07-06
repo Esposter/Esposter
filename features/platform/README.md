@@ -4,7 +4,7 @@ Cross-product integration program: implement the documents, datasets, and publis
 
 ## Now
 
-Program complete — all phases shipped. Open ideas live in the decision registry below.
+Layer contracts all shipped; reopened after the 2026-07-06 cross-product audit. Active work — distribution-flow bug fixes, cross-product navigation, and shell cohesion — is in [`roadmap.md`](roadmap.md).
 
 ## Shipped
 

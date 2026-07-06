@@ -2,6 +2,8 @@ import { SITE_NAME } from "@/services/app/constants";
 import { SURVEY_DISPLAY_NAME } from "@/services/survey/constants";
 import { uncapitalize } from "@/util/text/uncapitalize";
 
+const SURVEYER_EDIT_KEY: `${typeof SURVEY_DISPLAY_NAME}Edit` = `${SURVEY_DISPLAY_NAME}Edit`;
+
 export const RoutePath: {
   readonly About: "/about";
   readonly Achievements: "/achievements";
@@ -31,7 +33,8 @@ export const RoutePath: {
   readonly PostUpdate: (id: string) => string;
   readonly PrivacyPolicy: "/privacy-policy";
   readonly Survey: (id: string) => string;
-  readonly Surveyer: "/surveyer";
+  readonly [SURVEY_DISPLAY_NAME]: `/${Uncapitalize<typeof SURVEY_DISPLAY_NAME>}`;
+  readonly [SURVEYER_EDIT_KEY]: (id: string) => string;
   readonly TableEditor: "/table-editor";
   readonly UserSettings: "/user/settings";
   readonly ViewDashboard: (id: string) => string;
@@ -65,8 +68,9 @@ export const RoutePath: {
   PostCreate: "/post/create",
   PostUpdate: (id: string) => `/post/update/${id}`,
   PrivacyPolicy: "/privacy-policy",
-  Survey: (id: string) => `/${uncapitalize(SURVEY_DISPLAY_NAME)}/${id}`,
+  Survey: (id: string) => `/survey/${id}`,
   [SURVEY_DISPLAY_NAME]: `/${uncapitalize(SURVEY_DISPLAY_NAME)}`,
+  [SURVEYER_EDIT_KEY]: (id: string) => `/${uncapitalize(SURVEY_DISPLAY_NAME)}/${id}`,
   TableEditor: "/table-editor",
   UserSettings: "/user/settings",
   ViewDashboard: (id: string) => `/view/dashboard/${id}`,
