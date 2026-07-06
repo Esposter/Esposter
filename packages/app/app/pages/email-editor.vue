@@ -12,9 +12,8 @@ const { data: session } = await authClient.useSession(useFetch);
 const emailEditorStore = useEmailEditorStore();
 const { readEmailEditor, saveEmailEditor } = emailEditorStore;
 let editor: Editor | undefined;
-
 // The store branches between the authenticated document path and local storage,
-// so a single storage adapter suffices; re-initialize on session change to reload from the right source
+// So a single storage adapter suffices; re-initialize on session change to reload from the right source
 const { trigger } = watchTriggerable(session, () => {
   editor?.destroy();
   editor = grapesJS.init({

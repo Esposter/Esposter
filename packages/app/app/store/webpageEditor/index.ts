@@ -1,11 +1,13 @@
 import type { ProjectData } from "grapesjs";
 
 import { WebpageEditor, webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { authClient } from "@/services/auth/authClient";
 import { WEBPAGE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/webpageEditor/constants";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const { $trpc } = useNuxtApp();
-  const { content, load, save } = useDocumentState(
+  const session = authClient.useSession();
+  const { content, load, loadLocal, save } = useDocumentState(
     WebpageEditor,
     {
       createDocument: (input) => $trpc.webpageEditor.createDocument.mutate(input),
@@ -20,7 +22,8 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
     { defaultName: "My Webpage", localStorageKey: WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, schema: webpageEditorSchema },
   );
   const readWebpageEditor = async () => {
-    await load();
+    if (session.value.data) await load();
+    else loadLocal();
     return content.value;
   };
   const saveWebpageEditor = async (projectData: ProjectData) => {

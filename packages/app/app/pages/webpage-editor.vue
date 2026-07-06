@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import type { Editor } from "grapesjs";
 
-import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { authClient } from "@/services/auth/authClient";
-import { WEBPAGE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/webpageEditor/constants";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
-import { jsonDateParse } from "@esposter/shared";
 import grapesJS, { usePlugin } from "grapesjs";
 import grapesJSBlocksBasic from "grapesjs-blocks-basic";
 import grapesJSComponentCountdown from "grapesjs-component-countdown";
@@ -31,7 +28,9 @@ const webpageEditorStore = useWebpageEditorStore();
 const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
 let editor: Editor | undefined;
 
-const { trigger } = watchTriggerable(session, (newSession) => {
+// The store branches between the authenticated document path and local storage,
+// So a single storage adapter suffices; re-initialize on session change to reload from the right source
+const { trigger } = watchTriggerable(session, () => {
   editor?.destroy();
   editor = grapesJS.init({
     container: ".v-main",
@@ -76,7 +75,7 @@ const { trigger } = watchTriggerable(session, (newSession) => {
     selectorManager: { componentFirst: true },
     showOffsets: true,
     storageManager: {
-      type: newSession ? "remote" : "local",
+      type: "document",
     },
     styleManager: {
       sectors: [
@@ -371,19 +370,7 @@ const { trigger } = watchTriggerable(session, (newSession) => {
       ],
     },
   });
-  editor.Storage.add("local", {
-    load: () => {
-      const webpageEditorJson = localStorage.getItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY);
-      return Promise.resolve(
-        webpageEditorJson ? new WebpageEditor(jsonDateParse(webpageEditorJson)) : new WebpageEditor(),
-      );
-    },
-    store: (data) =>
-      new Promise<void>(() => {
-        localStorage.setItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data));
-      }),
-  });
-  editor.Storage.add("remote", {
+  editor.Storage.add("document", {
     load: () => readWebpageEditor(),
     store: (data) => saveWebpageEditor(data),
   });
