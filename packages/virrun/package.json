@@ -36,6 +36,17 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "default": "./dist/config.js"
+    },
+    "./schema.json": "./schema.json"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -50,6 +61,9 @@
     "test": "vitest",
     "typecheck": "tsgo"
   },
+  "dependencies": {
+    "unconfig": "catalog:"
+  },
   "devDependencies": {
     "@codspeed/vitest-plugin": "catalog:",
     "@esposter/configuration": "workspace:*",
@@ -61,7 +75,6 @@
     "ctix": "catalog:",
     "dayjs": "catalog:",
     "dedent": "catalog:",
-    "empathic": "catalog:",
     "fast-check": "catalog:",
     "rolldown": "catalog:",
     "vitest": "catalog:",

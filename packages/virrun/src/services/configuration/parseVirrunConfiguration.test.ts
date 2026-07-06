@@ -8,7 +8,7 @@ describe(parseVirrunConfiguration, () => {
   test("parses a full config", () => {
     expect.hasAssertions();
 
-    const configuration = parseVirrunConfiguration(JSON.stringify({ backend: "os", environment: "nuxt" }));
+    const configuration = parseVirrunConfiguration({ backend: "os", environment: "nuxt" });
 
     expect(configuration).toStrictEqual({ backend: BackendType.Os, environment: Environment.Nuxt });
   });
@@ -16,43 +16,43 @@ describe(parseVirrunConfiguration, () => {
   test(`defaults an omitted backend to ${BackendType.Os} and leaves an omitted environment undefined (no preset)`, () => {
     expect.hasAssertions();
 
-    expect(parseVirrunConfiguration("{}")).toStrictEqual({ backend: BackendType.Os });
+    expect(parseVirrunConfiguration({})).toStrictEqual({ backend: BackendType.Os });
   });
 
-  test("throws on invalid JSON", () => {
+  test("throws on a non-object value", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration("{ not json")).toThrow(InvalidOperationError);
+    expect(() => parseVirrunConfiguration("os")).toThrow(InvalidOperationError);
   });
 
   test("throws on an unknown backend", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration(JSON.stringify({ backend: "" }))).toThrow(InvalidOperationError);
+    expect(() => parseVirrunConfiguration({ backend: "" })).toThrow(InvalidOperationError);
   });
 
   test("throws on an unknown environment", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration(JSON.stringify({ environment: "" }))).toThrow(InvalidOperationError);
+    expect(() => parseVirrunConfiguration({ environment: "" })).toThrow(InvalidOperationError);
   });
 
   test("throws on the removed 'none' environment — absence is expressed by omitting the key, not a none value", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration(JSON.stringify({ environment: "none" }))).toThrow(InvalidOperationError);
+    expect(() => parseVirrunConfiguration({ environment: "none" })).toThrow(InvalidOperationError);
   });
 
   test("throws on an unknown key", () => {
     expect.hasAssertions();
 
-    expect(() => parseVirrunConfiguration(JSON.stringify({ "": "" }))).toThrow(InvalidOperationError);
+    expect(() => parseVirrunConfiguration({ "": "" })).toThrow(InvalidOperationError);
   });
 
   test("accepts a $schema pointer", () => {
     expect.hasAssertions();
 
-    expect(parseVirrunConfiguration(JSON.stringify({ $schema: "./schema.json", backend: "os" }))).toStrictEqual({
+    expect(parseVirrunConfiguration({ $schema: "./schema.json", backend: "os" })).toStrictEqual({
       backend: BackendType.Os,
     });
   });

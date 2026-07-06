@@ -19,44 +19,43 @@ jobs:
   # below is unchanged.
   build-packages:
     uses: ./.github/workflows/build-packages.yaml
-  # Capture virrun's two warm os-backend layers (dependency snapshot + prepare `.nuxt`) once and publish each as
-  # An `actions/cache` entry, so the os-backend jobs (format/lint/typecheck/build/build-docs) fork them instead of
-  # Each cold-installing their own. Mirrors build-packages: single gated work, fanned out via `needs:` + the
-  # `setup-warm-cache` composite (read-only restores) per consumer.
-  warm-cache:
-    needs: build-packages
-    uses: ./.github/workflows/warm-cache.yaml
 
   build:
     name: Build App
-    needs: [build-packages, warm-cache]
-    runs-on: ubuntu-26.04
+    needs: build-packages
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-      # `pnpm build:app` routes the Nuxt build through `virrun --`; the shared composite installs bubblewrap so it
-      # Runs in the os sandbox the config pins (output flushed to host via write-back) and restores the warm layers.
-      - name: 🔥 Setup Warm Cache
-        uses: ./.github/actions/setup-warm-cache
+      # The platform-branched virrun.config.ts resolves the native backend on Linux, so `virrun --` is a passthrough
+      # Here: `pnpm i` (warm pnpm store cache) provisions node_modules and its `postinstall: nuxt prepare` generates
+      # The platform-correct Linux `.nuxt` in place — no sandbox, no bubblewrap, no warm overlay layers.
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
 
       - name: 🏗️ Build app
         run: pnpm build:app
 
   build-docs:
     name: Build Documentation
-    needs: [build-packages, warm-cache]
-    runs-on: ubuntu-26.04
+    needs: build-packages
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-      # `pnpm build:docs` routes TypeDoc through `virrun --`; the shared composite installs bubblewrap so it runs in
-      # The os sandbox the config pins (generated docs flushed to host via write-back) and restores the warm layers.
-      - name: 🔥 Setup Warm Cache
-        uses: ./.github/actions/setup-warm-cache
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
 
       - name: 🏗️ Build documentation
         run: pnpm build:docs
@@ -68,6 +67,9 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8]
+    # ubuntu-26.04, not ubuntu-latest: the virrun os-backend suites need bubblewrap >= 0.10.0 (RAM overlay) and
+    # 24.04 ships 0.9.0 — on the older image the differential tests self-gate via describe.skipIf and the
+    # correctness gate silently disappears.
     runs-on: ubuntu-26.04
     steps:
       - name: 📥 Checkout
@@ -106,7 +108,7 @@ jobs:
   coverage-merge:
     name: Merge Coverage
     needs: [build-packages, coverage]
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -126,8 +128,7 @@ jobs:
           pattern: coverage-blob-*
           merge-multiple: true
       # Recombine the sharded runs into one report with unified coverage from the blob data —
-      # This re-emits the report only, it does not re-run any tests. Native (not virrun): a pure merge step has
-      # No toolchain to accelerate, and it stays native alongside the coverage shards that feed it.
+      # This re-emits the report only, it does not re-run any tests.
       - name: 🧪 Merge coverage
         run: pnpm exec vitest run --merge-reports --coverage
 
@@ -140,52 +141,58 @@ jobs:
 
   format:
     name: Format
-    needs: [build-packages, warm-cache]
-    runs-on: ubuntu-26.04
+    needs: build-packages
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-      # `pnpm format:check` runs `virrun -- oxfmt --check`; the shared composite exposes the built virrun bin (from
-      # The build-packages artifact, no host `pnpm i`), installs bubblewrap for the os sandbox the config pins, and
-      # Restores the warm layers so it runs isolated instead of falling back to native.
-      - name: 🔥 Setup Warm Cache
-        uses: ./.github/actions/setup-warm-cache
+      # Native on Linux (platform-branched virrun.config.ts): plain install + the built virrun bin from the
+      # build-packages artifact, no sandbox setup.
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
 
       - name: 📝 Format
         run: pnpm format:check
 
   lint:
     name: Lint
-    needs: [build-packages, warm-cache]
-    runs-on: ubuntu-26.04
+    needs: build-packages
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-      # `pnpm lint` routes oxlint + eslint through `virrun --`; the shared composite installs bubblewrap so that
-      # Runs in the os sandbox the config pins (not a native fallback) and restores the warm layers.
-      - name: 🔥 Setup Warm Cache
-        uses: ./.github/actions/setup-warm-cache
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
 
       - name: 🔍 Lint
         run: pnpm lint
 
   typecheck:
     name: Typecheck
-    needs: [build-packages, warm-cache]
-    runs-on: ubuntu-26.04
+    needs: build-packages
+    runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
-      # `pnpm typecheck` routes tsgo through `virrun --`; the shared composite installs bubblewrap so that runs in
-      # The os sandbox the config pins (not a native fallback) and restores the warm layers.
-      - name: 🔥 Setup Warm Cache
-        uses: ./.github/actions/setup-warm-cache
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Setup Packages
+        uses: ./.github/actions/setup-packages
 
       - name: ✅ Typecheck
         run: pnpm typecheck
