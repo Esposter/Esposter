@@ -4,6 +4,7 @@ export enum DatabaseEntityType {
   Ban = "Ban",
   Block = "Block",
   CallSession = "CallSession",
+  Document = "Document",
   Friend = "Friend",
   FriendRequest = "FriendRequest",
   Invite = "Invite",

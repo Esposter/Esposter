@@ -1,6 +1,6 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
-import type { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Metadata } from "#shared/models/tableEditor/file/datasource/Metadata";
 
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
@@ -13,15 +13,16 @@ import { exhaustiveGuard, takeOne } from "@esposter/shared";
 
 export const datasetToDataSource = (
   dataset: Dataset,
-  datasetProviderType: DatasetProviderType,
+  dataSourceType: Metadata["dataSourceType"],
   name: string,
+  size?: number,
 ): DataSource => {
   const columns = dataset.columns.map(({ name: sourceName, type }) => {
     switch (type) {
       case ColumnType.Boolean:
         return new BooleanColumn({ name: sourceName, sourceName });
       case ColumnType.Date: {
-        const values = dataset.rows.map((row) => String(takeOne(row, sourceName) ?? ""));
+        const values = dataset.rows.map((row) => String(row[sourceName] ?? ""));
         return new DateColumn({ format: inferDateFormat(values), name: sourceName, sourceName });
       }
       case ColumnType.Number:
@@ -35,11 +36,11 @@ export const datasetToDataSource = (
   const rows = dataset.rows.map((data) => new Row({ data }));
   for (const column of columns)
     column.size = rows.reduce((total, row) => total + JSON.stringify(takeOne(row.data, column.name)).length, 0);
-  const size = columns.reduce((total, column) => total + column.size, 0);
+  const statisticsSize = columns.reduce((total, column) => total + column.size, 0);
   return {
     columns,
-    metadata: { dataSourceType: datasetProviderType, importedAt: new Date(), name, size },
+    metadata: { dataSourceType, importedAt: new Date(), name, size: size ?? statisticsSize },
     rows,
-    statistics: { columnCount: columns.length, rowCount: rows.length, size },
+    statistics: { columnCount: columns.length, rowCount: rows.length, size: statisticsSize },
   };
 };

@@ -11,7 +11,7 @@ export const TableAchievementDefinitionMap = {
     description: "Save a table configuration",
     icon: "mdi-table",
     points: 20,
-    triggerPath: "tableEditor.saveTableEditorConfiguration" as const,
+    triggerPath: "tableEditor.saveDocumentContent" as const,
   }),
   [TableAchievementName.MathWhiz]: defineAchievementDefinition({
     amount: 1,
@@ -19,7 +19,7 @@ export const TableAchievementDefinitionMap = {
     condition: {
       conditions: Array.from(TableEditorTypes, (tableEditorType) => ({
         operator: BinaryOperator.ge,
-        path: `${tableEditorType}.items.length` as const,
+        path: `content.${tableEditorType}.items.length` as const,
         type: AchievementConditionType.Property,
         value: 5,
       })),
@@ -28,6 +28,6 @@ export const TableAchievementDefinitionMap = {
     description: "Create a table with at least 5 rows",
     icon: "mdi-calculator",
     points: 25,
-    triggerPath: "tableEditor.saveTableEditorConfiguration" as const,
+    triggerPath: "tableEditor.saveDocumentContent" as const,
   }),
 };

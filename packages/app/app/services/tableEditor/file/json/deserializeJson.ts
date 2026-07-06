@@ -2,7 +2,8 @@ import type { DataSource } from "#shared/models/tableEditor/file/datasource/Data
 import type { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 
 import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
-import { buildDataSource } from "@/services/tableEditor/file/dataSource/buildDataSource";
+import { buildDataset } from "@/services/tableEditor/file/dataSource/buildDataset";
+import { datasetToDataSource } from "@/services/tableEditor/file/dataSource/datasetToDataSource";
 import { InvalidOperationError, jsonDateParse, Operation, takeOne } from "@esposter/shared";
 import { z } from "zod";
 
@@ -13,8 +14,8 @@ export const deserializeJson = async (file: File, _item: JsonDataSourceItem): Pr
   const result = jsonRowsSchema.safeParse(jsonDateParse(text));
   if (!result.success) throw new InvalidOperationError(Operation.Read, file.name, result.error.message);
   const rows = result.data;
-  if (rows.length === 0) return buildDataSource(file, DataSourceType.Json, [], []);
+  if (rows.length === 0) return datasetToDataSource(buildDataset([], []), DataSourceType.Json, file.name, file.size);
   const sourceNames = Object.keys(takeOne(rows));
   const bodyRows = rows.map((row) => sourceNames.map((sourceName) => String(takeOne(row, sourceName))));
-  return buildDataSource(file, DataSourceType.Json, sourceNames, bodyRows);
+  return datasetToDataSource(buildDataset(sourceNames, bodyRows), DataSourceType.Json, file.name, file.size);
 };

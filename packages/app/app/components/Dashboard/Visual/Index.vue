@@ -6,11 +6,10 @@ import { takeOne } from "@esposter/shared";
 import VueApexCharts from "vue3-apexcharts";
 
 interface VisualProps {
-  chart: Visual["chart"];
-  type: Visual["type"];
+  visual: Visual;
 }
 
-const { chart, type } = defineProps<VisualProps>();
+const { visual } = defineProps<VisualProps>();
 const container = useTemplateRef("container");
 const height = ref<number>();
 // Grid layout + library CSS drive the height, so observe it for changes.
@@ -19,10 +18,11 @@ useResizeObserver(container, (entries) => {
   height.value = entry.target.clientHeight;
 });
 
-const data = computed(() => VisualTypeDemoDataMap[type](chart.type));
+const { error, isLoading, refresh, visualPropsData } = useVisualPropsData(() => visual);
+const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
 const options = useApexOptions(
-  () => chart,
-  () => type,
+  () => visual.chart,
+  () => visual.type,
   computed(() => ({
     ...data.value.options,
     chart: {
@@ -34,8 +34,19 @@ const options = useApexOptions(
 
 <template>
   <StyledCard size-full>
-    <div ref="container" h-full>
-      <VueApexCharts :="data" :options />
+    <div ref="container" relative h-full>
+      <v-alert v-if="error" type="error" text="Failed to load data" />
+      <VueApexCharts v-else :="data" :options />
+      <StyledTooltipIconButton
+        v-if="visual.dataset"
+        absolute
+        top-1
+        right-1
+        icon="mdi-refresh"
+        text="Refresh data"
+        :button-props="{ loading: isLoading, size: 'small', variant: 'text' }"
+        @click="refresh()"
+      />
     </div>
   </StyledCard>
 </template>
