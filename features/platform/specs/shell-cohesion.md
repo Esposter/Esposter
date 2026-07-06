@@ -36,7 +36,7 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 | `app/components/Styled/PageHeader.vue`     | shared editor header (title + breadcrumbs/controls/actions) |
 | `app/components/Styled/EmptyState.vue`     | shared empty state                                          |
 | `app/components/Styled/Skeleton.vue`       | shared skeleton loader                                      |
-| `app/components/App/Breadcrumbs.vue`       | route-derived breadcrumb trail in the app bar               |
+| `app/components/App/Breadcrumbs.vue`       | route-derived breadcrumb trail rendered by `PageHeader`     |
 | `app/components/App/MenuLinkListItem.vue`  | launcher leaf, reused by group + top level                  |
 | `app/services/app/ProductListLinkItems.ts` | launcher data (flat tools + Games group)                    |
 | `app/models/shared/ListLinkItem.ts`        | `children` field for submenus                               |
