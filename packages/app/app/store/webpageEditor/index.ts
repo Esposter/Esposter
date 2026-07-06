@@ -1,14 +1,28 @@
 import type { ProjectData } from "grapesjs";
 
-import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { WebpageEditor, webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { WEBPAGE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/webpageEditor/constants";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const { $trpc } = useNuxtApp();
-  const webpageEditor = ref(new WebpageEditor());
-  const save = useSave(webpageEditor, { auth: { save: $trpc.webpageEditor.saveWebpageEditor.mutate } });
-  const readWebpageEditor = () => $trpc.webpageEditor.readWebpageEditor.query();
+  const { content, load, save } = useDocumentState(
+    WebpageEditor,
+    {
+      createDocument: (input) => $trpc.webpageEditor.createDocument.mutate(input),
+      deleteDocument: (input) => $trpc.webpageEditor.deleteDocument.mutate(input),
+      readDocumentContent: (input) => $trpc.webpageEditor.readDocumentContent.query(input),
+      readDocuments: async () => (await $trpc.webpageEditor.readDocuments.query({})).items,
+      saveDocumentContent: (input) => $trpc.webpageEditor.saveDocumentContent.mutate(input),
+      updateDocument: (input) => $trpc.webpageEditor.updateDocument.mutate(input),
+    },
+    { defaultName: "My Webpage", localStorageKey: WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, schema: webpageEditorSchema },
+  );
+  const readWebpageEditor = async () => {
+    await load();
+    return content.value;
+  };
   const saveWebpageEditor = async (projectData: ProjectData) => {
-    webpageEditor.value = new WebpageEditor(projectData);
+    content.value = new WebpageEditor(projectData);
     await save();
   };
   return { readWebpageEditor, saveWebpageEditor };
