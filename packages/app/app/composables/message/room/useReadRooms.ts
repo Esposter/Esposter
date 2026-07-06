@@ -1,7 +1,6 @@
 import { authClient } from "@/services/auth/authClient";
+import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useRoomStore } from "@/store/message/room";
-import { CompositeKeyPropertyNames } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadRooms = async () => {
   const { $trpc } = useNuxtApp();
@@ -13,9 +12,7 @@ export const useReadRooms = async () => {
   const readMyPermissions = useReadMyPermissions();
   const readRoles = useReadRoles();
   const readRooms = () => {
-    const userId = session.value?.user.id;
-    if (!userId)
-      throw new InvalidOperationError(Operation.Read, readRooms.name, CompositeKeyPropertyNames.partitionKey);
+    requirePartitionKey(session.value?.user.id, readRooms.name);
     return readItems(async () => {
       const data = await $trpc.room.readRooms.query(currentRoomId.value ? { roomId: currentRoomId.value } : {});
       const roomIds = data.items.map(({ id }) => id);
@@ -25,9 +22,7 @@ export const useReadRooms = async () => {
     });
   };
   const readMoreRooms = (onComplete: () => void) => {
-    const userId = session.value?.user.id;
-    if (!userId)
-      throw new InvalidOperationError(Operation.Read, readMoreRooms.name, CompositeKeyPropertyNames.partitionKey);
+    requirePartitionKey(session.value?.user.id, readMoreRooms.name);
     return readMoreItems(async (cursor) => {
       const response = await $trpc.room.readRooms.query({ cursor });
       const roomIds = response.items.map(({ id }) => id);

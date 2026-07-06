@@ -1,5 +1,4 @@
 import type { SuggestionKeyDownProps, SuggestionOptions } from "@tiptap/suggestion";
-import type { Component } from "vue";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { updatePosition } from "@/services/message/updatePosition";

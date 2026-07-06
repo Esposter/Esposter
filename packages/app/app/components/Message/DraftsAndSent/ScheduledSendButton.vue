@@ -13,23 +13,16 @@ const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
 </script>
 
 <template>
-  <v-tooltip text="Send message">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn
-        :="tooltipProps"
-        :disabled="scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage"
-        density="comfortable"
-        icon="mdi-send-outline"
-        size="small"
-        variant="text"
-        @click.stop="
-          async () => {
-            if (scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage) return;
-            await $trpc.message.scheduledMessageJob.sendScheduledMessageNow.mutate({ id: scheduledMessageJob.id });
-            await readScheduledMessageJobs();
-          }
-        "
-      />
-    </template>
-  </v-tooltip>
+  <MessageDraftsAndSentActionButton
+    :button-props="{ disabled: scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage }"
+    icon="mdi-send-outline"
+    text="Send message"
+    @click="
+      async () => {
+        if (scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage) return;
+        await $trpc.message.scheduledMessageJob.sendScheduledMessageNow.mutate({ id: scheduledMessageJob.id });
+        await readScheduledMessageJobs();
+      }
+    "
+  />
 </template>

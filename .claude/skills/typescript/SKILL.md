@@ -103,9 +103,8 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 ## Promise Style
 
-- **`async`/`await` with neverthrow for fallible work** — `try`/`catch` is **BANNED**; never `.catch()` chains. Use `getResult(() => ...)` for sync throwing ops and `getResultAsync(() => ...)` for async/rejecting ops. Do not call `fromThrowable`/`ResultAsync.fromPromise`/`ResultAsync.fromThrowable` directly. For cleanup after both success and failure use `withFinalizer(...)`/`withFinalizerAsync(...)` — never `try`/`finally`.
+- **`try`/`catch` is BANNED** for fallible work — use neverthrow `getResult`/`getResultAsync` (+ `withFinalizer`/`withFinalizerAsync` for cleanup, never `try`/`finally`); never `.catch()` chains. Full patterns, utilities, consumption rules, and Azure Functions logging/retry live in the **error-handling** skill.
 - **`.then()` exception**: acceptable only for a **promise queue** (serialising sequential async ops in a sync context, e.g. `chain = chain.then(async () => {...})`) — can't be expressed with `await` in a sync watcher/callback. All other `.then()`/`.catch()` must be converted.
-- Every `Result`/`ResultAsync` must be consumed with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`; `.orTee(...)` alone is not enough.
 - Fire-and-forget: extract to a named `async` function and call without `await`.
 - **Never `void asyncFn()`** — when passing an async function to a sync callback slot (`onScopeDispose`, event listeners, Phaser callbacks), wrap with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction`. This satisfies `no-misused-promises` without suppressing the rule.
 

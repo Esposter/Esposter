@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch banned), chaining patterns, finalizers, and tRPC backend guards. Apply when handling errors in components, composables, stores, server routes, or tRPC routers.
+description: Esposter Error Handling Conventions — neverthrow getResult/getResultAsync (try/catch banned), chaining patterns, finalizers, tRPC backend guards, and Azure Functions logging/retry (context.error, logAndRethrow, fatal vs best-effort). Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers.
 ---
 
 # Error Handling Conventions
@@ -149,6 +149,39 @@ const updated = requireMutation(
   ctx.getSessionPayload.user.id,
 );
 ```
+
+## Azure Functions (EventGrid handlers): logging & retry
+
+Handlers receive an `InvocationContext`. Log through it — `context.error(...)` / `context.log(...)`, never `console.*`. When a service needs to log, `context` is its **first** parameter (`sendPushNotification`, `sendWebPushNotifications`, `createAndBroadcastMessage`).
+
+EventGrid delivery is **at-least-once**: a handler that throws is redelivered. So in a handler a throw is a _retry request_, not just an error — split every handler into a fatal path (rethrow → retry) and a best-effort path (log only).
+
+### Fatal path — rethrow to trigger retry
+
+Top-level handler wrapper. `logAndRethrow` logs then rethrows, so the failure is retried. Use for genuinely retryable steps (input `.parse()`, the persist/create step):
+
+```typescript
+return getResultAsync(async () => {
+  const input = someSchema.parse(event.data);
+  const newMessage = await createAndBroadcastMessage(context, input);
+  // ...
+}).match(noop, logAndRethrow(context, AzureFunction.ProcessWebhook));
+```
+
+### Best-effort path — log, never rethrow
+
+Side effects **after** the entity is persisted (realtime broadcast, push dispatch) must not rethrow — the row already exists with a fresh time-based `rowKey`, so replaying the event would create a **duplicate** message. Log and swallow:
+
+```typescript
+await getResultAsync(() => webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage)).match(
+  noop,
+  (error) => {
+    context.error(`Failed to broadcast message ${newMessage.partitionKey}/${newMessage.rowKey}: `, error);
+  },
+);
+```
+
+Canonical: `createAndBroadcastMessage` (broadcast) and `processWebhookHandler` (push dispatch) — both best-effort so a transient post-persist failure can't duplicate the message. The rule of thumb: everything before the persist is fatal/retryable; everything after it is best-effort.
 
 ## Finalizers
 

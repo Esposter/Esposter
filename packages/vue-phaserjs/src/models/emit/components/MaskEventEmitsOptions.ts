@@ -1,7 +1,4 @@
 import type { MaskConfiguration } from "@/models/configuration/components/MaskConfiguration";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type MaskEventEmitsOptions = {
-  [P in UpdateEvent<keyof MaskConfiguration>]: [MaskConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type MaskEventEmitsOptions = EmitsOptionsFor<MaskConfiguration>;

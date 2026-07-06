@@ -42,18 +42,12 @@ const createWord = () => {
             @keydown.enter.prevent="createWord()"
           >
             <template #append-inner>
-              <v-tooltip text="Add word">
-                <template #activator="{ props: tooltipProps }">
-                  <v-btn
-                    :="tooltipProps"
-                    :disabled="isAtMaxWords"
-                    icon="mdi-plus"
-                    size="x-small"
-                    variant="plain"
-                    @click="createWord()"
-                  />
-                </template>
-              </v-tooltip>
+              <StyledTooltipIconButton
+                :button-props="{ disabled: isAtMaxWords, size: 'x-small', variant: 'plain' }"
+                icon="mdi-plus"
+                text="Add word"
+                @click="createWord()"
+              />
             </template>
           </v-text-field>
           <div v-if="words.length > 0" mt-1 flex flex-wrap gap-2>
@@ -67,9 +61,7 @@ const createWord = () => {
               {{ word }}
             </v-chip>
           </div>
-          <span op-medium-emphasis text-body-small>
-            Messages containing these words will be blocked. Comparisons are case-insensitive.
-          </span>
+          <span text-hint> Messages containing these words will be blocked. Comparisons are case-insensitive. </span>
           <StyledButton
             :button-props="{ disabled: !isDirty, text: 'Save Changes', variant: 'tonal' }"
             @click="

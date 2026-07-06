@@ -2,7 +2,6 @@
 import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
 
 import { withFinalizerAsync } from "@esposter/shared";
-import { mergeProps } from "vue";
 
 interface MessageDraftsAndSentScheduledMoreMenuProps {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
@@ -14,21 +13,13 @@ const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 </script>
 
 <template>
-  <v-menu location="bottom end">
-    <template #activator="{ props: menuProps }">
-      <v-tooltip text="More">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn
-            :="mergeProps(menuProps, tooltipProps)"
-            density="comfortable"
-            icon="mdi-dots-vertical"
-            size="small"
-            variant="text"
-            @click.stop
-          />
-        </template>
-      </v-tooltip>
-    </template>
+  <StyledTooltipMenuIconButton
+    :button-props="{ density: 'comfortable', size: 'small', variant: 'text' }"
+    icon="mdi-dots-vertical"
+    :menu-props="{ location: 'bottom end' }"
+    text="More"
+    @click.stop
+  >
     <v-list density="compact">
       <v-list-item
         title="Cancel schedule and save to drafts"
@@ -48,5 +39,5 @@ const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
         </template>
       </StyledDeleteFormDialog>
     </v-list>
-  </v-menu>
+  </StyledTooltipMenuIconButton>
 </template>

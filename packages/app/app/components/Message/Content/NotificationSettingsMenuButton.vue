@@ -3,7 +3,6 @@ import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLab
 import { useRoomStore } from "@/store/message/room";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { NotificationType } from "@esposter/db-schema";
-import { mergeProps } from "vue";
 
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
@@ -14,18 +13,13 @@ const notificationType = computed(() => myUserToRoomMap.value?.notificationType 
 </script>
 
 <template>
-  <v-menu location="bottom" :close-on-content-click="false">
-    <template #activator="{ props: menuProps }">
-      <v-tooltip location="bottom" text="Notification Settings">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn
-            :="mergeProps(menuProps, tooltipProps)"
-            size="small"
-            :icon="notificationType === NotificationType.All ? 'mdi-bell' : 'mdi-bell-off'"
-          />
-        </template>
-      </v-tooltip>
-    </template>
+  <StyledTooltipMenuIconButton
+    :button-props="{ size: 'small' }"
+    :icon="notificationType === NotificationType.All ? 'mdi-bell' : 'mdi-bell-off'"
+    :menu-props="{ closeOnContentClick: false, location: 'bottom' }"
+    text="Notification Settings"
+    :tooltip-props="{ location: 'bottom' }"
+  >
     <StyledCard pr-2>
       <v-radio-group
         :model-value="notificationType"
@@ -45,5 +39,5 @@ const notificationType = computed(() => myUserToRoomMap.value?.notificationType 
         </v-radio>
       </v-radio-group>
     </StyledCard>
-  </v-menu>
+  </StyledTooltipMenuIconButton>
 </template>

@@ -13,11 +13,12 @@ const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
         <v-icon icon="mdi-keyboard" />
         Keyboard Shortcuts
         <v-spacer />
-        <v-tooltip text="Close">
-          <template #activator="{ props: tooltipProps }">
-            <v-btn :="tooltipProps" icon="mdi-close" size="small" variant="text" @click="isOpen = false" />
-          </template>
-        </v-tooltip>
+        <StyledTooltipIconButton
+          :button-props="{ size: 'small', variant: 'text' }"
+          icon="mdi-close"
+          text="Close"
+          @click="isOpen = false"
+        />
       </v-card-title>
       <v-divider />
       <v-card-text>
@@ -27,7 +28,7 @@ const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
             <span text-body-medium>{{ description }}</span>
             <div flex gap-1 items-center>
               <template v-for="(key, keyIndex) of keys" :key>
-                <span v-if="keyIndex > 0" op-medium-emphasis text-body-small>+</span>
+                <span v-if="keyIndex > 0" text-hint>+</span>
                 <kbd font-mono px-1 py-0 op-high-emphasis text-body-small>{{ key }}</kbd>
               </template>
             </div>

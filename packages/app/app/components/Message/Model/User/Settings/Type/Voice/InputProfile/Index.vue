@@ -23,7 +23,7 @@ const { updateUserSettings } = userSettingsStore;
       <template #label>
         <div flex flex-col>
           <span text-body-medium>{{ title }}</span>
-          <span op-medium-emphasis text-body-small>{{ subtitle }}</span>
+          <span text-hint>{{ subtitle }}</span>
         </div>
       </template>
     </v-radio>

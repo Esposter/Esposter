@@ -3,19 +3,14 @@ import type { RectangleEventEmitsOptions } from "@/models/emit/RectangleEventEmi
 import type { SetterMap } from "@/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
+import { ComputedSizeSetterMap } from "@/util/setterMap/components/ComputedSizeSetterMap";
 import { GlobalSetterMap } from "@/util/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "@/util/setterMap/shared/ShapeSetterMap";
 
 export const RectangleSetterMap: SetterMap<RectangleConfiguration, GameObjects.Rectangle, RectangleEventEmitsOptions> =
   {
-    height: (gameObject) => (value) => {
-      if (value === undefined) return;
-      gameObject.setSize(gameObject.width, value);
-    },
-    width: (gameObject) => (value) => {
-      if (value === undefined) return;
-      gameObject.setSize(value, gameObject.height);
-    },
+    height: ComputedSizeSetterMap.height,
+    width: ComputedSizeSetterMap.width,
     ...ShapeSetterMap,
     ...GlobalSetterMap,
   };

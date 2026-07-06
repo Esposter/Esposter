@@ -1,6 +1,7 @@
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
+import { copyBlob } from "@/services/azure/container/copyBlob";
+import { listBlobNames } from "@/services/azure/container/listBlobNames";
 
 export const cloneDirectory = async (
   containerClient: ContainerClient,
@@ -8,28 +9,17 @@ export const cloneDirectory = async (
   destinationPrefix: string,
   isDeep?: true,
 ) => {
-  const sourceBlobNames: string[] = [];
-
-  if (isDeep)
-    for await (const { segment } of containerClient
-      .listBlobsFlat({ prefix: sourcePrefix })
-      .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-      sourceBlobNames.push(...segment.blobItems.map(({ name }) => name));
-  else
-    for await (const { segment } of containerClient
-      .listBlobsByHierarchy("/", { prefix: sourcePrefix })
-      .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-      sourceBlobNames.push(...segment.blobItems.map(({ name }) => name));
-
+  const sourceBlobNames = await listBlobNames(containerClient, sourcePrefix, isDeep);
   if (sourceBlobNames.length === 0) return undefined;
 
   return Promise.all(
-    sourceBlobNames.map(async (sourceBlobName) => {
-      const sourceBlobUrl = `${containerClient.url}/${sourceBlobName}`;
-      const destinationBlobName = `${destinationPrefix}/${sourceBlobName}`;
-      const destinationBlockBlobClient = containerClient.getBlockBlobClient(destinationBlobName);
-      const poller = await destinationBlockBlobClient.beginCopyFromURL(sourceBlobUrl);
-      await poller.pollUntilDone();
+    sourceBlobNames.map((sourceBlobName) => {
+      const relativeBlobName = sourceBlobName.slice(`${sourcePrefix}/`.length);
+      return copyBlob(
+        containerClient,
+        `${containerClient.url}/${sourceBlobName}`,
+        `${destinationPrefix}/${relativeBlobName}`,
+      );
     }),
   );
 };

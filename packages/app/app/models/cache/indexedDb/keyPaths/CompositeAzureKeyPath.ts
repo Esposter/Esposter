@@ -1,3 +1,6 @@
 import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 
-export const CompositeAzureKeyPath = [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey];
+export const CompositeAzureKeyPath: [
+  typeof CompositeKeyPropertyNames.partitionKey,
+  typeof CompositeKeyPropertyNames.rowKey,
+] = [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey];

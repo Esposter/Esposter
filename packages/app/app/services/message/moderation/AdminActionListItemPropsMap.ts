@@ -2,32 +2,12 @@ import type { VListItem } from "vuetify/components";
 
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
 import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
-import { AdminActionType } from "@esposter/db-schema";
+import { AdminActionTitleMap } from "@/services/message/moderation/AdminActionTitleMap";
 
-export const AdminActionListItemPropsMap = {
-  [AdminActionType.CreateBan]: {
-    appendIcon: AdminActionIconMap[AdminActionType.CreateBan],
-    baseColor: AdminActionColorMap[AdminActionType.CreateBan],
-    title: "Ban",
-  },
-  [AdminActionType.KickFromRoom]: {
-    appendIcon: AdminActionIconMap[AdminActionType.KickFromRoom],
-    baseColor: AdminActionColorMap[AdminActionType.KickFromRoom],
-    title: "Kick",
-  },
-  [AdminActionType.SoftBan]: {
-    appendIcon: AdminActionIconMap[AdminActionType.SoftBan],
-    baseColor: AdminActionColorMap[AdminActionType.SoftBan],
-    title: "Soft Ban",
-  },
-  [AdminActionType.TimeoutUser]: {
-    appendIcon: AdminActionIconMap[AdminActionType.TimeoutUser],
-    baseColor: AdminActionColorMap[AdminActionType.TimeoutUser],
-    title: "Timeout",
-  },
-  [AdminActionType.Warn]: {
-    appendIcon: AdminActionIconMap[AdminActionType.Warn],
-    baseColor: AdminActionColorMap[AdminActionType.Warn],
-    title: "Warn",
-  },
-} satisfies Partial<Record<AdminActionType, Pick<VListItem["$props"], "appendIcon" | "baseColor" | "title">>>;
+// Derived from the title/icon/color maps so each admin action's metadata has one source of truth per concern.
+export const AdminActionListItemPropsMap = Object.fromEntries(
+  (Object.keys(AdminActionTitleMap) as (keyof typeof AdminActionTitleMap)[]).map((type) => [
+    type,
+    { appendIcon: AdminActionIconMap[type], baseColor: AdminActionColorMap[type], title: AdminActionTitleMap[type] },
+  ]),
+) as Record<keyof typeof AdminActionTitleMap, Pick<VListItem["$props"], "appendIcon" | "baseColor" | "title">>;

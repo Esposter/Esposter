@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
+
+### Bug Fixes
+
+* snapshot ([60cc6b7](https://github.com/Esposter/Esposter/commit/60cc6b785a12f313b558560986316de64524b6e6))
+* tests and types ([67fc659](https://github.com/Esposter/Esposter/commit/67fc6595f40dce01037dee4f1ee5c703b486d26a))
+
+## [2.34.1](https://github.com/Esposter/Esposter/compare/v2.34.0...v2.34.1) (2026-07-04)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.34.0](https://github.com/Esposter/Esposter/compare/v2.33.0...v2.34.0) (2026-07-04)
+
+**Note:** Version bump only for package @esposter/shared
+
 # [2.33.0](https://github.com/Esposter/Esposter/compare/v2.32.1...v2.33.0) (2026-07-03)
 
 ### Bug Fixes

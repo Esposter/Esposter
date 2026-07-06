@@ -1,8 +1,5 @@
 import type { StarConfiguration } from "@/models/configuration/StarConfiguration";
 import type { GameObjectEventMapEmitsOptions } from "@/models/emit/shared/GameObjectEventMapEmitsOptions";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type StarEventEmitsOptions = GameObjectEventMapEmitsOptions & {
-  [P in UpdateEvent<keyof StarConfiguration>]: [StarConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type StarEventEmitsOptions = EmitsOptionsFor<StarConfiguration> & GameObjectEventMapEmitsOptions;

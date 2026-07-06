@@ -3,6 +3,7 @@ import type { ExecResult } from "@/models/exec/ExecResult";
 import type { FlushOp } from "@/models/exec/FlushOp";
 
 import { FlushOpType } from "@/models/exec/FlushOp";
+import { writeVirrunDebug } from "@/services/cli/debug/writeVirrunDebug";
 import {
   TASK_CACHE_META_FILENAME,
   TASK_CACHE_PAYLOAD_DIRECTORY_NAME,
@@ -49,7 +50,8 @@ export const recordTaskCache = (key: string, upperDir: string, plan: readonly Fl
       if (!existsSync(location.metaFile)) throw error;
       removeSnapshotDirectory(tempDir);
     });
-  }).match(noop, () => {
+  }).match(noop, (error) => {
+    writeVirrunDebug(`task cache record failed — ${error.message}`);
     if (tempDir) removeSnapshotDirectory(tempDir);
   });
 };

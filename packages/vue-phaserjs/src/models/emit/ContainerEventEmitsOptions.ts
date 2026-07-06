@@ -1,8 +1,5 @@
 import type { ContainerConfiguration } from "@/models/configuration/ContainerConfiguration";
 import type { GameObjectEventMapEmitsOptions } from "@/models/emit/shared/GameObjectEventMapEmitsOptions";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type ContainerEventEmitsOptions = GameObjectEventMapEmitsOptions & {
-  [P in UpdateEvent<keyof ContainerConfiguration>]: [ContainerConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type ContainerEventEmitsOptions = EmitsOptionsFor<ContainerConfiguration> & GameObjectEventMapEmitsOptions;

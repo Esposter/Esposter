@@ -40,6 +40,10 @@ export const WSL_CACHE_ROOT_CACHE_FILENAME = "wsl-cache-root.json";
 export const VIRRUN_FORCE_PROBE_KEY = "VIRRUN_FORCE_PROBE";
 // Set (to any value) to disable the task cache for a run — the env form of `virrun --no-cache`. See isTaskCacheEnabled.
 export const VIRRUN_NO_CACHE_KEY = "VIRRUN_NO_CACHE";
+// Set (to any value) to print internal diagnostic lines to stderr — the env form of `virrun run --debug`. The
+// Observability lever for silently-degrading paths (the task cache is best-effort: a failed record leaves the run
+// Correct, merely uncached, so only these lines reveal why a run didn't cache). See writeVirrunDebug.
+export const VIRRUN_DEBUG_KEY = "VIRRUN_DEBUG";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_KEY = "PNPM_CONFIG_PACKAGE_IMPORT_METHOD";
 export const PNPM_CONFIG_PACKAGE_IMPORT_METHOD_VALUE = "copy";
 export const PNPM_CONFIG_STORE_DIR_KEY = "PNPM_CONFIG_STORE_DIR";
@@ -58,10 +62,11 @@ export const CI_ENV_VALUE = "true";
 // Are sub-second on a healthy host; a corrupt/unresponsive WSL distro can hang execFileSync forever, so the cap lets
 // The probe fail (degrade to unsupported) instead of blocking the whole CLI.
 export const PROBE_TIMEOUT_MS: number = dayjs.duration(10, "seconds").asMilliseconds();
-// Upper bound for the win32 source-mirror rsync (ensureWslSourceMirror). Generous — the first cold materialize reads
-// The whole source lower across v9fs (15-64x slower) — but bounded so a stalled ext4 volume or hung flock aborts the
-// Run instead of hanging the CLI forever.
-export const SOURCE_MIRROR_TIMEOUT_MS: number = dayjs.duration(5, "minutes").asMilliseconds();
+// Upper bound the folded sync script enforces Linux-side — `flock -w` on the mirror lock plus `timeout` on rsync
+// (createWslSourceMirrorSync). Generous — the first cold materialize reads the whole source lower across v9fs
+// (15-64x slower) — but bounded so a stalled ext4 volume or hung lock aborts the run instead of hanging the CLI
+// Forever. Seconds, not ms: the consumers are Linux shell utilities, not execFileSync.
+export const SOURCE_MIRROR_TIMEOUT_SECONDS: number = dayjs.duration(5, "minutes").asSeconds();
 
 export const VIRRUN_TEMP_DIR_PREFIX = "virrun-temp-";
 // The host cache dir acceptance corpora/snapshots stage into, under $HOME never os.tmpdir (see createWorkspaceCorpus).

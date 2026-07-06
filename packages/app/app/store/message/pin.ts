@@ -2,21 +2,18 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
+import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { AzureEntityType, CompositeKeyPropertyNames } from "@esposter/db-schema";
+import { AzureEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 export const usePinStore = defineStore("message/pin", () => {
   const roomStore = useRoomStore();
   const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
-  const { createMessage, deleteMessage } = createOperationData(
-    items,
-    [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey],
-    AzureEntityType.Message,
-  );
+  const { createMessage, deleteMessage } = createOperationData(items, CompositeAzureKeyPath, AzureEntityType.Message);
   const messages = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const dataStore = useDataStore();
   MessageHookMap[Operation.Update].push((input) => {
@@ -24,10 +21,7 @@ export const usePinStore = defineStore("message/pin", () => {
 
     if (input.isPinned) {
       const message = dataStore.items.find((i) =>
-        getIsEntityIdEqualComparator<MessageEntity>(
-          [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey],
-          input,
-        )(i),
+        getIsEntityIdEqualComparator<MessageEntity>(CompositeAzureKeyPath, input)(i),
       );
       if (!message) return;
       createMessage(message);

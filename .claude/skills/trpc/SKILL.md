@@ -101,6 +101,23 @@ Three builders in `server/trpc/procedure/room/`:
 - `getPermissionsProcedure(permission, schema, roomIdKey)` — verifies caller has a specific `RoomPermission`; most common for moderation/admin.
 - `getOwnerProcedure` — verifies caller owns the room; destructive room operations.
 
+## Room-Scoped Subscriptions — `getRoomEventSubscription`
+
+The shared single-room subscription shape (member check + `roomIdSchema` input + forward `[data, device]` events matching the input room to everyone except the emitting device) is `getRoomEventSubscription(emitter, eventName, getRoomId)` in `server/trpc/procedure/room/`. A subscription whose body would only filter by room id and same-device MUST use it:
+
+```ts
+onCreateEmoji: getRoomEventSubscription(emojiEventEmitter, "createEmoji", ({ partitionKey }) => partitionKey),
+onAssignRole: getRoomEventSubscription(roleEventEmitter, "assignRole", ({ roomId }) => roomId),
+```
+
+- Event map shape must be `[[Data, Device]]`; yield types stay exact per event via `TEventMap[TKey][0][0]` indexed access.
+- **Deliberately NOT abstracted**: multi-room (room/userToRoom), callSession, typing/moderation/achievement subscriptions — their bodies differ in destructure, device-id construction, and yield, so a builder would need as many lambdas as the body has lines. Don't force them in.
+
+## Ownership Guards in Mutations
+
+- **`ownedBy(table, id, userId)`** (`server/services/db/ownedBy.ts`) — the where-predicate for "this row must belong to the caller": `.where(ownedBy(surveys, input, ctx.getSessionPayload.user.id))`. Compose extra clauses with `and(ownedBy(...), isNull(...))`. Never hand-write `and(eq(table.id, id), eq(table.userId, userId))`.
+- Repeated multi-clause where-fragments within one router (e.g. "not cancelled and not completed") get a named module-level `const`/helper in that router file.
+
 ## Router and Store Structure
 
 - **One router + one Pinia store per DB table** — never bundle multiple tables into one router or store.
@@ -248,6 +265,8 @@ In tests, `Promise.all([iterator.next(), mutation()])` exposes this: the mutatio
 
 ## Router Test Patterns
 
+- **`setupRoomSuite()` fixture** (`server/trpc/routers/setupRoomSuite.test.ts`) — any room-scoped router suite where every test needs a room uses it at the top of `describe`. It owns `createMockContext`, room/role callers, a fresh room per test (`beforeEach`), and cleanup (`MockTableDatabase.clear()` + `db.delete(roomsInMessage)` in `afterEach`), and returns `createMember`/`setupMemberWithRole` plus `getMockContext`/`getRoomCaller`/`getRoleCaller`/`getRoomId` getters. Suites alias getters into local `let`s in their own `beforeAll`/`beforeEach` so test bodies stay unchanged; suite-specific hooks (fake timers, extra table deletes) compose alongside. Never copy-paste `createMember`/`setupMemberWithRole` or the room lifecycle hooks into a suite.
+- **Subscription tests: builder once, wiring smoke per router** — `getRoomEventSubscription` behavior (member check, room filter, same-device filter, data passthrough) is tested thoroughly ONCE in `server/trpc/procedure/room/getRoomEventSubscription.test.ts` through one representative subscription. Each router keeps only a **single** emit-wiring smoke test (one `getFirstEmit` happy path, e.g. `onCreateRole`); do not add per-subscription filter/UNAUTHORIZED/other-room tests to router suites.
 - **Caller types always use `TRPCRouter` path notation** — never `typeof subRouter`:
 
   ```ts

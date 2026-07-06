@@ -1,31 +1,15 @@
 <script setup lang="ts">
 import { RightDrawer } from "@/models/message/RightDrawer";
-import { useLayoutStore } from "@/store/layout";
-import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
 
-const layoutStore = useLayoutStore();
-const { isRightDrawerOpen } = storeToRefs(layoutStore);
-const messageLayoutStore = useMessageLayoutStore();
-const { rightDrawer } = storeToRefs(messageLayoutStore);
+const { toggle } = useToggleRightDrawer(RightDrawer.Search);
 </script>
 
 <template>
-  <v-tooltip location="bottom" text="Search">
-    <template #activator="{ props }">
-      <v-btn
-        icon="mdi-magnify"
-        size="small"
-        :="props"
-        @click="
-          () => {
-            if (rightDrawer === RightDrawer.Search) isRightDrawerOpen = !isRightDrawerOpen;
-            else {
-              rightDrawer = RightDrawer.Search;
-              isRightDrawerOpen = true;
-            }
-          }
-        "
-      />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ size: 'small' }"
+    icon="mdi-magnify"
+    text="Search"
+    :tooltip-props="{ location: 'bottom' }"
+    @click="toggle"
+  />
 </template>

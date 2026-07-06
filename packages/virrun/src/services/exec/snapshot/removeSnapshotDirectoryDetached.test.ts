@@ -7,6 +7,7 @@ import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { WSL_REMOVE_SCRIPT } from "@/services/exec/wsl/constants";
 import { TEST_WSL_CACHE_ROOT_LINUX, TEST_WSL_LEGACY_UNC_PREFIX } from "@/services/exec/wsl/constants.test";
 import { createTestWslUnc } from "@/services/exec/wsl/createTestWslUnc.test";
+import { noop } from "@esposter/shared";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -58,7 +59,7 @@ describe(removeSnapshotDirectoryDetached, () => {
       ["--exec", "sh", "-c", WSL_REMOVE_SCRIPT, "sh", linuxDir],
       { stdio: "ignore", windowsHide: true },
     );
-    expect(child.on).toHaveBeenCalledWith("error", expect.any(Function));
+    expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop);
     expect(child.unref).toHaveBeenCalledExactlyOnceWith();
   });
 });

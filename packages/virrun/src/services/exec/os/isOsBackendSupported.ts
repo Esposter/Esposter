@@ -35,6 +35,6 @@ export const isOsBackendSupported = (): boolean => {
     }
   }
   isSupported = probeOsBackendSupported();
-  writeCapabilityCache({ key, supported: isSupported });
+  writeCapabilityCache({ key, value: isSupported });
   return isSupported;
 };

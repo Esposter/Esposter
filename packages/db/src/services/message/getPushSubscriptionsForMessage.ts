@@ -3,6 +3,7 @@ import type { SQL } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { getMentionNotificationConditions } from "@/services/message/mention/getMentionNotificationConditions";
+import { PUSH_SUBSCRIPTION_COLUMNS } from "@/services/pushNotification/constants";
 import {
   NotificationType,
   pushSubscriptionsInMessage,
@@ -24,13 +25,7 @@ export const getPushSubscriptionsForMessage = async (
   const mentionOrWheres = [eq(usersToRoomsInMessage.notificationType, NotificationType.All), ...mentionConditions];
   andWheres.push(or(...mentionOrWheres));
   return db
-    .select({
-      auth: pushSubscriptionsInMessage.auth,
-      endpoint: pushSubscriptionsInMessage.endpoint,
-      expirationTime: pushSubscriptionsInMessage.expirationTime,
-      id: pushSubscriptionsInMessage.id,
-      p256dh: pushSubscriptionsInMessage.p256dh,
-    })
+    .select({ ...PUSH_SUBSCRIPTION_COLUMNS })
     .from(pushSubscriptionsInMessage)
     .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, pushSubscriptionsInMessage.userId))
     .leftJoin(userStatusesInMessage, eq(userStatusesInMessage.userId, pushSubscriptionsInMessage.userId))

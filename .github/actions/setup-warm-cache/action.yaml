@@ -1,0 +1,50 @@
+name: Setup Warm Cache
+description: >-
+  Shared setup for the os-backend verify/build jobs (format/lint/typecheck/build/build-docs): install the
+  bubblewrap sandbox, expose the virrun bin from the build-packages artifact (no host pnpm i), and restore
+  the warm-cache job's two published layers (dependency snapshot + prepare `.nuxt`) read-only. After this,
+  every `virrun -- <cmd>` forks the warm layers instead of cold-installing and re-running `nuxt prepare`.
+  The caller must run `needs: [build-packages, warm-cache]` and check out the repo before using this action.
+runs:
+  using: composite
+  steps:
+    # bubblewrap (+ unprivileged user namespaces) so the os backend the config pins runs isolated rather than
+    # Silently falling back to native.
+    - name: 🔧 Setup Project Dependencies
+      uses: ./.github/actions/setup-project-dependencies
+      with:
+        bubblewrap-sandbox: true
+    # These jobs run `pnpm <script>` with install: false (no host node_modules) purely to launch `virrun -- <tool>`,
+    # But pnpm's verify-deps-before-run would full-install the workspace just to start the script — the exact cost the
+    # Sandbox exists to avoid. Disable it CI-only (ephemeral runner; local dev keeps auto-reinstall). NOT via env
+    # (pnpm 11 ignores npm_config_* for this pnpm-native setting) and NOT in the repo tree (.npmrc / pnpm-workspace.yaml):
+    # Virrun keys its prepare layer on a source-tree hash, and the warm-cache job captures it on the CLEAN tree, so
+    # Mutating the tree here would diverge the hash and force a `.nuxt` rebuild. `pnpm config set` (default = global/user
+    # Config) leaves the tree untouched and covers the host launch — the only place that reinstalls; the nested
+    # `pnpm -r run …` inside the sandbox is a no-op over the restored frozen snapshot. Runs after pnpm is on PATH.
+    - name: 🚫 Disable pnpm verify-deps-before-run
+      shell: bash
+      run: pnpm config set verify-deps-before-run false
+    # install: false — node_modules comes from the warm snapshot inside the sandbox, so a host `pnpm i` is
+    # Redundant; Setup Packages exposes the `virrun` bin from the build-packages artifact instead.
+    - name: 📦 Setup Packages
+      uses: ./.github/actions/setup-packages
+      with:
+        install: false
+    # Read-only restore of the warm-cache job's published snapshot so `virrun --` forks the warm dep tree
+    # Instead of cold-installing. Same lockfile-hash key.
+    - name: ♻️ Restore snapshot layer
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: ~/.virrun/snapshots
+        key: virrun-snapshot-${{ hashFiles('pnpm-lock.yaml') }}
+        fail-on-cache-miss: true
+    # Read-only restore of the prepare layer the warm-cache job captured for this commit — SHA-keyed because
+    # `.nuxt` is source-derived and moves every commit — so each `virrun --` forks it instead of re-running
+    # `nuxt prepare`. warm-cache captures it per commit, so a miss here is a regression: fail loud.
+    - name: ♻️ Restore prepare layer
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: ~/.virrun/prepare
+        key: virrun-prepare-${{ github.sha }}
+        fail-on-cache-miss: true

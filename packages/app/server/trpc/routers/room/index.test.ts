@@ -9,9 +9,9 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
+import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { AzureContainer, DatabaseEntityType, friends, INVITE_ID_LENGTH, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL, MockContainerDatabase } from "azure-mock";
@@ -206,17 +206,12 @@ describe("room", () => {
     MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     const onUpdateRoom = await roomCaller.onUpdateRoom([newRoom.id]);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onUpdateRoom,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), roomCaller.updateRoom({ id: newRoom.id, image: "" })]);
-        return result;
-      },
+      () => roomCaller.updateRoom({ id: newRoom.id, image: "" }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.image).toBe("");
+    expect(data.image).toBe("");
     expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(false);
   });
 
@@ -264,20 +259,12 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const onUpdateRoom = await roomCaller.onUpdateRoom([newRoom.id]);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onUpdateRoom,
-      async (iterator) => {
-        const [result] = await Promise.all([
-          iterator.next(),
-          roomCaller.updateRoom({ id: newRoom.id, name: updatedName }),
-        ]);
-        return result;
-      },
+      () => roomCaller.updateRoom({ id: newRoom.id, name: updatedName }),
     );
 
-    assert(!data.done);
-
-    expect(data.value.name).toBe(updatedName);
+    expect(data.name).toBe(updatedName);
   });
 
   test("deletes", async () => {
@@ -305,17 +292,12 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const onDeleteRoom = await roomCaller.onDeleteRoom([newRoom.id]);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onDeleteRoom,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), roomCaller.deleteRoom(newRoom.id)]);
-        return result;
-      },
+      () => roomCaller.deleteRoom(newRoom.id),
     );
 
-    assert(!data.done);
-
-    expect(data.value).toBe(newRoom.id);
+    expect(data).toBe(newRoom.id);
   });
 
   test("reads invite", async () => {
@@ -489,17 +471,12 @@ describe("room", () => {
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const onJoinRoom = await roomCaller.onJoinRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onJoinRoom,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), roomCaller.joinRoom(newInviteCode)]);
-        return result;
-      },
+      () => roomCaller.joinRoom(newInviteCode),
     );
 
-    assert(!data.done);
-
-    expect(data.value).toStrictEqual(session.user);
+    expect(data).toStrictEqual(session.user);
   });
 
   test("leaves", async () => {
@@ -537,17 +514,12 @@ describe("room", () => {
     vi.advanceTimersByTime(1);
     const onLeaveRoom = await roomCaller.onLeaveRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db, user);
-    const data = await withAsyncIterator(
+    const data = await getFirstEmit(
       () => onLeaveRoom,
-      async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), roomCaller.leaveRoom(newRoom.id)]);
-        return result;
-      },
+      () => roomCaller.leaveRoom(newRoom.id),
     );
 
-    assert(!data.done);
-
-    expect(data.value).toBe(session.user.id);
+    expect(data).toBe(session.user.id);
   });
 
   test("counts members", async () => {

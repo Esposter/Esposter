@@ -2,13 +2,13 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
-import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
+// The generic blob-state matrix lives in webpageEditor.test.ts; here only the wiring.
 describe("tableEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["tableEditor"]>;
 
@@ -19,36 +19,6 @@ describe("tableEditor", () => {
 
   afterEach(() => {
     MockContainerDatabase.clear();
-  });
-
-  test("reads", async () => {
-    expect.hasAssertions();
-
-    const tableEditorConfiguration = await caller.readTableEditorConfiguration();
-    const { createdAt, File, id, TodoList, updatedAt, VuetifyComponent } = tableEditorConfiguration;
-
-    expect(tableEditorConfiguration).toStrictEqual(
-      new TableEditorConfiguration({
-        createdAt,
-        id,
-        [TableEditorType.File]: Object.assign(File, {
-          createdAt: File.createdAt,
-          id: File.id,
-          updatedAt: File.updatedAt,
-        }),
-        [TableEditorType.TodoList]: Object.assign(TodoList, {
-          createdAt: TodoList.createdAt,
-          id: TodoList.id,
-          updatedAt: TodoList.updatedAt,
-        }),
-        [TableEditorType.VuetifyComponent]: Object.assign(VuetifyComponent, {
-          createdAt: VuetifyComponent.createdAt,
-          id: VuetifyComponent.id,
-          updatedAt: VuetifyComponent.updatedAt,
-        }),
-        updatedAt,
-      }),
-    );
   });
 
   test("saves and reads", async () => {

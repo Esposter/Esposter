@@ -9,8 +9,6 @@ import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
-import { on } from "@@/server/services/events/on";
 import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
 import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
 import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
@@ -21,10 +19,10 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
+import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
   DatabaseEntityType,
-  roomIdSchema,
   RoomPermission,
   roomRolesInMessage,
   usersToRoomRolesInMessage,
@@ -33,8 +31,6 @@ import {
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
-
-const onRoleInputSchema = roomIdSchema;
 
 export const roleRouter = router({
   assignRole: getPermissionsProcedure(
@@ -159,46 +155,11 @@ export const roleRouter = router({
     ]);
     return deletedRole;
   }),
-  onAssignRole: getMemberProcedure(onRoleInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input: { roomId },
-    signal,
-  }) {
-    for await (const [[data, device]] of on(roleEventEmitter, "assignRole", { signal }))
-      if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
-  }),
-  onCreateRole: getMemberProcedure(onRoleInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input: { roomId },
-    signal,
-  }) {
-    for await (const [[data, device]] of on(roleEventEmitter, "createRole", { signal }))
-      if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
-  }),
-  onDeleteRole: getMemberProcedure(onRoleInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input: { roomId },
-    signal,
-  }) {
-    for await (const [[data, device]] of on(roleEventEmitter, "deleteRole", { signal }))
-      if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
-  }),
-  onRevokeRole: getMemberProcedure(onRoleInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input: { roomId },
-    signal,
-  }) {
-    for await (const [[data, device]] of on(roleEventEmitter, "revokeRole", { signal }))
-      if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
-  }),
-  onUpdateRole: getMemberProcedure(onRoleInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input: { roomId },
-    signal,
-  }) {
-    for await (const [[data, device]] of on(roleEventEmitter, "updateRole", { signal }))
-      if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
-  }),
+  onAssignRole: getRoomEventSubscription(roleEventEmitter, "assignRole", ({ roomId }) => roomId),
+  onCreateRole: getRoomEventSubscription(roleEventEmitter, "createRole", ({ roomId }) => roomId),
+  onDeleteRole: getRoomEventSubscription(roleEventEmitter, "deleteRole", ({ roomId }) => roomId),
+  onRevokeRole: getRoomEventSubscription(roleEventEmitter, "revokeRole", ({ roomId }) => roomId),
+  onUpdateRole: getRoomEventSubscription(roleEventEmitter, "updateRole", ({ roomId }) => roomId),
   readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<
     UserToRoomRoleInMessageWithRelations[]
   >(({ ctx, input: { roomId, userIds } }) =>

@@ -24,11 +24,12 @@ const { deleteWebhook } = webhookStore;
     "
   >
     <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Delete Webhook">
-        <template #activator="{ props }">
-          <v-btn icon="mdi-delete" size="small" :="props" @click="updateIsOpen(true)" />
-        </template>
-      </v-tooltip>
+      <StyledTooltipIconButton
+        :button-props="{ size: 'small' }"
+        icon="mdi-delete"
+        text="Delete Webhook"
+        @click="updateIsOpen(true)"
+      />
     </template>
   </StyledDeleteFormDialog>
 </template>

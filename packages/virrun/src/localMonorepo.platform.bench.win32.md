@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-07-03T12:33:48.543Z
-- Commit: ecf9684d7
+- Date: 2026-07-04T08:22:37.367Z
+- Commit: 19b13e90c
 - Node: v26.4.0
 - OS: win32 10.0.19045 (x64)
 - CPU: AMD Ryzen 7 3700X 8-Core Processor × 16
@@ -18,28 +18,28 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## typecheck - packages/shared (cold)
 
-| task   | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
-| ------ | ------- | ---------- | ------ | ---------- | ------- |
-| native | 1.00×   | 830.3512   | ±2.36% | 879.3718   | 10      |
-| os/wsl | 0.072×  | 11467.8689 | ±1.33% | 11888.2324 | 10      |
+| task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
+| ------ | ------- | --------- | ------ | --------- | ------- |
+| native | 1.00×   | 910.1152  | ±2.22% | 961.1603  | 10      |
+| os/wsl | 0.46×   | 1963.8211 | ±0.39% | 1979.1588 | 10      |
 
 ## build - packages/shared (cold)
 
-| task   | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
-| ------ | ------- | ---------- | ------ | ---------- | ------- |
-| native | 1.00×   | 5780.4005  | ±4.97% | 6435.9867  | 10      |
-| os/wsl | 0.37×   | 15669.2080 | ±0.68% | 15934.9802 | 10      |
+| task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
+| ------ | ------- | --------- | ------ | --------- | ------- |
+| native | 1.00×   | 5685.7639 | ±1.01% | 5854.2505 | 10      |
+| os/wsl | 0.88×   | 6453.0943 | ±1.28% | 6720.8761 | 10      |
 
 ## build - write-back persist vs native (produces dist)
 
-| task           | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
-| -------------- | ------- | ---------- | ------ | ---------- | ------- |
-| native         | 1.00×   | 5361.0971  | ±0.46% | 5415.9066  | 10      |
-| os/wsl/persist | 0.33×   | 16155.8924 | ±1.34% | 16707.9755 | 10      |
+| task           | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
+| -------------- | ------- | --------- | ------ | --------- | ------- |
+| native         | 1.00×   | 5645.1724 | ±0.32% | 5685.0659 | 10      |
+| os/wsl/persist | 0.79×   | 7136.5016 | ±0.35% | 7201.5601 | 10      |
 
 ## test - packages/shared
 
-| task   | vs base | mean (ms)  | ±rme   | p99 (ms)   | samples |
-| ------ | ------- | ---------- | ------ | ---------- | ------- |
-| native | 1.00×   | 2591.3745  | ±1.02% | 2655.2062  | 10      |
-| os/wsl | 0.21×   | 12511.9616 | ±0.79% | 12793.2716 | 10      |
+| task   | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
+| ------ | ------- | --------- | ------ | --------- | ------- |
+| native | 1.00×   | 2863.8383 | ±1.20% | 2945.3745 | 10      |
+| os/wsl | 0.91×   | 3131.4393 | ±2.57% | 3372.6652 | 10      |

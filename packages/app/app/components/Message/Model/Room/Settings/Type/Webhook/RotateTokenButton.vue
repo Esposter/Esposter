@@ -14,9 +14,10 @@ const { rotateToken } = webhookStore;
 </script>
 
 <template>
-  <v-tooltip text="Rotate Token">
-    <template #activator="{ props }">
-      <v-btn icon="mdi-refresh" size="small" :="props" @click="rotateToken(roomId, { id })" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ size: 'small' }"
+    icon="mdi-refresh"
+    text="Rotate Token"
+    @click="rotateToken(roomId, { id })"
+  />
 </template>

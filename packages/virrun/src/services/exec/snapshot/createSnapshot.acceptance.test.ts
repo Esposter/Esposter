@@ -1,7 +1,4 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
-
 import { dayjs } from "@/services/dayjs.test";
-import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { resolveSnapshotLocation } from "@/services/exec/snapshot/resolveSnapshotLocation";
 import {
   ACCEPTANCE_TIMEOUT_MINUTES,
@@ -10,16 +7,13 @@ import {
   PNPM_MODULES_DIRECTORY,
   RUN_ESBUILD_VERSION_COMMAND,
 } from "@/services/exec/test/constants.test";
-import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
-import { ensureWarmSnapshot } from "@/services/exec/test/ensureWarmSnapshot.test";
-import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
-import { getAcceptanceCacheHome } from "@/services/exec/test/getAcceptanceCacheHome";
 import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstallSupported.test";
-import { NODE_MODULES_DIRECTORY, VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
+import { setupWarmSnapshotSuite } from "@/services/exec/test/setupWarmSnapshotSuite.test";
+import { NODE_MODULES_DIRECTORY } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { existsSync, rmSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 // Proves the warm-fork promise: the warm snapshot is captured once (ensureWarmSnapshot) into the shared acceptance
 // Cache home, and a fork sees the full node_modules WITHOUT reinstalling (offline, no network) while its own writes
@@ -29,32 +23,13 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 // Os.tmpdir) because the sandbox masks /tmp with --tmpfs, which would hide a /tmp overlay layer from the command
 // Inside; the shared global teardown drops it.
 describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then fork (acceptance)", () => {
-  // Constructed lazily in beforeAll (which never runs for a skipped describe) rather than here in the factory:
-  // Vitest still executes a skipIf'd describe body to collect its tests, and createOsBackend throws on a host that
-  // Can't set up the overlay (e.g. this suite running nested inside the os-backend sandbox), which would fail
-  // Collection instead of skipping.
-  let backend: ExecBackend;
+  const { getBackend, getCorpus } = setupWarmSnapshotSuite();
   const acceptanceTimeoutMs = dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds();
-  let corpus = "";
-  const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
-
-  beforeAll(async () => {
-    backend = createOsBackend();
-    process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
-    corpus = createWorkspaceCorpus(findRepoRoot());
-    await ensureWarmSnapshot(backend, corpus);
-  }, acceptanceTimeoutMs);
-
-  afterAll(() => {
-    // The shared snapshot + cache home are owned by the global teardown; here only the per-file corpus is dropped.
-    if (previousCacheHome === undefined) delete process.env[VIRRUN_CACHE_HOME_KEY];
-    else process.env[VIRRUN_CACHE_HOME_KEY] = previousCacheHome;
-    if (corpus) rmSync(corpus, { force: true, recursive: true });
-  });
 
   test("the captured snapshot exists, a fork reuses node_modules offline, and the source stays clean", async () => {
     expect.hasAssertions();
 
+    const corpus = getCorpus();
     // The shared capture wrote into the snapshot, not the source corpus on disk.
     const location = resolveSnapshotLocation(corpus);
 
@@ -71,7 +46,7 @@ describe.skipIf(!isSandboxInstallSupported)("createSnapshot - warm capture then 
       `printf "" > ${TEST_FILENAME}`,
       `echo ${TEST_FILENAME}`,
     ].join(" && ");
-    const { exitCode, stdout } = await backend.exec(forkCommand, {
+    const { exitCode, stdout } = await getBackend().exec(forkCommand, {
       cwd: corpus,
       overlayLayers: { lowerDirs: [location.upperDir] },
       stdio: "pipe",

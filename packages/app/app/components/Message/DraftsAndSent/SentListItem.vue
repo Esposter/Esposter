@@ -13,16 +13,14 @@ const { message, room } = defineProps<MessageDraftsAndSentSentListItemProps>();
 </script>
 
 <template>
-  <v-list-item @click="navigateTo(RoutePath.MessagesMessage(message.partitionKey, message.rowKey))">
+  <MessageDraftsAndSentBaseListItem
+    :display-time="getDisplayTime(message.createdAt)"
+    :subtitle="message.message"
+    :title="room.name"
+    @click="navigateTo(RoutePath.MessagesMessage(message.partitionKey, message.rowKey))"
+  >
     <template #prepend>
       <StyledAvatar :image="room.image" :name="room.name" />
     </template>
-    <v-list-item-title font-bold>{{ room.name }}</v-list-item-title>
-    <v-list-item-subtitle>
-      <span v-html="message.message" />
-    </v-list-item-subtitle>
-    <template #append>
-      <span op-medium-emphasis text-body-small>{{ getDisplayTime(message.createdAt) }}</span>
-    </template>
-  </v-list-item>
+  </MessageDraftsAndSentBaseListItem>
 </template>

@@ -38,11 +38,11 @@ import { MockRestError } from "@/models/MockRestError";
 import { getBlobItemXml } from "@/services/container/getBlobItemXml";
 import { getBlobPrefixXml } from "@/services/container/getBlobPrefixXml";
 import { getListBlobsXml } from "@/services/container/getListBlobsXml";
-import { toWebResourceLike } from "@/services/container/toWebResourceLike";
+import { createMockResponse } from "@/services/createMockResponse";
+import { getMockSasUrl } from "@/services/getMockSasUrl";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
-import { toHttpHeadersLike } from "@azure/core-http-compat";
-import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
+import { getOrCreate } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure ContainerClient.
  * It uses a Map to simulate blob storage.
@@ -60,12 +60,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   url: string;
 
   get container(): MapValue<typeof MockContainerDatabase> {
-    let container = MockContainerDatabase.get(this.containerName);
-    if (!container) {
-      container = new Map();
-      MockContainerDatabase.set(this.containerName, container);
-    }
-    return container;
+    return getOrCreate(MockContainerDatabase, this.containerName, () => new Map());
   }
 
   constructor(connectionString: string, containerName: string) {
@@ -89,14 +84,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   deleteBlob(blobName: string): Promise<BlobDeleteResponse> {
     if (!this.container.has(blobName)) throw new MockRestError("The specified blob does not exist.", 404);
     this.container.delete(blobName);
-    return Promise.resolve({
-      _response: {
-        headers: toHttpHeadersLike(createHttpHeaders()),
-        parsedHeaders: {},
-        request: toWebResourceLike(createPipelineRequest({ url: `${this.url}/${blobName}` })),
-        status: 200,
-      },
-    });
+    return Promise.resolve({ _response: createMockResponse(200, `${this.url}/${blobName}`) });
   }
 
   deleteIfExists(): Promise<ContainerDeleteIfExistsResponse> {
@@ -116,10 +104,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   generateSasUrl(options: ContainerGenerateSasUrlOptions): Promise<string> {
-    const sp = options.permissions?.toString() ?? "r";
-    return Promise.resolve(
-      `${MOCK_BLOB_BASE_URL}/${this.containerName}?sv=2025-11-05&sr=c&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=${sp}`,
-    );
+    return Promise.resolve(getMockSasUrl(this.url, options.permissions, "c"));
   }
 
   generateUserDelegationSasStringToSign(): string {
@@ -192,11 +177,11 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
           if (allBlobItems.length > 0 || allBlobPrefixes.length > 0)
             yield await Promise.resolve({
               _response: {
+                ...createMockResponse(200),
                 bodyAsText: getListBlobsXml(
                   this.containerName,
                   `${allBlobItemXml.join("")}${allBlobPrefixXml.join("")}`,
                 ),
-                headers: toHttpHeadersLike(createHttpHeaders()),
                 parsedBody: {
                   containerName: this.containerName,
                   marker: "",
@@ -206,9 +191,6 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
                   },
                   serviceEndpoint: "",
                 },
-                parsedHeaders: {},
-                request: toWebResourceLike(createPipelineRequest({ url: "" })),
-                status: 200,
               },
               containerName: this.containerName,
               marker: "",
@@ -243,8 +225,8 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
           if (allBlobItems.length > 0)
             yield await Promise.resolve({
               _response: {
+                ...createMockResponse(200),
                 bodyAsText: getListBlobsXml(this.containerName, allBlobItemXml.join("")),
-                headers: toHttpHeadersLike(createHttpHeaders()),
                 parsedBody: {
                   containerName: this.containerName,
                   marker: "",
@@ -254,9 +236,6 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
                   },
                   serviceEndpoint: "",
                 },
-                parsedHeaders: {},
-                request: toWebResourceLike(createPipelineRequest({ url: "" })),
-                status: 200,
               },
               containerName: this.containerName,
               marker: "",

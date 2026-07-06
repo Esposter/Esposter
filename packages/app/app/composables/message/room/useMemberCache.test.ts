@@ -4,6 +4,7 @@ import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { goOffline } from "@/composables/shared/network.test";
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
@@ -13,11 +14,6 @@ import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
-const goOffline = () => {
-  vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
-  window.dispatchEvent(new Event("offline"));
-};
 
 describe(useMemberCache, () => {
   let router: Router;

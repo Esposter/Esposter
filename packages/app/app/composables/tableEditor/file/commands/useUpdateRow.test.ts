@@ -1,22 +1,14 @@
 // @vitest-environment nuxt
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
+import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
 import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
 import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne, toRawDeep } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
-import { afterEach, assert, beforeEach, describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(useUpdateRow, () => {
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
-  afterEach(() => {
-    const fileHistoryStore = useFileHistoryStore();
-    const { clear } = fileHistoryStore;
-    clear();
-  });
+  setupCommandTest();
 
   test("updates row data at given index", () => {
     expect.hasAssertions();

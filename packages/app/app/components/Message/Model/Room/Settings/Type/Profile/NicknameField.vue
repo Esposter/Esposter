@@ -17,8 +17,6 @@ const emit = defineEmits<{ save: [] }>();
       @blur="emit('save')"
       @keydown.enter.prevent="emit('save')"
     />
-    <span op-medium-emphasis text-body-small>
-      Overrides your global username within this room. Leave blank to use your global username.
-    </span>
+    <span text-hint> Overrides your global username within this room. Leave blank to use your global username. </span>
   </div>
 </template>

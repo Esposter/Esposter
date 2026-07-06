@@ -3,6 +3,45 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
+
+### Bug Fixes
+
+* lint and skip test for now ([3558dca](https://github.com/Esposter/Esposter/commit/3558dcaf3084b13b8c05cb7857f983bcf781329e))
+* lint and snapshot ([f97bf86](https://github.com/Esposter/Esposter/commit/f97bf867b5e420c861754bfb0cd9c2a48e9ee1cc))
+* snapshots ([5a04f18](https://github.com/Esposter/Esposter/commit/5a04f18c732cd3e7028e901823b515aff6c3cb7a))
+
+## [2.34.1](https://github.com/Esposter/Esposter/compare/v2.34.0...v2.34.1) (2026-07-04)
+
+### Bug Fixes
+
+* cleanup docs ([3f0fb42](https://github.com/Esposter/Esposter/commit/3f0fb4283953b0c3e26242b00356e469430b3a77))
+* code review comments ([d226957](https://github.com/Esposter/Esposter/commit/d2269573a334b1d12f2cddb7995e74e3a1caa48e))
+* code review comments ([e848577](https://github.com/Esposter/Esposter/commit/e8485770ad3ccafe723073613d82bf31a17f4d59))
+* lint warnings ([0f5ba91](https://github.com/Esposter/Esposter/commit/0f5ba91bab503102af6772f53cf19eeb6efe3315))
+
+### Performance Improvements
+
+* improve windows mirror ops ([19b13e9](https://github.com/Esposter/Esposter/commit/19b13e90cf9b3c76e2df271bcf8c56ab07abd1ed))
+
+# [2.34.0](https://github.com/Esposter/Esposter/compare/v2.33.0...v2.34.0) (2026-07-04)
+
+### Bug Fixes
+
+* bench ([05f2348](https://github.com/Esposter/Esposter/commit/05f234875094d96648e5d013f23702eaa0a52c06))
+* lint ([b9ef894](https://github.com/Esposter/Esposter/commit/b9ef8944146b4c0aa22205cec36492a927207995))
+* lint and snapshot ([f22e19e](https://github.com/Esposter/Esposter/commit/f22e19efc0ac1daf3e48609a555de2ee07e1464f))
+* network errors + bench ([885ba8e](https://github.com/Esposter/Esposter/commit/885ba8eda8718504c47b8d395034adb692757d8d))
+* tests and network ([a975df3](https://github.com/Esposter/Esposter/commit/a975df3b351679db8df08e9daa1dd2e669c1d25a))
+
+### Features
+
+* Add bench files ([358cfce](https://github.com/Esposter/Esposter/commit/358cfcee65291515d50a0e5a7399ec3545625be8))
+
+### Performance Improvements
+
+* optimize CI don't need to re-install ([abecda6](https://github.com/Esposter/Esposter/commit/abecda6756ed6d1bba6384008728ecea3058a6f7))
+
 # [2.33.0](https://github.com/Esposter/Esposter/compare/v2.32.1...v2.33.0) (2026-07-03)
 
 ### Bug Fixes

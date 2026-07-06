@@ -1,18 +1,10 @@
-import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { MoveRowCommand } from "@/models/tableEditor/file/commands/MoveRowCommand";
-import { useTableEditorStore } from "@/store/tableEditor";
-import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 
-export const useReorderRows = () => {
-  const tableEditorStore = useTableEditorStore<DataSourceItem>();
-  const { editedItem } = storeToRefs(tableEditorStore);
-  const fileHistoryStore = useFileHistoryStore();
-  const { push } = fileHistoryStore;
-  return (newRows: Row[]) => {
-    if (!editedItem.value?.dataSource) return;
-    const oldRows = editedItem.value.dataSource.rows;
+export const useReorderRows = () =>
+  useTableEditorCommand((editedItem, newRows: Row[]) => {
+    const oldRows = editedItem.dataSource.rows;
     const oldIndexById = new Map(oldRows.map((row, index) => [row.id, index]));
     const newRelativePositionByRowId = new Map(newRows.map((row, index) => [row.id, index]));
     // Determine the expected relative position of each row within this page subset
@@ -36,26 +28,23 @@ export const useReorderRows = () => {
       }
     }
 
-    if (fromIndex === -1 || movedRelativePosition === -1 || maxDisplacement === 0) return;
+    if (fromIndex === -1 || movedRelativePosition === -1 || maxDisplacement === 0) return undefined;
 
     let toIndex: number;
     if (movedRelativePosition === 0) {
       const nextRow = newRows.at(1);
-      if (!nextRow) return;
+      if (!nextRow) return undefined;
       const nextOldIndex = oldIndexById.get(nextRow.id);
-      if (nextOldIndex === undefined) return;
+      if (nextOldIndex === undefined) return undefined;
       toIndex = nextOldIndex;
     } else {
       const previousRow = newRows.at(movedRelativePosition - 1);
-      if (!previousRow) return;
+      if (!previousRow) return undefined;
       const previousOldIndex = oldIndexById.get(previousRow.id);
-      if (previousOldIndex === undefined) return;
+      if (previousOldIndex === undefined) return undefined;
       toIndex = previousOldIndex < fromIndex ? previousOldIndex + 1 : previousOldIndex;
     }
 
-    if (fromIndex === toIndex) return;
-    const command = new MoveRowCommand(fromIndex, toIndex);
-    command.execute(editedItem.value);
-    push(command);
-  };
-};
+    if (fromIndex === toIndex) return undefined;
+    return new MoveRowCommand(fromIndex, toIndex);
+  });

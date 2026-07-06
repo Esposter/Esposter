@@ -1,14 +1,9 @@
-import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
-
 import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 
 export const useTypingSubscribables = async () => {
-  const onlineSubscribableContext: OnlineSubscribableContext = {
-    instance: getCurrentInstance(),
-    scope: getCurrentScope(),
-  };
+  const onlineSubscribableContext = getOnlineSubscribableContext();
   const { $trpc } = useNuxtApp();
   const dataStore = useDataStore();
   const { typings } = storeToRefs(dataStore);

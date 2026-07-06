@@ -16,10 +16,24 @@ describe(resolveBackend, () => {
     vi.mocked(isOsBackendSupported).mockReturnValue(true);
   });
 
-  test("defaults to auto when there is no config", () => {
+  test(`defaults to ${BackendType.Os} when there is no config`, () => {
     expect.hasAssertions();
 
-    expect(resolveBackend(undefined, env)).toBe(BackendType.Auto);
+    expect(resolveBackend(undefined, env)).toBe(BackendType.Os);
+  });
+
+  test(`defaults to ${BackendType.Os} when the config omits a backend`, () => {
+    expect.hasAssertions();
+
+    expect(resolveBackend({}, env)).toBe(BackendType.Os);
+  });
+
+  test(`degrades the default ${BackendType.Os} backend to ${BackendType.Native} when the host lacks bubblewrap support`, () => {
+    expect.hasAssertions();
+
+    vi.mocked(isOsBackendSupported).mockReturnValue(false);
+
+    expect(resolveBackend(undefined, env)).toBe(BackendType.Native);
   });
 
   test("runs the configured backend", () => {

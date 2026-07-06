@@ -20,11 +20,12 @@ const columnStatistics = computed(() => {
 
 <template>
   <template v-if="column.type === ColumnType.Number || column.type === ColumnType.Boolean">
-    <v-tooltip text="Column Chart">
-      <template #activator="{ props: tooltipProps }">
-        <v-btn icon="mdi-chart-bar" size="small" tile m-0 :="tooltipProps" @click.stop="isOpen = true" />
-      </template>
-    </v-tooltip>
+    <StyledTooltipIconButton
+      :button-props="{ class: 'm-0', size: 'small', tile: true }"
+      icon="mdi-chart-bar"
+      text="Column Chart"
+      @click.stop="isOpen = true"
+    />
     <TableEditorFileColumnChartDialog v-model="isOpen" :column-statistics />
   </template>
 </template>

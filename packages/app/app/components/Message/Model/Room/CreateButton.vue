@@ -7,9 +7,10 @@ const { createRoom } = roomStore;
 </script>
 
 <template>
-  <v-tooltip text="Create Room">
-    <template #activator="{ props }">
-      <v-btn icon="mdi-plus" size="small" :ripple="false" :="props" @click.stop="createRoom({ name: DEFAULT_NAME })" />
-    </template>
-  </v-tooltip>
+  <StyledTooltipIconButton
+    :button-props="{ ripple: false, size: 'small' }"
+    icon="mdi-plus"
+    text="Create Room"
+    @click.stop="createRoom({ name: DEFAULT_NAME })"
+  />
 </template>

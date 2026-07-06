@@ -47,30 +47,18 @@ const goToNext = () => {
             >{{ currentOccurrenceIndex + 1 }} / {{ occurrences.length }}</template
           >
         </span>
-        <v-tooltip text="Previous (Shift+Enter)">
-          <template #activator="{ props }">
-            <v-btn
-              :disabled="occurrences.length === 0"
-              icon="mdi-chevron-up"
-              size="small"
-              variant="text"
-              :="props"
-              @click="goToPrevious()"
-            />
-          </template>
-        </v-tooltip>
-        <v-tooltip text="Next (Enter)">
-          <template #activator="{ props }">
-            <v-btn
-              :disabled="occurrences.length === 0"
-              icon="mdi-chevron-down"
-              size="small"
-              variant="text"
-              :="props"
-              @click="goToNext()"
-            />
-          </template>
-        </v-tooltip>
+        <StyledTooltipIconButton
+          :button-props="{ disabled: occurrences.length === 0, size: 'small', variant: 'text' }"
+          icon="mdi-chevron-up"
+          text="Previous (Shift+Enter)"
+          @click="goToPrevious()"
+        />
+        <StyledTooltipIconButton
+          :button-props="{ disabled: occurrences.length === 0, size: 'small', variant: 'text' }"
+          icon="mdi-chevron-down"
+          text="Next (Enter)"
+          @click="goToNext()"
+        />
         <v-btn
           :disabled="occurrences.length === 0"
           density="compact"
@@ -91,17 +79,12 @@ const goToNext = () => {
           @click="findReplace(findValue, replaceValue)"
         />
         <v-spacer />
-        <v-tooltip text="Close">
-          <template #activator="{ props: tooltipProps }">
-            <v-btn
-              :="tooltipProps"
-              density="compact"
-              icon="mdi-close"
-              variant="text"
-              @click="isFindReplaceOpen = false"
-            />
-          </template>
-        </v-tooltip>
+        <StyledTooltipIconButton
+          :button-props="{ density: 'compact', variant: 'text' }"
+          icon="mdi-close"
+          text="Close"
+          @click="isFindReplaceOpen = false"
+        />
       </div>
     </v-sheet>
   </v-expand-transition>

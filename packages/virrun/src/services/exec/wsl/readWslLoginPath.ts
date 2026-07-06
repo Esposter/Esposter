@@ -3,14 +3,10 @@ import { VIRRUN_FORCE_PROBE_KEY, WSL_LOGIN_PATH_CACHE_FILENAME } from "@/service
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import { getHostFingerprint } from "@/services/exec/util/getHostFingerprint";
 import { buildWslLoginShellCommand } from "@/services/exec/wsl/buildWslLoginShellCommand";
+import { VIRRUN_LOGIN_PATH_BEGIN_MARKER, VIRRUN_LOGIN_PATH_END_MARKER } from "@/services/exec/wsl/constants";
 import { readWslEnvironmentCache } from "@/services/exec/wsl/readWslEnvironmentCache";
 import { writeWslEnvironmentCache } from "@/services/exec/wsl/writeWslEnvironmentCache";
 import { getResult } from "@esposter/shared";
-// Markers bracketing the printed PATH so an interactive rc that writes to stdout itself (prompts, MOTD, version
-// Manager banners…) can't corrupt the result — we slice strictly between them and treat their absence as "no
-// PATH captured".
-const PATH_BEGIN = "__VIRRUN_LOGIN_PATH_BEGIN__";
-const PATH_END = "__VIRRUN_LOGIN_PATH_END__";
 // Cap the interactive-login capture: a blocking rc/profile (a prompt, a hung version-manager hook) would
 // Otherwise stall createVirrun indefinitely. On timeout execFileSync throws, getResult turns it into "", and the
 // Command falls back to the default PATH — the same degraded path as a missing WSL.
@@ -32,7 +28,7 @@ const CAPTURE_SCRIPT = buildWslLoginShellCommand(
   [
     `nodeBin="$(command -v node 2>/dev/null)"`,
     `[ -n "$nodeBin" ] && PATH="$(dirname "$(readlink -f "$nodeBin")"):$PATH"`,
-    `printf "${PATH_BEGIN}%s${PATH_END}" "$PATH"`,
+    `printf "${VIRRUN_LOGIN_PATH_BEGIN_MARKER}%s${VIRRUN_LOGIN_PATH_END_MARKER}" "$PATH"`,
   ].join("; "),
 );
 // Captures the PATH a WSL interactive login shell sees, so the os backend can run profile-bound toolchains.
@@ -62,10 +58,10 @@ export const readWslLoginPath = (): string => {
     execFileHidden("wsl.exe", ["--exec", "sh", "-c", CAPTURE_SCRIPT], { timeout: WSL_LOGIN_PATH_TIMEOUT_MS }),
   )
     .map((stdout) => {
-      const beginIndex = stdout.indexOf(PATH_BEGIN);
-      const endIndex = stdout.indexOf(PATH_END);
+      const beginIndex = stdout.indexOf(VIRRUN_LOGIN_PATH_BEGIN_MARKER);
+      const endIndex = stdout.indexOf(VIRRUN_LOGIN_PATH_END_MARKER);
       if (beginIndex === -1 || endIndex === -1 || endIndex < beginIndex) return "";
-      return stdout.slice(beginIndex + PATH_BEGIN.length, endIndex);
+      return stdout.slice(beginIndex + VIRRUN_LOGIN_PATH_BEGIN_MARKER.length, endIndex);
     })
     .unwrapOr("");
   isLoginPathCached = true;

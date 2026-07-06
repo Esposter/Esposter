@@ -3,13 +3,13 @@ import { createColumn } from "@/composables/tableEditor/file/commands/createColu
 import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
 import { createNumberColumn } from "@/composables/tableEditor/file/commands/createNumberColumn.test";
 import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
 import { usePasteRangeFromClipboard } from "@/composables/tableEditor/file/commands/usePasteRangeFromClipboard";
 import { PasteMode } from "@/models/tableEditor/file/commands/PasteMode";
 import { useCellStore } from "@/store/tableEditor/file/cell";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const selectAnchor = (rowIndex: number, columnIndex: number) => {
@@ -20,16 +20,15 @@ const selectAnchor = (rowIndex: number, columnIndex: number) => {
 describe(usePasteRangeFromClipboard, () => {
   let readTextMock: ReturnType<typeof vi.fn<() => Promise<string>>>;
 
+  setupCommandTest();
+
   beforeEach(() => {
-    setActivePinia(createPinia());
     readTextMock = vi.fn<() => Promise<string>>().mockResolvedValue("");
     vi.stubGlobal("navigator", { clipboard: { readText: readTextMock } });
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
-    const fileHistoryStore = useFileHistoryStore();
-    fileHistoryStore.clear();
   });
 
   describe("overwrite mode", () => {

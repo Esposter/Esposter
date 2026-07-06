@@ -1,7 +1,4 @@
 import type { TextureConfiguration } from "@/models/configuration/components/TextureConfiguration";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type TextureEventEmitsOptions = {
-  [P in UpdateEvent<keyof TextureConfiguration>]: [TextureConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type TextureEventEmitsOptions = EmitsOptionsFor<TextureConfiguration>;

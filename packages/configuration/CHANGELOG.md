@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
+
+### Bug Fixes
+
+* tests and types ([67fc659](https://github.com/Esposter/Esposter/commit/67fc6595f40dce01037dee4f1ee5c703b486d26a))
+
+## [2.34.1](https://github.com/Esposter/Esposter/compare/v2.34.0...v2.34.1) (2026-07-04)
+
+### Bug Fixes
+
+* lint warnings ([0f5ba91](https://github.com/Esposter/Esposter/commit/0f5ba91bab503102af6772f53cf19eeb6efe3315))
+
+# [2.34.0](https://github.com/Esposter/Esposter/compare/v2.33.0...v2.34.0) (2026-07-04)
+
+**Note:** Version bump only for package @esposter/configuration
+
 # [2.33.0](https://github.com/Esposter/Esposter/compare/v2.32.1...v2.33.0) (2026-07-03)
 
 ### Bug Fixes

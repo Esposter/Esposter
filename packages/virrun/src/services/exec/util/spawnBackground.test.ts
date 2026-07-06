@@ -1,6 +1,7 @@
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
 import { spawnBackground } from "@/services/exec/util/spawnBackground";
+import { noop } from "@esposter/shared";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { spawn } = vi.hoisted(() => ({ spawn: vi.fn<typeof baseSpawn>() }));
@@ -34,7 +35,7 @@ describe(spawnBackground, () => {
 
     spawnBackground("wsl.exe", []);
 
-    expect(child.on).toHaveBeenCalledWith("error", expect.any(Function));
+    expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop);
     expect(child.unref).toHaveBeenCalledExactlyOnceWith();
   });
 });

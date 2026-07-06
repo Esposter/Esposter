@@ -9,6 +9,7 @@ import { rescheduleMessageInputSchema } from "#shared/models/db/message/schedule
 import { scheduleMessageInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleMessageInput";
 import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleReminderInput";
 import { useQueueClient } from "@@/server/composables/azure/queue/useQueueClient";
+import { ownedBy } from "@@/server/services/db/ownedBy";
 import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { router } from "@@/server/trpc";
@@ -29,6 +30,19 @@ import {
 import { Operation } from "@esposter/shared";
 import { and, asc, count, eq, isNull, sql } from "drizzle-orm";
 
+// Not yet cancelled or completed.
+const isActiveScheduledMessageJob = and(
+  isNull(scheduledMessageJobsInMessage.cancelledAt),
+  isNull(scheduledMessageJobsInMessage.completedAt),
+);
+// An active scheduled-message job owned by the user — the precondition for cancelling/rescheduling/sending it.
+const isCancellableScheduledMessage = (id: string, userId: string) =>
+  and(
+    ownedBy(scheduledMessageJobsInMessage, id, userId),
+    isActiveScheduledMessageJob,
+    sql`${scheduledMessageJobsInMessage.payload}->>'type' = ${ScheduledMessageJobType.ScheduledMessage}`,
+  );
+
 export const scheduledMessageJobRouter = router({
   cancelScheduledJob: standardAuthedProcedure
     .input(cancelScheduledMessageJobInputSchema)
@@ -40,10 +54,8 @@ export const scheduledMessageJobRouter = router({
             .set({ cancelledAt: new Date() })
             .where(
               and(
-                eq(scheduledMessageJobsInMessage.id, input.id),
-                eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-                isNull(scheduledMessageJobsInMessage.cancelledAt),
-                isNull(scheduledMessageJobsInMessage.completedAt),
+                ownedBy(scheduledMessageJobsInMessage, input.id, ctx.getSessionPayload.user.id),
+                isActiveScheduledMessageJob,
               ),
             )
             .returning()
@@ -65,11 +77,7 @@ export const scheduledMessageJobRouter = router({
         .from(scheduledMessageJobsInMessage)
         .innerJoin(roomsInMessage, eq(scheduledMessageJobsInMessage.roomId, roomsInMessage.id))
         .where(
-          and(
-            eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-            isNull(scheduledMessageJobsInMessage.cancelledAt),
-            isNull(scheduledMessageJobsInMessage.completedAt),
-          ),
+          and(eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id), isActiveScheduledMessageJob),
         )
         .orderBy(asc(scheduledMessageJobsInMessage.runAt))
         .limit(limit + 1)
@@ -89,11 +97,7 @@ export const scheduledMessageJobRouter = router({
           .select({ count: count() })
           .from(scheduledMessageJobsInMessage)
           .where(
-            and(
-              eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-              isNull(scheduledMessageJobsInMessage.cancelledAt),
-              isNull(scheduledMessageJobsInMessage.completedAt),
-            ),
+            and(eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id), isActiveScheduledMessageJob),
           )
       )[0]?.count ?? 0,
   ),
@@ -107,8 +111,7 @@ export const scheduledMessageJobRouter = router({
         and(
           eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
           eq(scheduledMessageJobsInMessage.roomId, input.roomId),
-          isNull(scheduledMessageJobsInMessage.cancelledAt),
-          isNull(scheduledMessageJobsInMessage.completedAt),
+          isActiveScheduledMessageJob,
         ),
       )
       .orderBy(asc(scheduledMessageJobsInMessage.runAt)),
@@ -122,15 +125,7 @@ export const scheduledMessageJobRouter = router({
             await tx
               .update(scheduledMessageJobsInMessage)
               .set({ cancelledAt: new Date() })
-              .where(
-                and(
-                  eq(scheduledMessageJobsInMessage.id, input.id),
-                  eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-                  isNull(scheduledMessageJobsInMessage.cancelledAt),
-                  isNull(scheduledMessageJobsInMessage.completedAt),
-                  sql`${scheduledMessageJobsInMessage.payload}->>'type' = ${ScheduledMessageJobType.ScheduledMessage}`,
-                ),
-              )
+              .where(isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id))
               .returning()
           )[0],
           Operation.Update,
@@ -212,15 +207,7 @@ export const scheduledMessageJobRouter = router({
           await ctx.db
             .update(scheduledMessageJobsInMessage)
             .set({ cancelledAt: new Date() })
-            .where(
-              and(
-                eq(scheduledMessageJobsInMessage.id, input.id),
-                eq(scheduledMessageJobsInMessage.userId, ctx.getSessionPayload.user.id),
-                isNull(scheduledMessageJobsInMessage.cancelledAt),
-                isNull(scheduledMessageJobsInMessage.completedAt),
-                sql`${scheduledMessageJobsInMessage.payload}->>'type' = ${ScheduledMessageJobType.ScheduledMessage}`,
-              ),
-            )
+            .where(isCancellableScheduledMessage(input.id, ctx.getSessionPayload.user.id))
             .returning()
         )[0],
         Operation.Update,

@@ -1,0 +1,46 @@
+<script setup lang="ts">
+interface MessageDraftsAndSentBaseListItemProps {
+  displayTime: string;
+  subtitle: string;
+  title: string;
+}
+
+defineOptions({ inheritAttrs: false });
+const { displayTime, subtitle, title } = defineProps<MessageDraftsAndSentBaseListItemProps>();
+const listItem = useTemplateRef("listItem");
+// @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.
+const { focused: isFocusWithin } = useFocusWithin(listItem);
+</script>
+
+<template>
+  <v-hover #default="{ isHovering, props }">
+    <v-list-item ref="listItem" :="{ ...props, ...$attrs }">
+      <template #prepend>
+        <slot name="prepend" />
+      </template>
+      <v-list-item-title font-bold>{{ title }}</v-list-item-title>
+      <v-list-item-subtitle>
+        <span v-html="subtitle" />
+      </v-list-item-subtitle>
+      <template #append>
+        <div flex gap-x-3 items-center>
+          <span text-hint>{{ displayTime }}</span>
+          <div
+            v-if="$slots.default"
+            v-show="isHovering || isFocusWithin"
+            p-1
+            b-1
+            b-border
+            rd-lg
+            b-solid
+            bg-surface
+            flex
+            items-center
+          >
+            <slot />
+          </div>
+        </div>
+      </template>
+    </v-list-item>
+  </v-hover>
+</template>

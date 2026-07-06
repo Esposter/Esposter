@@ -19,6 +19,6 @@ const rules = useVRules();
       @blur="emit('save')"
       @keydown.enter.prevent="emit('save')"
     />
-    <span op-medium-emphasis text-body-small>Seconds between messages. Leave empty to disable.</span>
+    <span text-hint>Seconds between messages. Leave empty to disable.</span>
   </div>
 </template>

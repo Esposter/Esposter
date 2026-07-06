@@ -1,3 +1,4 @@
+import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { useRoomStore } from "@/store/message/room";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 
@@ -9,11 +10,7 @@ export const useUserToRoomSubscribables = () => {
   const { setMyUserToRoom, setNickname } = userToRoomStore;
 
   useOnlineSubscribable(
-    () =>
-      rooms.value
-        .map(({ id }) => id)
-        .toSorted()
-        .join(","),
+    () => getIdsKey(rooms.value),
     (roomIdsString) => {
       if (!roomIdsString) return undefined;
 

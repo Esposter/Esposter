@@ -1,7 +1,8 @@
 import { sweepStaleEntries } from "@/services/exec/snapshot/sweepStaleEntries";
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
@@ -11,11 +12,7 @@ const isStale = (name: string): boolean => name.startsWith(" ");
 describe(sweepStaleEntries, () => {
   const { cleanup, create } = createTemporaryDirectoryTracker();
   let dir = "";
-  const seedDirectory = (name: string): string => {
-    const entry = join(dir, name);
-    mkdirSync(entry, { recursive: true });
-    return entry;
-  };
+  const seedEntry = (name: string): string => seedDirectory(join(dir, name));
 
   beforeEach(() => {
     dir = create();
@@ -26,8 +23,8 @@ describe(sweepStaleEntries, () => {
   test("removes every directory the predicate selects, keeping the rest", () => {
     expect.hasAssertions();
 
-    const stale = seedDirectory(" ");
-    const live = seedDirectory(TEST_FILENAME);
+    const stale = seedEntry(" ");
+    const live = seedEntry(TEST_FILENAME);
 
     sweepStaleEntries(dir, isStale);
 

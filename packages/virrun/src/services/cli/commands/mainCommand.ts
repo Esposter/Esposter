@@ -6,7 +6,7 @@ import { doctorCommand } from "@/services/cli/commands/doctorCommand";
 import { execCommand } from "@/services/cli/commands/execCommand";
 import { initCommand } from "@/services/cli/commands/initCommand";
 import { runCommand } from "@/services/cli/commands/runCommand";
-import { snapshotCommand } from "@/services/cli/commands/snapshotCommand";
+import { warmCommand } from "@/services/cli/commands/warmCommand";
 import { defineCommand } from "citty";
 import dedent from "dedent";
 // `default: CommandType.Run` routes the bare `virrun -- <cmd>` prefix to `run` via citty's default-subcommand
@@ -28,6 +28,6 @@ export const mainCommand: CommandDef = defineCommand({
     [CommandType.Exec]: execCommand,
     [CommandType.Init]: initCommand,
     [CommandType.Run]: runCommand,
-    [CommandType.Snapshot]: snapshotCommand,
+    [CommandType.Warm]: warmCommand,
   },
 });

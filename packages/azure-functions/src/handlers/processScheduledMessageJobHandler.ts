@@ -1,18 +1,17 @@
 import type { StorageQueueHandler } from "@azure/functions";
 
 import { assertCanCreateMessage } from "@/services/assertCanCreateMessage";
+import { createAndBroadcastMessage } from "@/services/createAndBroadcastMessage";
 import { db } from "@/services/db";
+import { getPushNotificationData } from "@/services/getPushNotificationData";
 import { getQueueClient } from "@/services/getQueueClient";
-import { getTableClient } from "@/services/getTableClient";
-import { getWebPubSubServiceClient } from "@/services/getWebPubSubServiceClient";
+import { logAndRethrow } from "@/services/logAndRethrow";
 import { sendPushNotification } from "@/services/sendPushNotification";
 import { sendReminderNotification } from "@/services/sendReminderNotification";
-import { createMessage, enqueueScheduledMessageJob } from "@esposter/db";
+import { enqueueScheduledMessageJob } from "@esposter/db";
 import {
   AzureFunction,
   AzureQueue,
-  AzureTable,
-  AzureWebPubSubHub,
   MessageType,
   roomsInMessage,
   scheduledMessageJobPayloadSchema,
@@ -69,9 +68,7 @@ export const processScheduledMessageJobHandler: StorageQueueHandler = (message, 
       });
     else {
       await assertCanCreateMessage(processingJob.userId, processingJob.roomId, payload.message);
-      const messageClient = await getTableClient(AzureTable.Messages);
-      const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
-      const newMessage = await createMessage(messageClient, messageAscendingClient, {
+      const newMessage = await createAndBroadcastMessage(context, {
         message: payload.message,
         roomId: processingJob.roomId,
         type: MessageType.Message,
@@ -81,8 +78,6 @@ export const processScheduledMessageJobHandler: StorageQueueHandler = (message, 
         partitionKey: newMessage.partitionKey,
         rowKey: newMessage.rowKey,
       });
-      const webPubSubServiceClient = getWebPubSubServiceClient(AzureWebPubSubHub.Messages);
-      await webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage);
 
       const userToRoom = await db.query.usersToRoomsInMessage.findFirst({
         columns: { nickname: true },
@@ -90,18 +85,13 @@ export const processScheduledMessageJobHandler: StorageQueueHandler = (message, 
         with: { user: { columns: { image: true, name: true } } },
       });
       if (userToRoom)
-        await sendPushNotification(context, {
-          message: {
-            message: newMessage.message,
-            partitionKey: newMessage.partitionKey,
-            rowKey: newMessage.rowKey,
-            userId: newMessage.userId,
-          },
-          notificationOptions: {
+        await sendPushNotification(
+          context,
+          getPushNotificationData(newMessage, {
             icon: userToRoom.user.image,
             title: userToRoom.nickname || userToRoom.user.name,
-          },
-        });
+          }),
+        );
 
       await Promise.all([
         db
@@ -121,7 +111,4 @@ export const processScheduledMessageJobHandler: StorageQueueHandler = (message, 
       .update(scheduledMessageJobsInMessage)
       .set({ completedAt: new Date() })
       .where(eq(scheduledMessageJobsInMessage.id, processingJob.id));
-  }).match(noop, (error) => {
-    context.error(`${AzureFunction.ProcessScheduledMessageJob} failed: `, error);
-    throw error;
-  });
+  }).match(noop, logAndRethrow(context, AzureFunction.ProcessScheduledMessageJob));

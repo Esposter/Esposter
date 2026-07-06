@@ -9,6 +9,7 @@ import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentIn
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { ownedBy } from "@@/server/services/db/ownedBy";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -140,7 +141,7 @@ export const postRouter = router({
         (
           await tx
             .delete(posts)
-            .where(and(eq(posts.id, input), eq(posts.userId, ctx.getSessionPayload.user.id), isNotNull(posts.parentId)))
+            .where(and(ownedBy(posts, input, ctx.getSessionPayload.user.id), isNotNull(posts.parentId)))
             .returning()
         )[0],
         Operation.Delete,
@@ -182,7 +183,7 @@ export const postRouter = router({
       (
         await ctx.db
           .delete(posts)
-          .where(and(eq(posts.id, input), eq(posts.userId, ctx.getSessionPayload.user.id), isNull(posts.parentId)))
+          .where(and(ownedBy(posts, input, ctx.getSessionPayload.user.id), isNull(posts.parentId)))
           .returning()
       )[0],
       Operation.Delete,
@@ -228,7 +229,7 @@ export const postRouter = router({
             await tx
               .update(posts)
               .set(rest)
-              .where(and(eq(posts.id, id), isNotNull(posts.parentId), eq(posts.userId, ctx.getSessionPayload.user.id)))
+              .where(and(ownedBy(posts, id, ctx.getSessionPayload.user.id), isNotNull(posts.parentId)))
               .returning({ id: posts.id })
           )[0],
           Operation.Update,
@@ -264,7 +265,7 @@ export const postRouter = router({
             await tx
               .update(posts)
               .set(rest)
-              .where(and(eq(posts.id, id), isNull(posts.parentId), eq(posts.userId, ctx.getSessionPayload.user.id)))
+              .where(and(ownedBy(posts, id, ctx.getSessionPayload.user.id), isNull(posts.parentId)))
               .returning({ id: posts.id })
           )[0],
           Operation.Update,

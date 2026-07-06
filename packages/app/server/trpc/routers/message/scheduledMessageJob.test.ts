@@ -1,64 +1,62 @@
 // @vitest-environment nuxt
-
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { mockSessionOnce } from "@@/server/trpc/context.test";
 import { scheduledMessageJobRouter } from "@@/server/trpc/routers/message/scheduledMessageJob";
-import { roomRouter } from "@@/server/trpc/routers/room";
-import { roomsInMessage, scheduledMessageJobsInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
+import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
+import { scheduledMessageJobsInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("scheduledMessageJob", () => {
+  const { getMockContext, getRoomId } = setupRoomSuite();
   let mockContext: Context;
   let scheduledMessageJobCaller: DecorateRouterRecord<TRPCRouter["message"]["scheduledMessageJob"]>;
-  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  const name = "name";
+  let roomId: string;
   const message = "message";
   const text = "text";
   const runAt = new Date("1970-01-01");
 
-  beforeAll(async () => {
-    mockContext = await createMockContext();
+  beforeAll(() => {
+    mockContext = getMockContext();
     scheduledMessageJobCaller = createCallerFactory(scheduledMessageJobRouter)(mockContext);
-    roomCaller = createCallerFactory(roomRouter)(mockContext);
+  });
+
+  beforeEach(() => {
+    roomId = getRoomId();
   });
 
   afterEach(async () => {
     await mockContext.db.delete(scheduledMessageJobsInMessage);
-    await mockContext.db.delete(roomsInMessage);
   });
 
   test("schedules reminder", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
 
-    expect(scheduledMessageJob.roomId).toBe(room.id);
+    expect(scheduledMessageJob.roomId).toBe(roomId);
     expect(scheduledMessageJob.payload).toStrictEqual({ text, type: ScheduledMessageJobType.Reminder });
   });
 
   test("schedules message", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId: room.id, runAt });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt });
 
-    expect(scheduledMessageJob.roomId).toBe(room.id);
+    expect(scheduledMessageJob.roomId).toBe(roomId);
     expect(scheduledMessageJob.payload).toStrictEqual({ message, type: ScheduledMessageJobType.ScheduledMessage });
   });
 
   test("reads scheduled jobs", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
-    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId: room.id });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId });
 
     expect(scheduledMessageJobs).toHaveLength(1);
     expect(takeOne(scheduledMessageJobs).id).toBe(scheduledMessageJob.id);
@@ -67,21 +65,19 @@ describe("scheduledMessageJob", () => {
   test("reads my scheduled jobs", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
     const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledJobs();
 
     expect(scheduledMessageJobs.items).toHaveLength(1);
     expect(scheduledMessageJobs.hasMore).toBe(false);
     expect(takeOne(scheduledMessageJobs.items).id).toBe(scheduledMessageJob.id);
-    expect(takeOne(scheduledMessageJobs.items).room.id).toBe(room.id);
+    expect(takeOne(scheduledMessageJobs.items).room.id).toBe(roomId);
   });
 
   test("reads my scheduled jobs count", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
-    await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
     const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledJobsCount();
 
     expect(scheduledMessageJobCount).toBe(1);
@@ -90,8 +86,7 @@ describe("scheduledMessageJob", () => {
   test("excludes other users from readMyScheduledJobs", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
-    await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
     const { user } = await mockSessionOnce(mockContext.db);
     const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledJobs();
     await mockSessionOnce(mockContext.db, user);
@@ -105,12 +100,11 @@ describe("scheduledMessageJob", () => {
   test("cancels scheduled job", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
     const cancelledScheduledMessageJob = await scheduledMessageJobCaller.cancelScheduledJob({
       id: scheduledMessageJob.id,
     });
-    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId: room.id });
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId });
 
     expect(cancelledScheduledMessageJob.id).toBe(scheduledMessageJob.id);
     expect(cancelledScheduledMessageJob.cancelledAt).toBeInstanceOf(Date);
@@ -120,13 +114,12 @@ describe("scheduledMessageJob", () => {
   test("excludes completed jobs from readScheduledJobs", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
     await mockContext.db
       .update(scheduledMessageJobsInMessage)
       .set({ completedAt: new Date() })
       .where(eq(scheduledMessageJobsInMessage.id, scheduledMessageJob.id));
-    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId: room.id });
+    const scheduledMessageJobs = await scheduledMessageJobCaller.readScheduledJobs({ roomId });
 
     expect(scheduledMessageJobs).toStrictEqual([]);
   });
@@ -134,8 +127,7 @@ describe("scheduledMessageJob", () => {
   test("fails to cancel another user's scheduled job", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
-    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text });
+    const scheduledMessageJob = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
     await mockSessionOnce(mockContext.db);
 
     await expect(
@@ -148,33 +140,30 @@ describe("scheduledMessageJob", () => {
   test("fails to schedule reminder as non-member", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      scheduledMessageJobCaller.scheduleReminder({ roomId: room.id, runAt, text }),
+      scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails to schedule message as non-member", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      scheduledMessageJobCaller.scheduleMessage({ message, roomId: room.id, runAt }),
+      scheduledMessageJobCaller.scheduleMessage({ message, roomId, runAt }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails read scheduled jobs with non-member", async () => {
     expect.hasAssertions();
 
-    const room = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db);
 
-    await expect(
-      scheduledMessageJobCaller.readScheduledJobs({ roomId: room.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(scheduledMessageJobCaller.readScheduledJobs({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 });

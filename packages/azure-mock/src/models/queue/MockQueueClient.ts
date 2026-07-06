@@ -30,11 +30,11 @@ import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { MOCK_QUEUE_BASE_URL } from "@/constants";
-import { toWebResourceLike } from "@/services/container/toWebResourceLike";
+import { createMockResponse } from "@/services/createMockResponse";
+import { getMockSasUrl } from "@/services/getMockSasUrl";
 import { MockQueueDatabase } from "@/store/MockQueueDatabase";
-import { toHttpHeadersLike } from "@azure/core-http-compat";
-import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { MAX_QUEUE_VISIBILITY_TIMEOUT_MS } from "@esposter/db";
+import { getOrCreate } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure QueueClient.
  * It uses a Map to simulate queue storage and correctly implements the QueueClient interface.
@@ -51,12 +51,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   url: string;
 
   get queue(): MapValue<typeof MockQueueDatabase> {
-    let messages = MockQueueDatabase.get(this.name);
-    if (!messages) {
-      messages = [];
-      MockQueueDatabase.set(this.name, messages);
-    }
-    return messages;
+    return getOrCreate(MockQueueDatabase, this.name, () => []);
   }
 
   constructor(connectionString: string, queueName: string) {
@@ -98,8 +93,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   }
 
   generateSasUrl(options: QueueGenerateSasUrlOptions): string {
-    const sp = options.permissions?.toString() ?? "r";
-    return `${MOCK_QUEUE_BASE_URL}/${this.name}?sv=2025-11-05&sig=mock-signature&st=1970-01-01T00:00:00Z&se=2099-12-31T23:59:59Z&sp=${sp}`;
+    return getMockSasUrl(this.url, options.permissions);
   }
 
   generateUserDelegationSasUrl(): string {
@@ -135,14 +129,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
       messageText: text,
     }));
     return Promise.resolve({
-      _response: {
-        bodyAsText: "",
-        headers: toHttpHeadersLike(createHttpHeaders()),
-        parsedBody: peekedMessageItems,
-        parsedHeaders: {},
-        request: toWebResourceLike(createPipelineRequest({ url: this.url })),
-        status: 200,
-      },
+      _response: { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody: peekedMessageItems },
       peekedMessageItems,
     });
   }
@@ -158,14 +145,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
       popReceipt: crypto.randomUUID(),
     }));
     return Promise.resolve({
-      _response: {
-        bodyAsText: "",
-        headers: toHttpHeadersLike(createHttpHeaders()),
-        parsedBody: receivedMessageItems,
-        parsedHeaders: {},
-        request: toWebResourceLike(createPipelineRequest({ url: this.url })),
-        status: 200,
-      },
+      _response: { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody: receivedMessageItems },
       receivedMessageItems,
     });
   }
@@ -188,14 +168,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
       },
     ];
     return Promise.resolve({
-      _response: {
-        bodyAsText: "",
-        headers: toHttpHeadersLike(createHttpHeaders()),
-        parsedBody: enqueuedMessages,
-        parsedHeaders: {},
-        request: toWebResourceLike(createPipelineRequest({ url: this.url })),
-        status: 200,
-      },
+      _response: { ...createMockResponse(200, this.url), bodyAsText: "", parsedBody: enqueuedMessages },
       expiresOn,
       insertedOn,
       messageId,

@@ -42,6 +42,13 @@ export default Object.assign(
         selector:
           ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
       },
+      {
+        // `expect.any` is a loose matcher that also trips a vitest/valid-expect false positive; capture the real value
+        // From the mock call (via takeOne) and assert it exactly, or assert its type with toBeTypeOf.
+        message:
+          "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
+        selector: "MemberExpression[object.name='expect'][property.name='any']",
+      },
     ],
     // Computationally expensive
     // "@typescript-eslint/naming-convention": [

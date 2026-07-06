@@ -1,11 +1,12 @@
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { seedDirectory } from "@/services/exec/test/seedDirectory.test";
 import {
   VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME,
   VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME,
   VIRRUN_SOURCES_DIRECTORY_NAME,
 } from "@/services/exec/wsl/constants";
 import { reapAbandonedSourceMirrors } from "@/services/exec/wsl/reapAbandonedSourceMirrors";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -23,7 +24,7 @@ describe(reapAbandonedSourceMirrors, () => {
   // Seed a mirror entry (`sources/<hash>/tree` + an optional `origin` marker) and return its entry dir.
   const seedMirror = (hash: string, origin?: string): string => {
     const entry = join(sourcesDir(), hash);
-    mkdirSync(join(entry, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { recursive: true });
+    seedDirectory(join(entry, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME));
     if (origin !== undefined) writeFileSync(join(entry, VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME), origin);
     return entry;
   };

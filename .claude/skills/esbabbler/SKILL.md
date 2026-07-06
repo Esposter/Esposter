@@ -93,9 +93,9 @@ When subscriptions only need to react to **membership changes** (rooms added/rem
 // WRONG — re-subscribes on every updatedAt bump (every incoming message)
 useOnlineSubscribable(directMessages, (newDirectMessages) => { ... });
 
-// CORRECT — stable string; only changes when the set of IDs changes
+// CORRECT — stable string via getIdsKey; only changes when the set of IDs changes
 useOnlineSubscribable(
-  () => directMessages.value.map(({ id }) => id).toSorted().join(","),
+  () => getIdsKey(directMessages.value),
   (roomIdsString) => {
     if (!roomIdsString) return undefined;
     const roomIds = roomIdsString.split(",");
@@ -104,7 +104,10 @@ useOnlineSubscribable(
 );
 ```
 
-A plain getter `() => expr` is equivalent to `computed(() => expr)` as a watch source and is preferred — no extra ref allocation.
+- **`getIdsKey(items)`** (`app/services/message/subscribables/getIdsKey.ts`) is the canonical order-insensitive membership key (`map(id).toSorted().join(",")`) — never hand-roll it.
+- A plain getter `() => expr` is equivalent to `computed(() => expr)` as a watch source and is preferred — no extra ref allocation.
+- **`getOnlineSubscribableContext()`** (in `useOnlineSubscribable.ts`) captures `getCurrentInstance()`/`getCurrentScope()` for async subscribable composables — call it into a `const` BEFORE any `await` (context is lost after suspension); never inline the two calls.
+- **`requirePartitionKey(value, name)`** (`app/services/message/requirePartitionKey.ts`) is the guard for room-scoped reads needing a non-empty current room id (or user id): `const roomId = requirePartitionKey(currentRoomId.value, readMessages.name);` — never hand-write the `InvalidOperationError` throw.
 
 ## Scheduled Message Jobs Architecture
 

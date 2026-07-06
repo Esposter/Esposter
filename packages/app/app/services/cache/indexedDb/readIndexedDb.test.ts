@@ -1,19 +1,13 @@
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
-import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
+import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSuite.test";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { afterEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(readIndexedDb, () => {
-  const message1 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
-  const message2 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
-  const message3 = new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() });
-
-  afterEach(async () => {
-    await resetIndexedDb();
-  });
+  const { message1, message2, message3 } = setupIndexedDbSuite();
 
   test("returns empty array when no items exist for partitionKey", async () => {
     expect.hasAssertions();

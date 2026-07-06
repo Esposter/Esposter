@@ -1,8 +1,5 @@
 import type { ArcConfiguration } from "@/models/configuration/ArcConfiguration";
 import type { GameObjectEventMapEmitsOptions } from "@/models/emit/shared/GameObjectEventMapEmitsOptions";
-import type { ExtractUpdateEvent } from "@/util/types/ExtractUpdateEvent";
-import type { UpdateEvent } from "@/util/types/UpdateEvent";
+import type { EmitsOptionsFor } from "@/util/types/EmitsOptionsFor";
 
-export type ArcEventEmitsOptions = GameObjectEventMapEmitsOptions & {
-  [P in UpdateEvent<keyof ArcConfiguration>]: [ArcConfiguration[ExtractUpdateEvent<P>]?];
-};
+export type ArcEventEmitsOptions = EmitsOptionsFor<ArcConfiguration> & GameObjectEventMapEmitsOptions;

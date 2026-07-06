@@ -15,10 +15,6 @@ export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     ...baseExecuteAdminActionInputSchema.shape,
-    type: z.literal(AdminActionType.SoftBan),
-  }),
-  z.object({
-    ...baseExecuteAdminActionInputSchema.shape,
     reason: z
       .string()
       .optional()
@@ -33,6 +29,7 @@ export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
       AdminActionType.ForceUnmute,
       AdminActionType.KickFromRoom,
       AdminActionType.KickFromCall,
+      AdminActionType.SoftBan,
       AdminActionType.StopScreenShare,
     ]),
   }),

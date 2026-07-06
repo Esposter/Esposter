@@ -2,8 +2,12 @@ import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { ExecResult } from "@/models/exec/ExecResult";
 
+import { writeVirrunDebug } from "@/services/cli/debug/writeVirrunDebug";
 import { formatVirrunCacheHit } from "@/services/cli/format/formatVirrunCacheHit";
+import { formatVirrunNetworkHint } from "@/services/cli/format/formatVirrunNetworkHint";
 import { computeTaskCacheKey } from "@/services/exec/cache/computeTaskCacheKey";
+import { hasDependencyClosureMutation } from "@/services/exec/cache/hasDependencyClosureMutation";
+import { isNetworkFailure } from "@/services/exec/cache/isNetworkFailure";
 import { isTaskCacheEnabled } from "@/services/exec/cache/isTaskCacheEnabled";
 import { recordTaskCache } from "@/services/exec/cache/recordTaskCache";
 import { replayTaskCache } from "@/services/exec/cache/replayTaskCache";
@@ -22,7 +26,14 @@ export const persistWithCache = async (
   outputDirs: readonly string[] = [],
 ): Promise<ExecResult> => {
   const key = isTaskCacheEnabled() ? computeTaskCacheKey(command, options.cwd) : null;
-  if (key === null) return persistRun(backend, command, options, extraLowerDirs, outputDirs);
+  if (key === null) {
+    writeVirrunDebug(
+      isTaskCacheEnabled()
+        ? "task cache off — no key (not a git repo or no lockfile)"
+        : "task cache off — disabled (CI or VIRRUN_NO_CACHE)",
+    );
+    return persistRun(backend, command, options, extraLowerDirs, outputDirs);
+  }
   // Reproduce a result under the caller's stdio convention, matching createBwrapBackend: "inherit" already put its
   // Output on the terminal so it returns empty streams; "pipe" returns the captured streams.
   const toResult = (result: ExecResult): ExecResult =>
@@ -37,16 +48,33 @@ export const persistWithCache = async (
     return toResult(cached);
   }
   // Capture output so a miss can be recorded; tee it live only when the caller wanted it inherited, so a bare
-  // `virrun -- <cmd>` still streams during the run.
+  // `virrun -- <cmd>` still streams during the run. Run the command with network unshared (`isNetworkEnabled: false`):
+  // The task-cache key can't see network state, so a cacheable run must be hermetic for the key to be honest. Deps are
+  // Already provisioned (ensureSnapshot ran upstream with network on), so a pure task (typecheck/lint/test) is
+  // Unaffected, while a read-network command (`pnpm outdated`/`audit`) can't reach the registry, exits non-zero, and is
+  // Never recorded (onPersist fires only on exit 0). `--no-cache` / CI take the key===null branch above, which keeps
+  // Network on — the escape hatch for a command that genuinely needs it.
   const result = await persistRun(
     backend,
     command,
-    { ...options, stdio: "pipe", tee: options.stdio === "inherit" },
+    { ...options, isNetworkEnabled: false, stdio: "pipe", tee: options.stdio === "inherit" },
     extraLowerDirs,
     outputDirs,
     (upperDir, plan, persistResult) => {
+      // A write-network install (`pnpm install`/`add`/`update`) can still succeed offline from the warm store, so the
+      // Net-unshare gate alone would cache it. Its output isn't determined by the key it mutates, so skip recording —
+      // The run is flushed and correct, just uncached.
+      if (hasDependencyClosureMutation(plan)) {
+        writeVirrunDebug("task cache record skipped — run mutated the dependency closure");
+        return;
+      }
       recordTaskCache(key, upperDir, plan, persistResult);
     },
   );
+  // The run above was hermetic (network unshared). If it FAILED reaching the network, the tool's own error is opaque (a
+  // Buried "fetch failed"), so translate it into the cause + the --no-cache fix — human CLI path only (inherit, matching
+  // The hit label; a programmatic pipe caller reads the streams itself). Recording was already skipped (exit != 0).
+  if (result.exitCode !== 0 && options.stdio === "inherit" && isNetworkFailure(`${result.stdout}\n${result.stderr}`))
+    process.stderr.write(`${formatVirrunNetworkHint(command)}\n`);
   return toResult(result);
 };

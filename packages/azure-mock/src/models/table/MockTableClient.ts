@@ -21,7 +21,7 @@ import { MOCK_TABLE_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
 import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { exhaustiveGuard, getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
+import { exhaustiveGuard, getOrCreate, getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
  * It uses a Map to simulate table storage and correctly implements the TableClient interface.
@@ -37,12 +37,7 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
   url: string;
 
   get table(): MapValue<typeof MockTableDatabase> {
-    let table = MockTableDatabase.get(this.tableName);
-    if (!table) {
-      table = new Map();
-      MockTableDatabase.set(this.tableName, table);
-    }
-    return table;
+    return getOrCreate(MockTableDatabase, this.tableName, () => new Map());
   }
 
   constructor(_url: string, tableName: string) {

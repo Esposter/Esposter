@@ -72,6 +72,23 @@ interface Foo {
 - File-level (first line of file): `/* oxlint-disable typescript/method-signature-style -- reason */`
 - Line-level: `// oxlint-disable-next-line typescript/method-signature-style`
 
+## `no-restricted-syntax` — `expect.any` is banned (ESLint)
+
+`expect.any(...)` (and the other `expect.<asymmetric>` matchers) are banned in tests via `no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`. They are loose (they assert only the type, not the value) and they trip a `vitest/valid-expect` false positive in the current `@vitest/eslint-plugin` (the static `expect.any` is misparsed as an `expect(x).any` modifier → `Expect has an unknown modifier`).
+
+Instead, capture the real argument from the mock's `mock.calls` and assert it exactly:
+
+```ts
+// ✗ loose matcher — also errors on no-restricted-syntax
+expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(expect.any(String), HOST_DIR, PLAN);
+
+// ✓ capture the real value (takeOne asserts exactly one call) and assert it exactly
+const [upperDir] = takeOne(vi.mocked(applyFlushPlan).mock.calls);
+expect(applyFlushPlan).toHaveBeenCalledExactlyOnceWith(upperDir, HOST_DIR, PLAN);
+```
+
+When the captured arg is a known shared reference, assert it directly (`expect(child.on).toHaveBeenCalledExactlyOnceWith("error", noop)`); when only its type is knowable, use `toBeTypeOf` (`expect(checkIsStale).toBeTypeOf("function")`). `takeOne` and `noop` come from `@esposter/shared`.
+
 ## `prefer-named-capture-group` (ESLint)
 
 Every capturing group `(...)` must be named `(?<name>...)`:

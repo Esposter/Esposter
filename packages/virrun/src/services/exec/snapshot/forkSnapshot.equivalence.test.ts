@@ -1,8 +1,6 @@
-import type { ExecBackend } from "@/models/exec/ExecBackend";
 import type { ExecOptions } from "@/models/exec/ExecOptions";
 
 import { dayjs } from "@/services/dayjs.test";
-import { createOsBackend } from "@/services/exec/os/createOsBackend";
 import { createOsExecOptions } from "@/services/exec/os/createOsExecOptions";
 import { createOsInstallOptions } from "@/services/exec/os/createOsInstallOptions";
 import { forkSnapshot } from "@/services/exec/snapshot/forkSnapshot";
@@ -14,46 +12,21 @@ import {
   PNPM_MODULES_DIRECTORY,
   RUN_ESBUILD_VERSION_COMMAND,
 } from "@/services/exec/test/constants.test";
-import { createWorkspaceCorpus } from "@/services/exec/test/createWorkspaceCorpus.test";
-import { ensureWarmSnapshot } from "@/services/exec/test/ensureWarmSnapshot.test";
-import { findRepoRoot } from "@/services/exec/test/findRepoRoot.test";
-import { getAcceptanceCacheHome } from "@/services/exec/test/getAcceptanceCacheHome";
 import { isSandboxInstallSupported } from "@/services/exec/test/isSandboxInstallSupported.test";
-import { VIRRUN_CACHE_HOME_KEY } from "@/services/exec/util/constants";
-import { rmSync } from "node:fs";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
+import { setupWarmSnapshotSuite } from "@/services/exec/test/setupWarmSnapshotSuite.test";
+import { describe, expect, test } from "vitest";
 
 // Correctness layer 4 snapshot/fork equivalence (specs/correctness.md): a forked warm sandbox must be observably
 // Identical to a freshly booted + installed one. The only variable is how the dependency closure is presented —
 // Warm fork (frozen overlay upper stacked read-only) vs cold in-place install. Install output is discarded so only
 // The verify command's output is diffed; nothing is normalized, so no real divergence can hide.
 describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a cold in-place install (equivalence)", () => {
-  // Constructed lazily in beforeAll (which never runs for a skipped describe) rather than here in the factory:
-  // Vitest still executes a skipIf'd describe body to collect its tests, and createOsBackend throws on a host that
-  // Can't set up the overlay (e.g. this suite running nested inside the os-backend sandbox), which would fail
-  // Collection instead of skipping.
-  let backend: ExecBackend;
-  let corpus = "";
-  const previousCacheHome = process.env[VIRRUN_CACHE_HOME_KEY];
+  const { getBackend, getCorpus } = setupWarmSnapshotSuite();
   const runWarmVsCold = async (command: string, warmOptions: ExecOptions, coldOptions: ExecOptions) => {
-    const warmResult = await forkSnapshot(backend, command, warmOptions);
-    const coldResult = await backend.exec(`${resolveSetupCommand()} > /dev/null 2>&1 && ${command}`, coldOptions);
+    const warmResult = await forkSnapshot(getBackend(), command, warmOptions);
+    const coldResult = await getBackend().exec(`${resolveSetupCommand()} > /dev/null 2>&1 && ${command}`, coldOptions);
     return { coldResult, warmResult };
   };
-
-  beforeAll(async () => {
-    backend = createOsBackend();
-    process.env[VIRRUN_CACHE_HOME_KEY] = getAcceptanceCacheHome();
-    corpus = createWorkspaceCorpus(findRepoRoot());
-    await ensureWarmSnapshot(backend, corpus);
-  }, dayjs.duration(ACCEPTANCE_TIMEOUT_MINUTES, "minutes").asMilliseconds());
-
-  afterAll(() => {
-    // The shared snapshot + cache home are owned by the global teardown; here only the per-file corpus is dropped.
-    if (previousCacheHome === undefined) delete process.env[VIRRUN_CACHE_HOME_KEY];
-    else process.env[VIRRUN_CACHE_HOME_KEY] = previousCacheHome;
-    if (corpus) rmSync(corpus, { force: true, recursive: true });
-  });
 
   test("a forked warm run produces the identical observable result as a cold in-place install", async () => {
     expect.hasAssertions();
@@ -70,8 +43,8 @@ describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a 
 
     const { coldResult, warmResult } = await runWarmVsCold(
       verifyCommand,
-      createOsExecOptions(corpus, "pipe"),
-      createOsInstallOptions(corpus, "pipe"),
+      createOsExecOptions(getCorpus(), "pipe"),
+      createOsInstallOptions(getCorpus(), "pipe"),
     );
 
     expect(warmResult.exitCode).toBe(0);
@@ -92,8 +65,8 @@ describe.skipIf(!isSandboxInstallSupported)("forkSnapshot - warm fork matches a 
     const execCommand = "corepack pnpm exec node --version";
     const { coldResult, warmResult } = await runWarmVsCold(
       execCommand,
-      createOsInstallOptions(corpus, "pipe"),
-      createOsInstallOptions(corpus, "pipe"),
+      createOsInstallOptions(getCorpus(), "pipe"),
+      createOsInstallOptions(getCorpus(), "pipe"),
     );
 
     expect(warmResult.exitCode).toBe(0);

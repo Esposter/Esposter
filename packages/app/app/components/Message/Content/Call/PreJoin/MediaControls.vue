@@ -10,29 +10,17 @@ const emit = defineEmits<{ toggleCamera: []; toggleMicrophone: [] }>();
 
 <template>
   <div flex gap-x-3 justify-center>
-    <v-tooltip :text="isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'">
-      <template #activator="{ props: tooltipProps }">
-        <v-btn
-          :="tooltipProps"
-          :color="isMicrophoneEnabled ? undefined : 'error'"
-          :icon="isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off'"
-          size="large"
-          variant="tonal"
-          @click="emit('toggleMicrophone')"
-        />
-      </template>
-    </v-tooltip>
-    <v-tooltip :text="isCameraEnabled ? 'Turn off camera' : 'Turn on camera'">
-      <template #activator="{ props: tooltipProps }">
-        <v-btn
-          :="tooltipProps"
-          :color="isCameraEnabled ? undefined : 'error'"
-          :icon="isCameraEnabled ? 'mdi-video' : 'mdi-video-off'"
-          size="large"
-          variant="tonal"
-          @click="emit('toggleCamera')"
-        />
-      </template>
-    </v-tooltip>
+    <StyledTooltipIconButton
+      :button-props="{ color: isMicrophoneEnabled ? undefined : 'error', size: 'large', variant: 'tonal' }"
+      :icon="isMicrophoneEnabled ? 'mdi-microphone' : 'mdi-microphone-off'"
+      :text="isMicrophoneEnabled ? 'Mute microphone' : 'Unmute microphone'"
+      @click="emit('toggleMicrophone')"
+    />
+    <StyledTooltipIconButton
+      :button-props="{ color: isCameraEnabled ? undefined : 'error', size: 'large', variant: 'tonal' }"
+      :icon="isCameraEnabled ? 'mdi-video' : 'mdi-video-off'"
+      :text="isCameraEnabled ? 'Turn off camera' : 'Turn on camera'"
+      @click="emit('toggleCamera')"
+    />
   </div>
 </template>

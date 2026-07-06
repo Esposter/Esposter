@@ -3,6 +3,57 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.34.2](https://github.com/Esposter/Esposter/compare/v2.34.1...v2.34.2) (2026-07-05)
+
+### Bug Fixes
+
+* add exclude ([bac2627](https://github.com/Esposter/Esposter/commit/bac2627a2e0ce8e979274ac677a3d6d7ce5db1e5))
+* lint ([d668291](https://github.com/Esposter/Esposter/commit/d66829181390e45f6fdf9f30ef379b8d2494804a))
+* lint ([44f820b](https://github.com/Esposter/Esposter/commit/44f820b06ecbd6454b6a8f994decd1bc802dff05))
+* lint ([15b9814](https://github.com/Esposter/Esposter/commit/15b98148685d815e3f1d9b10a3f0ff58ad79c743))
+* lint and skip test for now ([3558dca](https://github.com/Esposter/Esposter/commit/3558dcaf3084b13b8c05cb7857f983bcf781329e))
+* lint and snapshot ([f97bf86](https://github.com/Esposter/Esposter/commit/f97bf867b5e420c861754bfb0cd9c2a48e9ee1cc))
+* pagination ([e605637](https://github.com/Esposter/Esposter/commit/e605637d7675c514a13e8b354f97147cdd4da22f))
+* reactive value ([21ff8bf](https://github.com/Esposter/Esposter/commit/21ff8bf45e3cd27b938efb352d9976f54ef6abf1))
+* snapshot ([60cc6b7](https://github.com/Esposter/Esposter/commit/60cc6b785a12f313b558560986316de64524b6e6))
+* snapshots ([5a04f18](https://github.com/Esposter/Esposter/commit/5a04f18c732cd3e7028e901823b515aff6c3cb7a))
+* tests ([f882fb5](https://github.com/Esposter/Esposter/commit/f882fb5c4e6dbbbfb031a5f9b3d5ffe29b82bdbb))
+* tests and types ([67fc659](https://github.com/Esposter/Esposter/commit/67fc6595f40dce01037dee4f1ee5c703b486d26a))
+* types ([4a3ec57](https://github.com/Esposter/Esposter/commit/4a3ec57ac7cf9eb0a3b3a5104af57402596d941f))
+* types and skills md ([be7f6c9](https://github.com/Esposter/Esposter/commit/be7f6c95a01c853505e49b52608db63db5f0a7af))
+
+## [2.34.1](https://github.com/Esposter/Esposter/compare/v2.34.0...v2.34.1) (2026-07-04)
+
+### Bug Fixes
+
+* cleanup docs ([3f0fb42](https://github.com/Esposter/Esposter/commit/3f0fb4283953b0c3e26242b00356e469430b3a77))
+* code review comments ([d226957](https://github.com/Esposter/Esposter/commit/d2269573a334b1d12f2cddb7995e74e3a1caa48e))
+* code review comments ([e848577](https://github.com/Esposter/Esposter/commit/e8485770ad3ccafe723073613d82bf31a17f4d59))
+* lint warnings ([0f5ba91](https://github.com/Esposter/Esposter/commit/0f5ba91bab503102af6772f53cf19eeb6efe3315))
+
+### Performance Improvements
+
+* improve windows mirror ops ([19b13e9](https://github.com/Esposter/Esposter/commit/19b13e90cf9b3c76e2df271bcf8c56ab07abd1ed))
+
+# [2.34.0](https://github.com/Esposter/Esposter/compare/v2.33.0...v2.34.0) (2026-07-04)
+
+### Bug Fixes
+
+* bench ([05f2348](https://github.com/Esposter/Esposter/commit/05f234875094d96648e5d013f23702eaa0a52c06))
+* CI ([de54019](https://github.com/Esposter/Esposter/commit/de54019dbcb6cd1dc8c8271ff2d84cfc18949e0d))
+* lint ([b9ef894](https://github.com/Esposter/Esposter/commit/b9ef8944146b4c0aa22205cec36492a927207995))
+* lint and snapshot ([f22e19e](https://github.com/Esposter/Esposter/commit/f22e19efc0ac1daf3e48609a555de2ee07e1464f))
+* network errors + bench ([885ba8e](https://github.com/Esposter/Esposter/commit/885ba8eda8718504c47b8d395034adb692757d8d))
+* tests and network ([a975df3](https://github.com/Esposter/Esposter/commit/a975df3b351679db8df08e9daa1dd2e669c1d25a))
+
+### Features
+
+* Add bench files ([358cfce](https://github.com/Esposter/Esposter/commit/358cfcee65291515d50a0e5a7399ec3545625be8))
+
+### Performance Improvements
+
+* optimize CI don't need to re-install ([abecda6](https://github.com/Esposter/Esposter/commit/abecda6756ed6d1bba6384008728ecea3058a6f7))
+
 # [2.33.0](https://github.com/Esposter/Esposter/compare/v2.32.1...v2.33.0) (2026-07-03)
 
 ### Bug Fixes

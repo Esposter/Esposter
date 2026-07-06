@@ -6,6 +6,11 @@ import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shar
 import { writeFile } from "node:fs/promises";
 
 const TS_EXTENSION_REGEX = /\.ts$/u;
+
+const writeFileOrThrow = async (path: string, contents: string): Promise<void> => {
+  const result = await getResultAsync(() => writeFile(path, contents));
+  if (result.isErr()) throw new InvalidOperationError(Operation.Create, path, result.error.message);
+};
 // Writes a bench file's results as two artifacts colocated beside the source (Foo.bench.ts →
 // Foo.bench.json + Foo.bench.md), so each bench is scoped to its file the way its test is, rather than one
 // Merged report per package. No-op for a bench file Vitest ran that declared no benchmarks (e.g. a shared
@@ -22,13 +27,8 @@ export const writeBenchmarkReport = async (file: BenchmarkTaskNode, environment:
   // (Foo.platform.bench.win32.{json,md} / Foo.platform.bench.linux.{json,md}) so each platform's run updates
   // Only its own file. Plain `*.bench.ts` files stay single-artifact and cross-platform.
   const reportPath = basePath.endsWith(".platform.bench") ? `${basePath}.${process.platform}` : basePath;
-  const jsonPath = `${reportPath}.json`;
-  const jsonResult = await getResultAsync(() => writeFile(jsonPath, `${JSON.stringify(report, null, 2)}\n`));
-  if (jsonResult.isErr()) throw new InvalidOperationError(Operation.Create, jsonPath, jsonResult.error.message);
-  const markdownPath = `${reportPath}.md`;
-  const markdownResult = await getResultAsync(() =>
-    writeFile(markdownPath, formatBenchmarkMarkdown(report, environment)),
-  );
-  if (markdownResult.isErr())
-    throw new InvalidOperationError(Operation.Create, markdownPath, markdownResult.error.message);
+  await Promise.all([
+    writeFileOrThrow(`${reportPath}.json`, `${JSON.stringify(report, null, 2)}\n`),
+    writeFileOrThrow(`${reportPath}.md`, formatBenchmarkMarkdown(report, environment)),
+  ]);
 };

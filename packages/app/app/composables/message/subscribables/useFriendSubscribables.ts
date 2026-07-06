@@ -1,14 +1,9 @@
-import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
-
 import { authClient } from "@/services/auth/authClient";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 export const useFriendSubscribables = async () => {
-  const onlineSubscribableContext: OnlineSubscribableContext = {
-    instance: getCurrentInstance(),
-    scope: getCurrentScope(),
-  };
+  const onlineSubscribableContext = getOnlineSubscribableContext();
   const { data: session } = await authClient.useSession(useFetch);
   const { $trpc } = useNuxtApp();
   const friendRequestStore = useFriendRequestStore();

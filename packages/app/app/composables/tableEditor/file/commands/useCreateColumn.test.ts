@@ -6,25 +6,17 @@ import { ColumnTransformationType } from "#shared/models/tableEditor/file/column
 import { createColumn as baseCreateColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
 import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
 import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
 import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
 import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
-import { createPinia, setActivePinia } from "pinia";
-import { afterEach, assert, beforeEach, describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe(useCreateColumn, () => {
   const SOURCE_COLUMN_NAME = "";
 
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
-  afterEach(() => {
-    const fileHistoryStore = useFileHistoryStore();
-    const { clear } = fileHistoryStore;
-    clear();
-  });
+  setupCommandTest();
 
   test("appends a new column with null values for all rows", () => {
     expect.hasAssertions();

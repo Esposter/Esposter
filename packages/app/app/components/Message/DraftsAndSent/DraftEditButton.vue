@@ -11,16 +11,9 @@ const { draftItem } = defineProps<MessageDraftsAndSentDraftEditButtonProps>();
 </script>
 
 <template>
-  <v-tooltip text="Edit draft">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn
-        :="tooltipProps"
-        density="comfortable"
-        icon="mdi-pencil-outline"
-        size="small"
-        variant="text"
-        @click.stop="navigateTo(RoutePath.Messages(draftItem.room.id))"
-      />
-    </template>
-  </v-tooltip>
+  <MessageDraftsAndSentActionButton
+    icon="mdi-pencil-outline"
+    text="Edit draft"
+    @click="navigateTo(RoutePath.Messages(draftItem.room.id))"
+  />
 </template>

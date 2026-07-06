@@ -3,6 +3,7 @@ import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
 import { WSL_BWRAP_STATUS_BEGIN, WSL_BWRAP_STATUS_END } from "@/services/exec/bwrap/constants";
 import { createBwrapBackend } from "@/services/exec/bwrap/createBwrapBackend";
+import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { getResultAsync } from "@esposter/shared";
 import { EventEmitter } from "node:events";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -112,6 +113,39 @@ describe(createBwrapBackend, () => {
 
     expect(exitCode).toBe(0);
     expect(write.mock.calls.map(([chunk]) => chunk).join("")).toBe(`${firstChunk}${secondChunk}`);
+  });
+
+  test("never tears a line mid-word under inherit — flushes on newline boundaries, not arbitrary bytes", async () => {
+    expect.hasAssertions();
+
+    // A single line longer than the marker holdback, split before its trailing newline so the first chunk carries
+    // No newline: the old byte-boundary flush would surface the leading fragment, while the line-aligned writer
+    // Holds it until the second chunk completes the line. Sizing off the marker length keeps the "exceeds the
+    // Holdback" intent self-documenting instead of a magic width.
+    const line = `${TEST_FILENAME.repeat(WSL_BWRAP_STATUS_BEGIN.length)}\n`;
+    const splitIndex = WSL_BWRAP_STATUS_BEGIN.length;
+    const trailer = `${WSL_BWRAP_STATUS_BEGIN}{"exit-code":0}\n${WSL_BWRAP_STATUS_END}`;
+    const write = vi.spyOn(process.stderr, "write").mockReturnValue(true);
+    spawn.mockImplementation(() => {
+      const child = new EventEmitter();
+      const stderrStream = new EventEmitter();
+      Object.assign(child, { stderr: stderrStream, stdio: [null, null, stderrStream], stdout: null });
+      queueMicrotask(() => {
+        stderrStream.emit("data", Buffer.from(line.slice(0, splitIndex)));
+        stderrStream.emit("data", Buffer.from(line.slice(splitIndex)));
+        stderrStream.emit("data", Buffer.from(trailer));
+        child.emit("close");
+      });
+      return child as unknown as ChildProcess;
+    });
+    const { exitCode } = await exec("inherit");
+
+    expect(exitCode).toBe(0);
+
+    // Every flushed chunk ends on a newline — the line is never surfaced half-written.
+    for (const [chunk] of write.mock.calls) expect(String(chunk).endsWith("\n")).toBe(true);
+
+    expect(write.mock.calls.map(([chunk]) => chunk).join("")).toBe(line);
   });
 
   test("returns the cleaned stderr in the result under pipe without writing to the host", async () => {

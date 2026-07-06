@@ -16,7 +16,7 @@ import { join } from "node:path";
 // `type: "enum"` so citty infers `args.backend` as BackendType, not a widened string.
 const initArgs: InitArgs = {
   backend: {
-    default: BackendType.Auto,
+    default: BackendType.Os,
     description: "Backend a sandboxed command runs through.",
     options: [BackendType.Auto, BackendType.Native, BackendType.Os, BackendType.Vfs],
     type: "enum",

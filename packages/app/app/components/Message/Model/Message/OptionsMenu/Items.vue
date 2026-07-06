@@ -23,13 +23,12 @@ const { updateMessageItems } = useMessageActionItems(message, isEditable, isCrea
 </script>
 
 <template>
-  <v-tooltip
+  <StyledTooltipIconButton
     v-for="{ icon, shortTitle, title, onClick } of updateMessageItems"
     :key="title"
+    :button-props="{ class: 'm-0', size: 'small', tile: true }"
+    :icon
     :text="shortTitle ?? title"
-  >
-    <template #activator="{ props }">
-      <v-btn :icon size="small" tile m-0 :="props" @click="onClick?.($event)" />
-    </template>
-  </v-tooltip>
+    @click="onClick?.($event)"
+  />
 </template>
