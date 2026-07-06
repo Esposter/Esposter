@@ -1,6 +1,4 @@
-// Import `virrun/config` (the ~1 kB defineConfig entry), never the `virrun` barrel — jiti transpiles this file's
-// Imports on every `virrun -- <cmd>` (unconfig disables jiti's fs cache), and the barrel measures ~11 s vs ~0.4 s.
-import type { VirrunConfigurationInput } from "virrun/config";
+import type { VirrunConfigurationInput } from "virrun";
 
 import { defineConfig } from "virrun/config";
 // Linux (CI runners, local Linux shells) runs the toolchain native — it already generates platform-correct artifacts
