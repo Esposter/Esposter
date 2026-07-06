@@ -23,4 +23,6 @@ export const useCreateTyping = async () => {
       username: session.value.user.name,
     });
   });
+
+  onUnmounted(stop, currentInstance);
 };

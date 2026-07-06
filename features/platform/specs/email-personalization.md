@@ -27,5 +27,5 @@ An email document optionally binds one dataset (`EmailEditor.datasetReference`).
 ## Constraints / Notes
 
 - Merge-field and survey-invite blocks re-sync whenever their reactive source changes (bound dataset columns, published surveys) — categories are replaced wholesale, no per-block bookkeeping.
-- Substituted values are HTML-escaped: merge fields personalize text, they never inject markup.
+- Substituted values are HTML-escaped: merge fields personalize text, they never inject markup. Tokens are inserted escaped and substitution matches both raw and escaped token forms, since the canvas entity-encodes special characters (e.g. a "P&L" column) on serialization.
 - Export is fully client-side; a zip dependency was rejected in favour of the File System Access directory picker.
