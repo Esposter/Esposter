@@ -194,5 +194,14 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
         return updatedDocument;
       },
     ),
+    updateDocument: getOwnerProcedure(type, updateDocumentInputSchema, "id").mutation<Document>(
+      async ({ ctx, input: { id, ...rest } }) =>
+        requireMutation(
+          (await ctx.db.update(documents).set(rest).where(eq(documents.id, id)).returning())[0],
+          Operation.Update,
+          DatabaseEntityType.Document,
+          id,
+        ),
+    ),
   };
 };
