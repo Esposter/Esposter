@@ -4,6 +4,7 @@ import { appUsersInMessage } from "@/schema/appUsersInMessage";
 import { bansInMessage } from "@/schema/bansInMessage";
 import { blocks } from "@/schema/blocks";
 import { callSessionsInMessage } from "@/schema/callSessionsInMessage";
+import { documents, documentTypeEnum } from "@/schema/documents";
 import { friendRequests } from "@/schema/friendRequests";
 import { friends } from "@/schema/friends";
 import { invitesInMessage } from "@/schema/invitesInMessage";
@@ -36,6 +37,8 @@ export const schema = {
   bansInMessage,
   blocks,
   callSessionsInMessage,
+  documents,
+  documentTypeEnum,
   friendRequests,
   friends,
   invitesInMessage,

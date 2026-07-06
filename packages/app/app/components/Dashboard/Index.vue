@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { useVisualStore } from "@/store/dashboard/visual";
+import type { Visual } from "#shared/models/dashboard/data/Visual";
+
 import { toRawDeep } from "@esposter/shared";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
-const visualStore = useVisualStore();
-const { noColumns, visuals } = storeToRefs(visualStore);
+interface DashboardProps {
+  noColumns?: number;
+  visuals: Visual[];
+}
+
+const { noColumns = 12, visuals } = defineProps<DashboardProps>();
 // The main dashboard shouldn't actually modify any persisted data
-const layout = ref(structuredClone(toRawDeep(visuals.value)));
+const layout = ref(structuredClone(toRawDeep(visuals)));
 </script>
 
 <template>
@@ -20,8 +25,16 @@ const layout = ref(structuredClone(toRawDeep(visuals.value)));
       :is-resizable="false"
       responsive
     >
-      <GridItem v-for="{ id, type, chart, x, y, w, h } of visuals" :key="id" :i="id" :x :y :w :h>
-        <DashboardVisual :type :chart />
+      <GridItem
+        v-for="visual of visuals"
+        :key="visual.id"
+        :i="visual.id"
+        :x="visual.x"
+        :y="visual.y"
+        :w="visual.w"
+        :h="visual.h"
+      >
+        <DashboardVisual :visual />
       </GridItem>
     </GridLayout>
   </v-container>

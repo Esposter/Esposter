@@ -1,12 +1,16 @@
 <script setup lang="ts">
+import { authClient } from "@/services/auth/authClient";
 import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { withFinalizerAsync } from "@esposter/shared";
 
 const slots = defineSlots<{ "append-header": () => VNode; "prepend-actions": () => VNode }>();
+const session = authClient.useSession();
 const tableEditorStore = useTableEditorStore();
-const { resetItem, save } = tableEditorStore;
+const { createDocument, deleteDocument, renameDocument, resetItem, save, selectDocument } = tableEditorStore;
 const {
+  currentDocument,
+  documents,
   editedItem,
   editForm,
   editFormDialog,
@@ -25,6 +29,16 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
   <v-toolbar pt-4>
     <v-toolbar-title px-4>
       <TableEditorTypeSelect />
+      <div v-if="session.data" pt-2 flex gap-2 w-full items-center>
+        <DocumentPicker
+          :current-document
+          :documents
+          @create="createDocument($event)"
+          @delete="deleteDocument($event)"
+          @rename="(id, name) => renameDocument(id, name)"
+          @select="selectDocument($event)"
+        />
+      </div>
       <div pt-2>
         <TableEditorSearchBar />
       </div>

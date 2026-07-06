@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SurveyResponseEntity } from "@esposter/db-schema";
 
+import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { validate } from "@/services/router/validate";
 import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/survey/constants";
-import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
 import { getResultAsync } from "@esposter/shared";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";

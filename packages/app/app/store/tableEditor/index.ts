@@ -26,7 +26,36 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   const itemStore = useItemStore();
   const { createItem, deleteItem, updateItem } = itemStore;
   const searchQuery = ref("");
-  const tableEditorConfiguration = ref(new TableEditorConfiguration());
+  const {
+    content: tableEditorConfiguration,
+    createDocument,
+    currentDocument,
+    deleteDocument,
+    documents,
+    load,
+    loadLocal,
+    renameDocument,
+    save: saveTableEditorConfiguration,
+    selectDocument,
+    setCurrentDocument,
+  } = useDocumentState(
+    TableEditorConfiguration,
+    {
+      createDocument: (input) => $trpc.tableEditor.createDocument.mutate(input),
+      deleteDocument: (input) => $trpc.tableEditor.deleteDocument.mutate(input),
+      publishDocument: (input) => $trpc.tableEditor.publishDocument.mutate(input),
+      readDocumentContent: (input) => $trpc.tableEditor.readDocumentContent.query(input),
+      readDocuments: async () => (await $trpc.tableEditor.readDocuments.query({})).items,
+      saveDocumentContent: (input) => $trpc.tableEditor.saveDocumentContent.mutate(input),
+      unpublishDocument: (input) => $trpc.tableEditor.unpublishDocument.mutate(input),
+      updateDocument: (input) => $trpc.tableEditor.updateDocument.mutate(input),
+    },
+    {
+      defaultName: "My Tables",
+      localStorageKey: TABLE_EDITOR_LOCAL_STORAGE_KEY,
+      schema: tableEditorConfigurationSchema,
+    },
+  );
   const tableEditorType = ref(TableEditorType.TodoList);
   const tableEditor = computed(() => tableEditorConfiguration.value[tableEditorType.value]);
   const { editedIndex, editedItem, editFormDialog, ...rest } = createEditFormData(
@@ -42,11 +71,6 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     },
     { flush: "sync" },
   );
-
-  const saveTableEditorConfiguration = useSave(tableEditorConfiguration, {
-    auth: { save: $trpc.tableEditor.saveTableEditorConfiguration.mutate },
-    unauth: { key: TABLE_EDITOR_LOCAL_STORAGE_KEY, schema: tableEditorConfigurationSchema },
-  });
 
   const saveConfiguration = async (snapshot: TableEditorConfiguration) => {
     const isSuccessful = await saveTableEditorConfiguration();
@@ -73,10 +97,19 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   };
 
   return {
+    createDocument,
+    currentDocument,
+    deleteDocument,
+    documents,
     editedIndex,
     editedItem,
     editFormDialog,
+    load,
+    loadLocal,
+    renameDocument,
     searchQuery,
+    selectDocument,
+    setCurrentDocument,
     tableEditor,
     tableEditorConfiguration,
     tableEditorType,

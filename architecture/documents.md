@@ -21,26 +21,27 @@ Drizzle table `documents` in `packages/db-schema`:
 
 Content blob lives in the product's existing container (`DashboardAssets`, …) at `${documentId}/content`. Ownership is enforced through the Postgres row, never inferred from the blob path.
 
-Surveys stay on their own table until a concrete feature needs convergence — the migration isn't worth it on principle alone.
-
 ---
 
 ## Procedures
 
-One factory, `createDocumentProcedures(type, contentSchema, container)`, registered in each product router:
+One factory, `createDocumentProcedures(type, contentSchema, container, transformPublishedContent?)` (`server/trpc/procedure/document/createDocumentProcedures.ts`), spread into each product router (`dashboard`, `tableEditor`, `emailEditor`, `webpageEditor`, `flowchartEditor`):
 
-| Procedure                                     | Auth  | Purpose                                     |
-| --------------------------------------------- | ----- | ------------------------------------------- |
-| `readDocuments`                               | owner | cursor-paginated list for the picker        |
-| `createDocument`                              | owner | row + empty content blob                    |
-| `updateDocument`                              | owner | rename                                      |
-| `deleteDocument`                              | owner | row + blobs                                 |
-| `readDocumentContent` / `saveDocumentContent` | owner | blob read/write with `contentVersion` check |
+| Procedure                                                                | Auth                | Purpose                                          |
+| ------------------------------------------------------------------------ | ------------------- | ------------------------------------------------ |
+| `readDocuments`                                                          | owner               | offset-paginated list for the picker             |
+| `createDocument`                                                         | owner               | metadata row; content blob written on first save |
+| `updateDocument`                                                         | owner               | rename                                           |
+| `deleteDocument`                                                         | owner               | row + blobs                                      |
+| `readDocumentContent` / `saveDocumentContent`                            | owner               | blob read/write with `contentVersion` check      |
+| `publishDocument` / `unpublishDocument` / `readPublishedDocumentContent` | see `publishing.md` | publish lifecycle                                |
+
+Ownership middleware: `getOwnerProcedure(type, schema, documentIdKey)` in `server/trpc/procedure/document/`.
 
 ---
 
-## Migration From Blob State
+## Client
 
-Per product, on first authed load: if the user has no documents but a legacy `${userId}/save` blob exists, create a document from it (name "My Dashboard" etc.) and delete the legacy blob. Unauth users keep the localStorage single-document path — the documents layer is auth-only, as email/webpage persistence already is.
+One composable, `useDocumentState(Model, procedures, { defaultName, localStorageKey, schema })` (`app/composables/document/useDocumentState.ts`), manages the document list, current selection, content ref, and save. Authed saves go through `saveDocumentContent`; unauthenticated users keep the single-document localStorage path. `DocumentPicker` (`app/components/Document/Picker.vue`) is the shared list/create/rename/delete UI, mounted in each editor's header when a session exists. There was no production data, so no legacy `${userId}/save` migration exists — blob state (`useSave` + `createRead/SaveBlobStateProcedure`) remains only for genuinely one-per-user saves: clicker and dungeons.
 
-Rollout order: dashboard (simplest content) → table editor (unlocks the TableDocument dataset provider) → email/webpage/flowchart.
+Surveys stay on their own table until a concrete feature needs convergence.

@@ -12,15 +12,18 @@ The surveyer proved it: `publishSurvey` bumps `publishVersion`, clones the model
 - **Public reads serve only the publish copy**, never the working copy, and are rate-limited with no auth — exactly like the survey response page.
 - **Unpublish** deletes the publish blobs and clears `publishedAt`; the public URL 404s.
 
-| Procedure                      | Auth                 | Purpose                      |
-| ------------------------------ | -------------------- | ---------------------------- |
-| `publishDocument`              | owner                | snapshot copy + version bump |
-| `readPublishedDocumentContent` | public, rate-limited | serve the publish copy       |
+| Procedure                      | Auth                 | Purpose                                   |
+| ------------------------------ | -------------------- | ----------------------------------------- |
+| `publishDocument`              | owner                | snapshot copy + version bump              |
+| `unpublishDocument`            | owner                | delete publish blobs, clear `publishedAt` |
+| `readPublishedDocumentContent` | public, rate-limited | serve the publish copy                    |
+
+The factory takes an optional `transformPublishedContent(ctx, content)` hook so a product can rewrite content at publish time with the owner's authority.
 
 ## Routes
 
-`pages/view/[type]/[id].vue` — public read-only renderer, one lightweight view component per `DocumentType`. A published URL is the share unit everywhere: paste it in an esbabbler message, a post, or externally. The page's OG meta tags give free unfurls on external platforms.
+`pages/view/<type>/[id].vue` — public read-only renderer, one lightweight view page per `DocumentType` (dashboard shipped first). A published URL is the share unit everywhere: paste it in an esbabbler message, a post, or externally.
 
-## Live Data In Published Documents
+## Data In Published Documents
 
-A published dashboard may contain visuals bound to datasets. Resolution runs with the **owner's** authority — publishing deliberately exposes that data. Safety rule: per-visual "include live data" opt-in, default **off** (the visual publishes a static snapshot taken at publish time).
+A published dashboard may contain visuals bound to datasets. At publish time the dashboard's `transformPublishedContent` resolves every bound visual with the **owner's** authority and bakes the result into `VisualDatasetBinding.snapshot` — public viewers render the static snapshot and never resolve references. Live data for viewers stays deferred (`features/platform/deferred/realtime-dataset-refresh.md`).

@@ -1,10 +1,8 @@
-import { FlowchartEditor, flowchartEditorSchema } from "#shared/models/flowchartEditor/data/FlowchartEditor";
+import { flowchartEditorSchema } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { router } from "@@/server/trpc";
-import { createReadBlobStateProcedure } from "@@/server/trpc/procedure/blobState/createReadBlobStateProcedure";
-import { createSaveBlobStateProcedure } from "@@/server/trpc/procedure/blobState/createSaveBlobStateProcedure";
-import { AzureContainer } from "@esposter/db-schema";
+import { createDocumentProcedures } from "@@/server/trpc/procedure/document/createDocumentProcedures";
+import { AzureContainer, DocumentType } from "@esposter/db-schema";
 
-export const flowchartEditorRouter = router({
-  readFlowchartEditor: createReadBlobStateProcedure(AzureContainer.FlowchartEditorAssets, FlowchartEditor),
-  saveFlowchartEditor: createSaveBlobStateProcedure(AzureContainer.FlowchartEditorAssets, flowchartEditorSchema),
-});
+export const flowchartEditorRouter = router(
+  createDocumentProcedures(DocumentType.Flowchart, flowchartEditorSchema, AzureContainer.FlowchartEditorAssets),
+);

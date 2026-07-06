@@ -11,6 +11,7 @@ import { trpcRouter } from "@@/server/trpc/routers";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import {
   achievements,
+  documents,
   roomsInMessage,
   SpecialAchievementName,
   UserAchievementRelations,
@@ -33,6 +34,7 @@ describe("achievement", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
+    await mockContext.db.delete(documents);
     await mockContext.db.delete(roomsInMessage);
     await mockContext.db.delete(achievements);
   });
@@ -83,10 +85,16 @@ describe("achievement", () => {
   test("on updates", async () => {
     expect.hasAssertions();
 
+    const newDocument = await caller.webpageEditor.createDocument({ name });
     const onUpdateAchievement = await caller.achievement.onUpdateAchievement();
     const data = await getFirstEmit(
       () => onUpdateAchievement,
-      () => caller.webpageEditor.saveWebpageEditor(new WebpageEditor()),
+      () =>
+        caller.webpageEditor.saveDocumentContent({
+          content: new WebpageEditor(),
+          contentVersion: newDocument.contentVersion,
+          id: newDocument.id,
+        }),
     );
 
     const unlockedAchievements: UserAchievementWithRelations[] = [];

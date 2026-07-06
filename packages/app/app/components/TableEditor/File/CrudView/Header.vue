@@ -15,6 +15,7 @@ useFileHistoryStore();
       <TableEditorFileCrudViewUndoButton />
       <TableEditorFileCrudViewRedoButton />
       <TableEditorFileCrudViewImportButton v-model="editedItem" />
+      <TableEditorFileCrudViewImportDatasetButton v-model="editedItem" />
       <TableEditorFileCrudViewExportButton :edited-item />
     </template>
   </TableEditorCrudViewHeader>

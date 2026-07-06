@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import type { Editor } from "grapesjs";
 
-import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { authClient } from "@/services/auth/authClient";
-import { EMAIL_EDITOR_LOCAL_STORAGE_KEY } from "@/services/emailEditor/constants";
 import { useEmailEditorStore } from "@/store/emailEditor";
-import { jsonDateParse } from "@esposter/shared";
 import grapesJS from "grapesjs";
 import grapesJSMJML from "grapesjs-mjml";
 
@@ -15,8 +12,9 @@ const { data: session } = await authClient.useSession(useFetch);
 const emailEditorStore = useEmailEditorStore();
 const { readEmailEditor, saveEmailEditor } = emailEditorStore;
 let editor: Editor | undefined;
-
-const { trigger } = watchTriggerable(session, (newSession) => {
+// The store branches between the authenticated document path and local storage,
+// So a single storage adapter suffices; re-initialize on session change to reload from the right source
+const { trigger } = watchTriggerable(session, () => {
   editor?.destroy();
   editor = grapesJS.init({
     container: ".v-main",
@@ -24,20 +22,10 @@ const { trigger } = watchTriggerable(session, (newSession) => {
     height: "100%",
     plugins: [grapesJSMJML],
     storageManager: {
-      type: newSession ? "remote" : "local",
+      type: "document",
     },
   });
-  editor.Storage.add("local", {
-    load: () => {
-      const emailEditorJson = localStorage.getItem(EMAIL_EDITOR_LOCAL_STORAGE_KEY);
-      return Promise.resolve(emailEditorJson ? new EmailEditor(jsonDateParse(emailEditorJson)) : new EmailEditor());
-    },
-    store: (data) =>
-      new Promise<void>(() => {
-        localStorage.setItem(EMAIL_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data));
-      }),
-  });
-  editor.Storage.add("remote", {
+  editor.Storage.add("document", {
     load: () => readEmailEditor(),
     store: (data) => saveEmailEditor(data),
   });

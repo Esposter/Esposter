@@ -14,13 +14,13 @@ New products join the platform by implementing contracts, not by adding services
 
 ## Layer Model
 
-| Layer          | Contract                                                            | Status                                                             |
-| -------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| **Identity**   | `users.id` (Better-Auth) keys every row, blob path, session         | ✅ Shipped — shared by all products                                |
-| **Documents**  | Postgres metadata row + content blob → `documents.md`               | 🟡 Survey only; other editors are single-blob-per-user             |
-| **Datasets**   | Columns + rows served by providers → `datasets.md`                  | 🔴 Table editor has the shape internally; no cross-product serving |
-| **Publishing** | Versioned publish copy + public rate-limited read → `publishing.md` | 🟡 Survey only                                                     |
-| **Events**     | tRPC mutation path = trigger key (`achievementPlugin`)              | ✅ Shipped — every new procedure is automatically triggerable      |
+| Layer          | Contract                                                            | Status                                                                                         |
+| -------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Identity**   | `users.id` (Better-Auth) keys every row, blob path, session         | ✅ Shipped — shared by all products                                                            |
+| **Documents**  | Postgres metadata row + content blob → `documents.md`               | ✅ Shipped — `documents` table + factory across all 5 editors; survey has its own table        |
+| **Datasets**   | Columns + rows served by providers → `datasets.md`                  | ✅ Shipped — SurveyResponses + TableDocument providers, table-editor import, dashboard binding |
+| **Publishing** | Versioned publish copy + public rate-limited read → `publishing.md` | ✅ Shipped — document publish lifecycle + `/view/dashboard/[id]` (more view pages later)       |
+| **Events**     | tRPC mutation path = trigger key (`achievementPlugin`)              | ✅ Shipped — every new procedure is automatically triggerable                                  |
 
 ---
 

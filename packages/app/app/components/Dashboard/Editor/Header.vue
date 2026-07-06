@@ -1,13 +1,20 @@
 <script setup lang="ts">
+import { authClient } from "@/services/auth/authClient";
 import { visualTypeItemCategoryDefinitions } from "@/services/dashboard/visualTypeItemCategoryDefinitions";
 import { ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
+import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 import { RoutePath } from "@esposter/shared";
 
+const session = authClient.useSession();
 const visualStore = useVisualStore();
 const { createVisual } = visualStore;
 const { visualType } = storeToRefs(visualStore);
+const dashboardStore = useDashboardStore();
+const { createDocument, deleteDocument, publishDashboard, renameDocument, selectDocument, unpublishDashboard } =
+  dashboardStore;
+const { currentDocument, documents } = storeToRefs(dashboardStore);
 </script>
 
 <template>
@@ -15,6 +22,23 @@ const { visualType } = storeToRefs(visualStore);
     <v-toolbar-title font-bold px-4>
       <div pt-4 flex flex-col gap-y-4 justify-between>
         <div>Dashboard Editor</div>
+        <div v-if="session.data" flex gap-2 w-full items-center>
+          <DocumentPicker
+            :current-document
+            :documents
+            @create="createDocument($event)"
+            @delete="deleteDocument($event)"
+            @rename="(id, name) => renameDocument(id, name)"
+            @select="selectDocument($event)"
+          />
+          <DocumentPublishButton
+            v-if="currentDocument"
+            :view-path="RoutePath.ViewDashboard"
+            :document="currentDocument"
+            @publish="publishDashboard()"
+            @unpublish="unpublishDashboard()"
+          />
+        </div>
         <div flex w-full items-center>
           <v-select
             v-model="visualType"

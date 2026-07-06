@@ -1,10 +1,12 @@
+import type { DatasetColumnType } from "#shared/models/dataset/DatasetColumnType";
+
 import { BooleanValue, BooleanValues } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { DateFormats } from "#shared/models/tableEditor/file/column/DateFormat";
 import { dayjs } from "#shared/services/dayjs";
 import { normalizeString } from "@esposter/shared";
 
-export const inferColumnType = (values: string[]): ColumnType => {
+export const inferColumnType = (values: string[]): DatasetColumnType => {
   const normalizedValues = values.map((value) => normalizeString(value)).filter(Boolean);
   if (normalizedValues.length === 0) return ColumnType.String;
   else if (normalizedValues.every((value) => BooleanValues.has(value.toLowerCase() as BooleanValue)))
