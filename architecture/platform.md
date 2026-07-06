@@ -1,26 +1,26 @@
 # Platform — Cross-Product Layer Model
 
-How Esposter's products link together. Five layers, each generalizing something that already ships — no new infrastructure category is invented. Each non-shipped layer has its own standard doc in this folder; implementation phases and open decisions live in `features/platform/`.
+How Esposter's products link together. Five layers; the Resources layer carries the products, and the others are capabilities or infrastructure it plugs into. Implementation phases and open decisions live in `features/platform/`.
 
 ---
 
 ## Principle
 
-> Every product is a **document** editor. Documents **expose and consume datasets**. Every mutation is already an **achievement trigger**. Anything publishable gets a **public versioned read**.
+> **Everything is a resource; capabilities are opt-in.** A resource exposes and consumes **datasets** if it declares so. Anything publishable gets a **public versioned read**. Every mutation is already an **achievement trigger**.
 
-New products join the platform by implementing contracts, not by adding services. Games, anime, and the fluid simulator deliberately stay outside (achievements only) — a game save has nothing to gain from naming, sharing, or dataset semantics.
+New products join the platform by adding one `ResourceType` and one `ResourceDefinitionMap` entry, not by adding services or bespoke pages. Games, anime, and the fluid simulator deliberately stay outside (achievements only) — a game save has nothing to gain from naming, sharing, or dataset semantics.
 
 ---
 
 ## Layer Model
 
-| Layer          | Contract                                                            | Status                                                                                         |
-| -------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| **Identity**   | `users.id` (Better-Auth) keys every row, blob path, session         | ✅ Shipped — shared by all products                                                            |
-| **Documents**  | Postgres metadata row + content blob → `documents.md`               | ✅ Shipped — `documents` table + factory across all 5 editors; survey has its own table        |
-| **Datasets**   | Columns + rows served by providers → `datasets.md`                  | ✅ Shipped — SurveyResponses + TableDocument providers, table-editor import, dashboard binding |
-| **Publishing** | Versioned publish copy + public rate-limited read → `publishing.md` | ✅ Shipped — document publish lifecycle + `/view/{dashboard,webpage}/[id]` with OG meta tags   |
-| **Events**     | tRPC mutation path = trigger key (`achievementPlugin`)              | ✅ Shipped — every new procedure is automatically triggerable                                  |
+| Layer          | Contract                                                                       | Status                                                                                  |
+| -------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| **Identity**   | `users.id` (Better-Auth) keys every row, blob path, session                    | ✅ Shipped — shared by all products                                                     |
+| **Resources**  | Postgres identity row + content blob + capability declaration → `resources.md` | 🚧 Standard defined — supersedes documents; migration in `features/platform/roadmap.md` |
+| **Datasets**   | Columns + rows served by DatasetProvider types → `datasets.md`                 | ✅ Shipped — providers re-key to `File`/`SurveyResponses` during migration              |
+| **Publishing** | Versioned publish copy + public rate-limited read → `publishing.md`            | ✅ Shipped — becomes the Publishable capability; `/view/[type]/[id]` unifies routes     |
+| **Events**     | tRPC mutation path = trigger key (`achievementPlugin`)                         | ✅ Shipped — every new procedure is automatically triggerable                           |
 
 ---
 
@@ -28,97 +28,86 @@ New products join the platform by implementing contracts, not by adding services
 
 ```mermaid
 flowchart TB
-  subgraph producers [Data producers]
-    SV[Surveyer<br/>responses in Azure Table]
-    TE[Table Editor<br/>rows and columns]
+  subgraph explorer [Resource Explorer — /resources]
+    FILE[File<br/>datasetProvider · portable]
+    SURVEY[Survey<br/>publishable · datasetProvider]
+    TODO[TodoList]
+    DASH[Dashboard<br/>publishable]
+    EMAIL[Email<br/>portable]
+    WEB[Webpage<br/>publishable]
+    FLOW[Flowchart]
   end
 
   subgraph platform [Platform layers]
+    RES["Resources<br/>identity row + content blob + ResourceDefinitionMap"]
     DS["Datasets<br/>readDataset(reference) + provider map"]
-    DOC[Documents<br/>Postgres metadata + Blob content]
-    PUB[Publishing<br/>publish copy + public read]
+    PUB["Publishing<br/>snapshot + public /view/[type]/[id]"]
   end
 
-  subgraph consumers [Data consumers]
-    DB[Dashboard<br/>visuals bind DatasetReference]
-    TEI[Table Editor<br/>import from data source]
-    EM[Email Editor<br/>merge fields, survey links]
-    CAL[Calendar<br/>view over TodoList items]
-  end
-
-  SV -- SurveyResponses provider --> DS
-  TE -- TableDocument provider --> DS
-  DS --> DB
-  DS --> TEI
-  DS --> EM
-  DOC --- SV
-  DOC --- TE
-  DOC --- DB
-  DOC --- EM
-  DOC --> PUB
+  explorer --- RES
+  FILE -- File provider --> DS
+  SURVEY -- SurveyResponses provider --> DS
+  DS -- bind / import / merge fields --> DASH
+  DS --> FILE
+  DS --> EMAIL
+  SURVEY --> PUB
+  DASH --> PUB
+  WEB --> PUB
   PUB -- "public /view URLs (shareable in esbabbler)" --> WORLD((Viewers))
 
   ACH[Achievements<br/>tRPC path middleware]
   ID[(Identity<br/>Better-Auth users.id)]
   platform --- ID
-  producers -. every mutation .-> ACH
-  consumers -. every mutation .-> ACH
+  explorer -. every mutation .-> ACH
 ```
 
 ---
 
 ## Business-Logic User Journey
 
-The headline cross-product flow — **create a survey → collect responses → extract/transform → visualise → publish**. Both halves now match the publishing standard: a survey, like any document, is a stable public artifact only once published. Remaining cross-product navigation gaps are tracked in [`features/platform/roadmap.md`](../features/platform/roadmap.md).
+The headline cross-product flow — **create a survey → collect responses → extract/transform → visualise → publish** — runs entirely through resources and their capabilities:
 
 ```mermaid
 sequenceDiagram
   actor Creator
   actor Respondent
-  participant SV as Surveyer
+  participant SV as Survey resource<br/>(Editor blade)
   participant AT as Azure Table<br/>(SurveyResponses)
-  participant EM as Email editor
-  participant TE as Table editor
-  participant DB as Dashboard
-  participant PUB as Public /view
+  participant FI as File resource<br/>(Data blade)
+  participant DB as Dashboard resource
+  participant PUB as Public /view/[type]/[id]
 
-  Creator->>SV: 1. Author survey (SurveyJS, autosave); preview drafts in the editor's Preview tab
-  Creator->>SV: 2. Publish — sets publishedAt, bumps publishVersion, snapshots model + assets to the publish dir
-  Creator->>EM: 3. Compose invite email; bind dataset → merge-field blocks
-  Note over EM: Invite block links to /survey/{id} and appears once the survey is published
-  EM-->>Respondent: 4. Distribute link (email sending deferred → share manually / via esbabbler)
-  Respondent->>AT: 5. Fill /survey/{id} → response rows (partitionKey = surveyId)
-  Note over SV,AT: Respondents are served the published snapshot; an unpublished survey 404s
-  Creator->>TE: 6. Import survey responses (one-time snapshot into a table document)
-  TE->>TE: 7. Computed columns — Aggregation / Math / Regex / String (the extract/transform layer)
-  Creator->>DB: 8. Bind visual to a dataset reference + aggregation (live re-resolve on load)
-  DB->>PUB: 9. Publish dashboard — bakes dataset snapshot → shareable public /view URL
+  Creator->>SV: 1. Author survey (SurveyJS autosave → saveResourceContent)
+  Creator->>SV: 2. Publish — snapshot model + assets to {id}/published/{n}
+  PUB-->>Respondent: 3. Share /view/survey/{id} (email invite block, esbabbler, anywhere)
+  Respondent->>AT: 4. Respond → rows (partitionKey = survey resource id)
+  Note over SV,AT: Respondents are served the published snapshot; unpublished 404s
+  Creator->>FI: 5. Import responses (dataset.readDataset → one-time copy into a File resource)
+  FI->>FI: 6. Computed columns — Aggregation / Math / Regex / String
+  Creator->>DB: 7. Bind visual to a DatasetReference (live re-resolve on load)
+  DB->>PUB: 8. Publish dashboard — bakes dataset snapshots → shareable /view/dashboard/{id}
 ```
-
-The **producer → dataset → consumer** contract (steps 6–9) is solid: `dataset.readDataset` + provider map, table-editor import, dashboard binding, and baked publish snapshots all work. The **distribution half** (steps 2–5) is now consistent with it — publish pins a versioned model snapshot that respondents read, the public page 404s for unpublished surveys, and the email invite points at the public `/survey/{id}` page. What remains is cross-product **navigation**: the loops exist as data but not yet as links (Surveyer → "view responses" / "build dashboard", share-to-esbabbler, the orphaned calendar). See the roadmap.
 
 ---
 
-## Where Each Product Sits Today
+## Capability Matrix
 
-| Product           | Persistence today                                                          | Platform role                                            |
-| ----------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- |
-| Surveyer          | Postgres `surveys` + model blob (`SurveyAssets`) + responses (Azure Table) | Document + dataset **producer**; publish pattern donor   |
-| Table editor      | Single blob per user (`TableEditorAssets`) + localStorage                  | Dataset **producer and consumer**; owns file import      |
-| Dashboard         | Single blob per user (`DashboardAssets`) + localStorage                    | Dataset **consumer** (visual binding)                    |
-| Email editor      | `documents` row + content blob (`EmailEditorAssets`)                       | Dataset **consumer** (merge fields, personalized export) |
-| Webpage editor    | `documents` row + content blob (`WebpageEditorAssets`)                     | Documents + publishing (`/view/webpage/[id]`)            |
-| Flowchart editor  | Single blob per user (`FlowchartEditorAssets`) + localStorage              | Documents + publishing only                              |
-| Calendar          | None — reads table editor's TodoList store                                 | Existing proof of cross-product consumption              |
-| Posts             | Postgres `posts`/`likes`                                                   | Already relational; document embeds deferred             |
-| Esbabbler         | Azure Table messages + Postgres rooms                                      | Distribution channel for published links                 |
-| Achievements      | Postgres `achievements`/`userAchievements`                                 | The events layer itself                                  |
-| Games/anime/fluid | Blob save state or none                                                    | Outside the platform (achievements only)                 |
+The `ResourceDefinitionMap` (`resources.md`) is the authoritative declaration; this is the summary:
 
-Single-blob products all use the same factories: `useSave` / `useSaveToLocalStorage` (client), `createReadBlobStateProcedure` / `createSaveBlobStateProcedure` (server), blob key `${userId}/save`. The documents standard replaces this one shared pattern in one place — that is why the migration is tractable.
+| ResourceType | Publishable | DatasetProvider | Portable  | Blades beyond Overview |
+| ------------ | :---------: | :-------------: | :-------: | ---------------------- |
+| Dashboard    |     ✅      |                 |           | Editor                 |
+| Email        |             |                 | ✅ export | Editor                 |
+| File         |             |       ✅        |    ✅     | Data, Settings         |
+| Flowchart    |             |                 |           | Editor                 |
+| Survey       |     ✅      |  ✅ responses   |           | Editor, Responses      |
+| TodoList     |             |                 |           | Items, Calendar        |
+| Webpage      |     ✅      |                 |           | Editor                 |
+
+Outside the resource model: **Posts** (relational Postgres, social feed semantics), **Esbabbler** (distribution channel for published links), **Achievements** (the events layer itself), **games/anime/fluid** (blob save state or none; achievements only).
 
 ---
 
 ## Feasibility
 
-Everything is TypeScript + already-installed OSS: SurveyJS (authoring/response), GrapesJS (email/webpage), mathjs (computed columns), SheetJS/CSV parsing (import), FullCalendar, existing chart stack. Phases 1–4 of the roadmap require **zero new dependencies and zero new Azure services** — only new Postgres tables, tRPC procedures, and reuse of existing blob containers. The only capability that needs new infrastructure is actually sending email (deferred with trigger in `features/platform/deferred/`).
+Everything is TypeScript + already-installed OSS: SurveyJS (authoring/response), GrapesJS (email/webpage), mathjs (computed columns), SheetJS/CSV parsing (import), FullCalendar, existing chart stack. The consolidation requires **zero new dependencies and zero new Azure services** — one renamed Postgres table, one blob container replacing six, and reshaped tRPC routers. The only capability needing new infrastructure is actually sending email (deferred with trigger in `features/platform/deferred/`).

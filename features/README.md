@@ -48,7 +48,7 @@ The granular, prioritized, checkbox backlog lives in each area's **`roadmap.md`*
 | [`esbabbler/`](esbabbler/README.md)             | Scheduled-jobs UI → [roadmap](esbabbler/roadmap.md)    | Messaging, calls, rooms, moderation, DMs                       |
 | [`fileTableEditor/`](fileTableEditor/README.md) | — (mature)                                             | CSV/JSON/XLSX table editor with computed columns               |
 | [`infra/`](infra/README.md)                     | — (migration complete)                                 | Azure Pulumi infrastructure, cost, security, naming            |
-| [`platform/`](platform/README.md)               | — (program complete)                                   | Cross-product documents, datasets, publishing integration      |
+| [`platform/`](platform/README.md)               | Resource Explorer → [roadmap](platform/roadmap.md)     | Everything-is-a-resource model, capabilities, explorer shell   |
 | [`virrun/`](virrun/README.md)                   | Bench win32 mirror lift → [roadmap](virrun/roadmap.md) | In-memory virtual runner: run any repo's real toolchain in RAM |
 | [`vue-phaserjs/`](vue-phaserjs/README.md)       | — (mature)                                             | Phaser game engine Vue integration                             |
 | [`refactors/`](#refactors)                      | null-removal (planned)                                 | Cross-cutting code migrations                                  |
@@ -66,4 +66,4 @@ Cross-cutting technical migrations, not user-visible features. One doc per migra
 
 ## Cross-Cutting Architecture
 
-Design decisions spanning multiple feature areas live in [`/architecture/`](../architecture/) at the repo root, not in any single area's `architecture.md` — see its [README](../architecture/README.md) for the index. The cross-product layer model (documents, datasets, publishing) is [`/architecture/platform.md`](../architecture/platform.md), with its program docs in [`platform/`](platform/README.md).
+Design decisions spanning multiple feature areas live in [`/architecture/`](../architecture/) at the repo root, not in any single area's `architecture.md` — see its [README](../architecture/README.md) for the index. The cross-product layer model (resources, datasets, publishing) is [`/architecture/platform.md`](../architecture/platform.md), with its program docs in [`platform/`](platform/README.md).

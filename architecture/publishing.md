@@ -1,29 +1,47 @@
 # Publishing
 
-The standard for making anything publicly shareable: a versioned publish copy plus a public, rate-limited, read-only route. Whenever a product needs "share this with people who aren't logged in", it uses this mechanism — never ad-hoc public reads of working data.
+The **Publishable capability** (`architecture/resources.md`): the standard for making a resource publicly shareable — a versioned publish copy plus a public, rate-limited, read-only route. Whenever a product needs "share this with people who aren't logged in", it opts into this capability — never ad-hoc public reads of working data.
 
-The surveyer proved it: `publishSurvey` bumps `publishVersion`, clones the model blob into a publish directory, and `pages/survey/[id].vue` serves the clone publicly without auth. The document publishing procedures generalize the same mechanism.
+Adopters: Dashboard, Survey, Webpage. A type opts in by declaring `publishable: true` in `ResourceDefinitionMap`; the derived `PublishableResourceType` union then _requires_ it to provide a view component and _grants_ it the publish procedures — a non-publishable type has no publish endpoints at the type level.
 
 ---
 
 ## Mechanism
 
-- **Publish = snapshot copy.** `publishDocument` copies the content blob to `${id}/published/${publishVersion}`, bumps `publishVersion`, sets `publishedAt`. Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
-- **Public reads serve only the publish copy**, never the working copy, and are rate-limited with no auth — exactly like the survey response page.
+- **Publish = snapshot copy.** `publishResource` copies the content blob to `{id}/published/{publishVersion}`, bumps `publishVersion`, sets `publishedAt`. Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
+- **Public reads serve only the publish copy**, never the working copy, and are rate-limited with no auth. An unpublished resource 404s publicly.
 - **Unpublish** deletes the publish blobs and clears `publishedAt`; the public URL 404s.
 
 | Procedure                      | Auth                 | Purpose                                   |
 | ------------------------------ | -------------------- | ----------------------------------------- |
-| `publishDocument`              | owner                | snapshot copy + version bump              |
-| `unpublishDocument`            | owner                | delete publish blobs, clear `publishedAt` |
-| `readPublishedDocumentContent` | public, rate-limited | serve the publish copy                    |
+| `publishResource`              | owner                | snapshot copy + version bump              |
+| `unpublishResource`            | owner                | delete publish blobs, clear `publishedAt` |
+| `readPublishedResourceContent` | public, rate-limited | serve the publish copy                    |
 
-The factory takes an optional `transformPublishedContent(ctx, content)` hook so a product can rewrite content at publish time with the owner's authority.
+Two hooks on `createResourceProcedures` support publishing needs:
 
-## Routes
+- `transformPublishedContent(ctx, resource, content)` — rewrite content at publish time with the **owner's** authority. Dashboard resolves every bound visual and bakes the result into `VisualDatasetBinding.snapshot` (public viewers render the static snapshot, never resolve references — live viewer data stays deferred, `features/platform/deferred/realtime-dataset-refresh.md`). Survey clones referenced asset blobs into the publish directory and rewrites their URLs.
+- `transformReadContent(ctx, resource, content)` — rewrite on owner read (survey refreshes SAS asset URLs).
 
-`pages/view/<type>/[id].vue` — public read-only renderer, one lightweight view page per `DocumentType` (dashboard and webpage shipped; the webpage view serves the saved css/html in a sandboxed iframe). View pages set OG meta tags (`ogTitle`, `ogUrl`) so a published URL unfurls when shared. A published URL is the share unit everywhere: paste it in an esbabbler message, a post, or externally.
+```mermaid
+sequenceDiagram
+  actor Owner
+  participant R as {type} router
+  participant PG as resources row
+  participant BLOB as resource-assets
 
-## Data In Published Documents
+  Owner->>R: publishResource(id)
+  R->>PG: bump publishVersion, set publishedAt
+  R->>R: transformPublishedContent(ctx, resource, content)
+  R->>BLOB: write {id}/published/{publishVersion}
+  Note over BLOB: immutable snapshot — later edits invisible until re-publish
 
-A published dashboard may contain visuals bound to datasets. At publish time the dashboard's `transformPublishedContent` resolves every bound visual with the **owner's** authority and bakes the result into `VisualDatasetBinding.snapshot` — public viewers render the static snapshot and never resolve references. Live data for viewers stays deferred (`features/platform/deferred/realtime-dataset-refresh.md`).
+  actor Viewer
+  Viewer->>R: readPublishedResourceContent(id) — public, rate-limited
+  R->>PG: 404 unless publishedAt set
+  R->>BLOB: serve {id}/published/{publishVersion}
+```
+
+## Route
+
+One dynamic public page, `pages/view/[type]/[id].vue`, dispatches through `ViewComponentMap: Record<PublishableResourceType, Component>` — a missing renderer is a compile error. The survey respondent experience is simply Survey's published view (an interactive renderer that writes responses). View pages set OG meta tags (`ogTitle`, `ogUrl`) so a published URL unfurls when shared. A published URL is the share unit everywhere: paste it in an esbabbler message, a post, or externally.

@@ -1,37 +1,55 @@
 # Platform Roadmap
 
-Reopened after the 2026-07-06 cross-product audit. The layer contracts (documents, datasets, publishing, events) are shipped and solid; the open work is the **distribution half of the survey journey** (broken today), **cross-product navigation** (the loops exist as data but not as links), and **shell cohesion**. Grep [out-of-scope/](out-of-scope) + [deferred/](deferred) before adding items.
+The Resource Explorer consolidation: everything becomes a resource (`/architecture/resources.md`), the explorer replaces every per-editor page ([specs/resource-explorer.md](specs/resource-explorer.md)). No backwards compatibility; existing documents/surveys data is discarded. Grep [out-of-scope/](out-of-scope) + [deferred/](deferred) before adding items.
 
-## Distribution-flow fixes — survey → respond → analyse loop
+## Phase 1 — schema + factory + container
 
-The three confirmed bugs that broke the survey distribution half are fixed (see [`## Shipped`](README.md) for the summary). The design decision: a survey is a **published artifact** like any document — the public `/survey/{id}` page serves only the versioned snapshot and 404s for unpublished surveys; creators preview drafts via the SurveyJS editor's built-in Preview tab. Remaining polish:
+- [ ] `packages/db-schema`: `ResourceType` enum + `resources` table (rename of `documents` absorbing `surveys` — `model`→blob, `modelVersion`→`contentVersion`, `group` dropped); delete `documents.ts`, `surveys.ts`, `DocumentType.ts`; migration drops `documents` + `surveys` + old enums; relations updated; `DatabaseEntityType.Document`/`.Survey` → `.Resource`
+- [ ] `AzureContainer.ResourceAssets` replaces the six editor/survey containers; Pulumi change in `packages/infra`
+- [ ] `ResourceDefinitionMap` + `ResourceDefinition` + derived unions (`PublishableResourceType`, `DatasetProviderResourceType`, `PortableResourceType`); content schemas relocated to `shared/models/resource/<type>/`
+- [ ] `createResourceProcedures` (from `createDocumentProcedures`): definition-map-driven schema/container, conditional publish procedures with conditional return type, `transformPublishedContent(ctx, resource, content)` + `transformReadContent(ctx, resource, content)` hooks; `getOwnerProcedure` on `resources` + typeless overload
+- [ ] Cross-type `resource` router: `readResource`, `readResources`
+- [ ] Router tests updated (factory + per-type)
 
-- [ ] **Copy-link on survey publish.** `PublishSurveyDialog` only bumps the version; add the copy-public-link affordance the `Document/PublishButton` already has for dashboard/webpage, pointing at `RoutePath.Survey(id)`.
+## Phase 2 — explorer shell
 
-## In progress — shell cohesion overhaul (chosen direction)
+- [ ] `/resources` list page: `StyledDataTableServer`, type facets, Draft/Published chips, Create dialog (type picker) ([spec](specs/resource-explorer.md))
+- [ ] `/resources/[id]/[[blade]]` page: left blade menu, Overview blade (Essentials + type summary), toolbar commands (rename/delete + capability commands), blade route middleware
+- [ ] `useResource(id)` composable (successor of `useDocumentState` detail half; auth-only, localStorage path deleted — [deferred/unauth-local-resources.md](deferred/unauth-local-resources.md))
+- [ ] `ResourceBladeDefinitionMap`, `PortableFormatMap`, `ViewComponentMap` skeletons
+- [ ] `/view/[type]/[id]` dynamic public page dispatching `ViewComponentMap`
+- [ ] Nav: `ProductListLinkItems` → single Resources entry ([specs/shell-cohesion.md](specs/shell-cohesion.md))
 
-The "nicer, more linked UI" ask, scoped with the user: full shell overhaul + trim nav to core with a Games submenu, calendar folded into the table editor.
+## Phase 3 — thin editors migrate (Flowchart, Email, Webpage, Dashboard)
 
-- [ ] **Nav trim.** `ProductListLinkItems` keeps the productivity tools flat and moves Clicker/Dungeons under a "Games" submenu (`children` on `ListLinkItem`, rendered as a `v-list-group`). Calendar is not a nav item — it lives inside the table editor.
-- [ ] **Shared editor shell.** Extract `StyledPageHeader` (title + breadcrumb + controls + actions slots, a proper toolbar layout — not controls crammed in `v-toolbar-title`) and adopt it across the table/dashboard/email/webpage/surveyer editors, mounting `DocumentPicker` + publish + dataset controls uniformly.
-- [ ] **Shell primitives.** Add `StyledEmptyState` and a skeleton-loader wrapper to the `Styled/` set; add breadcrumbs to the app bar.
-- [ ] **Unified "My Documents" hub.** A `/documents` page listing documents across all types (type icon, open/publish/share), generalising surveyer's `StyledDataTableServer` list. Needs a cross-type `documents` list procedure.
-- [ ] **Calendar in table editor.** Surface the existing TodoList calendar as a view inside the table editor rather than an orphaned page.
+- [ ] Per type: router → `createResourceProcedures`, editor page → Editor blade under `components/Resource/<Type>/`, store retargets to `useResource`
+- [ ] Dashboard keeps `transformPublishedContent` (baked dataset snapshots); Webpage view component moves to `ViewComponentMap`
+- [ ] Email: `PortableFormatMap[Email]` export-only html (personalized export); Email/Flowchart lose their unused publish endpoints (capability not declared)
+- [ ] Delete `pages/{dashboard/*,email-editor,webpage-editor,flowchart-editor}.vue`, `pages/view/{dashboard,webpage}/[id].vue`
 
-## Next — cross-product navigation (no new infra, extends shipped features)
+## Phase 4 — File split + TodoList
 
-The data loops exist; the UI links do not. All reuse existing procedures/components.
+- [ ] `fileResourceSchema` (`{ settings, data }`) + model relocation; `TableEditorConfiguration`/`TableEditorType`/VuetifyComponent models deleted ([spec](specs/file-resource.md), [out-of-scope/vuetify-component-resource.md](out-of-scope/vuetify-component-resource.md))
+- [ ] Data + Settings blades; `TableEditor/File/*` → `Resource/File/*`; store tree → `store/resource/file/` (command/undo stack intact; `item.ts` + type switching die)
+- [ ] Portable wiring from `DataSourceConfigurationMap` → `PortableFormatMap[File]`; empty-data `StyledEmptyState` + Import command
+- [ ] `todoListSchema` + Items blade; Calendar blade over this list ([deferred/global-calendar.md](deferred/global-calendar.md)); delete `pages/{table-editor,calendar}.vue`
+- [ ] Dataset provider re-key: `DatasetProviderType.TableDocument` → `File`, `readFileDataset` reads `content.data`, `DatasetReference.itemId` removed
 
-- [ ] **Surveyer → analyse.** Add row/action links from the survey list (`Survey/CrudView/ActionSlot.vue`) to "View responses" (table-editor import, `ImportDatasetButton` already exists) and "Build dashboard" (pre-select the survey in `Dataset/ReferencePicker`).
-- [ ] **Response count surface.** No endpoint returns per-survey response counts (`survey.count` counts _surveys_). Add a count so the creator sees engagement without a full 10k-row read.
-- [ ] **"Share to esbabbler"** from `Document/PublishButton` (and survey publish): post the public `/view` URL into a room — messaging is the obvious distribution channel and has zero affordance today.
-- [ ] **Editor/view dead-ends.** `/view/*` pages and the `/dashboard` viewer have no back-link into the editor and the viewer isn't in global nav — add contextual links.
+## Phase 5 — Survey fold
 
-## Later
+- [ ] `survey` router = factory + response/SAS procedures; survey CRUD procedures + `getCreatorProcedure` deleted ([spec](specs/survey-resource.md))
+- [ ] Publish hooks: asset clone in `transformPublishedContent`, SAS refresh in `transformReadContent`; blob paths unify onto the standard convention
+- [ ] Editor blade (SurveyJS creator, autosave → `saveResourceContent`) + Responses blade
+- [ ] `/view/survey/[id]` respondent renderer; `RoutePath.Survey(id)` aliases it; delete `pages/{surveyer/*,survey/[id]}.vue` + `Survey/CrudView/*`
 
-- [ ] **Command palette (⌘K).** Vuetify has no built-in; buildable from `v-dialog` + `v-list` over `ProductListLinkItems` + document search.
+## Phase 6 — deletions + cross-cutting sweep
+
+- [ ] Delete `pages/documents.vue`, `Document/{Picker,PublishButton}.vue`, `useDocumentState`, `services/document/*` maps, dead `RoutePath` members
+- [ ] Achievement `triggerPath` updates (`"flowchartEditor.saveDocumentContent"` → `"flowchart.saveResourceContent"`, …) — compile-checked against the router type
+- [ ] Grep sweep: no `document`/`surveyer`/`tableEditor` identifiers left outside history; `pnpm typecheck` + full test run green
 
 ## Notes
 
-- Everything above is TypeScript + already-installed OSS — **zero new dependencies, zero new Azure services**. The only journey step needing new infrastructure is actually sending email ([deferred/email-sending.md](deferred/email-sending.md)).
-- The 10k dataset row cap ([deferred/dataset-row-cap-pagination.md](deferred/dataset-row-cap-pagination.md)) silently truncates analysis on large surveys — revisit-trigger noted there; surface a "showing N of M" warning if a real survey approaches it.
+- Zero new dependencies, zero new Azure services — one renamed table, one container replacing six, reshaped routers. Email sending stays deferred ([deferred/email-sending.md](deferred/email-sending.md)).
+- Pre-consolidation polish items (survey copy-link, cross-product navigation links, response counts, share-to-esbabbler, command palette) are superseded or re-homed: copy-link and dead-end fixes come free with the explorer toolbar/Overview; "Surveyer → analyse" becomes the Responses blade; share-to-esbabbler and the command palette remain good post-consolidation ideas — re-add after Phase 6 if still wanted.
+- The 10k dataset row cap ([deferred/dataset-row-cap-pagination.md](deferred/dataset-row-cap-pagination.md)) still silently truncates large surveys — surface a "showing N of M" warning if a real survey approaches it.
