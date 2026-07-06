@@ -1,3 +1,4 @@
+// oxlint-disable typescript/no-unnecessary-type-assertion
 import type { DocumentProcedures } from "@/models/document/DocumentProcedures";
 import type { Document } from "@esposter/db-schema";
 import type { ItemMetadata } from "@esposter/shared";
@@ -13,7 +14,6 @@ interface UseDocumentStateOptions {
   localStorageKey: string;
   schema: z.ZodType;
 }
-
 // The init parameter is typed never so every content class with an optional-init constructor is accepted
 // (their init types vary: Partial<X> vs PartialDeep<X>); the single `as never` below is the centralized cost.
 export const useDocumentState = <TContent extends ItemMetadata>(

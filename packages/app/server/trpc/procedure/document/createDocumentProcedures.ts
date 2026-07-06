@@ -35,21 +35,16 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
   container: AzureContainer,
   transformPublishedContent?: (ctx: AuthedContext, content: z.infer<TSchema>) => Promise<z.infer<TSchema>>,
 ) => {
-  // Annotated so the generic content schema resolves to a concrete input type for destructuring
-  const saveDocumentContentInputSchema: z.ZodType<{
-    content: z.infer<TSchema>;
-    contentVersion: number;
-    id: string;
-  }> = z.object({
+  const saveDocumentContentInputSchema = z.object({
     content: contentSchema,
     contentVersion: selectDocumentSchema.shape.contentVersion,
     id: selectDocumentSchema.shape.id,
   });
-  const readContent = async (id: Document["id"]): Promise<undefined | z.infer<TSchema>> =>
+  const readContent = (id: Document["id"]): Promise<undefined | z.infer<TSchema>> =>
     getResultAsync(async () => {
       const { readableStreamBody } = await useDownload(container, getContentBlobName(id));
       if (!readableStreamBody) return undefined;
-      return contentSchema.parse(jsonDateParse(await streamToText(readableStreamBody))) as z.infer<TSchema>;
+      return contentSchema.parse(jsonDateParse(await streamToText(readableStreamBody)));
     })
       .orTee(console.error)
       .unwrapOr(undefined);
@@ -153,7 +148,7 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
           getPublishedContentBlobName(input, document.publishVersion),
         );
         if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
-        const content = contentSchema.parse(jsonDateParse(await streamToText(readableStreamBody))) as z.infer<TSchema>;
+        const content = contentSchema.parse(jsonDateParse(await streamToText(readableStreamBody)));
         return { content, name: document.name };
       }),
     saveDocumentContent: getOwnerProcedure(type, saveDocumentContentInputSchema, "id").mutation<Document>(
