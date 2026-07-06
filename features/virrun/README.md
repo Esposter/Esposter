@@ -64,7 +64,7 @@ Grep [out-of-scope/](out-of-scope) (won't do) and [deferred/](deferred) (not yet
 - [specs/write-back.md](specs/write-back.md) — native-equivalent persistence: flush a mutation command's produced files back to host.
 - [specs/orchestrator-api.md](specs/orchestrator-api.md) — the TS, node-compatible public API.
 - [specs/adoption.md](specs/adoption.md) — incremental opt-in: prefix → script → config (backend selection), with auto-fallback; dogfooding ladder for this repo.
-- [specs/config-and-cache.md](specs/config-and-cache.md) — the on-disk surface: `virrun.config.{ts,json}` backend selection (committed) + `.virrun/` cache (gitignored).
+- [specs/config-and-cache.md](specs/config-and-cache.md) — the on-disk surface: `virrun.config.{ts,mts,js,mjs,json}` backend selection (committed) + `.virrun/` cache (gitignored).
 - [specs/benchmarking.md](specs/benchmarking.md) — speed gate: baselines, metrics, methodology, must-beat-native rule.
 - [specs/correctness.md](specs/correctness.md) — correctness gate: differential testing vs native, test layers, coverage.
 - [reference/prior-art.md](reference/prior-art.md) — surveyed projects (node:vfs, platformatic, just-bash, WebContainers, e2b, Firecracker) and why each does/doesn't fit.

@@ -24,7 +24,7 @@ interface DatasetQuery {
 
 ## Components
 
-- Visual editor (`pages/dashboard/editor.vue` flow): new "Bind to data" step — pick provider → pick resource (owned surveys list) → pick x/series columns from the dataset's `DatasetColumn[]`
+- Visual editor (`pages/dashboard/editor.vue` flow): new "Bind to data" step — pick provider → pick resource (owned datasets list; surveys first, table documents later) → pick x/series columns from the dataset's `DatasetColumn[]`
 - Dashboard render: resolver computes chart data from the fetched `Dataset` per bound visual; loading + error states per visual; manual refresh action
 
 ## Constraints / Notes

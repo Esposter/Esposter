@@ -1,6 +1,6 @@
 # Documents
 
-The standard for product persistence. Any product whose artifact deserves a name, a list, an id, or a share link uses this pattern — Postgres metadata row + content blob. Single-blob-per-user state (`useSave` + `createRead/SaveBlobStateProcedure`, blob `${userId}/save`) remains only for genuinely one-per-user state: game saves and the unauth/localStorage fallback.
+The standard for product persistence. Any product whose artifact deserves a name, a list, an id, or a share link uses this pattern — Postgres metadata row + content blob. Single-blob-per-user state (`useSave` + `createRead/SaveBlobStateProcedure`, blob `${userId}/save`) is still the fallback for genuinely one-per-user cases today: game saves and the unauth/localStorage path.
 
 The surveyer proved this pattern (`surveys` row + model blob + version fields); the `documents` table generalizes it so no product ever copies it again.
 
