@@ -17,7 +17,12 @@ export const NODE_MODULES_DIRECTORY = "node_modules";
 // (current-platform) binary ahead of any host `.bin` the WSL login PATH leaks in. See createOsExecOptions.
 export const NODE_MODULES_BIN_DIRECTORY: string = `${NODE_MODULES_DIRECTORY}/.bin`;
 // Repo-root config selecting which backend a sandboxed command runs through; absent means auto (native today).
-export const VIRRUN_CONFIGURATION_FILENAME = "virrun.config.json";
+// The extensionless base name unconfig searches; the extensions below are the per-directory candidate order.
+export const VIRRUN_CONFIGURATION_NAME = "virrun.config";
+// Precedence within a directory level: a TS config (the platform-branching form) wins over the JSON variant.
+export const VIRRUN_CONFIGURATION_EXTENSIONS = ["ts", "mts", "js", "mjs", "json"] as const;
+// The JSON variant `virrun init` writes (schema-backed via $schema; TS configs are typed instead).
+export const VIRRUN_CONFIGURATION_FILENAME: string = `${VIRRUN_CONFIGURATION_NAME}.json`;
 // Resolved from the consumer's installed package so editors render the config's field docs on hover.
 export const VIRRUN_SCHEMA_RELATIVE_PATH: string = "./node_modules/virrun/schema.json";
 // Signals to the running command that it is executing under virrun — true for any backend including the native

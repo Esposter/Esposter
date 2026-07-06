@@ -8,11 +8,11 @@ const distDtsFile = resolve(import.meta.dirname, "../dist/index.d.ts");
 describe("virrun", () => {
   test("bundle size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 12.21 KB (12504 bytes)"`);
+    expect(getFileSize(distFile)).toMatchInlineSnapshot(`"index.js: 12.45 KB (12744 bytes)"`);
   });
 
   test("types size", () => {
     expect.hasAssertions();
-    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 141.50 KB (144897 bytes)"`);
+    expect(getFileSize(distDtsFile)).toMatchInlineSnapshot(`"index.d.ts: 141.81 KB (145217 bytes)"`);
   });
 });
