@@ -31,12 +31,14 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
 <template>
   <v-select
     v-model="type"
+    max-width="16rem"
     :items="DatasetProviderTypeItemCategoryDefinitions"
     label="Data source"
     hide-details
     @update:model-value="modelValue = undefined"
   />
   <v-select
+    max-width="16rem"
     :items="sourceIds"
     label="Source"
     :model-value="modelValue?.id"

@@ -19,9 +19,8 @@ const { currentDocument, documents } = storeToRefs(dashboardStore);
 
 <template>
   <StyledPageHeader>
-    <template #controls>
+    <template v-if="session.data" #identity>
       <DocumentPicker
-        v-if="session.data"
         :current-document
         :documents
         @create="createDocument($event)"
@@ -29,6 +28,8 @@ const { currentDocument, documents } = storeToRefs(dashboardStore);
         @rename="(id, name) => renameDocument(id, name)"
         @select="selectDocument($event)"
       />
+    </template>
+    <template #filters>
       <v-select
         v-model="visualType"
         max-width="16rem"

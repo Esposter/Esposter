@@ -28,10 +28,8 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
 
 <template>
   <StyledPageHeader>
-    <template #controls>
-      <TableEditorTypeSelect />
+    <template v-if="session.data" #identity>
       <DocumentPicker
-        v-if="session.data"
         :current-document
         :documents
         @create="createDocument($event)"
@@ -39,6 +37,9 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
         @rename="(id, name) => renameDocument(id, name)"
         @select="selectDocument($event)"
       />
+    </template>
+    <template #filters>
+      <TableEditorTypeSelect />
       <TableEditorSearchBar />
     </template>
     <template #actions>

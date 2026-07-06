@@ -1,6 +1,6 @@
 <template>
   <StyledPageHeader>
-    <template #controls>
+    <template #filters>
       <SurveySearchBar />
     </template>
     <template #actions>

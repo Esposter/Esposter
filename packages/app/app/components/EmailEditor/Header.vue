@@ -17,7 +17,7 @@ const { currentDocument, datasetReference, documents } = storeToRefs(emailEditor
 
 <template>
   <StyledPageHeader>
-    <template v-if="session.data" #controls>
+    <template v-if="session.data" #identity>
       <DocumentPicker
         :current-document
         :documents
@@ -26,7 +26,11 @@ const { currentDocument, datasetReference, documents } = storeToRefs(emailEditor
         @rename="(id, name) => renameDocument(id, name)"
         @select="selectDocument($event)"
       />
+    </template>
+    <template v-if="session.data" #filters>
       <DatasetReferencePicker :model-value="datasetReference" @update:model-value="saveDatasetReference($event)" />
+    </template>
+    <template v-if="session.data" #actions>
       <EmailEditorExportPersonalizedHtmlButton :editor />
     </template>
   </StyledPageHeader>

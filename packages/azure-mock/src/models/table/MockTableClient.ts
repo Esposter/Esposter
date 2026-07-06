@@ -21,6 +21,7 @@ import { MOCK_TABLE_BASE_URL } from "@/constants";
 import { MockRestError } from "@/models/MockRestError";
 import { createFilterPredicate } from "@/services/filter/createFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
 import { exhaustiveGuard, getOrCreate, getResultAsync, ID_SEPARATOR, noop } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
@@ -96,6 +97,9 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
           if (maxPageSize !== undefined && maxPageSize <= 0)
             throw new RangeError("maxPageSize must be greater than 0.");
+          // Azure Table Storage rejects a page size above its hard limit with InvalidInput (400)
+          else if (maxPageSize !== undefined && maxPageSize > AZURE_MAX_PAGE_SIZE)
+            throw new MockRestError("One of the request inputs is not valid.", 400);
 
           const allEntitiesWithMetadata = entities.map((e) => withMetadata(e));
           if (allEntitiesWithMetadata.length === 0) return;

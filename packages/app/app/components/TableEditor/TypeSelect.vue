@@ -10,6 +10,7 @@ const { tableEditorType } = storeToRefs(tableEditorStore);
 <template>
   <v-select
     v-model="tableEditorType"
+    max-width="16rem"
     :items="TableEditorTypeItemCategoryDefinitions"
     hide-details
     @update:model-value="

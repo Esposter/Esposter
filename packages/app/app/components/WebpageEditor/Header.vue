@@ -12,7 +12,7 @@ const { currentDocument, documents } = storeToRefs(webpageEditorStore);
 
 <template>
   <StyledPageHeader>
-    <template v-if="session.data" #controls>
+    <template v-if="session.data" #identity>
       <DocumentPicker
         :current-document
         :documents

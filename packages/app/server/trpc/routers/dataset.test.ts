@@ -15,7 +15,7 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
-import { documents, surveys } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE, documents, surveys } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -70,6 +70,21 @@ describe("dataset", () => {
       { name: "comments", type: ColumnType.String },
     ]);
     expect(dataset.rows).toStrictEqual([{ comments: "great", satisfaction: 5, wouldRecommend: true }]);
+  });
+
+  test("reads survey responses dataset within the azure page size limit", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await surveyCaller.createSurvey({ group, model, name });
+    for (let i = 0; i < AZURE_MAX_PAGE_SIZE + 1; i++)
+      await surveyCaller.createSurveyResponse({
+        model: { satisfaction: 1 },
+        partitionKey: newSurvey.id,
+        rowKey: crypto.randomUUID(),
+      });
+    const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
+
+    expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
   });
 
   test("reads survey responses dataset with no responses", async () => {

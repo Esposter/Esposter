@@ -20,7 +20,7 @@ const { createAlert } = alertStore;
 const emailEditorStore = useEmailEditorStore();
 const { currentDocument, datasetReference } = storeToRefs(emailEditorStore);
 const exportPersonalizedHtml = async (editorValue: Editor, document: Document, reference: DatasetReference) => {
-  const { html } = editorValue.runCommand("mjml-get-code") as { html: string };
+  const { html } = editorValue.runCommand("mjml-code-to-html") as { html: string };
   await getResultAsync(async () => {
     const dataset = await $trpc.dataset.readDataset.query(reference);
     for (const [index, row] of dataset.rows.entries())
