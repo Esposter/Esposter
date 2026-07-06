@@ -1,11 +1,12 @@
 import { BackendType } from "@/models/virrun/BackendType";
 import { Environment } from "@/models/virrun/Environment";
 import { z } from "zod";
-// The repo-root `virrun.config.json` (specs/config-and-cache.md): a checked-in, reviewable selection of which
-// Backend a sandboxed command runs through and which framework environment it targets. The `virrun -- <cmd>` prefix
-// Is the switch for *whether* a command is sandboxed (add it to adopt, remove it to drop); this config only chooses
-// *How*. An absent file means the defaults (backend os → native where unsupported, environment undefined → no
-// Preset), so no config is a valid, fully-functional state.
+// The repo-root `virrun.config.{ts,mts,js,mjs,json}` (specs/config-and-cache.md): a checked-in, reviewable selection
+// Of which backend a sandboxed command runs through and which framework environment it targets — the TS form
+// (`defineConfig`) is where platform branching lives. The `virrun -- <cmd>` prefix is the switch for *whether* a
+// Command is sandboxed (add it to adopt, remove it to drop); this config only chooses *how*. An absent file means the
+// Defaults (backend os → native where unsupported, environment undefined → no preset), so no config is a valid,
+// Fully-functional state.
 export interface VirrunConfiguration {
   // BackendType a sandboxed command runs through. When it can't run on this host (e.g. `os` off Linux) the
   // Resolver degrades to native — the worst case of adopting a command is "no speedup", never "broken". Optional: the
@@ -17,10 +18,10 @@ export interface VirrunConfiguration {
   // Entirely, so there is no `none` value to select.
   readonly environment?: Environment;
 }
-// Validates the committed `virrun.config.json` text into a VirrunConfiguration. strictObject so a typo'd key fails
-// Loud rather than silently changing the sandbox; the editor-only `$schema` pointer is the one extra key allowed.
-// An omitted `backend` defaults to os; an omitted `environment` stays undefined (no preset), so `{}` — or no file at
-// All — is valid.
+// Validates the loaded config value (a TS/JS module's default export, or the JSON variant's parsed object) into a
+// VirrunConfiguration. strictObject so a typo'd key fails loud rather than silently changing the sandbox; the
+// Editor-only `$schema` pointer (JSON variant only) is the one extra key allowed. An omitted `backend` defaults to
+// Os; an omitted `environment` stays undefined (no preset), so `{}` — or no file at all — is valid.
 export const virrunConfigurationSchema: z.ZodObject<
   {
     $schema: z.ZodOptional<z.ZodString>;

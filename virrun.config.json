@@ -1,4 +1,0 @@
-{
-  "$schema": "./node_modules/virrun/schema.json",
-  "environment": "nuxt"
-}
