@@ -8,6 +8,7 @@ description: Feature Specs — Esposter conventions for the features/ and root a
 ## Core Principles
 
 - **Every line earns its place.** If a line repeats something another file already says, delete it and link instead. Docs are deduped aggressively.
+- **Self-contained over link-chained.** A file must be understandable without following its links — links point to _further detail_, never to content required for comprehension. If a doc only makes sense as a hub of links, it lacks a single responsibility: split it, or promote the shared content to `/architecture/`. Dedupe by moving content to its one right home, not by scattering it behind cross-references.
 - **Organize by topic, not by version.** One file per cohesive feature/decision. Never create version grab-bags (`v1.md`, `v2.md` …) that accumulate unrelated items.
 - **Prefer more small files over fewer large ones.** When something grows, split it into another topic file rather than letting one file sprawl.
 - **Nothing is frozen.** Merge, trim, rename, and dedupe completed docs freely as understanding improves — they are not immutable history.
@@ -136,6 +137,8 @@ Keep it current. Stale architecture files mislead AI assistants more than no fil
 ### Root `/architecture/` folder
 
 Design decisions spanning multiple feature areas go here instead of any single feature's `architecture.md`. Current examples: Azure services and the file upload SAS pattern. When a decision would be copy-pasted into multiple feature architecture files, extract it here.
+
+**Standards vs specs.** When a mechanism is the repo-wide answer to a class of problem — "whenever we need X, we do it this way" (e.g. publishing, document persistence, dataset serving) — it is a **standard** and belongs in `/architecture/<topic>.md`, written self-contained. A `features/<area>/specs/` file holds only the **product-specific application** of standards (which fields, which pages, which flows for that one product). If a spec starts stating rules other products should also follow, promote those rules to `/architecture/` and keep the spec product-scoped.
 
 ## Naming Rules
 

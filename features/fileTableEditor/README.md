@@ -7,6 +7,7 @@ This README is the index. Detail lives in the linked specs.
 ## Now
 
 - Mature feature — no active work, no roadmap. New ideas: check [out-of-scope/](out-of-scope) first.
+- Cross-product work (import survey responses as a data source, multi-document persistence, serving table data to dashboards) is tracked in [`platform/`](../platform/roadmap.md), not here.
 
 ## Shipped
 
