@@ -1,3 +1,4 @@
+import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { ProjectData } from "grapesjs";
 
 import { EmailEditor, emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
@@ -7,7 +8,18 @@ import { EMAIL_EDITOR_LOCAL_STORAGE_KEY } from "@/services/emailEditor/constants
 export const useEmailEditorStore = defineStore("emailEditor", () => {
   const { $trpc } = useNuxtApp();
   const session = authClient.useSession();
-  const { content, load, loadLocal, save } = useDocumentState(
+  const {
+    content,
+    createDocument,
+    currentDocument,
+    deleteDocument,
+    documents,
+    load,
+    loadLocal,
+    renameDocument,
+    save,
+    selectDocument,
+  } = useDocumentState(
     EmailEditor,
     {
       createDocument: (input) => $trpc.emailEditor.createDocument.mutate(input),
@@ -21,14 +33,33 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     },
     { defaultName: "My Email", localStorageKey: EMAIL_EDITOR_LOCAL_STORAGE_KEY, schema: emailEditorSchema },
   );
+  const datasetReference = computed(() => content.value.datasetReference);
+  // The document list load happens once; subsequent editor storage loads serve the selected document's content
   const readEmailEditor = async () => {
-    if (session.value.data) await load();
-    else loadLocal();
+    if (session.value.data) {
+      if (!currentDocument.value) await load();
+    } else loadLocal();
     return content.value;
   };
+  // GrapesJS project data doesn't know about the dataset binding, so saves carry it over
   const saveEmailEditor = async (projectData: ProjectData) => {
-    content.value = new EmailEditor(projectData);
+    content.value = new EmailEditor({ ...projectData, datasetReference: datasetReference.value });
     await save();
   };
-  return { readEmailEditor, saveEmailEditor };
+  const saveDatasetReference = async (newDatasetReference: DatasetReference | undefined) => {
+    content.value.datasetReference = newDatasetReference;
+    await save();
+  };
+  return {
+    createDocument,
+    currentDocument,
+    datasetReference,
+    deleteDocument,
+    documents,
+    readEmailEditor,
+    renameDocument,
+    saveDatasetReference,
+    saveEmailEditor,
+    selectDocument,
+  };
 });

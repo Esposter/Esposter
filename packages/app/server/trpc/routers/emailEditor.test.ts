@@ -2,6 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
@@ -35,7 +36,10 @@ describe("emailEditor", () => {
 
     expect(newDocument.type).toBe(DocumentType.Email);
 
-    const emailEditor = new EmailEditor();
+    // The dataset binding is part of the round-trip so the schema provably preserves it
+    const emailEditor = new EmailEditor({
+      datasetReference: { id: crypto.randomUUID(), type: DatasetProviderType.SurveyResponses },
+    });
     await caller.saveDocumentContent({
       content: emailEditor,
       contentVersion: newDocument.contentVersion,

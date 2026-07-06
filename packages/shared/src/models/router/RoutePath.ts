@@ -35,6 +35,7 @@ export const RoutePath: {
   readonly TableEditor: "/table-editor";
   readonly UserSettings: "/user/settings";
   readonly ViewDashboard: (id: string) => string;
+  readonly ViewWebpage: (id: string) => string;
   readonly WebpageEditor: "/webpage-editor";
 } = {
   About: "/about",
@@ -69,6 +70,7 @@ export const RoutePath: {
   TableEditor: "/table-editor",
   UserSettings: "/user/settings",
   ViewDashboard: (id: string) => `/view/dashboard/${id}`,
+  ViewWebpage: (id: string) => `/view/webpage/${id}`,
   WebpageEditor: "/webpage-editor",
 } as const;
 export type RoutePath = typeof RoutePath;

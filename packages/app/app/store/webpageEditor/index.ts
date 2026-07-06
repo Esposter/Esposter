@@ -7,7 +7,20 @@ import { WEBPAGE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/webpageEditor/const
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const { $trpc } = useNuxtApp();
   const session = authClient.useSession();
-  const { content, load, loadLocal, save } = useDocumentState(
+  const {
+    content,
+    createDocument,
+    currentDocument,
+    deleteDocument,
+    documents,
+    load,
+    loadLocal,
+    publish: publishWebpage,
+    renameDocument,
+    save,
+    selectDocument,
+    unpublish: unpublishWebpage,
+  } = useDocumentState(
     WebpageEditor,
     {
       createDocument: (input) => $trpc.webpageEditor.createDocument.mutate(input),
@@ -21,14 +34,27 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
     },
     { defaultName: "My Webpage", localStorageKey: WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, schema: webpageEditorSchema },
   );
+  // The document list load happens once; subsequent editor storage loads serve the selected document's content
   const readWebpageEditor = async () => {
-    if (session.value.data) await load();
-    else loadLocal();
+    if (session.value.data) {
+      if (!currentDocument.value) await load();
+    } else loadLocal();
     return content.value;
   };
-  const saveWebpageEditor = async (projectData: ProjectData) => {
-    content.value = new WebpageEditor(projectData);
+  const saveWebpageEditor = async (projectData: ProjectData, { css, html }: Pick<WebpageEditor, "css" | "html">) => {
+    content.value = new WebpageEditor({ ...projectData, css, html });
     await save();
   };
-  return { readWebpageEditor, saveWebpageEditor };
+  return {
+    createDocument,
+    currentDocument,
+    deleteDocument,
+    documents,
+    publishWebpage,
+    readWebpageEditor,
+    renameDocument,
+    saveWebpageEditor,
+    selectDocument,
+    unpublishWebpage,
+  };
 });
