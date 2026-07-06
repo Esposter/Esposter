@@ -367,8 +367,8 @@ const { editor } = await useGrapesJsEditor(
 
 watch(
   () => currentDocument.value?.id,
-  () => {
-    editor.value?.load();
+  async () => {
+    await editor.value?.load();
   },
 );
 </script>

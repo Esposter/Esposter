@@ -32,8 +32,8 @@ const publishedSurveys = ref<Except<Survey, "model">[]>([]);
 
 watch(
   () => currentDocument.value?.id,
-  () => {
-    editor.value?.load();
+  async () => {
+    await editor.value?.load();
   },
 );
 
