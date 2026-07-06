@@ -1,8 +1,10 @@
 import type { LayoutItem } from "#shared/models/dashboard/data/LayoutItem";
+import type { VisualDatasetBinding } from "#shared/models/dashboard/data/VisualDatasetBinding";
 import type { ItemEntityType, ToData } from "@esposter/shared";
 
 import { Chart, chartSchema } from "#shared/models/dashboard/data/chart/Chart";
 import { layoutItemSchema } from "#shared/models/dashboard/data/LayoutItem";
+import { visualDatasetBindingSchema } from "#shared/models/dashboard/data/VisualDatasetBinding";
 import { VisualType, visualTypeSchema } from "#shared/models/dashboard/data/VisualType";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { createItemEntityTypeSchema } from "@esposter/shared";
@@ -10,6 +12,7 @@ import { z } from "zod";
 
 export class Visual extends AItemEntity implements ItemEntityType<VisualType>, LayoutItem {
   chart = new Chart();
+  dataset?: VisualDatasetBinding;
   h = 4;
   i: string;
   type = VisualType.Area;
@@ -29,4 +32,5 @@ export const visualSchema = z.object({
   ...createItemEntityTypeSchema(visualTypeSchema).shape,
   ...layoutItemSchema.shape,
   chart: chartSchema,
+  dataset: visualDatasetBindingSchema.optional(),
 }) satisfies z.ZodType<ToData<Visual>>;

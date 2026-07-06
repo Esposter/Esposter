@@ -7,7 +7,7 @@ import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getActions } from "@/services/survey/getActions";
-import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
+import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { getPropertyNames, getResultAsync, noop, takeOne } from "@esposter/shared";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
