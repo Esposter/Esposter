@@ -6,15 +6,15 @@ import { getResultAsync } from "@esposter/shared";
 
 interface DocumentPublishButtonProps {
   document: Document;
-  // Public route prefix for viewing the published document, e.g. "/view/dashboard"
-  viewPath: string;
+  // Builds the public route for viewing the published document, e.g. RoutePath.ViewDashboard
+  viewPath: (id: string) => string;
 }
 
 const { document, viewPath } = defineProps<DocumentPublishButtonProps>();
 const emit = defineEmits<{ publish: []; unpublish: [] }>();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
-const viewUrl = computed(() => `${window.location.origin}${viewPath}/${document.id}`);
+const viewUrl = computed(() => `${window.location.origin}${viewPath(document.id)}`);
 const copyViewUrl = () =>
   getResultAsync(() => window.navigator.clipboard.writeText(viewUrl.value)).match(
     () => createAlert("Copied public link", "success"),

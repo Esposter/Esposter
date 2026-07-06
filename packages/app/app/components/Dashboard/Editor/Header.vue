@@ -33,7 +33,7 @@ const { currentDocument, documents } = storeToRefs(dashboardStore);
           />
           <DocumentPublishButton
             v-if="currentDocument"
-            view-path="/view/dashboard"
+            :view-path="RoutePath.ViewDashboard"
             :document="currentDocument"
             @publish="publishDashboard()"
             @unpublish="unpublishDashboard()"

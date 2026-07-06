@@ -4,6 +4,7 @@ import { tableEditorConfigurationSchema } from "#shared/models/tableEditor/data/
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { dataSourceToDataset } from "#shared/services/tableEditor/dataSourceToDataset";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
+import { MAX_DATASET_ROWS } from "@@/server/services/dataset/constants";
 import { getContentBlobName } from "@@/server/services/document/getContentBlobName";
 import { AzureContainer, DocumentType } from "@esposter/db-schema";
 import { jsonDateParse, streamToText } from "@esposter/shared";
@@ -32,5 +33,6 @@ export const readTableDocumentDataset: DatasetProvider = async (ctx, reference) 
   const items = configuration[TableEditorType.File].items;
   const item = reference.itemId ? items.find(({ id }) => id === reference.itemId) : items[0];
   if (!item?.dataSource) throw new TRPCError({ code: "NOT_FOUND" });
-  return dataSourceToDataset(item.dataSource);
+  // Capped like readSurveyResponsesDataset so table-backed datasets cannot return unbounded payloads
+  return dataSourceToDataset({ ...item.dataSource, rows: item.dataSource.rows.slice(0, MAX_DATASET_ROWS) });
 };
