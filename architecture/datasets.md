@@ -54,6 +54,6 @@ Server structure (`server/services/dataset/`): `DatasetProviderMap.ts` maps `Dat
 ## Rules
 
 - **Row cap** (10 000) on every provider — datasets are for visualization and import, not bulk export. Add pagination only when a real consumer hits the cap.
-- **Consumers choose copy or reference.** Import (table editor) copies rows once. Binding (dashboard) stores the `DatasetReference` and re-resolves on load. Both call the same procedure.
+- **Consumers choose copy or reference.** Import (table editor) copies rows once. Binding (dashboard visuals, email editor merge fields) stores the `DatasetReference` and re-resolves on load. All call the same procedure.
 - **Fetch on load + manual refresh.** No live subscriptions through this layer (deferred with trigger in `features/platform/deferred/`).
 - **No external providers** (HTTP APIs, SQL) until secret storage and injection-safety work is scoped — the enum grows one value per new provider, nothing else changes.

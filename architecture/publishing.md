@@ -22,7 +22,7 @@ The factory takes an optional `transformPublishedContent(ctx, content)` hook so 
 
 ## Routes
 
-`pages/view/<type>/[id].vue` — public read-only renderer, one lightweight view page per `DocumentType` (dashboard shipped first). A published URL is the share unit everywhere: paste it in an esbabbler message, a post, or externally.
+`pages/view/<type>/[id].vue` — public read-only renderer, one lightweight view page per `DocumentType` (dashboard and webpage shipped; the webpage view serves the saved css/html in a sandboxed iframe). View pages set OG meta tags (`ogTitle`, `ogUrl`) so a published URL unfurls when shared. A published URL is the share unit everywhere: paste it in an esbabbler message, a post, or externally.
 
 ## Data In Published Documents
 
