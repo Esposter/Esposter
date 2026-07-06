@@ -1,5 +1,4 @@
 import type { DocumentType } from "@esposter/db-schema";
-import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod";
 
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
@@ -8,7 +7,7 @@ import { TRPCError } from "@trpc/server";
 export const getOwnerProcedure = <T extends z.ZodType>(
   type: DocumentType,
   schema: T,
-  documentIdKey: keyof inferParser<T>["out"],
+  documentIdKey: keyof z.infer<T>,
 ) =>
   standardAuthedProcedure.input(schema).use(async ({ ctx, input, next }) => {
     const documentId = input[documentIdKey];

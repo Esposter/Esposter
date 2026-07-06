@@ -37,8 +37,9 @@ const options = useApexOptions(
     <div ref="container" h-full relative>
       <v-alert v-if="error" type="error" text="Failed to load data" />
       <VueApexCharts v-else :="data" :options />
+      <!-- A snapshotted binding renders baked data, so there is nothing to refresh -->
       <StyledTooltipIconButton
-        v-if="visual.dataset"
+        v-if="visual.dataset && !visual.dataset.snapshot"
         right-1
         top-1
         absolute

@@ -7,13 +7,12 @@ import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 import { RoutePath } from "@esposter/shared";
 
-const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
 const visualStore = useVisualStore();
 const { createVisual } = visualStore;
 const { visualType } = storeToRefs(visualStore);
 const dashboardStore = useDashboardStore();
-const { createDocument, deleteDocument, renameDocument, saveDashboard, selectDocument, setCurrentDocument } =
+const { createDocument, deleteDocument, publishDashboard, renameDocument, selectDocument, unpublishDashboard } =
   dashboardStore;
 const { currentDocument, documents } = storeToRefs(dashboardStore);
 </script>
@@ -36,19 +35,8 @@ const { currentDocument, documents } = storeToRefs(dashboardStore);
             v-if="currentDocument"
             view-path="/view/dashboard"
             :document="currentDocument"
-            @publish="
-              async () => {
-                await saveDashboard();
-                if (currentDocument)
-                  setCurrentDocument(await $trpc.dashboard.publishDocument.mutate({ id: currentDocument.id }));
-              }
-            "
-            @unpublish="
-              async () => {
-                if (currentDocument)
-                  setCurrentDocument(await $trpc.dashboard.unpublishDocument.mutate({ id: currentDocument.id }));
-              }
-            "
+            @publish="publishDashboard()"
+            @unpublish="unpublishDashboard()"
           />
         </div>
         <div flex w-full items-center>

@@ -7,7 +7,7 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { authClient } from "@/services/auth/authClient";
 import { useAlertStore } from "@/store/alert";
-import { takeOne } from "@esposter/shared";
+import { getResultAsync, takeOne } from "@esposter/shared";
 
 const modelValue = defineModel<undefined | VisualDatasetBinding>({ required: true });
 const { $trpc } = useNuxtApp();
@@ -23,7 +23,9 @@ watch(
   () => session.value.data,
   async (newSession) => {
     if (!newSession) return;
-    ({ items: surveys.value } = await $trpc.survey.readSurveys.query({}));
+    await getResultAsync(async () => {
+      ({ items: surveys.value } = await $trpc.survey.readSurveys.query({}));
+    }).orTee((error) => createAlert(error.message, "error"));
   },
   { immediate: true },
 );
@@ -45,23 +47,25 @@ watch(
             return;
           }
 
-          const newDataset = await $trpc.dataset.readDataset.query({
-            id: newSurveyId,
-            type: DatasetProviderType.SurveyResponses,
-          });
-          const firstColumn = newDataset.columns[0];
-          if (!firstColumn) {
-            createAlert('Survey has no questions to bind', 'error');
-            return;
-          }
+          await getResultAsync(async () => {
+            const newDataset = await $trpc.dataset.readDataset.query({
+              id: newSurveyId,
+              type: DatasetProviderType.SurveyResponses,
+            });
+            const firstColumn = newDataset.columns[0];
+            if (!firstColumn) {
+              createAlert('Survey has no questions to bind', 'error');
+              return;
+            }
 
-          modelValue = {
-            query: {
-              series: [{ aggregation: DatasetAggregationType.Count, column: firstColumn.name }],
-              xColumn: firstColumn.name,
-            },
-            reference: { id: newSurveyId, type: DatasetProviderType.SurveyResponses },
-          };
+            modelValue = {
+              query: {
+                series: [{ aggregation: DatasetAggregationType.Count, column: firstColumn.name }],
+                xColumn: firstColumn.name,
+              },
+              reference: { id: newSurveyId, type: DatasetProviderType.SurveyResponses },
+            };
+          }).orTee((error) => createAlert(error.message, 'error'));
         }
       "
     />

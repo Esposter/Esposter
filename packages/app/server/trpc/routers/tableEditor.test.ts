@@ -4,14 +4,15 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext } from "@@/server/trpc/context.test";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
-import { DatabaseEntityType, documents, DocumentType } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import { documents, DocumentType } from "@esposter/db-schema";
+import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-// The generic document-procedure matrix lives in dashboard.test.ts; here only the wiring.
+// The generic document-procedure matrix is covered once in dashboard.test.ts;
+// here only the router wiring: document type, content schema and container.
 describe("tableEditor", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["tableEditor"]>;
@@ -27,86 +28,21 @@ describe("tableEditor", () => {
     await mockContext.db.delete(documents);
   });
 
-  test("creates document", async () => {
-    expect.hasAssertions();
-
-    const newDocument = await caller.createDocument({ name });
-
-    expect(newDocument.name).toBe(name);
-    expect(newDocument.type).toBe(DocumentType.Table);
-    expect(newDocument.contentVersion).toBe(0);
-  });
-
-  test("reads documents", async () => {
-    expect.hasAssertions();
-
-    const readDocuments = await caller.readDocuments();
-
-    expect(readDocuments.items).toStrictEqual([]);
-
-    const newDocument = await caller.createDocument({ name });
-    const newReadDocuments = await caller.readDocuments();
-
-    expect(newReadDocuments.items).toStrictEqual([newDocument]);
-  });
-
   test("saves and reads content", async () => {
     expect.hasAssertions();
 
     const newDocument = await caller.createDocument({ name });
+
+    expect(newDocument.type).toBe(DocumentType.Table);
+
     const tableEditorConfiguration = new TableEditorConfiguration();
-    const updatedDocument = await caller.saveDocumentContent({
+    await caller.saveDocumentContent({
       content: tableEditorConfiguration,
       contentVersion: newDocument.contentVersion,
       id: newDocument.id,
     });
-
-    expect(updatedDocument.contentVersion).toBe(1);
-
     const content = await caller.readDocumentContent({ id: newDocument.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(tableEditorConfiguration)));
-  });
-
-  test("fails save content with old content version", async () => {
-    expect.hasAssertions();
-
-    const newDocument = await caller.createDocument({ name });
-    const tableEditorConfiguration = new TableEditorConfiguration();
-    await caller.saveDocumentContent({ content: tableEditorConfiguration, contentVersion: 0, id: newDocument.id });
-
-    await expect(
-      caller.saveDocumentContent({ content: tableEditorConfiguration, contentVersion: 0, id: newDocument.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${
-        new InvalidOperationError(
-          Operation.Update,
-          DatabaseEntityType.Document,
-          "cannot save document content with old content version",
-        ).message
-      }]`,
-    );
-  });
-
-  test("fails read content with wrong user", async () => {
-    expect.hasAssertions();
-
-    const newDocument = await caller.createDocument({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(caller.readDocumentContent({ id: newDocument.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
-  test("fails save content with wrong user", async () => {
-    expect.hasAssertions();
-
-    const newDocument = await caller.createDocument({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      caller.saveDocumentContent({ content: new TableEditorConfiguration(), contentVersion: 0, id: newDocument.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

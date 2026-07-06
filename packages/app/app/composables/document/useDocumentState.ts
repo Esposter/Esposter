@@ -94,6 +94,22 @@ export const useDocumentState = <TContent extends ItemMetadata>(
       foundDocument.id === document.id ? document : foundDocument,
     );
   };
+  // Publishing bakes the latest content, so a failed save must abort instead of publishing stale content
+  const publish = async () => {
+    if (!(await save())) return;
+    const document = currentDocument.value;
+    if (!document) return;
+    await getResultAsync(async () => {
+      setCurrentDocument(await procedures.publishDocument({ id: document.id }));
+    }).orTee((error) => alertStore.createAlert(error.message, "error"));
+  };
+  const unpublish = async () => {
+    const document = currentDocument.value;
+    if (!document) return;
+    await getResultAsync(async () => {
+      setCurrentDocument(await procedures.unpublishDocument({ id: document.id }));
+    }).orTee((error) => alertStore.createAlert(error.message, "error"));
+  };
   return {
     content,
     createDocument,
@@ -102,9 +118,11 @@ export const useDocumentState = <TContent extends ItemMetadata>(
     documents,
     load,
     loadLocal,
+    publish,
     renameDocument,
     save,
     selectDocument,
     setCurrentDocument,
+    unpublish,
   };
 };

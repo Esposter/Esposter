@@ -6,10 +6,14 @@ import type { Except } from "type-fest";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { authClient } from "@/services/auth/authClient";
 import { datasetToDataSource } from "@/services/tableEditor/file/dataSource/datasetToDataSource";
+import { useAlertStore } from "@/store/alert";
+import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
 const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 const setDataSource = useSetDataSource();
 const dialog = ref(false);
 const surveys = ref<Except<Survey, "model">[]>([]);
@@ -17,7 +21,9 @@ const selectedSurveyId = ref<string>();
 
 watch(dialog, async (newDialog) => {
   if (!newDialog) return;
-  ({ items: surveys.value } = await $trpc.survey.readSurveys.query({}));
+  await getResultAsync(async () => {
+    ({ items: surveys.value } = await $trpc.survey.readSurveys.query({}));
+  }).orTee((error) => createAlert(error.message, "error"));
 });
 </script>
 
@@ -29,18 +35,21 @@ watch(dialog, async (newDialog) => {
       :card-props="{ title: 'Import survey responses' }"
       :confirm-button-props="{ disabled: !selectedSurveyId, text: 'Import' }"
       @confirm="
-        async (onComplete) => {
-          const survey = surveys.find(({ id }) => id === selectedSurveyId);
-          if (survey) {
-            const dataset = await $trpc.dataset.readDataset.query({
-              id: survey.id,
-              type: DatasetProviderType.SurveyResponses,
-            });
-            modelValue.name = survey.name;
-            setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
-          }
-          onComplete();
-        }
+        (onComplete) =>
+          withFinalizerAsync(
+            () =>
+              getResultAsync(async () => {
+                const survey = surveys.find(({ id }) => id === selectedSurveyId);
+                if (!survey) return;
+                const dataset = await $trpc.dataset.readDataset.query({
+                  id: survey.id,
+                  type: DatasetProviderType.SurveyResponses,
+                });
+                modelValue.name = survey.name;
+                setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
+              }).orTee((error) => createAlert(error.message, 'error')),
+            () => onComplete(),
+          )
       "
     >
       <v-card-text>

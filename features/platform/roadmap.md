@@ -11,6 +11,7 @@ Phases 1–4 are shipped (see README). The standards being implemented: `/archit
 ## Later — polish on shipped layers
 
 - [ ] Dashboard binding form: table-document source picker (provider works; UI currently lists surveys only)
+- [ ] Dashboard binding form: multi-series editing (query model supports it; form edits the first series only)
 - [ ] `/view/[type]` pages beyond dashboard (webpage is the natural next — GrapesJS HTML render)
 - [ ] Published-view OG meta tags for link unfurls
 - [ ] Dataset row-cap pagination — only when a real consumer hits the 10 000 cap

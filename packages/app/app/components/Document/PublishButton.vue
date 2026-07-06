@@ -2,6 +2,7 @@
 import type { Document } from "@esposter/db-schema";
 
 import { useAlertStore } from "@/store/alert";
+import { getResultAsync } from "@esposter/shared";
 
 interface DocumentPublishButtonProps {
   document: Document;
@@ -14,10 +15,11 @@ const emit = defineEmits<{ publish: []; unpublish: [] }>();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const viewUrl = computed(() => `${window.location.origin}${viewPath}/${document.id}`);
-const copyViewUrl = async () => {
-  await window.navigator.clipboard.writeText(viewUrl.value);
-  createAlert("Copied public link", "success");
-};
+const copyViewUrl = () =>
+  getResultAsync(() => window.navigator.clipboard.writeText(viewUrl.value)).match(
+    () => createAlert("Copied public link", "success"),
+    () => createAlert("Failed to copy public link", "error"),
+  );
 </script>
 
 <template>

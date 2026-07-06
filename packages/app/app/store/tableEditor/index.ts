@@ -43,9 +43,11 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     {
       createDocument: (input) => $trpc.tableEditor.createDocument.mutate(input),
       deleteDocument: (input) => $trpc.tableEditor.deleteDocument.mutate(input),
+      publishDocument: (input) => $trpc.tableEditor.publishDocument.mutate(input),
       readDocumentContent: (input) => $trpc.tableEditor.readDocumentContent.query(input),
       readDocuments: async () => (await $trpc.tableEditor.readDocuments.query({})).items,
       saveDocumentContent: (input) => $trpc.tableEditor.saveDocumentContent.mutate(input),
+      unpublishDocument: (input) => $trpc.tableEditor.unpublishDocument.mutate(input),
       updateDocument: (input) => $trpc.tableEditor.updateDocument.mutate(input),
     },
     {

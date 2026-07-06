@@ -18,7 +18,7 @@ import { deleteDirectory } from "@esposter/db";
 import { DatabaseEntityType, documents, selectDocumentSchema } from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, jsonDateParse, Operation, streamToText } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readDocumentsInputSchema = createOffsetPaginationParamsSchema(selectDocumentSchema.keyof()).prefault({});
@@ -96,12 +96,12 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
             ).message,
           });
 
-        const publishVersion = ctx.document.publishVersion + 1;
+        // The increment is done in SQL so concurrent publishes each claim a distinct publish blob
         const updatedDocument = requireMutation(
           (
             await ctx.db
               .update(documents)
-              .set({ publishedAt: new Date(), publishVersion })
+              .set({ publishedAt: new Date(), publishVersion: sql`${documents.publishVersion} + 1` })
               .where(eq(documents.id, id))
               .returning()
           )[0],
@@ -111,7 +111,11 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
         );
 
         const publishedContent = transformPublishedContent ? await transformPublishedContent(ctx, content) : content;
-        await useUpload(container, getPublishedContentBlobName(id, publishVersion), JSON.stringify(publishedContent));
+        await useUpload(
+          container,
+          getPublishedContentBlobName(id, updatedDocument.publishVersion),
+          JSON.stringify(publishedContent),
+        );
         return updatedDocument;
       },
     ),
@@ -157,7 +161,15 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
       }),
     saveDocumentContent: getOwnerProcedure(type, saveDocumentContentInputSchema, "id").mutation<Document>(
       async ({ ctx, input: { content, contentVersion, id } }) => {
-        if (contentVersion !== ctx.document.contentVersion)
+        // The version check is part of the UPDATE so concurrent saves cannot both pass and silently lose one write
+        const updatedDocument = (
+          await ctx.db
+            .update(documents)
+            .set({ contentVersion: contentVersion + 1 })
+            .where(and(eq(documents.id, id), eq(documents.contentVersion, contentVersion)))
+            .returning()
+        )[0];
+        if (!updatedDocument)
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: new InvalidOperationError(
@@ -166,19 +178,6 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
               "cannot save document content with old content version",
             ).message,
           });
-
-        const updatedDocument = requireMutation(
-          (
-            await ctx.db
-              .update(documents)
-              .set({ contentVersion: contentVersion + 1 })
-              .where(eq(documents.id, id))
-              .returning()
-          )[0],
-          Operation.Update,
-          DatabaseEntityType.Document,
-          id,
-        );
 
         await useUpload(container, getContentBlobName(id), JSON.stringify(content));
         return updatedDocument;
