@@ -10,7 +10,7 @@ export const getOwnerProcedure = <T extends z.ZodType>(
   documentIdKey: keyof z.infer<T>,
 ) =>
   standardAuthedProcedure.input(schema).use(async ({ ctx, input, next }) => {
-    const documentId = input[documentIdKey];
+    const documentId = (input as z.infer<T>)[documentIdKey];
     if (typeof documentId !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
 
     const document = await ctx.db.query.documents.findFirst({

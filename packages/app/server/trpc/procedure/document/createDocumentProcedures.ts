@@ -35,16 +35,17 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
   container: AzureContainer,
   transformPublishedContent?: (ctx: AuthedContext, content: z.infer<TSchema>) => Promise<z.infer<TSchema>>,
 ) => {
-  // Annotated so the generic content schema resolves to a concrete input type for destructuring
+  // Annotated so the generic content schema resolves to a concrete type for destructuring.
+  // Both the output and input sides are declared — leaving the input side defaulted to unknown
+  // would erase the procedure's input type for consumers like achievement condition paths.
   const saveDocumentContentInputSchema = z.object({
     content: contentSchema,
     contentVersion: selectDocumentSchema.shape.contentVersion,
     id: selectDocumentSchema.shape.id,
-  }) as unknown as z.ZodType<{
-    content: z.infer<TSchema>;
-    contentVersion: z.infer<typeof selectDocumentSchema.shape.contentVersion>;
-    id: z.infer<typeof selectDocumentSchema.shape.id>;
-  }>;
+  }) as unknown as z.ZodType<
+    { content: z.infer<TSchema>; contentVersion: Document["contentVersion"]; id: Document["id"] },
+    { content: z.input<TSchema>; contentVersion: Document["contentVersion"]; id: Document["id"] }
+  >;
   const readContent = (id: Document["id"]): Promise<undefined | z.infer<TSchema>> =>
     getResultAsync(async () => {
       const { readableStreamBody } = await useDownload(container, getContentBlobName(id));
