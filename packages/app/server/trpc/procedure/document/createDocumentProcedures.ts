@@ -35,11 +35,16 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
   container: AzureContainer,
   transformPublishedContent?: (ctx: AuthedContext, content: z.infer<TSchema>) => Promise<z.infer<TSchema>>,
 ) => {
+  // Annotated so the generic content schema resolves to a concrete input type for destructuring
   const saveDocumentContentInputSchema = z.object({
     content: contentSchema,
     contentVersion: selectDocumentSchema.shape.contentVersion,
     id: selectDocumentSchema.shape.id,
-  });
+  }) as unknown as z.ZodType<{
+    content: z.infer<TSchema>;
+    contentVersion: z.infer<typeof selectDocumentSchema.shape.contentVersion>;
+    id: z.infer<typeof selectDocumentSchema.shape.id>;
+  }>;
   const readContent = (id: Document["id"]): Promise<undefined | z.infer<TSchema>> =>
     getResultAsync(async () => {
       const { readableStreamBody } = await useDownload(container, getContentBlobName(id));
@@ -48,7 +53,6 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
     })
       .orTee(console.error)
       .unwrapOr(undefined);
-
   return {
     createDocument: standardAuthedProcedure
       .input(createDocumentInputSchema)
