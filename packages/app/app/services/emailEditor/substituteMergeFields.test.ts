@@ -30,6 +30,12 @@ describe(substituteMergeFields, () => {
     expect(substituteMergeFields(`{{${columnName}}}`, { [columnName]: null })).toBe("");
   });
 
+  test("substitutes the escaped token form for special-character column names", () => {
+    expect.hasAssertions();
+
+    expect(substituteMergeFields("{{P&amp;L}}", { "P&L": "a" })).toBe("a");
+  });
+
   test("leaves merge fields without a matching column", () => {
     expect.hasAssertions();
 

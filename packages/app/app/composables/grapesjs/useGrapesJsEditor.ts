@@ -18,14 +18,15 @@ export const useGrapesJsEditor = async (storage: UseGrapesJsEditorStorage, confi
   // So a single storage adapter suffices; re-initialize on session change to reload from the right source
   const { stop, trigger } = watchTriggerable(session, () => {
     editor.value?.destroy();
+    // The composable's contract keys come after the spread so a caller cannot override them
     const newEditor = grapesJS.init({
+      ...configuration,
       container: `#${GRAPES_JS_EDITOR_CONTAINER_ID}`,
       fromElement: true,
       height: "100%",
       storageManager: {
         type: "document",
       },
-      ...configuration,
     });
     newEditor.Storage.add("document", {
       load: () => storage.load(),

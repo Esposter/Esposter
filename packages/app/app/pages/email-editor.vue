@@ -54,7 +54,7 @@ watch([editor, columnNames], ([newEditor, newColumnNames]) => {
     newEditor,
     MERGE_FIELD_BLOCK_CATEGORY,
     newColumnNames.map((columnName) => ({
-      content: `<mj-text>${toMergeField(columnName)}</mj-text>`,
+      content: `<mj-text>${escapeHtml(toMergeField(columnName))}</mj-text>`,
       id: `merge-field-${columnName}`,
       label: escapeHtml(columnName),
     })),

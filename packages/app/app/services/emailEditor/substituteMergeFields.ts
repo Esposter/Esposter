@@ -4,8 +4,11 @@ import { toMergeField } from "@/services/emailEditor/toMergeField";
 import { escapeHtml } from "@/util/text/escapeHtml";
 
 export const substituteMergeFields = (html: string, row: Record<string, ColumnValue>): string =>
-  Object.entries(row).reduce(
-    (personalizedHtml, [columnName, value]) =>
-      personalizedHtml.replaceAll(toMergeField(columnName), escapeHtml(String(value ?? ""))),
-    html,
-  );
+  Object.entries(row).reduce((personalizedHtml, [columnName, value]) => {
+    const escapedValue = escapeHtml(String(value ?? ""));
+    // The editor canvas entity-encodes special characters on serialization,
+    // so a column name like "P&L" appears in the exported HTML as its escaped token form
+    return personalizedHtml
+      .replaceAll(toMergeField(columnName), escapedValue)
+      .replaceAll(escapeHtml(toMergeField(columnName)), escapedValue);
+  }, html);

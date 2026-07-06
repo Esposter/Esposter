@@ -1,6 +1,6 @@
 # Platform
 
-Cross-product integration program: implement the documents, datasets, and publishing standards across surveyer, table editor, dashboard, and the email/webpage/flowchart editors. The layer model and diagram are `/architecture/platform.md`; the standards themselves are `/architecture/documents.md`, `/architecture/datasets.md`, `/architecture/publishing.md`.
+Cross-product integration program: implement the documents, datasets, and publishing standards across surveyer, table editor, dashboard, and the email/webpage/flowchart editors. The layer model and diagram are [`/architecture/platform.md`](../../architecture/platform.md); the standards themselves are [`/architecture/documents.md`](../../architecture/documents.md), [`/architecture/datasets.md`](../../architecture/datasets.md), [`/architecture/publishing.md`](../../architecture/publishing.md).
 
 ## Now
 
@@ -21,4 +21,6 @@ Grep [out-of-scope/](out-of-scope) (won't do) and [deferred/](deferred) (not yet
 
 ## Reference
 
+- [`/architecture/platform.md`](../../architecture/platform.md) — cross-product layer model, diagram, and the contract docs it links
 - [specs/](specs) — product-specific applications of the standards (dashboard data binding, email personalization)
+- `.claude/skills/grapesjs` — editor integration conventions (useGrapesJsEditor, block sync, save-time capture)

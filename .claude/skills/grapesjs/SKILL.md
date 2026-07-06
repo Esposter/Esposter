@@ -38,4 +38,4 @@ GrapesJS project data is opaque; anything derived from the live editor must be c
 
 Blocks derived from reactive sources (dataset columns, published surveys) are re-synced with `setBlocks(editor, category, blocks)` (`app/services/grapesjs/setBlocks.ts`): it removes every block in the category, then adds the new set — no per-block bookkeeping. Watch `[editor, source]` so a session-driven editor re-init re-registers them. Block `label`s and any user text interpolated into `content` go through `escapeHtml`.
 
-Merge fields use the canonical `toMergeField(columnName)` token (`{{columnName}}`); substitution on export goes through `substituteMergeFields` (HTML-escaped values). See `features/platform/specs/email-personalization.md`.
+Merge fields use the canonical `toMergeField(columnName)` token (`{{columnName}}`), inserted into block content as `escapeHtml(toMergeField(columnName))` — the canvas entity-encodes special characters on serialization, so the exported HTML carries the escaped token form. `substituteMergeFields` therefore replaces **both** the raw and escaped token forms with the HTML-escaped row value. See `features/platform/specs/email-personalization.md`.
