@@ -37,7 +37,7 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
 ) => {
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
-  // would erase the procedure's input type for consumers like achievement condition paths.
+  // Would erase the procedure's input type for consumers like achievement condition paths.
   const saveDocumentContentInputSchema = z.object({
     content: contentSchema,
     contentVersion: selectDocumentSchema.shape.contentVersion,

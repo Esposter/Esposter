@@ -12,7 +12,7 @@ import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The generic document-procedure matrix is covered once in dashboard.test.ts;
-// here only the router wiring: document type, content schema and container.
+// Here only the router wiring: document type, content schema and container.
 describe("flowchartEditor", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["flowchartEditor"]>;

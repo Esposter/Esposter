@@ -18,7 +18,7 @@ export const transformPublishedDashboard = async (
       if (!visual.dataset) return visual;
       const { dataset } = visual;
       // A stale reference (e.g. deleted survey/table document) fails publish with a clear message
-      // instead of an opaque provider error
+      // Instead of an opaque provider error
       const snapshot = await getResultAsync(() =>
         DatasetProviderMap[dataset.reference.type](ctx, dataset.reference),
       ).match(
