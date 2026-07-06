@@ -23,7 +23,19 @@ virrun -- pnpm install
 virrun -- pnpm test
 ```
 
-The `virrun -- <cmd>` prefix **is** the switch: every prefixed command is sandboxed, and opting a command in or out is adding or removing the prefix. There is no allowlist or on/off flag. Which backend a sandboxed command runs through is the only thing `virrun.config.json` decides — see [config & cache](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/config-and-cache.md).
+The `virrun -- <cmd>` prefix **is** the switch: every prefixed command is sandboxed, and opting a command in or out is adding or removing the prefix. There is no allowlist or on/off flag. Which backend a sandboxed command runs through is the only thing `virrun.config.{ts,mts,js,mjs,json}` decides — the TS form is where `process.platform` branching lives (import `defineConfig` from the tiny `virrun/config` subpath, never the `virrun` barrel: jiti transpiles a config file's imports on every prefixed command):
+
+```ts
+// virrun.config.ts
+import { defineConfig } from "virrun/config";
+
+export default defineConfig({
+  backend: process.platform === "win32" ? "os" : "native",
+  environment: "nuxt",
+});
+```
+
+See [config & cache](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/config-and-cache.md).
 
 On an `os`-backend run the CLI prints a one-time provisioning line on stderr so a multi-minute first install is explained, not a silent stall:
 
@@ -36,16 +48,16 @@ On an `os`-backend run the CLI prints a one-time provisioning line on stderr so 
 
 The bare `virrun -- <cmd>` prefix is shorthand for `virrun run`. The CLI (built on [unjs/citty](https://github.com/unjs/citty), so every command has `--help`) also exposes:
 
-| Command                      | What it does                                                                                                                            |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `virrun -- <cmd>`            | Default passthrough — forks a warm snapshot on the `os` backend, else execs natively. Alias of `virrun run`.                            |
-| `virrun run -- <cmd>`        | Explicit form of the default passthrough.                                                                                               |
-| `virrun exec -- <cmd>`       | Forced plain exec — runs the command directly, skipping any warm-cache fork (the cold sibling of `run`).                                |
-| `virrun warm`                | Provisions the `os` backend's warm cache (dependency snapshot + prepare layer) for the current lockfile ahead of time (the CI warm-up). |
-| `virrun doctor`              | Diagnoses the `os` backend's prerequisites (bubblewrap, WSL node, python3, overlay mount); exits non-zero on a gap.                     |
-| `virrun init [--backend]`    | Writes a `virrun.config.json` selecting the backend (`--force` to overwrite an existing one).                                           |
-| `virrun cache ls`            | Lists the repo-local dependency store and host-global warm snapshots.                                                                   |
-| `virrun cache clean [--all]` | Removes the repo-local `.virrun` cache; `--all` also clears the host-global `~/.virrun/snapshots`.                                      |
+| Command                      | What it does                                                                                                                         |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `virrun -- <cmd>`            | Default passthrough — forks a warm snapshot on the `os` backend, else execs natively. Alias of `virrun run`.                         |
+| `virrun run -- <cmd>`        | Explicit form of the default passthrough.                                                                                            |
+| `virrun exec -- <cmd>`       | Forced plain exec — runs the command directly, skipping any warm-cache fork (the cold sibling of `run`).                             |
+| `virrun warm`                | Provisions the `os` backend's warm cache (dependency snapshot + prepare layer) for the current lockfile ahead of time.               |
+| `virrun doctor`              | Diagnoses the `os` backend's prerequisites (bubblewrap, WSL node, python3, overlay mount); exits non-zero on a gap.                  |
+| `virrun init [--backend]`    | Writes the JSON config variant selecting the backend (`--force` to overwrite); hand-write `virrun.config.ts` for platform branching. |
+| `virrun cache ls`            | Lists the repo-local dependency store and host-global warm snapshots.                                                                |
+| `virrun cache clean [--all]` | Removes the repo-local `.virrun` cache; `--all` also clears the host-global `~/.virrun/snapshots`.                                   |
 
 ## Programmatic
 
