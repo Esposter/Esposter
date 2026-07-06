@@ -1,12 +1,12 @@
 import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
 
-import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { tableEditorConfigurationSchema } from "#shared/models/tableEditor/data/TableEditorConfiguration";
+import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { dataSourceToDataset } from "#shared/services/tableEditor/dataSourceToDataset";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { getContentBlobName } from "@@/server/services/document/getContentBlobName";
 import { AzureContainer, DocumentType } from "@esposter/db-schema";
-import { streamToText, jsonDateParse } from "@esposter/shared";
+import { jsonDateParse, streamToText } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export const readTableDocumentDataset: DatasetProvider = async (ctx, reference) => {

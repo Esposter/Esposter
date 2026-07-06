@@ -20,7 +20,7 @@ const name = ref("");
 </script>
 
 <template>
-  <div flex items-center gap-2>
+  <div flex gap-2 items-center>
     <v-select
       hide-details
       item-title="name"

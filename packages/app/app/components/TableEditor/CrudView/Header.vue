@@ -29,9 +29,9 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
   <v-toolbar pt-4>
     <v-toolbar-title px-4>
       <TableEditorTypeSelect />
-      <div v-if="session.data" pt-2 flex w-full items-center gap-2>
+      <div v-if="session.data" pt-2 flex gap-2 w-full items-center>
         <DocumentPicker
-          :current-document="currentDocument"
+          :current-document
           :documents
           @create="createDocument($event)"
           @delete="deleteDocument($event)"

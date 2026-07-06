@@ -23,9 +23,9 @@ const { currentDocument, documents } = storeToRefs(dashboardStore);
     <v-toolbar-title font-bold px-4>
       <div pt-4 flex flex-col gap-y-4 justify-between>
         <div>Dashboard Editor</div>
-        <div v-if="session.data" flex w-full items-center gap-2>
+        <div v-if="session.data" flex gap-2 w-full items-center>
           <DocumentPicker
-            :current-document="currentDocument"
+            :current-document
             :documents
             @create="createDocument($event)"
             @delete="deleteDocument($event)"

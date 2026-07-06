@@ -34,14 +34,14 @@ const options = useApexOptions(
 
 <template>
   <StyledCard size-full>
-    <div ref="container" relative h-full>
+    <div ref="container" h-full relative>
       <v-alert v-if="error" type="error" text="Failed to load data" />
       <VueApexCharts v-else :="data" :options />
       <StyledTooltipIconButton
         v-if="visual.dataset"
-        absolute
-        top-1
         right-1
+        top-1
+        absolute
         icon="mdi-refresh"
         text="Refresh data"
         :button-props="{ loading: isLoading, size: 'small', variant: 'text' }"
