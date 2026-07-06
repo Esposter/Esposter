@@ -35,7 +35,12 @@ export const createDocumentProcedures = <TSchema extends z.ZodType>(
   container: AzureContainer,
   transformPublishedContent?: (ctx: AuthedContext, content: z.infer<TSchema>) => Promise<z.infer<TSchema>>,
 ) => {
-  const saveDocumentContentInputSchema = z.object({
+  // Annotated so the generic content schema resolves to a concrete input type for destructuring
+  const saveDocumentContentInputSchema: z.ZodType<{
+    content: z.infer<TSchema>;
+    contentVersion: number;
+    id: string;
+  }> = z.object({
     content: contentSchema,
     contentVersion: selectDocumentSchema.shape.contentVersion,
     id: selectDocumentSchema.shape.id,

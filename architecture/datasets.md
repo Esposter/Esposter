@@ -11,7 +11,7 @@ Shared models in `packages/app/shared/models/dataset/` (one type + schema per fi
 ```typescript
 interface DatasetColumn {
   name: string;
-  type: ColumnType; // Boolean | Date | Number | String
+  type: DatasetColumnType; // ColumnType minus Computed — computed values are derived at render time
 }
 
 interface Dataset {
@@ -26,7 +26,7 @@ enum DatasetProviderType {
 
 interface DatasetReference extends ItemEntityType<DatasetProviderType> {
   id: string; // surveyId or documentId
-  publishVersion?: number; // pin to a published version; absent = latest
+  itemId?: string; // sub-resource within the document, e.g. a table document's data source item
 }
 ```
 
@@ -38,14 +38,16 @@ interface DatasetReference extends ItemEntityType<DatasetProviderType> {
 
 One procedure resolves every reference:
 
-| Procedure             | Auth                                          | Input                             | Purpose                            |
-| --------------------- | --------------------------------------------- | --------------------------------- | ---------------------------------- |
-| `dataset.readDataset` | Resource owner, or public via a published doc | `{ reference: DatasetReference }` | Resolve a reference to a `Dataset` |
+| Procedure             | Auth           | Input              | Purpose                            |
+| --------------------- | -------------- | ------------------ | ---------------------------------- |
+| `dataset.readDataset` | Resource owner | `DatasetReference` | Resolve a reference to a `Dataset` |
 
-Server structure (`server/services/dataset/`): `DatasetProviderMap.ts` maps `DatasetProviderType` → provider, one provider per file. Each provider owns its auth check and its column/row derivation:
+Public viewers never call this: published documents bake resolved datasets in at publish time (`architecture/publishing.md`).
 
-- **SurveyResponsesProvider** — columns from the survey model's questions (name + inferred `ColumnType`); rows flattened from `SurveyResponseEntity` JSON in Azure Table; auth via survey ownership.
-- **TableDocumentProvider** — a table document's content blob is already columns/rows; requires the documents layer (`architecture/documents.md`).
+Server structure (`server/services/dataset/`): `DatasetProviderMap.ts` maps `DatasetProviderType` → provider function, one provider per folder. Each provider owns its auth check and its column/row derivation:
+
+- **`readSurveyResponsesDataset`** — columns from the survey model's questions (name + question-type → `ColumnType` mapping); rows flattened from `SurveyResponseEntity` JSON in Azure Table, non-primitive answers JSON-stringified, missing answers `null`; auth via survey ownership.
+- **`readTableDocumentDataset`** — reads the table document's content blob and converts the referenced data source item via `dataSourceToDataset` (`#shared/services/tableEditor/`); `itemId` picks the item, absent = first.
 
 ---
 

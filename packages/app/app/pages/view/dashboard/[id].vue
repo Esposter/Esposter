@@ -4,7 +4,7 @@ import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 const route = useRoute();
 const { $trpc } = useNuxtApp();
 const { content, name } = await $trpc.dashboard.readPublishedDocumentContent.query(String(route.params.id));
-const dashboard = new Dashboard(content);
+const dashboard = new Dashboard(content as never);
 useSeoMeta({ title: name });
 </script>
 

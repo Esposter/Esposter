@@ -4,7 +4,14 @@ Cross-product integration program: implement the documents, datasets, and publis
 
 ## Now
 
-- Phase 1 — dataset contract + survey-responses provider + table-editor import → [roadmap](roadmap.md)
+- Phase 5 — email editor merge fields + survey invite block → [roadmap](roadmap.md)
+
+## Shipped
+
+- Phase 1 — dataset contract, `dataset.readDataset` + SurveyResponses/TableDocument providers, table-editor survey-responses import (`/architecture/datasets.md`)
+- Phase 2 — dashboard visual dataset binding: `Visual.dataset` reference + query, client aggregation, bind-to-data form, per-visual refresh ([spec](specs/dashboard-data-binding.md))
+- Phase 3 — `documents` table + `createDocumentProcedures` factory + `useDocumentState`/`DocumentPicker` across all 5 editors (`/architecture/documents.md`)
+- Phase 4 — document publish lifecycle with baked dataset snapshots + public `/view/dashboard/[id]` (`/architecture/publishing.md`)
 
 ## Decisions
 
