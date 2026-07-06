@@ -6,6 +6,7 @@ interface MessageDraftsAndSentBaseListItemProps {
 }
 
 defineOptions({ inheritAttrs: false });
+defineSlots<{ default?: () => VNode; prepend?: () => VNode }>();
 const { displayTime, subtitle, title } = defineProps<MessageDraftsAndSentBaseListItemProps>();
 const listItem = useTemplateRef("listItem");
 // @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.

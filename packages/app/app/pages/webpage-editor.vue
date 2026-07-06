@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Editor } from "grapesjs";
 
-import { authClient } from "@/services/auth/authClient";
+import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
-import grapesJS, { usePlugin } from "grapesjs";
+import { usePlugin } from "grapesjs";
 import grapesJSBlocksBasic from "grapesjs-blocks-basic";
 import grapesJSComponentCountdown from "grapesjs-component-countdown";
 import grapesJSCustomCode from "grapesjs-custom-code";
@@ -23,19 +23,15 @@ import { css as cssFormat, html as htmlFormat } from "js-beautify";
 
 defineRouteRules({ ssr: false });
 
-const { data: session } = await authClient.useSession(useFetch);
 const webpageEditorStore = useWebpageEditorStore();
 const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
-let editor: Editor | undefined;
-
-// The store branches between the authenticated document path and local storage,
-// So a single storage adapter suffices; re-initialize on session change to reload from the right source
-const { trigger } = watchTriggerable(session, () => {
-  editor?.destroy();
-  editor = grapesJS.init({
-    container: ".v-main",
-    fromElement: true,
-    height: "100%",
+const { currentDocument } = storeToRefs(webpageEditorStore);
+const { editor } = await useGrapesJsEditor(
+  {
+    load: () => readWebpageEditor(),
+    store: (data, storeEditor) => saveWebpageEditor(data, { css: storeEditor.getCss(), html: storeEditor.getHtml() }),
+  },
+  {
     plugins: [
       usePlugin(grapesJSBlocksBasic, {
         flexGrid: true,
@@ -74,9 +70,6 @@ const { trigger } = watchTriggerable(session, () => {
     ],
     selectorManager: { componentFirst: true },
     showOffsets: true,
-    storageManager: {
-      type: "document",
-    },
     styleManager: {
       sectors: [
         {
@@ -369,20 +362,24 @@ const { trigger } = watchTriggerable(session, () => {
         },
       ],
     },
-  });
-  editor.Storage.add("document", {
-    load: () => readWebpageEditor(),
-    store: (data) => saveWebpageEditor(data),
-  });
-});
+  },
+);
 
-onMounted(() => {
-  trigger();
-});
+watch(
+  () => currentDocument.value?.id,
+  async () => {
+    await editor.value?.load();
+  },
+);
 </script>
 
 <template>
-  <NuxtLayout />
+  <NuxtLayout>
+    <div flex flex-col h-full>
+      <WebpageEditorHeader />
+      <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" flex-1 overflow-hidden />
+    </div>
+  </NuxtLayout>
 </template>
 
 <style lang="scss">

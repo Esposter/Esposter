@@ -14,7 +14,7 @@ const { content, name } = await getResultAsync(() =>
   },
 );
 const dashboard = new DashboardModel(content as never);
-useSeoMeta({ title: name });
+useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 </script>
 
 <template>

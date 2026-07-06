@@ -7,7 +7,7 @@ import type { z } from "zod";
 import { authClient } from "@/services/auth/authClient";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync, jsonDateParse, takeOne } from "@esposter/shared";
+import { getResultAsync, jsonDateParse, noop, takeOne } from "@esposter/shared";
 
 interface UseDocumentStateOptions {
   defaultName: string;
@@ -101,7 +101,7 @@ export const useDocumentState = <TContent extends ItemMetadata>(
     if (!document) return;
     await getResultAsync(async () => {
       setCurrentDocument(await procedures.publishDocument({ id: document.id }));
-    }).orTee((error) => {
+    }).match(noop, (error) => {
       alertStore.createAlert(error.message, "error");
     });
   };
@@ -110,7 +110,7 @@ export const useDocumentState = <TContent extends ItemMetadata>(
     if (!document) return;
     await getResultAsync(async () => {
       setCurrentDocument(await procedures.unpublishDocument({ id: document.id }));
-    }).orTee((error) => {
+    }).match(noop, (error) => {
       alertStore.createAlert(error.message, "error");
     });
   };

@@ -11,6 +11,7 @@ interface StyledTooltipMenuIconButtonProps {
   tooltipProps?: VTooltip["$props"];
 }
 
+defineSlots<{ default: () => VNode }>();
 const { buttonProps, icon, menuProps, text, tooltipProps } = defineProps<StyledTooltipMenuIconButtonProps>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
 const isOpen = defineModel<boolean>({ default: false });

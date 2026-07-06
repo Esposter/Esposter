@@ -35,7 +35,8 @@ describe("webpageEditor", () => {
 
     expect(newDocument.type).toBe(DocumentType.Webpage);
 
-    const webpageEditor = new WebpageEditor();
+    // The captured standalone render is part of the round-trip so the schema provably preserves it
+    const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
     await caller.saveDocumentContent({
       content: webpageEditor,
       contentVersion: newDocument.contentVersion,

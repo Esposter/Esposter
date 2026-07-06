@@ -41,6 +41,7 @@ readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => ctx.db.query.fri
 
 ## Client-Side Calling Conventions
 
+- **Never call `.query({})` / `.mutate({})` with a bare empty object** — procedures whose inputs are all-optional chain `.prefault({})` on the input schema (see Pagination Params Schemas), which makes the input itself optional. Call with no argument: `$trpc.survey.readSurveys.query()`. Same for test callers: `caller.readDocuments()`.
 - **Omit optional UUID fields instead of passing `undefined`** — when the value comes from a ref defaulting to `""` (e.g. `currentRoomId`), use a conditional spread, not `|| undefined`:
 
   ```ts

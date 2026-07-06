@@ -5,6 +5,7 @@ interface TableEditorFileSelectionToolbarProps {
   label: string;
 }
 
+defineSlots<{ default?: () => VNode }>();
 const { label } = defineProps<TableEditorFileSelectionToolbarProps>();
 const selectedIds = defineModel<string[]>({ required: true });
 const emit = defineEmits<{ delete: [ids: string[]] }>();

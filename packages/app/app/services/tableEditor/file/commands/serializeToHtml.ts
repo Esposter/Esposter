@@ -1,12 +1,6 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-const escapeHtml = (value: string): string =>
-  value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+import { escapeHtml } from "@/util/text/escapeHtml";
 
 export const serializeToHtml = (dataSource: DataSource, includeHeaders = true): string => {
   const headerCells = dataSource.columns.map((column) => `<th>${escapeHtml(column.name)}</th>`).join("");

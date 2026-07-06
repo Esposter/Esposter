@@ -43,15 +43,15 @@ The granular, prioritized, checkbox backlog lives in each area's **`roadmap.md`*
 
 ## Feature Areas
 
-| Area                                            | Now                                                         | Description                                                    |
-| ----------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------- |
-| [`esbabbler/`](esbabbler/README.md)             | Scheduled-jobs UI → [roadmap](esbabbler/roadmap.md)         | Messaging, calls, rooms, moderation, DMs                       |
-| [`fileTableEditor/`](fileTableEditor/README.md) | — (mature)                                                  | CSV/JSON/XLSX table editor with computed columns               |
-| [`infra/`](infra/README.md)                     | — (migration complete)                                      | Azure Pulumi infrastructure, cost, security, naming            |
-| [`platform/`](platform/README.md)               | Phase 5 email merge fields → [roadmap](platform/roadmap.md) | Cross-product documents, datasets, publishing integration      |
-| [`virrun/`](virrun/README.md)                   | Bench win32 mirror lift → [roadmap](virrun/roadmap.md)      | In-memory virtual runner: run any repo's real toolchain in RAM |
-| [`vue-phaserjs/`](vue-phaserjs/README.md)       | — (mature)                                                  | Phaser game engine Vue integration                             |
-| [`refactors/`](#refactors)                      | null-removal (planned)                                      | Cross-cutting code migrations                                  |
+| Area                                            | Now                                                    | Description                                                    |
+| ----------------------------------------------- | ------------------------------------------------------ | -------------------------------------------------------------- |
+| [`esbabbler/`](esbabbler/README.md)             | Scheduled-jobs UI → [roadmap](esbabbler/roadmap.md)    | Messaging, calls, rooms, moderation, DMs                       |
+| [`fileTableEditor/`](fileTableEditor/README.md) | — (mature)                                             | CSV/JSON/XLSX table editor with computed columns               |
+| [`infra/`](infra/README.md)                     | — (migration complete)                                 | Azure Pulumi infrastructure, cost, security, naming            |
+| [`platform/`](platform/README.md)               | — (program complete)                                   | Cross-product documents, datasets, publishing integration      |
+| [`virrun/`](virrun/README.md)                   | Bench win32 mirror lift → [roadmap](virrun/roadmap.md) | In-memory virtual runner: run any repo's real toolchain in RAM |
+| [`vue-phaserjs/`](vue-phaserjs/README.md)       | — (mature)                                             | Phaser game engine Vue integration                             |
+| [`refactors/`](#refactors)                      | null-removal (planned)                                 | Cross-cutting code migrations                                  |
 
 ---
 

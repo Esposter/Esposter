@@ -3,6 +3,7 @@ interface HeaderProps {
   isTopAttached?: boolean;
 }
 
+defineSlots<{ default: () => VNode }>();
 const { isTopAttached } = defineProps<HeaderProps>();
 const emit = defineEmits<{ close: [] }>();
 </script>

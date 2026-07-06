@@ -4,6 +4,7 @@ interface TableEditorDialogProps {
   title: string;
 }
 
+defineSlots<{ actions?: () => VNode; default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
 const { closeButtonText = "Close" } = defineProps<TableEditorDialogProps>();
 const isFullScreen = ref(false);

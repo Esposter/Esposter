@@ -6,6 +6,7 @@ import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
 import { useStatusStore } from "@/store/message/user/status";
 import { STATUS_MESSAGE_MAX_LENGTH, UserStatus } from "@esposter/db-schema";
 
+defineSlots<{ activator: (props: { menuProps: Record<string, unknown> }) => VNode }>();
 const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
 const userId = computed(() => session.value?.user.id ?? "");

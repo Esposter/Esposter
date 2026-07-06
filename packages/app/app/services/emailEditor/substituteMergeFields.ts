@@ -1,0 +1,14 @@
+import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
+
+import { toMergeField } from "@/services/emailEditor/toMergeField";
+import { escapeHtml } from "@/util/text/escapeHtml";
+
+export const substituteMergeFields = (html: string, row: Record<string, ColumnValue>): string =>
+  Object.entries(row).reduce((personalizedHtml, [columnName, value]) => {
+    const escapedValue = escapeHtml(String(value ?? ""));
+    // The editor canvas entity-encodes special characters on serialization,
+    // So a column name like "P&L" appears in the exported HTML as its escaped token form
+    return personalizedHtml
+      .replaceAll(toMergeField(columnName), escapedValue)
+      .replaceAll(escapeHtml(toMergeField(columnName)), escapedValue);
+  }, html);

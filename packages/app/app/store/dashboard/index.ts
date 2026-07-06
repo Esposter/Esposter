@@ -24,7 +24,7 @@ export const useDashboardStore = defineStore("dashboard", () => {
       deleteDocument: (input) => $trpc.dashboard.deleteDocument.mutate(input),
       publishDocument: (input) => $trpc.dashboard.publishDocument.mutate(input),
       readDocumentContent: (input) => $trpc.dashboard.readDocumentContent.query(input),
-      readDocuments: async () => (await $trpc.dashboard.readDocuments.query({})).items,
+      readDocuments: async () => (await $trpc.dashboard.readDocuments.query()).items,
       saveDocumentContent: (input) => $trpc.dashboard.saveDocumentContent.mutate(input),
       unpublishDocument: (input) => $trpc.dashboard.unpublishDocument.mutate(input),
       updateDocument: (input) => $trpc.dashboard.updateDocument.mutate(input),

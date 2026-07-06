@@ -7,7 +7,7 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { authClient } from "@/services/auth/authClient";
 import { datasetToDataSource } from "@/services/tableEditor/file/dataSource/datasetToDataSource";
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
 const { $trpc } = useNuxtApp();
@@ -22,8 +22,8 @@ const selectedSurveyId = ref<string>();
 watch(dialog, async (newDialog) => {
   if (!newDialog) return;
   await getResultAsync(async () => {
-    ({ items: surveys.value } = await $trpc.survey.readSurveys.query({}));
-  }).orTee((error) => createAlert(error.message, "error"));
+    ({ items: surveys.value } = await $trpc.survey.readSurveys.query());
+  }).match(noop, (error) => createAlert(error.message, "error"));
 });
 </script>
 
@@ -47,7 +47,7 @@ watch(dialog, async (newDialog) => {
                 });
                 modelValue.name = survey.name;
                 setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
-              }).orTee((error) => createAlert(error.message, 'error')),
+              }).match(noop, (error) => createAlert(error.message, 'error')),
             () => onComplete(),
           )
       "
