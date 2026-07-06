@@ -17,7 +17,7 @@ const { currentDocument, datasetReference, documents } = storeToRefs(emailEditor
 
 <template>
   <v-toolbar v-if="session.data" height="auto">
-    <div flex gap-2 items-center w-full px-4 py-2>
+    <div px-4 py-2 flex gap-2 w-full items-center>
       <DocumentPicker
         :current-document
         :documents

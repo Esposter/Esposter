@@ -18,5 +18,5 @@ useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 </script>
 
 <template>
-  <iframe h-screen w-full border-none sandbox="allow-scripts" :srcdoc :title="name" />
+  <iframe border-none h-screen w-full sandbox="allow-scripts" :srcdoc :title="name" />
 </template>

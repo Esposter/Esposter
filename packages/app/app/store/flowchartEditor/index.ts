@@ -15,7 +15,7 @@ export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
       deleteDocument: (input) => $trpc.flowchartEditor.deleteDocument.mutate(input),
       publishDocument: (input) => $trpc.flowchartEditor.publishDocument.mutate(input),
       readDocumentContent: (input) => $trpc.flowchartEditor.readDocumentContent.query(input),
-      readDocuments: async () => (await $trpc.flowchartEditor.readDocuments.query({})).items,
+      readDocuments: async () => (await $trpc.flowchartEditor.readDocuments.query()).items,
       saveDocumentContent: (input) => $trpc.flowchartEditor.saveDocumentContent.mutate(input),
       unpublishDocument: (input) => $trpc.flowchartEditor.unpublishDocument.mutate(input),
       updateDocument: (input) => $trpc.flowchartEditor.updateDocument.mutate(input),

@@ -6,7 +6,7 @@ import type { Editor } from "grapesjs";
 import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFields";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 interface ExportPersonalizedHtmlButtonProps {
   editor: Editor | undefined;
@@ -35,7 +35,7 @@ const exportPersonalizedHtml = async (editorValue: Editor, document: Document, r
       await writable.close();
     }
     createAlert(`Exported ${dataset.rows.length} personalized emails`, "success");
-  }).orTee((error) => {
+  }).match(noop, (error) => {
     if (error.name === "AbortError") return;
     createAlert(error.message, "error");
   });

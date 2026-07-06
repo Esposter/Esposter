@@ -10,7 +10,7 @@ import { setBlocks } from "@/services/grapesjs/setBlocks";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { escapeHtml } from "@/util/text/escapeHtml";
-import { getResultAsync, RoutePath } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 import grapesJSMJML from "grapesjs-mjml";
 
 defineRouteRules({ ssr: false });
@@ -42,9 +42,9 @@ watchImmediate(
   async (newSession) => {
     if (!newSession) return;
     await getResultAsync(async () => {
-      const { items } = await $trpc.survey.readSurveys.query({});
+      const { items } = await $trpc.survey.readSurveys.query();
       publishedSurveys.value = items.filter(({ publishedAt }) => publishedAt);
-    }).orTee((error) => createAlert(error.message, "error"));
+    }).match(noop, (error) => createAlert(error.message, "error"));
   },
 );
 

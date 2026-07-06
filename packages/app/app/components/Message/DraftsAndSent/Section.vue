@@ -3,6 +3,7 @@ interface MessageDraftsAndSentSectionProps {
   title: string;
 }
 
+defineSlots<{ default: () => VNode }>();
 const { title } = defineProps<MessageDraftsAndSentSectionProps>();
 </script>
 

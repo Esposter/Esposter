@@ -4,6 +4,7 @@ interface MessageRightSideBarSearchFilterPickerListProps {
   isPending: boolean;
 }
 
+defineSlots<{ default: () => VNode; skeleton: () => VNode }>();
 const { hasMore, isPending } = defineProps<MessageRightSideBarSearchFilterPickerListProps>();
 const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
 </script>

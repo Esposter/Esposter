@@ -161,6 +161,29 @@ When renaming a folder, the collapse is preserved if the new folder ends with th
 
 Line-count target and exceptions — see the `file-organization` skill. Component-specific extractions when a `.vue` runs long: pull toolbar/header buttons into a slot component (e.g. `TopSlot.vue`), row/column action menus into `ActionSlot.vue`, and grouped controls into their own focused component.
 
+## Slots — `defineSlots` Required + Conditional Forwarding
+
+**Every component that renders a `<slot>` declares `defineSlots`** — typed slot contracts, same as props:
+
+```ts
+defineSlots<{ default: () => VNode }>(); // VNode is auto-imported
+defineSlots<{ default?: () => VNode; prepend?: () => VNode }>(); // `?:` when the consumer may omit the slot
+defineSlots<{ activator: (props: { menuProps: Record<string, unknown> }) => VNode }>(); // scoped slot props
+const slots = defineSlots<{ ... }>(); // assign only when the script reads `slots`
+```
+
+**Conditional slot forwarding — the explicit slot name is load-bearing.** When a wrapper forwards an optional slot into a library component that falls back to a prop when the slot is absent (e.g. VTooltip renders `slots.default?.() ?? props.text`), a bare `<template v-if="$slots.x">` does NOT work: the compiler puts the `v-if` _inside_ an always-registered slot function, so the library sees the slot as present and the prop fallback never fires. `v-slot` + `v-if` on the same template compiles to `createSlots` with truly conditional registration:
+
+```vue
+<!-- WRONG — slot always registered; VTooltip's text prop suppressed even with no slot content -->
+<template v-if="$slots.default"><slot /></template>
+
+<!-- CORRECT — #default + v-if compiles to conditional slot registration -->
+<template v-if="$slots.default" #default><slot /></template>
+```
+
+Canonical: `Styled/TooltipIconButton.vue`. An unconditional `<slot />` directly inside a library component has the same always-registered problem — only safe when the wrapped component has no prop fallback for that slot.
+
 ## Slot Extraction (Complex Components)
 
 When a component has many named slots with non-trivial content, extract each slot's content into its own component, named after the slot it fills (`#tfoot` → `FooterSlot.vue`, `#top` → `TopSlot.vue`, `#[item.actions]` → `ActionSlot.vue`).

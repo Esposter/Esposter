@@ -6,6 +6,7 @@ interface MessageFriendsUserListItemProps {
   name: User["name"];
 }
 
+defineSlots<{ append?: () => VNode }>();
 const { image, name } = defineProps<MessageFriendsUserListItemProps>();
 </script>
 

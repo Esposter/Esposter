@@ -6,7 +6,7 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { authClient } from "@/services/auth/authClient";
 import { DatasetProviderTypeItemCategoryDefinitions } from "@/services/dataset/DatasetProviderTypeItemCategoryDefinitions";
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 const modelValue = defineModel<DatasetReference | undefined>({ required: true });
 const { $trpc } = useNuxtApp();
@@ -15,8 +15,8 @@ const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const type = ref(modelValue.value?.type ?? DatasetProviderType.SurveyResponses);
 const readSourcesMap: Record<DatasetProviderType, () => Promise<{ id: string; name: string }[]>> = {
-  [DatasetProviderType.SurveyResponses]: async () => (await $trpc.survey.readSurveys.query({})).items,
-  [DatasetProviderType.TableDocument]: async () => (await $trpc.tableEditor.readDocuments.query({})).items,
+  [DatasetProviderType.SurveyResponses]: async () => (await $trpc.survey.readSurveys.query()).items,
+  [DatasetProviderType.TableDocument]: async () => (await $trpc.tableEditor.readDocuments.query()).items,
 };
 const sourceIds = ref<SelectItemCategoryDefinition<string>[]>([]);
 
@@ -24,7 +24,7 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
   if (!newSession) return;
   await getResultAsync(async () => {
     sourceIds.value = (await readSourcesMap[newType]()).map(({ id, name }) => ({ title: name, value: id }));
-  }).orTee((error) => createAlert(error.message, "error"));
+  }).match(noop, (error) => createAlert(error.message, "error"));
 });
 </script>
 

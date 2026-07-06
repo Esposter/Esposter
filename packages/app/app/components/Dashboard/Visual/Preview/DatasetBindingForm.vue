@@ -4,7 +4,7 @@ import type { VisualDatasetBinding } from "#shared/models/dashboard/data/VisualD
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { authClient } from "@/services/auth/authClient";
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 const modelValue = defineModel<undefined | VisualDatasetBinding>({ required: true });
 const { $trpc } = useNuxtApp();
@@ -41,13 +41,13 @@ const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name
               },
               reference: newReference,
             };
-          }).orTee((error) => createAlert(error.message, 'error'));
+          }).match(noop, (error) => createAlert(error.message, 'error'));
         }
       "
     />
     <template v-if="modelValue">
       <v-select v-model="modelValue.query.xColumn" :items="columnNames" label="X Column" />
-      <div v-for="(series, index) of modelValue.query.series" :key="index" flex items-center gap-2>
+      <div v-for="(series, index) of modelValue.query.series" :key="index" flex gap-2 items-center>
         <v-select v-model="series.column" :items="columnNames" label="Series Column" />
         <v-select v-model="series.aggregation" :items="Object.values(DatasetAggregationType)" label="Aggregation" />
         <StyledTooltipIconButton

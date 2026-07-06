@@ -27,7 +27,7 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
       deleteDocument: (input) => $trpc.webpageEditor.deleteDocument.mutate(input),
       publishDocument: (input) => $trpc.webpageEditor.publishDocument.mutate(input),
       readDocumentContent: (input) => $trpc.webpageEditor.readDocumentContent.query(input),
-      readDocuments: async () => (await $trpc.webpageEditor.readDocuments.query({})).items,
+      readDocuments: async () => (await $trpc.webpageEditor.readDocuments.query()).items,
       saveDocumentContent: (input) => $trpc.webpageEditor.saveDocumentContent.mutate(input),
       unpublishDocument: (input) => $trpc.webpageEditor.unpublishDocument.mutate(input),
       updateDocument: (input) => $trpc.webpageEditor.updateDocument.mutate(input),
