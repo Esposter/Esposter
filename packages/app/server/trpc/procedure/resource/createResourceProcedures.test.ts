@@ -178,7 +178,7 @@ describe("createResourceProcedures", () => {
 
     const newResource = await caller.createResource({ name });
 
-    expect(await caller.readResourcePublication({ id: newResource.id })).toBeUndefined();
+    await expect(caller.readResourcePublication({ id: newResource.id })).resolves.toBeUndefined();
 
     await caller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     await caller.publishResource({ id: newResource.id });
@@ -210,7 +210,7 @@ describe("createResourceProcedures", () => {
     await caller.publishResource({ id: newResource.id });
     await caller.unpublishResource({ id: newResource.id });
 
-    expect(await caller.readResourcePublication({ id: newResource.id })).toBeUndefined();
+    await expect(caller.readResourcePublication({ id: newResource.id })).resolves.toBeUndefined();
     await expect(caller.readPublishedResourceContent(newResource.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: NOT_FOUND]`,
     );

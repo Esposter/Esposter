@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
+import type { Resource, ResourceType } from "@esposter/db-schema";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
+import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
 import { ResourceTypeRoutePathMap } from "@/services/resource/ResourceTypeRoutePathMap";
-import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { ResourceType, ResourceTypes } from "@esposter/db-schema";
+import { ResourceTypes } from "@esposter/db-schema";
 import { watchDebounced } from "@vueuse/core";
 
 definePageMeta({ middleware: "auth" });
@@ -37,7 +37,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => openRes
     </Head>
     <StyledPageHeader />
     <v-container fluid>
-      <div flex flex-wrap gap-4 mb-4>
+      <div mb-4 flex flex-wrap gap-4>
         <v-text-field
           v-model="searchQuery"
           clearable

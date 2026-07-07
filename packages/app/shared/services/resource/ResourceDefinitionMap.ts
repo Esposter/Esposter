@@ -1,11 +1,11 @@
 import type { ResourceDefinition } from "#shared/models/resource/ResourceDefinition";
 
-import { fileResourceSchema } from "#shared/models/resource/file/FileResource";
-import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
-import { todoListResourceSchema } from "#shared/models/resource/todoList/TodoListResource";
 import { dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
 import { emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { flowchartEditorSchema } from "#shared/models/flowchartEditor/data/FlowchartEditor";
+import { fileResourceSchema } from "#shared/models/resource/file/FileResource";
+import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
+import { todoListResourceSchema } from "#shared/models/resource/todoList/TodoListResource";
 import { tableEditorConfigurationSchema } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { ResourceType } from "@esposter/db-schema";

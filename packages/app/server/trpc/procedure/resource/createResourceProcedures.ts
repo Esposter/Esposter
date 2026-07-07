@@ -242,5 +242,5 @@ export const createResourceProcedures = <TType extends ResourceType>(
   return {
     ...baseProcedures,
     ...(getIsPublishable(type) ? publishProcedures : {}),
-  } as typeof baseProcedures & (TType extends PublishableResourceType ? typeof publishProcedures : unknown);
+  } as (TType extends PublishableResourceType ? typeof publishProcedures : unknown) & typeof baseProcedures;
 };
