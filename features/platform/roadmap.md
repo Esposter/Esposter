@@ -17,12 +17,17 @@ The Resource Explorer consolidation: everything becomes a resource (`/architectu
 - [x] Tests: generic matrix consolidated into `createResourceProcedures.test.ts`; per-type tests trimmed to wiring; `resource.test.ts` for cross-type list
 - [x] Migration generated (`20260707004532_aberrant_emma_frost`: enum rename + File/Survey/TodoList, `resource_publications` created, `documents`→`resources`, publish columns dropped, FK cascade)
 - [x] 5 orphaned containers deleted in dev+prod (`dashboard-assets`, `email-editor-assets`, `flowchart-editor-assets`, `table-editor-assets`, `webpage-editor-assets`); `resource-assets` auto-creates at runtime (no infra tracking)
-- [ ] **Pending user action:** run `pnpm db:up` in `packages/db-schema` to apply the publish-split migration
+- [x] Publish-split migration applied (`pnpm db:up` in `packages/db-schema`)
 
 ## Phase 2 — explorer shell
 
+Azure-portal-faithful surface: `/resources` is the **Home** (search + quick-create + recents), the full list is its own page, and **Create is a dedicated flow** (gallery → per-type form), never a modal. See [specs/resource-explorer.md](specs/resource-explorer.md).
+
+- [ ] `/resources` **Home** (`pages/resources/index.vue`): resource search bar, quick-create tiles (`ResourceDefinitionMap` entries → `/resources/create/[type]`, Azure "services" row), recent-resources rows (name · type · updatedAt, sorted desc, capped) with a **See all** link, and a primary **Create a resource** button
+- [ ] `/resources/all` (`pages/resources/all.vue`): full `StyledDataTableServer` over `resource.readResources` (name, type facet, status, updatedAt), search, row → `/resources/[id]`; the **See all** target
+- [ ] `/resources/create` (`pages/resources/create/index.vue`): type-picker **gallery** (marketplace) listing `ResourceDefinitionMap` entries with icon + title + description → `/resources/create/[type]`
+- [ ] `/resources/create/[type]` (`pages/resources/create/[type].vue`): per-type create form (name + any type-specific initial settings), Review + Create → `createResource` → routes to `/resources/[id]`
 - [ ] `/resources/[id]/[[blade]]` page: left blade menu, Overview blade (Essentials + type summary), toolbar commands (rename/delete + capability commands), blade route middleware
-- [ ] `+ Create` dialog (type picker) on the `/resources` list
 - [ ] `useResource(id)` blade-scoped composable (successor of `useResourceState` for the blade page)
 - [ ] `ResourceBladeDefinitionMap`, `PortableFormatMap`, `ViewComponentMap` skeletons
 - [ ] `/view/[type]/[id]` dynamic public page dispatching `ViewComponentMap` (replaces per-type view pages)
