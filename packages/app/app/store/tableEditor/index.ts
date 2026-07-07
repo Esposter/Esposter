@@ -18,7 +18,7 @@ import { createEditFormData } from "@/services/shared/editForm/createEditFormDat
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { TableEditorHookMap } from "@/services/tableEditor/TableEditorHookMap";
 import { useItemStore } from "@/store/tableEditor/item";
-import { toRawDeep } from "@esposter/shared";
+import { MAX_READ_LIMIT, toRawDeep } from "@esposter/shared";
 
 const id = "tableEditor";
 const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id, () => {
@@ -28,27 +28,25 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   const searchQuery = ref("");
   const {
     content: tableEditorConfiguration,
-    createDocument,
-    currentDocument,
-    deleteDocument,
-    documents,
+    createResource,
+    currentResource,
+    deleteResource,
     load,
     loadLocal,
-    renameDocument,
+    renameResource,
+    resources,
     save: saveTableEditorConfiguration,
-    selectDocument,
-    setCurrentDocument,
-  } = useDocumentState(
+    selectResource,
+    setCurrentResource,
+  } = useResourceState(
     TableEditorConfiguration,
     {
-      createDocument: (input) => $trpc.tableEditor.createDocument.mutate(input),
-      deleteDocument: (input) => $trpc.tableEditor.deleteDocument.mutate(input),
-      publishDocument: (input) => $trpc.tableEditor.publishDocument.mutate(input),
-      readDocumentContent: (input) => $trpc.tableEditor.readDocumentContent.query(input),
-      readDocuments: async () => (await $trpc.tableEditor.readDocuments.query()).items,
-      saveDocumentContent: (input) => $trpc.tableEditor.saveDocumentContent.mutate(input),
-      unpublishDocument: (input) => $trpc.tableEditor.unpublishDocument.mutate(input),
-      updateDocument: (input) => $trpc.tableEditor.updateDocument.mutate(input),
+      createResource: (input) => $trpc.tableEditor.createResource.mutate(input),
+      deleteResource: (input) => $trpc.tableEditor.deleteResource.mutate(input),
+      readResourceContent: (input) => $trpc.tableEditor.readResourceContent.query(input),
+      readResources: async () => (await $trpc.tableEditor.readResources.query({ limit: MAX_READ_LIMIT })).items,
+      saveResourceContent: (input) => $trpc.tableEditor.saveResourceContent.mutate(input),
+      updateResource: (input) => $trpc.tableEditor.updateResource.mutate(input),
     },
     {
       defaultName: "My Tables",
@@ -97,19 +95,19 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   };
 
   return {
-    createDocument,
-    currentDocument,
-    deleteDocument,
-    documents,
+    createResource,
+    currentResource,
+    deleteResource,
     editedIndex,
     editedItem,
     editFormDialog,
     load,
     loadLocal,
-    renameDocument,
+    renameResource,
+    resources,
     searchQuery,
-    selectDocument,
-    setCurrentDocument,
+    selectResource,
+    setCurrentResource,
     tableEditor,
     tableEditorConfiguration,
     tableEditorType,

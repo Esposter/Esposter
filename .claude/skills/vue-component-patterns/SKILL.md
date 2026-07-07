@@ -5,6 +5,17 @@ description: Esposter Vue 3 component architecture patterns — generic componen
 
 # Vue Component Patterns (Esposter)
 
+## Shared Shell / Design-System Primitives
+
+Cross-product chrome is a small set of shared components in `components/Styled/` (design-system) and `components/App/` (app-chrome) — **reuse them, never re-roll a bare `v-toolbar` per editor.** Their design and rationale live in [`features/platform/specs/shell-cohesion.md`](../../../features/platform/specs/shell-cohesion.md); keep that spec live in the same change when you add or alter a shell primitive (see the `feature-workflow` Document phase).
+
+- `StyledPageHeader` — the canonical editor/page header (breadcrumb row + `actions` slot + `controls` slot). Every editor header mounts document picker / selects / search through it; controls never go inside `v-toolbar-title`.
+- `StyledEmptyState` — icon + title + description + action slot for empty lists/states.
+- `StyledSkeleton` — bordered `v-skeleton-loader` for per-region loading.
+- `AppBreadcrumbs` — route→product trail (matched against `ProductListLinkItems`), rendered by `StyledPageHeader`.
+
+When a new product/editor is added, give it a `StyledPageHeader`, a launcher entry in `ProductListLinkItems`, and — if it is document-backed — a row in the `/documents` hub maps (`DocumentTypeRoutePathMap` / `DocumentTypeIconMap`). Document the result in the shell-cohesion spec.
+
 ## Same Level of Abstraction
 
 Every statement in `<script setup>` must operate at the same conceptual level. Mixing low-level detail with high-level orchestration makes the component hard to read and extend.

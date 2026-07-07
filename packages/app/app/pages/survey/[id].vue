@@ -37,7 +37,13 @@ const saveSurveyResponse = async (survey: Model) => {
 const route = useRoute();
 const surveyId = route.params.id as string;
 const { $trpc } = useNuxtApp();
-const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(await $trpc.survey.readSurveyModel.query(surveyId));
+const publishedModel = await getResultAsync(() => $trpc.survey.readSurveyModel.query(surveyId)).match(
+  (model) => model,
+  () => {
+    throw createError({ statusCode: 404, statusMessage: "Survey not found" });
+  },
+);
+const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(publishedModel);
 const model = new Model(surveyModel);
 if (theme) model.applyTheme(theme);
 model.onValueChanged.add(saveSurveyResponse);

@@ -15,6 +15,11 @@ export const ProductListLinkItems = [
     title: "Calls",
   },
   {
+    href: RoutePath.Resources,
+    icon: "mdi-folder-multiple",
+    title: "Resource Explorer",
+  },
+  {
     href: RoutePath.TableEditor,
     icon: "mdi-table-edit",
     title: "Table Editor",
@@ -45,13 +50,19 @@ export const ProductListLinkItems = [
     title: SURVEY_DISPLAY_NAME,
   },
   {
-    href: RoutePath.Clicker,
-    icon: "mdi-cursor-pointer",
-    title: "Clicker",
-  },
-  {
-    href: RoutePath.Dungeons,
-    icon: "custom:dungeon-gate",
-    title: "Dungeons",
+    children: [
+      {
+        href: RoutePath.Clicker,
+        icon: "mdi-cursor-pointer",
+        title: "Clicker",
+      },
+      {
+        href: RoutePath.Dungeons,
+        icon: "custom:dungeon-gate",
+        title: "Dungeons",
+      },
+    ],
+    icon: "mdi-gamepad-variant",
+    title: "Games",
   },
 ] as const satisfies ListLinkItem[];

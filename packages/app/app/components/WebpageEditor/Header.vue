@@ -5,29 +5,31 @@ import { RoutePath } from "@esposter/shared";
 
 const session = authClient.useSession();
 const webpageEditorStore = useWebpageEditorStore();
-const { createDocument, deleteDocument, publishWebpage, renameDocument, selectDocument, unpublishWebpage } =
+const { createResource, deleteResource, publishWebpage, renameResource, selectResource, unpublishWebpage } =
   webpageEditorStore;
-const { currentDocument, documents } = storeToRefs(webpageEditorStore);
+const { currentResource, publication, resources } = storeToRefs(webpageEditorStore);
 </script>
 
 <template>
-  <v-toolbar v-if="session.data" height="auto">
-    <div px-4 py-2 flex gap-2 w-full items-center>
-      <DocumentPicker
-        :current-document
-        :documents
-        @create="createDocument($event)"
-        @delete="deleteDocument($event)"
-        @rename="(id, name) => renameDocument(id, name)"
-        @select="selectDocument($event)"
+  <StyledPageHeader>
+    <template v-if="session.data" #identity>
+      <ResourcePicker
+        :current-resource
+        :resources
+        @create="createResource($event)"
+        @delete="deleteResource($event)"
+        @rename="(id, name) => renameResource(id, name)"
+        @select="selectResource($event)"
       />
-      <DocumentPublishButton
-        v-if="currentDocument"
-        :document="currentDocument"
+    </template>
+    <template v-if="session.data && currentResource" #actions>
+      <ResourcePublishButton
+        :is-published="Boolean(publication)"
+        :resource="currentResource"
         :view-path="RoutePath.ViewWebpage"
         @publish="publishWebpage()"
         @unpublish="unpublishWebpage()"
       />
-    </div>
-  </v-toolbar>
+    </template>
+  </StyledPageHeader>
 </template>

@@ -21,7 +21,7 @@ const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const emailEditorStore = useEmailEditorStore();
 const { readEmailEditor, saveEmailEditor } = emailEditorStore;
-const { currentDocument, datasetReference } = storeToRefs(emailEditorStore);
+const { currentResource, datasetReference } = storeToRefs(emailEditorStore);
 const { editor } = await useGrapesJsEditor(
   { load: () => readEmailEditor(), store: (data) => saveEmailEditor(data) },
   { plugins: [grapesJSMJML] },
@@ -31,7 +31,7 @@ const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name
 const publishedSurveys = ref<Except<Survey, "model">[]>([]);
 
 watch(
-  () => currentDocument.value?.id,
+  () => currentResource.value?.id,
   async () => {
     await editor.value?.load();
   },

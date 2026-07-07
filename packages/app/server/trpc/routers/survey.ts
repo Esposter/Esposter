@@ -6,6 +6,7 @@ import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyIn
 import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useUpdateBlobUrls } from "@@/server/composables/survey/useUpdateBlobUrls";
@@ -21,6 +22,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorProcedure";
+import { RestError } from "@azure/storage-blob";
 import {
   cloneBlobUrls,
   createEntity,
@@ -41,7 +43,15 @@ import {
   surveyResponseEntitySchema,
   surveys,
 } from "@esposter/db-schema";
-import { createUniqueArraySchema, InvalidOperationError, MAX_READ_LIMIT, Operation, takeOne } from "@esposter/shared";
+import {
+  createUniqueArraySchema,
+  getResultAsync,
+  InvalidOperationError,
+  MAX_READ_LIMIT,
+  Operation,
+  streamToText,
+  takeOne,
+} from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { count, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -170,18 +180,31 @@ export const surveyRouter = router({
           ).message,
         });
 
-      const updatedSurvey = requireMutation(
-        (await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id)).returning())[0],
+      // Write the published blob snapshot before committing publishedAt — if either Azure call fails,
+      // The survey must stay unpublished so respondents never read a publish path with a missing snapshot.
+      const publishedSurvey = { ...ctx.survey, ...rest };
+      const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
+      const blobUrls = extractBlobUrls(publishedSurvey.model);
+      const publishDirectory = getPublishDirectory(publishedSurvey);
+      await cloneBlobUrls(containerClient, blobUrls, id, publishDirectory);
+      await useUpload(
+        AzureContainer.SurveyAssets,
+        `${publishDirectory}/${SURVEY_MODEL_FILENAME}`,
+        publishedSurvey.model,
+      );
+
+      return requireMutation(
+        (
+          await ctx.db
+            .update(surveys)
+            .set({ ...rest, publishedAt: new Date() })
+            .where(eq(surveys.id, id))
+            .returning()
+        )[0],
         Operation.Update,
         DatabaseEntityType.Survey,
         id,
       );
-
-      const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
-      const blobUrls = extractBlobUrls(updatedSurvey.model);
-      const publishDirectory = getPublishDirectory(updatedSurvey);
-      await cloneBlobUrls(containerClient, blobUrls, updatedSurvey.id, publishDirectory);
-      return updatedSurvey;
     },
   ),
   readSurvey: getCreatorProcedure(readSurveyInputSchema, "id").query(async ({ ctx }) => ({
@@ -196,7 +219,24 @@ export const surveyRouter = router({
         DatabaseEntityType.Survey,
         input,
       );
-      return useUpdateBlobUrls(survey, true);
+      // The public respondent page only ever serves a published snapshot; creators preview drafts in the SurveyJS editor.
+      if (!survey.publishedAt) throw new TRPCError({ code: "NOT_FOUND" });
+
+      // BlobClient.download() rejects on a missing blob, so map a genuine 404 to NOT_FOUND
+      // While letting transient Azure failures surface as an internal error instead of a false 404.
+      const { readableStreamBody } = await getResultAsync(() =>
+        useDownload(AzureContainer.SurveyAssets, `${getPublishDirectory(survey)}/${SURVEY_MODEL_FILENAME}`),
+      ).match(
+        (response) => response,
+        (error) => {
+          if (error instanceof RestError && error.statusCode === 404) throw new TRPCError({ code: "NOT_FOUND" });
+          throw error;
+        },
+      );
+      if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const publishedModel = await streamToText(readableStreamBody);
+      return useUpdateBlobUrls({ ...survey, model: publishedModel }, true);
     }),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)

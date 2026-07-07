@@ -15,7 +15,7 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
-import { documents, surveys } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE, resources, surveys } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -26,6 +26,8 @@ describe("dataset", () => {
   let tableEditorCaller: DecorateRouterRecord<TRPCRouter["tableEditor"]>;
   const name = "name";
   const group = "group";
+  const columnName = "columnName";
+  const value = "value";
   const model = JSON.stringify({
     pages: [
       {
@@ -50,7 +52,7 @@ describe("dataset", () => {
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(surveys);
-    await mockContext.db.delete(documents);
+    await mockContext.db.delete(resources);
   });
 
   test("reads survey responses dataset", async () => {
@@ -70,6 +72,21 @@ describe("dataset", () => {
       { name: "comments", type: ColumnType.String },
     ]);
     expect(dataset.rows).toStrictEqual([{ comments: "great", satisfaction: 5, wouldRecommend: true }]);
+  });
+
+  test("reads survey responses dataset within the azure page size limit", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await surveyCaller.createSurvey({ group, model, name });
+    for (let i = 0; i < AZURE_MAX_PAGE_SIZE + 1; i++)
+      await surveyCaller.createSurveyResponse({
+        model: { satisfaction: 1 },
+        partitionKey: newSurvey.id,
+        rowKey: crypto.randomUUID(),
+      });
+    const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
+
+    expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
   });
 
   test("reads survey responses dataset with no responses", async () => {
@@ -131,9 +148,7 @@ describe("dataset", () => {
   test("reads table document dataset", async () => {
     expect.hasAssertions();
 
-    const columnName = "columnName";
-    const value = "value";
-    const newDocument = await tableEditorCaller.createDocument({ name });
+    const newResource = await tableEditorCaller.createResource({ name });
     const configuration = new TableEditorConfiguration();
     configuration[TableEditorType.File].items.push(
       new CsvDataSourceItem({
@@ -146,36 +161,58 @@ describe("dataset", () => {
         name,
       }),
     );
-    await tableEditorCaller.saveDocumentContent({ content: configuration, contentVersion: 0, id: newDocument.id });
-    const dataset = await caller.readDataset({ id: newDocument.id, type: DatasetProviderType.TableDocument });
+    await tableEditorCaller.saveResourceContent({ content: configuration, contentVersion: 0, id: newResource.id });
+    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument });
 
     expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
     expect(dataset.rows).toStrictEqual([{ [columnName]: value }]);
   });
 
+  test("reads table document dataset within the azure page size limit", async () => {
+    expect.hasAssertions();
+
+    const newResource = await tableEditorCaller.createResource({ name });
+    const configuration = new TableEditorConfiguration();
+    configuration[TableEditorType.File].items.push(
+      new CsvDataSourceItem({
+        dataSource: {
+          columns: [new StringColumn({ name: columnName, sourceName: columnName })],
+          metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
+          rows: Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => new Row({ data: { [columnName]: value } })),
+          statistics: { columnCount: 1, rowCount: AZURE_MAX_PAGE_SIZE + 1, size: 0 },
+        },
+        name,
+      }),
+    );
+    await tableEditorCaller.saveResourceContent({ content: configuration, contentVersion: 0, id: newResource.id });
+    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument });
+
+    expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
+  });
+
   test("fails read table document without data source", async () => {
     expect.hasAssertions();
 
-    const newDocument = await tableEditorCaller.createDocument({ name });
-    await tableEditorCaller.saveDocumentContent({
+    const newResource = await tableEditorCaller.createResource({ name });
+    await tableEditorCaller.saveResourceContent({
       content: new TableEditorConfiguration(),
       contentVersion: 0,
-      id: newDocument.id,
+      id: newResource.id,
     });
 
     await expect(
-      caller.readDataset({ id: newDocument.id, type: DatasetProviderType.TableDocument }),
+      caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
   test("fails read table document with wrong user", async () => {
     expect.hasAssertions();
 
-    const newDocument = await tableEditorCaller.createDocument({ name });
+    const newResource = await tableEditorCaller.createResource({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      caller.readDataset({ id: newDocument.id, type: DatasetProviderType.TableDocument }),
+      caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

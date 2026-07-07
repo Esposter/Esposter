@@ -14,6 +14,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { createId } from "#shared/util/math/random/createId";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
+import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
@@ -409,7 +410,7 @@ export const baseRoomRouter = router({
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
       if (cursor) wheres.push(getCursorWhere(users, cursor, sortBy));
-      if (filter?.name) wheres.push(ilike(users.name, `%${filter.name}%`));
+      if (filter?.name) wheres.push(ilike(users.name, `%${escapeLike(filter.name)}%`));
 
       const readUsers = await ctx.db
         .select(getColumns(users))
@@ -522,7 +523,7 @@ export const baseRoomRouter = router({
 
       const wheres: (SQL | undefined)[] = [eq(roomsInMessage.type, RoomType.Room)];
       if (cursor) wheres.push(getCursorWhere(roomsInMessage, cursor, sortBy));
-      if (filter?.name) wheres.push(ilike(roomsInMessage.name, `%${filter.name}%`));
+      if (filter?.name) wheres.push(ilike(roomsInMessage.name, `%${escapeLike(filter.name)}%`));
       if (room) wheres.push(ne(roomsInMessage.id, room.id));
 
       const readRooms = await ctx.db

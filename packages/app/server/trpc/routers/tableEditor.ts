@@ -1,8 +1,5 @@
-import { tableEditorConfigurationSchema } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { router } from "@@/server/trpc";
-import { createDocumentProcedures } from "@@/server/trpc/procedure/document/createDocumentProcedures";
-import { AzureContainer, DocumentType } from "@esposter/db-schema";
+import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
+import { ResourceType } from "@esposter/db-schema";
 
-export const tableEditorRouter = router(
-  createDocumentProcedures(DocumentType.Table, tableEditorConfigurationSchema, AzureContainer.TableEditorAssets),
-);
+export const tableEditorRouter = router(createResourceProcedures(ResourceType.Table));

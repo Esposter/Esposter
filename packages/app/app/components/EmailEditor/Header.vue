@@ -11,23 +11,27 @@ interface EmailEditorHeaderProps {
 const { editor } = defineProps<EmailEditorHeaderProps>();
 const session = authClient.useSession();
 const emailEditorStore = useEmailEditorStore();
-const { createDocument, deleteDocument, renameDocument, saveDatasetReference, selectDocument } = emailEditorStore;
-const { currentDocument, datasetReference, documents } = storeToRefs(emailEditorStore);
+const { createResource, deleteResource, renameResource, saveDatasetReference, selectResource } = emailEditorStore;
+const { currentResource, datasetReference, resources } = storeToRefs(emailEditorStore);
 </script>
 
 <template>
-  <v-toolbar v-if="session.data" height="auto">
-    <div px-4 py-2 flex gap-2 w-full items-center>
-      <DocumentPicker
-        :current-document
-        :documents
-        @create="createDocument($event)"
-        @delete="deleteDocument($event)"
-        @rename="(id, name) => renameDocument(id, name)"
-        @select="selectDocument($event)"
+  <StyledPageHeader>
+    <template v-if="session.data" #identity>
+      <ResourcePicker
+        :current-resource
+        :resources
+        @create="createResource($event)"
+        @delete="deleteResource($event)"
+        @rename="(id, name) => renameResource(id, name)"
+        @select="selectResource($event)"
       />
+    </template>
+    <template v-if="session.data" #filters>
       <DatasetReferencePicker :model-value="datasetReference" @update:model-value="saveDatasetReference($event)" />
+    </template>
+    <template v-if="session.data" #actions>
       <EmailEditorExportPersonalizedHtmlButton :editor />
-    </div>
-  </v-toolbar>
+    </template>
+  </StyledPageHeader>
 </template>

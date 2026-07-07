@@ -4,40 +4,39 @@ import type { ProjectData } from "grapesjs";
 import { EmailEditor, emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { authClient } from "@/services/auth/authClient";
 import { EMAIL_EDITOR_LOCAL_STORAGE_KEY } from "@/services/emailEditor/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {
   const { $trpc } = useNuxtApp();
   const session = authClient.useSession();
   const {
     content,
-    createDocument,
-    currentDocument,
-    deleteDocument,
-    documents,
+    createResource,
+    currentResource,
+    deleteResource,
     load,
     loadLocal,
-    renameDocument,
+    renameResource,
+    resources,
     save,
-    selectDocument,
-  } = useDocumentState(
+    selectResource,
+  } = useResourceState(
     EmailEditor,
     {
-      createDocument: (input) => $trpc.emailEditor.createDocument.mutate(input),
-      deleteDocument: (input) => $trpc.emailEditor.deleteDocument.mutate(input),
-      publishDocument: (input) => $trpc.emailEditor.publishDocument.mutate(input),
-      readDocumentContent: (input) => $trpc.emailEditor.readDocumentContent.query(input),
-      readDocuments: async () => (await $trpc.emailEditor.readDocuments.query()).items,
-      saveDocumentContent: (input) => $trpc.emailEditor.saveDocumentContent.mutate(input),
-      unpublishDocument: (input) => $trpc.emailEditor.unpublishDocument.mutate(input),
-      updateDocument: (input) => $trpc.emailEditor.updateDocument.mutate(input),
+      createResource: (input) => $trpc.emailEditor.createResource.mutate(input),
+      deleteResource: (input) => $trpc.emailEditor.deleteResource.mutate(input),
+      readResourceContent: (input) => $trpc.emailEditor.readResourceContent.query(input),
+      readResources: async () => (await $trpc.emailEditor.readResources.query({ limit: MAX_READ_LIMIT })).items,
+      saveResourceContent: (input) => $trpc.emailEditor.saveResourceContent.mutate(input),
+      updateResource: (input) => $trpc.emailEditor.updateResource.mutate(input),
     },
     { defaultName: "My Email", localStorageKey: EMAIL_EDITOR_LOCAL_STORAGE_KEY, schema: emailEditorSchema },
   );
   const datasetReference = computed(() => content.value.datasetReference);
-  // The document list load happens once; subsequent editor storage loads serve the selected document's content
+  // The resource list load happens once; subsequent editor storage loads serve the selected resource's content
   const readEmailEditor = async () => {
     if (session.value.data) {
-      if (!currentDocument.value) await load();
+      if (!currentResource.value) await load();
     } else loadLocal();
     return content.value;
   };
@@ -51,15 +50,15 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     await save();
   };
   return {
-    createDocument,
-    currentDocument,
+    createResource,
+    currentResource,
     datasetReference,
-    deleteDocument,
-    documents,
+    deleteResource,
     readEmailEditor,
-    renameDocument,
+    renameResource,
+    resources,
     saveDatasetReference,
     saveEmailEditor,
-    selectDocument,
+    selectResource,
   };
 });

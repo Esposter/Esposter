@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
-import type { Document } from "@esposter/db-schema";
+import type { Resource } from "@esposter/db-schema";
 import type { Editor } from "grapesjs";
 
+import { downloadFile } from "@/services/app/downloadFile";
+import { sanitizeFilename } from "@/services/app/sanitizeFilename";
 import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFields";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { getResultAsync, noop } from "@esposter/shared";
+import { strToU8, zipSync } from "fflate";
 
 interface ExportPersonalizedHtmlButtonProps {
   editor: Editor | undefined;
@@ -17,26 +20,20 @@ const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const emailEditorStore = useEmailEditorStore();
-const { currentDocument, datasetReference } = storeToRefs(emailEditorStore);
-const exportPersonalizedHtml = async (editorValue: Editor, document: Document, reference: DatasetReference) => {
-  if (!("showDirectoryPicker" in window)) {
-    createAlert("Your browser does not support exporting to a directory", "error");
-    return;
-  }
-
-  const { html } = editorValue.runCommand("mjml-get-code") as { html: string };
+const { currentResource, datasetReference } = storeToRefs(emailEditorStore);
+const exportPersonalizedHtml = async (editorValue: Editor, resource: Resource, reference: DatasetReference) => {
+  const { html } = editorValue.runCommand("mjml-code-to-html") as { html: string };
   await getResultAsync(async () => {
     const dataset = await $trpc.dataset.readDataset.query(reference);
-    const directoryHandle = await window.showDirectoryPicker({ mode: "readwrite" });
-    for (const [index, row] of dataset.rows.entries()) {
-      const fileHandle = await directoryHandle.getFileHandle(`${document.name}-${index + 1}.html`, { create: true });
-      const writable = await fileHandle.createWritable();
-      await writable.write(substituteMergeFields(html, row));
-      await writable.close();
-    }
+    const filename = sanitizeFilename(resource.name);
+    const zip = zipSync(
+      Object.fromEntries(
+        dataset.rows.map((row, index) => [`${filename}-${index + 1}.html`, strToU8(substituteMergeFields(html, row))]),
+      ),
+    );
+    downloadFile(`${filename}.zip`, zip, "application/zip");
     createAlert(`Exported ${dataset.rows.length} personalized emails`, "success");
   }).match(noop, (error) => {
-    if (error.name === "AbortError") return;
     createAlert(error.message, "error");
   });
 };
@@ -44,9 +41,9 @@ const exportPersonalizedHtml = async (editorValue: Editor, document: Document, r
 
 <template>
   <StyledTooltipIconButton
-    v-if="editor && currentDocument && datasetReference"
+    v-if="editor && currentResource && datasetReference"
     icon="mdi-email-arrow-right"
     text="Export personalized HTML"
-    @click="exportPersonalizedHtml(editor, currentDocument, datasetReference)"
+    @click="exportPersonalizedHtml(editor, currentResource, datasetReference)"
   />
 </template>

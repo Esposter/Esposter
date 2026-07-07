@@ -162,6 +162,37 @@ describe("survey", () => {
     );
   });
 
+  test("publishes", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await caller.createSurvey({ group, model, name });
+    const publishedSurvey = await caller.publishSurvey({ id: newSurvey.id, publishVersion: newSurvey.publishVersion });
+
+    expect(publishedSurvey.publishedAt).not.toBeNull();
+    expect(publishedSurvey.publishVersion).toBe(newSurvey.publishVersion + 1);
+  });
+
+  test("hides unpublished surveys from respondents", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await caller.createSurvey({ group, model, name });
+
+    await expect(caller.readSurveyModel(newSurvey.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: NOT_FOUND]`,
+    );
+  });
+
+  test("serves the published snapshot to respondents, not later edits", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await caller.createSurvey({ group, model, name });
+    await caller.publishSurvey({ id: newSurvey.id, publishVersion: newSurvey.publishVersion });
+    await caller.updateSurveyModel({ id: newSurvey.id, model: updatedModel, modelVersion: newSurvey.modelVersion });
+    const servedModel = await caller.readSurveyModel(newSurvey.id);
+
+    expect(servedModel).toBe(model);
+  });
+
   test("deletes", async () => {
     expect.hasAssertions();
 

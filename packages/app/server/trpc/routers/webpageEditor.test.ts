@@ -6,13 +6,13 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
-import { documents, DocumentType } from "@esposter/db-schema";
+import { resources, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-// The generic document-procedure matrix is covered once in dashboard.test.ts;
-// Here only the router wiring: document type, content schema and container.
+// The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
+// Here only the router wiring: resource type + content schema round-trip.
 describe("webpageEditor", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["webpageEditor"]>;
@@ -25,24 +25,24 @@ describe("webpageEditor", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    await mockContext.db.delete(documents);
+    await mockContext.db.delete(resources);
   });
 
   test("saves and reads content", async () => {
     expect.hasAssertions();
 
-    const newDocument = await caller.createDocument({ name });
+    const newResource = await caller.createResource({ name });
 
-    expect(newDocument.type).toBe(DocumentType.Webpage);
+    expect(newResource.type).toBe(ResourceType.Webpage);
 
     // The captured standalone render is part of the round-trip so the schema provably preserves it
     const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
-    await caller.saveDocumentContent({
+    await caller.saveResourceContent({
       content: webpageEditor,
-      contentVersion: newDocument.contentVersion,
-      id: newDocument.id,
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
     });
-    const content = await caller.readDocumentContent({ id: newDocument.id });
+    const content = await caller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
   });

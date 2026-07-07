@@ -1,13 +1,13 @@
 # File Table Editor
 
-A CSV/JSON/XLSX table editor with inline editing, data cleaning, computed columns, statistics, and Excel-style clipboard. Local-first; no backend.
+The grid editor of the **File resource** — CSV/JSON/XLSX with inline editing, data cleaning, computed columns, statistics, and Excel-style clipboard. Surfaced as the Data blade in the Resource Explorer ([`platform/specs/file-resource.md`](../platform/specs/file-resource.md)).
 
 This README is the index. Detail lives in the linked specs.
 
 ## Now
 
-- Mature feature — no active work, no roadmap. New ideas: check [out-of-scope/](out-of-scope) first.
-- Cross-product work (import survey responses as a data source, multi-document persistence, serving table data to dashboards) is tracked in [`platform/`](../platform/roadmap.md), not here.
+- Grid features mature — no active work, no roadmap. New ideas: check [out-of-scope/](out-of-scope) first.
+- The Resource Explorer consolidation (each file becomes its own resource; settings/data split into blades) is tracked in [`platform/`](../platform/roadmap.md), not here.
 
 ## Shipped
 
