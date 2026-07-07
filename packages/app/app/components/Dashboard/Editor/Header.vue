@@ -14,7 +14,7 @@ const { visualType } = storeToRefs(visualStore);
 const dashboardStore = useDashboardStore();
 const { createResource, deleteResource, publishDashboard, renameResource, selectResource, unpublishDashboard } =
   dashboardStore;
-const { currentResource, resources } = storeToRefs(dashboardStore);
+const { currentResource, publication, resources } = storeToRefs(dashboardStore);
 </script>
 
 <template>
@@ -46,6 +46,7 @@ const { currentResource, resources } = storeToRefs(dashboardStore);
     <template #actions>
       <ResourcePublishButton
         v-if="session.data && currentResource"
+        :is-published="Boolean(publication)"
         :view-path="RoutePath.ViewDashboard"
         :resource="currentResource"
         @publish="publishDashboard()"

@@ -5,12 +5,14 @@ import { useAlertStore } from "@/store/alert";
 import { getResultAsync } from "@esposter/shared";
 
 interface ResourcePublishButtonProps {
+  // Publish state is normalized off the resource row, so it is passed in explicitly
+  isPublished: boolean;
   resource: Resource;
   // Builds the public route for viewing the published resource, e.g. RoutePath.ViewDashboard
   viewPath: (id: string) => string;
 }
 
-const { resource, viewPath } = defineProps<ResourcePublishButtonProps>();
+const { isPublished, resource, viewPath } = defineProps<ResourcePublishButtonProps>();
 const emit = defineEmits<{ publish: []; unpublish: [] }>();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
@@ -24,11 +26,11 @@ const copyViewUrl = () =>
 
 <template>
   <StyledTooltipIconButton
-    :icon="resource.publishedAt ? 'mdi-publish' : 'mdi-publish-off'"
-    :text="resource.publishedAt ? 'Republish' : 'Publish'"
+    :icon="isPublished ? 'mdi-publish' : 'mdi-publish-off'"
+    :text="isPublished ? 'Republish' : 'Publish'"
     @click="emit('publish')"
   />
-  <template v-if="resource.publishedAt">
+  <template v-if="isPublished">
     <StyledTooltipIconButton icon="mdi-link-variant" text="Copy public link" @click="copyViewUrl()" />
     <StyledTooltipIconButton icon="mdi-cancel" text="Unpublish" @click="emit('unpublish')" />
   </template>

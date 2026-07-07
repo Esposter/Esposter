@@ -11,6 +11,7 @@ import { likes } from "@/schema/likes";
 import { posts } from "@/schema/posts";
 import { pushSubscriptionsInMessage } from "@/schema/pushSubscriptionsInMessage";
 import { rateLimiterFlexible } from "@/schema/rateLimiterFlexible";
+import { resourcePublications } from "@/schema/resourcePublications";
 import { resources, resourceTypeEnum } from "@/schema/resources";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
 import { roomFiltersInMessage } from "@/schema/roomFiltersInMessage";
@@ -46,6 +47,7 @@ export const schema = {
   posts,
   pushSubscriptionsInMessage,
   rateLimiterFlexible,
+  resourcePublications,
   resources,
   resourceTypeEnum,
   roomCategoriesInMessage,

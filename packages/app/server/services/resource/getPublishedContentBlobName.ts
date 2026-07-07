@@ -1,4 +1,6 @@
-import type { Resource } from "@esposter/db-schema";
+import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
-export const getPublishedContentBlobName = (resourceId: Resource["id"], publishVersion: Resource["publishVersion"]) =>
-  `${resourceId}/published/${publishVersion}`;
+export const getPublishedContentBlobName = (
+  resourceId: Resource["id"],
+  publishVersion: ResourcePublication["publishVersion"],
+) => `${resourceId}/published/${publishVersion}`;

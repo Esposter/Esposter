@@ -12,8 +12,10 @@ A resource is three things: an identity row (Postgres), a content blob (Azure Bl
 
 ```mermaid
 flowchart LR
-  subgraph pg [Postgres resources row — identity and lifecycle]
-    ROW["id · type · name · userId<br/>contentVersion · publishedAt · publishVersion"]
+  subgraph pg [Postgres — identity and lifecycle]
+    ROW["resources row<br/>id · type · name · userId · contentVersion"]
+    PUBROW["resource_publications row (exists iff published)<br/>resourceId · publishVersion · publishedAt"]
+    ROW -. "1:0..1 (Publishable)" .-> PUBROW
   end
 
   subgraph blob [Azure Blob resource-assets container]
@@ -38,16 +40,25 @@ flowchart LR
 
 ## Schema
 
-Drizzle table `resources` in `packages/db-schema`:
+Drizzle table `resources` in `packages/db-schema` — pure identity + content lifecycle:
 
-| Column                          | Type                   | Notes                                                        |
-| ------------------------------- | ---------------------- | ------------------------------------------------------------ |
-| `id`                            | uuid PK                | becomes the blob path prefix                                 |
-| `type`                          | `ResourceType` pg enum | Dashboard, Email, File, Flowchart, Survey, TodoList, Webpage |
-| `name`                          | text + length check    | `createNameSchema` pattern                                   |
-| `userId`                        | FK → users, cascade    | owner; resources are single-owner                            |
-| `contentVersion`                | integer                | optimistic concurrency on content saves                      |
-| `publishedAt`, `publishVersion` | timestamp / integer    | used by the Publishable capability (`publishing.md`)         |
+| Column           | Type                   | Notes                                                        |
+| ---------------- | ---------------------- | ------------------------------------------------------------ |
+| `id`             | uuid PK                | becomes the blob path prefix                                 |
+| `type`           | `ResourceType` pg enum | Dashboard, Email, File, Flowchart, Survey, TodoList, Webpage |
+| `name`           | text + length check    | `createNameSchema` pattern                                   |
+| `userId`         | FK → users, cascade    | owner; resources are single-owner                            |
+| `contentVersion` | integer                | optimistic concurrency on content saves                      |
+
+Publish state is **normalized into its own table**, `resource_publications` — a row exists iff the resource is currently published. Publishing is a capability, not a base attribute, so `publishedAt`/`publishVersion` do not belong on every resource row:
+
+| Column           | Type                             | Notes                                      |
+| ---------------- | -------------------------------- | ------------------------------------------ |
+| `resourceId`     | uuid PK, FK → resources, cascade | one publication per resource               |
+| `publishVersion` | integer, default 1               | keys the immutable published blob snapshot |
+| `publishedAt`    | timestamp, default now           | when the current publish happened          |
+
+Created/updated timestamps come from the shared metadata columns on every table. The Publishable capability owns `resource_publications` (`publishing.md`).
 
 Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by id only (type lives in the row; ids are UUIDs — a type prefix would duplicate authoritative data into path strings):
 

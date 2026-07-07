@@ -1,6 +1,6 @@
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { PublishableResourceProcedureOptions } from "@@/server/models/resource/PublishableResourceProcedureOptions";
-import type { Resource, ResourceType } from "@esposter/db-schema";
+import type { Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { getIsPublishable } from "#shared/services/resource/getIsPublishable";
@@ -18,7 +18,13 @@ import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerPro
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { deleteDirectory } from "@esposter/db";
-import { AzureContainer, DatabaseEntityType, resources, selectResourceSchema } from "@esposter/db-schema";
+import {
+  AzureContainer,
+  DatabaseEntityType,
+  resourcePublications,
+  resources,
+  selectResourceSchema,
+} from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, jsonDateParse, Operation, streamToText } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
@@ -154,7 +160,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ),
   };
   const publishProcedures = {
-    publishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(
+    publishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourcePublication>(
       async ({ ctx, input: { id } }) => {
         const content = await readContent(id);
         if (content === undefined)
@@ -167,63 +173,67 @@ export const createResourceProcedures = <TType extends ResourceType>(
             ).message,
           });
 
-        // The increment is done in SQL so concurrent publishes each claim a distinct publish blob
-        const updatedResource = requireMutation(
+        // The version bump is done in SQL so concurrent publishes each claim a distinct publish blob;
+        // the publication row exists only while the resource is published (the Publishable capability's state)
+        const publication = requireMutation(
           (
             await ctx.db
-              .update(resources)
-              .set({ publishedAt: new Date(), publishVersion: sql`${resources.publishVersion} + 1` })
-              .where(eq(resources.id, id))
+              .insert(resourcePublications)
+              .values({ resourceId: id })
+              .onConflictDoUpdate({
+                set: { publishedAt: new Date(), publishVersion: sql`${resourcePublications.publishVersion} + 1` },
+                target: resourcePublications.resourceId,
+              })
               .returning()
           )[0],
           Operation.Update,
-          DatabaseEntityType.Resource,
+          DatabaseEntityType.ResourcePublication,
           id,
         );
 
         const publishedContent = transformPublishedContent
-          ? await transformPublishedContent(ctx, updatedResource, content)
+          ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
         await useUpload(
           AzureContainer.ResourceAssets,
-          getPublishedContentBlobName(id, updatedResource.publishVersion),
+          getPublishedContentBlobName(id, publication.publishVersion),
           JSON.stringify(publishedContent),
         );
-        return updatedResource;
+        return publication;
       },
     ),
     readPublishedResourceContent: standardRateLimitedProcedure
       .input(selectResourceSchema.shape.id)
       .query(async ({ ctx, input }) => {
         const resource = await requireEntity(
-          ctx.db.query.resources.findFirst({ where: { id: { eq: input }, type: { eq: type } } }),
+          ctx.db.query.resources.findFirst({
+            where: { id: { eq: input }, type: { eq: type } },
+            with: { publication: true },
+          }),
           DatabaseEntityType.Resource,
           input,
         );
-        if (!resource.publishedAt) throw new TRPCError({ code: "NOT_FOUND" });
+        if (!resource.publication) throw new TRPCError({ code: "NOT_FOUND" });
 
         const { readableStreamBody } = await useDownload(
           AzureContainer.ResourceAssets,
-          getPublishedContentBlobName(input, resource.publishVersion),
+          getPublishedContentBlobName(input, resource.publication.publishVersion),
         );
         if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
         const content = contentSchema.parse(jsonDateParse(await streamToText(readableStreamBody)));
         return { content, name: resource.name };
       }),
-    unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { id } }) => {
-        const updatedResource = requireMutation(
-          (await ctx.db.update(resources).set({ publishedAt: null }).where(eq(resources.id, id)).returning())[0],
-          Operation.Update,
-          DatabaseEntityType.Resource,
-          id,
-        );
+    readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
+      ResourcePublication | undefined
+    >(({ ctx }) => ctx.db.query.resourcePublications.findFirst({ where: { resourceId: { eq: ctx.resource.id } } })),
+    unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
+      const { id } = ctx.resource;
+      await ctx.db.delete(resourcePublications).where(eq(resourcePublications.resourceId, id));
 
-        const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-        await deleteDirectory(containerClient, `${id}/published`, true);
-        return updatedResource;
-      },
-    ),
+      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+      await deleteDirectory(containerClient, `${id}/published`, true);
+      return ctx.resource;
+    }),
   };
   return {
     ...baseProcedures,

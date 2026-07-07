@@ -1,6 +1,6 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { ResourceProcedures } from "@/models/resource/ResourceProcedures";
-import type { Resource } from "@esposter/db-schema";
+import type { Resource, ResourcePublication } from "@esposter/db-schema";
 import type { ItemMetadata } from "@esposter/shared";
 import type { z } from "zod";
 
@@ -28,6 +28,9 @@ export const useResourceState = <TContent extends ItemMetadata>(
   const saveToLocalStorage = useSaveToLocalStorage();
   const resources = ref<Resource[]>([]);
   const currentResource = ref<Resource>();
+  // Publish state is normalized off the resource row (the Publishable capability), so it is tracked
+  // separately and only ever set for publishable types (whose procedures expose readResourcePublication)
+  const publication = ref<ResourcePublication>();
   const content = ref(new Model()) as Ref<TContent>;
 
   const selectResource = async (id: Resource["id"]) => {
@@ -35,6 +38,7 @@ export const useResourceState = <TContent extends ItemMetadata>(
     if (!resource) return;
 
     currentResource.value = resource;
+    publication.value = await procedures.readResourcePublication?.({ id });
     const data = await procedures.readResourceContent({ id });
     content.value = new Model((data ?? undefined) as never);
   };
@@ -109,7 +113,7 @@ export const useResourceState = <TContent extends ItemMetadata>(
     if (!resource) return;
     await getResultAsync(async () => {
       if (!procedures.publishResource) return;
-      setCurrentResource(await procedures.publishResource({ id: resource.id }));
+      publication.value = await procedures.publishResource({ id: resource.id });
     }).match(noop, (error) => {
       alertStore.createAlert(error.message, "error");
     });
@@ -119,7 +123,8 @@ export const useResourceState = <TContent extends ItemMetadata>(
     if (!resource) return;
     await getResultAsync(async () => {
       if (!procedures.unpublishResource) return;
-      setCurrentResource(await procedures.unpublishResource({ id: resource.id }));
+      await procedures.unpublishResource({ id: resource.id });
+      publication.value = undefined;
     }).match(noop, (error) => {
       alertStore.createAlert(error.message, "error");
     });
@@ -131,6 +136,7 @@ export const useResourceState = <TContent extends ItemMetadata>(
     deleteResource,
     load,
     loadLocal,
+    publication,
     publish,
     renameResource,
     resources,

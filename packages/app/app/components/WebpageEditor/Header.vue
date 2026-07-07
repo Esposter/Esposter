@@ -7,7 +7,7 @@ const session = authClient.useSession();
 const webpageEditorStore = useWebpageEditorStore();
 const { createResource, deleteResource, publishWebpage, renameResource, selectResource, unpublishWebpage } =
   webpageEditorStore;
-const { currentResource, resources } = storeToRefs(webpageEditorStore);
+const { currentResource, publication, resources } = storeToRefs(webpageEditorStore);
 </script>
 
 <template>
@@ -24,6 +24,7 @@ const { currentResource, resources } = storeToRefs(webpageEditorStore);
     </template>
     <template v-if="session.data && currentResource" #actions>
       <ResourcePublishButton
+        :is-published="Boolean(publication)"
         :resource="currentResource"
         :view-path="RoutePath.ViewWebpage"
         @publish="publishWebpage()"

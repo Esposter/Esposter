@@ -8,15 +8,18 @@ Adopters: Dashboard, Survey, Webpage. A type opts in by declaring `publishable: 
 
 ## Mechanism
 
-- **Publish = snapshot copy.** `publishResource` copies the content blob to `{id}/published/{publishVersion}`, bumps `publishVersion`, sets `publishedAt`. Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
-- **Public reads serve only the publish copy**, never the working copy, and are rate-limited with no auth. An unpublished resource 404s publicly.
-- **Unpublish** deletes the publish blobs and clears `publishedAt`; the public URL 404s.
+Publish state lives in its own `resource_publications` table (`resources.md`) — a row exists iff the resource is currently published. This keeps publish attributes off resources that can't publish.
 
-| Procedure                      | Auth                 | Purpose                                   |
-| ------------------------------ | -------------------- | ----------------------------------------- |
-| `publishResource`              | owner                | snapshot copy + version bump              |
-| `unpublishResource`            | owner                | delete publish blobs, clear `publishedAt` |
-| `readPublishedResourceContent` | public, rate-limited | serve the publish copy                    |
+- **Publish = snapshot copy.** `publishResource` upserts the `resource_publications` row (bumping `publishVersion` in SQL), then copies the content blob to `{id}/published/{publishVersion}`. Edits after publish are invisible until re-publish — that is the feature (a stable public artifact), not a limitation.
+- **Public reads serve only the publish copy**, never the working copy, and are rate-limited with no auth. A resource with no publication row 404s publicly.
+- **Unpublish** deletes the publication row and the publish blobs; the public URL 404s.
+
+| Procedure                      | Auth                 | Purpose                                                    |
+| ------------------------------ | -------------------- | ---------------------------------------------------------- |
+| `publishResource`              | owner                | upsert publication + snapshot copy → `ResourcePublication` |
+| `unpublishResource`            | owner                | delete publication row + publish blobs                     |
+| `readResourcePublication`      | owner                | current publish state (for editor UI), or undefined        |
+| `readPublishedResourceContent` | public, rate-limited | serve the publish copy                                     |
 
 Two hooks on `createResourceProcedures` support publishing needs:
 
