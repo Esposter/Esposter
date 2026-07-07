@@ -12,7 +12,7 @@ const { title } = defineProps<AppBreadcrumbsProps>();
 const route = useRoute();
 const items = computed(() => {
   const crumbs: { disabled?: boolean; title: string; to?: string }[] = [{ title: "Home", to: RoutePath.Index }];
-  const products = ProductListLinkItems.flatMap((item: ListLinkItem) => (item.children ? [...item.children] : [item]));
+  const products = ProductListLinkItems.flatMap((item: ListLinkItem) => item.children ?? [item]);
   const matched = products
     .filter((product) => typeof product.href === "string" && route.path.startsWith(product.href))
     .toSorted((a, b) => String(b.href).length - String(a.href).length)

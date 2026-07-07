@@ -5,6 +5,12 @@ import { MockTableDatabase } from "@/store/MockTableDatabase";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
 import { afterEach, describe, expect, test } from "vitest";
 
+const readByPage = async (client: MockTableClient, maxPageSize?: number) => {
+  const entities = [];
+  for await (const page of client.listEntities().byPage({ maxPageSize })) entities.push(...page);
+  return entities;
+};
+
 describe(MockTableClient, () => {
   const tableName = "tableName";
   const partitionKey = "partitionKey";
@@ -12,11 +18,6 @@ describe(MockTableClient, () => {
     const client = new MockTableClient(tableName, tableName);
     for (let i = 0; i < entityCount; i++) await client.createEntity<TableEntity>({ partitionKey, rowKey: `${i}` });
     return client;
-  };
-  const readByPage = async (client: MockTableClient, maxPageSize?: number) => {
-    const entities = [];
-    for await (const page of client.listEntities().byPage({ maxPageSize })) entities.push(...page);
-    return entities;
   };
 
   afterEach(() => {
