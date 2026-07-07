@@ -14,7 +14,7 @@ import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
-// per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
+// Per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
 describe("createResourceProcedures", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
@@ -229,12 +229,15 @@ describe("createResourceProcedures", () => {
   test("omits publish procedures for non-publishable types", () => {
     expect.hasAssertions();
 
-    // A non-publishable type (Table) has no publish endpoints at all — capability gating, not just a guard
-    const tableCaller = createCallerFactory(tableEditorRouter)(mockContext) as Record<string, unknown>;
+    // A non-publishable type (Table) has no publish endpoints at all — capability gating, not just a guard.
+    // The caller proxy is permissive at runtime, so absence is asserted on the router's procedure record.
+    const publishableProcedures = Object.keys(dashboardRouter._def.procedures);
+    const nonPublishableProcedures = Object.keys(tableEditorRouter._def.procedures);
 
-    expect(tableCaller.publishResource).toBeUndefined();
-    expect(tableCaller.unpublishResource).toBeUndefined();
-    expect(tableCaller.readResourcePublication).toBeUndefined();
-    expect(tableCaller.readPublishedResourceContent).toBeUndefined();
+    expect(publishableProcedures).toContain("publishResource");
+    expect(nonPublishableProcedures).not.toContain("publishResource");
+    expect(nonPublishableProcedures).not.toContain("unpublishResource");
+    expect(nonPublishableProcedures).not.toContain("readResourcePublication");
+    expect(nonPublishableProcedures).not.toContain("readPublishedResourceContent");
   });
 });

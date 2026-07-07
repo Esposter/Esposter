@@ -181,7 +181,7 @@ export const surveyRouter = router({
         });
 
       // Write the published blob snapshot before committing publishedAt — if either Azure call fails,
-      // the survey must stay unpublished so respondents never read a publish path with a missing snapshot.
+      // The survey must stay unpublished so respondents never read a publish path with a missing snapshot.
       const publishedSurvey = { ...ctx.survey, ...rest };
       const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
       const blobUrls = extractBlobUrls(publishedSurvey.model);
@@ -223,7 +223,7 @@ export const surveyRouter = router({
       if (!survey.publishedAt) throw new TRPCError({ code: "NOT_FOUND" });
 
       // BlobClient.download() rejects on a missing blob, so map a genuine 404 to NOT_FOUND
-      // while letting transient Azure failures surface as an internal error instead of a false 404.
+      // While letting transient Azure failures surface as an internal error instead of a false 404.
       const { readableStreamBody } = await getResultAsync(() =>
         useDownload(AzureContainer.SurveyAssets, `${getPublishDirectory(survey)}/${SURVEY_MODEL_FILENAME}`),
       ).match(

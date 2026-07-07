@@ -105,7 +105,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       const content = await readContent(id);
       if (content === undefined || !transformReadContent) return content;
       // The hook is typed for the concrete type at the call site; inside the generic factory the
-      // content and hook-param types can't be proven equal, so the cast is the centralized cost
+      // Content and hook-param types can't be proven equal, so the cast is the centralized cost
       return transformReadContent(ctx, ctx.resource, content as never) as Promise<typeof content>;
     }),
     readResources: standardAuthedProcedure
@@ -175,7 +175,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
             ).message,
           });
         // The version bump is done in SQL so concurrent publishes each claim a distinct publish blob;
-        // the publication row exists only while the resource is published (the Publishable capability's state)
+        // The publication row exists only while the resource is published (the Publishable capability's state)
         const publication = requireMutation(
           (
             await ctx.db

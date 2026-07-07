@@ -29,7 +29,7 @@ export const useResourceState = <TContent extends ItemMetadata>(
   const resources = ref<Resource[]>([]);
   const currentResource = ref<Resource>();
   // Publish state is normalized off the resource row (the Publishable capability), so it is tracked
-  // separately and only ever set for publishable types (whose procedures expose readResourcePublication)
+  // Separately and only ever set for publishable types (whose procedures expose readResourcePublication)
   const publication = ref<ResourcePublication>();
   const content = ref(new Model()) as Ref<TContent>;
 

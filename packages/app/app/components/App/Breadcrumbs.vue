@@ -15,7 +15,7 @@ const items = computed(() => {
   const products = ProductListLinkItems.flatMap((item: ListLinkItem) => (item.children ? [...item.children] : [item]));
   const matched = products
     .filter((product) => typeof product.href === "string" && route.path.startsWith(product.href))
-    .sort((a, b) => String(b.href).length - String(a.href).length)
+    .toSorted((a, b) => String(b.href).length - String(a.href).length)
     .at(0);
   if (matched && typeof matched.href === "string") crumbs.push({ title: matched.title, to: matched.href });
   if (title) crumbs.push({ title });

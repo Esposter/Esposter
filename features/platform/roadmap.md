@@ -2,23 +2,31 @@
 
 The Resource Explorer consolidation: everything becomes a resource (`/architecture/resources.md`), the explorer replaces every per-editor page ([specs/resource-explorer.md](specs/resource-explorer.md)). No backwards compatibility; existing documents/surveys data is discarded. Grep [out-of-scope/](out-of-scope) + [deferred/](deferred) before adding items.
 
-## Phase 1 — schema + factory + container
+**Phase-order note:** `surveys` stays on its own table until Phase 5 (folding it in Phase 1 would drag the whole survey frontend rewrite forward). `ResourceType.Table` is a transitional type carrying the multi-item table-editor blob until the File/TodoList split in Phase 4. The table editor, dashboard, email, webpage, flowchart still render on their existing top-level pages (the explorer deep-links to them) until Phase 3+ turns them into blades.
 
-- [ ] `packages/db-schema`: `ResourceType` enum + `resources` table (rename of `documents` absorbing `surveys` — `model`→blob, `modelVersion`→`contentVersion`, `group` dropped); delete `documents.ts`, `surveys.ts`, `DocumentType.ts`; migration drops `documents` + `surveys` + old enums; relations updated; `DatabaseEntityType.Document`/`.Survey` → `.Resource`
-- [ ] `AzureContainer.ResourceAssets` replaces the six editor/survey containers; Pulumi change in `packages/infra`
-- [ ] `ResourceDefinitionMap` + `ResourceDefinition` + derived unions (`PublishableResourceType`, `DatasetProviderResourceType`, `PortableResourceType`); content schemas relocated to `shared/models/resource/<type>/`
-- [ ] `createResourceProcedures` (from `createDocumentProcedures`): definition-map-driven schema/container, conditional publish procedures with conditional return type, `transformPublishedContent(ctx, resource, content)` + `transformReadContent(ctx, resource, content)` hooks; `getOwnerProcedure` on `resources` + typeless overload
-- [ ] Cross-type `resource` router: `readResource`, `readResources`
-- [ ] Router tests updated (factory + per-type)
+## Phase 1 — schema + factory + container ✅ (shipped)
+
+- [x] `packages/db-schema`: `ResourceType` enum + `resources` table (renamed from `documents`); `DatabaseEntityType.Document` → `.Resource` (+ `.ResourcePublication`); relations updated. `surveys` retained (folds in Phase 5)
+- [x] **Publish normalized** into `resource_publications` (row exists iff published) — `publishedAt`/`publishVersion` off the base row; `resourcesRelation.publication`, `resourcePublicationsRelation`
+- [x] `AzureContainer.ResourceAssets` replaces the editor/survey containers (Survey's kept until Phase 5)
+- [x] `ResourceDefinitionMap` + `ResourceDefinition` + derived unions (`PublishableResourceType`, `DatasetProviderResourceType`, `PortableResourceType`); File/Survey/TodoList content schemas under `shared/models/resource/<type>/`
+- [x] `createResourceProcedures`: definition-map-driven schema/container, conditional publish procedures (`publishResource`/`unpublishResource`/`readResourcePublication`/`readPublishedResourceContent`) via `resource_publications`, `transformPublishedContent`/`transformReadContent` hooks; `getOwnerProcedure` on `resources` + typeless overload
+- [x] Cross-type `resource` router: `readResource`, `readResources` (search + type facets)
+- [x] Per-type routers rewired; achievement `triggerPath`s → `*.saveResourceContent`
+- [x] Client: `useResourceState` (+ `publication` ref), stores/headers/`ResourcePublisher`, `/resources` explorer replaces the documents hub, `ProductListLinkItems` → Resource Explorer entry
+- [x] Tests: generic matrix consolidated into `createResourceProcedures.test.ts`; per-type tests trimmed to wiring; `resource.test.ts` for cross-type list
+- [x] Migration generated (`20260707004532_aberrant_emma_frost`: enum rename + File/Survey/TodoList, `resource_publications` created, `documents`→`resources`, publish columns dropped, FK cascade)
+- [x] 5 orphaned containers deleted in dev+prod (`dashboard-assets`, `email-editor-assets`, `flowchart-editor-assets`, `table-editor-assets`, `webpage-editor-assets`); `resource-assets` auto-creates at runtime (no infra tracking)
+- [ ] **Pending user action:** run `pnpm db:up` in `packages/db-schema` to apply the publish-split migration
 
 ## Phase 2 — explorer shell
 
-- [ ] `/resources` list page: `StyledDataTableServer`, type facets, Draft/Published chips, Create dialog (type picker) ([spec](specs/resource-explorer.md))
 - [ ] `/resources/[id]/[[blade]]` page: left blade menu, Overview blade (Essentials + type summary), toolbar commands (rename/delete + capability commands), blade route middleware
-- [ ] `useResource(id)` composable (successor of `useDocumentState` detail half; auth-only, localStorage path deleted — [deferred/unauth-local-resources.md](deferred/unauth-local-resources.md))
+- [ ] `+ Create` dialog (type picker) on the `/resources` list
+- [ ] `useResource(id)` blade-scoped composable (successor of `useResourceState` for the blade page)
 - [ ] `ResourceBladeDefinitionMap`, `PortableFormatMap`, `ViewComponentMap` skeletons
-- [ ] `/view/[type]/[id]` dynamic public page dispatching `ViewComponentMap`
-- [ ] Nav: `ProductListLinkItems` → single Resources entry ([specs/shell-cohesion.md](specs/shell-cohesion.md))
+- [ ] `/view/[type]/[id]` dynamic public page dispatching `ViewComponentMap` (replaces per-type view pages)
+- [ ] Trim per-editor `ProductListLinkItems` entries once editors become blades ([specs/shell-cohesion.md](specs/shell-cohesion.md))
 
 ## Phase 3 — thin editors migrate (Flowchart, Email, Webpage, Dashboard)
 

@@ -54,8 +54,10 @@ describe("resource", () => {
     const tableResource = await tableEditorCaller.createResource({ name });
     const { items } = await caller.readResources();
 
-    expect(items.map(({ id }) => id).sort()).toStrictEqual([dashboardResource.id, tableResource.id].sort());
-    expect(items.map(({ type }) => type).sort()).toStrictEqual([ResourceType.Dashboard, ResourceType.Table].sort());
+    expect(items.map(({ id }) => id).toSorted()).toStrictEqual([dashboardResource.id, tableResource.id].toSorted());
+    expect(items.map(({ type }) => type).toSorted()).toStrictEqual(
+      [ResourceType.Dashboard, ResourceType.Table].toSorted(),
+    );
   });
 
   test("filters resources by type", async () => {
