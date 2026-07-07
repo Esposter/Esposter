@@ -230,7 +230,7 @@ Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key of
 
 ## Client
 
-- **Explorer list** (`/resources`) queries `resource.readResources` directly — a server-paginated table needs no composable.
+- **Explorer** (`/resources`) is an Azure-portal-faithful shell: a **Home** landing (search + quick-create tiles + recent resources), a full list at `/resources/all`, and a dedicated create flow (`/resources/create` gallery → `/resources/create/[type]` form). All three read `resource.readResources` directly (different sort/limit/filter) — a server-paginated table needs no composable. Full UX in [`features/platform/specs/resource-explorer.md`](../features/platform/specs/resource-explorer.md).
 - **`useResource(id)`** (`app/composables/resource/useResource.ts`) — loads the row (`resource.readResource`) + typed content (`{type}.readResourceContent`), exposes `save` (optimistic `contentVersion`), `rename`, `remove`, and capability actions (`publish`/`unpublish` gated by `PublishableResourceType`).
 - Resource pages are auth-gated. There is no unauthenticated/localStorage editing path — one persistence mechanism, not two ([`deferred/unauth-local-resources.md`](../features/platform/deferred/unauth-local-resources.md)).
 

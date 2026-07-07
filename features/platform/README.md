@@ -4,7 +4,7 @@ Cross-product integration program: everything is a resource with opt-in capabili
 
 ## Now
 
-**Resource Explorer consolidation** — all editors + surveyer unify into the resource model and one Azure-portal-like explorer. Phased backlog in [`roadmap.md`](roadmap.md); UX shell in [specs/resource-explorer.md](specs/resource-explorer.md).
+**Resource Explorer consolidation** — all editors + surveyer unify into the resource model and one Azure-portal-like explorer. Phase 1 (schema + factory + container) shipped; **Phase 2 — explorer shell** (Azure-portal-faithful Home + full list + create flow + blade page) is next. Phased backlog in [`roadmap.md`](roadmap.md); UX shell in [specs/resource-explorer.md](specs/resource-explorer.md).
 
 ## Shipped
 
