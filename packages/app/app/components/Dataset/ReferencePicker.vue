@@ -16,7 +16,7 @@ const { createAlert } = alertStore;
 const type = ref(modelValue.value?.type ?? DatasetProviderType.SurveyResponses);
 const readSourcesMap: Record<DatasetProviderType, () => Promise<{ id: string; name: string }[]>> = {
   [DatasetProviderType.SurveyResponses]: async () => (await $trpc.survey.readSurveys.query()).items,
-  [DatasetProviderType.TableDocument]: async () => (await $trpc.tableEditor.readDocuments.query()).items,
+  [DatasetProviderType.TableDocument]: async () => (await $trpc.tableEditor.readResources.query()).items,
 };
 const sourceIds = ref<SelectItemCategoryDefinition<string>[]>([]);
 

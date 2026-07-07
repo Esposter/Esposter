@@ -4,9 +4,9 @@ import { getResultAsync } from "@esposter/shared";
 const route = useRoute();
 const { $trpc } = useNuxtApp();
 const { content, name } = await getResultAsync(() =>
-  $trpc.webpageEditor.readPublishedDocumentContent.query(String(route.params.id)),
+  $trpc.webpageEditor.readPublishedResourceContent.query(String(route.params.id)),
 ).match(
-  (publishedDocument) => publishedDocument,
+  (publishedResource) => publishedResource,
   () => {
     throw createError({ statusCode: 404, statusMessage: "Webpage not found" });
   },

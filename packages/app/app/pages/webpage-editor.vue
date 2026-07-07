@@ -25,7 +25,7 @@ defineRouteRules({ ssr: false });
 
 const webpageEditorStore = useWebpageEditorStore();
 const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
-const { currentDocument } = storeToRefs(webpageEditorStore);
+const { currentResource } = storeToRefs(webpageEditorStore);
 const { editor } = await useGrapesJsEditor(
   {
     load: () => readWebpageEditor(),
@@ -366,7 +366,7 @@ const { editor } = await useGrapesJsEditor(
 );
 
 watch(
-  () => currentDocument.value?.id,
+  () => currentResource.value?.id,
   async () => {
     await editor.value?.load();
   },

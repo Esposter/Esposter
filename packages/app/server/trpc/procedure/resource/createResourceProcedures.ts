@@ -220,7 +220,11 @@ export const createResourceProcedures = <TType extends ResourceType>(
           getPublishedContentBlobName(input, resource.publication.publishVersion),
         );
         if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
-        const content = contentSchema.parse(jsonDateParse(await streamToText(readableStreamBody)));
+        // The generic contentSchema parses to the union of all content types; the concrete caller's
+        // TType pins it back down so consumers read their own content shape
+        const content = contentSchema.parse(
+          jsonDateParse(await streamToText(readableStreamBody)),
+        ) as ResourceContent<TType>;
         return { content, name: resource.name };
       }),
     readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<

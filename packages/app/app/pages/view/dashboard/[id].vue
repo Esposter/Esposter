@@ -6,9 +6,9 @@ import { getResultAsync } from "@esposter/shared";
 const route = useRoute();
 const { $trpc } = useNuxtApp();
 const { content, name } = await getResultAsync(() =>
-  $trpc.dashboard.readPublishedDocumentContent.query(String(route.params.id)),
+  $trpc.dashboard.readPublishedResourceContent.query(String(route.params.id)),
 ).match(
-  (publishedDocument) => publishedDocument,
+  (publishedResource) => publishedResource,
   () => {
     throw createError({ statusCode: 404, statusMessage: "Dashboard not found" });
   },

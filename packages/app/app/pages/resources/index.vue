@@ -24,6 +24,8 @@ const readResources = async () => {
 await readResources();
 watchDebounced([searchQuery, selectedTypes], readResources, { debounce: 300, deep: true });
 const typeItems = ResourceTypes.map((type) => ({ title: ResourceDefinitionMap[type].title, value: type }));
+const getResourceIcon = (type: ResourceType) => ResourceDefinitionMap[type].icon;
+const getResourceTitle = (type: ResourceType) => ResourceDefinitionMap[type].title;
 const openResource = (resource: Resource) => navigateTo(ResourceTypeRoutePathMap[resource.type](resource.id));
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => openResource(item);
 </script>
@@ -69,8 +71,8 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => openRes
       >
         <template #[`item.type`]="{ item }">
           <div flex gap-2 items-center>
-            <v-icon :icon="ResourceDefinitionMap[item.type].icon" />
-            {{ ResourceDefinitionMap[item.type].title }}
+            <v-icon :icon="getResourceIcon(item.type)" />
+            {{ getResourceTitle(item.type) }}
           </div>
         </template>
         <template #[`item.actions`]="{ item }">
