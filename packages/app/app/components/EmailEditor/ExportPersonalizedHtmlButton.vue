@@ -8,6 +8,7 @@ import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFie
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { getResultAsync, noop } from "@esposter/shared";
+import JSZip from "jszip";
 
 interface ExportPersonalizedHtmlButtonProps {
   editor: Editor | undefined;
@@ -23,8 +24,10 @@ const exportPersonalizedHtml = async (editorValue: Editor, document: Document, r
   const { html } = editorValue.runCommand("mjml-code-to-html") as { html: string };
   await getResultAsync(async () => {
     const dataset = await $trpc.dataset.readDataset.query(reference);
+    const zip = new JSZip();
     for (const [index, row] of dataset.rows.entries())
-      downloadFile(`${document.name}-${index + 1}.html`, substituteMergeFields(html, row), "text/html");
+      zip.file(`${document.name}-${index + 1}.html`, substituteMergeFields(html, row));
+    downloadFile(`${document.name}.zip`, await zip.generateAsync({ type: "blob" }), "application/zip");
     createAlert(`Exported ${dataset.rows.length} personalized emails`, "success");
   }).match(noop, (error) => {
     createAlert(error.message, "error");

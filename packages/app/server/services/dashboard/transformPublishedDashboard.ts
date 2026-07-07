@@ -1,5 +1,6 @@
 import type { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
+import type { Resource } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
 import { DatasetProviderMap } from "@@/server/services/dataset/DatasetProviderMap";
@@ -10,6 +11,7 @@ import { TRPCError } from "@trpc/server";
 // So public viewers render a static snapshot without resolving references
 export const transformPublishedDashboard = async (
   ctx: AuthedContext,
+  _resource: Resource,
   dashboard: ToData<Dashboard>,
 ): Promise<ToData<Dashboard>> => ({
   ...dashboard,

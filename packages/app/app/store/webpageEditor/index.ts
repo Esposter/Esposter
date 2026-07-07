@@ -9,35 +9,35 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const session = authClient.useSession();
   const {
     content,
-    createDocument,
-    currentDocument,
-    deleteDocument,
-    documents,
+    createResource,
+    currentResource,
+    deleteResource,
     load,
     loadLocal,
     publish: publishWebpage,
-    renameDocument,
+    renameResource,
+    resources,
     save,
-    selectDocument,
+    selectResource,
     unpublish: unpublishWebpage,
-  } = useDocumentState(
+  } = useResourceState(
     WebpageEditor,
     {
-      createDocument: (input) => $trpc.webpageEditor.createDocument.mutate(input),
-      deleteDocument: (input) => $trpc.webpageEditor.deleteDocument.mutate(input),
-      publishDocument: (input) => $trpc.webpageEditor.publishDocument.mutate(input),
-      readDocumentContent: (input) => $trpc.webpageEditor.readDocumentContent.query(input),
-      readDocuments: async () => (await $trpc.webpageEditor.readDocuments.query()).items,
-      saveDocumentContent: (input) => $trpc.webpageEditor.saveDocumentContent.mutate(input),
-      unpublishDocument: (input) => $trpc.webpageEditor.unpublishDocument.mutate(input),
-      updateDocument: (input) => $trpc.webpageEditor.updateDocument.mutate(input),
+      createResource: (input) => $trpc.webpageEditor.createResource.mutate(input),
+      deleteResource: (input) => $trpc.webpageEditor.deleteResource.mutate(input),
+      publishResource: (input) => $trpc.webpageEditor.publishResource.mutate(input),
+      readResourceContent: (input) => $trpc.webpageEditor.readResourceContent.query(input),
+      readResources: async () => (await $trpc.webpageEditor.readResources.query()).items,
+      saveResourceContent: (input) => $trpc.webpageEditor.saveResourceContent.mutate(input),
+      unpublishResource: (input) => $trpc.webpageEditor.unpublishResource.mutate(input),
+      updateResource: (input) => $trpc.webpageEditor.updateResource.mutate(input),
     },
     { defaultName: "My Webpage", localStorageKey: WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, schema: webpageEditorSchema },
   );
-  // The document list load happens once; subsequent editor storage loads serve the selected document's content
+  // The resource list load happens once; subsequent editor storage loads serve the selected resource's content
   const readWebpageEditor = async () => {
     if (session.value.data) {
-      if (!currentDocument.value) await load();
+      if (!currentResource.value) await load();
     } else loadLocal();
     return content.value;
   };
@@ -46,15 +46,15 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
     await save();
   };
   return {
-    createDocument,
-    currentDocument,
-    deleteDocument,
-    documents,
+    createResource,
+    currentResource,
+    deleteResource,
     publishWebpage,
     readWebpageEditor,
-    renameDocument,
+    renameResource,
+    resources,
     saveWebpageEditor,
-    selectDocument,
+    selectResource,
     unpublishWebpage,
   };
 });

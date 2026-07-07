@@ -5,26 +5,26 @@ import { RoutePath } from "@esposter/shared";
 
 const session = authClient.useSession();
 const webpageEditorStore = useWebpageEditorStore();
-const { createDocument, deleteDocument, publishWebpage, renameDocument, selectDocument, unpublishWebpage } =
+const { createResource, deleteResource, publishWebpage, renameResource, selectResource, unpublishWebpage } =
   webpageEditorStore;
-const { currentDocument, documents } = storeToRefs(webpageEditorStore);
+const { currentResource, resources } = storeToRefs(webpageEditorStore);
 </script>
 
 <template>
   <StyledPageHeader>
     <template v-if="session.data" #identity>
-      <DocumentPicker
-        :current-document
-        :documents
-        @create="createDocument($event)"
-        @delete="deleteDocument($event)"
-        @rename="(id, name) => renameDocument(id, name)"
-        @select="selectDocument($event)"
+      <ResourcePicker
+        :current-resource
+        :resources
+        @create="createResource($event)"
+        @delete="deleteResource($event)"
+        @rename="(id, name) => renameResource(id, name)"
+        @select="selectResource($event)"
       />
     </template>
-    <template v-if="session.data && currentDocument" #actions>
-      <DocumentPublishButton
-        :document="currentDocument"
+    <template v-if="session.data && currentResource" #actions>
+      <ResourcePublishButton
+        :resource="currentResource"
         :view-path="RoutePath.ViewWebpage"
         @publish="publishWebpage()"
         @unpublish="unpublishWebpage()"

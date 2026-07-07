@@ -11,20 +11,20 @@ interface EmailEditorHeaderProps {
 const { editor } = defineProps<EmailEditorHeaderProps>();
 const session = authClient.useSession();
 const emailEditorStore = useEmailEditorStore();
-const { createDocument, deleteDocument, renameDocument, saveDatasetReference, selectDocument } = emailEditorStore;
-const { currentDocument, datasetReference, documents } = storeToRefs(emailEditorStore);
+const { createResource, deleteResource, renameResource, saveDatasetReference, selectResource } = emailEditorStore;
+const { currentResource, datasetReference, resources } = storeToRefs(emailEditorStore);
 </script>
 
 <template>
   <StyledPageHeader>
     <template v-if="session.data" #identity>
-      <DocumentPicker
-        :current-document
-        :documents
-        @create="createDocument($event)"
-        @delete="deleteDocument($event)"
-        @rename="(id, name) => renameDocument(id, name)"
-        @select="selectDocument($event)"
+      <ResourcePicker
+        :current-resource
+        :resources
+        @create="createResource($event)"
+        @delete="deleteResource($event)"
+        @rename="(id, name) => renameResource(id, name)"
+        @select="selectResource($event)"
       />
     </template>
     <template v-if="session.data" #filters>

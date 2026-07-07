@@ -6,7 +6,6 @@ import { callRouter } from "@@/server/trpc/routers/call";
 import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
-import { documentRouter } from "@@/server/trpc/routers/document";
 import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
 import { emailEditorRouter } from "@@/server/trpc/routers/emailEditor";
 import { flowchartEditorRouter } from "@@/server/trpc/routers/flowchartEditor";
@@ -16,6 +15,7 @@ import { likeRouter } from "@@/server/trpc/routers/like";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
+import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
@@ -34,7 +34,6 @@ const trpcRouterWithoutAchievements = router({
   clicker: clickerRouter,
   dashboard: dashboardRouter,
   dataset: datasetRouter,
-  document: documentRouter,
   dungeons: dungeonsRouter,
   emailEditor: emailEditorRouter,
   flowchartEditor: flowchartEditorRouter,
@@ -44,6 +43,7 @@ const trpcRouterWithoutAchievements = router({
   message: messageRouter,
   post: postRouter,
   pushSubscription: pushSubscriptionRouter,
+  resource: resourceRouter,
   role: roleRouter,
   room: roomRouter,
   searchHistory: searchHistoryRouter,

@@ -8,10 +8,9 @@ import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 const slots = defineSlots<{ "append-header": () => VNode; "prepend-actions": () => VNode }>();
 const session = authClient.useSession();
 const tableEditorStore = useTableEditorStore();
-const { createDocument, deleteDocument, renameDocument, resetItem, save, selectDocument } = tableEditorStore;
+const { createResource, deleteResource, renameResource, resetItem, save, selectResource } = tableEditorStore;
 const {
-  currentDocument,
-  documents,
+  currentResource,
   editedItem,
   editForm,
   editFormDialog,
@@ -20,6 +19,7 @@ const {
   isFullScreenDialog,
   isSavable,
   originalItem,
+  resources,
   tableEditorType,
 } = storeToRefs(tableEditorStore);
 const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : undefined));
@@ -29,13 +29,13 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
 <template>
   <StyledPageHeader>
     <template v-if="session.data" #identity>
-      <DocumentPicker
-        :current-document
-        :documents
-        @create="createDocument($event)"
-        @delete="deleteDocument($event)"
-        @rename="(id, name) => renameDocument(id, name)"
-        @select="selectDocument($event)"
+      <ResourcePicker
+        :current-resource
+        :resources
+        @create="createResource($event)"
+        @delete="deleteResource($event)"
+        @rename="(id, name) => renameResource(id, name)"
+        @select="selectResource($event)"
       />
     </template>
     <template #filters>

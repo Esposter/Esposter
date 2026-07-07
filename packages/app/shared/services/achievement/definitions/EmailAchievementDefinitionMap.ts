@@ -9,6 +9,6 @@ export const EmailAchievementDefinitionMap = {
     description: "Save an email template",
     icon: "mdi-email-edit",
     points: 20,
-    triggerPath: "emailEditor.saveDocumentContent" as const,
+    triggerPath: "emailEditor.saveResourceContent" as const,
   }),
 };

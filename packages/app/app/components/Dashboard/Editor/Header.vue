@@ -12,21 +12,21 @@ const visualStore = useVisualStore();
 const { createVisual } = visualStore;
 const { visualType } = storeToRefs(visualStore);
 const dashboardStore = useDashboardStore();
-const { createDocument, deleteDocument, publishDashboard, renameDocument, selectDocument, unpublishDashboard } =
+const { createResource, deleteResource, publishDashboard, renameResource, selectResource, unpublishDashboard } =
   dashboardStore;
-const { currentDocument, documents } = storeToRefs(dashboardStore);
+const { currentResource, resources } = storeToRefs(dashboardStore);
 </script>
 
 <template>
   <StyledPageHeader>
     <template v-if="session.data" #identity>
-      <DocumentPicker
-        :current-document
-        :documents
-        @create="createDocument($event)"
-        @delete="deleteDocument($event)"
-        @rename="(id, name) => renameDocument(id, name)"
-        @select="selectDocument($event)"
+      <ResourcePicker
+        :current-resource
+        :resources
+        @create="createResource($event)"
+        @delete="deleteResource($event)"
+        @rename="(id, name) => renameResource(id, name)"
+        @select="selectResource($event)"
       />
     </template>
     <template #filters>
@@ -44,10 +44,10 @@ const { currentDocument, documents } = storeToRefs(dashboardStore);
       />
     </template>
     <template #actions>
-      <DocumentPublishButton
-        v-if="session.data && currentDocument"
+      <ResourcePublishButton
+        v-if="session.data && currentResource"
         :view-path="RoutePath.ViewDashboard"
-        :document="currentDocument"
+        :resource="currentResource"
         @publish="publishDashboard()"
         @unpublish="unpublishDashboard()"
       />

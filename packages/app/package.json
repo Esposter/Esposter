@@ -147,6 +147,7 @@
     "howler": "catalog:",
     "idb": "catalog:",
     "js-beautify": "catalog:",
+    "jszip": "catalog:",
     "livekit-client": "catalog:",
     "livekit-server-sdk": "catalog:",
     "lodash-omitdeep": "catalog:",

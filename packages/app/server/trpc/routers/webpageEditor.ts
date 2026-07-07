@@ -1,8 +1,5 @@
-import { webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { router } from "@@/server/trpc";
-import { createDocumentProcedures } from "@@/server/trpc/procedure/document/createDocumentProcedures";
-import { AzureContainer, DocumentType } from "@esposter/db-schema";
+import { createResourceProcedures } from "@@/server/trpc/procedure/resource/createResourceProcedures";
+import { ResourceType } from "@esposter/db-schema";
 
-export const webpageEditorRouter = router(
-  createDocumentProcedures(DocumentType.Webpage, webpageEditorSchema, AzureContainer.WebpageEditorAssets),
-);
+export const webpageEditorRouter = router(createResourceProcedures(ResourceType.Webpage));

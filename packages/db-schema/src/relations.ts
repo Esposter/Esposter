@@ -4,13 +4,13 @@ import { appUsersInMessageRelation } from "@/relations/appUsersInMessageRelation
 import { bansInMessageRelation } from "@/relations/bansInMessageRelation";
 import { blocksRelation } from "@/relations/blocksRelation";
 import { callSessionsInMessageRelation } from "@/relations/callSessionsInMessageRelation";
-import { documentsRelation } from "@/relations/documentsRelation";
 import { friendRequestsRelation } from "@/relations/friendRequestsRelation";
 import { friendsRelation } from "@/relations/friendsRelation";
 import { invitesInMessageRelation } from "@/relations/invitesInMessageRelation";
 import { likesRelation } from "@/relations/likesRelation";
 import { postsRelation } from "@/relations/postsRelation";
 import { pushSubscriptionsInMessageRelation } from "@/relations/pushSubscriptionsInMessageRelation";
+import { resourcesRelation } from "@/relations/resourcesRelation";
 import { roomCategoriesInMessageRelation } from "@/relations/roomCategoriesInMessageRelation";
 import { roomFiltersInMessageRelation } from "@/relations/roomFiltersInMessageRelation";
 import { roomRolesInMessageRelation } from "@/relations/roomRolesInMessageRelation";
@@ -33,13 +33,13 @@ export const relations = {
   ...appUsersInMessageRelation,
   ...bansInMessageRelation,
   ...blocksRelation,
-  ...documentsRelation,
   ...friendRequestsRelation,
   ...friendsRelation,
   ...invitesInMessageRelation,
   ...likesRelation,
   ...postsRelation,
   ...pushSubscriptionsInMessageRelation,
+  ...resourcesRelation,
   ...roomCategoriesInMessageRelation,
   ...roomFiltersInMessageRelation,
   ...roomRolesInMessageRelation,

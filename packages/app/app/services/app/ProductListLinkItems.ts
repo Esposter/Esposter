@@ -15,9 +15,9 @@ export const ProductListLinkItems = [
     title: "Calls",
   },
   {
-    href: RoutePath.Documents,
-    icon: "mdi-file-document-multiple",
-    title: "Documents",
+    href: RoutePath.Resources,
+    icon: "mdi-folder-multiple",
+    title: "Resource Explorer",
   },
   {
     href: RoutePath.TableEditor,

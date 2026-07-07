@@ -8,17 +8,15 @@ export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
     load,
     loadLocal,
     save: saveFlowchartEditor,
-  } = useDocumentState(
+  } = useResourceState(
     FlowchartEditor,
     {
-      createDocument: (input) => $trpc.flowchartEditor.createDocument.mutate(input),
-      deleteDocument: (input) => $trpc.flowchartEditor.deleteDocument.mutate(input),
-      publishDocument: (input) => $trpc.flowchartEditor.publishDocument.mutate(input),
-      readDocumentContent: (input) => $trpc.flowchartEditor.readDocumentContent.query(input),
-      readDocuments: async () => (await $trpc.flowchartEditor.readDocuments.query()).items,
-      saveDocumentContent: (input) => $trpc.flowchartEditor.saveDocumentContent.mutate(input),
-      unpublishDocument: (input) => $trpc.flowchartEditor.unpublishDocument.mutate(input),
-      updateDocument: (input) => $trpc.flowchartEditor.updateDocument.mutate(input),
+      createResource: (input) => $trpc.flowchartEditor.createResource.mutate(input),
+      deleteResource: (input) => $trpc.flowchartEditor.deleteResource.mutate(input),
+      readResourceContent: (input) => $trpc.flowchartEditor.readResourceContent.query(input),
+      readResources: async () => (await $trpc.flowchartEditor.readResources.query()).items,
+      saveResourceContent: (input) => $trpc.flowchartEditor.saveResourceContent.mutate(input),
+      updateResource: (input) => $trpc.flowchartEditor.updateResource.mutate(input),
     },
     {
       defaultName: "My Flowchart",

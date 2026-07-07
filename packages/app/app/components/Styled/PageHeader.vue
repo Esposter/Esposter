@@ -7,7 +7,8 @@ const { title } = defineProps<StyledPageHeaderProps>();
 const slots = defineSlots<{
   actions?: () => VNode;
   breadcrumbs?: () => VNode;
-  controls?: () => VNode;
+  filters?: () => VNode;
+  identity?: () => VNode;
 }>();
 </script>
 
@@ -23,8 +24,9 @@ const slots = defineSlots<{
           <slot name="actions" />
         </div>
       </div>
-      <div v-if="slots.controls" flex flex-wrap gap-2 w-full items-center>
-        <slot name="controls" />
+      <div v-if="slots.identity || slots.filters" flex flex-wrap gap-2 w-full items-center>
+        <slot name="identity" />
+        <slot name="filters" />
       </div>
     </div>
   </v-toolbar>

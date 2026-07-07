@@ -4,28 +4,28 @@ import { tableEditorConfigurationSchema } from "#shared/models/tableEditor/data/
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { dataSourceToDataset } from "#shared/services/tableEditor/dataSourceToDataset";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
-import { getContentBlobName } from "@@/server/services/document/getContentBlobName";
-import { AZURE_MAX_PAGE_SIZE, AzureContainer, DocumentType } from "@esposter/db-schema";
+import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
+import { AZURE_MAX_PAGE_SIZE, AzureContainer, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse, streamToText } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export const readTableDocumentDataset: DatasetProvider = async (ctx, reference) => {
-  const document = await ctx.db.query.documents.findFirst({
+  const resource = await ctx.db.query.resources.findFirst({
     where: {
       id: {
         eq: reference.id,
       },
       type: {
-        eq: DocumentType.Table,
+        eq: ResourceType.Table,
       },
       userId: {
         eq: ctx.getSessionPayload.user.id,
       },
     },
   });
-  if (!document) throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (!resource) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-  const { readableStreamBody } = await useDownload(AzureContainer.TableEditorAssets, getContentBlobName(reference.id));
+  const { readableStreamBody } = await useDownload(AzureContainer.ResourceAssets, getContentBlobName(reference.id));
   if (!readableStreamBody) throw new TRPCError({ code: "NOT_FOUND" });
 
   const configuration = tableEditorConfigurationSchema.parse(jsonDateParse(await streamToText(readableStreamBody)));

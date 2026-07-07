@@ -15,7 +15,6 @@ export const RoutePath: {
   readonly Dashboard: "/dashboard";
   readonly DashboardEditor: "/dashboard/editor";
   readonly Docs: "/docs";
-  readonly Documents: "/documents";
   readonly Dungeons: "/dungeons";
   readonly EmailEditor: "/email-editor";
   readonly FlowchartEditor: "/flowchart-editor";
@@ -33,6 +32,8 @@ export const RoutePath: {
   readonly PostCreate: "/post/create";
   readonly PostUpdate: (id: string) => string;
   readonly PrivacyPolicy: "/privacy-policy";
+  readonly Resource: (id: string) => string;
+  readonly Resources: "/resources";
   readonly Survey: (id: string) => string;
   readonly [SURVEY_DISPLAY_NAME]: `/${Uncapitalize<typeof SURVEY_DISPLAY_NAME>}`;
   readonly [SURVEYER_EDIT_KEY]: (id: string) => string;
@@ -52,7 +53,6 @@ export const RoutePath: {
   Dashboard: "/dashboard",
   DashboardEditor: "/dashboard/editor",
   Docs: "/docs",
-  Documents: "/documents",
   Dungeons: "/dungeons",
   EmailEditor: "/email-editor",
   FlowchartEditor: "/flowchart-editor",
@@ -70,6 +70,8 @@ export const RoutePath: {
   PostCreate: "/post/create",
   PostUpdate: (id: string) => `/post/update/${id}`,
   PrivacyPolicy: "/privacy-policy",
+  Resource: (id: string) => `/resources/${id}`,
+  Resources: "/resources",
   Survey: (id: string) => `/survey/${id}`,
   [SURVEY_DISPLAY_NAME]: `/${uncapitalize(SURVEY_DISPLAY_NAME)}`,
   [SURVEYER_EDIT_KEY]: (id: string) => `/${uncapitalize(SURVEY_DISPLAY_NAME)}/${id}`,

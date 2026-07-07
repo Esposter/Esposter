@@ -4,7 +4,6 @@ import { appUsersInMessage } from "@/schema/appUsersInMessage";
 import { bansInMessage } from "@/schema/bansInMessage";
 import { blocks } from "@/schema/blocks";
 import { callSessionsInMessage } from "@/schema/callSessionsInMessage";
-import { documents, documentTypeEnum } from "@/schema/documents";
 import { friendRequests } from "@/schema/friendRequests";
 import { friends } from "@/schema/friends";
 import { invitesInMessage } from "@/schema/invitesInMessage";
@@ -12,6 +11,7 @@ import { likes } from "@/schema/likes";
 import { posts } from "@/schema/posts";
 import { pushSubscriptionsInMessage } from "@/schema/pushSubscriptionsInMessage";
 import { rateLimiterFlexible } from "@/schema/rateLimiterFlexible";
+import { resources, resourceTypeEnum } from "@/schema/resources";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
 import { roomFiltersInMessage } from "@/schema/roomFiltersInMessage";
 import { roomRolesInMessage } from "@/schema/roomRolesInMessage";
@@ -37,8 +37,6 @@ export const schema = {
   bansInMessage,
   blocks,
   callSessionsInMessage,
-  documents,
-  documentTypeEnum,
   friendRequests,
   friends,
   invitesInMessage,
@@ -48,6 +46,8 @@ export const schema = {
   posts,
   pushSubscriptionsInMessage,
   rateLimiterFlexible,
+  resources,
+  resourceTypeEnum,
   roomCategoriesInMessage,
   roomFiltersInMessage,
   roomRolesInMessage,

@@ -165,6 +165,7 @@ catalog:
   howler: ^2.2.4
   idb: ^8.0.3
   js-beautify: ^2.0.3
+  jszip: ^3.10.1
   link-preview-js: ^4.0.4
   linkifyjs: ^4.3.3
   livekit-client: ^2.20.0
