@@ -17,6 +17,7 @@ import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
+import { RestError } from "@azure/storage-blob";
 import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
@@ -63,14 +64,21 @@ export const createResourceProcedures = <TType extends ResourceType>(
       id: Resource["id"];
     }
   >;
-  const readContent = (id: Resource["id"]): Promise<ResourceContent<TType> | undefined> =>
-    getResultAsync(async () => {
-      const { readableStreamBody } = await useDownload(AzureContainer.ResourceAssets, getContentBlobName(id));
-      if (!readableStreamBody) return undefined;
-      return contentSchema.parse(jsonDateParse(await streamToText(readableStreamBody))) as ResourceContent<TType>;
-    })
-      .orTee(console.error)
-      .unwrapOr(undefined);
+  const readContent = async (id: Resource["id"]): Promise<ResourceContent<TType> | undefined> => {
+    // BlobClient.download() rejects on a missing blob, so treat a genuine 404 as "no content yet"
+    // While letting transient Azure or parse failures surface as an internal error instead of a false empty.
+    const { readableStreamBody } = await getResultAsync(() =>
+      useDownload(AzureContainer.ResourceAssets, getContentBlobName(id)),
+    ).match(
+      (response) => response,
+      (error) => {
+        if (error instanceof RestError && error.statusCode === 404) return { readableStreamBody: undefined };
+        throw error;
+      },
+    );
+    if (!readableStreamBody) return undefined;
+    return contentSchema.parse(jsonDateParse(await streamToText(readableStreamBody))) as ResourceContent<TType>;
+  };
   const baseProcedures = {
     createResource: standardAuthedProcedure
       .input(createResourceInputSchema)
@@ -128,28 +136,31 @@ export const createResourceProcedures = <TType extends ResourceType>(
         return getOffsetPaginationData(resultResources, limit);
       }),
     saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { content, contentVersion, id } }) => {
-        // The version check is part of the UPDATE so concurrent saves cannot both pass and silently lose one write
-        const updatedResource = (
-          await ctx.db
-            .update(resources)
-            .set({ contentVersion: contentVersion + 1 })
-            .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
-            .returning()
-        )[0];
-        if (!updatedResource)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(
-              Operation.Update,
-              DatabaseEntityType.Resource,
-              "cannot save resource content with old content version",
-            ).message,
-          });
+      async ({ ctx, input: { content, contentVersion, id } }) =>
+        // Bump the version and write the blob in one transaction so a failed upload rolls the version back,
+        // Keeping Postgres and blob storage consistent instead of stranding the resource at a version with stale content
+        ctx.db.transaction(async (tx) => {
+          // The version check is part of the UPDATE so concurrent saves cannot both pass and silently lose one write
+          const updatedResource = (
+            await tx
+              .update(resources)
+              .set({ contentVersion: contentVersion + 1 })
+              .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
+              .returning()
+          )[0];
+          if (!updatedResource)
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: new InvalidOperationError(
+                Operation.Update,
+                DatabaseEntityType.Resource,
+                "cannot save resource content with old content version",
+              ).message,
+            });
 
-        await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(content));
-        return updatedResource;
-      },
+          await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(content));
+          return updatedResource;
+        }),
     ),
     updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id").mutation<Resource>(
       async ({ ctx, input: { id, ...rest } }) =>
@@ -174,32 +185,36 @@ export const createResourceProcedures = <TType extends ResourceType>(
               "cannot publish resource without content",
             ).message,
           });
-        // The version bump is done in SQL so concurrent publishes each claim a distinct publish blob;
-        // The publication row exists only while the resource is published (the Publishable capability's state)
-        const publication = requireMutation(
-          (
-            await ctx.db
-              .insert(resourcePublications)
-              .values({ resourceId: id })
-              .onConflictDoUpdate({
-                set: { publishedAt: new Date(), publishVersion: sql`${resourcePublications.publishVersion} + 1` },
-                target: resourcePublications.resourceId,
-              })
-              .returning()
-          )[0],
-          Operation.Update,
-          DatabaseEntityType.ResourcePublication,
-          id,
-        );
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content as never)
           : content;
-        await useUpload(
-          AzureContainer.ResourceAssets,
-          getPublishedContentBlobName(id, publication.publishVersion),
-          JSON.stringify(publishedContent),
-        );
-        return publication;
+        // Bump the version and write the blob in one transaction so a failed upload rolls the version bump back,
+        // The publication row can never point at a publishVersion whose blob was never written.
+        return ctx.db.transaction(async (tx) => {
+          // The version bump is done in SQL so concurrent publishes each claim a distinct publish blob;
+          // The publication row exists only while the resource is published (the Publishable capability's state)
+          const publication = requireMutation(
+            (
+              await tx
+                .insert(resourcePublications)
+                .values({ resourceId: id })
+                .onConflictDoUpdate({
+                  set: { publishedAt: new Date(), publishVersion: sql`${resourcePublications.publishVersion} + 1` },
+                  target: resourcePublications.resourceId,
+                })
+                .returning()
+            )[0],
+            Operation.Update,
+            DatabaseEntityType.ResourcePublication,
+            id,
+          );
+          await useUpload(
+            AzureContainer.ResourceAssets,
+            getPublishedContentBlobName(id, publication.publishVersion),
+            JSON.stringify(publishedContent),
+          );
+          return publication;
+        });
       },
     ),
     readPublishedResourceContent: standardRateLimitedProcedure
