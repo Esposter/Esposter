@@ -22,7 +22,6 @@ const readResourcesInputSchema = z.object({
   ...createOffsetPaginationParamsSchema(selectResourceSchema.keyof()).shape,
   ...resourceFilterInputSchema.shape,
 });
-
 // Shared filter so count and readResources stay in lockstep as filters evolve
 const createResourcesWhere = (userId: string, searchQuery?: string, types?: ResourceType[]) =>
   and(
