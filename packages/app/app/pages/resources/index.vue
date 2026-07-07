@@ -5,21 +5,28 @@ import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
 import { ResourceTypeRoutePathMap } from "@/services/resource/ResourceTypeRoutePathMap";
+import { useAlertStore } from "@/store/alert";
 import { ResourceTypes } from "@esposter/db-schema";
+import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 import { watchDebounced } from "@vueuse/core";
 
 definePageMeta({ middleware: "auth" });
 
 const { $trpc } = useNuxtApp();
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 const searchQuery = ref("");
 const selectedTypes = ref<ResourceType[]>([]);
 const resources = ref<Resource[]>([]);
 const readResources = async () => {
-  const { items } = await $trpc.resource.readResources.query({
-    searchQuery: searchQuery.value || undefined,
-    types: selectedTypes.value.length > 0 ? selectedTypes.value : undefined,
-  });
-  resources.value = items;
+  await getResultAsync(async () => {
+    const { items } = await $trpc.resource.readResources.query({
+      limit: MAX_READ_LIMIT,
+      searchQuery: searchQuery.value || undefined,
+      types: selectedTypes.value.length > 0 ? selectedTypes.value : undefined,
+    });
+    resources.value = items;
+  }).match(noop, (error) => createAlert(error.message, "error"));
 };
 await readResources();
 watchDebounced([searchQuery, selectedTypes], readResources, { debounce: 300, deep: true });

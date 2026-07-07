@@ -32,7 +32,6 @@ export const RoutePath: {
   readonly PostCreate: "/post/create";
   readonly PostUpdate: (id: string) => string;
   readonly PrivacyPolicy: "/privacy-policy";
-  readonly Resource: (id: string) => string;
   readonly Resources: "/resources";
   readonly Survey: (id: string) => string;
   readonly [SURVEY_DISPLAY_NAME]: `/${Uncapitalize<typeof SURVEY_DISPLAY_NAME>}`;
@@ -70,7 +69,6 @@ export const RoutePath: {
   PostCreate: "/post/create",
   PostUpdate: (id: string) => `/post/update/${id}`,
   PrivacyPolicy: "/privacy-policy",
-  Resource: (id: string) => `/resources/${id}`,
   Resources: "/resources",
   Survey: (id: string) => `/survey/${id}`,
   [SURVEY_DISPLAY_NAME]: `/${uncapitalize(SURVEY_DISPLAY_NAME)}`,

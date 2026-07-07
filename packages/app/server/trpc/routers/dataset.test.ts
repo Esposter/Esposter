@@ -26,6 +26,8 @@ describe("dataset", () => {
   let tableEditorCaller: DecorateRouterRecord<TRPCRouter["tableEditor"]>;
   const name = "name";
   const group = "group";
+  const columnName = "columnName";
+  const value = "value";
   const model = JSON.stringify({
     pages: [
       {
@@ -146,8 +148,6 @@ describe("dataset", () => {
   test("reads table document dataset", async () => {
     expect.hasAssertions();
 
-    const columnName = "columnName";
-    const value = "value";
     const newResource = await tableEditorCaller.createResource({ name });
     const configuration = new TableEditorConfiguration();
     configuration[TableEditorType.File].items.push(
@@ -166,6 +166,28 @@ describe("dataset", () => {
 
     expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
     expect(dataset.rows).toStrictEqual([{ [columnName]: value }]);
+  });
+
+  test("reads table document dataset within the azure page size limit", async () => {
+    expect.hasAssertions();
+
+    const newResource = await tableEditorCaller.createResource({ name });
+    const configuration = new TableEditorConfiguration();
+    configuration[TableEditorType.File].items.push(
+      new CsvDataSourceItem({
+        dataSource: {
+          columns: [new StringColumn({ name: columnName, sourceName: columnName })],
+          metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
+          rows: Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => new Row({ data: { [columnName]: value } })),
+          statistics: { columnCount: 1, rowCount: AZURE_MAX_PAGE_SIZE + 1, size: 0 },
+        },
+        name,
+      }),
+    );
+    await tableEditorCaller.saveResourceContent({ content: configuration, contentVersion: 0, id: newResource.id });
+    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument });
+
+    expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
   });
 
   test("fails read table document without data source", async () => {

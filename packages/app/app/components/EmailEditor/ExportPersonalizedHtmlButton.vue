@@ -8,7 +8,6 @@ import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFie
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { getResultAsync, noop } from "@esposter/shared";
-import JSZip from "jszip";
 
 interface ExportPersonalizedHtmlButtonProps {
   editor: Editor | undefined;
@@ -23,6 +22,7 @@ const { currentResource, datasetReference } = storeToRefs(emailEditorStore);
 const exportPersonalizedHtml = async (editorValue: Editor, resource: Resource, reference: DatasetReference) => {
   const { html } = editorValue.runCommand("mjml-code-to-html") as { html: string };
   await getResultAsync(async () => {
+    const { default: JSZip } = await import("jszip");
     const dataset = await $trpc.dataset.readDataset.query(reference);
     const zip = new JSZip();
     for (const [index, row] of dataset.rows.entries())
