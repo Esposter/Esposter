@@ -115,13 +115,13 @@ describe("moderation", () => {
 
       const member = await createMember();
 
-      const result = await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.ForceMute,
-      });
-
-      expect(result).toBeUndefined();
+      await expect(
+        moderationCaller.executeAdminAction({
+          roomId,
+          targetUserId: member.id,
+          type: AdminActionType.ForceMute,
+        }),
+      ).resolves.toBeUndefined();
     });
 
     test(`${AdminActionType.ForceUnmute}: owner unmutes member — succeeds with no error`, async () => {
@@ -129,13 +129,13 @@ describe("moderation", () => {
 
       const member = await createMember();
 
-      const result = await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.ForceUnmute,
-      });
-
-      expect(result).toBeUndefined();
+      await expect(
+        moderationCaller.executeAdminAction({
+          roomId,
+          targetUserId: member.id,
+          type: AdminActionType.ForceUnmute,
+        }),
+      ).resolves.toBeUndefined();
     });
 
     test(`${AdminActionType.KickFromCall}: owner kicks member from the call — succeeds with no error`, async () => {
@@ -143,13 +143,13 @@ describe("moderation", () => {
 
       const member = await createMember();
 
-      const result = await moderationCaller.executeAdminAction({
-        roomId,
-        targetUserId: member.id,
-        type: AdminActionType.KickFromCall,
-      });
-
-      expect(result).toBeUndefined();
+      await expect(
+        moderationCaller.executeAdminAction({
+          roomId,
+          targetUserId: member.id,
+          type: AdminActionType.KickFromCall,
+        }),
+      ).resolves.toBeUndefined();
     });
 
     test(`member without ${RoomPermission.BanMembers} permission cannot ban — throws UNAUTHORIZED`, async () => {

@@ -13,7 +13,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
 - **The `private` keyword is BANNED** — use ECMAScript `#` private members instead (see Private Members). `protected` is still allowed (no `#` equivalent for subclass access).
 - Non-null assertions (`!`) are **BANNED** — both the expression operator (`foo!.bar`) and the field definite-assignment assertion (`field!: T`, see Class Fields). Use optional chaining or guard clauses.
-- `.forEach()` is **BANNED** — use `for...of`.
+- `.forEach()` is **BANNED** — use `for...of` (see Loops).
 - `type` aliases for object shapes are **BANNED** — use `interface`.
 - **Prefer non-mutating array methods** (copy versions returning a new array):
   - `arr.toSorted(fn)` not `[...arr].sort(fn)` — `sort()` **BANNED**

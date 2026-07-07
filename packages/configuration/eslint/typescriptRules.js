@@ -49,12 +49,6 @@ export default Object.assign(
           "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
         selector: "MemberExpression[object.name='expect'][property.name='any']",
       },
-      {
-        // `.rejects` is intentionally NOT banned — it stays the only accepted async error assertion.
-        message:
-          "Avoid `.resolves` — await the promise into a `const` and assert on it (e.g. `const x = await fn(); expect(x).toBe(...)`).",
-        selector: "MemberExpression[property.name='resolves']",
-      },
     ],
     // Computationally expensive
     // "@typescript-eslint/naming-convention": [

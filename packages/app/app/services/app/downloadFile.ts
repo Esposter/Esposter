@@ -7,5 +7,5 @@ export const downloadFile = (filename: string, blobPart: BlobPart, type: string)
   // Revoking synchronously races WebKit and can silently abort the download.
   window.setTimeout(() => {
     URL.revokeObjectURL(url);
-  });
+  }, 0);
 };

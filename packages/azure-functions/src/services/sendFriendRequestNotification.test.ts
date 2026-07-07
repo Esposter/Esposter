@@ -35,9 +35,7 @@ describe(sendFriendRequestNotification, () => {
   test("completes without error when user has no push subscriptions", async () => {
     expect.hasAssertions();
 
-    const result = await sendFriendRequestNotification(context, { notificationOptions, receiverId });
-
-    expect(result).toBeUndefined();
+    await expect(sendFriendRequestNotification(context, { notificationOptions, receiverId })).resolves.toBeUndefined();
   });
 
   test("sends notification to all subscriptions", async () => {
