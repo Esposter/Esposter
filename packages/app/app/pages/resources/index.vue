@@ -86,7 +86,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => openRes
           <StyledEmptyState
             icon="mdi-folder-multiple-outline"
             title="No resources yet"
-            description="Create a dashboard, table, email, webpage, or flowchart and it will show up here."
+            description="Create a resource and it will show up here."
           />
         </template>
       </StyledDataTableServer>

@@ -1,5 +1,6 @@
 import { Dashboard, dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
 import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 
 export const useDashboardStore = defineStore("dashboard", () => {
   const { $trpc } = useNuxtApp();
@@ -26,7 +27,7 @@ export const useDashboardStore = defineStore("dashboard", () => {
       publishResource: (input) => $trpc.dashboard.publishResource.mutate(input),
       readResourceContent: (input) => $trpc.dashboard.readResourceContent.query(input),
       readResourcePublication: (input) => $trpc.dashboard.readResourcePublication.query(input),
-      readResources: async () => (await $trpc.dashboard.readResources.query()).items,
+      readResources: async () => (await $trpc.dashboard.readResources.query({ limit: MAX_READ_LIMIT })).items,
       saveResourceContent: (input) => $trpc.dashboard.saveResourceContent.mutate(input),
       unpublishResource: (input) => $trpc.dashboard.unpublishResource.mutate(input),
       updateResource: (input) => $trpc.dashboard.updateResource.mutate(input),

@@ -103,7 +103,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
           DatabaseEntityType.Resource,
           id,
         );
-
         const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
         await deleteDirectory(containerClient, id, true);
         return deletedResource;
@@ -136,7 +135,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         return getOffsetPaginationData(resultResources, limit);
       }),
     saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<Resource>(
-      async ({ ctx, input: { content, contentVersion, id } }) =>
+      ({ ctx, input: { content, contentVersion, id } }) =>
         // Bump the version and write the blob in one transaction so a failed upload rolls the version back,
         // Keeping Postgres and blob storage consistent instead of stranding the resource at a version with stale content
         ctx.db.transaction(async (tx) => {

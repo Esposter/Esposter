@@ -1,6 +1,7 @@
 import type { ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { escapeLike } from "@@/server/services/db/escapeLike";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { router } from "@@/server/trpc";
@@ -26,7 +27,7 @@ const readResourcesInputSchema = z.object({
 const createResourcesWhere = (userId: string, searchQuery?: string, types?: ResourceType[]) =>
   and(
     eq(resources.userId, userId),
-    searchQuery ? ilike(resources.name, `%${searchQuery}%`) : undefined,
+    searchQuery ? ilike(resources.name, `%${escapeLike(searchQuery)}%`) : undefined,
     types && types.length > 0 ? inArray(resources.type, types) : undefined,
   );
 

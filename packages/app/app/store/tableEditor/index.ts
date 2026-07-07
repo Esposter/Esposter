@@ -18,7 +18,7 @@ import { createEditFormData } from "@/services/shared/editForm/createEditFormDat
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { TableEditorHookMap } from "@/services/tableEditor/TableEditorHookMap";
 import { useItemStore } from "@/store/tableEditor/item";
-import { toRawDeep } from "@esposter/shared";
+import { MAX_READ_LIMIT, toRawDeep } from "@esposter/shared";
 
 const id = "tableEditor";
 const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id, () => {
@@ -44,7 +44,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
       createResource: (input) => $trpc.tableEditor.createResource.mutate(input),
       deleteResource: (input) => $trpc.tableEditor.deleteResource.mutate(input),
       readResourceContent: (input) => $trpc.tableEditor.readResourceContent.query(input),
-      readResources: async () => (await $trpc.tableEditor.readResources.query()).items,
+      readResources: async () => (await $trpc.tableEditor.readResources.query({ limit: MAX_READ_LIMIT })).items,
       saveResourceContent: (input) => $trpc.tableEditor.saveResourceContent.mutate(input),
       updateResource: (input) => $trpc.tableEditor.updateResource.mutate(input),
     },

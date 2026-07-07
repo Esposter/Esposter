@@ -3,6 +3,7 @@ import type { ProjectData } from "grapesjs";
 import { WebpageEditor, webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { authClient } from "@/services/auth/authClient";
 import { WEBPAGE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/webpageEditor/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const { $trpc } = useNuxtApp();
@@ -29,7 +30,7 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
       publishResource: (input) => $trpc.webpageEditor.publishResource.mutate(input),
       readResourceContent: (input) => $trpc.webpageEditor.readResourceContent.query(input),
       readResourcePublication: (input) => $trpc.webpageEditor.readResourcePublication.query(input),
-      readResources: async () => (await $trpc.webpageEditor.readResources.query()).items,
+      readResources: async () => (await $trpc.webpageEditor.readResources.query({ limit: MAX_READ_LIMIT })).items,
       saveResourceContent: (input) => $trpc.webpageEditor.saveResourceContent.mutate(input),
       unpublishResource: (input) => $trpc.webpageEditor.unpublishResource.mutate(input),
       updateResource: (input) => $trpc.webpageEditor.updateResource.mutate(input),

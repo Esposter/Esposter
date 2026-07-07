@@ -4,6 +4,7 @@ import type { ProjectData } from "grapesjs";
 import { EmailEditor, emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { authClient } from "@/services/auth/authClient";
 import { EMAIL_EDITOR_LOCAL_STORAGE_KEY } from "@/services/emailEditor/constants";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {
   const { $trpc } = useNuxtApp();
@@ -25,7 +26,7 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
       createResource: (input) => $trpc.emailEditor.createResource.mutate(input),
       deleteResource: (input) => $trpc.emailEditor.deleteResource.mutate(input),
       readResourceContent: (input) => $trpc.emailEditor.readResourceContent.query(input),
-      readResources: async () => (await $trpc.emailEditor.readResources.query()).items,
+      readResources: async () => (await $trpc.emailEditor.readResources.query({ limit: MAX_READ_LIMIT })).items,
       saveResourceContent: (input) => $trpc.emailEditor.saveResourceContent.mutate(input),
       updateResource: (input) => $trpc.emailEditor.updateResource.mutate(input),
     },

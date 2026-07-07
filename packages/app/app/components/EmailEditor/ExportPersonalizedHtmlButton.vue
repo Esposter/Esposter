@@ -4,6 +4,7 @@ import type { Resource } from "@esposter/db-schema";
 import type { Editor } from "grapesjs";
 
 import { downloadFile } from "@/services/app/downloadFile";
+import { sanitizeFilename } from "@/services/app/sanitizeFilename";
 import { substituteMergeFields } from "@/services/emailEditor/substituteMergeFields";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
@@ -24,15 +25,13 @@ const exportPersonalizedHtml = async (editorValue: Editor, resource: Resource, r
   const { html } = editorValue.runCommand("mjml-code-to-html") as { html: string };
   await getResultAsync(async () => {
     const dataset = await $trpc.dataset.readDataset.query(reference);
+    const filename = sanitizeFilename(resource.name);
     const zip = zipSync(
       Object.fromEntries(
-        dataset.rows.map((row, index) => [
-          `${resource.name}-${index + 1}.html`,
-          strToU8(substituteMergeFields(html, row)),
-        ]),
+        dataset.rows.map((row, index) => [`${filename}-${index + 1}.html`, strToU8(substituteMergeFields(html, row))]),
       ),
     );
-    downloadFile(`${resource.name}.zip`, zip, "application/zip");
+    downloadFile(`${filename}.zip`, zip, "application/zip");
     createAlert(`Exported ${dataset.rows.length} personalized emails`, "success");
   }).match(noop, (error) => {
     createAlert(error.message, "error");
