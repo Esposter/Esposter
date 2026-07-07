@@ -2,9 +2,13 @@
 
 Handling a `DatasetReference` whose source resource has been deleted, so a bound Dashboard visual or Email merge field surfaces a clear "source no longer available" state instead of a silent empty/failed resolve.
 
+## Why not a DB cascade
+
+A `DatasetReference` (`{ type, id }`) lives **inside the consumer's content blob** (JSON in Azure Blob), not in a Postgres column — there is no relational FK edge, so Drizzle `onDelete: "cascade"` / ORM cascade decorators have nothing to fire on. And cascade-**delete** would be the wrong operation regardless: deleting a source File must **blank/flag** the binding, never delete the Dashboard that binds to it. Only **references** dangle (Dashboard bind, Email merge fields); **imports** copied rows once and are immune.
+
 ## Why deferred
 
-Links are stored as bare `DatasetReference` ids (`{ type, id }`), not Postgres foreign keys, so a source delete cannot cascade. Today the consumer re-resolves on load and `dataset.readDataset` fails/returns empty — acceptable while binding is new and single-owner. Reference-integrity UX (dependency lookup on delete, a "broken link" placeholder in the consumer) is real cross-resource wiring to add only once binding is proven and users actually hit it. Published snapshots are unaffected — they bake the data in at publish time.
+Eager cleanup means null-the-reference / mark-broken, which needs either a reverse-reference index (a `resource_references` join table) or a scan of all consumers on delete, then a **rewrite of each consumer's content blob** (respecting its `contentVersion`) — real cross-resource write machinery. Acceptable to skip while binding is new and single-owner: today the consumer re-resolves on load and `dataset.readDataset` fails/returns empty. Published snapshots are unaffected — they bake the data in at publish time.
 
 ## Revisit when
 
