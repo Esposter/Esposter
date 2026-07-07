@@ -15,7 +15,8 @@ describe(loadDirSource, () => {
     expect.hasAssertions();
 
     const { dispose } = await loadDirSource({ dir: "", type: SourceType.Dir });
+    const result = await dispose();
 
-    await expect(dispose()).resolves.toBeUndefined();
+    expect(result).toBeUndefined();
   });
 });

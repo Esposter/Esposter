@@ -39,7 +39,9 @@ describe(sendReminderNotification, () => {
   test("completes without error when user has no push subscriptions", async () => {
     expect.hasAssertions();
 
-    await expect(sendReminderNotification(context, reminder)).resolves.toBeUndefined();
+    const result = await sendReminderNotification(context, reminder);
+
+    expect(result).toBeUndefined();
   });
 
   test("sends notification to all subscriptions", async () => {

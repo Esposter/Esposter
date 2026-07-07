@@ -55,10 +55,12 @@ describe(sendPushNotification, () => {
   test("returns early when message has no text content", async () => {
     expect.hasAssertions();
 
-    await expect(
-      sendPushNotification(context, { message: { ...standardMessage, message: "<p></p>" }, notificationOptions }),
-    ).resolves.toBeUndefined();
+    const result = await sendPushNotification(context, {
+      message: { ...standardMessage, message: "<p></p>" },
+      notificationOptions,
+    });
 
+    expect(result).toBeUndefined();
     expect(vi.mocked(webpush.sendNotification)).not.toHaveBeenCalled();
   });
 

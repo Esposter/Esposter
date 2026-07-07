@@ -23,6 +23,8 @@ describe(getFirstEmit, () => {
   test("resolves the first emitted value alongside the trigger", async () => {
     expect.hasAssertions();
 
-    await expect(getFirstEmit(createIterator, () => Promise.resolve())).resolves.toBe("");
+    const firstEmit = await getFirstEmit(createIterator, () => Promise.resolve());
+
+    expect(firstEmit).toBe("");
   });
 });

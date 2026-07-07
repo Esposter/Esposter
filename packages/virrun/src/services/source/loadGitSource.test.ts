@@ -33,8 +33,9 @@ describe(loadGitSource, () => {
     expect.hasAssertions();
 
     const { cwd, dispose } = await loadGitSource({ ref: "", repo: origin, type: SourceType.Git });
+    const content = await readFile(join(cwd, fileName), "utf8");
 
-    await expect(readFile(join(cwd, fileName), "utf8")).resolves.toBe(" ");
+    expect(content).toBe(" ");
 
     await dispose();
   });
@@ -43,8 +44,9 @@ describe(loadGitSource, () => {
     expect.hasAssertions();
 
     const { cwd, dispose } = await loadGitSource({ ref: "main", repo: origin, type: SourceType.Git });
+    const content = await readFile(join(cwd, fileName), "utf8");
 
-    await expect(readFile(join(cwd, fileName), "utf8")).resolves.toBe(" ");
+    expect(content).toBe(" ");
 
     await dispose();
   });

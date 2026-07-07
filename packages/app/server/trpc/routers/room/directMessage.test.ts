@@ -116,7 +116,9 @@ describe("directMessage", () => {
     await createFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
-    await expect(directMessageCaller.hideDirectMessage(directMessage.id)).resolves.toBeUndefined();
+    const result = await directMessageCaller.hideDirectMessage(directMessage.id);
+
+    expect(result).toBeUndefined();
   });
 
   test("fails hide with non-member", async () => {

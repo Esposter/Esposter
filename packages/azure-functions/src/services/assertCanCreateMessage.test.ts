@@ -109,7 +109,9 @@ describe(assertCanCreateMessage, () => {
 
     await mockDb.update(roomsInMessage).set({ isReadOnly: true }).where(eq(roomsInMessage.id, roomId));
 
-    await expect(assertCanCreateMessage(ownerUserId, roomId, "")).resolves.toBeUndefined();
+    const result = await assertCanCreateMessage(ownerUserId, roomId, "");
+
+    expect(result).toBeUndefined();
   });
 
   test("throws when slowmode is active and not enough time has elapsed", async () => {
@@ -139,6 +141,8 @@ describe(assertCanCreateMessage, () => {
   test("passes when all conditions are met", async () => {
     expect.hasAssertions();
 
-    await expect(assertCanCreateMessage(memberUserId, roomId, "a")).resolves.toBeUndefined();
+    const result = await assertCanCreateMessage(memberUserId, roomId, "a");
+
+    expect(result).toBeUndefined();
   });
 });
