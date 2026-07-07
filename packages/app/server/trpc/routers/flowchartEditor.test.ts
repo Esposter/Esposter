@@ -6,13 +6,13 @@ import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEd
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { flowchartEditorRouter } from "@@/server/trpc/routers/flowchartEditor";
-import { documents, DocumentType } from "@esposter/db-schema";
+import { resources, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
-// The generic document-procedure matrix is covered once in dashboard.test.ts;
-// Here only the router wiring: document type, content schema and container.
+// The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
+// here only the router wiring: resource type + content schema round-trip.
 describe("flowchartEditor", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["flowchartEditor"]>;
@@ -25,23 +25,23 @@ describe("flowchartEditor", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    await mockContext.db.delete(documents);
+    await mockContext.db.delete(resources);
   });
 
   test("saves and reads content", async () => {
     expect.hasAssertions();
 
-    const newDocument = await caller.createDocument({ name });
+    const newResource = await caller.createResource({ name });
 
-    expect(newDocument.type).toBe(DocumentType.Flowchart);
+    expect(newResource.type).toBe(ResourceType.Flowchart);
 
     const flowchartEditor = new FlowchartEditor();
-    await caller.saveDocumentContent({
+    await caller.saveResourceContent({
       content: flowchartEditor,
-      contentVersion: newDocument.contentVersion,
-      id: newDocument.id,
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
     });
-    const content = await caller.readDocumentContent({ id: newDocument.id });
+    const content = await caller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(flowchartEditor)));
   });

@@ -15,7 +15,7 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
-import { AZURE_MAX_PAGE_SIZE, documents, surveys } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE, resources, surveys } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -50,7 +50,7 @@ describe("dataset", () => {
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(surveys);
-    await mockContext.db.delete(documents);
+    await mockContext.db.delete(resources);
   });
 
   test("reads survey responses dataset", async () => {
@@ -148,7 +148,7 @@ describe("dataset", () => {
 
     const columnName = "columnName";
     const value = "value";
-    const newDocument = await tableEditorCaller.createDocument({ name });
+    const newResource = await tableEditorCaller.createResource({ name });
     const configuration = new TableEditorConfiguration();
     configuration[TableEditorType.File].items.push(
       new CsvDataSourceItem({
@@ -161,8 +161,8 @@ describe("dataset", () => {
         name,
       }),
     );
-    await tableEditorCaller.saveDocumentContent({ content: configuration, contentVersion: 0, id: newDocument.id });
-    const dataset = await caller.readDataset({ id: newDocument.id, type: DatasetProviderType.TableDocument });
+    await tableEditorCaller.saveResourceContent({ content: configuration, contentVersion: 0, id: newResource.id });
+    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument });
 
     expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
     expect(dataset.rows).toStrictEqual([{ [columnName]: value }]);
@@ -171,26 +171,26 @@ describe("dataset", () => {
   test("fails read table document without data source", async () => {
     expect.hasAssertions();
 
-    const newDocument = await tableEditorCaller.createDocument({ name });
-    await tableEditorCaller.saveDocumentContent({
+    const newResource = await tableEditorCaller.createResource({ name });
+    await tableEditorCaller.saveResourceContent({
       content: new TableEditorConfiguration(),
       contentVersion: 0,
-      id: newDocument.id,
+      id: newResource.id,
     });
 
     await expect(
-      caller.readDataset({ id: newDocument.id, type: DatasetProviderType.TableDocument }),
+      caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
   test("fails read table document with wrong user", async () => {
     expect.hasAssertions();
 
-    const newDocument = await tableEditorCaller.createDocument({ name });
+    const newResource = await tableEditorCaller.createResource({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      caller.readDataset({ id: newDocument.id, type: DatasetProviderType.TableDocument }),
+      caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

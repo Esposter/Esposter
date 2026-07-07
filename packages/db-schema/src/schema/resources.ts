@@ -8,7 +8,6 @@ import { createSelectSchema } from "drizzle-orm/zod";
 export const RESOURCE_NAME_MAX_LENGTH = 100;
 
 export const resourceTypeEnum = pgEnum("resource_type", ResourceType);
-
 // Pure identity + content lifecycle. Publish state is normalized into resourcePublications
 // because publishing is an opt-in capability — not every resource type has it.
 export const resources = pgTable(

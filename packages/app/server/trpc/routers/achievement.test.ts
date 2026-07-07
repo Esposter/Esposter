@@ -11,7 +11,7 @@ import { trpcRouter } from "@@/server/trpc/routers";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import {
   achievements,
-  documents,
+  resources,
   roomsInMessage,
   SpecialAchievementName,
   UserAchievementRelations,
@@ -34,7 +34,7 @@ describe("achievement", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    await mockContext.db.delete(documents);
+    await mockContext.db.delete(resources);
     await mockContext.db.delete(roomsInMessage);
     await mockContext.db.delete(achievements);
   });
@@ -85,15 +85,15 @@ describe("achievement", () => {
   test("on updates", async () => {
     expect.hasAssertions();
 
-    const newDocument = await caller.webpageEditor.createDocument({ name });
+    const newResource = await caller.webpageEditor.createResource({ name });
     const onUpdateAchievement = await caller.achievement.onUpdateAchievement();
     const data = await getFirstEmit(
       () => onUpdateAchievement,
       () =>
-        caller.webpageEditor.saveDocumentContent({
+        caller.webpageEditor.saveResourceContent({
           content: new WebpageEditor(),
-          contentVersion: newDocument.contentVersion,
-          id: newDocument.id,
+          contentVersion: newResource.contentVersion,
+          id: newResource.id,
         }),
     );
 

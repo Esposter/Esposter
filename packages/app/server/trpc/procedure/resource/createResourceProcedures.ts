@@ -104,7 +104,9 @@ export const createResourceProcedures = <TType extends ResourceType>(
     readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query(async ({ ctx, input: { id } }) => {
       const content = await readContent(id);
       if (content === undefined || !transformReadContent) return content;
-      return transformReadContent(ctx, ctx.resource, content);
+      // The hook is typed for the concrete type at the call site; inside the generic factory the
+      // content and hook-param types can't be proven equal, so the cast is the centralized cost
+      return transformReadContent(ctx, ctx.resource, content as never) as Promise<typeof content>;
     }),
     readResources: standardAuthedProcedure
       .input(readResourcesInputSchema)
@@ -172,7 +174,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
               "cannot publish resource without content",
             ).message,
           });
-
         // The version bump is done in SQL so concurrent publishes each claim a distinct publish blob;
         // the publication row exists only while the resource is published (the Publishable capability's state)
         const publication = requireMutation(
@@ -190,9 +191,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
           DatabaseEntityType.ResourcePublication,
           id,
         );
-
         const publishedContent = transformPublishedContent
-          ? await transformPublishedContent(ctx, ctx.resource, content)
+          ? await transformPublishedContent(ctx, ctx.resource, content as never)
           : content;
         await useUpload(
           AzureContainer.ResourceAssets,
