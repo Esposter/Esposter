@@ -807,7 +807,9 @@ describe("message", () => {
       await mockSessionOnce(mockContext.db, user);
       vi.advanceTimersByTime(1);
 
-      await expect(messageCaller.createMessage({ message, roomId: newRoom.id })).resolves.toBeDefined();
+      const createdMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+
+      expect(createdMessage).toBeDefined();
     });
   });
 
@@ -835,7 +837,9 @@ describe("message", () => {
       const userId = getMockSession().user.id;
       const message = getMessage(userId);
 
-      await expect(messageCaller.createMessage({ message, roomId: newRoom.id })).resolves.toBeDefined();
+      const createdMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+
+      expect(createdMessage).toBeDefined();
     });
   });
 });

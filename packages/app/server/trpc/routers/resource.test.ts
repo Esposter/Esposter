@@ -86,7 +86,9 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name });
     await tableEditorCaller.createResource({ name });
 
-    expect(await caller.count()).toBe(2);
+    const count = await caller.count();
+
+    expect(count).toBe(2);
   });
 
   test("counts resources filtered by type", async () => {
@@ -95,7 +97,9 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name });
     await tableEditorCaller.createResource({ name });
 
-    expect(await caller.count({ types: [ResourceType.Dashboard] })).toBe(1);
+    const count = await caller.count({ types: [ResourceType.Dashboard] });
+
+    expect(count).toBe(1);
   });
 
   test("counts resources filtered by search query", async () => {
@@ -104,6 +108,8 @@ describe("resource", () => {
     await dashboardCaller.createResource({ name: "quarterly report" });
     await tableEditorCaller.createResource({ name: "grocery list" });
 
-    expect(await caller.count({ searchQuery: "report" })).toBe(1);
+    const count = await caller.count({ searchQuery: "report" });
+
+    expect(count).toBe(1);
   });
 });

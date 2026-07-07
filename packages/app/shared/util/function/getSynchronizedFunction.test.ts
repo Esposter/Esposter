@@ -11,6 +11,8 @@ describe(getSynchronizedFunction, () => {
 
     synchronizedFunction();
 
-    await expect(fn.apply(this)).resolves.toBe(value);
+    const result = await fn.apply(this);
+
+    expect(result).toBe(value);
   });
 });

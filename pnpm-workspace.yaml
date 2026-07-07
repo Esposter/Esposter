@@ -31,7 +31,7 @@ catalog:
   "@codemirror/language-data": ^6.5.2
   "@codemirror/state": ^6.7.1
   "@codemirror/theme-one-dark": ^6.1.3
-  "@codemirror/view": ^6.43.5
+  "@codemirror/view": ^6.43.6
   "@codspeed/vitest-plugin": ^5.7.1
   "@dxup/nuxt": ^0.5.3
   "@dxup/unimport": ^0.1.2
@@ -63,15 +63,15 @@ catalog:
   "@pulumi/pulumi": ^3.250.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^1.8.7
-  "@tiptap/core": ^3.27.1
-  "@tiptap/extension-code-block-lowlight": ^3.27.1
-  "@tiptap/extension-file-handler": ^3.27.1
-  "@tiptap/extension-mention": ^3.27.1
-  "@tiptap/extensions": ^3.27.1
-  "@tiptap/pm": ^3.27.1
-  "@tiptap/starter-kit": ^3.27.1
-  "@tiptap/suggestion": ^3.27.1
-  "@tiptap/vue-3": ^3.27.1
+  "@tiptap/core": ^3.27.2
+  "@tiptap/extension-code-block-lowlight": ^3.27.2
+  "@tiptap/extension-file-handler": ^3.27.2
+  "@tiptap/extension-mention": ^3.27.2
+  "@tiptap/extensions": ^3.27.2
+  "@tiptap/pm": ^3.27.2
+  "@tiptap/starter-kit": ^3.27.2
+  "@tiptap/suggestion": ^3.27.2
+  "@tiptap/vue-3": ^3.27.2
   "@tresjs/cientos": ^5.8.1
   "@tresjs/core": ^5.8.3
   "@tresjs/nuxt": ^5.6.3
@@ -92,12 +92,12 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260705.1
+  "@typescript/native-preview": ^7.0.0-dev.20260706.1
   "@unocss/eslint-config": ^66.7.4
   "@unocss/nuxt": ^66.7.4
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.7
-  "@vitest/coverage-v8": ^4.1.9
+  "@vitest/coverage-v8": ^4.1.10
   "@vitest/eslint-plugin": ^1.6.21
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.3
@@ -134,7 +134,7 @@ catalog:
   eslint: ^10.6.0
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-oxlint: ^1.72.0
-  eslint-plugin-perfectionist: ^5.9.1
+  eslint-plugin-perfectionist: ^5.10.0
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
   fake-indexeddb: ^6.2.5
@@ -178,11 +178,11 @@ catalog:
   mjml-browser: ^5.4.0
   neverthrow: ^8.2.0
   node-emoji: ^2.2.0
-  node-html-parser: ^8.0.4
+  node-html-parser: ^9.0.0
   nuxt: ^4.4.8
   nuxt-security: ^2.6.0
-  oxfmt: ^0.57.0
-  oxlint: ^1.72.0
+  oxfmt: ^0.58.0
+  oxlint: ^1.73.0
   oxlint-tsgolint: ^0.24.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
@@ -196,7 +196,7 @@ catalog:
   rate-limiter-flexible: ^11.2.0
   read-excel-file: ^9.2.0
   rolldown: ^1.1.4
-  rolldown-plugin-dts: ^0.26.0
+  rolldown-plugin-dts: ^0.27.1
   rxjs: ^7.8.2
   sanitize-html: ^2.17.5
   sass-embedded: ^1.100.0
@@ -215,7 +215,7 @@ catalog:
   type-fest: ^5.8.0
   typedoc: ^0.28.20
   typescript: ^6.0.3
-  typescript-eslint: ^8.62.1
+  typescript-eslint: ^8.63.0
   unconfig: ^7.5.0
   unocss: ^66.7.4
   unocss-preset-vuetify: ^0.3.0
@@ -225,7 +225,7 @@ catalog:
   viewerjs: ^1.11.7
   vite: ^8.1.3
   vite-plugin-mkcert: ^2.1.0
-  vitest: ^4.1.9
+  vitest: ^4.1.10
   vue: ^3.5.39
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1

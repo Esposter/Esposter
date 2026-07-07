@@ -572,7 +572,7 @@ describe("room", () => {
     await roomCaller.joinRoom(invite);
     vi.advanceTimersByTime(1);
 
-    await expect(roomCaller.deleteMember({ roomId: newRoom.id, userId: user.id })).resolves.toBeUndefined();
+    await roomCaller.deleteMember({ roomId: newRoom.id, userId: user.id });
 
     const members = await roomCaller.readMembers({ roomId: newRoom.id });
 

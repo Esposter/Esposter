@@ -39,12 +39,16 @@ describe(createMockDb, () => {
       loadDataDir: new Blob([await readFile(join(import.meta.dirname, SNAPSHOT_FILENAME))]),
     });
 
-    await expect(introspect(snapshot)).resolves.toStrictEqual(await introspect(fresh));
+    const snapshotIntrospection = await introspect(snapshot);
+
+    expect(snapshotIntrospection).toStrictEqual(await introspect(fresh));
   });
 
   test("returns a queryable db", async () => {
     expect.hasAssertions();
 
-    await expect(db.$count(users)).resolves.toBe(0);
+    const count = await db.$count(users);
+
+    expect(count).toBe(0);
   });
 });

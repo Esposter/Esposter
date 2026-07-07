@@ -88,8 +88,9 @@ Cross-cutting whitespace, comment, and line-ending rules for all files. Language
 - **Keep error/warning examples** — when a comment quotes the actual error or warning text a workaround addresses (e.g. `[Vue warn]: Invalid prop: type check failed`), keep that quote — it's how the next person greps for the cause. Trim it to the minimal identifying fragment; drop surrounding example values.
 - **Don't fight the comment-capitalization hook** — a hook capitalizes the first letter of every `//` line, so a wrapped sentence shows a mid-sentence capital on its continuation line. That's fine. Only avoid starting a wrapped line with a case-sensitive code identifier the hook would corrupt — reword those.
 
-## Skill Doc Examples
+## Skill Doc Content
 
+- **Don't restate what an enforcer already checks.** A rule mechanically enforced by typecheck, an ESLint/oxlint rule, or `no-restricted-syntax` is owned by that enforcer — it fails the build on violation, so prose re-deriving it is dead weight that rots when the rule changes. When a convention is enforced, the skill note should be one line: state it, give the non-obvious _why_ or the fix the error message can't, and point to the enforcer (rule name / file). Don't enumerate every banned form, paste the error text, or re-explain what the rule already says. Reserve full prose for conventions that have **no** enforcer (naming, structure, when-to-use-X) — those are exactly what skills exist to capture.
 - **Code examples in skill docs must use generic placeholders** — `Foo`/`Bar`/`baz`, `external-pkg`, `@/models/Bar`, etc. NEVER paste the concrete identifiers, package names, or file paths from the change that prompted the note. A skill is a reusable convention, not a changelog; task-specific names make the rule read as a one-off. Generic source categories (`#shared`, `@vueuse/*`, `@/`) are fine since they describe a class of import, not a specific symbol.
 
 ## Declaration Layout
