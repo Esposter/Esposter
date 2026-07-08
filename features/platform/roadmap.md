@@ -53,7 +53,18 @@ on-canvas `<Panel>` (`isSidebarOpen`). Deleted `pages/flowchart-editor.vue` +
 `useReadFlowchartEditor` + the Flowchart `ProductListLinkItems` entry (the Phase-2-deferred per-editor
 launcher trim, now applicable). Router key `flowchartEditor`, the `flowchartEditor/` folders, and
 `RoutePath.FlowchartEditor`/`ResourceTypeRoutePathMap[Flowchart]` stay for the Phase 6 rename/grep sweep.
-**Pending:** Email, Webpage, Dashboard (+ their view/portable wiring and page deletions).
+
+**Email ✅ (shipped — first Portable inline editor).** Same blade migration (GrapesJS canvas renders
+inline under `<ClientOnly><Suspense>` in `BladeOutlet`; `store/emailEditor` retargets to `useResource`,
+drops `localStorage`, and holds the live `editor` as the bridge for the command-bar export). The
+**Portable capability is now wired**: `PortableFormat` reshaped from `serialize(content)→string`+`mimeType`
+to a self-contained async `export()` (so a format can pull the editor + dataset + zip N files);
+`PortableActions` renders an Export menu from `PortableFormatMap[type]`; `PortableFormatMap[Email]` = the
+personalized-HTML export (via the extracted `exportPersonalizedHtml` service). Import lands with File
+(Phase 4). Also added a generic `hasCapability(type, capability)` guard + `CapabilityResourceType<T>`
+(the three derived unions now alias it), replacing the per-capability `getIs*` helpers. Deleted
+`email-editor.vue`, `EmailEditor/{Header,ExportPersonalizedHtmlButton}.vue`, the Email launcher entry, and
+the dead `localStorage` key. **Pending:** Webpage, Dashboard (+ view wiring and page deletions).
 
 ## Phase 4 — File split + TodoList
 

@@ -78,11 +78,11 @@ Each type owns one content schema (zod interface-first, one export per file) in 
 
 A capability is a cross-cutting mechanism a resource type opts into via its definition. **Admission rule: a capability exists only when ≥2 resource types need the same mechanism, or when the type system must guarantee its absence** (a TodoList must not have publish endpoints). Anything used by exactly one type is type-specific code — promoting a single-consumer mechanism is over-engineering.
 
-| Capability          | Contract                                                                                                | Adopters                                                  |
-| ------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command (`publishing.md`) | Dashboard, Survey, Webpage                                |
-| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type (`datasets.md`)                         | File, Survey (responses)                                  |
-| **Portable**        | import/export via declared formats (serialize/deserialize/accept/mimeType) + Import/Export commands     | File (csv/json/xlsx, both ways), Email (html export only) |
+| Capability          | Contract                                                                                                         | Adopters                                                               |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Publishable**     | versioned snapshot + publish procedures + `/view/[type]/[id]` route + Publish command (`publishing.md`)          | Dashboard, Survey, Webpage                                             |
+| **DatasetProvider** | registers a provider so `dataset.readDataset` resolves the type (`datasets.md`)                                  | File, Survey (responses)                                               |
+| **Portable**        | import/export via declared formats (self-contained `export()` / `deserialize`+`accept`) + Import/Export commands | File (csv/json/xlsx, both ways), Email (personalized html export only) |
 
 Explicitly **not** capabilities: collecting public responses (Survey-only — stays survey-specific code) and dataset _consumption_ (just calling `dataset.readDataset` from a component; no per-type wiring to declare).
 
@@ -186,7 +186,7 @@ flowchart TB
   DEF --> BLADES
 ```
 
-Component wiring cannot live in shared code, so exactly three thin client satellite maps exist: `ResourceBladeDefinitionMap` (type-specific blades), `PortableFormatMap` (import/export formats — an entry with `deserialize` contributes Import, with `serialize` contributes Export), and `ViewComponentMap` (public view renderers). Server-side hooks (publish transform, dataset provider) are passed at router construction because they import server code.
+Component wiring cannot live in shared code, so exactly three thin client satellite maps exist: `ResourceBladeDefinitionMap` (type-specific blades), `PortableFormatMap` (import/export formats — an entry with `deserialize` contributes Import, with a self-contained async `export()` contributes Export), and `ViewComponentMap` (public view renderers). Server-side hooks (publish transform, dataset provider) are passed at router construction because they import server code.
 
 ---
 
