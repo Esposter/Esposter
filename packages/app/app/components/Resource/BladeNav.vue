@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
+import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceBladeType, ResourceBladeTypes } from "@/models/resource/ResourceBladeType";
 import { ResourceBladeTitleMap } from "@/services/resource/ResourceBladeTitleMap";
-import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { RoutePath } from "@esposter/shared";
 
 interface ResourceBladeNavProps {

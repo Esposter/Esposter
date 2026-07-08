@@ -22,7 +22,7 @@ const { activeBlade, publication, publish, remove, rename, resource, unpublish }
     <div flex flex-1 flex-col>
       <ResourceBladeToolbar :active-blade :publication :publish :remove :rename :resource :unpublish />
       <!-- The blade box owns the vertical divider (b-l) that meets the list toolbar's b-b at the corner -->
-      <div b-l-1 b-t-1 b-b-0 b-border b-solid flex flex-1>
+      <div b-b-0 b-l-1 b-t-1 b-border b-solid flex flex-1>
         <ResourceBladeNav :active-blade :resource />
         <div flex-1 overflow-y-auto>
           <ResourceBladeOutlet :active-blade :publication :resource />

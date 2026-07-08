@@ -3,7 +3,7 @@ import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { RoutePath } from "@esposter/shared";
+import { getResultAsync, noop, RoutePath } from "@esposter/shared";
 
 interface ResourceOverviewProps {
   publication?: ResourcePublication;
@@ -13,8 +13,13 @@ interface ResourceOverviewProps {
 const { publication, resource } = defineProps<ResourceOverviewProps>();
 const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
 const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, resource.id) : undefined));
-const copyPublicLink = () =>
-  publicUrl.value && window.navigator.clipboard.writeText(`${window.location.origin}${publicUrl.value}`);
+const copyPublicLink = async () => {
+  if (!publicUrl.value) return;
+  await getResultAsync(() => window.navigator.clipboard.writeText(`${window.location.origin}${publicUrl.value}`)).match(
+    noop,
+    noop,
+  );
+};
 </script>
 
 <template>

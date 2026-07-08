@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Resource } from "@esposter/db-schema";
 import type { ResourceBladeType } from "@/models/resource/ResourceBladeType";
+import type { Resource } from "@esposter/db-schema";
 
-import { ResourceBladeTitleMap } from "@/services/resource/ResourceBladeTitleMap";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { ResourceBladeTitleMap } from "@/services/resource/ResourceBladeTitleMap";
 
 interface ResourceBladeTitleProps {
   activeBlade: ResourceBladeType;

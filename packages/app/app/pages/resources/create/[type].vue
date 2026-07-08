@@ -52,7 +52,7 @@ const onSubmit = async () => {
                   label="Name"
                   :rules="resourceNameRules"
                 />
-                <div flex gap-2 justify-end mt-4>
+                <div mt-4 flex gap-2 justify-end>
                   <v-btn variant="text" :to="RoutePath.ResourcesCreate">Cancel</v-btn>
                   <StyledButton type="submit" :button-props="{ disabled: !isValid, loading: isSubmitting }">
                     Create

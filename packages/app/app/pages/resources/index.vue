@@ -25,8 +25,8 @@ await readResources({
       <StyledPageHeader />
       <v-sheet flex-1 overflow-y-auto>
         <v-container>
-          <div flex flex-col gap-8 py-4>
-            <div flex justify-center py-4>
+          <div py-4 flex flex-col gap-8>
+            <div py-4 flex justify-center>
               <v-text-field
                 v-model="searchQuery"
                 clearable

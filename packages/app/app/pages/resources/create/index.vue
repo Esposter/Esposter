@@ -11,7 +11,7 @@ definePageMeta({ middleware: "auth" });
       <StyledPageHeader title="Create" />
       <v-sheet flex-1 overflow-y-auto>
         <v-container>
-          <div flex flex-col gap-4 py-4>
+          <div py-4 flex flex-col gap-4>
             <span text-h6>Create a resource</span>
             <ResourceCreateGallery />
           </div>
