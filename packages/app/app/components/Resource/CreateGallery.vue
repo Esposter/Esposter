@@ -16,7 +16,7 @@ const { dense = false } = defineProps<CreateGalleryProps>();
     <v-card
       v-for="type in CreatableResourceTypes"
       :key="type"
-      pa-4
+      p-4
       flex
       flex-col
       gap-2

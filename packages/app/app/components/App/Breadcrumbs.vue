@@ -4,15 +4,15 @@ import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 import { ProductListLinkItems } from "@/services/app/ProductListLinkItems";
 import { RoutePath } from "@esposter/shared";
 
-interface BreadcrumbItem {
-  title: string;
-  to?: string;
-}
-
 interface AppBreadcrumbsProps {
   // Intermediate crumbs inserted between the matched product and the (disabled) title leaf
   crumbs?: BreadcrumbItem[];
   title?: string;
+}
+
+interface BreadcrumbItem {
+  title: string;
+  to?: string;
 }
 
 const { crumbs, title } = defineProps<AppBreadcrumbsProps>();
@@ -34,5 +34,5 @@ const items = computed(() => {
 </script>
 
 <template>
-  <v-breadcrumbs :items pa-0 />
+  <v-breadcrumbs :items p-0 />
 </template>

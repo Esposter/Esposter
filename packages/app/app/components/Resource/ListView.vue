@@ -25,7 +25,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigat
 
 <template>
   <div flex flex-col h-full>
-    <v-toolbar v-if="searchable" px-4 py-2 flex flex-wrap gap-2 items-center>
+    <v-toolbar v-if="searchable" px-4 py-2 b-1 b-border b-solid flex flex-wrap gap-2 items-center>
       <v-text-field
         v-model="searchQuery"
         clearable

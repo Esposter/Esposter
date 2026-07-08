@@ -121,7 +121,7 @@ const onRename = async () => {
             <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
           </v-toolbar>
           <div flex flex-1>
-            <v-list nav b-e-1 b-border b-solid :width="smAndDown ? '3.5rem' : '16rem'">
+            <v-list nav :width="smAndDown ? '3.5rem' : '16rem'">
               <v-list-item
                 v-for="item in bladeItems"
                 :key="item.slug"

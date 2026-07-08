@@ -10,7 +10,7 @@ const callView = useTemplateRef("callView");
 
 <template>
   <div ref="callView" bg-background flex flex-col size-full relative overflow-hidden>
-    <header v-if="hasScreenShare || $slots.append" pa-3 flex gap-x-3 items-center right-0 top-0 absolute z-1>
+    <header v-if="hasScreenShare || $slots.append" p-3 flex gap-x-3 items-center right-0 top-0 absolute z-1>
       <StyledCard v-if="hasScreenShare" rounded="pill" px-4 py-2 flex gap-x-3 items-center>
         <v-icon icon="mdi-monitor-share" text-primary />
         <span font-medium truncate>{{ presenterName }} is presenting</span>

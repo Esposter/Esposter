@@ -18,7 +18,7 @@ const copyPublicLink = () =>
 </script>
 
 <template>
-  <div pa-6 flex flex-col gap-4>
+  <div p-6 flex flex-col gap-4>
     <span text-h6>Essentials</span>
     <v-card>
       <v-card-text>

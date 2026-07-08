@@ -7,7 +7,7 @@
     :tooltip-props="{ location: 'bottom' }"
   >
     <StyledCard>
-      <div pa-1 flex>
+      <div p-1 flex>
         <MessageContentHeaderActionButtons />
       </div>
     </StyledCard>
