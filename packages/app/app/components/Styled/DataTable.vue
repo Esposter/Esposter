@@ -13,8 +13,7 @@ const { "background-opacity-40": backgroundOpacity40 } = storeToRefs(colorsStore
 </script>
 
 <template>
-  <!-- @vue-expect-error @TODO: https://github.com/vuetifyjs/vuetify/issues/21183 -->
-  <v-data-table b-1 :="dataTableProps">
+  <v-data-table :="dataTableProps">
     <template v-for="(_slot, name) of slots" #[name]="scope">
       <slot :name :="{ ...scope }" />
     </template>

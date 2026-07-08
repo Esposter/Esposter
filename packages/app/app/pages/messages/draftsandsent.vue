@@ -14,7 +14,7 @@ await readDraftsAndSent();
     <template #left>
       <MessageLeftSideBar />
     </template>
-    <div bg-surface flex flex-col h-full min-h-0>
+    <v-sheet flex flex-col h-full min-h-0>
       <div px-6 pt-5>
         <h1 font-bold text-headline-small>Drafts & sent</h1>
         <MessageDraftsAndSentTabs v-model="tab" />
@@ -34,6 +34,6 @@ await readDraftsAndSent();
         </v-window>
       </div>
       <MessageDraftsAndSentScheduleDialog />
-    </div>
+    </v-sheet>
   </NuxtLayout>
 </template>

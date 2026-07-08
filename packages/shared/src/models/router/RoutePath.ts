@@ -32,12 +32,17 @@ export const RoutePath: {
   readonly PostCreate: "/post/create";
   readonly PostUpdate: (id: string) => string;
   readonly PrivacyPolicy: "/privacy-policy";
+  readonly Resource: (id: string) => string;
   readonly Resources: "/resources";
+  readonly ResourcesAll: "/resources/all";
+  readonly ResourcesCreate: "/resources/create";
+  readonly ResourcesCreateType: (type: string) => string;
   readonly Survey: (id: string) => string;
   readonly [SURVEY_DISPLAY_NAME]: `/${Uncapitalize<typeof SURVEY_DISPLAY_NAME>}`;
   readonly [SURVEYER_EDIT_KEY]: (id: string) => string;
   readonly TableEditor: "/table-editor";
   readonly UserSettings: "/user/settings";
+  readonly View: (type: string, id: string) => string;
   readonly ViewDashboard: (id: string) => string;
   readonly ViewWebpage: (id: string) => string;
   readonly WebpageEditor: "/webpage-editor";
@@ -69,12 +74,17 @@ export const RoutePath: {
   PostCreate: "/post/create",
   PostUpdate: (id: string) => `/post/update/${id}`,
   PrivacyPolicy: "/privacy-policy",
+  Resource: (id: string) => `/resources/${id}`,
   Resources: "/resources",
+  ResourcesAll: "/resources/all",
+  ResourcesCreate: "/resources/create",
+  ResourcesCreateType: (type: string) => `/resources/create/${type}`,
   Survey: (id: string) => `/survey/${id}`,
   [SURVEY_DISPLAY_NAME]: `/${uncapitalize(SURVEY_DISPLAY_NAME)}`,
   [SURVEYER_EDIT_KEY]: (id: string) => `/${uncapitalize(SURVEY_DISPLAY_NAME)}/${id}`,
   TableEditor: "/table-editor",
   UserSettings: "/user/settings",
+  View: (type: string, id: string) => `/view/${type}/${id}`,
   ViewDashboard: (id: string) => `/view/dashboard/${id}`,
   ViewWebpage: (id: string) => `/view/webpage/${id}`,
   WebpageEditor: "/webpage-editor",

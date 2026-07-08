@@ -1,34 +1,17 @@
 <script setup lang="ts">
-import { authClient } from "@/services/auth/authClient";
 import { visualTypeItemCategoryDefinitions } from "@/services/dashboard/visualTypeItemCategoryDefinitions";
 import { ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
-import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 import { RoutePath } from "@esposter/shared";
 
-const session = authClient.useSession();
 const visualStore = useVisualStore();
 const { createVisual } = visualStore;
 const { visualType } = storeToRefs(visualStore);
-const dashboardStore = useDashboardStore();
-const { createResource, deleteResource, publishDashboard, renameResource, selectResource, unpublishDashboard } =
-  dashboardStore;
-const { currentResource, publication, resources } = storeToRefs(dashboardStore);
 </script>
 
 <template>
   <StyledPageHeader>
-    <template v-if="session.data" #identity>
-      <ResourcePicker
-        :current-resource
-        :resources
-        @create="createResource($event)"
-        @delete="deleteResource($event)"
-        @rename="(id, name) => renameResource(id, name)"
-        @select="selectResource($event)"
-      />
-    </template>
     <template #filters>
       <v-select
         v-model="visualType"
@@ -44,14 +27,6 @@ const { currentResource, publication, resources } = storeToRefs(dashboardStore);
       />
     </template>
     <template #actions>
-      <ResourcePublishButton
-        v-if="session.data && currentResource"
-        :is-published="Boolean(publication)"
-        :view-path="RoutePath.ViewDashboard"
-        :resource="currentResource"
-        @publish="publishDashboard()"
-        @unpublish="unpublishDashboard()"
-      />
       <v-tooltip :text="`Add ${prettify(visualType)} Visual`">
         <template #activator="{ props }">
           <v-btn variant="elevated" :flat="false" :="props" @click="createVisual">

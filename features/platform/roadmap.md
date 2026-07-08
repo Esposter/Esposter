@@ -23,15 +23,17 @@ The Resource Explorer consolidation: everything becomes a resource (`/architectu
 
 Azure-portal-faithful surface: `/resources` is the **Home** (search + quick-create + recents), the full list is its own page, and **Create is a dedicated flow** (gallery → per-type form), never a modal. See [specs/resource-explorer.md](specs/resource-explorer.md).
 
-- [ ] `/resources` **Home** (`pages/resources/index.vue`): resource search bar, quick-create tiles (`ResourceDefinitionMap` entries → `/resources/create/[type]`, Azure "services" row), recent-resources rows (name · type · updatedAt, sorted desc, capped) with a **See all** link, and a primary **Create a resource** button
-- [ ] `/resources/all` (`pages/resources/all.vue`): full `StyledDataTableServer` over `resource.readResources` (name, type facet, status, updatedAt), search, row → `/resources/[id]`; the **See all** target
-- [ ] `/resources/create` (`pages/resources/create/index.vue`): type-picker **gallery** (marketplace) listing `ResourceDefinitionMap` entries with icon + title + description → `/resources/create/[type]`
-- [ ] `/resources/create/[type]` (`pages/resources/create/[type].vue`): per-type create form (name + any type-specific initial settings), Review + Create → `createResource` → routes to `/resources/[id]`
-- [ ] `/resources/[id]/[[blade]]` page: left blade menu, Overview blade (Essentials + type summary), toolbar commands (rename/delete + capability commands), blade route middleware
-- [ ] `useResource(id)` blade-scoped composable (successor of `useResourceState` for the blade page)
-- [ ] `ResourceBladeDefinitionMap`, `PortableFormatMap`, `ViewComponentMap` skeletons
-- [ ] `/view/[type]/[id]` dynamic public page dispatching `ViewComponentMap` (replaces per-type view pages)
-- [ ] Trim per-editor `ProductListLinkItems` entries once editors become blades ([specs/shell-cohesion.md](specs/shell-cohesion.md))
+- [x] `/resources` **Home** (`pages/resources/index.vue`): resource search bar → `/resources/all`, quick-create tiles (`ResourceCreateGallery` dense → `/resources/create/[type]`), recent-resources rows (name · type · updatedAt via `useReadResources`, capped) with a **See all** link, primary **Create a resource** button, empty state
+- [x] `/resources/all` (`pages/resources/all.vue`): full `StyledDataTableServer` over `resource.readResources` (type facet, name, created/updated — **no status column**, see note), search prefilled from `?search`, row → `/resources/[id]`; the **See all** target
+- [x] `/resources/create` (`pages/resources/create/index.vue`): type-picker **gallery** (`ResourceCreateGallery`) → `/resources/create/[type]`
+- [x] `/resources/create/[type]` (`pages/resources/create/[type].vue`): per-type create form (name via `resourceNameRules`) → `useCreateResource` → routes to `/resources/[id]`
+- [x] `/resources/[id]/[[blade]]` page: left blade menu (Overview + `ResourceBladeDefinitionMap`), Overview blade (Essentials + summary slot), toolbar (rename/delete + publish/import/export by capability), inline blade validation
+- [x] `useResource(id)` blade-scoped composable — **metadata scope** (row load, rename, delete, publish/unpublish); typed content + type summary land with each editor's blade migration (Phase 3-5)
+- [x] `ResourceBladeDefinitionMap`, `PortableFormatMap`, `ViewComponentMap` skeletons
+- [x] `/view/[type]/[id]` dynamic public page dispatching `ViewComponentMap` (skeleton map ⇒ 404s until types migrate off their static view pages in Phase 3/5)
+- [ ] Trim per-editor `ProductListLinkItems` entries once editors become blades ([specs/shell-cohesion.md](specs/shell-cohesion.md)) — deferred to Phase 3 (editors still top-level)
+
+**Phase 2 transitional notes.** The create gallery offers only the `createResourceProcedures`-backed, `resources`-table types (`ResourceType.Table`, `Dashboard`, `Webpage`, `Email`, `Flowchart` — `CreatableResourceTypes`). Survey lives on its own `surveys` table (folds Phase 5) so it never appears in `resource.readResources` and is excluded; File/TodoList have no router yet (Phase 4). Router keys stay the legacy editor names (`tableEditor`/`emailEditor`/…), so `useCreateResource`/`useResource` dispatch through explicit per-type maps until the Phase 3-4 renames. Publish **status** is intentionally omitted from the `/all` list (surfaced per-resource on Overview instead).
 
 ## Phase 3 — thin editors migrate (Flowchart, Email, Webpage, Dashboard)
 

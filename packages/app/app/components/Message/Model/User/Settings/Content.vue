@@ -17,14 +17,14 @@ useSettingsScrollSpy();
 <template>
   <MessageModelSettingsContent>
     <template #header>
-      <header px-4 py-4 bg-surface flex items-center justify-between>
+      <v-sheet tag="header" px-4 py-4 flex items-center justify-between>
         <div font-bold text-headline-medium>{{ settingsType }}</div>
         <v-tooltip text="Close">
           <template #activator="{ props: tooltipProps }">
             <v-btn :="tooltipProps" icon="mdi-close" variant="text" @click="isVisible = false" />
           </template>
         </v-tooltip>
-      </header>
+      </v-sheet>
     </template>
     <component :is="component" v-if="component" />
   </MessageModelSettingsContent>

@@ -1,27 +1,19 @@
 <script setup lang="ts">
-import type { Resource, ResourceType } from "@esposter/db-schema";
-import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
-
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { dayjs } from "#shared/services/dayjs";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
-import { ResourceTypeRoutePathMap } from "@/services/resource/ResourceTypeRoutePathMap";
-import { ResourceTypes } from "@esposter/db-schema";
+import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
 
+const RECENT_RESOURCES_LIMIT = 5;
 const searchQuery = ref("");
-const selectedTypes = ref<ResourceType[]>([]);
-const { count, isLoading, items, readResources } = useReadResources(searchQuery, selectedTypes);
-// Encode every filter into the table's search signal so any change resets to page 1 and refetches (debounced)
-const search = refDebounced(
-  computed(() => JSON.stringify([searchQuery.value, selectedTypes.value])),
-  300,
-);
-const typeItems = ResourceTypes.map((type) => ({ title: ResourceDefinitionMap[type].title, value: type }));
-const getResourceIcon = (type: ResourceType) => ResourceDefinitionMap[type].icon;
-const getResourceTitle = (type: ResourceType) => ResourceDefinitionMap[type].title;
-const openResource = (resource: Resource) => navigateTo(ResourceTypeRoutePathMap[resource.type](resource.id));
-const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => openResource(item);
+const { isLoading, items: recentResources, readResources } = useReadResources(ref(""), ref([]));
+await readResources({
+  itemsPerPage: RECENT_RESOURCES_LIMIT,
+  page: 1,
+  sortBy: [{ key: "updatedAt", order: SortOrder.Desc }],
+});
 </script>
 
 <template>
@@ -30,66 +22,69 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => openRes
       <Title>Resource Explorer</Title>
     </Head>
     <div flex flex-col h-full>
-      <StyledPageHeader title="Resource Explorer">
-        <template #filters>
-          <v-text-field
-            v-model="searchQuery"
-            clearable
-            density="comfortable"
-            hide-details
-            label="Search resources"
-            max-width="24rem"
-            min-width="16rem"
-            prepend-inner-icon="mdi-magnify"
-          />
-          <v-select
-            v-model="selectedTypes"
-            chips
-            clearable
-            density="comfortable"
-            hide-details
-            label="Type"
-            max-width="20rem"
-            min-width="12rem"
-            multiple
-            :items="typeItems"
-          />
-        </template>
-      </StyledPageHeader>
-      <StyledDataTableServer
-        flex
-        flex-1
-        flex-col
-        min-h-0
-        :data-table-server-props="{
-          headers: ResourceHeaders,
-          height: '100%',
-          items,
-          itemsLength: count,
-          loading: isLoading,
-          search,
-          sortBy: [{ key: 'updatedAt', order: 'desc' }],
-        }"
-        @click:row="onClickRow"
-        @update:options="readResources"
-      >
-        <template #[`item.type`]="{ item }">
-          <div flex gap-2 items-center>
-            <v-icon :icon="getResourceIcon(item.type)" />
-            {{ getResourceTitle(item.type) }}
+      <StyledPageHeader />
+      <v-sheet flex-1 overflow-y-auto>
+        <v-container>
+          <div py-4 flex flex-col gap-8>
+            <div py-4 flex justify-center>
+              <v-text-field
+                v-model="searchQuery"
+                clearable
+                hide-details
+                max-width="44rem"
+                placeholder="Search resources, services, and docs (G+/)"
+                prepend-inner-icon="mdi-magnify"
+                variant="solo"
+                w-full
+                @keyup.enter="
+                  navigateTo({ path: RoutePath.ResourcesAll, query: searchQuery ? { search: searchQuery } : undefined })
+                "
+              />
+            </div>
+            <v-card>
+              <v-card-item>
+                <div flex flex-wrap gap-4 items-center justify-between>
+                  <span text-h6>Create a resource</span>
+                  <StyledButton :button-props="{ prependIcon: 'mdi-plus', to: RoutePath.ResourcesCreate }">
+                    Create a resource
+                  </StyledButton>
+                </div>
+              </v-card-item>
+              <v-card-text>
+                <ResourceCreateGallery dense />
+              </v-card-text>
+            </v-card>
+            <v-card>
+              <v-card-item>
+                <div flex flex-wrap gap-4 items-center justify-between>
+                  <span text-h6>Recent resources</span>
+                  <v-btn append-icon="mdi-arrow-right" variant="text" :to="RoutePath.ResourcesAll">See all</v-btn>
+                </div>
+              </v-card-item>
+              <StyledEmptyState
+                v-if="!isLoading && recentResources.length === 0"
+                description="Create a resource and it will show up here."
+                icon="mdi-folder-multiple-outline"
+                title="No resources yet"
+              />
+              <v-list v-else lines="two">
+                <v-list-item
+                  v-for="resource in recentResources"
+                  :key="resource.id"
+                  :prepend-icon="ResourceDefinitionMap[resource.type].icon"
+                  :title="resource.name"
+                  :to="RoutePath.Resource(resource.id)"
+                >
+                  <template #subtitle>
+                    {{ ResourceDefinitionMap[resource.type].title }} ·
+                    <ClientOnly>{{ dayjs(resource.updatedAt).fromNow() }}</ClientOnly>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </v-card>
           </div>
-        </template>
-        <template #[`item.actions`]="{ item }">
-          <StyledTooltipIconButton icon="mdi-open-in-new" text="Open" @click.stop="openResource(item)" />
-        </template>
-        <template #no-data>
-          <StyledEmptyState
-            icon="mdi-folder-multiple-outline"
-            title="No resources yet"
-            description="Create a resource and it will show up here."
-          />
-        </template>
-      </StyledDataTableServer>
+        </v-container>
+      </v-sheet>
     </div>
   </NuxtLayout>
 </template>

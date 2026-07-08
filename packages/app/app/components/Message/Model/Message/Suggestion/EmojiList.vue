@@ -45,7 +45,7 @@ defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <div v-show="items.length > 0" b-1 rd bg-surface flex flex-col max-h-64 max-w-80 overflow-y-auto elevation-1>
+  <v-sheet v-show="items.length > 0" b-1 rd flex flex-col max-h-64 max-w-80 overflow-y-auto elevation-1>
     <v-card-title font-bold text-title-small>{{ title }}</v-card-title>
     <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
       <v-list-item
@@ -63,5 +63,5 @@ defineExpose({ onKeyDown });
         >
       </v-list-item>
     </StyledList>
-  </div>
+  </v-sheet>
 </template>

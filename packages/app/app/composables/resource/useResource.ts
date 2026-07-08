@@ -1,0 +1,108 @@
+import type { Resource, ResourcePublication } from "@esposter/db-schema";
+
+import { useAlertStore } from "@/store/alert";
+import { ResourceType } from "@esposter/db-schema";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
+
+interface ResourceMutations {
+  deleteResource: (input: { id: string }) => Promise<Resource>;
+  publishResource?: (input: { id: string }) => Promise<ResourcePublication>;
+  readResourcePublication?: (input: { id: string }) => Promise<ResourcePublication | undefined>;
+  unpublishResource?: (input: { id: string }) => Promise<Resource>;
+  updateResource: (input: { id: string; name: string }) => Promise<Resource>;
+}
+// Blade-scoped state for one resource (metadata + Overview). Typed content + type blades land as each editor
+// Migrates (roadmap Phase 3-5). Metadata mutations live on each type's createResourceProcedures router, whose
+// Keys are the legacy editor names until the Phase 3-4 renames — hence the explicit per-type dispatch.
+export const useResource = (id: string) => {
+  const { $trpc } = useNuxtApp();
+  const alertStore = useAlertStore();
+  const resource = ref<Resource>();
+  const publication = ref<ResourcePublication>();
+  // File/TodoList (no router) and Survey (separate surveys table) never reach the explorer resource page in Phase 2.
+  const getResourceMutations = (type: ResourceType): ResourceMutations => {
+    switch (type) {
+      case ResourceType.Dashboard:
+        return {
+          deleteResource: (input) => $trpc.dashboard.deleteResource.mutate(input),
+          publishResource: (input) => $trpc.dashboard.publishResource.mutate(input),
+          readResourcePublication: (input) => $trpc.dashboard.readResourcePublication.query(input),
+          unpublishResource: (input) => $trpc.dashboard.unpublishResource.mutate(input),
+          updateResource: (input) => $trpc.dashboard.updateResource.mutate(input),
+        };
+      case ResourceType.Email:
+        return {
+          deleteResource: (input) => $trpc.emailEditor.deleteResource.mutate(input),
+          updateResource: (input) => $trpc.emailEditor.updateResource.mutate(input),
+        };
+      case ResourceType.Flowchart:
+        return {
+          deleteResource: (input) => $trpc.flowchartEditor.deleteResource.mutate(input),
+          updateResource: (input) => $trpc.flowchartEditor.updateResource.mutate(input),
+        };
+      case ResourceType.Table:
+        return {
+          deleteResource: (input) => $trpc.tableEditor.deleteResource.mutate(input),
+          updateResource: (input) => $trpc.tableEditor.updateResource.mutate(input),
+        };
+      case ResourceType.Webpage:
+        return {
+          deleteResource: (input) => $trpc.webpageEditor.deleteResource.mutate(input),
+          publishResource: (input) => $trpc.webpageEditor.publishResource.mutate(input),
+          readResourcePublication: (input) => $trpc.webpageEditor.readResourcePublication.query(input),
+          unpublishResource: (input) => $trpc.webpageEditor.unpublishResource.mutate(input),
+          updateResource: (input) => $trpc.webpageEditor.updateResource.mutate(input),
+        };
+      default:
+        throw new InvalidOperationError(Operation.Read, type, "resource type is not editable in the explorer");
+    }
+  };
+  const load = async () => {
+    resource.value = await $trpc.resource.readResource.query({ id });
+    publication.value = await getResourceMutations(resource.value.type).readResourcePublication?.({ id });
+  };
+  const rename = (name: string) => {
+    const current = resource.value;
+    if (!current) return Promise.resolve();
+    return getResultAsync(async () => {
+      resource.value = await getResourceMutations(current.type).updateResource({ id: current.id, name });
+    }).match(noop, (error) => {
+      alertStore.createAlert(error.message, "error");
+    });
+  };
+  const remove = () => {
+    const current = resource.value;
+    if (!current) return Promise.resolve(false);
+    return getResultAsync(() => getResourceMutations(current.type).deleteResource({ id: current.id })).match(
+      () => true,
+      (error) => {
+        alertStore.createAlert(error.message, "error");
+        return false;
+      },
+    );
+  };
+  const publish = () => {
+    const current = resource.value;
+    if (!current) return Promise.resolve();
+    const { publishResource } = getResourceMutations(current.type);
+    if (!publishResource) return Promise.resolve();
+    return getResultAsync(async () => {
+      publication.value = await publishResource({ id: current.id });
+    }).match(noop, (error) => {
+      alertStore.createAlert(error.message, "error");
+    });
+  };
+  const unpublish = () => {
+    const current = resource.value;
+    if (!current) return Promise.resolve();
+    const { unpublishResource } = getResourceMutations(current.type);
+    if (!unpublishResource) return Promise.resolve();
+    return getResultAsync(async () => {
+      await unpublishResource({ id: current.id });
+      publication.value = undefined;
+    }).match(noop, (error) => {
+      alertStore.createAlert(error.message, "error");
+    });
+  };
+  return { load, publication, publish, remove, rename, resource, unpublish };
+};

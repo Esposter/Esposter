@@ -11,22 +11,12 @@ interface EmailEditorHeaderProps {
 const { editor } = defineProps<EmailEditorHeaderProps>();
 const session = authClient.useSession();
 const emailEditorStore = useEmailEditorStore();
-const { createResource, deleteResource, renameResource, saveDatasetReference, selectResource } = emailEditorStore;
-const { currentResource, datasetReference, resources } = storeToRefs(emailEditorStore);
+const { saveDatasetReference } = emailEditorStore;
+const { datasetReference } = storeToRefs(emailEditorStore);
 </script>
 
 <template>
   <StyledPageHeader>
-    <template v-if="session.data" #identity>
-      <ResourcePicker
-        :current-resource
-        :resources
-        @create="createResource($event)"
-        @delete="deleteResource($event)"
-        @rename="(id, name) => renameResource(id, name)"
-        @select="selectResource($event)"
-      />
-    </template>
     <template v-if="session.data" #filters>
       <DatasetReferencePicker :model-value="datasetReference" @update:model-value="saveDatasetReference($event)" />
     </template>
