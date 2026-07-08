@@ -17,7 +17,7 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
   const readEmailEditor = async () => {
     await load();
     const data = await readContent();
-    content.value = new EmailEditor((data ?? undefined) as never);
+    content.value = new EmailEditor(data);
     return content.value;
   };
   // GrapesJS project data doesn't know about the dataset binding, so saves carry it over
@@ -26,7 +26,9 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     await save(content.value);
   };
   const saveDatasetReference = async (newDatasetReference: DatasetReference | undefined) => {
-    content.value = new EmailEditor({ ...content.value, datasetReference: newDatasetReference });
+    const emailEditor = new EmailEditor(content.value);
+    emailEditor.datasetReference = newDatasetReference;
+    content.value = emailEditor;
     await save(content.value);
   };
   return { content, datasetReference, editor, readEmailEditor, resource, saveDatasetReference, saveEmailEditor };

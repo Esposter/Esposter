@@ -113,7 +113,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       if (content === undefined || !transformReadContent) return content;
       // The hook is typed for the concrete type at the call site; inside the generic factory the
       // Content and hook-param types can't be proven equal, so the cast is the centralized cost
-      return transformReadContent(ctx, ctx.resource, content as never) as Promise<typeof content>;
+      return transformReadContent(ctx, ctx.resource, content) as Promise<typeof content>;
     }),
     readResources: standardAuthedProcedure
       .input(readResourcesInputSchema)
@@ -185,7 +185,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
             ).message,
           });
         const publishedContent = transformPublishedContent
-          ? await transformPublishedContent(ctx, ctx.resource, content as never)
+          ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
         // Bump the version and write the blob in one transaction so a failed upload rolls the version bump back,
         // The publication row can never point at a publishVersion whose blob was never written.
