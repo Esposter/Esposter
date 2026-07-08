@@ -4,20 +4,16 @@ import { resourceNameRules } from "@/services/resource/resourceNameRules";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
-
 // Built-in blades every resource has in Phase 2; per-type blades (ResourceBladeDefinitionMap) join as editors migrate.
 const BLADE_SLUGS = ["overview", "editor"] as const;
-
 const route = useRoute();
 const id = (Array.isArray(route.params.id) ? route.params.id[0] : route.params.id) ?? "";
 const bladeParam = (Array.isArray(route.params.blade) ? route.params.blade[0] : route.params.blade) ?? "";
-
 const { load, publication, publish, remove, rename, resource, unpublish } = useResource(id);
 await load();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
 if (bladeParam && !BLADE_SLUGS.some((slug) => slug === bladeParam))
   throw createError({ statusCode: 404, statusMessage: "Blade not found" });
-
 // Two flex boxes (list | blade); the caret collapses the list box so the blade fills the row.
 // Collapse by default on mobile so the blade gets the full width.
 const { smAndDown } = useVDisplay();
@@ -44,7 +40,6 @@ const isPortable = computed(() => {
   const current = resource.value;
   return current ? "portable" in ResourceDefinitionMap[current.type].capabilities : false;
 });
-
 const isRenameDialogOpen = ref(false);
 const renameValue = ref("");
 const isDeleteDialogOpen = ref(false);
@@ -61,7 +56,7 @@ const onRename = async () => {
     </Head>
     <div v-if="resource" flex flex-col h-full>
       <!-- The single unified breadcrumb lives in the base page and updates with the open resource -->
-      <StyledPageHeader>
+      <StyledPageHeader b-b-1 b-border b-solid>
         <template #breadcrumbs>
           <AppBreadcrumbs :crumbs="[{ title: 'All', to: RoutePath.ResourcesAll }]" :title="resource.name" />
         </template>
@@ -72,7 +67,7 @@ const onRename = async () => {
           <StyledTooltipIconButton icon="mdi-chevron-double-right" text="Show list" @click="isListCollapsed = false" />
         </div>
         <div v-else flex flex-col>
-          <v-toolbar title="Resources">
+          <v-toolbar title="Resources" b-b-1 b-border b-solid>
             <template #prepend>
               <StyledTooltipIconButton
                 icon="mdi-chevron-double-left"
@@ -84,7 +79,7 @@ const onRename = async () => {
           <ResourceListView :searchable="false" />
         </div>
         <div flex flex-1 flex-col>
-          <v-toolbar>
+          <v-toolbar b-l-1 b-border b-solid>
             <template #prepend>
               <v-icon :icon="ResourceDefinitionMap[resource.type].icon" />
             </template>
@@ -120,8 +115,8 @@ const onRename = async () => {
             </template>
             <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
           </v-toolbar>
-          <div flex flex-1>
-            <v-list nav :width="smAndDown ? '3.5rem' : '16rem'">
+          <div b-l-1 b-border b-solid flex flex-1>
+            <v-list nav>
               <v-list-item
                 v-for="item in bladeItems"
                 :key="item.slug"
@@ -138,7 +133,7 @@ const onRename = async () => {
           </div>
         </div>
       </v-sheet>
-      <v-dialog v-model="isRenameDialogOpen" max-width="30rem">
+      <v-dialog v-model="isRenameDialogOpen">
         <v-card title="Rename resource">
           <v-card-text>
             <v-form @submit.prevent="onRename">
@@ -152,7 +147,7 @@ const onRename = async () => {
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="isDeleteDialogOpen" max-width="30rem">
+      <v-dialog v-model="isDeleteDialogOpen">
         <v-card title="Delete resource">
           <v-card-text>Delete "{{ resource.name }}"? This cannot be undone.</v-card-text>
           <v-card-actions>
