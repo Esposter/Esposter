@@ -19,8 +19,12 @@ if (bladeParam && !BLADE_SLUGS.some((slug) => slug === bladeParam))
   throw createError({ statusCode: 404, statusMessage: "Blade not found" });
 
 const { smAndDown } = useVDisplay();
-// The blade stacks over the list like an Azure blade — full-width on mobile, leaving a list strip on wider screens
-const bladeLeft = computed(() => (smAndDown.value ? "0" : "24rem"));
+// The blade stacks over the list and blocks everything to its right; the caret collapses the list strip to a sliver
+const isListCollapsed = ref(false);
+const bladeLeft = computed(() => {
+  if (smAndDown.value) return "0";
+  return isListCollapsed.value ? "2rem" : "24rem";
+});
 const activeBlade = bladeParam || "overview";
 const bladeItems = computed(() => {
   const current = resource.value;
@@ -30,6 +34,9 @@ const bladeItems = computed(() => {
     { icon: ResourceDefinitionMap[current.type].icon, slug: "editor", title: "Editor" },
   ];
 });
+const activeBladeTitle = computed(
+  () => bladeItems.value.find((item) => item.slug === activeBlade)?.title ?? "Overview",
+);
 const bladePath = (slug: string) =>
   slug === "overview" ? RoutePath.Resource(id) : `${RoutePath.Resource(id)}/${slug}`;
 const isPublishable = computed(() => {
@@ -55,29 +62,37 @@ const onRename = async () => {
     <Head>
       <Title>{{ resource?.name ?? "Resource" }}</Title>
     </Head>
-    <!-- Azure-style stacked blade: the list stays mounted behind, the blade is an elevated panel over its right side -->
-    <div v-if="resource" relative h-full overflow-hidden>
-      <ResourceListView />
-      <div
-        absolute
-        b-border
-        b-l-1
-        b-solid
-        bg-surface
-        bottom-0
-        flex
-        flex-col
-        overflow-hidden
-        right-0
-        shadow-lg
-        top-0
-        :style="{ left: bladeLeft }"
-      >
-        <StyledPageHeader :title="resource.name">
-          <template #breadcrumbs>
-            <AppBreadcrumbs :crumbs="[{ title: 'All', to: RoutePath.ResourcesAll }]" :title="resource.name" />
-          </template>
-          <template #actions>
+    <div v-if="resource" flex flex-col h-full>
+      <!-- The single unified breadcrumb lives here in the base page and updates with the open resource -->
+      <StyledPageHeader>
+        <template #breadcrumbs>
+          <AppBreadcrumbs :crumbs="[{ title: 'All', to: RoutePath.ResourcesAll }]" :title="resource.name" />
+        </template>
+      </StyledPageHeader>
+      <!-- Body: list behind, blade stacked over its right side (blocking everything there) -->
+      <div relative flex-1 min-h-0 overflow-hidden>
+        <ResourceListView />
+        <div
+          absolute
+          b-border
+          b-l-1
+          b-solid
+          bg-surface
+          bottom-0
+          flex
+          flex-col
+          overflow-hidden
+          right-0
+          shadow-lg
+          top-0
+          z-10
+          :style="{ left: bladeLeft }"
+        >
+          <div flex flex-wrap gap-2 items-center b-b-1 b-border b-solid px-4 py-3>
+            <v-icon :icon="ResourceDefinitionMap[resource.type].icon" />
+            <span text-h6>{{ resource.name }}</span>
+            <span op-medium-emphasis>| {{ activeBladeTitle }}</span>
+            <v-spacer />
             <v-btn
               prepend-icon="mdi-pencil"
               variant="text"
@@ -104,24 +119,40 @@ const onRename = async () => {
               <v-btn disabled prepend-icon="mdi-export" variant="text">Export</v-btn>
             </template>
             <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
-          </template>
-        </StyledPageHeader>
-        <div flex flex-1 min-h-0>
-          <v-list b-border b-e-1 b-solid nav width="16rem">
-            <v-list-item
-              v-for="item in bladeItems"
-              :key="item.slug"
-              :active="activeBlade === item.slug"
-              :prepend-icon="item.icon"
-              :title="item.title"
-              :to="bladePath(item.slug)"
-            />
-          </v-list>
-          <div flex-1 overflow-y-auto>
-            <ResourceOverview v-if="activeBlade === 'overview'" :publication :resource />
-            <ResourceEditorLaunch v-else :resource />
+          </div>
+          <div flex flex-1 min-h-0>
+            <v-list b-border b-e-1 b-solid nav width="16rem">
+              <v-list-item
+                v-for="item in bladeItems"
+                :key="item.slug"
+                :active="activeBlade === item.slug"
+                :prepend-icon="item.icon"
+                :title="item.title"
+                :to="bladePath(item.slug)"
+              />
+            </v-list>
+            <div flex-1 overflow-y-auto>
+              <ResourceOverview v-if="activeBlade === 'overview'" :publication :resource />
+              <ResourceEditorLaunch v-else :resource />
+            </div>
           </div>
         </div>
+        <!-- Boundary caret: collapse the list strip to give the blade (near-)full width, and back -->
+        <v-tooltip v-if="!smAndDown" location="right" :text="isListCollapsed ? 'Show list' : 'Hide list'">
+          <template #activator="{ props }">
+            <v-btn
+              absolute
+              size="small"
+              top-2
+              variant="elevated"
+              z-20
+              :icon="isListCollapsed ? 'mdi-chevron-double-right' : 'mdi-chevron-double-left'"
+              :style="{ left: bladeLeft, transform: 'translateX(-50%)' }"
+              :="props"
+              @click="isListCollapsed = !isListCollapsed"
+            />
+          </template>
+        </v-tooltip>
       </div>
       <v-dialog v-model="isRenameDialogOpen" max-width="30rem">
         <v-card title="Rename resource">
