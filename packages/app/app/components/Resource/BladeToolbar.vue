@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Resource, ResourcePublication } from "@esposter/db-schema";
 import type { ResourceBladeType } from "@/models/resource/ResourceBladeType";
+import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
 interface ResourceBladeToolbarProps {
   activeBlade: ResourceBladeType;
@@ -17,7 +17,7 @@ const { activeBlade, publication, publish, remove, rename, resource, unpublish }
 </script>
 
 <template>
-  <v-toolbar b-l-1 b-border b-solid>
+  <v-toolbar pl-4 b-l-1 b-border b-solid>
     <ResourceBladeTitle :active-blade :resource />
     <v-spacer />
     <ResourceBladeActions :publication :publish :remove :rename :resource :unpublish />
