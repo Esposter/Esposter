@@ -11,7 +11,7 @@ definePageMeta({ middleware: "auth" });
     </Head>
     <div flex flex-col h-full>
       <StyledPageHeader title="All" />
-      <v-sheet flex-1 min-h-0>
+      <v-sheet flex-1>
         <ResourceListView :close-to="RoutePath.Resources" />
       </v-sheet>
     </div>

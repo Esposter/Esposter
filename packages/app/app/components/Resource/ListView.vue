@@ -25,7 +25,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigat
 
 <template>
   <div flex flex-col h-full>
-    <div v-if="searchable" flex flex-wrap gap-2 items-center b-b-1 b-border b-solid px-4 py-2>
+    <v-toolbar v-if="searchable" px-4 py-2 flex flex-wrap gap-2 items-center>
       <v-text-field
         v-model="searchQuery"
         clearable
@@ -38,13 +38,11 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigat
       />
       <v-spacer />
       <StyledTooltipIconButton v-if="closeTo" icon="mdi-close" text="Close" :button-props="{ to: closeTo }" />
-    </div>
+    </v-toolbar>
     <StyledDataTableServer
       flex
       flex-1
       flex-col
-      min-h-0
-      :border="false"
       :data-table-server-props="{
         headers: ResourceHeaders,
         height: '100%',
@@ -80,10 +78,3 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigat
     </StyledDataTableServer>
   </div>
 </template>
-
-<style scoped>
-/* The list panel owns its edges; drop the data-table footer's own top border so the very bottom stays clean */
-:deep(.v-data-table-footer) {
-  border-top: none;
-}
-</style>

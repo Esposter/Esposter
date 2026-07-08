@@ -72,15 +72,22 @@ const onRename = async () => {
           <StyledTooltipIconButton icon="mdi-chevron-double-right" text="Show list" @click="isListCollapsed = false" />
         </div>
         <div v-else flex flex-col>
-          <div px-4 b-b-1 b-border b-solid flex gap-1 items-center>
-            <StyledTooltipIconButton icon="mdi-chevron-double-left" text="Hide list" @click="isListCollapsed = true" />
-            <span text-subtitle-1>Resources</span>
-          </div>
+          <v-toolbar title="Resources">
+            <template #prepend>
+              <StyledTooltipIconButton
+                icon="mdi-chevron-double-left"
+                text="Hide list"
+                @click="isListCollapsed = true"
+              />
+            </template>
+          </v-toolbar>
           <ResourceListView :searchable="false" />
         </div>
         <div flex flex-1 flex-col>
-          <div px-4 py-2 b-b-1 b-border b-solid flex gap-2 items-center>
-            <v-icon :icon="ResourceDefinitionMap[resource.type].icon" />
+          <v-toolbar>
+            <template #prepend>
+              <v-icon :icon="ResourceDefinitionMap[resource.type].icon" />
+            </template>
             <div flex flex-col>
               <span text-h6>{{ resource.name }} | {{ activeBladeTitle }}</span>
               <span text-caption op-medium-emphasis>{{ ResourceDefinitionMap[resource.type].title }}</span>
@@ -112,8 +119,8 @@ const onRename = async () => {
               <v-btn disabled prepend-icon="mdi-export" variant="text">Export</v-btn>
             </template>
             <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
-          </div>
-          <div flex flex-1 min-h-0>
+          </v-toolbar>
+          <div flex flex-1>
             <v-list nav b-e-1 b-border b-solid :width="smAndDown ? '3.5rem' : '16rem'">
               <v-list-item
                 v-for="item in bladeItems"
