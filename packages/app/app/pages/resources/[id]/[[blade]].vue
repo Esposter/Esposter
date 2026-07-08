@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { ResourceBladeDefinitionMap } from "@/services/resource/ResourceBladeDefinitionMap";
 import { resourceNameRules } from "@/services/resource/resourceNameRules";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
+
+// Built-in blades every resource has in Phase 2; per-type blades (ResourceBladeDefinitionMap) join as editors migrate.
+const BLADE_SLUGS = ["overview", "editor"] as const;
 
 const route = useRoute();
 const id = (Array.isArray(route.params.id) ? route.params.id[0] : route.params.id) ?? "";
@@ -13,9 +15,20 @@ const bladeParam = (Array.isArray(route.params.blade) ? route.params.blade[0] : 
 const { load, publication, publish, remove, rename, resource, unpublish } = useResource(id);
 await load();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
-// Only Overview exists until type editors migrate into blades (roadmap Phase 3-5); any other blade 404s.
-if (bladeParam && bladeParam !== "overview") throw createError({ statusCode: 404, statusMessage: "Blade not found" });
+if (bladeParam && !BLADE_SLUGS.some((slug) => slug === bladeParam))
+  throw createError({ statusCode: 404, statusMessage: "Blade not found" });
 
+const activeBlade = bladeParam || "overview";
+const bladeItems = computed(() => {
+  const current = resource.value;
+  if (!current) return [];
+  return [
+    { icon: "mdi-information-outline", slug: "overview", title: "Overview" },
+    { icon: ResourceDefinitionMap[current.type].icon, slug: "editor", title: "Editor" },
+  ];
+});
+const bladePath = (slug: string) =>
+  slug === "overview" ? RoutePath.Resource(id) : `${RoutePath.Resource(id)}/${slug}`;
 const isPublishable = computed(() => {
   const current = resource.value;
   return current ? "publishable" in ResourceDefinitionMap[current.type].capabilities : false;
@@ -67,20 +80,23 @@ const onRename = async () => {
             <v-btn disabled prepend-icon="mdi-import" variant="text">Import</v-btn>
             <v-btn disabled prepend-icon="mdi-export" variant="text">Export</v-btn>
           </template>
+          <StyledTooltipIconButton icon="mdi-close" text="Close" @click="navigateTo(RoutePath.ResourcesAll)" />
         </template>
       </StyledPageHeader>
-      <div flex flex-1 min-h-0>
-        <v-list nav border width="14rem">
-          <v-list-item prepend-icon="mdi-information-outline" title="Overview" :to="RoutePath.Resource(resource.id)" />
+      <div flex flex-1 min-h-0 bg-surface>
+        <v-list b-e-1 b-border b-solid nav width="16rem">
           <v-list-item
-            v-for="blade in ResourceBladeDefinitionMap[resource.type]"
-            :key="blade.title"
-            :prepend-icon="blade.icon"
-            :title="blade.title"
+            v-for="item in bladeItems"
+            :key="item.slug"
+            :active="activeBlade === item.slug"
+            :prepend-icon="item.icon"
+            :title="item.title"
+            :to="bladePath(item.slug)"
           />
         </v-list>
         <div flex-1 overflow-y-auto>
-          <ResourceOverview :publication :resource />
+          <ResourceOverview v-if="activeBlade === 'overview'" :publication :resource />
+          <ResourceEditorLaunch v-else :resource />
         </div>
       </div>
       <v-dialog v-model="isRenameDialogOpen" max-width="30rem">
@@ -107,8 +123,7 @@ const onRename = async () => {
               color="error"
               @click="
                 async () => {
-                  await remove();
-                  await navigateTo(RoutePath.ResourcesAll);
+                  if (await remove()) await navigateTo(RoutePath.ResourcesAll);
                 }
               "
             >

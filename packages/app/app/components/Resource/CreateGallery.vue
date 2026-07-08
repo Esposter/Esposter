@@ -22,7 +22,7 @@ const { dense = false } = defineProps<CreateGalleryProps>();
       gap-2
       :max-width="dense ? '10rem' : '18rem'"
       :min-width="dense ? '8rem' : '14rem'"
-      @click="navigateTo(RoutePath.ResourcesCreateType(type))"
+      :to="RoutePath.ResourcesCreateType(type)"
     >
       <div flex gap-2 items-center>
         <v-icon size="large" :icon="ResourceDefinitionMap[type].icon" />

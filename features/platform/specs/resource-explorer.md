@@ -56,15 +56,16 @@ Create is a **page per resource type**, mirroring the Azure marketplace + create
 - **Create form** (`/resources/create/[type]`): a `StyledPageHeader`-framed form collecting the name (`createNameSchema`) plus any type-specific initial settings. Submit calls `createResource(type, …)` and routes to the new `/resources/[id]` (Overview blade). The content blob is written on the first save inside the editor blade, not at create time.
 - Type-specific initial settings stay minimal — most types are name-only; anything a type genuinely needs up front (rather than editable later in a Settings blade) lives on its create form. Revisit if a real type needs a richer create wizard.
 
-## Resource page — `/resources/[id]/[[blade]]`
+Azure-portal-faithful **blade** experience: clicking a resource opens a per-resource shell — a left blade nav + a content pane for the active blade, framed by the breadcrumb and a resource-level command bar. It reads as a panel layered over the list (breadcrumb `Home › Resource Explorer › {name}`), with a **close (✕)** that returns to `/resources/all`.
 
-- **Left menu** (`v-navigation-drawer`): Overview first, then the type's blades from `ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>`.
-- **Overview blade**: Essentials panel (name, type, created/updated, publish status + version, copyable public link when published) + type-specific summary (row/response/item counts).
-- **Toolbar commands**: Rename + Delete always; Publish/Unpublish/Copy-link for `PublishableResourceType`; Import/Export for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, `serialize` ⇒ Export).
+- **Left blade nav** (`v-list`, surface panel with an inline-end border): **Overview** first, then **Editor**, then the type's blades from `ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>`. Each item deep-links to `/resources/[id]/[[blade]]`; the active blade is highlighted.
+- **Overview blade**: Essentials panel (type, created/updated). **Publish status + version and the public link render only for `PublishableResourceType`** — a non-publishable resource (Table/Email/Flowchart/TodoList) shows no status row at all. Plus a type-specific summary slot (row/response/item counts).
+- **Editor blade**: an Azure "Advanced Tools"-style launch panel — type icon, a one-line description, and an **Open editor →** link. In Phase 2 it deep-links to the type's still-external editor (`ResourceTypeRoutePathMap`); as editors migrate (Phase 3-5) the editor renders inline as the blade content.
+- **Command bar** (`StyledPageHeader` `#actions`): Rename + Delete always; Publish/Unpublish for `PublishableResourceType` (`StyledButton`; Delete stays `color="error"`); Import/Export for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, `serialize` ⇒ Export); a trailing close (✕).
 - **Breadcrumbs** via the shell-cohesion primitives (`StyledPageHeader`, `AppBreadcrumbs`).
 - State via `useResource(id)` (`/architecture/resources.md`).
 
-Blades per type (also in `/architecture/platform.md`'s capability matrix):
+Blades per type land as each editor migrates off its top-level page (Phase 3-5); until then every resource has the built-in **Overview** + **Editor**(launch) blades. Target per-type blades (also in `/architecture/platform.md`'s capability matrix):
 
 | Type      | Blades after Overview                                                                         |
 | --------- | --------------------------------------------------------------------------------------------- |
@@ -142,21 +143,23 @@ Azure-portal-faithful wireframes for each screen (structure, not pixels — styl
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**Resource page — `/resources/[id]/[[blade]]`** (left blade menu + toolbar + blade outlet)
+**Resource page — `/resources/[id]/[[blade]]`** (blade nav + command bar + blade outlet, layered over the list)
 
 ```text
 ┌────────────┬─────────────────────────────────────────────────┐
-│  Q3 Report │  Resources › Q3 Report › Overview                │  breadcrumb
-│            │  [Rename] [Delete]  [Publish]  [Import ▾] [Export]│  toolbar (by capability)
+│  Q3 Report │  Resources › Q3 Report                           │  breadcrumb
+│            │  [Rename] [Delete]              [Import] [Export] [✕]│  command bar (by capability)
 │ ▸ Overview ├─────────────────────────────────────────────────┤
-│   Data     │  Essentials                                      │
-│   Settings │   Name      Q3 Report      Type     File         │
+│   Editor   │  Essentials                                      │
+│            │   Type      File                                 │
 │            │   Created   … ago          Updated  2h ago       │
-│            │   Status    Draft                                │
-│            │  ──────────────────────────────────────────────  │
+│            │  ──────────────────────────────────────────────  │  (Status row only for publishable)
 │            │  Summary    1,240 rows                           │
 └────────────┴─────────────────────────────────────────────────┘
+        (Editor blade → Advanced-Tools-style launch panel: “Open editor →”)
 ```
+
+A **publishable** resource additionally shows a `Status  Draft/Published v{n}` + `Public link` row in Essentials and a `[Publish]` command; a non-publishable one shows neither.
 
 ## Navigation map
 
@@ -232,7 +235,8 @@ Blade components live under `app/components/Resource/<Type>/`, absorbing today's
 - `pages/resources/create/index.vue` — create gallery (type picker)
 - `pages/resources/create/[type].vue` — per-type create form
 - `pages/resources/[id]/[[blade]].vue` — resource page shell (menu + blade outlet + toolbar)
-- `components/Resource/Overview.vue` — generic Overview blade (Essentials + type summary slot)
+- `components/Resource/Overview.vue` — generic Overview blade (Essentials + type summary slot; status/public-link only when publishable)
+- `components/Resource/EditorLaunch.vue` — Editor blade launch panel (icon + description + Open editor link)
 - `components/Resource/CreateGallery.vue` — type-picker tiles for the create gallery
 - `components/Resource/<Type>/…` — per-type blades registered in `ResourceBladeDefinitionMap`
 
@@ -256,4 +260,5 @@ Blade components live under `app/components/Resource/<Type>/`, absorbing today's
 - The shell reuses the shell-cohesion primitives ([specs/shell-cohesion.md](shell-cohesion.md)); styling follows the `styling`/`vuetify` skills.
 - One list mechanism: the explorer replaces `DocumentPicker`, the surveyer CRUD list, and the documents hub — no per-editor pickers survive. Recents on Home and the full list at `/resources/all` are both `resource.readResources` (different sort/limit), not two data paths.
 - One create mechanism: the `/resources/create` gallery + `/resources/create/[type]` form replace every per-editor "new" button and modal. Create is a page (marketplace parity), never a dialog.
+- **Editors are pure editors.** The resource lifecycle (create / select / rename / delete / publish) lives only in the Explorer + the resource Overview blade — never in an editor's `StyledPageHeader`. Editor headers keep only editing tools (type select, search, dataset picker, export, add-visual). The shared `ResourcePicker` / `ResourcePublishButton` and the `StyledPageHeader` `#identity` slot were removed with this consolidation; editors save independently (autosave / edit-dialog), so they need no resource controls in-header.
 - Deleted routes/pages: `/documents`, `/table-editor`, `/surveyer`, `/surveyer/[id]`, `/survey/[id]`, `/dashboard`, `/dashboard/editor`, `/email-editor`, `/webpage-editor`, `/flowchart-editor`, `/calendar`, `/view/dashboard/[id]`, `/view/webpage/[id]`.

@@ -72,11 +72,12 @@ export const useResource = (id: string) => {
   };
   const remove = () => {
     const current = resource.value;
-    if (!current) return Promise.resolve();
+    if (!current) return Promise.resolve(false);
     return getResultAsync(() => getResourceMutations(current.type).deleteResource({ id: current.id })).match(
-      noop,
+      () => true,
       (error) => {
         alertStore.createAlert(error.message, "error");
+        return false;
       },
     );
   };
