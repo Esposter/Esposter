@@ -2,8 +2,9 @@
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { isCreatableResourceType } from "@/services/resource/CreatableResourceTypes";
 import { resourceNameRules } from "@/services/resource/resourceNameRules";
+import { useAlertStore } from "@/store/alert";
 import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { getResultAsync, RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
 
@@ -13,9 +14,23 @@ if (!isCreatableResourceType(typeParam)) throw createError({ statusCode: 404, st
 
 const type = typeParam;
 const createResource = useCreateResource();
+const alertStore = useAlertStore();
 const name = ref("");
 const isValid = ref(false);
 const isSubmitting = ref(false);
+const onSubmit = async () => {
+  if (!isValid.value) return;
+  isSubmitting.value = true;
+  await getResultAsync(() => createResource(type, name.value)).match(
+    async (resource) => {
+      await navigateTo(RoutePath.Resource(resource.id));
+    },
+    (error) => {
+      alertStore.createAlert(error.message, "error");
+    },
+  );
+  isSubmitting.value = false;
+};
 </script>
 
 <template>
@@ -29,17 +44,7 @@ const isSubmitting = ref(false);
         <v-container>
           <v-card max-width="40rem" mx-auto>
             <v-card-text>
-              <v-form
-                v-model="isValid"
-                @submit.prevent="
-                  async () => {
-                    if (!isValid) return;
-                    isSubmitting = true;
-                    const resource = await createResource(type, name);
-                    await navigateTo(RoutePath.Resource(resource.id));
-                  }
-                "
-              >
+              <v-form v-model="isValid" @submit.prevent="onSubmit">
                 <v-text-field
                   v-model="name"
                   autofocus

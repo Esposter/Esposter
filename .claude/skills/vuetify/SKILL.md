@@ -14,6 +14,12 @@ Use `StyledButton` for every confirm / complete / primary call-to-action button 
 - `@click` and other native listeners also fall through to the root `v-btn`.
 - Destructive confirms stay a `color="error"` `v-btn` (error red is visible on the transparent base) — `StyledButton` is for positive/primary actions only.
 
+## Navigation — prefer `:to` over `@click="navigateTo(...)"`
+
+Vuetify components with router integration (`v-btn`, `v-card`, `v-list-item`, `v-breadcrumbs` items) take a `:to` prop that renders a real `<a>` / `RouterLink` with keyboard focus, `aria-current`, and middleware handling for free. **Use `:to` for any navigation to a static route.** For wrapper components pass it through their props object — `StyledButton` / `StyledTooltipIconButton` → `:button-props="{ to: RoutePath.X }"`.
+
+Reserve `navigateTo(...)` inside a handler for **dynamic-only** targets where there is no element to hang `:to` on: search submit (`@keyup.enter`), a redirect after a create/delete mutation resolves, or a `v-data-table` `@click:row`.
+
 ## Auto-Imported Composables — `v` Prefix
 
 Vuetify composables are auto-imported with a `v` prefix. **Never import from `"vuetify"` directly** — they are globally available:

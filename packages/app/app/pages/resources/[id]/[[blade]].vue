@@ -18,6 +18,9 @@ if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resour
 if (bladeParam && !BLADE_SLUGS.some((slug) => slug === bladeParam))
   throw createError({ statusCode: 404, statusMessage: "Blade not found" });
 
+const { smAndDown } = useVDisplay();
+// The blade stacks over the list like an Azure blade — full-width on mobile, leaving a list strip on wider screens
+const bladeLeft = computed(() => (smAndDown.value ? "0" : "24rem"));
 const activeBlade = bladeParam || "overview";
 const bladeItems = computed(() => {
   const current = resource.value;
@@ -52,51 +55,72 @@ const onRename = async () => {
     <Head>
       <Title>{{ resource?.name ?? "Resource" }}</Title>
     </Head>
-    <div v-if="resource" flex flex-col h-full>
-      <StyledPageHeader :title="resource.name">
-        <template #actions>
-          <v-btn
-            prepend-icon="mdi-pencil"
-            variant="text"
-            @click="
-              renameValue = resource.name;
-              isRenameDialogOpen = true;
-            "
-          >
-            Rename
-          </v-btn>
-          <v-btn color="error" prepend-icon="mdi-delete" variant="text" @click="isDeleteDialogOpen = true"
-            >Delete</v-btn
-          >
-          <template v-if="isPublishable">
-            <v-btn v-if="publication" prepend-icon="mdi-cloud-off-outline" variant="tonal" @click="unpublish">
-              Unpublish
+    <!-- Azure-style stacked blade: the list stays mounted behind, the blade is an elevated panel over its right side -->
+    <div v-if="resource" relative h-full overflow-hidden>
+      <ResourceListView />
+      <div
+        absolute
+        b-border
+        b-l-1
+        b-solid
+        bg-surface
+        bottom-0
+        flex
+        flex-col
+        overflow-hidden
+        right-0
+        shadow-lg
+        top-0
+        :style="{ left: bladeLeft }"
+      >
+        <StyledPageHeader :title="resource.name">
+          <template #breadcrumbs>
+            <AppBreadcrumbs :crumbs="[{ title: 'All', to: RoutePath.ResourcesAll }]" :title="resource.name" />
+          </template>
+          <template #actions>
+            <v-btn
+              prepend-icon="mdi-pencil"
+              variant="text"
+              @click="
+                renameValue = resource.name;
+                isRenameDialogOpen = true;
+              "
+            >
+              Rename
             </v-btn>
-            <StyledButton v-else :button-props="{ prependIcon: 'mdi-cloud-upload' }" @click="publish">
-              Publish
-            </StyledButton>
+            <v-btn color="error" prepend-icon="mdi-delete" variant="text" @click="isDeleteDialogOpen = true">
+              Delete
+            </v-btn>
+            <template v-if="isPublishable">
+              <v-btn v-if="publication" prepend-icon="mdi-cloud-off-outline" variant="tonal" @click="unpublish">
+                Unpublish
+              </v-btn>
+              <StyledButton v-else :button-props="{ prependIcon: 'mdi-cloud-upload' }" @click="publish">
+                Publish
+              </StyledButton>
+            </template>
+            <template v-if="isPortable">
+              <v-btn disabled prepend-icon="mdi-import" variant="text">Import</v-btn>
+              <v-btn disabled prepend-icon="mdi-export" variant="text">Export</v-btn>
+            </template>
+            <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
           </template>
-          <template v-if="isPortable">
-            <v-btn disabled prepend-icon="mdi-import" variant="text">Import</v-btn>
-            <v-btn disabled prepend-icon="mdi-export" variant="text">Export</v-btn>
-          </template>
-          <StyledTooltipIconButton icon="mdi-close" text="Close" @click="navigateTo(RoutePath.ResourcesAll)" />
-        </template>
-      </StyledPageHeader>
-      <div flex flex-1 min-h-0 bg-surface>
-        <v-list b-e-1 b-border b-solid nav width="16rem">
-          <v-list-item
-            v-for="item in bladeItems"
-            :key="item.slug"
-            :active="activeBlade === item.slug"
-            :prepend-icon="item.icon"
-            :title="item.title"
-            :to="bladePath(item.slug)"
-          />
-        </v-list>
-        <div flex-1 overflow-y-auto>
-          <ResourceOverview v-if="activeBlade === 'overview'" :publication :resource />
-          <ResourceEditorLaunch v-else :resource />
+        </StyledPageHeader>
+        <div flex flex-1 min-h-0>
+          <v-list b-border b-e-1 b-solid nav width="16rem">
+            <v-list-item
+              v-for="item in bladeItems"
+              :key="item.slug"
+              :active="activeBlade === item.slug"
+              :prepend-icon="item.icon"
+              :title="item.title"
+              :to="bladePath(item.slug)"
+            />
+          </v-list>
+          <div flex-1 overflow-y-auto>
+            <ResourceOverview v-if="activeBlade === 'overview'" :publication :resource />
+            <ResourceEditorLaunch v-else :resource />
+          </div>
         </div>
       </div>
       <v-dialog v-model="isRenameDialogOpen" max-width="30rem">

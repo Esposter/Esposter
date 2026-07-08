@@ -72,10 +72,14 @@ await readResources({
                   v-for="resource in recentResources"
                   :key="resource.id"
                   :prepend-icon="ResourceDefinitionMap[resource.type].icon"
-                  :subtitle="`${ResourceDefinitionMap[resource.type].title} · ${dayjs(resource.updatedAt).fromNow()}`"
                   :title="resource.name"
                   :to="RoutePath.Resource(resource.id)"
-                />
+                >
+                  <template #subtitle>
+                    {{ ResourceDefinitionMap[resource.type].title }} ·
+                    <ClientOnly>{{ dayjs(resource.updatedAt).fromNow() }}</ClientOnly>
+                  </template>
+                </v-list-item>
               </v-list>
             </v-card>
           </div>
