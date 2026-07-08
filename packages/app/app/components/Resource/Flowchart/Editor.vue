@@ -13,17 +13,18 @@ const { loadContent, saveFlowchartEditor } = flowchartEditorStore;
 const { flowchartEditor, isSidebarOpen } = storeToRefs(flowchartEditorStore);
 const { addEdges, onConnect } = useVueFlow();
 const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
+const isLoading = ref(true);
 
 onConnect(addEdges);
-const isLoaded = ref(false);
+
 onMounted(async () => {
   await loadContent();
-  isLoaded.value = true;
+  isLoading.value = false;
 });
 </script>
 
 <template>
-  <StyledSkeleton v-if="!isLoaded" />
+  <StyledSkeleton v-if="isLoading" />
   <VueFlow
     v-else
     h-full
