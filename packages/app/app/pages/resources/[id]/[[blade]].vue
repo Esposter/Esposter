@@ -32,10 +32,6 @@ const onRename = async () => {
   await rename(renameValue.value);
   isRenameDialogOpen.value = false;
 };
-const onDelete = async () => {
-  await remove();
-  await navigateTo(RoutePath.ResourcesAll);
-};
 </script>
 
 <template>
@@ -63,7 +59,9 @@ const onDelete = async () => {
             <v-btn v-if="publication" prepend-icon="mdi-cloud-off-outline" variant="tonal" @click="unpublish">
               Unpublish
             </v-btn>
-            <v-btn v-else color="primary" prepend-icon="mdi-cloud-upload" @click="publish">Publish</v-btn>
+            <StyledButton v-else :button-props="{ prependIcon: 'mdi-cloud-upload' }" @click="publish">
+              Publish
+            </StyledButton>
           </template>
           <template v-if="isPortable">
             <v-btn disabled prepend-icon="mdi-import" variant="text">Import</v-btn>
@@ -95,7 +93,7 @@ const onDelete = async () => {
           <v-card-actions>
             <v-spacer />
             <v-btn variant="text" @click="isRenameDialogOpen = false">Cancel</v-btn>
-            <v-btn color="primary" @click="onRename">Save</v-btn>
+            <StyledButton @click="onRename">Save</StyledButton>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -105,7 +103,17 @@ const onDelete = async () => {
           <v-card-actions>
             <v-spacer />
             <v-btn variant="text" @click="isDeleteDialogOpen = false">Cancel</v-btn>
-            <v-btn color="error" @click="onDelete">Delete</v-btn>
+            <v-btn
+              color="error"
+              @click="
+                async () => {
+                  await remove();
+                  await navigateTo(RoutePath.ResourcesAll);
+                }
+              "
+            >
+              Delete
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
