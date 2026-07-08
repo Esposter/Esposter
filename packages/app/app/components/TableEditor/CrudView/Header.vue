@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { authClient } from "@/services/auth/authClient";
 import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
 const slots = defineSlots<{ "append-header": () => VNode; "prepend-actions": () => VNode }>();
-const session = authClient.useSession();
 const tableEditorStore = useTableEditorStore();
-const { createResource, deleteResource, renameResource, resetItem, save, selectResource } = tableEditorStore;
+const { resetItem, save } = tableEditorStore;
 const {
-  currentResource,
   editedItem,
   editForm,
   editFormDialog,
@@ -19,7 +16,6 @@ const {
   isFullScreenDialog,
   isSavable,
   originalItem,
-  resources,
   tableEditorType,
 } = storeToRefs(tableEditorStore);
 const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : undefined));
@@ -28,16 +24,6 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
 
 <template>
   <StyledPageHeader>
-    <template v-if="session.data" #identity>
-      <ResourcePicker
-        :current-resource
-        :resources
-        @create="createResource($event)"
-        @delete="deleteResource($event)"
-        @rename="(id, name) => renameResource(id, name)"
-        @select="selectResource($event)"
-      />
-    </template>
     <template #filters>
       <TableEditorTypeSelect />
       <TableEditorSearchBar />

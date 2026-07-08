@@ -15,6 +15,15 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - Avoid custom `min-width`/`max-width`/fixed width/height when flex, grid, wrapping, or intrinsic sizing solves it. Reach for `flex-1`, `min-w-0`, `shrink-0`, responsive direction (`flex-col lg:flex-row`), breakpoint grids (`grid-cols-1 md:grid-cols-2`) first.
 - Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds). First check whether the component hierarchy or flex/grid structure is wrong.
 
+## Full-Page Surface Layout
+
+`NuxtLayout` renders page content inside `v-main`, which carries the gray `background` base. Page content must **not** sit transparent directly on that base — layer surface on top, Azure-portal style:
+
+- Wrap the page body in `<v-container>` (centered, max-width — **not** `fluid`) so content is centered; section titles stay left-aligned inside it.
+- Group content into `v-card` / `StyledCard` surfaces (Essentials panels, lists, forms). The gray base showing between cards is the intended look — a full page of transparent content on the gray base reads as unfinished.
+- Center a hero/search field with a `flex justify-center` wrapper + a `max-width`, not full-bleed.
+- Keep the breadcrumb bar (`StyledPageHeader`) full-width above the centered container.
+
 ## Slashes / fractions → valued attributify (never bare, never `class`)
 
 A utility containing `/` (fractions like `top-1/2`, `translate-y-1/2`) **cannot** be a bare attribute — the SFC/prettier parser reads the `/` as a tag terminator and fails (`Opening tag "div" not terminated`). It also must **not** be dumped into `class="..."` to dodge the parser. Use the **valued** attributify form `attr="value"`, and for negatives put the `-` in front of the number, inside the quotes:

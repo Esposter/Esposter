@@ -376,7 +376,7 @@ watch(
 <template>
   <NuxtLayout>
     <div flex flex-col h-full>
-      <WebpageEditorHeader />
+      <StyledPageHeader />
       <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" flex-1 overflow-hidden />
     </div>
   </NuxtLayout>
