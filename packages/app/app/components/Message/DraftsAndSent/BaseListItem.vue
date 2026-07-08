@@ -26,7 +26,7 @@ const { focused: isFocusWithin } = useFocusWithin(listItem);
       <template #append>
         <div flex gap-x-3 items-center>
           <span text-hint>{{ displayTime }}</span>
-          <div
+          <v-sheet
             v-if="$slots.default"
             v-show="isHovering || isFocusWithin"
             p-1
@@ -34,12 +34,11 @@ const { focused: isFocusWithin } = useFocusWithin(listItem);
             b-border
             rd-lg
             b-solid
-            bg-surface
             flex
             items-center
           >
             <slot />
-          </div>
+          </v-sheet>
         </div>
       </template>
     </v-list-item>

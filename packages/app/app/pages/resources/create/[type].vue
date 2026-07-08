@@ -40,7 +40,7 @@ const onSubmit = async () => {
     </Head>
     <div flex flex-col h-full>
       <StyledPageHeader :title="`Create ${ResourceDefinitionMap[type].title}`" />
-      <div flex-1 bg-surface overflow-y-auto>
+      <v-sheet flex-1 overflow-y-auto>
         <v-container>
           <v-card max-width="40rem" mx-auto>
             <v-card-text>
@@ -62,7 +62,7 @@ const onSubmit = async () => {
             </v-card-text>
           </v-card>
         </v-container>
-      </div>
+      </v-sheet>
     </div>
   </NuxtLayout>
 </template>

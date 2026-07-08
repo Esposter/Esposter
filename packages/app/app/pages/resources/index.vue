@@ -23,7 +23,7 @@ await readResources({
     </Head>
     <div flex flex-col h-full>
       <StyledPageHeader />
-      <div flex-1 bg-surface overflow-y-auto>
+      <v-sheet flex-1 overflow-y-auto>
         <v-container>
           <div flex flex-col gap-8 py-4>
             <div flex justify-center py-4>
@@ -84,7 +84,7 @@ await readResources({
             </v-card>
           </div>
         </v-container>
-      </div>
+      </v-sheet>
     </div>
   </NuxtLayout>
 </template>

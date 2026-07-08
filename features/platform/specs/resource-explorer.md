@@ -57,17 +57,19 @@ Create is a **page per resource type**, mirroring the Azure marketplace + create
 - **Create form** (`/resources/create/[type]`): a `StyledPageHeader`-framed form collecting the name (`createNameSchema`) plus any type-specific initial settings. Submit calls `createResource(type, …)` and routes to the new `/resources/[id]` (Overview blade). The content blob is written on the first save inside the editor blade, not at create time.
 - Type-specific initial settings stay minimal — most types are name-only; anything a type genuinely needs up front (rather than editable later in a Settings blade) lives on its create form. Revisit if a real type needs a richer create wizard.
 
-Azure-portal-faithful **stacked blade**: clicking a resource keeps the list visible and stacks the resource shell **on top of it** (both visible, like the portal). `/resources/[id]/[[blade]]` is `flex flex-col`: a full-width **breadcrumb bar** (the single unified breadcrumb) on top, then a `relative` body that renders the shared `ResourceListView` behind + the blade as an **absolutely-positioned elevated surface panel**. The panel is `inset-y-0 right-0` (it **fills the whole body height and blocks everything to its right** — no see-through hole; the white top blends because it sits flush under the breadcrumb bar), `left` responsive (see collapse), `bg-surface` + `shadow-lg` + inline-start border, and **`z-10`** so the list underneath doesn't bleed through. The list strip stays interactive: clicking another row swaps the blade.
+Azure-portal-faithful **two flex boxes** (deliberately simple — no absolute overlay, no `z-index`): `/resources/[id]/[[blade]]` is `flex flex-col` — a full-width **breadcrumb bar** (the single unified breadcrumb) on top, then a single `<v-sheet flex flex-1>` (the one surface for the whole body) holding two side-by-side boxes: the **list box** (`w-96`, `shrink-0`, inline-end border) and the **blade box** (`flex-1`). Both are plain transparent flex children on the shared `v-sheet` surface.
 
-**Nested close**: the close ✕ peels back one layer — the blade closes to `/resources/all`, and `/all`'s own close ✕ closes to `/resources` (Home). Each ✕ lives on the row **below** the breadcrumb (the panel header / list toolbar), never on the breadcrumb's level.
-
-- **Single unified breadcrumb** — the **base list owns the only breadcrumb**; there is none inside the panel. `ResourceListView` takes an `activeResourceName?` prop: unset (standalone `/resources/all`) → `Home › Resource Explorer › All`; set (a blade is open) → `Home › Resource Explorer › All › {name}`. `AppBreadcrumbs` takes a `crumbs` prop for the intermediate `All` (→ `/resources/all`) between the matched product and the leaf. Navigation uses `:to` (real `<a>`, keyboard + ARIA) everywhere the target is static — `navigateTo` only for dynamic targets (search submit, post-create/-delete redirects, data-table row clicks).
-- **Collapse caret** — a double-caret toggle floats at the list/panel boundary (`z-20`, centered on the `left` edge): `«` (`mdi-chevron-double-left`) hides the list strip so the blade slides to near-full width, leaving a `~2rem` sliver; `»` (`mdi-chevron-double-right`) restores it. Hidden on mobile, where the blade is full-width (`left: 0`) regardless.
-- **Panel header** (plain, white — not a breadcrumb): type icon + `{name}` `| {active blade}` + the command bar + close ✕.
-- **Left blade nav** (`v-list`, inline-end border): **Overview** first, then **Editor**, then the type's blades from `ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>`. Each item deep-links via `:to` to `/resources/[id]/[[blade]]`; the active blade is highlighted.
+- **Collapse caret next to the list title** — the list box header is `« {title}` (`mdi-chevron-double-left` + "Resources"). Clicking `«` collapses the whole list box to a thin `shrink-0` strip containing just a `»` (`mdi-chevron-double-right`) to restore it — so the blade box (`flex-1`) simply grows to fill the row. No width animation math, no overlay.
+- **Mobile-native** — the list box starts collapsed on `smAndDown` (`useVDisplay`) so the blade gets the full width, and the blade nav shrinks to a `3.5rem` icon rail (titles dropped) on the same breakpoint. The `«`/`»` caret still toggles the list on demand.
+- **List box header** — `« Resources` only; the search toolbar is hidden here (`ResourceListView` `:searchable="false"` — search lives on the standalone `/all` page). Both the list box header and the blade box header share a `min-h-16` items-centered height so their bottom separators line up across the vertical divider.
+- **Borders drawn exactly once** — no component double-draws an edge. The **list box** owns the full-height list↔blade divider (`b-e`); the **blade nav** owns the nav↔content divider (`b-e`); the **list box header** and the **blade box header** each own their horizontal separator (`b-b`) — on `/all`, where there is no header, `ResourceListView`'s search toolbar owns it instead. The data table is borderless in panels — `StyledDataTableServer` takes a `border` prop (default `true` for standalone tables e.g. Survey; `false` here) so it never adds a redundant box/top border — and the footer's own top border is dropped so the very bottom stays clean.
+- **Nested close**: the close ✕ peels back one layer — the blade box's ✕ closes to `/resources/all`, and `/all`'s own close ✕ (in `ResourceListView`'s toolbar, via `closeTo`) closes to `/resources` (Home). Each ✕ lives in its box's header, never on the breadcrumb's level.
+- **Single unified breadcrumb** — the **base page owns the only breadcrumb**; the blade box has none. `AppBreadcrumbs` takes a `crumbs` prop for the intermediate `All` (→ `/resources/all`): standalone `/resources/all` → `Home › Resource Explorer › All`; a resource open → `Home › Resource Explorer › All › {name}`. Navigation uses `:to` (real `<a>`, keyboard + ARIA) everywhere the target is static — `navigateTo` only for dynamic targets (search submit, post-create/-delete redirects, data-table row clicks).
+- **Blade box header** (type + name, not a breadcrumb): type icon + `{name} | {active blade}` with the resource **type** as a caption line beneath + the command bar + close ✕.
+- **Blade nav** (`v-list`, inline-end border): **Overview** first, then **Editor**, then the type's blades from `ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>`. Each item deep-links via `:to` to `/resources/[id]/[[blade]]`; the active blade is highlighted.
 - **Overview blade**: Essentials panel (type, created/updated). **Publish status + version and the public link render only for `PublishableResourceType`** — a non-publishable resource (Table/Email/Flowchart/TodoList) shows no status row at all. Plus a type-specific summary slot (row/response/item counts).
 - **Editor blade**: an Azure "Advanced Tools"-style launch panel — type icon, a one-line description, and an **Open editor →** link. In Phase 2 it deep-links to the type's still-external editor (`ResourceTypeRoutePathMap`); as editors migrate (Phase 3-5) the editor renders inline as the blade content.
-- **Command bar** (in the panel header): Rename + Delete always; Publish/Unpublish for `PublishableResourceType` (`StyledButton`; Delete stays `color="error"`); Import/Export for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, `serialize` ⇒ Export); a trailing close ✕.
+- **Command bar** (in the blade box header): Rename + Delete always; Publish/Unpublish for `PublishableResourceType` (`StyledButton`; Delete stays `color="error"`); Import/Export for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, `serialize` ⇒ Export); a trailing close ✕.
 - State via `useResource(id)` (`/architecture/resources.md`).
 
 Blades per type land as each editor migrates off its top-level page (Phase 3-5); until then every resource has the built-in **Overview** + **Editor**(launch) blades. Target per-type blades (also in `/architecture/platform.md`'s capability matrix):
@@ -148,21 +150,22 @@ Azure-portal-faithful wireframes for each screen (structure, not pixels — styl
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**Resource page — `/resources/[id]/[[blade]]`** (blade stacked over the list; list owns the single breadcrumb)
+**Resource page — `/resources/[id]/[[blade]]`** (two flex boxes on one surface; base page owns the single breadcrumb)
 
 ```text
-  Home › Resource Explorer › All › Q3 Report          ← single breadcrumb (base list, updates when open)
-┌──────────┐‹ small gap (white) ›──────────────────────────────┐
-│ All      │«│ 📄 Q3 Report | Overview   [Rename][Delete] … [✕] │  ← panel header (no breadcrumb)
-│ 🔍 …     │ ├──────────────┬──────────────────────────────────┤
-│ 📄 Q3 Rpt│ │ ▸ Overview   │  Essentials                       │
-│ 📊 Sales │ │   Editor      │   Type     File                  │
-│ 🌐 Land… │ │              │   Created  … ago   Updated 2h ago │
-└──────────┘ └──────────────┴──────────────────────────────────┘
-   list strip (interactive)   stacked blade panel (bg-surface, shadow, z-10)
+  Home › Resource Explorer › All › Q3 Report          ← single breadcrumb (base page, updates when open)
+┌───────────────┬──────────────────────────────────────────────┐
+│ « Resources   │ 📄 Q3 Report | Overview   [Rename][Delete] [✕] │  ← blade box header (type + name)
+│ 🔍 Search     │ File                                          │
+│ ───────────── ├───────────────┬──────────────────────────────┤
+│ 📄 Q3 Report  │ ▸ Overview     │  Essentials                  │
+│ 📊 Sales      │   Editor        │   Type     File             │
+│ 🌐 Landing…   │               │   Created  … ago  Updated 2h  │
+└───────────────┴───────────────┴──────────────────────────────┘
+   list box (w-96, collapsible)   blade box (flex-1)
 ```
 
-- The `«` caret at the boundary collapses the list strip to a `~2rem` sliver (blade near-full-width); it flips to `»` to restore. The panel is tucked below the breadcrumb by a small `top-14` gap so the breadcrumb bar shows and the white panel top blends in.
+- The **`«`** caret sits next to the list box's "Resources" title; clicking it collapses the whole list box to a thin strip with a **`»`** to restore, and the blade box (`flex-1`) grows to fill. Two flex boxes — no overlay, no z-index.
 - **Overview** shows `Status Draft/Published v{n}` + `Public link` + a `[Publish]` command **only for publishable** types; a non-publishable resource shows none of these.
 - The **Editor** blade is an Advanced-Tools-style launch panel (“Open editor →”).
 

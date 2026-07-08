@@ -10,7 +10,7 @@ await readFriends();
     <template #left>
       <MessageLeftSideBar />
     </template>
-    <div bg-surface flex flex-col h-full overflow-y-auto>
+    <v-sheet flex flex-col h-full overflow-y-auto>
       <v-container>
         <div font-bold mb-6 text-headline-small>Friends</div>
         <MessageFriendsSearch />
@@ -18,6 +18,6 @@ await readFriends();
         <MessageFriendsList />
         <MessageFriendsBlockedList />
       </v-container>
-    </div>
+    </v-sheet>
   </NuxtLayout>
 </template>

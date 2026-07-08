@@ -10,19 +10,24 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - `flex` not `d-flex`.
 - `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
 - Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index unless the layout needs them. Don't add z-index defensively; rely on DOM order and positioning first.
-- Prefer theme primitives over bespoke styling: `StyledCard` for card/panel surfaces; theme colours (`bg-background`, `bg-surface`, `bg-surface-opacity-80`, `b-border`, `text-primary`, `text-error`) and semantic opacity utilities before custom colours.
+- Prefer theme primitives over bespoke styling: `StyledCard` / `v-sheet` for card/panel/surface backgrounds; theme colours (`bg-background`, `b-border`, `text-primary`, `text-error`) and semantic opacity utilities before custom colours. For surface colour use `v-sheet`, not `bg-surface` on a `<div>` (see Full-Page Surface Layout).
 - Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. If a semantic colour is genuinely needed, prefer Vuetify theme colours or the Material palette with lighten/darken variants (`text-green-darken-2`, `bg-yellow-lighten-5`, `text-red`) over raw values.
 - Avoid custom `min-width`/`max-width`/fixed width/height when flex, grid, wrapping, or intrinsic sizing solves it. Reach for `flex-1`, `min-w-0`, `shrink-0`, responsive direction (`flex-col lg:flex-row`), breakpoint grids (`grid-cols-1 md:grid-cols-2`) first.
 - Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds). First check whether the component hierarchy or flex/grid structure is wrong.
 
 ## Full-Page Surface Layout
 
-`NuxtLayout` renders page content inside `v-main`, which carries the gray `background` base. Page content must **not** sit transparent directly on that base — layer surface on top, Azure-portal style:
+`NuxtLayout` renders page content inside `v-main`, which carries the gray `background` base. Page content must **not** sit transparent directly on that base — layer surface on top, Azure-portal style.
 
-- Wrap the page body in `<v-container>` (centered, max-width — **not** `fluid`) so content is centered; section titles stay left-aligned inside it.
-- Group content into `v-card` / `StyledCard` surfaces (Essentials panels, lists, forms). The gray base showing between cards is the intended look — a full page of transparent content on the gray base reads as unfinished.
+- **`bg-surface` on a plain `<div>` is BANNED — use `v-sheet` for surface colour.** `v-sheet` (and `v-card`) carry the theme surface inherently; wrap a surface region in a `<v-sheet flex-1 …>` and let children be transparent on top of it. Never write `<div bg-surface>`. (`v-container` is layout/max-width only — it does **not** provide a background.)
+- Wrap centered page bodies in `<v-container>` (centered, max-width — **not** `fluid`) inside the `v-sheet`; section titles stay left-aligned.
+- Group distinct panels into `v-card` / `StyledCard` (Essentials panels, forms).
 - Center a hero/search field with a `flex justify-center` wrapper + a `max-width`, not full-bleed.
-- Keep the breadcrumb bar (`StyledPageHeader`) full-width above the centered container.
+- Keep the breadcrumb bar (`StyledPageHeader`) full-width above the surface body.
+
+### Borders drawn exactly once
+
+In multi-box layouts (side-by-side panels, nav + content), each edge must be drawn by **one** component — no two adjacent components both border the shared edge. Give each divider a single owner: the container that spans the whole edge owns it. E.g. a full-height column owns the vertical divider (`b-e`) for the whole row; a header owns its own bottom separator (`b-b`); the box below it stays borderless (no redundant `b-t`). When a reusable component hard-codes a box border that would double up inside a bordered container (e.g. `StyledDataTableServer`'s `b-1`), give it a `border?: boolean` prop (default `true` for standalone use) so panels can pass `false`.
 
 ## Slashes / fractions → valued attributify (never bare, never `class`)
 

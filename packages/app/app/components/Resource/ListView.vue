@@ -9,9 +9,11 @@ import { RoutePath } from "@esposter/shared";
 interface ResourceListViewProps {
   // When set, a close ✕ routes here (the base list closes back a layer); omitted when it sits behind a blade
   closeTo?: string;
+  // The blade list box hides the search toolbar (its own header owns the title + separator)
+  searchable?: boolean;
 }
 
-const { closeTo } = defineProps<ResourceListViewProps>();
+const { closeTo, searchable = true } = defineProps<ResourceListViewProps>();
 const searchQuery = ref("");
 const noTypes = ref<ResourceType[]>([]);
 const { count, isLoading, items, readResources } = useReadResources(searchQuery, noTypes);
@@ -22,8 +24,8 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigat
 </script>
 
 <template>
-  <div flex flex-col h-full bg-surface>
-    <div flex flex-wrap gap-2 items-center px-4 py-2>
+  <div flex flex-col h-full>
+    <div v-if="searchable" flex flex-wrap gap-2 items-center b-b-1 b-border b-solid px-4 py-2>
       <v-text-field
         v-model="searchQuery"
         clearable
@@ -42,6 +44,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigat
       flex-1
       flex-col
       min-h-0
+      :border="false"
       :data-table-server-props="{
         headers: ResourceHeaders,
         height: '100%',
@@ -77,3 +80,10 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigat
     </StyledDataTableServer>
   </div>
 </template>
+
+<style scoped>
+/* The list panel owns its edges; drop the data-table footer's own top border so the very bottom stays clean */
+:deep(.v-data-table-footer) {
+  border-top: none;
+}
+</style>
