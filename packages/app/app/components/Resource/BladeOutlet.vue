@@ -20,7 +20,7 @@ const editorComponent = computed(() => ResourceEditorComponentMap[resource.type]
   <!-- Migrated editors can't SSR (VueFlow/GrapesJS), so render client-only; Suspense supports async editor setup -->
   <ClientOnly v-else-if="editorComponent">
     <Suspense>
-      <component :is="editorComponent" />
+      <component :is="editorComponent" :key="resource.id" />
       <template #fallback>
         <StyledSkeleton />
       </template>

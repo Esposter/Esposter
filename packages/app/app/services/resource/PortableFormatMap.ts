@@ -22,8 +22,14 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           createAlert("Bind a dataset before exporting personalized HTML", "warning");
           return;
         }
+
         await getResultAsync(async () => {
           const dataset = await $trpc.dataset.readDataset.query(referenceValue);
+          if (dataset.rows.length === 0) {
+            createAlert("Dataset has no rows to export", "warning");
+            return;
+          }
+
           const count = exportPersonalizedHtml(editorValue, resourceValue, dataset.rows);
           createAlert(`Exported ${count} personalized emails`, "success");
         }).match(noop, (error) => {

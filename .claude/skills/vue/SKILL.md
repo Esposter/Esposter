@@ -115,6 +115,23 @@ The only acceptable client-side validation is Vuetify form field rules (inline e
 - **Dotted slot names need dynamic binding** — Vue rejects dots in static slot names; Vuetify item slots use brackets: `#[`item.drag`]`, `#[`item.actions`]`. Only dot-free names are static (`#top`, `#activator`).
 - **Always use `:` shorthand** — `:disabled="..."` not `v-bind:disabled`. Object spread: `:="object"` not `v-bind="object"`.
 - **Never use `.value` in templates** — Vue auto-unwraps refs. `ref.value` in a template reads `.value` on the unwrapped object (usually `undefined`). Write `fn(ref)`. `.value` is only for `<script setup>` outside template expressions.
+- **No allocating expressions in render positions** — a template expression that runs on every render (a `:prop` bind, `v-for` source, or `{{ }}` interpolation) must not build a new object/array. This most often means **`Object.*` calls** (`Object.entries`/`keys`/`values`/`fromEntries`/`assign`) — enforced by `vue/no-restricted-syntax`. A fresh reference each render breaks prop reference-equality (e.g. VueFlow's `:node-types`) and forces needless re-renders/recomputes. Hoist to a **script-setup `const`** when the source is static (an imported map/enum), or a **`computed`** when it derives from reactive state:
+
+  ```vue
+  <!-- WRONG — new array every render -->
+  <v-item v-for="[key, permission] of Object.entries(RoomPermission)" :key />
+  ```
+
+  ```ts
+  // RIGHT — hoisted once (RoomPermission is a static import)
+  const roomPermissions = Object.entries(RoomPermission);
+  ```
+
+  ```vue
+  <v-item v-for="[key, permission] of roomPermissions" :key />
+  ```
+
+  Event handlers (`@click`, `@submit`, …) are exempt — they run per-event, not per-render — so an inline `Object.assign(model, await mutate())` in a handler is fine (and reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice; don't "fix" it).
 
 ## Optional Refs — Omit the Initial Value
 

@@ -1,3 +1,4 @@
+/* oxlint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
 import { useAlertStore } from "@/store/alert";
@@ -31,7 +32,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
           readResourceContent: (input) => $trpc.dashboard.readResourceContent.query(input),
           readResourcePublication: (input) => $trpc.dashboard.readResourcePublication.query(input),
           // Content is untyped at this cross-type dispatch; the calling store owns the concrete schema
-          saveResourceContent: (input) => $trpc.dashboard.saveResourceContent.mutate(input),
+          saveResourceContent: (input) => $trpc.dashboard.saveResourceContent.mutate(input as never),
           unpublishResource: (input) => $trpc.dashboard.unpublishResource.mutate(input),
           updateResource: (input) => $trpc.dashboard.updateResource.mutate(input),
         };
@@ -39,21 +40,21 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
         return {
           deleteResource: (input) => $trpc.emailEditor.deleteResource.mutate(input),
           readResourceContent: (input) => $trpc.emailEditor.readResourceContent.query(input),
-          saveResourceContent: (input) => $trpc.emailEditor.saveResourceContent.mutate(input),
+          saveResourceContent: (input) => $trpc.emailEditor.saveResourceContent.mutate(input as never),
           updateResource: (input) => $trpc.emailEditor.updateResource.mutate(input),
         };
       case ResourceType.Flowchart:
         return {
           deleteResource: (input) => $trpc.flowchartEditor.deleteResource.mutate(input),
           readResourceContent: (input) => $trpc.flowchartEditor.readResourceContent.query(input),
-          saveResourceContent: (input) => $trpc.flowchartEditor.saveResourceContent.mutate(input),
+          saveResourceContent: (input) => $trpc.flowchartEditor.saveResourceContent.mutate(input as never),
           updateResource: (input) => $trpc.flowchartEditor.updateResource.mutate(input),
         };
       case ResourceType.Table:
         return {
           deleteResource: (input) => $trpc.tableEditor.deleteResource.mutate(input),
           readResourceContent: (input) => $trpc.tableEditor.readResourceContent.query(input),
-          saveResourceContent: (input) => $trpc.tableEditor.saveResourceContent.mutate(input),
+          saveResourceContent: (input) => $trpc.tableEditor.saveResourceContent.mutate(input as never),
           updateResource: (input) => $trpc.tableEditor.updateResource.mutate(input),
         };
       case ResourceType.Webpage:
@@ -62,7 +63,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
           publishResource: (input) => $trpc.webpageEditor.publishResource.mutate(input),
           readResourceContent: (input) => $trpc.webpageEditor.readResourceContent.query(input),
           readResourcePublication: (input) => $trpc.webpageEditor.readResourcePublication.query(input),
-          saveResourceContent: (input) => $trpc.webpageEditor.saveResourceContent.mutate(input),
+          saveResourceContent: (input) => $trpc.webpageEditor.saveResourceContent.mutate(input as never),
           unpublishResource: (input) => $trpc.webpageEditor.unpublishResource.mutate(input),
           updateResource: (input) => $trpc.webpageEditor.updateResource.mutate(input),
         };

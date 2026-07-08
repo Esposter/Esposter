@@ -17,7 +17,7 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
   const readEmailEditor = async () => {
     await load();
     const data = await readContent();
-    content.value = new EmailEditor(data);
+    content.value = new EmailEditor(data ?? undefined);
     return content.value;
   };
   // GrapesJS project data doesn't know about the dataset binding, so saves carry it over

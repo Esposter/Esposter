@@ -14,6 +14,11 @@ const { flowchartEditor, isSidebarOpen } = storeToRefs(flowchartEditorStore);
 const { addEdges, onConnect } = useVueFlow();
 const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
 const isLoading = ref(true);
+const nodeTypes = Object.fromEntries(
+  Object.entries(NodeTypeMap).map(([nodeType, { component }]) => [nodeType, component]),
+);
+// VueFlow emits on every drag frame; coalesce so overlapping saves don't fight over contentVersion
+const debouncedSave = useDebounceFn(saveFlowchartEditor, 500);
 
 onConnect(addEdges);
 
@@ -28,21 +33,19 @@ onMounted(async () => {
   <VueFlow
     v-else
     h-full
-    :node-types="
-      Object.fromEntries(Object.entries(NodeTypeMap).map(([nodeType, { component }]) => [nodeType, component]))
-    "
+    :node-types="nodeTypes"
     :nodes="flowchartEditor.nodes"
     :edges="flowchartEditor.edges"
     @update:nodes="
-      async (newNodes) => {
+      (newNodes) => {
         flowchartEditor.nodes = newNodes as GraphNode[];
-        await saveFlowchartEditor();
+        debouncedSave();
       }
     "
     @update:edges="
-      async (newEdges) => {
+      (newEdges) => {
         flowchartEditor.edges = newEdges as GraphEdge[];
-        await saveFlowchartEditor();
+        debouncedSave();
       }
     "
     @dragover="onDragOver"
