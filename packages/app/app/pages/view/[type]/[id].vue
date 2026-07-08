@@ -12,6 +12,6 @@ if (!viewComponent) throw createError({ statusCode: 404, statusMessage: "Resourc
 
 <template>
   <NuxtLayout>
-    <component :is="viewComponent" :id="id" />
+    <component :is="viewComponent" :id />
   </NuxtLayout>
 </template>

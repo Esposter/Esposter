@@ -16,10 +16,10 @@ const { dense = false } = defineProps<CreateGalleryProps>();
     <v-card
       v-for="type in CreatableResourceTypes"
       :key="type"
+      pa-4
       flex
       flex-col
       gap-2
-      pa-4
       :max-width="dense ? '10rem' : '18rem'"
       :min-width="dense ? '8rem' : '14rem'"
       @click="navigateTo(RoutePath.ResourcesCreateType(type))"

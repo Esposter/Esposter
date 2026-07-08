@@ -33,7 +33,9 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => openRes
     <div flex flex-col h-full>
       <StyledPageHeader title="All">
         <template #actions>
-          <v-btn color="primary" prepend-icon="mdi-plus" :to="RoutePath.ResourcesCreate">Create a resource</v-btn>
+          <StyledButton :button-props="{ prependIcon: 'mdi-plus', to: RoutePath.ResourcesCreate }">
+            Create a resource
+          </StyledButton>
         </template>
         <template #filters>
           <v-text-field

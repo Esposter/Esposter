@@ -10,6 +10,6 @@ describe("resourceNameRules", () => {
   });
 
   test("returns an error message for an empty name", () => {
-    expect(typeof rule("")).toBe("string");
+    expect(rule("")).toBeTypeOf("string");
   });
 });

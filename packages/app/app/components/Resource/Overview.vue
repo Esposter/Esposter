@@ -17,7 +17,7 @@ const copyPublicLink = () => window.navigator.clipboard.writeText(`${window.loca
 </script>
 
 <template>
-  <div flex flex-col gap-4 pa-6>
+  <div pa-6 flex flex-col gap-4>
     <div flex flex-wrap gap-2 items-center>
       <v-icon size="large" :icon="ResourceDefinitionMap[resource.type].icon" />
       <span text-h6>{{ resource.name }}</span>
@@ -33,7 +33,7 @@ const copyPublicLink = () => window.navigator.clipboard.writeText(`${window.loca
     <v-card>
       <v-card-title text-subtitle-1>Essentials</v-card-title>
       <v-card-text>
-        <div grid gap-x-6 gap-y-2 items-center :style="{ gridTemplateColumns: 'auto 1fr' }">
+        <div gap-x-6 gap-y-2 grid items-center :style="{ gridTemplateColumns: 'auto 1fr' }">
           <span text-medium-emphasis>Type</span>
           <span>{{ ResourceDefinitionMap[resource.type].title }}</span>
           <span text-medium-emphasis>Created</span>

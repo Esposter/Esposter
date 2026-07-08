@@ -72,7 +72,7 @@ const onDelete = async () => {
         </template>
       </StyledPageHeader>
       <div flex flex-1 min-h-0>
-        <v-list border nav width="14rem">
+        <v-list nav border width="14rem">
           <v-list-item prepend-icon="mdi-information-outline" title="Overview" :to="RoutePath.Resource(resource.id)" />
           <v-list-item
             v-for="blade in ResourceBladeDefinitionMap[resource.type]"

@@ -9,9 +9,13 @@ definePageMeta({ middleware: "auth" });
     </Head>
     <div flex flex-col h-full>
       <StyledPageHeader title="Create" />
-      <div flex flex-col gap-4 overflow-y-auto pa-6>
-        <span text-h6>Create a resource</span>
-        <ResourceCreateGallery />
+      <div flex-1 overflow-y-auto>
+        <v-container>
+          <div flex flex-col gap-4 py-4>
+            <span text-h6>Create a resource</span>
+            <ResourceCreateGallery />
+          </div>
+        </v-container>
       </div>
     </div>
   </NuxtLayout>
