@@ -105,7 +105,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^4.3.0
-  "@vue/language-core": 3.3.5
+  "@vue/language-core": ^3.3.7
   "@vue/test-utils": ^2.4.11
   "@vuepic/vue-datepicker": ^14.0.0
   "@vueuse/core": ^14.3.0
@@ -169,7 +169,7 @@ catalog:
   link-preview-js: ^4.0.4
   linkifyjs: ^4.3.3
   livekit-client: ^2.20.0
-  livekit-server-sdk: ^2.16.0
+  livekit-server-sdk: ^2.17.0
   lodash-omitdeep: ^1.10.1
   lowlight: ^3.3.0
   marked: ^18.0.5
@@ -231,7 +231,7 @@ catalog:
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.5
   vue-router: ^5.1.0
-  vue-tsc: 3.3.5
+  vue-tsc: ^3.3.7
   vue3-apexcharts: ^1.11.1
   vuetify: ^4.1.4
   vuetify-nuxt-module: ^1.0.0-rc.2
