@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useLayoutStore } from "@/store/layout";
+import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 
-const layoutStore = useLayoutStore();
-const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
+const flowchartEditorStore = useFlowchartEditorStore();
+const { isSidebarOpen } = storeToRefs(flowchartEditorStore);
 </script>
 
 <template>
-  <div v-if="!isLeftDrawerOpenAuto" class="vue-flow__panel">
-    <StyledTooltipIconButton icon="mdi-chevron-double-right" text="Components" @click="isLeftDrawerOpen = true" />
+  <div v-if="!isSidebarOpen" class="vue-flow__panel">
+    <StyledTooltipIconButton icon="mdi-chevron-double-right" text="Components" @click="isSidebarOpen = true" />
   </div>
 </template>

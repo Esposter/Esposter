@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { NodeCategoryTypeMap } from "@/services/flowchartEditor/NodeCategoryTypeMap";
 import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
-import { useLayoutStore } from "@/store/layout";
+import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 
 const { height, width } = useWindowSize();
-const layoutStore = useLayoutStore();
-const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
+const flowchartEditorStore = useFlowchartEditorStore();
+const { isSidebarOpen } = storeToRefs(flowchartEditorStore);
 const { createNode, onDragStart } = useDragAndDrop();
 </script>
 
@@ -39,11 +39,10 @@ const { createNode, onDragStart } = useDragAndDrop();
       </v-expansion-panels>
     </v-list>
     <StyledTooltipIconButton
-      v-if="!isLeftDrawerOpenAuto"
       :button-props="{ class: 'self-end' }"
       icon="mdi-chevron-double-left"
       text="Collapse sidebar"
-      @click="isLeftDrawerOpen = false"
+      @click="isSidebarOpen = false"
     />
   </div>
 </template>

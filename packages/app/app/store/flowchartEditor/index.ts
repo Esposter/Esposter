@@ -1,31 +1,26 @@
-import { FlowchartEditor, flowchartEditorSchema } from "#shared/models/flowchartEditor/data/FlowchartEditor";
-import { FLOWCHART_EDITOR_LOCAL_STORAGE_KEY } from "@/services/flowchartEditor/constants";
-import { MAX_READ_LIMIT } from "@esposter/shared";
+import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
+import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 
 export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
-  const { $trpc } = useNuxtApp();
-  const {
-    content: flowchartEditor,
-    load,
-    loadLocal,
-    save: saveFlowchartEditor,
-  } = useResourceState(
-    FlowchartEditor,
-    {
-      createResource: (input) => $trpc.flowchartEditor.createResource.mutate(input),
-      deleteResource: (input) => $trpc.flowchartEditor.deleteResource.mutate(input),
-      readResourceContent: (input) => $trpc.flowchartEditor.readResourceContent.query(input),
-      readResources: async () => (await $trpc.flowchartEditor.readResources.query({ limit: MAX_READ_LIMIT })).items,
-      saveResourceContent: (input) => $trpc.flowchartEditor.saveResourceContent.mutate(input),
-      updateResource: (input) => $trpc.flowchartEditor.updateResource.mutate(input),
-    },
-    {
-      defaultName: "My Flowchart",
-      localStorageKey: FLOWCHART_EDITOR_LOCAL_STORAGE_KEY,
-      schema: flowchartEditorSchema,
-    },
+  const route = useRoute();
+  // The store outlives the page, so the id is read from the route per call rather than captured once
+  const { load, readContent, save } = useResource(() =>
+    Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? ""),
   );
+  // Cast avoids the excessively deep UnwrapRef instantiation on the nested graph node/edge types
+  const flowchartEditor = ref(new FlowchartEditor()) as Ref<FlowchartEditor>;
+  const loadContent = async () => {
+    await load();
+    const data = await readContent();
+    flowchartEditor.value = new FlowchartEditor((data ?? undefined) as never);
+  };
+  const saveFlowchartEditor = () => {
+    saveItemMetadata(flowchartEditor.value);
+    return save(flowchartEditor.value);
+  };
   const selectedNodes = computed(() => flowchartEditor.value.nodes.filter(({ selected }) => selected));
   const isSingleNodeSelected = computed(() => selectedNodes.value.length === 1);
-  return { flowchartEditor, isSingleNodeSelected, load, loadLocal, saveFlowchartEditor, selectedNodes };
+  // The node palette renders as an on-canvas panel inside the Editor blade (no app drawer to host it)
+  const isSidebarOpen = ref(false);
+  return { flowchartEditor, isSidebarOpen, isSingleNodeSelected, loadContent, saveFlowchartEditor, selectedNodes };
 });

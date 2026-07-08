@@ -35,11 +35,6 @@ export const ProductListLinkItems = [
     title: "Webpage Editor",
   },
   {
-    href: RoutePath.FlowchartEditor,
-    icon: "mdi-sitemap",
-    title: "Flowchart Editor",
-  },
-  {
     href: RoutePath.DashboardEditor,
     icon: "mdi-view-dashboard-edit",
     title: "Dashboard Editor",
