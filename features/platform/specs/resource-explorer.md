@@ -66,7 +66,7 @@ Azure-portal-faithful **two flex boxes** (deliberately simple — no absolute ov
 - **Nested close**: the close ✕ peels back one layer — the blade box's ✕ closes to `/resources/all`, and `/all`'s own close ✕ (in `ResourceListView`'s toolbar, via `closeTo`) closes to `/resources` (Home). Each ✕ lives in its box's header, never on the breadcrumb's level.
 - **Single unified breadcrumb** — the **base page owns the only breadcrumb**; the blade box has none. `AppBreadcrumbs` takes a `crumbs` prop for the intermediate `All` (→ `/resources/all`): standalone `/resources/all` → `Home › Resource Explorer › All`; a resource open → `Home › Resource Explorer › All › {name}`. Navigation uses `:to` (real `<a>`, keyboard + ARIA) everywhere the target is static — `navigateTo` only for dynamic targets (search submit, post-create/-delete redirects, data-table row clicks).
 - **Blade box header** (type + name, not a breadcrumb): type icon + `{name} | {active blade}` with the resource **type** as a caption line beneath + the command bar + close ✕.
-- **Blade nav** (`v-list`, inline-end border): **Overview** first, then **Editor**, then the type's blades from `ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>`. Each item deep-links via `:to` to `/resources/[id]/[[blade]]`; the active blade is highlighted.
+- **Blade nav** (`v-list`, inline-end border): the built-in slugs come from the exported `ResourceBladeTypes` set (enum order **Overview** first, then **Editor** — `sort-enums` disabled so the enum stays the single ordered source of truth; per the typescript skill `Object.values` is wrapped in the set, never inlined), then the type's blades from `ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>`. Each item deep-links via `:to` to `/resources/[id]/[[blade]]`; the active blade is highlighted.
 - **Overview blade**: Essentials panel (type, created/updated). **Publish status + version and the public link render only for `PublishableResourceType`** — a non-publishable resource (Table/Email/Flowchart/TodoList) shows no status row at all. Plus a type-specific summary slot (row/response/item counts).
 - **Editor blade**: an Azure "Advanced Tools"-style launch panel — type icon, a one-line description, and an **Open editor →** link. In Phase 2 it deep-links to the type's still-external editor (`ResourceTypeRoutePathMap`); as editors migrate (Phase 3-5) the editor renders inline as the blade content.
 - **Command bar** (in the blade box header): Rename + Delete always; Publish/Unpublish for `PublishableResourceType` (`StyledButton`; Delete stays `color="error"`); Import/Export for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, `serialize` ⇒ Export); a trailing close ✕.
@@ -242,11 +242,22 @@ Blade components live under `app/components/Resource/<Type>/`, absorbing today's
 - `pages/resources/all.vue` — full list
 - `pages/resources/create/index.vue` — create gallery (type picker)
 - `pages/resources/create/[type].vue` — per-type create form
-- `pages/resources/[id]/[[blade]].vue` — resource page shell (menu + blade outlet + toolbar)
+- `pages/resources/[id]/[[blade]].vue` — resource page shell: loads `useResource`, 404-guards the id + blade, resolves the active blade, renders the breadcrumb + `<ResourceExplorer>`. Nothing else.
+- `components/Resource/Explorer.vue` — the two-flex-box body (list box | blade box); wires the blade toolbar, nav and outlet
+- `components/Resource/ExplorerList.vue` — collapsible list box (owns `isListCollapsed`, mobile-collapsed default) wrapping `ResourceListView :searchable="false"`
+- `components/Resource/BladeToolbar.vue` — blade box header `<v-toolbar>` composing `BladeTitle` + `BladeActions`
+- `components/Resource/BladeTitle.vue` — type icon + `{name} | {active blade}` + type caption
+- `components/Resource/BladeActions.vue` — command bar: `RenameDialogButton`, `DeleteDialogButton`, `PublishToggle` (publishable), `PortableActions` (portable), close ✕
+- `components/Resource/RenameDialogButton.vue` / `DeleteDialogButton.vue` — command buttons wrapping `StyledFormDialog` / `StyledDeleteFormDialog`
+- `components/Resource/PublishToggle.vue` / `PortableActions.vue` — capability command groups
+- `components/Resource/BladeNav.vue` — `v-list` built from `Object.values(ResourceBladeType)`; mobile icon rail
+- `components/Resource/BladeOutlet.vue` — switches Overview vs EditorLaunch on the active `ResourceBladeType`
 - `components/Resource/Overview.vue` — generic Overview blade (Essentials + type summary slot; status/public-link only when publishable)
 - `components/Resource/EditorLaunch.vue` — Editor blade launch panel (icon + description + Open editor link)
 - `components/Resource/CreateGallery.vue` — type-picker tiles for the create gallery
 - `components/Resource/<Type>/…` — per-type blades registered in `ResourceBladeDefinitionMap`
+- `models/resource/ResourceBladeType.ts` — built-in blade slugs enum (`Overview`, `Editor`) + exported `ResourceBladeTypes` set; `sort-enums` disabled so declaration order = nav order
+- `services/resource/ResourceBladeTitleMap.ts` — `Record<ResourceBladeType, string>` display titles
 
 ## Key Files
 
