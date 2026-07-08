@@ -17,9 +17,14 @@ const editorComponent = computed(() => ResourceEditorComponentMap[resource.type]
 
 <template>
   <ResourceOverview v-if="activeBlade === ResourceBladeType.Overview" :publication :resource />
-  <!-- Migrated editors (e.g. VueFlow) can't SSR, so the inline blade renders client-only -->
+  <!-- Migrated editors can't SSR (VueFlow/GrapesJS), so render client-only; Suspense supports async editor setup -->
   <ClientOnly v-else-if="editorComponent">
-    <component :is="editorComponent" />
+    <Suspense>
+      <component :is="editorComponent" />
+      <template #fallback>
+        <StyledSkeleton />
+      </template>
+    </Suspense>
     <template #fallback>
       <StyledSkeleton />
     </template>

@@ -3,7 +3,7 @@ import type { PublishableResourceProcedureOptions } from "@@/server/models/resou
 import type { Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { getIsPublishable } from "#shared/services/resource/getIsPublishable";
+import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
@@ -255,6 +255,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
   };
   return {
     ...baseProcedures,
-    ...(getIsPublishable(type) ? publishProcedures : {}),
+    ...(hasCapability(type, "publishable") ? publishProcedures : {}),
   } as (TType extends PublishableResourceType ? typeof publishProcedures : unknown) & typeof baseProcedures;
 };
