@@ -49,7 +49,7 @@ const isSubmitting = ref(false);
                 />
                 <div flex gap-2 justify-end mt-4>
                   <v-btn variant="text" :to="RoutePath.ResourcesCreate">Cancel</v-btn>
-                  <StyledButton :button-props="{ disabled: !isValid, loading: isSubmitting, type: 'submit' }">
+                  <StyledButton type="submit" :button-props="{ disabled: !isValid, loading: isSubmitting }">
                     Create
                   </StyledButton>
                 </div>
