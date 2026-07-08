@@ -204,6 +204,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
 | Procedure                                                                | Auth                | Purpose                                          |
 | ------------------------------------------------------------------------ | ------------------- | ------------------------------------------------ |
 | `readResources`                                                          | owner               | offset-paginated list                            |
+| `count`                                                                  | owner               | filtered total, kept in lockstep with the list   |
 | `createResource`                                                         | owner               | metadata row; content blob written on first save |
 | `updateResource`                                                         | owner               | rename                                           |
 | `deleteResource`                                                         | owner               | row + `{id}/` blob directory                     |
@@ -230,8 +231,8 @@ Router-per-type is load-bearing, not cosmetic: achievement `triggerPath`s key of
 
 ## Client
 
-- **Explorer** (`/resources`) is an Azure-portal-faithful shell: a **Home** landing (search + quick-create tiles + recent resources), a full list at `/resources/all`, and a dedicated create flow (`/resources/create` gallery → `/resources/create/[type]` form). All three read `resource.readResources` directly (different sort/limit/filter) — a server-paginated table needs no composable. Full UX in [`features/platform/specs/resource-explorer.md`](../features/platform/specs/resource-explorer.md).
+- **Explorer** (`/resources`) is an Azure-portal-faithful shell: a **Home** landing (search + quick-create tiles + recent resources), a full list at `/resources/all`, and a route-driven create flow (`/resources/create` gallery → `/resources/create/[type]` form). Home and `/resources/all` read resources through the shared `useReadResources` composable (`resource.count` + `resource.readResources`, different sort/limit/filter per surface); the create flow is a separate route-driven page. Full UX in [`features/platform/specs/resource-explorer.md`](../features/platform/specs/resource-explorer.md).
 - **`useResource(id)`** (`app/composables/resource/useResource.ts`) — loads the row (`resource.readResource`) + typed content (`{type}.readResourceContent`), exposes `save` (optimistic `contentVersion`), `rename`, `remove`, and capability actions (`publish`/`unpublish` gated by `PublishableResourceType`).
 - Resource pages are auth-gated. There is no unauthenticated/localStorage editing path — one persistence mechanism, not two ([`deferred/unauth-local-resources.md`](../features/platform/deferred/unauth-local-resources.md)).
 
-The explorer UX shell (list, blade page, Overview, toolbar commands) is product surface, not a repo-wide mechanism — it is specified in [`features/platform/specs/resource-explorer.md`](../features/platform/specs/resource-explorer.md).
+The explorer UX shell (list, blade page, Overview, toolbar commands) is product surface, not a repo-wide mechanism — full UX lives in the spec linked above.

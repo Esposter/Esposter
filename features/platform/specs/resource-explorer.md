@@ -43,7 +43,7 @@ The Azure-portal landing. Not a table — a dashboard of entry points:
 
 `StyledDataTableServer` over `resource.readResources` (cross-type, owner, offset-paginated) — the full list the Home **See all** deep-links to:
 
-- Columns: name, type (icon + label from `ResourceDefinitionMap`, facet filter), status (Draft/Published chips), updatedAt.
+- Columns: type (icon + label from `ResourceDefinitionMap`, facet filter), name, createdAt, updatedAt. Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade, not mixed into a cross-type list.
 - Toolbar: search (accepts the query forwarded from Home), **Create a resource** → `/resources/create`.
 - Row click → `/resources/{id}`.
 - Empty state: `StyledEmptyState` with a Create action.
@@ -106,11 +106,11 @@ Azure-portal-faithful wireframes for each screen (structure, not pixels — styl
 │  Resources                                                     │  breadcrumb
 │  🔍 Search        Type ▾              [ + Create a resource ]  │
 ├──────────────────────────────────────────────────────────────┤
-│  Name           Type      Status      Updated                 │
+│  Type      Name           Created      Updated                │
 │  ───────────────────────────────────────────────────────────  │
-│  📄 Q3 Report   File      Draft       2h ago                  │
-│  📋 NPS Survey  Survey    Published   yesterday               │
-│  ✅ Launch…     TodoList  Draft       3d ago      ‹ 1 2 3 ›   │
+│  📄 File   Q3 Report      2d ago       2h ago                 │
+│  📊 Dash   Sales board    1w ago       yesterday              │
+│  🌐 Web    Landing page   3w ago       3d ago     ‹ 1 2 3 ›   │
 └──────────────────────────────────────────────────────────────┘
 ```
 
