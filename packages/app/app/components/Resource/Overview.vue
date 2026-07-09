@@ -36,9 +36,7 @@ const copyPublicLink = async () => {
           <span op-medium-emphasis>Created</span>
           <span>{{ dayjs(resource.createdAt).format("ddd, MMM D, YYYY h:mm A") }}</span>
           <span op-medium-emphasis>Updated</span>
-          <span
-            ><ClientOnly>{{ dayjs(resource.updatedAt).fromNow() }}</ClientOnly></span
-          >
+          <span>{{ dayjs(resource.updatedAt).fromNow() }}</span>
           <template v-if="isPublishable">
             <span op-medium-emphasis>Status</span>
             <div flex gap-2 items-center>

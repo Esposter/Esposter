@@ -12,7 +12,7 @@ const { dense = false } = defineProps<CreateGalleryProps>();
 </script>
 
 <template>
-  <div grid gap-4 :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${dense ? '8rem' : '14rem'}, 1fr))` }">
+  <div gap-4 grid :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${dense ? '8rem' : '14rem'}, 1fr))` }">
     <v-card
       v-for="type in CreatableResourceTypes"
       :key="type"

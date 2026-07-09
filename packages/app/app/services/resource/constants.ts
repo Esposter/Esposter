@@ -1,0 +1,1 @@
+export const RECENT_RESOURCES_LIMIT = 5;

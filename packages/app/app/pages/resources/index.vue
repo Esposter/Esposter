@@ -2,11 +2,11 @@
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { RECENT_RESOURCES_LIMIT } from "@/services/resource/constants";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
 
-const RECENT_RESOURCES_LIMIT = 5;
 const searchQuery = ref("");
 const { isLoading, items: recentResources, readResources } = useReadResources(ref(""), ref([]));
 await readResources({
@@ -77,7 +77,7 @@ await readResources({
                 >
                   <template #subtitle>
                     {{ ResourceDefinitionMap[resource.type].title }} ·
-                    <ClientOnly>{{ dayjs(resource.updatedAt).fromNow() }}</ClientOnly>
+                    {{ dayjs(resource.updatedAt).fromNow() }}
                   </template>
                 </v-list-item>
               </v-list>
