@@ -48,8 +48,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
     : []
 ) => {
   const { contentSchema } = ResourceDefinitionMap[type];
-  // args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
-  // intersection of every content type; pin them back to this TType's concrete content shape.
+  // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
+  // Intersection of every content type; pin them back to this TType's concrete content shape.
   const { transformPublishedContent, transformReadContent } = (args[0] ??
     {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
