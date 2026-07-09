@@ -281,6 +281,43 @@ const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsAndSentTabs, Drafts
 
 Each enum exposes a value `Set` alongside it (`DraftsAndSentTabs`, `PermissionsTabs`, `AchievementStatuses`). Put `useEnumRouteQuery` where the `v-tabs` `v-model` originates. When a child renders the tabs via `defineModel`, keep it in the parent and pass it down as `v-model`.
 
+## Route-Param Validation + Page Key (avoid remount refetch)
+
+For pages with **optional/nested route segments** that share one page component (e.g. `[id]/[[blade]].vue`), each segment change is a different path, so by default the page **remounts** on every in-page navigation — re-running top-level `await` loaders and remounting the whole subtree (a shared sidebar/list refetches on every click).
+
+Fix with two paired changes:
+
+1. **Key the page by the stable segment only** via `definePageMeta({ key })`, so sibling-segment navigations reuse the page instead of remounting it.
+2. **Validate params at the route boundary, not in setup** — `definePageMeta({ validate })` runs on every navigation (including in-page segment changes), so a bad param 404s _before_ setup. Reuse `@/services/router/validate` (uuid v4 for `id`) or a domain `schema.shape.id.safeParseAsync`, and check enum segments against the enum's `Set`. This replaces any in-setup `watchEffect(showError)`.
+
+```ts
+// pages/resources/[id]/[[blade]].vue
+import { validate } from "@/services/router/validate";
+
+definePageMeta({
+  key: (route) => `resource-${Array.isArray(route.params.id) ? route.params.id[0] : route.params.id}`,
+  middleware: "auth",
+  validate: (route) => {
+    if (!validate(route)) return false; // shared uuid-v4 check for id
+    const { blade } = route.params;
+    return !blade || (typeof blade === "string" && ResourceBladeTypes.has(blade as ResourceBladeType));
+  },
+});
+const route = useRoute();
+// Keyed/stable segment → plain const cast (page remounts on id change; validate guarantees it is a string)
+const id = route.params.id as string;
+const { load, resource } = useResource(id);
+await load();
+// Only the CHANGING segment needs a computed — it updates without a remount once the page is reused
+const activeBlade = computed(() => (route.params.blade as ResourceBladeType) || ResourceBladeType.Overview);
+```
+
+**Rules:**
+
+- `<v-list-item :to>` / `<NuxtLink to>` are already SPA navigations — switching them to `navigateTo` does **not** fix a remount refetch. The remount comes from the per-segment page key, so fix it at the page level.
+- The **keyed/stable** segment is a plain `const route.params.x as string` (safe because `validate` gated it and the page remounts when it changes). Only the **changing** segment needs a `computed` — a captured `const` for it goes stale after reuse.
+- `takeOne` (`@esposter/shared`) is the `noUncheckedIndexedAccess` workaround for **array / first-element** access — not for `string | string[]` route params, which `validate` + a cast already handle.
+
 ## Resource Management
 
 - Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.

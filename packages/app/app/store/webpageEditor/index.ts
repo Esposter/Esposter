@@ -2,7 +2,7 @@ import type { ProjectData } from "grapesjs";
 
 import { WebpageEditor, webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { authClient } from "@/services/auth/authClient";
-import { WEBPAGE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/webpageEditor/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
@@ -35,7 +35,7 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
       unpublishResource: (input) => $trpc.webpageEditor.unpublishResource.mutate(input),
       updateResource: (input) => $trpc.webpageEditor.updateResource.mutate(input),
     },
-    { defaultName: "My Webpage", localStorageKey: WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, schema: webpageEditorSchema },
+    { defaultName: "My Webpage", localStorageKey: LocalStorageKey.WebpageEditorStore, schema: webpageEditorSchema },
   );
   // The resource list load happens once; subsequent editor storage loads serve the selected resource's content
   const readWebpageEditor = async () => {

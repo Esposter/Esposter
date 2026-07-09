@@ -1,5 +1,5 @@
 import { Clicker } from "#shared/models/clicker/data/Clicker";
-import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useClickerStore } from "@/store/clicker";
 import { jsonDateParse } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
@@ -24,7 +24,7 @@ export const useReadClicker = async () => {
 
   await useReadData(
     () => {
-      const clickerJson = localStorage.getItem(CLICKER_LOCAL_STORAGE_KEY);
+      const clickerJson = localStorage.getItem(LocalStorageKey.ClickerStore);
       clicker.value = clickerJson ? new Clicker(jsonDateParse(clickerJson)) : new Clicker();
     },
     async () => {

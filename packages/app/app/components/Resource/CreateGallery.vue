@@ -12,7 +12,7 @@ const { dense = false } = defineProps<CreateGalleryProps>();
 </script>
 
 <template>
-  <div flex flex-wrap gap-4>
+  <div grid gap-4 :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${dense ? '8rem' : '14rem'}, 1fr))` }">
     <v-card
       v-for="type in CreatableResourceTypes"
       :key="type"
@@ -20,8 +20,8 @@ const { dense = false } = defineProps<CreateGalleryProps>();
       flex
       flex-col
       gap-2
+      h-full
       :max-width="dense ? '10rem' : '18rem'"
-      :min-width="dense ? '8rem' : '14rem'"
       :to="RoutePath.ResourcesCreateType(type)"
     >
       <div flex gap-2 items-center>

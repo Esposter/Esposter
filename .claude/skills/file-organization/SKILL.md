@@ -74,6 +74,24 @@ Tracked symlinks in this repo:
     computed(() => DataSourceConfigurationMap[toValue(item).type] as DataSourceConfiguration<TDataSourceItem>);
   ```
 
+## localStorage Keys
+
+Every localStorage key lives in **one** central registry, `app/services/shared/LocalStorageKey.ts` — a `RoutePath`-style `as const` object. Never scatter `*_LOCAL_STORAGE_KEY` constants across `services/*/constants.ts`, and never inline a literal into `useLocalStorage("literal")` / `localStorage.getItem("literal")`. One registry = keys can never silently overlap.
+
+```typescript
+export const LocalStorageKey = {
+  ClickerStore: "clicker-store",
+  Draft: (roomId: string) => `draft:${roomId}`, // function form for parameterised keys (like RoutePath.Messages(id))
+  IsResourceListCollapsed: "is-resource-list-collapsed",
+  SurveyResponseId: "survey-response-id",
+} as const;
+```
+
+- **PascalCase entries; kebab-case string values** for new keys. Boolean-valued keys follow the boolean naming rule (`is`/`has`/`show` prefix, e.g. `IsResourceListCollapsed`).
+- **Parameterised keys are functions** returning the composed string. Derive a prefix for enumeration from the empty call, e.g. `LocalStorageKey.Draft("")` → `"draft:"` for `.startsWith` / `.slice`.
+- **Keep existing string values byte-identical** when migrating scattered keys into the registry — changing a value orphans users' already-persisted data.
+- Not every `*_KEY` constant is a localStorage key — e.g. `THEME_KEY` is a property key inside a model's JSON. Only storage keys belong here.
+
 ## Generic Vue Components
 
 Use `<script setup lang="ts" generic="T extends SomeBase">` to make components type-safe over a subtype. Pass the typed value AND its associated generic config/interface as props so the parent resolves concrete types and the child stays typed without lookups/casts:
