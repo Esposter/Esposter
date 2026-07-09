@@ -2,8 +2,6 @@
 import { ResourceBladeType, ResourceBladeTypes } from "@/models/resource/ResourceBladeType";
 import { validate } from "@/services/router/validate";
 import { RoutePath } from "@esposter/shared";
-
-defineRouteRules({ ssr: false });
 // Key by id only so switching blades reuses this page (the left resource list stays mounted instead of refetching);
 // The page still remounts when the id changes. validate runs on every navigation, so a bad id/blade 404s at the boundary.
 definePageMeta({
