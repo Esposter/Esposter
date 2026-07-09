@@ -3,7 +3,7 @@ import type { PublishableResourceProcedureOptions } from "@@/server/models/resou
 import type { Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { getIsPublishable } from "#shared/services/resource/getIsPublishable";
+import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
@@ -48,7 +48,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
     : []
 ) => {
   const { contentSchema } = ResourceDefinitionMap[type];
-  const { transformPublishedContent, transformReadContent } = args[0] ?? {};
+  // Args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
+  // Intersection of every content type; pin them back to this TType's concrete content shape.
+  const { transformPublishedContent, transformReadContent } = (args[0] ??
+    {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
   // Would erase the procedure's input type for consumers like achievement condition paths.
@@ -111,9 +114,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query(async ({ ctx, input: { id } }) => {
       const content = await readContent(id);
       if (content === undefined || !transformReadContent) return content;
-      // The hook is typed for the concrete type at the call site; inside the generic factory the
-      // Content and hook-param types can't be proven equal, so the cast is the centralized cost
-      return transformReadContent(ctx, ctx.resource, content as never) as Promise<typeof content>;
+      return transformReadContent(ctx, ctx.resource, content);
     }),
     readResources: standardAuthedProcedure
       .input(readResourcesInputSchema)
@@ -185,7 +186,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
             ).message,
           });
         const publishedContent = transformPublishedContent
-          ? await transformPublishedContent(ctx, ctx.resource, content as never)
+          ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
         // Bump the version and write the blob in one transaction so a failed upload rolls the version bump back,
         // The publication row can never point at a publishVersion whose blob was never written.
@@ -255,6 +256,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
   };
   return {
     ...baseProcedures,
-    ...(getIsPublishable(type) ? publishProcedures : {}),
+    ...(hasCapability(type, "publishable") ? publishProcedures : {}),
   } as (TType extends PublishableResourceType ? typeof publishProcedures : unknown) & typeof baseProcedures;
 };

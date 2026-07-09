@@ -31,7 +31,7 @@ Azure-portal-faithful surface: `/resources` is the **Home** (search + quick-crea
 - [x] `useResource(id)` blade-scoped composable — **metadata scope** (row load, rename, delete, publish/unpublish); typed content + type summary land with each editor's blade migration (Phase 3-5)
 - [x] `ResourceBladeDefinitionMap`, `PortableFormatMap`, `ViewComponentMap` skeletons
 - [x] `/view/[type]/[id]` dynamic public page dispatching `ViewComponentMap` (skeleton map ⇒ 404s until types migrate off their static view pages in Phase 3/5)
-- [ ] Trim per-editor `ProductListLinkItems` entries once editors become blades ([specs/shell-cohesion.md](specs/shell-cohesion.md)) — deferred to Phase 3 (editors still top-level)
+- [ ] Trim per-editor `ProductListLinkItems` entries once editors become blades ([specs/shell-cohesion.md](specs/shell-cohesion.md)) — happens incrementally in Phase 3 as each editor migrates (Flowchart entry removed; Table/Email/Webpage/Dashboard/Survey entries remain until theirs land)
 
 **Phase 2 transitional notes.** The create gallery offers only the `createResourceProcedures`-backed, `resources`-table types (`ResourceType.Table`, `Dashboard`, `Webpage`, `Email`, `Flowchart` — `CreatableResourceTypes`). Survey lives on its own `surveys` table (folds Phase 5) so it never appears in `resource.readResources` and is excluded; File/TodoList have no router yet (Phase 4). Router keys stay the legacy editor names (`tableEditor`/`emailEditor`/…), so `useCreateResource`/`useResource` dispatch through explicit per-type maps until the Phase 3-4 renames. Publish **status** is intentionally omitted from the `/all` list (surfaced per-resource on Overview instead).
 
@@ -41,6 +41,30 @@ Azure-portal-faithful surface: `/resources` is the **Home** (search + quick-crea
 - [ ] Dashboard keeps `transformPublishedContent` (baked dataset snapshots); Webpage view component moves to `ViewComponentMap`
 - [ ] Email: `PortableFormatMap[Email]` export-only html (personalized export); Email/Flowchart lose their unused publish endpoints (capability not declared)
 - [ ] Delete `pages/{dashboard/*,email-editor,webpage-editor,flowchart-editor}.vue`, `pages/view/{dashboard,webpage}/[id].vue`
+
+**Flowchart ✅ (shipped — first inline editor, established the mechanism).** `useResource` gained
+blob content (`readContent`/`save`, optimistic `contentVersion`) — the "store retargets to `useResource`"
+enabler every remaining editor reuses. New `ResourceEditorComponentMap` (`Partial<Record<ResourceType,
+Component>>`) supplies the component the built-in **Editor** blade renders inline; `BladeOutlet` renders it
+under `<ClientOnly>` (VueFlow can't SSR), else falls back to `EditorLaunch`. `store/flowchartEditor`
+retargets to `useResource` (drops the `localStorage`/multi-resource/query-param path; id read from the route
+per call so the persisted store never goes stale); the node palette moved off the app left drawer to an
+on-canvas `<Panel>` (`isSidebarOpen`). Deleted `pages/flowchart-editor.vue` +
+`useReadFlowchartEditor` + the Flowchart `ProductListLinkItems` entry (the Phase-2-deferred per-editor
+launcher trim, now applicable). Router key `flowchartEditor`, the `flowchartEditor/` folders, and
+`RoutePath.FlowchartEditor`/`ResourceTypeRoutePathMap[Flowchart]` stay for the Phase 6 rename/grep sweep.
+
+**Email ✅ (shipped — first Portable inline editor).** Same blade migration (GrapesJS canvas renders
+inline under `<ClientOnly><Suspense>` in `BladeOutlet`; `store/emailEditor` retargets to `useResource`,
+drops `localStorage`, and holds the live `editor` as the bridge for the command-bar export). The
+**Portable capability is now wired**: `PortableFormat` reshaped from `serialize(content)→string`+`mimeType`
+to a self-contained async `export()` (so a format can pull the editor + dataset + zip N files);
+`PortableActions` renders an Export menu from `PortableFormatMap[type]`; `PortableFormatMap[Email]` = the
+personalized-HTML export (via the extracted `exportPersonalizedHtml` service). Import lands with File
+(Phase 4). Also added a generic `hasCapability(type, capability)` guard + `CapabilityResourceType<T>`
+(the three derived unions now alias it), replacing the per-capability `getIs*` helpers. Deleted
+`email-editor.vue`, `EmailEditor/{Header,ExportPersonalizedHtmlButton}.vue`, the Email launcher entry, and
+the dead `localStorage` key. **Pending:** Webpage, Dashboard (+ view wiring and page deletions).
 
 ## Phase 4 — File split + TodoList
 

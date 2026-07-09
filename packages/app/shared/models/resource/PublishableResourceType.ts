@@ -1,7 +1,3 @@
-import type { ResourceType } from "@esposter/db-schema";
+import type { CapabilityResourceType } from "#shared/models/resource/CapabilityResourceType";
 
-import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-
-export type PublishableResourceType = {
-  [T in ResourceType]: (typeof ResourceDefinitionMap)[T]["capabilities"] extends { publishable: true } ? T : never;
-}[ResourceType];
+export type PublishableResourceType = CapabilityResourceType<"publishable">;

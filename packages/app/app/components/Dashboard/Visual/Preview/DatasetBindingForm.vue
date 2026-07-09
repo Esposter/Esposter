@@ -13,6 +13,7 @@ const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const { dataset } = useDataset(() => modelValue.value?.reference);
 const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name) ?? []);
+const datasetAggregationTypes = Object.values(DatasetAggregationType);
 </script>
 
 <template>
@@ -49,7 +50,7 @@ const columnNames = computed(() => dataset.value?.columns.map(({ name }) => name
       <v-select v-model="modelValue.query.xColumn" :items="columnNames" label="X Column" />
       <div v-for="(series, index) of modelValue.query.series" :key="index" flex gap-2 items-center>
         <v-select v-model="series.column" :items="columnNames" label="Series Column" />
-        <v-select v-model="series.aggregation" :items="Object.values(DatasetAggregationType)" label="Aggregation" />
+        <v-select v-model="series.aggregation" :items="datasetAggregationTypes" label="Aggregation" />
         <StyledTooltipIconButton
           :button-props="{ disabled: modelValue.query.series.length === 1 }"
           icon="mdi-delete"

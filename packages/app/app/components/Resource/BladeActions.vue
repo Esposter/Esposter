@@ -22,6 +22,6 @@ const isPortable = computed(() => "portable" in ResourceDefinitionMap[resource.t
   <ResourceRenameDialogButton :rename :resource />
   <ResourceDeleteDialogButton :remove :resource />
   <ResourcePublishToggle v-if="isPublishable" :publication :publish :unpublish />
-  <ResourcePortableActions v-if="isPortable" />
+  <ResourcePortableActions v-if="isPortable" :resource />
   <StyledTooltipIconButton icon="mdi-close" text="Close" :button-props="{ to: RoutePath.ResourcesAll }" />
 </template>

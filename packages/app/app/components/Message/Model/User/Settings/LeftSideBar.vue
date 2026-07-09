@@ -12,6 +12,7 @@ const modelValue = defineModel<UserSettingsType>({ required: true });
 const userSettingsDialogStore = useUserSettingsDialogStore();
 const { activeSectionId, isScrollingToSection } = storeToRefs(userSettingsDialogStore);
 const goTo = useVGoTo();
+const userSettingsListItems = Object.entries(UserSettingsListItemMap);
 const scrollToSection = async (section: SettingsSection) => {
   activeSectionId.value = section;
   const element = document.getElementById(section);
@@ -29,11 +30,7 @@ const scrollToSection = async (section: SettingsSection) => {
 <template>
   <MessageModelSettingsLeftSideBar>
     <v-list :opened="[modelValue]">
-      <v-list-group
-        v-for="[settingsType, { icon }] of Object.entries(UserSettingsListItemMap)"
-        :key="settingsType"
-        :value="settingsType"
-      >
+      <v-list-group v-for="[settingsType, { icon }] of userSettingsListItems" :key="settingsType" :value="settingsType">
         <template #activator="{ props }">
           <v-list-item
             :="props"

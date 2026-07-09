@@ -10,6 +10,7 @@ const { currentRoomId } = storeToRefs(roomStore);
 const userToRoomStore = useUserToRoomStore();
 const { myUserToRoomMap } = storeToRefs(userToRoomStore);
 const notificationType = computed(() => myUserToRoomMap.value?.notificationType ?? NotificationType.DirectMessage);
+const notificationTypeLabels = Object.entries(NotificationTypeLabelMap);
 </script>
 
 <template>
@@ -32,7 +33,7 @@ const notificationType = computed(() => myUserToRoomMap.value?.notificationType 
           })
         "
       >
-        <v-radio v-for="[value, label] of Object.entries(NotificationTypeLabelMap)" :key="value" :value :label>
+        <v-radio v-for="[value, label] of notificationTypeLabels" :key="value" :value :label>
           <template #label="{ props: labelProps }">
             <v-label :="labelProps" text-label-large :text="label" />
           </template>

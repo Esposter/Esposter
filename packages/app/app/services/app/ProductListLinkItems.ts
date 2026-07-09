@@ -25,19 +25,9 @@ export const ProductListLinkItems = [
     title: "Table Editor",
   },
   {
-    href: RoutePath.EmailEditor,
-    icon: "mdi-email-edit",
-    title: "Email Editor",
-  },
-  {
     href: RoutePath.WebpageEditor,
     icon: "mdi-language-html5",
     title: "Webpage Editor",
-  },
-  {
-    href: RoutePath.FlowchartEditor,
-    icon: "mdi-sitemap",
-    title: "Flowchart Editor",
   },
   {
     href: RoutePath.DashboardEditor,

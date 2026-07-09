@@ -40,7 +40,7 @@ export const useResourceState = <TContent extends ItemMetadata>(
     currentResource.value = resource;
     publication.value = await procedures.readResourcePublication?.({ id });
     const data = await procedures.readResourceContent({ id });
-    content.value = new Model((data ?? undefined) as never);
+    content.value = new Model(data as never);
   };
   // The unauthenticated path stays single-resource in local storage
   const loadLocal = () => {
