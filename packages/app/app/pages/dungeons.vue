@@ -22,6 +22,7 @@ prioritizedParallelSceneKeys.value = [SceneKey.MobileJoystick];
 const textStore = useTextStore();
 const { defaultTextStyle } = storeToRefs(textStore);
 defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
+const sceneKeys = Object.entries(SceneKeyMap);
 </script>
 
 <template>
@@ -71,7 +72,7 @@ defaultTextStyle.value = { fontFamily: FontKey.KenneyFutureNarrow };
         },
       }"
     >
-      <component :is="component" v-for="[sceneKey, component] of Object.entries(SceneKeyMap)" :key="sceneKey" />
+      <component :is="component" v-for="[sceneKey, component] of sceneKeys" :key="sceneKey" />
     </Game>
   </NuxtLayout>
 </template>

@@ -33,7 +33,7 @@ onMounted(async () => {
   <VueFlow
     v-else
     h-full
-    :node-types="nodeTypes"
+    :node-types
     :nodes="flowchartEditor.nodes"
     :edges="flowchartEditor.edges"
     @update:nodes="
