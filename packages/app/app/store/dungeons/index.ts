@@ -4,7 +4,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { Dungeons, dungeonsSchema } from "#shared/models/dungeons/data/Dungeons";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { dayjs } from "#shared/services/dayjs";
-import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";
 
@@ -18,7 +18,7 @@ export const useDungeonsStore = defineStore("dungeons", () => {
   const dungeons = ref(new Dungeons());
   const saveDungeons = useSave(dungeons, {
     auth: { save: $trpc.dungeons.saveDungeons.mutate },
-    unauth: { key: DUNGEONS_LOCAL_STORAGE_KEY, schema: dungeonsSchema },
+    unauth: { key: LocalStorageKey.DungeonsStore, schema: dungeonsSchema },
   });
 
   const save = ref(new Save());

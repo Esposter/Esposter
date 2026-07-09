@@ -15,7 +15,7 @@ import {
 } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { TableEditorHookMap } from "@/services/tableEditor/TableEditorHookMap";
 import { useItemStore } from "@/store/tableEditor/item";
 import { MAX_READ_LIMIT, toRawDeep } from "@esposter/shared";
@@ -50,7 +50,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     },
     {
       defaultName: "My Tables",
-      localStorageKey: TABLE_EDITOR_LOCAL_STORAGE_KEY,
+      localStorageKey: LocalStorageKey.TableEditorStore,
       schema: tableEditorConfigurationSchema,
     },
   );

@@ -1,5 +1,5 @@
 import { Dashboard, dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
-import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
 export const useDashboardStore = defineStore("dashboard", () => {
@@ -32,7 +32,7 @@ export const useDashboardStore = defineStore("dashboard", () => {
       unpublishResource: (input) => $trpc.dashboard.unpublishResource.mutate(input),
       updateResource: (input) => $trpc.dashboard.updateResource.mutate(input),
     },
-    { defaultName: "My Dashboard", localStorageKey: DASHBOARD_LOCAL_STORAGE_KEY, schema: dashboardSchema },
+    { defaultName: "My Dashboard", localStorageKey: LocalStorageKey.DashboardStore, schema: dashboardSchema },
   );
   return {
     createResource,

@@ -13,6 +13,7 @@ description: Esposter naming conventions — booleans (is*/has*/show*), function
 - `show*` is **banned** — rename to `is*Visible`: `showSettings` → `isSettingsVisible`, `showDialog` → `isDialogVisible`. Exception: 3rd-party API properties that can't be renamed
 - `isDirty` for tracking unsaved state — never `isChanged`
 - `initial*` for the last-saved snapshot used in dirty comparisons: `initialWords`, `initialName`
+- Boolean-valued `LocalStorageKey` registry entries follow the same `is*` rule (`IsResourceListCollapsed`) — see the file-organization skill "localStorage Keys"
 
 ## Functions
 

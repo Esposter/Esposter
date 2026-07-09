@@ -1,7 +1,8 @@
 <script setup lang="ts">
-// The caret collapses the list box so the blade fills the row; collapse by default on mobile.
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+// The caret collapses the list box so the blade fills the row; persisted so it survives a reload, mobile-default otherwise.
 const { smAndDown } = useVDisplay();
-const isListCollapsed = ref(smAndDown.value);
+const isListCollapsed = useLocalStorage(LocalStorageKey.IsResourceListCollapsed, smAndDown.value);
 </script>
 
 <template>

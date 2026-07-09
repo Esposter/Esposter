@@ -2,8 +2,8 @@
 import type { Router } from "vue-router";
 
 import { dayjs } from "#shared/services/dayjs";
-import { DRAFT_KEY_PREFIX } from "@/services/message/draft/constants";
 import { getDraft } from "@/services/message/draft/getDraft";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useInputStore } from "@/store/message/input";
 import { marked } from "marked";
 import { createPinia, setActivePinia } from "pinia";
@@ -34,7 +34,7 @@ describe(useInputStore, () => {
   test("populates drafts from localStorage on init", () => {
     expect.hasAssertions();
 
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, draftContent);
+    localStorage.setItem(LocalStorageKey.Draft(roomId1), draftContent);
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
 
@@ -44,7 +44,7 @@ describe(useInputStore, () => {
   test("ignores empty draft content in localStorage", () => {
     expect.hasAssertions();
 
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, marked.parse("", { async: false }));
+    localStorage.setItem(LocalStorageKey.Draft(roomId1), marked.parse("", { async: false }));
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
 
@@ -54,7 +54,7 @@ describe(useInputStore, () => {
   test("ignores legacy draft content that sanitizes to empty", () => {
     expect.hasAssertions();
 
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, "<script>alert(1)</script>");
+    localStorage.setItem(LocalStorageKey.Draft(roomId1), "<script>alert(1)</script>");
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
 
@@ -66,8 +66,8 @@ describe(useInputStore, () => {
   test("populates drafts for multiple rooms", () => {
     expect.hasAssertions();
 
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, draftContent);
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId2}`, draftContent);
+    localStorage.setItem(LocalStorageKey.Draft(roomId1), draftContent);
+    localStorage.setItem(LocalStorageKey.Draft(roomId2), draftContent);
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
 
@@ -78,7 +78,7 @@ describe(useInputStore, () => {
   test("clearDraft removes room from drafts", () => {
     expect.hasAssertions();
 
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, draftContent);
+    localStorage.setItem(LocalStorageKey.Draft(roomId1), draftContent);
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
     const { clearDraft } = inputStore;
@@ -90,7 +90,7 @@ describe(useInputStore, () => {
   test("clearDraft removes draft from localStorage", () => {
     expect.hasAssertions();
 
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, draftContent);
+    localStorage.setItem(LocalStorageKey.Draft(roomId1), draftContent);
     const inputStore = useInputStore();
     const { clearDraft } = inputStore;
     clearDraft(roomId1);
@@ -101,7 +101,7 @@ describe(useInputStore, () => {
   test("clearDraft clears input data for the room", () => {
     expect.hasAssertions();
 
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, draftContent);
+    localStorage.setItem(LocalStorageKey.Draft(roomId1), draftContent);
     const inputStore = useInputStore();
     const { input } = storeToRefs(inputStore);
     const { clearDraft } = inputStore;
@@ -144,7 +144,7 @@ describe(useInputStore, () => {
     expect.hasAssertions();
 
     const updatedDraftContent = marked.parse("updatedDraftContent", { async: false });
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, draftContent);
+    localStorage.setItem(LocalStorageKey.Draft(roomId1), draftContent);
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
     const { storeDraft } = inputStore;
@@ -170,7 +170,7 @@ describe(useInputStore, () => {
   test("removes localStorage draft when input becomes empty", async () => {
     expect.hasAssertions();
 
-    localStorage.setItem(`${DRAFT_KEY_PREFIX}${roomId1}`, draftContent);
+    localStorage.setItem(LocalStorageKey.Draft(roomId1), draftContent);
     const inputStore = useInputStore();
     const { drafts, input } = storeToRefs(inputStore);
     input.value = "";

@@ -1,11 +1,11 @@
 import type { Draft } from "@/models/message/Draft";
 
-import { DRAFT_KEY_PREFIX } from "@/services/message/draft/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { getIsServer, getResult } from "@esposter/shared";
 
 export const getDraft = (roomId: string): Draft | undefined => {
   if (getIsServer()) return undefined;
-  const value = localStorage.getItem(`${DRAFT_KEY_PREFIX}${roomId}`);
+  const value = localStorage.getItem(LocalStorageKey.Draft(roomId));
   if (!value) return undefined;
   const parsed = getResult(() => JSON.parse(value) as unknown).unwrapOr(undefined);
   if (parsed && typeof parsed === "object" && "content" in parsed && "updatedAt" in parsed)

@@ -3,7 +3,8 @@ import type { SurveyResponseEntity } from "@esposter/db-schema";
 
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { validate } from "@/services/router/validate";
-import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/survey/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
+import { THEME_KEY } from "@/services/survey/constants";
 import { getResultAsync } from "@esposter/shared";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
@@ -22,7 +23,7 @@ const saveSurveyResponse = async (survey: Model) => {
       partitionKey: surveyId,
       rowKey: newSurveyResponseId,
     });
-    localStorage.setItem(SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, surveyResponse.rowKey);
+    localStorage.setItem(LocalStorageKey.SurveyResponseId, surveyResponse.rowKey);
     return;
   }
 
@@ -59,7 +60,7 @@ model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSav
 
 const isLoading = ref(true);
 const onMount = async () => {
-  const surveyResponseId = localStorage.getItem(SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY);
+  const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId);
   if (!surveyResponseId) return;
 
   surveyResponse = await $trpc.survey.readSurveyResponse.query({ partitionKey: surveyId, rowKey: surveyResponseId });

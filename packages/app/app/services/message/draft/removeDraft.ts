@@ -1,5 +1,5 @@
-import { DRAFT_KEY_PREFIX } from "@/services/message/draft/constants";
+import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 
 export const removeDraft = (roomId: string) => {
-  localStorage.removeItem(`${DRAFT_KEY_PREFIX}${roomId}`);
+  localStorage.removeItem(LocalStorageKey.Draft(roomId));
 };
