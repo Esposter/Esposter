@@ -17,17 +17,11 @@ const editorComponent = computed(() => ResourceEditorComponentMap[resource.type]
 
 <template>
   <ResourceOverview v-if="activeBlade === ResourceBladeType.Overview" :publication :resource />
-  <!-- Migrated editors can't SSR (VueFlow/GrapesJS), so render client-only; Suspense supports async editor setup -->
-  <ClientOnly v-else-if="editorComponent">
-    <Suspense>
-      <component :is="editorComponent" :key="resource.id" />
-      <template #fallback>
-        <StyledSkeleton />
-      </template>
-    </Suspense>
+  <Suspense v-else-if="editorComponent">
+    <component :is="editorComponent" :key="resource.id" />
     <template #fallback>
       <StyledSkeleton />
     </template>
-  </ClientOnly>
+  </Suspense>
   <ResourceEditorLaunch v-else :resource />
 </template>
