@@ -48,7 +48,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
     : []
 ) => {
   const { contentSchema } = ResourceDefinitionMap[type];
-  const { transformPublishedContent, transformReadContent } = args[0] ?? {};
+  // args comes from an unresolved-generic conditional tuple, so the hook params collapse to the
+  // intersection of every content type; pin them back to this TType's concrete content shape.
+  const { transformPublishedContent, transformReadContent } = (args[0] ??
+    {}) as unknown as PublishableResourceProcedureOptions<ResourceContent<TType>>;
   // Annotated so the generic content schema resolves to a concrete type for destructuring.
   // Both the output and input sides are declared — leaving the input side defaulted to unknown
   // Would erase the procedure's input type for consumers like achievement condition paths.
@@ -111,9 +114,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query(async ({ ctx, input: { id } }) => {
       const content = await readContent(id);
       if (content === undefined || !transformReadContent) return content;
-      // The hook is typed for the concrete type at the call site; inside the generic factory the
-      // Content and hook-param types can't be proven equal, so the cast is the centralized cost
-      return transformReadContent(ctx, ctx.resource, content) as Promise<typeof content>;
+      return transformReadContent(ctx, ctx.resource, content);
     }),
     readResources: standardAuthedProcedure
       .input(readResourcesInputSchema)
