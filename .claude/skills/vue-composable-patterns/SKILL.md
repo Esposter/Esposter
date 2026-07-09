@@ -281,6 +281,48 @@ const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, DraftsAndSentTabs, Drafts
 
 Each enum exposes a value `Set` alongside it (`DraftsAndSentTabs`, `PermissionsTabs`, `AchievementStatuses`). Put `useEnumRouteQuery` where the `v-tabs` `v-model` originates. When a child renders the tabs via `defineModel`, keep it in the parent and pass it down as `v-model`.
 
+## Reactive Route Params + Page Key (avoid remount refetch)
+
+For pages with **optional/nested route segments** that share one page component (e.g. `[id]/[[blade]].vue`), each segment change is a different path, so by default the page **remounts** on every in-page navigation — re-running top-level `await` loaders and remounting the whole subtree (a shared sidebar/list refetches on every click).
+
+Fix with two paired changes:
+
+1. **Key the page by the stable segment only** via `definePageMeta({ key })`, so sibling-segment navigations reuse the page instead of remounting it.
+2. **Read route params reactively** — since the page is now reused, params must come from a `computed` reading `useRouter().currentRoute`, not captured `const`s. Destructuring `useRoute()` (`const { params } = useRoute()`) or assigning `const blade = route.params.blade` snapshots the value and goes stale after reuse.
+
+```ts
+// pages/resources/[id]/[[blade]].vue
+definePageMeta({
+  // Key by resource id only so switching blades reuses the page (keeps the shared left list, no reload)
+  key: (route) => `resource-${Array.isArray(route.params.id) ? route.params.id[0] : route.params.id}`,
+  middleware: "auth",
+});
+// Read inside a computed off currentRoute — stays reactive across in-page navigation once the page is reused
+const { currentRoute } = useRouter();
+const id = computed(() =>
+  Array.isArray(currentRoute.value.params.id) ? currentRoute.value.params.id[0] : (currentRoute.value.params.id ?? ""),
+);
+const bladeParam = computed(() =>
+  Array.isArray(currentRoute.value.params.blade)
+    ? currentRoute.value.params.blade[0]
+    : (currentRoute.value.params.blade ?? ""),
+);
+const { load, resource } = useResource(id); // pass the id getter so the loader reads the current value
+await load();
+// Validation that ran once at setup must move to watchEffect — setup no longer reruns per navigation
+const activeBlade = computed(() => (bladeParam.value || ResourceBladeType.Overview) as ResourceBladeType);
+watchEffect(() => {
+  if (bladeParam.value && !ResourceBladeTypes.has(bladeParam.value as ResourceBladeType))
+    showError({ statusCode: 404, statusMessage: "Blade not found" });
+});
+```
+
+**Rules:**
+
+- `<v-list-item :to>` / `<NuxtLink to>` are already SPA navigations — switching them to `navigateTo` does **not** fix a remount refetch. The remount comes from the per-segment page key, so fix it at the page level.
+- Once the page is reused, anything captured as a plain `const` at setup goes stale — move param reads to `computed` and one-shot setup validation to `watchEffect`.
+- Pass the reactive `id` **getter** (`computed`/`MaybeRefOrGetter`) into loaders so `toValue(id)` reads the current segment when navigating to a _different_ stable id (which still remounts via the new key).
+
 ## Resource Management
 
 - Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.

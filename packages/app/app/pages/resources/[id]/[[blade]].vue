@@ -2,16 +2,27 @@
 import { ResourceBladeType, ResourceBladeTypes } from "@/models/resource/ResourceBladeType";
 import { RoutePath } from "@esposter/shared";
 
-definePageMeta({ middleware: "auth" });
-const route = useRoute();
-const id = (Array.isArray(route.params.id) ? route.params.id[0] : route.params.id) ?? "";
-const bladeParam = (Array.isArray(route.params.blade) ? route.params.blade[0] : route.params.blade) ?? "";
+definePageMeta({
+  key: (route) => `resource-${Array.isArray(route.params.id) ? route.params.id[0] : route.params.id}`,
+  middleware: "auth",
+});
+const { currentRoute } = useRouter();
+const id = computed(() =>
+  Array.isArray(currentRoute.value.params.id) ? currentRoute.value.params.id[0] : (currentRoute.value.params.id ?? ""),
+);
+const bladeParam = computed(() =>
+  Array.isArray(currentRoute.value.params.blade)
+    ? currentRoute.value.params.blade[0]
+    : (currentRoute.value.params.blade ?? ""),
+);
 const { load, publication, publish, remove, rename, resource, unpublish } = useResource(id);
 await load();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
-if (bladeParam && !ResourceBladeTypes.has(bladeParam as ResourceBladeType))
-  throw createError({ statusCode: 404, statusMessage: "Blade not found" });
-const activeBlade = (bladeParam || ResourceBladeType.Overview) as ResourceBladeType;
+watchEffect(() => {
+  if (bladeParam.value && !ResourceBladeTypes.has(bladeParam.value as ResourceBladeType))
+    showError({ statusCode: 404, statusMessage: "Blade not found" });
+});
+const activeBlade = computed(() => (bladeParam.value || ResourceBladeType.Overview) as ResourceBladeType);
 </script>
 
 <template>
