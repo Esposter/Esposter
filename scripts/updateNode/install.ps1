@@ -14,17 +14,15 @@ if (-not (Test-Path $corepack)) {
   & (Join-Path $binDir "npm.cmd") install -g corepack
 }
 & $corepack enable
-# Sweep leftover node versions. fnm can't delete a version whose node.exe is still open on Windows, so a
-# long-lived process (editor / agent / dev server) started on an old version keeps it locked for the whole
-# session. So we (1) immediately prune every installed version except the new one - this frees any version
-# stranded by a PAST update whose processes have since exited - and (2) briefly retry the just-replaced $old
-# in the background for the case where this call's own short-lived node processes release it moments later.
-# Anything still locked is collected on the NEXT update run. Best-effort throughout; locked versions fail
-# harmlessly.
-$installed = [regex]::Matches((fnm list), 'v\d+\.\d+\.\d+') | ForEach-Object { $_.Value } | Select-Object -Unique
-foreach ($v in $installed) { if ($v -ne "v$new") { fnm uninstall $v 2>$null } }
+# Remove the previous node version if it changed. fnm can't delete a version whose node.exe is still open on
+# Windows, so if this call's own node processes still hold $old the synchronous uninstall fails; a detached
+# process then retries until they exit. Best-effort - a still-locked version is harmless and removable later.
+# We only touch $old, never other installed versions the user may keep for different projects.
 if ($old -and $old -ne $new) {
-  $retry = "for (`$i = 0; `$i -lt 60; `$i++) { fnm uninstall $old 2>`$null; if (`$LASTEXITCODE -eq 0) { break }; Start-Sleep 1 }"
-  Start-Process pwsh -WindowStyle Hidden -ArgumentList "-NoProfile", "-NonInteractive", "-Command", $retry
-  Write-Output "Scheduled removal of node $old (runs once this process exits)."
+  fnm uninstall $old 2>$null
+  if ($LASTEXITCODE -ne 0) {
+    $retry = "for (`$i = 0; `$i -lt 60; `$i++) { fnm uninstall $old 2>`$null; if (`$LASTEXITCODE -eq 0) { break }; Start-Sleep 1 }"
+    Start-Process pwsh -WindowStyle Hidden -ArgumentList "-NoProfile", "-NonInteractive", "-Command", $retry
+    Write-Output "Scheduled removal of node $old (runs once this process exits)."
+  }
 }
