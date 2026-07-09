@@ -14,7 +14,7 @@ definePageMeta({
   },
 });
 const route = useRoute();
-// id is stable for this page instance (keyed by id), so a plain cast is safe; only blade changes without a remount
+// Id is stable for this page instance (keyed by id), so a plain cast is safe; only blade changes without a remount
 const id = route.params.id as string;
 const { load, publication, publish, remove, rename, resource, unpublish } = useResource(id);
 await load();
