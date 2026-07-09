@@ -249,7 +249,7 @@ catalogs:
       specifier: ^6.14.0
       version: 6.14.0
     '@pulumi/pulumi':
-      specifier: ^3.250.0
+      specifier: ^3.251.0
       version: 3.251.0
     '@rolldown/plugin-node-polyfills':
       specifier: ^1.0.3
