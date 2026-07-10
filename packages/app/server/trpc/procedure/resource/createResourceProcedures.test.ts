@@ -42,7 +42,7 @@ describe("createResourceProcedures", () => {
     expect(newResource.contentVersion).toBe(0);
   });
 
-  test("reads resources", async () => {
+  test("reads resources with publication state", async () => {
     expect.hasAssertions();
 
     const readResources = await caller.readResources();
@@ -52,7 +52,13 @@ describe("createResourceProcedures", () => {
     const newResource = await caller.createResource({ name });
     const newReadResources = await caller.readResources();
 
-    expect(newReadResources.items).toStrictEqual([newResource]);
+    expect(newReadResources.items).toStrictEqual([{ ...newResource, publication: null }]);
+
+    await caller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    await caller.publishResource({ id: newResource.id });
+    const publishedReadResources = await caller.readResources();
+
+    expect(publishedReadResources.items[0]?.publication?.publishVersion).toBe(1);
   });
 
   test("updates resource", async () => {

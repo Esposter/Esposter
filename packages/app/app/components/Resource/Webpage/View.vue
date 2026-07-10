@@ -7,7 +7,7 @@ interface ResourceWebpageViewProps {
 
 const { id } = defineProps<ResourceWebpageViewProps>();
 const { $trpc } = useNuxtApp();
-const { content, name } = await getResultAsync(() => $trpc.webpageEditor.readPublishedResourceContent.query(id)).match(
+const { content, name } = await getResultAsync(() => $trpc.webpage.readPublishedResourceContent.query(id)).match(
   (publishedResource) => publishedResource,
   () => {
     throw createError({ statusCode: 404, statusMessage: "Webpage not found" });

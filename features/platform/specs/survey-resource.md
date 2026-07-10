@@ -1,10 +1,10 @@
 # Platform — Survey Resource
 
-The surveyer folds into the resource model: the `surveys` table dies, the SurveyJS model moves to the content blob, and the respondent page becomes Survey's published view.
+The surveyer folds into the resource model: the `surveys` table dies, the SurveyJS model moves to the content blob, and the respondent page becomes Survey's published view. Shipped in roadmap Phase 5.
 
 ## Overview
 
-Today surveys live on their own Postgres table (`surveys`: name/group/model/modelVersion/publishVersion/publishedAt/userId) with a bespoke CRUD list, bespoke routes, and a publish mechanism that predates (and donated to) the generic one. As a resource, Survey keeps only what is genuinely survey-specific — responses and SAS file uploads — and inherits everything else.
+Before the fold, surveys lived on their own Postgres table (`surveys`: name/group/model/modelVersion/publishVersion/publishedAt/userId) with a bespoke CRUD list, bespoke routes, and a publish mechanism that predates (and donated to) the generic one. As a resource, Survey keeps only what is genuinely survey-specific — responses and SAS file uploads — and inherits everything else.
 
 ## Data Model Changes
 
@@ -39,7 +39,7 @@ Deleted procedures: `readSurveys`/`count`/`createSurvey`/`updateSurvey`/`deleteS
 
 - **Editor blade** — SurveyJS creator (`useSurveyCreator` survives); autosave retargets `updateSurveyModel` → `survey.saveResourceContent({ content: { model }, contentVersion, id })`. SurveyJS keeps owning editor/preview state; the resource layer only sees model JSON in/out.
 - **Responses blade** — dataset table over `dataset.readDataset` (SurveyResponses reference), replacing the "import to analyze" detour as the first-look surface.
-- **Respondent page** — `/view/survey/[id]` via `ViewComponentMap`: an interactive published-view renderer (plain `survey-core` Model + theme, localStorage in-progress tracking) that writes responses. Replaces `pages/survey/[id].vue`; `RoutePath.Survey(id)` aliases it so email invite blocks keep working.
+- **Respondent page** — `/view/survey/[id]` via `ViewComponentMap`: an interactive published-view renderer (plain `survey-core` Model + theme, localStorage in-progress tracking) that writes responses. Replaces `pages/survey/[id].vue`; email invite blocks link it via the generic `RoutePath.View(ResourceType.Survey, id)` (`RoutePath.Survey` is deleted).
 
 Deleted: `pages/surveyer/index.vue` (explorer list replaces it), `pages/surveyer/[id].vue` (Editor blade), the `Survey/CrudView/*` list components, `useSurveyStore` list state.
 

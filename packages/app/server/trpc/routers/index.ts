@@ -7,9 +7,9 @@ import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
-import { emailEditorRouter } from "@@/server/trpc/routers/emailEditor";
+import { emailRouter } from "@@/server/trpc/routers/email";
 import { fileRouter } from "@@/server/trpc/routers/file";
-import { flowchartEditorRouter } from "@@/server/trpc/routers/flowchartEditor";
+import { flowchartRouter } from "@@/server/trpc/routers/flowchart";
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { likeRouter } from "@@/server/trpc/routers/like";
@@ -25,7 +25,7 @@ import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { userRouter } from "@@/server/trpc/routers/user";
 import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
-import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
+import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 // We need to declare a base router without achievements to avoid circular dependencies
 const trpcRouterWithoutAchievements = router({
@@ -36,9 +36,9 @@ const trpcRouterWithoutAchievements = router({
   dashboard: dashboardRouter,
   dataset: datasetRouter,
   dungeons: dungeonsRouter,
-  emailEditor: emailEditorRouter,
+  email: emailRouter,
   file: fileRouter,
-  flowchartEditor: flowchartEditorRouter,
+  flowchart: flowchartRouter,
   friend: friendRouter,
   friendRequest: friendRequestRouter,
   like: likeRouter,
@@ -54,7 +54,7 @@ const trpcRouterWithoutAchievements = router({
   user: userRouter,
   userToRoom: userToRoomRouter,
   webhook: webhookRouter,
-  webpageEditor: webpageEditorRouter,
+  webpage: webpageRouter,
 });
 
 export type TRPCRouterWithoutAchievements = typeof trpcRouterWithoutAchievements;

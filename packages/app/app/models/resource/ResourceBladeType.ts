@@ -1,5 +1,5 @@
 /* eslint-disable perfectionist/sort-enums */
-// Blade slugs every resource has in Phase 2; per-type blades (ResourceBladeDefinitionMap) join as editors migrate.
+// Built-in blade slugs every resource has; per-type blades come from ResourceBladeDefinitionMap.
 // Declaration order is the nav order, so the sort rule is disabled to keep Overview first (Object.values reads it).
 export enum ResourceBladeType {
   Overview = "overview",

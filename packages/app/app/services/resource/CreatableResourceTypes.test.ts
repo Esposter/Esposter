@@ -1,5 +1,4 @@
 import { CreatableResourceTypes, isCreatableResourceType } from "@/services/resource/CreatableResourceTypes";
-import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(isCreatableResourceType, () => {
@@ -7,12 +6,6 @@ describe(isCreatableResourceType, () => {
     expect.hasAssertions();
 
     for (const type of CreatableResourceTypes) expect(isCreatableResourceType(type)).toBe(true);
-  });
-
-  test("rejects types without an explorer create path", () => {
-    expect.hasAssertions();
-
-    expect(isCreatableResourceType(ResourceType.Survey)).toBe(false);
   });
 
   test("rejects an unknown string", () => {

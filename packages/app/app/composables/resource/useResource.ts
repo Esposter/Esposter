@@ -14,9 +14,8 @@ interface ResourceMutations {
   unpublishResource?: (input: { id: string }) => Promise<Resource>;
   updateResource: (input: { id: string; name: string }) => Promise<Resource>;
 }
-// Blade-scoped state for one resource (metadata + Overview). Typed content + type blades land as each editor
-// Migrates (roadmap Phase 3-5). Metadata mutations live on each type's createResourceProcedures router, whose
-// Keys are the legacy editor names until the Phase 3-4 renames — hence the explicit per-type dispatch.
+// Blade-scoped state for one resource (metadata + content + publication). Mutations live on each type's
+// CreateResourceProcedures router, so the dispatch is an explicit per-type map.
 export const useResource = (id: MaybeRefOrGetter<string>) => {
   const { $trpc } = useNuxtApp();
   const alertStore = useAlertStore();
@@ -37,10 +36,10 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
         };
       case ResourceType.Email:
         return {
-          deleteResource: (input) => $trpc.emailEditor.deleteResource.mutate(input),
-          readResourceContent: (input) => $trpc.emailEditor.readResourceContent.query(input),
-          saveResourceContent: (input) => $trpc.emailEditor.saveResourceContent.mutate(input as never),
-          updateResource: (input) => $trpc.emailEditor.updateResource.mutate(input),
+          deleteResource: (input) => $trpc.email.deleteResource.mutate(input),
+          readResourceContent: (input) => $trpc.email.readResourceContent.query(input),
+          saveResourceContent: (input) => $trpc.email.saveResourceContent.mutate(input as never),
+          updateResource: (input) => $trpc.email.updateResource.mutate(input),
         };
       case ResourceType.File:
         return {
@@ -51,10 +50,10 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
         };
       case ResourceType.Flowchart:
         return {
-          deleteResource: (input) => $trpc.flowchartEditor.deleteResource.mutate(input),
-          readResourceContent: (input) => $trpc.flowchartEditor.readResourceContent.query(input),
-          saveResourceContent: (input) => $trpc.flowchartEditor.saveResourceContent.mutate(input as never),
-          updateResource: (input) => $trpc.flowchartEditor.updateResource.mutate(input),
+          deleteResource: (input) => $trpc.flowchart.deleteResource.mutate(input),
+          readResourceContent: (input) => $trpc.flowchart.readResourceContent.query(input),
+          saveResourceContent: (input) => $trpc.flowchart.saveResourceContent.mutate(input as never),
+          updateResource: (input) => $trpc.flowchart.updateResource.mutate(input),
         };
       case ResourceType.Survey:
         return {
@@ -75,13 +74,13 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
         };
       case ResourceType.Webpage:
         return {
-          deleteResource: (input) => $trpc.webpageEditor.deleteResource.mutate(input),
-          publishResource: (input) => $trpc.webpageEditor.publishResource.mutate(input),
-          readResourceContent: (input) => $trpc.webpageEditor.readResourceContent.query(input),
-          readResourcePublication: (input) => $trpc.webpageEditor.readResourcePublication.query(input),
-          saveResourceContent: (input) => $trpc.webpageEditor.saveResourceContent.mutate(input as never),
-          unpublishResource: (input) => $trpc.webpageEditor.unpublishResource.mutate(input),
-          updateResource: (input) => $trpc.webpageEditor.updateResource.mutate(input),
+          deleteResource: (input) => $trpc.webpage.deleteResource.mutate(input),
+          publishResource: (input) => $trpc.webpage.publishResource.mutate(input),
+          readResourceContent: (input) => $trpc.webpage.readResourceContent.query(input),
+          readResourcePublication: (input) => $trpc.webpage.readResourcePublication.query(input),
+          saveResourceContent: (input) => $trpc.webpage.saveResourceContent.mutate(input as never),
+          unpublishResource: (input) => $trpc.webpage.unpublishResource.mutate(input),
+          updateResource: (input) => $trpc.webpage.updateResource.mutate(input),
         };
       default:
         throw new InvalidOperationError(Operation.Read, type, "resource type is not editable in the explorer");

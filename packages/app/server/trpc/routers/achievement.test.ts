@@ -85,12 +85,12 @@ describe("achievement", () => {
   test("on updates", async () => {
     expect.hasAssertions();
 
-    const newResource = await caller.webpageEditor.createResource({ name });
+    const newResource = await caller.webpage.createResource({ name });
     const onUpdateAchievement = await caller.achievement.onUpdateAchievement();
     const data = await getFirstEmit(
       () => onUpdateAchievement,
       () =>
-        caller.webpageEditor.saveResourceContent({
+        caller.webpage.saveResourceContent({
           content: new WebpageEditor(),
           contentVersion: newResource.contentVersion,
           id: newResource.id,
