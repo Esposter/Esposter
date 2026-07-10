@@ -35,6 +35,7 @@ When `@electric-sql/pglite` changes between minor versions, regenerate the db-mo
 ## Pinned packages (do not update)
 
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
+- **`read-excel-file`** — pinned to `9.2.0` (no caret). 9.3.0 imports `saxen` from `modules/xml/parseXmlStream.saxen.js` without declaring it as a dependency, so the Nuxt build fails with `[vite]: Rolldown failed to resolve import "saxen"`. Unpin once upstream declares `saxen` properly.
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 

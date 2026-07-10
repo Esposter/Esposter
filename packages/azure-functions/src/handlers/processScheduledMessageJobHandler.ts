@@ -1,10 +1,10 @@
-import type { StorageQueueHandler } from "@azure/functions";
+import type { ServiceBusQueueHandler } from "@azure/functions";
 
 import { assertCanCreateMessage } from "@/services/assertCanCreateMessage";
 import { createAndBroadcastMessage } from "@/services/createAndBroadcastMessage";
 import { db } from "@/services/db";
 import { getPushNotificationData } from "@/services/getPushNotificationData";
-import { getQueueClient } from "@/services/getQueueClient";
+import { getServiceBusSender } from "@/services/getServiceBusSender";
 import { logAndRethrow } from "@/services/logAndRethrow";
 import { sendPushNotification } from "@/services/sendPushNotification";
 import { sendReminderNotification } from "@/services/sendReminderNotification";
@@ -23,7 +23,7 @@ import {
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
 
-export const processScheduledMessageJobHandler: StorageQueueHandler = (message, context) =>
+export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (message, context) =>
   getResultAsync(async () => {
     const { id } = scheduledMessageJobQueueMessageSchema.parse(message);
     context.log(`${AzureFunction.ProcessScheduledMessageJob} dequeued job`, { id });
@@ -39,7 +39,7 @@ export const processScheduledMessageJobHandler: StorageQueueHandler = (message, 
         now: new Date().toISOString(),
         runAt: job.runAt.toISOString(),
       });
-      await enqueueScheduledMessageJob(getQueueClient(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
+      await enqueueScheduledMessageJob(getServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
       return;
     }
 

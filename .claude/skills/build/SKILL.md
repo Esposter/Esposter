@@ -73,6 +73,7 @@ const externalStrings = [
   "@azure/core-rest-pipeline",
   "@azure/eventgrid",
   "@azure/search-documents",
+  "@azure/service-bus",
   "@azure/storage-blob",
   "@azure/storage-queue",
   "@azure/web-pubsub",

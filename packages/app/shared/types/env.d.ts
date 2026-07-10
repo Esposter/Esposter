@@ -11,6 +11,7 @@ declare global {
       AZURE_FUNCTION_KEY: string;
       AZURE_SEARCH_API_KEY: string;
       AZURE_SEARCH_BASE_URL: string;
+      AZURE_SERVICE_BUS_CONNECTION_STRING: string;
       AZURE_STORAGE_ACCOUNT_CONNECTION_STRING: string;
       AZURE_WEB_PUBSUB_CONNECTION_STRING: string;
       BASE_URL: string;

@@ -3,7 +3,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { processScheduledMessageJobHandler } from "@/handlers/processScheduledMessageJobHandler";
 import { InvocationContext } from "@azure/functions";
-import { MAX_QUEUE_VISIBILITY_TIMEOUT_MS } from "@esposter/db";
+import { dayjs } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AzureQueue,
@@ -16,7 +16,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { MockQueueDatabase, MockTableDatabase } from "azure-mock";
+import { MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -27,7 +27,7 @@ vi.mock(import("@/services/db"), () => ({
   },
 }));
 
-vi.mock(import("@/services/getQueueClient"), () => import("@/services/getQueueClient.test"));
+vi.mock(import("@/services/getServiceBusSender"), () => import("@/services/getServiceBusSender.test"));
 vi.mock(import("@/services/getTableClient"), () => import("@/services/getTableClient.test"));
 vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services/getWebPubSubServiceClient.test"));
 vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
@@ -68,7 +68,7 @@ describe(processScheduledMessageJobHandler, () => {
 
   afterEach(async () => {
     await mockDb.delete(scheduledMessageJobsInMessage);
-    MockQueueDatabase.clear();
+    MockServiceBusDatabase.clear();
     MockTableDatabase.clear();
   });
 
@@ -82,7 +82,7 @@ describe(processScheduledMessageJobHandler, () => {
     await processScheduledMessageJobHandler({ id: crypto.randomUUID() }, context);
 
     expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
-    expect(MockQueueDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
+    expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
   });
 
   test("skips when job already completed", async () => {
@@ -94,7 +94,7 @@ describe(processScheduledMessageJobHandler, () => {
     const skippedJob = await getJob(job.id);
 
     expect(skippedJob?.processingStartedAt).toBeNull();
-    expect(MockQueueDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
+    expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
   });
 
   test("skips when job cancelled", async () => {
@@ -106,22 +106,22 @@ describe(processScheduledMessageJobHandler, () => {
     const skippedJob = await getJob(job.id);
 
     expect(skippedJob?.processingStartedAt).toBeNull();
-    expect(MockQueueDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
+    expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
   });
 
   test("requeues when job is visible before runAt", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob(reminderPayload, {
-      runAt: new Date(Date.now() + MAX_QUEUE_VISIBILITY_TIMEOUT_MS + 1000),
-    });
+    const job = await insertJob(reminderPayload, { runAt: dayjs().add(1, "day").toDate() });
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const requeuedJob = await getJob(job.id);
 
     expect(requeuedJob?.completedAt).toBeNull();
     expect(requeuedJob?.processingStartedAt).toBeNull();
-    expect(MockQueueDatabase.get(AzureQueue.ScheduledMessageJobs)).toStrictEqual([JSON.stringify({ id: job.id })]);
+    expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toStrictEqual([
+      { body: { id: job.id }, scheduledEnqueueTimeUtc: job.runAt },
+    ]);
   });
 
   test("records processing start and processes reminder job", async () => {

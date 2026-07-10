@@ -142,22 +142,22 @@ sequenceDiagram
     participant C as Client (Vue)
     participant T as tRPC Server
     participant DB as Postgres
-    participant Q as Azure Storage Queue
+    participant Q as Azure Service Bus
     participant F as Azure Function
 
     U->>C: /remind 10m Buy milk
     C->>T: scheduleReminder({ roomId, runAt, text })
     T->>DB: INSERT scheduledMessageJobsInMessage<br/>(id, userId, roomId, payload, runAt)
-    T->>Q: sendMessage({ id }, visibilityTimeout=600s)
+    T->>Q: scheduleMessages({ id }, scheduledEnqueueTimeUtc=runAt)
     T-->>C: ScheduledMessageJobInMessage
 
-    note over Q: Message hidden for 10 min
+    note over Q: Message scheduled for 10 min
 
-    Q->>F: ProcessScheduledMessageJob triggered<br/>message becomes visible
+    Q->>F: ProcessScheduledMessageJob triggered<br/>scheduled message fires
     F->>DB: SELECT job WHERE id AND cancelledAt IS NULL<br/>AND completedAt IS NULL
     alt job found
         alt runAt is still future
-            F->>Q: sendMessage({ id }, remaining visibilityTimeout)
+            F->>Q: scheduleMessages({ id }, scheduledEnqueueTimeUtc=runAt)
             F->>F: return
         end
         F->>DB: UPDATE processingStartedAt = now()
@@ -174,7 +174,7 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-    A[scheduleReminder called] -->|visibilityTimeout| B{Queue message<br/>becomes visible}
+    A[scheduleReminder called] -->|scheduledEnqueueTimeUtc| B{Scheduled message<br/>fires}
     A -->|user cancels| C[cancelScheduledJob tRPC]
     C -->|UPDATE cancelledAt| D[(Postgres)]
     B -->|SELECT guard finds cancelledAt set| E[Function exits — no notification]

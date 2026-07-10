@@ -171,4 +171,4 @@ To add a new slash command:
 
 ### Azure Functions
 
-Triggered by EventGrid events, not called directly from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid`; Azure Functions consume them for async work (push notifications, friend request notifications, webhook delivery). No HTTP triggers are exposed to clients.
+Background handlers triggered by EventGrid events or Service Bus queues, not called directly from the app. Located in `packages/azure-functions/src/functions/`. The app publishes events via `EventGrid` for fire-and-forget async work (push notifications, friend request notifications, webhook delivery) and enqueues Service Bus messages for delayed/scheduled work (scheduled message jobs, which need `scheduleMessages` delivery at a future `runAt`). No HTTP triggers are exposed to clients.

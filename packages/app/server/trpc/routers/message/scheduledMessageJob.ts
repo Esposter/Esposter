@@ -8,7 +8,7 @@ import { readScheduledMessageJobsInputSchema } from "#shared/models/db/message/s
 import { rescheduleMessageInputSchema } from "#shared/models/db/message/scheduledMessageJob/RescheduleMessageInput";
 import { scheduleMessageInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleMessageInput";
 import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleReminderInput";
-import { useQueueClient } from "@@/server/composables/azure/queue/useQueueClient";
+import { useServiceBusSender } from "@@/server/composables/azure/serviceBus/useServiceBusSender";
 import { ownedBy } from "@@/server/services/db/ownedBy";
 import { createUserMessage } from "@@/server/services/message/createUserMessage";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
@@ -150,7 +150,7 @@ export const scheduledMessageJobRouter = router({
           JSON.stringify(input),
         );
       });
-      await enqueueScheduledMessageJob(useQueueClient(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
+      await enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
       return job;
     },
   ),
@@ -173,7 +173,7 @@ export const scheduledMessageJobRouter = router({
         DatabaseEntityType.ScheduledMessageJob,
         JSON.stringify(input),
       );
-      await enqueueScheduledMessageJob(useQueueClient(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
+      await enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
       return job;
     },
   ),
@@ -195,7 +195,7 @@ export const scheduledMessageJobRouter = router({
         DatabaseEntityType.ScheduledMessageJob,
         JSON.stringify(input),
       );
-      await enqueueScheduledMessageJob(useQueueClient(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
+      await enqueueScheduledMessageJob(useServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
       return job;
     },
   ),

@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Mock Azure service classes for local development and testing. Provides in-memory implementations of Azure Table Storage, Blob Storage, Queue Storage, and EventGrid clients that mirror the real Azure SDK interfaces.
+Mock Azure service classes for local development and testing. Provides in-memory implementations of Azure Table Storage, Blob Storage, Queue Storage, Service Bus, and EventGrid clients that mirror the real Azure SDK interfaces.
 
 ## Table of Contents
 
@@ -18,7 +18,7 @@ Mock Azure service classes for local development and testing. Provides in-memory
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/storage-blob @azure/storage-queue
+pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/service-bus @azure/storage-blob @azure/storage-queue
 ```
 
 ## <a name="documentation">📖 Documentation</a>
@@ -32,6 +32,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage |
 | `MockBlobServiceClient`        | `BlobServiceClient`        | In-memory Azure Blob Storage  |
 | `MockQueueClient`              | `QueueClient`              | In-memory Azure Queue Storage |
+| `MockServiceBusSender`         | `ServiceBusSender`         | In-memory Azure Service Bus   |
 | `MockEventGridPublisherClient` | `EventGridPublisherClient` | No-op EventGrid publisher     |
 
 ### Usage
