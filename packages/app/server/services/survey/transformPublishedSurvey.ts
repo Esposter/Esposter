@@ -5,9 +5,8 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { useUpdateBlobUrls } from "@@/server/composables/survey/useUpdateBlobUrls";
 import { getPublishedDirectoryName } from "@@/server/services/resource/getPublishedDirectoryName";
 import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
-import { AzureContainer } from "@esposter/db-schema";
 import { cloneBlobUrls } from "@esposter/db";
-
+import { AzureContainer } from "@esposter/db-schema";
 // Published snapshots must survive the owner deleting/replacing working-copy assets, so the referenced
 // Asset blobs are cloned under the publish directory and the model is rewritten to serve the clones
 export const transformPublishedSurvey: NonNullable<
@@ -15,7 +14,6 @@ export const transformPublishedSurvey: NonNullable<
 > = async (ctx, resource, content) => {
   const blobUrls = extractBlobUrls(content.model);
   if (blobUrls.length === 0) return content;
-
   // The hook runs before the factory bumps the publication row, so the clone directory is keyed
   // By the version this publish is about to claim (default 1 on the first publish)
   const publication = await ctx.db.query.resourcePublications.findFirst({
