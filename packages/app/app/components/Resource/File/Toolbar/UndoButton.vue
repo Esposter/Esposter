@@ -1,20 +1,24 @@
 <script setup lang="ts">
-import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
-
 import { useFileStore } from "@/store/resource/file";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 
 const fileStore = useFileStore();
+const { saveFile } = fileStore;
 const { dataSource } = storeToRefs(fileStore);
 const fileHistoryStore = useFileHistoryStore();
 const { undo } = fileHistoryStore;
 const { isUndoable, undoDescription } = storeToRefs(fileHistoryStore);
 const tooltipHtml = useHistoryTooltipHtml(undoDescription, "Undo", "Ctrl+Z");
+const onUndo = async () => {
+  if (!isUndoable.value) return;
+  undo(dataSource.value);
+  await saveFile();
+};
 
-onKeyStroke(["z", "Z"], (event) => {
+onKeyStroke(["z", "Z"], async (event) => {
   if ((!event.ctrlKey && !event.metaKey) || event.shiftKey) return;
   event.preventDefault();
-  undo(editedItem.value);
+  await onUndo();
 });
 </script>
 
@@ -23,7 +27,7 @@ onKeyStroke(["z", "Z"], (event) => {
     :button-props="{ disabled: !isUndoable, variant: 'text' }"
     icon="mdi-undo"
     :tooltip-props="{ location: 'bottom' }"
-    @click="undo(editedItem)"
+    @click="onUndo"
   >
     <div v-html="tooltipHtml" />
   </StyledTooltipIconButton>

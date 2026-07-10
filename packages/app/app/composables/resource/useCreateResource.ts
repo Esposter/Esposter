@@ -8,8 +8,9 @@ export const useCreateResource = () => {
   const ResourceCreateProcedureMap = {
     [ResourceType.Dashboard]: $trpc.dashboard.createResource,
     [ResourceType.Email]: $trpc.emailEditor.createResource,
+    [ResourceType.File]: $trpc.file.createResource,
     [ResourceType.Flowchart]: $trpc.flowchartEditor.createResource,
-    [ResourceType.Table]: $trpc.tableEditor.createResource,
+    [ResourceType.TodoList]: $trpc.todoList.createResource,
     [ResourceType.Webpage]: $trpc.webpageEditor.createResource,
   } satisfies Record<CreatableResourceType, unknown>;
   return (type: CreatableResourceType, name: string) => ResourceCreateProcedureMap[type].mutate({ name });

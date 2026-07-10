@@ -1,0 +1,45 @@
+<script setup lang="ts">
+import type { EventSourceInput } from "@fullcalendar/core";
+
+import { useTodoListStore } from "@/store/resource/todoList";
+
+const todoListStore = useTodoListStore();
+const { loadContent, saveTodoList } = todoListStore;
+const { items } = storeToRefs(todoListStore);
+const isLoading = ref(true);
+const events = computed<EventSourceInput>(() => {
+  const results: EventSourceInput = [];
+
+  for (const item of items.value) {
+    if (!item.dueAt) continue;
+    results.push({ date: item.dueAt, description: item.notes, id: item.id, title: item.name });
+  }
+
+  return results;
+});
+
+onMounted(async () => {
+  await loadContent();
+  isLoading.value = false;
+});
+</script>
+
+<template>
+  <StyledSkeleton v-if="isLoading" />
+  <v-container v-else fluid h-full>
+    <StyledCard p-4 h-full>
+      <StyledCalendar
+        h-full
+        :calendar-options="{
+          events,
+          eventChange: async ({ event: { id, start } }) => {
+            const item = items.find((todoListItem) => todoListItem.id === id);
+            if (!item) return;
+            item.dueAt = start;
+            await saveTodoList();
+          },
+        }"
+      />
+    </StyledCard>
+  </v-container>
+</template>

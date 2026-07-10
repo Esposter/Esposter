@@ -22,7 +22,7 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   const alertStore = useAlertStore();
   const resource = ref<Resource>();
   const publication = ref<ResourcePublication>();
-  // File/TodoList (no router) and Survey (separate surveys table) never reach the explorer resource page in Phase 2.
+  // Survey (separate surveys table) never reaches the explorer resource page until roadmap Phase 5.
   const getResourceMutations = (type: ResourceType): ResourceMutations => {
     switch (type) {
       case ResourceType.Dashboard:
@@ -50,12 +50,19 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
           saveResourceContent: (input) => $trpc.flowchartEditor.saveResourceContent.mutate(input as never),
           updateResource: (input) => $trpc.flowchartEditor.updateResource.mutate(input),
         };
-      case ResourceType.Table:
+      case ResourceType.File:
         return {
-          deleteResource: (input) => $trpc.tableEditor.deleteResource.mutate(input),
-          readResourceContent: (input) => $trpc.tableEditor.readResourceContent.query(input),
-          saveResourceContent: (input) => $trpc.tableEditor.saveResourceContent.mutate(input as never),
-          updateResource: (input) => $trpc.tableEditor.updateResource.mutate(input),
+          deleteResource: (input) => $trpc.file.deleteResource.mutate(input),
+          readResourceContent: (input) => $trpc.file.readResourceContent.query(input),
+          saveResourceContent: (input) => $trpc.file.saveResourceContent.mutate(input as never),
+          updateResource: (input) => $trpc.file.updateResource.mutate(input),
+        };
+      case ResourceType.TodoList:
+        return {
+          deleteResource: (input) => $trpc.todoList.deleteResource.mutate(input),
+          readResourceContent: (input) => $trpc.todoList.readResourceContent.query(input),
+          saveResourceContent: (input) => $trpc.todoList.saveResourceContent.mutate(input as never),
+          updateResource: (input) => $trpc.todoList.updateResource.mutate(input),
         };
       case ResourceType.Webpage:
         return {

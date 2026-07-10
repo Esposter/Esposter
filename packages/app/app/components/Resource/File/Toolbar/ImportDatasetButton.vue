@@ -1,5 +1,4 @@
-<script setup lang="ts" generic="TDataSourceItem extends DataSourceItem">
-import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
+<script setup lang="ts">
 import type { Survey } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
@@ -9,7 +8,6 @@ import { datasetToDataSource } from "@/services/resource/file/dataSource/dataset
 import { useAlertStore } from "@/store/alert";
 import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
-const modelValue = defineModel<TDataSourceItem>({ required: true });
 const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
 const alertStore = useAlertStore();
@@ -45,8 +43,7 @@ watch(dialog, async (newDialog) => {
                   id: survey.id,
                   type: DatasetProviderType.SurveyResponses,
                 });
-                modelValue.name = survey.name;
-                setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
+                await setDataSource(datasetToDataSource(dataset, DatasetProviderType.SurveyResponses, survey.name));
               }).match(noop, (error) => createAlert(error.message, 'error')),
             () => onComplete(),
           )

@@ -1,15 +1,16 @@
-<script setup lang="ts" generic="TDataSourceItem extends DataSourceItem">
+<script setup lang="ts">
 import type { DataSource } from "#shared/models/resource/file/datasource/DataSource";
-import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
 import type { Row } from "#shared/models/resource/file/datasource/Row";
 
 import { trimFileExtension } from "@/util/file/trimFileExtension";
+import { useFileStore } from "@/store/resource/file";
 import { takeOne } from "@esposter/shared";
 
-const modelValue = defineModel<TDataSourceItem>({ required: true });
+const fileStore = useFileStore();
+const { settings } = storeToRefs(fileStore);
 const setDataSource = useSetDataSource();
 const importFile = useImportFile();
-const dataSourceConfiguration = useDataSourceConfiguration(modelValue);
+const dataSourceConfiguration = useDataSourceConfiguration(settings);
 const previewDataSource = ref<DataSource | null>(null);
 const pendingName = ref("");
 const isPreviewOpen = computed({
@@ -32,10 +33,10 @@ const previewRows = computed(() => previewDataSource.value?.rows.slice(0, 5) ?? 
 <template>
   <StyledTooltipIconButton
     icon="mdi-upload"
-    :text="`Import ${modelValue.type}`"
+    :text="`Import ${settings.type}`"
     @click="
       importFile(dataSourceConfiguration.mimeType, dataSourceConfiguration.accept, async (file) => {
-        const result = await dataSourceConfiguration.deserialize(file, modelValue);
+        const result = await dataSourceConfiguration.deserialize(file, settings);
         pendingName = trimFileExtension(result.metadata.name);
         previewDataSource = result;
       })
@@ -46,11 +47,8 @@ const previewRows = computed(() => previewDataSource.value?.rows.slice(0, 5) ?? 
     :card-props="{ title: `Preview: ${pendingName}` }"
     :confirm-button-props="{ text: 'Import' }"
     @confirm="
-      (onComplete) => {
-        if (previewDataSource) {
-          modelValue.name = pendingName;
-          setDataSource(previewDataSource);
-        }
+      async (onComplete) => {
+        if (previewDataSource) await setDataSource(previewDataSource);
         onComplete();
       }
     "

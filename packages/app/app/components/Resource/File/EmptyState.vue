@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import type { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
+import { useFileStore } from "@/store/resource/file";
 
-interface EmptyStateProps {
-  type: DataSourceType;
-}
-
-const { type } = defineProps<EmptyStateProps>();
+const fileStore = useFileStore();
+const { settings } = storeToRefs(fileStore);
 </script>
 
 <template>
   <v-empty-state
     icon="mdi-file-table-outline"
     headline="No file loaded"
-    :text="`Import a ${type.toUpperCase()} file to get started`"
+    :text="`Import a ${settings.type.toUpperCase()} file to get started`"
   />
 </template>

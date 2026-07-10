@@ -1,7 +1,7 @@
 import type { FileResource } from "#shared/models/resource/file/FileResource";
 
-import { CsvDelimiter } from "#shared/models/resource/file/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
+import { createDefaultFileSettings } from "@/services/resource/file/createDefaultFileSettings";
 // The content blob is written on first save, so a fresh File resource starts from this default shape
 export const createDefaultFileResource = (): FileResource => ({
   data: {
@@ -10,5 +10,5 @@ export const createDefaultFileResource = (): FileResource => ({
     rows: [],
     statistics: { columnCount: 0, rowCount: 0, size: 0 },
   },
-  settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
+  settings: createDefaultFileSettings(DataSourceType.Csv),
 });

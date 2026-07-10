@@ -17,8 +17,7 @@ const type = ref(modelValue.value?.type ?? DatasetProviderType.SurveyResponses);
 const readSourcesMap: Record<DatasetProviderType, () => Promise<{ id: string; name: string }[]>> = {
   [DatasetProviderType.SurveyResponses]: async () =>
     (await $trpc.survey.readSurveys.query({ limit: MAX_READ_LIMIT })).items,
-  [DatasetProviderType.TableDocument]: async () =>
-    (await $trpc.tableEditor.readResources.query({ limit: MAX_READ_LIMIT })).items,
+  [DatasetProviderType.File]: async () => (await $trpc.file.readResources.query({ limit: MAX_READ_LIMIT })).items,
 };
 const sourceIds = ref<SelectItemCategoryDefinition<string>[]>([]);
 

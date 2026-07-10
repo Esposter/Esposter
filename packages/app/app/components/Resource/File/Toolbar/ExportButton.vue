@@ -1,20 +1,20 @@
-<script setup lang="ts" generic="TDataSourceItem extends DataSourceItem">
-import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
-
+<script setup lang="ts">
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
 import { DataSourceTypeItemCategoryDefinitions } from "@/services/resource/file/dataSource/DataSourceTypeItemCategoryDefinitions";
+import { useFileStore } from "@/store/resource/file";
 
-interface ExportButtonProps {
-  editedItem: TDataSourceItem;
-}
-
-const { editedItem } = defineProps<ExportButtonProps>();
+const fileStore = useFileStore();
+const { dataSource } = storeToRefs(fileStore);
 const isExportDialogOpen = ref(false);
 const dataSourceType = ref(DataSourceType.Csv);
 </script>
 
 <template>
-  <StyledTooltipMenuIconButton :button-props="{ disabled: !editedItem.dataSource }" icon="mdi-download" text="Export">
+  <StyledTooltipMenuIconButton
+    :button-props="{ disabled: dataSource.rows.length === 0 }"
+    icon="mdi-download"
+    text="Export"
+  >
     <v-list>
       <v-list-item
         v-for="{ value, icon, title } of DataSourceTypeItemCategoryDefinitions"
@@ -31,5 +31,5 @@ const dataSourceType = ref(DataSourceType.Csv);
       </v-list-item>
     </v-list>
   </StyledTooltipMenuIconButton>
-  <ResourceFileCrudViewExportDialog v-model="isExportDialogOpen" :edited-item :data-source-type />
+  <ResourceFileToolbarExportDialog v-model="isExportDialogOpen" :data-source-type />
 </template>

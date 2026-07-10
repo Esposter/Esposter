@@ -6,7 +6,6 @@ import { flowchartEditorSchema } from "#shared/models/flowchartEditor/data/Flowc
 import { fileResourceSchema } from "#shared/models/resource/file/FileResource";
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
 import { todoListResourceSchema } from "#shared/models/resource/todoList/TodoListResource";
-import { tableEditorConfigurationSchema } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { ResourceType } from "@esposter/db-schema";
 
@@ -40,13 +39,6 @@ export const ResourceDefinitionMap = {
     contentSchema: surveyResourceSchema,
     icon: "mdi-clipboard-list",
     title: ResourceType.Survey,
-  },
-  // Transitional: dies with the File/TodoList split (platform roadmap Phase 4)
-  [ResourceType.Table]: {
-    capabilities: {},
-    contentSchema: tableEditorConfigurationSchema,
-    icon: "mdi-table-edit",
-    title: ResourceType.Table,
   },
   [ResourceType.TodoList]: {
     capabilities: {},
