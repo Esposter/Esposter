@@ -1,15 +1,15 @@
-import type { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
+import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import type { ToData } from "@esposter/shared";
 
-import { todoListItemSchema } from "#shared/models/tableEditor/todoList/TodoListItem";
-import { TABLE_EDITOR_ITEMS_MAX_LENGTH } from "#shared/services/tableEditor/constants";
+import { todoListItemSchema } from "#shared/models/resource/todoList/TodoListItem";
+import { RESOURCE_ITEMS_MAX_LENGTH } from "#shared/services/resource/itemConstants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface TodoListResource {
-  items: ToData<TodoListItem>[];
+  items: TodoListItem[];
 }
 
 export const todoListResourceSchema = z.object({
-  items: createUniqueArraySchema(todoListItemSchema, "id").max(TABLE_EDITOR_ITEMS_MAX_LENGTH),
-}) satisfies z.ZodType<TodoListResource>;
+  items: createUniqueArraySchema(todoListItemSchema, "id").max(RESOURCE_ITEMS_MAX_LENGTH),
+}) satisfies z.ZodType<ToData<TodoListResource>>;

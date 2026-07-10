@@ -1,8 +1,8 @@
-import type { XlsxDataSourceConfiguration } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
+import type { XlsxDataSourceConfiguration } from "#shared/models/resource/file/xlsx/XlsxDataSourceConfiguration";
 import type { ItemEntityType } from "@esposter/shared";
 
-import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
-import { xlsxDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
+import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
+import { xlsxDataSourceConfigurationSchema } from "#shared/models/resource/file/xlsx/XlsxDataSourceConfiguration";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 

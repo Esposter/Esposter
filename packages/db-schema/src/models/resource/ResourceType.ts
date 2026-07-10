@@ -6,8 +6,6 @@ export enum ResourceType {
   File = "File",
   Flowchart = "Flowchart",
   Survey = "Survey",
-  // Transitional: carries the multi-item table editor blob until the File/TodoList split lands (platform roadmap Phase 4)
-  Table = "Table",
   TodoList = "TodoList",
   Webpage = "Webpage",
 }

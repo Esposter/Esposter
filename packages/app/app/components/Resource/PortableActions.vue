@@ -12,10 +12,27 @@ const { resource } = defineProps<ResourcePortableActionsProps>();
 // BladeActions only renders this for portable types, so the guard also narrows the map key
 const formats = computed(() => (hasCapability(resource.type, "portable") ? PortableFormatMap[resource.type] : []));
 const exportFormats = computed(() => formats.value.filter(({ export: exportFn }) => exportFn));
-// Import lands with the File type's blade migration (roadmap Phase 4); Email is export-only
+const importFormats = computed(() => formats.value.filter(({ import: importFn }) => importFn));
 </script>
 
 <template>
+  <v-menu v-if="importFormats.length > 0">
+    <template #activator="{ props }">
+      <StyledButton :button-props="{ ...props, prependIcon: 'mdi-import', variant: 'text' }">Import</StyledButton>
+    </template>
+    <v-list>
+      <v-list-item
+        v-for="format in importFormats"
+        :key="format.label"
+        :title="format.label"
+        @click="
+          () => {
+            format.import?.();
+          }
+        "
+      />
+    </v-list>
+  </v-menu>
   <v-menu v-if="exportFormats.length > 0">
     <template #activator="{ props }">
       <StyledButton :button-props="{ ...props, prependIcon: 'mdi-export', variant: 'text' }">Export</StyledButton>

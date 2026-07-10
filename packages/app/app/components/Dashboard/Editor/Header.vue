@@ -3,7 +3,6 @@ import { visualTypeItemCategoryDefinitions } from "@/services/dashboard/visualTy
 import { ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
-import { RoutePath } from "@esposter/shared";
 
 const visualStore = useVisualStore();
 const { createVisual } = visualStore;
@@ -31,13 +30,6 @@ const { visualType } = storeToRefs(visualStore);
         <template #activator="{ props }">
           <v-btn variant="elevated" :flat="false" :="props" @click="createVisual">
             <v-icon icon="mdi-plus" />
-          </v-btn>
-        </template>
-      </v-tooltip>
-      <v-tooltip text="Dashboard">
-        <template #activator="{ props }">
-          <v-btn variant="elevated" :flat="false" :="props" @click="navigateTo(RoutePath.Dashboard)">
-            <v-icon icon="mdi-view-dashboard" />
           </v-btn>
         </template>
       </v-tooltip>

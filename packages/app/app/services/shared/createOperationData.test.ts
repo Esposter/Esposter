@@ -1,4 +1,4 @@
-import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
+import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { beforeEach, describe, expect, test } from "vitest";
 

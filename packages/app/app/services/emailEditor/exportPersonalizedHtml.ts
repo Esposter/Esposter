@@ -1,4 +1,4 @@
-import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
+import type { ColumnValue } from "#shared/models/resource/file/column/ColumnValue";
 import type { Resource } from "@esposter/db-schema";
 import type { Editor } from "grapesjs";
 

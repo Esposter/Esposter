@@ -5,8 +5,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
+import { fileRouter } from "@@/server/trpc/routers/file";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
-import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
 import { resources, ResourceType } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -15,14 +15,14 @@ describe("resource", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
-  let tableEditorCaller: DecorateRouterRecord<TRPCRouter["tableEditor"]>;
+  let fileCaller: DecorateRouterRecord<TRPCRouter["file"]>;
   const name = "name";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(resourceRouter)(mockContext);
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
-    tableEditorCaller = createCallerFactory(tableEditorRouter)(mockContext);
+    fileCaller = createCallerFactory(fileRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -51,12 +51,12 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    const tableResource = await tableEditorCaller.createResource({ name });
+    const fileResource = await fileCaller.createResource({ name });
     const { items } = await caller.readResources();
 
-    expect(items.map(({ id }) => id).toSorted()).toStrictEqual([dashboardResource.id, tableResource.id].toSorted());
+    expect(items.map(({ id }) => id).toSorted()).toStrictEqual([dashboardResource.id, fileResource.id].toSorted());
     expect(items.map(({ type }) => type).toSorted()).toStrictEqual(
-      [ResourceType.Dashboard, ResourceType.Table].toSorted(),
+      [ResourceType.Dashboard, ResourceType.File].toSorted(),
     );
   });
 
@@ -64,7 +64,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    await tableEditorCaller.createResource({ name });
+    await fileCaller.createResource({ name });
     const { items } = await caller.readResources({ types: [ResourceType.Dashboard] });
 
     expect(items.map(({ id }) => id)).toStrictEqual([dashboardResource.id]);
@@ -74,7 +74,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const matchingResource = await dashboardCaller.createResource({ name: "quarterly report" });
-    await tableEditorCaller.createResource({ name: "grocery list" });
+    await fileCaller.createResource({ name: "grocery list" });
     const { items } = await caller.readResources({ searchQuery: "report" });
 
     expect(items.map(({ id }) => id)).toStrictEqual([matchingResource.id]);
@@ -84,7 +84,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     await dashboardCaller.createResource({ name });
-    await tableEditorCaller.createResource({ name });
+    await fileCaller.createResource({ name });
 
     const count = await caller.count();
 
@@ -95,7 +95,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     await dashboardCaller.createResource({ name });
-    await tableEditorCaller.createResource({ name });
+    await fileCaller.createResource({ name });
 
     const count = await caller.count({ types: [ResourceType.Dashboard] });
 
@@ -106,7 +106,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     await dashboardCaller.createResource({ name: "quarterly report" });
-    await tableEditorCaller.createResource({ name: "grocery list" });
+    await fileCaller.createResource({ name: "grocery list" });
 
     const count = await caller.count({ searchQuery: "report" });
 

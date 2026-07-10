@@ -6,6 +6,7 @@ import { useAlertStore } from "@/store/alert";
 import { RESOURCE_NAME_MAX_LENGTH } from "@esposter/db-schema";
 import { getResultAsync, RoutePath } from "@esposter/shared";
 
+defineRouteRules({ ssr: false });
 definePageMeta({ middleware: "auth" });
 
 const route = useRoute();

@@ -1,12 +1,49 @@
 import type { PortableResourceType } from "#shared/models/resource/PortableResourceType";
 import type { PortableFormat } from "@/models/resource/PortableFormat";
 
+import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
 import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
+import { createDefaultFileSettings } from "@/services/resource/file/createDefaultFileSettings";
+import { DataSourceConfigurationMap } from "@/services/resource/file/dataSource/DataSourceConfigurationMap";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
+import { useFileStore } from "@/store/resource/file";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
-// Import/export formats per portable type. File's import/export land with its blade migration (roadmap Phase 4).
+
+// Self-contained per-format import/export for File, backed by the same client-side parse the Data blade uses
+const createFilePortableFormat = (type: DataSourceType): PortableFormat => ({
+  export: async () => {
+    const fileStore = useFileStore();
+    const { loadContent } = fileStore;
+    // The command bar is reachable from any blade, so the content may not be loaded yet
+    await loadContent();
+    const configuration = DataSourceConfigurationMap[type];
+    const settings = fileStore.settings.type === type ? fileStore.settings : createDefaultFileSettings(type);
+    const exportFile = useExportFile();
+    await exportFile(
+      (mimeType) => configuration.serialize(fileStore.dataSource, settings, mimeType),
+      fileStore.resource?.name ?? "export",
+      configuration.mimeType,
+      configuration.accept,
+    );
+  },
+  import: async () => {
+    const fileStore = useFileStore();
+    const { loadContent } = fileStore;
+    await loadContent();
+    const configuration = DataSourceConfigurationMap[type];
+    const settings = fileStore.settings.type === type ? fileStore.settings : createDefaultFileSettings(type);
+    const importFile = useImportFile();
+    const setDataSource = useSetDataSource();
+    await importFile(configuration.mimeType, configuration.accept, async (file) => {
+      const result = await configuration.deserialize(file, settings);
+      await setDataSource(result);
+    });
+  },
+  label: type,
+});
+// Import/export formats per portable type
 export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> = {
   [ResourceType.Email]: [
     {
@@ -39,5 +76,9 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
       label: "Personalized HTML",
     },
   ],
-  [ResourceType.File]: [],
+  [ResourceType.File]: [
+    createFilePortableFormat(DataSourceType.Csv),
+    createFilePortableFormat(DataSourceType.Json),
+    createFilePortableFormat(DataSourceType.Xlsx),
+  ],
 };

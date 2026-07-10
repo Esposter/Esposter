@@ -1,8 +1,8 @@
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
-import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
+import type { ColumnValue } from "#shared/models/resource/file/column/ColumnValue";
 
 import { datasetColumnSchema } from "#shared/models/dataset/DatasetColumn";
-import { columnValueSchema } from "#shared/models/tableEditor/file/column/ColumnValue";
+import { columnValueSchema } from "#shared/models/resource/file/column/ColumnValue";
 import { z } from "zod";
 
 export interface Dataset {

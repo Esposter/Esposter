@@ -16,23 +16,8 @@ export const ProductListLinkItems = [
   },
   {
     href: RoutePath.Resources,
-    icon: "mdi-folder-multiple",
+    icon: "mdi-earth",
     title: "Resource Explorer",
-  },
-  {
-    href: RoutePath.TableEditor,
-    icon: "mdi-table-edit",
-    title: "Table Editor",
-  },
-  {
-    href: RoutePath.WebpageEditor,
-    icon: "mdi-language-html5",
-    title: "Webpage Editor",
-  },
-  {
-    href: RoutePath.DashboardEditor,
-    icon: "mdi-view-dashboard-edit",
-    title: "Dashboard Editor",
   },
   {
     href: RoutePath[SURVEY_DISPLAY_NAME],

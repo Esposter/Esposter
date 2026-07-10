@@ -1,64 +1,25 @@
 import type { ProjectData } from "grapesjs";
 
-import { WebpageEditor, webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { authClient } from "@/services/auth/authClient";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { MAX_READ_LIMIT } from "@esposter/shared";
+import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 
 export const useWebpageEditorStore = defineStore("webpageEditor", () => {
-  const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
-  const {
-    content,
-    createResource,
-    currentResource,
-    deleteResource,
-    load,
-    loadLocal,
-    publication,
-    publish: publishWebpage,
-    renameResource,
-    resources,
-    save,
-    selectResource,
-    unpublish: unpublishWebpage,
-  } = useResourceState(
-    WebpageEditor,
-    {
-      createResource: (input) => $trpc.webpageEditor.createResource.mutate(input),
-      deleteResource: (input) => $trpc.webpageEditor.deleteResource.mutate(input),
-      publishResource: (input) => $trpc.webpageEditor.publishResource.mutate(input),
-      readResourceContent: (input) => $trpc.webpageEditor.readResourceContent.query(input),
-      readResourcePublication: (input) => $trpc.webpageEditor.readResourcePublication.query(input),
-      readResources: async () => (await $trpc.webpageEditor.readResources.query({ limit: MAX_READ_LIMIT })).items,
-      saveResourceContent: (input) => $trpc.webpageEditor.saveResourceContent.mutate(input),
-      unpublishResource: (input) => $trpc.webpageEditor.unpublishResource.mutate(input),
-      updateResource: (input) => $trpc.webpageEditor.updateResource.mutate(input),
-    },
-    { defaultName: "My Webpage", localStorageKey: LocalStorageKey.WebpageEditorStore, schema: webpageEditorSchema },
+  const route = useRoute();
+  const { load, readContent, resource, save } = useResource(() =>
+    Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? ""),
   );
-  // The resource list load happens once; subsequent editor storage loads serve the selected resource's content
+  // Cast avoids the excessively deep UnwrapRef instantiation on the nested GrapesJS project types
+  const content = ref(new WebpageEditor()) as Ref<WebpageEditor>;
+  // GrapesJS storage adapter load: serve the selected resource's content
   const readWebpageEditor = async () => {
-    if (session.value.data) {
-      if (!currentResource.value) await load();
-    } else loadLocal();
+    await load();
+    const data = await readContent();
+    content.value = new WebpageEditor(data ?? undefined);
     return content.value;
   };
+  // The standalone render (css/html) is captured at save time so the published webpage serves without GrapesJS
   const saveWebpageEditor = async (projectData: ProjectData, { css, html }: Pick<WebpageEditor, "css" | "html">) => {
     content.value = new WebpageEditor({ ...projectData, css, html });
-    await save();
+    await save(content.value);
   };
-  return {
-    createResource,
-    currentResource,
-    deleteResource,
-    publication,
-    publishWebpage,
-    readWebpageEditor,
-    renameResource,
-    resources,
-    saveWebpageEditor,
-    selectResource,
-    unpublishWebpage,
-  };
+  return { content, readWebpageEditor, resource, saveWebpageEditor };
 });

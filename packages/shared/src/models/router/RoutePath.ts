@@ -8,16 +8,12 @@ export const RoutePath: {
   readonly About: "/about";
   readonly Achievements: "/achievements";
   readonly Anime: "/anime";
-  readonly Calendar: "/calendar";
   readonly Calls: (id: string) => string;
   readonly CallsIndex: "/calls";
   readonly Clicker: "/clicker";
   readonly Dashboard: "/dashboard";
-  readonly DashboardEditor: "/dashboard/editor";
   readonly Docs: "/docs";
   readonly Dungeons: "/dungeons";
-  readonly EmailEditor: "/email-editor";
-  readonly FlowchartEditor: "/flowchart-editor";
   readonly FluidSimulator: "/fluid-simulator";
   readonly Github: "https://github.com/Esposter/Esposter";
   readonly Index: "/";
@@ -40,26 +36,18 @@ export const RoutePath: {
   readonly Survey: (id: string) => string;
   readonly [SURVEY_DISPLAY_NAME]: `/${Uncapitalize<typeof SURVEY_DISPLAY_NAME>}`;
   readonly [SURVEYER_EDIT_KEY]: (id: string) => string;
-  readonly TableEditor: "/table-editor";
   readonly UserSettings: "/user/settings";
   readonly View: (type: string, id: string) => string;
-  readonly ViewDashboard: (id: string) => string;
-  readonly ViewWebpage: (id: string) => string;
-  readonly WebpageEditor: "/webpage-editor";
 } = {
   About: "/about",
   Achievements: "/achievements",
   Anime: "/anime",
-  Calendar: "/calendar",
   Calls: (id: string) => `/calls/${id}`,
   CallsIndex: "/calls",
   Clicker: "/clicker",
   Dashboard: "/dashboard",
-  DashboardEditor: "/dashboard/editor",
   Docs: "/docs",
   Dungeons: "/dungeons",
-  EmailEditor: "/email-editor",
-  FlowchartEditor: "/flowchart-editor",
   FluidSimulator: "/fluid-simulator",
   Github: `https://github.com/${SITE_NAME}/${SITE_NAME}`,
   Index: "/",
@@ -82,11 +70,7 @@ export const RoutePath: {
   Survey: (id: string) => `/survey/${id}`,
   [SURVEY_DISPLAY_NAME]: `/${uncapitalize(SURVEY_DISPLAY_NAME)}`,
   [SURVEYER_EDIT_KEY]: (id: string) => `/${uncapitalize(SURVEY_DISPLAY_NAME)}/${id}`,
-  TableEditor: "/table-editor",
   UserSettings: "/user/settings",
   View: (type: string, id: string) => `/view/${type}/${id}`,
-  ViewDashboard: (id: string) => `/view/dashboard/${id}`,
-  ViewWebpage: (id: string) => `/view/webpage/${id}`,
-  WebpageEditor: "/webpage-editor",
 } as const;
 export type RoutePath = typeof RoutePath;

@@ -1,8 +1,8 @@
-import type { CsvDataSourceConfiguration } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";
+import type { CsvDataSourceConfiguration } from "#shared/models/resource/file/csv/CsvDataSourceConfiguration";
 import type { ItemEntityType } from "@esposter/shared";
 
-import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";
-import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
+import { csvDataSourceConfigurationSchema } from "#shared/models/resource/file/csv/CsvDataSourceConfiguration";
+import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
