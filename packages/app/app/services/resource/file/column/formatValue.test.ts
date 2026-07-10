@@ -57,6 +57,11 @@ describe(formatValue, () => {
       expect.hasAssertions();
       expect(formatValue("1970-01-01", DateFormat["YYYY-MM-DD"])).toBe("1970-01-01");
     });
+
+    test("returns raw string for invalid date string", () => {
+      expect.hasAssertions();
+      expect(formatValue("not-a-date", DateFormat["YYYY-MM-DD"])).toBe("not-a-date");
+    });
   });
 
   test("returns empty string for non-boolean value with boolean format", () => {
