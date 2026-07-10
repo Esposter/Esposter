@@ -13,8 +13,12 @@ All documentation lives in `packages/app/content/docs/` and is rendered in the a
 
 - `docs/<area>/` and `docs/architecture/` describe **only what exists in code today**. If you can't point at the file that implements a sentence, the sentence doesn't belong here.
 - `docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal.
-- `docs/<area>/decisions.md` holds ideas we **rejected or deferred**.
+- `docs/<area>/decisions/` holds ideas we **rejected or deferred** — one page per idea.
 - `docs/<area>/roadmap.md` holds **open work** (checkbox backlog).
+
+## Single responsibility — one file per feature/idea
+
+Doc files are like Vue SFCs: **one feature, proposal, or decision per file — never merge them.** Do not consolidate multiple specs into one page or multiple decisions into one file; modularity beats file count. A page may have sub-pages (nested folder with `index.md`) when a feature has cohesive sub-features (e.g. `file-table-editor/computed-columns/aggregation.md`). Never delete or merge a doc file "to tidy up" — split when a page grows two responsibilities, and only remove a file when the idea itself is superseded (record that in a decision page).
 
 ## Directory layout
 
@@ -26,8 +30,10 @@ packages/app/content/docs/
     <topic>.md                ← as-built system explanation shared by multiple areas
   <area>/                     ← esbabbler · platform · file-table-editor · virrun · vue-phaserjs · infra
     index.md                  ← what the area is, key concepts, terse chronological shipped log
-    <feature>.md              ← one page per cohesive implemented feature
-    decisions.md              ← all rejected/deferred ideas for the area, one ## per decision
+    <feature>.md              ← one page per implemented feature (or <feature>/ folder with index.md + sub-feature pages)
+    decisions/
+      index.md                ← one-line list of every decision page
+      <idea>.md               ← one rejected/deferred idea per page
     roadmap.md                ← open work only (omit for mature areas with none)
   proposals/
     <area>/<name>.md          ← unimplemented design spec
@@ -56,7 +62,7 @@ Write for a new engineer reading in the browser, not for an agent grepping a rep
 - **Every line earns its place.** If another page already says it, link instead (`/docs/architecture/resources` — absolute route paths, no `.md` suffix, so links work in-app).
 - Self-contained over link-chained: a page must be understandable without following links; links add depth, never required context.
 - Keep the **Key Files** table on feature pages — path + one-line role. It's the bridge from docs to code.
-- Nothing is frozen: merge, trim, rename freely as understanding improves.
+- Nothing is frozen: trim, rename, and split freely as understanding improves — but never merge files (see single-responsibility rule).
 
 ## Diagram mandate
 
@@ -88,14 +94,14 @@ Omit any section with nothing to say.
 
 Same template plus an explicit scope: what works today vs what the proposal adds, cheapest viable infrastructure (reuse existing Azure resources first), and failure/retry semantics when background work is involved. A proposal is the design conversation done in advance — trim it the moment implementation teaches you better.
 
-## Decisions (`<area>/decisions.md`)
+## Decisions (`<area>/decisions/<idea>.md`)
 
-One `## <idea name>` per decision:
+One page per rejected or deferred idea (kebab-case slug named after the idea), plus a `decisions/index.md` listing every page in one line each. Page body:
 
-- **Rejected** — one paragraph: what it was, why not.
+- **Rejected** — what it was, why not.
 - **Deferred** — what it was, why not now, and **Revisit when:** the concrete trigger. Optionally the cheaper interim already covering the need.
 
-Grep this file before adding a roadmap item or proposal — never re-argue a decided idea.
+Check this folder before adding a roadmap item or proposal — never re-argue a decided idea.
 
 ## Roadmap pages
 
@@ -108,8 +114,12 @@ Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped b
 | Idea     | `<area>/roadmap.md`          | Checkbox item; grep `decisions.md` first                                                |
 | Designed | `proposals/<area>/<name>.md` | Write the proposal; roadmap item links to it                                            |
 | Shipped  | `<area>/<feature>.md`        | Rewrite proposal as an as-built page; delete proposal + roadmap item; log in `index.md` |
-| Won't do | `<area>/decisions.md`        | `##` entry with rationale                                                               |
-| Deferred | `<area>/decisions.md`        | `##` entry with rationale + revisit trigger                                             |
+| Won't do | `<area>/decisions/<idea>.md` | One page with rationale                                                                 |
+| Deferred | `<area>/decisions/<idea>.md` | One page with rationale + revisit trigger                                               |
+
+## Batch size — PR review budget
+
+Docs work lands in PRs reviewed by CodeRabbit free tier (hard cap ~150 files). Keep every chunk of work to **~100 changed files** (`git status --porcelain -uall | wc -l`) so there is buffer for lockfiles and stragglers. Before starting a sweep, count what's already dirty; when the budget is reached, stop and hand back for compaction/PR — don't start a new area you can't finish inside the budget. Large deletions (retiring an old tree) are their own PR. Chunk by area/folder (e.g. "feature pages this PR, decision pages next"), never by squeezing multiple topics into one file — the single-responsibility rule always wins over file count.
 
 ## Standards vs feature pages
 
