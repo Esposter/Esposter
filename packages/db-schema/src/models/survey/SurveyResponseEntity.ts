@@ -2,7 +2,7 @@ import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity
 import type { ToData } from "@esposter/shared";
 
 import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
-import { selectSurveySchema } from "@/schema/surveys";
+import { selectResourceSchema } from "@/schema/resources";
 import { z } from "zod";
 
 export class SurveyResponseEntity extends AzureEntity {
@@ -18,7 +18,7 @@ export class SurveyResponseEntity extends AzureEntity {
 export const surveyResponseEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      partitionKey: selectSurveySchema.shape.id,
+      partitionKey: selectResourceSchema.shape.id,
       rowKey: z.uuid(),
     }),
   ).shape,

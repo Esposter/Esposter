@@ -3,7 +3,7 @@ import { AzureContainer } from "@esposter/db-schema";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { describe, expect, test, vi } from "vitest";
 
-const containerUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.SurveyAssets}`;
+const containerUrl = `${MOCK_BLOB_BASE_URL}/${AzureContainer.ResourceAssets}`;
 
 vi.mock(import("@@/server/composables/azure/container/useContainerBaseUrl"), () => ({
   useContainerBaseUrl: () => MOCK_BLOB_BASE_URL,

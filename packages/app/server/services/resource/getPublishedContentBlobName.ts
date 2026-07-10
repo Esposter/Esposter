@@ -1,6 +1,8 @@
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
+import { getPublishedDirectoryName } from "@@/server/services/resource/getPublishedDirectoryName";
+
 export const getPublishedContentBlobName = (
   resourceId: Resource["id"],
   publishVersion: ResourcePublication["publishVersion"],
-) => `${resourceId}/published/${publishVersion}.json`;
+) => `${getPublishedDirectoryName(resourceId, publishVersion)}.json`;

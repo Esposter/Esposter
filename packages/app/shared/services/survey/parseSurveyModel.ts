@@ -1,6 +1,6 @@
-import type { Survey } from "@esposter/db-schema";
+import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 
 import { jsonDateParse } from "@esposter/shared";
 
-export const parseSurveyModel = (surveyModel: Survey["model"]): Record<string, unknown> =>
+export const parseSurveyModel = (surveyModel: SurveyResource["model"]): Record<string, unknown> =>
   surveyModel ? jsonDateParse(surveyModel) : {};
