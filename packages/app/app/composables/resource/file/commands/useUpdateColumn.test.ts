@@ -3,7 +3,6 @@ import { BooleanValue } from "#shared/models/resource/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { DateColumn } from "#shared/models/resource/file/column/DateColumn";
 import { DateFormat } from "#shared/models/resource/file/column/DateFormat";
-import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
 import { createColumn } from "@/composables/resource/file/commands/createColumn.test";
 import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
 import { createDateColumn } from "@/composables/resource/file/commands/createDateColumn.test";

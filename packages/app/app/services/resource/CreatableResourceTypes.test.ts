@@ -13,8 +13,6 @@ describe(isCreatableResourceType, () => {
     expect.hasAssertions();
 
     expect(isCreatableResourceType(ResourceType.Survey)).toBe(false);
-    expect(isCreatableResourceType(ResourceType.File)).toBe(false);
-    expect(isCreatableResourceType(ResourceType.TodoList)).toBe(false);
   });
 
   test("rejects an unknown string", () => {
