@@ -1,6 +1,6 @@
 # Outbound Webhooks
 
-Register HTTP endpoints per room; on configurable events (new message, pin, etc.) enqueue to Azure Storage Queue and have an Azure Function POST with retry/backoff.
+Register HTTP endpoints per room; on configurable events (new message, pin, etc.) enqueue to Azure Service Bus and have an Azure Function POST with retry/backoff.
 
 ## Why deferred
 
@@ -11,7 +11,7 @@ Register HTTP endpoints per room; on configurable events (new message, pin, etc.
 
 The "needs infrastructure" blocker is gone — the building blocks are in code:
 
-- Generic Storage Queue + retry pattern (`useQueueClient`, `enqueueScheduledMessageJob`, `app.storageQueue` trigger).
+- Generic Service Bus queue + retry pattern (`useServiceBusSender`, `enqueueScheduledMessageJob`, `app.serviceBusQueue` trigger).
 - `RoomPermission.ManageWebhooks` gate and the inbound webhook model (`webhooksInMessage`, `appUsersInMessage`, tokens).
 
 ## Revisit when

@@ -124,6 +124,8 @@ These tokens are official for Esposter infrastructure. If a new Azure resource t
 | `logic` | Logic app                  | `Microsoft.Logic/workflows`                 | CAF      |
 | `pa`    | Policy assignment          | `Microsoft.Authorization/policyAssignments` | Esposter |
 | `rg`    | Resource group             | `Microsoft.Resources/resourceGroups`        | CAF      |
+| `sbns`  | Service Bus namespace      | `Microsoft.ServiceBus/namespaces`           | CAF      |
+| `sbq`   | Service Bus queue          | `Microsoft.ServiceBus/namespaces/queues`    | CAF      |
 | `spch`  | Speech service             | `Microsoft.CognitiveServices/accounts`      | CAF      |
 | `srch`  | Azure AI Search            | `Microsoft.Search/searchServices`           | CAF      |
 | `st`    | Storage account            | `Microsoft.Storage/storageAccounts`         | CAF      |
@@ -279,8 +281,6 @@ These tokens are the complete set of CAF abbreviations plus Esposter-specific ad
 | Token  | Asset Type                     | Azure ARM Type                                         | Source |
 | ------ | ------------------------------ | ------------------------------------------------------ | ------ |
 | `apim` | API Management service         | `Microsoft.ApiManagement/service`                      | CAF    |
-| `sbns` | Service Bus namespace          | `Microsoft.ServiceBus/namespaces`                      | CAF    |
-| `sbq`  | Service Bus queue              | `Microsoft.ServiceBus/namespaces/queues`               | CAF    |
 | `sbt`  | Service Bus topic              | `Microsoft.ServiceBus/namespaces/topics`               | CAF    |
 | `sbts` | Service Bus topic subscription | `Microsoft.ServiceBus/namespaces/topics/subscriptions` | CAF    |
 

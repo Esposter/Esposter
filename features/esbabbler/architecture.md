@@ -33,7 +33,7 @@ LiveKit-based audio/video. Key boundary: `activeCallSessionId` (user's active ca
 
 ### Scheduled Jobs
 
-tRPC mutation → Postgres row + Azure Storage Queue (visibility delay = `runAt`, capped at 7 days) → Azure Function executes on visibility. If the message is visible before `runAt`, the function re-enqueues it with the remaining delay. Guard: `cancelledAt IS NULL AND completedAt IS NULL`. Full flow, Mermaid diagrams, cancellation window → [`specs/slash-commands.md`](specs/slash-commands.md).
+tRPC mutation → Postgres row + Azure Service Bus scheduled message (`scheduledEnqueueTimeUtc = runAt`, no delay cap) → Service Bus-triggered Azure Function executes when the message fires. If the message fires before `runAt` (defensive guard), the function re-schedules it at `runAt`. Guard: `cancelledAt IS NULL AND completedAt IS NULL`. Full flow, Mermaid diagrams, cancellation window → [`specs/slash-commands.md`](specs/slash-commands.md).
 
 ### Offline Cache
 
