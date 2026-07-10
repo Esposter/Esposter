@@ -645,8 +645,8 @@ catalogs:
       specifier: ^11.2.0
       version: 11.2.0
     read-excel-file:
-      specifier: ^9.3.0
-      version: 9.3.0
+      specifier: 9.2.0
+      version: 9.2.0
     rolldown:
       specifier: ^1.1.5
       version: 1.1.5
@@ -1180,7 +1180,7 @@ importers:
         version: 11.2.0
       read-excel-file:
         specifier: 'catalog:'
-        version: 9.3.0
+        version: 9.2.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -7943,6 +7943,10 @@ packages:
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
 
+  '@xmldom/xmldom@0.9.10':
+    resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
+    engines: {node: '>=14.6'}
+
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
 
@@ -12410,8 +12414,8 @@ packages:
     resolution: {integrity: sha512-1zM5HuOfagXCBWMN83fuFI/x+T/UhZ7k+KIzhrHXcQoeX5+7gmaDYjELQHmmzIodumBHeByBJT4QYS7ufAgs7A==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  read-excel-file@9.3.0:
-    resolution: {integrity: sha512-J14xnZ48oLHcbdHqaBlu9c4GgNOR1ll3dJ4lb1N4j6TnEhWtsT2i3zp4ZaLSutnk4+56Zj5k5dc/2XWz86G4RQ==}
+  read-excel-file@9.2.0:
+    resolution: {integrity: sha512-jwSi8Q9oCmswrYMkuiKvJ6VdHbAXGQnANSOaHBNQZEm2XvaXx8d0t/V7oepgHqT9YWxlQE3HEuCtDZq8BZBmvw==}
     engines: {node: '>=18'}
 
   readable-stream@2.3.8:
@@ -21079,6 +21083,8 @@ snapshots:
       '@webassemblyjs/ast': 1.14.1
       '@xtuc/long': 4.2.2
 
+  '@xmldom/xmldom@0.9.10': {}
+
   '@xtuc/ieee754@1.2.0': {}
 
   '@xtuc/long@4.2.2': {}
@@ -26552,8 +26558,9 @@ snapshots:
 
   read-cmd-shim@6.0.0: {}
 
-  read-excel-file@9.3.0:
+  read-excel-file@9.2.0:
     dependencies:
+      '@xmldom/xmldom': 0.9.10
       fflate: 0.8.3
       unzipper-esm: 0.13.2
 
