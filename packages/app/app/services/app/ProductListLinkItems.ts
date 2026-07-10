@@ -16,7 +16,7 @@ export const ProductListLinkItems = [
   },
   {
     href: RoutePath.Resources,
-    icon: "mdi-folder-multiple",
+    icon: "mdi-earth",
     title: "Resource Explorer",
   },
   {

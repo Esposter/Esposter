@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineRouteRules({ ssr: false });
 definePageMeta({ middleware: "auth" });
 </script>
 
