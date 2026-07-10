@@ -3,8 +3,8 @@ import type { AzureQueue } from "@esposter/db-schema";
 
 import { ServiceBusClient } from "@azure/service-bus";
 import { getOrCreate } from "@esposter/shared";
-// Service Bus clients hold a long-lived AMQP connection, so they are cached per process
-// instead of being recreated (and leaked) on every send.
+// Service Bus clients hold a long-lived AMQP connection.
+// Cache clients and senders per process instead of recreating (and leaking) them on every send.
 const serviceBusClients = new Map<string, ServiceBusClient>();
 const serviceBusSenders = new Map<string, ServiceBusSender>();
 

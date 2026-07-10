@@ -31,6 +31,7 @@ export const external: (RegExp | string)[] = [
   "@azure/core-client",
   "@azure/data-tables",
   "@azure/search-documents",
+  "@azure/service-bus",
   "@azure/storage-blob",
   "@azure/web-pubsub",
   // @esposter/db-mock
