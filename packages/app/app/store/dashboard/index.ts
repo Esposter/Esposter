@@ -1,53 +1,17 @@
-import { Dashboard, dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
-import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
-import { MAX_READ_LIMIT } from "@esposter/shared";
+import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 
 export const useDashboardStore = defineStore("dashboard", () => {
-  const { $trpc } = useNuxtApp();
-  const {
-    content: dashboard,
-    createResource,
-    currentResource,
-    deleteResource,
-    load,
-    loadLocal,
-    publication,
-    publish: publishDashboard,
-    renameResource,
-    resources,
-    save: saveDashboard,
-    selectResource,
-    setCurrentResource,
-    unpublish: unpublishDashboard,
-  } = useResourceState(
-    Dashboard,
-    {
-      createResource: (input) => $trpc.dashboard.createResource.mutate(input),
-      deleteResource: (input) => $trpc.dashboard.deleteResource.mutate(input),
-      publishResource: (input) => $trpc.dashboard.publishResource.mutate(input),
-      readResourceContent: (input) => $trpc.dashboard.readResourceContent.query(input),
-      readResourcePublication: (input) => $trpc.dashboard.readResourcePublication.query(input),
-      readResources: async () => (await $trpc.dashboard.readResources.query({ limit: MAX_READ_LIMIT })).items,
-      saveResourceContent: (input) => $trpc.dashboard.saveResourceContent.mutate(input),
-      unpublishResource: (input) => $trpc.dashboard.unpublishResource.mutate(input),
-      updateResource: (input) => $trpc.dashboard.updateResource.mutate(input),
-    },
-    { defaultName: "My Dashboard", localStorageKey: LocalStorageKey.DashboardStore, schema: dashboardSchema },
+  const route = useRoute();
+  // The store outlives the page, so the id is read from the route per call rather than captured once
+  const { load, readContent, save } = useResource(() =>
+    Array.isArray(route.params.id) ? (route.params.id[0] ?? "") : (route.params.id ?? ""),
   );
-  return {
-    createResource,
-    currentResource,
-    dashboard,
-    deleteResource,
-    load,
-    loadLocal,
-    publication,
-    publishDashboard,
-    renameResource,
-    resources,
-    saveDashboard,
-    selectResource,
-    setCurrentResource,
-    unpublishDashboard,
+  const dashboard = ref(new Dashboard()) as Ref<Dashboard>;
+  const loadContent = async () => {
+    await load();
+    const data = await readContent();
+    dashboard.value = new Dashboard((data as Partial<Dashboard> | undefined) ?? undefined);
   };
+  const saveDashboard = () => save(dashboard.value);
+  return { dashboard, loadContent, saveDashboard };
 });

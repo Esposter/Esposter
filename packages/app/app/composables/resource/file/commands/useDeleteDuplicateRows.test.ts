@@ -1,0 +1,148 @@
+// @vitest-environment nuxt
+import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
+import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
+import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { KeepDuplicateMode } from "@/models/resource/file/commands/KeepDuplicateMode";
+import { useFileHistoryStore } from "@/store/resource/file/history";
+import { takeOne } from "@esposter/shared";
+import { assert, describe, expect, test } from "vitest";
+
+describe(useDeleteDuplicateRows, () => {
+  setupCommandTest();
+
+  test("removes duplicate rows keeping first occurrence", () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": 0, " ": 1 }), createRow({ "": 0, " ": 1 }), createRow({ "": 0, " ": 1 })],
+    );
+    const { editedItem } = setupWithDataSource(ds);
+    const deleteDuplicateRows = useDeleteDuplicateRows();
+    deleteDuplicateRows();
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(dataSource.rows).toHaveLength(1);
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
+  });
+
+  test("removes duplicate rows keeping last occurrence", () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("a")], [createRow({ a: 1 }), createRow({ a: 2 }), createRow({ a: 1 })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const deleteDuplicateRows = useDeleteDuplicateRows();
+    deleteDuplicateRows(KeepDuplicateMode.Last);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(dataSource.rows).toHaveLength(2);
+    expect(takeOne(dataSource.rows).data.a).toBe(2);
+    expect(takeOne(dataSource.rows, 1).data.a).toBe(1);
+  });
+
+  test("keeps rows that differ in at least one column", () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": 0, " ": 1 }), createRow({ "": 0, " ": 2 })],
+    );
+    const { editedItem } = setupWithDataSource(ds);
+    const deleteDuplicateRows = useDeleteDuplicateRows();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    deleteDuplicateRows();
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(dataSource.rows).toHaveLength(2);
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test("undo restores deleted duplicate rows", () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const deleteDuplicateRows = useDeleteDuplicateRows();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
+    const editedItemValue = editedItem.value;
+
+    assert.exists(editedItemValue);
+
+    deleteDuplicateRows();
+    undo(editedItemValue);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(dataSource.rows).toHaveLength(2);
+  });
+
+  test("redo re-applies after undo", () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const deleteDuplicateRows = useDeleteDuplicateRows();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
+    const editedItemValue = editedItem.value;
+
+    assert.exists(editedItemValue);
+
+    deleteDuplicateRows();
+    undo(editedItemValue);
+    redo(editedItemValue);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(dataSource.rows).toHaveLength(1);
+  });
+
+  test("no-op when editedItem is undefined", () => {
+    expect.hasAssertions();
+
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    const deleteDuplicateRows = useDeleteDuplicateRows();
+    deleteDuplicateRows();
+
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test("no-op when dataSource is null", () => {
+    expect.hasAssertions();
+
+    setupEditedItem();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    const deleteDuplicateRows = useDeleteDuplicateRows();
+    deleteDuplicateRows();
+
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test("no-op when no duplicates exist", () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 1 })]);
+    setupWithDataSource(ds);
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    const deleteDuplicateRows = useDeleteDuplicateRows();
+    deleteDuplicateRows();
+
+    expect(isUndoable.value).toBe(false);
+  });
+});

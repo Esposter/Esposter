@@ -35,12 +35,12 @@ Azure-portal-faithful surface: `/resources` is the **Home** (search + quick-crea
 
 **Phase 2 transitional notes.** The create gallery offers only the `createResourceProcedures`-backed, `resources`-table types (`ResourceType.Table`, `Dashboard`, `Webpage`, `Email`, `Flowchart` — `CreatableResourceTypes`). Survey lives on its own `surveys` table (folds Phase 5) so it never appears in `resource.readResources` and is excluded; File/TodoList have no router yet (Phase 4). Router keys stay the legacy editor names (`tableEditor`/`emailEditor`/…), so `useCreateResource`/`useResource` dispatch through explicit per-type maps until the Phase 3-4 renames. Publish **status** is intentionally omitted from the `/all` list (surfaced per-resource on Overview instead).
 
-## Phase 3 — thin editors migrate (Flowchart, Email, Webpage, Dashboard)
+## Phase 3 — thin editors migrate (Flowchart, Email, Webpage, Dashboard) ✅ (shipped)
 
-- [ ] Per type: router → `createResourceProcedures`, editor page → Editor blade under `components/Resource/<Type>/`, store retargets to `useResource`
-- [ ] Dashboard keeps `transformPublishedContent` (baked dataset snapshots); Webpage view component moves to `ViewComponentMap`
-- [ ] Email: `PortableFormatMap[Email]` export-only html (personalized export); Email/Flowchart lose their unused publish endpoints (capability not declared)
-- [ ] Delete `pages/{dashboard/*,email-editor,webpage-editor,flowchart-editor}.vue`, `pages/view/{dashboard,webpage}/[id].vue`
+- [x] Per type: router → `createResourceProcedures`, editor page → Editor blade under `components/Resource/<Type>/`, store retargets to `useResource`
+- [x] Dashboard keeps `transformPublishedContent` (baked dataset snapshots); Webpage view component moves to `ViewComponentMap`
+- [x] Email: `PortableFormatMap[Email]` export-only html (personalized export); Email/Flowchart lose their unused publish endpoints (capability not declared)
+- [x] Delete `pages/{dashboard/*,email-editor,webpage-editor,flowchart-editor}.vue`, `pages/view/{dashboard,webpage}/[id].vue`
 
 **Flowchart ✅ (shipped — first inline editor, established the mechanism).** `useResource` gained
 blob content (`readContent`/`save`, optimistic `contentVersion`) — the "store retargets to `useResource`"
@@ -64,7 +64,17 @@ personalized-HTML export (via the extracted `exportPersonalizedHtml` service). I
 (Phase 4). Also added a generic `hasCapability(type, capability)` guard + `CapabilityResourceType<T>`
 (the three derived unions now alias it), replacing the per-capability `getIs*` helpers. Deleted
 `email-editor.vue`, `EmailEditor/{Header,ExportPersonalizedHtmlButton}.vue`, the Email launcher entry, and
-the dead `localStorage` key. **Pending:** Webpage, Dashboard (+ view wiring and page deletions).
+the dead `localStorage` key.
+
+**Webpage ✅ + Dashboard ✅ (shipped — first `ViewComponentMap` renderers).** Same blade migration
+(`store/webpageEditor` and `store/dashboard` retarget to `useResource`, dropping `useResourceState`
+`localStorage` paths + their `LocalStorageKey`s and launcher entries). Both types registered their public
+renderers in `ViewComponentMap` (`Resource/Webpage/View.vue` iframe-srcdoc, `Resource/Dashboard/View.vue`),
+so `/view/[type]/[id]` now serves them and the static `pages/view/{webpage,dashboard}/[id].vue` pages are
+deleted. Dashboard's autosave watch (deep-diff `virtualDashboard`) moved from the deleted
+`useReadDashboard` into the Editor blade, guarded so the initial load doesn't write back; the visual-type +
+edit-item query-param deep-links keep working on the blade route. The Dashboard editor header lost its
+viewer-page button (`/dashboard` deleted — the published view is the render surface now).
 
 ## Phase 4 — File split + TodoList
 

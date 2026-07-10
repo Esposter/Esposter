@@ -1,8 +1,8 @@
-import type { JsonDataSourceConfiguration } from "#shared/models/tableEditor/file/json/JsonDataSourceConfiguration";
+import type { JsonDataSourceConfiguration } from "#shared/models/resource/file/json/JsonDataSourceConfiguration";
 import type { ItemEntityType } from "@esposter/shared";
 
-import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
-import { jsonDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/json/JsonDataSourceConfiguration";
+import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
+import { jsonDataSourceConfigurationSchema } from "#shared/models/resource/file/json/JsonDataSourceConfiguration";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 

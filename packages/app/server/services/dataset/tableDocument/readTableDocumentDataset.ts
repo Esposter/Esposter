@@ -2,7 +2,7 @@ import type { DatasetProvider } from "@@/server/models/dataset/DatasetProvider";
 
 import { tableEditorConfigurationSchema } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { dataSourceToDataset } from "#shared/services/tableEditor/dataSourceToDataset";
+import { dataSourceToDataset } from "#shared/services/resource/file/dataSourceToDataset";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { AZURE_MAX_PAGE_SIZE, AzureContainer, ResourceType } from "@esposter/db-schema";

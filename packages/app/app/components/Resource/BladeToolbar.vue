@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
 interface ResourceBladeToolbarProps {
-  activeBlade: ResourceBladeType;
+  activeBlade: string;
   publication?: ResourcePublication;
   publish: () => Promise<void>;
   remove: () => Promise<boolean>;

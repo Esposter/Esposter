@@ -1,0 +1,22 @@
+<script setup lang="ts">
+import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+
+import { DESCRIPTION_MAX_LENGTH } from "#shared/services/constants";
+
+const modelValue = defineModel<TodoListItem>({ required: true });
+</script>
+
+<template>
+  <v-row>
+    <ResourceTodoListItemNameTextField v-model="modelValue.name" />
+    <v-col cols="12">
+      <RichTextEditor v-model="modelValue.notes" height="15rem" :limit="DESCRIPTION_MAX_LENGTH" />
+    </v-col>
+    <v-col cols="12">
+      <StyledDatePicker
+        v-model="modelValue.dueAt"
+        :date-picker-props="{ placeholder: 'Due Date', sixWeeks: 'append' }"
+      />
+    </v-col>
+  </v-row>
+</template>

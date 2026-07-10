@@ -1,15 +1,23 @@
 import type { BladeDefinition } from "@/models/resource/BladeDefinition";
 
+import ResourceFileData from "@/components/Resource/File/Data.vue";
+import ResourceFileSettings from "@/components/Resource/File/Settings.vue";
+import ResourceTodoListCalendar from "@/components/Resource/TodoList/Calendar.vue";
+import ResourceTodoListItems from "@/components/Resource/TodoList/Items.vue";
 import { ResourceType } from "@esposter/db-schema";
-// Type editors still live on their own top-level pages until the roadmap Phase 3-5 blade migration, so every
-// Type starts with no blades beyond the generic Overview the resource page always renders first.
+// The type's own blades after the built-in Overview/Editor; slugs are route segments on /resources/[id]/[[blade]]
 export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]> = {
   [ResourceType.Dashboard]: [],
   [ResourceType.Email]: [],
-  [ResourceType.File]: [],
+  [ResourceType.File]: [
+    { component: ResourceFileData, icon: "mdi-table", slug: "data", title: "Data" },
+    { component: ResourceFileSettings, icon: "mdi-cog", slug: "settings", title: "Settings" },
+  ],
   [ResourceType.Flowchart]: [],
   [ResourceType.Survey]: [],
-  [ResourceType.Table]: [],
-  [ResourceType.TodoList]: [],
+  [ResourceType.TodoList]: [
+    { component: ResourceTodoListItems, icon: "mdi-format-list-checks", slug: "items", title: "Items" },
+    { component: ResourceTodoListCalendar, icon: "mdi-calendar", slug: "calendar", title: "Calendar" },
+  ],
   [ResourceType.Webpage]: [],
 };

@@ -2,7 +2,6 @@
 // Values are kept byte-identical to their historical strings to preserve existing persisted data.
 export const LocalStorageKey = {
   ClickerStore: "clicker-store",
-  DashboardStore: "dashboard-store",
   Draft: (roomId: string) => `draft:${roomId}`,
   DungeonsStore: "dungeons-store",
   IsResourceListCollapsed: "is-resource-list-collapsed",
@@ -11,5 +10,4 @@ export const LocalStorageKey = {
   VoiceCameraDeviceId: "user-settings-voice-camera-device-id",
   VoiceInputDeviceId: "user-settings-voice-input-device-id",
   VoiceOutputDeviceId: "user-settings-voice-output-device-id",
-  WebpageEditorStore: "webpage-editor-store",
 } as const;

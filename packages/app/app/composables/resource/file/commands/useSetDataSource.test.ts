@@ -1,0 +1,64 @@
+// @vitest-environment nuxt
+import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
+
+import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
+import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
+import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { useFileStore } from "@/store/resource/file";
+import { useFileHistoryStore } from "@/store/resource/file/history";
+import { takeOne } from "@esposter/shared";
+import { assert, describe, expect, test } from "vitest";
+
+describe(useSetDataSource, () => {
+  setupCommandTest();
+
+  test("sets data source on edited item", () => {
+    expect.hasAssertions();
+
+    const { editedItem } = setupEditedItem();
+    const setDataSource = useSetDataSource();
+    const dataSource = createDataSource();
+    setDataSource(dataSource);
+    const editedItemValue = editedItem.value;
+
+    assert.exists(editedItemValue);
+
+    expect(editedItemValue.dataSource).toStrictEqual(dataSource);
+  });
+
+  test("clears undo and redo history after setting data source", () => {
+    expect.hasAssertions();
+
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    const setDataSource = useSetDataSource();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
+    const { undo } = fileHistoryStore;
+    deleteRow(takeOne(dataSource.value?.rows ?? []).id);
+
+    expect(isUndoable.value).toBe(true);
+
+    undo(editedItem.value);
+
+    expect(isRedoable.value).toBe(true);
+
+    setDataSource(createDataSource());
+
+    expect(isUndoable.value).toBe(false);
+    expect(isRedoable.value).toBe(false);
+  });
+
+  test("no-op when editedItem is undefined", () => {
+    expect.hasAssertions();
+
+    const setDataSource = useSetDataSource();
+    setDataSource(createDataSource());
+
+    const fileStore = useFileStore();
+    const { dataSource } = storeToRefs(fileStore);
+
+    expect(editedItem.value).toBeUndefined();
+  });
+});

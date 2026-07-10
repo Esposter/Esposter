@@ -25,16 +25,6 @@ export const ProductListLinkItems = [
     title: "Table Editor",
   },
   {
-    href: RoutePath.WebpageEditor,
-    icon: "mdi-language-html5",
-    title: "Webpage Editor",
-  },
-  {
-    href: RoutePath.DashboardEditor,
-    icon: "mdi-view-dashboard-edit",
-    title: "Dashboard Editor",
-  },
-  {
     href: RoutePath[SURVEY_DISPLAY_NAME],
     icon: "mdi-text-box-edit",
     title: SURVEY_DISPLAY_NAME,

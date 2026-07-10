@@ -5,11 +5,11 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
-import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
-import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
-import { Row } from "#shared/models/tableEditor/file/datasource/Row";
+import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
+import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
+import { CsvDataSourceItem } from "#shared/models/resource/file/csv/CsvDataSourceItem";
+import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
+import { Row } from "#shared/models/resource/file/datasource/Row";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";

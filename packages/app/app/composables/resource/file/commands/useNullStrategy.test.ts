@@ -1,0 +1,264 @@
+// @vitest-environment nuxt
+import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
+import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
+import { createNumberColumn } from "@/composables/tableEditor/file/commands/createNumberColumn.test";
+import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
+import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { NullStrategy } from "@/models/resource/file/commands/NullStrategy";
+import { useFileHistoryStore } from "@/store/resource/file/history";
+import { takeOne } from "@esposter/shared";
+import { assert, describe, expect, test } from "vitest";
+
+describe(useNullStrategy, () => {
+  setupCommandTest();
+
+  test(`${NullStrategy.ReplaceWithNA} replaces null in string columns with "N/A"`, () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": null })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    nullStrategy(NullStrategy.ReplaceWithNA);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows).data[""]).toBe("N/A");
+  });
+
+  test(`${NullStrategy.ReplaceWithNA} replaces empty string in string columns with "N/A"`, () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": "" })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    nullStrategy(NullStrategy.ReplaceWithNA);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows).data[""]).toBe("N/A");
+  });
+
+  test(`${NullStrategy.ReplaceWithNA} skips non-string columns`, () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createNumberColumn("")], [createRow({ "": null })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    nullStrategy(NullStrategy.ReplaceWithNA);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows).data[""]).toBeNull();
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test(`${NullStrategy.ReplaceWithNA} skips hidden columns`, () => {
+    expect.hasAssertions();
+
+    const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
+    const ds = createDataSource([hiddenColumn], [createRow({ "": null })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    nullStrategy(NullStrategy.ReplaceWithNA);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows).data[""]).toBeNull();
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test(`${NullStrategy.DropRow} drops rows with null cells`, () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource(
+      [createColumn(""), createColumn(" ")],
+      [createRow({ "": null, " ": " " }), createRow({ "": " ", " ": " " })],
+    );
+    const { editedItem } = setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    nullStrategy(NullStrategy.DropRow);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(dataSource.rows).toHaveLength(1);
+    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
+  });
+
+  test(`${NullStrategy.DropRow} drops rows with empty string cells`, () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": "" }), createRow({ "": " " })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    nullStrategy(NullStrategy.DropRow);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(dataSource.rows).toHaveLength(1);
+    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
+  });
+
+  test(`${NullStrategy.DropRow} skips hidden columns`, () => {
+    expect.hasAssertions();
+
+    const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
+    const ds = createDataSource([hiddenColumn], [createRow({ "": null })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    nullStrategy(NullStrategy.DropRow);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(dataSource.rows).toHaveLength(1);
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test(`${NullStrategy.ReplaceWithNA} undo restores original values`, () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": null }), createRow({ "": "" })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
+    const editedItemValue = editedItem.value;
+
+    assert.exists(editedItemValue);
+
+    nullStrategy(NullStrategy.ReplaceWithNA);
+    undo(editedItemValue);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows).data[""]).toBeNull();
+    expect(takeOne(dataSource.rows, 1).data[""]).toBe("");
+  });
+
+  test(`${NullStrategy.DropRow} undo restores deleted rows in original positions`, () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource(
+      [createColumn("")],
+      [createRow({ "": null }), createRow({ "": " " }), createRow({ "": "" })],
+    );
+    const { editedItem } = setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
+    const editedItemValue = editedItem.value;
+
+    assert.exists(editedItemValue);
+
+    nullStrategy(NullStrategy.DropRow);
+    undo(editedItemValue);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(dataSource.rows).toHaveLength(3);
+    expect(takeOne(dataSource.rows).data[""]).toBeNull();
+    expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
+    expect(takeOne(dataSource.rows, 2).data[""]).toBe("");
+  });
+
+  test("redo re-applies after undo", () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": null })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
+    const editedItemValue = editedItem.value;
+
+    assert.exists(editedItemValue);
+
+    nullStrategy(NullStrategy.ReplaceWithNA);
+    undo(editedItemValue);
+    redo(editedItemValue);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows).data[""]).toBe("N/A");
+  });
+
+  test("no-op when editedItem is undefined", () => {
+    expect.hasAssertions();
+
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    const nullStrategy = useNullStrategy();
+    nullStrategy(NullStrategy.ReplaceWithNA);
+
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test("no-op when dataSource is null", () => {
+    expect.hasAssertions();
+
+    setupEditedItem();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    const nullStrategy = useNullStrategy();
+    nullStrategy(NullStrategy.ReplaceWithNA);
+
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test(`${NullStrategy.ReplaceWithNA} no-op when no null or empty string cells`, () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
+    setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    nullStrategy(NullStrategy.ReplaceWithNA);
+
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test(`${NullStrategy.DropRow} no-op when no rows have null or empty string cells`, () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
+    setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    nullStrategy(NullStrategy.DropRow);
+
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test("description includes the strategy", () => {
+    expect.hasAssertions();
+
+    const ds = createDataSource([createColumn("")], [createRow({ "": null })]);
+    setupWithDataSource(ds);
+    const nullStrategy = useNullStrategy();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undoDescription } = storeToRefs(fileHistoryStore);
+    nullStrategy(NullStrategy.ReplaceWithNA);
+
+    expect(undoDescription.value).toBe(`Null Strategy (${NullStrategy.ReplaceWithNA})`);
+  });
+});

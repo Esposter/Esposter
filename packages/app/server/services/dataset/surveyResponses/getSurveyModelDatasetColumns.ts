@@ -1,7 +1,7 @@
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 import type { DatasetColumnType } from "#shared/models/dataset/DatasetColumnType";
 
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 
 interface SurveyModelElement {
   elements?: SurveyModelElement[];
