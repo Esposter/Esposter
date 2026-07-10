@@ -52,6 +52,7 @@ catalog:
   "@livekit/track-processors": ^0.7.2
   "@mdi/font": ^7.4.47
   "@ninoseki/eslint-plugin-neverthrow": ^0.2.0
+  "@nuxt/content": ^3.14.0
   "@nuxt/eslint": ^1.16.0
   "@nuxt/fonts": ^0.14.0
   "@nuxt/scripts": ^1.3.0
@@ -175,6 +176,7 @@ catalog:
   lowlight: ^3.3.0
   marked: ^18.0.6
   mathjs: ^15.2.0
+  mermaid: ^11.0.0
   mime-types: ^3.0.2
   mjml-browser: ^5.4.0
   neverthrow: ^8.2.0

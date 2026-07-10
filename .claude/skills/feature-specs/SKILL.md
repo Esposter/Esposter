@@ -13,6 +13,7 @@ description: Feature Specs — Esposter conventions for the features/ and root a
 - **Prefer more small files over fewer large ones.** When something grows, split it into another topic file rather than letting one file sprawl.
 - **Nothing is frozen.** Merge, trim, rename, and dedupe completed docs freely as understanding improves — they are not immutable history.
 - **Decide once.** A dropped or deferred idea is recorded in the decision registry (below) exactly once, with its rationale. Roadmaps link to it; they never re-argue it.
+- **Diagram the moving parts.** Any spec, architecture file, or reference doc describing a flow, lifecycle, or interaction between 3+ parts (components, procedures, storage, background workers) MUST carry a Mermaid diagram of it — `flowchart` for data/navigation flows, `stateDiagram-v2` for lifecycles, `sequenceDiagram` for request/event ordering. Prose describes _why_; the diagram is the alignment artifact for _what talks to what_. Exemptions: decision-registry stubs (`out-of-scope/`, `deferred/`), thin READMEs, and roadmaps. A static list of parts with no interaction (component inventories, key-file tables) needs no diagram — never add one as decoration.
 
 ## Directory Layout
 
@@ -83,6 +84,10 @@ tRPC procedure signatures and auth requirements (table form). Only if new proced
 
 | Procedure | Auth | Input | Purpose |
 | --------- | ---- | ----- | ------- |
+
+## Flow
+
+Mermaid diagram of the moving parts (required whenever the feature has a flow/lifecycle/3+ interacting parts — see Core Principles): `flowchart` for data/navigation, `stateDiagram-v2` for lifecycles, `sequenceDiagram` for ordering. One diagram per distinct flow; label edges with the procedure/event that drives them.
 
 ## Components
 
