@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Survey } from "@esposter/db-schema";
-import type { Except } from "type-fest";
+import type { Resource } from "@esposter/db-schema";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { authClient } from "@/services/auth/authClient";
@@ -14,13 +13,13 @@ const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const setDataSource = useSetDataSource();
 const dialog = ref(false);
-const surveys = ref<Except<Survey, "model">[]>([]);
+const surveys = ref<Resource[]>([]);
 const selectedSurveyId = ref<string>();
 
 watch(dialog, async (newDialog) => {
   if (!newDialog) return;
   await getResultAsync(async () => {
-    ({ items: surveys.value } = await $trpc.survey.readSurveys.query());
+    ({ items: surveys.value } = await $trpc.survey.readResources.query());
   }).match(noop, (error) => createAlert(error.message, "error"));
 });
 </script>

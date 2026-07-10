@@ -11,7 +11,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { resources, ResourceType, surveys } from "@esposter/db-schema";
+import { resources, ResourceType } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -33,7 +33,6 @@ describe("dashboard", () => {
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(resources);
-    await mockContext.db.delete(surveys);
   });
 
   test("wires the Dashboard resource type", async () => {
@@ -47,10 +46,13 @@ describe("dashboard", () => {
   test("bakes dataset snapshot into published dashboard", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await surveyCaller.createSurvey({
-      group: "group",
-      model: JSON.stringify({ pages: [{ elements: [{ name: "satisfaction", type: "rating" }], name: "page1" }] }),
-      name,
+    const newSurvey = await surveyCaller.createResource({ name });
+    await surveyCaller.saveResourceContent({
+      content: {
+        model: JSON.stringify({ pages: [{ elements: [{ name: "satisfaction", type: "rating" }], name: "page1" }] }),
+      },
+      contentVersion: newSurvey.contentVersion,
+      id: newSurvey.id,
     });
     await surveyCaller.createSurveyResponse({
       model: { satisfaction: 5 },

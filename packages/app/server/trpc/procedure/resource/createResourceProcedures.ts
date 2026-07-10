@@ -119,6 +119,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
               eq: ctx.getSessionPayload.user.id,
             },
           },
+          // Publication state rides along so listings can distinguish published resources without n+1 queries
+          with: { publication: true },
         });
         return getOffsetPaginationData(resultResources, limit);
       }),

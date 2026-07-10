@@ -10,6 +10,7 @@ export const useCreateResource = () => {
     [ResourceType.Email]: $trpc.emailEditor.createResource,
     [ResourceType.File]: $trpc.file.createResource,
     [ResourceType.Flowchart]: $trpc.flowchartEditor.createResource,
+    [ResourceType.Survey]: $trpc.survey.createResource,
     [ResourceType.TodoList]: $trpc.todoList.createResource,
     [ResourceType.Webpage]: $trpc.webpageEditor.createResource,
   } satisfies Record<CreatableResourceType, unknown>;

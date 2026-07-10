@@ -7,6 +7,7 @@ export const ResourceTypeDescriptionMap = {
   [ResourceType.Email]: "Design an email with a drag-and-drop editor.",
   [ResourceType.File]: "Import and edit tabular data like a spreadsheet.",
   [ResourceType.Flowchart]: "Draw flows and node diagrams.",
+  [ResourceType.Survey]: "Build a survey and collect responses.",
   [ResourceType.TodoList]: "Track tasks with a list and calendar.",
   [ResourceType.Webpage]: "Design and publish a web page.",
 } as const satisfies Record<CreatableResourceType, string>;

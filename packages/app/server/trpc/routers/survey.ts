@@ -120,7 +120,8 @@ export const surveyRouter = router({
         AzureEntityType.SurveyResponse,
         JSON.stringify({ partitionKey: input.partitionKey, rowKey: input.rowKey }),
       );
-      if (input.model === surveyResponse.model)
+      // Response models are plain records, so duplicates are detected structurally rather than by reference
+      if (JSON.stringify(input.model) === JSON.stringify(surveyResponse.model))
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model")

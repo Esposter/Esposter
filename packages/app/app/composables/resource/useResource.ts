@@ -22,7 +22,6 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
   const alertStore = useAlertStore();
   const resource = ref<Resource>();
   const publication = ref<ResourcePublication>();
-  // Survey (separate surveys table) never reaches the explorer resource page until roadmap Phase 5.
   const getResourceMutations = (type: ResourceType): ResourceMutations => {
     switch (type) {
       case ResourceType.Dashboard:
@@ -56,6 +55,16 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
           readResourceContent: (input) => $trpc.flowchartEditor.readResourceContent.query(input),
           saveResourceContent: (input) => $trpc.flowchartEditor.saveResourceContent.mutate(input as never),
           updateResource: (input) => $trpc.flowchartEditor.updateResource.mutate(input),
+        };
+      case ResourceType.Survey:
+        return {
+          deleteResource: (input) => $trpc.survey.deleteResource.mutate(input),
+          publishResource: (input) => $trpc.survey.publishResource.mutate(input),
+          readResourceContent: (input) => $trpc.survey.readResourceContent.query(input),
+          readResourcePublication: (input) => $trpc.survey.readResourcePublication.query(input),
+          saveResourceContent: (input) => $trpc.survey.saveResourceContent.mutate(input as never),
+          unpublishResource: (input) => $trpc.survey.unpublishResource.mutate(input),
+          updateResource: (input) => $trpc.survey.updateResource.mutate(input),
         };
       case ResourceType.TodoList:
         return {
