@@ -29,7 +29,7 @@ const resetForm = () => {
 </script>
 
 <template>
-  <ResourceFileCrudViewEditDialogButton
+  <ResourceFileEditDialogButton
     :title
     :tooltip-text="title"
     :edited-value="extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.type], editedColumn)"
@@ -44,5 +44,5 @@ const resetForm = () => {
     "
   >
     <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
-  </ResourceFileCrudViewEditDialogButton>
+  </ResourceFileEditDialogButton>
 </template>

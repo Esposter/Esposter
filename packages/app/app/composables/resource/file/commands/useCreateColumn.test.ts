@@ -3,12 +3,11 @@ import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { ComputedColumn } from "#shared/models/resource/file/column/ComputedColumn";
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
 import { ColumnTransformationType } from "#shared/models/resource/file/column/transformation/ColumnTransformationType";
-import { createColumn as baseCreateColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
-import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
-import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { createColumn as baseCreateColumn } from "@/composables/resource/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
+import { setupCommandTest } from "@/composables/resource/file/commands/setupCommandTest.test";
+import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
@@ -21,13 +20,10 @@ describe(useCreateColumn, () => {
   test("appends a new column with null values for all rows", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const createColumn = useCreateColumn();
     const newColumn = new StringColumn({ name: "new", sourceName: "new" });
     createColumn(newColumn);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(3);
     expect(takeOne(dataSource.columns, 2).name).toBe("new");
@@ -38,16 +34,13 @@ describe(useCreateColumn, () => {
   test("undo removes the created column and its row values", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const newColumn = new StringColumn({ name: "new", sourceName: "new" });
     createColumn(newColumn);
-    undo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
 
     expect(dataSource.columns).toHaveLength(2);
     expect(takeOne(dataSource.rows).data.new).toBeUndefined();
@@ -56,17 +49,14 @@ describe(useCreateColumn, () => {
   test("redo re-applies create after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
     const newColumn = new StringColumn({ name: "new", sourceName: "new" });
     createColumn(newColumn);
-    undo(editedItem.value);
-    redo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
+    redo(dataSource);
 
     expect(dataSource.columns).toHaveLength(3);
     expect(takeOne(dataSource.rows).data.new).toBeNull();
@@ -75,14 +65,11 @@ describe(useCreateColumn, () => {
   test("creates a unique id when the same column instance is passed multiple times", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const createColumn = useCreateColumn();
     const newColumn = new StringColumn({ name: "new", sourceName: "new" });
     createColumn(newColumn);
     createColumn(newColumn);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     const firstColumn = takeOne(dataSource.columns, 2);
     const secondColumn = takeOne(dataSource.columns, 3);
@@ -98,36 +85,11 @@ describe(useCreateColumn, () => {
     );
   });
 
-  test("no-op when editedItem is undefined", () => {
-    expect.hasAssertions();
-
-    const createColumn = useCreateColumn();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
-    createColumn(newColumn);
-
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("no-op when dataSource is null", () => {
-    expect.hasAssertions();
-
-    setupEditedItem();
-    const createColumn = useCreateColumn();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
-    createColumn(newColumn);
-
-    expect(isUndoable.value).toBe(false);
-  });
-
   test("adds a computed column to the data source", () => {
     expect.hasAssertions();
 
     const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(
+    const { dataSource } = setupWithDataSource(
       createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
     );
     const createColumn = useCreateColumn();
@@ -140,9 +102,6 @@ describe(useCreateColumn, () => {
       },
     });
     createColumn(newColumn);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(2);
     expect(takeOne(dataSource.columns, 1)).toBeInstanceOf(ComputedColumn);
@@ -152,7 +111,7 @@ describe(useCreateColumn, () => {
     expect.hasAssertions();
 
     const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(
+    const { dataSource } = setupWithDataSource(
       createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
     );
     const createColumn = useCreateColumn();
@@ -165,9 +124,6 @@ describe(useCreateColumn, () => {
       },
     });
     createColumn(newColumn);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual([SOURCE_COLUMN_NAME]);
   });
@@ -176,7 +132,7 @@ describe(useCreateColumn, () => {
     expect.hasAssertions();
 
     const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(
+    const { dataSource } = setupWithDataSource(
       createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
     );
     const createColumn = useCreateColumn();
@@ -191,10 +147,7 @@ describe(useCreateColumn, () => {
       },
     });
     createColumn(newColumn);
-    undo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
 
     expect(dataSource.columns).toHaveLength(1);
   });
@@ -203,7 +156,7 @@ describe(useCreateColumn, () => {
     expect.hasAssertions();
 
     const sourceColumn = baseCreateColumn(SOURCE_COLUMN_NAME);
-    const { editedItem } = setupWithDataSource(
+    const { dataSource } = setupWithDataSource(
       createDataSource([sourceColumn], [createRow({ [SOURCE_COLUMN_NAME]: 0 })]),
     );
     const createColumn = useCreateColumn();
@@ -218,11 +171,8 @@ describe(useCreateColumn, () => {
       },
     });
     createColumn(newColumn);
-    undo(editedItem.value);
-    redo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
+    redo(dataSource);
 
     expect(dataSource.columns).toHaveLength(2);
   });

@@ -1,7 +1,7 @@
-import { createComputedColumn } from "@/composables/tableEditor/file/commands/createComputedColumn.test";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createNumberColumn } from "@/composables/tableEditor/file/commands/createNumberColumn.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { createComputedColumn } from "@/composables/resource/file/commands/createComputedColumn.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createNumberColumn } from "@/composables/resource/file/commands/createNumberColumn.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
 import { filterDataSourceColumns } from "@/services/resource/file/dataSource/filterDataSourceColumns";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

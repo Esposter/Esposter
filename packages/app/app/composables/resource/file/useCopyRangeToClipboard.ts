@@ -1,5 +1,3 @@
-import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
-
 import { copyToClipboard } from "@/services/resource/file/commands/copyToClipboard";
 import { useAlertStore } from "@/store/alert";
 import { useFileStore } from "@/store/resource/file";

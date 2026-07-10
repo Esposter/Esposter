@@ -1,6 +1,6 @@
 import type { Row } from "#shared/models/resource/file/datasource/Row";
 
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
 
 // The 5-column basis every table-editor bench fixture is generated against. Co-located with the
 // Generator it seeds (rather than constants.bench.ts) so constants.bench can import both from here

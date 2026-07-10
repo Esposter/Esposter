@@ -20,11 +20,6 @@ export const ProductListLinkItems = [
     title: "Resource Explorer",
   },
   {
-    href: RoutePath.TableEditor,
-    icon: "mdi-table-edit",
-    title: "Table Editor",
-  },
-  {
     href: RoutePath[SURVEY_DISPLAY_NAME],
     icon: "mdi-text-box-edit",
     title: SURVEY_DISPLAY_NAME,

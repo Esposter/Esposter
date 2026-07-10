@@ -1,14 +1,16 @@
+import type { CsvFileSettings } from "#shared/models/resource/file/CsvFileSettings";
 import type { Column } from "#shared/models/resource/file/column/Column";
 import type { DataSource } from "#shared/models/resource/file/datasource/DataSource";
 
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
-import { CsvDataSourceItem } from "#shared/models/resource/file/csv/CsvDataSourceItem";
 import { CsvDelimiter } from "#shared/models/resource/file/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/file/datasource/Row";
 import { serializeCsv } from "@/services/resource/file/csv/serializeCsv";
 import { DataSourceConfigurationMap } from "@/services/resource/file/dataSource/DataSourceConfigurationMap";
 import { describe, expect, test } from "vitest";
+
+const defaultSettings: CsvFileSettings = { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv };
 
 const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
   columns,
@@ -31,7 +33,7 @@ describe(serializeCsv, () => {
       [createColumn("a"), createColumn("b")],
       [createRow({ a: 0, b: 1 }), createRow({ a: 2, b: 3 })],
     );
-    const item = new CsvDataSourceItem();
+    const item = defaultSettings;
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
     const text = await blob.text();
 
@@ -42,7 +44,10 @@ describe(serializeCsv, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: 0, b: 1 })]);
-    const item = new CsvDataSourceItem({ configuration: { delimiter: CsvDelimiter.Semicolon } });
+    const item = {
+      configuration: { delimiter: CsvDelimiter.Semicolon },
+      type: DataSourceType.Csv,
+    } satisfies CsvFileSettings;
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
     const text = await blob.text();
 
@@ -53,7 +58,7 @@ describe(serializeCsv, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a")], [new Row({ data: { a: "0,1" } })]);
-    const item = new CsvDataSourceItem();
+    const item = defaultSettings;
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
     const text = await blob.text();
 
@@ -64,7 +69,7 @@ describe(serializeCsv, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a")], [new Row({ data: { a: 'say "hi"' } })]);
-    const item = new CsvDataSourceItem();
+    const item = defaultSettings;
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
     const text = await blob.text();
 
@@ -75,7 +80,7 @@ describe(serializeCsv, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a")], [new Row({ data: { a: "0\n1" } })]);
-    const item = new CsvDataSourceItem();
+    const item = defaultSettings;
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
     const text = await blob.text();
 
@@ -86,7 +91,7 @@ describe(serializeCsv, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([], []);
-    const item = new CsvDataSourceItem();
+    const item = defaultSettings;
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
 
     expect(blob.type).toBe(MIME_TYPE);
@@ -96,7 +101,7 @@ describe(serializeCsv, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a")], []);
-    const item = new CsvDataSourceItem();
+    const item = defaultSettings;
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
     const text = await blob.text();
 

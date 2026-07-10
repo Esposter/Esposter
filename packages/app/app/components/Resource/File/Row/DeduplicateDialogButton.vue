@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
 import type { IndexedRow } from "@/models/resource/file/commands/IndexedRow";
 
 import { KeepDuplicateMode } from "@/models/resource/file/commands/KeepDuplicateMode";
@@ -12,12 +11,9 @@ const { dataSource } = storeToRefs(fileStore);
 const isOpen = ref(false);
 const keepMode = ref(KeepDuplicateMode.First);
 const deleteDuplicateRows = useDeleteDuplicateRows();
-const duplicateRowEntries = computed<IndexedRow[]>(() =>
-  dataSource.value ? findDuplicateRows(dataSource.value, keepMode.value) : [],
-);
+const duplicateRowEntries = computed<IndexedRow[]>(() => findDuplicateRows(dataSource.value, keepMode.value));
 const duplicateCount = computed(() => duplicateRowEntries.value.length);
 const duplicateHeaders = computed(() => {
-  if (!dataSource.value) return [];
   return [
     { key: "index", title: "#", value: (entry: IndexedRow) => entry.index },
     ...dataSource.value.columns

@@ -2,12 +2,11 @@
 import { NumberColumn } from "#shared/models/resource/file/column/NumberColumn";
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
 import { StringTransformationType } from "#shared/models/resource/file/column/transformation/string/StringTransformationType";
-import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
-import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
-import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { createColumn } from "@/composables/resource/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
+import { setupCommandTest } from "@/composables/resource/file/commands/setupCommandTest.test";
+import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
@@ -22,12 +21,9 @@ describe(useStringTransformation, () => {
       [createColumn(""), createColumn(" ")],
       [createRow({ "": " ", " ": " " }), createRow({ "": " ", " ": " " })],
     );
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     stringTransformation(StringTransformationType.Trim);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe("");
     expect(takeOne(dataSource.rows).data[" "]).toBe("");
@@ -39,12 +35,9 @@ describe(useStringTransformation, () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("")], [createRow({ "": "A" })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     stringTransformation(StringTransformationType.LowerCase);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe("a");
   });
@@ -53,12 +46,9 @@ describe(useStringTransformation, () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("")], [createRow({ "": "a" })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     stringTransformation(StringTransformationType.UpperCase);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe("A");
   });
@@ -67,12 +57,9 @@ describe(useStringTransformation, () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("")], [createRow({ "": "a b" })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     stringTransformation(StringTransformationType.TitleCase);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe("A B");
   });
@@ -82,14 +69,11 @@ describe(useStringTransformation, () => {
 
     const numberColumn = new NumberColumn({ name: "", size: 0, sourceName: "" });
     const ds = createDataSource([numberColumn], [createRow({ "": 0 })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
     stringTransformation(StringTransformationType.Trim);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(isUndoable.value).toBe(false);
@@ -100,14 +84,11 @@ describe(useStringTransformation, () => {
 
     const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
     const ds = createDataSource([hiddenColumn], [createRow({ "": " " })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
     stringTransformation(StringTransformationType.Trim);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(" ");
     expect(isUndoable.value).toBe(false);
@@ -117,19 +98,13 @@ describe(useStringTransformation, () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    const editedItemValue = editedItem.value;
-
-    assert.exists(editedItemValue);
 
     stringTransformation(StringTransformationType.Trim);
-    undo(editedItemValue);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(" ");
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
@@ -139,45 +114,16 @@ describe(useStringTransformation, () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    const editedItemValue = editedItem.value;
-
-    assert.exists(editedItemValue);
 
     stringTransformation(StringTransformationType.Trim);
-    undo(editedItemValue);
-    redo(editedItemValue);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
+    redo(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe("");
-  });
-
-  test("no-op when editedItem is undefined", () => {
-    expect.hasAssertions();
-
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    const stringTransformation = useStringTransformation();
-    stringTransformation(StringTransformationType.Trim);
-
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("no-op when dataSource is null", () => {
-    expect.hasAssertions();
-
-    setupEditedItem();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    const stringTransformation = useStringTransformation();
-    stringTransformation(StringTransformationType.Trim);
-
-    expect(isUndoable.value).toBe(false);
   });
 
   test("description includes the transform", () => {

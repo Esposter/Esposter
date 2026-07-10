@@ -1,10 +1,10 @@
 import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { ComputedColumn } from "#shared/models/resource/file/column/ComputedColumn";
 import { ColumnTransformationType } from "#shared/models/resource/file/column/transformation/ColumnTransformationType";
-import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
-import { createComputedColumn } from "@/composables/tableEditor/file/commands/createComputedColumn.test";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { createColumn } from "@/composables/resource/file/commands/createColumn.test";
+import { createComputedColumn } from "@/composables/resource/file/commands/createComputedColumn.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
 import { computeValue } from "@/services/resource/file/column/computeValue";
 import { describe, expect, test } from "vitest";
 

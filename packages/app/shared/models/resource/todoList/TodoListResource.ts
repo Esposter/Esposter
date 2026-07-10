@@ -7,9 +7,9 @@ import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface TodoListResource {
-  items: ToData<TodoListItem>[];
+  items: TodoListItem[];
 }
 
 export const todoListResourceSchema = z.object({
   items: createUniqueArraySchema(todoListItemSchema, "id").max(RESOURCE_ITEMS_MAX_LENGTH),
-}) satisfies z.ZodType<TodoListResource>;
+}) satisfies z.ZodType<ToData<TodoListResource>>;

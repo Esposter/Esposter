@@ -7,11 +7,11 @@ import { dataSourceSchema } from "#shared/models/resource/file/datasource/DataSo
 import { z } from "zod";
 
 export interface FileResource {
-  data: ToData<DataSource>;
+  data: DataSource;
   settings: FileSettings;
 }
 
 export const fileResourceSchema = z.object({
   data: dataSourceSchema,
   settings: fileSettingsSchema,
-}) satisfies z.ZodType<FileResource>;
+}) satisfies z.ZodType<ToData<FileResource>>;

@@ -1,4 +1,3 @@
-import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
 import type { SortItem } from "vuetify/lib/components/VDataTable/composables/sort.mjs";
 
 import { useFileStore } from "@/store/resource/file";

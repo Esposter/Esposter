@@ -2,10 +2,10 @@ import { BooleanColumn } from "#shared/models/resource/file/column/BooleanColumn
 import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { DateFormats } from "#shared/models/resource/file/column/DateFormat";
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createDateColumn } from "@/composables/tableEditor/file/commands/createDateColumn.test";
-import { createNumberColumn } from "@/composables/tableEditor/file/commands/createNumberColumn.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createDateColumn } from "@/composables/resource/file/commands/createDateColumn.test";
+import { createNumberColumn } from "@/composables/resource/file/commands/createNumberColumn.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
 import { computeColumnStatistics } from "@/services/resource/file/column/computeColumnStatistics";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

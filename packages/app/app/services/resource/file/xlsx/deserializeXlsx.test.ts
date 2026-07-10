@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 // DOMParser only exists in the nuxt env, and read-excel-file parses the workbook XML with it.
+import type { XlsxFileSettings } from "#shared/models/resource/file/XlsxFileSettings";
 import type { Column } from "#shared/models/resource/file/column/Column";
 import type { DataSource } from "#shared/models/resource/file/datasource/DataSource";
 
@@ -7,12 +8,13 @@ import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/file/datasource/Row";
-import { XlsxDataSourceItem } from "#shared/models/resource/file/xlsx/XlsxDataSourceItem";
 import { DataSourceConfigurationMap } from "@/services/resource/file/dataSource/DataSourceConfigurationMap";
 import { deserializeXlsx } from "@/services/resource/file/xlsx/deserializeXlsx";
 import { serializeXlsx } from "@/services/resource/file/xlsx/serializeXlsx";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+const defaultSettings: XlsxFileSettings = { configuration: { sheetIndex: 0 }, type: DataSourceType.Xlsx };
 
 const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
   columns,
@@ -29,7 +31,7 @@ describe(deserializeXlsx, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Xlsx].mimeType;
 
   const createXlsxFile = async (dataSource: DataSource, name = "test.xlsx") => {
-    const blob = await serializeXlsx(dataSource, new XlsxDataSourceItem(), MIME_TYPE);
+    const blob = await serializeXlsx(dataSource, defaultSettings, MIME_TYPE);
     return new File([blob], name, { type: MIME_TYPE });
   };
 
@@ -41,7 +43,7 @@ describe(deserializeXlsx, () => {
       [createRow({ a: 0, b: 1 }), createRow({ a: 2, b: 3 })],
     );
     const file = await createXlsxFile(dataSource);
-    const { columns, rows } = await deserializeXlsx(file, new XlsxDataSourceItem());
+    const { columns, rows } = await deserializeXlsx(file, defaultSettings);
 
     expect(columns).toHaveLength(2);
     expect(takeOne(columns).name).toBe("a");
@@ -57,7 +59,7 @@ describe(deserializeXlsx, () => {
 
     const dataSource = createDataSource([createColumn("a"), createColumn("b")], []);
     const file = await createXlsxFile(dataSource);
-    const { columns, metadata, rows } = await deserializeXlsx(file, new XlsxDataSourceItem());
+    const { columns, metadata, rows } = await deserializeXlsx(file, defaultSettings);
 
     expect(columns).toHaveLength(2);
     expect(rows).toHaveLength(0);

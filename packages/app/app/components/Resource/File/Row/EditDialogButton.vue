@@ -22,7 +22,7 @@ const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
 </script>
 
 <template>
-  <ResourceFileCrudViewEditDialogButton
+  <ResourceFileEditDialogButton
     :title
     :tooltip-text="title"
     :value="row"
@@ -45,5 +45,5 @@ const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
         />
       </v-col>
     </v-row>
-  </ResourceFileCrudViewEditDialogButton>
+  </ResourceFileEditDialogButton>
 </template>

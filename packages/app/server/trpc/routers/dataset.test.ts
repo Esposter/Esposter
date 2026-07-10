@@ -2,19 +2,19 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import type { FileResource } from "#shared/models/resource/file/FileResource";
+
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
-import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
-import { CsvDataSourceItem } from "#shared/models/resource/file/csv/CsvDataSourceItem";
+import { CsvDelimiter } from "#shared/models/resource/file/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/file/datasource/Row";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
+import { fileRouter } from "@@/server/trpc/routers/file";
 import { AZURE_MAX_PAGE_SIZE, resources, surveys } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -23,7 +23,7 @@ describe("dataset", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["dataset"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
-  let tableEditorCaller: DecorateRouterRecord<TRPCRouter["tableEditor"]>;
+  let fileCaller: DecorateRouterRecord<TRPCRouter["file"]>;
   const name = "name";
   const group = "group";
   const columnName = "columnName";
@@ -45,7 +45,7 @@ describe("dataset", () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(datasetRouter)(mockContext);
     surveyCaller = createCallerFactory(surveyRouter)(mockContext);
-    tableEditorCaller = createCallerFactory(tableEditorRouter)(mockContext);
+    fileCaller = createCallerFactory(fileRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -145,74 +145,63 @@ describe("dataset", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("reads table document dataset", async () => {
+  test("reads file dataset", async () => {
     expect.hasAssertions();
 
-    const newResource = await tableEditorCaller.createResource({ name });
-    const configuration = new TableEditorConfiguration();
-    configuration[TableEditorType.File].items.push(
-      new CsvDataSourceItem({
-        dataSource: {
-          columns: [new StringColumn({ name: columnName, sourceName: columnName })],
-          metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
-          rows: [new Row({ data: { [columnName]: value } })],
-          statistics: { columnCount: 1, rowCount: 1, size: 0 },
-        },
-        name,
-      }),
-    );
-    await tableEditorCaller.saveResourceContent({ content: configuration, contentVersion: 0, id: newResource.id });
-    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument });
+    const newResource = await fileCaller.createResource({ name });
+    const content: FileResource = {
+      data: {
+        columns: [new StringColumn({ name: columnName, sourceName: columnName })],
+        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
+        rows: [new Row({ data: { [columnName]: value } })],
+        statistics: { columnCount: 1, rowCount: 1, size: 0 },
+      },
+      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
+    };
+    await fileCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
+    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.File });
 
     expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
     expect(dataset.rows).toStrictEqual([{ [columnName]: value }]);
   });
 
-  test("reads table document dataset within the azure page size limit", async () => {
+  test("reads file dataset within the azure page size limit", async () => {
     expect.hasAssertions();
 
-    const newResource = await tableEditorCaller.createResource({ name });
-    const configuration = new TableEditorConfiguration();
-    configuration[TableEditorType.File].items.push(
-      new CsvDataSourceItem({
-        dataSource: {
-          columns: [new StringColumn({ name: columnName, sourceName: columnName })],
-          metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
-          rows: Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => new Row({ data: { [columnName]: value } })),
-          statistics: { columnCount: 1, rowCount: AZURE_MAX_PAGE_SIZE + 1, size: 0 },
-        },
-        name,
-      }),
-    );
-    await tableEditorCaller.saveResourceContent({ content: configuration, contentVersion: 0, id: newResource.id });
-    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument });
+    const newResource = await fileCaller.createResource({ name });
+    const content: FileResource = {
+      data: {
+        columns: [new StringColumn({ name: columnName, sourceName: columnName })],
+        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
+        rows: Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => new Row({ data: { [columnName]: value } })),
+        statistics: { columnCount: 1, rowCount: AZURE_MAX_PAGE_SIZE + 1, size: 0 },
+      },
+      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
+    };
+    await fileCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
+    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.File });
 
     expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
   });
 
-  test("fails read table document without data source", async () => {
+  test("fails read file dataset without content", async () => {
     expect.hasAssertions();
 
-    const newResource = await tableEditorCaller.createResource({ name });
-    await tableEditorCaller.saveResourceContent({
-      content: new TableEditorConfiguration(),
-      contentVersion: 0,
-      id: newResource.id,
-    });
+    const newResource = await fileCaller.createResource({ name });
 
     await expect(
-      caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument }),
+      caller.readDataset({ id: newResource.id, type: DatasetProviderType.File }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
-  test("fails read table document with wrong user", async () => {
+  test("fails read file dataset with wrong user", async () => {
     expect.hasAssertions();
 
-    const newResource = await tableEditorCaller.createResource({ name });
+    const newResource = await fileCaller.createResource({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      caller.readDataset({ id: newResource.id, type: DatasetProviderType.TableDocument }),
+      caller.readDataset({ id: newResource.id, type: DatasetProviderType.File }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

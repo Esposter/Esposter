@@ -12,7 +12,7 @@ interface ResourceBladeOutletProps {
 }
 
 const { activeBlade, publication, resource } = defineProps<ResourceBladeOutletProps>();
-// The type's own blade wins over the built-ins; a migrated editor renders inline, else the launch panel
+// The type's own blade wins over the built-ins; the Editor blade renders the type's inline editor
 const bladeComponent = computed(
   () => ResourceBladeDefinitionMap[resource.type].find(({ slug }) => slug === activeBlade)?.component,
 );
@@ -33,5 +33,4 @@ const editorComponent = computed(() => ResourceEditorComponentMap[resource.type]
       <StyledSkeleton />
     </template>
   </Suspense>
-  <ResourceEditorLaunch v-else :resource />
 </template>

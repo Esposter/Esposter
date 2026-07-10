@@ -1,5 +1,3 @@
-import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
-
 import { findMatchingCells } from "@/services/resource/file/commands/findMatchingCells";
 import { useFileStore } from "@/store/resource/file";
 

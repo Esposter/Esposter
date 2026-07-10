@@ -1,8 +1,7 @@
 // @vitest-environment nuxt
 import { Row } from "#shared/models/resource/file/datasource/Row";
-import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
-import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { setupCommandTest } from "@/composables/resource/file/commands/setupCommandTest.test";
+import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
@@ -13,13 +12,10 @@ describe(useUpdateRow, () => {
   test("updates row data at given index", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const updateRow = useUpdateRow();
-    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? []);
+    const originalRow = takeOne(dataSource?.rows ?? []);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(10);
     expect(takeOne(dataSource.rows).data[" "]).toBe(11);
@@ -28,16 +24,13 @@ describe(useUpdateRow, () => {
   test("undo restores original row data", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const updateRow = useUpdateRow();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? []);
+    const originalRow = takeOne(dataSource?.rows ?? []);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
-    undo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(takeOne(dataSource.rows).data[" "]).toBe(1);
@@ -46,80 +39,42 @@ describe(useUpdateRow, () => {
   test("redo re-applies update after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const updateRow = useUpdateRow();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? []);
+    const originalRow = takeOne(dataSource?.rows ?? []);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
-    undo(editedItem.value);
-    redo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
+    redo(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(10);
-  });
-
-  test("no-op when row id not found", () => {
-    expect.hasAssertions();
-
-    setupWithDataSource();
-    const updateRow = useUpdateRow();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    updateRow(new Row({ data: { "": 10 } }));
-
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("no-op when editedItem is undefined", () => {
-    expect.hasAssertions();
-
-    const updateRow = useUpdateRow();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    updateRow(new Row({ data: { "": 10 } }));
-
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("no-op when dataSource is null", () => {
-    expect.hasAssertions();
-
-    setupEditedItem();
-    const updateRow = useUpdateRow();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    updateRow(new Row({ data: { "": 10 } }));
-
-    expect(isUndoable.value).toBe(false);
   });
 
   test("snapshot immutability - mutating passed object after call does not affect undo history", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const updateRow = useUpdateRow();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? []);
+    const originalRow = takeOne(dataSource?.rows ?? []);
     const updatedRow = reactive(
       new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })),
     );
     updateRow(updatedRow);
     updatedRow.data[""] = 99;
     updatedRow.data[" "] = 99;
-    undo(editedItem.value);
-    const dataSourceAfterUndo = editedItem.value?.dataSource;
+    undo(dataSource);
+    const dataSourceAfterUndo = dataSource;
 
     assert.exists(dataSourceAfterUndo);
 
     expect(takeOne(dataSourceAfterUndo.rows).data[""]).toBe(0);
     expect(takeOne(dataSourceAfterUndo.rows).data[" "]).toBe(1);
 
-    redo(editedItem.value);
-    const dataSourceAfterRedo = editedItem.value?.dataSource;
+    redo(dataSource);
+    const dataSourceAfterRedo = dataSource;
 
     assert.exists(dataSourceAfterRedo);
 

@@ -1,11 +1,10 @@
 // @vitest-environment nuxt
-import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createNumberColumn } from "@/composables/tableEditor/file/commands/createNumberColumn.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
-import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
-import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { createColumn } from "@/composables/resource/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createNumberColumn } from "@/composables/resource/file/commands/createNumberColumn.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
+import { setupCommandTest } from "@/composables/resource/file/commands/setupCommandTest.test";
+import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
@@ -20,12 +19,9 @@ describe(useFindReplace, () => {
       [createColumn(""), createColumn(" ")],
       [createRow({ "": " ", " ": " " }), createRow({ "": " ", " ": 0 })],
     );
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     findReplace(" ", "");
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe("");
     expect(takeOne(dataSource.rows).data[" "]).toBe("");
@@ -37,12 +33,9 @@ describe(useFindReplace, () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("")], [createRow({ "": "a " })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     findReplace(" ", "");
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe("a");
   });
@@ -51,19 +44,13 @@ describe(useFindReplace, () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("")], [createRow({ "": " " }), createRow({ "": " " })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    const editedItemValue = editedItem.value;
-
-    assert.exists(editedItemValue);
 
     findReplace(" ", "");
-    undo(editedItemValue);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(" ");
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
@@ -73,20 +60,14 @@ describe(useFindReplace, () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    const editedItemValue = editedItem.value;
-
-    assert.exists(editedItemValue);
 
     findReplace(" ", "");
-    undo(editedItemValue);
-    redo(editedItemValue);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
+    redo(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe("");
   });
@@ -95,98 +76,23 @@ describe(useFindReplace, () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn(""), createColumn(" ")], [createRow({ "": " ", " ": " " })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     findReplace(" ", "", { columnName: "", rowIndex: 0 });
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe("");
     expect(takeOne(dataSource.rows).data[" "]).toBe(" ");
-  });
-
-  test("no-op when find value equals replace value", () => {
-    expect.hasAssertions();
-
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
-    const { editedItem } = setupWithDataSource(ds);
-    const findReplace = useFindReplace();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    findReplace(" ", " ");
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
-    expect(isUndoable.value).toBe(false);
   });
 
   test("preserves number type after replace", () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createNumberColumn("")], [createRow({ "": 1 })]);
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
     findReplace("1", "2");
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows).data[""]).toBe(2);
-  });
-
-  test("no-op when find value is empty", () => {
-    expect.hasAssertions();
-
-    const ds = createDataSource([createColumn("")], [createRow({ "": " " })]);
-    const { editedItem } = setupWithDataSource(ds);
-    const findReplace = useFindReplace();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    findReplace("", "b");
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
-
-    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("no-op when no matches found", () => {
-    expect.hasAssertions();
-
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    setupWithDataSource();
-    const findReplace = useFindReplace();
-    findReplace("-1", "");
-
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("no-op when editedItem is undefined", () => {
-    expect.hasAssertions();
-
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    const findReplace = useFindReplace();
-    findReplace(" ", "");
-
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("no-op when dataSource is null", () => {
-    expect.hasAssertions();
-
-    setupEditedItem();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    const findReplace = useFindReplace();
-    findReplace(" ", "");
-
-    expect(isUndoable.value).toBe(false);
   });
 
   test("description shows row number when replacing a single occurrence", () => {

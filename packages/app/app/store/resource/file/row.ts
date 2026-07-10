@@ -1,4 +1,3 @@
-import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
 import type { Row } from "#shared/models/resource/file/datasource/Row";
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 import type { SortItem } from "vuetify/lib/components/VDataTable/composables/sort.mjs";

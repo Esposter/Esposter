@@ -1,12 +1,14 @@
+import type { XlsxFileSettings } from "#shared/models/resource/file/XlsxFileSettings";
 import type { DataSource } from "#shared/models/resource/file/datasource/DataSource";
 
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/file/datasource/Row";
-import { XlsxDataSourceItem } from "#shared/models/resource/file/xlsx/XlsxDataSourceItem";
 import { DataSourceConfigurationMap } from "@/services/resource/file/dataSource/DataSourceConfigurationMap";
 import { serializeXlsx } from "@/services/resource/file/xlsx/serializeXlsx";
 import { describe, expect, test } from "vitest";
+
+const defaultSettings: XlsxFileSettings = { configuration: { sheetIndex: 0 }, type: DataSourceType.Xlsx };
 
 const createDataSource = (columns: StringColumn[], rows: Row[]): DataSource => ({
   columns,
@@ -29,7 +31,7 @@ describe(serializeXlsx, () => {
       [createColumn("a"), createColumn("b")],
       [createRow({ a: 0, b: 1 }), createRow({ a: 2, b: 3 })],
     );
-    const blob = await serializeXlsx(dataSource, new XlsxDataSourceItem(), MIME_TYPE);
+    const blob = await serializeXlsx(dataSource, defaultSettings, MIME_TYPE);
 
     expect(blob).toBeInstanceOf(Blob);
     expect(blob.size).toBeGreaterThan(0);
@@ -39,7 +41,7 @@ describe(serializeXlsx, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([], []);
-    const blob = await serializeXlsx(dataSource, new XlsxDataSourceItem(), MIME_TYPE);
+    const blob = await serializeXlsx(dataSource, defaultSettings, MIME_TYPE);
 
     expect(blob).toBeInstanceOf(Blob);
   });

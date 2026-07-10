@@ -1,14 +1,16 @@
+import type { JsonFileSettings } from "#shared/models/resource/file/JsonFileSettings";
 import type { Column } from "#shared/models/resource/file/column/Column";
 import type { DataSource } from "#shared/models/resource/file/datasource/DataSource";
 
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/file/datasource/Row";
-import { JsonDataSourceItem } from "#shared/models/resource/file/json/JsonDataSourceItem";
 import { DataSourceConfigurationMap } from "@/services/resource/file/dataSource/DataSourceConfigurationMap";
 import { serializeJson } from "@/services/resource/file/json/serializeJson";
 import { jsonDateParse } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+const defaultSettings: JsonFileSettings = { configuration: {}, type: DataSourceType.Json };
 
 const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
   columns,
@@ -31,7 +33,7 @@ describe(serializeJson, () => {
       [createColumn("a"), createColumn("b")],
       [createRow({ a: 0, b: 1 }), createRow({ a: 2, b: 3 })],
     );
-    const blob = await serializeJson(dataSource, new JsonDataSourceItem(), MIME_TYPE);
+    const blob = await serializeJson(dataSource, defaultSettings, MIME_TYPE);
     const text = await blob.text();
 
     expect(jsonDateParse(text)).toStrictEqual([
@@ -44,7 +46,7 @@ describe(serializeJson, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([], []);
-    const blob = await serializeJson(dataSource, new JsonDataSourceItem(), MIME_TYPE);
+    const blob = await serializeJson(dataSource, defaultSettings, MIME_TYPE);
 
     expect(blob.type).toBe(MIME_TYPE);
   });
@@ -53,7 +55,7 @@ describe(serializeJson, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a")], []);
-    const blob = await serializeJson(dataSource, new JsonDataSourceItem(), MIME_TYPE);
+    const blob = await serializeJson(dataSource, defaultSettings, MIME_TYPE);
     const text = await blob.text();
 
     expect(jsonDateParse(text)).toStrictEqual([]);

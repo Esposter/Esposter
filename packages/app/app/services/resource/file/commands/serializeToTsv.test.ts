@@ -1,6 +1,6 @@
-import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { createColumn } from "@/composables/resource/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
 import { serializeToTsv } from "@/services/resource/file/commands/serializeToTsv";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

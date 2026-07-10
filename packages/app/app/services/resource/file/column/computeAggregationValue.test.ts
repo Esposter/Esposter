@@ -2,9 +2,9 @@ import type { AggregationTransformation } from "#shared/models/resource/file/col
 
 import { AggregationTransformationType } from "#shared/models/resource/file/column/transformation/AggregationTransformationType";
 import { ColumnTransformationType } from "#shared/models/resource/file/column/transformation/ColumnTransformationType";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createNumberColumn } from "@/composables/tableEditor/file/commands/createNumberColumn.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createNumberColumn } from "@/composables/resource/file/commands/createNumberColumn.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
 import { computeAggregationValue } from "@/services/resource/file/column/computeAggregationValue";
 import { describe, expect, test } from "vitest";
 

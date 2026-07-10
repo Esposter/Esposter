@@ -1,6 +1,4 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
-import type { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import type { ToData } from "@esposter/shared";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
@@ -14,7 +12,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   );
   const todoList = ref<TodoListResource>({ items: [] });
   const items = computed({
-    get: () => todoList.value.items as ToData<TodoListItem>[],
+    get: () => todoList.value.items,
     set: (newItems) => {
       todoList.value.items = newItems;
     },

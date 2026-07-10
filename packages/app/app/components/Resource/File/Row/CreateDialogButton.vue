@@ -23,7 +23,7 @@ const resetForm = () => {
 </script>
 
 <template>
-  <ResourceFileCrudViewEditDialogButton
+  <ResourceFileEditDialogButton
     :edited-value="editedRow"
     icon="mdi-table-row-plus-after"
     :schema="rowSchema"
@@ -48,5 +48,5 @@ const resetForm = () => {
         />
       </v-col>
     </v-row>
-  </ResourceFileCrudViewEditDialogButton>
+  </ResourceFileEditDialogButton>
 </template>

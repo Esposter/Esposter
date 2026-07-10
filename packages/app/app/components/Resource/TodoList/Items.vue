@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { ToData } from "@esposter/shared";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { TodoListItem, todoListItemSchema } from "#shared/models/resource/todoList/TodoListItem";
@@ -24,7 +23,7 @@ const {
   searchQuery,
 } = storeToRefs(todoListStore);
 const isLoading = ref(true);
-const onClickRow = (_event: MouseEvent, { item }: ItemSlot<ToData<TodoListItem>>) => editItem({ id: item.id });
+const onClickRow = (_event: MouseEvent, { item }: ItemSlot<TodoListItem>) => editItem({ id: item.id });
 
 onMounted(async () => {
   await loadContent();

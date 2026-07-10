@@ -6,7 +6,6 @@ export const LocalStorageKey = {
   DungeonsStore: "dungeons-store",
   IsResourceListCollapsed: "is-resource-list-collapsed",
   SurveyResponseId: "survey-response-id",
-  TableEditorStore: "table-editor-store",
   VoiceCameraDeviceId: "user-settings-voice-camera-device-id",
   VoiceInputDeviceId: "user-settings-voice-input-device-id",
   VoiceOutputDeviceId: "user-settings-voice-output-device-id",

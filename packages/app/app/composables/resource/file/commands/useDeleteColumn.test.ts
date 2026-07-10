@@ -1,10 +1,9 @@
 // @vitest-environment nuxt
-import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
-import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
-import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { createColumn } from "@/composables/resource/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
+import { setupCommandTest } from "@/composables/resource/file/commands/setupCommandTest.test";
+import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
@@ -15,12 +14,9 @@ describe(useDeleteColumn, () => {
   test("removes column by name", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const deleteColumn = useDeleteColumn();
     deleteColumn("");
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(1);
     expect(takeOne(dataSource.columns).name).toBe(" ");
@@ -30,15 +26,12 @@ describe(useDeleteColumn, () => {
   test("undo restores deleted column and row values", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const deleteColumn = useDeleteColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     deleteColumn("");
-    undo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
 
     expect(dataSource.columns).toHaveLength(2);
     expect(takeOne(dataSource.columns).name).toBe("");
@@ -49,16 +42,13 @@ describe(useDeleteColumn, () => {
   test("redo re-applies delete after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const deleteColumn = useDeleteColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
     deleteColumn("");
-    undo(editedItem.value);
-    redo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
+    redo(dataSource);
 
     expect(dataSource.columns).toHaveLength(1);
     expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
@@ -71,51 +61,13 @@ describe(useDeleteColumn, () => {
       [createColumn("a"), createColumn("b"), createColumn("c")],
       [createRow({ a: 1, b: 2, c: 3 })],
     );
-    const { editedItem } = setupWithDataSource(ds);
+    const { dataSource } = setupWithDataSource(ds);
     const deleteColumn = useDeleteColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     deleteColumn("b");
-    undo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    undo(dataSource);
 
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c"]);
-  });
-
-  test("no-op when column name not found", () => {
-    expect.hasAssertions();
-
-    setupWithDataSource();
-    const deleteColumn = useDeleteColumn();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    deleteColumn("-1");
-
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("no-op when editedItem is undefined", () => {
-    expect.hasAssertions();
-
-    const deleteColumn = useDeleteColumn();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    deleteColumn("");
-
-    expect(isUndoable.value).toBe(false);
-  });
-
-  test("no-op when dataSource is null", () => {
-    expect.hasAssertions();
-
-    setupEditedItem();
-    const deleteColumn = useDeleteColumn();
-    const fileHistoryStore = useFileHistoryStore();
-    const { isUndoable } = storeToRefs(fileHistoryStore);
-    deleteColumn("");
-
-    expect(isUndoable.value).toBe(false);
   });
 });

@@ -29,7 +29,7 @@ const resetForm = () => {
 </script>
 
 <template>
-  <ResourceFileCrudViewEditDialogButton
+  <ResourceFileEditDialogButton
     icon="mdi-table-column-plus-after"
     title="Create Column"
     tooltip-text="Add Column"
@@ -46,5 +46,5 @@ const resetForm = () => {
     "
   >
     <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
-  </ResourceFileCrudViewEditDialogButton>
+  </ResourceFileEditDialogButton>
 </template>

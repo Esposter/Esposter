@@ -1,6 +1,6 @@
-import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { BENCH_COLUMN_NAMES, generateBenchRows } from "@/composables/tableEditor/file/commands/generateBenchRows.bench";
+import { createColumn } from "@/composables/resource/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { BENCH_COLUMN_NAMES, generateBenchRows } from "@/composables/resource/file/commands/generateBenchRows.bench";
 
 export const benchColumns = BENCH_COLUMN_NAMES.map((name) => createColumn(name));
 

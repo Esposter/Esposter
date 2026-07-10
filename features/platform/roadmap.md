@@ -76,13 +76,28 @@ deleted. Dashboard's autosave watch (deep-diff `virtualDashboard`) moved from th
 edit-item query-param deep-links keep working on the blade route. The Dashboard editor header lost its
 viewer-page button (`/dashboard` deleted — the published view is the render surface now).
 
-## Phase 4 — File split + TodoList
+## Phase 4 — File split + TodoList ✅ (shipped)
 
-- [ ] `fileResourceSchema` (`{ settings, data }`) + model relocation; `TableEditorConfiguration`/`TableEditorType`/VuetifyComponent models deleted ([spec](specs/file-resource.md), [out-of-scope/vuetify-component-resource.md](out-of-scope/vuetify-component-resource.md))
-- [ ] Data + Settings blades; `TableEditor/File/*` → `Resource/File/*`; store tree → `store/resource/file/` (command/undo stack intact; `item.ts` + type switching die)
-- [ ] Portable wiring from `DataSourceConfigurationMap` → `PortableFormatMap[File]`; empty-data `StyledEmptyState` + Import command
-- [ ] `todoListSchema` + Items blade; Calendar blade over this list ([deferred/global-calendar.md](deferred/global-calendar.md)); delete `pages/{table-editor,calendar}.vue`
-- [ ] Dataset provider re-key: `DatasetProviderType.TableDocument` → `File`, `readFileDataset` reads `content.data`, `DatasetReference.itemId` removed
+- [x] `fileResourceSchema` (`{ settings, data }`) + model relocation; `TableEditorConfiguration`/`TableEditorType`/VuetifyComponent models deleted ([spec](specs/file-resource.md), [out-of-scope/vuetify-component-resource.md](out-of-scope/vuetify-component-resource.md))
+- [x] Data + Settings blades; `TableEditor/File/*` → `Resource/File/*`; store tree → `store/resource/file/` (command/undo stack intact; `item.ts` + type switching die)
+- [x] Portable wiring from `DataSourceConfigurationMap` → `PortableFormatMap[File]`; empty-data `StyledEmptyState` + Import command
+- [x] `todoListSchema` + Items blade; Calendar blade over this list ([deferred/global-calendar.md](deferred/global-calendar.md)); delete `pages/{table-editor,calendar}.vue`
+- [x] Dataset provider re-key: `DatasetProviderType.TableDocument` → `File`, `readFileDataset` reads `content.data`, `DatasetReference.itemId` removed
+
+**Shipped notes.** Per-type blades are now real infrastructure: `BladeDefinition` gained a `slug` route segment,
+`ResourceBladeDefinitionMap` supplies File (Data/Settings) + TodoList (Items/Calendar), the blade nav shows
+the built-in Editor blade only for types in `ResourceEditorComponentMap`, and the resource page 404-guards
+per-type slugs after load (`isValidResourceBlade`). The command/undo stack was re-seamed from the deleted
+`DataSourceItem` onto `DataSource` directly (`ADataSourceCommand.execute(dataSource)`; `useFileCommand`
+autosaves after every command, undo/redo, and import). `store/resource/file` holds `fileResource`
+(`{ settings, data }`) loaded via `useResource`; `store/resource/todoList` owns items + the edit dialog with
+snapshot-revert saves. Serializers re-seamed from items to `FileSettings`; exporting as another format falls
+back to that format's default settings. `PortableFormat` became fully self-contained (`import()` + `export()`)
+and `PortableActions` renders both menus; the Data-blade Import button keeps the 5-row preview.
+`ResourceType.Table` is gone from the enum (**pg enum migration still needs `pnpm db:gen`/`db:up` — not run**),
+`tableEditor` router → `file` + `todoList`, achievements re-keyed to `file.saveResourceContent`
+(`content.data.rows.length`), `EditorLaunch`/`ResourceTypeRoutePathMap`/`useResourceState` and the dead
+`RoutePath` members deleted; `ANamedItemEntity` (ex-`ATableEditorItemEntity`) moved to `shared/models/entity/`.
 
 ## Phase 5 — Survey fold
 

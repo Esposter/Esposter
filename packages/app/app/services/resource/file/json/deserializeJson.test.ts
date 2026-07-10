@@ -1,10 +1,12 @@
+import type { JsonFileSettings } from "#shared/models/resource/file/JsonFileSettings";
 import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
-import { JsonDataSourceItem } from "#shared/models/resource/file/json/JsonDataSourceItem";
 import { DataSourceConfigurationMap } from "@/services/resource/file/dataSource/DataSourceConfigurationMap";
 import { deserializeJson } from "@/services/resource/file/json/deserializeJson";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+const defaultSettings: JsonFileSettings = { configuration: {}, type: DataSourceType.Json };
 
 describe(deserializeJson, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Json].mimeType;
@@ -20,7 +22,7 @@ describe(deserializeJson, () => {
         { a: 2, b: 3 },
       ]),
     );
-    const { columns, rows } = await deserializeJson(file, new JsonDataSourceItem());
+    const { columns, rows } = await deserializeJson(file, defaultSettings);
 
     expect(columns).toHaveLength(2);
     expect(takeOne(columns).name).toBe("a");
@@ -35,7 +37,7 @@ describe(deserializeJson, () => {
     expect.hasAssertions();
 
     const file = createFile("[]");
-    const { columns, metadata, rows } = await deserializeJson(file, new JsonDataSourceItem());
+    const { columns, metadata, rows } = await deserializeJson(file, defaultSettings);
 
     expect(columns).toHaveLength(0);
     expect(rows).toHaveLength(0);
@@ -47,7 +49,7 @@ describe(deserializeJson, () => {
 
     const file = createFile(JSON.stringify({ a: 0 }));
 
-    await expect(deserializeJson(file, new JsonDataSourceItem())).rejects.toThrowErrorMatchingInlineSnapshot(`
+    await expect(deserializeJson(file, defaultSettings)).rejects.toThrowErrorMatchingInlineSnapshot(`
       [InvalidOperationError: Invalid operation: Read, name: test.json, [
         {
           "expected": "array",

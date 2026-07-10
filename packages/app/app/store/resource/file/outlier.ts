@@ -1,5 +1,3 @@
-import type { DataSourceItem } from "#shared/models/resource/file/datasource/DataSourceItem";
-
 import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { computeColumnStatistics } from "@/services/resource/file/column/computeColumnStatistics";
 import { OUTLIER_STANDARD_DEVIATION_MULTIPLIER } from "@/services/resource/file/constants";

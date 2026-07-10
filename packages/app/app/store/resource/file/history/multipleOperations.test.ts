@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
@@ -19,28 +19,28 @@ describe(useFileHistoryStore, () => {
   test("multiple undo operations reverse in order", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 1).id);
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
-    const dataSourceAfterDeletes = editedItem.value?.dataSource;
+    deleteRow(takeOne(dataSource?.rows ?? [], 1).id);
+    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    const dataSourceAfterDeletes = dataSource;
 
     assert.exists(dataSourceAfterDeletes);
 
     expect(dataSourceAfterDeletes.rows).toHaveLength(0);
 
-    undo(editedItem.value);
-    const dataSourceAfterUndo1 = editedItem.value?.dataSource;
+    undo(dataSource);
+    const dataSourceAfterUndo1 = dataSource;
 
     assert.exists(dataSourceAfterUndo1);
 
     expect(dataSourceAfterUndo1.rows).toHaveLength(1);
     expect(takeOne(dataSourceAfterUndo1.rows).data[""]).toBe(0);
 
-    undo(editedItem.value);
-    const dataSourceAfterUndo2 = editedItem.value?.dataSource;
+    undo(dataSource);
+    const dataSourceAfterUndo2 = dataSource;
 
     assert.exists(dataSourceAfterUndo2);
 
@@ -52,43 +52,43 @@ describe(useFileHistoryStore, () => {
   test("mixed operations undo/redo correctly", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const deleteColumn = useDeleteColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
+    deleteRow(takeOne(dataSource?.rows ?? []).id);
     deleteColumn(" ");
-    const dataSourceAfterOps = editedItem.value?.dataSource;
+    const dataSourceAfterOps = dataSource;
 
     assert.exists(dataSourceAfterOps);
 
     expect(dataSourceAfterOps.rows).toHaveLength(1);
     expect(dataSourceAfterOps.columns).toHaveLength(1);
 
-    undo(editedItem.value);
-    const dataSourceAfterUndo1 = editedItem.value?.dataSource;
+    undo(dataSource);
+    const dataSourceAfterUndo1 = dataSource;
 
     assert.exists(dataSourceAfterUndo1);
 
     expect(dataSourceAfterUndo1.columns).toHaveLength(2);
 
-    undo(editedItem.value);
-    const dataSourceAfterUndo2 = editedItem.value?.dataSource;
+    undo(dataSource);
+    const dataSourceAfterUndo2 = dataSource;
 
     assert.exists(dataSourceAfterUndo2);
 
     expect(dataSourceAfterUndo2.rows).toHaveLength(2);
 
-    redo(editedItem.value);
-    const dataSourceAfterRedo1 = editedItem.value?.dataSource;
+    redo(dataSource);
+    const dataSourceAfterRedo1 = dataSource;
 
     assert.exists(dataSourceAfterRedo1);
 
     expect(dataSourceAfterRedo1.rows).toHaveLength(1);
 
-    redo(editedItem.value);
-    const dataSourceAfterRedo2 = editedItem.value?.dataSource;
+    redo(dataSource);
+    const dataSourceAfterRedo2 = dataSource;
 
     assert.exists(dataSourceAfterRedo2);
 

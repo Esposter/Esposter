@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createNumberColumn } from "@/composables/tableEditor/file/commands/createNumberColumn.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
-import { setupCommandTest } from "@/composables/tableEditor/file/commands/setupCommandTest.test";
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
-import { usePasteRangeFromClipboard } from "@/composables/tableEditor/file/commands/usePasteRangeFromClipboard";
+import { createColumn } from "@/composables/resource/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createNumberColumn } from "@/composables/resource/file/commands/createNumberColumn.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
+import { setupCommandTest } from "@/composables/resource/file/commands/setupCommandTest.test";
+import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
+import { usePasteRangeFromClipboard } from "@/composables/resource/file/commands/usePasteRangeFromClipboard";
 import { PasteMode } from "@/models/resource/file/commands/PasteMode";
 import { useCellStore } from "@/store/resource/file/cell";
 import { useFileHistoryStore } from "@/store/resource/file/history";
@@ -35,7 +35,7 @@ describe(usePasteRangeFromClipboard, () => {
     test("overwrites cells at selection anchor", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(
+      const { dataSource } = setupWithDataSource(
         createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]),
       );
       readTextMock.mockResolvedValueOnce("10\t20");
@@ -43,16 +43,16 @@ describe(usePasteRangeFromClipboard, () => {
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
-      expect(takeOne(editedItem.value.dataSource.rows).data.a).toBe("10");
-      expect(takeOne(editedItem.value.dataSource.rows).data.b).toBe("20");
+      expect(takeOne(dataSource.rows).data.a).toBe("10");
+      expect(takeOne(dataSource.rows).data.b).toBe("20");
     });
 
     test("overwrites only columns starting at column anchor", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(
+      const { dataSource } = setupWithDataSource(
         createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: "1", b: "2" })]),
       );
       readTextMock.mockResolvedValueOnce("99");
@@ -60,103 +60,103 @@ describe(usePasteRangeFromClipboard, () => {
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
-      expect(takeOne(editedItem.value.dataSource.rows).data.a).toBe("1");
-      expect(takeOne(editedItem.value.dataSource.rows).data.b).toBe("99");
+      expect(takeOne(dataSource.rows).data.a).toBe("1");
+      expect(takeOne(dataSource.rows).data.b).toBe("99");
     });
 
     test("appends new rows when pasted data extends past the last row", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
+      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
       readTextMock.mockResolvedValueOnce("2\n3");
       selectAnchor(1, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
-      expect(editedItem.value.dataSource.rows).toHaveLength(3);
-      expect(takeOne(editedItem.value.dataSource.rows, 1).data.a).toBe("2");
-      expect(takeOne(editedItem.value.dataSource.rows, 2).data.a).toBe("3");
+      expect(dataSource.rows).toHaveLength(3);
+      expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
+      expect(takeOne(dataSource.rows, 2).data.a).toBe("3");
     });
 
     test("appends at end when no cell is selected", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
+      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
       readTextMock.mockResolvedValueOnce("2");
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
-      expect(editedItem.value.dataSource.rows).toHaveLength(2);
-      expect(takeOne(editedItem.value.dataSource.rows, 1).data.a).toBe("2");
+      expect(dataSource.rows).toHaveLength(2);
+      expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
     });
 
     test("coerces pasted values to target column type", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(createDataSource([createNumberColumn("n")], [createRow({ n: 1 })]));
+      const { dataSource } = setupWithDataSource(createDataSource([createNumberColumn("n")], [createRow({ n: 1 })]));
       readTextMock.mockResolvedValueOnce("42");
       selectAnchor(0, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
-      expect(takeOne(editedItem.value.dataSource.rows).data.n).toBe(42);
+      expect(takeOne(dataSource.rows).data.n).toBe(42);
     });
 
     test("undo restores original cell values", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "original" })]));
+      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "original" })]));
       readTextMock.mockResolvedValueOnce("changed");
       selectAnchor(0, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
       const fileHistoryStore = useFileHistoryStore();
-      fileHistoryStore.undo(editedItem.value);
+      fileHistoryStore.undo(dataSource);
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
-      expect(takeOne(editedItem.value.dataSource.rows).data.a).toBe("original");
+      expect(takeOne(dataSource.rows).data.a).toBe("original");
     });
 
     test("undo removes appended rows", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
+      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
       readTextMock.mockResolvedValueOnce("1\n2");
       selectAnchor(0, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
       const fileHistoryStore = useFileHistoryStore();
-      fileHistoryStore.undo(editedItem.value);
+      fileHistoryStore.undo(dataSource);
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
-      expect(editedItem.value.dataSource.rows).toHaveLength(1);
+      expect(dataSource.rows).toHaveLength(1);
     });
 
     test("redo re-applies paste after undo", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "original" })]));
+      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "original" })]));
       readTextMock.mockResolvedValueOnce("changed");
       selectAnchor(0, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
       const fileHistoryStore = useFileHistoryStore();
-      fileHistoryStore.undo(editedItem.value);
-      fileHistoryStore.redo(editedItem.value);
+      fileHistoryStore.undo(dataSource);
+      fileHistoryStore.redo(dataSource);
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
-      expect(takeOne(editedItem.value.dataSource.rows).data.a).toBe("changed");
+      expect(takeOne(dataSource.rows).data.a).toBe("changed");
     });
   });
 
@@ -164,7 +164,7 @@ describe(usePasteRangeFromClipboard, () => {
     test("inserts rows at anchor row position", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(
+      const { dataSource } = setupWithDataSource(
         createDataSource([createColumn("a")], [createRow({ a: "1" }), createRow({ a: "3" })]),
       );
       readTextMock.mockResolvedValueOnce("2");
@@ -172,18 +172,18 @@ describe(usePasteRangeFromClipboard, () => {
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard(PasteMode.ShiftDown);
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
-      expect(editedItem.value.dataSource.rows).toHaveLength(3);
-      expect(takeOne(editedItem.value.dataSource.rows).data.a).toBe("1");
-      expect(takeOne(editedItem.value.dataSource.rows, 1).data.a).toBe("2");
-      expect(takeOne(editedItem.value.dataSource.rows, 2).data.a).toBe("3");
+      expect(dataSource.rows).toHaveLength(3);
+      expect(takeOne(dataSource.rows).data.a).toBe("1");
+      expect(takeOne(dataSource.rows, 1).data.a).toBe("2");
+      expect(takeOne(dataSource.rows, 2).data.a).toBe("3");
     });
 
     test("undo removes inserted rows and restores original order", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(
+      const { dataSource } = setupWithDataSource(
         createDataSource([createColumn("a")], [createRow({ a: "1" }), createRow({ a: "3" })]),
       );
       readTextMock.mockResolvedValueOnce("2");
@@ -191,13 +191,13 @@ describe(usePasteRangeFromClipboard, () => {
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard(PasteMode.ShiftDown);
       const fileHistoryStore = useFileHistoryStore();
-      fileHistoryStore.undo(editedItem.value);
+      fileHistoryStore.undo(dataSource);
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
-      expect(editedItem.value.dataSource.rows).toHaveLength(2);
-      expect(takeOne(editedItem.value.dataSource.rows).data.a).toBe("1");
-      expect(takeOne(editedItem.value.dataSource.rows, 1).data.a).toBe("3");
+      expect(dataSource.rows).toHaveLength(2);
+      expect(takeOne(dataSource.rows).data.a).toBe("1");
+      expect(takeOne(dataSource.rows, 1).data.a).toBe("3");
     });
   });
 
@@ -205,27 +205,17 @@ describe(usePasteRangeFromClipboard, () => {
     test("no-op when clipboard text is empty", async () => {
       expect.hasAssertions();
 
-      const { editedItem } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
+      const { dataSource } = setupWithDataSource(createDataSource([createColumn("a")], [createRow({ a: "1" })]));
       readTextMock.mockResolvedValueOnce("");
       selectAnchor(0, 0);
       const pasteRangeFromClipboard = usePasteRangeFromClipboard();
       await pasteRangeFromClipboard();
       const fileHistoryStore = useFileHistoryStore();
 
-      assert.exists(editedItem.value?.dataSource);
+      assert.exists(dataSource);
 
       expect(fileHistoryStore.isUndoable).toBe(false);
-      expect(takeOne(editedItem.value.dataSource.rows).data.a).toBe("1");
-    });
-
-    test("no-op when dataSource is null", async () => {
-      expect.hasAssertions();
-
-      readTextMock.mockResolvedValueOnce("10");
-      const pasteRangeFromClipboard = usePasteRangeFromClipboard();
-      await pasteRangeFromClipboard();
-
-      expect(readTextMock).not.toHaveBeenCalled();
+      expect(takeOne(dataSource.rows).data.a).toBe("1");
     });
   });
 });

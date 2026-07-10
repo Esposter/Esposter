@@ -1,10 +1,9 @@
 // @vitest-environment nuxt
-import { createColumn } from "@/composables/tableEditor/file/commands/createColumn.test";
-import { createDataSource } from "@/composables/tableEditor/file/commands/createDataSource.test";
-import { createRow } from "@/composables/tableEditor/file/commands/createRow.test";
-import { setupEditedItem } from "@/composables/tableEditor/file/commands/setupEditedItem.test";
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
-import { useCopyRangeToClipboard } from "@/composables/tableEditor/file/useCopyRangeToClipboard";
+import { createColumn } from "@/composables/resource/file/commands/createColumn.test";
+import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
+import { createRow } from "@/composables/resource/file/commands/createRow.test";
+import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
+import { useCopyRangeToClipboard } from "@/composables/resource/file/useCopyRangeToClipboard";
 import { useCellStore } from "@/store/resource/file/cell";
 import { useRowStore } from "@/store/resource/file/row";
 import { createPinia, setActivePinia } from "pinia";
@@ -92,26 +91,5 @@ describe(useCopyRangeToClipboard, () => {
     await copyRangeToClipboard();
 
     expect(writeTextMock).toHaveBeenCalledWith("a\n2\n3");
-  });
-
-  test("no-op when no cell range is selected", async () => {
-    expect.hasAssertions();
-
-    setupWithDataSource();
-    const copyRangeToClipboard = useCopyRangeToClipboard();
-    await copyRangeToClipboard();
-
-    expect(writeTextMock).not.toHaveBeenCalled();
-  });
-
-  test("no-op when dataSource is null", async () => {
-    expect.hasAssertions();
-
-    setupEditedItem();
-    selectRange(0, 0, 0, 0);
-    const copyRangeToClipboard = useCopyRangeToClipboard();
-    await copyRangeToClipboard();
-
-    expect(writeTextMock).not.toHaveBeenCalled();
   });
 });

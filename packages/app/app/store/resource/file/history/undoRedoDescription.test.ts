@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
@@ -29,11 +29,11 @@ describe(useFileHistoryStore, () => {
   test("undoDescription reflects last command", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { undoDescription } = storeToRefs(fileHistoryStore);
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
+    deleteRow(takeOne(dataSource?.rows ?? []).id);
 
     expect(undoDescription.value).toBe("Delete Row 1");
   });
@@ -51,13 +51,13 @@ describe(useFileHistoryStore, () => {
   test("redoDescription reflects undone command", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { redoDescription } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
-    undo(editedItem.value);
+    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    undo(dataSource);
 
     expect(redoDescription.value).toBe("Delete Row 1");
   });

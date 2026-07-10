@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import { setupWithDataSource } from "@/composables/tableEditor/file/commands/setupWithDataSource.test";
+import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
@@ -30,11 +30,11 @@ describe(useFileHistoryStore, () => {
   test("becomes undoable after an operation", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
+    deleteRow(takeOne(dataSource?.rows ?? []).id);
 
     expect(isUndoable.value).toBe(true);
     expect(isRedoable.value).toBe(false);
@@ -43,13 +43,13 @@ describe(useFileHistoryStore, () => {
   test("becomes redoable after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
-    undo(editedItem.value);
+    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    undo(dataSource);
 
     expect(isUndoable.value).toBe(false);
     expect(isRedoable.value).toBe(true);
@@ -58,15 +58,12 @@ describe(useFileHistoryStore, () => {
   test("undo no-op when history is empty", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    const rowCountBefore = editedItem.value?.dataSource?.rows.length ?? 0;
-    undo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    const rowCountBefore = dataSource?.rows.length ?? 0;
+    undo(dataSource);
 
     expect(dataSource.rows).toHaveLength(rowCountBefore);
     expect(isUndoable.value).toBe(false);
@@ -75,15 +72,12 @@ describe(useFileHistoryStore, () => {
   test("redo no-op when future is empty", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable } = storeToRefs(fileHistoryStore);
     const { redo } = fileHistoryStore;
-    const rowCountBefore = editedItem.value?.dataSource?.rows.length ?? 0;
-    redo(editedItem.value);
-    const dataSource = editedItem.value?.dataSource;
-
-    assert.exists(dataSource);
+    const rowCountBefore = dataSource?.rows.length ?? 0;
+    redo(dataSource);
 
     expect(dataSource.rows).toHaveLength(rowCountBefore);
     expect(isRedoable.value).toBe(false);
@@ -92,17 +86,17 @@ describe(useFileHistoryStore, () => {
   test("new operation after undo clears redo history", () => {
     expect.hasAssertions();
 
-    const { editedItem } = setupWithDataSource();
+    const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
-    undo(editedItem.value);
+    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    undo(dataSource);
 
     expect(isRedoable.value).toBe(true);
 
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
+    deleteRow(takeOne(dataSource?.rows ?? []).id);
 
     expect(isRedoable.value).toBe(false);
   });
