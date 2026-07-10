@@ -18,18 +18,18 @@ import { assert, describe, expect, test } from "vitest";
 describe(useUpdateColumn, () => {
   setupCommandTest();
 
-  test("sets description on column", () => {
+  test("sets description on column", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
-    updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { description: " " }));
+    await updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { description: " " }));
 
     expect(takeOne(dataSource.columns).description).toBe(" ");
   });
 
-  test("undo restores original description", () => {
+  test("undo restores original description", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -37,26 +37,26 @@ describe(useUpdateColumn, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const column = takeOne(dataSource?.columns ?? []);
-    updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { description: " " }));
+    await updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { description: " " }));
     undo(dataSource);
 
     expect(takeOne(dataSource.columns).description).toBe("");
   });
 
-  test("renames column and updates row keys", () => {
+  test("renames column and updates row keys", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
-    updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
+    await updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
 
     expect(takeOne(dataSource.columns).name).toBe("renamed");
     expect(takeOne(dataSource.rows).data.renamed).toBe(0);
     expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
   });
 
-  test("undo restores original column name and row keys", () => {
+  test("undo restores original column name and row keys", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -64,7 +64,7 @@ describe(useUpdateColumn, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const column = takeOne(dataSource?.columns ?? []);
-    updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
+    await updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
     undo(dataSource);
 
     expect(takeOne(dataSource.columns).name).toBe("");
@@ -72,7 +72,7 @@ describe(useUpdateColumn, () => {
     expect(takeOne(dataSource.rows).data.renamed).toBeUndefined();
   });
 
-  test("redo re-applies update after undo", () => {
+  test("redo re-applies update after undo", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -80,7 +80,7 @@ describe(useUpdateColumn, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
     const column = takeOne(dataSource?.columns ?? []);
-    updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
+    await updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
     undo(dataSource);
     redo(dataSource);
 
@@ -88,7 +88,7 @@ describe(useUpdateColumn, () => {
     expect(takeOne(dataSource.rows).data.renamed).toBe(0);
   });
 
-  test("preserves row.data key order after rename", () => {
+  test("preserves row.data key order after rename", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource(
@@ -98,12 +98,12 @@ describe(useUpdateColumn, () => {
     const { dataSource } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? [], 1);
-    updateColumn("b", Object.assign(structuredClone(toRawDeep(column)), { name: "b_renamed" }));
+    await updateColumn("b", Object.assign(structuredClone(toRawDeep(column)), { name: "b_renamed" }));
 
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b_renamed", "c"]);
   });
 
-  test("undo preserves row.data key order after rename restore", () => {
+  test("undo preserves row.data key order after rename restore", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource(
@@ -115,13 +115,13 @@ describe(useUpdateColumn, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const column = takeOne(dataSource?.columns ?? [], 1);
-    updateColumn("b", Object.assign(structuredClone(toRawDeep(column)), { name: "b_renamed" }));
+    await updateColumn("b", Object.assign(structuredClone(toRawDeep(column)), { name: "b_renamed" }));
     undo(dataSource);
 
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c"]);
   });
 
-  test("reformats date values when format changes", () => {
+  test("reformats date values when format changes", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource(
@@ -131,14 +131,14 @@ describe(useUpdateColumn, () => {
     const { dataSource } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
-    updateColumn("date", Object.assign(structuredClone(toRawDeep(column)), { format: DateFormat["DD/MM/YYYY"] }));
+    await updateColumn("date", Object.assign(structuredClone(toRawDeep(column)), { format: DateFormat["DD/MM/YYYY"] }));
 
     expect(takeOne(dataSource.rows).data.date).toBe("15/01/2024");
     expect(takeOne(dataSource.rows, 1).data.date).toBe("30/06/2024");
     expect(takeOne(dataSource.columns).size).toBeGreaterThan(0);
   });
 
-  test("undo restores original date values after format change", () => {
+  test("undo restores original date values after format change", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource(
@@ -150,7 +150,7 @@ describe(useUpdateColumn, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const originalColumn = takeOne(dataSource?.columns ?? []);
-    updateColumn(
+    await updateColumn(
       "date",
       Object.assign(structuredClone(toRawDeep(originalColumn)), { format: DateFormat["DD/MM/YYYY"] }),
     );
@@ -166,33 +166,33 @@ describe(useUpdateColumn, () => {
     expect(updatedColumn.format).toBe(DateFormat["YYYY-MM-DD"]);
   });
 
-  test("recasts String values to Number when type changes", () => {
+  test("recasts String values to Number when type changes", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("score")], [createRow({ score: "42" }), createRow({ score: "7" })]);
     const { dataSource } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
-    updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Number }));
+    await updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Number }));
 
     expect(takeOne(dataSource.rows).data.score).toBe(42);
     expect(takeOne(dataSource.rows, 1).data.score).toBe(7);
   });
 
-  test("recasts Number values to String when type changes", () => {
+  test("recasts Number values to String when type changes", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createNumberColumn("score")], [createRow({ score: 42 }), createRow({ score: 7 })]);
     const { dataSource } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
-    updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.String }));
+    await updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.String }));
 
     expect(takeOne(dataSource.rows).data.score).toBe("42");
     expect(takeOne(dataSource.rows, 1).data.score).toBe("7");
   });
 
-  test("recasts String values to Boolean when type changes", () => {
+  test("recasts String values to Boolean when type changes", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource(
@@ -202,13 +202,13 @@ describe(useUpdateColumn, () => {
     const { dataSource } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
-    updateColumn("flag", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Boolean }));
+    await updateColumn("flag", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Boolean }));
 
     expect(takeOne(dataSource.rows).data.flag).toBe(true);
     expect(takeOne(dataSource.rows, 1).data.flag).toBe(false);
   });
 
-  test("undo restores original values after type recast", () => {
+  test("undo restores original values after type recast", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("score")], [createRow({ score: "42" }), createRow({ score: "7" })]);
@@ -217,7 +217,7 @@ describe(useUpdateColumn, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const column = takeOne(dataSource?.columns ?? []);
-    updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Number }));
+    await updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Number }));
     undo(dataSource);
 
     expect(takeOne(dataSource.rows).data.score).toBe("42");
@@ -225,7 +225,7 @@ describe(useUpdateColumn, () => {
     expect(takeOne(dataSource.columns).type).toBe(ColumnType.String);
   });
 
-  test("does not recast values when type is unchanged", () => {
+  test("does not recast values when type is unchanged", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createNumberColumn("score")], [createRow({ score: 42 })]);
@@ -233,13 +233,13 @@ describe(useUpdateColumn, () => {
     const updateColumn = useUpdateColumn();
     const column = takeOne(dataSource?.columns ?? []);
     const originalSize = column.size;
-    updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { description: "updated" }));
+    await updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { description: "updated" }));
 
     expect(takeOne(dataSource.rows).data.score).toBe(42);
     expect(takeOne(dataSource.columns).size).toBe(originalSize);
   });
 
-  test("snapshot immutability - mutating passed object after call does not affect undo history", () => {
+  test("snapshot immutability - mutating passed object after call does not affect undo history", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -248,7 +248,7 @@ describe(useUpdateColumn, () => {
     const { redo, undo } = fileHistoryStore;
     const column = takeOne(dataSource?.columns ?? []);
     const updatedColumn = reactive(Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
-    updateColumn("", updatedColumn);
+    await updateColumn("", updatedColumn);
     updatedColumn.name = "mutated";
     undo(dataSource);
     const dataSourceAfterUndo = dataSource;

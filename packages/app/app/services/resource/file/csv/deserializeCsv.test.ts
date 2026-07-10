@@ -1,4 +1,5 @@
 import type { CsvFileSettings } from "#shared/models/resource/file/CsvFileSettings";
+
 import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { CsvDelimiter } from "#shared/models/resource/file/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";

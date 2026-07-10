@@ -35,10 +35,10 @@ onMounted(async () => {
           <template #title>
             Columns
             <v-spacer />
-            <ResourceFileColumnCreateDialogButton :data-source="dataSource" />
+            <ResourceFileColumnCreateDialogButton :data-source />
           </template>
           <v-expansion-panel-text>
-            <ResourceFileColumnTable :data-source="dataSource" />
+            <ResourceFileColumnTable :data-source />
           </v-expansion-panel-text>
         </v-expansion-panel>
         <v-expansion-panel value="data">
@@ -52,7 +52,7 @@ onMounted(async () => {
             />
           </template>
           <v-expansion-panel-text>
-            <ResourceFileRowTable :data-source="dataSource" />
+            <ResourceFileRowTable :data-source />
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>

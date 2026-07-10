@@ -48,7 +48,7 @@ onMounted(async () => {
       @click:row="onClickRow"
     >
       <template #top>
-        <div flex gap-2 items-center pb-2>
+        <div pb-2 flex gap-2 items-center>
           <v-text-field
             v-model="searchQuery"
             clearable

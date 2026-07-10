@@ -1,5 +1,5 @@
-import type { XlsxFileSettings } from "#shared/models/resource/file/XlsxFileSettings";
 import type { DataSource } from "#shared/models/resource/file/datasource/DataSource";
+import type { XlsxFileSettings } from "#shared/models/resource/file/XlsxFileSettings";
 
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";

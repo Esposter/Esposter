@@ -2,8 +2,8 @@
 import type { DataSource } from "#shared/models/resource/file/datasource/DataSource";
 import type { Row } from "#shared/models/resource/file/datasource/Row";
 
-import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { useFileStore } from "@/store/resource/file";
+import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { takeOne } from "@esposter/shared";
 
 const fileStore = useFileStore();

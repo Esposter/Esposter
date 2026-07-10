@@ -1,7 +1,7 @@
 import type { ItemEntityType } from "@esposter/shared";
 
-import { descriptionSchema } from "#shared/models/entity/Description";
 import { ANamedItemEntity, aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
+import { descriptionSchema } from "#shared/models/entity/Description";
 import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { z } from "zod";
 

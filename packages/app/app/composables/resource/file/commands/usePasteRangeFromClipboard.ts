@@ -60,7 +60,7 @@ export const usePasteRangeFromClipboard = () => {
             }
             return row;
           });
-          createRows(rows, anchorRowIndex);
+          await createRows(rows, anchorRowIndex);
           break;
         }
         default:

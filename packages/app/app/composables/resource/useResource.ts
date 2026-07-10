@@ -43,19 +43,19 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
           saveResourceContent: (input) => $trpc.emailEditor.saveResourceContent.mutate(input as never),
           updateResource: (input) => $trpc.emailEditor.updateResource.mutate(input),
         };
-      case ResourceType.Flowchart:
-        return {
-          deleteResource: (input) => $trpc.flowchartEditor.deleteResource.mutate(input),
-          readResourceContent: (input) => $trpc.flowchartEditor.readResourceContent.query(input),
-          saveResourceContent: (input) => $trpc.flowchartEditor.saveResourceContent.mutate(input as never),
-          updateResource: (input) => $trpc.flowchartEditor.updateResource.mutate(input),
-        };
       case ResourceType.File:
         return {
           deleteResource: (input) => $trpc.file.deleteResource.mutate(input),
           readResourceContent: (input) => $trpc.file.readResourceContent.query(input),
           saveResourceContent: (input) => $trpc.file.saveResourceContent.mutate(input as never),
           updateResource: (input) => $trpc.file.updateResource.mutate(input),
+        };
+      case ResourceType.Flowchart:
+        return {
+          deleteResource: (input) => $trpc.flowchartEditor.deleteResource.mutate(input),
+          readResourceContent: (input) => $trpc.flowchartEditor.readResourceContent.query(input),
+          saveResourceContent: (input) => $trpc.flowchartEditor.saveResourceContent.mutate(input as never),
+          updateResource: (input) => $trpc.flowchartEditor.updateResource.mutate(input),
         };
       case ResourceType.TodoList:
         return {

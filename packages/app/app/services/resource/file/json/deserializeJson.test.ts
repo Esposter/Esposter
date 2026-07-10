@@ -1,4 +1,5 @@
 import type { JsonFileSettings } from "#shared/models/resource/file/JsonFileSettings";
+
 import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
 import { DataSourceConfigurationMap } from "@/services/resource/file/dataSource/DataSourceConfigurationMap";

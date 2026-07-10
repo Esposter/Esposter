@@ -1,5 +1,5 @@
-import type { CsvFileSettings } from "#shared/models/resource/file/CsvFileSettings";
 import type { Column } from "#shared/models/resource/file/column/Column";
+import type { CsvFileSettings } from "#shared/models/resource/file/CsvFileSettings";
 import type { DataSource } from "#shared/models/resource/file/datasource/DataSource";
 
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";

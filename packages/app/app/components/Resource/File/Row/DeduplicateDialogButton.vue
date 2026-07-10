@@ -13,21 +13,19 @@ const keepMode = ref(KeepDuplicateMode.First);
 const deleteDuplicateRows = useDeleteDuplicateRows();
 const duplicateRowEntries = computed<IndexedRow[]>(() => findDuplicateRows(dataSource.value, keepMode.value));
 const duplicateCount = computed(() => duplicateRowEntries.value.length);
-const duplicateHeaders = computed(() => {
-  return [
-    { key: "index", title: "#", value: (entry: IndexedRow) => entry.index },
-    ...dataSource.value.columns
-      .filter((column) => !column.hidden)
-      .map((column) => ({
-        key: column.name,
-        title: column.name,
-        value: (entry: IndexedRow) => {
-          const value = takeOne(entry.row.data, column.name);
-          return value === null ? "" : String(value);
-        },
-      })),
-  ];
-});
+const duplicateHeaders = computed(() => [
+  { key: "index", title: "#", value: (entry: IndexedRow) => entry.index },
+  ...dataSource.value.columns
+    .filter((column) => !column.hidden)
+    .map((column) => ({
+      key: column.name,
+      title: column.name,
+      value: (entry: IndexedRow) => {
+        const value = takeOne(entry.row.data, column.name);
+        return value === null ? "" : String(value);
+      },
+    })),
+]);
 </script>
 
 <template>

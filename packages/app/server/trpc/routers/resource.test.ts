@@ -5,8 +5,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
-import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { fileRouter } from "@@/server/trpc/routers/file";
+import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { resources, ResourceType } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";

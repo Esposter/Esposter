@@ -1,9 +1,9 @@
-import type { FileSettings } from "#shared/models/resource/file/FileSettings";
 import type { DataSource } from "#shared/models/resource/file/datasource/DataSource";
+import type { FileSettings } from "#shared/models/resource/file/FileSettings";
 import type { ToData } from "@esposter/shared";
 
-import { fileSettingsSchema } from "#shared/models/resource/file/FileSettings";
 import { dataSourceSchema } from "#shared/models/resource/file/datasource/DataSource";
+import { fileSettingsSchema } from "#shared/models/resource/file/FileSettings";
 import { z } from "zod";
 
 export interface FileResource {

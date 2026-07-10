@@ -8,25 +8,25 @@ import { setupCommandTest } from "@/composables/resource/file/commands/setupComm
 import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useReorderColumns, () => {
   setupCommandTest();
 
-  test("moves column forward (index 0 to 1)", () => {
+  test("moves column forward (index 0 to 1)", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const reorderColumns = useReorderColumns();
     const columns = dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns)] as StringColumn[];
-    reorderColumns(newColumns);
+    await reorderColumns(newColumns);
 
     expect(takeOne(dataSource.columns).name).toBe(" ");
     expect(takeOne(dataSource.columns, 1).name).toBe("");
   });
 
-  test("undo restores original column order", () => {
+  test("undo restores original column order", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -35,14 +35,14 @@ describe(useReorderColumns, () => {
     const { undo } = fileHistoryStore;
     const columns = dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns)] as StringColumn[];
-    reorderColumns(newColumns);
+    await reorderColumns(newColumns);
     undo(dataSource);
 
     expect(takeOne(dataSource.columns).name).toBe("");
     expect(takeOne(dataSource.columns, 1).name).toBe(" ");
   });
 
-  test("redo re-applies reorder after undo", () => {
+  test("redo re-applies reorder after undo", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -51,7 +51,7 @@ describe(useReorderColumns, () => {
     const { redo, undo } = fileHistoryStore;
     const columns = dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns)] as StringColumn[];
-    reorderColumns(newColumns);
+    await reorderColumns(newColumns);
     undo(dataSource);
     redo(dataSource);
 
@@ -59,7 +59,7 @@ describe(useReorderColumns, () => {
     expect(takeOne(dataSource.columns, 1).name).toBe("");
   });
 
-  test("moves column backward (index 1 to 0) with three columns", () => {
+  test("moves column backward (index 1 to 0) with three columns", async () => {
     expect.hasAssertions();
 
     const threeColumnDs = createDataSource(
@@ -70,14 +70,14 @@ describe(useReorderColumns, () => {
     const reorderColumns = useReorderColumns();
     const columns = dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns), takeOne(columns, 2)] as StringColumn[];
-    reorderColumns(newColumns);
+    await reorderColumns(newColumns);
 
     expect(takeOne(dataSource.columns).name).toBe("b");
     expect(takeOne(dataSource.columns, 1).name).toBe("a");
     expect(takeOne(dataSource.columns, 2).name).toBe("c");
   });
 
-  test("moves column forward non-adjacent (index 0 to 2) with three columns", () => {
+  test("moves column forward non-adjacent (index 0 to 2) with three columns", async () => {
     expect.hasAssertions();
 
     const threeColumnDs = createDataSource(
@@ -88,7 +88,7 @@ describe(useReorderColumns, () => {
     const reorderColumns = useReorderColumns();
     const columns = dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns, 2), takeOne(columns)] as StringColumn[];
-    reorderColumns(newColumns);
+    await reorderColumns(newColumns);
 
     expect(takeOne(dataSource.columns).name).toBe("b");
     expect(takeOne(dataSource.columns, 1).name).toBe("c");

@@ -26,14 +26,14 @@ describe(useFileHistoryStore, () => {
     expect(undoDescription.value).toBe("");
   });
 
-  test("undoDescription reflects last command", () => {
+  test("undoDescription reflects last command", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { undoDescription } = storeToRefs(fileHistoryStore);
-    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    await deleteRow(takeOne(dataSource?.rows ?? []).id);
 
     expect(undoDescription.value).toBe("Delete Row 1");
   });
@@ -48,7 +48,7 @@ describe(useFileHistoryStore, () => {
     expect(redoDescription.value).toBe("");
   });
 
-  test("redoDescription reflects undone command", () => {
+  test("redoDescription reflects undone command", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -56,7 +56,7 @@ describe(useFileHistoryStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { redoDescription } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    await deleteRow(takeOne(dataSource?.rows ?? []).id);
     undo(dataSource);
 
     expect(redoDescription.value).toBe("Delete Row 1");

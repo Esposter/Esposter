@@ -2,8 +2,8 @@
 import { createDataSource } from "@/composables/resource/file/commands/createDataSource.test";
 import { setupCommandTest } from "@/composables/resource/file/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
-import { useFileHistoryStore } from "@/store/resource/file/history";
 import { useFileStore } from "@/store/resource/file";
+import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

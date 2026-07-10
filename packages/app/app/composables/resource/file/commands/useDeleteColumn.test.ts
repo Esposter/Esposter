@@ -6,31 +6,31 @@ import { setupCommandTest } from "@/composables/resource/file/commands/setupComm
 import { setupWithDataSource } from "@/composables/resource/file/commands/setupWithDataSource.test";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useDeleteColumn, () => {
   setupCommandTest();
 
-  test("removes column by name", () => {
+  test("removes column by name", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteColumn = useDeleteColumn();
-    deleteColumn("");
+    await deleteColumn("");
 
     expect(dataSource.columns).toHaveLength(1);
     expect(takeOne(dataSource.columns).name).toBe(" ");
     expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
   });
 
-  test("undo restores deleted column and row values", () => {
+  test("undo restores deleted column and row values", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteColumn = useDeleteColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    deleteColumn("");
+    await deleteColumn("");
     undo(dataSource);
 
     expect(dataSource.columns).toHaveLength(2);
@@ -39,14 +39,14 @@ describe(useDeleteColumn, () => {
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
   });
 
-  test("redo re-applies delete after undo", () => {
+  test("redo re-applies delete after undo", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteColumn = useDeleteColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    deleteColumn("");
+    await deleteColumn("");
     undo(dataSource);
     redo(dataSource);
 
@@ -54,7 +54,7 @@ describe(useDeleteColumn, () => {
     expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
   });
 
-  test("undo preserves row.data key order after restore", () => {
+  test("undo preserves row.data key order after restore", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource(
@@ -65,7 +65,7 @@ describe(useDeleteColumn, () => {
     const deleteColumn = useDeleteColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    deleteColumn("b");
+    await deleteColumn("b");
     undo(dataSource);
 
     expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c"]);

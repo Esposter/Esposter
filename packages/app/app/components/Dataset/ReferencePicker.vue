@@ -15,9 +15,9 @@ const alertStore = useAlertStore();
 const { createAlert } = alertStore;
 const type = ref(modelValue.value?.type ?? DatasetProviderType.SurveyResponses);
 const readSourcesMap: Record<DatasetProviderType, () => Promise<{ id: string; name: string }[]>> = {
+  [DatasetProviderType.File]: async () => (await $trpc.file.readResources.query({ limit: MAX_READ_LIMIT })).items,
   [DatasetProviderType.SurveyResponses]: async () =>
     (await $trpc.survey.readSurveys.query({ limit: MAX_READ_LIMIT })).items,
-  [DatasetProviderType.File]: async () => (await $trpc.file.readResources.query({ limit: MAX_READ_LIMIT })).items,
 };
 const sourceIds = ref<SelectItemCategoryDefinition<string>[]>([]);
 

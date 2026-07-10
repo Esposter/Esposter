@@ -3,7 +3,7 @@ import { setupWithDataSource } from "@/composables/resource/file/commands/setupW
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, assert, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(useFileHistoryStore, () => {
   beforeEach(() => {
@@ -27,20 +27,20 @@ describe(useFileHistoryStore, () => {
     expect(isRedoable.value).toBe(false);
   });
 
-  test("becomes undoable after an operation", () => {
+  test("becomes undoable after an operation", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
-    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    await deleteRow(takeOne(dataSource?.rows ?? []).id);
 
     expect(isUndoable.value).toBe(true);
     expect(isRedoable.value).toBe(false);
   });
 
-  test("becomes redoable after undo", () => {
+  test("becomes redoable after undo", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -48,7 +48,7 @@ describe(useFileHistoryStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    await deleteRow(takeOne(dataSource?.rows ?? []).id);
     undo(dataSource);
 
     expect(isUndoable.value).toBe(false);
@@ -83,7 +83,7 @@ describe(useFileHistoryStore, () => {
     expect(isRedoable.value).toBe(false);
   });
 
-  test("new operation after undo clears redo history", () => {
+  test("new operation after undo clears redo history", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -91,12 +91,12 @@ describe(useFileHistoryStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    await deleteRow(takeOne(dataSource?.rows ?? []).id);
     undo(dataSource);
 
     expect(isRedoable.value).toBe(true);
 
-    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    await deleteRow(takeOne(dataSource?.rows ?? []).id);
 
     expect(isRedoable.value).toBe(false);
   });

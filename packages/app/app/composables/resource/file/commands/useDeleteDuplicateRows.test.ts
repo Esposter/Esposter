@@ -7,12 +7,12 @@ import { setupWithDataSource } from "@/composables/resource/file/commands/setupW
 import { KeepDuplicateMode } from "@/models/resource/file/commands/KeepDuplicateMode";
 import { useFileHistoryStore } from "@/store/resource/file/history";
 import { takeOne } from "@esposter/shared";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 describe(useDeleteDuplicateRows, () => {
   setupCommandTest();
 
-  test("removes duplicate rows keeping first occurrence", () => {
+  test("removes duplicate rows keeping first occurrence", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource(
@@ -21,26 +21,26 @@ describe(useDeleteDuplicateRows, () => {
     );
     const { dataSource } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
-    deleteDuplicateRows();
+    await deleteDuplicateRows();
 
     expect(dataSource.rows).toHaveLength(1);
     expect(takeOne(dataSource.rows).data[""]).toBe(0);
   });
 
-  test("removes duplicate rows keeping last occurrence", () => {
+  test("removes duplicate rows keeping last occurrence", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("a")], [createRow({ a: 1 }), createRow({ a: 2 }), createRow({ a: 1 })]);
     const { dataSource } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
-    deleteDuplicateRows(KeepDuplicateMode.Last);
+    await deleteDuplicateRows(KeepDuplicateMode.Last);
 
     expect(dataSource.rows).toHaveLength(2);
     expect(takeOne(dataSource.rows).data.a).toBe(2);
     expect(takeOne(dataSource.rows, 1).data.a).toBe(1);
   });
 
-  test("keeps rows that differ in at least one column", () => {
+  test("keeps rows that differ in at least one column", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource(
@@ -51,13 +51,13 @@ describe(useDeleteDuplicateRows, () => {
     const deleteDuplicateRows = useDeleteDuplicateRows();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    deleteDuplicateRows();
+    await deleteDuplicateRows();
 
     expect(dataSource.rows).toHaveLength(2);
     expect(isUndoable.value).toBe(false);
   });
 
-  test("undo restores deleted duplicate rows", () => {
+  test("undo restores deleted duplicate rows", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
@@ -66,13 +66,13 @@ describe(useDeleteDuplicateRows, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
 
-    deleteDuplicateRows();
+    await deleteDuplicateRows();
     undo(dataSource);
 
     expect(dataSource.rows).toHaveLength(2);
   });
 
-  test("redo re-applies after undo", () => {
+  test("redo re-applies after undo", async () => {
     expect.hasAssertions();
 
     const ds = createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 0 })]);
@@ -81,7 +81,7 @@ describe(useDeleteDuplicateRows, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
 
-    deleteDuplicateRows();
+    await deleteDuplicateRows();
     undo(dataSource);
     redo(dataSource);
 

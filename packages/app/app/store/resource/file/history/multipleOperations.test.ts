@@ -16,15 +16,15 @@ describe(useFileHistoryStore, () => {
     clear();
   });
 
-  test("multiple undo operations reverse in order", () => {
+  test("multiple undo operations reverse in order", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(dataSource?.rows ?? [], 1).id);
-    deleteRow(takeOne(dataSource?.rows ?? []).id);
+    await deleteRow(takeOne(dataSource?.rows ?? [], 1).id);
+    await deleteRow(takeOne(dataSource?.rows ?? []).id);
     const dataSourceAfterDeletes = dataSource;
 
     assert.exists(dataSourceAfterDeletes);
@@ -49,7 +49,7 @@ describe(useFileHistoryStore, () => {
     expect(takeOne(dataSourceAfterUndo2.rows, 1).data[""]).toBe(2);
   });
 
-  test("mixed operations undo/redo correctly", () => {
+  test("mixed operations undo/redo correctly", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
@@ -57,8 +57,8 @@ describe(useFileHistoryStore, () => {
     const deleteColumn = useDeleteColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    deleteRow(takeOne(dataSource?.rows ?? []).id);
-    deleteColumn(" ");
+    await deleteRow(takeOne(dataSource?.rows ?? []).id);
+    await deleteColumn(" ");
     const dataSourceAfterOps = dataSource;
 
     assert.exists(dataSourceAfterOps);

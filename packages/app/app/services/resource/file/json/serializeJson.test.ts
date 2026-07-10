@@ -1,6 +1,6 @@
-import type { JsonFileSettings } from "#shared/models/resource/file/JsonFileSettings";
 import type { Column } from "#shared/models/resource/file/column/Column";
 import type { DataSource } from "#shared/models/resource/file/datasource/DataSource";
+import type { JsonFileSettings } from "#shared/models/resource/file/JsonFileSettings";
 
 import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
 import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
