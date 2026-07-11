@@ -1,6 +1,6 @@
 ---
 title: Portal chrome extras
-description: Rejected — remaining Azure-portal chrome with no workflow behind it: breadcrumb pickers, feedback smiley, tours, docs cards, localization, tabbed Overviews.
+description: "Rejected — remaining Azure-portal chrome with no workflow behind it: breadcrumb pickers, feedback smiley, tours, docs cards, localization, tabbed Overviews."
 ---
 
 # Portal chrome extras

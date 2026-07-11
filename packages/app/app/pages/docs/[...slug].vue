@@ -10,7 +10,10 @@ const [{ data: page }, { data: navigation }] = await Promise.all([
 
 if (!page.value) throw createError({ fatal: true, statusCode: 404, statusMessage: "Page Not Found" });
 
-const items = computed(() => navigation.value?.at(0)?.children ?? []);
+// Unwrap the single "/docs" root group; fall back to the full tree if the shape ever changes
+const items = computed(
+  () => navigation.value?.find(({ path }) => path === "/docs")?.children ?? navigation.value ?? [],
+);
 
 useSeoMeta({ description: page.value.description, title: page.value.title });
 </script>

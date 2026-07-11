@@ -23,22 +23,23 @@ stateDiagram-v2
   state "Soft-deleted (deletedAt set,<br/>publication row removed, blob kept)" as Bin
   Live --> Bin: deleteResource / deleteResources
   Bin --> Live: restoreResource (returns as Draft — re-publish is manual)
-  Bin --> [*]: purgeResource (row + {id}/ blob dir)
+  Bin --> [*]: purgeResource (blob dir → table partitions → row)
   Bin --> [*]: timer purge (deletedAt < now − 30d)
 ```
 
 - `createResourcesWhere` gains `isNull(deletedAt)` by default and an internal `deletedOnly` mode for the bin.
 - `getOwnerProcedure` rejects soft-deleted ids for normal procedures (a deleted resource's page 404s); restore/purge use the `deletedOnly` lookup.
-- Auto-purge: an Azure Functions **timer** (existing function app, the Service-Bus/timer pattern already in place) purging rows where `deletedAt < now − 30d` — batch delete rows + blob dirs, before-persist failures rethrow for retry.
+- Auto-purge: an Azure Functions **timer** (existing function app, the Service-Bus/timer pattern already in place) purging resources where `deletedAt < now − 30d`.
+- Purge protocol — shared by `purgeResource` and the timer, ordered for idempotent retry: delete the `{id}/` blob directory first, dependent Azure Table partitions next (e.g. the [activity log](/docs/proposals/platform/activity-log)'s), and the Postgres row **last**. A partial failure leaves the row behind as the durable marker that re-drives the whole sequence; blob and table deletes treat already-gone as success, and failures rethrow so the timer retries.
 
 ## Procedures
 
-| Procedure                                            | Auth                  | Input      | Purpose                                              |
-| ---------------------------------------------------- | --------------------- | ---------- | ---------------------------------------------------- |
-| `<type>.deleteResource` / `resource.deleteResources` | owner                 | unchanged  | become soft: set `deletedAt`, delete publication row |
-| `resource.readDeletedResources`                      | authed                | pagination | the bin list (`deletedOnly`)                         |
-| `resource.restoreResource`                           | owner (`deletedOnly`) | `{ id }`   | clear `deletedAt`                                    |
-| `resource.purgeResource`                             | owner (`deletedOnly`) | `{ id }`   | hard delete row + blob dir                           |
+| Procedure                                            | Auth                           | Input      | Purpose                                              |
+| ---------------------------------------------------- | ------------------------------ | ---------- | ---------------------------------------------------- |
+| `<type>.deleteResource` / `resource.deleteResources` | owner                          | unchanged  | become soft: set `deletedAt`, delete publication row |
+| `resource.readDeletedResources`                      | authed (caller-scoped `where`) | pagination | the caller's own bin list (`deletedOnly`)            |
+| `resource.restoreResource`                           | owner (`deletedOnly`)          | `{ id }`   | clear `deletedAt`                                    |
+| `resource.purgeResource`                             | owner (`deletedOnly`)          | `{ id }`   | hard delete row + blob dir                           |
 
 ## Components
 

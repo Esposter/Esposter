@@ -1,6 +1,6 @@
 ---
 title: Create gallery search + categories
-description: Deferred — Azure Marketplace parity in the create gallery: a search field and category rail over the type tiles.
+description: "Deferred — Azure Marketplace parity in the create gallery: a search field and category rail over the type tiles."
 ---
 
 # Create gallery search + categories

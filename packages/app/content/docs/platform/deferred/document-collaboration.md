@@ -1,6 +1,6 @@
 ---
 title: Resource collaboration
-description: Deferred — multi-user access to resources: sharing, roles/ACLs, concurrent editing.
+description: "Deferred — multi-user access to resources: sharing, roles/ACLs, concurrent editing."
 ---
 
 # Resource collaboration

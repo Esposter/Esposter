@@ -17,7 +17,9 @@ Azure Activity-log parity: a per-resource audit trail (created, renamed, saved, 
 
 ## Write path
 
-Events are emitted inside `createResourceProcedures` mutations (and `resource.duplicateResource` / recycle-bin restore), **after** the primary write, best-effort per the error-handling conventions — a failed activity write logs and never fails the user's mutation. `ContentSaved` is coalesced: skip the write when the newest existing entry is a `ContentSaved` by the same user within the last hour (autosave would otherwise flood the partition). `deleteResource` drops the partition with the resource.
+Events are emitted inside `createResourceProcedures` mutations (and `resource.duplicateResource` / recycle-bin restore), **after** the primary write, best-effort per the error-handling conventions — a failed activity write logs and never fails the user's mutation. `ContentSaved` is coalesced: skip the write when the newest existing entry is a `ContentSaved` by the same user within the last hour (autosave would otherwise flood the partition).
+
+Cleanup: Azure Table Storage has no partition-drop operation, so activity deletion enumerates the `resourceId` partition and batch-deletes entities in transactions of up to 100 (the existing batch convention). Soft delete ([recycle bin](/docs/proposals/platform/recycle-bin)) leaves the partition intact — history survives the bin window and restore appends `Restored` — and the sweep runs at purge time (`purgeResource` and the timer purge), before the resource row is deleted so a failed sweep is re-driven by the surviving row on the next pass.
 
 ## Flow
 
@@ -63,4 +65,4 @@ sequenceDiagram
 
 - Activity is the durable trail; the [notifications bell](/docs/proposals/platform/notifications) is the ephemeral session feedback — they share event sources but never storage.
 - No cross-resource activity feed (portal subscription-level log) — per-resource only until something needs more.
-- Retention: rows live until resource deletion; if partitions ever grow uncomfortable, add a timer-function sweep (same pattern as message retention) rather than capping writes.
+- Retention: rows live until resource purge; if partitions ever grow uncomfortable, add a timer-function sweep (same pattern as message retention) rather than capping writes.

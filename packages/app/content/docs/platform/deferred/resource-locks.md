@@ -1,6 +1,6 @@
 ---
 title: Resource locks
-description: Deferred — Azure lock parity: CanNotDelete / ReadOnly markers enforced by the factory.
+description: "Deferred — Azure lock parity: CanNotDelete / ReadOnly markers enforced by the factory."
 ---
 
 # Resource locks
