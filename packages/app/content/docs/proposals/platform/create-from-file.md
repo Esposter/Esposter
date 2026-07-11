@@ -34,6 +34,6 @@ flowchart LR
 
 ## Notes
 
-- Client-side parse only, same as Import — no upload path, the 10k-row realities are identical to the Import command's.
+- Client-side parse only, same as Import — no upload path; the 1000-row dataset-cap realities are identical to the Import command's.
 - Only File opts in; the mechanism is a per-type create-form slot, which is exactly the "type-specific initial settings" affordance the create form already reserves — not a new framework.
 - If more types ever want rich create forms, that is the [create wizard tabs](/docs/platform/deferred/create-wizard-tabs) revisit trigger.
