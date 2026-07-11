@@ -30,11 +30,9 @@ const items = computed<ListLinkItem[]>(() => {
       title: "About",
     },
     {
-      external: true,
       href: RoutePath.Docs,
       icon: "mdi-book-open-page-variant",
       title: "Documentation",
-      trailingSlash: "append",
     },
     {
       href: RoutePath.PrivacyPolicy,

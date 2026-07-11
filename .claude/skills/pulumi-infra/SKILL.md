@@ -73,12 +73,12 @@ Every new resource must set the `parent` Pulumi option to the **nearest final Az
 
 ## Docs
 
-- Durable infrastructure docs live in `packages/infra/docs/`, split by provider: provider-specific docs under `docs/azure/` (and `docs/github/`), cross-cutting docs at the `docs/` root. The forward roadmap is `features/infra/roadmap.md` (prioritized, checkbox backlog); the shipped log + index is `features/infra/README.md` (thin); completed design records live in `features/infra/reference/`.
+- Durable infrastructure docs live in `packages/infra/docs/`, split by provider: provider-specific docs under `docs/azure/` (and `docs/github/`), cross-cutting docs at the `docs/` root. The forward roadmap is `packages/app/content/docs/infra/roadmap.md` (every item links a proposal in `packages/app/content/docs/proposals/infra/`); the area index + shipped log is `packages/app/content/docs/infra/index.md`.
 - `docs/azure/naming-conventions.md` — Azure naming rules.
 - `docs/azure/overview.md` — Azure resource inventory.
 - `docs/azure/search-indexes.md` — Azure Search index/datasource/indexer setup.
 - `docs/azure/security-constraints.md` — security hardening blockers and app code references.
-- `features/infra/reference/optimization-review.md` — phase-2 cost/security findings.
+- `packages/app/content/docs/infra/optimization-review.md` — phase-2 cost/security findings.
 - `docs/stacks.md` — stack policy (cross-provider).
 - `docs/roadmap.md` — cleanup, optimization, naming-refactor, and production-stack phases.
 - Move completed one-off migration notes out of the package after their durable content is represented in `docs/`.

@@ -9,6 +9,7 @@ import type { NuxtConfig } from "nuxt/schema";
 export const modules: NuxtConfig["modules"] = process.env.VITEST
   ? ["@nuxt/test-utils/module", "@pinia/nuxt", "@vueuse/nuxt", "vuetify-nuxt-module"]
   : [
+      "@nuxt/content",
       "@nuxt/eslint",
       "@nuxt/fonts",
       "@nuxt/scripts",

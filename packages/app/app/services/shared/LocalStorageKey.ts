@@ -5,7 +5,7 @@ export const LocalStorageKey = {
   Draft: (roomId: string) => `draft:${roomId}`,
   DungeonsStore: "dungeons-store",
   IsResourceListCollapsed: "is-resource-list-collapsed",
-  SurveyResponseId: "survey-response-id",
+  SurveyResponseId: (surveyId: string) => `survey-response-id:${surveyId}`,
   VoiceCameraDeviceId: "user-settings-voice-camera-device-id",
   VoiceInputDeviceId: "user-settings-voice-input-device-id",
   VoiceOutputDeviceId: "user-settings-voice-output-device-id",

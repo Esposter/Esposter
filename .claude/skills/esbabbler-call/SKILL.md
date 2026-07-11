@@ -99,7 +99,7 @@ v-for="entity of childMap.values()"
 
 `useMediaStore` (`call/media.ts`): `isDeafened`, `isForceMuted`, `isCameraEnabled`, `isScreenSharing`, `screenSharingParticipantIds`, `pinnedParticipantId`, `selectedVirtualBackground`, `localVideoStream`, `remoteVideoStreams`, `localScreenShareStream`, `remoteScreenShareStreams`.
 
-`useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`, `setScreenShare`, `setVirtualBackground`, `setActiveDevice`. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers call `room.switchActiveDevice` to restart the live track. The store keeps no `selectedAudioInputDeviceId`-style refs. See [voice-video-settings.md](../../../features/esbabbler/specs/voice-video-settings.md#device-selection-single-source-of-truth).
+`useLiveKitStore` (`store/message/room/liveKit.ts`) wraps the LiveKit `Room`: `connect`, `disconnect`, `setCamera`, `setMicrophone`, `setRemoteAudioMuted`, `setScreenShare`, `setVirtualBackground`, `setActiveDevice`. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers call `room.switchActiveDevice` to restart the live track. The store keeps no `selectedAudioInputDeviceId`-style refs. See `packages/app/content/docs/esbabbler/voice-video.md` (Device selection).
 
 ## Shareable call link
 

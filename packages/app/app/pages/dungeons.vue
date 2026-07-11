@@ -10,8 +10,6 @@ import SliderPlugin from "phaser4-rex-plugins/plugins/slider-plugin";
 import VirtualJoystickPlugin from "phaser4-rex-plugins/plugins/virtualjoystick-plugin";
 import { Game, usePhaserStore, useTextStore } from "vue-phaserjs";
 
-defineRouteRules({ ssr: false });
-
 await useReadDungeons();
 
 const phaserStore = usePhaserStore();

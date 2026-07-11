@@ -27,7 +27,7 @@ const saveSurveyResponse = async (survey: Model) => {
       partitionKey: id,
       rowKey: newSurveyResponseId,
     });
-    localStorage.setItem(LocalStorageKey.SurveyResponseId, surveyResponse.rowKey);
+    localStorage.setItem(LocalStorageKey.SurveyResponseId(id), surveyResponse.rowKey);
     return;
   }
 
@@ -54,7 +54,11 @@ model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSav
   showSaveInProgress();
   survey.clearIncorrectValues(true);
   await getResultAsync(() => saveSurveyResponse(survey)).match(
-    () => showSaveSuccess(),
+    () => {
+      // The resume id must not outlive the submission — a shared device could otherwise reopen the answers
+      localStorage.removeItem(LocalStorageKey.SurveyResponseId(id));
+      showSaveSuccess();
+    },
     (error) => showSaveError(error.message),
   );
 });
@@ -63,7 +67,7 @@ useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 const isLoading = ref(true);
 // Respondent progress is tracked per browser, so an interrupted survey resumes where it left off
 const onMount = async () => {
-  const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId);
+  const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId(id));
   if (!surveyResponseId) return;
 
   surveyResponse = await $trpc.survey.readSurveyResponse.query({ partitionKey: id, rowKey: surveyResponseId });

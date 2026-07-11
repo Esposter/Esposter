@@ -132,7 +132,7 @@ external: [...externalVueFramework, "@platformatic/vfs"],  // virrun — declare
 ## Dependency Installs
 
 - Use plain `pnpm i` from the repo root when package manifests change.
-- Follow `architecture/monorepo-tooling.md` for install safety rules.
+- Follow `packages/app/content/docs/architecture/monorepo-tooling.md` for install safety rules.
 - If `pnpm i` needs network access, request approval for plain `pnpm i` rather than changing pnpm store settings.
 
 ## Workspace Graph

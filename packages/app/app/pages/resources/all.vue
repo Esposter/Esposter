@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "@esposter/shared";
 
-defineRouteRules({ ssr: false });
 definePageMeta({ middleware: "auth" });
 </script>
 

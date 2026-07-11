@@ -6,7 +6,7 @@ This file is the canonical guidance for AI coding agents working in this reposit
 
 **Project**: Esposter
 **Description**: A comprehensive social platform monorepo ("A nice and casual place for posting random things").
-**Architecture**: Monorepo using pnpm workspaces. See `architecture/monorepo-tooling.md` for workspace orchestration, publishing, installs, and CI runner policy.
+**Architecture**: Monorepo using pnpm workspaces. See `packages/app/content/docs/architecture/monorepo-tooling.md` for workspace orchestration, publishing, installs, and CI runner policy.
 **Language**: TypeScript (Strict Mode)
 **Runtime**: Node.js (see `engines.node` in `package.json`)
 **Package Manager**: pnpm (see `packageManager` in `package.json`)
@@ -83,7 +83,7 @@ pnpm update:node      # bump engines.node + @types/node, install/switch via fnm,
 pnpm depcruise:graph  # generate dependency-graph.svg from package entrypoints
 ```
 
-Use plain `pnpm i` for dependency installs. See `architecture/monorepo-tooling.md` for install safety rules. `pnpm update:node [version]` bumps the node version everywhere in one call (see the `dependency-updates` skill).
+Use plain `pnpm i` for dependency installs. See `packages/app/content/docs/architecture/monorepo-tooling.md` for install safety rules. `pnpm update:node [version]` bumps the node version everywhere in one call (see the `dependency-updates` skill).
 
 `pnpm depcruise:graph` pipes dependency-cruiser DOT output directly into `graphviz-cli` to produce `dependency-graph.svg`. Avoid committing intermediate DOT/Mermaid files unless explicitly needed for debugging.
 

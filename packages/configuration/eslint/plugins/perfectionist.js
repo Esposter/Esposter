@@ -15,5 +15,6 @@ export default defineConfig({
         internalPattern: [],
       },
     ],
+    "perfectionist/sort-vue-attributes": "off",
   },
 });

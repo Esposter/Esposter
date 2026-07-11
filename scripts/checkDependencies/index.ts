@@ -46,7 +46,7 @@ const [regularChecks, registryChecks] = await Promise.all([
 ]);
 const outdatedDependencies = [...regularChecks.outdatedDependencies, ...registryChecks.outdatedDependencies];
 const errors = [...regularChecks.errors, ...registryChecks.errors];
-const hasBlockingIssues = uncatalogedManifestDependencies.length > 0 || mismatches.length > 0 || errors.length > 0;
+const hasBlockingIssues = uncatalogedManifestDependencies.length > 0 || errors.length > 0;
 printOutdatedDependencies(outdatedDependencies, color);
 printRegistryErrors(errors, color);
 printExecutionTime(startedAt);

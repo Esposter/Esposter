@@ -4,9 +4,11 @@ Cross-product integration program: everything is a resource with opt-in capabili
 
 ## Now
 
-**Resource Explorer consolidation** — all editors + surveyer unify into the resource model and one Azure-portal-like explorer. Phase 1 (schema + factory + container) shipped; **Phase 2 — explorer shell** (Azure-portal-faithful Home + full list + create flow + blade page) is next. Phased backlog in [`roadmap.md`](roadmap.md); UX shell in [specs/resource-explorer.md](specs/resource-explorer.md).
+**Azure-portal parity** — the consolidation shipped; the explorer now chases real-portal UX: global search dropdown + command palette first, then `/all` list filters/views, command-bar parity, and schema-backed extras (favorites, tags, activity log, recycle bin). Backlog in [`roadmap.md`](roadmap.md); shell spec in [specs/resource-explorer.md](specs/resource-explorer.md).
 
 ## Shipped
+
+- **Resource Explorer consolidation (Phases 1–6)** — everything became a resource behind one Azure-portal-like explorer; all per-editor pages, the documents hub, and the surveyer are gone ([reference/resource-consolidation.md](reference/resource-consolidation.md); shell in [specs/resource-explorer.md](specs/resource-explorer.md))
 
 Documents-era phases below built the mechanisms the resource model generalizes — their specs are superseded where noted.
 
@@ -25,5 +27,6 @@ Grep [out-of-scope/](out-of-scope) (won't do) and [deferred/](deferred) (not yet
 ## Reference
 
 - [`/architecture/platform.md`](../../architecture/platform.md) — cross-product layer model, capability matrix, journey diagram
-- [specs/](specs) — resource explorer shell, file/survey resource folds, dashboard data binding, email personalization, shell cohesion
+- [specs/](specs) — resource explorer shell + the portal-parity set (global search, list filters & views, resource-page parity, notifications, favorites & recents, tags, activity log, recycle bin), file/survey resource folds, dashboard data binding, email personalization, shell cohesion
+- [reference/](reference) — resource-consolidation record (Phases 1–6)
 - `.claude/skills/grapesjs` — editor integration conventions (useGrapesJsEditor, block sync, save-time capture)

@@ -132,7 +132,7 @@ New workspace packages follow existing patterns (e.g. `packages/db`, `packages/d
    ```
    No per-package `.oxlintrc.json` — oxlint runs once from the repo root against the single root `.oxlintrc.json`.
 6. **`src/index.ts`** — minimal barrel; `ctix` regenerates it on `pnpm export:gen`.
-7. **Run plain `pnpm i`** from repo root to link the package. Follow `architecture/monorepo-tooling.md` for install safety.
+7. **Run plain `pnpm i`** from repo root to link the package. Follow `packages/app/content/docs/architecture/monorepo-tooling.md` for install safety.
 8. **Run `pnpm build`** in the new package to produce `dist/`.
 
 ### Bin entrypoints — no shebang

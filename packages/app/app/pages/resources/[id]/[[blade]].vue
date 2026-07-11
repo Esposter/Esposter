@@ -4,8 +4,6 @@ import { isValidResourceBlade } from "@/services/resource/isValidResourceBlade";
 import { validate } from "@/services/router/validate";
 import { RoutePath } from "@esposter/shared";
 
-// The resource explorer is an authenticated SPA area (no SSR/SEO benefit) that touches localStorage/window, so render client-only.
-defineRouteRules({ ssr: false });
 // Key by id only so switching blades reuses this page (the left resource list stays mounted instead of refetching);
 // The page still remounts when the id changes. Per-type blade slugs need the loaded resource's type, so the blade
 // Itself is 404-guarded after load rather than in validate.
