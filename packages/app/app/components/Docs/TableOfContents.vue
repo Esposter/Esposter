@@ -6,14 +6,21 @@ interface TableOfContentsProps {
 }
 
 const { links } = defineProps<TableOfContentsProps>();
-const activeId = useActiveTocLinkId(() => links);
+const visibleIds = useVisibleTocLinkIds(() => links);
 </script>
 
 <template>
-  <nav p-4 overflow-y-auto aria-label="On this page">
-    <p font-medium mb-2 op-medium-emphasis text-body-small>On this page</p>
-    <ul m-0 p-0 list-none>
-      <DocsTableOfContentsItem v-for="link of links" :key="link.id" :active-id :link />
+  <nav overflow-y-auto p-4 aria-label="On this page">
+    <p mb-2 font-medium op-medium-emphasis>On this page</p>
+    <ul class="table-of-contents" relative m-0 list-none p-0>
+      <StyledSlideIndicator :active-keys="visibleIds" />
+      <DocsTableOfContentsItem v-for="link of links" :key="link.id" :depth="0" :link :visible-ids="visibleIds" />
     </ul>
   </nav>
 </template>
+
+<style scoped>
+.table-of-contents {
+  border-left: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+}
+</style>

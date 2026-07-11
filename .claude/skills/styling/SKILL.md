@@ -19,7 +19,8 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 
 `NuxtLayout` renders page content inside `v-main`, which carries the gray `background` base. Page content must **not** sit transparent directly on that base — layer surface on top, Azure-portal style.
 
-- **`bg-surface` on a plain `<div>` is BANNED — use `v-sheet` for surface colour.** `v-sheet` (and `v-card`) carry the theme surface inherently; wrap a surface region in a `<v-sheet flex-1 …>` and let children be transparent on top of it. Never write `<div bg-surface>`. (`v-container` is layout/max-width only — it does **not** provide a background.)
+- **When the whole page is one surface, paint `v-main` directly instead of adding a wrapper:** `<NuxtLayout :main-style="{ backgroundColor: 'rgb(var(--v-theme-surface))' }">`. No `v-sheet`, no extra div — the docs pages are the reference. Prefer trimming an existing wrapper `v-sheet` down to this whenever it exists only to provide the page background.
+- **`bg-surface` on a plain `<div>` is BANNED.** For a distinct nested surface region (a panel inside a page that keeps the gray base) use `v-sheet`/`v-card`, which carry the theme surface inherently. For an element that merely needs an opaque backdrop (e.g. a sticky bar content scrolls under), set `background-color: rgb(var(--v-theme-surface))` in its scoped style — don't wrap it in a component just for colour. (`v-container` is layout/max-width only — it does **not** provide a background.)
 - Wrap centered page bodies in `<v-container>` (centered, max-width — **not** `fluid`) inside the `v-sheet`; section titles stay left-aligned.
 - Group distinct panels into `v-card` / `StyledCard` (Essentials panels, forms).
 - Center a hero/search field with a `flex justify-center` wrapper + a `max-width`, not full-bleed.
@@ -329,3 +330,4 @@ Use `relative` on the parent and `absolute top-0 right-0` (or other corners) to 
 
 - Use `<style scoped>` — `scoped` always required.
 - Omit `lang="scss"` unless the block uses Sass features (variables, nesting, mixins). Plain CSS doesn't need it.
+- **Switch to `lang="scss"` the moment nesting simplifies the block** — e.g. many `:deep(...)` rules repeating one root selector (`.docs-content :deep(h1)`, `.docs-content :deep(h2)`, …) collapse to one nested root (`.docs-content { :deep(h1) {…} }`). If a plain-CSS block repeats an ancestor selector 3+ times, refactor it to nested SCSS; conversely never add `lang="scss"` to a block that stays flat.

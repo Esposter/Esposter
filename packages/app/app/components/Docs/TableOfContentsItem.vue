@@ -2,11 +2,13 @@
 import type { TocLink } from "@nuxt/content";
 
 interface TableOfContentsItemProps {
-  activeId: string;
+  depth: number;
   link: TocLink;
+  visibleIds: string[];
 }
 
-const { activeId, link } = defineProps<TableOfContentsItemProps>();
+const { depth, link, visibleIds } = defineProps<TableOfContentsItemProps>();
+const isActive = computed(() => visibleIds.includes(link.id));
 // window is not reachable from template expressions, so the handler lives in script
 const onClick = () => {
   window.document.getElementById(link.id)?.scrollIntoView({ behavior: "smooth" });
@@ -17,20 +19,28 @@ const onClick = () => {
 <template>
   <li>
     <a
-      py-1
-      no-underline
       block
+      py-1
+      text-sm
+      no-underline
       transition-colors
-      duration-[--transition-duration]
-      text-body-small
-      :class="link.id === activeId ? 'text-primary' : 'text-inherit op-medium-emphasis hover:op-high-emphasis'"
+      duration="[--transition-duration]"
+      :class="isActive ? 'text-primary font-medium' : 'text-inherit op-medium-emphasis hover:op-high-emphasis'"
+      :data-slide-indicator-key="link.id"
       :href="`#${link.id}`"
+      :style="{ paddingLeft: `${0.75 + depth * 0.75}rem` }"
       @click.prevent="onClick()"
     >
       {{ link.text }}
     </a>
-    <ul v-if="link.children" m-0 pl-3 list-none>
-      <DocsTableOfContentsItem v-for="child of link.children" :key="child.id" :active-id :link="child" />
+    <ul v-if="link.children" m-0 list-none p-0>
+      <DocsTableOfContentsItem
+        v-for="child of link.children"
+        :key="child.id"
+        :depth="depth + 1"
+        :link="child"
+        :visible-ids="visibleIds"
+      />
     </ul>
   </li>
 </template>
