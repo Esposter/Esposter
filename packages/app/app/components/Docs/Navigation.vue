@@ -10,8 +10,8 @@ interface NavigationProps {
 }
 
 const { sections } = defineProps<NavigationProps>();
-const route = useRoute();
-const opened = ref(getOpenedNavigationPaths(route.path));
+const router = useRouter();
+const { cloned: opened } = useCloned(() => getOpenedNavigationPaths(router.currentRoute.value.path));
 const sectionsWithGroups = computed(() =>
   sections.map((section) => ({
     groups: getNavigationGroups(
@@ -24,7 +24,7 @@ const sectionsWithGroups = computed(() =>
 </script>
 
 <template>
-  <v-list v-model:opened="opened" overflow-y-auto color="primary" nav>
+  <v-list v-model:opened="opened" color="primary" nav overflow-y-auto>
     <v-list-group v-for="{ groups, section } of sectionsWithGroups" :key="section.path" :value="section.path">
       <template #activator="{ props: activatorProps }">
         <v-list-item

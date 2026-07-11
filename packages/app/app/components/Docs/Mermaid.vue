@@ -60,7 +60,7 @@ onUnmounted(() => {
     >
       <pre>{{ code }}</pre>
     </div>
-    <div v-if="panzoom" absolute right-2 top-2 flex gap-1 op-0 transition-opacity group-hover:op-100>
+    <div v-if="panzoom" op-0 flex gap-1 transition-opacity right-2 top-2 absolute group-hover:op-100>
       <StyledTooltipIconButton
         :button-props="zoomButtonProps"
         icon="mdi-plus"

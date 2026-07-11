@@ -8,9 +8,9 @@ const goTo = useVGoTo();
   <v-fade-transition>
     <StyledButton
       v-show="y > SHOW_SCROLL_TO_TOP_OFFSET"
-      fixed
       bottom-4
       right-4
+      fixed
       z-5
       :button-props="{ icon: 'mdi-chevron-up' }"
       @click="goTo(0)"

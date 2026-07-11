@@ -24,7 +24,7 @@ const categories = computed(() =>
 </script>
 
 <template>
-  <div class="category-tabs" sticky top="[--app-bar-height]" z-1 flex items-center>
+  <div class="category-tabs" top="[--app-bar-height]" flex items-center sticky z-1>
     <v-tabs color="primary" :model-value="activeCategory ?? RoutePath.Docs" show-arrows>
       <v-tab class="text-none" exact prepend-icon="mdi-home" :to="RoutePath.Docs" :value="RoutePath.Docs">
         Overview

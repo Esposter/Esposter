@@ -19,10 +19,10 @@ const onClick = () => {
 <template>
   <li>
     <a
-      block
-      py-1.5
       class="text-[0.9375rem]"
+      py-1.5
       no-underline
+      block
       transition-colors
       duration="[--transition-duration]"
       :class="isActive ? 'text-primary font-medium' : 'text-inherit op-medium-emphasis hover:op-high-emphasis'"
@@ -33,13 +33,13 @@ const onClick = () => {
     >
       {{ link.text }}
     </a>
-    <ul v-if="link.children" m-0 list-none p-0>
+    <ul v-if="link.children" m-0 p-0 list-none>
       <DocsTableOfContentsItem
         v-for="child of link.children"
         :key="child.id"
         :depth="depth + 1"
         :link="child"
-        :visible-ids="visibleIds"
+        :visible-ids
       />
     </ul>
   </li>

@@ -6,9 +6,9 @@ import { DocsSectionGroupsMap } from "@/services/docs/DocsSectionGroupsMap";
 
 const PLANNING_GROUP_TITLE = "Planning";
 const planningSlugs = new Set<string>([
-  DocsNavigationSlug.Roadmap,
   DocsNavigationSlug.Deferred,
   DocsNavigationSlug.Rejected,
+  DocsNavigationSlug.Roadmap,
 ]);
 
 export const getNavigationGroups = (sectionPath: string, items: ContentNavigationItem[]): DocsNavigationGroup[] => {
