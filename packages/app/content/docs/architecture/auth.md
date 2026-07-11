@@ -1,0 +1,44 @@
+---
+title: Auth
+description: The better-auth OAuth setup, session middleware, and the authed/rate-limited tRPC procedure chain.
+---
+
+# Auth
+
+Authentication is OAuth-only through [better-auth](https://better-auth.com) with the Drizzle adapter — Google, GitHub, and Facebook — mounted at the catch-all `server/api/auth/[...].ts`. Sessions are cookie-based; the Vue client reads them through `authClient.useSession` (better-auth's Vue plugin with the server's inferred additional fields, so `user.biography` is typed end-to-end).
+
+## How it works
+
+```mermaid
+flowchart LR
+  login[login page\nGoogle / GitHub / Facebook] --> ba[better-auth handler\nserver/api/auth/...]
+  ba --> pg[(users / sessions tables\nDrizzle adapter)]
+  page[auth-gated page] --> mw[auth middleware\nsession? else /login]
+  client[$trpc call] --> proc[standardAuthedProcedure]
+  proc --> isAuthed[getIsAuthed + rate limiter\nsession → AuthedContext]
+  proc --> plugin[achievementPlugin]
+```
+
+- **Route gating** — `definePageMeta({ middleware: "auth" })` redirects signed-out visitors to `/login`; the login page itself uses the inverse `guest` middleware. Everything else is public by default.
+- **Procedure gating** — `standardAuthedProcedure` = `publicProcedure` + `getIsAuthed(RateLimiterType.Standard)` (session check + rate limiting in one middleware, yielding `AuthedContext` with `getSessionPayload`) + the [achievement plugin](/docs/achievements/unlock-pipeline). `standardRateLimitedProcedure` is the unauthenticated sibling for public reads. Room-scoped RBAC procedures build on top (see [esbabbler RBAC](/docs/esbabbler/rbac)).
+- **Users table** — better-auth owns the `users`/`sessions` schema; Esposter adds `biography` via `additionalFields`, validated by the Drizzle-derived Zod schema. better-auth's own endpoints share the standard rate-limiter budget.
+- **Device identity** — `getDeviceId`/`getIsSameDevice` fingerprint requests (push-subscription scoping), and `generateToken` mints the shared-secret tokens used by webhook delivery.
+
+## Key files
+
+Paths relative to `packages/app`.
+
+| File                                                | Role                               |
+| --------------------------------------------------- | ---------------------------------- |
+| `server/auth.ts`                                    | better-auth configuration          |
+| `server/api/auth/[...].ts`                          | the mounted auth handler           |
+| `app/services/auth/authClient.ts`                   | typed Vue session client           |
+| `app/middleware/auth.ts`, `app/middleware/guest.ts` | route gating                       |
+| `server/trpc/middleware/getIsAuthed.ts`             | session + rate-limit middleware    |
+| `server/trpc/procedure/standardAuthedProcedure.ts`  | the standard authed chain          |
+| `server/services/auth/`                             | device id + webhook token services |
+
+## Notes
+
+- OAuth-only is deliberate — see [users rejected: password auth](/docs/users/rejected/password-auth).
+- Anonymous users are first-class where products support it (games persist to localStorage; the feed is readable rate-limited) — auth gates writing and personal state, not browsing.
