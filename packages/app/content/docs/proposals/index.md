@@ -9,6 +9,7 @@ Everything under this folder is **future work awaiting implementation** — one 
 
 Each product area's roadmap is the prioritized index over its proposals:
 
+- [posts roadmap](/docs/posts/roadmap)
 - [esbabbler roadmap](/docs/esbabbler/roadmap)
 - [platform roadmap](/docs/platform/roadmap)
 - [file table editor roadmap](/docs/file-table-editor/roadmap)
