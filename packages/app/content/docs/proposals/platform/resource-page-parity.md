@@ -57,4 +57,4 @@ sequenceDiagram
 
 - Commands stay capability-gated exactly as today — this proposal changes presentation and adds Refresh/Duplicate, not the gating model.
 - Publish history (list `{id}/published/{n}` snapshots, view/rollback) is a separate roadmap investigation — blob retention across re-publishes must be verified first.
-- JSON view / export-template parity is [out of scope](/docs/platform/decisions/json-config-parity).
+- JSON view / export-template parity is [out of scope](/docs/platform/rejected/json-config-parity).

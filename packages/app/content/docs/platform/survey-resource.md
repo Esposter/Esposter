@@ -12,7 +12,7 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 - Content blob: `surveySchema = z.object({ model: z.string() })` — an object wrapper so future fields don't break the blob shape. The SurveyJS theme stays inside the model JSON under `THEME_KEY` — no reason to split it while SurveyJS owns both.
 - `contentVersion` is server-incremented by the resource factory (the old client-incremented `modelVersion`).
 - `SurveyResponseEntity` (Azure Table, partitionKey = survey resource id) holds respondent answers.
-- Survey groups were dropped in the fold ([resource groups](/docs/platform/decisions/resource-groups)).
+- Survey groups were dropped in the fold ([resource groups](/docs/platform/deferred/resource-groups)).
 
 ## Capabilities
 

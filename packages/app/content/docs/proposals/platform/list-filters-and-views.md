@@ -19,7 +19,7 @@ Azure "All resources" parity for `/resources/all`: filter pills, URL-synced stat
   - **Status** — Published/Draft; server gains `isPublished?: boolean` on `resourceFilterInputSchema`, implemented as an `exists`/left-join on `resource_publications` inside `createResourcesWhere` (the one filter source for both `count` and `readResources`).
   - **Updated** — date-range presets (24h / 7d / 30d / custom), `gte`/`lte` on `updatedAt`.
   - **Tags** — lands with [tags](/docs/proposals/platform/tags).
-- **URL state**: `search`, `types`, `status`, `sortBy`, `page` mirror to query params via `router.replace` (watcher both ways); `?search=` from Home stays the entry point. Named saved views are [deferred](/docs/platform/decisions/saved-views).
+- **URL state**: `search`, `types`, `status`, `sortBy`, `page` mirror to query params via `router.replace` (watcher both ways); `?search=` from Home stays the entry point. Named saved views are [deferred](/docs/platform/deferred/saved-views).
 
 ## Bulk operations
 

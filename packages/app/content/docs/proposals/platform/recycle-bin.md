@@ -58,6 +58,6 @@ stateDiagram-v2
 ## Notes
 
 - Publication removal at soft-delete is deliberate — restore returns a **Draft**; silently resurrecting a public URL would be surprising.
-- Dataset references to a soft-deleted source fail identically to hard delete (dangling-reference behavior unchanged — [dangling dataset references](/docs/platform/decisions/dangling-dataset-references)); restore heals them.
+- Dataset references to a soft-deleted source fail identically to hard delete (dangling-reference behavior unchanged — [dangling dataset references](/docs/platform/deferred/dangling-dataset-references)); restore heals them.
 - Names are not unique, so restore never conflicts.
 - 30 days is a named constant; no per-resource retention setting until someone asks.

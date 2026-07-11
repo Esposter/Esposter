@@ -54,7 +54,7 @@ flowchart LR
 
 1. **Now (free)**: rank prefix matches first — `ORDER BY name ILIKE '{q}%' DESC, updatedAt DESC` in `readResources` (keep `createResourcesWhere` as the single filter source).
 2. **Postgres migration**: `pg_trgm` extension + GIN index on `resources.name`, rank by `similarity()` — typo tolerance at zero service cost.
-3. **Azure AI Search** — [deferred](/docs/platform/decisions/azure-ai-search); nothing at current volumes needs it.
+3. **Azure AI Search** — [deferred](/docs/platform/deferred/azure-ai-search); nothing at current volumes needs it.
 
 ## Key files
 

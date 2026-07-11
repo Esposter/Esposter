@@ -13,4 +13,4 @@ Single-owner resources today — the type-the-name delete confirmation ([resourc
 
 ## Revisit when
 
-Collaboration ships ([resource collaboration](/docs/platform/decisions/document-collaboration)) — protecting a resource from _other_ editors is when locks earn a column.
+Collaboration ships ([resource collaboration](/docs/platform/deferred/document-collaboration)) — protecting a resource from _other_ editors is when locks earn a column.

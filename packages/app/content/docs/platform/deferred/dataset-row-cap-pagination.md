@@ -1,11 +1,11 @@
 ---
 title: Dataset row-cap pagination
-description: Deferred — paginating dataset.readDataset beyond the 10,000-row cap.
+description: Deferred — paginating dataset.readDataset beyond the 1000-row AZURE_MAX_PAGE_SIZE cap.
 ---
 
 # Dataset row-cap pagination
 
-Paginating `dataset.readDataset` beyond the 10 000-row cap (`MAX_DATASET_ROWS`).
+Paginating `dataset.readDataset` beyond the 1000-row cap (`AZURE_MAX_PAGE_SIZE`, applied consistently by every provider).
 
 ## Why deferred
 

@@ -5,7 +5,7 @@ description: Merge-field blocks bound to a dataset, survey invite blocks, and pe
 
 # Email Personalization
 
-The email editor joins the data flow: merge-field blocks bound to a `DatasetReference`, survey invite blocks, and per-row personalized HTML export — applying the [datasets standard](/docs/architecture/datasets) to the email product. Actually sending email is deferred ([email sending](/docs/platform/decisions/email-sending)).
+The email editor joins the data flow: merge-field blocks bound to a `DatasetReference`, survey invite blocks, and per-row personalized HTML export — applying the [datasets standard](/docs/architecture/datasets) to the email product. Actually sending email is deferred ([email sending](/docs/platform/deferred/email-sending)).
 
 ## How it works
 

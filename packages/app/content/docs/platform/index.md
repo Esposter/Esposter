@@ -25,8 +25,9 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
 - [Dashboard data binding](/docs/platform/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots
 - [Email personalization](/docs/platform/email-personalization) — merge fields, survey invite blocks, personalized HTML export
+- [Resource Explorer consolidation](/docs/platform/resource-consolidation) — the shipped six-phase program record
 
-Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals).
+Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity designs it references live under [proposals](/docs/proposals). Ideas we chose not to pursue are under [deferred](/docs/platform/deferred) (with revisit triggers) and [rejected](/docs/platform/rejected).
 
 ## Shipped
 

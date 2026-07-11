@@ -5,7 +5,7 @@ description: Azure tag parity — name:value pairs on every resource, shown in E
 
 # Resource Tags
 
-Azure tag parity: name:value pairs on every resource, shown in Essentials, editable in place, filterable on `/resources/all`. Azure tags are `Record<string, string>` metadata — the lightweight organization layer that keeps [resource groups deferred](/docs/platform/decisions/resource-groups): cross-cutting labels without a grouping entity.
+Azure tag parity: name:value pairs on every resource, shown in Essentials, editable in place, filterable on `/resources/all`. Azure tags are `Record<string, string>` metadata — the lightweight organization layer that keeps [resource groups deferred](/docs/platform/deferred/resource-groups): cross-cutting labels without a grouping entity.
 
 ## Data model
 
@@ -46,4 +46,4 @@ flowchart LR
 
 - Flat name:value only (faithful to Azure) — no hierarchies, no typed values.
 - Free-text tag search inside global search is out of the first cut; the `/all` filter pill is the retrieval path. Revisit alongside `pg_trgm`.
-- If tag usage grows into "give me a folder", that is the [resource groups](/docs/platform/decisions/resource-groups) revisit trigger, not more tag features.
+- If tag usage grows into "give me a folder", that is the [resource groups](/docs/platform/deferred/resource-groups) revisit trigger, not more tag features.
