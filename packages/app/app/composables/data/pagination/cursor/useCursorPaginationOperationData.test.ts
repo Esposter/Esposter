@@ -83,7 +83,7 @@ describe(useCursorPaginationOperationData, () => {
       `[Error: ${error.message}]`,
     );
 
-    expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), BACKOFF_BASE_DELAY_MS);
+    expect(setTimeoutSpy.mock.lastCall?.[1]).toBe(BACKOFF_BASE_DELAY_MS);
     expect(query).toHaveBeenCalledTimes(2);
     expect(onComplete).toHaveBeenCalledTimes(2);
   });

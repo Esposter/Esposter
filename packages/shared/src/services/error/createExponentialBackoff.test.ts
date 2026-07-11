@@ -38,7 +38,7 @@ describe(createExponentialBackoff, () => {
       await expect(executeWithBackoff(operation)).rejects.toThrowErrorMatchingInlineSnapshot(
         `[Error: ${error.message}]`,
       );
-      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), expectedDelayMs);
+      expect(setTimeoutSpy.mock.lastCall?.[1]).toBe(expectedDelayMs);
     }
 
     expect(operation).toHaveBeenCalledTimes(4);
