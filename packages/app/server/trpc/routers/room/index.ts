@@ -411,11 +411,6 @@ export const baseRoomRouter = router({
     });
     return { ...invite, isMember: Boolean(isMember) };
   }),
-  readMyInvite: getMemberProcedure(readMyInviteInputSchema, "roomId")
-    .use(isRoom)
-    .query<InviteInMessage | null>(({ ctx, input: { roomId } }) =>
-      readMyInvite(ctx.db, ctx.getSessionPayload.user.id, roomId),
-    ),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
@@ -460,6 +455,11 @@ export const baseRoomRouter = router({
       .orderBy(desc(roomsInMessage.updatedAt))
       .limit(MAX_READ_LIMIT);
   }),
+  readMyInvite: getMemberProcedure(readMyInviteInputSchema, "roomId")
+    .use(isRoom)
+    .query<InviteInMessage | null>(({ ctx, input: { roomId } }) =>
+      readMyInvite(ctx.db, ctx.getSessionPayload.user.id, roomId),
+    ),
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | RoomInMessage>(async ({ ctx, input }) => {
     if (input) {
       const room = await ctx.db.query.roomsInMessage.findFirst({

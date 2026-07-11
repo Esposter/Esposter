@@ -12,8 +12,7 @@ Prioritized top-down. Every item links a full proposal; the specs are the plan, 
 Each extends something already shipped, no new infra.
 
 - [ ] [Mention badges](/docs/proposals/esbabbler/mention-badges) — mention-only unread counts in the sidebar
-- [ ] [Invite expiry](/docs/proposals/esbabbler/invite-expiry) — expiring and max-use invite links
-- [ ] [Push-to-talk release delay](/docs/proposals/esbabbler/push-to-talk-release-delay) — grace period before the gate closes (needs schema batch)
+- [ ] [Push-to-talk release delay](/docs/proposals/esbabbler/push-to-talk-release-delay) — grace period before the gate closes
 
 ## Later — larger or multi-area
 
@@ -26,6 +25,7 @@ Each extends something already shipped, no new infra.
 
 ## Hygiene
 
+- [ ] [Optimistic mutations sweep](/docs/proposals/esbabbler/optimistic-mutations) — every user-facing mutation through `useOptimisticMutation`
 - [ ] [Store subscription audit](/docs/proposals/esbabbler/store-subscription-audit) — one owner per state transition + idempotence tests
 - [ ] [Search index tooling](/docs/proposals/esbabbler/search-index-tooling) — index schema docs + status/rebuild scripts
 - [ ] Voice & Video two-party verification — the live-call audio path (mic gain, gating, noise modes) still needs real two-party call verification ([/docs/esbabbler/voice-video](/docs/esbabbler/voice-video))

@@ -29,7 +29,7 @@ const avatarProps = computed(() => ({
 
 <template>
   <div relative>
-    <MessageContentCallParticipantActionMenu v-if="isActionable" :is-hand-raised="isHandRaised" :participant>
+    <MessageContentCallParticipantActionMenu v-if="isActionable" :is-hand-raised :participant>
       <template #activator="{ props: menuProps }">
         <StyledAvatar cursor-pointer :="{ ...avatarProps, ...menuProps }" />
       </template>

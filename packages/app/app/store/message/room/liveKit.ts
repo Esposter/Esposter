@@ -10,6 +10,7 @@ import type {
 import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { MicrophoneProcessor } from "@/models/message/room/call/MicrophoneProcessor";
+import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "@/services/message/room/call/constants";
 import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { checkIsRemoteAudioSource } from "@/services/message/room/liveKit/checkIsRemoteAudioSource";
 import { rasterizeSvg } from "@/services/message/room/liveKit/rasterizeSvg";
@@ -17,7 +18,6 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
-import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "@/services/message/room/call/constants";
 import { DEFAULT_SPEAKER_VOLUME_PERCENTAGE, NoiseSuppressionMode, VoiceInputMode } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";

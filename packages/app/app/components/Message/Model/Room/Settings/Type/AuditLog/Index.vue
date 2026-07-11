@@ -29,7 +29,11 @@ const { readMembers } = useReadMembers();
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
 const memberItems = computed(() => members.value.map(({ id, name }) => ({ title: name, value: id })));
-const adminActionTypes = Object.values(AdminActionType);
+const adminActionTypeItems = Object.values(AdminActionType).map((adminActionType) => ({
+  props: { prependIcon: AdminActionIconMap[adminActionType] },
+  title: adminActionType,
+  value: adminActionType,
+}));
 
 await Promise.all([readModerationLog(), readMembers()]);
 </script>
@@ -40,16 +44,12 @@ await Promise.all([readModerationLog(), readMembers()]);
       <v-select
         v-model="type"
         label="Action"
-        :items="adminActionTypes"
+        :items="adminActionTypeItems"
         density="compact"
         hide-details
         clearable
         @update:model-value="readModerationLog"
-      >
-        <template #item="{ props: itemProps, item }">
-          <v-list-item :="itemProps" :prepend-icon="AdminActionIconMap[item.raw]" />
-        </template>
-      </v-select>
+      />
       <v-select
         v-model="actorUserId"
         label="Actor"

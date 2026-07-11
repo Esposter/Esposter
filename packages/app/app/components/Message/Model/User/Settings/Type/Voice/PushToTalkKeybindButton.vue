@@ -20,9 +20,27 @@ useEventListener("keydown", async (event) => {
 </script>
 
 <template>
-  <div mt-2 flex gap-2 items-center>
-    <v-btn :color="isCapturingKeybind ? 'primary' : undefined" @click="isCapturingKeybind = true">
-      {{ isCapturingKeybind ? "Press a key…" : keybind || "Set keybind" }}
-    </v-btn>
+  <div mt-4 max-w-100>
+    <div mb-1 font-semibold text-body-medium>Push-to-talk Keybind</div>
+    <v-text-field
+      :model-value="isCapturingKeybind ? '' : keybind"
+      :placeholder="isCapturingKeybind ? 'Press a key… (Esc to cancel)' : 'No Keybind Set'"
+      variant="outlined"
+      bg-color="background"
+      density="compact"
+      hide-details
+      readonly
+    >
+      <template #append-inner>
+        <v-btn
+          :color="isCapturingKeybind ? 'error' : 'primary'"
+          size="small"
+          variant="tonal"
+          @click="isCapturingKeybind = !isCapturingKeybind"
+        >
+          {{ isCapturingKeybind ? "Stop Recording" : "Record Keybind" }}
+        </v-btn>
+      </template>
+    </v-text-field>
   </div>
 </template>

@@ -23,6 +23,12 @@ const component = computed(() => SettingsContentMap[settingsType]);
         </template>
       </v-tooltip>
     </v-sheet>
-    <component :is="component" v-if="component" :room />
+    <!-- Timeout 0 shows the skeleton on every tab switch instead of keeping the stale panel -->
+    <Suspense v-if="component" :timeout="0">
+      <component :is="component" :room />
+      <template #fallback>
+        <MessageModelSettingsSkeleton />
+      </template>
+    </Suspense>
   </MessageModelSettingsContent>
 </template>

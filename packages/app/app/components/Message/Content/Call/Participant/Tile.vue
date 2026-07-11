@@ -45,14 +45,14 @@ const displayName = computed(() => (isSelf ? `${participant.name} (You)` : parti
     <div v-else flex size-full items-center justify-center>
       <StyledAvatar :image="participant.image" :name="participant.name" :avatar-props="{ size: '6rem' }" />
     </div>
-    <MessageContentCallParticipantActionMenu v-if="!isSelf" :is-hand-raised="isHandRaised" :participant>
+    <MessageContentCallParticipantActionMenu v-if="!isSelf" :is-hand-raised :participant>
       <template #activator="{ props: menuProps }">
         <v-tooltip text="More Options" location="top">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               m-1
-              top-0
               right-0
+              top-0
               absolute
               :="{ ...menuProps, ...tooltipProps }"
               density="comfortable"

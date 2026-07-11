@@ -16,7 +16,7 @@ const invite = ref<InviteInMessage | null>(null);
 if (currentRoomId.value) invite.value = await $trpc.room.readMyInvite.query({ roomId: currentRoomId.value });
 
 const expireAfterMinutes = ref<null | number>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
-const maxUses = ref<null | (typeof INVITE_MAX_USES_OPTIONS)[number]>(null);
+const maxUses = ref<(typeof INVITE_MAX_USES_OPTIONS)[number] | null>(null);
 const expireAfterItems = [
   ...Object.entries(InviteExpireAfterMinutesMap).map(([title, value]) => ({ title, value })),
   { title: "Never", value: null },

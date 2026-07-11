@@ -323,7 +323,7 @@ describe("moderation", () => {
       const member = await createMember();
       await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
 
-      const result = await moderationCaller.readModerationLog({ roomId, actorUserId: member.id });
+      const result = await moderationCaller.readModerationLog({ actorUserId: member.id, roomId });
 
       expect(result.items).toHaveLength(0);
     });

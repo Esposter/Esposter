@@ -1,7 +1,7 @@
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { useUserSettingsStore } from "@/store/message/user/settings";
-import { VoiceInputMode } from "@esposter/db-schema";
 import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
+import { VoiceInputMode } from "@esposter/db-schema";
 import { defaultWindow } from "@vueuse/core";
 
 // Global hold-to-talk listener driving the MicrophoneProcessor gate. isInCall is injected (not read
@@ -20,16 +20,18 @@ export const usePushToTalk = (isInCall: MaybeRefOrGetter<boolean>, target?: Mayb
       userSettingsStore.userSettings?.voiceInputMode === VoiceInputMode.PushToTalk,
   );
 
+  // Casts (not instanceof) — PiP window events come from another realm with its own KeyboardEvent
   useEventListener(listenerTarget, "keydown", (event) => {
-    if (!isActive.value || event.code !== pushToTalkKeybind.value || event.repeat) return;
+    const keyboardEvent = event as KeyboardEvent;
+    if (!isActive.value || keyboardEvent.code !== pushToTalkKeybind.value || keyboardEvent.repeat) return;
     // Typing in the composer must not transmit — Discord behaviour
-    if (checkIsEditableTarget(event.target)) return;
-    event.preventDefault();
+    if (checkIsEditableTarget(keyboardEvent.target)) return;
+    keyboardEvent.preventDefault();
     setPushToTalkKeyHeld(true);
   });
   // Keyup always closes the gate (even from an editable element) so focus changes can't leave it stuck open
   useEventListener(listenerTarget, "keyup", (event) => {
-    if (event.code !== pushToTalkKeybind.value) return;
+    if ((event as KeyboardEvent).code !== pushToTalkKeybind.value) return;
     setPushToTalkKeyHeld(false);
   });
   // Key releases outside a blurred window are invisible — close the gate on blur

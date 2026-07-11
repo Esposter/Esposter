@@ -28,4 +28,4 @@ Discord's **Push-to-talk Release Delay** slider: after releasing the keybind, ke
 
 ## Notes
 
-Blocked on a schema migration (`db:gen` + db-mock `snapshot:gen` are user-run), so it ships with the next schema batch rather than the client-only push-to-talk work.
+Deliberately split from the shipped push-to-talk listener — the delay is a tuning knob on top of a gate that works without it.
