@@ -15,7 +15,7 @@ The file table editor is the grid editor of the **File resource** — a spreadsh
 - **Command history** — every mutation is a command object (`ADataSourceCommand`) pushed onto a history store, which is what powers unlimited undo/redo, including for multi-cell operations like range paste.
 - **Cell selection** — an Excel-style anchor/focus range selection (click, drag, Shift+click, Shift+Arrow) that keyboard copy/paste operates on. See [clipboard](/docs/file-table-editor/clipboard).
 
-The area is mature: there is no open roadmap. New ideas should be checked against [decisions](/docs/file-table-editor/decisions) first.
+The area is mature. Open work: [roadmap](/docs/file-table-editor/roadmap). New ideas should be checked against [deferred](/docs/file-table-editor/deferred) and [rejected](/docs/file-table-editor/rejected) first.
 
 ## Shipped
 
