@@ -13,8 +13,7 @@ How tRPC router tests wire up an in-memory database, mocked Azure services, and 
 flowchart TD
     subgraph test["Test file (e.g. routers/user.test.ts)"]
         bA["beforeAll<br/>createMockContext()"]
-        bE["beforeEach<br/>clear Azure state"]
-        aE["afterEach<br/>delete DB rows<br/>restoreAllMocks"]
+        aE["afterEach<br/>clear Azure state<br/>delete DB rows<br/>restoreAllMocks"]
         caller["createCallerFactory(router)(mockContext)<br/>→ direct tRPC calls, no HTTP"]
     end
 
@@ -67,7 +66,7 @@ flowchart TD
 
 **Why PGlite instead of a real PostgreSQL?** No external process, no port, no cleanup — each test suite gets an isolated in-memory database that vanishes when the worker exits.
 
-**Environment cost.** Server tests run in the default `node` environment. They get **no DOM** — happy-dom is built by the nuxt environment only, so there is no manual happy-dom registration and node-env tests run without a `window`. A server test pays only PGlite boot + the Azure/auth `vi.mock`s (plus the cheap global `fake-indexeddb/auto` polyfill).
+**Environment cost.** Server tests — including almost every tRPC router test — run in the default `node` environment. They get **no DOM** — happy-dom is built by the nuxt environment only, so there is no manual happy-dom registration and node-env tests run without a `window`. A server test pays only PGlite boot + the Azure/auth `vi.mock`s (plus the cheap global `fake-indexeddb/auto` polyfill). The one exception is a router that calls a Nuxt composable `context.test.ts` does not mock: the message router uses `useWebPubSubServiceClient` (which needs `useRuntimeConfig`), so `message/index.test.ts` and `message/scheduledMessageJob.test.ts` declare `// @vitest-environment nuxt` and pay the Nuxt environment build.
 
 ### 2. `azure-mock` — in-memory Azure services
 
@@ -121,19 +120,20 @@ beforeAll
   └─ createCallerFactory()   ← bind router to context
 
 beforeEach
-  └─ MockContainerDatabase.clear()
-  └─ MockTableDatabase.clear()
+  └─ per-test setup only     ← vi.useFakeTimers(), fixture rows (e.g. a fresh room)
 
 [ test body ]
   └─ mockSessionOnce(db)     ← when a non-owner user is needed
   └─ caller.someProc(input)
 
 afterEach
+  └─ MockContainerDatabase.clear()
+  └─ MockTableDatabase.clear()
   └─ db.delete(affectedTable)
   └─ vi.restoreAllMocks()    ← restores spy implementations + clears call history
 ```
 
-Prefer `afterEach` for cleanup over `beforeEach` so leaked state from a failing test remains visible in the output.
+All cleanup — Azure mock stores and DB rows — lives in `afterEach`, never `beforeEach`: the mock stores and the PGlite database persist for the whole suite, so each test removes its own writes immediately instead of relying on the next test to sweep up before running. Tests stay order-independent and the suite's last test leaks nothing. `beforeEach` is reserved for per-test setup such as fake timers or fixture rows.
 
 ## Key files
 
@@ -149,9 +149,9 @@ Prefer `afterEach` for cleanup over `beforeEach` so leaked state from a failing 
 
 ## Adding a new router test
 
-1. Add `// @vitest-environment nuxt` as the first line (required for tRPC router tests).
+1. No environment directive — router tests run in the default `node` environment. Add `// @vitest-environment nuxt` as the first line only when the router calls a Nuxt composable that `context.test.ts` does not mock (currently only `useWebPubSubServiceClient` in the message router).
 2. Import `createMockContext`, session helpers, and your router from their canonical locations.
 3. Follow the `beforeAll → createMockContext → createCallerFactory` pattern.
 4. Use the base user (from `getMockSession()`) as the room/resource owner.
 5. Use `mockSessionOnce(db)` only when a non-owner perspective is needed.
-6. Clean up DB rows in `afterEach` (not `beforeEach`).
+6. Clean up DB rows and Azure mock state in `afterEach` (not `beforeEach`).

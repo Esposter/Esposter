@@ -15,9 +15,20 @@ Invite links that expire after a duration and/or a number of uses — Discord's 
 
 ## Data model
 
-`invitesInMessage` gains `expiresAt` (timestamp, nullable = never), `maxUses` (integer, nullable = unlimited), `uses` (integer, NOT NULL DEFAULT 0). Existing rows keep null = today's behaviour (no breaking change).
+`invitesInMessage` gains `expiresAt` (timestamp, nullable = never), `maxUses` (integer, nullable = unlimited, CHECK `maxUses > 0`), `uses` (integer, NOT NULL DEFAULT 0, CHECK `uses >= 0`). The Zod input for `createInvite` only accepts the fixed select values below, so a zero/negative `maxUses` (an invite nobody could ever use) is rejected at both the API boundary and the database. Existing rows keep null = today's behaviour (no breaking change).
 
 ## How it works
+
+```mermaid
+flowchart TD
+    dialog["Invite dialog<br/>(expire-after + max-uses selects)"] -->|createInvite| create["createInvite<br/>computes expiresAt from duration"]
+    create --> row[("invitesInMessage<br/>expiresAt · maxUses · uses")]
+    joiner["User with token"] -->|join by token| check{"single UPDATE … RETURNING<br/>expiresAt > now()<br/>AND (maxUses IS NULL OR uses < maxUses)<br/>SET uses = uses + 1"}
+    row --> check
+    check -->|row returned| member["Joined room"]
+    check -->|"no row (expired · exhausted · unknown)"| invalid["one 'invalid invite' error<br/>— doesn't leak which"]
+    row -.->|"inert when expired/exhausted"| list["Invite list UI<br/>ManageInvites holders delete"]
+```
 
 - **Create**: the invite dialog gains Discord's two selects (expire after: 30m/1h/6h/12h/1d/7d/never; max uses: 1/5/10/25/50/100/∞). `createInvite` computes `expiresAt`.
 - **Join**: the join-by-token path checks `expiresAt > now()` and `maxUses IS NULL OR uses < maxUses` in the same statement that increments `uses` (`UPDATE … RETURNING`, so two concurrent joins can't both consume the last use). Expired/exhausted → the same "invalid invite" error as an unknown token (don't leak which).
