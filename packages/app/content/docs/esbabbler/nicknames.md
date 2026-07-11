@@ -11,20 +11,9 @@ Members can set a per-room display name that overrides their global username wit
 
 All member name display goes through `getDisplayName(user, roomId)` from `useUserToRoomStore`. **Never read `user.name` or `member.name` directly in a room context.**
 
-```ts
-// WRONG — ignores room nickname
-{
-  {
-    creator.name;
-  }
-}
-
-// CORRECT — respects room nickname, falls back to global name
-{
-  {
-    getDisplayName(member, roomId);
-  }
-}
+```text
+WRONG   — {{ creator.name }}                    (ignores room nickname)
+CORRECT — {{ getDisplayName(member, roomId) }}  (nickname, falls back to global name)
 ```
 
 Nicknames are stored as `text().notNull().default("")` — empty string means "no nickname set", never null. Empty string is falsy, so fallback uses `||`, never `??`:
