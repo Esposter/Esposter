@@ -8,6 +8,8 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig(depend, neverthrow, perfectionist, pinia.configs["all-flat"], unocss, vitest, {
   rules: {
+    "@unocss/order": "error",
+    "@unocss/order-attributify": "error",
     curly: ["error", "multi"],
     eqeqeq: "error",
     "import/consistent-type-specifier-style": "error",

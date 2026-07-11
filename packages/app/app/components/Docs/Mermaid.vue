@@ -24,7 +24,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div ref="container" flex justify-center overflow-x-auto py-2>
+  <div ref="container" py-2 flex justify-center overflow-x-auto>
     <pre>{{ code }}</pre>
   </div>
 </template>

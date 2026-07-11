@@ -9,7 +9,7 @@ const { code = "", language } = defineProps<ProsePreProps>();
 
 <template>
   <DocsMermaid v-if="language === 'mermaid'" :code />
-  <pre v-else overflow-x-auto rounded p-4 class="prose-pre"><slot /></pre>
+  <pre v-else p-4 rounded overflow-x-auto class="prose-pre"><slot /></pre>
 </template>
 
 <style scoped>
