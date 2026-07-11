@@ -13,16 +13,16 @@ Rooms are joined through invite links: an 8-character alphanumeric token (`invit
 flowchart TD
     dialog["Add Friends dialog<br/>(expire-after + max-uses selects)"] -->|createInvite| create["createInvite<br/>deletes old link, computes expiresAt via dayjs"]
     create --> row[("invitesInMessage<br/>expiresAt · maxUses · uses")]
-    joiner["User with token"] -->|joinRoom| check{"single UPDATE … RETURNING<br/>expiresAt is null or > now()<br/>AND (maxUses is null or uses < maxUses)<br/>SET uses = uses + 1"}
+    joiner["User with token"] -->|joinRoom| check{"single UPDATE … RETURNING<br/>expiresAt is null or > now()<br/>AND (maxUses = 0 or uses < maxUses)<br/>SET uses = uses + 1"}
     row --> check
     check -->|row returned| member["Joined room"]
     check -->|"no row (expired · exhausted · unknown)"| invalid["one NOT_FOUND error<br/>— doesn't leak which"]
     row -.->|"inert when expired/exhausted"| reads["readInvite / readMyInvite<br/>treat as absent, lazily delete"]
 ```
 
-- **Create**: the Add Friends dialog's selects drive `createInvite`; option values come from the dayjs-computed `InviteExpireAfterMinutesMap` (never manual minute math) and `INVITE_MAX_USES_OPTIONS`. The input's `0` sentinel means never expires / unlimited uses and maps to the DB's `null` at the insert boundary. Changing an option with a live link regenerates it. The dialog shows the real state ("expires in 7 days", "5 uses remaining") from the returned row.
+- **Create**: the Add Friends dialog's selects drive `createInvite`; option values come from the dayjs-computed `InviteExpireAfterMinutesMap` (never manual minute math) and `INVITE_MAX_USES_OPTIONS`. The `0` sentinel means never expires / unlimited uses; `maxUses` stores it as-is (the column is `notNull().default(0)`), while `expireAfterMinutes` maps to a null `expiresAt` since timestamps have no empty value. Changing an option with a live link regenerates it. The dialog shows the real state ("expires in 7 days", "5 uses remaining") from the returned row.
 - **Join**: `joinRoom` validates and consumes a use in one `UPDATE … RETURNING` statement, so two concurrent joins can't both consume the last use. Expired, exhausted, and unknown tokens all produce the same `NOT_FOUND` error.
-- **Cleanup**: no timer — expired/exhausted rows are inert. `readInvite` (the landing page) treats them as absent and `readMyInvite` lazily deletes them; `createInvite` replaces them. Existing rows with null options keep the previous forever-valid behaviour.
+- **Cleanup**: no timer — expired/exhausted rows are inert. `readInvite` (the landing page) treats them as absent and `readMyInvite` lazily deletes them; `createInvite` replaces them.
 - DM rooms reject invites entirely (see [/docs/esbabbler/friends-and-dms](/docs/esbabbler/friends-and-dms)); banned users are rejected at join.
 
 ## Procedures

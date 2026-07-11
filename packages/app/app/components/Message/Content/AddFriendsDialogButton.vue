@@ -54,7 +54,7 @@ const inviteStateText = computed(() => {
       ? `Your invite link expires ${dayjs(invite.value.expiresAt).fromNow()}.`
       : "Your invite link never expires.",
   ];
-  if (invite.value.maxUses !== null) {
+  if (invite.value.maxUses) {
     const remainingUses = invite.value.maxUses - invite.value.uses;
     parts.push(`${remainingUses} use${remainingUses === 1 ? "" : "s"} remaining.`);
   }

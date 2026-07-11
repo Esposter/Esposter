@@ -21,7 +21,7 @@ useEventListener("keydown", async (event) => {
 
 <template>
   <div mt-4 max-w-100>
-    <div mb-1 font-semibold text-body-medium>Push-to-talk Keybind</div>
+    <div font-semibold mb-1 text-body-medium>Push-to-talk Keybind</div>
     <v-text-field
       :model-value="isCapturingKeybind ? '' : keybind"
       :placeholder="isCapturingKeybind ? 'Press a key… (Esc to cancel)' : 'No Keybind Set'"

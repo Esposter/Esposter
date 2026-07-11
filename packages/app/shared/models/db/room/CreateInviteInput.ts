@@ -5,7 +5,8 @@ import { z } from "zod";
 
 export const createInviteInputSchema = z.object({
   ...roomIdSchema.shape,
-  // 0 = never expires / unlimited uses — the numeric empty sentinel; the server maps 0 to the DB's null
+  // 0 = never expires / unlimited uses — the numeric empty sentinel. maxUses stores 0 as-is;
+  // ExpireAfterMinutes maps to a null expiresAt since timestamps have no empty value
   expireAfterMinutes: z.literal([...Object.values(InviteExpireAfterMinutesMap), 0]),
   maxUses: z.literal([...INVITE_MAX_USES_OPTIONS, 0]),
 });

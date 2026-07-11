@@ -12,11 +12,11 @@ export const INVITE_ID_REGEX = new RegExp(String.raw`^[A-Za-z0-9]{${INVITE_ID_LE
 export const invitesInMessage = pgTable(
   "invites",
   {
-    // Null = never expires
+    // Null = never expires (timestamps have no empty value, unlike numbers/strings)
     expiresAt: timestamp(),
     id: text().primaryKey(),
-    // Null = unlimited uses
-    maxUses: integer(),
+    // 0 = unlimited uses — the numeric empty sentinel, stored as-is so it propagates end-to-end
+    maxUses: integer().notNull().default(0),
     roomId: uuid()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
@@ -28,9 +28,9 @@ export const invitesInMessage = pgTable(
   {
     extraConfig: ({ id, maxUses, uses }) => [
       check("invites_id_length_check", sql`LENGTH(${id}) = ${sql.raw(INVITE_ID_LENGTH.toString())}`),
-      check("invites_max_uses_check", sql`${maxUses} IS NULL OR ${maxUses} > 0`),
+      check("invites_max_uses_check", sql`${maxUses} >= 0`),
       check("invites_uses_check", sql`${uses} >= 0`),
-      check("invites_uses_max_uses_check", sql`${maxUses} IS NULL OR ${uses} <= ${maxUses}`),
+      check("invites_uses_max_uses_check", sql`${maxUses} = 0 OR ${uses} <= ${maxUses}`),
     ],
     schema: messageSchema,
   },

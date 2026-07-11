@@ -28,7 +28,7 @@ describe(useOptimisticMutation, () => {
     const executeOptimisticMutation = useOptimisticMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    await executeOptimisticMutation(applyOptimistic, () => Promise.reject(new Error("")));
+    await executeOptimisticMutation(applyOptimistic, () => Promise.reject(new Error("error")));
 
     expect(rollback).toHaveBeenCalledTimes(1);
     expect(alerts.value).toHaveLength(1);

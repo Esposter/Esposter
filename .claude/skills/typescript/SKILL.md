@@ -298,7 +298,8 @@ A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends
 
 - Plain `string` fields already contain `""` — reuse the source schema untouched: `entitySchema.pick({ actorUserId: true })`, non-partial.
 - Enum fields union the sentinel: `type: entitySchema.shape.type.or(z.literal(""))`.
-- **Numbers use `0`** when `0` has no domain meaning — invite `expireAfterMinutes`/`maxUses`: `0` = never expires / unlimited (`z.literal([...OPTIONS, 0])`, never `.nullable()`); the server maps `0` to the DB's `null` at the insert boundary.
+- **Numbers use `0`** when `0` has no domain meaning — invite `expireAfterMinutes`/`maxUses`: `0` = never expires / unlimited (`z.literal([...OPTIONS, 0])`, never `.nullable()`).
+- **The DB schema itself carries the sentinel** — `maxUses: integer().notNull().default(0)`, never a nullable column plus manual `|| null` mapping in the router. The DB schema is the source of truth for types (that's why we use Drizzle); the sentinel flows ref → input → row → read untouched. Only types with no empty value (timestamps) stay nullable, mapped once at the insert site.
 - Reserve `.default("")` for fields genuinely omitted by some callers (e.g. `cursor` on the first page request).
 
 ## `null` vs `undefined`
