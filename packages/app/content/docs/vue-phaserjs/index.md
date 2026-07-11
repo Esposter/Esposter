@@ -14,7 +14,7 @@ description: Phaser 4 game engine integration for Vue 3 — declarative game obj
 - **Lifecycle hook composables** — `onInit`, `onPreload`, `onCreate`, `onUpdate`, `onNextTick`, and `onShutdown` register handlers against the injected scene key, mirroring Phaser's scene lifecycle inside Vue components.
 - **Pinia stores** — `usePhaserStore` (game instance, scene switching, parallel scenes), `useCameraStore` (fades), `useInputStore` (input gating), and `useTextStore` (default text style). Phaser objects held in stores are wrapped in `markRaw` so Vue never proxies engine internals.
 
-The library is mature — there is no active roadmap. Ideas for new components or composables were evaluated and settled in [decisions](/docs/vue-phaserjs/decisions); most Phaser primitives that don't map to a Vue component hierarchy are intentionally left as imperative calls on the object received from `@complete`.
+The library is mature — there is no active roadmap. Ideas for new components or composables were evaluated and settled in [rejected](/docs/vue-phaserjs/rejected) (one page per idea); most Phaser primitives that don't map to a Vue component hierarchy are intentionally left as imperative calls on the object received from `@complete`. The remaining unwrapped game-object types are [deferred](/docs/vue-phaserjs/deferred) until a scene needs one.
 
 ## Shipped
 

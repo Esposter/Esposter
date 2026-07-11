@@ -7,9 +7,10 @@ description: Azure infrastructure managed as Pulumi code — one prod stack cove
 
 `packages/infra` manages Esposter's cloud footprint as Pulumi TypeScript. A single `prod` stack owns both the development and production Azure resource groups plus the GitHub repository settings (labels, environments, secrets, branch rulesets). Everything runs on free or near-free SKUs, and the whole estate is cost-guarded: `$0.01` budgets trigger Logic App automation that stops Function Apps and deletes Event Grid subscriptions the moment anything exits the free tier.
 
-- /docs/infra/azure-pulumi-migration — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
-- /docs/infra/optimization-review — the cost/security posture: the budget guard cycle, retention settings, and why each hardening step is deliberately deferred.
-- /docs/infra/roadmap — open items (observability caps, dead-lettering, key-auth-gated hardening).
+- [Azure Pulumi migration](/docs/infra/azure-pulumi-migration) — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
+- [Optimization review](/docs/infra/optimization-review) — the cost/security posture: the budget guard cycle, retention settings, and why each hardening step is deliberately deferred.
+- [Roadmap](/docs/infra/roadmap) — open items (observability caps, dead-lettering, key-auth-gated hardening); every item links its proposal.
+- [Deferred](/docs/infra/deferred) — ideas waiting on a trigger.
 
 Deeper operational reference lives beside the code in `packages/infra/docs/` (naming conventions, security constraints, search indexes, stacks), and Pulumi coding conventions live in the `pulumi-infra` skill.
 

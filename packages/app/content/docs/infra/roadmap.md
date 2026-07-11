@@ -1,18 +1,18 @@
 ---
 title: Roadmap
-description: Open infrastructure work — all deferred-with-trigger, nothing in flight.
+description: Open infrastructure work — every item links its proposal.
 ---
 
 # Roadmap
 
-All items are deferred-with-trigger; there is no active wave. Rationale lives in /docs/infra/optimization-review and `packages/infra/docs/`.
+All items are deferred-with-trigger; there is no active wave. Rationale lives in [/docs/infra/optimization-review](/docs/infra/optimization-review) and `packages/infra/docs/`.
 
 ## Next
 
-- [ ] **Observability caps** — measure Log Analytics / App Insights ingestion, then set daily caps + sampling (currently uncapped, `dailyQuotaGb: -1`).
-- [ ] **Pulumi as full source of truth** — move Function App runtime settings + App Insights connection settings into Pulumi.
-- [ ] **Event Grid dead-letter** — design a dead-letter storage target + replay process, then enable dead-letter destinations.
+- [ ] [Observability caps](/docs/proposals/infra/observability-caps) — measure ingestion, cap Log Analytics, sample App Insights
+- [ ] [Pulumi source of truth](/docs/proposals/infra/pulumi-source-of-truth) — adopt Function App runtime + App Insights settings
+- [ ] [Event Grid dead-letter](/docs/proposals/infra/eventgrid-dead-letter) — dead-letter container + replay script
 
 ## Blocked (app-side migration off key-based auth first)
 
-- [ ] **Security hardening** — disable storage shared-key / blob public access / Search + Event Grid local auth; set storage network default-deny. Each is gated on the app moving off key-based auth — see `packages/infra/docs/azure/security-constraints.md` for the code path holding each one open.
+- [ ] [Keyless auth hardening](/docs/proposals/infra/keyless-auth-hardening) — service-principal credentials in the app, then disable shared-key/local auth + network default-deny
