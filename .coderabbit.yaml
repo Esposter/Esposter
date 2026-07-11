@@ -3,8 +3,6 @@ reviews:
     - "!pnpm-lock.yaml"
     # auto-generated migrations
     - "!packages/app/server/db/migrations/**"
-    # documentation content (prose, reviewed by humans)
-    - "!packages/app/content/docs/**"
     # legacy docs trees deleted after migrating into packages/app/content/docs
     - "!features/**"
     - "!architecture/**"
