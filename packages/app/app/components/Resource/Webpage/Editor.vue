@@ -19,8 +19,9 @@ import grapesJSTooltip from "grapesjs-tooltip";
 import grapesJSTouch from "grapesjs-touch";
 import grapesJSTuiImageEditor from "grapesjs-tui-image-editor";
 import grapesJSTyped from "grapesjs-typed";
-import { css as cssFormat, html as htmlFormat } from "js-beautify";
+import jsBeautify from "js-beautify";
 
+const { css: cssFormat, html: htmlFormat } = jsBeautify;
 const webpageEditorStore = useWebpageEditorStore();
 const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
 await useGrapesJsEditor(

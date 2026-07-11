@@ -2,25 +2,29 @@
 import type { SurveyResponseEntity } from "@esposter/db-schema";
 
 import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
-import { validate } from "@/services/router/validate";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getResultAsync } from "@esposter/shared";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
 
-definePageMeta({ validate });
+interface ResourceSurveyViewProps {
+  id: string;
+}
+
+const { id } = defineProps<ResourceSurveyViewProps>();
+const { $trpc } = useNuxtApp();
 
 let surveyResponse: null | SurveyResponseEntity = null;
 
 const saveSurveyResponse = async (survey: Model) => {
-  const model = survey.data;
-  model.pageNo = survey.currentPageNo;
+  const responseModel = survey.data;
+  responseModel.pageNo = survey.currentPageNo;
   if (!surveyResponse) {
     const newSurveyResponseId = crypto.randomUUID();
     surveyResponse = await $trpc.survey.createSurveyResponse.mutate({
-      model,
-      partitionKey: surveyId,
+      model: responseModel,
+      partitionKey: id,
       rowKey: newSurveyResponseId,
     });
     localStorage.setItem(LocalStorageKey.SurveyResponseId, surveyResponse.rowKey);
@@ -28,23 +32,20 @@ const saveSurveyResponse = async (survey: Model) => {
   }
 
   surveyResponse = await $trpc.survey.updateSurveyResponse.mutate({
-    model,
+    model: responseModel,
     modelVersion: surveyResponse.modelVersion,
     partitionKey: surveyResponse.partitionKey,
     rowKey: surveyResponse.rowKey,
   });
 };
 
-const route = useRoute();
-const surveyId = route.params.id as string;
-const { $trpc } = useNuxtApp();
-const publishedModel = await getResultAsync(() => $trpc.survey.readSurveyModel.query(surveyId)).match(
-  (model) => model,
+const { content, name } = await getResultAsync(() => $trpc.survey.readPublishedResourceContent.query(id)).match(
+  (publishedResource) => publishedResource,
   () => {
     throw createError({ statusCode: 404, statusMessage: "Survey not found" });
   },
 );
-const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(publishedModel);
+const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(content.model);
 const model = new Model(surveyModel);
 if (theme) model.applyTheme(theme);
 model.onValueChanged.add(saveSurveyResponse);
@@ -57,13 +58,15 @@ model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSav
     (error) => showSaveError(error.message),
   );
 });
+useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 
 const isLoading = ref(true);
+// Respondent progress is tracked per browser, so an interrupted survey resumes where it left off
 const onMount = async () => {
   const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId);
   if (!surveyResponseId) return;
 
-  surveyResponse = await $trpc.survey.readSurveyResponse.query({ partitionKey: surveyId, rowKey: surveyResponseId });
+  surveyResponse = await $trpc.survey.readSurveyResponse.query({ partitionKey: id, rowKey: surveyResponseId });
   if (!surveyResponse) return;
 
   model.data = surveyResponse.model;
@@ -78,10 +81,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <NuxtLayout>
-    <Head>
-      <Title>Survey Response</Title>
-    </Head>
-    <SurveyComponent v-if="!isLoading" :model />
-  </NuxtLayout>
+  <SurveyComponent v-if="!isLoading" :model />
 </template>

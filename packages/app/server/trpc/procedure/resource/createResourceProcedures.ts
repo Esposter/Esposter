@@ -12,12 +12,12 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getContentBlobName } from "@@/server/services/resource/getContentBlobName";
 import { getPublishedContentBlobName } from "@@/server/services/resource/getPublishedContentBlobName";
+import { readResourceContent } from "@@/server/services/resource/readResourceContent";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
 import { getOwnerProcedure } from "@@/server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { RestError } from "@azure/storage-blob";
 import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
@@ -26,7 +26,7 @@ import {
   resources,
   selectResourceSchema,
 } from "@esposter/db-schema";
-import { getResultAsync, InvalidOperationError, jsonDateParse, Operation, streamToText } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, Operation, streamToText } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -67,21 +67,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
       id: Resource["id"];
     }
   >;
-  const readContent = async (id: Resource["id"]): Promise<ResourceContent<TType> | undefined> => {
-    // BlobClient.download() rejects on a missing blob, so treat a genuine 404 as "no content yet"
-    // While letting transient Azure or parse failures surface as an internal error instead of a false empty.
-    const { readableStreamBody } = await getResultAsync(() =>
-      useDownload(AzureContainer.ResourceAssets, getContentBlobName(id)),
-    ).match(
-      (response) => response,
-      (error) => {
-        if (error instanceof RestError && error.statusCode === 404) return { readableStreamBody: undefined };
-        throw error;
-      },
-    );
-    if (!readableStreamBody) return undefined;
-    return contentSchema.parse(jsonDateParse(await streamToText(readableStreamBody))) as ResourceContent<TType>;
-  };
+  const readContent = async (id: Resource["id"]): Promise<ResourceContent<TType> | undefined> =>
+    (await readResourceContent(contentSchema, id)) as ResourceContent<TType> | undefined;
   const baseProcedures = {
     createResource: standardAuthedProcedure
       .input(createResourceInputSchema)
@@ -132,6 +119,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
               eq: ctx.getSessionPayload.user.id,
             },
           },
+          // Publication state rides along so listings can distinguish published resources without n+1 queries
+          with: { publication: true },
         });
         return getOffsetPaginationData(resultResources, limit);
       }),

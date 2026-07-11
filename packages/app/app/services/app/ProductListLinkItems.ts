@@ -1,7 +1,7 @@
 import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
-import { RoutePath, SURVEY_DISPLAY_NAME } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 
 export const ProductListLinkItems = [
   {
@@ -18,11 +18,6 @@ export const ProductListLinkItems = [
     href: RoutePath.Resources,
     icon: "mdi-earth",
     title: "Resource Explorer",
-  },
-  {
-    href: RoutePath[SURVEY_DISPLAY_NAME],
-    icon: "mdi-text-box-edit",
-    title: SURVEY_DISPLAY_NAME,
   },
   {
     children: [

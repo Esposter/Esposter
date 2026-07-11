@@ -2,21 +2,20 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext } from "@@/server/trpc/context.test";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { DatabaseEntityType, surveys } from "@esposter/db-schema";
+import { AzureEntityType, resources, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
+import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
+// The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
+// Here only the router wiring (resource type + content round-trip) and the survey-specific procedures.
 describe("survey", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const name = "name";
-  const updatedName = "updatedName";
-  const group = "group";
   const model = "model";
   const updatedModel = "updatedModel";
 
@@ -27,157 +26,33 @@ describe("survey", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    await mockContext.db.delete(surveys);
+    MockTableDatabase.clear();
+    await mockContext.db.delete(resources);
   });
 
-  test("counts", async () => {
+  test("saves and reads content", async () => {
     expect.hasAssertions();
 
-    const count = await caller.count();
+    const newResource = await caller.createResource({ name });
 
-    expect(count).toBe(0);
+    expect(newResource.type).toBe(ResourceType.Survey);
 
-    await caller.createSurvey({ group, model, name });
-    const newCount = await caller.count();
-
-    expect(newCount).toBe(1);
-  });
-
-  test("reads", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-    const readSurvey = await caller.readSurvey({ id: newSurvey.id });
-
-    expect(readSurvey).toStrictEqual(newSurvey);
-  });
-
-  test("fails read with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.readSurvey({ id })).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("reads empty surveys", async () => {
-    expect.hasAssertions();
-
-    const readSurveys = await caller.readSurveys();
-
-    expect(readSurveys).toStrictEqual(getOffsetPaginationData([], 0));
-  });
-
-  test("creates", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-
-    expect(newSurvey.name).toBe(name);
-    expect(newSurvey.group).toBe(group);
-    expect(newSurvey.model).toBe(model);
-  });
-
-  test("updates", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-    const updatedSurvey = await caller.updateSurvey({ id: newSurvey.id, name: updatedName });
-
-    expect(updatedSurvey.name).toBe(updatedName);
-  });
-
-  test("fails update with wrong user", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(caller.updateSurvey({ id: newSurvey.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, newSurvey.id).message}]`,
-    );
-  });
-
-  test("updates model", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-    const updatedSurvey = await caller.updateSurveyModel({
-      id: newSurvey.id,
-      model: updatedModel,
-      modelVersion: newSurvey.modelVersion,
+    await caller.saveResourceContent({
+      content: { model },
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
     });
+    const content = await caller.readResourceContent({ id: newResource.id });
 
-    expect(updatedSurvey.model).toBe(updatedModel);
-  });
-
-  test("fails update model with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(caller.updateSurveyModel({ id, model, modelVersion: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
-  test("fails update model with wrong user", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      caller.updateSurveyModel({ id: newSurvey.id, model, modelVersion: 0 }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("fails update model with old model version", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-
-    await expect(
-      caller.updateSurveyModel({ id: newSurvey.id, model: updatedModel, modelVersion: newSurvey.modelVersion - 1 }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${
-        new InvalidOperationError(
-          Operation.Update,
-          DatabaseEntityType.Survey,
-          "cannot update survey model with old model version",
-        ).message
-      }]`,
-    );
-  });
-
-  test("fails update model with duplicate", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-
-    await expect(
-      caller.updateSurveyModel({ id: newSurvey.id, model, modelVersion: newSurvey.modelVersion }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, "duplicate model").message}]`,
-    );
-  });
-
-  test("publishes", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-    const publishedSurvey = await caller.publishSurvey({ id: newSurvey.id, publishVersion: newSurvey.publishVersion });
-
-    expect(publishedSurvey.publishedAt).not.toBeNull();
-    expect(publishedSurvey.publishVersion).toBe(newSurvey.publishVersion + 1);
+    expect(content).toStrictEqual({ model });
   });
 
   test("hides unpublished surveys from respondents", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await caller.createSurvey({ group, model, name });
+    const newResource = await caller.createResource({ name });
 
-    await expect(caller.readSurveyModel(newSurvey.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(caller.readPublishedResourceContent(newResource.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: NOT_FOUND]`,
     );
   });
@@ -185,31 +60,125 @@ describe("survey", () => {
   test("serves the published snapshot to respondents, not later edits", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await caller.createSurvey({ group, model, name });
-    await caller.publishSurvey({ id: newSurvey.id, publishVersion: newSurvey.publishVersion });
-    await caller.updateSurveyModel({ id: newSurvey.id, model: updatedModel, modelVersion: newSurvey.modelVersion });
-    const servedModel = await caller.readSurveyModel(newSurvey.id);
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: { model },
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    await caller.saveResourceContent({
+      content: { model: updatedModel },
+      contentVersion: newResource.contentVersion + 1,
+      id: newResource.id,
+    });
+    const { content } = await caller.readPublishedResourceContent(newResource.id);
 
-    expect(servedModel).toBe(model);
+    expect(content).toStrictEqual({ model });
   });
 
-  test("deletes", async () => {
+  test("creates and reads survey response", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await caller.createSurvey({ group, model, name });
-    const deletedSurvey = await caller.deleteSurvey(newSurvey.id);
+    const newResource = await caller.createResource({ name });
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 1 },
+      partitionKey: newResource.id,
+      rowKey: crypto.randomUUID(),
+    });
+    const readSurveyResponse = await caller.readSurveyResponse({
+      partitionKey: newSurveyResponse.partitionKey,
+      rowKey: newSurveyResponse.rowKey,
+    });
 
-    expect(deletedSurvey.id).toBe(newSurvey.id);
+    expect(readSurveyResponse).toStrictEqual(newSurveyResponse);
   });
 
-  test("fails delete with wrong user", async () => {
+  test("reads null survey response with non-existent id", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await caller.createSurvey({ group, model, name });
-    await mockSessionOnce(mockContext.db);
+    const newResource = await caller.createResource({ name });
+    const readSurveyResponse = await caller.readSurveyResponse({
+      partitionKey: newResource.id,
+      rowKey: crypto.randomUUID(),
+    });
 
-    await expect(caller.deleteSurvey(newSurvey.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Survey, newSurvey.id).message}]`,
+    expect(readSurveyResponse).toBeNull();
+  });
+
+  test("updates survey response", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      partitionKey: newResource.id,
+      rowKey: crypto.randomUUID(),
+    });
+    const updatedSurveyResponse = await caller.updateSurveyResponse({
+      model: { satisfaction: 1 },
+      modelVersion: newSurveyResponse.modelVersion,
+      partitionKey: newSurveyResponse.partitionKey,
+      rowKey: newSurveyResponse.rowKey,
+    });
+
+    expect(updatedSurveyResponse.model).toStrictEqual({ satisfaction: 1 });
+    expect(updatedSurveyResponse.modelVersion).toBe(newSurveyResponse.modelVersion + 1);
+  });
+
+  test("fails update survey response with duplicate model", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      partitionKey: newResource.id,
+      rowKey: crypto.randomUUID(),
+    });
+
+    await expect(
+      caller.updateSurveyResponse({
+        model: newSurveyResponse.model,
+        modelVersion: newSurveyResponse.modelVersion,
+        partitionKey: newSurveyResponse.partitionKey,
+        rowKey: newSurveyResponse.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model").message}]`,
+    );
+  });
+
+  test("fails update survey response with old model version", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const newSurveyResponse = await caller.createSurveyResponse({
+      model: { satisfaction: 0 },
+      partitionKey: newResource.id,
+      rowKey: crypto.randomUUID(),
+    });
+    await caller.updateSurveyResponse({
+      model: { satisfaction: 1 },
+      modelVersion: newSurveyResponse.modelVersion,
+      partitionKey: newSurveyResponse.partitionKey,
+      rowKey: newSurveyResponse.rowKey,
+    });
+
+    await expect(
+      caller.updateSurveyResponse({
+        model: { satisfaction: 2 },
+        modelVersion: newSurveyResponse.modelVersion,
+        partitionKey: newSurveyResponse.partitionKey,
+        rowKey: newSurveyResponse.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${
+        new InvalidOperationError(
+          Operation.Update,
+          AzureEntityType.SurveyResponse,
+          "cannot update survey response model with old model version",
+        ).message
+      }]`,
     );
   });
 });

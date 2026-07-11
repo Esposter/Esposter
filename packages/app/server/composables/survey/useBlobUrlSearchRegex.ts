@@ -5,7 +5,7 @@ export const useBlobUrlSearchRegex = (blobUrl?: string) => {
   const containerBaseUrl = useContainerBaseUrl();
   return new RegExp(
     // Match until we reach a character that ends with "
-    `${blobUrl ? RegExp.escape(blobUrl) : `${containerBaseUrl}/${AzureContainer.SurveyAssets}`}[^"]*`,
+    `${blobUrl ? RegExp.escape(blobUrl) : `${containerBaseUrl}/${AzureContainer.ResourceAssets}`}[^"]*`,
     "gu",
   );
 };

@@ -99,18 +99,48 @@ and `PortableActions` renders both menus; the Data-blade Import button keeps the
 (`content.data.rows.length`), `EditorLaunch`/`ResourceTypeRoutePathMap`/`useResourceState` and the dead
 `RoutePath` members deleted; `ANamedItemEntity` (ex-`ATableEditorItemEntity`) moved to `shared/models/entity/`.
 
-## Phase 5 — Survey fold
+## Phase 5 — Survey fold ✅ (shipped)
 
-- [ ] `survey` router = factory + response/SAS procedures; survey CRUD procedures + `getCreatorProcedure` deleted ([spec](specs/survey-resource.md))
-- [ ] Publish hooks: asset clone in `transformPublishedContent`, SAS refresh in `transformReadContent`; blob paths unify onto the standard convention
-- [ ] Editor blade (SurveyJS creator, autosave → `saveResourceContent`) + Responses blade
-- [ ] `/view/survey/[id]` respondent renderer; `RoutePath.Survey(id)` aliases it; delete `pages/{surveyer/*,survey/[id]}.vue` + `Survey/CrudView/*`
+- [x] `survey` router = factory + response/SAS procedures; survey CRUD procedures + `getCreatorProcedure` deleted ([spec](specs/survey-resource.md))
+- [x] Publish hooks: asset clone in `transformPublishedContent`, SAS refresh in `transformReadContent`; blob paths unify onto the standard convention
+- [x] Editor blade (SurveyJS creator, autosave → `saveResourceContent`) + Responses blade
+- [x] `/view/survey/[id]` respondent renderer; delete `pages/{surveyer/*,survey/[id]}.vue` + `Survey/CrudView/*`
 
-## Phase 6 — deletions + cross-cutting sweep
+**Shipped notes.** The `surveys` table, `surveysRelation`, `DatabaseEntityType.Survey`, and
+`AzureContainer.SurveyAssets` are gone from `packages/db-schema` (**pg migration still needs
+`pnpm db:gen`/`db:up` — not run**, same as the Phase 4 Table-enum migration). The router keeps the
+survey-specific procedures (`create/read/updateSurveyResponse` public rate-limited on
+`AzureTable.SurveyResponses`, upload/download SAS + `deleteFile` under `{id}/files/…` via
+`getOwnerProcedure`); `updateSurveyResponse`'s duplicate-model guard now compares structurally
+(the old `===` on records never fired). Publish clones referenced assets under
+`{id}/published/{v}/…` in `transformPublishedSurvey` (keyed by the version the factory is about to
+claim) and bakes 1-year SAS URLs; `transformReadSurvey` re-signs working-copy URLs on every read.
+`readResourceContent` was extracted to a shared service (`readResourceContent.ts`) so the factory
+and `readSurveyResponsesDataset` share one blob-read path, and factory `readResources` now rides
+`publication` along (the Email editor's published-survey invite blocks filter on it). Client:
+`store/survey` retargets to `useResource`; `useSurveyCreator` builds the creator after `loadContent`
+(skeleton until then) with autosave through `saveModel` (`{ model }` blob, THEME_KEY embedded);
+Editor/Responses (dataset table over `dataset.readDataset`)/View (respondent renderer, ported from
+`pages/survey/[id].vue` onto `readPublishedResourceContent`) live under `components/Resource/Survey/`;
+Survey joined `CreatableResourceTypes`/`ViewComponentMap`/`ResourceEditorComponentMap`. Existing
+survey rows/blobs are discarded by design. The creator toolbar dropped its Publish dialog (the
+explorer Overview publish toggle owns it); `RoutePath.Survey`/`Surveyer`/`SURVEY_DISPLAY_NAME` are
+deleted — invite links use `RoutePath.View(ResourceType.Survey, id)`.
 
-- [ ] Delete `pages/documents.vue`, `Document/{Picker,PublishButton}.vue`, `useDocumentState`, `services/document/*` maps, dead `RoutePath` members
-- [ ] Achievement `triggerPath` updates (`"flowchartEditor.saveDocumentContent"` → `"flowchart.saveResourceContent"`, …) — compile-checked against the router type
-- [ ] Grep sweep: no `document`/`surveyer`/`tableEditor` identifiers left outside history; `pnpm typecheck` + full test run green
+## Phase 6 — deletions + cross-cutting sweep ✅ (shipped)
+
+- [x] Delete `pages/documents.vue`, `Document/{Picker,PublishButton}.vue`, `useDocumentState`, `services/document/*` maps, dead `RoutePath` members
+- [x] Achievement `triggerPath` updates (`"flowchartEditor.saveDocumentContent"` → `"flowchart.saveResourceContent"`, …) — compile-checked against the router type
+- [x] Grep sweep: no `document`/`surveyer`/`tableEditor` identifiers left outside history; `pnpm typecheck` + full test run green
+
+**Shipped notes.** The document deletions had already landed with Phases 1-4; Phase 6's remaining work
+was the router renames: `flowchartEditor` → `flowchart`, `emailEditor` → `email`, `webpageEditor` →
+`webpage` (router files, `trpcRouter` keys, `$trpc` call sites, achievement `triggerPath`s, wiring
+tests). The `FlowchartEditor`/`EmailEditor`/`WebpageEditor` content **classes** and their
+`store/`/`models/`/`services/` folders deliberately keep their names — they are registered in
+`JSONClassMap`, so renaming them would break superjson deserialization of persisted blobs.
+`RoutePath` dropped its dead `Dashboard`/`Survey`/`Surveyer` members and the computed
+`SURVEY_DISPLAY_NAME` keys.
 
 ## Notes
 

@@ -5,7 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
-import { flowchartEditorRouter } from "@@/server/trpc/routers/flowchartEditor";
+import { flowchartRouter } from "@@/server/trpc/routers/flowchart";
 import { resources, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
@@ -13,14 +13,14 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
 // Here only the router wiring: resource type + content schema round-trip.
-describe("flowchartEditor", () => {
+describe("flowchart", () => {
   let mockContext: Context;
-  let caller: DecorateRouterRecord<TRPCRouter["flowchartEditor"]>;
+  let caller: DecorateRouterRecord<TRPCRouter["flowchart"]>;
   const name = "name";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    caller = createCallerFactory(flowchartEditorRouter)(mockContext);
+    caller = createCallerFactory(flowchartRouter)(mockContext);
   });
 
   afterEach(async () => {

@@ -14,7 +14,7 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { fileRouter } from "@@/server/trpc/routers/file";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { AZURE_MAX_PAGE_SIZE, resources, surveys } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE, resources } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -24,7 +24,6 @@ describe("dataset", () => {
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   let fileCaller: DecorateRouterRecord<TRPCRouter["file"]>;
   const name = "name";
-  const group = "group";
   const columnName = "columnName";
   const value = "value";
   const model = JSON.stringify({
@@ -50,14 +49,23 @@ describe("dataset", () => {
   afterEach(async () => {
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
-    await mockContext.db.delete(surveys);
     await mockContext.db.delete(resources);
   });
+
+  const setupSurvey = async () => {
+    const newResource = await surveyCaller.createResource({ name });
+    await surveyCaller.saveResourceContent({
+      content: { model },
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    return newResource;
+  };
 
   test("reads survey responses dataset", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await surveyCaller.createSurvey({ group, model, name });
+    const newSurvey = await setupSurvey();
     await surveyCaller.createSurveyResponse({
       model: { comments: "great", satisfaction: 5, wouldRecommend: true },
       partitionKey: newSurvey.id,
@@ -76,7 +84,7 @@ describe("dataset", () => {
   test("reads survey responses dataset within the azure page size limit", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await surveyCaller.createSurvey({ group, model, name });
+    const newSurvey = await setupSurvey();
     for (let i = 0; i < AZURE_MAX_PAGE_SIZE + 1; i++)
       await surveyCaller.createSurveyResponse({
         model: { satisfaction: 1 },
@@ -91,7 +99,7 @@ describe("dataset", () => {
   test("reads survey responses dataset with no responses", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await surveyCaller.createSurvey({ group, model, name });
+    const newSurvey = await setupSurvey();
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.rows).toStrictEqual([]);
@@ -100,7 +108,7 @@ describe("dataset", () => {
   test("fills missing answers with null", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await surveyCaller.createSurvey({ group, model, name });
+    const newSurvey = await setupSurvey();
     await surveyCaller.createSurveyResponse({
       model: { satisfaction: 3 },
       partitionKey: newSurvey.id,
@@ -114,7 +122,7 @@ describe("dataset", () => {
   test("flattens non-primitive answers to json", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await surveyCaller.createSurvey({ group, model, name });
+    const newSurvey = await setupSurvey();
     await surveyCaller.createSurveyResponse({
       model: { comments: ["a", "b"] },
       partitionKey: newSurvey.id,
@@ -128,7 +136,7 @@ describe("dataset", () => {
   test("fails read survey responses with wrong user", async () => {
     expect.hasAssertions();
 
-    const newSurvey = await surveyCaller.createSurvey({ group, model, name });
+    const newSurvey = await setupSurvey();
     await mockSessionOnce(mockContext.db);
 
     await expect(

@@ -1,8 +1,4 @@
 import { SITE_NAME } from "@/services/app/constants";
-import { SURVEY_DISPLAY_NAME } from "@/services/survey/constants";
-import { uncapitalize } from "@/util/text/uncapitalize";
-
-const SURVEYER_EDIT_KEY: `${typeof SURVEY_DISPLAY_NAME}Edit` = `${SURVEY_DISPLAY_NAME}Edit`;
 
 export const RoutePath: {
   readonly About: "/about";
@@ -11,7 +7,6 @@ export const RoutePath: {
   readonly Calls: (id: string) => string;
   readonly CallsIndex: "/calls";
   readonly Clicker: "/clicker";
-  readonly Dashboard: "/dashboard";
   readonly Docs: "/docs";
   readonly Dungeons: "/dungeons";
   readonly FluidSimulator: "/fluid-simulator";
@@ -33,9 +28,6 @@ export const RoutePath: {
   readonly ResourcesAll: "/resources/all";
   readonly ResourcesCreate: "/resources/create";
   readonly ResourcesCreateType: (type: string) => string;
-  readonly Survey: (id: string) => string;
-  readonly [SURVEY_DISPLAY_NAME]: `/${Uncapitalize<typeof SURVEY_DISPLAY_NAME>}`;
-  readonly [SURVEYER_EDIT_KEY]: (id: string) => string;
   readonly UserSettings: "/user/settings";
   readonly View: (type: string, id: string) => string;
 } = {
@@ -45,7 +37,6 @@ export const RoutePath: {
   Calls: (id: string) => `/calls/${id}`,
   CallsIndex: "/calls",
   Clicker: "/clicker",
-  Dashboard: "/dashboard",
   Docs: "/docs",
   Dungeons: "/dungeons",
   FluidSimulator: "/fluid-simulator",
@@ -67,9 +58,6 @@ export const RoutePath: {
   ResourcesAll: "/resources/all",
   ResourcesCreate: "/resources/create",
   ResourcesCreateType: (type: string) => `/resources/create/${type}`,
-  Survey: (id: string) => `/survey/${id}`,
-  [SURVEY_DISPLAY_NAME]: `/${uncapitalize(SURVEY_DISPLAY_NAME)}`,
-  [SURVEYER_EDIT_KEY]: (id: string) => `/${uncapitalize(SURVEY_DISPLAY_NAME)}/${id}`,
   UserSettings: "/user/settings",
   View: (type: string, id: string) => `/view/${type}/${id}`,
 } as const;

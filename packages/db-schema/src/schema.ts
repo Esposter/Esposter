@@ -20,7 +20,6 @@ import { roomsInMessage, roomTypeEnum } from "@/schema/roomsInMessage";
 import { scheduledMessageJobsInMessage } from "@/schema/scheduledMessageJobsInMessage";
 import { searchHistoriesInMessage } from "@/schema/searchHistoriesInMessage";
 import { sessions } from "@/schema/sessions";
-import { surveys } from "@/schema/surveys";
 import { userAchievements } from "@/schema/userAchievements";
 import { users } from "@/schema/users";
 import { noiseSuppressionModeEnum, userSettingsInMessage, voiceInputModeEnum } from "@/schema/userSettingsInMessage";
@@ -58,7 +57,6 @@ export const schema = {
   scheduledMessageJobsInMessage,
   searchHistoriesInMessage,
   sessions,
-  surveys,
   userAchievements,
   users,
   userSettingsInMessage,

@@ -2,10 +2,11 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
-import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
+import { emailRouter } from "@@/server/trpc/routers/email";
 import { resources, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
@@ -13,14 +14,14 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
 // Here only the router wiring: resource type + content schema round-trip.
-describe("webpageEditor", () => {
+describe("email", () => {
   let mockContext: Context;
-  let caller: DecorateRouterRecord<TRPCRouter["webpageEditor"]>;
+  let caller: DecorateRouterRecord<TRPCRouter["email"]>;
   const name = "name";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    caller = createCallerFactory(webpageEditorRouter)(mockContext);
+    caller = createCallerFactory(emailRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -33,17 +34,19 @@ describe("webpageEditor", () => {
 
     const newResource = await caller.createResource({ name });
 
-    expect(newResource.type).toBe(ResourceType.Webpage);
+    expect(newResource.type).toBe(ResourceType.Email);
 
-    // The captured standalone render is part of the round-trip so the schema provably preserves it
-    const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
+    // The dataset binding is part of the round-trip so the schema provably preserves it
+    const emailEditor = new EmailEditor({
+      datasetReference: { id: crypto.randomUUID(), type: DatasetProviderType.SurveyResponses },
+    });
     await caller.saveResourceContent({
-      content: webpageEditor,
+      content: emailEditor,
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
     const content = await caller.readResourceContent({ id: newResource.id });
 
-    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(emailEditor)));
   });
 });

@@ -1,9 +1,8 @@
-import type { Survey } from "@esposter/db-schema";
+import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useBlobUrlSearchRegex } from "@@/server/composables/survey/useBlobUrlSearchRegex";
 import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
-import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";
 import { ContainerSASPermissions } from "@azure/storage-blob";
 import { AzureContainer } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -11,26 +10,16 @@ import dayjs from "dayjs";
 import { lookup } from "mime-types";
 import { extname } from "node:path";
 
-export const useUpdateBlobUrls = async (survey: Survey, isPublish?: true) => {
-  const blobUrls = extractBlobUrls(survey.model);
-  if (blobUrls.length === 0) return survey.model;
+export const useUpdateBlobUrls = async (model: SurveyResource["model"], publishedDirectoryName?: string) => {
+  const blobUrls = extractBlobUrls(model);
+  if (blobUrls.length === 0) return model;
 
-  const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
-  const blobNames: string[] = [];
-
-  if (isPublish) {
-    const publishDirectory = getPublishDirectory(survey);
-
-    for (const blobUrl of blobUrls) {
-      const blobName = `${publishDirectory}/${blobUrl.slice(`${containerClient.url}/${survey.id}/`.length)}`;
-      blobNames.push(blobName);
-    }
-  } else
-    for (const blobUrl of blobUrls) {
-      const blobName = blobUrl.slice(`${containerClient.url}/`.length);
-      blobNames.push(blobName);
-    }
-
+  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const blobNames = blobUrls.map((blobUrl) => {
+    const blobName = blobUrl.slice(`${containerClient.url}/`.length);
+    // Published snapshots serve the assets cloned under the publish directory, not the mutable working copies
+    return publishedDirectoryName ? `${publishedDirectoryName}/${blobName.slice(blobName.indexOf("/") + 1)}` : blobName;
+  });
   const updatedBlobUrls = await Promise.all(
     blobNames.map((blobName) => {
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
@@ -42,7 +31,7 @@ export const useUpdateBlobUrls = async (survey: Survey, isPublish?: true) => {
       });
     }),
   );
-  let updatedModel = survey.model;
+  let updatedModel = model;
 
   for (const [i, blobUrl] of blobUrls.entries()) {
     const updatedBlobUrl = takeOne(updatedBlobUrls, i);

@@ -1,13 +1,12 @@
-import type { Survey } from "@esposter/db-schema";
 import type { SurveyCreatorModel } from "survey-creator-core";
 
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { Action, ComputedUpdater } from "survey-core";
 
+// Publish is owned by the explorer's generic publish toggle, so the creator toolbar only handles model I/O
 export const getActions = (
-  survey: Ref<Survey>,
   creator: SurveyCreatorModel,
-  dialog: Ref<boolean>,
+  getName: () => string,
   importJsonFile: (onSelect: (file: File) => Promise<void>) => Promise<void>,
   exportJsonFile: (fileName: string, data: unknown) => Promise<void>,
 ): Action[] => [
@@ -24,21 +23,12 @@ export const getActions = (
   }),
   new Action({
     action: getSynchronizedFunction(async () => {
-      await exportJsonFile(survey.value.name, creator.JSON);
+      await exportJsonFile(getName(), creator.JSON);
     }),
     iconName: "icon-download-24x24",
     id: "download-survey",
     tooltip: "Export",
     visible: new ComputedUpdater(() => creator.activeTab === "designer"),
-  }),
-  new Action({
-    action: () => {
-      dialog.value = true;
-    },
-    iconName: "icon-publish-24x24",
-    id: "publish-survey",
-    tooltip: "Publish",
-    visible: new ComputedUpdater(() => ["designer", "theme"].includes(creator.activeTab)),
   }),
   new Action({
     action: () => {
