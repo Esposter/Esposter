@@ -5,7 +5,6 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { RECENT_RESOURCES_LIMIT } from "@/services/resource/constants";
 import { RoutePath } from "@esposter/shared";
 
-defineRouteRules({ ssr: false });
 definePageMeta({ middleware: "auth" });
 
 const searchQuery = ref("");

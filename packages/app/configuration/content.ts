@@ -11,6 +11,6 @@ export const content: NuxtConfig["content"] = {
   },
   experimental: {
     // Use node:sqlite so we don't need the better-sqlite3 native dependency
-    nativeSqlite: true,
+    sqliteConnector: "native",
   },
 };
