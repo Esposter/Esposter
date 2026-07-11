@@ -15,7 +15,7 @@ A `/user/[id]` page showing a user's avatar, name, biography, their posts, and t
 
 ## How it works
 
-- **Procedure** — extend `readPostsInputSchema` with an optional `userId`; when present, add `userId: { eq }` to the relations filter (composes with the existing `parentId` + cursor clauses). A separate light `user.readUser(id)` query returns the public identity fields (name, image, biography, createdAt) — never email.
+- **Procedure** — extend `readPostsInputSchema` with an optional `userId`; when present, add `userId: { eq }` to the relations filter (composes with the existing `parentId` + cursor clauses). A separate light `user.readUser(id)` query serves the public identity fields. "Never email" is enforced server-side: the procedure selects **only** the allowlisted columns (name, image, biography, createdAt) in the Drizzle query projection — it never loads or serializes the full user row and relies on nothing client-side to strip private fields. It runs on the public rate-limited procedure (no session required), and the column allowlist plus unauthenticated access are acceptance criteria for the implementation.
 - **Page** — `/user/[id]`: identity header, achievement points + recent unlocks (reusing the gallery's grid items via `readUserAchievements`), and a cursor-paginated post list reusing the feed's card + waypoint machinery with the `userId` filter.
 - **Links** — post/comment cards' author name/avatar becomes a `NuxtLink` to the profile; esbabbler surfaces deliberately keep their own member-profile popovers (room identity ≠ global identity, per nickname/persona rules).
 

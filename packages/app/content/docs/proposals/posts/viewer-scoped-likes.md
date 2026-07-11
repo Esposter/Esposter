@@ -11,24 +11,24 @@ Return each post with at most one like row — the viewer's — instead of all o
 
 **Today:** `readPosts`/`readPost` and every post/comment mutation return `PostWithRelations` (`likes: Like[]`, `user`). Client sites (`LikeSection`, `useLikeOperations`) scan `post.likes` for the session user's row.
 
-**This adds:** a `viewerLike: Like | undefined` shape (or a `likes` relation filtered to the requesting user) and mechanical client updates. No schema change; `noLikes` already carries the count.
+**This adds:** one canonical response shape — `viewerLike: Like | undefined` **replaces** `likes: Like[]` on `PostWithRelations` — applied uniformly to every procedure that returns a post (reads and mutations alike), plus mechanical client updates. A filtered `likes` relation is only the server-side fetch strategy, never a second API shape. No schema change; `noLikes` already carries the count.
 
 ## How it works
 
-- In the post procedures, filter the relation by the caller: unauthenticated readers get no like rows, authenticated ones get theirs (`likes: { where: { userId } }` in the relational query, or a follow-up keyed lookup if relation filters don't fit).
-- `LikeSection` derives `liked`/`unliked` from the single row; `useLikeOperations` patches `viewerLike` instead of searching the array.
-- Type: replace `PostWithRelations.likes: Like[]` with the scoped field so the compiler finds every consumer.
+- **Server** — `readPost`/`readPosts` run through the public rate-limited procedure, so a session may be absent. Branch explicitly: no session → skip the like lookup entirely and return `viewerLike: undefined`; session present → fetch the caller's row (`likes: { where: { userId } }` in the relational query, or a follow-up keyed lookup if relation filters don't fit) and map it to `viewerLike`. Post/comment mutations (which are authenticated) map the same way, so every endpoint emits the identical shape.
+- **Client** — `LikeSection` derives `liked`/`unliked` from the single row; `useLikeOperations` patches `viewerLike` instead of searching the array.
+- **Type** — replace `PostWithRelations.likes: Like[]` with `viewerLike: Like | undefined` so the compiler finds every consumer.
 
 ## Key files
 
 Paths relative to `packages/app`.
 
-| File                                                | Change                      |
-| --------------------------------------------------- | --------------------------- |
-| `packages/db-schema/src/relations/postsRelation.ts` | viewer-scoped relation/type |
-| `server/trpc/routers/post.ts`                       | filter by `ctx` user        |
-| `app/components/Post/LikeSection.vue`               | single-row derivation       |
-| `app/composables/post/useLikeOperations.ts`         | patch `viewerLike`          |
+| File                                          | Change                      |
+| --------------------------------------------- | --------------------------- |
+| `../db-schema/src/relations/postsRelation.ts` | viewer-scoped relation/type |
+| `server/trpc/routers/post.ts`                 | filter by `ctx` user        |
+| `app/components/Post/LikeSection.vue`         | single-row derivation       |
+| `app/composables/post/useLikeOperations.ts`   | patch `viewerLike`          |
 
 ## Notes
 

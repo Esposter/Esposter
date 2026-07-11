@@ -24,7 +24,7 @@ flowchart LR
 
 **Ranking** — the hot score is computed at write time, never re-read:
 
-```
+```text
 sign(likes) × log10(max(|likes|, 1)) + (createdAtMs − 1.5e12) / 45e6
 ```
 
