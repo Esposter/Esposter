@@ -4,11 +4,10 @@ import type { SQL } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { getMentionConditions } from "@/services/message/mention/getMentionConditions";
-import { MentionNotificationConditionBuilders } from "@/services/message/mention/MentionNotificationConditionBuilders";
+import { MentionBadgeConditionBuilders } from "@/services/message/mention/MentionBadgeConditionBuilders";
 
-export const getMentionNotificationConditions = (
+export const getMentionBadgeConditions = (
   db: PostgresJsDatabase<typeof relations>,
   roomId: string,
   classifiedMentions: ClassifiedMentions,
-): Promise<(SQL | undefined)[]> =>
-  getMentionConditions(db, roomId, classifiedMentions, MentionNotificationConditionBuilders);
+): Promise<(SQL | undefined)[]> => getMentionConditions(db, roomId, classifiedMentions, MentionBadgeConditionBuilders);

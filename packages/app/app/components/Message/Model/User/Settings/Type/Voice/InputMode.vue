@@ -28,8 +28,8 @@ const voiceInputModes = Object.values(VoiceInputMode);
       :value="voiceInputMode"
     />
   </v-radio-group>
-  <MessageModelUserSettingsTypeVoicePushToTalkKeybindButton
-    v-if="userSettings.voiceInputMode === VoiceInputMode.PushToTalk"
-    :keybind="userSettings.pushToTalkKeybind"
-  />
+  <template v-if="userSettings.voiceInputMode === VoiceInputMode.PushToTalk">
+    <MessageModelUserSettingsTypeVoicePushToTalkKeybindButton :keybind="userSettings.pushToTalkKeybind" />
+    <MessageModelUserSettingsTypeVoicePushToTalkReleaseDelaySlider :user-settings />
+  </template>
 </template>

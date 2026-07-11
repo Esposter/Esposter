@@ -27,6 +27,7 @@ The dialog is opened by the gear in `Message/LeftSideBar/StatusBar.vue` and mirr
 | -------------------------------------------------------- | ----------------------------------------------------------------- | --------------- |
 | `voiceInputMode`                                         | `voice_input_mode` enum (`VoiceActivity` \| `PushToTalk`)         | `VoiceActivity` |
 | `pushToTalkKeybind`                                      | text                                                              | `""`            |
+| `pushToTalkReleaseDelayMs`                               | integer (CHECK 0..2000)                                           | 20              |
 | `inputSensitivityDecibels`                               | integer (CHECK −100..0)                                           | −50             |
 | `microphoneVolumePercentage` / `speakerVolumePercentage` | integer                                                           | 100             |
 | `noiseSuppressionMode`                                   | enum → [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video) |                 |

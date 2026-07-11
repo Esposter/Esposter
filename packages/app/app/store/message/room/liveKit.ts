@@ -17,7 +17,11 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
-import { DEFAULT_SPEAKER_VOLUME_PERCENTAGE, NoiseSuppressionMode, VoiceInputMode } from "@esposter/db-schema";
+import {
+  DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
+  DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+  NoiseSuppressionMode,
+} from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { ConnectionQuality, ConnectionState, Room, RoomEvent, Track } from "livekit-client";
@@ -27,6 +31,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let disconnectHandler: (() => Promise<void>) | undefined;
   let localCameraTrack: LocalVideoTrack | undefined;
   let microphoneProcessor: MicrophoneProcessor | undefined;
+  let pushToTalkReleaseTimeoutId: number | undefined;
   let virtualBackgroundProcessor: ReturnType<typeof BackgroundProcessor> | undefined;
   const mediaStore = useMediaStore();
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
@@ -65,8 +70,21 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     const settings = userSettingsStore.userSettings;
     if (!microphoneProcessor || !settings) return;
     microphoneProcessor.inputSensitivityDecibels = settings.inputSensitivityDecibels;
-    microphoneProcessor.isVoiceActivity = settings.voiceInputMode === VoiceInputMode.VoiceActivity;
     microphoneProcessor.microphoneVolumePercentage = settings.microphoneVolumePercentage;
+    microphoneProcessor.voiceInputMode = settings.voiceInputMode;
+  };
+  // Push-to-talk gate: pressing opens instantly; releasing closes after the configured grace period
+  // So word endings aren't clipped (Discord's release delay). Pressing again cancels a pending close.
+  const setIsPushToTalkHeld = (isHeld: boolean) => {
+    window.clearTimeout(pushToTalkReleaseTimeoutId);
+    pushToTalkReleaseTimeoutId = undefined;
+    if (!microphoneProcessor) return;
+    else if (isHeld) microphoneProcessor.isPushToTalkOpen = true;
+    else
+      pushToTalkReleaseTimeoutId = window.setTimeout(() => {
+        if (microphoneProcessor) microphoneProcessor.isPushToTalkOpen = false;
+        pushToTalkReleaseTimeoutId = undefined;
+      }, userSettingsStore.userSettings?.pushToTalkReleaseDelayMs ?? DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS);
   };
   const setActiveDevice = (kind: MediaDeviceKind, deviceId: string) => {
     switch (kind) {
@@ -302,6 +320,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     const room = activeRoom;
     activeRoom = undefined;
     disconnectHandler = undefined;
+    window.clearTimeout(pushToTalkReleaseTimeoutId);
+    pushToTalkReleaseTimeoutId = undefined;
     await localCameraTrack?.stopProcessor();
     await room?.disconnect();
     localCameraTrack = undefined;
@@ -327,6 +347,10 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     applyMicrophoneSettings,
   );
 
+  // Main-window push-to-talk keybind listener — lives with the store so it survives navigation,
+  // Like the call itself. Pip/Host registers the PiP window's own listeners when popped out.
+  usePushToTalk(setIsPushToTalkHeld);
+
   return {
     connect,
     connectionQuality,
@@ -334,6 +358,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     disconnect,
     setActiveDevice,
     setCamera,
+    setIsPushToTalkHeld,
     setMicrophone,
     setRemoteAudioMuted,
     setScreenShare,

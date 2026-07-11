@@ -11,9 +11,7 @@ Prioritized top-down. Every item links a full proposal; the specs are the plan, 
 
 Each extends something already shipped, no new infra.
 
-- [ ] [Mention badges](/docs/proposals/esbabbler/mention-badges) — mention-only unread counts in the sidebar
 - [ ] [Per-user call volume](/docs/proposals/esbabbler/per-user-call-volume) — per-participant slider, client-only
-- [ ] [Push-to-talk keybind](/docs/proposals/esbabbler/push-to-talk-keybind) — make PushToTalk mode functional
 - [ ] [Invite expiry](/docs/proposals/esbabbler/invite-expiry) — expiring and max-use invite links
 
 ## Later — larger or multi-area
