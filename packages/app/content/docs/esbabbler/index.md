@@ -19,23 +19,28 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 
 ## Pages
 
-| Page                                                                     | Covers                                                       |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------ |
-| [/docs/esbabbler/messaging](/docs/esbabbler/messaging)                   | Message storage, send flow, message types, real-time fan-out |
-| [/docs/esbabbler/friends-and-dms](/docs/esbabbler/friends-and-dms)       | Friend requests, blocking, 1:1 and group direct messages     |
-| [/docs/esbabbler/rbac](/docs/esbabbler/rbac)                             | Roles, permission bitfield, hierarchy, procedure guards      |
-| [/docs/esbabbler/moderation](/docs/esbabbler/moderation)                 | Admin actions, bans/timeouts, audit log                      |
-| [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)                   | Per-room nicknames and display-name resolution               |
-| [/docs/esbabbler/calls](/docs/esbabbler/calls)                           | LiveKit calls, sessions, knock lobby, screenshare, call view |
-| [/docs/esbabbler/picture-in-picture](/docs/esbabbler/picture-in-picture) | Document PiP pop-out of the active call                      |
-| [/docs/esbabbler/settings](/docs/esbabbler/settings)                     | User settings dialog, Voice & Video, profile editing         |
-| [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications) | Web push delivery and recipient filtering                    |
-| [/docs/esbabbler/slash-commands](/docs/esbabbler/slash-commands)         | `/command` registry, picker, execution model                 |
-| [/docs/esbabbler/scheduled-messages](/docs/esbabbler/scheduled-messages) | `/remind` + `/schedule` jobs and the Service Bus worker      |
-| [/docs/esbabbler/drafts-and-sent](/docs/esbabbler/drafts-and-sent)       | Cross-room Drafts / Scheduled / Sent view                    |
-| [/docs/esbabbler/offline-cache](/docs/esbabbler/offline-cache)           | IndexedDB offline mirror of Pinia state                      |
-| [/docs/esbabbler/decisions](/docs/esbabbler/decisions)                   | Rejected and deferred ideas                                  |
-| [/docs/esbabbler/roadmap](/docs/esbabbler/roadmap)                       | Open work                                                    |
+| Page                                                                                 | Covers                                                        |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| [/docs/esbabbler/messaging](/docs/esbabbler/messaging)                               | Message storage, send flow, message types, real-time fan-out  |
+| [/docs/esbabbler/friends-and-dms](/docs/esbabbler/friends-and-dms)                   | Friend requests, blocking, 1:1 and group direct messages      |
+| [/docs/esbabbler/rbac](/docs/esbabbler/rbac)                                         | Roles, permission bitfield, hierarchy, procedure guards       |
+| [/docs/esbabbler/moderation](/docs/esbabbler/moderation)                             | Admin actions, word filter, bans/timeouts, audit log          |
+| [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)                               | Per-room nicknames and display-name resolution                |
+| [/docs/esbabbler/profiles-and-presence](/docs/esbabbler/profiles-and-presence)       | Profile card/editing and Online/Idle/DND/Offline presence     |
+| [/docs/esbabbler/calls](/docs/esbabbler/calls)                                       | LiveKit sessions, membership boundary, knock lobby            |
+| [/docs/esbabbler/calls/call-view](/docs/esbabbler/calls/call-view)                   | Call surface, prejoin/ready room, tiles, control bar          |
+| [/docs/esbabbler/calls/screenshare](/docs/esbabbler/calls/screenshare)               | Screen-share tracks, presenter layout, moderation             |
+| [/docs/esbabbler/calls/picture-in-picture](/docs/esbabbler/calls/picture-in-picture) | Document PiP pop-out of the active call                       |
+| [/docs/esbabbler/settings](/docs/esbabbler/settings)                                 | Message-scoped user settings dialog + `userSettingsInMessage` |
+| [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video)                           | Voice & Video panel and live LiveKit application              |
+| [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications)             | Web push delivery and recipient filtering                     |
+| [/docs/esbabbler/slash-commands](/docs/esbabbler/slash-commands)                     | `/command` registry, picker, execution model                  |
+| [/docs/esbabbler/scheduled-messages](/docs/esbabbler/scheduled-messages)             | `/remind` + `/schedule` jobs and the Service Bus worker       |
+| [/docs/esbabbler/drafts-and-sent](/docs/esbabbler/drafts-and-sent)                   | Cross-room Drafts / Scheduled / Sent view                     |
+| [/docs/esbabbler/offline-cache](/docs/esbabbler/offline-cache)                       | IndexedDB offline mirror of Pinia state                       |
+| [/docs/esbabbler/deferred](/docs/esbabbler/deferred)                                 | Ideas deferred, each with a revisit trigger                   |
+| [/docs/esbabbler/rejected](/docs/esbabbler/rejected)                                 | Ideas decided against                                         |
+| [/docs/esbabbler/roadmap](/docs/esbabbler/roadmap)                                   | Open work — every item links its proposal                     |
 
 ## Shipped log
 
