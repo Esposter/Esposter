@@ -465,3 +465,17 @@ Use `Pick` for all properties derived directly from the source type. Keep explic
 - `Parameters<SourceType["method"]>` tuples — no readable property to pick
 - `Parameters<SourceType["method"]>[n]` — same
 - Plain primitives (`number`, `string`) representing constructor args with no matching readable property on the source type
+
+## Missing `NuxtConfig` Module Keys — Augment `nuxt.d.ts`, Never Touch tsconfig
+
+When `NuxtConfig["x"]` errors in `packages/app/configuration/*.ts` because a Nuxt module's config key isn't picked up (the module relies on the generated `.nuxt/types/modules.d.ts` instead of shipping its own `nuxt/schema` augmentation), **NEVER edit `tsconfig.root.json` or any tsconfig `include`**. Add the key to the existing `declare module "nuxt/schema"` block in `packages/app/shared/types/nuxt.d.ts`, importing the module's exported `ModuleOptions`:
+
+```ts
+import type { ModuleOptions as ContentModuleOptions } from "@nuxt/content";
+
+declare module "nuxt/schema" {
+  interface NuxtConfig {
+    content?: Partial<ContentModuleOptions>;
+  }
+}
+```
