@@ -26,6 +26,12 @@ useSettingsScrollSpy();
         </v-tooltip>
       </v-sheet>
     </template>
-    <component :is="component" v-if="component" />
+    <!-- Timeout 0 shows the skeleton on every tab switch instead of keeping the stale panel -->
+    <Suspense v-if="component" :timeout="0">
+      <component :is="component" />
+      <template #fallback>
+        <MessageModelSettingsSkeleton />
+      </template>
+    </Suspense>
   </MessageModelSettingsContent>
 </template>

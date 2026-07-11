@@ -2,6 +2,7 @@ import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSu
 
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
+import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 
 export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubscribableContext) => {
@@ -9,6 +10,8 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
   const callStore = useCallStore();
   const { activeCallSessionId } = storeToRefs(callStore);
   const knockerStore = useKnockerStore();
+  const mediaStore = useMediaStore();
+  const { deleteParticipantVolumePercentage } = mediaStore;
   const participantStore = useParticipantStore();
   const { createCallParticipant, deleteCallParticipant, deleteSpeaker, setHandRaised, setMute, setParticipantCamera } =
     participantStore;
@@ -28,6 +31,7 @@ export const useCallJoinedSubscribables = (onlineSubscribableContext: OnlineSubs
         onData: (participantId) => {
           deleteCallParticipant(callSessionId, participantId);
           deleteSpeaker(participantId);
+          deleteParticipantVolumePercentage(participantId);
         },
       });
       const handRaisedChangedUnsubscribable = $trpc.callSession.onHandRaisedChanged.subscribe(callSessionId, {

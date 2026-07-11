@@ -2,9 +2,11 @@ import type { AnyPgColumn } from "drizzle-orm/pg-core";
 
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
+import { sanitizeTextHtml } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { check, doublePrecision, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const POST_TITLE_MAX_LENGTH = 300;
 export const POST_DESCRIPTION_MAX_LENGTH = 1000;
@@ -39,9 +41,9 @@ export const posts = pgTable(
 export type Post = typeof posts.$inferSelect;
 
 export const selectPostSchema = createSelectSchema(posts, {
-  description: (schema) => schema.max(POST_DESCRIPTION_MAX_LENGTH),
+  description: (schema) => schema.transform(sanitizeTextHtml).pipe(z.string().max(POST_DESCRIPTION_MAX_LENGTH)),
   title: (schema) => schema.min(1).max(POST_TITLE_MAX_LENGTH),
 });
 export const selectCommentSchema = createSelectSchema(posts, {
-  description: (schema) => schema.min(1).max(POST_DESCRIPTION_MAX_LENGTH),
+  description: (schema) => schema.transform(sanitizeTextHtml).pipe(z.string().min(1).max(POST_DESCRIPTION_MAX_LENGTH)),
 });

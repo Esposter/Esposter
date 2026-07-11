@@ -1,39 +1,35 @@
 <script setup lang="ts">
-import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-
 import { useCommentStore } from "@/store/post/comment";
+import { useCommentDialogStore } from "@/store/post/comment/dialog";
 import { withFinalizerAsync } from "@esposter/shared";
 
-interface PostCommentConfirmDeleteDialogProps {
-  commentId: string;
-}
-
-defineSlots<{
-  activator: (props: StyledDialogActivatorSlotProps) => VNode;
-  commentPreview: () => VNode;
-}>();
-const { commentId } = defineProps<PostCommentConfirmDeleteDialogProps>();
 const commentStore = useCommentStore();
+const { items } = storeToRefs(commentStore);
 const { deleteComment } = commentStore;
+const commentDialogStore = useCommentDialogStore();
+const { deletingId } = storeToRefs(commentDialogStore);
+const comment = computed(() => items.value.find(({ id }) => id === deletingId.value));
+const isOpen = useSingletonDialog(deletingId);
 </script>
 
 <template>
   <StyledDeleteFormDialog
+    v-if="comment"
+    v-model="isOpen"
     :card-props="{
       title: 'Delete Comment',
       text: 'Are you sure you want to delete this comment?',
     }"
     @delete="
       async (onComplete) => {
+        if (!comment) return;
+        const commentId = comment.id;
         await withFinalizerAsync(() => deleteComment(commentId), onComplete);
       }
     "
   >
-    <template #activator="activatorProps">
-      <slot name="activator" :="activatorProps" />
-    </template>
     <div mx-4 py-2 b-1 b-text rd-lg b-solid shadow-md>
-      <slot name="commentPreview" />
+      <PostCommentPreview :comment />
     </div>
   </StyledDeleteFormDialog>
 </template>

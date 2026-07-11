@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { z } from "zod";
 
-import deepEqual from "fast-deep-equal";
-
 interface EditDialogButtonProps {
   editedValue: unknown;
   icon?: string;
@@ -24,45 +22,29 @@ const {
   value,
 } = defineProps<EditDialogButtonProps>();
 const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
-const styledDialog = useTemplateRef("styledDialog");
-const errorIcon = useTemplateRef("errorIcon");
-const isEqual = computed(() => deepEqual(value, editedValue));
-const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || (!isCreate && isEqual.value));
+const isOpen = ref(false);
 </script>
 
 <template>
-  <StyledFormDialog
-    ref="styledDialog"
-    :card-props="{ title }"
-    :confirm-button-attrs="{ disabled }"
-    :confirm-button-props="{ text: 'Save & Close' }"
-    @submit="(_event, onComplete) => emit('submit', onComplete)"
+  <StyledTooltipIconButton
+    :button-props="{ class: 'm-0', size: 'small', tile: true }"
+    :icon
+    :text="tooltipText"
+    @click.stop="isOpen = true"
+  />
+  <ResourceFileEditDialog
+    v-model="isOpen"
+    :edited-value
+    :is-create
+    :schema
+    :title
+    :value
+    @reset="emit('reset')"
+    @submit="(onComplete) => emit('submit', onComplete)"
   >
-    <template #activator="{ updateIsOpen }">
-      <StyledTooltipIconButton
-        :button-props="{ class: 'm-0', size: 'small', tile: true }"
-        :icon
-        :text="tooltipText"
-        @click.stop="updateIsOpen(true)"
-      />
-    </template>
     <template #prepend-actions>
-      <StyledEditFormDialogErrorIcon
-        ref="errorIcon"
-        :edited-value
-        :edit-form="styledDialog?.editForm"
-        :is-edit-form-valid="styledDialog?.isEditFormValid ?? true"
-        :schema
-      />
-      <v-tooltip text="Reset changes">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn :disabled="isEqual" text="Reset" :="tooltipProps" @click="emit('reset')" />
-        </template>
-      </v-tooltip>
       <slot name="prepend-actions" />
     </template>
-    <v-container fluid overflow-y-auto>
-      <slot />
-    </v-container>
-  </StyledFormDialog>
+    <slot />
+  </ResourceFileEditDialog>
 </template>

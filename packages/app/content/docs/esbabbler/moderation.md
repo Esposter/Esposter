@@ -46,19 +46,19 @@ Rooms can define filtered words (`room.filter` router, `roomFiltersInMessage`). 
 
 ## Data model
 
-The moderation log is an append-only Azure Table (`AzureTable.ModerationLog`): `partitionKey = roomId`, `rowKey = reverseTickedTimestamp`, fields `type`, `actorId`, `targetId`, `durationMs?`. It is surfaced in the room settings **Audit Log** tab (behind `ManageRoom`). Bans are relational (`bans` table in Postgres: `roomId`, `userId`, `bannedByUserId`).
+The moderation log is an append-only Azure Table (`AzureTable.ModerationLog`): `partitionKey = roomId`, `rowKey = reverseTickedTimestamp`, fields `type`, `actorUserId`, `targetUserId`, `durationMs?`. It is surfaced in the room settings **Audit Log** tab (behind `ManageRoom`), with a filter bar over action type, actor, and target — the filters become extra `$filter` clauses on the partition query (a partition scan, fine at room-log scale), so filtered pagination stays stateless through the same cursor. The empty state distinguishes "no entries" from "no matches". Bans are relational (`bans` table in Postgres: `roomId`, `userId`, `bannedByUserId`).
 
 ## Procedures
 
 `moderation` router (`server/trpc/routers/message/moderation.ts`):
 
-| Procedure                                                         | Auth (permission)           | Purpose                                             |
-| :---------------------------------------------------------------- | :-------------------------- | :-------------------------------------------------- |
-| `executeAdminAction({ roomId, targetUserId, type, durationMs? })` | per-action gate + hierarchy | Execute any admin action                            |
-| `onAdminAction({ roomId })`                                       | member                      | Subscription; targeted `userId` receives the action |
-| `readBans({ roomId, cursor, limit })`                             | `BanMembers`                | Cursor-paginated ban list                           |
-| `deleteBan({ roomId, userId })`                                   | `BanMembers`                | Unban                                               |
-| `readModerationLog({ roomId, cursor })`                           | `ManageRoom`                | Cursor-paginated audit log                          |
+| Procedure                                                                   | Auth (permission)           | Purpose                                             |
+| :-------------------------------------------------------------------------- | :-------------------------- | :-------------------------------------------------- |
+| `executeAdminAction({ roomId, targetUserId, type, durationMs? })`           | per-action gate + hierarchy | Execute any admin action                            |
+| `onAdminAction({ roomId })`                                                 | member                      | Subscription; targeted `userId` receives the action |
+| `readBans({ roomId, cursor, limit })`                                       | `BanMembers`                | Cursor-paginated ban list                           |
+| `deleteBan({ roomId, userId })`                                             | `BanMembers`                | Unban                                               |
+| `readModerationLog({ roomId, cursor, type?, actorUserId?, targetUserId? })` | `ManageRoom`                | Cursor-paginated audit log, optionally filtered     |
 
 ## Key files
 

@@ -10,9 +10,16 @@ import { withFinalizerAsync } from "@esposter/shared";
 
 const modelValue = defineModel<UserSettingsType>({ required: true });
 const userSettingsDialogStore = useUserSettingsDialogStore();
-const { activeSectionId, isScrollingToSection } = storeToRefs(userSettingsDialogStore);
+const { activeSectionId, isScrollingToSection, visibleSectionIds } = storeToRefs(userSettingsDialogStore);
 const goTo = useVGoTo();
 const userSettingsListItems = Object.entries(UserSettingsListItemMap);
+// Highlight every visible section (docs table-of-contents behaviour) — the slide indicator stretches
+// Across them. While a sidebar click scrolls programmatically, pin the highlight to the target.
+const activeSectionIds = computed<string[]>(() => {
+  if (isScrollingToSection.value) return [activeSectionId.value];
+  const sections = UserSettingsSectionMap[modelValue.value].filter((section) => visibleSectionIds.value.has(section));
+  return sections.length > 0 ? sections : [activeSectionId.value];
+});
 const scrollToSection = async (section: SettingsSection) => {
   activeSectionId.value = section;
   const element = document.getElementById(section);
@@ -43,16 +50,16 @@ const scrollToSection = async (section: SettingsSection) => {
             <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
           </v-list-item>
         </template>
-        <StyledSlideIndicator v-if="settingsType === modelValue" :active-keys="[activeSectionId]" />
+        <StyledSlideIndicator v-if="settingsType === modelValue" :active-keys="activeSectionIds" />
         <v-list-item
           v-for="section of UserSettingsSectionMap[settingsType as UserSettingsType]"
           :key="section"
-          :active="activeSectionId === section"
+          :active="activeSectionIds.includes(section)"
           :data-slide-indicator-key="section"
           density="compact"
           @click="scrollToSection(section)"
         >
-          <v-list-item-title :class="activeSectionId === section ? 'font-bold' : 'op-60'">{{
+          <v-list-item-title :class="activeSectionIds.includes(section) ? 'font-bold' : 'op-60'">{{
             section
           }}</v-list-item-title>
         </v-list-item>

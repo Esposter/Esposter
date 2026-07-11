@@ -10,6 +10,6 @@ Let the master Speaker Volume slider boost past 100% by routing remote audio thr
 **Why deferred**
 
 - Requires switching the Room to `webAudioMix`, changing the audio pipeline for everyone to serve an edge preference.
-- The per-track path already supports boost where it matters ([per-user call volume](/docs/proposals/esbabbler/per-user-call-volume) uses `participant.setVolume`, which boosts >100%).
+- [Per-user volume](/docs/esbabbler/calls/per-user-volume) shares the same `HTMLMediaElement.volume` path, so its >100% range clamps to full too — a `webAudioMix` migration would unlock boost for both at once.
 
-**Revisit when:** users report calls being too quiet even at 100% with per-user boost available.
+**Revisit when:** users report calls being too quiet even at 100%.

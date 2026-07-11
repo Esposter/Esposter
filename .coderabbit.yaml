@@ -3,9 +3,6 @@ reviews:
     - "!pnpm-lock.yaml"
     # auto-generated migrations
     - "!packages/app/server/db/migrations/**"
-    # legacy docs trees deleted after migrating into packages/app/content/docs
-    - "!features/**"
-    - "!architecture/**"
 
   auto_review:
     ignore_usernames:

@@ -39,7 +39,7 @@ catalog:
   "@electric-sql/pglite": ^0.5.4
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.0.1
-  "@floating-ui/dom": ^1.7.6
+  "@floating-ui/dom": ^1.8.0
   "@fullcalendar/core": ^6.1.21
   "@fullcalendar/daygrid": ^6.1.21
   "@fullcalendar/interaction": ^6.1.21

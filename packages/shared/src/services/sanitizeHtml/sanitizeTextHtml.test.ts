@@ -6,17 +6,17 @@ import {
   MENTION_TYPE_ATTRIBUTE,
 } from "@/services/message/constants";
 import { getMentions } from "@/services/message/getMentions";
-import { sanitizeMessageHtml } from "@/services/sanitizeHtml/sanitizeMessageHtml";
+import { sanitizeTextHtml } from "@/services/sanitizeHtml/sanitizeTextHtml";
 import { takeOne } from "@/util/array/takeOne";
 import { describe, expect, test } from "vitest";
 
-describe(sanitizeMessageHtml, () => {
+describe(sanitizeTextHtml, () => {
   test("preserves role mention metadata", () => {
     expect.hasAssertions();
 
     const roleId = crypto.randomUUID();
     const html = `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${roleId}" ${MENTION_ITEM_TYPE_ATTRIBUTE}="${MentionType.Role}"></span>`;
-    const result = sanitizeMessageHtml(html);
+    const result = sanitizeTextHtml(html);
     const mention = takeOne(getMentions(result));
 
     expect(mention.getAttribute(MENTION_ID_ATTRIBUTE)).toStrictEqual(roleId);
@@ -27,13 +27,13 @@ describe(sanitizeMessageHtml, () => {
   test("strips script tags and their content", () => {
     expect.hasAssertions();
 
-    expect(sanitizeMessageHtml("<p>hi</p><script>alert(1)</script>")).toBe("<p>hi</p>");
+    expect(sanitizeTextHtml("<p>hi</p><script>alert(1)</script>")).toBe("<p>hi</p>");
   });
 
   test("strips inline event handler attributes", () => {
     expect.hasAssertions();
 
-    expect(sanitizeMessageHtml(`<a href="https://example.com" onclick="alert(1)">x</a>`)).toBe(
+    expect(sanitizeTextHtml(`<a href="https://example.com" onclick="alert(1)">x</a>`)).toBe(
       `<a href="https://example.com">x</a>`,
     );
   });
@@ -41,12 +41,12 @@ describe(sanitizeMessageHtml, () => {
   test("strips javascript: protocol hrefs", () => {
     expect.hasAssertions();
 
-    expect(sanitizeMessageHtml(`<a href="javascript:alert(1)">x</a>`)).toBe("<a>x</a>");
+    expect(sanitizeTextHtml(`<a href="javascript:alert(1)">x</a>`)).toBe("<a>x</a>");
   });
 
   test("strips disallowed style properties", () => {
     expect.hasAssertions();
 
-    expect(sanitizeMessageHtml(`<span style="position:fixed">x</span>`)).toBe(`<span>x</span>`);
+    expect(sanitizeTextHtml(`<span style="position:fixed">x</span>`)).toBe(`<span>x</span>`);
   });
 });

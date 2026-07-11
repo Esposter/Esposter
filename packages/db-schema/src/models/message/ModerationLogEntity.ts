@@ -5,6 +5,7 @@ import type { ToData } from "@esposter/shared";
 import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
 import { AdminActionType, adminActionTypeSchema } from "@/models/message/AdminActionType";
 import { selectUserSchema } from "@/schema/users";
+import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class ModerationLogEntity extends AzureEntity {
@@ -18,6 +19,8 @@ export class ModerationLogEntity extends AzureEntity {
     Object.assign(this, init);
   }
 }
+
+export const ModerationLogEntityPropertyNames = getPropertyNames<ModerationLogEntity>();
 
 export const moderationLogEntitySchema = z.object({
   ...createAzureEntitySchema(

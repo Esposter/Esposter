@@ -1,6 +1,8 @@
 import type { MessageEntity } from "@esposter/db-schema";
 import type { VMenu } from "vuetify/components/VMenu";
 
+import { skipHydrate } from "pinia";
+
 export const useMessageStore = defineStore("message", () => {
   const optionsMenu = ref<{
     rowKey: MessageEntity["rowKey"];
@@ -8,5 +10,12 @@ export const useMessageStore = defineStore("message", () => {
   }>();
   const editingRowKey = ref<MessageEntity["rowKey"]>();
   const { copied, copy, text } = useClipboard();
-  return { copied, copy, editingRowKey, optionsMenu, text };
+  // Copied/text are readonly refs, so they cannot be written to by pinia's SSR payload hydration
+  return {
+    copied: skipHydrate(copied),
+    copy,
+    editingRowKey,
+    optionsMenu,
+    text: skipHydrate(text),
+  };
 });

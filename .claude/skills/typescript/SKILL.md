@@ -271,6 +271,8 @@ const baseUrl = IS_PRODUCTION ? PRODUCTION_URL : DEVELOPMENT_URL;
 
 - **Never `ref<EnumType | null>(null)`** — default to a sensible first value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`.
 - **Never `ref<EnumType>(EnumValue)`** — TypeScript infers the type from the value: `ref(ColumnType.String)`.
+- **Filter/selection refs where "nothing selected" is a real state** use the string-enum `""` sentinel — `ref<"" | EnumType>("")` — never `| null` or `| undefined`. Pair with an explicit "All …" select item (`value: ""`), never `clearable` (see the vuetify skill).
+- **Prefer inferred refs** — `ref("")`, `ref(0)`, `ref(EnumType.Value)`. Annotate only when the value space genuinely exceeds the seed: `ref<"" | EnumType>("")`, literal-union inputs like `ref<CreateInviteInput["maxUses"]>(0)`.
 
 ## `string` — Always Use `""` as Empty Sentinel
 
@@ -289,6 +291,16 @@ Prefer `string` with `""` as the absent/empty sentinel. Do not use `string | und
 - Browser API properties genuinely optional with no default (e.g. `MediaRecorder.mimeType`).
 - Vue Router param casts: `route.params.x as string | undefined` — normalise at the boundary, guard with `if (x)` immediately after.
 - Node.js `req.socket.remoteAddress` and similar network properties.
+
+## Sentinels Propagate End-to-End
+
+A client ref seeded with its sentinel (`""`, `0`, first enum value) always sends the field, so the API input declares it **required** with the sentinel in its value space — never `.partial()`/`.optional()`/`.default()` machinery or `?? undefined` normalisation at the call site. The server truthiness-guards (`if (type) ...`). Minimal code: one value space from ref to query.
+
+- Plain `string` fields already contain `""` — reuse the source schema untouched: `entitySchema.pick({ actorUserId: true })`, non-partial.
+- Enum fields union the sentinel: `type: entitySchema.shape.type.or(z.literal(""))`.
+- **Numbers use `0`** when `0` has no domain meaning — invite `expireAfterMinutes`/`maxUses`: `0` = never expires / unlimited (`z.literal([...OPTIONS, 0])`, never `.nullable()`).
+- **The DB schema itself carries the sentinel** — `maxUses: integer().notNull().default(0)`, never a nullable column plus manual `|| null` mapping in the router. The DB schema is the source of truth for types (that's why we use Drizzle); the sentinel flows ref → input → row → read untouched. Only types with no empty value (timestamps) stay nullable, mapped once at the insert site.
+- Reserve `.default("")` for fields genuinely omitted by some callers (e.g. `cursor` on the first page request).
 
 ## `null` vs `undefined`
 

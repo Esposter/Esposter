@@ -27,6 +27,7 @@ const { hasMore, items } = storeToRefs(postStore);
         <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMorePosts" />
       </v-container>
     </v-pull-to-refresh>
+    <PostConfirmDeleteDialog />
     <template #left>
       <AppProductList />
     </template>

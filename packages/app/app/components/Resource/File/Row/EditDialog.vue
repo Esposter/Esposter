@@ -3,15 +3,19 @@ import type { DataSource } from "#shared/models/resource/file/datasource/DataSou
 
 import { rowSchema } from "#shared/models/resource/file/datasource/Row";
 import { checkIsEditableColumnValue } from "@/services/resource/file/column/checkIsEditableColumnValue";
+import { useRowDialogStore } from "@/store/resource/file/rowDialog";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
-interface EditDialogButtonProps {
+interface EditDialogProps {
   columns: DataSource["columns"];
   index: number;
   row: DataSource["rows"][number];
 }
 
-const { columns, index, row } = defineProps<EditDialogButtonProps>();
+const { columns, index, row } = defineProps<EditDialogProps>();
+const rowDialogStore = useRowDialogStore();
+const { editingId } = storeToRefs(rowDialogStore);
+const isOpen = useSingletonDialog(editingId);
 const editableColumns = computed(() => columns.filter((column) => checkIsEditableColumnValue(column)));
 const updateRow = useUpdateRow();
 const title = computed(() => `Edit Row ${index + 1}`);
@@ -22,9 +26,9 @@ const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
 </script>
 
 <template>
-  <ResourceFileEditDialogButton
+  <ResourceFileEditDialog
+    v-model="isOpen"
     :title
-    :tooltip-text="title"
     :value="row"
     :edited-value="editedRow"
     :schema="rowSchema"
@@ -45,5 +49,5 @@ const { cloned: editedRow, sync: resetForm } = useCloned(() => row, {
         />
       </v-col>
     </v-row>
-  </ResourceFileEditDialogButton>
+  </ResourceFileEditDialog>
 </template>

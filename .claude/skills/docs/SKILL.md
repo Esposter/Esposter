@@ -68,6 +68,7 @@ Nothing else unless the renderer needs it. No status/date/author fields — loca
 Write for a new engineer reading in the browser, not for an agent grepping a repo:
 
 - Prose first. Complete sentences; spell out a term on first use (blade, capability, reverse-ticked rowKey…). Tables only for short enumerable facts (procedures, key files).
+- **Magnitudes, not measurements.** Cite orders of magnitude ("milliseconds into whole seconds", "hundreds of kilobytes"), never precise profiling numbers ("4,008 ms INP", "845 KB") — exact figures go stale with the next change and add no decision value beyond their magnitude.
 - **Every line earns its place.** If another page already says it, link instead (`/docs/architecture/resources` — absolute route paths, no `.md` suffix, so links work in-app).
 - Self-contained over link-chained: a page must be understandable without following links; links add depth, never required context.
 - Keep the **Key Files** table on feature pages — path + one-line role. It's the bridge from docs to code.

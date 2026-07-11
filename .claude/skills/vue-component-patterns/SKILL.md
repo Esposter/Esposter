@@ -368,6 +368,32 @@ const controlItems = computed<ControlItem[]>(() => [
 
 **When NOT to extract:** Items rendering fundamentally different components (e.g. `StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — the template structure diverges too much for a shared shape.
 
+## Singleton Dialogs — Store-Driven Target, Never Per-Item
+
+**Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded `v-dialog`/menu creates N full component trees that all mount, hydrate, and re-render together — the root cause of a seconds-long INP on the messages page. The full rationale and canonical wiring live in `packages/app/content/docs/architecture/singleton-dialogs.md`; keep that page updated when this pattern evolves.
+
+The pattern (three parts):
+
+1. **Target ref in a per-service dialog store** — dialog UI state never lives in a business-logic store. Each service gets its own dialog store next to its business store (`store/message/dialog.ts` → `useMessageDialogStore`, `store/post/dialog.ts`, `store/resource/file/rowDialog.ts`, …) holding only targets like `deletingId` / `editingColumnName`. Targets are strings defaulting to `""` — never `undefined` (empty-string default rule).
+2. **Action buttons write the target** — the per-item button is a dumb `StyledTooltipIconButton` with `@click.stop="deletingId = item.id"`. No activator slots, no emit plumbing up the tree.
+3. **One dialog instance mounted at list level** — a `ConfirmDeleteDialog.vue`/`EditDialog.vue` singleton mounted once (in the list/table/page component). It resolves the full item from the business store by target, guards with `v-if="item"`, and derives its model via `useSingletonDialog`:
+
+```ts
+// composables/useSingletonDialog.ts — writable v-model over the target ref
+const isOpen = useSingletonDialog(deletingId); // get: Boolean(target); set false: target = ""
+```
+
+```vue
+<!-- singleton dialog: resolve item from store, v-if guard, v-model via useSingletonDialog -->
+<StyledDeleteFormDialog v-if="item" v-model="isOpen" :card-props="{ title, text }" @delete="..." />
+```
+
+- When the dialog needs per-open local state (a `structuredClone` edit draft), mount it `v-if`-guarded **with a `:key`** at the list level so it re-creates per target: `<ResourceFileRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" />`.
+- Hover toolbars / options menus in list items follow the same idea with `v-if` (mount on hover), not `v-show` — see `Message/Model/Message/List/Item.vue`.
+- Single-instance dialogs (one create button per toolbar, one settings dialog per page) may keep the button+dialog combined component — the rule targets per-item multiplication.
+
+Canonical examples: `Message/Model/Message/ConfirmDeleteDialog.vue`, `Resource/File/Column/{ActionSlot,Table,EditDialog,ConfirmDeleteDialog}.vue`, `Message/Model/Room/Settings/Dialog.vue`.
+
 ## Page Decomposition — Pages are Layout + Composition
 
 Pages (`pages/**/*.vue`) should be **presentation-only orchestrators**: layout structure, `<Head>`, `definePageMeta`/`defineRouteRules`, and composed sub-components. All action logic, validation, and reactive state live in the sub-components or composables they own.

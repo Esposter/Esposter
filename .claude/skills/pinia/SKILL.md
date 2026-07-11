@@ -38,6 +38,15 @@ description: Esposter Pinia store conventions — full store name, destructure w
   const roomParticipants = computed(() => roomParticipantsMap.value.get(roomStore.currentRoomId));
   ```
 
+## Dialog UI State Lives in Per-Service Dialog Stores
+
+Singleton-dialog targets (`deletingId`, `editingColumnName`, `settingsRoomId`, …) never live in a business-logic store — each service gets a dedicated dialog store next to its business store, following the existing `dialog.ts` / `*Dialog.ts` naming:
+
+- `store/message/dialog.ts` → `useMessageDialogStore`; `store/post/dialog.ts` → `usePostDialogStore` (folder exists → `<folder>/dialog.ts`)
+- `store/message/roomCategoryDialog.ts` → `useRoomCategoryDialogStore`; `store/resource/file/rowDialog.ts` → `useRowDialogStore` (no feature folder → `<feature>Dialog.ts` beside the business store file)
+
+Targets are strings defaulting to `""` (never `undefined`), and components derive `v-model` from them via `useSingletonDialog`. Full pattern: the Singleton Dialogs section in the `vue-component-patterns` skill and `packages/app/content/docs/architecture/singleton-dialogs.md`.
+
 ## Never Redirect Store Functions — Use Them Directly
 
 A store function is defined **once** and consumed directly at every use site by destructuring it from the store. Never insert a layer that only forwards to it:

@@ -28,8 +28,11 @@ const voiceInputModes = Object.values(VoiceInputMode);
       :value="voiceInputMode"
     />
   </v-radio-group>
-  <MessageModelUserSettingsTypeVoicePushToTalkKeybindButton
-    v-if="userSettings.voiceInputMode === VoiceInputMode.PushToTalk"
-    :keybind="userSettings.pushToTalkKeybind"
-  />
+  <template v-if="userSettings.voiceInputMode === VoiceInputMode.PushToTalk">
+    <MessageModelUserSettingsTypeVoicePushToTalkKeybindButton :keybind="userSettings.pushToTalkKeybind" />
+    <div mt-2 op-medium-emphasis text-body-small>
+      Activates your mic only while you hold the keybind. Push to Talk only works while an app window (main or pop-out)
+      has focus.
+    </div>
+  </template>
 </template>

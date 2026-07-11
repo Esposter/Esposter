@@ -5,33 +5,26 @@ import { dayjs } from "#shared/services/dayjs";
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { useMessageStore } from "@/store/message";
+import { useMessageDialogStore } from "@/store/message/dialog";
+import { useForwardStore } from "@/store/message/input/forward";
+import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
 import { exhaustiveGuard, normalizeString, RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
-export const useMessageActionItems = (
-  message: MessageEntity,
-  isEditable: Ref<boolean>,
-  isCreator: Ref<boolean>,
-  {
-    onDeleteMode,
-    onForward,
-    onPin,
-    onReply,
-    onUpdateMode,
-  }: {
-    onDeleteMode?: () => void;
-    onForward: (rowKey: string) => void;
-    onPin: (value: true) => void;
-    onReply: (rowKey: string) => void;
-    onUpdateMode: () => void;
-  },
-) => {
+export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
   const { $trpc } = useNuxtApp();
   const messageStore = useMessageStore();
   const { copy } = messageStore;
+  const { editingRowKey } = storeToRefs(messageStore);
+  const messageDialogStore = useMessageDialogStore();
+  const { deletingRowKey, pinningRowKey } = storeToRefs(messageDialogStore);
+  const replyStore = useReplyStore();
+  const { rowKey: replyRowKey } = storeToRefs(replyStore);
+  const forwardStore = useForwardStore();
+  const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const threadStore = useThreadStore();
@@ -39,21 +32,23 @@ export const useMessageActionItems = (
   const runtimeConfig = useRuntimeConfig();
   const editMessageItem: Item = {
     icon: "mdi-pencil",
-    onClick: onUpdateMode,
+    onClick: () => {
+      editingRowKey.value = message.rowKey;
+    },
     shortTitle: "Edit",
     title: "Edit Message",
   };
   const replyItem: Item = {
     icon: "mdi-reply",
     onClick: () => {
-      onReply(message.rowKey);
+      replyRowKey.value = message.rowKey;
     },
     title: "Reply",
   };
   const forwardMessageItem: Item = {
     icon: "mdi-share",
     onClick: () => {
-      onForward(message.rowKey);
+      forwardRowKey.value = message.rowKey;
     },
     title: "Forward",
   };
@@ -77,7 +72,7 @@ export const useMessageActionItems = (
       : {
           icon: "mdi-pin",
           onClick: () => {
-            onPin(true);
+            pinningRowKey.value = message.rowKey;
           },
           title: "Pin Message",
         },
@@ -143,11 +138,13 @@ export const useMessageActionItems = (
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>
-    DeletableMessageTypes.has(message.type) && isCreator.value && onDeleteMode
+    DeletableMessageTypes.has(message.type) && isCreator.value
       ? {
           color: "error",
           icon: "mdi-delete",
-          onClick: onDeleteMode,
+          onClick: () => {
+            deletingRowKey.value = message.rowKey;
+          },
           title: "Delete Message",
         }
       : undefined,

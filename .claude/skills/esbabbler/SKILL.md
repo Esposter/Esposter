@@ -109,6 +109,14 @@ useOnlineSubscribable(
 - **`getOnlineSubscribableContext()`** (in `useOnlineSubscribable.ts`) captures `getCurrentInstance()`/`getCurrentScope()` for async subscribable composables — call it into a `const` BEFORE any `await` (context is lost after suspension); never inline the two calls.
 - **`requirePartitionKey(value, name)`** (`app/services/message/requirePartitionKey.ts`) is the guard for room-scoped reads needing a non-empty current room id (or user id): `const roomId = requirePartitionKey(currentRoomId.value, readMessages.name);` — never hand-write the `InvalidOperationError` throw.
 
+## Settings Surfaces (Room + User Settings Dialogs)
+
+Both settings dialogs share one structure and three conventions — apply them to every new settings tab or field:
+
+- **Panels are lazy + skeletoned.** Each tab is a `defineAsyncComponent` in `SettingsContentMap` (room) / `UserSettingsContentMap` (user); the shared `Content.vue` wraps `<component :is>` in `<Suspense :timeout="0">` with `<MessageModelSettingsSkeleton />` as fallback. New tabs get the skeleton for free — never add per-panel spinners; if a panel needs data, top-level `await` it and let Suspense show the skeleton.
+- **Every settings mutation is optimistic.** Never make a control wait on the server round-trip. Use `useOptimisticMutation()` (`app/composables/shared/useOptimisticMutation.ts`): `applyOptimistic` mutates the store immediately and returns the rollback closure; the mutation runs in the background; failure rolls back + alerts. Subscriptions stay the confirming source of truth. `updateUserSettings` implements the same shape inline (with `getConcurrentFunction` staleness checks).
+- **Sidebar section highlight uses `StyledSlideIndicator` with ALL visible keys.** Items carry `data-slide-indicator-key`; pass every visible section id (docs table-of-contents behaviour — the rail stretches across them), pinning to the clicked target while the programmatic scroll runs (`isScrollingToSection`). Never hand-roll a sliding/active rail.
+
 ## Scheduled Message Jobs Architecture
 
 Scheduled messages and reminders use a two-step pattern: Postgres row + Azure Storage Queue.

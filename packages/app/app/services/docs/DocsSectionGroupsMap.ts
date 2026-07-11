@@ -4,13 +4,13 @@
 // Is enough below ~6 pages), and roadmap/deferred/rejected always trail in an automatic Planning group.
 export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
   architecture: {
-    "Core standards": ["platform", "resources", "datasets", "publishing", "serialization"],
+    "Core standards": ["platform", "resources", "datasets", "publishing", "serialization", "singleton-dialogs"],
     Backend: ["auth", "azure-services", "file-uploads"],
     Development: ["environment", "monorepo-tooling", "server-testing"],
   },
   esbabbler: {
-    Messaging: ["messaging", "slash-commands", "scheduled-messages", "drafts-and-sent"],
-    "Members & profiles": ["friends-and-dms", "profiles-and-presence", "nicknames", "settings"],
+    Messaging: ["messaging", "message-list-rendering", "slash-commands", "scheduled-messages", "drafts-and-sent"],
+    "Members & profiles": ["friends-and-dms", "profiles-and-presence", "nicknames", "invites", "settings"],
     Moderation: ["moderation", "rbac"],
     Calls: ["voice-video", "calls"],
     Infrastructure: ["push-notifications", "offline-cache"],

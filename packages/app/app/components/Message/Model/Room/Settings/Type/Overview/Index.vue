@@ -2,6 +2,7 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
+import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
 
@@ -11,6 +12,9 @@ interface OverviewProps {
 
 const { room } = defineProps<OverviewProps>();
 const { $trpc } = useNuxtApp();
+const roomStore = useRoomStore();
+const { storeUpdateRoom } = roomStore;
+const executeOptimisticMutation = useOptimisticMutation();
 const { readRoomCategories } = useReadRoomCategories();
 await readRoomCategories();
 
@@ -33,13 +37,29 @@ const isDirty = computed(
 );
 const save = async () => {
   if (!isDirty.value) return;
-  await $trpc.room.updateRoom.mutate({
+  const input = {
     categoryId: selectedCategoryId.value,
     id: room.id,
     isReadOnly: isReadOnly.value,
     slowmodeMs: slowmodeMs.value,
     topic: topic.value,
-  });
+  };
+  await executeOptimisticMutation(
+    () => {
+      const snapshot = {
+        categoryId: room.categoryId,
+        id: room.id,
+        isReadOnly: room.isReadOnly,
+        slowmodeMs: room.slowmodeMs,
+        topic: room.topic,
+      };
+      storeUpdateRoom(input);
+      return () => {
+        storeUpdateRoom(snapshot);
+      };
+    },
+    () => $trpc.room.updateRoom.mutate(input),
+  );
 };
 </script>
 

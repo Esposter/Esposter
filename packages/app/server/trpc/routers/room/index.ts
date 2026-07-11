@@ -1,7 +1,8 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { RoomInMessage, User } from "@esposter/db-schema";
+import type { InviteInMessage, RoomInMessage, User } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
+import { createInviteInputSchema } from "#shared/models/db/room/CreateInviteInput";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteMemberInputSchema } from "#shared/models/db/room/DeleteMemberInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
@@ -16,9 +17,10 @@ import { useContainerClient } from "@@/server/composables/azure/container/useCon
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
+import { checkIsInviteUsable } from "@@/server/services/message/checkIsInviteUsable";
 import { createSystemRoomMessage } from "@@/server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
-import { readInviteId } from "@@/server/services/message/readInviteId";
+import { readMyInvite } from "@@/server/services/message/readMyInvite";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
@@ -73,7 +75,7 @@ import {
 } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { and, count, desc, eq, getColumns, ilike, inArray, ne, sql } from "drizzle-orm";
+import { and, count, desc, eq, getColumns, gt, ilike, inArray, isNull, lt, ne, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
@@ -112,9 +114,7 @@ const countMembersInputSchema = roomIdSchema;
 
 const readInviteInputSchema = selectInviteInMessageSchema.shape.id;
 
-const readInviteIdInputSchema = roomIdSchema;
-
-const createInviteInputSchema = roomIdSchema;
+const readMyInviteInputSchema = roomIdSchema;
 
 export const baseRoomRouter = router({
   countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
@@ -128,18 +128,23 @@ export const baseRoomRouter = router({
   ),
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
-    .mutation<string>(async ({ ctx, input: { roomId } }) => {
-      const inviteId = await readInviteId(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
-      if (inviteId) return inviteId;
+    .mutation<InviteInMessage>(async ({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) => {
+      // Timestamps have no empty value, so the 0 sentinel (never expires) maps to null here
+      const expiresAt = expireAfterMinutes ? dayjs().add(expireAfterMinutes, "minutes").toDate() : null;
+      // One invite per member per room — creating with new options replaces the old link
+      await ctx.db
+        .delete(invitesInMessage)
+        .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, ctx.getSessionPayload.user.id)));
 
       for (let i = 0; i < 3; i++) {
         const id = createId(INVITE_ID_LENGTH);
-        if (
-          await getResultAsync(() =>
-            ctx.db.insert(invitesInMessage).values({ id, roomId, userId: ctx.getSessionPayload.user.id }),
-          ).unwrapOr(null)
-        )
-          return id;
+        const invites = await getResultAsync(() =>
+          ctx.db
+            .insert(invitesInMessage)
+            .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
+            .returning(),
+        ).unwrapOr(null);
+        if (invites) return takeOne(invites);
       }
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",
@@ -237,16 +242,19 @@ export const baseRoomRouter = router({
   ),
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const { roomId, roomInMessage, user } = await ctx.db.transaction(async (tx) => {
-      const invite = await tx.query.invitesInMessage.findFirst({
-        columns: {
-          roomId: true,
-        },
-        where: {
-          id: {
-            eq: input,
-          },
-        },
-      });
+      // Usability check + use consumption in one statement so two concurrent joins can't both
+      // Consume the last use. Expired/exhausted invites get the same error as unknown tokens.
+      const [invite] = await tx
+        .update(invitesInMessage)
+        .set({ uses: sql`${invitesInMessage.uses} + 1` })
+        .where(
+          and(
+            eq(invitesInMessage.id, input),
+            or(isNull(invitesInMessage.expiresAt), gt(invitesInMessage.expiresAt, new Date())),
+            or(eq(invitesInMessage.maxUses, 0), lt(invitesInMessage.uses, invitesInMessage.maxUses)),
+          ),
+        )
+        .returning({ roomId: invitesInMessage.roomId });
       if (!invite)
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -389,7 +397,8 @@ export const baseRoomRouter = router({
       where: { id: { eq: input } },
       with: InviteInMessageRelations,
     });
-    if (!invite) return null;
+    // Expired/exhausted invites behave exactly like unknown tokens — don't leak which
+    if (!invite || !checkIsInviteUsable(invite)) return null;
 
     const isMember = await ctx.db.query.usersToRoomsInMessage.findFirst({
       where: {
@@ -403,9 +412,6 @@ export const baseRoomRouter = router({
     });
     return { ...invite, isMember: Boolean(isMember) };
   }),
-  readInviteId: getMemberProcedure(readInviteIdInputSchema, "roomId")
-    .use(isRoom)
-    .query<string>(({ ctx, input: { roomId } }) => readInviteId(ctx.db, ctx.getSessionPayload.user.id, roomId)),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
@@ -450,6 +456,11 @@ export const baseRoomRouter = router({
       .orderBy(desc(roomsInMessage.updatedAt))
       .limit(MAX_READ_LIMIT);
   }),
+  readMyInvite: getMemberProcedure(readMyInviteInputSchema, "roomId")
+    .use(isRoom)
+    .query<InviteInMessage | null>(({ ctx, input: { roomId } }) =>
+      readMyInvite(ctx.db, ctx.getSessionPayload.user.id, roomId),
+    ),
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | RoomInMessage>(async ({ ctx, input }) => {
     if (input) {
       const room = await ctx.db.query.roomsInMessage.findFirst({

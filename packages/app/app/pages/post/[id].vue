@@ -41,6 +41,8 @@ currentPost.value = post;
           </StyledCard>
         </v-col>
       </v-row>
+      <PostConfirmDeleteDialog />
+      <PostCommentConfirmDeleteDialog />
     </v-container>
   </NuxtLayout>
 </template>

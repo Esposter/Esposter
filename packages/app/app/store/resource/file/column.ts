@@ -9,5 +9,11 @@ export const useColumnStore = defineStore("resource/file/column", () => {
   const sortBy = ref<readonly SortItem[]>([]);
   const columns = computed(() => fileStore.dataSource.columns);
   const displayColumns = computed(() => columns.value.filter((column) => !column.hidden));
-  return { columns, displayColumns, search, selectedColumnIds, sortBy };
+  return {
+    columns,
+    displayColumns,
+    search,
+    selectedColumnIds,
+    sortBy,
+  };
 });

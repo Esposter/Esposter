@@ -12,9 +12,7 @@ Prioritized top-down. Every item links a full proposal; the specs are the plan, 
 Each extends something already shipped, no new infra.
 
 - [ ] [Mention badges](/docs/proposals/esbabbler/mention-badges) — mention-only unread counts in the sidebar
-- [ ] [Per-user call volume](/docs/proposals/esbabbler/per-user-call-volume) — per-participant slider, client-only
-- [ ] [Push-to-talk keybind](/docs/proposals/esbabbler/push-to-talk-keybind) — make PushToTalk mode functional
-- [ ] [Invite expiry](/docs/proposals/esbabbler/invite-expiry) — expiring and max-use invite links
+- [ ] [Push-to-talk release delay](/docs/proposals/esbabbler/push-to-talk-release-delay) — grace period before the gate closes
 
 ## Later — larger or multi-area
 
@@ -22,12 +20,12 @@ Each extends something already shipped, no new infra.
 - [ ] [Thread follows](/docs/proposals/esbabbler/thread-follows) — follow + notify-on-reply + Threads drawer
 - [ ] [Automod actions](/docs/proposals/esbabbler/automod-actions) — word filter reject/warn/timeout
 - [ ] [Moderator notes](/docs/proposals/esbabbler/moderator-notes) — private per-member notes
-- [ ] [Audit log filters](/docs/proposals/esbabbler/audit-log-filters) — filter by action/actor/target
 - [ ] [Room UI polish](/docs/proposals/esbabbler/room-ui-polish) — density, resizable sidebars, member grouping, empty states, mobile
 - [ ] [File & media enhancements](/docs/proposals/esbabbler/file-media-enhancements) — thumbnails, attachment limits, files filter
 
 ## Hygiene
 
+- [ ] [Optimistic mutations sweep](/docs/proposals/esbabbler/optimistic-mutations) — every user-facing mutation through `useOptimisticMutation`
 - [ ] [Store subscription audit](/docs/proposals/esbabbler/store-subscription-audit) — one owner per state transition + idempotence tests
 - [ ] [Search index tooling](/docs/proposals/esbabbler/search-index-tooling) — index schema docs + status/rebuild scripts
 - [ ] Voice & Video two-party verification — the live-call audio path (mic gain, gating, noise modes) still needs real two-party call verification ([/docs/esbabbler/voice-video](/docs/esbabbler/voice-video))

@@ -7,6 +7,8 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   const isForceMuted = ref(false);
   const isPoppedOut = ref(false);
   const isScreenSharing = ref(false);
+  // ParticipantId → volume multiplier percentage; absent = DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE
+  const participantVolumePercentageMap = ref(new Map<string, number>());
   const pinnedParticipantId = ref("");
   const selectedVirtualBackground = ref("");
   const screenSharingParticipantIds = ref<string[]>([]);
@@ -40,6 +42,12 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
       if (pinnedParticipantId.value === id) pinnedParticipantId.value = "";
     }
   };
+  const setParticipantVolumePercentage = (participantId: string, volumePercentage: number) => {
+    participantVolumePercentageMap.value.set(participantId, volumePercentage);
+  };
+  const deleteParticipantVolumePercentage = (participantId: string) => {
+    participantVolumePercentageMap.value.delete(participantId);
+  };
   const setRemoteVideoStream = (identity: string, stream: MediaStream | null) => {
     if (stream) remoteVideoStreams.value.set(identity, stream);
     else remoteVideoStreams.value.delete(identity);
@@ -66,6 +74,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
     isForceMuted.value = false;
     isPoppedOut.value = false;
     isScreenSharing.value = false;
+    participantVolumePercentageMap.value.clear();
     pinnedParticipantId.value = "";
     selectedVirtualBackground.value = "";
     screenSharingParticipantIds.value = [];
@@ -78,6 +87,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
   return {
     activeScreenShareParticipantId,
     activeScreenShareStream,
+    deleteParticipantVolumePercentage,
     hasScreenShare,
     isCameraEnabled,
     isDeafened,
@@ -86,6 +96,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
     isScreenSharing,
     localScreenShareStream,
     localVideoStream,
+    participantVolumePercentageMap,
     pinnedParticipantId,
     remoteScreenShareStreams,
     remoteVideoStreams,
@@ -93,6 +104,7 @@ export const useMediaStore = defineStore("message/room/call/media", () => {
     screenSharingParticipantIds,
     selectedVirtualBackground,
     setLocalScreenShareStream,
+    setParticipantVolumePercentage,
     setRemoteScreenShareStream,
     setRemoteVideoStream,
   };

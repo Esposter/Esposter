@@ -238,9 +238,13 @@ pnpm db:gen   # generates migration SQL from schema diff
 pnpm db:up    # applies pending migrations to the DB
 ```
 
-## Nullable String Columns
+## Empty-Sentinel Columns — DB Schema Is the Source of Truth
+
+The DB schema carries the empty-sentinel convention itself so types and defaults propagate end-to-end through Drizzle's inference — never store `null` and manually map a sentinel to/from it in app code.
 
 - **`.notNull().default("")` for optional user-editable text fields** — never `null` as the "not set" state for strings. `""` is the canonical absent value (biography, color, topic, group, description, etc.).
+- **`.notNull().default(0)` for optional numeric fields where `0` has no domain meaning** — `0` is the canonical absent value (e.g. `invitesInMessage.maxUses`: `0` = unlimited). CHECK constraints treat the sentinel explicitly: `maxUses = 0 OR uses <= maxUses`. Queries compare against the sentinel (`eq(column, 0)`), not `isNull`.
+- **Timestamps keep `null` for absence** — a timestamp has no empty value (e.g. `expiresAt`: null = never expires). The mapping from the input's sentinel happens once at the insert site.
 - **Keep `null` only for semantically distinct absence**:
   - URL fields (`image`, `url`) — null means "no image/URL set"; `""` would fail URL validation
   - Fields constrained to `null` by a CHECK constraint (e.g. `roomsInMessage.name` must be `null` for DirectMessage type)
