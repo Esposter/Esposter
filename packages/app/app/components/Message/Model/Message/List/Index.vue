@@ -44,6 +44,8 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
 </script>
 
 <template>
+  <MessageModelMessageConfirmDeleteDialog />
+  <MessageModelMessageConfirmPinDialog />
   <v-list
     ref="messageContainer"
     :class="{ 'overflow-anchor-none': isPinnedToBottom }"

@@ -9,7 +9,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     Development: ["environment", "monorepo-tooling", "server-testing"],
   },
   esbabbler: {
-    Messaging: ["messaging", "slash-commands", "scheduled-messages", "drafts-and-sent"],
+    Messaging: ["messaging", "message-list-rendering", "slash-commands", "scheduled-messages", "drafts-and-sent"],
     "Members & profiles": ["friends-and-dms", "profiles-and-presence", "nicknames", "invites", "settings"],
     Moderation: ["moderation", "rbac"],
     Calls: ["voice-video", "calls"],
