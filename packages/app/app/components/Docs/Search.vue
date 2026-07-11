@@ -24,7 +24,7 @@ const miniSearch = computed(() => {
   return index;
 });
 // Group hits by page and keep only the best-scoring section per page (results arrive relevance-sorted),
-// so one page matching in many sections can't flood the list — the DocSearch/VitePress behavior
+// So one page matching in many sections can't flood the list — the DocSearch/VitePress behavior
 const results = computed(() => {
   if (!query.value) return [];
   const resultsByPagePath = new Map<string, { id: string; subtitle: string; title: string }>();

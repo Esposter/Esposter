@@ -1,7 +1,7 @@
 /* eslint-disable perfectionist/sort-objects */
 // Logical sidebar groups for sections with many flat feature pages — declaration order is the display
-// order, membership is by page slug. Sections without an entry render their pages ungrouped (alphabetical
-// is enough below ~6 pages), and roadmap/deferred/rejected always trail in an automatic Planning group.
+// Order, membership is by page slug. Sections without an entry render their pages ungrouped (alphabetical
+// Is enough below ~6 pages), and roadmap/deferred/rejected always trail in an automatic Planning group.
 export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
   architecture: {
     "Core standards": ["platform", "resources", "datasets", "publishing", "serialization"],
