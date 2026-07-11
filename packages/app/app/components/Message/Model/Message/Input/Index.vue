@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { checkIsEditableTarget } from "@/services/shared/checkIsEditableTarget";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useKeyboardShortcutsDialogStore } from "@/store/message/input/keyboardShortcutsDialog";
@@ -33,12 +34,7 @@ const keyboardShortcutsDialogStore = useKeyboardShortcutsDialogStore();
 const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
 
 useEventListener("keydown", (event: KeyboardEvent) => {
-  const target = event.target;
-  if (
-    target instanceof HTMLElement &&
-    (target.isContentEditable || target.tagName === "INPUT" || target.tagName === "TEXTAREA")
-  )
-    return;
+  if (checkIsEditableTarget(event.target)) return;
   else if (event.shiftKey && event.key === "?") isOpen.value = true;
 });
 </script>

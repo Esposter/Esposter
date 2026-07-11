@@ -1,0 +1,46 @@
+import { authClient } from "@/services/auth/authClient";
+import { KEY_CHORD_TIMEOUT_MS } from "@/services/app/constants";
+import { checkIsEditableTarget } from "@/services/shared/checkIsEditableTarget";
+import { useShortcutsOverlayStore } from "@/store/app/shortcutsOverlay";
+import { useSearchDialogStore } from "@/store/resource/searchDialog";
+import { RoutePath } from "@esposter/shared";
+
+// Global Azure-portal-style shortcuts: Ctrl+K / G-chords / ? — registered once from app.vue
+export const useAppKeyboardShortcuts = () => {
+  const session = authClient.useSession();
+  const router = useRouter();
+  const searchDialogStore = useSearchDialogStore();
+  const { isOpen: isSearchDialogOpen } = storeToRefs(searchDialogStore);
+  const shortcutsOverlayStore = useShortcutsOverlayStore();
+  const { isOpen: isShortcutsOverlayOpen } = storeToRefs(shortcutsOverlayStore);
+  let chordStartedAtMs = 0;
+
+  useEventListener("keydown", async (event) => {
+    // The messaging area owns its own Ctrl+K palette and Shift+? shortcuts dialog
+    if (!session.value.data || router.currentRoute.value.path.startsWith(RoutePath.MessagesIndex)) return;
+    else if (event.ctrlKey || event.metaKey) {
+      if (event.key.toLowerCase() === "k" && !event.altKey && !event.shiftKey) {
+        event.preventDefault();
+        isSearchDialogOpen.value = true;
+      }
+      return;
+    } else if (event.altKey || checkIsEditableTarget(event.target)) return;
+    else if (event.shiftKey) {
+      if (event.key === "?") isShortcutsOverlayOpen.value = true;
+      return;
+    }
+
+    const key = event.key.toLowerCase();
+    if (key === "g") {
+      chordStartedAtMs = Date.now();
+      return;
+    } else if (!chordStartedAtMs || Date.now() - chordStartedAtMs > KEY_CHORD_TIMEOUT_MS) return;
+
+    chordStartedAtMs = 0;
+    if (key === "/") {
+      event.preventDefault();
+      isSearchDialogOpen.value = true;
+    } else if (key === "h") await navigateTo(RoutePath.Resources);
+    else if (key === "a") await navigateTo(RoutePath.ResourcesAll);
+  });
+};
