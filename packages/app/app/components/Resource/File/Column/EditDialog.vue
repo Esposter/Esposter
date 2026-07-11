@@ -5,15 +5,25 @@ import type { DataSource } from "#shared/models/resource/file/datasource/DataSou
 import { columnFormSchema, ColumnTypeFormSchemaMap } from "#shared/models/resource/file/column/ColumnForm";
 import { extractSchemaFields } from "#shared/services/zod/extractSchemaFields";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { useColumnDialogStore } from "@/store/resource/file/columnDialog";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
-interface EditDialogButtonProps {
+interface EditDialogProps {
   column: Column;
   dataSource: DataSource;
 }
 
-const { column, dataSource } = defineProps<EditDialogButtonProps>();
+const { column, dataSource } = defineProps<EditDialogProps>();
+const columnDialogStore = useColumnDialogStore();
+const { editingColumnName } = storeToRefs(columnDialogStore);
+const isOpen = computed({
+  get: () => Boolean(editingColumnName.value),
+  set: (value) => {
+    if (value) return;
+    editingColumnName.value = "";
+  },
+});
 const updateColumn = useUpdateColumn();
 // StructuredClone to a plain object: vjsf rejects class instances, and fast-deep-equal compares constructors.
 const editedColumn = ref(structuredClone(toRawDeep(column)));
@@ -29,9 +39,9 @@ const resetForm = () => {
 </script>
 
 <template>
-  <ResourceFileEditDialogButton
+  <ResourceFileEditDialog
+    v-model="isOpen"
     :title
-    :tooltip-text="title"
     :edited-value="extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.type], editedColumn)"
     :schema="columnFormSchema"
     :value="extractSchemaFields(ColumnTypeFormSchemaMap[column.type], column)"
@@ -44,5 +54,5 @@ const resetForm = () => {
     "
   >
     <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
-  </ResourceFileEditDialogButton>
+  </ResourceFileEditDialog>
 </template>

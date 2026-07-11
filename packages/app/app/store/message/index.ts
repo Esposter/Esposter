@@ -9,17 +9,13 @@ export const useMessageStore = defineStore("message", () => {
     target: InstanceType<typeof VMenu>["$props"]["target"];
   }>();
   const editingRowKey = ref<MessageEntity["rowKey"]>();
-  const deletingRowKey = ref<MessageEntity["rowKey"]>();
-  const pinningRowKey = ref<MessageEntity["rowKey"]>();
   const { copied, copy, text } = useClipboard();
   // Copied/text are readonly refs, so they cannot be written to by pinia's SSR payload hydration
   return {
     copied: skipHydrate(copied),
     copy,
-    deletingRowKey,
     editingRowKey,
     optionsMenu,
-    pinningRowKey,
     text: skipHydrate(text),
   };
 });

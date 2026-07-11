@@ -5,6 +5,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { useMessageStore } from "@/store/message";
+import { useMessageDialogStore } from "@/store/message/dialog";
 import { useForwardStore } from "@/store/message/input/forward";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
@@ -17,7 +18,9 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const { $trpc } = useNuxtApp();
   const messageStore = useMessageStore();
   const { copy } = messageStore;
-  const { deletingRowKey, editingRowKey, pinningRowKey } = storeToRefs(messageStore);
+  const { editingRowKey } = storeToRefs(messageStore);
+  const messageDialogStore = useMessageDialogStore();
+  const { deletingRowKey, pinningRowKey } = storeToRefs(messageDialogStore);
   const replyStore = useReplyStore();
   const { rowKey: replyRowKey } = storeToRefs(replyStore);
   const forwardStore = useForwardStore();

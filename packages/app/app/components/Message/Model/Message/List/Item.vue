@@ -5,6 +5,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { dayjs } from "#shared/services/dayjs";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
+import { useMessageDialogStore } from "@/store/message/dialog";
 import { useScrollStore } from "@/store/message/ui/scroll";
 import { MessageType } from "@esposter/db-schema";
 
@@ -25,7 +26,9 @@ const isSameBatch = computed(
     dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
 const messageStore = useMessageStore();
-const { deletingRowKey, editingRowKey, optionsMenu } = storeToRefs(messageStore);
+const { editingRowKey, optionsMenu } = storeToRefs(messageStore);
+const messageDialogStore = useMessageDialogStore();
+const { deletingRowKey } = storeToRefs(messageDialogStore);
 const scrollStore = useScrollStore();
 const { activeRowKey } = storeToRefs(scrollStore);
 const isUpdateMode = computed({

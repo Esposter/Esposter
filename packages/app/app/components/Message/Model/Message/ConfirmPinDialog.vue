@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
-import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
+import { useMessageDialogStore } from "@/store/message/dialog";
 import { withFinalizerAsync } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
-const messageStore = useMessageStore();
-const { pinningRowKey } = storeToRefs(messageStore);
+const messageDialogStore = useMessageDialogStore();
+const { pinningRowKey } = storeToRefs(messageDialogStore);
 const message = computed(() => items.value.find(({ rowKey }) => rowKey === pinningRowKey.value));
 const creator = useCreator(message);
 const isOpen = computed({
   get: () => Boolean(pinningRowKey.value),
   set: (value) => {
     if (value) return;
-    pinningRowKey.value = undefined;
+    pinningRowKey.value = "";
   },
 });
 </script>

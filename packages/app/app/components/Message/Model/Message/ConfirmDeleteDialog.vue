@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
-import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
+import { useMessageDialogStore } from "@/store/message/dialog";
 import { withFinalizerAsync } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
-const messageStore = useMessageStore();
-const { deletingRowKey } = storeToRefs(messageStore);
+const messageDialogStore = useMessageDialogStore();
+const { deletingRowKey } = storeToRefs(messageDialogStore);
 const message = computed(() => items.value.find(({ rowKey }) => rowKey === deletingRowKey.value));
 const creator = useCreator(message);
 const isOpen = computed({
   get: () => Boolean(deletingRowKey.value),
   set: (value) => {
     if (value) return;
-    deletingRowKey.value = undefined;
+    deletingRowKey.value = "";
   },
 });
 </script>

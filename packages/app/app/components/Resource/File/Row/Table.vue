@@ -10,6 +10,7 @@ import { DRAG_HANDLE_CLASS } from "@/services/resource/file/constants";
 import { useCellStore } from "@/store/resource/file/cell";
 import { useColumnStore } from "@/store/resource/file/column";
 import { useRowStore } from "@/store/resource/file/row";
+import { useRowDialogStore } from "@/store/resource/file/rowDialog";
 import { VueDraggable } from "vue-draggable-plus";
 
 interface DataTableProps {
@@ -23,6 +24,8 @@ const { displayColumns } = storeToRefs(columnStore);
 const rowStore = useRowStore();
 const { filteredRows, itemsPerPage, page, rowIndexIdMap, search, selectedRowIds, sortBy, tableHeaders } =
   storeToRefs(rowStore);
+const rowDialogStore = useRowDialogStore();
+const editingRow = computed(() => filteredRows.value.find(({ id }) => id === rowDialogStore.editingId));
 const reorderRows = useReorderRows();
 const dragRows = computed({
   get: () => {
@@ -186,11 +189,7 @@ onKeyStroke("Escape", () => {
           <v-icon v-if="isDraggable" :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
         </template>
         <template #[`item.actions`]="{ item }">
-          <ResourceFileRowActionSlot
-            :columns="dataSource.columns"
-            :index="rowIndexIdMap.get(item.id) ?? -1"
-            :row="item"
-          />
+          <ResourceFileRowActionSlot :index="rowIndexIdMap.get(item.id) ?? -1" :row="item" />
         </template>
         <template
           v-for="column of displayColumns"
@@ -213,5 +212,13 @@ onKeyStroke("Escape", () => {
         </template>
       </StyledDataTable>
     </VueDraggable>
+    <ResourceFileRowEditDialog
+      v-if="editingRow"
+      :key="editingRow.id"
+      :columns="dataSource.columns"
+      :index="rowIndexIdMap.get(editingRow.id) ?? -1"
+      :row="editingRow"
+    />
+    <ResourceFileRowConfirmDeleteDialog />
   </v-card>
 </template>
