@@ -287,6 +287,14 @@ Always use UnoCSS abbreviated shorthand forms — they are first-class utilities
 
 When in doubt, prefer the shorter form — UnoCSS abbreviations are canonical here.
 
+## Named Utilities Over Numeric
+
+Prefer UnoCSS **named** utilities over numeric equivalents whenever a name exists:
+
+- Font weight: `font-medium` / `font-semibold` / `font-bold` — never `font-500` / `font-600` / `font-700`.
+- Transition duration: `duration-[--transition-duration]` (the global variable from `globals.scss`) — never a raw `duration-200`.
+- Vuetify helper classes (`font-weight-medium`, `font-weight-bold`, …) are **not** UnoCSS utilities — as attributify attributes they generate nothing. Only the shortcuts registered in `uno.config.ts` work (MD3 typography `text-body-small` etc., theme/palette colours, semantic opacity). Use the UnoCSS named form (`font-medium`) instead.
+
 ## Gap Directionality
 
 Use axis-specific gap utilities instead of omnidirectional `gap-{n}`:

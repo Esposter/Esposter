@@ -14,7 +14,7 @@ const { items } = defineProps<NavigationListProps>();
       <template #activator="{ props: activatorProps }">
         <v-list-item :="activatorProps" :title="item.title" />
       </template>
-      <v-list-item v-if="item.page !== false" title="Overview" :to="item.path" />
+      <v-list-item v-if="item.page !== false" title="Overview" :to="item.path" exact />
       <DocsNavigationList :items="item.children" />
     </v-list-group>
     <v-list-item v-else :title="item.title" :to="item.path" />
