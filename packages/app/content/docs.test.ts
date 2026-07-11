@@ -12,8 +12,8 @@ const diagrams = (
       await Array.fromAsync(glob("**/*.md", { cwd: docsDirectory }))
     ).map(async (page) => {
       const markdown = await readFile(join(docsDirectory, page), "utf8");
-      return [...markdown.matchAll(/```mermaid\r?\n([\s\S]*?)```/g)].map((match, index) => ({
-        code: match[1] ?? "",
+      return [...markdown.matchAll(/```mermaid\r?\n(?<code>[\s\S]*?)```/gu)].map((match, index) => ({
+        code: match.groups?.code ?? "",
         ordinal: index + 1,
         page,
       }));
