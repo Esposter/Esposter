@@ -33,7 +33,7 @@ The repeatable order of operations for shipping a change well. Every phase links
 
 ## 5. Document — keep the spec and the diagram whole
 
-- Update the owning spec in `features/<area>/specs/` and any `architecture.md` in the same change — code and docs move together. See `feature-specs`.
+- Update the owning docs page in `packages/app/content/docs/<area>/` (and the roadmap/proposal it came from) in the same change — code and docs move together. See the `docs` skill for lifecycle rules (proposal → as-built page, deferred/rejected registries).
 - Include the full lifecycle: creation **and** cleanup/teardown. If a flow diagram exists (mermaid), update it or add one so the new path is visible, not just prose.
 - Every doc line earns its place — link, don't repeat. Update the relevant memory note if it recorded the old (now-fixed) state.
 

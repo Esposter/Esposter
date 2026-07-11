@@ -469,7 +469,7 @@ Offline cache should mirror Pinia state. Prefer thin feature-level `use*Cache` c
 - put online-only metadata reads inside the online query passed to the cache helper
 - do not call `useOnline`, `readIndexedDb`, or `writeIndexedDb` directly from feature read composables
 
-`useMessageCache`, `useMemberCache`, `useRoomCache` are the reference shapes. Architecture doc: `features/esbabbler/specs/cache.md`.
+`useMessageCache`, `useMemberCache`, `useRoomCache` are the reference shapes. Architecture doc: `packages/app/content/docs/esbabbler/offline-cache.md`.
 
 ## Bundle Ancillary Reads with the Primary Read
 
