@@ -41,6 +41,10 @@ packages/app/content/docs/
 
 Area folders and file names: kebab-case (they become URL slugs). One topic per file; no version grab-bags.
 
+**File format is always `.md`, never `.mdx`.** MDX is the React ecosystem's format; @nuxt/content parses MDC syntax (`::component` blocks, `{.class}` props) inside plain `.md`, and `.md` stays readable on GitHub/editors/grep. Decided 2026-07-11 — don't revisit.
+
+**Write plain GFM markdown — no MDC syntax yet.** MDC callouts (`::note`/`::tip`/`::warning`, as the Nuxt docs use) require prose components registered in our docs renderer, which don't exist. If they land later, adopt MDC sparingly for callouts only; never for layout.
+
 ## Frontmatter
 
 Every page starts with exactly:
