@@ -3,7 +3,7 @@ import type { ItemEntityType, ToData } from "@esposter/shared";
 import { ANamedItemEntity, aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
 import { TodoListItemType, todoListItemTypeSchema } from "#shared/models/resource/todoList/TodoListItemType";
 import { DESCRIPTION_MAX_LENGTH } from "#shared/services/constants";
-import { createItemEntityTypeSchema, sanitizeMessageHtml } from "@esposter/shared";
+import { createItemEntityTypeSchema, sanitizeTextHtml } from "@esposter/shared";
 import { z } from "zod";
 
 export class TodoListItem extends ANamedItemEntity implements ItemEntityType<TodoListItemType> {
@@ -22,5 +22,5 @@ export const todoListItemSchema = z.object({
   ...createItemEntityTypeSchema(todoListItemTypeSchema).shape,
   dueAt: z.date().nullable(),
   // Notes are rich-text HTML rendered with v-html, so they are sanitized at the schema boundary
-  notes: z.string().transform(sanitizeMessageHtml).pipe(z.string().max(DESCRIPTION_MAX_LENGTH)),
+  notes: z.string().transform(sanitizeTextHtml).pipe(z.string().max(DESCRIPTION_MAX_LENGTH)),
 }) satisfies z.ZodType<ToData<TodoListItem>>;

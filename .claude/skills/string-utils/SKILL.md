@@ -1,6 +1,6 @@
 ---
 name: string-utils
-description: Esposter string normalization and HTML sanitization conventions — normalizeString replaces all .trim() usages everywhere including Zod schemas; sanitizeMessageHtml is declared at the Zod boundary in base db-schema schemas (never manual frontend calls). Exception — user-facing transformation actions and localStorage drafts.
+description: Esposter string normalization and HTML sanitization conventions — normalizeString replaces all .trim() usages everywhere including Zod schemas; sanitizeTextHtml is declared at the Zod boundary in base db-schema schemas (never manual frontend calls). Exception — user-facing transformation actions and localStorage drafts.
 ---
 
 # String Normalization
