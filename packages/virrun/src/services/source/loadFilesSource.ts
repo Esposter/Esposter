@@ -2,7 +2,7 @@ import type { FilesSource } from "@/models/source/FilesSource";
 import type { LoadedSource } from "@/models/source/LoadedSource";
 
 import { VIRRUN_TEMP_DIR_PREFIX } from "@/services/exec/util/constants";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
@@ -11,7 +11,7 @@ import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 export const loadFilesSource = async (source: FilesSource): Promise<LoadedSource> => {
   const cwd = await mkdtemp(join(tmpdir(), VIRRUN_TEMP_DIR_PREFIX));
   const dispose = () => rm(cwd, { force: true, recursive: true });
-  const result = await getResultAsync(async () => {
+  await getResultAsync(async () => {
     for (const [relativePath, content] of Object.entries(source.files)) {
       const filePath = resolve(cwd, relativePath);
       const rel = relative(cwd, filePath);
@@ -20,10 +20,9 @@ export const loadFilesSource = async (source: FilesSource): Promise<LoadedSource
       await mkdir(dirname(filePath), { recursive: true });
       await writeFile(filePath, content);
     }
-  });
-  if (result.isErr()) {
+  }).match(noop, async (error) => {
     await dispose();
-    throw result.error;
-  }
+    throw error;
+  });
   return { cwd, dispose };
 };

@@ -61,8 +61,10 @@ vi.mock("nitropack/runtime", () => ({
 // Runs before the app is built; every beforeEach runs after all beforeAlls, so the app is ready by then. The
 // Module-scoped flag makes it fire only on the first test of the worker, no-op thereafter. Node-env files
 // (`getIsServer()` — no `window`) skip it — they never mount, and importing the nuxt runtime there would break them.
+// Plain happy-dom files (a `window` but no Nuxt app) skip it via the env's own marker — mounting there would crash.
 let isNuxtRuntimeWarm = false;
-if (!getIsServer())
+// oxlint-disable-next-line no-underscore-dangle -- marker property name is owned by @nuxt/test-utils
+if (!getIsServer() && (window as { __NUXT_VITEST_ENVIRONMENT__?: true }).__NUXT_VITEST_ENVIRONMENT__)
   beforeEach(async () => {
     if (isNuxtRuntimeWarm) return;
     isNuxtRuntimeWarm = true;

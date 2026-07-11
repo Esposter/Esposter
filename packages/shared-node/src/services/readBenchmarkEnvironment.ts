@@ -5,10 +5,11 @@ import { arch, cpus, platform, release, totalmem } from "node:os";
 const GIBIBYTE = 1024 ** 3;
 // The commit the numbers were produced on — provenance so a results file can be tied back to the code that
 // Generated it (a bench can otherwise silently lag the implementation it benches). "unknown" outside a repo.
-const readCommit = (): string => {
-  const result = getResult(() => execSync("git rev-parse --short HEAD", { encoding: "utf8", stdio: "pipe" }));
-  return result.isErr() ? "unknown" : normalizeString(result.value);
-};
+const readCommit = (): string =>
+  getResult(() => execSync("git rev-parse --short HEAD", { encoding: "utf8", stdio: "pipe" })).match(
+    (stdout) => normalizeString(stdout),
+    () => "unknown",
+  );
 // The host + commit snapshot rendered into every colocated results.md — bench numbers are only comparable
 // Across runs on the same machine, so the markdown carries its own environment block.
 export const readBenchmarkEnvironment = (): string => {

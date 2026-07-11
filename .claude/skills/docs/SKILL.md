@@ -44,6 +44,8 @@ packages/app/content/docs/
 
 Area folders and file names: kebab-case (they become URL slugs). One topic per file; no version grab-bags.
 
+**Sidebar grouping**: sections with many flat feature pages get logical subheader groups in the in-app left sidebar via `packages/app/app/services/docs/DocsSectionGroupsMap.ts` (section slug → group title → page slugs; declaration order is display order). When adding a feature page to a mapped section (architecture, esbabbler, platform, virrun), add its slug to the right group — unmapped slugs render ungrouped at the top. `roadmap`/`deferred`/`rejected` group automatically under a trailing "Planning" subheader; sections with few pages need no map entry (alphabetical is enough).
+
 **File format is always `.md`, never `.mdx`.** MDX is the React ecosystem's format; @nuxt/content parses MDC syntax (`::component` blocks, `{.class}` props) inside plain `.md`, and `.md` stays readable on GitHub/editors/grep. Decided 2026-07-11 — don't revisit.
 
 **Write plain GFM markdown — no MDC syntax yet.** MDC callouts (`::note`/`::tip`/`::warning`, as the Nuxt docs use) require prose components registered in our docs renderer, which don't exist. If they land later, adopt MDC sparingly for callouts only; never for layout.
@@ -77,6 +79,8 @@ Write for a new engineer reading in the browser, not for an agent grepping a rep
 Any page describing a flow, lifecycle, or interaction between 3+ parts (components, procedures, storage, background workers) MUST carry a Mermaid diagram — `flowchart` for data/navigation flows, `stateDiagram-v2` for lifecycles, `sequenceDiagram` for request/event ordering. Prose says _why_; the diagram is the alignment artifact for _what talks to what_. Label edges with the procedure/event that drives them.
 
 Exemptions: `index.md` pages, `deferred/`/`rejected/` pages, `roadmap.md`, and static inventories (key-file tables, component lists). Never add a diagram as decoration.
+
+Every diagram is parse-validated by `packages/app/content/docs.test.ts` (`mermaid.parse` over all ` ```mermaid ` blocks), so a syntax error fails `pnpm test`. Gotcha: `;` is a mermaid statement separator even inside message/note text — never use a semicolon in labels or notes (use `—` or a comma).
 
 ## Feature page template
 

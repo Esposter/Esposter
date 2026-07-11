@@ -43,7 +43,7 @@ const scrollToSection = async (section: SettingsSection) => {
             <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
           </v-list-item>
         </template>
-        <StyledSlideIndicator v-if="settingsType === modelValue" :active-key="activeSectionId" />
+        <StyledSlideIndicator v-if="settingsType === modelValue" :active-keys="[activeSectionId]" />
         <v-list-item
           v-for="section of UserSettingsSectionMap[settingsType as UserSettingsType]"
           :key="section"

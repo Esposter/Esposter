@@ -319,6 +319,7 @@ describe(useMyComposable, () => {
 - **Don't repeat generic middleware tests** — shared middleware (auth, membership, permissions) is tested once; skip redundant UNAUTHORIZED/NotFound tests per procedure.
 - **Shared procedure/subscription builders: thorough once, wiring smoke per consumer** — when endpoints are config-only instantiations of a shared builder (e.g. `getRoomEventSubscription`), the builder's full behavior matrix lives in the builder's own co-located test through ONE representative endpoint; each consuming router keeps a single happy-path wiring test. Same principle as the twin-test-files rule, applied to routers.
 - **Don't test Zod schema constraints** — min/max, regex, required-field are Zod's concern.
+- **Don't test trivial lookups** — a function that just indexes a constant map with a static fallback (e.g. `getSectionIcon`) needs no test; the test would restate the map. Test only functions with real logic (recursion, sorting, branching).
 - **One test per operation** — combine all field assertions in a single test; don't split "updates name"/"updates bio".
 - **Flat `describe` structure** — no nested `describe` for sub-grouping.
 

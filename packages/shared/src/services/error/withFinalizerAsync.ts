@@ -11,8 +11,14 @@ export const withFinalizerAsync = async <T>(
   const result = await getResultAsync(async () => fn());
   if (finalizer)
     await getResultAsync(async () => finalizer()).match(noop, (error) => {
-      if (result.isOk()) throw error;
-      console.error(error);
+      result.match(
+        () => {
+          throw error;
+        },
+        () => {
+          console.error(error);
+        },
+      );
     });
   return result.match(
     (value) => value,
