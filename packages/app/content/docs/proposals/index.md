@@ -15,6 +15,7 @@ Each product area's roadmap is the prioritized index over its proposals:
 - [file table editor roadmap](/docs/file-table-editor/roadmap)
 - [clicker roadmap](/docs/clicker/roadmap)
 - [dungeons roadmap](/docs/dungeons/roadmap)
+- [achievements roadmap](/docs/achievements/roadmap)
 - [virrun roadmap](/docs/virrun/roadmap)
 - [infra roadmap](/docs/infra/roadmap)
 
