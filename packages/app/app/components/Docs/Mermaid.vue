@@ -13,10 +13,16 @@ interface MermaidProps {
 
 const { code } = defineProps<MermaidProps>();
 const theme = useTheme();
+const wrapper = useTemplateRef("wrapper");
 const container = useTemplateRef("container");
 const id = useId();
 const panzoom = shallowRef<PanzoomObject>();
+const { isFullscreen, isSupported: isFullscreenSupported, toggle: toggleFullscreen } = useFullscreen(wrapper);
 const zoomButtonProps = { density: "comfortable", size: "small", variant: "tonal" } as const;
+// Entering/leaving full screen changes the viewport, so recenter instead of keeping a stale pan/zoom
+watch(isFullscreen, () => {
+  panzoom.value?.reset();
+});
 
 onMounted(async () => {
   mermaid.initialize({ startOnLoad: false, theme: theme.global.current.value.dark ? "dark" : "default" });
@@ -44,8 +50,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div relative class="group">
-    <div ref="container" py-2 flex justify-center :class="panzoom ? 'overflow-hidden' : 'overflow-x-auto'">
+  <div ref="wrapper" relative class="group" :class="isFullscreen ? 'bg-surface' : undefined">
+    <div
+      ref="container"
+      py-2
+      flex
+      justify-center
+      :class="[panzoom ? 'overflow-hidden' : 'overflow-x-auto', isFullscreen ? 'h-full items-center' : undefined]"
+    >
       <pre>{{ code }}</pre>
     </div>
     <div v-if="panzoom" absolute right-2 top-2 flex gap-1 op-0 transition-opacity group-hover:op-100>
@@ -66,6 +78,13 @@ onUnmounted(() => {
         icon="mdi-backup-restore"
         text="Reset view"
         @click="panzoom.reset()"
+      />
+      <StyledTooltipIconButton
+        v-if="isFullscreenSupported"
+        :button-props="zoomButtonProps"
+        :icon="isFullscreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'"
+        :text="isFullscreen ? 'Exit full screen' : 'Full screen'"
+        @click="toggleFullscreen()"
       />
     </div>
   </div>
