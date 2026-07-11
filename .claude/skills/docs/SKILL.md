@@ -80,6 +80,8 @@ Any page describing a flow, lifecycle, or interaction between 3+ parts (componen
 
 Exemptions: `index.md` pages, `deferred/`/`rejected/` pages, `roadmap.md`, and static inventories (key-file tables, component lists). Never add a diagram as decoration.
 
+Every diagram is parse-validated by `packages/app/content/docs.test.ts` (`mermaid.parse` over all ` ```mermaid ` blocks), so a syntax error fails `pnpm test`. Gotcha: `;` is a mermaid statement separator even inside message/note text — never use a semicolon in labels or notes (use `—` or a comma).
+
 ## Feature page template
 
 ```markdown

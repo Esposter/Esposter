@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import type { PanzoomObject } from "@panzoom/panzoom";
+
+import { MAX_MERMAID_SCALE, MIN_MERMAID_SCALE } from "@/services/docs/constants";
 import { getResultAsync } from "@esposter/shared";
+import Panzoom from "@panzoom/panzoom";
 import mermaid from "mermaid";
 import { useTheme } from "vuetify";
 
@@ -11,6 +15,8 @@ const { code } = defineProps<MermaidProps>();
 const theme = useTheme();
 const container = useTemplateRef("container");
 const id = useId();
+const panzoom = shallowRef<PanzoomObject>();
+const zoomButtonProps = { density: "comfortable", size: "small", variant: "tonal" } as const;
 
 onMounted(async () => {
   mermaid.initialize({ startOnLoad: false, theme: theme.global.current.value.dark ? "dark" : "default" });
@@ -20,13 +26,47 @@ onMounted(async () => {
   });
   // On a render failure we keep showing the raw diagram source
   result.match((svg) => {
-    if (container.value) container.value.innerHTML = svg;
+    if (!container.value) return;
+    container.value.innerHTML = svg;
+    const svgElement = container.value.querySelector("svg");
+    if (!svgElement) return;
+    panzoom.value = Panzoom(svgElement, { cursor: "grab", maxScale: MAX_MERMAID_SCALE, minScale: MIN_MERMAID_SCALE });
   }, console.error);
+});
+// Ctrl+wheel (and trackpad pinch, which browsers report as a ctrl wheel) zooms; plain wheel keeps scrolling the page
+useEventListener(container, "wheel", (event) => {
+  if (event.ctrlKey) panzoom.value?.zoomWithWheel(event);
+});
+
+onUnmounted(() => {
+  panzoom.value?.destroy();
 });
 </script>
 
 <template>
-  <div ref="container" py-2 flex justify-center overflow-x-auto>
-    <pre>{{ code }}</pre>
+  <div relative class="group">
+    <div ref="container" py-2 flex justify-center :class="panzoom ? 'overflow-hidden' : 'overflow-x-auto'">
+      <pre>{{ code }}</pre>
+    </div>
+    <div v-if="panzoom" absolute right-2 top-2 flex gap-1 op-0 transition-opacity group-hover:op-100>
+      <StyledTooltipIconButton
+        :button-props="zoomButtonProps"
+        icon="mdi-plus"
+        text="Zoom in"
+        @click="panzoom.zoomIn()"
+      />
+      <StyledTooltipIconButton
+        :button-props="zoomButtonProps"
+        icon="mdi-minus"
+        text="Zoom out"
+        @click="panzoom.zoomOut()"
+      />
+      <StyledTooltipIconButton
+        :button-props="zoomButtonProps"
+        icon="mdi-backup-restore"
+        text="Reset view"
+        @click="panzoom.reset()"
+      />
+    </div>
   </div>
 </template>

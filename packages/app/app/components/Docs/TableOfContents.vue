@@ -11,7 +11,7 @@ const visibleIds = useVisibleTocLinkIds(() => links);
 
 <template>
   <nav overflow-y-auto p-4 aria-label="On this page">
-    <p mb-2 font-medium op-medium-emphasis>On this page</p>
+    <p class="text-[0.8125rem]" mb-3 font-bold uppercase tracking-wide op-medium-emphasis>On this page</p>
     <ul class="table-of-contents" relative m-0 list-none p-0>
       <StyledSlideIndicator :active-keys="visibleIds" />
       <DocsTableOfContentsItem v-for="link of links" :key="link.id" :depth="0" :link :visible-ids="visibleIds" />

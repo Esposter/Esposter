@@ -2,6 +2,7 @@
 import type { DocsSearchSection } from "@/models/docs/DocsSearchSection";
 
 import { ContentCollection } from "#shared/models/content/ContentCollection";
+import { DocsSearchSectionPropertyNames } from "@/models/docs/DocsSearchSection";
 import { MAX_DOCS_SEARCH_RESULTS } from "@/services/docs/constants";
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
 import MiniSearch from "minisearch";
@@ -15,9 +16,9 @@ const { data: searchSections } = useAsyncData(
 );
 const miniSearch = computed(() => {
   const index = new MiniSearch<DocsSearchSection>({
-    fields: ["title", "content"],
+    fields: [DocsSearchSectionPropertyNames.title, DocsSearchSectionPropertyNames.content],
     searchOptions: { fuzzy: 0.2, prefix: true },
-    storeFields: ["title", "titles"],
+    storeFields: [DocsSearchSectionPropertyNames.title, DocsSearchSectionPropertyNames.titles],
   });
   index.addAll(searchSections.value ?? []);
   return index;

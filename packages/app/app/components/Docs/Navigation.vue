@@ -27,7 +27,12 @@ const sectionsWithGroups = computed(() =>
   <v-list v-model:opened="opened" overflow-y-auto color="primary" nav>
     <v-list-group v-for="{ groups, section } of sectionsWithGroups" :key="section.path" :value="section.path">
       <template #activator="{ props: activatorProps }">
-        <v-list-item :="activatorProps" :prepend-icon="getSectionIcon(section.path)" :title="section.title" />
+        <v-list-item
+          :="activatorProps"
+          class="docs-section-title"
+          :prepend-icon="getSectionIcon(section.path)"
+          :title="section.title"
+        />
       </template>
       <v-list-item title="Overview" :to="section.path" exact />
       <template v-for="group of groups" :key="group.title ?? ''">
@@ -39,8 +44,18 @@ const sectionsWithGroups = computed(() =>
 </template>
 
 <style scoped>
+/* Three-tier hierarchy: section titles > page items > group subheaders (small caps) */
+:deep(.v-list-item-title) {
+  font-size: 0.875rem;
+}
+
 :deep(.v-list-group__header .v-list-item-title) {
   font-weight: 500;
+}
+
+:deep(.docs-section-title .v-list-item-title) {
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 :deep(.v-list-item--active .v-list-item-title) {
@@ -53,9 +68,13 @@ const sectionsWithGroups = computed(() =>
   margin-left: 1rem;
 }
 
+:deep(.v-list-subheader) {
+  margin-top: 0.5rem;
+}
+
 :deep(.v-list-subheader__text) {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }

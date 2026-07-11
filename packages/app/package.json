@@ -88,6 +88,7 @@
     "@koumoul/vjsf": "catalog:",
     "@livekit/track-processors": "catalog:",
     "@mdi/font": "catalog:",
+    "@panzoom/panzoom": "catalog:",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-code-block-lowlight": "catalog:",
     "@tiptap/extension-file-handler": "catalog:",

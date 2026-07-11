@@ -20,8 +20,8 @@ const onClick = () => {
   <li>
     <a
       block
-      py-1
-      text-sm
+      py-1.5
+      class="text-[0.9375rem]"
       no-underline
       transition-colors
       duration="[--transition-duration]"
