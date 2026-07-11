@@ -4,8 +4,10 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
+import { useDialogStore } from "@/store/message/room/dialog";
 import { useRoleStore } from "@/store/message/room/role";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
+import { DatabaseEntityType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 interface RoomListItemProps {
@@ -24,6 +26,8 @@ const hasDraft = computed(() => drafts.value.has(room.id) && room.id !== current
 const isCreator = computed(() => room.userId === session.value?.user.id);
 const roleStore = useRoleStore();
 const { checkIsManageable } = roleStore;
+const dialogStore = useDialogStore();
+const { settingsRoomId } = storeToRefs(dialogStore);
 const isVisible = computed(() => isCreator.value || checkIsManageable(room.id));
 const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom } = userToRoomStore;
@@ -54,20 +58,21 @@ const hasUnread = computed(() => {
             <v-icon :="activatorProps" icon="mdi-bullhorn-outline" size="x-small" op-medium-emphasis />
           </template>
         </v-tooltip>
-        <MessageModelRoomSettingsDialogButton :room-id="room.id">
-          <template #activator="activatorProps">
+        <v-tooltip :text="`${DatabaseEntityType.Room} Settings`">
+          <template #activator="{ props: tooltipProps }">
             <v-btn
               v-show="(isActive || isHovering) && isVisible"
               bg-transparent
-              :="activatorProps"
+              :="tooltipProps"
               :ripple="false"
               density="compact"
               icon="mdi-cog"
               variant="plain"
               size="small"
+              @click.stop="settingsRoomId = room.id"
             />
           </template>
-        </MessageModelRoomSettingsDialogButton>
+        </v-tooltip>
       </template>
     </v-list-item>
   </v-hover>

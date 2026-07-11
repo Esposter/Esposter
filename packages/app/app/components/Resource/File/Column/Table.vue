@@ -18,13 +18,7 @@ const columnStore = useColumnStore();
 const { search, selectedColumnIds, sortBy } = storeToRefs(columnStore);
 const columnDialogStore = useColumnDialogStore();
 const { chartingColumnName, editingColumnName } = storeToRefs(columnDialogStore);
-const isChartOpen = computed({
-  get: () => Boolean(chartingColumnName.value),
-  set: (value) => {
-    if (value) return;
-    chartingColumnName.value = "";
-  },
-});
+const isChartOpen = useSingletonDialog(chartingColumnName);
 const chartingColumnStatistics = computed(() =>
   chartingColumnName.value
     ? (computeColumnStatistics(dataSource).find(({ columnName }) => columnName === chartingColumnName.value) ?? null)

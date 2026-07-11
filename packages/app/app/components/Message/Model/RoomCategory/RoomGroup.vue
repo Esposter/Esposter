@@ -27,7 +27,7 @@ const isCollapsed = useLocalStorage(`message-category-${category?.id ?? "uncateg
         </div>
       </v-list-item-title>
       <template #append>
-        <MessageModelRoomCategoryDeleteDialogButton :category />
+        <MessageModelRoomCategoryDeleteButton :category />
       </template>
     </v-list-item>
     <TransitionFade>

@@ -5,13 +5,7 @@ const columnDialogStore = useColumnDialogStore();
 const { deletingColumnName } = storeToRefs(columnDialogStore);
 const deleteColumn = useDeleteColumn();
 const title = computed(() => `Delete "${deletingColumnName.value}" Column`);
-const isOpen = computed({
-  get: () => Boolean(deletingColumnName.value),
-  set: (value) => {
-    if (value) return;
-    deletingColumnName.value = "";
-  },
-});
+const isOpen = useSingletonDialog(deletingColumnName);
 </script>
 
 <template>

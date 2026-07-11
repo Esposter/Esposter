@@ -11,13 +11,7 @@ const messageDialogStore = useMessageDialogStore();
 const { deletingRowKey } = storeToRefs(messageDialogStore);
 const message = computed(() => items.value.find(({ rowKey }) => rowKey === deletingRowKey.value));
 const creator = useCreator(message);
-const isOpen = computed({
-  get: () => Boolean(deletingRowKey.value),
-  set: (value) => {
-    if (value) return;
-    deletingRowKey.value = "";
-  },
-});
+const isOpen = useSingletonDialog(deletingRowKey);
 </script>
 
 <template>

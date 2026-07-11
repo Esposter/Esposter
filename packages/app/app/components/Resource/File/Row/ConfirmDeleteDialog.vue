@@ -9,13 +9,7 @@ const { rowIndexIdMap } = storeToRefs(rowStore);
 const deleteRow = useDeleteRow();
 const index = computed(() => (deletingId.value ? (rowIndexIdMap.value.get(deletingId.value) ?? -1) : -1));
 const title = computed(() => `Delete Row ${index.value + 1}`);
-const isOpen = computed({
-  get: () => Boolean(deletingId.value),
-  set: (value) => {
-    if (value) return;
-    deletingId.value = "";
-  },
-});
+const isOpen = useSingletonDialog(deletingId);
 </script>
 
 <template>

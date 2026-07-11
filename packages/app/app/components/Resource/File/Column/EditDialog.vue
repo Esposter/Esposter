@@ -17,13 +17,7 @@ interface EditDialogProps {
 const { column, dataSource } = defineProps<EditDialogProps>();
 const columnDialogStore = useColumnDialogStore();
 const { editingColumnName } = storeToRefs(columnDialogStore);
-const isOpen = computed({
-  get: () => Boolean(editingColumnName.value),
-  set: (value) => {
-    if (value) return;
-    editingColumnName.value = "";
-  },
-});
+const isOpen = useSingletonDialog(editingColumnName);
 const updateColumn = useUpdateColumn();
 // StructuredClone to a plain object: vjsf rejects class instances, and fast-deep-equal compares constructors.
 const editedColumn = ref(structuredClone(toRawDeep(column)));

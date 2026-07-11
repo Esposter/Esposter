@@ -50,4 +50,6 @@ const roomsByCategory = computed(() =>
       :rooms="categoryRooms"
     />
   </MessageModelRoomBaseList>
+  <MessageModelRoomSettingsDialog />
+  <MessageModelRoomCategoryConfirmDeleteDialog />
 </template>

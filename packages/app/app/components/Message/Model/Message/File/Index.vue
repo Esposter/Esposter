@@ -42,9 +42,14 @@ const isActive = ref(false);
     @mouseleave="isActive = false"
   >
     <MessageModelFileRenderer :file :is-preview :url />
+    <!-- Mounting on hover keeps the options menu tree off the tree for the whole file grid -->
     <div
-      v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
-      v-show="isActive"
+      v-if="
+        isActive &&
+        !message.isForward &&
+        isCreator &&
+        (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))
+      "
       right-2
       top-2
       absolute
