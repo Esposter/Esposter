@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from "@nuxt/content";
 
+import { getNavigationGroups } from "@/services/docs/getNavigationGroups";
 import { getOpenedNavigationPaths } from "@/services/docs/getOpenedNavigationPaths";
 import { getSectionIcon } from "@/services/docs/getSectionIcon";
 
@@ -11,16 +12,28 @@ interface NavigationProps {
 const { sections } = defineProps<NavigationProps>();
 const route = useRoute();
 const opened = ref(getOpenedNavigationPaths(route.path));
+const sectionsWithGroups = computed(() =>
+  sections.map((section) => ({
+    groups: getNavigationGroups(
+      section.path,
+      (section.children ?? []).filter(({ path }) => path !== section.path),
+    ),
+    section,
+  })),
+);
 </script>
 
 <template>
   <v-list v-model:opened="opened" overflow-y-auto color="primary" nav>
-    <v-list-group v-for="section of sections" :key="section.path" :value="section.path">
+    <v-list-group v-for="{ groups, section } of sectionsWithGroups" :key="section.path" :value="section.path">
       <template #activator="{ props: activatorProps }">
         <v-list-item :="activatorProps" :prepend-icon="getSectionIcon(section.path)" :title="section.title" />
       </template>
       <v-list-item title="Overview" :to="section.path" exact />
-      <DocsNavigationList :items="(section.children ?? []).filter(({ path }) => path !== section.path)" />
+      <template v-for="group of groups" :key="group.title ?? ''">
+        <v-list-subheader v-if="group.title">{{ group.title }}</v-list-subheader>
+        <DocsNavigationList :items="group.items" />
+      </template>
     </v-list-group>
   </v-list>
 </template>
@@ -38,5 +51,12 @@ const opened = ref(getOpenedNavigationPaths(route.path));
 :deep(.v-list-group__items) {
   border-left: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
   margin-left: 1rem;
+}
+
+:deep(.v-list-subheader__text) {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 </style>

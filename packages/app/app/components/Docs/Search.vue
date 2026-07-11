@@ -22,14 +22,20 @@ const miniSearch = computed(() => {
   index.addAll(searchSections.value ?? []);
   return index;
 });
-const results = computed(() =>
-  query.value
-    ? (miniSearch.value.search(query.value).slice(0, MAX_DOCS_SEARCH_RESULTS) as unknown as Pick<
-        DocsSearchSection,
-        "id" | "title" | "titles"
-      >[])
-    : [],
-);
+// Group hits by page and keep only the best-scoring section per page (results arrive relevance-sorted),
+// so one page matching in many sections can't flood the list — the DocSearch/VitePress behavior
+const results = computed(() => {
+  if (!query.value) return [];
+  const resultsByPagePath = new Map<string, { id: string; subtitle: string; title: string }>();
+  for (const searchResult of miniSearch.value.search(query.value)) {
+    const { id, title, titles } = searchResult as unknown as Pick<DocsSearchSection, "id" | "title" | "titles">;
+    const pagePath = id.split("#")[0] || id;
+    if (!resultsByPagePath.has(pagePath))
+      resultsByPagePath.set(pagePath, { id, subtitle: titles.join(" › ") || pagePath, title });
+    if (resultsByPagePath.size === MAX_DOCS_SEARCH_RESULTS) break;
+  }
+  return [...resultsByPagePath.values()];
+});
 
 useVHotkey("ctrl+k", () => {
   isOpen.value = !isOpen.value;
@@ -60,7 +66,7 @@ useVHotkey("ctrl+k", () => {
           <v-list-item
             v-for="result of results"
             :key="result.id"
-            :subtitle="result.titles.join(' › ')"
+            :subtitle="result.subtitle"
             :title="result.title"
             :to="result.id"
             @click="isOpen = false"

@@ -76,7 +76,7 @@ sequenceDiagram
   Creator->>SV: 2. Publish — snapshot model + assets to {id}/published/{n}
   PUB-->>Respondent: 3. Share /view/survey/{id} (esbabbler, email block, anywhere)
   Respondent->>AT: 4. Respond → rows (partitionKey = survey resource id)
-  Note over SV,AT: Respondents are served the published snapshot; unpublished 404s
+  Note over SV,AT: Respondents are served the published snapshot — unpublished 404s
   Creator->>FI: 5. Import responses (dataset.readDataset → one-time copy into a File resource)
   FI->>FI: 6. Computed columns — Aggregation / Math / Regex / String
   Creator->>DB: 7. Bind visual to a DatasetReference (live re-resolve on load)
