@@ -5,6 +5,7 @@ import { useKeyboardShortcutsDialogStore } from "@/store/message/input/keyboardS
 import { useReplyStore } from "@/store/message/input/reply";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
+import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
 const roomStore = useRoomStore();
@@ -33,12 +34,7 @@ const keyboardShortcutsDialogStore = useKeyboardShortcutsDialogStore();
 const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
 
 useEventListener("keydown", (event: KeyboardEvent) => {
-  const target = event.target;
-  if (
-    target instanceof HTMLElement &&
-    (target.isContentEditable || target.tagName === "INPUT" || target.tagName === "TEXTAREA")
-  )
-    return;
+  if (checkIsEditableTarget(event.target)) return;
   else if (event.shiftKey && event.key === "?") isOpen.value = true;
 });
 </script>

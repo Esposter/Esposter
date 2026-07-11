@@ -276,6 +276,57 @@ describe("moderation", () => {
         `[TRPCError: UNAUTHORIZED]`,
       );
     });
+
+    test("filters by type", async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
+      vi.setSystemTime(durationMs);
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: member.id,
+        type: AdminActionType.ForceUnmute,
+      });
+
+      const result = await moderationCaller.readModerationLog({ roomId, type: AdminActionType.ForceUnmute });
+
+      expect(result.items).toHaveLength(1);
+      expect(takeOne(result.items).type).toBe(AdminActionType.ForceUnmute);
+    });
+
+    test("filters by targetUserId", async () => {
+      expect.hasAssertions();
+
+      const [firstMember, secondMember] = await Promise.all([createMember(), createMember()]);
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: firstMember.id,
+        type: AdminActionType.ForceMute,
+      });
+      vi.setSystemTime(durationMs);
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: secondMember.id,
+        type: AdminActionType.ForceMute,
+      });
+
+      const result = await moderationCaller.readModerationLog({ roomId, targetUserId: secondMember.id });
+
+      expect(result.items).toHaveLength(1);
+      expect(takeOne(result.items).targetUserId).toBe(secondMember.id);
+    });
+
+    test("filters by actorUserId — non-actor matches nothing", async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
+
+      const result = await moderationCaller.readModerationLog({ roomId, actorUserId: member.id });
+
+      expect(result.items).toHaveLength(0);
+    });
   });
 
   describe("deleteBan", () => {

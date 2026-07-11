@@ -12,5 +12,6 @@ export const readModerationLogInputSchema = z.object({
       order: SortOrder.Desc,
     },
   ]).omit({ sortBy: true }).shape,
+  ...moderationLogEntitySchema.pick({ actorUserId: true, targetUserId: true, type: true }).partial().shape,
 });
 export type ReadModerationLogInput = z.infer<typeof readModerationLogInputSchema>;

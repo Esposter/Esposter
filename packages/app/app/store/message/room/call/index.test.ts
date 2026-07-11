@@ -239,4 +239,48 @@ describe(useMediaStore, () => {
       expect(pinnedParticipantId.value).toBe("");
     });
   });
+
+  describe("setParticipantVolumePercentage", () => {
+    test("stores participant volume percentage", () => {
+      expect.hasAssertions();
+
+      const participantId = getMockSession().session.id;
+      const mediaStore = useMediaStore();
+      const { setParticipantVolumePercentage } = mediaStore;
+      const { participantVolumePercentageMap } = storeToRefs(mediaStore);
+      setParticipantVolumePercentage(participantId, 1);
+
+      expect(participantVolumePercentageMap.value.get(participantId)).toBe(1);
+    });
+  });
+
+  describe("deleteParticipantVolumePercentage", () => {
+    test("removes participant volume percentage", () => {
+      expect.hasAssertions();
+
+      const participantId = getMockSession().session.id;
+      const mediaStore = useMediaStore();
+      const { deleteParticipantVolumePercentage, setParticipantVolumePercentage } = mediaStore;
+      const { participantVolumePercentageMap } = storeToRefs(mediaStore);
+      setParticipantVolumePercentage(participantId, 1);
+      deleteParticipantVolumePercentage(participantId);
+
+      expect(participantVolumePercentageMap.value.has(participantId)).toBe(false);
+    });
+  });
+
+  describe("resetCallMedia", () => {
+    test("clears participant volume percentages", () => {
+      expect.hasAssertions();
+
+      const participantId = getMockSession().session.id;
+      const mediaStore = useMediaStore();
+      const { resetCallMedia, setParticipantVolumePercentage } = mediaStore;
+      const { participantVolumePercentageMap } = storeToRefs(mediaStore);
+      setParticipantVolumePercentage(participantId, 1);
+      resetCallMedia();
+
+      expect(participantVolumePercentageMap.value.size).toBe(0);
+    });
+  });
 });

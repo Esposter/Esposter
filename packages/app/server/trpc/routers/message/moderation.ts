@@ -40,6 +40,7 @@ import {
   CompositeKeyPropertyNames,
   DatabaseEntityType,
   ModerationLogEntity,
+  ModerationLogEntityPropertyNames,
   roomIdSchema,
   RoomPermission,
   StandardMessageEntityPropertyNames,
@@ -203,12 +204,25 @@ export const moderationRouter = router({
     return getCursorPaginationData(readBans, limit, sortBy);
   }),
   readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query(
-    async ({ input: { cursor, limit, roomId } }) => {
+    async ({ input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
       const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
       const clauses: Clause<ModerationLogEntity>[] = [
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
+      if (actorUserId)
+        clauses.push({
+          key: ModerationLogEntityPropertyNames.actorUserId,
+          operator: BinaryOperator.eq,
+          value: actorUserId,
+        });
+      if (targetUserId)
+        clauses.push({
+          key: ModerationLogEntityPropertyNames.targetUserId,
+          operator: BinaryOperator.eq,
+          value: targetUserId,
+        });
+      if (type) clauses.push({ key: ModerationLogEntityPropertyNames.type, operator: BinaryOperator.eq, value: type });
       if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
 
       const moderationLogClient = await useTableClient(AzureTable.ModerationLog);

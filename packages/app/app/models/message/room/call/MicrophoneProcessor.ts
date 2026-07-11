@@ -1,16 +1,18 @@
 import type { AudioProcessorOptions, Track, TrackProcessor } from "livekit-client";
 
-import { MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
+import { MIN_INPUT_SENSITIVITY_DECIBELS, VoiceInputMode } from "@esposter/db-schema";
 
 // Native Web Audio mic processor: applies the user's mic volume as gain and gates transmission below
-// The voice-activity threshold. LiveKit owns the lifecycle — init on publish, restart on device
-// Switch, destroy on unpublish — so there is no manual track-republish to manage.
+// The voice-activity threshold (Voice Activity) or while the push-to-talk key is released (Push To
+// Talk). LiveKit owns the lifecycle — init on publish, restart on device switch, destroy on
+// Unpublish — so there is no manual track-republish to manage.
 export class MicrophoneProcessor implements TrackProcessor<Track.Kind.Audio, AudioProcessorOptions> {
   inputSensitivityDecibels = MIN_INPUT_SENSITIVITY_DECIBELS;
-  isVoiceActivity = true;
+  isPushToTalkKeyHeld = false;
   microphoneVolumePercentage = 100;
   name = "microphone-processor";
   processedTrack?: MediaStreamTrack;
+  voiceInputMode = VoiceInputMode.VoiceActivity;
   #analyser?: AnalyserNode;
   #animationFrameId?: number;
   #audioContext?: AudioContext;
@@ -62,7 +64,10 @@ export class MicrophoneProcessor implements TrackProcessor<Track.Kind.Audio, Aud
       for (const sample of this.#timeDomainData) sumSquares += sample * sample;
       const rms = Math.sqrt(sumSquares / this.#timeDomainData.length);
       const decibels = rms > 0 ? 20 * Math.log10(rms) : MIN_INPUT_SENSITIVITY_DECIBELS;
-      const isOpen = !this.isVoiceActivity || decibels >= this.inputSensitivityDecibels;
+      const isOpen =
+        this.voiceInputMode === VoiceInputMode.PushToTalk
+          ? this.isPushToTalkKeyHeld
+          : decibels >= this.inputSensitivityDecibels;
       this.#gainNode.gain.value = isOpen ? this.microphoneVolumePercentage / 100 : 0;
     }
     this.#animationFrameId = window.requestAnimationFrame(this.#tick);

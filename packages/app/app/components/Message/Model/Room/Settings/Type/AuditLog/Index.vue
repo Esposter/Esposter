@@ -4,29 +4,89 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
 import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
 import { useModerationLogStore } from "@/store/message/moderation/log";
+import { useMemberStore } from "@/store/message/user/member";
 import { formatDuration } from "@/util/text/formatDuration";
+import { AdminActionType } from "@esposter/db-schema";
 
 interface AuditLogProps {
   room: RoomInMessage;
 }
 
 const { room } = defineProps<AuditLogProps>();
-const { readModerationLog, readMoreModerationLog } = useReadModerationLog(room.id);
+const type = ref<AdminActionType>();
+const actorUserId = ref<string>();
+const targetUserId = ref<string>();
+const filters = computed(() => ({
+  actorUserId: actorUserId.value,
+  targetUserId: targetUserId.value,
+  type: type.value,
+}));
+const hasFilters = computed(() => Boolean(type.value || actorUserId.value || targetUserId.value));
+const { readModerationLog, readMoreModerationLog } = useReadModerationLog(room.id, filters);
 const moderationLogStore = useModerationLogStore();
 const { hasMore, items } = storeToRefs(moderationLogStore);
+const { readMembers } = useReadMembers();
+const memberStore = useMemberStore();
+const { members } = storeToRefs(memberStore);
+const memberItems = computed(() => members.value.map(({ id, name }) => ({ title: name, value: id })));
+const adminActionTypes = Object.values(AdminActionType);
 
-await readModerationLog();
+await Promise.all([readModerationLog(), readMembers()]);
 </script>
 
 <template>
   <div flex flex-col gap-4>
-    <div v-if="items.length === 0" op-medium-emphasis>No audit log entries.</div>
-    <v-list v-else lines="two">
-      <v-list-item v-for="{ actorUserId, durationMs, rowKey, targetUserId, type } of items" :key="rowKey">
-        <template #prepend>
-          <v-icon :color="AdminActionColorMap[type]">{{ AdminActionIconMap[type] }}</v-icon>
+    <div flex gap-2>
+      <v-select
+        v-model="type"
+        label="Action"
+        :items="adminActionTypes"
+        density="compact"
+        hide-details
+        clearable
+        @update:model-value="readModerationLog"
+      >
+        <template #item="{ props: itemProps, item }">
+          <v-list-item :="itemProps" :prepend-icon="AdminActionIconMap[item.raw]" />
         </template>
-        <v-list-item-title>{{ type }} — {{ actorUserId }} acted on {{ targetUserId }}</v-list-item-title>
+      </v-select>
+      <v-select
+        v-model="actorUserId"
+        label="Actor"
+        :items="memberItems"
+        density="compact"
+        hide-details
+        clearable
+        @update:model-value="readModerationLog"
+      />
+      <v-select
+        v-model="targetUserId"
+        label="Target"
+        :items="memberItems"
+        density="compact"
+        hide-details
+        clearable
+        @update:model-value="readModerationLog"
+      />
+    </div>
+    <div v-if="items.length === 0" op-medium-emphasis>
+      {{ hasFilters ? "No audit log entries match the filters." : "No audit log entries." }}
+    </div>
+    <v-list v-else lines="two">
+      <v-list-item
+        v-for="{
+          actorUserId: entryActorUserId,
+          durationMs,
+          rowKey,
+          targetUserId: entryTargetUserId,
+          type: entryType,
+        } of items"
+        :key="rowKey"
+      >
+        <template #prepend>
+          <v-icon :color="AdminActionColorMap[entryType]">{{ AdminActionIconMap[entryType] }}</v-icon>
+        </template>
+        <v-list-item-title>{{ entryType }} — {{ entryActorUserId }} acted on {{ entryTargetUserId }}</v-list-item-title>
         <v-list-item-subtitle v-if="durationMs">{{ formatDuration(durationMs) }}</v-list-item-subtitle>
       </v-list-item>
       <StyledWaypoint :is-active="hasMore" @change="readMoreModerationLog" />

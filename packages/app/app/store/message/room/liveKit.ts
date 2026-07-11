@@ -17,6 +17,7 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
+import { DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE } from "@/services/message/room/call/constants";
 import { DEFAULT_SPEAKER_VOLUME_PERCENTAGE, NoiseSuppressionMode, VoiceInputMode } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
@@ -35,26 +36,30 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   // Persisted (localStorage) device selections are the single source of truth, shared with the settings
   // Panel, mic test, and pre-join preview - so the call captures the device the user actually picked.
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
-  const remoteAudioElements = new Map<string, HTMLMediaElement>();
+  const remoteAudioElements = new Map<string, { element: HTMLMediaElement; identity: string }>();
   const connectionQuality = ref(ConnectionQuality.Unknown);
   const connectionState = ref(ConnectionState.Disconnected);
   const cleanupRemoteAudio = () => {
-    for (const audio of remoteAudioElements.values()) audio.remove();
+    for (const { element } of remoteAudioElements.values()) element.remove();
     remoteAudioElements.clear();
   };
   const setActiveSpeakers = (speakers: { identity: string }[]) => {
     participantStore.speakingIds = speakers.map(({ identity }) => identity);
   };
   const setRemoteAudioMuted = (isDeafened: boolean) => {
-    for (const audio of remoteAudioElements.values()) audio.muted = isDeafened;
+    for (const { element } of remoteAudioElements.values()) element.muted = isDeafened;
   };
-  // Master output volume — HTMLMediaElement.volume caps at 1, so values above 100% clamp to full.
-  const applyRemoteAudioVolume = (element: HTMLMediaElement) => {
-    const percentage = userSettingsStore.userSettings?.speakerVolumePercentage ?? DEFAULT_SPEAKER_VOLUME_PERCENTAGE;
-    element.volume = Math.min(1, percentage / 100);
+  // Master output volume × per-participant multiplier — HTMLMediaElement.volume caps at 1,
+  // So combined values above 100% clamp to full.
+  const applyRemoteAudioVolume = (element: HTMLMediaElement, identity: string) => {
+    const speakerVolumePercentage =
+      userSettingsStore.userSettings?.speakerVolumePercentage ?? DEFAULT_SPEAKER_VOLUME_PERCENTAGE;
+    const participantVolumePercentage =
+      mediaStore.participantVolumePercentageMap.get(identity) ?? DEFAULT_PARTICIPANT_VOLUME_PERCENTAGE;
+    element.volume = Math.min(1, (speakerVolumePercentage / 100) * (participantVolumePercentage / 100));
   };
   const setSpeakerVolume = () => {
-    for (const audio of remoteAudioElements.values()) applyRemoteAudioVolume(audio);
+    for (const { element, identity } of remoteAudioElements.values()) applyRemoteAudioVolume(element, identity);
   };
   const setNoiseSuppressionMode = getSynchronizedFunction(async (noiseSuppressionMode: NoiseSuppressionMode) => {
     if (!activeRoom) return;
@@ -65,8 +70,12 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     const settings = userSettingsStore.userSettings;
     if (!microphoneProcessor || !settings) return;
     microphoneProcessor.inputSensitivityDecibels = settings.inputSensitivityDecibels;
-    microphoneProcessor.isVoiceActivity = settings.voiceInputMode === VoiceInputMode.VoiceActivity;
     microphoneProcessor.microphoneVolumePercentage = settings.microphoneVolumePercentage;
+    microphoneProcessor.voiceInputMode = settings.voiceInputMode;
+    if (settings.voiceInputMode !== VoiceInputMode.PushToTalk) microphoneProcessor.isPushToTalkKeyHeld = false;
+  };
+  const setPushToTalkKeyHeld = (isPushToTalkKeyHeld: boolean) => {
+    if (microphoneProcessor) microphoneProcessor.isPushToTalkKeyHeld = isPushToTalkKeyHeld;
   };
   const setActiveDevice = (kind: MediaDeviceKind, deviceId: string) => {
     switch (kind) {
@@ -99,8 +108,11 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     const element = track.attach();
     element.autoplay = true;
     element.muted = mediaStore.isDeafened;
-    applyRemoteAudioVolume(element);
-    remoteAudioElements.set(`${participant.identity}:${publication.source}`, element);
+    applyRemoteAudioVolume(element, participant.identity);
+    remoteAudioElements.set(`${participant.identity}:${publication.source}`, {
+      element,
+      identity: participant.identity,
+    });
     window.document.body.append(element);
   };
   const detachRemoteAudio = (
@@ -312,6 +324,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     cleanupRemoteAudio();
   };
   watch(() => userSettingsStore.userSettings?.speakerVolumePercentage, setSpeakerVolume);
+  watch(() => mediaStore.participantVolumePercentageMap, setSpeakerVolume, { deep: true });
   watch(
     () => userSettingsStore.userSettings?.noiseSuppressionMode,
     (newNoiseSuppressionMode) => {
@@ -335,6 +348,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     setActiveDevice,
     setCamera,
     setMicrophone,
+    setPushToTalkKeyHeld,
     setRemoteAudioMuted,
     setScreenShare,
     setVirtualBackground,

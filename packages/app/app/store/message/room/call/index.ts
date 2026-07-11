@@ -49,6 +49,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   );
   const selfParticipant = computed(() => (sessionId.value ? callParticipantMap.value.get(sessionId.value) : undefined));
   const isInCall = computed(() => Boolean(selfParticipant.value));
+  // Hosted here (not a component) so hold-to-talk survives navigation, like the call itself
+  usePushToTalk(isInCall);
   const isHandRaised = computed(() => selfParticipant.value?.isHandRaised ?? false);
   const isMuted = computed(() => selfParticipant.value?.isMuted ?? false);
   const setHandRaisedEnabled = async (newIsHandRaised: boolean, targetSessionId?: string) => {
