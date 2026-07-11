@@ -7,7 +7,7 @@ import { describe, expect } from "vitest";
 // The shared body of every differential correctness test: run the same command through the candidate backend
 // And the native baseline, normalize both with the case's rules, then assert they are observably identical
 // (exit code + stdout + stderr). Backends own which corpus they feed it; the assert itself is backend-blind.
-// See features/virrun/specs/correctness.md.
+// See packages/app/content/docs/virrun/correctness.md.
 export const assertDifferential = async (
   backend: ExecBackend,
   baseline: ExecBackend,

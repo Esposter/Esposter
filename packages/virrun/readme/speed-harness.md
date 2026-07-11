@@ -1,6 +1,6 @@
 # virrun — Speed Harness
 
-The whole project's value is "faster than doing it normally", so every backend and speed feature proves it against a native baseline, continuously. A path that loses to baseline is deleted. Full methodology (scenarios, cache-state matrix, metrics) lives in [specs/benchmarking.md](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/benchmarking.md); this is the operational summary.
+The whole project's value is "faster than doing it normally", so every backend and speed feature proves it against a native baseline, continuously. A path that loses to baseline is deleted. Full methodology (scenarios, cache-state matrix, metrics) lives in the [benchmarking docs page](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/benchmarking.md); this is the operational summary.
 
 ## The rule
 

@@ -6,7 +6,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node
 import { join } from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-// Property/fuzz gate (features/virrun/specs/correctness.md): fast-check generates randomized FS op sequences,
+// Property/fuzz gate (packages/app/content/docs/virrun/correctness.md): fast-check generates randomized FS op sequences,
 // Each run against BOTH the vfs provider and a real node:fs temp dir, asserting identical outcomes. node:fs is
 // The oracle (never re-implemented), so a divergence is a real provider bug; a failing sequence shrinks to its
 // Minimal counterexample. Pure in-memory (never mounted). The "d" sub-dir is pre-created on both sides so every

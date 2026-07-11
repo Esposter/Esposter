@@ -5,7 +5,7 @@ description: Sweep ledger for keeping every comment tight, generic, and correctl
 
 # Comment Cleanup
 
-Goal: make every comment tight, generic, readable, and correctly placed across the whole repo, per the **Whitespace & Comments** conventions in `.claude/skills/file-organization/SKILL.md`. This ledger tracks what has been swept so future passes skip unchanged files and resume where the last one left off.
+Goal: make every comment tight, generic, readable, and correctly placed across the whole repo, per the comment conventions in `.claude/skills/formatting/SKILL.md`. This ledger tracks what has been swept so future passes skip unchanged files and resume where the last one left off.
 
 **Last full sweep:** 2026-06-14 (covers all packages; baseline below).
 

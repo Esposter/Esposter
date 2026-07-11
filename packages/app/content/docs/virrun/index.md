@@ -44,6 +44,17 @@ Correctness beats speed; a fast wrong answer is worthless.
 | [Execution backends](/docs/virrun/execution-backends) | the `ExecBackend` seam, virtual-FS layer, `vfs` and `os` backends                 |
 | [Snapshot and fork](/docs/virrun/snapshot-and-fork)   | warm deps snapshot, source-keyed prepare layer, atomic publish                    |
 | [Write-back](/docs/virrun/write-back)                 | native-equivalent persistence of a mutation command's output                      |
+| [Task cache](/docs/virrun/task-cache)                 | content-keyed replay of unchanged persist runs, the two honesty guards            |
+| [WSL source mirror](/docs/virrun/wsl-source-mirror)   | win32 ext4 source mirror + host-side manifest delta sync                          |
+| [Adoption](/docs/virrun/adoption)                     | the prefix-is-the-switch model, opt-in levels, auto-fallback, CLI subcommands     |
+| [Configuration](/docs/virrun/configuration)           | the committed `virrun.config.*` — backend selection + environment preset          |
+| [Cache](/docs/virrun/cache)                           | the gitignored `.virrun` layout, probe caches, cleanup & self-healing             |
+| [Correctness](/docs/virrun/correctness)               | the correctness gate — differential, equivalence, and property/fuzz layers        |
+| [Benchmarking](/docs/virrun/benchmarking)             | the speed gate — committed bench artifacts, methodology, honest numbers           |
+| [Orchestrator API](/docs/virrun/orchestrator-api)     | the public `createVirrun` TypeScript surface                                      |
+| [Prior art](/docs/virrun/prior-art)                   | surveyed landscape — what was adopted, studied, or ruled out                      |
+
+Open work: [roadmap](/docs/virrun/roadmap). Decided ideas: [deferred](/docs/virrun/deferred) (not yet, trigger-gated) · [rejected](/docs/virrun/rejected) (won't do) — grep both before proposing anything.
 
 ## Shipped log
 
