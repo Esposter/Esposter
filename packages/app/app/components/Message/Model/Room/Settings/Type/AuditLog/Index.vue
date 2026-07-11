@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
@@ -13,9 +14,9 @@ interface AuditLogProps {
 }
 
 const { room } = defineProps<AuditLogProps>();
-const type = ref<AdminActionType>();
-const actorUserId = ref<string>();
-const targetUserId = ref<string>();
+const type = ref<"" | AdminActionType>("");
+const actorUserId = ref("");
+const targetUserId = ref("");
 const filters = computed(() => ({
   actorUserId: actorUserId.value,
   targetUserId: targetUserId.value,
@@ -28,12 +29,19 @@ const { hasMore, items } = storeToRefs(moderationLogStore);
 const { readMembers } = useReadMembers();
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
-const memberItems = computed(() => members.value.map(({ id, name }) => ({ title: name, value: id })));
-const adminActionTypeItems = Object.values(AdminActionType).map((adminActionType) => ({
-  props: { prependIcon: AdminActionIconMap[adminActionType] },
-  title: adminActionType,
-  value: adminActionType,
-}));
+// "" = unfiltered ("All …") — clearable is avoided since it emits null
+const memberItems = computed<SelectItemCategoryDefinition<string>[]>(() => [
+  { title: "All members", value: "" },
+  ...members.value.map(({ id, name }) => ({ title: name, value: id })),
+]);
+const adminActionTypeItems = [
+  { title: "All actions", value: "" },
+  ...Object.values(AdminActionType).map((adminActionType) => ({
+    props: { prependIcon: AdminActionIconMap[adminActionType] },
+    title: adminActionType,
+    value: adminActionType,
+  })),
+];
 
 await Promise.all([readModerationLog(), readMembers()]);
 </script>
@@ -47,7 +55,6 @@ await Promise.all([readModerationLog(), readMembers()]);
         :items="adminActionTypeItems"
         density="compact"
         hide-details
-        clearable
         @update:model-value="readModerationLog"
       />
       <v-select
@@ -56,7 +63,6 @@ await Promise.all([readModerationLog(), readMembers()]);
         :items="memberItems"
         density="compact"
         hide-details
-        clearable
         @update:model-value="readModerationLog"
       />
       <v-select
@@ -65,7 +71,6 @@ await Promise.all([readModerationLog(), readMembers()]);
         :items="memberItems"
         density="compact"
         hide-details
-        clearable
         @update:model-value="readModerationLog"
       />
     </div>

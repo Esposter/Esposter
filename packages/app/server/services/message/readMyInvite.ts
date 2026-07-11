@@ -3,7 +3,7 @@ import type { InviteInMessage } from "@esposter/db-schema";
 
 import { checkIsInviteUsable } from "@@/server/services/message/checkIsInviteUsable";
 import { invitesInMessage } from "@esposter/db-schema";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 // Expired/exhausted invites are inert rows — reads treat them as absent and lazily delete them
 export const readMyInvite = async (
@@ -24,8 +24,7 @@ export const readMyInvite = async (
   if (!invite) return null;
   else if (checkIsInviteUsable(invite)) return invite;
 
-  await db
-    .delete(invitesInMessage)
-    .where(and(eq(invitesInMessage.userId, userId), eq(invitesInMessage.roomId, roomId)));
+  // Delete by primary key — a (userId, roomId) match could race a concurrent createInvite and remove its fresh row
+  await db.delete(invitesInMessage).where(eq(invitesInMessage.id, invite.id));
   return null;
 };

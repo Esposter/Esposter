@@ -4,7 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient.test";
 import { createCallerFactory } from "@@/server/trpc";
-import { mockSessionOnce } from "@@/server/trpc/context.test";
+import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
@@ -266,15 +266,17 @@ describe("moderation", () => {
   });
 
   describe("readModerationLog", () => {
+    const emptyFilters = { actorUserId: "", targetUserId: "", type: "" } as const;
+
     test(`member without ${RoomPermission.ManageRoom} permission cannot readModerationLog — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
 
-      await expect(moderationCaller.readModerationLog({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: UNAUTHORIZED]`,
-      );
+      await expect(
+        moderationCaller.readModerationLog({ ...emptyFilters, roomId }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
 
     test("filters by type", async () => {
@@ -289,7 +291,11 @@ describe("moderation", () => {
         type: AdminActionType.ForceUnmute,
       });
 
-      const result = await moderationCaller.readModerationLog({ roomId, type: AdminActionType.ForceUnmute });
+      const result = await moderationCaller.readModerationLog({
+        ...emptyFilters,
+        roomId,
+        type: AdminActionType.ForceUnmute,
+      });
 
       expect(result.items).toHaveLength(1);
       expect(takeOne(result.items).type).toBe(AdminActionType.ForceUnmute);
@@ -311,7 +317,11 @@ describe("moderation", () => {
         type: AdminActionType.ForceMute,
       });
 
-      const result = await moderationCaller.readModerationLog({ roomId, targetUserId: secondMember.id });
+      const result = await moderationCaller.readModerationLog({
+        ...emptyFilters,
+        roomId,
+        targetUserId: secondMember.id,
+      });
 
       expect(result.items).toHaveLength(1);
       expect(takeOne(result.items).targetUserId).toBe(secondMember.id);
@@ -323,9 +333,22 @@ describe("moderation", () => {
       const member = await createMember();
       await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
 
-      const result = await moderationCaller.readModerationLog({ actorUserId: member.id, roomId });
+      const result = await moderationCaller.readModerationLog({ ...emptyFilters, actorUserId: member.id, roomId });
 
       expect(result.items).toHaveLength(0);
+    });
+
+    test("filters by actorUserId — actor matches their own actions", async () => {
+      expect.hasAssertions();
+
+      const owner = getMockSession().user;
+      const member = await createMember();
+      await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.ForceMute });
+
+      const result = await moderationCaller.readModerationLog({ ...emptyFilters, actorUserId: owner.id, roomId });
+
+      expect(result.items).toHaveLength(1);
+      expect(takeOne(result.items).actorUserId).toBe(owner.id);
     });
   });
 

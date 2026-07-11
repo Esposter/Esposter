@@ -60,7 +60,7 @@ describe(hasPermission, () => {
       position: 1,
       roomId,
     });
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId });
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(invite.id);
     await roleCaller.assignRole({ roleId: adminRole.id, roomId, userId: user.id });
@@ -72,7 +72,7 @@ describe(hasPermission, () => {
   test("specific permission check works", async () => {
     expect.hasAssertions();
 
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId });
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(invite.id);
 

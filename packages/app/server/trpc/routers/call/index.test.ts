@@ -76,7 +76,7 @@ describe("call", () => {
 
     const room = await roomCaller.createRoom({ name });
     const callSessionId = await createCallSessionId(mockContext.db, room.id, getMockSession().user.id);
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: room.id });
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: room.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(invite.id);
     await mockSessionOnce(mockContext.db, user);

@@ -41,4 +41,8 @@ export const usePushToTalk = (isInCall: MaybeRefOrGetter<boolean>, target?: Mayb
   watch(isActive, (newIsActive) => {
     if (!newIsActive) setPushToTalkKeyHeld(false);
   });
+  // Rebinding mid-hold orphans the old key's keyup (it no longer matches) — close the gate so the mic can't stay open
+  watch(pushToTalkKeybind, () => {
+    setPushToTalkKeyHeld(false);
+  });
 };

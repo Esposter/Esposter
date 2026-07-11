@@ -129,7 +129,8 @@ export const baseRoomRouter = router({
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
     .mutation<InviteInMessage>(async ({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) => {
-      const expiresAt = expireAfterMinutes === null ? null : dayjs().add(expireAfterMinutes, "minutes").toDate();
+      // The input's 0 sentinel (never expires / unlimited uses) maps to null at the DB boundary
+      const expiresAt = expireAfterMinutes ? dayjs().add(expireAfterMinutes, "minutes").toDate() : null;
       // One invite per member per room — creating with new options replaces the old link
       await ctx.db
         .delete(invitesInMessage)
@@ -140,7 +141,7 @@ export const baseRoomRouter = router({
         const invites = await getResultAsync(() =>
           ctx.db
             .insert(invitesInMessage)
-            .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
+            .values({ expiresAt, id, maxUses: maxUses || null, roomId, userId: ctx.getSessionPayload.user.id })
             .returning(),
         ).unwrapOr(null);
         if (invites) return takeOne(invites);

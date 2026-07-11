@@ -46,7 +46,7 @@ describe(getPermissions, () => {
   test("updates @everyone permissions for all members", async () => {
     expect.hasAssertions();
 
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId });
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(invite.id);
 
@@ -62,7 +62,7 @@ describe(getPermissions, () => {
   test("ors @everyone + assigned role permissions", async () => {
     expect.hasAssertions();
 
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId });
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(invite.id);
 

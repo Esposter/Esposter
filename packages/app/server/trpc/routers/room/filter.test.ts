@@ -68,7 +68,7 @@ describe("room/filter", () => {
     test(`member without ${RoomPermission.ManageRoom} permission cannot upsertRoomFilter — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
 
-      const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId });
+      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite.id);
       await mockSessionOnce(mockContext.db, user);
@@ -81,7 +81,7 @@ describe("room/filter", () => {
     test(`member with ${RoomPermission.ManageRoom} permission can upsertRoomFilter`, async () => {
       expect.hasAssertions();
 
-      const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId });
+      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite.id);
       const role = await roleCaller.createRole({

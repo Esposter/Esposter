@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
+import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { InviteInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
@@ -15,14 +17,18 @@ const { currentRoomId } = storeToRefs(roomStore);
 const invite = ref<InviteInMessage | null>(null);
 if (currentRoomId.value) invite.value = await $trpc.room.readMyInvite.query({ roomId: currentRoomId.value });
 
-const expireAfterMinutes = ref<null | number>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
-const maxUses = ref<(typeof INVITE_MAX_USES_OPTIONS)[number] | null>(null);
-const expireAfterItems = [
+const expireAfterMinutes = ref<CreateInviteInput["expireAfterMinutes"]>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
+// Seed from the loaded invite so regenerating via one option doesn't silently reset the other to unlimited
+// (expireAfterMinutes can't be recovered from the absolute expiresAt, so it falls back to the default)
+const maxUses = ref<CreateInviteInput["maxUses"]>(
+  INVITE_MAX_USES_OPTIONS.find((uses) => uses === invite.value?.maxUses) ?? 0,
+);
+const expireAfterItems: SelectItemCategoryDefinition<CreateInviteInput["expireAfterMinutes"]>[] = [
   ...Object.entries(InviteExpireAfterMinutesMap).map(([title, value]) => ({ title, value })),
-  { title: "Never", value: null },
+  { title: "Never", value: 0 },
 ];
-const maxUsesItems = [
-  { title: "No limit", value: null },
+const maxUsesItems: SelectItemCategoryDefinition<CreateInviteInput["maxUses"]>[] = [
+  { title: "No limit", value: 0 },
   ...INVITE_MAX_USES_OPTIONS.map((uses) => ({ title: `${uses} use${uses === 1 ? "" : "s"}`, value: uses })),
 ];
 const createInvite = async () => {

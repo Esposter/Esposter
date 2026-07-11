@@ -1,7 +1,7 @@
 /* eslint-disable perfectionist/sort-objects */
 import { dayjs } from "#shared/services/dayjs";
 
-// Discord's invite expiry options; the "Never" (null) option lives in the select, not here
+// Discord's invite expiry options; the "Never" (the 0 sentinel) option lives in the select, not here
 export const InviteExpireAfterMinutesMap = {
   "30 minutes": dayjs.duration(30, "minutes").asMinutes(),
   "1 hour": dayjs.duration(1, "hour").asMinutes(),

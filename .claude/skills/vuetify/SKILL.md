@@ -117,12 +117,14 @@ When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use 
 
   ```typescript
   // CORRECT — map to SelectItemCategoryDefinition<T> so no extra props needed
-  const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
-    { title: "None", value: null },
+  const categoryItems = computed<SelectItemCategoryDefinition<string>[]>(() => [
+    { title: "None", value: "" },
     ...categories.value.map(({ id, name }) => ({ title: name, value: id })),
   ]);
   // <v-select :items="categoryItems" />
   ```
+
+- **`clearable` is BANNED on selects** — clearing emits `null`, which violates the no-null convention and fails non-nullable API inputs. Model "no selection / all" as an explicit first item carrying the empty sentinel (`{ title: "All members", value: "" }`, `{ title: "No limit", value: 0 }`) so the ref stays a plain inferred `ref("")`/`ref(0)` and the sentinel propagates end-to-end (see the typescript skill's sentinel section).
 
 - Name the items constant to reflect what the value represents — e.g. `columnIds` for `SelectItemCategoryDefinition<string>[]` where each value is a column ID.
 - **Prefer enum values as display titles** — when the enum string value IS the label, use `Object.values(EnumType).map((v) => ({ title: v, value: v }))` (`ColumnTypeItemCategoryDefinitions` pattern). When display must differ from the enum value (rare), use `const Map = { ... } as const satisfies Record<Enum, Except<SelectItemCategoryDefinition<Enum>, "value">>` + `parseDictionaryToArray` (`CsvDelimiterItemCategoryDefinitions` pattern). Update enum string values to match the label when reasonable, to keep key and value the same string.

@@ -12,6 +12,8 @@ export const readModerationLogInputSchema = z.object({
       order: SortOrder.Desc,
     },
   ]).omit({ sortBy: true }).shape,
-  ...moderationLogEntitySchema.pick({ actorUserId: true, targetUserId: true, type: true }).partial().shape,
+  // "" = unfiltered — the client's empty-string sentinel propagates end-to-end; the server truthiness-guards
+  ...moderationLogEntitySchema.pick({ actorUserId: true, targetUserId: true }).shape,
+  type: moderationLogEntitySchema.shape.type.or(z.literal("")),
 });
 export type ReadModerationLogInput = z.infer<typeof readModerationLogInputSchema>;

@@ -36,7 +36,7 @@ export const setupRoomSuite = () => {
   });
 
   const createMember = async () => {
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId });
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(invite.id);
     return user;

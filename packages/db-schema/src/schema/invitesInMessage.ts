@@ -30,6 +30,7 @@ export const invitesInMessage = pgTable(
       check("invites_id_length_check", sql`LENGTH(${id}) = ${sql.raw(INVITE_ID_LENGTH.toString())}`),
       check("invites_max_uses_check", sql`${maxUses} IS NULL OR ${maxUses} > 0`),
       check("invites_uses_check", sql`${uses} >= 0`),
+      check("invites_uses_max_uses_check", sql`${maxUses} IS NULL OR ${uses} <= ${maxUses}`),
     ],
     schema: messageSchema,
   },

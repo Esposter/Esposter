@@ -5,7 +5,7 @@ import { useModerationLogStore } from "@/store/message/moderation/log";
 
 export const useReadModerationLog = (
   roomId: RoomInMessage["id"],
-  filters?: MaybeRefOrGetter<Pick<ReadModerationLogInput, "actorUserId" | "targetUserId" | "type">>,
+  filters: MaybeRefOrGetter<Pick<ReadModerationLogInput, "actorUserId" | "targetUserId" | "type">>,
 ) => {
   const { $trpc } = useNuxtApp();
   const moderationLogStore = useModerationLogStore();

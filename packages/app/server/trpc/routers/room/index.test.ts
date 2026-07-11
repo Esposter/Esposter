@@ -308,7 +308,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const readInvite = await roomCaller.readInvite(newInvite.id);
     const userId = getMockSession().user.id;
 
@@ -332,7 +332,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
     expect(myInvite).toStrictEqual(newInvite);
@@ -353,7 +353,7 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     await roomCaller.createInvite({
       expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
-      maxUses: null,
+      maxUses: 0,
       roomId: newRoom.id,
     });
     vi.setSystemTime(dayjs.duration(31, "minutes").asMilliseconds());
@@ -366,8 +366,8 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const firstInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
-    const secondInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const firstInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
+    const secondInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const myInvite = await roomCaller.readMyInvite({ roomId: newRoom.id });
 
     expect(secondInvite.id).not.toBe(firstInvite.id);
@@ -393,7 +393,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
     const joinedRoom = await roomCaller.joinRoom(newInvite.id);
 
@@ -405,7 +405,7 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: null,
+      expireAfterMinutes: 0,
       maxUses,
       roomId: newRoom.id,
     });
@@ -422,7 +422,7 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: null,
+      expireAfterMinutes: 0,
       maxUses,
       roomId: newRoom.id,
     });
@@ -441,7 +441,7 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
       expireAfterMinutes: InviteExpireAfterMinutesMap["30 minutes"],
-      maxUses: null,
+      maxUses: 0,
       roomId: newRoom.id,
     });
     vi.setSystemTime(dayjs.duration(31, "minutes").asMilliseconds());
@@ -466,7 +466,7 @@ describe("room", () => {
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(
-      roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: directMessage.id }),
+      roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: directMessage.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
     );
@@ -551,8 +551,8 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: null,
-      maxUses: null,
+      expireAfterMinutes: 0,
+      maxUses: 0,
       roomId: newRoom.id,
     });
     const userId = getMockSession().user.id;
@@ -567,8 +567,8 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: null,
-      maxUses: null,
+      expireAfterMinutes: 0,
+      maxUses: 0,
       roomId: newRoom.id,
     });
     const onJoinRoom = await roomCaller.onJoinRoom([newRoom.id]);
@@ -586,8 +586,8 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: null,
-      maxUses: null,
+      expireAfterMinutes: 0,
+      maxUses: 0,
       roomId: newRoom.id,
     });
     const { user } = await mockSessionOnce(mockContext.db);
@@ -615,8 +615,8 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await roomCaller.createInvite({
-      expireAfterMinutes: null,
-      maxUses: null,
+      expireAfterMinutes: 0,
+      maxUses: 0,
       roomId: newRoom.id,
     });
     const { user } = await mockSessionOnce(mockContext.db);
@@ -677,7 +677,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(invite.id);
     vi.advanceTimersByTime(1);

@@ -292,7 +292,7 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
@@ -775,7 +775,7 @@ describe("message", () => {
 
       const newRoom = await roomCaller.createRoom({ name });
       await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 2 });
-      const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite.id);
       const message = getMessage(user.id);
@@ -796,7 +796,7 @@ describe("message", () => {
 
       const newRoom = await roomCaller.createRoom({ name });
       await roomCaller.updateRoom({ id: newRoom.id, slowmodeMs: 1 });
-      const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite.id);
       const message = getMessage(user.id);
@@ -819,7 +819,7 @@ describe("message", () => {
 
       const newRoom = await roomCaller.createRoom({ name });
       await mockContext.db.insert(roomFiltersInMessage).values({ roomId: newRoom.id, words: ["spam"] });
-      const invite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+      const invite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite.id);
       await mockSessionOnce(mockContext.db, user);

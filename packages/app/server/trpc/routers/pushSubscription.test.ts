@@ -93,7 +93,7 @@ describe("pushSubscription", () => {
     await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
     await userToRoomCaller.updateUserToRoom({ notificationType: NotificationType.All, roomId: newRoom.id });
 
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
 
@@ -127,7 +127,7 @@ describe("pushSubscription", () => {
     const newRoom = await roomCaller.createRoom({ name });
     await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
 
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
 
@@ -163,7 +163,7 @@ describe("pushSubscription", () => {
     const newRoom = await roomCaller.createRoom({ name });
     await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
 
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
 
@@ -183,7 +183,7 @@ describe("pushSubscription", () => {
     const newRoom = await roomCaller.createRoom({ name });
     await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
 
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
 

@@ -123,7 +123,7 @@ describe("emoji", () => {
       messageRowKey: newMessage.rowKey,
       partitionKey: newRoom.id,
     });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
     await mockSessionOnce(mockContext.db, user);
@@ -149,7 +149,7 @@ describe("emoji", () => {
       messageRowKey: newMessage.rowKey,
       partitionKey: newRoom.id,
     });
-    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: null, maxUses: null, roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInvite.id);
     await mockSessionOnce(mockContext.db, user);
