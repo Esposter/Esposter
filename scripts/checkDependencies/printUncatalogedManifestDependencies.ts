@@ -7,6 +7,7 @@ import { printTable } from "@/checkDependencies/printTable";
 export const printUncatalogedManifestDependencies = (dependencies: ManifestDependency[], color: ColorPalette): void => {
   if (dependencies.length === 0) return;
 
+  console.log(color.red("Dependencies not using catalog:/workspace: specifiers"));
   printTable(
     ["Package", "Specifier", "Dependents"],
     dependencies.map(({ field, manifestName, pkg, specifier }) => {
