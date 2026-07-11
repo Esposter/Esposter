@@ -5,7 +5,7 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { authClient } from "@/services/auth/authClient";
 import { datasetToDataSource } from "@/services/resource/file/dataSource/datasetToDataSource";
 import { useAlertStore } from "@/store/alert";
-import { getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
+import { getResultAsync, MAX_READ_LIMIT, noop, withFinalizerAsync } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
@@ -19,7 +19,7 @@ const selectedSurveyId = ref<string>();
 watch(dialog, async (newDialog) => {
   if (!newDialog) return;
   await getResultAsync(async () => {
-    ({ items: surveys.value } = await $trpc.survey.readResources.query());
+    ({ items: surveys.value } = await $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }));
   }).match(noop, (error) => createAlert(error.message, "error"));
 });
 </script>

@@ -10,7 +10,7 @@ import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { escapeHtml } from "@/util/text/escapeHtml";
 import { ResourceType } from "@esposter/db-schema";
-import { getResultAsync, noop, RoutePath } from "@esposter/shared";
+import { getResultAsync, MAX_READ_LIMIT, noop, RoutePath } from "@esposter/shared";
 import grapesJSMJML from "grapesjs-mjml";
 
 const { $trpc } = useNuxtApp();
@@ -37,7 +37,7 @@ watchImmediate(
   async (newSession) => {
     if (!newSession) return;
     await getResultAsync(async () => {
-      const { items } = await $trpc.survey.readResources.query();
+      const { items } = await $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT });
       publishedSurveys.value = items.filter(({ publication }) => publication);
     }).match(noop, (error) => createAlert(error.message, "error"));
   },

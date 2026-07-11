@@ -22,6 +22,8 @@ export const useSurveyCreator = () => {
   const isDark = useIsDark();
   // The creator needs the loaded model at construction, so the blade renders a skeleton until it exists
   const creator = shallowRef<SurveyCreatorModel>();
+  // Captured at setup so unmount can undo the global prototype patch — remounting would otherwise stack wrappers
+  const removeLogoImage = LogoImageViewModel.prototype.remove;
 
   onMounted(async () => {
     await loadContent();
@@ -82,15 +84,15 @@ export const useSurveyCreator = () => {
       });
     });
     // Add all the possible delete file events
-    const remove = LogoImageViewModel.prototype.remove;
     LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (model: LogoImageViewModel) => {
       const url = model.survey.logo;
-      remove(model);
+      removeLogoImage(model);
+      if (!url) return;
       await deleteFile(url);
     });
     newCreator.themeEditor.themeModel.onPropertyChanged.add(async (_themeEditor, { name, newValue, oldValue }) => {
       if (name === getPropertyNames<ThemeTabPlugin["themeModel"]>().backgroundImage) {
-        if (!newValue) await deleteFile(oldValue);
+        if (!newValue && oldValue) await deleteFile(oldValue);
         return;
       }
     });
@@ -117,6 +119,10 @@ export const useSurveyCreator = () => {
       }
     });
     creator.value = newCreator;
+  });
+
+  onUnmounted(() => {
+    LogoImageViewModel.prototype.remove = removeLogoImage;
   });
 
   watchImmediate([creator, isDark], ([newCreator, newIsDark]) => {
