@@ -70,6 +70,7 @@ Write for a new engineer reading in the browser, not for an agent grepping a rep
 - Self-contained over link-chained: a page must be understandable without following links; links add depth, never required context.
 - Keep the **Key Files** table on feature pages — path + one-line role. It's the bridge from docs to code.
 - Nothing is frozen: trim, rename, and split freely as understanding improves — but never merge files (see single-responsibility rule).
+- **No deprecated or stale content, ever.** When something is superseded, delete it and fix every reference in the same change — no deprecation stubs, no "moved to X" notices. Why-not rationale lives only in `deferred/`/`rejected/` pages, and only when genuinely needed.
 
 ## Diagram mandate
 
