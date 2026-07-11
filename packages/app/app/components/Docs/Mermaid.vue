@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getResultAsync } from "@esposter/shared";
+import mermaid from "mermaid";
 import { useTheme } from "vuetify";
 
 interface MermaidProps {
@@ -12,14 +13,15 @@ const container = useTemplateRef("container");
 const id = useId();
 
 onMounted(async () => {
-  const { default: mermaid } = await import("mermaid");
   mermaid.initialize({ startOnLoad: false, theme: theme.global.current.value.dark ? "dark" : "default" });
   const result = await getResultAsync(async () => {
     const { svg } = await mermaid.render(`mermaid-${id}`, code);
     return svg;
   });
-  // On a parse failure we keep showing the raw diagram source
-  if (result.isOk() && container.value) container.value.innerHTML = result.value;
+  // On a render failure we keep showing the raw diagram source
+  result.match((svg) => {
+    if (container.value) container.value.innerHTML = svg;
+  }, console.error);
 });
 </script>
 

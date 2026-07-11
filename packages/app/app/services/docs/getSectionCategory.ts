@@ -3,7 +3,7 @@ import { DocsCategorySectionsMap } from "@/services/docs/DocsCategorySectionsMap
 
 const SectionCategoryMap = new Map<string, DocsCategory>(
   Object.entries(DocsCategorySectionsMap).flatMap(([category, slugs]) =>
-    slugs.map((slug) => [slug, category as DocsCategory] as const),
+    slugs.map((slug) => [slug, category] as const),
   ),
 );
 

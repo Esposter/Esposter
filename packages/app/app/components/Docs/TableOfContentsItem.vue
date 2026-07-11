@@ -9,7 +9,7 @@ interface TableOfContentsItemProps {
 
 const { depth, link, visibleIds } = defineProps<TableOfContentsItemProps>();
 const isActive = computed(() => visibleIds.includes(link.id));
-// window is not reachable from template expressions, so the handler lives in script
+// Window is not reachable from template expressions, so the handler lives in script
 const onClick = () => {
   window.document.getElementById(link.id)?.scrollIntoView({ behavior: "smooth" });
   window.history.replaceState(window.history.state, "", `#${link.id}`);

@@ -24,6 +24,7 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 
 - Always use `getResult(() => expr)` / `getResultAsync(() => asyncExpr)`. Never call `fromThrowable` or `ResultAsync.fromPromise` directly.
 - Never leave a `Result`/`ResultAsync` unhandled — finish every chain with `.match(...)`, `.unwrapOr(...)`, or `._unsafeUnwrap()`.
+- `.isOk()` / `.isErr()` are BANNED — branch with `.match(...)` instead so both branches are handled in one place. To rethrow/cleanup on failure, `throw` inside the err handler (works in sync and async handlers alike); to fall back, `.unwrapOr(fallback)`.
 - Never `catch {}` (silent swallow). Never `console.warn` — always `.orTee(console.error)`.
 - Never `void` a ResultAsync — always `await` (ResultAsync never rejects, so awaiting is safe).
 - Never end a fire-and-forget chain with `.orTee(handler)` alone (lint flags it) — use `.match(noop, handler)`.
@@ -74,16 +75,18 @@ return getResultAsync(() => auth.save(value)).match(
 
 ### Discriminated error types
 
-For `instanceof` checks on the error, use `.match()` or `.isErr()`:
+For `instanceof` checks on the error, branch inside the `.match()` err handler (never `.isErr()` + `.error`):
 
 ```typescript
-const result = await getResultAsync(() => op());
-if (result.isErr()) {
-  if (result.error instanceof DOMException) createAlert(result.error.message, "error");
-  else console.error(result.error);
-  return;
-}
-const value = result.value;
+await getResultAsync(() => op()).match(
+  (value) => {
+    doSomethingWith(value);
+  },
+  (error) => {
+    if (error instanceof DOMException) createAlert(error.message, "error");
+    else console.error(error);
+  },
+);
 ```
 
 **A thrown value you want to `instanceof`-check on the err branch must extend `Error`.** `getResult`/`getResultAsync` route throws through `toAppError`, which passes `instanceof Error` through untouched but wraps anything else in `new Error(String(x), { cause: x })`. So a custom control-flow sentinel thrown to be caught later (e.g. an `ExitSignal` carrying an exit code) must `extends Error` — otherwise the err branch receives a plain `Error` and your `instanceof ExitSignal` silently fails (the original lands on `.cause`).

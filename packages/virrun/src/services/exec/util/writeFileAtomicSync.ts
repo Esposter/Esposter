@@ -1,4 +1,4 @@
-import { getResult } from "@esposter/shared";
+import { getResult, noop } from "@esposter/shared";
 import { renameSync, unlinkSync, writeFileSync } from "node:fs";
 // Atomic file write: write the payload to a pid-suffixed temp sibling, then rename it over the target. rename is
 // Atomic within a single filesystem, so a reader — or a racing writer from another `virrun -- <cmd>` process — never
@@ -9,11 +9,10 @@ export const writeFileAtomicSync = (filePath: string, data: string): void => {
   const temporaryPath = `${filePath}.${process.pid}.tmp`;
   writeFileSync(temporaryPath, data);
   // If the rename fails the temp sibling would be orphaned, so unlink it before rethrowing.
-  const result = getResult(() => {
+  getResult(() => {
     renameSync(temporaryPath, filePath);
-  });
-  if (result.isErr()) {
+  }).match(noop, (error) => {
     unlinkSync(temporaryPath);
-    throw result.error;
-  }
+    throw error;
+  });
 };

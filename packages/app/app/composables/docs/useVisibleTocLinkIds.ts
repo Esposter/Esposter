@@ -2,34 +2,34 @@ import type { TocLink } from "@nuxt/content";
 
 const getTocLinkIds = (links: TocLink[]): string[] =>
   links.flatMap((link) => [link.id, ...(link.children ? getTocLinkIds(link.children) : [])]);
-
-// Tracks every heading currently on screen so the table of contents can highlight all of them.
-// The last non-empty set is kept when scrolling between headings so the highlight never drops out.
+// A section spans from its heading to the next heading, so every section overlapping the viewport is
+// Highlighted — reading the content under one heading while the next heading is on screen highlights both.
 export const useVisibleTocLinkIds = (links: MaybeRefOrGetter<TocLink[]>) => {
   const visibleIds = ref<string[]>([]);
-  const intersectingIds = new Set<string>();
-  let observer: IntersectionObserver | undefined;
 
-  onMounted(() => {
-    const ids = getTocLinkIds(toValue(links));
-    observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries)
-          if (entry.isIntersecting) intersectingIds.add(entry.target.id);
-          else intersectingIds.delete(entry.target.id);
-        if (intersectingIds.size > 0) visibleIds.value = ids.filter((id) => intersectingIds.has(id));
-      },
-      { rootMargin: "0% 0% -30% 0%" },
-    );
-    for (const id of ids) {
+  const updateVisibleIds = () => {
+    const headings = getTocLinkIds(toValue(links)).flatMap((id) => {
       const element = window.document.getElementById(id);
-      if (element) observer.observe(element);
-    }
-  });
+      return element ? [{ element, id }] : [];
+    });
+    const firstHeading = headings[0];
+    if (!firstHeading) return;
+    // Headings set scroll-margin-top to clear the sticky app bar + category tabs, so reuse it as the
+    // Effective top of the viewport instead of duplicating the offset here
+    const viewportTop = Number.parseFloat(window.getComputedStyle(firstHeading.element).scrollMarginTop) || 0;
+    const tops = headings.map(({ element }) => element.getBoundingClientRect().top);
+    const newVisibleIds = headings.filter(({ id }, index) => {
+      const sectionTop = tops[index] ?? 0;
+      const sectionBottom = tops[index + 1] ?? Number.POSITIVE_INFINITY;
+      return sectionBottom > viewportTop && sectionTop < window.innerHeight;
+    });
+    // Keep the last non-empty set (e.g. a long intro before the first heading) so the highlight never drops out
+    if (newVisibleIds.length > 0) visibleIds.value = newVisibleIds.map(({ id }) => id);
+  };
 
-  onUnmounted(() => {
-    observer?.disconnect();
-  });
+  useEventListener("scroll", updateVisibleIds, { passive: true });
+  useEventListener("resize", updateVisibleIds, { passive: true });
+  onMounted(updateVisibleIds);
 
   return visibleIds;
 };

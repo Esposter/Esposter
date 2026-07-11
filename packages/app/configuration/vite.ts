@@ -22,7 +22,14 @@ export const vite: NuxtConfig["vite"] = {
       // Three's inspector loads extension assets relative to import.meta.url, which breaks from Vite's cache.
       "three/examples/jsm/inspector/Inspector.js",
     ],
-    include: [...commonjsDeps, "debug", "pdfjs-dist"],
+    include: [
+      ...commonjsDeps,
+      "debug",
+      // DocsMermaid is only loaded on docs pages, so mermaid is discovered late — pre-bundle it so that
+      // Discovery doesn't trigger a re-optimization that leaves its chunks referencing stale dep hashes
+      "mermaid",
+      "pdfjs-dist",
+    ],
   },
   plugins: [fixAjv],
 };
