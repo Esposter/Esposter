@@ -1,6 +1,6 @@
 # virrun — CI
 
-How the two gates are enforced in CI, and where the warm cache lives. Design rationale lives in the [benchmarking](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/benchmarking.md) and [correctness](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/correctness.md) specs.
+How the two gates are enforced in CI, and where the warm cache lives. Design rationale lives in the [benchmarking](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/benchmarking.md) and [correctness](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/correctness.md) docs pages.
 
 ## The two gates
 
@@ -11,7 +11,7 @@ A change that fails either gate does not ship. Correctness beats speed — a fas
 | **Differential correctness** | A backend is observably identical to native (exit code + stdout + stderr) | The `*.differential.test.ts` files are plain Vitest. They run in the 🏗️ CI coverage shards (bubblewrap enabled), so a divergence **hard-fails the build**.                                  |
 | **Speed**                    | A sandbox path beats the native baseline                                  | The committed `*.bench.md` from local `pnpm bench` is the offline diff gate; 🏎️ Bench runs plain `vitest bench` shards every push as a smoke signal that every `*.bench.ts` still executes. |
 
-A hard wall-clock CI fail was considered and rejected — shared-runner wall-clock is too noisy for a pass/fail bar (it would be flaky-red). CodSpeed (simulation dashboard, PR regression comments, flamegraphs, and the walltime/memory modes on its bare-metal runners) previously covered regression detection but was removed: the runs exceeded the free tier's 600 min/month, after which every upload failed and posted a red commit status. → [decision](https://github.com/Esposter/Esposter/blob/main/features/virrun/out-of-scope/ci-walltime-gate.md)
+A hard wall-clock CI fail was considered and rejected — shared-runner wall-clock is too noisy for a pass/fail bar (it would be flaky-red). CodSpeed (simulation dashboard, PR regression comments, flamegraphs, and the walltime/memory modes on its bare-metal runners) previously covered regression detection but was removed: the runs exceeded the free tier's 600 min/month, after which every upload failed and posted a red commit status. → [decision](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/rejected/ci-walltime-gate.md)
 
 ### Run the gates locally
 
@@ -39,6 +39,6 @@ The snapshot upper is built with pnpm `package-import-method=copy`, so it is sel
 
 ## Task cache in CI
 
-The [task cache](https://github.com/Esposter/Esposter/blob/main/features/virrun/specs/config-and-cache.md) (skip unchanged builds) is **disabled in CI** and `~/.virrun/tasks` is deliberately **not** persisted across runs. It is a dev-loop lever: a hit needs the command, lockfile, and whole working tree to be unchanged, but every CI push is a fresh commit that changes the working-tree hash — so hits would be ~0 while the per-command source hashing (`git ls-files -s` + `git diff`) only adds cost. `isTaskCacheEnabled` short-circuits when the `CI` env var is truthy, so the CI jobs pay neither the hashing nor a lookup. The pnpm store cache + `package-builds` artifact above are what make CI fast; the task cache is orthogonal and local.
+The [task cache](https://github.com/Esposter/Esposter/blob/main/packages/app/content/docs/virrun/task-cache.md) (skip unchanged builds) is **disabled in CI** and `~/.virrun/tasks` is deliberately **not** persisted across runs. It is a dev-loop lever: a hit needs the command, lockfile, and whole working tree to be unchanged, but every CI push is a fresh commit that changes the working-tree hash — so hits would be ~0 while the per-command source hashing (`git ls-files -s` + `git diff`) only adds cost. `isTaskCacheEnabled` short-circuits when the `CI` env var is truthy, so the CI jobs pay neither the hashing nor a lookup. The pnpm store cache + `package-builds` artifact above are what make CI fast; the task cache is orthogonal and local.
 
 The **capability cache** (`~/.virrun/capability.json`) is likewise not worth persisting in CI — a fresh runner re-probes once, cheaply, on the first routed command. Its payoff is the local dev loop, where every `virrun -- <cmd>` is a new process that would otherwise re-run the probe (on win32, three `wsl.exe` round-trips).

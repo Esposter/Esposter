@@ -55,7 +55,7 @@ After the command exits — **whatever the exit code** — reconcile the top upp
 2. **Skip snapshot-lower-shadowing paths** and prepare outputs (structural, above). Source-tree paths and genuinely new repo content always flush.
 3. **Bulk copy-out, last** — sequential over the (small) diff, far cheaper than the random I/O the toolchain did in RAM.
 
-The flush runs on non-zero exits too, because native-equivalence taken literally means the host is left exactly as the tool left it: `eslint --fix`/`oxfmt` exit non-zero when unfixable errors remain yet still rewrote the files they could fix, and a failed build can leave a partial `dist/` — native persists both, so the flush does too. Only the **task cache** is gated on exit 0 (`onPersist` fires only then), so a failed run is flushed but never replayed.
+The flush runs on non-zero exits too, because native-equivalence taken literally means the host is left exactly as the tool left it: `eslint --fix`/`oxfmt` exit non-zero when unfixable errors remain yet still rewrote the files they could fix, and a failed build can leave a partial `dist/` — native persists both, so the flush does too. Only the [task cache](/docs/virrun/task-cache) is gated on exit 0 (`onPersist` fires only then), so a failed run is flushed but never replayed.
 
 ## Execution locus and the xattr seam
 
