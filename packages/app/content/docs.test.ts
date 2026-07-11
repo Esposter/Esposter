@@ -1,8 +1,7 @@
 // @vitest-environment happy-dom
+import mermaid from "mermaid";
 import { glob, readFile } from "node:fs/promises";
 import { join } from "node:path";
-
-import mermaid from "mermaid";
 import { describe, expect, test } from "vitest";
 
 const docsDirectory = join(import.meta.dirname, "docs");
@@ -25,6 +24,6 @@ describe(mermaid.parse, () => {
   test.each(diagrams)("$page diagram $ordinal parses", async ({ code }) => {
     expect.hasAssertions();
 
-    await expect(mermaid.parse(code)).resolves.toBeTruthy();
+    await expect(mermaid.parse(code)).resolves.toBeDefined();
   });
 });
