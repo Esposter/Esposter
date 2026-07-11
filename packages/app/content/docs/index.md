@@ -10,7 +10,7 @@ Esposter is a social platform monorepo — a nice and casual place for posting r
 ## How these docs are organized
 
 - **[Architecture](/docs/architecture)** — cross-cutting, as-built system explanations: the resource model, datasets, publishing, Azure services, serialization, tooling. Standards live here; product pages only apply them.
-- **Product areas** — [posts](/docs/posts), [esbabbler](/docs/esbabbler), [platform](/docs/platform), [file table editor](/docs/file-table-editor), [clicker](/docs/clicker), [dungeons](/docs/dungeons), [fluid simulator](/docs/fluid-simulator), [achievements](/docs/achievements), [virrun](/docs/virrun), [vue-phaserjs](/docs/vue-phaserjs), [infra](/docs/infra). Each area has an overview, one page per implemented feature, `deferred/` (not-yet ideas with revisit triggers) and `rejected/` (won't-do ideas) folders, and a `roadmap` of open work.
+- **Product areas** — [posts](/docs/posts), [esbabbler](/docs/esbabbler), [platform](/docs/platform), [file table editor](/docs/file-table-editor), [clicker](/docs/clicker), [dungeons](/docs/dungeons), [fluid simulator](/docs/fluid-simulator), [anime](/docs/anime), [achievements](/docs/achievements), [virrun](/docs/virrun), [vue-phaserjs](/docs/vue-phaserjs), [infra](/docs/infra). Each area has an overview, one page per implemented feature, `deferred/` (not-yet ideas with revisit triggers) and `rejected/` (won't-do ideas) folders, and a `roadmap` of open work.
 - **[Proposals](/docs/proposals)** — designs that are **not implemented yet**. Everything under a product area describes shipped behavior; everything under proposals is future work awaiting implementation.
 
 ## API reference
