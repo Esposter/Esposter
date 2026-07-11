@@ -117,6 +117,24 @@ Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped b
 | Won't do | `<area>/decisions/<idea>.md` | One page with rationale                                                                 |
 | Deferred | `<area>/decisions/<idea>.md` | One page with rationale + revisit trigger                                               |
 
+## Sequential per-area work — never parallelize
+
+**Never fan out to parallel subagents for docs/feature work.** Parallel agents each re-read the same context cold and exhaust the token budget on reading before doing any real work. All work happens in the main session, **one product area at a time, to completion, before touching the next area**.
+
+Modularize by area, and take each area through its **full lifecycle in one sequential pass**:
+
+1. **Migrate** — move/rewrite that area's existing docs into `packages/app/content/docs/<area>/` per the layout above.
+2. **Refactor** — split consolidated pages to single-responsibility files, fix links, promote repo-wide rules to `architecture/`.
+3. **Ideate exhaustively** — enumerate every new feature that could possibly make sense for the area, not just obvious ones.
+4. **Triage every idea** into exactly one bucket, and **every to-implement idea gets a full spec**:
+   - **Implement** → write a full proposal page `proposals/<area>/<name>.md` (one spec per feature — modular, never a combined plan page), then add a `roadmap.md` checkbox linking to it. The roadmap is only the prioritized index over the specs; the specs ARE the plan. A bare checkbox with no spec is an unfinished triage.
+   - **Deferred** → `decisions/<idea>.md` with rationale + revisit trigger
+   - **Out of scope / rejected** → `decisions/<idea>.md` with rationale
+
+Only when an area's lifecycle is complete (and the PR budget below permits) move to the next area. This focus per product is the point — depth over breadth.
+
+Docs sessions produce **specs, not code**: the deliverable of ideation/triage is the complete proposal set. Implementation happens later in separate sessions (possibly a different model) that pick up one proposal, build it, then rewrite the proposal as an as-built feature page (the Lifecycle table below). A proposal must therefore be self-contained enough for a cold implementation session to execute without this conversation's context.
+
 ## Batch size — PR review budget
 
 Docs work lands in PRs reviewed by CodeRabbit free tier (hard cap ~150 files). Keep every chunk of work to **~100 changed files** (`git status --porcelain -uall | wc -l`) so there is buffer for lockfiles and stragglers. Before starting a sweep, count what's already dirty; when the budget is reached, stop and hand back for compaction/PR — don't start a new area you can't finish inside the budget. Large deletions (retiring an old tree) are their own PR. Chunk by area/folder (e.g. "feature pages this PR, decision pages next"), never by squeezing multiple topics into one file — the single-responsibility rule always wins over file count.
