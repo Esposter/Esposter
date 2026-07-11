@@ -13,6 +13,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Resources](/docs/architecture/resources)               | The standard for product persistence and surface — resource model, capabilities, factory |
 | [Datasets](/docs/architecture/datasets)                 | The standard for serving tabular data — contract, DatasetProvider capability, row cap    |
 | [Publishing](/docs/architecture/publishing)             | The Publishable capability — versioned publish copy + rate-limited public read           |
+| [Auth](/docs/architecture/auth)                         | better-auth OAuth setup, session middleware, and the authed procedure chain              |
 | [Azure services](/docs/architecture/azure-services)     | Azure service ownership, the storage split, event flows, and the real-time layer model   |
 | [Environment](/docs/architecture/environment)           | Environment detection across the three Nuxt runtime contexts                             |
 | [File uploads](/docs/architecture/file-uploads)         | The two-step Azure Blob SAS upload pattern and upload procedure inventory                |
