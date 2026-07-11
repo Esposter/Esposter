@@ -46,13 +46,13 @@ flowchart LR
 
 ## Keyboard
 
-- `Ctrl+K` opens the dialog mount anywhere (authed platform pages); `Esc` closes; `↑`/`↓` move through a flat list across groups; `Enter` activates; `Tab` stays trapped in the panel. ARIA: the field is `role="combobox"` with `aria-expanded`/`aria-activedescendant`, the panel `role="listbox"`.
+- `Ctrl+K` opens the dialog mount anywhere (authed platform pages); `Esc` closes; `↑`/`↓` move through a flat list across groups; `Enter` activates. `Tab` stays trapped in the panel in the `SearchDialog` mount only — the inline Home mount keeps normal document tab order. ARIA: the field is `role="combobox"` with `aria-expanded`/`aria-activedescendant`, the panel `role="listbox"`.
 - Azure `G`-chord shortcuts (via `useMagicKeys` or the existing keyboard-shortcut components): `G /` focus search (the Home placeholder already advertises this — currently unimplemented), `G H` → Home, `G A` → `/resources/all`, `G N` → notifications panel ([notifications](/docs/proposals/platform/notifications)).
 - `?` opens a shortcuts overlay dialog listing all bindings (Azure has the same panel). Chords are suppressed while focus is in an input/editor.
 
 ## Relevance ladder
 
-1. **Now (free)**: rank prefix matches first — `ORDER BY name ILIKE '{q}%' DESC, updatedAt DESC` in `readResources` (keep `createResourcesWhere` as the single filter source).
+1. **Now (free)**: rank prefix matches first, the remaining substring matches after, newest-first within each tier — `orderBy(desc(ilike(resources.name, prefix)), desc(resources.updatedAt))` in `readResources`, where `prefix` is the search value with `%` appended, bound through the query builder (never interpolated into SQL). Keep `createResourcesWhere` as the single filter source.
 2. **Postgres migration**: `pg_trgm` extension + GIN index on `resources.name`, rank by `similarity()` — typo tolerance at zero service cost.
 3. **Azure AI Search** — [deferred](/docs/platform/deferred/azure-ai-search); nothing at current volumes needs it.
 

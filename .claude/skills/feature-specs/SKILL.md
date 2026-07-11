@@ -134,7 +134,7 @@ Before implementing cross-cutting features, write or update the spec enough to a
 AI-assisted development reference for that feature only — not user docs. Include:
 
 - Key file map (component → file path → one-line role)
-- Data flows (sequence diagrams or arrow notation)
+- Data flows (Mermaid diagrams — see Core Principles)
 - DB schema table (key fields only; link to full schema in db-schema package)
 
 Keep it current. Stale architecture files mislead AI assistants more than no file at all.

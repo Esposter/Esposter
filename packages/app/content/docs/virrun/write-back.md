@@ -63,7 +63,7 @@ The flush walks overlay internals (char-dev whiteouts, `user.overlay.*` xattrs) 
 
 ## Equivalence gate
 
-Write-back is unprovable by inspection — it is gated by an **equivalence test** (`persistRun.equivalence.test.ts`), CI-enforced beside the differential suite: capture one warm snapshot, run commands with `persistRun`, and assert the produced host files match a native run while `node_modules` never reaches the host. The corpus exercises the flush **mechanism** one overlay-entry shape per case: a new top-level file, an in-place edit (the `oxfmt`/`eslint --fix` shape), a nested create under a new directory (the ctix-barrel/`db:gen` shape), a whiteout delete, the `node_modules` drop, and the partial write a non-zero exit still flushes. Every fixed bug becomes a golden regression case. See [quality gates](/docs/virrun/quality-gates).
+Write-back is unprovable by inspection — it is gated by an **equivalence test** (`persistRun.equivalence.test.ts`), CI-enforced beside the differential suite: capture one warm snapshot, run commands with `persistRun`, and assert the produced host files match a native run while `node_modules` never reaches the host. The corpus exercises the flush **mechanism** one overlay-entry shape per case: a new top-level file, an in-place edit (the `oxfmt`/`eslint --fix` shape), a nested create under a new directory (the ctix-barrel/`db:gen` shape), a whiteout delete, the `node_modules` drop, and the partial write a non-zero exit still flushes. Every fixed bug becomes a golden regression case.
 
 ## Key files
 
@@ -83,7 +83,7 @@ Paths relative to `packages/virrun/src/`.
 ## Notes
 
 - **Always warm; persist is the only axis.** A cold-install-per-mutation design would defeat "speedup everywhere", and re-flushing `node_modules` would defeat "never touches disk" — both avoided by forking the snapshot and flushing only the top upper.
-- **`pnpm install` is the snapshot-creation path, not a persist run.** Its output is the warm snapshot, not host `node_modules` — see the materialize-node-modules entry in [decisions](/docs/virrun/decisions).
+- **`pnpm install` is the snapshot-creation path, not a persist run.** Its output is the warm snapshot, not host `node_modules` — materializing `node_modules` onto the host was rejected.
 - The persist-vs-ephemeral choice lives in the orchestrator (`persistRun` parallels `forkSnapshot`), not an `ExecOptions` flag — the backend stays a pure executor of an `overlayLayers` shape.
-- **No new config or per-command list.** Persist is the default for a normal `virrun -- <cmd>`; the prefix remains the sole switch, consistent with [adoption](/docs/virrun/adoption).
+- **No new config or per-command list.** Persist is the default for a normal `virrun -- <cmd>`; the prefix remains the sole switch, consistent with the adoption model.
 - **Concurrency**: the snapshot lower is RO and shared safely; the only remaining race is two persist runs flushing the same host path at once — last-writer-wins, exactly as native.

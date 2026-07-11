@@ -37,7 +37,7 @@ Azure "All resources" parity for `/resources/all`: filter pills, URL-synced stat
 
 - **Name cell is a real `:to` link** (middle-click/ctrl-click work); row click keeps `navigateTo` for the rest of the row.
 - **Context menu** on right-click (positioned `v-menu`): Open, Open in new tab, Copy link, Rename, Delete — reusing the blade command-bar dialogs.
-- **Export CSV**: serialize the current filtered result (re-query with the full count as limit) through the existing File CSV serializer; bulk-selection export uses the selected rows.
+- **Export CSV**: serialize the current filtered result through the existing File CSV serializer, re-querying the same filter in page-sized chunks up to a named `MAX_CSV_EXPORT_ROWS` cap — never a single query with the full count as its limit, so export cost stays bounded; hitting the cap truncates the export with a warning. Bulk-selection export uses the selected rows.
 - **Refresh** button re-runs `readResources` with current options.
 - **Empty states**: filters active → "No resources match your filters" + Clear-filters action; otherwise the existing no-resources `StyledEmptyState`; load failure → error state with Retry.
 

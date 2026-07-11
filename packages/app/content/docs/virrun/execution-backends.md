@@ -49,10 +49,10 @@ Hard limit: in-process JS only. Child processes and native binaries bypass it wi
 Makes **every** process, including spawned native binaries, see the RAM FS by moving the filesystem and isolation down to the OS:
 
 - **RAM filesystem** — `bubblewrap` supplies it directly: `--overlay-src <cwd>` is the read-only lower (the source) and `--tmp-overlay <cwd>` overmounts the working directory with an overlay whose upper is an invisible `tmpfs`. Reads hit the real source; all writes (`node_modules`, build output) stay in RAM.
-- **Isolation** — bubblewrap: one unprivileged tool collapses overlay + tmpfs + namespaces (`--unshare-all`, `--die-with-parent`). Unlike `vfs`, the `os` backend **never falls back to native at run time**: an unsupported host throws, because a silent un-isolated run would be a wrong answer disguised as success. (Backend _selection_ may still degrade to native before a run starts — see [adoption](/docs/virrun/adoption).)
+- **Isolation** — bubblewrap: one unprivileged tool collapses overlay + tmpfs + namespaces (`--unshare-all`, `--die-with-parent`). Unlike `vfs`, the `os` backend **never falls back to native at run time**: an unsupported host throws, because a silent un-isolated run would be a wrong answer disguised as success. (Backend _selection_ may still degrade to native before a run starts.)
 - **Dep store** — `.virrun/store/pnpm` is created lazily in the consuming repo, gitignored, bind-mounted writable into the sandbox, and exposed through pnpm env so deps download once. Package imports use copy because hardlinks cannot cross from the on-disk store into the RAM overlay.
-- **Windows bridge** — on win32, `createOsBackend` invokes `wsl.exe --exec bwrap ...` against the same bwrap argv. Windows cwd and bind paths are translated once through `wslpath` (memoized), and pnpm store env is translated before entering Linux, so the public backend contract stays unchanged. Source reads come from an ext4 mirror, not `/mnt/c` — see [WSL source sync](/docs/virrun/wsl-source-sync).
-- **macOS bridge** — deferred; there is no WSL equivalent to target. See [decisions](/docs/virrun/decisions).
+- **Windows bridge** — on win32, `createOsBackend` invokes `wsl.exe --exec bwrap ...` against the same bwrap argv. Windows cwd and bind paths are translated once through `wslpath` (memoized), and pnpm store env is translated before entering Linux, so the public backend contract stays unchanged. Source reads come from an ext4 mirror, not `/mnt/c`.
+- **macOS bridge** — deferred; there is no WSL equivalent to target.
 
 The acceptance test that proves the subprocess wall is broken: `pnpm install` on a repo with a native postinstall (sharp or esbuild) completes **fully in RAM**, isolated from the host, and the resulting `node_modules` is invisible to the real disk.
 
@@ -78,5 +78,5 @@ Paths relative to `packages/virrun/src/`.
 ## Notes
 
 - Native-binary support across platforms is impossible in pure JS; the `os` backend is Linux-core and bridged elsewhere — accepted, see the platform table in [architecture](/docs/virrun/architecture).
-- The shell layer (just-bash parser/builtins) is optional sugar for running shell scripts; it is **not** an exec engine and never spawns native binaries — see the pure-JS exec entry in [decisions](/docs/virrun/decisions).
+- The shell layer (just-bash parser/builtins) is optional sugar for running shell scripts; it is **not** an exec engine and never spawns native binaries — a pure-JS exec engine was rejected.
 - Do **not** use just-bash's FS abstraction — platformatic _is_ node's fs, not a parallel one, so in-process tooling and the module loader see virtual files for free.

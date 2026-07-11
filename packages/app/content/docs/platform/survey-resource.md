@@ -32,7 +32,7 @@ The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus
 
 - **Editor blade** — SurveyJS creator rendered inline (`useSurveyCreator`); autosave calls `survey.saveResourceContent({ content: { model }, contentVersion, id })`. SurveyJS keeps owning editor/preview state; the resource layer only sees model JSON in and out.
 - **Responses blade** — dataset table over `dataset.readDataset` (SurveyResponses reference), the first-look surface for results.
-- **Respondent page** — `/view/survey/[id]` via `ViewComponentMap`: an interactive published-view renderer (plain `survey-core` Model + theme, localStorage in-progress tracking) that writes responses. Email invite blocks link it via `RoutePath.View(ResourceType.Survey, id)`.
+- **Respondent page** — `/view/survey/[id]` via `ViewComponentMap`: an interactive published-view renderer (plain `survey-core` Model + theme) that writes responses. In-progress resume stores only a per-survey response id in localStorage — answers live solely in Azure Table — and the id is removed on submit, so a later visitor on a shared device cannot reopen a submitted response. Email invite blocks link it via `RoutePath.View(ResourceType.Survey, id)`.
 
 ## Key files
 

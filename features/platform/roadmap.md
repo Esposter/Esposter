@@ -33,17 +33,17 @@ Azure-portal parity program for the Resource Explorer: the consolidation shipped
 - [ ] Notifications bell ([specs/notifications.md](specs/notifications.md)): client-only store + app-bar bell + toasts for create/publish/delete/import/export outcomes
 - [ ] Save-conflict surface: stale `contentVersion` rejection → notification "Modified elsewhere — refresh to load the latest"
 
-## Later — schema-backed (one migration each, independently shippable)
+## Later — storage-backed (one Postgres migration or Azure table each, independently shippable)
 
 - [ ] Favorites + true recents ([specs/favorites-and-recents.md](specs/favorites-and-recents.md)): `resourceFavorites` table, star toggle in list + command bar, Home `Recent | Favorites` tabs; recents switch from `updatedAt` to last-_viewed_ (localStorage first, `resourceViews` table when cross-device matters)
 - [ ] Tags ([specs/tags.md](specs/tags.md)): `tags` jsonb (`Record<string, string>`, Azure name:value parity) + GIN index, Essentials tags row + edit dialog, tag filter pill
 - [ ] Activity log blade ([specs/activity-log.md](specs/activity-log.md)) — Azure Table only, no Postgres migration: audit trail (created/renamed/saved/published/imported) as a built-in blade on every type
 - [ ] Recycle bin ([specs/recycle-bin.md](specs/recycle-bin.md)): `deletedAt` soft delete, restore/purge, timer-driven auto-purge
-- [ ] `pg_trgm` relevance: extension + GIN index migration, `similarity()` ranking for typo tolerance (Azure AI Search stays [deferred](deferred/azure-ai-search.md))
+- [ ] `pg_trgm` relevance ([specs/global-search.md](specs/global-search.md)): extension + GIN index migration, `similarity()` ranking for typo tolerance (Azure AI Search stays [deferred](deferred/azure-ai-search.md))
 - [ ] Summary view toggle on `/all`: per-type count cards over a grouped `count` procedure
 
 ## Later — larger or multi-area
 
 - [ ] Publish history blade: list `{id}/published/{n}` snapshots with view/rollback — investigate first whether prior-version blob dirs are retained on re-publish
-- [ ] Dataset row-cap warning: surface "showing N of M" when a dataset hits the 10k cap ([deferred/dataset-row-cap-pagination.md](deferred/dataset-row-cap-pagination.md)) — a real survey can silently truncate today
+- [ ] Dataset row-cap warning: surface "showing N of M" when a dataset hits the 1000-row `AZURE_MAX_PAGE_SIZE` cap ([deferred/dataset-row-cap-pagination.md](deferred/dataset-row-cap-pagination.md)) — a real survey can silently truncate today
 - [ ] Share to esbabbler: send a published resource link into a room (pairs with [deferred/esbabbler-link-unfurl.md](deferred/esbabbler-link-unfurl.md))

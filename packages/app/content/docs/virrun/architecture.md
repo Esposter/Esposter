@@ -45,7 +45,7 @@ The two os-backend paths on the right are the persist axis: a **mutation run** f
 ## The five layers
 
 ```text
-┌─ orchestrator API (TS, node-compat)   ← public surface — /docs/virrun/orchestrator-and-cli
+┌─ orchestrator API (TS, node-compat)   ← public surface
 ├─ shell layer (optional)               ← parse/dispatch shell scripts
 ├─ exec + isolation layer   ★ THE CORE  ← run real processes, sandboxed — /docs/virrun/execution-backends
 ├─ snapshot / warm-fork layer           ← freeze + clone warm state; write-back flush
@@ -60,7 +60,7 @@ The two os-backend paths on the right are the persist axis: a **mutation run** f
 | Snapshot / fork  | **Build**                          | new — own overlayfs FS-only snapshot (CRIU/microVM deferred) |
 | Virtual FS       | **Reuse**                          | `@platformatic/vfs` → swap to `node:vfs`                     |
 
-The only layer no existing package solves is **exec + isolation**. Everything else is glue or reuse — see [prior art](/docs/virrun/prior-art). Write-back is a reconciliation step on the snapshot/fork layer: it reuses the same persistable overlay upper the snapshot capture uses, but flushes it to the host working directory instead of freezing it as a cache layer.
+The only layer no existing package solves is **exec + isolation**. Everything else is glue or reuse. Write-back is a reconciliation step on the snapshot/fork layer: it reuses the same persistable overlay upper the snapshot capture uses, but flushes it to the host working directory instead of freezing it as a cache layer.
 
 ## The subprocess wall (the crux)
 
@@ -83,8 +83,8 @@ Detail: [execution backends](/docs/virrun/execution-backends).
 1. **RAM filesystem** (`tmpfs` upperdir) — `node_modules` never touches disk.
 2. **Shared content-addressable store** — deps download once into `.virrun/store/pnpm`, then are reused by each sandbox.
 3. **Snapshot + warm-fork** — "clone repo + install" happens once; each run forks the warm state → near-instant repeated runs. The biggest win.
-4. **Task cache** — skip a persist run whose inputs are unchanged, keyed by `sha256(lockfile-hash + working-tree-hash + command)`; a hit skips the sandbox and replays the recorded output diff + streams. A dev-loop lever — off in CI, where a fresh commit means ~0 hits. See [config and cache](/docs/virrun/config-and-cache).
-5. **WSL source mirror + manifest delta (win32)** — the sandbox reads source from an ext4 mirror instead of `/mnt/c` (v9fs, 15–64× slower), kept fresh by a host-side manifest diff that ships only changed files. See [WSL source sync](/docs/virrun/wsl-source-sync).
+4. **Task cache** — skip a persist run whose inputs are unchanged, keyed by `sha256(lockfile-hash + working-tree-hash + command)`; a hit skips the sandbox and replays the recorded output diff + streams. A dev-loop lever — off in CI, where a fresh commit means ~0 hits.
+5. **WSL source mirror + manifest delta (win32)** — the sandbox reads source from an ext4 mirror instead of `/mnt/c` (v9fs, 15–64× slower), kept fresh by a host-side manifest diff that ships only changed files.
 
 A blunt caveat the numbers force: per **cold command**, the os backend is marginally _slower_ than native (inherent overlayfs read overhead, ~30–50% on the file I/O a command does) — the OS page cache already serves a warm native run's reads from RAM, so "RAM filesystem" is not a per-command speedup. Items 3–5 are the actual product: skip the install, skip the unchanged re-run, and don't pay bridge taxes for the privilege.
 

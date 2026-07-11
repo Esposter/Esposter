@@ -1,6 +1,6 @@
 ---
 title: Dataset Row-Cap Warning
-description: Surface "showing N of M rows" when a dataset read hits the 10k cap instead of silently truncating.
+description: Surface "showing N of M rows" when a dataset read hits the 1000-row AZURE_MAX_PAGE_SIZE cap instead of silently truncating.
 ---
 
 # Dataset Row-Cap Warning

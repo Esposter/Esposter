@@ -1,18 +1,21 @@
 <script setup lang="ts">
+import { ContentCollection } from "#shared/models/content/ContentCollection";
+import { RoutePath } from "@esposter/shared";
+
 definePageMeta({ key: (route) => route.path });
 
 const route = useRoute();
 const path = route.path.endsWith("/") ? route.path.slice(0, -1) : route.path;
 const [{ data: page }, { data: navigation }] = await Promise.all([
-  useAsyncData(`docs-page-${path}`, () => queryCollection("docs").path(path).first()),
-  useAsyncData("docs-navigation", () => queryCollectionNavigation("docs")),
+  useAsyncData(`docs-page-${path}`, () => queryCollection(ContentCollection.Docs).path(path).first()),
+  useAsyncData("docs-navigation", () => queryCollectionNavigation(ContentCollection.Docs)),
 ]);
 
 if (!page.value) throw createError({ fatal: true, statusCode: 404, statusMessage: "Page Not Found" });
 
-// Unwrap the single "/docs" root group; fall back to the full tree if the shape ever changes
+// Unwrap the single docs root group; fall back to the full tree if the shape ever changes
 const items = computed(
-  () => navigation.value?.find(({ path }) => path === "/docs")?.children ?? navigation.value ?? [],
+  () => navigation.value?.find(({ path }) => path === RoutePath.Docs)?.children ?? navigation.value ?? [],
 );
 
 useSeoMeta({ description: page.value.description, title: page.value.title });

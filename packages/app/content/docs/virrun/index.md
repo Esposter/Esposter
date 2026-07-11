@@ -16,7 +16,7 @@ Developer experience through speed — remove the two things that make the every
 - **Network-bound waits** — dependencies are fetched once into a shared store and reused; a warm snapshot skips install entirely.
 - **Disk I/O** — files live in a RAM filesystem; `node_modules` and build output never touch real disk.
 
-Plus: **ephemeral** (spin up / throw away, no polluted machine state), **reproducible** (same source + lockfile → same warm snapshot), **isolated** (a run cannot corrupt the host), and **drop-in** (existing commands run unchanged behind a single `virrun -- <cmd>` prefix — see [adoption](/docs/virrun/adoption)).
+Plus: **ephemeral** (spin up / throw away, no polluted machine state), **reproducible** (same source + lockfile → same warm snapshot), **isolated** (a run cannot corrupt the host), and **drop-in** (existing commands run unchanged behind a single `virrun -- <cmd>` prefix).
 
 ## The two gates
 
@@ -25,7 +25,7 @@ Every backend and speed feature must pass two non-negotiable gates, both CI-enfo
 1. **Faster than the native baseline** — tracked by committed `*.bench.md` artifacts diffed offline.
 2. **Observably correct** — exit code, stdout/stderr, produced files, and dependency tree identical to running the command natively, enforced by a differential Vitest harness that hard-fails CI on any divergence.
 
-Correctness beats speed; a fast wrong answer is worthless. Detail: [quality gates](/docs/virrun/quality-gates).
+Correctness beats speed; a fast wrong answer is worthless.
 
 ## Key concepts
 
@@ -33,25 +33,17 @@ Correctness beats speed; a fast wrong answer is worthless. Detail: [quality gate
 - **The subprocess wall** — an in-process VFS is blind to child processes; only the `os` backend puts a real `pnpm install` in RAM. See [architecture](/docs/virrun/architecture).
 - **Warm snapshot / fork** — "clone + install" happens once into a lockfile-hash-keyed overlay layer; each run forks it. See [snapshot and fork](/docs/virrun/snapshot-and-fork).
 - **Write-back** — a mutation command's produced files are flushed back to the host so disk matches native, while `node_modules` structurally never flushes. See [write-back](/docs/virrun/write-back).
-- **Task cache** — a persist run keyed by lockfile + working-tree + command hash; a hit skips the sandbox and replays the recorded diff and streams. See [config and cache](/docs/virrun/config-and-cache).
-- **The prefix is the switch** — `virrun -- <cmd>` opts one command in; removing it opts out. No allowlist, no env flag. See [adoption](/docs/virrun/adoption).
+- **Task cache** — a persist run keyed by lockfile + working-tree + command hash; a hit skips the sandbox and replays the recorded diff and streams.
+- **The prefix is the switch** — `virrun -- <cmd>` opts one command in; removing it opts out. No allowlist, no env flag.
 
 ## Pages
 
-| Page                                                      | Covers                                                                            |
-| --------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [Architecture](/docs/virrun/architecture)                 | system overview, the five layers, the subprocess wall, where the speed comes from |
-| [Execution backends](/docs/virrun/execution-backends)     | the `ExecBackend` seam, virtual-FS layer, `vfs` and `os` backends                 |
-| [Snapshot and fork](/docs/virrun/snapshot-and-fork)       | warm deps snapshot, source-keyed prepare layer, atomic publish                    |
-| [Write-back](/docs/virrun/write-back)                     | native-equivalent persistence of a mutation command's output                      |
-| [WSL source sync](/docs/virrun/wsl-source-sync)           | win32 ext4 source mirror + manifest delta sync                                    |
-| [Orchestrator and CLI](/docs/virrun/orchestrator-and-cli) | `createVirrun` API, source loaders, citty subcommands, output palette             |
-| [Adoption](/docs/virrun/adoption)                         | per-command opt-in levels, auto-fallback, dogfooding in this repo                 |
-| [Config and cache](/docs/virrun/config-and-cache)         | `virrun.config.*`, the `.virrun/` cache, task cache, cleanup and self-healing     |
-| [Quality gates](/docs/virrun/quality-gates)               | correctness (differential testing) and benchmarking (must beat native)            |
-| [Prior art](/docs/virrun/prior-art)                       | surveyed projects and why each does or does not fit                               |
-| [Decisions](/docs/virrun/decisions)                       | rejected and deferred ideas                                                       |
-| [Roadmap](/docs/virrun/roadmap)                           | open, trigger-gated work                                                          |
+| Page                                                  | Covers                                                                            |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [Architecture](/docs/virrun/architecture)             | system overview, the five layers, the subprocess wall, where the speed comes from |
+| [Execution backends](/docs/virrun/execution-backends) | the `ExecBackend` seam, virtual-FS layer, `vfs` and `os` backends                 |
+| [Snapshot and fork](/docs/virrun/snapshot-and-fork)   | warm deps snapshot, source-keyed prepare layer, atomic publish                    |
+| [Write-back](/docs/virrun/write-back)                 | native-equivalent persistence of a mutation command's output                      |
 
 ## Shipped log
 

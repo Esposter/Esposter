@@ -36,7 +36,7 @@ sequenceDiagram
 ## Caching
 
 - The snapshot cache is keyed by **lockfile hash** (`computeLockfileHash`, sha256 of `pnpm-lock.yaml`) and stored in the **host-global** cache root `~/.virrun/snapshots/<hash>` (`VIRRUN_CACHE_HOME` override; on win32 the WSL-native ext4 root). Host-global for two reasons: overlayfs rejects a lower that nests inside another lower, so a `<cwd>/.virrun/snapshots` layer would fail at fork; and the same deps then reuse one warm snapshot across repos. The repo-local `.virrun/store` (dep store) stays put — it is a **bind** mount, and binds may overlap the overlay.
-- Evicted by lockfile hash, not LRU: only the current lockfile's hash is reused, so `ensureSnapshot` sweeps every superseded `snapshots/<hash>` (`pruneStaleSnapshots`), sparing any a concurrent run still leases. See [config and cache](/docs/virrun/config-and-cache) for the full cleanup model.
+- Evicted by lockfile hash, not LRU: only the current lockfile's hash is reused, so `ensureSnapshot` sweeps every superseded `snapshots/<hash>` (`pruneStaleSnapshots`), sparing any a concurrent run still leases.
 - CI does not consume the snapshot: the platform-branched config resolves `native` on the Linux runners, so verify jobs run a plain `pnpm i` from the pnpm store cache. The snapshot is the win32/local os-backend warm path — `virrun warm` provisions it ahead of time.
 
 ## Prepare layer (source-keyed generated artifacts)
@@ -55,7 +55,7 @@ The deps snapshot is keyed on the **lockfile** and must freeze only what the loc
 
 - Parallel capturers never share an overlay upper/work (pid-tagged temps). A capturer that loses the race finds `upperDir` already published, keeps that equivalent layer, and drops its own temp.
 - Teardown removes **only the capturing process's own temps**, never the shared `<hash>/` root.
-- Cleanup is gated on **process liveness**, not a serial-run assumption: a hard-killed run's temp corpse is reaped only once its owner pid is dead, and a published hash dir a concurrent run still needs is pinned by a `leases/<pid>` file the prune honors. Detail: [config and cache](/docs/virrun/config-and-cache).
+- Cleanup is gated on **process liveness**, not a serial-run assumption: a hard-killed run's temp corpse is reaped only once its owner pid is dead, and a published hash dir a concurrent run still needs is pinned by a `leases/<pid>` file the prune honors.
 
 ## Key files
 
@@ -78,7 +78,7 @@ Paths relative to `packages/virrun/src/`.
 
 ## Notes
 
-- FS-only snapshotting is the realized approach; CRIU process-state forking and Firecracker microVM snapshots stay deferred unless measured warm-boot time justifies them — see [decisions](/docs/virrun/decisions).
+- FS-only snapshotting is the realized approach; CRIU process-state forking and Firecracker microVM snapshots stay deferred unless measured warm-boot time justifies them.
 - Generated artifacts that are both source- and platform-specific never belong in the lockfile-keyed deps snapshot: they go in the source-keyed prepare layer, regenerated in-sandbox for the sandbox's own platform.
 - The prepare layer obviated (and removed) the former `virtual-store-dir-max-length=60` install pin.
 - On the `vfs` backend a fork would be a volume clone; process state is never preserved — only files.

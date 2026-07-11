@@ -5,7 +5,7 @@ description: The shipped six-phase program that turned every editor and the surv
 
 # Resource Explorer consolidation (Phases 1–6, shipped)
 
-The consolidation program that turned every editor + the surveyer into resources ([/docs/architecture/resources](/docs/architecture/resources)) rendered by one Azure-portal-like [explorer](/docs/platform/resource-explorer). Six phases, all shipped; existing documents/surveys data was discarded by design. This page keeps only the durable record — current-state detail lives in the feature pages and [architecture standards](/docs/architecture).
+The consolidation program that turned every editor + the surveyer into resources ([/docs/architecture/resources](/docs/architecture/resources)) rendered by one Azure-portal-like [explorer](/docs/platform/resource-explorer). Six phases, all shipped; `documents` rows were migrated in place (the table became `resources`), while `surveys` rows were discarded by design. This page keeps only the durable record — current-state detail lives in the feature pages and [architecture standards](/docs/architecture).
 
 ## What shipped, per phase
 

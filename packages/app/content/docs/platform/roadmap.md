@@ -5,7 +5,7 @@ description: Open platform work — the prioritized index over the proposal spec
 
 # Platform roadmap
 
-Azure-portal parity program for the Resource Explorer: the [consolidation](/docs/platform/resource-consolidation) shipped — this backlog closes the UX gap between our explorer and the real portal. Each item links its full spec under [proposals](/docs/proposals); the specs are the plan, this page is only the priority order. Check [deferred](/docs/platform/deferred) + [rejected](/docs/platform/rejected) before adding items. New Azure services are the only real cost anywhere below; everything else is frontend + procedures + at most a Postgres migration (never run `db:gen`/`db:up` automatically — generate on request, user applies).
+Azure-portal parity program for the Resource Explorer: the [consolidation](/docs/platform/resource-consolidation) shipped — this backlog closes the UX gap between our explorer and the real portal. Items link their full specs under [proposals](/docs/proposals) — directly or via their section heading; the specs are the plan, this page is only the priority order. Check [deferred](/docs/platform/deferred) + [rejected](/docs/platform/rejected) before adding items. New Azure services are the only real cost anywhere below; everything else is frontend + procedures + at most a Postgres migration (never run `db:gen`/`db:up` automatically — generate on request, user applies).
 
 ## Next — global search overhaul ([spec](/docs/proposals/platform/global-search))
 
@@ -34,13 +34,13 @@ Azure-portal parity program for the Resource Explorer: the [consolidation](/docs
 - [ ] Notifications bell ([spec](/docs/proposals/platform/notifications)): client-only store + app-bar bell + toasts for operation outcomes
 - [ ] Save-conflict surface: stale `contentVersion` rejection → "Modified elsewhere — refresh to load the latest"
 
-## Later — schema-backed (one migration each, independently shippable)
+## Later — storage-backed (one Postgres migration or Azure table each, independently shippable)
 
 - [ ] Favorites + true recents ([spec](/docs/proposals/platform/favorites-and-recents)): `resourceFavorites` table, star toggles, Home `Recent | Favorites` tabs, last-viewed recents
 - [ ] Tags ([spec](/docs/proposals/platform/tags)): `tags` jsonb + GIN index, Essentials tags row + edit dialog, tag filter pill
 - [ ] Activity log blade ([spec](/docs/proposals/platform/activity-log)) — Azure Table only, no Postgres migration
 - [ ] Recycle bin ([spec](/docs/proposals/platform/recycle-bin)): `deletedAt` soft delete, restore/purge, timer auto-purge
-- [ ] `pg_trgm` relevance: extension + GIN index migration, `similarity()` ranking for typo tolerance (Azure AI Search stays [deferred](/docs/platform/deferred/azure-ai-search))
+- [ ] `pg_trgm` relevance ([spec](/docs/proposals/platform/global-search)): extension + GIN index migration, `similarity()` ranking for typo tolerance (Azure AI Search stays [deferred](/docs/platform/deferred/azure-ai-search))
 - [ ] Summary view toggle on `/all`: per-type count cards over a grouped `count` procedure ([spec](/docs/proposals/platform/list-filters-and-views))
 
 ## Later — larger or multi-area
