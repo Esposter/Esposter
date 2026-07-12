@@ -22,9 +22,8 @@ export const useDungeonsStore = defineStore("dungeons", () => {
   });
 
   const save = ref(new Save());
-  const saveIndex = ref(0);
   const saveData = async () => {
-    dungeons.value.saves[saveIndex.value] = save.value;
+    dungeons.value.save = save.value;
     await saveDungeons();
   };
 

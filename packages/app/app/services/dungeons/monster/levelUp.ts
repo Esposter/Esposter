@@ -8,4 +8,5 @@ export const levelUp = (monster: Monster) => {
   monster.stats.level += 1;
   monster.stats.maxHp += 5 + createRandomInteger(3);
   monster.stats.attack += 1 + createRandomInteger(1);
+  monster.stats.defense += 1 + createRandomInteger(1);
 };

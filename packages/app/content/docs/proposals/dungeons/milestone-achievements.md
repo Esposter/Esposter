@@ -15,7 +15,7 @@ Award achievements for play milestones — first capture, party levels, catching
 
 ## How it works
 
-Conditions read the saved run (`saves[0].player` today; `save.player` after [single save](/docs/proposals/dungeons/single-save) — land that first so paths don't churn):
+Conditions read the saved run (`save.player`):
 
 - **Monster Catcher** — party size ≥ 2 (`Operation` callback; the starter is 1, so 2 means a capture).
 - **Collector** — every `MonsterKey` present across the party.
