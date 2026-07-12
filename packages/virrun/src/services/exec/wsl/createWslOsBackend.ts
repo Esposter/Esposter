@@ -27,8 +27,9 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
       // Tag this run's shell with a unique `$0` so Ctrl+C can find and group-kill exactly its process tree.
       const marker = createWslProcessMarker();
       // The mirror sync rides the run's own wsl.exe invocation instead of a separate spawn: an empty script (mirror
-      // Already current) prepends nothing, a delta/full sync runs ahead of bwrap and a failure exits with its own
-      // Code before the sandbox starts — surfaced by the close handler with the sync's stderr, never a stale mirror.
+      // Already current) prepends nothing, a delta/full sync runs ahead of bwrap and a failure prints a labelled
+      // Line then exits with its own code before the sandbox starts — surfaced by the close handler with the sync's
+      // Stderr, so a sync failure reads as one instead of masquerading as a bwrap setup failure. Never a stale mirror.
       // On success the sync is silent (rsync without -v), so the child's stdout/stderr stay byte-exact vs native.
       // The whole body then runs under a shared flock on the mirror lock (fd 9, held until sh exits): bwrap reads the
       // Mirror lower for the run's full duration, and a concurrent same-cwd sync takes the exclusive side of the same
@@ -45,7 +46,11 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
           "sh",
           "-c",
           `{ ${[
-            ...(script === "" ? [] : [`{ ${script}; } || exit "$?"`]),
+            ...(script === ""
+              ? []
+              : [
+                  `{ ${script}; } || { syncExitCode="$?"; printf 'virrun: source mirror sync failed with exit code %s\\n' "$syncExitCode" >&2; exit "$syncExitCode"; }`,
+                ]),
             `flock -s -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 || exit "$?"`,
             `status="$(mktemp)"`,
             `bwrap --json-status-fd 3 "$@" 3>"$status"`,

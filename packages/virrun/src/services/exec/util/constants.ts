@@ -67,6 +67,12 @@ export const CI_ENV_VALUE = "true";
 // Are sub-second on a healthy host; a corrupt/unresponsive WSL distro can hang execFileSync forever, so the cap lets
 // The probe fail (degrade to unsupported) instead of blocking the whole CLI.
 export const PROBE_TIMEOUT_MS: number = dayjs.duration(10, "seconds").asMilliseconds();
+// Minimum age (`ps -o etimes`) before the startup orphan sweep may judge a marker-matched process. Every transient
+// Misread window lasts milliseconds — a fork that hasn't exec'd yet (its cmdline still carries the parent's marker),
+// A spawning run whose Relay parent isn't established, a finishing run whose Relay died first — while a true corpse
+// Sits orphaned until the next virrun startup, so a short floor removes the races without delaying real reaps.
+// Seconds, not ms: the consumer is a Linux shell `[ -ge ]` against etimes.
+export const ORPHAN_REAP_MINIMUM_AGE_SECONDS: number = dayjs.duration(10, "seconds").asSeconds();
 // Upper bound the folded sync script enforces Linux-side — `flock -w` on the mirror lock plus `timeout` on rsync
 // (createWslSourceMirrorSync). Generous — the first cold materialize reads the whole source lower across v9fs
 // (15-64x slower) — but bounded so a stalled ext4 volume or hung lock aborts the run instead of hanging the CLI
