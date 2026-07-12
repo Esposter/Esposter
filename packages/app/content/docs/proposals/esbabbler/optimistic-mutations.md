@@ -21,7 +21,7 @@ Sweep order (by user-perceived latency):
 
 - [ ] Message actions — reactions, pin/unpin, mark-unread, delete
 - [ ] Room membership — hide DM, leave room, category drag-reorder
-- [ ] Roles/permissions editors (Permissions tab save)
+- [ ] Roles/permissions editors (Roles tab save)
 - [ ] Word filter + webhook CRUD
 - [ ] Friends — send/accept/decline/block
 

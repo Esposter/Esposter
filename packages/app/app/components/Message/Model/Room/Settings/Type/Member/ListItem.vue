@@ -3,13 +3,13 @@ import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 
-interface MemberPanelListItemProps {
+interface MemberListItemProps {
   active: boolean;
   member: User;
   roomId: RoomInMessage["id"];
 }
 
-const { active, member, roomId } = defineProps<MemberPanelListItemProps>();
+const { active, member, roomId } = defineProps<MemberListItemProps>();
 const emit = defineEmits<{ click: [] }>();
 const userToRoomStore = useUserToRoomStore();
 const { getDisplayName } = userToRoomStore;

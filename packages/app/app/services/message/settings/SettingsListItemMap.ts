@@ -8,23 +8,29 @@ export const SettingsListItemMap: Record<SettingsType, Except<Item, "onClick" | 
   [SettingsType.Overview]: {
     icon: "mdi-information-outline",
   },
+  [SettingsType.Roles]: {
+    icon: "mdi-shield-key-outline",
+  },
   [SettingsType.Profile]: {
     icon: "mdi-account-circle-outline",
-  },
-  [SettingsType.Permissions]: {
-    icon: "mdi-shield-key-outline",
   },
   [SettingsType.Webhooks]: {
     icon: "mdi-webhook",
   },
-  [SettingsType.Bans]: {
-    icon: "mdi-account-cancel-outline",
+  [SettingsType.WordFilter]: {
+    icon: "mdi-filter-outline",
   },
   [SettingsType.AuditLog]: {
     icon: "mdi-clipboard-list-outline",
   },
-  [SettingsType.WordFilter]: {
-    icon: "mdi-filter-outline",
+  [SettingsType.Bans]: {
+    icon: "mdi-account-cancel-outline",
+  },
+  [SettingsType.Members]: {
+    icon: "mdi-account-multiple-outline",
+  },
+  [SettingsType.Invites]: {
+    icon: "mdi-account-plus-outline",
   },
   [SettingsType.Delete]: {
     color: "error",

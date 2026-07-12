@@ -5,11 +5,11 @@ import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 
-interface MemberPanelProps {
+interface MemberListProps {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<MemberPanelProps>();
+const { roomId } = defineProps<MemberListProps>();
 const roleStore = useRoleStore();
 const { selectMember } = roleStore;
 const { selectedMemberId } = storeToRefs(roleStore);
@@ -25,7 +25,7 @@ const { isPending } = await readMembers();
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
     <template v-else>
-      <MessageModelRoomSettingsTypePermissionsMemberPanelListItem
+      <MessageModelRoomSettingsTypeMemberListItem
         v-for="member of members"
         :key="member.id"
         :active="member.id === selectedMemberId"

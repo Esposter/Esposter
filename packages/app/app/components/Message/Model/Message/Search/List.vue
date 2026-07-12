@@ -19,6 +19,6 @@ const { messages } = defineProps<ListProps>();
     </div>
   </template>
   <slot v-else name="no-data">
-    <div text-gray pt-6 text-center>No results</div>
+    <StyledEmptyState description="Try different keywords or filters." icon="mdi-magnify" title="No results" />
   </slot>
 </template>
