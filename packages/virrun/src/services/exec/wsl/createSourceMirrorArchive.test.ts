@@ -86,6 +86,7 @@ describe(createSourceMirrorArchive, () => {
     // Would be unresolvable after the Linux-side extract.
     const extractDirectory = create();
     execFileHidden("tar", ["-xf", join(entryUnc, archiveFilename), "-C", extractDirectory]);
+
     expect(readFileSync(join(extractDirectory, linkFilename), "utf8")).toBe(TEST_FILENAME);
   });
 
@@ -93,7 +94,7 @@ describe(createSourceMirrorArchive, () => {
     expect.hasAssertions();
 
     // A vanished path is not a tolerated "couldn't open" report — the plan must abort loudly.
-    expect(() => createSourceMirrorArchive(cwd, entryUnc, [TEST_FILENAME], TAG)).toThrow();
+    expect(() => createSourceMirrorArchive(cwd, entryUnc, [TEST_FILENAME], TAG)).toThrow(Error);
     expect(readdirSync(entryUnc)).toContain(`${VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX}${TAG}`);
   });
 });

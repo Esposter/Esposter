@@ -65,7 +65,7 @@ catalog:
   "@pulumi/github": ^6.14.0
   "@pulumi/pulumi": ^3.251.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^2.0.2
+  "@takumi-rs/core": ^2.1.1
   "@tiptap/core": ^3.27.3
   "@tiptap/extension-code-block-lowlight": ^3.27.3
   "@tiptap/extension-file-handler": ^3.27.3
@@ -121,7 +121,7 @@ catalog:
   better-auth: ^1.6.23
   citty: ^0.2.2
   codemirror: ^6.0.2
-  crossws: ^0.4.9
+  crossws: ^0.4.10
   ctix: ^2.8.1
   data-urls: ^7.0.0
   dayjs: ^1.11.21
