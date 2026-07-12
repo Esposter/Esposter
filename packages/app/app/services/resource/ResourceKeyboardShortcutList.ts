@@ -2,7 +2,7 @@ import type { KeyboardShortcutCategory } from "@/models/shared/KeyboardShortcutC
 
 export const ResourceKeyboardShortcutList = [
   {
-    category: "Global search",
+    category: "Search",
     items: [
       { description: "Open the command palette", keys: ["Ctrl", "K"] },
       { description: "Focus search", keys: ["G", "/"] },

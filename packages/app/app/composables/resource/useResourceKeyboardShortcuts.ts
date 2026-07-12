@@ -1,14 +1,11 @@
-import { authClient } from "@/services/auth/authClient";
 import { KEY_CHORD_TIMEOUT_MS } from "@/services/resource/constants";
 import { useSearchDialogStore } from "@/store/resource/searchDialog";
 import { useShortcutsOverlayStore } from "@/store/resource/shortcutsOverlay";
 import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
 import { RoutePath } from "@esposter/shared";
 
-// Global Azure-portal-style shortcuts: Ctrl+K / G-chords / ? — registered once from app.vue
+// Azure-portal-style shortcuts: Ctrl+K / G-chords / ? — registered once from the /resources parent route
 export const useResourceKeyboardShortcuts = () => {
-  const session = authClient.useSession();
-  const router = useRouter();
   const searchDialogStore = useSearchDialogStore();
   const { isOpen: isSearchDialogOpen } = storeToRefs(searchDialogStore);
   const shortcutsOverlayStore = useShortcutsOverlayStore();
@@ -16,9 +13,7 @@ export const useResourceKeyboardShortcuts = () => {
   let chordStartedAtMs = 0;
 
   useEventListener("keydown", async (event) => {
-    // The messaging area owns its own Ctrl+K palette and Shift+? shortcuts dialog
-    if (!session.value.data || router.currentRoute.value.path.startsWith(RoutePath.MessagesIndex)) return;
-    else if (event.ctrlKey || event.metaKey) {
+    if (event.ctrlKey || event.metaKey) {
       if (event.key.toLowerCase() === "k" && !event.altKey && !event.shiftKey) {
         event.preventDefault();
         isSearchDialogOpen.value = true;
