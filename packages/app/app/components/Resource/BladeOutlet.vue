@@ -7,11 +7,12 @@ import { ResourceEditorComponentMap } from "@/services/resource/ResourceEditorCo
 
 interface ResourceBladeOutletProps {
   activeBlade: string;
+  isLoading?: boolean;
   publication?: ResourcePublication;
   resource: Resource;
 }
 
-const { activeBlade, publication, resource } = defineProps<ResourceBladeOutletProps>();
+const { activeBlade, isLoading, publication, resource } = defineProps<ResourceBladeOutletProps>();
 // The type's own blade wins over the built-ins; the Editor blade renders the type's inline editor
 const bladeComponent = computed(
   () => ResourceBladeDefinitionMap[resource.type].find(({ slug }) => slug === activeBlade)?.component,
@@ -20,7 +21,7 @@ const editorComponent = computed(() => ResourceEditorComponentMap[resource.type]
 </script>
 
 <template>
-  <ResourceOverview v-if="activeBlade === ResourceBladeType.Overview" :publication :resource />
+  <ResourceOverview v-if="activeBlade === ResourceBladeType.Overview" :is-loading :publication :resource />
   <Suspense v-else-if="bladeComponent">
     <component :is="bladeComponent" :key="`${resource.id}-${activeBlade}`" />
     <template #fallback>

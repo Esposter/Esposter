@@ -3,6 +3,7 @@ import type { PublishableResourceProcedureOptions } from "@@/server/models/resou
 import type { Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { STALE_CONTENT_VERSION_MESSAGE } from "#shared/services/resource/constants";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -143,7 +144,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
               message: new InvalidOperationError(
                 Operation.Update,
                 DatabaseEntityType.Resource,
-                "cannot save resource content with old content version",
+                STALE_CONTENT_VERSION_MESSAGE,
               ).message,
             });
 

@@ -14,6 +14,7 @@ const { remove, resource } = defineProps<ResourceDeleteDialogButtonProps>();
 <template>
   <StyledDeleteFormDialog
     :card-props="{ title: 'Delete resource' }"
+    :confirm-name="resource.name"
     @delete="
       async (onComplete) => {
         const isDeleted = await remove();
