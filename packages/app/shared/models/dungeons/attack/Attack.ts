@@ -7,10 +7,12 @@ import { z } from "zod";
 
 export interface Attack {
   id: AttackId;
+  power: number;
   soundEffectKey: SoundEffectKey;
 }
 
 export const attackSchema = z.object({
   id: attackIdSchema,
+  power: z.int().positive(),
   soundEffectKey: soundEffectKeySchema,
 }) satisfies z.ZodType<Attack>;

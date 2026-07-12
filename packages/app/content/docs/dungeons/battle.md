@@ -46,8 +46,8 @@ stateDiagram-v2
 
 The math, all in small pure services under `services/dungeons/monster/` and `services/dungeons/item/`:
 
-- **Damage** — `ceil(random(0.85, 1.01) × attacker.stats.attack)`. There is no defense stat and attacks carry no power value (an `Attack` is currently id + sound effect + animation component), so every attack of a monster hits equally hard.
-- **Experience** — on a kill, `round(baseExp × enemyLevel / 7)`; `useExperience` applies it and loops `levelUp` while the threshold (`calculateLevelExperience`) is crossed. Level-ups add randomized `maxHp` (+5–8) and `attack` (+1–2).
+- **Damage** — `ceil(random(0.85, 1.01) × attacker.stats.attack × power / (power + defense))`. Each attack carries a `power` (Slash 40, Ice Shard 55) and every monster a `defense` stat, so move choice and bulk both matter. The saturating `power / (power + defense)` factor means defense meaningfully reduces damage without ever granting immunity, and tuning stays two-knob.
+- **Experience** — on a kill, `round(baseExp × enemyLevel / 7)`; `useExperience` applies it and loops `levelUp` while the threshold (`calculateLevelExperience`) is crossed. Level-ups add randomized `maxHp` (+5–8), `attack` (+1–2), and `defense` (+1–2).
 - **Capture** — ball items roll `0.5 + (1 − hp/maxHp) × 0.2` against a uniform random: success joins the party, a near miss (within 0.1) gets its own dialog, otherwise failure — so weakening the enemy first genuinely helps.
 - **Flee** — a random escape attempt; failure forfeits the turn.
 
@@ -63,6 +63,7 @@ Paths relative to `packages/app/app`.
 | `models/dungeons/state/battle/StateMap.ts`             | the 17 battle states                              |
 | `services/dungeons/scene/battle/battleStateMachine.ts` | the singleton instance                            |
 | `services/dungeons/monster/calculateDamage.ts`         | damage roll                                       |
+| `assets/dungeons/data/attacks.ts`                      | per-attack power values                           |
 | `services/dungeons/monster/calculateExperienceGain.ts` | experience award                                  |
 | `services/dungeons/monster/levelUp.ts`                 | stat growth                                       |
 | `services/dungeons/item/createCaptureResult.ts`        | capture roll                                      |
@@ -71,4 +72,5 @@ Paths relative to `packages/app/app`.
 ## Notes
 
 - The `Battle` state orders the two attacks through `useAttackStatePriorityMap` and the post-attack checks route to the other side's attack via the same map. The enemy AI is trivial: `EnemyAttack` picks a uniformly random attack from the monster's `attackIds`.
-- Deepening the combat math (attack power, defense) is proposed in [attack power and defense](/docs/proposals/dungeons/attack-power-and-defense).
+- Power and defense values are tuned so early battles keep their pre-defense length: with base defense 5, `power / (power + defense)` sits near 0.9 at low levels, close to the old raw-attack damage.
+- A type-effectiveness chart is deliberately out of scope until the roster grows — see [monster roster expansion](/docs/proposals/dungeons/monster-roster-expansion) and the deferred [status effects](/docs/dungeons/deferred/status-effects).
