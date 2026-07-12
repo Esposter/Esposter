@@ -6,11 +6,26 @@ import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKe
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 const AttackMap = {
-  [AttackId.Slash]: {
+  [AttackId["Aqua Jet"]]: {
+    soundEffectKey: SoundEffectKey.IceExplosion,
+  },
+  [AttackId.Bite]: {
     soundEffectKey: SoundEffectKey.Claw,
+  },
+  [AttackId["Frost Fang"]]: {
+    soundEffectKey: SoundEffectKey.IceExplosion,
   },
   [AttackId["Ice Shard"]]: {
     soundEffectKey: SoundEffectKey.IceExplosion,
+  },
+  [AttackId["Shadow Claw"]]: {
+    soundEffectKey: SoundEffectKey.Claw,
+  },
+  [AttackId.Slash]: {
+    soundEffectKey: SoundEffectKey.Claw,
+  },
+  [AttackId["Volt Claw"]]: {
+    soundEffectKey: SoundEffectKey.Claw,
   },
 } as const satisfies Record<AttackId, Except<Attack, "id">>;
 

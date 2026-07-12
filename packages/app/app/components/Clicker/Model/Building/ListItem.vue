@@ -15,14 +15,16 @@ const { building } = defineProps<BuildingListItemProps>();
 const clickerStore = useClickerStore();
 const { clicker } = storeToRefs(clickerStore);
 const buildingStore = useBuildingStore();
-const { createBoughtBuilding, getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPrice } = buildingStore;
+const { createBoughtBuilding, getBoughtBuildingAmount, getBoughtBuildingStats, getBuildingPriceForQuantity } =
+  buildingStore;
+const { buyQuantity } = storeToRefs(buildingStore);
 const { play } = useClickerSound(Sound.Buy);
 const boughtBuildingAmount = computed(() => getBoughtBuildingAmount(building));
 const buildingStatsHtml = computed(() =>
   getBoughtBuildingStats(building).map((s) => marked.parse(s, { async: false })),
 );
 const hasBuildingStatsHtml = computed(() => buildingStatsHtml.value.length > 0);
-const buildingPrice = computed(() => getBuildingPrice(building));
+const buildingPrice = computed(() => getBuildingPriceForQuantity(building, buyQuantity.value));
 const isAffordable = computed(() => clicker.value.noPoints >= buildingPrice.value);
 const displayFlavorDescription = useDecompileString(building.flavorDescription);
 </script>
@@ -55,7 +57,7 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
         :button-props="{ disabled: !isAffordable, text: 'Buy' }"
         @click="
           () => {
-            createBoughtBuilding(building);
+            createBoughtBuilding(building, buyQuantity);
             play();
           }
         "

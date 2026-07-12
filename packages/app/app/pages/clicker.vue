@@ -20,6 +20,7 @@ const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 
       <ClickerContent />
     </v-container>
     <ClickerModelPointsPopups />
+    <ClickerOfflineProgressDialog />
     <template #left>
       <ClickerModelStoreHeader pt-4 />
       <ClickerModelStoreList />

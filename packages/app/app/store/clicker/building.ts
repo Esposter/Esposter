@@ -48,32 +48,35 @@ export const useBuildingStore = defineStore("clicker/building", () => {
       `- **${formatNumberLong(boughtBuilding.producedValue, 3)}** ${clickerStore.clickerItemProperties.pluralName} produced so far`,
     ];
   };
-  const getBuildingPrice = (building: Building) => {
+  const getBuildingPriceAtAmount = (building: Building, amount: number) =>
+    Math.trunc(building.basePrice * (1 + amount) ** 1.15);
+  // Summing the per-unit prices over the loop stays exact under any price formula.
+  const getBuildingPriceForQuantity = (building: Building, quantity: number) => {
     const boughtBuildingAmount = getBoughtBuildingAmount(building);
-    return Math.trunc(building.basePrice * (1 + boughtBuildingAmount) ** 1.15);
+    let priceForQuantity = 0;
+    for (let index = 0; index < quantity; index++)
+      priceForQuantity += getBuildingPriceAtAmount(building, boughtBuildingAmount + index);
+    return priceForQuantity;
   };
 
-  const createBoughtBuilding = (newBuilding: Building) => {
-    const newBuildingPrice = getBuildingPrice(newBuilding);
+  const buyQuantity = ref(1);
+  const createBoughtBuilding = (newBuilding: Building, quantity: number) => {
+    const newBuildingPrice = getBuildingPriceForQuantity(newBuilding, quantity);
     const boughtBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === newBuilding.id);
-    if (!boughtBuilding) {
-      clickerStore.clicker.boughtBuildings.push({ ...newBuilding, amount: 1, producedValue: 0 });
-      decrementPoints(newBuildingPrice);
-      return;
-    }
-
-    boughtBuilding.amount++;
+    if (boughtBuilding) boughtBuilding.amount += quantity;
+    else clickerStore.clicker.boughtBuildings.push({ ...newBuilding, amount: quantity, producedValue: 0 });
     decrementPoints(newBuildingPrice);
   };
 
   return {
     allBuildingPower,
     buildings,
+    buyQuantity,
     createBoughtBuilding,
     getBoughtBuildingAmount,
     getBoughtBuildingPower,
     getBoughtBuildingStats,
-    getBuildingPrice,
+    getBuildingPriceForQuantity,
     initializeBuildingMap,
   };
 });
