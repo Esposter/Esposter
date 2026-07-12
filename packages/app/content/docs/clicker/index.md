@@ -23,3 +23,7 @@ Clicker is Esposter's idle game at `/clicker`: click the central item to earn po
 - [Clicker types](/docs/clicker/clicker-types) — the Default/Magical/Physical theming layer.
 
 Open work: [roadmap](/docs/clicker/roadmap). Decided ideas: [deferred](/docs/clicker/deferred), [rejected](/docs/clicker/rejected).
+
+## Shipped log
+
+- **Core refactors** — normalized id-based save data, single 60 FPS game tick, exponential building price curve.

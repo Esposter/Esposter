@@ -1,4 +1,4 @@
-import { EN_US_SEGMENTER } from "#shared/services/constants";
+import { EN_US_SEGMENTER } from "#shared/services/intl/constants";
 import { createId, ID_CHARACTERS } from "#shared/util/math/random/createId";
 import { describe, expect, test } from "vitest";
 

@@ -22,9 +22,9 @@ export const benchmarkResultSchema: z.ZodObject<{
   rme: z.ZodNumber;
   sampleCount: z.ZodNumber;
 }> = z.object({
-  mean: z.number(),
+  mean: z.number().nonnegative(),
   name: z.string(),
-  p99: z.number(),
-  rme: z.number(),
-  sampleCount: z.number(),
+  p99: z.number().nonnegative(),
+  rme: z.number().nonnegative(),
+  sampleCount: z.int().positive(),
 }) satisfies z.ZodType<BenchmarkResult>;

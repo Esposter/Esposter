@@ -2,6 +2,7 @@ import { AchievementCategory } from "#shared/models/achievement/AchievementCateg
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { countEmojis } from "#shared/util/text/countEmojis";
 import { BinaryOperator, MessageAchievementName } from "@esposter/db-schema";
 
 export const MessageAchievementDefinitionMap = {
@@ -53,15 +54,7 @@ export const MessageAchievementDefinitionMap = {
     amount: 1,
     category: AchievementCategory.Message,
     condition: {
-      operation: (value) => {
-        if (!value) return false;
-        const segmenter = new Intl.Segmenter("en-US", { granularity: "grapheme" });
-        const segments = [...segmenter.segment(value)];
-        const emojiCount = segments.filter((segment) =>
-          /\p{Emoji_Presentation}|\p{Extended_Pictographic}/u.test(segment.segment),
-        ).length;
-        return emojiCount >= 1;
-      },
+      operation: (value) => (value ? countEmojis(value) >= 1 : false),
       operator: AchievementOperator.Operation,
       path: "message",
       type: AchievementConditionType.Property,

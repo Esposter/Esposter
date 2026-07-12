@@ -34,5 +34,6 @@ const voiceInputModes = Object.values(VoiceInputMode);
       Activates your mic only while you hold the keybind. Push to Talk only works while an app window (main or pop-out)
       has focus.
     </div>
+    <MessageModelUserSettingsTypeVoicePushToTalkReleaseDelaySlider :user-settings />
   </template>
 </template>

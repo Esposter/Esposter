@@ -8,3 +8,4 @@ export const FPS = 60;
 export const MIN_OFFLINE_DIALOG_ELAPSED = dayjs.duration(1, "minute").asMilliseconds();
 export const OFFLINE_CAP = dayjs.duration(1, "day").asMilliseconds();
 export const OFFLINE_RATE = 0.5;
+export const PRICE_GROWTH = 1.15;

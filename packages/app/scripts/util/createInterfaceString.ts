@@ -1,7 +1,7 @@
 import type { InterfaceProperty } from "@@/scripts/models/InterfaceProperty";
 
+import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { startsWithNumber } from "#shared/util/regex/startsWithNumber";
-import { EN_US_COMPARATOR } from "@/services/shared/constants";
 
 export const createInterfaceString = (name: string, properties: InterfaceProperty[]) =>
   properties.length === 0

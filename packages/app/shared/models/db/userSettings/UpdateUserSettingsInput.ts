@@ -12,6 +12,7 @@ export const updateUserSettingsInputSchema = refineAtLeastOne(
       microphoneVolumePercentage: true,
       noiseSuppressionMode: true,
       pushToTalkKeybind: true,
+      pushToTalkReleaseDelayMs: true,
       speakerVolumePercentage: true,
       voiceInputMode: true,
     })
@@ -24,6 +25,7 @@ export const updateUserSettingsInputSchema = refineAtLeastOne(
     "microphoneVolumePercentage",
     "noiseSuppressionMode",
     "pushToTalkKeybind",
+    "pushToTalkReleaseDelayMs",
     "speakerVolumePercentage",
     "voiceInputMode",
   ],

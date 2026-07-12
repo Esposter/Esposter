@@ -23,6 +23,6 @@ export const createUpgradeSchema = <T extends z.ZodType<string> = z.ZodType<Upgr
     effects: effectSchema.array().min(1),
     flavorDescription: z.string().min(1),
     id: idSchema,
-    price: z.number(),
+    price: z.number().positive(),
     unlockConditions: createUniqueArraySchema(unlockConditionSchema, "type"),
   });

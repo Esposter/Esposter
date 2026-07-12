@@ -1,18 +1,17 @@
 ---
 title: Game loop and saves
-description: The 60 FPS production timers, click handling, autosave, and the auth/unauth single-blob persistence.
+description: The single 60 FPS game tick, click handling, autosave, and the normalized id-based save persisted per user to Azure blob or localStorage.
 ---
 
 # Game Loop and Saves
 
-Production ticks on worker-based timers, and the entire game state is one `Clicker` entity saved to a per-user Azure blob (authenticated) or localStorage (anonymous).
+Production runs on one worker-based game tick, and the entire game state is one `Clicker` entity in memory, persisted as a normalized id-based `ClickerSave` to a per-user Azure blob (authenticated) or localStorage (anonymous).
 
 ## How it works
 
-`pages/clicker.vue` loads the save with `useReadClicker`, then `useTimers` starts three timer composables. All intervals come from `worker-timers`, which runs in a Web Worker so production continues when the tab is backgrounded (browsers throttle main-thread timers there).
+`pages/clicker.vue` loads the save with `useReadClicker`, then `useTimers` starts two timer composables. Both intervals come from `worker-timers`, which runs in a Web Worker so production continues when the tab is backgrounded (browsers throttle main-thread timers there).
 
-- `useBuildingClickerTimer` — one 60 FPS interval adding `allBuildingPower / FPS` points per tick.
-- `useBuildingStatsTimer` — one 60 FPS interval **per bought building** accumulating its lifetime `producedValue`; all intervals are torn down and recreated whenever the bought-building powers change.
+- `useGameTickTimer` — one 60 FPS interval calling `applyGameTick`: it computes each bought building's power once per tick, accumulates the building's lifetime `producedValue`, and adds the summed power to `noPoints`. Powers are read fresh every tick, so purchases apply on the next tick with no watch/teardown machinery.
 - `useAutosaveTimer` — saves the full state every 60 seconds.
 
 Clicking the central item goes through the popup store: it adds `mousePower` points and spawns a floating `+N` popup at the cursor that despawns after 10 seconds.
@@ -20,25 +19,30 @@ Clicking the central item goes through the popup store: it adds `mousePower` poi
 ```mermaid
 flowchart TD
   click[click on item] -->|mousePower| points[clicker.noPoints]
-  tick[60 FPS worker timer] -->|allBuildingPower / 60| points
-  stat[per-building 60 FPS timers] --> produced[boughtBuilding.producedValue]
+  tick[60 FPS game tick] -->|sum of building powers / 60| points
+  tick -->|per-building power / 60| produced[boughtBuilding.producedValue]
   buy[buy building / upgrade] --> save60[virtualClicker watch: immediate save]
   auto[60 s autosave timer] --> persist
-  save60 --> persist{useSave}
+  save60 --> persist{useSave + toClickerSave}
   persist -->|authed| blob[clicker.saveClicker → Azure blob userId/save]
   persist -->|anonymous| ls[localStorage ClickerStore]
+  blob --> load[useReadClicker]
+  ls --> load
+  load -->|clickerSaveSchema + toClicker| clicker[in-memory Clicker]
 ```
 
-**Save timing** — `useReadClicker` watches a `virtualClicker` computed that deep-omits `noPoints` and `producedValue`; only _manual_ state changes (purchases, type switches) trigger an immediate save, while the ever-ticking counters are picked up by the periodic autosave. The omitted view is reference-stabilized with `deepEqual` so the watch doesn't fire on every tick.
+**Save timing** — `useReadClicker` watches a `virtualClicker` computed that deep-omits `noPoints` and `producedValue`; only _manual_ state changes (purchases, type switches) trigger an immediate save, while the ever-ticking counters are picked up by the periodic autosave. The omitted view is reference-stabilized with `deepEqual` so the watch doesn't fire on every tick, and `useSave` stamps `updatedAt` on the serialized copy rather than the in-memory state so saving never re-triggers the watch.
 
-**Persistence** — `useSave` and `useReadData` are the app-wide single-blob-per-user pattern (shared with dungeons): authenticated users read/write through `clicker.readClicker` / `clicker.saveClicker` (generic blob-state procedures over the `clicker-assets` container, blob name `${userId}/save`, validated by `clickerSchema`); anonymous users get the same state in localStorage under `ClickerStore`. Why games stay off the resource layer: [games integration](/docs/platform/rejected/games-integration).
+**Normalized save data** — the save stores only what the player _did_: `boughtUpgrades` as `UpgradeId[]` and `boughtBuildings` as `{ id, amount, producedValue }[]` (the `ClickerSave` entity). On write, `toClickerSave` strips the in-memory definitions down to ids, and on load `toClicker` resolves them back through `UpgradeMap`/`BuildingMap` — so a balance change to the content maps reaches every existing save on its next load. The in-memory `Clicker` keeps full definition objects, leaving the effect engine and components untouched. Per the [latest-shape-only convention](/docs/architecture/persisted-data-latest-shape-only), there is no migration or self-heal path: a save that fails `clickerSaveSchema` (old shape, removed content ids) resets to a fresh game.
+
+**Persistence** — `useSave` and `useReadData` are the app-wide single-blob-per-user pattern (shared with dungeons): authenticated users read/write through `clicker.readClicker` / `clicker.saveClicker` (generic blob-state procedures over the `clicker-assets` container, blob name `${userId}/save`, validated by `clickerSaveSchema`); anonymous users get the same state in localStorage under `ClickerStore`. Why games stay off the resource layer: [games integration](/docs/platform/rejected/games-integration).
 
 ## Procedures
 
-| Procedure             | Auth | Input           | Purpose                        |
-| --------------------- | ---- | --------------- | ------------------------------ |
-| `clicker.readClicker` | user | —               | read the user's save blob      |
-| `clicker.saveClicker` | user | `clickerSchema` | overwrite the user's save blob |
+| Procedure             | Auth | Input               | Purpose                        |
+| --------------------- | ---- | ------------------- | ------------------------------ |
+| `clicker.readClicker` | user | —                   | read the user's save blob      |
+| `clicker.saveClicker` | user | `clickerSaveSchema` | overwrite the user's save blob |
 
 `saveClicker` is also the trigger path for all five clicker achievements (save-count thresholds 1/5/10/100/1000).
 
@@ -46,20 +50,22 @@ flowchart TD
 
 Paths relative to `packages/app`.
 
-| File                                                 | Role                                    |
-| ---------------------------------------------------- | --------------------------------------- |
-| `app/composables/clicker/useReadClicker.ts`          | load save + immediate-save watch        |
-| `app/composables/clicker/useTimers.ts`               | starts the three timers                 |
-| `app/composables/clicker/useBuildingClickerTimer.ts` | production tick                         |
-| `app/composables/clicker/useBuildingStatsTimer.ts`   | per-building producedValue accumulation |
-| `app/composables/clicker/useAutosaveTimer.ts`        | periodic save                           |
-| `app/store/clicker/index.ts`                         | save root, `useSave` wiring             |
-| `app/store/clicker/popup.ts`                         | click handling + floating point popups  |
-| `server/trpc/routers/clicker.ts`                     | read/save + content-map procedures      |
-| `shared/models/clicker/data/Clicker.ts`              | save entity + schema                    |
+| File                                          | Role                                              |
+| --------------------------------------------- | ------------------------------------------------- |
+| `app/composables/clicker/useReadClicker.ts`   | load + hydrate save, immediate-save watch         |
+| `app/composables/clicker/useTimers.ts`        | starts the two timers                             |
+| `app/composables/clicker/useGameTickTimer.ts` | the single 60 FPS game tick interval              |
+| `app/composables/clicker/useAutosaveTimer.ts` | periodic save                                     |
+| `app/services/clicker/applyGameTick.ts`       | per-tick production math (points + producedValue) |
+| `app/services/clicker/save/toClickerSave.ts`  | serialize in-memory state to ids/counters         |
+| `app/services/clicker/save/toClicker.ts`      | parse + hydrate ids back                          |
+| `app/store/clicker/index.ts`                  | save root, `useSave` wiring                       |
+| `app/store/clicker/popup.ts`                  | click handling + floating point popups            |
+| `server/trpc/routers/clicker.ts`              | read/save + content-map procedures                |
+| `shared/models/clicker/data/Clicker.ts`       | in-memory game state entity                       |
+| `shared/models/clicker/data/ClickerSave.ts`   | persisted save entity + schema                    |
 
 ## Notes
 
-- The save stores **full** `Upgrade` and `Building` objects, not ids — content rebalances never reach existing saves. The [normalize save data](/docs/proposals/clicker/normalize-save-data) proposal fixes this.
-- One 60 FPS interval per bought building is O(buildings) timer churn for a stat display; the [single game tick](/docs/proposals/clicker/single-game-tick) proposal consolidates the loop.
 - There is no offline progress: production only happens while the page is open (the worker timers keep it alive across tab switches, not across sessions).
+- Late-game blob size shrank by an order of magnitude with normalization (19 full upgrade objects → 19 short ids).

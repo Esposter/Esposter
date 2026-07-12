@@ -23,6 +23,6 @@ export const overlayManifestEntrySchema: z.ZodObject<{
   isDirectory: z.boolean(),
   isOpaque: z.boolean(),
   isSnapshotLowerPath: z.boolean(),
-  rdev: z.number(),
+  rdev: z.int().nonnegative(),
   relativePath: z.string(),
 }) satisfies z.ZodType<OverlayManifestEntry>;

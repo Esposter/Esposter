@@ -30,7 +30,8 @@ export const postsRelation = defineRelationsPart(schema, (r) => ({
 }));
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const PostRelations = {
-  likes: true,
   user: true,
 } as const;
-export type PostWithRelations = Post & { likes: Like[]; user: User };
+// The likes relation is only a server-side fetch strategy filtered to the viewer's row,
+// So every procedure returns at most one like — the viewer's — instead of all of them
+export type PostWithRelations = Post & { user: User; viewerLike: Like | undefined };

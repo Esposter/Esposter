@@ -18,7 +18,12 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
-import { DEFAULT_SPEAKER_VOLUME_PERCENTAGE, NoiseSuppressionMode, VoiceInputMode } from "@esposter/db-schema";
+import {
+  DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
+  DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+  NoiseSuppressionMode,
+  VoiceInputMode,
+} from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { BackgroundProcessor, supportsBackgroundProcessors } from "@livekit/track-processors";
 import { ConnectionQuality, ConnectionState, Room, RoomEvent, Track } from "livekit-client";
@@ -28,6 +33,7 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
   let disconnectHandler: (() => Promise<void>) | undefined;
   let localCameraTrack: LocalVideoTrack | undefined;
   let microphoneProcessor: MicrophoneProcessor | undefined;
+  let pushToTalkReleaseTimeoutId: number | undefined;
   let virtualBackgroundProcessor: ReturnType<typeof BackgroundProcessor> | undefined;
   const mediaStore = useMediaStore();
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
@@ -74,8 +80,18 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     microphoneProcessor.voiceInputMode = settings.voiceInputMode;
     if (settings.voiceInputMode !== VoiceInputMode.PushToTalk) microphoneProcessor.isPushToTalkKeyHeld = false;
   };
+  // Push-to-talk gate: pressing opens instantly; releasing closes after the configured grace period
+  // So word endings aren't clipped (Discord's release delay). Pressing again cancels a pending close.
   const setPushToTalkKeyHeld = (isPushToTalkKeyHeld: boolean) => {
-    if (microphoneProcessor) microphoneProcessor.isPushToTalkKeyHeld = isPushToTalkKeyHeld;
+    window.clearTimeout(pushToTalkReleaseTimeoutId);
+    pushToTalkReleaseTimeoutId = undefined;
+    if (!microphoneProcessor) return;
+    else if (isPushToTalkKeyHeld) microphoneProcessor.isPushToTalkKeyHeld = true;
+    else
+      pushToTalkReleaseTimeoutId = window.setTimeout(() => {
+        if (microphoneProcessor) microphoneProcessor.isPushToTalkKeyHeld = false;
+        pushToTalkReleaseTimeoutId = undefined;
+      }, userSettingsStore.userSettings?.pushToTalkReleaseDelayMs ?? DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS);
   };
   const setActiveDevice = (kind: MediaDeviceKind, deviceId: string) => {
     switch (kind) {
@@ -314,6 +330,8 @@ export const useLiveKitStore = defineStore("message/room/liveKit", () => {
     const room = activeRoom;
     activeRoom = undefined;
     disconnectHandler = undefined;
+    window.clearTimeout(pushToTalkReleaseTimeoutId);
+    pushToTalkReleaseTimeoutId = undefined;
     await localCameraTrack?.stopProcessor();
     await room?.disconnect();
     localCameraTrack = undefined;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { pluralize } from "#shared/util/text/pluralize";
 import { capitalize } from "@esposter/shared";
 
 interface ResourceFileSelectionToolbarProps {
@@ -9,7 +10,7 @@ defineSlots<{ default?: () => VNode }>();
 const { label } = defineProps<ResourceFileSelectionToolbarProps>();
 const selectedIds = defineModel<string[]>({ required: true });
 const emit = defineEmits<{ delete: [ids: string[]] }>();
-const pluralizedLabel = computed(() => `${label}${selectedIds.value.length === 1 ? "" : "s"}`);
+const pluralizedLabel = computed(() => pluralize(label, selectedIds.value.length));
 </script>
 
 <template>

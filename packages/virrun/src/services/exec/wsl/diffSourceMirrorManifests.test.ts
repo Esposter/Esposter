@@ -63,7 +63,7 @@ describe(diffSourceMirrorManifests, () => {
     });
   });
 
-  test("puts a type flip in both the delete and copy sets so rsync recreates it cleanly", () => {
+  test("puts a type flip in both the delete and copy sets so the extract recreates it cleanly", () => {
     expect.hasAssertions();
 
     const delta = diffSourceMirrorManifests({ [TEST_FILENAME]: file() }, { [TEST_FILENAME]: directory });

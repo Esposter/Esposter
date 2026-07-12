@@ -13,6 +13,9 @@ import { ownedBy } from "@@/server/services/db/ownedBy";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { getNotBlockedWhere } from "@@/server/services/post/getNotBlockedWhere";
+import { getPostWithViewerLike } from "@@/server/services/post/getPostWithViewerLike";
+import { getViewerPostRelations } from "@@/server/services/post/getViewerPostRelations";
 import { ranking } from "@@/server/services/post/ranking";
 import { router } from "@@/server/trpc";
 import { requireEntity } from "@@/server/trpc/guards/requireEntity";
@@ -36,7 +39,10 @@ const readPostInputSchema = selectPostSchema.shape.id;
 
 const readPostsInputSchema = z
   .object({
-    ...createCursorPaginationParamsSchema(selectPostSchema.keyof(), [{ key: "ranking", order: SortOrder.Desc }]).shape,
+    ...createCursorPaginationParamsSchema(selectPostSchema.keyof(), [
+      { key: "ranking", order: SortOrder.Desc },
+      { key: "id", order: SortOrder.Desc },
+    ]).shape,
     [selectPostSchema.keyof().enum.parentId]: selectPostSchema.shape.parentId.default(null),
   })
   .prefault({});
@@ -86,17 +92,19 @@ export const postRouter = router({
           .set({ noComments: parentPost.noComments + 1 })
           .where(eq(posts.id, parentPost.id));
 
-        return requireEntity(
-          tx.query.posts.findFirst({
-            where: {
-              id: {
-                eq: newComment.id,
+        return getPostWithViewerLike(
+          await requireEntity(
+            tx.query.posts.findFirst({
+              where: {
+                id: {
+                  eq: newComment.id,
+                },
               },
-            },
-            with: PostRelations,
-          }),
-          DerivedDatabaseEntityType.Comment,
-          newComment.id,
+              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
+            }),
+            DerivedDatabaseEntityType.Comment,
+            newComment.id,
+          ),
         );
       }),
   ),
@@ -121,17 +129,19 @@ export const postRouter = router({
           JSON.stringify(input),
         );
 
-        return requireEntity(
-          tx.query.posts.findFirst({
-            where: {
-              id: {
-                eq: newPost.id,
+        return getPostWithViewerLike(
+          await requireEntity(
+            tx.query.posts.findFirst({
+              where: {
+                id: {
+                  eq: newPost.id,
+                },
               },
-            },
-            with: PostRelations,
-          }),
-          DatabaseEntityType.Post,
-          newPost.id,
+              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
+            }),
+            DatabaseEntityType.Post,
+            newPost.id,
+          ),
         );
       }),
   ),
@@ -192,34 +202,77 @@ export const postRouter = router({
     );
     return deletedPost;
   }),
-  readPost: standardRateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(({ ctx, input }) =>
-    requireEntity(
-      ctx.db.query.posts.findFirst({
-        where: {
-          id: {
-            eq: input,
+  readPost: standardRateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) => {
+    // The procedure is rate-limited, so a session may be absent — no viewer means no like lookup at all
+    const userId = ctx.getSessionPayload?.user.id;
+    if (!userId)
+      return getPostWithViewerLike(
+        await requireEntity(
+          ctx.db.query.posts.findFirst({
+            where: {
+              id: {
+                eq: input,
+              },
+            },
+            with: PostRelations,
+          }),
+          DatabaseEntityType.Post,
+          input,
+        ),
+      );
+
+    return getPostWithViewerLike(
+      await requireEntity(
+        ctx.db.query.posts.findFirst({
+          where: {
+            id: {
+              eq: input,
+            },
           },
-        },
-        with: PostRelations,
-      }),
-      DatabaseEntityType.Post,
-      input,
-    ),
-  ),
+          with: getViewerPostRelations(userId),
+        }),
+        DatabaseEntityType.Post,
+        input,
+      ),
+    );
+  }),
   readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
     .query(async ({ ctx, input: { cursor, limit, parentId, sortBy } }) => {
+      const userId = ctx.getSessionPayload?.user.id;
       const where: RelationsFilter<(typeof relations)["posts"], typeof relations> = parentId
         ? { parentId: { eq: parentId } }
         : { parentId: { isNull: true } };
-      if (cursor) where.RAW = (posts) => getCursorWhere(posts, cursor, sortBy);
-      const resultPosts: PostWithRelations[] = await ctx.db.query.posts.findMany({
-        limit: limit + 1,
-        orderBy: (posts) => parseSortByToSql(posts, sortBy),
-        where,
-        with: PostRelations,
-      });
-      return getCursorPaginationData(resultPosts, limit, sortBy);
+      if (cursor || userId)
+        where.RAW = (posts) => {
+          const rawWhere = and(
+            cursor ? getCursorWhere(posts, cursor, sortBy) : undefined,
+            // Only feeds filter blocked users — `readPost` stays readable since navigating
+            // Directly to a blocked user's post is an intentional act
+            userId ? getNotBlockedWhere(posts, ctx.db, userId) : undefined,
+          );
+          if (!rawWhere)
+            throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
+          return rawWhere;
+        };
+      const resultPosts = userId
+        ? await ctx.db.query.posts.findMany({
+            limit: limit + 1,
+            orderBy: (posts) => parseSortByToSql(posts, sortBy),
+            where,
+            with: getViewerPostRelations(userId),
+          })
+        : await ctx.db.query.posts.findMany({
+            limit: limit + 1,
+            orderBy: (posts) => parseSortByToSql(posts, sortBy),
+            where,
+            with: PostRelations,
+          });
+      return getCursorPaginationData(
+        resultPosts.map((post) => getPostWithViewerLike(post)),
+        limit,
+        sortBy,
+      );
     }),
   updateComment: getProfanityFilterProcedure(updateCommentInputSchema, ["description"]).mutation<PostWithRelations>(
     ({ ctx, input: { id, ...rest } }) =>
@@ -237,23 +290,25 @@ export const postRouter = router({
           id,
         );
 
-        return requireEntity(
-          tx.query.posts.findFirst({
-            where: {
-              id: {
-                eq: updatedComment.id,
+        return getPostWithViewerLike(
+          await requireEntity(
+            tx.query.posts.findFirst({
+              where: {
+                id: {
+                  eq: updatedComment.id,
+                },
+                parentId: {
+                  isNotNull: true,
+                },
+                userId: {
+                  eq: ctx.getSessionPayload.user.id,
+                },
               },
-              parentId: {
-                isNotNull: true,
-              },
-              userId: {
-                eq: ctx.getSessionPayload.user.id,
-              },
-            },
-            with: PostRelations,
-          }),
-          DerivedDatabaseEntityType.Comment,
-          id,
+              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
+            }),
+            DerivedDatabaseEntityType.Comment,
+            id,
+          ),
         );
       }),
   ),
@@ -273,23 +328,25 @@ export const postRouter = router({
           id,
         );
 
-        return requireEntity(
-          tx.query.posts.findFirst({
-            where: {
-              id: {
-                eq: updatedPost.id,
+        return getPostWithViewerLike(
+          await requireEntity(
+            tx.query.posts.findFirst({
+              where: {
+                id: {
+                  eq: updatedPost.id,
+                },
+                parentId: {
+                  isNull: true,
+                },
+                userId: {
+                  eq: ctx.getSessionPayload.user.id,
+                },
               },
-              parentId: {
-                isNull: true,
-              },
-              userId: {
-                eq: ctx.getSessionPayload.user.id,
-              },
-            },
-            with: PostRelations,
-          }),
-          DatabaseEntityType.Post,
-          id,
+              with: getViewerPostRelations(ctx.getSessionPayload.user.id),
+            }),
+            DatabaseEntityType.Post,
+            id,
+          ),
         );
       }),
   ),

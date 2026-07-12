@@ -15,7 +15,7 @@ Make the existing bestiary real: today all five species share identical base sta
 
 ## How it works
 
-- Give each species a role via stats: fast-fragile (high attack / low HP), tank (inverse), balanced — using the existing `Stats` fields (plus `defense` once [attack power and defense](/docs/proposals/dungeons/attack-power-and-defense) lands; land that first, this proposal tunes against it).
+- Give each species a role via stats: fast-fragile (high attack / low HP), tank (inverse), balanced — using the existing `Stats` fields, including the `defense` stat from the shipped [attack power and defense](/docs/dungeons/battle) (this proposal tunes against it).
 - Add attacks in `AttackMap` (each needs an `AttackComponentMap` animation — the Slash/IceShard components show the spritesheet pattern; reusing an animation with different power/sound is acceptable).
 - Vary `EncounterAreaMap` entries: encounter levels beyond base level 5 by scaling stats on spawn (small helper applying `levelUp` N times to a fresh `Monster`).
 - Species' `baseExp` values already differ slightly; align them with the new stat strength.

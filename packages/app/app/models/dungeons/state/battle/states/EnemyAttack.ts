@@ -7,6 +7,7 @@ import { calculateDamage } from "@/services/dungeons/monster/calculateDamage";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { getRandomValue } from "@/util/math/random/getRandomValue";
 import { prettify } from "@/util/text/prettify";
 import { sleep } from "vue-phaserjs";
@@ -19,6 +20,8 @@ export const EnemyAttack: State<StateName> = {
     const takeDamage = useTakeDamage(false);
     const enemyStore = useEnemyStore();
     const { activeMonster } = storeToRefs(enemyStore);
+    const battlePlayerStore = useBattlePlayerStore();
+    const { activeMonster: playerActiveMonster } = storeToRefs(battlePlayerStore);
     const randomAttackId = getRandomValue(activeMonster.value.attackIds);
     const randomAttack = getAttack(randomAttackId);
 
@@ -28,7 +31,9 @@ export const EnemyAttack: State<StateName> = {
     );
     await sleep(scene, dayjs.duration(0.5, "seconds").asMilliseconds());
     await useAttackAnimation(scene, randomAttack, false);
-    await takeDamage(calculateDamage(activeMonster.value.stats.attack));
+    await takeDamage(
+      calculateDamage(activeMonster.value.stats.attack, randomAttack.power, playerActiveMonster.value.stats.defense),
+    );
     await battleStateMachine.setState(StateName.EnemyPostAttackCheck);
   },
 };

@@ -2,19 +2,19 @@ import type { SourceMirrorManifest } from "@/models/exec/wsl/SourceMirrorManifes
 
 import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
 import { getResult, noop } from "@esposter/shared";
-import { lstatSync, readdirSync, readlinkSync } from "node:fs";
+import { lstatSync, readdirSync, readlinkSync, statSync } from "node:fs";
 import { join } from "node:path";
 // Walk the host working tree on the native filesystem and record every mirrored entry's change signature, keyed by
-// Posix relative path. This is the same stat-walk rsync's quick-check does, moved off v9fs onto the host FS where it
-// Is orders of magnitude cheaper — diffing two of these manifests replaces the whole-tree remote walk.
+// Posix relative path. This is the stat-walk an rsync quick-check would do, moved off v9fs onto the host FS where it
+// Is orders of magnitude cheaper — diffing two of these manifests replaces the whole-tree remote walk, and the
+// Manifest's key set is the single source of truth for what the sync's archive carries (createSourceMirrorArchive).
 //
-// Excludes replicate the rsync `--exclude` semantics for the patterns resolveMirrorExcludes produces: a bare name
-// (node_modules, .git) matches its basename at any depth, a slashed pattern (an environment's prepare output like
-// `packages/app/.nuxt`) matches the relative path from the walk root; an excluded directory is not descended. Both
-// Sides of a sync must agree on the mirrored set, so a full rsync fallback passes the same patterns.
+// Exclude semantics for the patterns resolveMirrorExcludes produces: a bare name (node_modules, .git) matches its
+// Basename at any depth, a slashed pattern (.claude/worktrees, or an environment's prepare output like
+// `packages/app/.nuxt`) matches the relative path from the walk root; an excluded directory is not descended.
 //
-// An entry the host can't lstat/readlink (e.g. Windows-locked) is skipped, exactly as it is unreadable for a /mnt/c
-// Rsync today: it drops out of the manifest, so once readable again it diffs as changed and self-heals.
+// An entry the host can't lstat/readlink (e.g. Windows-locked) is skipped, exactly as it would be unreadable for the
+// Archiving tar: it drops out of the manifest, so once readable again it diffs as changed and self-heals.
 export const buildSourceMirrorManifest = (cwd: string, excludes: readonly string[]): SourceMirrorManifest => {
   const nameExcludes = new Set(excludes.filter((exclude) => !exclude.includes("/")));
   const pathExcludes = new Set(excludes.filter((exclude) => exclude.includes("/")));
@@ -25,9 +25,18 @@ export const buildSourceMirrorManifest = (cwd: string, excludes: readonly string
       if (nameExcludes.has(entry.name) || pathExcludes.has(relativePath)) continue;
       const path = join(directory, entry.name);
       if (entry.isSymbolicLink()) {
+        // The archive dereferences symlinks (tar -h — createSourceMirrorArchive), so the change signal follows the
+        // Target's stat, plus the target path so a retarget still flips the entry. A broken link drops out like any
+        // Unreadable entry.
+        const stats = getResult(() => statSync(path)).unwrapOr(undefined);
         const target = getResult(() => readlinkSync(path)).unwrapOr(undefined);
-        if (target !== undefined)
-          manifest[relativePath] = { mtimeMs: 0, size: 0, target, type: SourceMirrorEntryType.Symlink };
+        if (stats !== undefined && target !== undefined)
+          manifest[relativePath] = {
+            mtimeMs: stats.mtimeMs,
+            size: stats.size,
+            target,
+            type: SourceMirrorEntryType.Symlink,
+          };
       } else if (entry.isDirectory()) {
         manifest[relativePath] = { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.Directory };
         getResult(() => {

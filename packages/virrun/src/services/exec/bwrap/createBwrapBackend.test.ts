@@ -1,7 +1,11 @@
 import type { ExecStdio } from "@/models/exec/ExecOptions";
 import type { spawn as baseSpawn, ChildProcess } from "node:child_process";
 
-import { WSL_BWRAP_STATUS_BEGIN, WSL_BWRAP_STATUS_END } from "@/services/exec/bwrap/constants";
+import {
+  WSL_BWRAP_STATUS_BEGIN,
+  WSL_BWRAP_STATUS_END,
+  WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER,
+} from "@/services/exec/bwrap/constants";
 import { createBwrapBackend } from "@/services/exec/bwrap/createBwrapBackend";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { getResultAsync } from "@esposter/shared";
@@ -66,6 +70,22 @@ describe(createBwrapBackend, () => {
 
     expect(message).toBe(
       `Invalid operation: Create, name: ${ERROR_NAME}, bubblewrap failed to set up the sandbox\n${commandStderr}`,
+    );
+  });
+
+  test("names a folded sync failure instead of blaming bubblewrap when its marker is in stderr", async () => {
+    expect.hasAssertions();
+
+    // The wsl backend's sync prelude failed before bwrap started: no status block, only the marker line.
+    const commandStderr = `${WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER} with exit code 1\n`;
+    spawn.mockImplementation(() => createFakeChild({ stderr: commandStderr }));
+    const message = (await getResultAsync(() => exec("pipe"))).match(
+      () => "",
+      ({ message }) => message,
+    );
+
+    expect(message).toBe(
+      `Invalid operation: Create, name: ${ERROR_NAME}, the source mirror sync failed before the sandbox started\n${commandStderr}`,
     );
   });
 

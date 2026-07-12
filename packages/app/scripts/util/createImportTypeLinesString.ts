@@ -1,6 +1,6 @@
 import type { ImportTypeLine } from "@@/scripts/models/ImportTypeLine";
 
-import { EN_US_COMPARATOR } from "@/services/shared/constants";
+import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 
 export const createImportTypeLinesString = (lines: ImportTypeLine[]) =>
   lines.length === 0

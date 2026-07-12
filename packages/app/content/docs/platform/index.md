@@ -20,6 +20,7 @@ The standards the platform applies live in architecture: the layer model ([/docs
 ## Feature pages
 
 - [Resource explorer](/docs/platform/resource-explorer) — the shell: Home, list, create flow, resource page, blades, command bar
+- [Global search](/docs/platform/global-search) — grouped as-you-type dropdown, `Ctrl+K` command palette, keyboard chords, prefix-match ranking
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [File resource](/docs/platform/file-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
@@ -38,6 +39,7 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 - Dashboard binding polish — multi-series editing, File sources; published-view OG meta tags
 - Survey distribution fixes — publishing snapshots the model; the public respondent page serves that snapshot and 404s for unpublished surveys
 - **Resource Explorer consolidation (Phases 1–6)** — everything became a resource behind one explorer: `resources` + `resource_publications` tables, one `ResourceAssets` container replacing six, `createResourceProcedures` factory, the explorer shell, all editors migrated to inline blades, the `surveys` table folded in, and every per-editor page/picker/hub deleted. Zero new dependencies and zero new Azure services across all six phases.
+- Global search overhaul — `ResourceSearchMenu` grouped dropdown (inline Home mount + `Ctrl+K` palette), localStorage recents, `G`-chords + `?` shortcuts overlay, prefix-match ranking in `readResources`
 
 ### Consolidation notes
 

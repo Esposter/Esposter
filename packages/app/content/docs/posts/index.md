@@ -17,8 +17,13 @@ Posts are Esposter's core product — "a nice and casual place for posting rando
 
 ## Pages
 
-- [Feed and ranking](/docs/posts/feed-and-ranking) — the home feed, cursor pagination, and the hot score.
+- [Feed and ranking](/docs/posts/feed-and-ranking) — the home feed, sort options, cursor pagination, and the hot score.
 - [Posts and comments](/docs/posts/posts-and-comments) — CRUD, the self-referencing model, rich text.
-- [Likes](/docs/posts/likes) — the ±1 like model and its transactional counter updates.
+- [Likes](/docs/posts/likes) — the ±1 like model, viewer-scoped reads, and transactional counter updates.
+- [Feed block filtering](/docs/posts/feed-block-filtering) — blocked users' posts and comments are hidden from feeds.
 
 Open work: [roadmap](/docs/posts/roadmap). Decided ideas: [deferred](/docs/posts/deferred), [rejected](/docs/posts/rejected).
+
+## Shipped log
+
+- **Feed reads** — viewer-scoped likes (one like row per post instead of all of them), Hot / New / Top sort toggle, blocked-user filtering, lexicographic compound cursors.

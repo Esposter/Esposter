@@ -6,7 +6,8 @@ import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { roomIdSchema, roomIdsSchema, userIdsSchema } from "@esposter/db-schema";
+import { roomIdSchema, roomIdsSchema, userIdsSchema, usersToRoomsInMessage } from "@esposter/db-schema";
+import { and, eq, ne } from "drizzle-orm";
 import { z } from "zod";
 
 const readNicknamesInputSchema = z.object({
@@ -21,6 +22,23 @@ const readMyUsersToRoomsInputSchema = z.object({
 const onUpdateUserToRoomInputSchema = roomIdsSchema.shape.roomIds.min(1);
 
 export const userToRoomRouter = router({
+  // Resets the caller's own mention badge on room view; idempotent — only emits when a count was cleared.
+  clearMentionCount: getMemberProcedure(roomIdSchema, "roomId").mutation(async ({ ctx, input }) => {
+    const updatedUserToRoom = (
+      await ctx.db
+        .update(usersToRoomsInMessage)
+        .set({ mentionCount: 0 })
+        .where(
+          and(
+            eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+            eq(usersToRoomsInMessage.roomId, input.roomId),
+            ne(usersToRoomsInMessage.mentionCount, 0),
+          ),
+        )
+        .returning()
+    )[0];
+    if (updatedUserToRoom) userToRoomEventEmitter.emit("updateUserToRoom", updatedUserToRoom);
+  }),
   onUpdateUserToRoom: standardAuthedProcedure.input(onUpdateUserToRoomInputSchema).subscription(async function* ({
     ctx,
     input,
