@@ -1,7 +1,8 @@
 import { Clicker } from "#shared/models/clicker/data/Clicker";
+import { toClicker } from "@/services/clicker/save/toClicker";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useClickerStore } from "@/store/clicker";
-import { jsonDateParse } from "@esposter/shared";
+import { getResult, jsonDateParse } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 import { omitDeep } from "lodash-omitdeep";
 
@@ -25,10 +26,15 @@ export const useReadClicker = async () => {
   await useReadData(
     () => {
       const clickerJson = localStorage.getItem(LocalStorageKey.ClickerStore);
-      clicker.value = clickerJson ? new Clicker(jsonDateParse(clickerJson)) : new Clicker();
+      clicker.value = clickerJson
+        ? getResult(() => jsonDateParse(clickerJson))
+            .map((savedClicker) => toClicker(savedClicker))
+            .orTee(console.error)
+            .unwrapOr(new Clicker())
+        : new Clicker();
     },
     async () => {
-      clicker.value = await $trpc.clicker.readClicker.query();
+      clicker.value = toClicker(await $trpc.clicker.readClicker.query());
     },
   );
 };

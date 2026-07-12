@@ -3,6 +3,7 @@ import type { Building } from "#shared/models/clicker/data/building/Building";
 import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
+import { getBuildingPrice as baseGetBuildingPrice } from "@/services/clicker/building/getBuildingPrice";
 import { formatNumberLong } from "@/services/clicker/format";
 import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
 import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingUpgrades";
@@ -48,10 +49,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
       `- **${formatNumberLong(boughtBuilding.producedValue, 3)}** ${clickerStore.clickerItemProperties.pluralName} produced so far`,
     ];
   };
-  const getBuildingPrice = (building: Building) => {
-    const boughtBuildingAmount = getBoughtBuildingAmount(building);
-    return Math.trunc(building.basePrice * (1 + boughtBuildingAmount) ** 1.15);
-  };
+  const getBuildingPrice = (building: Building) => baseGetBuildingPrice(building, getBoughtBuildingAmount(building));
 
   const createBoughtBuilding = (newBuilding: Building) => {
     const newBuildingPrice = getBuildingPrice(newBuilding);

@@ -36,5 +36,5 @@ Paths relative to `packages/app`.
 
 ## Notes
 
-- Land [normalize save data](/docs/proposals/clicker/normalize-save-data) first so shipped content can still be rebalanced afterwards.
+- Save data is already normalized to ids ([game loop and saves](/docs/clicker/game-loop-and-saves)), so shipped content can still be rebalanced afterwards.
 - Icons are the only non-mechanical cost; reusing the building's menu icon as a placeholder is acceptable for a first pass.
