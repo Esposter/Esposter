@@ -15,5 +15,5 @@ export interface Effect {
 export const effectSchema = z.object({
   configuration: effectConfigurationSchema,
   targets: createUniqueArraySchema(targetSchema).min(1),
-  value: z.number(),
+  value: z.number().positive(),
 }) satisfies z.ZodType<Effect>;

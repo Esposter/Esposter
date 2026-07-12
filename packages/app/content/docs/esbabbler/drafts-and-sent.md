@@ -9,11 +9,11 @@ Route `/messages/draftsandsent`: a cross-room view of unsent drafts, scheduled j
 
 ## Tabs
 
-| Tab       | Source                            | Ordering                                                               |
-| --------- | --------------------------------- | ---------------------------------------------------------------------- |
-| Drafts    | Local draft storage keyed by room | Draft update time, falling back to room updated time for legacy drafts |
-| Scheduled | `scheduledMessageJobsInMessage`   | `runAt ASC`, grouped by Today/Yesterday/date                           |
-| Sent      | Azure AI Search messages index    | Sent time descending, grouped by Today/Yesterday/date                  |
+| Tab       | Source                            | Ordering                                              |
+| --------- | --------------------------------- | ----------------------------------------------------- |
+| Drafts    | Local draft storage keyed by room | Draft update time descending                          |
+| Scheduled | `scheduledMessageJobsInMessage`   | `runAt ASC`, grouped by Today/Yesterday/date          |
+| Sent      | Azure AI Search messages index    | Sent time descending, grouped by Today/Yesterday/date |
 
 Sent messages reuse the existing Azure AI Search messages index as the cross-room read model — Azure Table Storage remains the source of truth for message writes. `message.readMySentMessages({ offset, limit })` queries the index with `userId` and non-deleted filters ordered `createdAt DESC`, returning total count, offset pagination metadata, deserialized message entities, and room metadata per row; the client groups rows by day and links each row back to its source room/message.
 

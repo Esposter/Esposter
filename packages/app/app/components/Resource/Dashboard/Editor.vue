@@ -2,10 +2,9 @@
 import type { VisualType } from "#shared/models/dashboard/data/VisualType";
 
 import { VisualTypes } from "#shared/models/dashboard/data/VisualType";
-import { ID_QUERY_PARAMETER_KEY, ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
+import { ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useDashboardStore } from "@/store/dashboard";
 import { useVisualStore } from "@/store/dashboard/visual";
-import { uuidValidateV4 } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 import { omitDeep } from "lodash-omitdeep";
 
@@ -14,12 +13,10 @@ const dashboardStore = useDashboardStore();
 const { loadContent, saveDashboard } = dashboardStore;
 const { dashboard } = storeToRefs(dashboardStore);
 const visualStore = useVisualStore();
-const { editItem } = visualStore;
 const { visualType } = storeToRefs(visualStore);
 const isLoading = ref(true);
 const itemType = route.query[ITEM_TYPE_QUERY_PARAMETER_KEY];
 if (VisualTypes.has(itemType as VisualType)) visualType.value = itemType as VisualType;
-const itemId = route.query[ID_QUERY_PARAMETER_KEY];
 const virtualDashboard = computed((oldVirtualDashboard) => {
   const newVirtualDashboard = omitDeep(dashboard.value);
   return oldVirtualDashboard && deepEqual(newVirtualDashboard, oldVirtualDashboard)
@@ -35,7 +32,6 @@ watch(virtualDashboard, async () => {
 onMounted(async () => {
   await loadContent();
   isLoading.value = false;
-  if (typeof itemId === "string" && uuidValidateV4(itemId)) await editItem({ id: itemId });
 });
 </script>
 

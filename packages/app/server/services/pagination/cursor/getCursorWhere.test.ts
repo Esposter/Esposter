@@ -6,7 +6,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { BinaryOperator, users } from "@esposter/db-schema";
-import { and, gt, gte, lt, lte } from "drizzle-orm";
+import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
 import { describe, expect, test } from "vitest";
 
 describe(getCursorWhere, () => {
@@ -37,8 +37,22 @@ describe(getCursorWhere, () => {
       const serializedCursors = serialize(user, [sortItem]);
 
       expect(getCursorWhere(users, serializedCursors, [sortItem])).toStrictEqual(
-        and(sortItem.operator(users.id, user.id)),
+        or(and(sortItem.operator(users.id, user.id))),
       );
     }
+  });
+
+  test("gets lexicographic where for compound sort", () => {
+    expect.hasAssertions();
+
+    const sortBy: SortItem<keyof User>[] = [
+      { key: "createdAt", order: SortOrder.Desc },
+      { key: "id", order: SortOrder.Desc },
+    ];
+    const serializedCursors = serialize(user, sortBy);
+
+    expect(getCursorWhere(users, serializedCursors, sortBy)).toStrictEqual(
+      or(and(lt(users.createdAt, user.createdAt)), and(eq(users.createdAt, user.createdAt), lt(users.id, user.id))),
+    );
   });
 });

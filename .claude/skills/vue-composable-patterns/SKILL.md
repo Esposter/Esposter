@@ -360,6 +360,38 @@ onMounted(async () => {
 });
 ```
 
+## Least API Calls — Dirty-Check Saves (`useSave`)
+
+Every API call must be necessary. Never fire a persistence call (tRPC mutation or localStorage write) when the payload equals what was last persisted. Two silent offenders this kills:
+
+1. **Save-on-mount** — a `watch` on saveable state fires when the load assigns the just-loaded value, immediately re-persisting it.
+2. **Unconditional autosave** — an interval that saves every tick even when nothing changed since the last save.
+
+The dirty check is built into `useSave` (`composables/shared/useSave.ts`) — never hand-roll a snapshot or a `set*` wrapper in a store. It takes the state `Ref` plus an optional `toSave` mapper (when the persisted shape differs from the in-memory shape) and returns `{ save, setState }`: `save` skips (returning `true`) when the state's JSON snapshot equals the last persisted one; `setState` assigns loaded state AND resets the snapshot in one call. The snapshot bookkeeping (`markSaved`-style logic) is internal — callers never see it.
+
+```ts
+// store — persisted shape differs from in-memory shape: pass toSave
+const clicker = ref(new Clicker());
+const { save: saveClicker, setState: setClicker } = useSave(clicker, {
+  auth: { save: $trpc.clicker.saveClicker.mutate },
+  toSave: toClickerSave,
+  unauth: { key: LocalStorageKey.ClickerStore, schema: clickerSaveSchema },
+});
+
+// store — persisted shape IS the state: omit toSave
+const { save: saveDungeons, setState: setDungeons } = useSave(dungeons, { auth, unauth });
+
+// read composable — loads go through the returned setter, never assign the state ref directly
+setClicker(toClicker(await $trpc.clicker.readClicker.query()));
+```
+
+Rules:
+
+- Loads go through the returned setter (`setState`, renamed per domain: `setClicker`/`setDungeons`) so the snapshot resets — read composables never assign the state ref directly.
+- Skipping returns `true` — "already persisted" is success, not failure.
+- The snapshot updates only after a **successful** save so failures retry on the next trigger.
+- Snapshots are JSON strings (`Serializable.toJSON` handles reactive proxies/class instances) with `updatedAt` excluded — `saveItemMetadata` bumps it as part of saving, so it must not participate in the dirty check.
+
 ## Dialog Data Loading
 
 **Do NOT re-fetch on every dialog open.** Trust the Pinia store as source of truth — CRUD flows through tRPC subscriptions which keep the store current. Fetch once on mount; subsequent opens use cached store data.
@@ -428,6 +460,7 @@ Rules:
 
 ## Composable Rules
 
+- **Minimal public surface** — return only the composed operations callers actually use; bookkeeping helpers stay internal. If every caller would pair two returned functions the same way (e.g. assign + `markSaved`), return the composed function (`setState`) instead of the parts.
 - **Never use `createSharedComposable`** — VueUse's `createSharedComposable` creates global singletons that bypass Pinia devtools, HMR, and reactive reset. All shared reactive state must live in a Pinia store (`defineStore`). Existing `createSharedComposable` usages should be replaced by a store, or made thin wrappers delegating to the store.
 - **Single-function composables return the function directly** — when a composable exposes one function, return it directly: `return async (...) => { ... }`. Callers use `const fn = useX()` not `const { fn } = useX()`.
 - **`Promise.resolve(value)` for sync-to-async** — when a sync expression must satisfy a `Promise<T>` return type, use `Promise.resolve(value)` instead of `async () => value`.

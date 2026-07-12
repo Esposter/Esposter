@@ -9,7 +9,7 @@ Index `resources` (name, tags, eventually content extracts) into Azure AI Search
 
 ## Why deferred
 
-The only genuinely paid item in the portal-parity program. `ilike` with prefix ranking covers current volumes, and the `pg_trgm` migration ([global search](/docs/proposals/platform/global-search) relevance ladder) buys typo tolerance for free before any service spend is justified.
+The only genuinely paid item in the portal-parity program. `ilike` with prefix ranking ([global search](/docs/platform/global-search)) covers current volumes, and the `pg_trgm` migration ([relevance proposal](/docs/proposals/platform/global-search-relevance)) buys typo tolerance for free before any service spend is justified.
 
 ## Revisit when
 

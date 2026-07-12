@@ -54,7 +54,7 @@ flowchart LR
 
 ## Home — `/resources`
 
-The Azure-portal landing. Not a table — a dashboard of entry points: a **search bar** (submitting routes to `/resources/all` pre-filtered), **quick-create tiles** from `ResourceDefinitionMap` (icon + title → `/resources/create/[type]`), a primary **Create a resource** button (→ gallery), and **Recent resources** (`resource.readResources` sorted by `updatedAt` desc, capped, with a **See all** link). Empty state is a `StyledEmptyState` with a Create action.
+The Azure-portal landing. Not a table — a dashboard of entry points: the inline [global search](/docs/platform/global-search) mount (grouped as-you-type dropdown; Enter still routes to `/resources/all` pre-filtered), **quick-create tiles** from `ResourceDefinitionMap` (icon + title → `/resources/create/[type]`), a primary **Create a resource** button (→ gallery), and **Recent resources** (`resource.readResources` sorted by `updatedAt` desc, capped, with a **See all** link). Empty state is a `StyledEmptyState` with a Create action.
 
 ## All resources — `/resources/all`
 
@@ -63,6 +63,7 @@ The Azure-portal landing. Not a table — a dashboard of entry points: a **searc
 - Columns: type (icon + label from `ResourceDefinitionMap`), name, createdAt, updatedAt. Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade, not mixed into a cross-type list.
 - Toolbar (a fully-bordered `b-1` box, rendered only when `searchable`): search + a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
 - Row click → `/resources/{id}` via `navigateTo`; the row's **Open** action links there with `:to`.
+- `?search=` and `?types=` query params pre-filter the list on load, so [global search](/docs/platform/global-search) deep links land filtered.
 
 ## Create flow — `/resources/create` → `/resources/create/[type]`
 

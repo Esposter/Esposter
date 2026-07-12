@@ -27,6 +27,7 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [/docs/esbabbler/moderation](/docs/esbabbler/moderation)                             | Admin actions, word filter, bans/timeouts, audit log          |
 | [/docs/esbabbler/invites](/docs/esbabbler/invites)                                   | Invite links with expiry and max-use options                  |
 | [/docs/esbabbler/nicknames](/docs/esbabbler/nicknames)                               | Per-room nicknames and display-name resolution                |
+| [/docs/esbabbler/mention-badges](/docs/esbabbler/mention-badges)                     | Mention-only unread counts in the room sidebar                |
 | [/docs/esbabbler/profiles-and-presence](/docs/esbabbler/profiles-and-presence)       | Profile card/editing and Online/Idle/DND/Offline presence     |
 | [/docs/esbabbler/calls](/docs/esbabbler/calls)                                       | LiveKit sessions, membership boundary, knock lobby            |
 | [/docs/esbabbler/calls/call-view](/docs/esbabbler/calls/call-view)                   | Call surface, prejoin/ready room, tiles, control bar          |
@@ -36,6 +37,7 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [/docs/esbabbler/settings](/docs/esbabbler/settings)                                 | Message-scoped user settings dialog + `userSettingsInMessage` |
 | [/docs/esbabbler/room-settings](/docs/esbabbler/room-settings)                       | Room settings dialog — Discord categories + permission gating |
 | [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video)                           | Voice & Video panel and live LiveKit application              |
+| [/docs/esbabbler/push-to-talk](/docs/esbabbler/push-to-talk)                         | Hold-to-talk keybind, mic gate, release delay                 |
 | [/docs/esbabbler/push-notifications](/docs/esbabbler/push-notifications)             | Web push delivery and recipient filtering                     |
 | [/docs/esbabbler/slash-commands](/docs/esbabbler/slash-commands)                     | `/command` registry, picker, execution model                  |
 | [/docs/esbabbler/scheduled-messages](/docs/esbabbler/scheduled-messages)             | `/remind` + `/schedule` jobs and the Service Bus worker       |
@@ -53,10 +55,10 @@ Chronological, one line per feature group.
 - **Search & navigation** — Ctrl+K command palette, filtered search (`from:`/`in:`/`before:`/`after:`), pinned messages list, unread room dot, jump-to-message, Copy Message Link, Mark Unread From Here.
 - **Slash commands** — `/me` `/flip` `/shrug` `/tableflip` `/unflip` `/roll` `/topic` `/remind` `/schedule`.
 - **Friends & DMs** — friends system, blocked users, 1:1 + group DMs, group-DM participant management, DM calls.
-- **Mentions & notifications** — `@here`, `@everyone`, role mentions, mention highlighting, per-room notification preference, friend-request push notifications.
+- **Mentions & notifications** — `@here`, `@everyone`, role mentions, mention highlighting, per-room notification preference, friend-request push notifications, mention badges (sidebar mention counts).
 - **Presence & profiles** — Online/Idle/DND/Offline status, custom status message, profile card, profile editing (biography + avatar SAS upload), room profile image.
 - **Rooms** — categories with drag-reorder, read-only/announcement channels, slowmode, per-room nicknames, welcome screen, join/leave system messages, invite expiry & max uses.
 - **Moderation** — RBAC roles/permissions, force-mute, kick, ban/unban, timeout, warn, softban, word filter, audit log with action/actor/target filters.
 - **Calls** — persistent per-room drop-in audio, LiveKit migration, video, screenshare, call lobby (knock & admit), deafen, raise-hand, call-health indicator, call-end duration system message, Document PiP pop-out, per-user volume, push-to-talk.
 - **Integrations & infra** — inbound webhooks, offline message cache, scheduled messages (Service Bus worker + listing/cancel UI), Sent tab via Search index.
-- **Settings** — message-scoped user-settings dialog (Voice & Video / Notifications / Keybinds) backed by `userSettingsInMessage`, applied live to LiveKit calls; room settings Discord-parity IA (category groups, Roles rename, Members/Invites tabs, Integrations + Moderation groups).
+- **Settings** — message-scoped user-settings dialog (Voice & Video / Notifications / Keybinds) backed by `userSettingsInMessage`, applied live to LiveKit calls; push-to-talk keybind + release delay; room settings Discord-parity IA (category groups, Roles rename, Members/Invites tabs, Integrations + Moderation groups).

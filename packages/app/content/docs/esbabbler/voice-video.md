@@ -12,7 +12,7 @@ The Voice & Video panel of the [user settings dialog](/docs/esbabbler/settings),
 1. **Devices** — Microphone/Speaker selects two-up; Microphone/Speaker Volume sliders two-up; Camera select; Test Mic button + segmented level meter.
 2. **Input Profile** — radio: Voice Isolation / Studio / Custom (`noiseSuppressionMode`).
 3. **Input Sensitivity** — a gradient slider (yellow→green): the thumb is the activation **threshold**, a darker overlay shows the **live mic level**; a warning + permission link appears when no input device is granted.
-4. **Input Mode** (Voice Activity / Push To Talk + keybind) and **Join Settings** (mute/deafen on join).
+4. **Input Mode** (Voice Activity / Push To Talk + keybind + release delay) and **Join Settings** (mute/deafen on join).
 
 ## How each setting applies
 
@@ -33,7 +33,7 @@ flowchart LR
 | **Speaker Volume**      | `speakerVolumePercentage`         | master output: `HTMLMediaElement.volume` on every remote audio element, multiplied per participant by the in-call [per-user volume](/docs/esbabbler/calls/per-user-volume) (caps at 100%; >100% needs `webAudioMix`) |
 | **Input Profile**       | `noiseSuppressionMode`            | browser-native getUserMedia constraints via `getAudioCaptureDefaults` → Room `audioCaptureDefaults` + `restartTrack`                                                                                                 |
 | **Input Sensitivity**   | `inputSensitivityDecibels`        | voice-activity gate in `MicrophoneProcessor`: gain → 0 when live dB < threshold (Voice Activity mode only)                                                                                                           |
-| **Input mode**          | `voiceInputMode`                  | `VoiceActivity` enables the sensitivity gate; `PushToTalk` gates on the held keybind (see Push-to-talk below)                                                                                                        |
+| **Input mode**          | `voiceInputMode`                  | `VoiceActivity` enables the sensitivity gate; `PushToTalk` gates on the held keybind — [/docs/esbabbler/push-to-talk](/docs/esbabbler/push-to-talk)                                                                  |
 | **Default mute/deafen** | `isMuteOnJoin` / `isDeafenOnJoin` | initial mic/deafen state in the join flow                                                                                                                                                                            |
 | **Devices**             | `inputDeviceId` etc. (local)      | join: Room `audio`/`videoCaptureDefaults.deviceId`; mid-call: `room.switchActiveDevice` via store watchers                                                                                                           |
 
@@ -53,21 +53,9 @@ Browser-native only — **no Krisp** (paid). `getAudioCaptureDefaults` maps the 
 
 ## Microphone processing — `MicrophoneProcessor`
 
-`models/message/room/call/MicrophoneProcessor.ts` is a LiveKit audio `TrackProcessor`, so LiveKit owns its lifecycle (init on publish, restart on device switch, destroy on unpublish) — no manual track republish. It builds `source → gainNode → MediaStreamDestination`, taps the source pre-gain with an `AnalyserNode`, and per animation frame computes the live dB level to drive the voice-activity gate and applies `microphoneVolumePercentage / 100` as gain.
+`models/message/room/call/MicrophoneProcessor.ts` is a LiveKit audio `TrackProcessor`, so LiveKit owns its lifecycle (init on publish, restart on device switch, destroy on unpublish) — no manual track republish. It builds `source → gainNode → MediaStreamDestination`, taps the source pre-gain with an `AnalyserNode`, and per animation frame computes the live dB level to drive the gate and applies `microphoneVolumePercentage / 100` as gain. The gate source follows `voiceInputMode`: the dB threshold in Voice Activity, the held keybind (`isPushToTalkKeyHeld`) in Push To Talk — see [/docs/esbabbler/push-to-talk](/docs/esbabbler/push-to-talk).
 
 There is **no** shared "speaking indicator analyser" to reuse — in-call active-speaker state comes from LiveKit's server-side `RoomEvent.ActiveSpeakersChanged`. Local level analysis (panel meter + processor gate) is its own Web Audio graph; the panel meter uses the separate read-only `useMicrophoneLevel` composable.
-
-## Push-to-talk
-
-`VoiceInputMode.PushToTalk` drives the same `MicrophoneProcessor` gain gate from key state instead of dB level: while the configured key (`pushToTalkKeybind`, captured as an `event.code` under Input Mode) is held, the mic transmits; released, gain gates to 0.
-
-The `usePushToTalk` composable registers `keydown`/`keyup`/`blur` listeners while in a call with Push To Talk selected. It is hosted by the **call store** (not a component) so hold-to-talk survives navigation like the call itself, and the [PiP host](/docs/esbabbler/calls/picture-in-picture) mounts a second instance on the PiP window because key events don't cross documents. Edge rules:
-
-- Keydown in an editable element (the composer) never opens the gate — typing a bound letter must not transmit.
-- Keyup and window blur always close the gate, so focus changes and out-of-window key releases can't leave it stuck open.
-- Switching input mode away from Push To Talk resets the held state.
-
-Browser limitation: keys only arrive while an app window (main or PiP) is focused — true global OS-level push-to-talk needs a desktop app and is out of scope (same constraint family as [currently-playing activity](/docs/esbabbler/rejected/currently-playing-activity)). The PiP window being focusable mitigates this when presenting.
 
 ## Key files
 

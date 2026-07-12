@@ -1,6 +1,6 @@
 import type { User } from "@esposter/db-schema";
 
-import { EN_US_COMPARATOR } from "@/services/shared/constants";
+import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useUserStore } from "@/store/message/user";
 

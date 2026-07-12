@@ -7,9 +7,11 @@ import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArr
 
 const AttackMap = {
   [AttackId.Slash]: {
+    power: 40,
     soundEffectKey: SoundEffectKey.Claw,
   },
   [AttackId["Ice Shard"]]: {
+    power: 55,
     soundEffectKey: SoundEffectKey.IceExplosion,
   },
 } as const satisfies Record<AttackId, Except<Attack, "id">>;

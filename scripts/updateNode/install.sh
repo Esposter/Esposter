@@ -2,6 +2,13 @@
 new="$1"
 old="$2"
 
+# If the caller's shell enabled fnm's built-in corepack support (FNM_COREPACK_ENABLED, set by
+# `fnm env --corepack-enabled`), fnm runs `corepack enable` on every install/use/default. Node 25+ no
+# longer bundles corepack, so that fires against a binary this fresh version doesn't have yet and hard-errors
+# ("Can't enable corepack: Can't spawn program"). Suppress it here and let the block below provision corepack
+# ourselves; once it's globally installed, the user's cd-triggered `fnm use --corepack-enabled` resolves fine.
+unset FNM_COREPACK_ENABLED
+
 fnm install "$new"
 fnm default "$new"
 fnm use "$new"

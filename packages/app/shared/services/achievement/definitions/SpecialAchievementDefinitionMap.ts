@@ -2,6 +2,7 @@ import { AchievementCategory } from "#shared/models/achievement/AchievementCateg
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { countEmojis } from "#shared/util/text/countEmojis";
 import { SpecialAchievementName } from "@esposter/db-schema";
 
 export const SpecialAchievementDefinitionMap = {
@@ -37,15 +38,7 @@ export const SpecialAchievementDefinitionMap = {
     amount: 1,
     category: AchievementCategory.Special,
     condition: {
-      operation: (value) => {
-        if (!value) return false;
-        const segmenter = new Intl.Segmenter("en-US", { granularity: "grapheme" });
-        const segments = [...segmenter.segment(value)];
-        const emojiCount = segments.filter((segment) =>
-          /\p{Emoji_Presentation}|\p{Extended_Pictographic}/u.test(segment.segment),
-        ).length;
-        return emojiCount >= 10;
-      },
+      operation: (value) => (value ? countEmojis(value) >= 10 : false),
       operator: AchievementOperator.Operation,
       path: "message",
       type: AchievementConditionType.Property,

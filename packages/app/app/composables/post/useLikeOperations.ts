@@ -3,11 +3,7 @@ import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
 import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
 import type { PostWithRelations } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
-import { takeOne } from "@esposter/shared";
-
 export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
-  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
 
   const createLike = async (input: CreateLikeInput) => {
@@ -15,7 +11,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     const post = toValue(allPosts).find(({ id }) => id === newLike.postId);
     if (!post) return;
 
-    post.likes.push(newLike);
+    post.viewerLike = newLike;
     post.noLikes += newLike.value;
   };
   const updateLike = async (input: UpdateLikeInput) => {
@@ -23,27 +19,15 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     const post = toValue(allPosts).find(({ id }) => id === updatedLike.postId);
     if (!post) return;
 
-    const index = post.likes.findIndex(
-      ({ postId, userId }) => userId === updatedLike.userId && postId === updatedLike.postId,
-    );
-    if (index === -1) return;
-
-    Object.assign(takeOne(post.likes, index), updatedLike);
+    post.viewerLike = updatedLike;
     post.noLikes += updatedLike.value * 2;
   };
   const deleteLike = async (postId: DeleteLikeInput) => {
-    const userId = session.value.data?.user.id;
-    if (!userId) return;
-
-    await $trpc.like.deleteLike.mutate(postId);
-
+    const deletedLike = await $trpc.like.deleteLike.mutate(postId);
     const post = toValue(allPosts).find(({ id }) => id === postId);
     if (!post) return;
 
-    const deletedLike = post.likes.find((l) => l.userId === userId && l.postId === postId);
-    if (!deletedLike) return;
-
-    post.likes = post.likes.filter((l) => !(l.userId === deletedLike.userId && l.postId === deletedLike.postId));
+    post.viewerLike = undefined;
     post.noLikes -= deletedLike.value;
   };
 

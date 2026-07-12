@@ -4,6 +4,7 @@ import type { Except } from "type-fest";
 import { AttackId } from "#shared/models/dungeons/attack/AttackId";
 import { AssetKey } from "#shared/models/dungeons/keys/AssetKey";
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { BASE_DEFENSE } from "#shared/services/dungeons/monster/constants";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
 
 const MonstersDataMap = {
@@ -15,6 +16,7 @@ const MonstersDataMap = {
     stats: {
       attack: 5,
       baseExp: 50,
+      defense: BASE_DEFENSE,
       level: 5,
       maxHp: 25,
     },
@@ -28,6 +30,7 @@ const MonstersDataMap = {
     stats: {
       attack: 5,
       baseExp: 52,
+      defense: BASE_DEFENSE,
       level: 5,
       maxHp: 25,
     },
@@ -41,6 +44,7 @@ const MonstersDataMap = {
     stats: {
       attack: 5,
       baseExp: 53,
+      defense: BASE_DEFENSE,
       level: 5,
       maxHp: 25,
     },
@@ -54,6 +58,7 @@ const MonstersDataMap = {
     stats: {
       attack: 5,
       baseExp: 51,
+      defense: BASE_DEFENSE,
       level: 5,
       maxHp: 25,
     },
@@ -67,6 +72,7 @@ const MonstersDataMap = {
     stats: {
       attack: 5,
       baseExp: 50,
+      defense: BASE_DEFENSE,
       level: 5,
       maxHp: 25,
     },
