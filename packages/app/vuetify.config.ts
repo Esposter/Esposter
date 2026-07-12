@@ -6,7 +6,7 @@ import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configura
 
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
 import { forVuetify } from "./configuration/breakpoints";
-import { EN_US_SEGMENTER } from "./shared/services/constants";
+import { EN_US_SEGMENTER } from "./shared/services/intl/constants";
 
 const BaseColorsCommon = {
   border: "#ccc",

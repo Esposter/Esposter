@@ -88,7 +88,6 @@ catalog:
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^5.0.0
   "@types/node": ^26.1.1
-  "@types/pluralize": ^0.0.33
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
   "@types/three": ^0.185.1
@@ -195,7 +194,6 @@ catalog:
   phaser: ^4.2.1
   phaser4-rex-plugins: ^4.2.0
   pinia: ^3.0.4
-  pluralize: ^8.0.0
   postgres: ^3.4.9
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.2.0

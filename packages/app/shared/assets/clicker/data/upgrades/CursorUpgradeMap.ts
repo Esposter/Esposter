@@ -5,11 +5,11 @@ import type { Except } from "type-fest";
 import { EffectType } from "#shared/models/clicker/data/effect/EffectType";
 import { Target } from "#shared/models/clicker/data/Target";
 import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
-import pluralize from "pluralize";
+import { pluralize } from "#shared/util/text/pluralize";
 
 export const CursorUpgradeMap = {
   [CursorUpgradeId["Reinforced Index Finger"]]: {
-    description: `The ${Target.Mouse} and ${pluralize.plural(Target.Cursor)} are **twice** as efficient.`,
+    description: `The ${Target.Mouse} and ${pluralize(Target.Cursor)} are **twice** as efficient.`,
     flavorDescription: "prod prod",
     price: 1e2,
     effects: [
@@ -24,7 +24,7 @@ export const CursorUpgradeMap = {
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 1 }],
   },
   [CursorUpgradeId["Carpal Tunnel Prevention Cream"]]: {
-    description: `The ${Target.Mouse} and ${pluralize.plural(Target.Cursor)} are **twice** as efficient.`,
+    description: `The ${Target.Mouse} and ${pluralize(Target.Cursor)} are **twice** as efficient.`,
     flavorDescription: "it... it hurts to click...",
     price: 5e2,
     effects: [
@@ -39,7 +39,7 @@ export const CursorUpgradeMap = {
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 1 }],
   },
   [CursorUpgradeId.Ambidextrous]: {
-    description: `The ${Target.Mouse} and ${pluralize.plural(Target.Cursor)} are **twice** as efficient.`,
+    description: `The ${Target.Mouse} and ${pluralize(Target.Cursor)} are **twice** as efficient.`,
     flavorDescription: "Look ma, both hands!",
     price: 1e4,
     effects: [
