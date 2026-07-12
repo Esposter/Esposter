@@ -7,15 +7,15 @@ description: The single Azure-portal-like UI for every resource — Home, list, 
 
 The single Azure-portal-like UI for every resource: one list, one resource page with capability-aware blades, one public view route. It replaced the documents hub and all per-editor top-level pages — the shell is driven entirely by `ResourceDefinitionMap` ([/docs/architecture/resources](/docs/architecture/resources)). Azure Portal is the UX reference, deliberately literal: Home mirrors the portal landing, Create mirrors the marketplace (a page per resource type, never a modal).
 
-| Azure portal                    | Resource Explorer                                         |
-| ------------------------------- | --------------------------------------------------------- |
-| Home (search + recents)         | `/resources`                                              |
-| All resources list              | `/resources/all`                                          |
-| Create a resource (marketplace) | `/resources/create` gallery → `/resources/create/[type]`  |
-| Resource menu (left nav)        | blade menu on `/resources/[id]/[[blade]]`                 |
-| Overview + Essentials           | Overview blade with Essentials panel                      |
-| Toolbar commands                | Rename/Delete always; Publish/Import/Export by capability |
-| Breadcrumbs                     | `AppBreadcrumbs`: Resource Explorer → All → {name}        |
+| Azure portal                    | Resource Explorer                                                           |
+| ------------------------------- | --------------------------------------------------------------------------- |
+| Home (search + recents)         | `/resources`                                                                |
+| All resources list              | `/resources/all`                                                            |
+| Create a resource (marketplace) | `/resources/create` gallery → `/resources/create/[type]`                    |
+| Resource menu (left nav)        | blade menu on `/resources/[id]/[[blade]]`                                   |
+| Overview + Essentials           | Overview blade with Essentials panel                                        |
+| Toolbar commands                | Refresh/Rename/Delete/Duplicate always; Publish/Import/Export by capability |
+| Breadcrumbs                     | `AppBreadcrumbs`: Resource Explorer → All → {name}                          |
 
 ## Routes
 
@@ -58,12 +58,13 @@ The Azure-portal landing. Not a table — a dashboard of entry points: the inlin
 
 ## All resources — `/resources/all`
 
-`pages/resources/all.vue` is a `StyledPageHeader title="All"` (rendering the `Home › Resource Explorer › All` breadcrumb) above a `v-sheet flex-1` wrapping `ResourceListView` (`searchable` + `:close-to`) — `StyledDataTableServer` over `resource.readResources` (cross-type, owner, offset-paginated):
+`pages/resources/all.vue` is a `StyledPageHeader title="All"` (rendering the `Home › Resource Explorer › All` breadcrumb) above a `v-sheet flex-1` wrapping `ResourceListView` (`:close-to`; the blade list box passes `:is-searchable="false"` to strip the workbench) — `StyledDataTableServer` over `resource.readResources` (cross-type, owner, offset-paginated):
 
-- Columns: type (icon + label from `ResourceDefinitionMap`), name, createdAt, updatedAt. Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade, not mixed into a cross-type list.
-- Toolbar (a fully-bordered `b-1` box, rendered only when `searchable`): search + a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
-- Row click → `/resources/{id}` via `navigateTo`; the row's **Open** action links there with `:to`.
-- `?search=` and `?types=` query params pre-filter the list on load, so [global search](/docs/platform/global-search) deep links land filtered.
+- Columns: type (icon + label from `ResourceDefinitionMap`), name (a real `:to` link), createdAt, updatedAt — subject to the column chooser. Publish status is deliberately **not** a list column — it is a capability surfaced per-resource on the Overview blade and as an opt-in filter pill.
+- Toolbar (a fully-bordered `b-1` box, workbench only): search, group-by-type toggle, column chooser, Export CSV, Refresh, and a **close ✕** (`closeTo` → Home) — **not** a Create button. Create lives on Home; `/all` is a layer you close back to Home.
+- Filter-pill row, bulk select, context menu, URL-synced filter state, and the footer count are the list workbench — see [list filters & views](/docs/platform/list-filters-and-views).
+- Row click → `/resources/{id}` via `navigateTo`; the row's **Open** action and name cell link there with `:to`.
+- `?search=`, `?types=`, `?status=`, `?sortBy=`, and `?page=` deep-link the list, so [global search](/docs/platform/global-search) links land filtered.
 
 ## Create flow — `/resources/create` → `/resources/create/[type]`
 
@@ -107,7 +108,7 @@ The blade nav's built-in slugs come from the `ResourceBladeTypes` set (enum orde
 | Flowchart | Editor (VueFlow, inline)                                     |
 
 - **Overview blade**: Essentials panel (type, created/updated) plus a type-specific summary slot. **Publish status + version and the public link render only for `PublishableResourceType`** — a non-publishable resource shows no status row at all.
-- **Command bar** (in the blade box header): Rename + Delete always; Publish/Unpublish for `PublishableResourceType`; Import/Export for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, a self-contained async `export()` ⇒ Export); a trailing close ✕.
+- **Command bar** (in the blade box header): Refresh + Rename + Delete + Duplicate always; Publish/Unpublish for `PublishableResourceType`; Import/Export for `PortableResourceType` (contributed by `PortableFormatMap` entries — `deserialize` ⇒ Import, a self-contained async `export()` ⇒ Export); a trailing close ✕. Labeled buttons, group dividers, narrow-viewport `…` overflow, and the type-the-name delete guard are [resource page parity](/docs/platform/resource-page-parity).
 - State via `useResource(id)` ([/docs/architecture/resources](/docs/architecture/resources)).
 
 ## Resource lifecycle
@@ -137,22 +138,22 @@ stateDiagram-v2
 
 ## Key files
 
-| File                                                  | Role                                                                                         |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `app/pages/resources/[id]/[[blade]].vue`              | resource page shell: `useResource`, 404-guards id + blade, breadcrumb + `<ResourceExplorer>` |
-| `app/components/Resource/Explorer.vue`                | the two-flex-box body (list box \| blade box)                                                |
-| `app/components/Resource/ExplorerList.vue`            | collapsible list box (owns `isListCollapsed`, mobile-collapsed default)                      |
-| `app/components/Resource/ListView.vue`                | `StyledDataTableServer` over `resource.readResources` (shared by `/all`)                     |
-| `app/components/Resource/BladeToolbar.vue`            | blade box header composing `BladeTitle` + `BladeActions`                                     |
-| `app/components/Resource/BladeActions.vue`            | command bar: rename, delete, `PublishToggle`, `PortableActions`, close ✕                     |
-| `app/components/Resource/BladeNav.vue`                | blade menu from `ResourceBladeTypes` + type blades; mobile icon rail                         |
-| `app/components/Resource/BladeOutlet.vue`             | Overview vs inline editor vs type blade on the active slug                                   |
-| `app/components/Resource/Overview.vue`                | generic Overview blade (Essentials + type summary slot)                                      |
-| `app/services/resource/ResourceBladeDefinitionMap.ts` | type → its own blade definitions                                                             |
-| `app/services/resource/ResourceEditorComponentMap.ts` | type → inline Editor-blade component                                                         |
-| `app/services/resource/PortableFormatMap.ts`          | portable type → formats (Import/Export)                                                      |
-| `app/services/resource/ViewComponentMap.ts`           | publishable type → public view renderer                                                      |
-| `app/composables/resource/useResource.ts`             | row + typed content + save/capability actions                                                |
+| File                                                  | Role                                                                                                       |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `app/pages/resources/[id]/[[blade]].vue`              | resource page shell: `useResource`, 404-guards id + blade, breadcrumb + `<ResourceExplorer>`               |
+| `app/components/Resource/Explorer.vue`                | the two-flex-box body (list box \| blade box)                                                              |
+| `app/components/Resource/ExplorerList.vue`            | collapsible list box (owns `isListCollapsed`, mobile-collapsed default)                                    |
+| `app/components/Resource/ListView.vue`                | `StyledDataTableServer` over `resource.readResources` (shared by `/all` — the workbench)                   |
+| `app/components/Resource/BladeToolbar.vue`            | blade box header composing `BladeTitle` + `BladeActions`                                                   |
+| `app/components/Resource/BladeActions.vue`            | command bar: refresh, rename, delete, duplicate, `PublishToggle`, `PortableActions`, `…` overflow, close ✕ |
+| `app/components/Resource/BladeNav.vue`                | blade menu from `ResourceBladeTypes` + type blades; mobile icon rail                                       |
+| `app/components/Resource/BladeOutlet.vue`             | Overview vs inline editor vs type blade on the active slug                                                 |
+| `app/components/Resource/Overview.vue`                | generic Overview blade (Essentials + type summary slot)                                                    |
+| `app/services/resource/ResourceBladeDefinitionMap.ts` | type → its own blade definitions                                                                           |
+| `app/services/resource/ResourceEditorComponentMap.ts` | type → inline Editor-blade component                                                                       |
+| `app/services/resource/PortableFormatMap.ts`          | portable type → formats (Import/Export)                                                                    |
+| `app/services/resource/ViewComponentMap.ts`           | publishable type → public view renderer                                                                    |
+| `app/composables/resource/useResource.ts`             | row + typed content + save/capability actions                                                              |
 
 ## Notes
 

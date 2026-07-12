@@ -23,7 +23,7 @@ flowchart LR
 
 - **Command**: appears in `BladeActions` for `PublishableResourceType` **only while published** (an unpublished resource has no public URL to share).
 - **Dialog**: `v-select` of the caller's rooms (existing `room.readRooms`), an optional message field, Share button. The sent message is `{note}\n{origin}{RoutePath.View(type, id)}` — plain text through the standard `message.createMessage` mutation, so RBAC, rate limits, and the message pipeline apply unchanged.
-- **Feedback**: success lands in the notifications store ([notifications](/docs/proposals/platform/notifications)) with an **Open room** action.
+- **Feedback**: success lands in the notifications store ([notifications](/docs/platform/notifications)) with an **Open room** action.
 
 ## Key files
 

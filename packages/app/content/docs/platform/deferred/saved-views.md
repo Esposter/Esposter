@@ -9,7 +9,7 @@ Azure "Manage view"-style named view sets: save a filter + column + sort combina
 
 ## Why deferred
 
-URL-synced filter state + the persisted column chooser ([list filters & views](/docs/proposals/platform/list-filters-and-views)) already make any view reproducible (bookmark the URL); named server-side views add a table + procedures for convenience only.
+URL-synced filter state + the persisted column chooser ([list filters & views](/docs/platform/list-filters-and-views)) already make any view reproducible (bookmark the URL); named server-side views add a table + procedures for convenience only.
 
 ## Revisit when
 

@@ -63,6 +63,6 @@ sequenceDiagram
 
 ## Notes
 
-- Activity is the durable trail; the [notifications bell](/docs/proposals/platform/notifications) is the ephemeral session feedback — they share event sources but never storage.
+- Activity is the durable trail; the [notifications bell](/docs/platform/notifications) is the ephemeral session feedback — they share event sources but never storage.
 - No cross-resource activity feed (portal subscription-level log) — per-resource only until something needs more.
 - Retention: rows live until resource purge; if partitions ever grow uncomfortable, add a timer-function sweep (same pattern as message retention) rather than capping writes.
