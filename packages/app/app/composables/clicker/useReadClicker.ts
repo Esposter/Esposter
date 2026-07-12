@@ -9,7 +9,7 @@ import { omitDeep } from "lodash-omitdeep";
 export const useReadClicker = async () => {
   const { $trpc } = useNuxtApp();
   const clickerStore = useClickerStore();
-  const { saveClicker } = clickerStore;
+  const { saveClicker, setClicker } = clickerStore;
   const { clicker } = storeToRefs(clickerStore);
   // This is used for tracking when we should save
   // I.e. every time the user manually updates the state
@@ -26,15 +26,17 @@ export const useReadClicker = async () => {
   await useReadData(
     () => {
       const clickerJson = localStorage.getItem(LocalStorageKey.ClickerStore);
-      clicker.value = clickerJson
-        ? getResult(() => jsonDateParse(clickerJson))
-            .map((savedClicker) => toClicker(savedClicker))
-            .orTee(console.error)
-            .unwrapOr(new Clicker())
-        : new Clicker();
+      setClicker(
+        clickerJson
+          ? getResult(() => jsonDateParse(clickerJson))
+              .map((savedClicker) => toClicker(savedClicker))
+              .orTee(console.error)
+              .unwrapOr(new Clicker())
+          : new Clicker(),
+      );
     },
     async () => {
-      clicker.value = toClicker(await $trpc.clicker.readClicker.query());
+      setClicker(toClicker(await $trpc.clicker.readClicker.query()));
     },
   );
 };

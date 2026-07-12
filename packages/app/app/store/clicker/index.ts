@@ -15,8 +15,9 @@ export const useClickerStore = defineStore("clicker", () => {
   const colorsStore = useColorsStore();
   const clicker = ref(new Clicker());
   // Persist ids and counters only (the `ClickerSave` shape) so content rebalances reach existing saves
-  const saveClicker = useSave(() => toClickerSave(clicker.value), {
+  const { save: saveClicker, setState: setClicker } = useSave(clicker, {
     auth: { save: $trpc.clicker.saveClicker.mutate },
+    toSave: toClickerSave,
     unauth: { key: LocalStorageKey.ClickerStore, schema: clickerSaveSchema },
   });
   const clickerItemColor = computed(
@@ -31,5 +32,5 @@ export const useClickerStore = defineStore("clicker", () => {
     name: NameMap[clicker.value.type],
     pluralName: PluralNameMap[clicker.value.type],
   }));
-  return { clicker, clickerItemProperties, saveClicker };
+  return { clicker, clickerItemProperties, saveClicker, setClicker };
 });

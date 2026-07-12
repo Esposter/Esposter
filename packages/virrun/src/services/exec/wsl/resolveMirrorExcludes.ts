@@ -2,16 +2,18 @@ import { resolvePrepareStep } from "@/services/configuration/resolvePrepareStep"
 import { resolveVirrunConfiguration } from "@/services/configuration/resolveVirrunConfiguration";
 import { getResult } from "@esposter/shared";
 // What never enters the source mirror: node_modules (supplied by the snapshot RO lower — mirrors the write-back
-// Rule), .git (large, churns every commit, unread by dev-loop commands), and an active environment's prepare outputs
-// (e.g. .nuxt) — those are owned by the source-keyed prepare layer, so the host's platform-specific copy is kept out
-// Entirely: it can't shadow the prepare layer, and the prepare-layer capture regenerates a *complete* copy in its own
-// Upper rather than reading unchanged files through a host lower. Everything else is mirrored — over-copy is
-// Correctness-safe, under-copy is a bug. Best-effort: a resolution hiccup falls back to the base excludes (the
-// Prepare layer still shadows the host copy when forking). The same patterns feed both the host manifest walk
-// (buildSourceMirrorManifest) and the full-rsync fallback's `--exclude` args, so the two sides always agree on the
-// Mirrored set.
+// Rule), .git (large, churns every commit, unread by dev-loop commands), .claude/worktrees (agent worktrees are whole
+// Sibling working trees nested inside the repo — each is its own virrun cwd with its own mirror entry, and letting
+// Them into the parent's mirrored set multiplies every sync by the worktree count: a real run was 34,339 of 34,860
+// Copied paths), and an active environment's prepare outputs (e.g. .nuxt) — those are owned by the source-keyed
+// Prepare layer, so the host's platform-specific copy is kept out entirely: it can't shadow the prepare layer, and
+// The prepare-layer capture regenerates a *complete* copy in its own upper rather than reading unchanged files
+// Through a host lower. Everything else is mirrored — over-copy is correctness-safe, under-copy is a bug.
+// Best-effort: a resolution hiccup falls back to the base excludes (the prepare layer still shadows the host copy
+// When forking). The patterns feed the host manifest walk (buildSourceMirrorManifest), and the walk's manifest is the
+// Single source of truth for the mirrored set — the archive data plane copies exactly the manifest's paths.
 export const resolveMirrorExcludes = (cwd: string): readonly string[] => {
   const environment = resolveVirrunConfiguration(cwd)?.environment;
   const outputs = getResult(() => resolvePrepareStep(environment, cwd)?.outputs ?? []).unwrapOr([]);
-  return ["node_modules", ".git", ...outputs];
+  return ["node_modules", ".git", ".claude/worktrees", ...outputs];
 };

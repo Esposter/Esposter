@@ -1,10 +1,11 @@
 import type { SourceMirrorDelta } from "@/models/exec/wsl/SourceMirrorDelta";
 import type { SourceMirrorManifest } from "@/models/exec/wsl/SourceMirrorManifest";
 // Diff the mirror's published manifest against a fresh host walk into the minimal sync (SourceMirrorDelta): a new or
-// Changed entry (size/mtimeMs/target quick-check, same signal rsync uses) is copied; a removed entry is deleted; a
-// Type flip (file → directory, …) is deleted first and then copied so rsync recreates it cleanly instead of failing
-// To replace a non-matching entry. A removed directory's children are also in the delete set — `rm -rf` on the parent
-// Makes the child deletes no-ops, which is fine. Pure; both lists are sorted so a staged sync script is deterministic.
+// Changed entry (size/mtimeMs/target — rsync's classic quick-check signal) is copied; a removed entry is deleted; a
+// Type flip (file → directory, …) is deleted first and then copied so the archive extract recreates it cleanly
+// Instead of landing on a non-matching entry. A removed directory's children are also in the delete set — `rm -rf` on
+// The parent makes the child deletes no-ops, which is fine. Pure; both lists are sorted so a staged sync script is
+// Deterministic.
 export const diffSourceMirrorManifests = (
   previous: SourceMirrorManifest,
   current: SourceMirrorManifest,

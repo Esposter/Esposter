@@ -4,6 +4,7 @@ import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { buildSourceMirrorManifest } from "@/services/exec/wsl/buildSourceMirrorManifest";
 import {
+  VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME,
@@ -21,8 +22,9 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const state = vi.hoisted(() => ({ cacheRoot: "" }));
-// The "UNC" cache root is just a real temp dir here, so the planner's host-side staging/reads exercise real fs; the
-// Same TEST_WSL_PREFIX transform the sibling wsl tests use derives the Linux-side paths embedded in the script.
+// The "UNC" cache root is just a real temp dir here, so the planner's host-side staging/reads — including the real
+// Host `tar` spawn building the archive — exercise real fs; the same TEST_WSL_PREFIX transform the sibling wsl tests
+// Use derives the Linux-side paths embedded in the script.
 vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({ getWslNativeCacheRoot: () => state.cacheRoot }));
 
 vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
@@ -30,7 +32,7 @@ vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
 }));
 // The temp cwd resolves no config on disk, so resolveMirrorExcludes would walk up to the real repo's
 // Virrun.config.json (environment nuxt) and fire `git ls-files` ahead of the plan. Pin it undefined so the
-// Environment defaults to none and the mirror excludes stay the base node_modules/.git pair.
+// Environment defaults to none and the mirror excludes stay the base patterns.
 vi.mock(import("@/services/configuration/resolveVirrunConfiguration"), () => ({
   resolveVirrunConfiguration: () => undefined,
 }));
@@ -61,7 +63,7 @@ describe(createWslSourceMirrorSync, () => {
 
   afterEach(cleanup);
 
-  test("first run falls back to a locked full rsync and stages the manifest for publish", () => {
+  test("first run materializes from scratch: full archive extract into a cleared tree", () => {
     expect.hasAssertions();
 
     const { lockPath, mirrorPath, script } = createWslSourceMirrorSync(cwd);
@@ -70,11 +72,17 @@ describe(createWslSourceMirrorSync, () => {
     expect(lockPath).toBe(`${mirrorPath}.lock`);
     expect(script).toContain(`mkdir -p '${mirrorPath}'`);
     expect(script).toContain(`flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9`);
-    expect(script).toContain(
-      `timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} rsync -a --delete --exclude='node_modules' --exclude='.git' '${TEST_WSL_PREFIX}${cwd}/' '${mirrorPath}/'`,
-    );
+    // Clearing the tree before the extract is the drift self-heal — the archive carries the complete mirrored set.
+    expect(script).toContain(`rm -rf '${mirrorPath}' && mkdir -p '${mirrorPath}'`);
+    expect(script).toContain(`timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar -xf`);
+    // Bsdtar records NTFS entries as 644/755 — the chmod restores the drvfs-parity 777 the sandbox lower always had.
+    expect(script).toContain(`chmod -R 777 '${mirrorPath}'`);
     expect(script).toContain(`9> '${mirrorPath}.lock'`);
     expect(script).toContain(`/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}'`);
+    // The archive is staged pid-tagged beside the manifest/origin temps and carries the mirrored file itself; its
+    // Null-delimited copy-list input is consumed and unlinked during planning, before the script ever runs.
+    expect(readStaged(`${VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX}${process.pid}.`)).toContain(TEST_FILENAME);
+    expect(readStaged(VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX)).toBe("");
     // The next manifest and the origin marker are staged host-side as pid-tagged temps the script publishes via
     // Atomic mv — the origin content is the host cwd the abandonment reaper keys on.
     expect(JSON.parse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).toHaveProperty(
@@ -97,7 +105,7 @@ describe(createWslSourceMirrorSync, () => {
     expect(readStaged(VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX)).toBe("");
   });
 
-  test("stages null-delimited copy and delete lists and applies only the delta", () => {
+  test("stages the delta archive and delete list and applies only the delta", () => {
     expect.hasAssertions();
 
     publish();
@@ -114,28 +122,54 @@ describe(createWslSourceMirrorSync, () => {
     const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
 
     expect(script).toContain(`xargs -0r rm -rf --`);
-    expect(script).toContain(`rsync -a --from0 --files-from=`);
-    expect(script).not.toContain("--delete ");
-    expect(script).toContain(`'${TEST_WSL_PREFIX}${cwd}/' '${mirrorPath}/'`);
-    expect(readStaged(VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX)).toBe(`${TEST_FILENAME}\0`);
+    expect(script).toContain(`timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar -xf`);
+    expect(script).toContain(`chmod -R 777 '${mirrorPath}'`);
+    // A delta never clears the tree — that is the full materialize's move.
+    expect(script).not.toContain(`rm -rf '${mirrorPath}'`);
+    expect(readStaged(VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX)).toContain(TEST_FILENAME);
     expect(readStaged(VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX)).toBe(`${removedFilename}\0`);
   });
 
-  test("falls back to the full rsync when the manifest is unreadable", () => {
+  test("skips the archive and extract when the delta only deletes", () => {
+    expect.hasAssertions();
+
+    publish();
+    const removedFilename = "b";
+    writeFileSync(
+      join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME),
+      JSON.stringify({
+        ...buildSourceMirrorManifest(cwd, []),
+        [removedFilename]: { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.File },
+      }),
+    );
+
+    const { script } = createWslSourceMirrorSync(cwd);
+
+    expect(script).toContain(`xargs -0r rm -rf --`);
+    expect(script).not.toContain("tar -xf");
+    expect(readStaged(VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX)).toBe("");
+    expect(readStaged(VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX)).toBe(`${removedFilename}\0`);
+  });
+
+  test("falls back to the full materialize when the manifest is unreadable", () => {
     expect.hasAssertions();
 
     publish();
     writeFileSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME), "{");
 
-    expect(createWslSourceMirrorSync(cwd).script).toContain("rsync -a --delete");
+    const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
+
+    expect(script).toContain(`rm -rf '${mirrorPath}'`);
   });
 
-  test("distrusts a manifest whose mirror tree is gone and forces the full rsync", () => {
+  test("distrusts a manifest whose mirror tree is gone and forces the full materialize", () => {
     expect.hasAssertions();
 
     publish();
     rmSync(join(entryUnc, VIRRUN_SOURCE_MIRROR_TREE_DIRECTORY_NAME), { force: true, recursive: true });
 
-    expect(createWslSourceMirrorSync(cwd).script).toContain("rsync -a --delete");
+    const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
+
+    expect(script).toContain(`rm -rf '${mirrorPath}'`);
   });
 });

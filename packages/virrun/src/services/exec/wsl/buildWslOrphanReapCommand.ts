@@ -5,8 +5,8 @@ import { ORPHAN_REAP_MINIMUM_AGE_SECONDS } from "@/services/exec/util/constants"
 // WSL-side `sh`+bwrap tree reparents to init and survives, pinning the store/snapshot open. This sweep, run once at
 // Os-backend startup, reaps those corpses. The orphan test is exact, not heuristic, and every guard fails *closed* —
 // Skip rather than kill an unconfirmed process — because a false positive TERMs a concurrent live run's whole group
-// Mid-flight (its rsync dies with "received SIGINT, SIGTERM, or SIGHUP" and its bwrap surfaces as a sandbox-setup
-// Failure), which parallel runs (`pnpm -r --parallel`) expose constantly:
+// Mid-flight (its sync's tar/extract dies mid-write and its bwrap surfaces as a sandbox-setup failure), which
+// Parallel runs (`pnpm -r --parallel`) expose constantly:
 //
 // - `self=$$` excludes this reaper's own shell (its `-c` text also carries the marker).
 // - Only process-group leaders (`pid == pgid`) are candidates: every fork of a live run's shell — a subshell, a

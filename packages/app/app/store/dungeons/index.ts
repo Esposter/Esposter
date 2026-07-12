@@ -16,7 +16,7 @@ export const useDungeonsStore = defineStore("dungeons", () => {
   const { fadeOut } = cameraStore;
 
   const dungeons = ref(new Dungeons());
-  const saveDungeons = useSave(dungeons, {
+  const { save: saveDungeons, setState: setDungeons } = useSave(dungeons, {
     auth: { save: $trpc.dungeons.saveDungeons.mutate },
     unauth: { key: LocalStorageKey.DungeonsStore, schema: dungeonsSchema },
   });
@@ -34,5 +34,5 @@ export const useDungeonsStore = defineStore("dungeons", () => {
     });
   };
 
-  return { dungeons, fadeSwitchToScene, save, saveData, saveDungeons };
+  return { dungeons, fadeSwitchToScene, save, saveData, saveDungeons, setDungeons };
 });
