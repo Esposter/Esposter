@@ -48,5 +48,5 @@ Paths relative to `packages/app`.
 
 ## Notes
 
-- Processing is synchronous in the request path: a failure inside the plugin (after the mutation committed) rejects the whole call even though the write succeeded — see [resilient achievement plugin](/docs/proposals/achievements/resilient-plugin).
+- Processing is synchronous in the request path but **best-effort**: the whole post-mutation block and each definition's writes run behind `getResultAsync` boundaries, so a failure is logged with its path, user, and definition name and the original mutation result is always returned. A lost counter increment self-heals on the next trigger; an unmet `amount: 1` condition retries naturally on the next qualifying call. Escalate to EventGrid only if plugin latency ever shows in traces.
 - `readUserAchievements` accepts another user's id, so achievement showcases on user-facing surfaces need no new procedure.
