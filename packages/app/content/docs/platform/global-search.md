@@ -43,8 +43,8 @@ With a query set the dropdown shows three groups plus a footer:
 
 - `Ctrl+K` (and the app-bar magnify button) opens the dialog mount anywhere; `Esc` closes; `↑`/`↓` move through a flat list across groups (the See-all footer is the last option); `Enter` activates the selection, falling back to See-all when nothing is selected. The dialog mount traps focus (Vuetify dialog); the inline Home mount keeps normal document tab order.
 - ARIA: the field is `role="combobox"` with `aria-expanded`/`aria-activedescendant`; the panel is `role="listbox"` with `role="option"` rows.
-- Azure `G`-chords via `useAppKeyboardShortcuts` (registered once from `app.vue`): `G /` focuses search (opens the palette), `G H` → Home, `G A` → `/resources/all`. Chords are suppressed while focus is in an input/editor (`checkIsEditableTarget`).
-- `?` opens `AppShortcutsOverlay`, a `StyledKeyboardShortcutsDialog` listing all bindings (`AppKeyboardShortcutList`).
+- Azure `G`-chords via `useResourceKeyboardShortcuts` (registered once from `app.vue`): `G /` focuses search (opens the palette), `G H` → Home, `G A` → `/resources/all`. Chords are suppressed while focus is in an input/editor (`checkIsEditableTarget`).
+- `?` opens `ResourceShortcutsOverlay`, a `StyledKeyboardShortcutsDialog` listing all bindings (`ResourceKeyboardShortcutList`).
 - The messaging area keeps its own `Ctrl+K` room palette and `Shift+?` dialog, so the global handlers skip `/messages` routes.
 
 ## Relevance
@@ -59,11 +59,11 @@ With a query set the dropdown shows three groups plus a footer:
 | `app/components/Resource/Search/ResultList.vue`             | grouped listbox rows, Create sub-action, See-all footer                                |
 | `app/components/Resource/Search/HighlightedTitle.vue`       | bolds the matched substring in row titles                                              |
 | `app/components/Resource/Search/Dialog.vue`                 | `Ctrl+K` overlay mount (`v-dialog` bound to `useSearchDialogStore`)                    |
-| `app/components/App/SearchButton.vue`                       | app-bar magnify button opening the dialog                                              |
-| `app/components/App/ShortcutsOverlay.vue`                   | `?` shortcuts help dialog                                                              |
+| `app/components/Resource/Search/Button.vue`                 | app-bar magnify button opening the dialog                                              |
+| `app/components/Resource/ShortcutsOverlay.vue`              | `?` shortcuts help dialog                                                              |
 | `app/composables/resource/search/useResourceSearchItems.ts` | debounce, grouping, recent-search persistence                                          |
 | `app/composables/resource/search/useRecordResourceView.ts`  | records recently viewed resources from the resource page                               |
-| `app/composables/app/useAppKeyboardShortcuts.ts`            | `Ctrl+K`, `G`-chords, `?` — global keydown listener                                    |
+| `app/composables/resource/useResourceKeyboardShortcuts.ts`  | `Ctrl+K`, `G`-chords, `?` — global keydown listener                                    |
 | `app/services/resource/search/`                             | pure grouping/highlight/recents helpers (`getServiceSearchItems`, `pushRecent`, …)     |
 | `server/trpc/routers/resource.ts`                           | prefix-match ranking in `readResources`                                                |
 

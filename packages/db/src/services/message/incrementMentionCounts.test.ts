@@ -29,6 +29,9 @@ import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 const getMentionMessage = (id: string, type?: MentionType) =>
   `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}"${type ? ` ${MENTION_ITEM_TYPE_ATTRIBUTE}="${type}"` : ""} />`;
 
+const getMentionedUserIds = (updatedUsersToRooms: { userId: string }[]) =>
+  new Set(updatedUsersToRooms.map(({ userId }) => userId));
+
 describe(incrementMentionCounts, () => {
   let db: PostgresJsDatabase<typeof relations>;
   const name = "name";
@@ -41,8 +44,6 @@ describe(incrementMentionCounts, () => {
   const roleMemberUserId = crypto.randomUUID();
   const senderUserId = crypto.randomUUID();
   const sender = { partitionKey: roomId, userId: senderUserId };
-  const getMentionedUserIds = (updatedUsersToRooms: { userId: string }[]) =>
-    new Set(updatedUsersToRooms.map(({ userId }) => userId));
 
   beforeAll(async () => {
     db = await createMockDb();
@@ -148,7 +149,7 @@ describe(incrementMentionCounts, () => {
 
     expect(updatedUsersToRooms).toHaveLength(4);
     expect(getMentionedUserIds(updatedUsersToRooms)).toStrictEqual(
-      new Set([onlineUserId, offlineUserId, nullStatusUserId, roleMemberUserId]),
+      new Set([nullStatusUserId, offlineUserId, onlineUserId, roleMemberUserId]),
     );
   });
 
@@ -162,7 +163,7 @@ describe(incrementMentionCounts, () => {
 
     expect(updatedUsersToRooms).toHaveLength(3);
     expect(getMentionedUserIds(updatedUsersToRooms)).toStrictEqual(
-      new Set([onlineUserId, nullStatusUserId, roleMemberUserId]),
+      new Set([nullStatusUserId, onlineUserId, roleMemberUserId]),
     );
   });
 

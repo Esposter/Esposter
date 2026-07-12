@@ -1,8 +1,9 @@
 import { pushRecent } from "@/services/resource/search/pushRecent";
 import { describe, expect, test } from "vitest";
 
+const checkIsSame = (a: string, b: string) => a === b;
+
 describe(pushRecent, () => {
-  const checkIsSame = (a: string, b: string) => a === b;
   const limit = 2;
 
   test("prepends a new entry", () => {

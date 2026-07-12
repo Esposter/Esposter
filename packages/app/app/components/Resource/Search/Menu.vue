@@ -46,7 +46,7 @@ onClickOutside(root, () => {
 </script>
 
 <template>
-  <div ref="root" relative w-full>
+  <div ref="root" w-full relative>
     <v-text-field
       v-model="searchQuery"
       :aria-activedescendant="selectedIndex >= 0 ? getResourceSearchOptionId(selectedIndex) : undefined"

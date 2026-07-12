@@ -25,9 +25,9 @@ describe("userToRoom", () => {
   // Creates a room as the owner plus a second member whose mention count the tests exercise.
   const setupMentionedMember = async () => {
     const newRoom = await roomCaller.createRoom({ name });
-    const inviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const newInvite = await roomCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: newRoom.id });
     const { user: member } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(inviteCode);
+    await roomCaller.joinRoom(newInvite.id);
     await messageCaller.createMessage({ message: getMentionMessage(member.id), roomId: newRoom.id });
     return { member, roomId: newRoom.id };
   };

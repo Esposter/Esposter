@@ -11,8 +11,8 @@ describe(useOptimisticMutation, () => {
   test("applies optimistically and keeps the change on success", async () => {
     expect.hasAssertions();
 
-    const rollback = vi.fn();
-    const applyOptimistic = vi.fn(() => rollback);
+    const rollback = vi.fn<() => void>();
+    const applyOptimistic = vi.fn<() => () => void>(() => rollback);
     const executeOptimisticMutation = useOptimisticMutation();
     await executeOptimisticMutation(applyOptimistic, () => Promise.resolve());
 
@@ -23,8 +23,8 @@ describe(useOptimisticMutation, () => {
   test("rolls back and alerts on failure", async () => {
     expect.hasAssertions();
 
-    const rollback = vi.fn();
-    const applyOptimistic = vi.fn(() => rollback);
+    const rollback = vi.fn<() => void>();
+    const applyOptimistic = vi.fn<() => () => void>(() => rollback);
     const executeOptimisticMutation = useOptimisticMutation();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);

@@ -26,7 +26,7 @@ await readResources({
         <v-container>
           <div py-4 flex flex-col gap-8>
             <div py-4 flex justify-center>
-              <ResourceSearchMenu max-w-176 placeholder="Search resources, services, and pages (G+/)" is-inline />
+              <ResourceSearchMenu placeholder="Search resources, services, and pages (G+/)" is-inline max-w-176 />
             </div>
             <v-card>
               <v-card-item>

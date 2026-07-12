@@ -1,6 +1,6 @@
 import type { KeyboardShortcutCategory } from "@/models/shared/KeyboardShortcutCategory";
 
-export const AppKeyboardShortcutList = [
+export const ResourceKeyboardShortcutList = [
   {
     category: "Global search",
     items: [

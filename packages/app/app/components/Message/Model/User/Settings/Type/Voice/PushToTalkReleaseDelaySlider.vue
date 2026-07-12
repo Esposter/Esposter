@@ -15,7 +15,7 @@ const { cloned: pushToTalkReleaseDelayMs } = useCloned(() => userSettings.pushTo
 </script>
 
 <template>
-  <div mt-4 mb-1 text-body-medium>Push to Talk Release Delay</div>
+  <div mb-1 mt-4 text-body-medium>Push to Talk Release Delay</div>
   <div mb-2 text-body-small>{{ pushToTalkReleaseDelayMs }}ms</div>
   <v-slider
     v-model="pushToTalkReleaseDelayMs"

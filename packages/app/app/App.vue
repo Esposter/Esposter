@@ -2,7 +2,7 @@
 import { authClient } from "@/services/auth/authClient";
 
 const { data: session } = await authClient.useSession(useFetch);
-useAppKeyboardShortcuts();
+useResourceKeyboardShortcuts();
 </script>
 
 <template>
@@ -18,7 +18,7 @@ useAppKeyboardShortcuts();
         <MessageContentCallPipHost v-if="session" />
         <MessageModelUserSettingsDialog v-if="session" />
         <ResourceSearchDialog v-if="session" />
-        <AppShortcutsOverlay v-if="session" />
+        <ResourceShortcutsOverlay v-if="session" />
       </v-app>
     </NuxtSEO>
   </NuxtTheme>

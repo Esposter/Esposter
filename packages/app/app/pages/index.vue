@@ -26,7 +26,7 @@ watch(sortType, async () => {
       "
     >
       <v-container>
-        <v-btn-toggle v-model="sortType" mb-2 density="compact" mandatory>
+        <v-btn-toggle v-model="sortType" density="compact" mandatory mb-2>
           <v-btn v-for="postSortType of PostSortTypes" :key="postSortType" :text="postSortType" :value="postSortType" />
         </v-btn-toggle>
         <v-row>
