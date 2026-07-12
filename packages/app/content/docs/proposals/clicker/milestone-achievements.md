@@ -34,5 +34,5 @@ Paths relative to `packages/app`.
 
 ## Notes
 
-- Server-side evaluation of the saved payload is the only honest signal available — it is validated by `clickerSchema` at the same boundary. The blob is still client-authoritative (a player can craft a save); acceptable for a casual game, same trust level as today.
+- Server-side evaluation of the saved payload is the only honest signal available — it is validated by `clickerSaveSchema` at the same boundary. The blob is still client-authoritative (a player can craft a save); acceptable for a casual game, same trust level as today.
 - Anonymous (localStorage) players earn nothing, as with all achievements — unchanged.
