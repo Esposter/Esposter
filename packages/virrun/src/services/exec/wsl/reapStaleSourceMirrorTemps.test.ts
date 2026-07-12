@@ -3,6 +3,7 @@ import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemp
 import { seedFile } from "@/services/exec/test/seedFile.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import {
+  VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX,
   VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME,
@@ -31,6 +32,7 @@ describe(reapStaleSourceMirrorTemps, () => {
 
     const deadManifest = seed(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
     const deadOrigin = seed(`${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
+    const deadArchive = seed(`${VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
     const deadCopy = seed(`${VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
     const deadDelete = seed(`${VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX}${DEAD_PID}.${TEST_FILENAME}`);
     const liveManifest = seed(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.${TEST_FILENAME}`);
@@ -41,6 +43,7 @@ describe(reapStaleSourceMirrorTemps, () => {
 
     expect(existsSync(deadManifest)).toBe(false);
     expect(existsSync(deadOrigin)).toBe(false);
+    expect(existsSync(deadArchive)).toBe(false);
     expect(existsSync(deadCopy)).toBe(false);
     expect(existsSync(deadDelete)).toBe(false);
     expect(existsSync(liveManifest)).toBe(true);

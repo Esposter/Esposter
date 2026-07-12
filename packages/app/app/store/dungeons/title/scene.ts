@@ -8,12 +8,12 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { useDungeonsStore } from "@/store/dungeons";
-import { exhaustiveGuard, takeOne } from "@esposter/shared";
+import { exhaustiveGuard } from "@esposter/shared";
 
 export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const dungeonsStore = useDungeonsStore();
   const { fadeSwitchToScene } = dungeonsStore;
-  const isContinueEnabled = computed(() => dungeonsStore.dungeons.saves.length > 0);
+  const isContinueEnabled = computed(() => Boolean(dungeonsStore.dungeons.save));
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (checkIsPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
@@ -23,10 +23,14 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
     if (playerSpecialInput === PlayerSpecialInput.Confirm)
       switch (PlayerTitleMenuOptionGrid.value) {
-        case PlayerTitleMenuOption.Continue:
-          dungeonsStore.save = takeOne(dungeonsStore.dungeons.saves);
+        case PlayerTitleMenuOption.Continue: {
+          const { save } = dungeonsStore.dungeons;
+          if (!save) return;
+
+          dungeonsStore.save = save;
           fadeSwitchToScene(scene, SceneKey.World);
           return;
+        }
         case PlayerTitleMenuOption.Settings:
           fadeSwitchToScene(scene, SceneKey.Settings);
           return;

@@ -6,12 +6,13 @@ import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGr
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
+import { userToRoomEventEmitter } from "@@/server/services/message/events/userToRoomEventEmitter";
 import { assertCanCreateMessage } from "@@/server/services/message/moderation/assertCanCreateMessage";
 import { updateUserToRoom } from "@@/server/services/message/updateUserToRoom";
 import { requireMutation } from "@@/server/trpc/guards/requireMutation";
-import { createMessage, getPushSubscriptionsForMessage } from "@esposter/db";
+import { createMessage, getPushSubscriptionsForMessage, incrementMentionCounts } from "@esposter/db";
 import { AzureFunction, AzureTable, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getResultAsync, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 export const createUserMessage = async (
@@ -32,6 +33,13 @@ export const createUserMessage = async (
     roomId: input.roomId,
   });
   messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: session.id }]);
+
+  // Best-effort after the Table write — a failed increment loses one badge count, never a message.
+  const mentionedUsersToRooms = await getResultAsync(() => incrementMentionCounts(db, newMessageEntity))
+    .orTee(console.error)
+    .unwrapOr([]);
+  for (const mentionedUserToRoom of mentionedUsersToRooms)
+    userToRoomEventEmitter.emit("updateUserToRoom", mentionedUserToRoom);
 
   const readPushSubscriptions = await getPushSubscriptionsForMessage(db, newMessageEntity);
   if (readPushSubscriptions.length > 0) {

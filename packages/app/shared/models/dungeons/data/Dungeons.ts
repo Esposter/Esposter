@@ -4,11 +4,10 @@ import type { ToData } from "@esposter/shared";
 import { saveSchema } from "#shared/models/dungeons/data/Save";
 import { getInitialSettings, settingsSchema } from "#shared/models/dungeons/data/settings/Settings";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
-import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class Dungeons extends AItemEntity {
-  saves: Save[] = [];
+  save?: Save;
   settings = getInitialSettings();
 
   constructor(init?: Partial<Dungeons>) {
@@ -20,6 +19,6 @@ export class Dungeons extends AItemEntity {
 export const dungeonsSchema = z.object({
   ...aItemEntitySchema.shape,
   id: z.uuid(),
-  saves: createUniqueArraySchema(saveSchema, "tilemapKey"),
+  save: saveSchema.optional(),
   settings: settingsSchema,
 }) satisfies z.ZodType<ToData<Dungeons>>;

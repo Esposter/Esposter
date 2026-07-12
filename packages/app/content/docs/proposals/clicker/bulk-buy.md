@@ -15,7 +15,7 @@ A quantity toggle (×1 / ×10 / ×100) in the store header so late-game players 
 
 ## How it works
 
-- Store: `getBuildingPriceForQuantity(building, quantity)` sums the per-unit price formula over `owned … owned + quantity - 1`. With the [exponential curve](/docs/proposals/clicker/building-price-curve) this closes to a geometric series, but summing the loop is simpler and exact under either formula — keep the loop.
+- Store: `getBuildingPriceForQuantity(building, quantity)` sums the per-unit price formula over `owned … owned + quantity - 1`. With the shipped [exponential curve](/docs/clicker/buildings-and-upgrades) this closes to a geometric series, but summing the loop is simpler and exact — keep the loop.
 - `createBoughtBuilding(building, quantity)` decrements the summed price and adds `quantity` to `amount` in one mutation (one save trigger, one popup).
 - UI: a small `v-btn-toggle` in `Store/Header.vue`; `Building/ListItem.vue` shows the summed price and disables Buy when `noPoints` can't cover it.
 

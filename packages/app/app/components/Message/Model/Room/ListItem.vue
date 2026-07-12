@@ -36,6 +36,7 @@ const hasUnread = computed(() => {
   const lastMessageAt = getMyUserToRoom(room.id)?.lastMessageAt;
   return lastMessageAt && lastMessageAt < room.updatedAt;
 });
+const mentionCount = computed(() => (isActive.value ? 0 : (getMyUserToRoom(room.id)?.mentionCount ?? 0)));
 </script>
 
 <template>
@@ -48,6 +49,9 @@ const hasUnread = computed(() => {
         {{ roomName }}
       </v-list-item-title>
       <template #append>
+        <v-chip v-if="mentionCount" color="error" density="compact" size="x-small" variant="flat">
+          {{ mentionCount }}
+        </v-chip>
         <v-tooltip v-if="hasDraft" text="Draft" location="top">
           <template #activator="{ props: activatorProps }">
             <v-icon :="activatorProps" icon="mdi-pencil" size="x-small" op-medium-emphasis />

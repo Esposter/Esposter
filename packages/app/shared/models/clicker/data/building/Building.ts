@@ -11,8 +11,8 @@ export interface Building {
 }
 
 export const buildingSchema = z.object({
-  basePrice: z.number(),
-  baseValue: z.number(),
+  basePrice: z.number().positive(),
+  baseValue: z.number().positive(),
   flavorDescription: z.string().min(1),
   id: buildingIdSchema,
 }) satisfies z.ZodType<Building>;

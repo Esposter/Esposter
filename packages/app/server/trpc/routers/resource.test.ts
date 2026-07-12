@@ -9,7 +9,7 @@ import { fileRouter } from "@@/server/trpc/routers/file";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { resources, ResourceType } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("resource", () => {
   let mockContext: Context;
@@ -25,7 +25,14 @@ describe("resource", () => {
     fileCaller = createCallerFactory(fileRouter)(mockContext);
   });
 
+  // UpdatedAt is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency deterministic
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
+  });
+
   afterEach(async () => {
+    vi.useRealTimers();
     MockContainerDatabase.clear();
     await mockContext.db.delete(resources);
   });
@@ -78,6 +85,29 @@ describe("resource", () => {
     const { items } = await caller.readResources({ searchQuery: "report" });
 
     expect(items.map(({ id }) => id)).toStrictEqual([matchingResource.id]);
+  });
+
+  test("ranks prefix matches before substring matches", async () => {
+    expect.hasAssertions();
+
+    // The prefix match is created first (older), so without ranking the newer substring match would come first
+    const prefixResource = await dashboardCaller.createResource({ name: `${name} a` });
+    vi.advanceTimersByTime(1);
+    const substringResource = await fileCaller.createResource({ name: `a ${name}` });
+    const { items } = await caller.readResources({ searchQuery: name });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([prefixResource.id, substringResource.id]);
+  });
+
+  test("orders by updatedAt desc within a match tier", async () => {
+    expect.hasAssertions();
+
+    const olderResource = await dashboardCaller.createResource({ name });
+    vi.advanceTimersByTime(1);
+    const newerResource = await fileCaller.createResource({ name });
+    const { items } = await caller.readResources({ searchQuery: name });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([newerResource.id, olderResource.id]);
   });
 
   test("counts resources across every type", async () => {

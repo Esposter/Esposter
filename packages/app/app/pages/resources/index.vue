@@ -6,8 +6,8 @@ import { RECENT_RESOURCES_LIMIT } from "@/services/resource/constants";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
+useResourceKeyboardShortcuts();
 
-const searchQuery = ref("");
 const { isLoading, items: recentResources, readResources } = useReadResources(ref(""), ref([]));
 await readResources({
   itemsPerPage: RECENT_RESOURCES_LIMIT,
@@ -27,19 +27,7 @@ await readResources({
         <v-container>
           <div py-4 flex flex-col gap-8>
             <div py-4 flex justify-center>
-              <v-text-field
-                v-model="searchQuery"
-                clearable
-                hide-details
-                max-width="44rem"
-                placeholder="Search resources, services, and docs (G+/)"
-                prepend-inner-icon="mdi-magnify"
-                variant="solo"
-                w-full
-                @keyup.enter="
-                  navigateTo({ path: RoutePath.ResourcesAll, query: searchQuery ? { search: searchQuery } : undefined })
-                "
-              />
+              <ResourceSearchMenu placeholder="Search resources, services, and pages (G+/)" is-inline max-w-176 />
             </div>
             <v-card>
               <v-card-item>
@@ -86,5 +74,7 @@ await readResources({
         </v-container>
       </v-sheet>
     </div>
+    <ResourceSearchDialog />
+    <ResourceShortcutsOverlay />
   </NuxtLayout>
 </template>

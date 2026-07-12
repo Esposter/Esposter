@@ -116,6 +116,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 - Use the resource name (`file.name`, entity ID) as `name`; fall back to the calling function's name (`deserializeJson.name`) if none better.
 - User-supplied JSON (uploads, external input): use Zod `safeParse` and throw `InvalidOperationError` on failure — never bare `JSON.parse` with a cast.
 - Validated endpoint data: `jsonDateParse` from `@esposter/shared` is acceptable.
+- **JSON containing dates** (localStorage, blobs, any `JSON.stringify` round trip): parse with `jsonDateParse` — its reviver restores ISO strings to `Date`s, so the Zod schema keeps plain `z.date()`. Never `JSON.parse` + `z.coerce.date()`.
 
 ## Control Flow
 

@@ -15,8 +15,6 @@ const schema = useZodSchema(
   () => editedItem.value.type,
 );
 const jsonSchema = computed(() => zodToJsonSchema(schema.value));
-
-useConfirmBeforeNavigation(isDirty);
 </script>
 
 <template>

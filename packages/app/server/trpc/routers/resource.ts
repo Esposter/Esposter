@@ -49,7 +49,12 @@ export const resourceRouter = router({
         .select()
         .from(resources)
         .where(createResourcesWhere(ctx.getSessionPayload.user.id, searchQuery, types))
-        .orderBy(...(sortBy.length > 0 ? parseSortByToSql(resources, sortBy) : [desc(resources.updatedAt)]))
+        .orderBy(
+          // Relevance ladder: prefix matches rank above the remaining substring matches (true sorts before
+          // False under desc), then newest-first within each tier; the prefix is bound through the query builder
+          ...(searchQuery ? [desc(ilike(resources.name, `${escapeLike(searchQuery)}%`))] : []),
+          ...(sortBy.length > 0 ? parseSortByToSql(resources, sortBy) : [desc(resources.updatedAt)]),
+        )
         .limit(limit + 1)
         .offset(offset);
       return getOffsetPaginationData(resultResources, limit);

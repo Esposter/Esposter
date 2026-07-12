@@ -4,6 +4,8 @@ import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
+import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constants";
+import { resourceTypeSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 interface ResourceListViewProps {
@@ -14,10 +16,17 @@ interface ResourceListViewProps {
 }
 
 const { closeTo, searchable = true } = defineProps<ResourceListViewProps>();
-const searchQuery = ref("");
-const noTypes = ref<ResourceType[]>([]);
-const { count, isLoading, items, readResources } = useReadResources(searchQuery, noTypes);
-const search = refDebounced(searchQuery, 300);
+const route = useRoute();
+// Deep links from the global search dropdown (?search= / ?types=) pre-filter the list on load
+const searchQuery = ref(typeof route.query.search === "string" ? route.query.search : "");
+const types = ref<ResourceType[]>(
+  (Array.isArray(route.query.types) ? route.query.types : [route.query.types]).flatMap((value) => {
+    const parsedType = resourceTypeSchema.safeParse(value);
+    return parsedType.success ? [parsedType.data] : [];
+  }),
+);
+const { count, isLoading, items, readResources } = useReadResources(searchQuery, types);
+const search = refDebounced(searchQuery, RESOURCE_SEARCH_DEBOUNCE_MS);
 const getResourceIcon = (type: ResourceType) => ResourceDefinitionMap[type].icon;
 const getResourceTitle = (type: ResourceType) => ResourceDefinitionMap[type].title;
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigateTo(RoutePath.Resource(item.id));

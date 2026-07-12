@@ -4,6 +4,7 @@ import type { ExecOptions } from "@/models/exec/ExecOptions";
 import type { StdioOptions } from "node:child_process";
 
 import { BackendType } from "@/models/virrun/BackendType";
+import { WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER } from "@/services/exec/bwrap/constants";
 import { createStderrLiveWriter } from "@/services/exec/bwrap/createStderrLiveWriter";
 import { parseBwrapExitCode } from "@/services/exec/bwrap/parseBwrapExitCode";
 import { parseBwrapStderrStatus } from "@/services/exec/bwrap/parseBwrapStderrStatus";
@@ -66,13 +67,18 @@ export const createBwrapBackend = (
           bwrapCommand.statusSource === "stderr" ? parseBwrapStderrStatus(stderr) : { status, stderr };
         const exitCode = parseBwrapExitCode(bwrapStderr.status);
         if (exitCode === undefined) {
-          // Sandbox setup failed (bad flag, missing binary, WSL bridge or overlay-mount error); fold the captured
-          // Stderr into the error so the user sees why.
+          // No status block means bwrap never reported: either the wsl backend's folded sync prelude failed before
+          // The sandbox started (its marker line is in stderr — name that failure, not bubblewrap) or sandbox setup
+          // Itself failed (bad flag, missing binary, WSL bridge or overlay-mount error). Fold the captured stderr
+          // Into the error either way so the user sees why.
+          const headline = bwrapStderr.stderr.includes(WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER)
+            ? "the source mirror sync failed before the sandbox started"
+            : "bubblewrap failed to set up the sandbox";
           reject(
             new InvalidOperationError(
               Operation.Create,
               errorName,
-              `bubblewrap failed to set up the sandbox${bwrapStderr.stderr ? `\n${bwrapStderr.stderr}` : ""}`,
+              `${headline}${bwrapStderr.stderr ? `\n${bwrapStderr.stderr}` : ""}`,
             ),
           );
           return;

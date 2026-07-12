@@ -1,6 +1,7 @@
 import type { AudioProcessorOptions, Track, TrackProcessor } from "livekit-client";
 
 import { MIN_INPUT_SENSITIVITY_DECIBELS, VoiceInputMode } from "@esposter/db-schema";
+import { exhaustiveGuard } from "@esposter/shared";
 
 // Native Web Audio mic processor: applies the user's mic volume as gain and gates transmission below
 // The voice-activity threshold (Voice Activity) or while the push-to-talk key is released (Push To
@@ -8,6 +9,7 @@ import { MIN_INPUT_SENSITIVITY_DECIBELS, VoiceInputMode } from "@esposter/db-sch
 // Unpublish — so there is no manual track-republish to manage.
 export class MicrophoneProcessor implements TrackProcessor<Track.Kind.Audio, AudioProcessorOptions> {
   inputSensitivityDecibels = MIN_INPUT_SENSITIVITY_DECIBELS;
+  // Driven by the push-to-talk keybind listener (usePushToTalk) via the liveKit store.
   isPushToTalkKeyHeld = false;
   microphoneVolumePercentage = 100;
   name = "microphone-processor";
@@ -48,6 +50,17 @@ export class MicrophoneProcessor implements TrackProcessor<Track.Kind.Audio, Aud
     return Promise.resolve();
   }
 
+  #checkIsOpen(decibels: number) {
+    switch (this.voiceInputMode) {
+      case VoiceInputMode.PushToTalk:
+        return this.isPushToTalkKeyHeld;
+      case VoiceInputMode.VoiceActivity:
+        return decibels >= this.inputSensitivityDecibels;
+      default:
+        return exhaustiveGuard(this.voiceInputMode);
+    }
+  }
+
   // The analyser taps the source pre-gain so a gated (gain 0) mic can still detect speech and reopen.
   #connectSource(track: MediaStreamTrack) {
     if (!this.#audioContext || !this.#gainNode || !this.#analyser) return;
@@ -64,11 +77,7 @@ export class MicrophoneProcessor implements TrackProcessor<Track.Kind.Audio, Aud
       for (const sample of this.#timeDomainData) sumSquares += sample * sample;
       const rms = Math.sqrt(sumSquares / this.#timeDomainData.length);
       const decibels = rms > 0 ? 20 * Math.log10(rms) : MIN_INPUT_SENSITIVITY_DECIBELS;
-      const isOpen =
-        this.voiceInputMode === VoiceInputMode.PushToTalk
-          ? this.isPushToTalkKeyHeld
-          : decibels >= this.inputSensitivityDecibels;
-      this.#gainNode.gain.value = isOpen ? this.microphoneVolumePercentage / 100 : 0;
+      this.#gainNode.gain.value = this.#checkIsOpen(decibels) ? this.microphoneVolumePercentage / 100 : 0;
     }
     this.#animationFrameId = window.requestAnimationFrame(this.#tick);
   };

@@ -1,3 +1,5 @@
+import type { KeyboardShortcutCategory } from "@/models/shared/KeyboardShortcutCategory";
+
 export const KeyboardShortcutList = [
   { category: "Navigation", items: [{ description: "Open room search / command palette", keys: ["Ctrl", "K"] }] },
   {
@@ -24,4 +26,4 @@ export const KeyboardShortcutList = [
       { description: "Keyboard shortcuts", keys: ["Shift", "?"] },
     ],
   },
-] as const;
+] as const satisfies readonly KeyboardShortcutCategory[];

@@ -3,10 +3,11 @@ import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsEditableTarget, () => {
-  test("true for input and textarea", () => {
+  test("true for input, select, and textarea", () => {
     expect.hasAssertions();
 
     expect(checkIsEditableTarget(document.createElement("input"))).toBe(true);
+    expect(checkIsEditableTarget(document.createElement("select"))).toBe(true);
     expect(checkIsEditableTarget(document.createElement("textarea"))).toBe(true);
   });
 

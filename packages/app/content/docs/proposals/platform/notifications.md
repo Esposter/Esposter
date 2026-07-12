@@ -40,7 +40,7 @@ flowchart LR
 
 - **Bell** in the app bar (authed pages): `v-badge` unread count, click opens a `v-menu` panel — newest first, severity icon, relative time, per-item dismiss, "Dismiss all". Empty state: "No notifications".
 - **Toasts**: each pushed notification also shows a `v-snackbar` (~5s, dismissible); errors persist until dismissed. One snackbar queue, not stacked ad-hoc snackbars.
-- `G N` opens the panel ([global search](/docs/proposals/platform/global-search) shortcuts).
+- `G N` opens the panel ([global search](/docs/platform/global-search) shortcuts).
 
 ## Key files
 

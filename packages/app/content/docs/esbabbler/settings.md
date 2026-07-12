@@ -29,6 +29,7 @@ Both settings dialogs share three conventions: panels are lazy async components 
 | -------------------------------------------------------- | ----------------------------------------------------------------- | --------------- |
 | `voiceInputMode`                                         | `voice_input_mode` enum (`VoiceActivity` \| `PushToTalk`)         | `VoiceActivity` |
 | `pushToTalkKeybind`                                      | text                                                              | `""`            |
+| `pushToTalkReleaseDelayMs`                               | integer (CHECK 0..2000)                                           | 20              |
 | `inputSensitivityDecibels`                               | integer (CHECK −100..0)                                           | −50             |
 | `microphoneVolumePercentage` / `speakerVolumePercentage` | integer                                                           | 100             |
 | `noiseSuppressionMode`                                   | enum → [/docs/esbabbler/voice-video](/docs/esbabbler/voice-video) |                 |

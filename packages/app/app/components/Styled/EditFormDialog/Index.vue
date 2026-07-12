@@ -30,6 +30,7 @@ const emit = defineEmits<{
 const editForm = ref<InstanceType<typeof VForm>>();
 const confirmCloseDialog = ref(false);
 const formId = useId();
+useConfirmBeforeNavigation(() => isDirty);
 
 watch(dialog, (newDialog) => {
   if (newDialog) return;

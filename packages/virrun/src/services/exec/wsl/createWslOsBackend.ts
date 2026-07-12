@@ -1,6 +1,10 @@
 import type { ExecBackend } from "@/models/exec/ExecBackend";
 
-import { WSL_BWRAP_STATUS_BEGIN, WSL_BWRAP_STATUS_END } from "@/services/exec/bwrap/constants";
+import {
+  WSL_BWRAP_STATUS_BEGIN,
+  WSL_BWRAP_STATUS_END,
+  WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER,
+} from "@/services/exec/bwrap/constants";
 import { createBwrapBackend } from "@/services/exec/bwrap/createBwrapBackend";
 import { SOURCE_MIRROR_TIMEOUT_SECONDS } from "@/services/exec/util/constants";
 import { resolveCwd } from "@/services/exec/util/resolveCwd";
@@ -27,9 +31,11 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
       // Tag this run's shell with a unique `$0` so Ctrl+C can find and group-kill exactly its process tree.
       const marker = createWslProcessMarker();
       // The mirror sync rides the run's own wsl.exe invocation instead of a separate spawn: an empty script (mirror
-      // Already current) prepends nothing, a delta/full sync runs ahead of bwrap and a failure exits with its own
-      // Code before the sandbox starts — surfaced by the close handler with the sync's stderr, never a stale mirror.
-      // On success the sync is silent (rsync without -v), so the child's stdout/stderr stay byte-exact vs native.
+      // Already current) prepends nothing, a delta/full sync runs ahead of bwrap and a failure prints the
+      // WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER line then exits with its own code before the sandbox starts — the
+      // Close handler keys on that marker (no status block ever reaches stderr on this path) so a sync failure reads
+      // As one instead of masquerading as a bwrap setup failure. Never a stale mirror. On success the sync is silent
+      // (tar without -v), so the child's stdout/stderr stay byte-exact vs native.
       // The whole body then runs under a shared flock on the mirror lock (fd 9, held until sh exits): bwrap reads the
       // Mirror lower for the run's full duration, and a concurrent same-cwd sync takes the exclusive side of the same
       // Lock — so its deletes/renames wait for readers to drain instead of tearing a live run's source tree. Shared
@@ -45,7 +51,11 @@ export const createWslOsBackend = (errorName: string): ExecBackend => {
           "sh",
           "-c",
           `{ ${[
-            ...(script === "" ? [] : [`{ ${script}; } || exit "$?"`]),
+            ...(script === ""
+              ? []
+              : [
+                  `{ ${script}; } || { syncExitCode="$?"; printf '${WSL_SOURCE_MIRROR_SYNC_FAILURE_MARKER} with exit code %s\\n' "$syncExitCode" >&2; exit "$syncExitCode"; }`,
+                ]),
             `flock -s -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 || exit "$?"`,
             `status="$(mktemp)"`,
             `bwrap --json-status-fd 3 "$@" 3>"$status"`,

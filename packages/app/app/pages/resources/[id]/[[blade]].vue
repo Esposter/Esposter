@@ -19,6 +19,8 @@ const { load, publication, publish, remove, rename, resource, unpublish } = useR
 await load();
 if (!resource.value) throw createError({ statusCode: 404, statusMessage: "Resource not found" });
 const activeBlade = computed(() => (route.params.blade as string) || ResourceBladeType.Overview);
+// Opening a resource feeds the global search dropdown's "Recently viewed" group
+useRecordResourceView(resource);
 
 // Blade switches reuse this page instance, so the guard watches instead of running once in setup
 watchImmediate([activeBlade, resource], ([newActiveBlade, newResource]) => {

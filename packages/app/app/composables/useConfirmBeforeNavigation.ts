@@ -1,11 +1,11 @@
-export const useConfirmBeforeNavigation = (isDirty: Ref<boolean>) => {
+export const useConfirmBeforeNavigation = (isDirty: MaybeRefOrGetter<boolean>) => {
   onBeforeRouteLeave(() => {
-    if (isDirty.value && !window.confirm("Changes you made may not be saved.")) return false;
+    if (toValue(isDirty) && !window.confirm("Changes you made may not be saved.")) return false;
     else return true;
   });
 
   useEventListener("beforeunload", (event) => {
-    if (!isDirty.value) return;
+    if (!toValue(isDirty)) return;
     event.preventDefault();
   });
 };

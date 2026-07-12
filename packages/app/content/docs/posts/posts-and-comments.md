@@ -9,7 +9,7 @@ One `posts` table carries both: a post is a root row (required title, `parentId 
 
 ## How it works
 
-**Model** — `posts(id, userId, title, description, parentId, depth, noComments, noLikes, ranking)` with DB-level length checks (`title ≤ 300`, `description ≤ 1000`); `selectPostSchema` vs `selectCommentSchema` differ only in which text field is required. Rows relate to their author and likes via `PostRelations`.
+**Model** — `posts(id, userId, title, description, parentId, depth, noComments, noLikes, ranking)` with DB-level length checks (`title ≤ 300`, `description ≤ 1000`); `selectPostSchema` vs `selectCommentSchema` differ only in which text field is required. Rows relate to their author via `PostRelations` and carry the viewer's own like as `viewerLike` (see [likes](/docs/posts/likes)).
 
 **Creating** — `/post/create` hosts the post form (`Post/UpsertForm.vue`); descriptions are Tiptap rich text (`DescriptionRichTextEditor`). Comments are created inline on the post page (`Comment/CreateRichTextEditor`). Both mutations run through the profanity-filter procedure, which censors the configured text fields in middleware, and compute the initial [ranking](/docs/posts/feed-and-ranking) from zero likes.
 

@@ -24,3 +24,10 @@ Dungeons is Esposter's monster-catching RPG at `/dungeons`: walk a tile-based wo
 - [Saves and settings](/docs/dungeons/saves-and-settings) — persistence, the settings scene, achievements.
 
 Open work: [roadmap](/docs/dungeons/roadmap). Decided ideas: [deferred](/docs/dungeons/deferred), [rejected](/docs/dungeons/rejected).
+
+## Shipped log
+
+Chronological, one line per feature.
+
+- **Single save** — collapsed the unused multi-save array into one `save` field.
+- **Attack power and defense** — per-attack `power`, per-species `defense`, and a saturating damage formula, so move choice and bulk both matter.
