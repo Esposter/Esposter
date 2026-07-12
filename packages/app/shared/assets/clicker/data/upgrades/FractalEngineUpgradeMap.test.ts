@@ -1,4 +1,7 @@
-import { FractalEngineUpgradeMap, FractalEngineUpgrades } from "#shared/assets/clicker/data/upgrades/FractalEngineUpgradeMap";
+import {
+  FractalEngineUpgradeMap,
+  FractalEngineUpgrades,
+} from "#shared/assets/clicker/data/upgrades/FractalEngineUpgradeMap";
 import { FractalEngineUpgradeId } from "#shared/models/clicker/data/upgrade/FractalEngineUpgradeId";
 import { createUpgradeSchema } from "#shared/models/clicker/data/upgrade/Upgrade";
 import { describe, expect, test } from "vitest";

@@ -2,7 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { Clicker } from "#shared/models/clicker/data/Clicker";
+import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
@@ -32,12 +32,12 @@ describe("achievementPlugin", () => {
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
     vi.spyOn(mockContext.db.query.achievements, "findFirst").mockRejectedValue(new Error(""));
-    const clicker = new Clicker();
-    await caller.clicker.saveClicker(clicker);
+    const clickerSave = new ClickerSave();
+    await caller.clicker.saveClicker(clickerSave);
     const readClicker = await caller.clicker.readClicker();
     const userAchievements = await caller.achievement.readUserAchievements();
 
-    expect(readClicker).toStrictEqual(clicker);
+    expect(readClicker).toStrictEqual(clickerSave);
     expect(userAchievements).toStrictEqual([]);
     expect(consoleErrorSpy).toHaveBeenCalledTimes(
       achievementDefinitions.filter(({ condition, triggerPath }) => triggerPath === "clicker.saveClicker" && !condition)
@@ -48,7 +48,7 @@ describe("achievementPlugin", () => {
   test("processes achievements on the happy path", async () => {
     expect.hasAssertions();
 
-    await caller.clicker.saveClicker(new Clicker());
+    await caller.clicker.saveClicker(new ClickerSave());
     const userAchievements = await caller.achievement.readUserAchievements();
     const clickerNovice = userAchievements.find(
       ({ achievement }) => achievement.name === ClickerAchievementName.ClickerNovice,

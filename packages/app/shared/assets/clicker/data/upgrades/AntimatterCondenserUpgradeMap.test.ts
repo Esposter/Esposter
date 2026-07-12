@@ -1,4 +1,7 @@
-import { AntimatterCondenserUpgradeMap, AntimatterCondenserUpgrades } from "#shared/assets/clicker/data/upgrades/AntimatterCondenserUpgradeMap";
+import {
+  AntimatterCondenserUpgradeMap,
+  AntimatterCondenserUpgrades,
+} from "#shared/assets/clicker/data/upgrades/AntimatterCondenserUpgradeMap";
 import { AntimatterCondenserUpgradeId } from "#shared/models/clicker/data/upgrade/AntimatterCondenserUpgradeId";
 import { createUpgradeSchema } from "#shared/models/clicker/data/upgrade/Upgrade";
 import { describe, expect, test } from "vitest";
@@ -19,6 +22,8 @@ describe("antimatterCondenserUpgradeMap", () => {
 
     const antimatterCondenserUpgrades = [...AntimatterCondenserUpgrades];
 
-    expect(antimatterCondenserUpgrades).toStrictEqual(antimatterCondenserUpgrades.toSorted((a, b) => a.price - b.price));
+    expect(antimatterCondenserUpgrades).toStrictEqual(
+      antimatterCondenserUpgrades.toSorted((a, b) => a.price - b.price),
+    );
   });
 });

@@ -1,4 +1,7 @@
-import { JavascriptConsoleUpgradeMap, JavascriptConsoleUpgrades } from "#shared/assets/clicker/data/upgrades/JavascriptConsoleUpgradeMap";
+import {
+  JavascriptConsoleUpgradeMap,
+  JavascriptConsoleUpgrades,
+} from "#shared/assets/clicker/data/upgrades/JavascriptConsoleUpgradeMap";
 import { JavascriptConsoleUpgradeId } from "#shared/models/clicker/data/upgrade/JavascriptConsoleUpgradeId";
 import { createUpgradeSchema } from "#shared/models/clicker/data/upgrade/Upgrade";
 import { describe, expect, test } from "vitest";

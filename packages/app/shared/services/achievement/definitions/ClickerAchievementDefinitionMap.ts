@@ -55,7 +55,7 @@ export const ClickerAchievementDefinitionMap = {
     amount: 1,
     category: AchievementCategory.Clicker,
     condition: {
-      operation: (value) => Object.keys(UpgradeMap).every((upgradeId) => value.some(({ id }) => id === upgradeId)),
+      operation: (value) => Object.keys(UpgradeMap).every((upgradeId) => value.some((id) => id === upgradeId)),
       operator: AchievementOperator.Operation,
       path: "boughtUpgrades",
       type: AchievementConditionType.Property,
