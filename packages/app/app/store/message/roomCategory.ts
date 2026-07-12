@@ -3,6 +3,7 @@ import type { DeleteRoomCategoryInput } from "#shared/models/db/roomCategory/Del
 import type { UpdateRoomCategoryInput } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
 import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
+import { getCategoryPositionUpdates } from "@/services/message/roomCategory/getCategoryPositionUpdates";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
@@ -32,10 +33,18 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     return updatedCategory;
   };
 
+  const reorderRoomCategories = async (newCategories: RoomCategoryInMessage[]) => {
+    const updates = getCategoryPositionUpdates(newCategories);
+    // Optimistically apply the new positions so the dragged order sticks while the mutations run
+    for (const update of updates) storeUpdateRoomCategory(update);
+    await Promise.all(updates.map((update) => $trpc.room.category.updateRoomCategory.mutate(update)));
+  };
+
   return {
     categories,
     createRoomCategory,
     deleteRoomCategory,
+    reorderRoomCategories,
     storeCreateRoomCategory,
     storeDeleteRoomCategory,
     storeUpdateRoomCategory,

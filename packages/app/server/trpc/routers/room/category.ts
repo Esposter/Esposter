@@ -46,7 +46,9 @@ export const categoryRouter = router({
     }),
   readRoomCategories: standardAuthedProcedure.query<RoomCategoryInMessage[]>(({ ctx }) =>
     ctx.db.query.roomCategoriesInMessage.findMany({
-      orderBy: { name: "asc", position: "asc" },
+      // Drag-reorder assigns positions, so position must take precedence over the name tiebreaker
+      // eslint-disable-next-line perfectionist/sort-objects
+      orderBy: { position: "asc", name: "asc" },
       where: { userId: { eq: ctx.getSessionPayload.user.id } },
     }),
   ),
