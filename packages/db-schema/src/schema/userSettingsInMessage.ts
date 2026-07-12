@@ -34,6 +34,9 @@ export const DEFAULT_SPEAKER_VOLUME_PERCENTAGE = 100;
 export const MIN_AUTO_IDLE_THRESHOLD_MS = 60_000;
 export const MAX_AUTO_IDLE_THRESHOLD_MS = 86_400_000;
 export const DEFAULT_AUTO_IDLE_THRESHOLD_MS = 600_000;
+export const MIN_PUSH_TO_TALK_RELEASE_DELAY_MS = 0;
+export const MAX_PUSH_TO_TALK_RELEASE_DELAY_MS = 2000;
+export const DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS = 20;
 
 export const userSettingsInMessage = pgTable(
   "userSettings",
@@ -45,6 +48,7 @@ export const userSettingsInMessage = pgTable(
     microphoneVolumePercentage: integer().notNull().default(DEFAULT_MICROPHONE_VOLUME_PERCENTAGE),
     noiseSuppressionMode: noiseSuppressionModeEnum().notNull().default(NoiseSuppressionMode.Custom),
     pushToTalkKeybind: text().notNull().default(""),
+    pushToTalkReleaseDelayMs: integer().notNull().default(DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS),
     speakerVolumePercentage: integer().notNull().default(DEFAULT_SPEAKER_VOLUME_PERCENTAGE),
     userId: text()
       .primaryKey()
@@ -56,6 +60,7 @@ export const userSettingsInMessage = pgTable(
       autoIdleThresholdMs,
       inputSensitivityDecibels,
       microphoneVolumePercentage,
+      pushToTalkReleaseDelayMs,
       speakerVolumePercentage,
     }) => [
       check(
@@ -74,6 +79,10 @@ export const userSettingsInMessage = pgTable(
         "user_settings_auto_idle_threshold_ms_check",
         sql`${autoIdleThresholdMs} BETWEEN ${sql.raw(MIN_AUTO_IDLE_THRESHOLD_MS.toString())} AND ${sql.raw(MAX_AUTO_IDLE_THRESHOLD_MS.toString())}`,
       ),
+      check(
+        "user_settings_push_to_talk_release_delay_ms_check",
+        sql`${pushToTalkReleaseDelayMs} BETWEEN ${sql.raw(MIN_PUSH_TO_TALK_RELEASE_DELAY_MS.toString())} AND ${sql.raw(MAX_PUSH_TO_TALK_RELEASE_DELAY_MS.toString())}`,
+      ),
     ],
     schema: messageSchema,
   },
@@ -85,6 +94,8 @@ export const selectUserSettingsInMessageSchema = createSelectSchema(userSettings
   inputSensitivityDecibels: (schema) => schema.min(MIN_INPUT_SENSITIVITY_DECIBELS).max(MAX_INPUT_SENSITIVITY_DECIBELS),
   microphoneVolumePercentage: (schema) => schema.min(0).max(MAX_USER_VOLUME_PERCENTAGE),
   noiseSuppressionMode: noiseSuppressionModeSchema,
+  pushToTalkReleaseDelayMs: (schema) =>
+    schema.min(MIN_PUSH_TO_TALK_RELEASE_DELAY_MS).max(MAX_PUSH_TO_TALK_RELEASE_DELAY_MS),
   speakerVolumePercentage: (schema) => schema.min(0).max(MAX_USER_VOLUME_PERCENTAGE),
   voiceInputMode: voiceInputModeSchema,
 });

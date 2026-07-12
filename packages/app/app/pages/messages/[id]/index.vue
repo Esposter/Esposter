@@ -5,7 +5,11 @@ definePageMeta({ middleware: "auth", validate });
 
 const route = useRoute();
 const { $trpc } = useNuxtApp();
-await $trpc.userToRoom.updateUserToRoom.mutate({ lastMessageAt: new Date(), roomId: route.params.id as string });
+const roomId = route.params.id as string;
+await Promise.all([
+  $trpc.userToRoom.updateUserToRoom.mutate({ lastMessageAt: new Date(), roomId }),
+  $trpc.userToRoom.clearMentionCount.mutate({ roomId }),
+]);
 </script>
 
 <template>
