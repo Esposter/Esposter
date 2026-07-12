@@ -27,7 +27,7 @@ export const useResourceListFilters = () => {
       return parsedStatus.success ? parsedStatus.data : "";
     },
   });
-  const page = useRouteQuery<null | string | string[], number>("page", 1, {
+  const page = useRouteQuery<null | number | string | string[], number>("page", 1, {
     transform: (value) => {
       const parsedPage = Number(value);
       return Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;

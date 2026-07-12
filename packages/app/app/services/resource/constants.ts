@@ -14,3 +14,6 @@ export const MAX_CSV_EXPORT_ROWS = 10_000;
 export const DEFAULT_RESOURCE_SORT_BY = [
   { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
 ] as const satisfies readonly SortItem<keyof Resource>[];
+// Matches Vuetify's data-table default so the tracked value is correct before the first update:options
+export const RESOURCE_LIST_ITEMS_PER_PAGE = 10;
+export const RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100];

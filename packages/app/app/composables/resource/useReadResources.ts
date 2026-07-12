@@ -1,4 +1,4 @@
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
 import type { ResourceListFilters } from "@/models/resource/list/ResourceListFilters";
 import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
 import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
@@ -6,12 +6,6 @@ import type { Resource, ResourceType } from "@esposter/db-schema";
 
 import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
 import { getResultAsync, noop } from "@esposter/shared";
-
-interface ReadResourcesOptions {
-  itemsPerPage: number;
-  page: number;
-  sortBy: SortItem<keyof Resource>[];
-}
 
 export const useReadResources = ({
   searchQuery = ref(""),
@@ -28,10 +22,8 @@ export const useReadResources = ({
   const error = ref("");
   // Remembered so Refresh / error Retry can re-run the exact query the table last asked for
   let lastOptions: ReadResourcesOptions | undefined;
-  const readResources = async (options: ReadResourcesOptions) => {
-    lastOptions = options;
-    const { itemsPerPage, page, sortBy } = options;
-    const filterInput = getResourceFilterInput({
+  const getFilterInput = () =>
+    getResourceFilterInput({
       searchQuery: searchQuery.value,
       status: status.value,
       types: types.value,
@@ -39,6 +31,10 @@ export const useReadResources = ({
       updatedBefore: updatedBefore.value,
       updatedFilter: updatedFilter.value,
     });
+  const readResources = async (options: ReadResourcesOptions) => {
+    lastOptions = options;
+    const { itemsPerPage, page, sortBy } = options;
+    const filterInput = getFilterInput();
     isLoading.value = true;
     error.value = "";
     await getResultAsync(async () => {
@@ -58,6 +54,9 @@ export const useReadResources = ({
     });
     isLoading.value = false;
   };
+  // One page of the current filter + sort, for chunked consumers like the CSV export
+  const readResourcesPage = ({ limit, offset }: { limit: number; offset: number }) =>
+    $trpc.resource.readResources.query({ limit, offset, sortBy: lastOptions?.sortBy ?? [], ...getFilterInput() });
   const refresh = () => (lastOptions ? readResources(lastOptions) : Promise.resolve());
-  return { count, error, isLoading, items, readResources, refresh };
+  return { count, error, isLoading, items, readResources, readResourcesPage, refresh };
 };
