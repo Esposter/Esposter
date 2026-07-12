@@ -27,5 +27,5 @@ export const clickerSaveSchema = z.object({
   boughtBuildings: createUniqueArraySchema(boughtBuildingSchema, "id"),
   boughtUpgrades: createUniqueArraySchema(upgradeIdSchema),
   id: z.uuid(),
-  noPoints: z.number(),
+  noPoints: z.number().nonnegative(),
 }) satisfies z.ZodType<ToData<ClickerSave>>;

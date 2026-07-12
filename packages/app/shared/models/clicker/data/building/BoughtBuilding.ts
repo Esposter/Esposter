@@ -10,7 +10,7 @@ export interface BoughtBuilding {
 }
 
 export const boughtBuildingSchema = z.object({
-  amount: z.number(),
+  amount: z.int().nonnegative(),
   id: buildingIdSchema,
-  producedValue: z.number(),
+  producedValue: z.number().nonnegative(),
 }) satisfies z.ZodType<BoughtBuilding>;

@@ -26,7 +26,7 @@ export const createAColumnSchema = <T extends z.ZodType<ColumnType>>(typeSchema:
     ...aNamedItemEntitySchema.shape,
     ...descriptionSchema.shape,
     hidden: z.boolean().default(false),
-    size: z.number().default(0),
+    size: z.int().nonnegative().default(0),
     sourceName: z.string().default("").readonly(),
     type: typeSchema.readonly(),
   });

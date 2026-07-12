@@ -18,8 +18,8 @@ export const sourceMirrorManifestEntrySchema: z.ZodObject<{
   target: z.ZodString;
   type: z.ZodEnum<typeof SourceMirrorEntryType>;
 }> = z.object({
-  mtimeMs: z.number(),
-  size: z.number(),
+  mtimeMs: z.number().nonnegative(),
+  size: z.int().nonnegative(),
   target: z.string(),
   type: z.enum(SourceMirrorEntryType),
 }) satisfies z.ZodType<SourceMirrorManifestEntry>;

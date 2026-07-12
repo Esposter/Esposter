@@ -151,11 +151,30 @@ myError.issues.push({ code: "custom", message: "..." }); // not myError.addIssue
 
 Schemas for persisted client-authoritative data (save blobs, localStorage state) model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no constructor migration code, no per-element tolerance filters for stale ids. Data that fails to parse resets to a fresh default; the reset is the migration. When a shape changes, change the schema and delete the old shape in the same commit. (Postgres evolves through real Drizzle migrations — unaffected.) See `docs/architecture/persisted-data-latest-shape-only.md`.
 
+## Tightest Possible Constraints
+
+Every field carries the tightest constraint its domain allows — a bare `z.number()` / `z.string()` is only correct when the value is genuinely unbounded (e.g. statistical `average`/`minimum`/`maximum`/`summation`, which can be negative). Audit each numeric field against what it models:
+
+| Domain                                                | Schema                       |
+| ----------------------------------------------------- | ---------------------------- |
+| Count / quantity / index / byte size (whole, ≥ 0)     | `z.int().nonnegative()`      |
+| Count that can't be zero (frequency, sample count)    | `z.int().positive()`         |
+| Price / rate / duration / timestamp (fractional, ≥ 0) | `z.number().nonnegative()`   |
+| Price / multiplier that can't be zero                 | `z.number().positive()`      |
+| Percentage                                            | `z.number().min(0).max(100)` |
+| Genuinely signed value (deltas, stats, coordinates)   | `z.number()` — leave bare    |
+
+Rules:
+
+- **Integers use `z.int()`**, never `z.number().int()` (Zod 4) and never plain `z.number()` when the value is whole by definition (counts, indices, `rdev`, byte sizes). `z.int()` stays `z.ZodNumber` under `--isolatedDeclarations` annotations — no annotation change needed.
+- **≥ 0 is `.nonnegative()`, > 0 is `.positive()`** — never `.min(0)` / `.min(1)` for these; reserve `.min(N)` for a domain-specific lower bound (usually paired with an upper).
+- **Check the seed/fixture data** before choosing — if every real value is strictly positive (prices, effect multipliers), use `.positive()`, not the weaker `.nonnegative()`.
+- Same audit applies in `packages/*` libraries — refinements like `.nonnegative()` don't change the `z.ZodObject<{...}>` annotation, so tightening is annotation-safe; still verify with the package's `typecheck`.
+
 ## Schema Rules
 
 - **Minimal strict input schemas** — model the exact case being implemented now. Prefer required fields over optional + `.refine()` when only one flow is supported; split future variants into separate schemas/procedures later. Use `.refine()` only for cross-field rules that can't be represented structurally.
 - **`z.enum` with native enums (Zod 4)** — use `z.enum(MyEnum)` directly for TS string enums; `z.nativeEnum` is Zod 3 only.
-- **Non-negative integers** — use `.nonnegative()` not `.min(0)` for fields that must be ≥ 0 (`position`, `sheetIndex`). Reserve `.min(N)` for N > 0 or a specific lower bound paired with an upper.
 - **Schema must match its type exactly** — if a field is `ColumnFormat`, use `columnFormatSchema`, never inline `z.union([booleanFormatSchema, ...])`. Every named type has exactly one named schema; never reconstruct a union inline.
 - **`.default()`** — never combine `.optional().default(value)` (`.default()` already handles `undefined`). Only use `.default()` in schemas whose TS type is a **class with actual property defaults** (e.g. `class Foo { bar = [] }`). Never add `.default()` to a schema that `satisfies z.ZodType<Interface>` — interfaces have no defaults, so schema and type would misalign. Initialise empties explicitly at the call site (`new MyClass()` or `{ steps: [] }`).
 - **Generic schemas** — when an abstract class has a generic type param (e.g. `ADataSourceItem<TType, TConfig>`), its schema must be generic too: export a `create*Schema` function taking typed zod schemas as params. Never hardcode type-specific values in a base schema. Use `T` for one param, descriptive `T*` (`TType`, `TConfiguration`) for multiple:

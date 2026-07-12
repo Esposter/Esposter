@@ -24,18 +24,18 @@ export const columnStatisticsSchema = z.object({
   average: z.number().nullable(),
   columnName: z.string(),
   columnType: columnTypeSchema,
-  falseCount: z.number().nullable(),
+  falseCount: z.int().nonnegative().nullable(),
   maximum: z.number().nullable(),
   minimum: z.number().nullable(),
   mostFrequentValue: z.string().nullable(),
-  nullCount: z.number(),
-  nullPercent: z.number().nullable(),
-  standardDeviation: z.number().nullable(),
+  nullCount: z.int().nonnegative(),
+  nullPercent: z.number().min(0).max(100).nullable(),
+  standardDeviation: z.number().nonnegative().nullable(),
   summation: z.number().nullable(),
   topFrequencies: z
-    .array(z.tuple([z.string(), z.number()]).readonly())
+    .array(z.tuple([z.string(), z.int().positive()]).readonly())
     .readonly()
     .nullable(),
-  trueCount: z.number().nullable(),
-  uniqueCount: z.number().nullable(),
+  trueCount: z.int().nonnegative().nullable(),
+  uniqueCount: z.int().nonnegative().nullable(),
 });
