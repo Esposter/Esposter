@@ -42,7 +42,8 @@ import { join } from "node:path";
 //   Sequential 9p write). The script applies them under the mirror lock: `xargs -0 rm -rf` for removals, then a local
 //   Ext4 `tar -x` into `tree/` — no source file ever crosses v9fs individually. `chmod -R 777` after the extract
 //   Restores the drvfs-parity modes the old rsync propagated (bsdtar records NTFS entries mode-less as 644/755, which
-//   Would strip the exec bits repo scripts rely on inside the sandbox).
+//   Would strip the exec bits repo scripts rely on inside the sandbox). Symlinks ship dereferenced and a
+//   Windows-locked file is skipped and pruned from the published manifest rather than fatal (createSourceMirrorArchive).
 // - No readable manifest (first run, corrupt file, `cache clean`) or a missing tree materializes from scratch: the
 //   Archive carries the whole manifest file set and the script clears `tree/` before extracting, which also
 //   Self-heals any mirror-vs-manifest drift; the fresh manifest is published either way. The old whole-tree
@@ -79,6 +80,17 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
     const originTempFilename = `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${tag}`;
     mkdirSync(entryUnc, { recursive: true });
+    const copyPaths = delta === undefined ? Object.keys(manifest).toSorted() : delta.copyPaths;
+    const consumedPaths: string[] = [];
+    let archivePath = "";
+    if (copyPaths.length > 0) {
+      const { archiveFilename, unreadablePaths } = createSourceMirrorArchive(cwd, entryUnc, copyPaths, tag);
+      archivePath = `${entryPath}/${archiveFilename}`;
+      consumedPaths.push(archivePath);
+      // A Windows-locked copy path is missing from the archive, so it must not be published as held: pruning keeps
+      // The manifest honest and later runs retry it until readable, instead of one locked file hard-failing the run.
+      for (const unreadablePath of unreadablePaths) delete manifest[unreadablePath];
+    }
     writeFileSync(join(entryUnc, manifestTempFilename), JSON.stringify(manifest));
     // The origin marker is staged host-side like the manifest and published via `mv` (atomic same-fs rename), so a
     // Concurrent reaper reads either the old or the complete new marker, never a half-written path it would misjudge
@@ -88,9 +100,6 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     const publish = `mv ${shellQuote(`${entryPath}/${originTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_ORIGIN_FILENAME}`)} && mv ${shellQuote(`${entryPath}/${manifestTempFilename}`)} ${shellQuote(`${entryPath}/${VIRRUN_SOURCE_MIRROR_MANIFEST_FILENAME}`)}`;
     const withMirrorLock = (sync: string): string =>
       `mkdir -p ${shellQuote(mirrorPath)} && { flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9 && ${sync} && ${publish}; } 9> ${shellQuote(lockPath)}`;
-    const copyPaths = delta === undefined ? Object.keys(manifest).toSorted() : delta.copyPaths;
-    const archivePath =
-      copyPaths.length === 0 ? "" : `${entryPath}/${createSourceMirrorArchive(cwd, entryUnc, copyPaths, tag)}`;
     const extract =
       archivePath === ""
         ? []
@@ -98,7 +107,6 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
             `timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar -xf ${shellQuote(archivePath)} -C ${shellQuote(mirrorPath)}`,
             `chmod -R 777 ${shellQuote(mirrorPath)}`,
           ];
-    const consumedPaths = archivePath === "" ? [] : [archivePath];
     let sync: string[];
     if (delta === undefined)
       // Materialize from scratch: clearing `tree/` before the extract is what self-heals mirror-vs-manifest drift —
@@ -113,7 +121,8 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
     }
     // The staged temps are consumed-then-removed only on success; a failed sync aborts the run and leaves them for
     // ReapStaleSourceMirrorTemps to reclaim once this process is dead.
-    const cleanup = consumedPaths.length === 0 ? "" : ` && rm -f ${consumedPaths.map(shellQuote).join(" ")}`;
+    const cleanup =
+      consumedPaths.length === 0 ? "" : ` && rm -f ${consumedPaths.map((path) => shellQuote(path)).join(" ")}`;
     return `${withMirrorLock(sync.join(" && "))}${cleanup}`;
   }).match(
     (script) => ({ lockPath, mirrorPath, script }),

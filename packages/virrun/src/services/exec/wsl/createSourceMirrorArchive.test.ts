@@ -1,4 +1,5 @@
 import { createTemporaryDirectoryTracker } from "@/services/exec/test/createTemporaryDirectoryTracker.test";
+import { isSymlinkSupported } from "@/services/exec/test/isSymlinkSupported.test";
 import { TEST_FILENAME } from "@/services/exec/util/constants.test";
 import { execFileHidden } from "@/services/exec/util/execFileHidden";
 import {
@@ -6,7 +7,7 @@ import {
   VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX,
 } from "@/services/exec/wsl/constants";
 import { createSourceMirrorArchive } from "@/services/exec/wsl/createSourceMirrorArchive";
-import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
@@ -43,7 +44,7 @@ describe(createSourceMirrorArchive, () => {
     writeFileSync(join(cwd, listedChildPath), TEST_FILENAME);
     writeFileSync(join(cwd, skippedChildPath), TEST_FILENAME);
 
-    const archiveFilename = createSourceMirrorArchive(
+    const { archiveFilename, unreadablePaths } = createSourceMirrorArchive(
       cwd,
       entryUnc,
       [TEST_FILENAME, directoryName, listedChildPath],
@@ -51,6 +52,7 @@ describe(createSourceMirrorArchive, () => {
     );
 
     expect(archiveFilename).toBe(`${VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX}${TAG}`);
+    expect(unreadablePaths).toStrictEqual([]);
     // A listed directory contributes its entry alone — its children are mirrored only when listed themselves, exactly
     // Matching the manifest's per-entry bookkeeping.
     expect(listMembers(archiveFilename).toSorted()).toStrictEqual(
@@ -66,14 +68,31 @@ describe(createSourceMirrorArchive, () => {
     const spacedFilename = `${TEST_FILENAME} ${TEST_FILENAME}`;
     writeFileSync(join(cwd, spacedFilename), TEST_FILENAME);
 
-    expect(listMembers(createSourceMirrorArchive(cwd, entryUnc, [spacedFilename], TAG))).toStrictEqual([
+    expect(listMembers(createSourceMirrorArchive(cwd, entryUnc, [spacedFilename], TAG).archiveFilename)).toStrictEqual([
       spacedFilename,
     ]);
   });
 
-  test("throws on an unreadable source path and leaves the copy list staged for the reaper", () => {
+  test.runIf(isSymlinkSupported)("dereferences a symlink so its member extracts as the target's content", () => {
     expect.hasAssertions();
 
+    const linkFilename = "link";
+    writeFileSync(join(cwd, TEST_FILENAME), TEST_FILENAME);
+    symlinkSync(TEST_FILENAME, join(cwd, linkFilename));
+
+    const { archiveFilename } = createSourceMirrorArchive(cwd, entryUnc, [linkFilename], TAG);
+
+    // Extracting the member on the archiving host proves drvfs parity: content, not a preserved symlink whose target
+    // Would be unresolvable after the Linux-side extract.
+    const extractDirectory = create();
+    execFileHidden("tar", ["-xf", join(entryUnc, archiveFilename), "-C", extractDirectory]);
+    expect(readFileSync(join(extractDirectory, linkFilename), "utf8")).toBe(TEST_FILENAME);
+  });
+
+  test("throws when tar fails for anything but an unreadable file and leaves the copy list staged for the reaper", () => {
+    expect.hasAssertions();
+
+    // A vanished path is not a tolerated "couldn't open" report — the plan must abort loudly.
     expect(() => createSourceMirrorArchive(cwd, entryUnc, [TEST_FILENAME], TAG)).toThrow();
     expect(readdirSync(entryUnc)).toContain(`${VIRRUN_SOURCE_MIRROR_COPY_TEMP_PREFIX}${TAG}`);
   });

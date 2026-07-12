@@ -2,7 +2,7 @@ import type { SourceMirrorManifest } from "@/models/exec/wsl/SourceMirrorManifes
 
 import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
 import { getResult, noop } from "@esposter/shared";
-import { lstatSync, readdirSync, readlinkSync } from "node:fs";
+import { lstatSync, readdirSync, readlinkSync, statSync } from "node:fs";
 import { join } from "node:path";
 // Walk the host working tree on the native filesystem and record every mirrored entry's change signature, keyed by
 // Posix relative path. This is the stat-walk an rsync quick-check would do, moved off v9fs onto the host FS where it
@@ -25,9 +25,18 @@ export const buildSourceMirrorManifest = (cwd: string, excludes: readonly string
       if (nameExcludes.has(entry.name) || pathExcludes.has(relativePath)) continue;
       const path = join(directory, entry.name);
       if (entry.isSymbolicLink()) {
+        // The archive dereferences symlinks (tar -h — createSourceMirrorArchive), so the change signal follows the
+        // Target's stat, plus the target path so a retarget still flips the entry. A broken link drops out like any
+        // Unreadable entry.
+        const stats = getResult(() => statSync(path)).unwrapOr(undefined);
         const target = getResult(() => readlinkSync(path)).unwrapOr(undefined);
-        if (target !== undefined)
-          manifest[relativePath] = { mtimeMs: 0, size: 0, target, type: SourceMirrorEntryType.Symlink };
+        if (stats !== undefined && target !== undefined)
+          manifest[relativePath] = {
+            mtimeMs: stats.mtimeMs,
+            size: stats.size,
+            target,
+            type: SourceMirrorEntryType.Symlink,
+          };
       } else if (entry.isDirectory()) {
         manifest[relativePath] = { mtimeMs: 0, size: 0, target: "", type: SourceMirrorEntryType.Directory };
         getResult(() => {

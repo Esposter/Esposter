@@ -21,11 +21,22 @@ import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "nod
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const state = vi.hoisted(() => ({ cacheRoot: "" }));
+const state = vi.hoisted(() => ({ cacheRoot: "", unreadablePaths: [] as string[] }));
 // The "UNC" cache root is just a real temp dir here, so the planner's host-side staging/reads — including the real
 // Host `tar` spawn building the archive — exercise real fs; the same TEST_WSL_PREFIX transform the sibling wsl tests
 // Use derives the Linux-side paths embedded in the script.
 vi.mock(import("@/services/exec/wsl/getWslNativeCacheRoot"), () => ({ getWslNativeCacheRoot: () => state.cacheRoot }));
+// Delegate to the real archive staging but let a test inject unreadable paths — a genuinely Windows-locked file can't
+// Be created portably from Node, whose open flags don't control the share mode.
+vi.mock(import("@/services/exec/wsl/createSourceMirrorArchive"), async (importOriginal) => {
+  const { createSourceMirrorArchive } = await importOriginal();
+  return {
+    createSourceMirrorArchive: (...args: Parameters<typeof createSourceMirrorArchive>) => ({
+      ...createSourceMirrorArchive(...args),
+      unreadablePaths: state.unreadablePaths,
+    }),
+  };
+});
 
 vi.mock(import("@/services/exec/wsl/readWslPath"), () => ({
   readWslPath: (path: string) => `${TEST_WSL_PREFIX}${path}`,
@@ -57,6 +68,7 @@ describe(createWslSourceMirrorSync, () => {
   beforeEach(() => {
     cwd = create();
     state.cacheRoot = create();
+    state.unreadablePaths = [];
     entryUnc = join(state.cacheRoot, VIRRUN_SOURCES_DIRECTORY_NAME, getSourceMirrorKey(cwd));
     writeFileSync(join(cwd, TEST_FILENAME), TEST_FILENAME);
   });
@@ -149,6 +161,20 @@ describe(createWslSourceMirrorSync, () => {
     expect(script).not.toContain("tar -xf");
     expect(readStaged(VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX)).toBe("");
     expect(readStaged(VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX)).toBe(`${removedFilename}\0`);
+  });
+
+  test("prunes an unreadable copy path from the published manifest so later runs retry it", () => {
+    expect.hasAssertions();
+
+    state.unreadablePaths = [TEST_FILENAME];
+
+    const { script } = createWslSourceMirrorSync(cwd);
+
+    // The run still proceeds — a Windows-locked file is skipped, not fatal — but the manifest must not claim it.
+    expect(script).not.toBe("");
+    expect(JSON.parse(readStaged(`${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${process.pid}.`))).not.toHaveProperty(
+      TEST_FILENAME,
+    );
   });
 
   test("falls back to the full materialize when the manifest is unreadable", () => {
