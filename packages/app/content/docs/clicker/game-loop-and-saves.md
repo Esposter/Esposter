@@ -28,14 +28,12 @@ flowchart TD
   persist -->|anonymous| ls[localStorage ClickerStore]
   blob --> load[useReadClicker]
   ls --> load
-  load -->|clickerSaveMigrationSchema + toClicker| clicker[in-memory Clicker]
+  load -->|clickerSaveSchema + toClicker| clicker[in-memory Clicker]
 ```
 
 **Save timing** — `useReadClicker` watches a `virtualClicker` computed that deep-omits `noPoints` and `producedValue`; only _manual_ state changes (purchases, type switches) trigger an immediate save, while the ever-ticking counters are picked up by the periodic autosave. The omitted view is reference-stabilized with `deepEqual` so the watch doesn't fire on every tick, and `useSave` stamps `updatedAt` on the serialized copy rather than the in-memory state so saving never re-triggers the watch.
 
-**Normalized save data** — the save stores only what the player _did_: `boughtUpgrades` as `UpgradeId[]` and `boughtBuildings` as `{ id, amount, producedValue }[]` (the `ClickerSave` entity). On write, `toClickerSave` strips the in-memory definitions down to ids, and on load `toClicker` resolves them back through `UpgradeMap`/`BuildingMap` — so a balance change to the content maps reaches every existing save on its next load, and unknown ids (removed content) are silently dropped so saves self-heal. The in-memory `Clicker` keeps full definition objects, leaving the effect engine and components untouched.
-
-**Migration** — `clickerSaveMigrationSchema` is a union that also accepts the legacy pre-normalization shape (full `Upgrade`/`Building` objects embedded in the save) and converts it by extracting the ids; the immediate-save watch then re-persists the migrated shape on first load. The legacy arm can be deleted once existing saves have cycled through a load + re-save.
+**Normalized save data** — the save stores only what the player _did_: `boughtUpgrades` as `UpgradeId[]` and `boughtBuildings` as `{ id, amount, producedValue }[]` (the `ClickerSave` entity). On write, `toClickerSave` strips the in-memory definitions down to ids, and on load `toClicker` resolves them back through `UpgradeMap`/`BuildingMap` — so a balance change to the content maps reaches every existing save on its next load. The in-memory `Clicker` keeps full definition objects, leaving the effect engine and components untouched. Per the [latest-shape-only convention](/docs/architecture/persisted-data-latest-shape-only), there is no migration or self-heal path: a save that fails `clickerSaveSchema` (old shape, removed content ids) resets to a fresh game.
 
 **Persistence** — `useSave` and `useReadData` are the app-wide single-blob-per-user pattern (shared with dungeons): authenticated users read/write through `clicker.readClicker` / `clicker.saveClicker` (generic blob-state procedures over the `clicker-assets` container, blob name `${userId}/save`, validated by `clickerSaveSchema`); anonymous users get the same state in localStorage under `ClickerStore`. Why games stay off the resource layer: [games integration](/docs/platform/rejected/games-integration).
 
@@ -60,12 +58,12 @@ Paths relative to `packages/app`.
 | `app/composables/clicker/useAutosaveTimer.ts` | periodic save                                     |
 | `app/services/clicker/applyGameTick.ts`       | per-tick production math (points + producedValue) |
 | `app/services/clicker/save/toClickerSave.ts`  | serialize in-memory state to ids/counters         |
-| `app/services/clicker/save/toClicker.ts`      | parse (with migration) + hydrate ids back         |
+| `app/services/clicker/save/toClicker.ts`      | parse + hydrate ids back                          |
 | `app/store/clicker/index.ts`                  | save root, `useSave` wiring                       |
 | `app/store/clicker/popup.ts`                  | click handling + floating point popups            |
 | `server/trpc/routers/clicker.ts`              | read/save + content-map procedures                |
 | `shared/models/clicker/data/Clicker.ts`       | in-memory game state entity                       |
-| `shared/models/clicker/data/ClickerSave.ts`   | persisted save entity, schema + migration schema  |
+| `shared/models/clicker/data/ClickerSave.ts`   | persisted save entity + schema                    |
 
 ## Notes
 

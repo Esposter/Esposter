@@ -6,10 +6,11 @@ import { FPS } from "@/services/clicker/constants";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const createBoughtBuilding = (id: BuildingId) => ({ ...BuildingMap[id], amount: 1, id, producedValue: 0 });
+
 describe(applyGameTick, () => {
   const cursorPower = BuildingMap[BuildingId.Cursor].baseValue;
   const grandmaPower = BuildingMap[BuildingId.Grandma].baseValue;
-  const createBoughtBuilding = (id: BuildingId) => ({ ...BuildingMap[id], amount: 1, id, producedValue: 0 });
 
   test("adds summed building power to points and each share to producedValue", () => {
     expect.hasAssertions();

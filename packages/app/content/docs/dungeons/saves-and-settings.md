@@ -11,7 +11,7 @@ The whole game persists as one `Dungeons` entity per user — a single optional 
 
 A `Save` is the full run state: `player` (position, direction, party monsters, inventory, respawn location), the active `tilemapKey`, and per-map `world` state (chest opened-flags). `useReadDungeons` loads the blob at page setup (authed: `dungeons.readDungeons`; anonymous: localStorage `DungeonsStore`); the Title scene's Continue resumes `dungeons.save` (enabled only when one exists), New Game starts from a fresh `Save`. Saving is **manual** — the world menu's Save option calls `saveData`, which assigns the active save onto `dungeons.save` and persists via `useSave` — there is no autosave.
 
-**Legacy migration** — older blobs stored a `saves` array that only ever grew one slot. Every read path funnels through the `Dungeons` constructor (the server's blob read, superjson revival on the client, and the localStorage path), which takes the array's first entry as `save` and defaults any monster `defense` missing from pre-defense saves via the species data. `dungeonsSchema` keeps a legacy union arm doing the same migration so stale clients can still write during a deploy cycle — delete that arm once one has passed. If real save slots are ever wanted, design them as slots (their own ids, names, timestamps) rather than resurrecting the array.
+**No legacy shapes** — per the [latest-shape-only convention](/docs/architecture/persisted-data-latest-shape-only), `dungeonsSchema` and the `Dungeons` constructor accept only the current single-`save` shape; a blob that fails to parse starts fresh. If real save slots are ever wanted, design them as slots (their own ids, names, timestamps) rather than resurrecting the old array.
 
 **Settings** — the Settings scene edits `dungeons.settings`, shared across runs: text speed (Slow/Mid/Fast, driving dialog animation delay), battle style, animations on/off, sound on/off + volume percentage, and theme mode (recoloring the UI glass panels via `ThemeModeColorsMap`). Settings persist in the same blob write.
 
@@ -28,14 +28,14 @@ A `Save` is the full run state: `player` (position, direction, party monsters, i
 
 Paths relative to `packages/app`.
 
-| File                                                                          | Role                                     |
-| ----------------------------------------------------------------------------- | ---------------------------------------- |
-| `shared/models/dungeons/data/Dungeons.ts`                                     | root entity (save + settings), migration |
-| `shared/models/dungeons/data/Save.ts`                                         | one run's full state                     |
-| `app/store/dungeons/index.ts`                                                 | `useSave` wiring, `saveData`             |
-| `app/composables/dungeons/useReadDungeons.ts`                                 | load on page setup                       |
-| `app/store/dungeons/settings/`                                                | settings scene stores                    |
-| `shared/services/achievement/definitions/DungeonsAchievementDefinitionMap.ts` | achievements                             |
+| File                                                                          | Role                          |
+| ----------------------------------------------------------------------------- | ----------------------------- |
+| `shared/models/dungeons/data/Dungeons.ts`                                     | root entity (save + settings) |
+| `shared/models/dungeons/data/Save.ts`                                         | one run's full state          |
+| `app/store/dungeons/index.ts`                                                 | `useSave` wiring, `saveData`  |
+| `app/composables/dungeons/useReadDungeons.ts`                                 | load on page setup            |
+| `app/store/dungeons/settings/`                                                | settings scene stores         |
+| `shared/services/achievement/definitions/DungeonsAchievementDefinitionMap.ts` | achievements                  |
 
 ## Notes
 

@@ -1,4 +1,3 @@
-import { BASE_DEFENSE } from "#shared/services/dungeons/monster/constants";
 import { z } from "zod";
 
 export interface Stats {
@@ -13,8 +12,7 @@ export interface Stats {
 export const statsSchema = z.object({
   attack: z.int().positive(),
   baseExp: z.int().positive(),
-  // Saves written before the defense stat existed omit it — default to the shared species base
-  defense: z.int().positive().default(BASE_DEFENSE),
+  defense: z.int().positive(),
   level: z.int().positive(),
   maxHp: z.int().positive(),
 }) satisfies z.ZodType<Stats>;

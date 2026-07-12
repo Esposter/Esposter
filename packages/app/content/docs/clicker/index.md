@@ -26,4 +26,4 @@ Open work: [roadmap](/docs/clicker/roadmap). Decided ideas: [deferred](/docs/cli
 
 ## Shipped log
 
-- **Core refactors** — normalized id-based save data with legacy-save migration, single 60 FPS game tick, exponential building price curve.
+- **Core refactors** — normalized id-based save data, single 60 FPS game tick, exponential building price curve.

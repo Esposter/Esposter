@@ -51,6 +51,9 @@ export const useResourceSearchItems = (searchQuery: Ref<string>) => {
   watch(debouncedSearchQuery, async (newSearchQuery) => {
     if (!newSearchQuery) {
       resourceItems.value = [];
+      // An in-flight request for the previous query bails on the staleness guard below,
+      // So the pending state must be released here or the spinner never stops
+      isPending.value = false;
       return;
     }
 

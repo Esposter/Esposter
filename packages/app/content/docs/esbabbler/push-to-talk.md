@@ -5,7 +5,7 @@ description: Hold-to-talk keybind driving the mic gate, with a configurable rele
 
 # Push-to-Talk
 
-`VoiceInputMode.PushToTalk` is a real hold-to-talk mode: while the configured key is held the mic transmits; released, it gates to silence after a short grace period (the release delay) so word endings aren't clipped — Discord's Push to Talk Release Delay.
+`VoiceInputMode.PushToTalk` is a real hold-to-talk mode: while the configured key is held the mic transmits; released, it gates to silence after the configured release delay (0 ms closes immediately) so word endings aren't clipped — Discord's Push to Talk Release Delay.
 
 ## How it works
 

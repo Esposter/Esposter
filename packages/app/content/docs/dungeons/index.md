@@ -29,5 +29,5 @@ Open work: [roadmap](/docs/dungeons/roadmap). Decided ideas: [deferred](/docs/du
 
 Chronological, one line per feature.
 
-- **Single save** — collapsed the unused multi-save array into one `save` field, with a legacy-shape migration on read.
+- **Single save** — collapsed the unused multi-save array into one `save` field.
 - **Attack power and defense** — per-attack `power`, per-species `defense`, and a saturating damage formula, so move choice and bulk both matter.
