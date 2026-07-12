@@ -18,9 +18,10 @@ describe(createSourceMirrorArchive, () => {
   let entryUnc = "";
   // Archive members as stored (posix relative paths); a directory member's trailing slash is normalized away so
   // Expectations read like the copyPaths that produced them.
+  // Split on \r?\n — Windows bsdtar terminates member lines with \r\n.
   const listMembers = (archiveFilename: string): string[] =>
     execFileHidden("tar", ["-tf", join(entryUnc, archiveFilename)])
-      .split("\n")
+      .split(/\r?\n/u)
       .filter(Boolean)
       .map((member) => (member.endsWith("/") ? member.slice(0, -1) : member));
 

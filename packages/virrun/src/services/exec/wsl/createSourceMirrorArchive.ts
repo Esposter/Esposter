@@ -11,7 +11,7 @@ import { join } from "node:path";
 // Into the mirror entry over the UNC, and return its staged filename for the Linux script to extract into `tree/`.
 // This is the whole reason the sync's per-file 9p cost is gone: the host reads every copied file at native NTFS speed
 // And the 9p bridge carries ONE sequential archive write, instead of rsync opening each file across v9fs — a cold
-// Materialize of this repo (~18k files) went from past the 5-minute timeout to seconds. `--no-recursion` archives
+// Materialize of a tens-of-thousands-of-files repo went from blowing the 5-minute timeout to seconds. `--no-recursion` archives
 // Exactly the listed entries (a listed directory is its entry alone, its children are their own listed paths —
 // Matching the manifest's per-entry bookkeeping), `--null -T` feeds the same null-delimited path form the delete list
 // Uses so any filename survives, and `-C cwd` keys members by the manifest's posix relative paths. Both flags parse

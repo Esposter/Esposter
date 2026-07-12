@@ -4,8 +4,9 @@ import { getResult } from "@esposter/shared";
 // What never enters the source mirror: node_modules (supplied by the snapshot RO lower — mirrors the write-back
 // Rule), .git (large, churns every commit, unread by dev-loop commands), .claude/worktrees (agent worktrees are whole
 // Sibling working trees nested inside the repo — each is its own virrun cwd with its own mirror entry, and letting
-// Them into the parent's mirrored set multiplies every sync by the worktree count: a real run was 34,339 of 34,860
-// Copied paths), and an active environment's prepare outputs (e.g. .nuxt) — those are owned by the source-keyed
+// Them into the parent's mirrored set multiplies every sync by the worktree count: a real run's delta was tens of
+// Thousands of worktree paths dwarfing a few hundred real changes), and an active environment's prepare outputs
+// (e.g. .nuxt) — those are owned by the source-keyed
 // Prepare layer, so the host's platform-specific copy is kept out entirely: it can't shadow the prepare layer, and
 // The prepare-layer capture regenerates a *complete* copy in its own upper rather than reading unchanged files
 // Through a host lower. Everything else is mirrored — over-copy is correctness-safe, under-copy is a bug.

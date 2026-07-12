@@ -27,16 +27,16 @@ import { join } from "node:path";
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
 // Path (the `--overlay-src` lower createWslBwrapArgs points at) plus the sh script that brings it up to date, which
 // CreateWslOsBackend folds into the run's own `wsl.exe` invocation ahead of bwrap — no separate sync spawn. The whole
-// Win32 os gap was reads of the source lower crossing v9fs (15-64x slower); the mirror moves the toolchain's reads to
-// Ext4, the manifest diff moves the per-run change detection to the host FS, and the staged archive moves the data
-// Plane off per-file 9p round-trips:
+// Win32 os gap was reads of the source lower crossing v9fs (an order of magnitude slower or worse); the mirror moves
+// The toolchain's reads to ext4, the manifest diff moves the per-run change detection to the host FS, and the staged
+// Archive moves the data plane off per-file 9p round-trips:
 //
 // - A fresh host-side walk (buildSourceMirrorManifest) is diffed against the manifest published beside the mirror
 //   After the last successful sync. No delta and a present tree ⇒ script "" — the run pays no wsl.exe sync at all.
 //   The walk runs unconditionally and synchronously by design: it IS the change detector (the skip decision needs the
 //   Current side of the diff, and every sync path publishes that same manifest), and virrun is a one-shot CLI whose
 //   Event loop has nothing else to run during planning — off-threading it would add IPC without cutting wall time.
-//   Measured ~330ms warm for a ~10k-entry repo on NTFS vs the ~12.5s 9p stat-walk it replaced.
+//   Measured sub-second warm on NTFS vs the >10s 9p stat-walk it replaced.
 // - A delta stages pid-tagged temps in the entry dir (over the UNC): the next manifest, the null-delimited delete
 //   List, and a tar archive of the copied paths built host-side (createSourceMirrorArchive — native NTFS reads, one
 //   Sequential 9p write). The script applies them under the mirror lock: `xargs -0 rm -rf` for removals, then a local
@@ -46,8 +46,8 @@ import { join } from "node:path";
 // - No readable manifest (first run, corrupt file, `cache clean`) or a missing tree materializes from scratch: the
 //   Archive carries the whole manifest file set and the script clears `tree/` before extracting, which also
 //   Self-heals any mirror-vs-manifest drift; the fresh manifest is published either way. The old whole-tree
-//   `rsync -a --delete` here read every source file across v9fs — a cold materialize of this repo blew past the
-//   5-minute timeout; the archive does it in seconds.
+//   `rsync -a --delete` here read every source file across v9fs — a cold materialize could blow past the 5-minute
+//   Timeout; the archive does it in seconds.
 //
 // The publish is the last step inside the flock, via atomic `mv` of the staged temps, so the manifest never claims a
 // State the mirror doesn't hold and a concurrent planner reads either the old or the new manifest, never a torn one.
