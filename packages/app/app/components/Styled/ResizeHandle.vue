@@ -31,10 +31,10 @@ const onPointerUp = () => {
 <template>
   <div
     absolute
-    inset-y-0
-    z-10
-    w-1
     cursor-col-resize
+    inset-y-0
+    w-1
+    z-10
     class="resize-handle"
     :class="[isReversed ? 'left-0' : 'right-0', { 'resize-handle--dragging': isDragging }]"
     @pointerdown="onPointerDown"

@@ -1,4 +1,3 @@
-/* eslint-disable perfectionist/sort-objects */
 import { SettingsCategory } from "@/models/message/room/SettingsCategory";
 import { SettingsType } from "@/models/message/room/SettingsType";
 
