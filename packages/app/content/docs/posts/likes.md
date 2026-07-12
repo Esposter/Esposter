@@ -17,7 +17,9 @@ Reddit-style voting: each user holds at most one like per post with `value ∈ {
 - `updateLike` — flip an existing vote (`noLikes += 2 × value`, rejecting no-op flips).
 - `deleteLike` — retract (`noLikes −= value`).
 
-**Client** — `LikeSection.vue` derives `liked`/`unliked` from the post's like rows and the session user, and maps arrow clicks to the right mutation (up while unliked = flip, up while liked = retract, …). `useLikeOperations` applies the result optimistically to whichever store owns the list (feed posts vs a post page's comments — two store instances of the same shape), patching `likes` and `noLikes` in place so counts update without a refetch.
+**Viewer-scoped reads** — every procedure that returns a post (reads and mutations alike) carries `viewerLike: Like | undefined` on `PostWithRelations`: at most the viewer's own like row, never the full list, since the net count already lives in the denormalized `noLikes`. The `likes` relation is only the server-side fetch strategy — `getViewerPostRelations` filters it to the caller, and `getPostWithViewerLike` maps the result. Unauthenticated rate-limited reads have no viewer, so they skip the like lookup entirely and the arrows render uncolored. A hot feed page's payload is O(posts) instead of O(total likes).
+
+**Client** — `LikeSection.vue` derives `liked`/`unliked` from `viewerLike`, and maps arrow clicks to the right mutation (up while unliked = flip, up while liked = retract, …). `useLikeOperations` applies the result optimistically to whichever store owns the list (feed posts vs a post page's comments — two store instances of the same shape), patching `viewerLike` and `noLikes` in place so counts update without a refetch.
 
 ## Procedures
 
@@ -31,15 +33,17 @@ Reddit-style voting: each user holds at most one like per post with `value ∈ {
 
 Paths relative to `packages/app`.
 
-| File                                                       | Role                         |
-| ---------------------------------------------------------- | ---------------------------- |
-| `packages/db-schema/src/schema/likes.ts`                   | table + ±1 check             |
-| `server/trpc/routers/like.ts`                              | transactional mutations      |
-| `app/components/Post/LikeSection.vue`                      | arrows UI + state derivation |
-| `app/composables/post/useLikeOperations.ts`                | optimistic store patching    |
-| `app/store/post/like.ts`, `app/store/post/comment/like.ts` | per-list like stores         |
+| File                                                       | Role                                 |
+| ---------------------------------------------------------- | ------------------------------------ |
+| `packages/db-schema/src/schema/likes.ts`                   | table + ±1 check                     |
+| `packages/db-schema/src/relations/postsRelation.ts`        | `PostWithRelations` + `viewerLike`   |
+| `server/trpc/routers/like.ts`                              | transactional mutations              |
+| `server/services/post/getViewerPostRelations.ts`           | viewer-filtered likes fetch strategy |
+| `server/services/post/getPostWithViewerLike.ts`            | maps the fetched row to `viewerLike` |
+| `app/components/Post/LikeSection.vue`                      | arrows UI + state derivation         |
+| `app/composables/post/useLikeOperations.ts`                | optimistic store patching            |
+| `app/store/post/like.ts`, `app/store/post/comment/like.ts` | per-list like stores                 |
 
 ## Notes
 
-- Determining the viewer's vote requires shipping every like row with each post (`PostRelations`); the [viewer-scoped likes](/docs/proposals/posts/viewer-scoped-likes) proposal trims this to the one row that matters.
 - Like achievements (`LikeAchievementDefinitionMap`) trigger on these procedure paths like all achievement definitions.
