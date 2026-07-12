@@ -16,7 +16,6 @@ Each extends something already shipped, no new infra.
 
 ## Later — larger or multi-area
 
-- [ ] [Room settings alignment](/docs/proposals/esbabbler/room-settings-alignment) — Discord Server Settings IA/naming parity
 - [ ] [Thread follows](/docs/proposals/esbabbler/thread-follows) — follow + notify-on-reply + Threads drawer
 - [ ] [Automod actions](/docs/proposals/esbabbler/automod-actions) — word filter reject/warn/timeout
 - [ ] [Moderator notes](/docs/proposals/esbabbler/moderator-notes) — private per-member notes

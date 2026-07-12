@@ -36,7 +36,7 @@ flowchart TD
 
 ## Configuration UI
 
-The word-filter settings panel (moving under **Moderation** — see [room settings alignment](/docs/proposals/esbabbler/room-settings-alignment)) gains an action select + duration field per filter row. Gate stays `ManageRoom`.
+The word-filter settings panel (under **Moderation** — see [room settings](/docs/esbabbler/room-settings)) gains an action select + duration field per filter row. Gate stays `ManageRoom`.
 
 ## Key files
 

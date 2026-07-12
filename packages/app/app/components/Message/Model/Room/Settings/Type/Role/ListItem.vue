@@ -21,7 +21,7 @@ const { selectedRoleId } = storeToRefs(roleStore);
     </template>
     <v-list-item-title>{{ role.name }}</v-list-item-title>
     <template v-if="!role.isEveryone" #append>
-      <MessageModelRoomSettingsTypePermissionsRoleDeleteButton :role-id="role.id" :room-id />
+      <MessageModelRoomSettingsTypeRoleDeleteButton :role-id="role.id" :room-id />
     </template>
   </v-list-item>
 </template>

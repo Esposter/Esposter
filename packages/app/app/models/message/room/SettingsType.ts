@@ -1,11 +1,13 @@
 /* eslint-disable perfectionist/sort-enums */
 export enum SettingsType {
   Overview = "Overview",
+  Roles = "Roles",
   Profile = "Profile",
-  Permissions = "Permissions",
   Webhooks = "Webhooks",
-  Bans = "Bans",
-  AuditLog = "Audit Log",
   WordFilter = "Word Filter",
+  AuditLog = "Audit Log",
+  Bans = "Bans",
+  Members = "Members",
+  Invites = "Invites",
   Delete = "Delete",
 }

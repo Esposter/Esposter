@@ -10,7 +10,14 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
   },
   esbabbler: {
     Messaging: ["messaging", "message-list-rendering", "slash-commands", "scheduled-messages", "drafts-and-sent"],
-    "Members & profiles": ["friends-and-dms", "profiles-and-presence", "nicknames", "invites", "settings"],
+    "Members & profiles": [
+      "friends-and-dms",
+      "profiles-and-presence",
+      "nicknames",
+      "invites",
+      "settings",
+      "room-settings",
+    ],
     Moderation: ["moderation", "rbac"],
     Calls: ["voice-video", "calls"],
     Infrastructure: ["push-notifications", "offline-cache"],

@@ -11,6 +11,6 @@ const { roles, roomId } = defineProps<RoleListProps>();
 
 <template>
   <v-list density="compact" rd>
-    <MessageModelRoomSettingsTypePermissionsRoleListItem v-for="role of roles" :key="role.id" :role :room-id />
+    <MessageModelRoomSettingsTypeRoleListItem v-for="role of roles" :key="role.id" :role :room-id />
   </v-list>
 </template>

@@ -20,11 +20,7 @@ const room = computed(() => rooms.value.find(({ id }) => id === settingsRoomId.v
     <MessageModelRoomConfirmDeleteDialog v-model="isDeleteOpen" :room-id="room.id" :creator-id="room.userId" />
     <v-dialog v-model="isOpen" fullscreen>
       <v-app>
-        <MessageModelRoomSettingsLeftSideBar
-          v-model="settingsType"
-          :room-id="room.id"
-          @open:delete="isDeleteOpen = true"
-        />
+        <MessageModelRoomSettingsLeftSideBar v-model="settingsType" :room @open:delete="isDeleteOpen = true" />
         <MessageModelRoomSettingsContent :room :settings-type @close="isOpen = false" />
       </v-app>
     </v-dialog>
