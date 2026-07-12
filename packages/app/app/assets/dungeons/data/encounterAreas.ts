@@ -8,11 +8,12 @@ import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArr
 
 export const EncounterAreaMap = {
   [Area.Grass]: {
+    // Common species spawn at their base level; rarer ones spawn levelled up so rarity feels rewarding
     encounterableMonsters: [
-      { key: MonsterKey.Aquavalor, weight: 45 },
-      { key: MonsterKey.Carnodusk, weight: 40 },
-      { key: MonsterKey.Frostsaber, weight: 10 },
-      { key: MonsterKey.Ignivolt, weight: 25 },
+      { key: MonsterKey.Aquavalor, level: 5, weight: 45 },
+      { key: MonsterKey.Carnodusk, level: 5, weight: 40 },
+      { key: MonsterKey.Frostsaber, level: 7, weight: 10 },
+      { key: MonsterKey.Ignivolt, level: 6, weight: 25 },
     ],
   },
 } as const satisfies Record<Area, Except<EncounterArea<BaseEncounterableMonster>, "id">>;

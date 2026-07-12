@@ -26,22 +26,23 @@ flowchart TD
 
 NPC dialog and effects come from the `NpcMap` content map (`assets/dungeons/data/npcs.ts`); chest opened-state is per-map in `save.world[tilemapKey].chestMap`; doors read a typed `TeleportTarget` property and fade-switch tilemaps, spawning the player at the matching door id.
 
-**Random encounters** — each step on an encounter layer increments `stepsSinceLastEncounter`, and the encounter chance is `steps / MAX_STEPS_BEFORE_NEXT_ENCOUNTER` (guaranteed at the cap). The layer's Tiled `area` property selects an `EncounterAreaMap` entry, a weighted random pick chooses the monster, and the scene fade-switches to [battle](/docs/dungeons/battle). A settings toggle (`isSkipEncounters`, dev convenience) bypasses the roll.
+**Random encounters** — each step on an encounter layer increments `stepsSinceLastEncounter`, and the encounter chance is `steps / MAX_STEPS_BEFORE_NEXT_ENCOUNTER` (guaranteed at the cap). The layer's Tiled `area` property selects an `EncounterAreaMap` entry, a weighted random pick chooses the monster, `createEncounteredMonster` spawns it at the entry's level (replaying the normal level-up rolls above the species base, so rare picks arrive stronger), and the scene fade-switches to [battle](/docs/dungeons/battle). A settings toggle (`isSkipEncounters`, dev convenience) bypasses the roll.
 
 ## Key files
 
 Paths relative to `packages/app`.
 
-| File                                                                                 | Role                                    |
-| ------------------------------------------------------------------------------------ | --------------------------------------- |
-| `scripts/tiled/index.ts`                                                             | `pnpm tiled:gen` codegen entrypoint     |
-| `shared/generated/tiled/`                                                            | generated enums + typed map properties  |
-| `app/composables/dungeons/scene/world/tilemap/`                                      | tilemap asset/metadata creation         |
-| `app/composables/dungeons/scene/world/interaction/`                                  | interaction dispatch composables        |
-| `app/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap.ts` | object group → effect                   |
-| `app/composables/dungeons/scene/world/useRandomEncounter.ts`                         | encounter roll + battle handoff         |
-| `app/assets/dungeons/data/npcs.ts`                                                   | NPC content (dialog, effects, movement) |
-| `app/assets/dungeons/data/encounterAreas.ts`                                         | weighted encounter tables               |
+| File                                                                                 | Role                                     |
+| ------------------------------------------------------------------------------------ | ---------------------------------------- |
+| `scripts/tiled/index.ts`                                                             | `pnpm tiled:gen` codegen entrypoint      |
+| `shared/generated/tiled/`                                                            | generated enums + typed map properties   |
+| `app/composables/dungeons/scene/world/tilemap/`                                      | tilemap asset/metadata creation          |
+| `app/composables/dungeons/scene/world/interaction/`                                  | interaction dispatch composables         |
+| `app/services/dungeons/scene/world/interaction/effect/ObjectInteractionEffectMap.ts` | object group → effect                    |
+| `app/composables/dungeons/scene/world/useRandomEncounter.ts`                         | encounter roll + battle handoff          |
+| `app/assets/dungeons/data/npcs.ts`                                                   | NPC content (dialog, effects, movement)  |
+| `app/assets/dungeons/data/encounterAreas.ts`                                         | weighted encounter tables + spawn levels |
+| `app/services/dungeons/monster/createEncounteredMonster.ts`                          | level-scaled wild monster spawn          |
 
 ## Notes
 

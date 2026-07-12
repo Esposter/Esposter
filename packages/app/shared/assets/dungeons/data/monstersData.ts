@@ -17,7 +17,7 @@ const MonstersDataMap = {
     stats: {
       attack: 4,
       baseExp: 60,
-      defense: BASE_DEFENSE,
+      defense: 8,
       level: 5,
       maxHp: 40,
     },
@@ -32,7 +32,7 @@ const MonstersDataMap = {
     stats: {
       attack: 8,
       baseExp: 62,
-      defense: BASE_DEFENSE,
+      defense: 3,
       level: 5,
       maxHp: 18,
     },
@@ -47,7 +47,7 @@ const MonstersDataMap = {
     stats: {
       attack: 7,
       baseExp: 70,
-      defense: BASE_DEFENSE,
+      defense: 7,
       level: 5,
       maxHp: 30,
     },
@@ -62,7 +62,7 @@ const MonstersDataMap = {
     stats: {
       attack: 7,
       baseExp: 58,
-      defense: BASE_DEFENSE,
+      defense: 4,
       level: 5,
       maxHp: 20,
     },
