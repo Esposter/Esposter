@@ -6,6 +6,7 @@ import { RECENT_RESOURCES_LIMIT } from "@/services/resource/constants";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
+useResourceKeyboardShortcuts();
 
 const { isLoading, items: recentResources, readResources } = useReadResources(ref(""), ref([]));
 await readResources({
@@ -73,5 +74,7 @@ await readResources({
         </v-container>
       </v-sheet>
     </div>
+    <ResourceSearchDialog />
+    <ResourceShortcutsOverlay />
   </NuxtLayout>
 </template>

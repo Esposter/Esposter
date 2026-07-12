@@ -1,18 +1,18 @@
 ---
 title: Global Search
-description: Azure-portal-faithful resource-explorer search — grouped as-you-type dropdown, Ctrl+K command palette mount scoped to /resources, keyboard chords, and prefix-match ranking.
+description: Azure-portal-faithful resource-explorer search — grouped as-you-type dropdown, Ctrl+K command palette on the explorer home page, keyboard chords, and prefix-match ranking.
 ---
 
 # Global Search
 
-Azure-portal-faithful search over the resource platform: one `ResourceSearchMenu` combobox with an as-you-type dropdown grouped into Resources / Services / Pages, mounted inline on Home (portal landing parity) and as a `Ctrl+K` command-palette dialog on every other resource-explorer page. It is scoped to `/resources` routes via the `pages/resources.vue` parent route — the app bar is cross-product chrome (messaging, posts, games), so it carries no resource-search entry. No new backend — the Resources group rides `resource.readResources`, which ranks prefix matches first.
+Azure-portal-faithful search over the resource platform: one `ResourceSearchMenu` combobox with an as-you-type dropdown grouped into Resources / Services / Pages, mounted inline on Home (portal landing parity) and as a `Ctrl+K` command-palette dialog, both from the explorer home page (`pages/resources/index.vue`) — the app bar is cross-product chrome (messaging, posts, games), so it carries no resource-search entry. No new backend — the Resources group rides `resource.readResources`, which ranks prefix matches first.
 
 ## How it works
 
 ```mermaid
 flowchart LR
   HOME["Home inline mount"] --> SM["ResourceSearchMenu"]
-  CK["Ctrl+K / G /<br/>(any /resources page)"] --> DLG["ResourceSearchDialog"] --> SM
+  CK["Ctrl+K / G /<br/>(explorer home)"] --> DLG["ResourceSearchDialog"] --> SM
 
   SM -->|"query (300ms debounce)"| RR["resource.readResources<br/>{ searchQuery, limit: 5 }"] --> RG["Resources group"]
   SM -->|client substring| RDM["ResourceDefinitionMap +<br/>ResourceTypeDescriptionMap"] --> SG["Services group"]
@@ -41,11 +41,11 @@ With a query set the dropdown shows three groups plus a footer:
 
 ## Keyboard
 
-- `Ctrl+K` opens the dialog mount on any resource-explorer page; `Esc` closes; `↑`/`↓` move through a flat list across groups (the See-all footer is the last option); `Enter` activates the selection, falling back to See-all when nothing is selected. The dialog mount traps focus (Vuetify dialog); the inline Home mount keeps normal document tab order.
+- `Ctrl+K` opens the dialog mount on the explorer home page; `Esc` closes; `↑`/`↓` move through a flat list across groups (the See-all footer is the last option); `Enter` activates the selection, falling back to See-all when nothing is selected. The dialog mount traps focus (Vuetify dialog); the inline Home mount keeps normal document tab order.
 - ARIA: the field is `role="combobox"` with `aria-expanded`/`aria-activedescendant`; the panel is `role="listbox"` with `role="option"` rows.
-- Azure `G`-chords via `useResourceKeyboardShortcuts` (registered once from the `pages/resources.vue` parent route): `G /` focuses search (opens the palette), `G H` → Home, `G A` → `/resources/all`. Chords are suppressed while focus is in an input/editor (`checkIsEditableTarget`).
+- Azure `G`-chords via `useResourceKeyboardShortcuts` (registered from the explorer home page): `G /` focuses search (opens the palette), `G A` → `/resources/all`. Chords are suppressed while focus is in an input/editor (`checkIsEditableTarget`).
 - `?` opens `ResourceShortcutsOverlay`, a `StyledKeyboardShortcutsDialog` listing all bindings (`ResourceKeyboardShortcutList`).
-- The messaging area keeps its own `Ctrl+K` room palette and `Shift+?` dialog; because the resource handlers only exist under `/resources`, no route carve-out is needed.
+- The messaging area keeps its own `Ctrl+K` room palette and `Shift+?` dialog; because the resource handlers only exist on the explorer home page, no route carve-out is needed.
 
 ## Relevance
 
@@ -53,19 +53,19 @@ With a query set the dropdown shows three groups plus a footer:
 
 ## Key files
 
-| File                                                        | Role                                                                                      |
-| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `app/components/Resource/Search/Menu.vue`                   | the combobox + panel (single source for both mounts); keyboard nav, select bookkeeping    |
-| `app/components/Resource/Search/ResultList.vue`             | grouped listbox rows, Create sub-action, See-all footer                                   |
-| `app/components/Resource/Search/HighlightedTitle.vue`       | bolds the matched substring in row titles                                                 |
-| `app/components/Resource/Search/Dialog.vue`                 | `Ctrl+K` overlay mount (`v-dialog` bound to `useSearchDialogStore`)                       |
-| `app/components/Resource/ShortcutsOverlay.vue`              | `?` shortcuts help dialog                                                                 |
-| `app/pages/resources.vue`                                   | parent route mounting the dialog, overlay, and keyboard chords for all `/resources` pages |
-| `app/composables/resource/search/useResourceSearchItems.ts` | debounce, grouping, recent-search persistence                                             |
-| `app/composables/resource/search/useRecordResourceView.ts`  | records recently viewed resources from the resource page                                  |
-| `app/composables/resource/useResourceKeyboardShortcuts.ts`  | `Ctrl+K`, `G`-chords, `?` — keydown listener scoped to `/resources`                       |
-| `app/services/resource/search/`                             | pure grouping/highlight/recents helpers (`getServiceSearchItems`, `pushRecent`, …)        |
-| `server/trpc/routers/resource.ts`                           | prefix-match ranking in `readResources`                                                   |
+| File                                                        | Role                                                                                   |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `app/components/Resource/Search/Menu.vue`                   | the combobox + panel (single source for both mounts); keyboard nav, select bookkeeping |
+| `app/components/Resource/Search/ResultList.vue`             | grouped listbox rows, Create sub-action, See-all footer                                |
+| `app/components/Resource/Search/HighlightedTitle.vue`       | bolds the matched substring in row titles                                              |
+| `app/components/Resource/Search/Dialog.vue`                 | `Ctrl+K` overlay mount (`v-dialog` bound to `useSearchDialogStore`)                    |
+| `app/components/Resource/ShortcutsOverlay.vue`              | `?` shortcuts help dialog                                                              |
+| `app/pages/resources/index.vue`                             | explorer home — inline mount plus the dialog/overlay mounts and keyboard chords        |
+| `app/composables/resource/search/useResourceSearchItems.ts` | debounce, grouping, recent-search persistence                                          |
+| `app/composables/resource/search/useRecordResourceView.ts`  | records recently viewed resources from the resource page                               |
+| `app/composables/resource/useResourceKeyboardShortcuts.ts`  | `Ctrl+K`, `G`-chords, `?` — keydown listener mounted with the explorer home page       |
+| `app/services/resource/search/`                             | pure grouping/highlight/recents helpers (`getServiceSearchItems`, `pushRecent`, …)     |
+| `server/trpc/routers/resource.ts`                           | prefix-match ranking in `readResources`                                                |
 
 ## Notes
 

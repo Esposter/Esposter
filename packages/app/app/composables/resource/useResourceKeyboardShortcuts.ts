@@ -3,8 +3,7 @@ import { useSearchDialogStore } from "@/store/resource/searchDialog";
 import { useShortcutsOverlayStore } from "@/store/resource/shortcutsOverlay";
 import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
 import { RoutePath } from "@esposter/shared";
-
-// Azure-portal-style shortcuts: Ctrl+K / G-chords / ? — registered once from the /resources parent route
+// Azure-portal-style shortcuts: Ctrl+K / G-chords / ? — registered from the explorer home page
 export const useResourceKeyboardShortcuts = () => {
   const searchDialogStore = useSearchDialogStore();
   const { isOpen: isSearchDialogOpen } = storeToRefs(searchDialogStore);
@@ -35,7 +34,6 @@ export const useResourceKeyboardShortcuts = () => {
     if (key === "/") {
       event.preventDefault();
       isSearchDialogOpen.value = true;
-    } else if (key === "h") await navigateTo(RoutePath.Resources);
-    else if (key === "a") await navigateTo(RoutePath.ResourcesAll);
+    } else if (key === "a") await navigateTo(RoutePath.ResourcesAll);
   });
 };

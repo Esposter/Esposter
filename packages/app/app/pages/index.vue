@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { PostSortTypes } from "@/models/post/PostSortType";
 import { usePostStore } from "@/store/post";
 
 const { readMorePosts, readPosts } = useReadPosts();
@@ -26,9 +25,8 @@ watch(sortType, async () => {
       "
     >
       <v-container>
-        <v-btn-toggle v-model="sortType" density="compact" mandatory mb-2>
-          <v-btn v-for="postSortType of PostSortTypes" :key="postSortType" :text="postSortType" :value="postSortType" />
-        </v-btn-toggle>
+        <PostSortMenu />
+        <v-divider my-2 />
         <v-row>
           <v-col v-for="post of items" :key="post.id" cols="12">
             <PostCard :post />
