@@ -21,3 +21,4 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only) | No legacy-shape schemas or migration code — parse the latest shape or reset              |
 | [Monorepo tooling](/docs/architecture/monorepo-tooling)                                   | pnpm workspace orchestration, virrun routing, publishing, installs, and CI job shape     |
 | [Server testing](/docs/architecture/server-testing)                                       | tRPC router test wiring — in-memory DB, mocked Azure services, controlled auth session   |
+| [Destructive confirmation](/docs/architecture/destructive-confirmation)                   | One shared delete dialog — StyledDeleteFormDialog + opt-in type-the-name guard           |
