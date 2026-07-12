@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { PostWithRelations } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
 import { useCommentLikeStore } from "@/store/post/comment/like";
 import { useLikeStore } from "@/store/post/like";
 
@@ -11,13 +10,10 @@ interface PostLikeSectionProps {
 }
 
 const { isCommentStore, post } = defineProps<PostLikeSectionProps>();
-const { data: session } = await authClient.useSession(useFetch);
 const likeStore = isCommentStore ? useCommentLikeStore() : useLikeStore();
 const { createLike, deleteLike, updateLike } = likeStore;
-const liked = computed(() => post.likes.some(({ userId, value }) => userId === session.value?.user.id && value === 1));
-const unliked = computed(() =>
-  post.likes.some(({ userId, value }) => userId === session.value?.user.id && value === -1),
-);
+const liked = computed(() => post.viewerLike?.value === 1);
+const unliked = computed(() => post.viewerLike?.value === -1);
 </script>
 
 <template>

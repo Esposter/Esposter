@@ -5,22 +5,27 @@ description: The home feed's cursor pagination, pull-to-refresh, and the stored 
 
 # Feed and Ranking
 
-The home page renders top-level posts hottest-first with pull-to-refresh and infinite scroll, backed by cursor pagination over a stored ranking score.
+The home page renders top-level posts with pull-to-refresh, infinite scroll, and a Hot / New / Top sort toggle, backed by cursor pagination over a stored ranking score.
 
 ## How it works
 
 ```mermaid
 flowchart LR
-  page[pages/index.vue] -->|readPosts| store[post store\nitems + hasMore]
+  toggle[Hot / New / Top toggle] -->|sortType| store[post store\nitems + hasMore + sortType]
+  page[pages/index.vue] -->|readPosts + sortBy| store
   page -->|v-pull-to-refresh| refresh[refresh]
   waypoint[StyledWaypoint at list end] -->|readMorePosts + cursor| store
-  store --> proc[post.readPosts\ncursor pagination, ranking desc]
+  store --> proc[post.readPosts\ncursor pagination + viewer block filter]
   proc --> pg[(posts, parentId IS NULL)]
   mutation[likes / comments] -->|transactional| counters[noLikes, noComments, ranking]
   counters --> pg
 ```
 
-**Pagination** — `readPosts` takes cursor pagination params (default sort: `ranking` desc), fetches `limit + 1` rows to detect `hasMore`, and returns a cursor for the next page — the app-standard cursor pattern (`getCursorWhere` / `getCursorPaginationData`). The same procedure serves comment lists via the `parentId` filter.
+**Pagination** — `readPosts` takes cursor pagination params (default sort: `ranking` desc with the unique `id` as tiebreaker), fetches `limit + 1` rows to detect `hasMore`, and returns a cursor for the next page — the app-standard cursor pattern (`getCursorWhere` / `getCursorPaginationData`). Compound sort keys compare lexicographically — `(k1 < v1) OR (k1 = v1 AND k2 < v2)` — so pages of tied values (every new post has `noLikes = 0`) never skip rows. The same procedure serves comment lists via the `parentId` filter.
+
+**Sort options** — a `v-btn-toggle` above the feed switches between Hot (`ranking` desc), New (`createdAt` desc), and Top (`noLikes` desc, all-time), each mapped to a `sortBy` by `PostSortTypeSortByMap` with `id` as second key. The chosen sort lives in the post store; switching clears the list and refetches page one, and the waypoint continues from the new cursor. Comments keep their fixed sort.
+
+**Block filtering** — authenticated feed reads exclude posts and comments authored by users the viewer has blocked — see [feed block filtering](/docs/posts/feed-block-filtering).
 
 **Ranking** — the hot score is computed at write time, never re-read:
 
@@ -43,17 +48,17 @@ The log term means early likes matter most; the time term gives newer posts a co
 
 Paths relative to `packages/app`.
 
-| File                                   | Role                             |
-| -------------------------------------- | -------------------------------- |
-| `app/pages/index.vue`                  | the feed page                    |
-| `app/composables/post/useReadPosts.ts` | initial read + read-more         |
-| `app/store/post/index.ts`              | feed items store                 |
-| `server/trpc/routers/post.ts`          | `readPosts` / `readPost`         |
-| `server/services/post/ranking.ts`      | the hot score                    |
-| `server/services/pagination/cursor/`   | shared cursor pagination helpers |
+| File                                         | Role                               |
+| -------------------------------------------- | ---------------------------------- |
+| `app/pages/index.vue`                        | the feed page + sort toggle        |
+| `app/composables/post/useReadPosts.ts`       | initial read + read-more, `sortBy` |
+| `app/store/post/index.ts`                    | feed items store + `sortType`      |
+| `app/services/post/PostSortTypeSortByMap.ts` | sort toggle → `sortBy` mapping     |
+| `server/trpc/routers/post.ts`                | `readPosts` / `readPost`           |
+| `server/services/post/ranking.ts`            | the hot score                      |
+| `server/services/pagination/cursor/`         | shared cursor pagination helpers   |
 
 ## Notes
 
-- `readPosts` accepts arbitrary `sortBy` already; the UI only ever asks for the default hot sort — exposing New/Top is proposed in [feed sort options](/docs/proposals/posts/feed-sort-options).
-- Every post row ships **all** of its like rows to the client (`PostRelations = { likes, user }`) just to color the viewer's arrows — see [viewer-scoped likes](/docs/proposals/posts/viewer-scoped-likes).
-- The feed does not exclude posts from users the viewer has blocked — see [feed block filtering](/docs/proposals/posts/feed-block-filtering).
+- Top is all-time (no time windows) — casual scale doesn't need "top this week" partitioning yet; revisit if the feed ages badly.
+- Every post ships at most the viewer's own like row (`viewerLike`) — see [likes](/docs/posts/likes) for the viewer-scoped read contract.

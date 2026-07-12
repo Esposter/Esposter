@@ -1,10 +1,17 @@
 <script setup lang="ts">
+import { PostSortTypes } from "@/models/post/PostSortType";
 import { usePostStore } from "@/store/post";
 
 const { readMorePosts, readPosts } = useReadPosts();
 const { refresh } = await readPosts();
 const postStore = usePostStore();
-const { hasMore, items } = storeToRefs(postStore);
+const { resetCursorPaginationData } = postStore;
+const { hasMore, items, sortType } = storeToRefs(postStore);
+
+watch(sortType, async () => {
+  resetCursorPaginationData();
+  await refresh();
+});
 </script>
 
 <template>
@@ -19,6 +26,9 @@ const { hasMore, items } = storeToRefs(postStore);
       "
     >
       <v-container>
+        <v-btn-toggle v-model="sortType" mb-2 density="compact" mandatory>
+          <v-btn v-for="postSortType of PostSortTypes" :key="postSortType" :text="postSortType" :value="postSortType" />
+        </v-btn-toggle>
         <v-row>
           <v-col v-for="post of items" :key="post.id" cols="12">
             <PostCard :post />

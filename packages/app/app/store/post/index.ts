@@ -3,11 +3,13 @@ import type { DeletePostInput } from "#shared/models/db/post/DeletePostInput";
 import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
 import type { PostWithRelations } from "@esposter/db-schema";
 
+import { PostSortType } from "@/models/post/PostSortType";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const usePostStore = defineStore("post", () => {
   const { $trpc } = useNuxtApp();
+  const sortType = ref(PostSortType.Hot);
   const { items, ...restData } = useCursorPaginationData<PostWithRelations>();
   const {
     createPost: storeCreatePost,
@@ -33,6 +35,7 @@ export const usePostStore = defineStore("post", () => {
     createPost,
     deletePost,
     items,
+    sortType,
     updatePost,
     ...restOperationData,
     ...restData,

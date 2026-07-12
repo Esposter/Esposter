@@ -9,10 +9,4 @@ Open work only. Decided ideas live in [deferred](/docs/posts/deferred) and [reje
 
 ## Next
 
-- [ ] Viewer-scoped likes — stop shipping every like row with every post → [proposal](/docs/proposals/posts/viewer-scoped-likes)
-- [ ] Feed block filtering — hide blocked users' posts and comments → [proposal](/docs/proposals/posts/feed-block-filtering)
-- [ ] Feed sort options — Hot / New / Top toggle → [proposal](/docs/proposals/posts/feed-sort-options)
-
-## Later
-
 - [ ] Post images — attachments via the file-upload standard → [proposal](/docs/proposals/posts/post-images)
