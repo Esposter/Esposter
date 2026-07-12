@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { checkIsEditableTarget } from "@/services/shared/checkIsEditableTarget";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useKeyboardShortcutsDialogStore } from "@/store/message/input/keyboardShortcutsDialog";

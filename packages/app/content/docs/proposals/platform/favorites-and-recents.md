@@ -9,12 +9,12 @@ Azure Home parity: star resources as favorites (server-side), and make "Recent r
 
 ## Scope
 
-**Today**: Home approximates recents with `updatedAt` desc, which is wrong the moment anything autosaves, and has no favorites at all. **This proposal adds** the portal's Recent (last opened by you) and Favorites (starred) — favorites as a small Postgres table; recents as localStorage (per-device) first, with a table upgrade only if cross-device recall matters.
+**Today**: Home approximates recents with `updatedAt` desc, which is wrong the moment anything autosaves, and has no favorites at all. [Global search](/docs/platform/global-search) already records `LocalStorageKey.ResourceRecentViews` (`{ id, name, type }`, capped at 5, via `useRecordResourceView`) for its empty-query dropdown. **This proposal adds** the portal's Recent (last opened by you) and Favorites (starred) — favorites as a small Postgres table; recents extending the existing localStorage key (per-device) first, with a table upgrade only if cross-device recall matters.
 
 ## Data model
 
 - `resourceFavorites` (Drizzle, `packages/db-schema`): `userId` + `resourceId` composite PK, `createdAt`; FK cascade from `resources` so deletes clean up.
-- Recents phase 1: `LocalStorageKey.ResourceRecentViews` — capped array of `{ id, viewedAt }`, upserted on resource-page load; Home resolves rows via `readResources` filtered to those ids (missing ids = deleted resources, dropped from the list).
+- Recents phase 1: extend the existing `LocalStorageKey.ResourceRecentViews` entries with `viewedAt` (today `{ id, name, type }`, upserted on resource-page load by `useRecordResourceView`); Home resolves rows via `readResources` filtered to those ids (missing ids = deleted resources, dropped from the list).
 - Recents phase 2 (only if cross-device matters): `resourceViews` table (`userId` + `resourceId` PK, `viewedAt`), upsert fired from `readResource`.
 
 ## Flow
@@ -43,7 +43,7 @@ flowchart LR
 
 - Home resources card gains `v-tabs`: **Recent | Favorites** (portal parity); Recent rows show "viewed {relative}"
 - Star toggle: icon column on `/all` rows (hover-visible, filled when favorited) + a star command in the blade command bar
-- Favorites group in the empty-query search dropdown ([global search](/docs/proposals/platform/global-search)) — optional follow-up
+- Favorites group in the empty-query search dropdown ([global search](/docs/platform/global-search)) — optional follow-up
 
 ## Key files
 

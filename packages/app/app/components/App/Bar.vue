@@ -14,6 +14,7 @@ import { RoutePath, SITE_NAME } from "@esposter/shared";
     </v-app-bar-title>
     <template #append>
       <div flex gap-x-2>
+        <AppSearchButton />
         <AppMenuButton />
         <AppToggleThemeButton />
         <AppGithubButton />

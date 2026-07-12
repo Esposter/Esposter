@@ -14,8 +14,10 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 - `Styled/PageHeader.vue` — the canonical page header. A `v-toolbar` (surface, `height="auto"`) laying out two flex rows — a breadcrumb row (default `AppBreadcrumbs`, with a right-aligned `actions` slot) and a `controls` row — never inside `v-toolbar-title`.
 - `Styled/EmptyState.vue` — icon + title + description + optional action slot, for "no resources yet" / "no rows" / "not bound to data" states.
 - `Styled/Skeleton.vue` — thin `v-skeleton-loader` wrapper with the project's bordered-card preset, for per-region loading (instead of relying on the single global `AppLoadingIndicator`).
+- `Styled/KeyboardShortcutsDialog.vue` — the shared shortcuts help dialog (category groups + `kbd` chips over a `KeyboardShortcutCategory[]` prop); bound to the messaging shortcuts dialog and the global `App/ShortcutsOverlay`.
 - `App/Breadcrumbs.vue` — derives the trail from the current route matched against `ProductListLinkItems` (route paths are kebab, so `prettify` won't do — product titles come from the launcher data); rendered by `PageHeader`, not the global app bar, so it carries page context and never duplicates.
 - `App/MenuLinkListItem.vue` — a single launcher leaf (extracted from `MenuLinkList` so leaves render identically at top level and inside a group).
+- `App/SearchButton.vue` + `App/ShortcutsOverlay.vue` — app-bar entry and `?` overlay for [global search](/docs/platform/global-search) keyboard chrome.
 
 ## Navigation
 
