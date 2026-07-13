@@ -23,11 +23,11 @@ const updateRoom = async (name: string) => {
   if (!currentRoom.value) return;
   const isNameChanged = name !== currentRoom.value.name;
   await executeMutation(
-    () => $trpc.room.updateRoom.mutate({ id: currentRoom.value?.id ?? "", name, image: editedImage.value }),
+    () => $trpc.room.updateRoom.mutate({ id: currentRoom.value?.id ?? "", image: editedImage.value, name }),
     {
       onSuccess: async (updatedRoom) => {
         if (isNameChanged)
-          await createMessage({ roomId: updatedRoom.id, type: MessageType.EditRoom, message: updatedRoom.name });
+          await createMessage({ message: updatedRoom.name, roomId: updatedRoom.id, type: MessageType.EditRoom });
       },
     },
   );

@@ -5,8 +5,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
-import { roomCategoriesInMessage } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("room/category", () => {
@@ -77,7 +77,9 @@ describe("room/category", () => {
     ]);
 
     expect(reorderedRoomCategories).toHaveLength(2);
+
     const readRoomCategories = await roomCategoryCaller.readRoomCategories();
+
     expect(takeOne(readRoomCategories).id).toBe(second.id);
   });
 
@@ -85,14 +87,17 @@ describe("room/category", () => {
     expect.hasAssertions();
 
     const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
+    const missingId = "missing";
+
     await expect(
       roomCategoryCaller.reorderRoomCategories([
         { id: newRoomCategory.id, position: 1 },
-        { id: "missing", position: 0 },
+        { id: missingId, position: 0 },
       ]),
-    ).rejects.toThrow();
+    ).rejects.toThrow(new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomCategory, missingId).message);
 
     const readRoomCategories = await roomCategoryCaller.readRoomCategories();
+
     expect(takeOne(readRoomCategories).position).toBe(newRoomCategory.position);
   });
 

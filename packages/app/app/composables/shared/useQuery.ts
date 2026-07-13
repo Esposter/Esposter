@@ -1,6 +1,6 @@
-import { useAlertStore } from "@/store/alert";
 import { getConcurrentFunction } from "#shared/util/function/getConcurrentFunction";
 import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
+import { useAlertStore } from "@/store/alert";
 import { getResultAsync } from "@esposter/shared";
 
 interface QueryOptions<TResult> {

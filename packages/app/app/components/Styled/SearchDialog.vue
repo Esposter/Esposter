@@ -23,7 +23,7 @@ if (hotkey)
 </script>
 
 <template>
-  <slot name="activator" :is-open="isOpen" :update-is-open="(value) => (isOpen = value)" />
+  <slot name="activator" :is-open :update-is-open="(value) => (isOpen = value)" />
   <v-dialog v-model="isOpen" :width>
     <v-card>
       <v-text-field

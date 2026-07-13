@@ -42,8 +42,9 @@ import { join } from "node:path";
 //   Sequential 9p write). The script applies them under the mirror lock: `xargs -0 rm -rf` for removals, then a local
 //   Ext4 `tar -x` into `tree/` — no source file ever crosses v9fs individually. `chmod -R 777` after the extract
 //   Restores the drvfs-parity modes the old rsync propagated (bsdtar records NTFS entries mode-less as 644/755, which
-//   Would strip the exec bits repo scripts rely on inside the sandbox). Symlinks ship dereferenced and a
-//   Windows-locked file is skipped and pruned from the published manifest rather than fatal (createSourceMirrorArchive).
+//   Would strip the exec bits repo scripts rely on inside the sandbox). Symlinks ship preserved (their relative
+//   Targets are mirrored too, so they resolve at extract) and a Windows-locked file is skipped and pruned from the
+//   Published manifest rather than fatal (createSourceMirrorArchive).
 // - No readable manifest (first run, corrupt file, `cache clean`) or a missing tree materializes from scratch: the
 //   Archive carries the whole manifest file set and the script clears `tree/` before extracting, which also
 //   Self-heals any mirror-vs-manifest drift; the fresh manifest is published either way. The old whole-tree
@@ -104,7 +105,13 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
       archivePath === ""
         ? []
         : [
-            `timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar -xf ${shellQuote(archivePath)} -C ${shellQuote(mirrorPath)}`,
+            // `--warning=no-unknown-keyword` quiets GNU tar's per-symlink "Ignoring unknown extended header keyword
+            // 'LIBARCHIVE.symlinktype'" line: a benign pax header the win32 bsdtar writer stamps on every archived
+            // symlink to record its file-vs-dir target kind. That distinction is meaningless on Linux — extraction
+            // recreates the symlink correctly and exits 0 with or without it — so it is pure noise at this boundary.
+            // This command only ever runs under WSL GNU tar (the mirror is win32-only; a native-Linux run uses the os
+            // Backend, not this archive), and the archive itself stays standard pax for any other reader.
+            `timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar --warning=no-unknown-keyword -xf ${shellQuote(archivePath)} -C ${shellQuote(mirrorPath)}`,
             `chmod -R 777 ${shellQuote(mirrorPath)}`,
           ];
     let sync: string[];

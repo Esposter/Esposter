@@ -65,13 +65,13 @@ describe(buildSourceMirrorManifest, () => {
     expect(Object.keys(manifest).toSorted()).toStrictEqual([TEST_FILENAME, NESTED_DIRECTORY_NAME]);
   });
 
-  test.runIf(isSymlinkSupported)("records a symlink by its target path and the target's stat", () => {
+  test.runIf(isSymlinkSupported)("records a symlink by its target path and the link's own stat", () => {
     expect.hasAssertions();
 
     writeFileSync(join(cwd, TEST_FILENAME), TEST_FILENAME);
     symlinkSync(TEST_FILENAME, join(cwd, NESTED_DIRECTORY_NAME));
-    // The archive dereferences symlinks, so the change signal is the target's quick-check signature.
-    const { mtimeMs, size } = lstatSync(join(cwd, TEST_FILENAME));
+    // The archive preserves symlinks, so the change signal is the link's own lstat (not the target's) plus its target.
+    const { mtimeMs, size } = lstatSync(join(cwd, NESTED_DIRECTORY_NAME));
 
     const manifest = buildSourceMirrorManifest(cwd, []);
 
@@ -83,11 +83,14 @@ describe(buildSourceMirrorManifest, () => {
     });
   });
 
-  test.runIf(isSymlinkSupported)("drops a broken symlink like any unreadable entry", () => {
+  test.runIf(isSymlinkSupported)("records a broken symlink so it mirrors as-is rather than dropping out", () => {
     expect.hasAssertions();
 
     symlinkSync(TEST_FILENAME, join(cwd, NESTED_DIRECTORY_NAME));
+    const { mtimeMs, size } = lstatSync(join(cwd, NESTED_DIRECTORY_NAME));
 
-    expect(buildSourceMirrorManifest(cwd, [])).toStrictEqual({});
+    expect(buildSourceMirrorManifest(cwd, [])).toStrictEqual({
+      [NESTED_DIRECTORY_NAME]: { mtimeMs, size, target: TEST_FILENAME, type: SourceMirrorEntryType.Symlink },
+    });
   });
 });

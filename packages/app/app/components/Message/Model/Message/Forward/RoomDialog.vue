@@ -50,16 +50,16 @@ const forwardMessage = async () => {
   await executeMutation(
     () =>
       $trpc.message.forwardMessage.mutate({
-        partitionKey,
-        rowKey,
-        roomIds: roomIds.value,
         message: messageInput.value,
+        partitionKey,
+        roomIds: roomIds.value,
+        rowKey,
       }),
     {
       onSuccess: async () => {
         if (roomIds.value.length === 1) {
           await navigateTo(RoutePath.Messages(takeOne(roomIds.value)));
-          createAlert("Message forwarded!", "success", { location: "top center", icon: "mdi-share" });
+          createAlert("Message forwarded!", "success", { icon: "mdi-share", location: "top center" });
         }
         dialog.value = false;
         searchQuery.value = "";

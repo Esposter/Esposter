@@ -27,7 +27,7 @@ const executeMutation = useMutation();
 // File removal applies via the subscription echo — non-optimistic
 const deleteFile = () => {
   void executeMutation(() =>
-    $trpc.message.deleteFile.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey, id: file.id }),
+    $trpc.message.deleteFile.mutate({ id: file.id, partitionKey: message.partitionKey, rowKey: message.rowKey }),
   );
 };
 </script>
