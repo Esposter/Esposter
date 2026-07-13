@@ -15,16 +15,16 @@ const roles = computed(() => getRoles(room.id).toSorted((a, b) => (a.isEveryone 
 </script>
 
 <template>
-  <div flex gap-x-6 h-full>
-    <div flex shrink-0 flex-col gap-y-3 w-56>
+  <v-row no-gutters>
+    <v-col cols="4" md="3" lg="2" pe-6 flex flex-col gap-y-3>
       <MessageModelRoomSettingsTypeRoleCreateForm :room-id="room.id" />
-      <div flex-1 overflow-y-auto>
-        <MessageModelRoomSettingsTypeRoleList :roles :room-id="room.id" />
-      </div>
-    </div>
-    <div v-if="selectedRole" flex-1 overflow-y-auto>
+      <MessageModelRoomSettingsTypeRoleList :roles :room-id="room.id" />
+    </v-col>
+    <v-col v-if="selectedRole">
       <MessageModelRoomSettingsTypeRoleEditor :key="selectedRole.id" :role="selectedRole" :room-id="room.id" />
-    </div>
-    <div v-else flex flex-1 items-center justify-center op-medium-emphasis>Select a role to edit its permissions.</div>
-  </div>
+    </v-col>
+    <v-col v-else flex items-center justify-center py-12 op-medium-emphasis
+      >Select a role to edit its permissions.</v-col
+    >
+  </v-row>
 </template>

@@ -19,13 +19,15 @@ const selectedMember = computed(() =>
 </script>
 
 <template>
-  <div flex gap-x-6 h-full>
-    <div flex shrink-0 flex-col w-56 overflow-y-auto>
+  <v-row no-gutters>
+    <v-col cols="4" md="3" lg="2" pe-6>
       <MessageModelRoomSettingsTypeMemberList :room-id="room.id" />
-    </div>
-    <div v-if="selectedMember" flex-1 overflow-y-auto>
+    </v-col>
+    <v-col v-if="selectedMember">
       <MessageModelRoomSettingsTypeMemberEditor :key="selectedMember.id" :member="selectedMember" :room-id="room.id" />
-    </div>
-    <div v-else flex flex-1 items-center justify-center op-medium-emphasis>Select a member to manage their roles.</div>
-  </div>
+    </v-col>
+    <v-col v-else flex items-center justify-center py-12 op-medium-emphasis
+      >Select a member to manage their roles.</v-col
+    >
+  </v-row>
 </template>
