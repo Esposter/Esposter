@@ -14,6 +14,7 @@ interface InviteManagerProps {
 
 const { roomId } = defineProps<InviteManagerProps>();
 const { $trpc } = useNuxtApp();
+const executeMutation = useMutation();
 const runtimeConfig = useRuntimeConfig();
 const invite = ref<InviteInMessage | null>(await $trpc.room.readMyInvite.query({ roomId }));
 const expireAfterMinutes = ref<CreateInviteInput["expireAfterMinutes"]>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
@@ -30,13 +31,16 @@ const maxUsesItems: SelectItemCategoryDefinition<CreateInviteInput["maxUses"]>[]
   { title: "No limit", value: 0 },
   ...INVITE_MAX_USES_OPTIONS.map((uses) => ({ title: `${uses} use${uses === 1 ? "" : "s"}`, value: uses })),
 ];
-const createInvite = async () => {
-  invite.value = await $trpc.room.createInvite.mutate({
-    expireAfterMinutes: expireAfterMinutes.value,
-    maxUses: maxUses.value,
-    roomId,
-  });
-};
+const createInvite = () =>
+  executeMutation(
+    () =>
+      $trpc.room.createInvite.mutate({ expireAfterMinutes: expireAfterMinutes.value, maxUses: maxUses.value, roomId }),
+    {
+      onSuccess: (newInvite) => {
+        invite.value = newInvite;
+      },
+    },
+  );
 // Changing options with a live link regenerates it — the old link is replaced (one invite per member per room)
 const onUpdateOptions = async () => {
   if (invite.value) await createInvite();

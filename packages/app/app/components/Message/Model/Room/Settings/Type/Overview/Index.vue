@@ -14,7 +14,7 @@ const { room } = defineProps<OverviewProps>();
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { storeUpdateRoom } = roomStore;
-const executeOptimisticMutation = useOptimisticMutation();
+const executeMutation = useMutation();
 const { readRoomCategories } = useReadRoomCategories();
 await readRoomCategories();
 
@@ -44,8 +44,8 @@ const save = async () => {
     slowmodeMs: slowmodeMs.value,
     topic: topic.value,
   };
-  await executeOptimisticMutation(
-    () => {
+  await executeMutation(() => $trpc.room.updateRoom.mutate(input), {
+    applyOptimistic: () => {
       const snapshot = {
         categoryId: room.categoryId,
         id: room.id,
@@ -58,8 +58,7 @@ const save = async () => {
         storeUpdateRoom(snapshot);
       };
     },
-    () => $trpc.room.updateRoom.mutate(input),
-  );
+  });
 };
 </script>
 

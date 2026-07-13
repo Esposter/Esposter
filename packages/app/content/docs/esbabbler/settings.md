@@ -17,7 +17,7 @@ A Discord-style fullscreen settings dialog for **message/communication** prefere
 
 The dialog is opened by the gear in `Message/LeftSideBar/StatusBar.vue` and mirrors the [room settings](/docs/esbabbler/room-settings) pattern (`SettingsType` enum → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
 
-Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings mutation is **optimistic** (apply to the store immediately, mutate in the background, roll back + alert on failure — `useOptimisticMutation`); and the sidebar section rail is `StyledSlideIndicator` stretched across **all** visible sections, pinned to the target while a click-scroll runs.
+Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings mutation is **optimistic** (apply to the store immediately, mutate in the background, roll back + surface the error on failure — [`useMutation`](/docs/architecture/client-mutations)); and the sidebar section rail is `StyledSlideIndicator` stretched across **all** visible sections, pinned to the target while a click-scroll runs.
 
 **Sync by default, per-device by exception**: preferences live in the DB and sync across devices; only hardware device IDs (mic/speaker/camera — a device chosen on one machine must not apply on another) and UI collapsibles stay `localStorage`.
 
