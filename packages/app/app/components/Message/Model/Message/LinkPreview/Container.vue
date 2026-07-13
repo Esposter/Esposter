@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { LinkPreviewResponse, MessageEntity } from "@esposter/db-schema";
 
-import { withFinalizerAsync } from "@esposter/shared";
-
 interface ContainerProps {
   linkPreviewResponse: LinkPreviewResponse;
   partitionKey: MessageEntity["partitionKey"];
@@ -12,6 +10,12 @@ interface ContainerProps {
 const { linkPreviewResponse, partitionKey, rowKey } = defineProps<ContainerProps>();
 const { $trpc } = useNuxtApp();
 const isActive = ref(false);
+const executeMutation = useMutation();
+// Embed removal applies via the subscription echo — non-optimistic
+const deleteLinkPreviewResponse = async (onComplete: () => void) => {
+  await executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey }));
+  onComplete();
+};
 </script>
 
 <template>
@@ -23,14 +27,7 @@ const isActive = ref(false);
         text: 'This will remove all embeds on this message for everyone.',
       }"
       :confirm-button-props="{ text: 'Remove All Embeds' }"
-      @delete="
-        async (onComplete) => {
-          await withFinalizerAsync(
-            () => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey }),
-            onComplete,
-          );
-        }
-      "
+      @delete="deleteLinkPreviewResponse"
     >
       <template #activator="{ updateIsOpen }">
         <v-btn

@@ -5,6 +5,7 @@ import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
+import { useMutation } from "@/composables/shared/useMutation";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -42,22 +43,50 @@ export const useRoomStore = defineStore("message/room", () => {
   const session = authClient.useSession();
   const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);
 
+  const executeCreateRoomMutation = useMutation();
+  const executeDeleteRoomMutation = useMutation();
+  const executeJoinRoomMutation = useMutation();
+  const executeLeaveRoomMutation = useMutation();
+  // Server-generated results (ids, navigation targets) — non-optimistic, applied in onSuccess
   const createRoom = async (input: CreateRoomInput) => {
-    const newRoom = await $trpc.room.createRoom.mutate(input);
-    storeCreateRoom(newRoom, true);
+    await executeCreateRoomMutation(() => $trpc.room.createRoom.mutate(input), {
+      onSuccess: (newRoom) => {
+        storeCreateRoom(newRoom, true);
+      },
+    });
   };
   const deleteRoom = async (input: DeleteRoomInput) => {
-    const { id } = await $trpc.room.deleteRoom.mutate(input);
-    await storeDeleteRoom({ id });
+    await executeDeleteRoomMutation(() => $trpc.room.deleteRoom.mutate(input), {
+      onSuccess: async ({ id }) => {
+        await storeDeleteRoom({ id });
+      },
+    });
   };
   const joinRoom = async (input: JoinRoomInput) => {
-    const joinedRoom = await $trpc.room.joinRoom.mutate(input);
-    storeCreateRoom(joinedRoom, true);
-    await navigateTo(RoutePath.Messages(joinedRoom.id));
+    await executeJoinRoomMutation(() => $trpc.room.joinRoom.mutate(input), {
+      onSuccess: async (joinedRoom) => {
+        storeCreateRoom(joinedRoom, true);
+        await navigateTo(RoutePath.Messages(joinedRoom.id));
+      },
+    });
   };
   const leaveRoom = async (input: LeaveRoomInput) => {
-    const id = await $trpc.room.leaveRoom.mutate(input);
-    await storeDeleteRoom({ id });
+    const snapshot = [...items.value];
+    await executeLeaveRoomMutation(() => $trpc.room.leaveRoom.mutate(input), {
+      applyOptimistic: () => {
+        baseStoreDeleteRoom({ id: input });
+        return () => {
+          items.value = snapshot;
+        };
+      },
+      onSuccess: async () => {
+        if (currentRoomId.value !== input) return;
+        await router.push({
+          path: rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
+          replace: true,
+        });
+      },
+    });
   };
   MessageHookMap[Operation.Create].push(({ message, partitionKey, type }) => {
     if (type !== MessageType.EditRoom) return;

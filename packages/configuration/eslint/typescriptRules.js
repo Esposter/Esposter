@@ -34,7 +34,19 @@ export default Object.assign(
   }),
   {
     "@typescript-eslint/consistent-type-exports": "error",
-    // Ban the TypeScript `private` keyword — use ECMAScript `#` private members instead (`protected` is still allowed; no `#` equivalent for subclass access).
+    "no-restricted-imports": [
+      "error",
+      {
+        paths: [
+          {
+            importNames: ["randomUUID"],
+            message: "Use the global `crypto.randomUUID()` instead of importing `randomUUID` from `node:crypto`.",
+            name: "node:crypto",
+          },
+        ],
+      },
+    ],
+    // `protected` is still allowed — no `#` equivalent exists for subclass access.
     "no-restricted-syntax": [
       "error",
       {
@@ -43,8 +55,7 @@ export default Object.assign(
           ":matches(PropertyDefinition, MethodDefinition, TSParameterProperty, TSAbstractPropertyDefinition, TSAbstractMethodDefinition)[accessibility='private']",
       },
       {
-        // `expect.any` is a loose matcher that also trips a vitest/valid-expect false positive; capture the real value
-        // From the mock call (via takeOne) and assert it exactly, or assert its type with toBeTypeOf.
+        // `expect.any` also trips a vitest/valid-expect false positive.
         message:
           "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
         selector: "MemberExpression[object.name='expect'][property.name='any']",

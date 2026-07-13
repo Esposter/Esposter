@@ -5,6 +5,9 @@ import type { Except } from "type-fest";
 import { UserSettingsType } from "@/models/message/user/UserSettingsType";
 
 export const UserSettingsListItemMap: Record<UserSettingsType, Except<Item, "onClick" | "title">> = {
+  [UserSettingsType.Appearance]: {
+    icon: "mdi-palette-outline",
+  },
   [UserSettingsType.Voice]: {
     icon: "mdi-microphone-outline",
   },

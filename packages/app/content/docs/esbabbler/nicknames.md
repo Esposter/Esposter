@@ -26,7 +26,7 @@ getNicknameMap(roomId)?.get(user.id) ?? user.name;
 getNicknameMap(roomId)?.get(user.id) || user.name;
 ```
 
-Applied in: mention labels (`useMessageWithMentions`), the member list sidebar (`MemberListItem`), the role permission panel (`MemberPanelListItem`), and the push notification title (queried server-side before the EventGrid publish). `useCreator` does **not** overlay the nickname — components that need the message creator's nickname call `getDisplayName` directly.
+Applied in: mention labels (`useMessageWithMentions`), the member list sidebar (`MemberListItem`), the room settings Members panel (`Settings/Type/Member/ListItem`), and the push notification title (queried server-side before the EventGrid publish). `useCreator` does **not** overlay the nickname — components that need the message creator's nickname call `getDisplayName` directly.
 
 ## Data model
 

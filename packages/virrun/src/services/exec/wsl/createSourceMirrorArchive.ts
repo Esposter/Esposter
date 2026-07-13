@@ -15,10 +15,15 @@ import { join } from "node:path";
 // Archive written over the UNC — the 9p bridge carries a single sequential write instead of rsync opening each file
 // Across v9fs, taking a cold materialize of a tens-of-thousands-of-files repo from minutes to seconds. `--no-recursion`
 // Archives exactly the listed entries (matching the manifest's per-entry bookkeeping), `--null -T` shares the delete
-// List's null-delimited form so any filename survives, `-C cwd` keys members by the manifest's posix relative paths,
-// And `-h` dereferences symlinks — the drvfs parity the old /mnt/c lower had, where a preserved Windows symlink would
-// Extract with an unresolvable target (`-h` not `-L`: synonyms on bsdtar, but GNU tar's `-L` is --tape-length). All
-// Flags parse identically on bsdtar and GNU tar, so tests exercise the real spawn on any platform.
+// List's null-delimited form so any filename survives, `-C cwd` keys members by the manifest's posix relative paths.
+// Symlinks are archived AS symlinks (no `-h`): the repo's intra-tree symlinks carry position-dependent relative
+// Content (e.g. every package's `eslint.config.js` links to `../configuration/eslint/index.*.js`, whose own imports
+// Resolve `../../app/.nuxt/...` from the link target's real directory), so dereferencing would copy that content into
+// The link's location and break its relative resolution — the whole-repo lint failure the tar migration first shipped.
+// Preserving the link restores rsync's default: the target is mirrored too, so it resolves at extract, and Node walks
+// The symlink's realpath to bind imports from the right base. All flags parse identically on bsdtar and GNU tar, so
+// Tests exercise the real spawn on any platform. (The win32 bsdtar writer stamps a benign pax LIBARCHIVE.symlinktype
+// Header on each symlink member; the WSL GNU-tar extract quiets its "unknown keyword" warning — createWslSourceMirrorSync.)
 //
 // The copy list is consumed and unlinked here, staged under the pid-tag convention so a plan that dies mid-way leaves
 // Only reapable corpses (reapStaleSourceMirrorTemps). A failure whose stderr is entirely "couldn't open" reports
@@ -37,7 +42,7 @@ export const createSourceMirrorArchive = (
   const unreadablePaths = getResult(() =>
     execFileHidden(
       "tar",
-      ["-c", "-h", "--no-recursion", "--null", "-f", join(entryUnc, archiveFilename), "-C", cwd, "-T", copyListUnc],
+      ["-c", "--no-recursion", "--null", "-f", join(entryUnc, archiveFilename), "-C", cwd, "-T", copyListUnc],
       { timeout: SOURCE_MIRROR_ARCHIVE_TIMEOUT_MS },
     ),
   ).match(

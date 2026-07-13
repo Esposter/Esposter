@@ -1,6 +1,6 @@
 ---
 name: vue-composable-patterns
-description: Esposter-specific Vue 3 composable and form patterns — MaybeRefOrGetter, SSR safety, online/offline, type-driven state reset, resource management, and cursor pagination (store + useRead* composable + StyledWaypoint). Apply when writing composables, form dialogs, paginated lists, or browser-aware reactive code.
+description: Esposter-specific Vue 3 composable and form patterns — MaybeRefOrGetter, SSR safety, online/offline, type-driven state reset, resource management, cursor pagination (store + useRead* composable + StyledWaypoint), and server search-as-you-type (useAutoSearch/useCursorSearcher). Apply when writing composables, form dialogs, paginated lists, search inputs, or browser-aware reactive code.
 ---
 
 # Vue Composable & Form Patterns
@@ -83,6 +83,48 @@ Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" butto
 const readMoreBans = (onComplete: () => void) =>
   readMoreItems((cursor) => $trpc.moderation.readBans.query({ cursor, limit: LIMIT, roomId }), onComplete);
 ```
+
+## Server Search-as-You-Type — `useAutoSearch` / `useCursorSearcher` (hand-rolling BANNED)
+
+Hand-rolling search-as-you-type around a `$trpc` search query is **banned** — no per-component `useThrottle`/`refDebounced` + `watch` + `AbortController` + `isSearching` wiring, and no `@input` handlers firing queries. That stack exists exactly once, in `useAutoSearch` (`app/composables/useAutoSearch.ts`): 1s throttle, in-flight request abort, normalized-query change detection, reset-on-empty, an `isPending` ref, and the shared `getResultAsync` → `createAlert` error surfacing from the client-data conventions (superseded/aborted requests stay silent — no consumer writes error handling).
+
+Pick the layer by result shape:
+
+- **Cursor-paginated results** → `useCursorSearcher(query, true)` — wraps `useAutoSearch` + `useCursorPaginationData`; the query callback receives `(searchQuery, cursor, opts)` and must forward `opts` (carries the abort signal) to the tRPC call. Pass the third `isIncludeEmptySearchQuery: true` argument when an empty query should list everything (e.g. room pickers).
+- **Plain array results** → `useAutoSearch(searchQuery, { reset, search })` directly; `search` receives the sanitized query and the `AbortSignal` to forward as `{ signal }`.
+- **Ctrl+K palette UI** → wrap in `StyledSearchDialog` (see the vue-component-patterns skill).
+
+```ts
+// stores/dialogs with cursor pagination
+export const useSearchStore = defineStore("message/room/search", () => {
+  const { $trpc } = useNuxtApp();
+  return useCursorSearcher((searchQuery, cursor, opts) => {
+    const normalizedSearchQuery = normalizeString(searchQuery);
+    return $trpc.room.readRooms.query(
+      { cursor, filter: normalizedSearchQuery ? { name: normalizedSearchQuery } : undefined },
+      opts,
+    );
+  }, true);
+});
+
+// plain array results
+const { isPending } = useAutoSearch(searchQuery, {
+  reset: () => {
+    searchResults.value = [];
+  },
+  search: async (sanitizedSearchQuery, signal) => {
+    searchResults.value = await $trpc.friend.searchUsers.query(sanitizedSearchQuery, { signal });
+  },
+});
+```
+
+The only sanctioned exceptions (documented in `docs/architecture/search.md`):
+
+- **`v-data-table-server` lists** — the table owns fetch orchestration via its `search` prop + `@update:options`; feed it `refDebounced(searchQuery, RESOURCE_SEARCH_DEBOUNCE_MS)` (see `Resource/ListView.vue`).
+- **Explicit-submit search** — Enter-triggered with filters + search history (message right-sidebar search); no as-you-type querying to throttle.
+- **Client-index search** — MiniSearch/computed over already-loaded data (docs search, portal `useResourceSearchItems`); no server call, so a plain `computed` (optionally `refDebounced`) suffices.
+
+Anything else that looks like a new exception should be refactored onto `useAutoSearch` instead.
 
 ## MaybeRefOrGetter vs Function Argument
 

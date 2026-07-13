@@ -18,6 +18,9 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [Environment](/docs/architecture/environment)                                             | Environment detection across the three Nuxt runtime contexts                             |
 | [File uploads](/docs/architecture/file-uploads)                                           | The two-step Azure Blob SAS upload pattern and upload procedure inventory                |
 | [Serialization](/docs/architecture/serialization)                                         | How class instances survive the three transport paths (Azure Table, Nuxt payload, tRPC)  |
+| [Client data access](/docs/architecture/client-data)                                      | The useQuery + useMutation primitives — non-blocking fetch, optimistic apply, staleness  |
 | [Persisted data — latest shape only](/docs/architecture/persisted-data-latest-shape-only) | No legacy-shape schemas or migration code — parse the latest shape or reset              |
 | [Monorepo tooling](/docs/architecture/monorepo-tooling)                                   | pnpm workspace orchestration, virrun routing, publishing, installs, and CI job shape     |
 | [Server testing](/docs/architecture/server-testing)                                       | tRPC router test wiring — in-memory DB, mocked Azure services, controlled auth session   |
+| [Singleton dialogs](/docs/architecture/singleton-dialogs)                                 | Store-driven singleton dialogs — one mounted dialog per feature, never one per list item |
+| [Search](/docs/architecture/search)                                                       | One search stack — StyledSearchDialog palettes + useAutoSearch/useCursorSearcher         |

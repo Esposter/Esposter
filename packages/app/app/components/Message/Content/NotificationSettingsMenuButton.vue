@@ -12,20 +12,22 @@ const { setMyUserToRoom } = userToRoomStore;
 const { myUserToRoomMap } = storeToRefs(userToRoomStore);
 const notificationType = computed(() => myUserToRoomMap.value?.notificationType ?? NotificationType.DirectMessage);
 const notificationTypeLabels = Object.entries(NotificationTypeLabelMap);
-const executeOptimisticMutation = useOptimisticMutation();
+const executeMutation = useMutation();
 const updateNotificationType = async (newNotificationType: NotificationType) => {
   const roomId = currentRoomId.value;
   const userToRoom = myUserToRoomMap.value;
   if (!roomId || !userToRoom) return;
-  await executeOptimisticMutation(
-    () => {
-      const oldNotificationType = userToRoom.notificationType;
-      setMyUserToRoom(roomId, { ...userToRoom, notificationType: newNotificationType });
-      return () => {
-        setMyUserToRoom(roomId, { ...userToRoom, notificationType: oldNotificationType });
-      };
-    },
+  await executeMutation(
     () => $trpc.userToRoom.updateUserToRoom.mutate({ notificationType: newNotificationType, roomId }),
+    {
+      applyOptimistic: () => {
+        const oldNotificationType = userToRoom.notificationType;
+        setMyUserToRoom(roomId, { ...userToRoom, notificationType: newNotificationType });
+        return () => {
+          setMyUserToRoom(roomId, { ...userToRoom, notificationType: oldNotificationType });
+        };
+      },
+    },
   );
 };
 </script>

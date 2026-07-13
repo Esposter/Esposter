@@ -18,6 +18,20 @@ const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 const roomName = useRoomName(() => currentRoom.value?.id ?? "");
 const placeholder = useRoomPlaceholder(currentRoom);
 const { cloned: editedImage } = useCloned(() => currentRoom.value?.image ?? "");
+const executeMutation = useMutation();
+const updateRoom = async (name: string) => {
+  if (!currentRoom.value) return;
+  const isNameChanged = name !== currentRoom.value.name;
+  await executeMutation(
+    () => $trpc.room.updateRoom.mutate({ id: currentRoom.value?.id ?? "", image: editedImage.value, name }),
+    {
+      onSuccess: async (updatedRoom) => {
+        if (isNameChanged)
+          await createMessage({ message: updatedRoom.name, roomId: updatedRoom.id, type: MessageType.EditRoom });
+      },
+    },
+  );
+};
 </script>
 
 <template>
@@ -37,15 +51,7 @@ const { cloned: editedImage } = useCloned(() => currentRoom.value?.image ?? "");
       :schema="selectRoomInMessageSchema.shape.name"
       :placeholder
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
-      @submit="
-        async (name) => {
-          if (!currentRoom) return;
-          const isNameChanged = name !== currentRoom.name;
-          const updatedRoom = await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name, image: editedImage });
-          if (isNameChanged)
-            await createMessage({ roomId: updatedRoom.id, type: MessageType.EditRoom, message: updatedRoom.name });
-        }
-      "
+      @submit="updateRoom"
     >
       <template #prepend-content>
         <MessageContentHeaderEditRoomImageField v-model="editedImage" :name="roomName" :room-id="currentRoom.id" />

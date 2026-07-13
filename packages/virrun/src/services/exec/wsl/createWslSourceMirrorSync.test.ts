@@ -86,7 +86,9 @@ describe(createWslSourceMirrorSync, () => {
     expect(script).toContain(`flock -w ${SOURCE_MIRROR_TIMEOUT_SECONDS} 9`);
     // Clearing the tree before the extract is the drift self-heal — the archive carries the complete mirrored set.
     expect(script).toContain(`rm -rf '${mirrorPath}' && mkdir -p '${mirrorPath}'`);
-    expect(script).toContain(`timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar -xf`);
+    // `--warning=no-unknown-keyword` silences GNU tar's benign LIBARCHIVE.symlinktype header noise from bsdtar-authored
+    // Symlink members — see createWslSourceMirrorSync's extract comment.
+    expect(script).toContain(`timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar --warning=no-unknown-keyword -xf`);
     // Bsdtar records NTFS entries as 644/755 — the chmod restores the drvfs-parity 777 the sandbox lower always had.
     expect(script).toContain(`chmod -R 777 '${mirrorPath}'`);
     expect(script).toContain(`9> '${mirrorPath}.lock'`);
@@ -134,7 +136,7 @@ describe(createWslSourceMirrorSync, () => {
     const { mirrorPath, script } = createWslSourceMirrorSync(cwd);
 
     expect(script).toContain(`xargs -0r rm -rf --`);
-    expect(script).toContain(`timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar -xf`);
+    expect(script).toContain(`timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar --warning=no-unknown-keyword -xf`);
     expect(script).toContain(`chmod -R 777 '${mirrorPath}'`);
     // A delta never clears the tree — that is the full materialize's move.
     expect(script).not.toContain(`rm -rf '${mirrorPath}'`);
@@ -158,7 +160,7 @@ describe(createWslSourceMirrorSync, () => {
     const { script } = createWslSourceMirrorSync(cwd);
 
     expect(script).toContain(`xargs -0r rm -rf --`);
-    expect(script).not.toContain("tar -xf");
+    expect(script).not.toContain("tar --warning=no-unknown-keyword -xf");
     expect(readStaged(VIRRUN_SOURCE_MIRROR_ARCHIVE_TEMP_PREFIX)).toBe("");
     expect(readStaged(VIRRUN_SOURCE_MIRROR_DELETE_TEMP_PREFIX)).toBe(`${removedFilename}\0`);
   });
