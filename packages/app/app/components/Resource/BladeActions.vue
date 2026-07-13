@@ -29,14 +29,14 @@ const isPortable = computed(() => "portable" in ResourceDefinitionMap[resource.t
   <ResourceRenameDialogButton :rename :resource />
   <ResourceDeleteDialogButton :remove :resource />
   <template v-if="!smAndDown">
-    <v-divider mx-1 vertical />
+    <v-divider vertical mx-1 />
     <v-btn prepend-icon="mdi-content-copy" variant="text" @click="duplicate()">Duplicate</v-btn>
     <template v-if="isPublishable">
-      <v-divider mx-1 vertical />
+      <v-divider vertical mx-1 />
       <ResourcePublishToggle :publication :publish :unpublish />
     </template>
     <template v-if="isPortable">
-      <v-divider mx-1 vertical />
+      <v-divider vertical mx-1 />
       <ResourcePortableActions :resource />
     </template>
   </template>

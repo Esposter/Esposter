@@ -38,10 +38,10 @@ watch(modelValue, (newModelValue) => {
     <v-text-field
       v-if="confirmName"
       v-model="confirmNameValue"
-      mt-4
       :label="`Type '${confirmName}' to confirm`"
       autofocus
       hide-details
+      mt-4
     />
   </StyledFormDialog>
 </template>

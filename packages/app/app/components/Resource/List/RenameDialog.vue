@@ -2,8 +2,8 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { resourceNameRules } from "@/services/resource/resourceNameRules";
-import { useListDialogStore } from "@/store/resource/listDialog";
 import { useNotificationStore } from "@/store/notification";
+import { useListDialogStore } from "@/store/resource/listDialog";
 
 interface ResourceListRenameDialogProps {
   resource: Resource;

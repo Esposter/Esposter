@@ -35,7 +35,7 @@ const { deleteNotifications, markAllAsRead } = notificationStore;
         </template>
       </v-tooltip>
     </template>
-    <v-card min-w-88 max-w-120>
+    <v-card max-w-120 min-w-88>
       <v-toolbar density="compact" title="Notifications">
         <template #append>
           <v-btn v-if="notifications.length > 0" size="small" variant="text" @click="deleteNotifications()">

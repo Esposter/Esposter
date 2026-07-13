@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Resource } from "@esposter/db-schema";
 
-import { useListDialogStore } from "@/store/resource/listDialog";
 import { useNotificationStore } from "@/store/notification";
+import { useListDialogStore } from "@/store/resource/listDialog";
 
 interface ResourceListDeleteDialogProps {
   resource: Resource;

@@ -4,8 +4,8 @@ import type { Resource, ResourceType } from "@esposter/db-schema";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
 import { RESOURCE_LIST_ITEMS_PER_PAGE, RESOURCE_LIST_ITEMS_PER_PAGE_OPTIONS } from "@/services/resource/constants";
+import { ResourceHeaders } from "@/services/resource/ResourceHeaders";
 import { RESOURCE_SEARCH_DEBOUNCE_MS } from "@/services/resource/search/constants";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useListDialogStore } from "@/store/resource/listDialog";
