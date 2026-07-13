@@ -8,7 +8,6 @@ export interface UseAutoSearchOptions {
   reset: () => void;
   search: (searchQuery: string, signal: AbortSignal) => Promise<void>;
 }
-
 // The shared core for search-as-you-type: 1s throttle, in-flight abort, and normalized-query change detection
 export const useAutoSearch = (
   searchQuery: Ref<string>,
