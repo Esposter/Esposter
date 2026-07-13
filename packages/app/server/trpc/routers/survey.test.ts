@@ -8,6 +8,7 @@ import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { AzureEntityType, resources, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
@@ -84,7 +85,7 @@ describe("survey", () => {
     const newSurveyResponse = await caller.createSurveyResponse({
       model: { satisfaction: 1 },
       partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
+      rowKey: randomUUID(),
     });
     const readSurveyResponse = await caller.readSurveyResponse({
       partitionKey: newSurveyResponse.partitionKey,
@@ -100,7 +101,7 @@ describe("survey", () => {
     const newResource = await caller.createResource({ name });
     const readSurveyResponse = await caller.readSurveyResponse({
       partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
+      rowKey: randomUUID(),
     });
 
     expect(readSurveyResponse).toBeNull();
@@ -113,7 +114,7 @@ describe("survey", () => {
     const newSurveyResponse = await caller.createSurveyResponse({
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
+      rowKey: randomUUID(),
     });
     const updatedSurveyResponse = await caller.updateSurveyResponse({
       model: { satisfaction: 1 },
@@ -133,7 +134,7 @@ describe("survey", () => {
     const newSurveyResponse = await caller.createSurveyResponse({
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
+      rowKey: randomUUID(),
     });
 
     await expect(
@@ -155,7 +156,7 @@ describe("survey", () => {
     const newSurveyResponse = await caller.createSurveyResponse({
       model: { satisfaction: 0 },
       partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
+      rowKey: randomUUID(),
     });
     await caller.updateSurveyResponse({
       model: { satisfaction: 1 },

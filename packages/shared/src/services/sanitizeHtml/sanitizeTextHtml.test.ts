@@ -8,13 +8,14 @@ import {
 import { getMentions } from "@/services/message/getMentions";
 import { sanitizeTextHtml } from "@/services/sanitizeHtml/sanitizeTextHtml";
 import { takeOne } from "@/util/array/takeOne";
+import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 
 describe(sanitizeTextHtml, () => {
   test("preserves role mention metadata", () => {
     expect.hasAssertions();
 
-    const roleId = crypto.randomUUID();
+    const roleId = randomUUID();
     const html = `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${roleId}" ${MENTION_ITEM_TYPE_ATTRIBUTE}="${MentionType.Role}"></span>`;
     const result = sanitizeTextHtml(html);
     const mention = takeOne(getMentions(result));

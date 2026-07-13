@@ -6,6 +6,7 @@ import { MOCK_EVENT_GRID_ENDPOINT } from "@/services/eventGridPublisherClient.te
 import { InvocationContext } from "@azure/functions";
 import { AzureTable } from "@esposter/db-schema";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
+import { randomUUID } from "node:crypto";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/eventGridPublisherClient"), () => import("@/services/eventGridPublisherClient.test"));
@@ -14,8 +15,8 @@ vi.mock(import("@/services/getWebPubSubServiceClient"), () => import("@/services
 
 describe(processWebhookHandler, () => {
   const context = new InvocationContext();
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = randomUUID();
+  const userId = randomUUID();
 
   afterEach(() => {
     MockTableDatabase.clear();
@@ -34,7 +35,7 @@ describe(processWebhookHandler, () => {
         dataVersion: "1.0",
         eventTime: "1970-01-01T00:00:00.000Z",
         eventType: "",
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         metadataVersion: "1",
         subject: "",
         topic: "",

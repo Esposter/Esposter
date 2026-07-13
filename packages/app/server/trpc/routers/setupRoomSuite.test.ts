@@ -9,6 +9,7 @@ import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { roomsInMessage } from "@esposter/db-schema";
 import { MockTableDatabase } from "azure-mock";
+import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, beforeEach, describe } from "vitest";
 
 // Room-suite fixture: owns the mock context, room/role callers, a fresh room per test, and the
@@ -44,7 +45,7 @@ export const setupRoomSuite = () => {
 
   const setupMemberWithRole = async (permissions: bigint, position: number) => {
     const member = await createMember();
-    const role = await roleCaller.createRole({ name: crypto.randomUUID(), permissions, position, roomId });
+    const role = await roleCaller.createRole({ name: randomUUID(), permissions, position, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: member.id });
     return { member, role };
   };

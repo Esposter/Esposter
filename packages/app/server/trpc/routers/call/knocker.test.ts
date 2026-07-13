@@ -15,6 +15,7 @@ import { callRouter } from "@@/server/trpc/routers/call";
 import { knockerRouter } from "@@/server/trpc/routers/call/knocker";
 import { CALL_ID_LENGTH, callSessionsInMessage, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
+import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("call/knocker", () => {
@@ -160,7 +161,7 @@ describe("call/knocker", () => {
       );
 
       await expect(
-        knockerCaller.admitKnocker({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),
+        knockerCaller.admitKnocker({ callSessionId: nonExistentCallSessionId, sessionId: randomUUID() }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
         `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, nonExistentCallSessionId).message}]`,
       );
@@ -232,7 +233,7 @@ describe("call/knocker", () => {
       );
 
       await expect(
-        knockerCaller.dismissKnocker({ callSessionId: nonExistentCallSessionId, sessionId: crypto.randomUUID() }),
+        knockerCaller.dismissKnocker({ callSessionId: nonExistentCallSessionId, sessionId: randomUUID() }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
         `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, nonExistentCallSessionId).message}]`,
       );

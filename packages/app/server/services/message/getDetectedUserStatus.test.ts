@@ -1,11 +1,12 @@
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
 import { UserStatus, UserStatuses } from "@esposter/db-schema";
+import { randomUUID } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getDetectedUserStatus, () => {
   const createdAt = new Date();
   const message = "message";
-  const userId = crypto.randomUUID();
+  const userId = randomUUID();
 
   beforeEach(() => {
     vi.useFakeTimers();

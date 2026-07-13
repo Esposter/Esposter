@@ -4,6 +4,7 @@ import { MessageType } from "@/models/message/MessageType";
 import { StandardMessageEntity } from "@/models/message/StandardMessageEntity";
 import { WebhookMessageEntity } from "@/models/message/WebhookMessageEntity";
 import { createMessageEntity } from "@/services/message/createMessageEntity";
+import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 
 describe(createMessageEntity, () => {
@@ -11,13 +12,13 @@ describe(createMessageEntity, () => {
   const appUser: AppUserInMessage = {
     createdAt,
     deletedAt: null,
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     image: "image",
     name: "name",
     updatedAt: createdAt,
   };
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = randomUUID();
+  const userId = randomUUID();
 
   test("creates", () => {
     expect.hasAssertions();

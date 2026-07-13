@@ -10,6 +10,7 @@ import { roomRouter } from "@@/server/trpc/routers/room";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
 import { appUsersInMessage, DatabaseEntityType, roomsInMessage, webhooksInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { randomUUID } from "node:crypto";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("webhook", () => {
@@ -62,7 +63,7 @@ describe("webhook", () => {
   test("fails create with non-existent room", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
+    const roomId = randomUUID();
 
     await expect(webhookCaller.createWebhook({ name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,

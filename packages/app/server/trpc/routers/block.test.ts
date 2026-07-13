@@ -9,6 +9,7 @@ import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("block", () => {
@@ -71,7 +72,7 @@ describe("block", () => {
   test("fails to block non-existent user", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = randomUUID();
 
     await expect(blockCaller.blockUser(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, userId).message}]`,
@@ -126,7 +127,7 @@ describe("block", () => {
   test("fails to unblock non-existent block", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = randomUUID();
 
     await expect(blockCaller.unblockUser(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Block, userId).message}]`,

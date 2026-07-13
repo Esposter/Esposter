@@ -8,6 +8,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { appUsersInMessage, roomsInMessage, users, webhooksInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockEventGridDatabase } from "azure-mock";
+import { randomUUID } from "node:crypto";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -33,7 +34,7 @@ describe(pushWebhookHandler, () => {
   const token = "token";
   const context = new InvocationContext();
   const seedWebhook = async () => {
-    const userId = crypto.randomUUID();
+    const userId = randomUUID();
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: userId, name });
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     const appUser = takeOne(await mockDb.insert(appUsersInMessage).values({ name: "Bot" }).returning());
@@ -58,7 +59,7 @@ describe(pushWebhookHandler, () => {
   test("returns 404 when webhook not found", async () => {
     expect.hasAssertions();
 
-    const result = await pushWebhookHandler(createMockRequest({ id: crypto.randomUUID(), token }), context);
+    const result = await pushWebhookHandler(createMockRequest({ id: randomUUID(), token }), context);
 
     expect(result?.status).toBe(404);
   });

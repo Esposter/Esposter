@@ -5,6 +5,7 @@ import { processFriendRequestNotificationHandler } from "@/handlers/processFrien
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { users } from "@esposter/db-schema";
+import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -32,7 +33,7 @@ describe(processFriendRequestNotificationHandler, () => {
   test("completes without error when user has no push subscriptions", async () => {
     expect.hasAssertions();
 
-    const receiverId = crypto.randomUUID();
+    const receiverId = randomUUID();
     await mockDb.insert(users).values({ email: "", emailVerified: true, id: receiverId, name });
 
     const result = await processFriendRequestNotificationHandler(
@@ -44,7 +45,7 @@ describe(processFriendRequestNotificationHandler, () => {
         dataVersion: "1.0",
         eventTime: "1970-01-01T00:00:00.000Z",
         eventType: "",
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         metadataVersion: "1",
         subject: "",
         topic: "",

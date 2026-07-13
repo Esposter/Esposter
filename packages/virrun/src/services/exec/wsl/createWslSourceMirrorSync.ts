@@ -107,8 +107,8 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
         : [
             // `--warning=no-unknown-keyword` quiets GNU tar's per-symlink "Ignoring unknown extended header keyword
             // 'LIBARCHIVE.symlinktype'" line: a benign pax header the win32 bsdtar writer stamps on every archived
-            // symlink to record its file-vs-dir target kind. That distinction is meaningless on Linux — extraction
-            // recreates the symlink correctly and exits 0 with or without it — so it is pure noise at this boundary.
+            // Symlink to record its file-vs-dir target kind. That distinction is meaningless on Linux — extraction
+            // Recreates the symlink correctly and exits 0 with or without it — so it is pure noise at this boundary.
             // This command only ever runs under WSL GNU tar (the mirror is win32-only; a native-Linux run uses the os
             // Backend, not this archive), and the archive itself stays standard pax for any other reader.
             `timeout ${SOURCE_MIRROR_TIMEOUT_SECONDS} tar --warning=no-unknown-keyword -xf ${shellQuote(archivePath)} -C ${shellQuote(mirrorPath)}`,

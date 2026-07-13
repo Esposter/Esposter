@@ -6,6 +6,7 @@ import { processPushNotificationHandler } from "@/handlers/processPushNotificati
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { users } from "@esposter/db-schema";
+import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -23,7 +24,7 @@ const createEvent = (data: EventGridEvent["data"]): EventGridEvent => ({
   dataVersion: "1.0",
   eventTime: "1970-01-01T00:00:00.000Z",
   eventType: "",
-  id: crypto.randomUUID(),
+  id: randomUUID(),
   metadataVersion: "1",
   subject: "",
   topic: "",
@@ -32,8 +33,8 @@ const createEvent = (data: EventGridEvent["data"]): EventGridEvent => ({
 describe(processPushNotificationHandler, () => {
   const context = new InvocationContext();
   const name = "name";
-  const userId = crypto.randomUUID();
-  const baseMessage = { message: "<p>a</p>", partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() };
+  const userId = randomUUID();
+  const baseMessage = { message: "<p>a</p>", partitionKey: randomUUID(), rowKey: randomUUID() };
   const notificationOptions = { icon: "", title: "" };
 
   beforeAll(async () => {

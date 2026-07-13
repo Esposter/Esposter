@@ -17,6 +17,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
+import { randomUUID } from "node:crypto";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -35,14 +36,14 @@ vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
 describe(processScheduledMessageJobHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const name = "name";
-  const otherRoomId = crypto.randomUUID();
+  const otherRoomId = randomUUID();
   const reminderPayload: ScheduledMessageJobPayload = { text: "text", type: ScheduledMessageJobType.Reminder };
-  const roomId = crypto.randomUUID();
+  const roomId = randomUUID();
   const scheduledMessagePayload: ScheduledMessageJobPayload = {
     message: "message",
     type: ScheduledMessageJobType.ScheduledMessage,
   };
-  const userId = crypto.randomUUID();
+  const userId = randomUUID();
 
   const getJob = (id: string) => mockDb.query.scheduledMessageJobsInMessage.findFirst({ where: { id: { eq: id } } });
   const insertJob = async (
@@ -79,7 +80,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("skips when no active job exists", async () => {
     expect.hasAssertions();
 
-    await processScheduledMessageJobHandler({ id: crypto.randomUUID() }, context);
+    await processScheduledMessageJobHandler({ id: randomUUID() }, context);
 
     expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
     expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();

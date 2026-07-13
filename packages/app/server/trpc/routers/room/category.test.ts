@@ -7,6 +7,7 @@ import { createMockContext } from "@@/server/trpc/context.test";
 import { categoryRouter } from "@@/server/trpc/routers/room/category";
 import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("room/category", () => {
@@ -87,7 +88,7 @@ describe("room/category", () => {
     expect.hasAssertions();
 
     const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
-    const missingId = "missing";
+    const missingId = randomUUID();
 
     await expect(
       roomCategoryCaller.reorderRoomCategories([

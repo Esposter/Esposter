@@ -13,6 +13,7 @@ import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { resources, ResourceType } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix lives in createResourceProcedures.test.ts;
@@ -57,7 +58,7 @@ describe("dashboard", () => {
     await surveyCaller.createSurveyResponse({
       model: { satisfaction: 5 },
       partitionKey: newSurvey.id,
-      rowKey: crypto.randomUUID(),
+      rowKey: randomUUID(),
     });
 
     const newResource = await caller.createResource({ name });

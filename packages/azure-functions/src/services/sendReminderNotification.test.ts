@@ -7,6 +7,7 @@ import { webpush } from "@/services/webpush.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInMessage, roomsInMessage, users, usersToRoomsInMessage } from "@esposter/db-schema";
+import { randomUUID } from "node:crypto";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -23,9 +24,9 @@ vi.mock(import("@/services/webpush"), () => import("@/services/webpush.test"));
 describe(sendReminderNotification, () => {
   const context = new InvocationContext();
   const name = "name";
-  const roomId = crypto.randomUUID();
+  const roomId = randomUUID();
   const text = "text";
-  const userId = crypto.randomUUID();
+  const userId = randomUUID();
   const reminder = { roomId, text, userId };
   const { pushSubscription } = setupWebPushSuite(() => mockDb, userId);
 

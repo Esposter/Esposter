@@ -1,10 +1,11 @@
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 
 describe(requirePartitionKey, () => {
-  const partitionKey = crypto.randomUUID();
+  const partitionKey = randomUUID();
   const name = "name";
 
   test("returns the partition key when non-empty", () => {

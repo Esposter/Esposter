@@ -9,6 +9,7 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { RoomPermission, roomsInMessage } from "@esposter/db-schema";
+import { randomUUID } from "node:crypto";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(hasPermission, () => {
@@ -46,7 +47,7 @@ describe(hasPermission, () => {
   test("returns false for non-existent room", async () => {
     expect.hasAssertions();
 
-    const result = await hasPermission(mockContext.db, owner.id, crypto.randomUUID(), RoomPermission.ReadMessages);
+    const result = await hasPermission(mockContext.db, owner.id, randomUUID(), RoomPermission.ReadMessages);
 
     expect(result).toBe(false);
   });

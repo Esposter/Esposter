@@ -2,14 +2,15 @@ import type { RoomRoleInMessage, User } from "@esposter/db-schema";
 
 import { createRoomRole } from "@/services/message/member/createRoomRole.test";
 import { getMemberGroups } from "@/services/message/member/getMemberGroups";
+import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 
 describe(getMemberGroups, () => {
   const highRole = createRoomRole({ position: 1 });
   const lowRole = createRoomRole({ position: 0 });
-  const highRoleMember = { id: crypto.randomUUID() };
-  const lowRoleMember = { id: crypto.randomUUID() };
-  const rolelessMember = { id: crypto.randomUUID() };
+  const highRoleMember = { id: randomUUID() };
+  const lowRoleMember = { id: randomUUID() };
+  const rolelessMember = { id: randomUUID() };
   const memberRolesMap = new Map<string, RoomRoleInMessage[]>([
     [highRoleMember.id, [lowRole, highRole]],
     [lowRoleMember.id, [lowRole]],
@@ -32,7 +33,7 @@ describe(getMemberGroups, () => {
   test("keeps member order within a group", () => {
     expect.hasAssertions();
 
-    const secondLowRoleMember: Pick<User, "id"> = { id: crypto.randomUUID() };
+    const secondLowRoleMember: Pick<User, "id"> = { id: randomUUID() };
     memberRolesMap.set(secondLowRoleMember.id, [lowRole]);
     const memberGroups = getMemberGroups([lowRoleMember, secondLowRoleMember], getMemberRoles);
     memberRolesMap.delete(secondLowRoleMember.id);

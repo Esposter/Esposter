@@ -10,6 +10,7 @@ import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test
 import { AzureContainer, DatabaseEntityType, UserStatus, userStatusesInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL, MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("user", () => {
@@ -40,7 +41,7 @@ describe("user", () => {
   test("reads empty statuses with default values", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = randomUUID();
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(userStatus.expiresAt).toBeNull();

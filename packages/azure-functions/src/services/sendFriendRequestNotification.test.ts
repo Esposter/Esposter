@@ -7,6 +7,7 @@ import { webpush } from "@/services/webpush.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInMessage, users } from "@esposter/db-schema";
+import { randomUUID } from "node:crypto";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -24,7 +25,7 @@ describe(sendFriendRequestNotification, () => {
   const context = new InvocationContext();
   const name = "name";
   const notificationOptions = { icon: "", title: "" };
-  const receiverId = crypto.randomUUID();
+  const receiverId = randomUUID();
   const { pushSubscription } = setupWebPushSuite(() => mockDb, receiverId);
 
   beforeAll(async () => {
