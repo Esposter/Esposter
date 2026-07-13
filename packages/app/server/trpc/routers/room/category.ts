@@ -2,6 +2,7 @@ import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
 import { createRoomCategoryInputSchema } from "#shared/models/db/roomCategory/CreateRoomCategoryInput";
 import { deleteRoomCategoryInputSchema } from "#shared/models/db/roomCategory/DeleteRoomCategoryInput";
+import { reorderRoomCategoriesInputSchema } from "#shared/models/db/roomCategory/ReorderRoomCategoriesInput";
 import { updateRoomCategoryInputSchema } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
 import { ownedBy } from "@@/server/services/db/ownedBy";
 import { router } from "@@/server/trpc";
@@ -52,6 +53,31 @@ export const categoryRouter = router({
       where: { userId: { eq: ctx.getSessionPayload.user.id } },
     }),
   ),
+  reorderRoomCategories: standardAuthedProcedure
+    .input(reorderRoomCategoriesInputSchema)
+    .mutation<RoomCategoryInMessage[]>(({ ctx, input }) =>
+      // One transaction so a drag either fully lands or fully rolls back — no partially-reordered state
+      ctx.db.transaction(async (tx) => {
+        const reorderedRoomCategories: RoomCategoryInMessage[] = [];
+        for (const { id, position } of input)
+          reorderedRoomCategories.push(
+            requireMutation(
+              (
+                await tx
+                  .update(roomCategoriesInMessage)
+                  .set({ position })
+                  .where(ownedBy(roomCategoriesInMessage, id, ctx.getSessionPayload.user.id))
+                  .returning()
+              )[0],
+              Operation.Update,
+              DatabaseEntityType.RoomCategory,
+              id,
+              "NOT_FOUND",
+            ),
+          );
+        return reorderedRoomCategories;
+      }),
+    ),
   updateRoomCategory: standardAuthedProcedure
     .input(updateRoomCategoryInputSchema)
     .mutation<RoomCategoryInMessage>(async ({ ctx, input: { id, ...rest } }) => {

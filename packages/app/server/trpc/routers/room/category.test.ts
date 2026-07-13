@@ -66,6 +66,36 @@ describe("room/category", () => {
     expect(updatedRoomCategory.position).toBe(1);
   });
 
+  test("reorders in one transaction", async () => {
+    expect.hasAssertions();
+
+    const first = await roomCategoryCaller.createRoomCategory({ name });
+    const second = await roomCategoryCaller.createRoomCategory({ name: updatedName });
+    const reorderedRoomCategories = await roomCategoryCaller.reorderRoomCategories([
+      { id: first.id, position: 1 },
+      { id: second.id, position: 0 },
+    ]);
+
+    expect(reorderedRoomCategories).toHaveLength(2);
+    const readRoomCategories = await roomCategoryCaller.readRoomCategories();
+    expect(takeOne(readRoomCategories).id).toBe(second.id);
+  });
+
+  test("rolls back the whole reorder when a row is not owned", async () => {
+    expect.hasAssertions();
+
+    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
+    await expect(
+      roomCategoryCaller.reorderRoomCategories([
+        { id: newRoomCategory.id, position: 1 },
+        { id: "missing", position: 0 },
+      ]),
+    ).rejects.toThrow();
+
+    const readRoomCategories = await roomCategoryCaller.readRoomCategories();
+    expect(takeOne(readRoomCategories).position).toBe(newRoomCategory.position);
+  });
+
   test("deletes", async () => {
     expect.hasAssertions();
 

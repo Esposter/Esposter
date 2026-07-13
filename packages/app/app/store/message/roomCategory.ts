@@ -37,18 +37,16 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
 
   const reorderRoomCategories = async (newCategories: RoomCategoryInMessage[]) => {
     const updates = getCategoryPositionUpdates(newCategories);
-    await executeMutation(
-      () => Promise.all(updates.map((update) => $trpc.room.category.updateRoomCategory.mutate(update))),
-      {
-        applyOptimistic: () => {
-          const snapshot = [...categories.value];
-          for (const update of updates) storeUpdateRoomCategory(update);
-          return () => {
-            categories.value = snapshot;
-          };
-        },
+    if (updates.length === 0) return;
+    await executeMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
+      applyOptimistic: () => {
+        const snapshot = [...categories.value];
+        for (const update of updates) storeUpdateRoomCategory(update);
+        return () => {
+          categories.value = snapshot;
+        };
       },
-    );
+    });
   };
 
   return {
