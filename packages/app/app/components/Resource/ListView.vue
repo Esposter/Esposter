@@ -127,7 +127,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         v-if="selectedResources.length > 0"
         :selected-resources
         @clear="clearSelection()"
-        @deleted="
+        @delete="
           async () => {
             clearSelection();
             await refresh();
@@ -249,9 +249,9 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         v-if="renamingResource"
         :key="renamingResource.id"
         :resource="renamingResource"
-        @updated="refresh()"
+        @update="refresh()"
       />
-      <ResourceListDeleteDialog v-if="deletingResource" :resource="deletingResource" @deleted="refresh()" />
+      <ResourceListDeleteDialog v-if="deletingResource" :resource="deletingResource" @delete="refresh()" />
     </template>
   </div>
 </template>

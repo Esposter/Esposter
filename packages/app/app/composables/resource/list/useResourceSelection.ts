@@ -1,7 +1,6 @@
 import type { Resource } from "@esposter/db-schema";
 
-// Vuetify's selection model only carries item values (ids), so the full rows for rows selected on
-// Other pages are remembered here — bulk delete/export can then list names across page boundaries
+// Vuetify's selection model only carries ids, so full rows are remembered here — bulk delete/export can then list names across page boundaries
 export const useResourceSelection = <TResource extends Pick<Resource, "id">>(items: Ref<TResource[]>) => {
   const selectedIds = ref<string[]>([]);
   const selectedResources = shallowRef<TResource[]>([]);

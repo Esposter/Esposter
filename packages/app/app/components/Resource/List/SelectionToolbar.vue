@@ -2,30 +2,20 @@
 import type { Resource } from "@esposter/db-schema";
 
 import { useNotificationStore } from "@/store/notification";
-import { getResultAsync } from "@esposter/shared";
 
 interface ResourceListSelectionToolbarProps {
   selectedResources: Resource[];
 }
 
 const { selectedResources } = defineProps<ResourceListSelectionToolbarProps>();
-const emit = defineEmits<{ clear: []; deleted: [] }>();
+const emit = defineEmits<{ clear: []; delete: [] }>();
 const { $trpc } = useNuxtApp();
+const executeMutation = useMutation();
 const notificationStore = useNotificationStore();
 const { createNotification } = notificationStore;
 const { exportResourcesCsv } = useExportResourcesCsv();
 // The bulk guard is the selection count, mirroring the single-delete type-the-name guard
 const confirmName = computed(() => `delete ${selectedResources.length}`);
-const deleteSelectedResources = () =>
-  getResultAsync(() => $trpc.resource.deleteResources.mutate({ ids: selectedResources.map(({ id }) => id) })).match(
-    (deletedResources) => {
-      createNotification({ severity: "success", title: `Deleted ${deletedResources.length} resources` });
-      emit("deleted");
-    },
-    (error) => {
-      createNotification({ severity: "error", title: error.message });
-    },
-  );
 </script>
 
 <template>
@@ -36,7 +26,18 @@ const deleteSelectedResources = () =>
       :confirm-name
       @delete="
         async (onComplete) => {
-          await deleteSelectedResources();
+          await executeMutation(
+            () => $trpc.resource.deleteResources.mutate({ ids: selectedResources.map(({ id }) => id) }),
+            {
+              onError: (error) => {
+                createNotification({ severity: 'error', title: error.message });
+              },
+              onSuccess: (deletedResources) => {
+                createNotification({ severity: 'success', title: `Deleted ${deletedResources.length} resources` });
+                emit('delete');
+              },
+            },
+          );
           onComplete();
         }
       "

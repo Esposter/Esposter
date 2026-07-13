@@ -1,6 +1,6 @@
 ---
 name: vue-component-patterns
-description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, slot extraction, and same-level abstraction. Apply when designing or refactoring Vue components.
+description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, slot extraction, same-level abstraction, present-tense emit names, and inline template event handlers. Apply when designing or refactoring Vue components.
 ---
 
 # Vue Component Patterns (Esposter)
@@ -146,7 +146,36 @@ A **derived/computed** value still fits the literal type as long as it can only 
 
 **Exception — genuinely two-way boolean.** Use the full `boolean` type only when the prop carries a real, changeable boolean: a `v-model` / `defineModel<boolean>()`, or a ref/computed whose value legitimately flips **both** ways at the call site. A flag that only ever toggles away from its default is not this case — keep it a literal.
 
-## Component Co-location (Folder = Auto-import Prefix)
+## Emits — Present-Tense Event Names
+
+Emit names are **present-tense verbs**: `delete`, `update`, `create`, `save`, `submit` — never past tense (`deleted`, `updated`, `copied`). The event names the action the parent should handle, not a completed fact; past-tense names also drift from Vue/DOM convention (`click`, `submit`, `change`).
+
+```ts
+// ❌ const emit = defineEmits<{ deleted: []; updated: [] }>();
+// ✅
+const emit = defineEmits<{ delete: []; update: [] }>();
+```
+
+For state-sync emits, use the `update:x` form where `x` is the state name (`"update:copied": [boolean]`) — the verb stays present tense; the state name may be any shape.
+
+## Event Handlers — Inline in the Template Binding
+
+Inline handler logic directly in the `@event` binding instead of declaring a one-use `onSubmit`/`deleteResource` function in script — the binding reuses the emitter's parameter inference (`onComplete`, `_event`, slot props) that a script-level function would have to re-type.
+
+```vue
+<!-- ❌ @submit="onSubmit" with const onSubmit = async () => {...} in script -->
+<!-- ✅ -->
+<StyledFormDialog
+  @submit="
+    async (_event, onComplete) => {
+      await executeMutation(() => $trpc.resource.deleteResources.mutate({ ids: [resource.id] }));
+      onComplete();
+    }
+  "
+/>
+```
+
+Extract to script only when the template genuinely can't express it: globals unreachable from templates (`window`), logic reused across multiple bindings, or literals a template attribute can't carry (a string containing double quotes → hoist just that string to a `computed`).
 
 **Group components with the same prefix into a folder** — Nuxt auto-imports with the folder path as prefix, so co-located components share it without repeating it in filenames.
 

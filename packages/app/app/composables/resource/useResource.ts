@@ -20,8 +20,17 @@ const staleContentVersionErrorMessage = new InvalidOperationError(
 // Blade-scoped state for one resource (metadata + content + publication)
 export const useResource = (id: MaybeRefOrGetter<string>) => {
   const { $trpc } = useNuxtApp();
+  const executeSaveMutation = useMutation();
+  const executeRenameMutation = useMutation();
+  const executeRemoveMutation = useMutation();
+  const executeDuplicateMutation = useMutation();
+  const executePublishMutation = useMutation();
+  const executeUnpublishMutation = useMutation();
   const notificationStore = useNotificationStore();
   const { createNotification } = notificationStore;
+  const createErrorNotification = (error: Error) => {
+    createNotification({ severity: "error", title: error.message });
+  };
   const getResourceMutations = useResourceMutations();
   const resource = ref<Resource>();
   const publication = ref<ResourcePublication>();
@@ -46,105 +55,111 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
     if (!current) return Promise.resolve(undefined);
     return getResourceMutations(current.type).readResourceContent({ id: current.id });
   };
-  // Optimistic concurrency: reads the tracked contentVersion and writes the returned row back so the
-  // Next save carries the bumped version (sequential autosaves stay consistent)
-  const save = (content: unknown): Promise<boolean> => {
+  // Optimistic concurrency: writes the returned row back so the next save carries the bumped contentVersion
+  const save = async (content: unknown) => {
     const current = resource.value;
-    if (!current) return Promise.resolve(false);
-    return getResultAsync(async () => {
-      resource.value = await getResourceMutations(current.type).saveResourceContent({
-        content,
-        contentVersion: current.contentVersion,
-        id: current.id,
-      });
-    }).match(
-      () => true,
-      (error) => {
-        if (error.message === staleContentVersionErrorMessage)
-          createNotification({
-            // A hard reload is the one path guaranteed to re-run every blade's content loader
-            action: { handler: () => reloadNuxtApp({ force: true }), title: "Refresh" },
-            severity: "warning",
-            title: `"${current.name}" was modified elsewhere — refresh to load the latest`,
-          });
-        else createNotification({ severity: "error", title: error.message });
-        return false;
-      },
-    );
-  };
-  const rename = (name: string) => {
-    const current = resource.value;
-    if (!current) return Promise.resolve();
-    return getResultAsync(async () => {
-      resource.value = await getResourceMutations(current.type).updateResource({ id: current.id, name });
-    }).match(noop, (error) => {
-      createNotification({ severity: "error", title: error.message });
-    });
-  };
-  const remove = () => {
-    const current = resource.value;
-    if (!current) return Promise.resolve(false);
-    return getResultAsync(() => getResourceMutations(current.type).deleteResource({ id: current.id })).match(
-      () => {
-        createNotification({ severity: "success", title: `Deleted "${current.name}"` });
-        return true;
-      },
-      (error) => {
-        createNotification({ severity: "error", title: error.message });
-        return false;
-      },
-    );
-  };
-  const duplicate = () => {
-    const current = resource.value;
-    if (!current) return Promise.resolve();
-    return getResultAsync(async () => {
-      const newResource = await $trpc.resource.duplicateResource.mutate({ id: current.id });
-      createNotification({
-        action: { title: "Go to resource", to: RoutePath.Resource(newResource.id) },
-        severity: "success",
-        title: `Created "${newResource.name}"`,
-      });
-      await navigateTo(RoutePath.Resource(newResource.id));
-    }).match(noop, (error) => {
-      createNotification({ severity: "error", title: error.message });
-    });
-  };
-  const publish = () => {
-    const current = resource.value;
-    if (!current) return Promise.resolve();
-    const { publishResource } = getResourceMutations(current.type);
-    if (!publishResource) return Promise.resolve();
-    return getResultAsync(async () => {
-      publication.value = await publishResource({ id: current.id });
-      createNotification({
-        action: {
-          handler: () =>
-            getResultAsync(() =>
-              window.navigator.clipboard.writeText(
-                `${window.location.origin}${RoutePath.View(current.type, current.id)}`,
-              ),
-            ).match(noop, noop),
-          title: "Copy public link",
+    if (!current) return false;
+    let isSuccessful = false;
+    await executeSaveMutation(
+      () =>
+        getResourceMutations(current.type).saveResourceContent({
+          content,
+          contentVersion: current.contentVersion,
+          id: current.id,
+        }),
+      {
+        onError: (error) => {
+          if (error.message === staleContentVersionErrorMessage)
+            createNotification({
+              // A hard reload is the one path guaranteed to re-run every blade's content loader
+              action: { handler: () => reloadNuxtApp({ force: true }), title: "Refresh" },
+              severity: "warning",
+              title: `"${current.name}" was modified elsewhere — refresh to load the latest`,
+            });
+          else createErrorNotification(error);
         },
-        severity: "success",
-        title: `Published "${current.name}" (v${publication.value.publishVersion})`,
-      });
-    }).match(noop, (error) => {
-      createNotification({ severity: "error", title: error.message });
+        onSuccess: (newResource) => {
+          resource.value = newResource;
+          isSuccessful = true;
+        },
+      },
+    );
+    return isSuccessful;
+  };
+  const rename = async (name: string) => {
+    const current = resource.value;
+    if (!current) return;
+    await executeRenameMutation(() => getResourceMutations(current.type).updateResource({ id: current.id, name }), {
+      onError: createErrorNotification,
+      onSuccess: (newResource) => {
+        resource.value = newResource;
+      },
     });
   };
-  const unpublish = () => {
+  const remove = async () => {
     const current = resource.value;
-    if (!current) return Promise.resolve();
+    if (!current) return false;
+    let isSuccessful = false;
+    await executeRemoveMutation(() => getResourceMutations(current.type).deleteResource({ id: current.id }), {
+      onError: createErrorNotification,
+      onSuccess: () => {
+        createNotification({ severity: "success", title: `Deleted "${current.name}"` });
+        isSuccessful = true;
+      },
+    });
+    return isSuccessful;
+  };
+  const duplicate = async () => {
+    const current = resource.value;
+    if (!current) return;
+    await executeDuplicateMutation(() => $trpc.resource.duplicateResource.mutate({ id: current.id }), {
+      onError: createErrorNotification,
+      onSuccess: async (newResource) => {
+        createNotification({
+          action: { title: "Go to resource", to: RoutePath.Resource(newResource.id) },
+          severity: "success",
+          title: `Created "${newResource.name}"`,
+        });
+        await navigateTo(RoutePath.Resource(newResource.id));
+      },
+    });
+  };
+  const publish = async () => {
+    const current = resource.value;
+    if (!current) return;
+    const { publishResource } = getResourceMutations(current.type);
+    if (!publishResource) return;
+    await executePublishMutation(() => publishResource({ id: current.id }), {
+      onError: createErrorNotification,
+      onSuccess: (newPublication) => {
+        publication.value = newPublication;
+        createNotification({
+          action: {
+            handler: () =>
+              getResultAsync(() =>
+                window.navigator.clipboard.writeText(
+                  `${window.location.origin}${RoutePath.View(current.type, current.id)}`,
+                ),
+              ).match(noop, noop),
+            title: "Copy public link",
+          },
+          severity: "success",
+          title: `Published "${current.name}" (v${newPublication.publishVersion})`,
+        });
+      },
+    });
+  };
+  const unpublish = async () => {
+    const current = resource.value;
+    if (!current) return;
     const { unpublishResource } = getResourceMutations(current.type);
-    if (!unpublishResource) return Promise.resolve();
-    return getResultAsync(async () => {
-      await unpublishResource({ id: current.id });
-      publication.value = undefined;
-      createNotification({ severity: "success", title: `Unpublished "${current.name}"` });
-    }).match(noop, (error) => {
-      createNotification({ severity: "error", title: error.message });
+    if (!unpublishResource) return;
+    await executeUnpublishMutation(() => unpublishResource({ id: current.id }), {
+      onError: createErrorNotification,
+      onSuccess: () => {
+        publication.value = undefined;
+        createNotification({ severity: "success", title: `Unpublished "${current.name}"` });
+      },
     });
   };
   return { duplicate, isLoading, load, publication, publish, readContent, remove, rename, resource, save, unpublish };

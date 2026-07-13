@@ -26,4 +26,3 @@ Repo-wide refactor plans have no area roadmap and live here directly:
 
 - [Null removal](/docs/proposals/refactors/null-removal) — eliminate `null` in favour of `undefined`, ESLint-enforced.
 - [Comment cleanup](/docs/proposals/refactors/comment-cleanup) — sweep ledger for keeping comments tight repo-wide.
-- [Resource layer useMutation sweep](/docs/proposals/refactors/resource-layer-usemutation) — route the platform resource CRUD map + editor saves through useMutation.

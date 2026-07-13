@@ -3,31 +3,22 @@ import type { Resource } from "@esposter/db-schema";
 
 import { useListDialogStore } from "@/store/resource/listDialog";
 import { useNotificationStore } from "@/store/notification";
-import { getResultAsync } from "@esposter/shared";
 
 interface ResourceListDeleteDialogProps {
   resource: Resource;
 }
 
 const { resource } = defineProps<ResourceListDeleteDialogProps>();
-const emit = defineEmits<{ deleted: [] }>();
+const emit = defineEmits<{ delete: [] }>();
 const { $trpc } = useNuxtApp();
+const executeMutation = useMutation();
 const listDialogStore = useListDialogStore();
 const { deletingId } = storeToRefs(listDialogStore);
 const isOpen = useSingletonDialog(deletingId);
 const notificationStore = useNotificationStore();
 const { createNotification } = notificationStore;
-// The batch procedure with one id shares the exact cleanup path (row + publication + blob directory)
-const deleteResource = () =>
-  getResultAsync(() => $trpc.resource.deleteResources.mutate({ ids: [resource.id] })).match(
-    () => {
-      createNotification({ severity: "success", title: `Deleted "${resource.name}"` });
-      emit("deleted");
-    },
-    (error) => {
-      createNotification({ severity: "error", title: error.message });
-    },
-  );
+// Double quotes cannot appear in a template attribute expression
+const deletedNotificationTitle = computed(() => `Deleted "${resource.name}"`);
 </script>
 
 <template>
@@ -37,7 +28,16 @@ const deleteResource = () =>
     :confirm-name="resource.name"
     @delete="
       async (onComplete) => {
-        await deleteResource();
+        // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory)
+        await executeMutation(() => $trpc.resource.deleteResources.mutate({ ids: [resource.id] }), {
+          onError: (error) => {
+            createNotification({ severity: 'error', title: error.message });
+          },
+          onSuccess: () => {
+            createNotification({ severity: 'success', title: deletedNotificationTitle });
+            emit('delete');
+          },
+        });
         onComplete();
       }
     "

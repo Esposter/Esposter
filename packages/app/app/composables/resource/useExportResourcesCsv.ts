@@ -23,8 +23,7 @@ export const useExportResourcesCsv = () => {
       createNotification({ severity: "success", title: `Exported ${resourceItems.length} resources to CSV` });
     return isExported;
   };
-  // Re-queries the current filter in page-sized chunks up to the export cap — never one query
-  // With the full count as its limit, so export cost stays bounded
+  // Re-queries the current filter in page-sized chunks up to the export cap, so export cost stays bounded
   const exportAllResourcesCsv = async (
     readResourcesPage: (input: { limit: number; offset: number }) => Promise<{ hasMore: boolean; items: Resource[] }>,
   ) => {
