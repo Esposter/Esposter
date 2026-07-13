@@ -45,7 +45,7 @@ const resourceFilterInputSchema = z.object({
   updatedBefore: z.date().optional(),
 });
 
-interface ResourceFilterInput extends z.infer<typeof resourceFilterInputSchema> {}
+type ResourceFilterInput = z.infer<typeof resourceFilterInputSchema>;
 
 const readResourcesInputSchema = z.object({
   ...createOffsetPaginationParamsSchema(selectResourceSchema.keyof()).shape,

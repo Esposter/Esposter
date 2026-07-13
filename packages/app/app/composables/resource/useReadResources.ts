@@ -55,7 +55,7 @@ export const useReadResources = ({
     isLoading.value = false;
   };
   // Snapshots the filter + sort at call time so a chunked consumer (CSV export) pages one consistent query
-  // even if the filters change mid-export
+  // Even if the filters change mid-export
   const createResourcesPageReader = () => {
     const input = { sortBy: lastOptions?.sortBy ?? [], ...getFilterInput() };
     return ({ limit, offset }: { limit: number; offset: number }) =>

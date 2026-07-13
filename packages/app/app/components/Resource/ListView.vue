@@ -36,7 +36,7 @@ const {
   updatedFilter,
 } = useResourceListFilters();
 // Typing buffers in a local clone so router.replace isn't spammed per keystroke;
-// useCloned keeps route → field flowing (back-nav, clear filters) while the debounced value follows field → route
+// UseCloned keeps route → field flowing (back-nav, clear filters) while the debounced value follows field → route
 const { cloned: searchInput } = useCloned(searchQuery);
 const search = refDebounced(searchInput, RESOURCE_SEARCH_DEBOUNCE_MS);
 watch(search, (newSearch) => {
