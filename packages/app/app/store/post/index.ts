@@ -19,10 +19,12 @@ export const usePostStore = defineStore("post", () => {
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Post);
 
-  const executeMutation = useMutation();
+  const executeCreatePostMutation = useMutation();
+  const executeUpdatePostMutation = useMutation();
+  const executeDeletePostMutation = useMutation();
   // Server-generated post — non-optimistic, applied in onSuccess
   const createPost = async (input: CreatePostInput) => {
-    await executeMutation(() => $trpc.post.createPost.mutate(input), {
+    await executeCreatePostMutation(() => $trpc.post.createPost.mutate(input), {
       onSuccess: (newPost) => {
         storeCreatePost(newPost);
       },
@@ -30,7 +32,7 @@ export const usePostStore = defineStore("post", () => {
   };
   const updatePost = async (input: UpdatePostInput) => {
     const snapshot = items.value.map((post) => ({ ...post }));
-    await executeMutation(() => $trpc.post.updatePost.mutate(input), {
+    await executeUpdatePostMutation(() => $trpc.post.updatePost.mutate(input), {
       applyOptimistic: () => {
         storeUpdatePost(input);
         return () => {
@@ -44,7 +46,7 @@ export const usePostStore = defineStore("post", () => {
   };
   const deletePost = async (input: DeletePostInput) => {
     const snapshot = [...items.value];
-    await executeMutation(() => $trpc.post.deletePost.mutate(input), {
+    await executeDeletePostMutation(() => $trpc.post.deletePost.mutate(input), {
       applyOptimistic: () => {
         storeDeletePost({ id: input });
         return () => {

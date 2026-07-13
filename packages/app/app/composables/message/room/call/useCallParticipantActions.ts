@@ -7,7 +7,8 @@ import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
 export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const executeLowerHandMutation = useMutation();
+  const executeAdminActionMutation = useMutation();
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
   const roleStore = useRoleStore();
@@ -36,7 +37,7 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-hand-back-right-off",
         onClick: () => {
-          void executeMutation(() =>
+          void executeLowerHandMutation(() =>
             $trpc.callSession.setHandRaised.mutate({
               callSessionId,
               isHandRaised: false,
@@ -50,7 +51,7 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-microphone-off",
         onClick: () => {
-          void executeMutation(() =>
+          void executeAdminActionMutation(() =>
             $trpc.message.moderation.executeAdminAction.mutate({
               roomId,
               targetUserId: userId,
@@ -64,7 +65,7 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-microphone",
         onClick: () => {
-          void executeMutation(() =>
+          void executeAdminActionMutation(() =>
             $trpc.message.moderation.executeAdminAction.mutate({
               roomId,
               targetUserId: userId,
@@ -78,7 +79,7 @@ export const useCallParticipantActions = () => {
       items.push({
         icon: "mdi-account-remove",
         onClick: () => {
-          void executeMutation(() =>
+          void executeAdminActionMutation(() =>
             $trpc.message.moderation.executeAdminAction.mutate({
               roomId,
               targetUserId: userId,

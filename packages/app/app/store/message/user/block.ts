@@ -7,7 +7,8 @@ import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const executeBlockUserMutation = useMutation();
+  const executeUnblockUserMutation = useMutation();
   const friendStore = useFriendStore();
   const { storeDeleteFriend } = friendStore;
   const friendRequestStore = useFriendRequestStore();
@@ -17,7 +18,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const blockUser = async (userId: FriendUserIdInput) => {
     const previousFriends = [...friendStore.friends];
     const previousFriendRequests = [...friendRequestStore.friendRequests];
-    await executeMutation(() => $trpc.block.blockUser.mutate(userId), {
+    await executeBlockUserMutation(() => $trpc.block.blockUser.mutate(userId), {
       applyOptimistic: () => {
         storeDeleteFriend(userId);
         storeDeleteFriendRequestsByUser(userId);
@@ -35,7 +36,7 @@ export const useBlockStore = defineStore("message/user/block", () => {
 
   const unblockUser = async (blockedUserId: FriendUserIdInput) => {
     const previousBlockedUsers = blockedUsers.value;
-    await executeMutation(() => $trpc.block.unblockUser.mutate(blockedUserId), {
+    await executeUnblockUserMutation(() => $trpc.block.unblockUser.mutate(blockedUserId), {
       applyOptimistic: () => {
         blockedUsers.value = blockedUsers.value.filter(({ id }) => id !== blockedUserId);
         return () => {

@@ -5,11 +5,13 @@ import type { PostWithRelations } from "@esposter/db-schema";
 
 export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const executeCreateLikeMutation = useMutation();
+  const executeUpdateLikeMutation = useMutation();
+  const executeDeleteLikeMutation = useMutation();
 
   // Server-generated like row — non-optimistic, applied in onSuccess
   const createLike = async (input: CreateLikeInput) => {
-    await executeMutation(() => $trpc.like.createLike.mutate(input), {
+    await executeCreateLikeMutation(() => $trpc.like.createLike.mutate(input), {
       onSuccess: (newLike) => {
         const post = toValue(allPosts).find(({ id }) => id === newLike.postId);
         if (!post) return;
@@ -24,7 +26,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     if (!post?.viewerLike) return;
 
     const previousViewerLike = post.viewerLike;
-    await executeMutation(() => $trpc.like.updateLike.mutate(input), {
+    await executeUpdateLikeMutation(() => $trpc.like.updateLike.mutate(input), {
       applyOptimistic: () => {
         post.viewerLike = { ...previousViewerLike, value: input.value };
         post.noLikes += input.value * 2;
@@ -43,7 +45,7 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     if (!post?.viewerLike) return;
 
     const previousViewerLike = post.viewerLike;
-    await executeMutation(() => $trpc.like.deleteLike.mutate(postId), {
+    await executeDeleteLikeMutation(() => $trpc.like.deleteLike.mutate(postId), {
       applyOptimistic: () => {
         post.viewerLike = undefined;
         post.noLikes -= previousViewerLike.value;

@@ -10,7 +10,10 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const executeCreateRoomCategoryMutation = useMutation();
+  const executeDeleteRoomCategoryMutation = useMutation();
+  const executeUpdateRoomCategoryMutation = useMutation();
+  const executeReorderRoomCategoriesMutation = useMutation();
   const categories = ref<RoomCategoryInMessage[]>([]);
   const {
     createRoomCategory: storeCreateRoomCategory,
@@ -20,7 +23,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
 
   // Server-generated category — non-optimistic, applied in onSuccess
   const createRoomCategory = async (input: CreateRoomCategoryInput) => {
-    await executeMutation(() => $trpc.room.category.createRoomCategory.mutate(input), {
+    await executeCreateRoomCategoryMutation(() => $trpc.room.category.createRoomCategory.mutate(input), {
       onSuccess: (newCategory) => {
         storeCreateRoomCategory(newCategory);
       },
@@ -29,7 +32,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
 
   const deleteRoomCategory = async (id: DeleteRoomCategoryInput) => {
     const snapshot = [...categories.value];
-    await executeMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
+    await executeDeleteRoomCategoryMutation(() => $trpc.room.category.deleteRoomCategory.mutate(id), {
       applyOptimistic: () => {
         storeDeleteRoomCategory({ id });
         return () => {
@@ -41,7 +44,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
 
   const updateRoomCategory = async (input: UpdateRoomCategoryInput) => {
     const snapshot = categories.value.map((category) => ({ ...category }));
-    await executeMutation(() => $trpc.room.category.updateRoomCategory.mutate(input), {
+    await executeUpdateRoomCategoryMutation(() => $trpc.room.category.updateRoomCategory.mutate(input), {
       applyOptimistic: () => {
         storeUpdateRoomCategory(input);
         return () => {
@@ -57,7 +60,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const reorderRoomCategories = async (newCategories: RoomCategoryInMessage[]) => {
     const updates = getCategoryPositionUpdates(newCategories);
     if (updates.length === 0) return;
-    await executeMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
+    await executeReorderRoomCategoriesMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
       applyOptimistic: () => {
         const snapshot = categories.value.map((category) => ({ ...category }));
         for (const update of updates) storeUpdateRoomCategory(update);

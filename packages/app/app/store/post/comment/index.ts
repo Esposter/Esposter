@@ -25,12 +25,14 @@ export const useCommentStore = defineStore("post/comment", () => {
     ...restOperationData
   } = createOperationData(items, ["id"], DerivedDatabaseEntityType.Comment);
 
-  const executeMutation = useMutation();
+  const executeCreateCommentMutation = useMutation();
+  const executeUpdateCommentMutation = useMutation();
+  const executeDeleteCommentMutation = useMutation();
   // Server-generated comment — non-optimistic, applied in onSuccess
   const createComment = async (input: CreateCommentInput) => {
     if (!currentPost.value || EMPTY_TEXT_REGEX.test(input.description)) return;
 
-    await executeMutation(() => $trpc.post.createComment.mutate(input), {
+    await executeCreateCommentMutation(() => $trpc.post.createComment.mutate(input), {
       onSuccess: (newComment) => {
         if (!currentPost.value) return;
         storeCreateComment(newComment);
@@ -40,7 +42,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   };
   const updateComment = async (input: UpdateCommentInput) => {
     const snapshot = items.value.map((comment) => ({ ...comment }));
-    await executeMutation(() => $trpc.post.updateComment.mutate(input), {
+    await executeUpdateCommentMutation(() => $trpc.post.updateComment.mutate(input), {
       applyOptimistic: () => {
         storeUpdateComment(input);
         return () => {
@@ -56,7 +58,7 @@ export const useCommentStore = defineStore("post/comment", () => {
     if (!currentPost.value) return;
 
     const snapshot = [...items.value];
-    await executeMutation(() => $trpc.post.deleteComment.mutate(input), {
+    await executeDeleteCommentMutation(() => $trpc.post.deleteComment.mutate(input), {
       applyOptimistic: () => {
         if (!currentPost.value) return () => undefined;
         storeDeleteComment({ id: input });

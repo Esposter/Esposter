@@ -23,10 +23,13 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   const readWebhooks = async (roomId: RoomInMessage["id"]) => {
     items.value = await $trpc.webhook.readWebhooks.query({ roomId });
   };
-  const executeMutation = useMutation();
+  const executeCreateWebhookMutation = useMutation();
+  const executeUpdateWebhookMutation = useMutation();
+  const executeRotateTokenMutation = useMutation();
+  const executeDeleteWebhookMutation = useMutation();
   // Server-generated webhook (id, token) — non-optimistic, applied in onSuccess
   const createWebhook = async (roomId: RoomInMessage["id"], input: Except<CreateWebhookInput, "roomId">) => {
-    await executeMutation(() => $trpc.webhook.createWebhook.mutate({ ...input, roomId }), {
+    await executeCreateWebhookMutation(() => $trpc.webhook.createWebhook.mutate({ ...input, roomId }), {
       onSuccess: (newWebhook) => {
         storeCreateWebhook(newWebhook, true);
       },
@@ -34,7 +37,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   };
   const updateWebhook = async (roomId: RoomInMessage["id"], input: Except<UpdateWebhookInput, "roomId">) => {
     const snapshot = items.value.map((webhook) => ({ ...webhook }));
-    await executeMutation(() => $trpc.webhook.updateWebhook.mutate({ ...input, roomId }), {
+    await executeUpdateWebhookMutation(() => $trpc.webhook.updateWebhook.mutate({ ...input, roomId }), {
       applyOptimistic: () => {
         storeUpdateWebhook({ ...input, roomId });
         return () => {
@@ -48,7 +51,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   };
   // Server-generated token — non-optimistic, applied in onSuccess
   const rotateToken = async (roomId: RoomInMessage["id"], input: Except<RotateTokenInput, "roomId">) => {
-    await executeMutation(() => $trpc.webhook.rotateToken.mutate({ ...input, roomId }), {
+    await executeRotateTokenMutation(() => $trpc.webhook.rotateToken.mutate({ ...input, roomId }), {
       onSuccess: (updatedWebhook) => {
         storeUpdateWebhook(updatedWebhook);
       },
@@ -56,7 +59,7 @@ export const useWebhookStore = defineStore("message/room/webhook", () => {
   };
   const deleteWebhook = async (roomId: RoomInMessage["id"], input: Except<DeleteWebhookInput, "roomId">) => {
     const snapshot = [...items.value];
-    await executeMutation(() => $trpc.webhook.deleteWebhook.mutate({ ...input, roomId }), {
+    await executeDeleteWebhookMutation(() => $trpc.webhook.deleteWebhook.mutate({ ...input, roomId }), {
       applyOptimistic: () => {
         storeDeleteWebhook({ id: input.id });
         return () => {

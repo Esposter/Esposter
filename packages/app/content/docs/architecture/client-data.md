@@ -61,7 +61,7 @@ await executeMutation(mutate, {
 
 Both `applyOptimistic` and `onSuccess` are staleness-guarded so a superseded call leaves the newer state intact. The error alert always fires with the real `Error.message`.
 
-Call `useMutation()` once per logical action (each instance owns its own staleness counter); reach for a second instance when a store drives two independent mutations.
+Call `useMutation()` once per logical action — each instance owns its own staleness counter, so two independent actions must **never** share one. A shared instance lets a newer unrelated call supersede an older action's `onSuccess`/rollback (fire `deleteRole` while `createRole` is in flight and the created role never lands in the store). In a store with several mutations, declare one named instance per action (`executeCreateRoleMutation`, `executeDeleteRoleMutation`, …); a single flow that branches into two tRPC calls (create-or-update save) correctly shares one instance, because its successive calls do supersede each other.
 
 ## When not to use them
 

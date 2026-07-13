@@ -43,24 +43,27 @@ export const useRoomStore = defineStore("message/room", () => {
   const session = authClient.useSession();
   const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);
 
-  const executeMutation = useMutation();
+  const executeCreateRoomMutation = useMutation();
+  const executeDeleteRoomMutation = useMutation();
+  const executeJoinRoomMutation = useMutation();
+  const executeLeaveRoomMutation = useMutation();
   // Server-generated results (ids, navigation targets) — non-optimistic, applied in onSuccess
   const createRoom = async (input: CreateRoomInput) => {
-    await executeMutation(() => $trpc.room.createRoom.mutate(input), {
+    await executeCreateRoomMutation(() => $trpc.room.createRoom.mutate(input), {
       onSuccess: (newRoom) => {
         storeCreateRoom(newRoom, true);
       },
     });
   };
   const deleteRoom = async (input: DeleteRoomInput) => {
-    await executeMutation(() => $trpc.room.deleteRoom.mutate(input), {
+    await executeDeleteRoomMutation(() => $trpc.room.deleteRoom.mutate(input), {
       onSuccess: ({ id }) => {
         void storeDeleteRoom({ id });
       },
     });
   };
   const joinRoom = async (input: JoinRoomInput) => {
-    await executeMutation(() => $trpc.room.joinRoom.mutate(input), {
+    await executeJoinRoomMutation(() => $trpc.room.joinRoom.mutate(input), {
       onSuccess: async (joinedRoom) => {
         storeCreateRoom(joinedRoom, true);
         await navigateTo(RoutePath.Messages(joinedRoom.id));
@@ -69,7 +72,7 @@ export const useRoomStore = defineStore("message/room", () => {
   };
   const leaveRoom = async (input: LeaveRoomInput) => {
     const snapshot = [...items.value];
-    await executeMutation(() => $trpc.room.leaveRoom.mutate(input), {
+    await executeLeaveRoomMutation(() => $trpc.room.leaveRoom.mutate(input), {
       applyOptimistic: () => {
         void storeDeleteRoom({ id: input });
         return () => {

@@ -9,7 +9,9 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useFriendRequestStore = defineStore("message/user/friendRequest", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const executeSendFriendRequestMutation = useMutation();
+  const executeAcceptFriendRequestMutation = useMutation();
+  const executeDeclineFriendRequestMutation = useMutation();
   const friendStore = useFriendStore();
   const { storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequests = ref<FriendRequestWithRelations[]>([]);
@@ -57,7 +59,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
 
   const sendFriendRequest = async (receiverId: string) => {
     // Server-generated request row — non-optimistic, applied in onSuccess (subscription echo is idempotent)
-    await executeMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
+    await executeSendFriendRequestMutation(() => $trpc.friendRequest.sendFriendRequest.mutate(receiverId), {
       onSuccess: (friendRequest) => {
         storeCreateFriendRequest(friendRequest);
       },
@@ -65,7 +67,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   };
   const acceptFriendRequest = async (sender: User) => {
     const previousFriendRequests = [...friendRequests.value];
-    await executeMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
+    await executeAcceptFriendRequestMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
       applyOptimistic: () => {
         storeAcceptFriendRequest(sender);
         return () => {
@@ -77,7 +79,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   };
   const declineFriendRequest = async (senderId: string) => {
     const previousFriendRequests = [...friendRequests.value];
-    await executeMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
+    await executeDeclineFriendRequestMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
       applyOptimistic: () => {
         storeDeclineFriendRequest(senderId);
         return () => {

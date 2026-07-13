@@ -99,10 +99,14 @@ export const useRoleStore = defineStore("message/room/role", () => {
     }
     for (const userId of input.userIds) setMemberRoles(input.roomId, userId, rolesByUserId.get(userId) ?? []);
   };
-  const executeMutation = useMutation();
+  const executeCreateRoleMutation = useMutation();
+  const executeUpdateRoleMutation = useMutation();
+  const executeDeleteRoleMutation = useMutation();
+  const executeAssignRoleMutation = useMutation();
+  const executeRevokeRoleMutation = useMutation();
   const createRole = async (input: CreateRoleInput) => {
     // Server-generated role — non-optimistic, applied in onSuccess
-    await executeMutation(() => $trpc.role.createRole.mutate(input), {
+    await executeCreateRoleMutation(() => $trpc.role.createRole.mutate(input), {
       onSuccess: (newRole) => {
         setRoles(input.roomId, [newRole, ...getRoles(input.roomId)]);
         setSelectedRoleId(input.roomId, newRole.id);
@@ -111,7 +115,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const updateRole = async (input: UpdateRoleInput) => {
     const previousRoles = getRoles(input.roomId);
-    await executeMutation(() => $trpc.role.updateRole.mutate(input), {
+    await executeUpdateRoleMutation(() => $trpc.role.updateRole.mutate(input), {
       applyOptimistic: () => {
         setRoles(
           input.roomId,
@@ -131,7 +135,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const deleteRole = async (input: DeleteRoleInput) => {
     const previousRoles = getRoles(input.roomId);
-    await executeMutation(() => $trpc.role.deleteRole.mutate(input), {
+    await executeDeleteRoleMutation(() => $trpc.role.deleteRole.mutate(input), {
       applyOptimistic: () => {
         setRoles(
           input.roomId,
@@ -147,7 +151,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     const existingMemberRoles = getMemberRoles(input.roomId, input.userId);
     if (existingMemberRoles.some(({ id }) => id === input.roleId)) return;
     const role = getRoles(input.roomId).find(({ id }) => id === input.roleId);
-    await executeMutation(
+    await executeAssignRoleMutation(
       () => $trpc.role.assignRole.mutate(input),
       role
         ? {
@@ -167,7 +171,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const revokeRole = async (input: RevokeRoleInput) => {
     const existingMemberRoles = getMemberRoles(input.roomId, input.userId);
-    await executeMutation(() => $trpc.role.revokeRole.mutate(input), {
+    await executeRevokeRoleMutation(() => $trpc.role.revokeRole.mutate(input), {
       applyOptimistic: () => {
         setMemberRoles(
           input.roomId,

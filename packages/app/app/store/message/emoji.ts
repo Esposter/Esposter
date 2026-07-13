@@ -15,12 +15,14 @@ import { takeOne } from "@esposter/shared";
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const executeMutation = useMutation();
+  const executeCreateEmojiMutation = useMutation();
+  const executeUpdateEmojiMutation = useMutation();
+  const executeDeleteEmojiMutation = useMutation();
   const { getEmojis, setEmojis } = useMessageMetadataMap(MessageMetadataType.Emoji);
   const createEmoji = async (input: CreateEmojiInput) => {
     if (!session.value.data) return;
     const newEmoji = reactive(createMessageEmojiMetadataEntity({ ...input, userIds: [session.value.data.user.id] }));
-    await executeMutation(() => $trpc.message.emoji.createEmoji.mutate(input), {
+    await executeCreateEmojiMutation(() => $trpc.message.emoji.createEmoji.mutate(input), {
       applyOptimistic: () => {
         storeCreateEmoji(newEmoji);
         return () => {
@@ -35,7 +37,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   const updateEmoji = async (input: Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput) => {
     if (!session.value.data) return;
     const updatedInput = { ...input, userIds: getUpdatedUserIds(input.userIds, session.value.data.user.id) };
-    await executeMutation(() => $trpc.message.emoji.updateEmoji.mutate(updatedInput), {
+    await executeUpdateEmojiMutation(() => $trpc.message.emoji.updateEmoji.mutate(updatedInput), {
       applyOptimistic: () => {
         storeUpdateEmoji(updatedInput);
         return () => {
@@ -47,7 +49,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   const deleteEmoji = async (input: DeleteEmojiInput) => {
     const emojis = getEmojis(input.messageRowKey);
     const deletedEmoji = emojis.find((emoji) => getIsEntityIdEqualComparator(CompositeAzureKeyPath, input)(emoji));
-    await executeMutation(() => $trpc.message.emoji.deleteEmoji.mutate(input), {
+    await executeDeleteEmojiMutation(() => $trpc.message.emoji.deleteEmoji.mutate(input), {
       applyOptimistic: () => {
         storeDeleteEmoji(input);
         return () => {

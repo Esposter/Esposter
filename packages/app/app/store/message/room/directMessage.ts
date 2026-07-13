@@ -26,10 +26,11 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const currentDirectMessage = computed(() =>
     directMessages.value.find(({ id }) => id === currentDirectMessageId.value),
   );
-  const executeMutation = useMutation();
+  const executeCreateDirectMessageMutation = useMutation();
+  const executeHideDirectMessageMutation = useMutation();
   const createDirectMessage = async (userIds: string[]) => {
     // Server-generated room — non-optimistic, applied in onSuccess
-    await executeMutation(() => $trpc.room.directMessage.createDirectMessage.mutate(userIds), {
+    await executeCreateDirectMessageMutation(() => $trpc.room.directMessage.createDirectMessage.mutate(userIds), {
       onSuccess: async (room) => {
         const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
         if (!existingDirectMessage) storeCreateDirectMessage(room, true);
@@ -39,7 +40,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   };
   const hideDirectMessage = async (input: HideDirectMessageInput) => {
     const snapshot = [...items.value];
-    await executeMutation(() => $trpc.room.directMessage.hideDirectMessage.mutate(input), {
+    await executeHideDirectMessageMutation(() => $trpc.room.directMessage.hideDirectMessage.mutate(input), {
       applyOptimistic: () => {
         storeDeleteDirectMessage({ id: input });
         if (currentDirectMessageId.value === input) {

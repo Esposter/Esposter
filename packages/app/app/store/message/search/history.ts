@@ -19,10 +19,12 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   } = createOperationData(items, ["id"], DatabaseEntityType.SearchHistory);
   const { $trpc } = useNuxtApp();
 
-  const executeMutation = useMutation();
+  const executeCreateSearchHistoryMutation = useMutation();
+  const executeUpdateSearchHistoryMutation = useMutation();
+  const executeDeleteSearchHistoryMutation = useMutation();
   // Server-generated history row — non-optimistic, applied in onSuccess
   const createSearchHistory = async (input: CreateSearchHistoryInput) => {
-    await executeMutation(() => $trpc.searchHistory.createSearchHistory.mutate(input), {
+    await executeCreateSearchHistoryMutation(() => $trpc.searchHistory.createSearchHistory.mutate(input), {
       onSuccess: (newHistory) => {
         baseCreateSearchHistory(newHistory);
       },
@@ -30,7 +32,7 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   };
   const updateSearchHistory = async (input: UpdateSearchHistoryInput) => {
     const snapshot = items.value.map((searchHistory) => ({ ...searchHistory }));
-    await executeMutation(() => $trpc.searchHistory.updateSearchHistory.mutate(input), {
+    await executeUpdateSearchHistoryMutation(() => $trpc.searchHistory.updateSearchHistory.mutate(input), {
       applyOptimistic: () => {
         baseUpdateSearchHistory(input);
         return () => {
@@ -44,7 +46,7 @@ export const useSearchHistoryStore = defineStore("message/search/history", () =>
   };
   const deleteSearchHistory = async (input: DeleteSearchHistoryInput) => {
     const snapshot = [...items.value];
-    await executeMutation(() => $trpc.searchHistory.deleteSearchHistory.mutate(input), {
+    await executeDeleteSearchHistoryMutation(() => $trpc.searchHistory.deleteSearchHistory.mutate(input), {
       applyOptimistic: () => {
         baseDeleteSearchHistory({ id: input });
         return () => {
