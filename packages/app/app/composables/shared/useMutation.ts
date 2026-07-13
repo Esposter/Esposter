@@ -1,9 +1,11 @@
+import type { Promisable } from "type-fest";
+
 import { useAlertStore } from "@/store/alert";
 import { getResultAsync } from "@esposter/shared";
 
 interface MutationOptions<TResult> {
   applyOptimistic?: () => () => void;
-  onSuccess?: (result: TResult) => void;
+  onSuccess?: (result: TResult) => Promisable<void>;
 }
 
 export const useMutation = () => {
@@ -17,8 +19,8 @@ export const useMutation = () => {
     const checkIsStale = () => id !== callId;
     const rollback = applyOptimistic?.();
     await getResultAsync(mutate).match(
-      (result) => {
-        if (!checkIsStale()) onSuccess?.(result);
+      async (result) => {
+        if (!checkIsStale()) await onSuccess?.(result);
       },
       (error) => {
         if (checkIsStale()) return;

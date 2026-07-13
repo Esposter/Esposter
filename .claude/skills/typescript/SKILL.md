@@ -108,6 +108,7 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 - Fire-and-forget: extract to a named `async` function and call without `await`.
 - **Never `await import(...)`** for code-splitting — always static top-level `import`. Components are already chunk-split per component by the build, so a nested dynamic import only hides the dependency and (in dev) defers Vite discovery until first use, which can trigger a mid-session re-optimization that leaves chunks referencing stale dep hashes. Only touch `optimizeDeps` when the dependency's own docs instruct it. Sole exception: a library-mandated lazy-loader contract (e.g. CodeMirror `LanguageDescription.of({ load })`).
 - **Never `void asyncFn()`** — when passing an async function to a sync callback slot (`onScopeDispose`, event listeners, Phaser callbacks), wrap with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction`. This satisfies `no-misused-promises` without suppressing the rule.
+- **Callback types you own should accept `Promisable<void>` and be awaited** — when defining a callback slot in your own option/hook interface (e.g. `useMutation`'s `onSuccess`), type it `(...) => Promisable<void>` (`Promisable` from `type-fest`) and `await` it at the call site, so callers can pass `async` handlers that run to completion. Never type it `() => void` and force callers to `void`/`getSynchronizedFunction` their async work — that workaround is only for third-party sync slots you can't change.
 
 ## Error Handling
 

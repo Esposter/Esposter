@@ -40,22 +40,24 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   };
   const hideDirectMessage = async (input: HideDirectMessageInput) => {
     const snapshot = [...items.value];
+    const isCurrent = currentDirectMessageId.value === input;
+    const remainingDirectMessages = directMessages.value.filter(({ id }) => id !== input);
     await executeHideDirectMessageMutation(() => $trpc.room.directMessage.hideDirectMessage.mutate(input), {
       applyOptimistic: () => {
         storeDeleteDirectMessage({ id: input });
-        if (currentDirectMessageId.value === input) {
-          const remainingDirectMessages = directMessages.value.filter(({ id }) => id !== input);
-          void router.push({
-            path:
-              remainingDirectMessages.length > 0
-                ? RoutePath.Messages(takeOne(remainingDirectMessages).id)
-                : RoutePath.MessagesIndex,
-            replace: true,
-          });
-        }
         return () => {
           items.value = snapshot;
         };
+      },
+      onSuccess: async () => {
+        if (!isCurrent) return;
+        await router.push({
+          path:
+            remainingDirectMessages.length > 0
+              ? RoutePath.Messages(takeOne(remainingDirectMessages).id)
+              : RoutePath.MessagesIndex,
+          replace: true,
+        });
       },
     });
   };

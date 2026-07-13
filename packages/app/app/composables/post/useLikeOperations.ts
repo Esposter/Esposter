@@ -26,13 +26,14 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
     if (!post?.viewerLike) return;
 
     const previousViewerLike = post.viewerLike;
+    const delta = input.value - previousViewerLike.value;
     await executeUpdateLikeMutation(() => $trpc.like.updateLike.mutate(input), {
       applyOptimistic: () => {
         post.viewerLike = { ...previousViewerLike, value: input.value };
-        post.noLikes += input.value * 2;
+        post.noLikes += delta;
         return () => {
           post.viewerLike = previousViewerLike;
-          post.noLikes -= input.value * 2;
+          post.noLikes -= delta;
         };
       },
       onSuccess: (updatedLike) => {

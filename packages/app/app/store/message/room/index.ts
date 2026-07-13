@@ -57,8 +57,8 @@ export const useRoomStore = defineStore("message/room", () => {
   };
   const deleteRoom = async (input: DeleteRoomInput) => {
     await executeDeleteRoomMutation(() => $trpc.room.deleteRoom.mutate(input), {
-      onSuccess: ({ id }) => {
-        void storeDeleteRoom({ id });
+      onSuccess: async ({ id }) => {
+        await storeDeleteRoom({ id });
       },
     });
   };
@@ -74,10 +74,17 @@ export const useRoomStore = defineStore("message/room", () => {
     const snapshot = [...items.value];
     await executeLeaveRoomMutation(() => $trpc.room.leaveRoom.mutate(input), {
       applyOptimistic: () => {
-        void storeDeleteRoom({ id: input });
+        baseStoreDeleteRoom({ id: input });
         return () => {
           items.value = snapshot;
         };
+      },
+      onSuccess: async () => {
+        if (currentRoomId.value !== input) return;
+        await router.push({
+          path: rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
+          replace: true,
+        });
       },
     });
   };
