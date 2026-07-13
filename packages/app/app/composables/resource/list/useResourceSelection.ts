@@ -6,11 +6,13 @@ export const useResourceSelection = <TResource extends Pick<Resource, "id">>(ite
   const selectedResources = shallowRef<TResource[]>([]);
   const updateSelection = (ids: string[]) => {
     selectedIds.value = ids;
-    const idSet = new Set(ids);
-    const newSelectedResources = selectedResources.value.filter(({ id }) => idSet.has(id));
-    const keptIds = new Set(newSelectedResources.map(({ id }) => id));
-    newSelectedResources.push(...items.value.filter(({ id }) => idSet.has(id) && !keptIds.has(id)));
-    selectedResources.value = newSelectedResources;
+    // Current page rows win over remembered snapshots so a renamed/updated selection never shows stale data
+    const itemMap = new Map(items.value.map((item) => [item.id, item]));
+    const selectedResourceMap = new Map(selectedResources.value.map((resource) => [resource.id, resource]));
+    selectedResources.value = ids.flatMap((id) => {
+      const resource = itemMap.get(id) ?? selectedResourceMap.get(id);
+      return resource ? [resource] : [];
+    });
   };
   const clearSelection = () => {
     selectedIds.value = [];

@@ -54,9 +54,13 @@ export const useReadResources = ({
     });
     isLoading.value = false;
   };
-  // One page of the current filter + sort, for chunked consumers like the CSV export
-  const readResourcesPage = ({ limit, offset }: { limit: number; offset: number }) =>
-    $trpc.resource.readResources.query({ limit, offset, sortBy: lastOptions?.sortBy ?? [], ...getFilterInput() });
+  // Snapshots the filter + sort at call time so a chunked consumer (CSV export) pages one consistent query
+  // even if the filters change mid-export
+  const createResourcesPageReader = () => {
+    const input = { sortBy: lastOptions?.sortBy ?? [], ...getFilterInput() };
+    return ({ limit, offset }: { limit: number; offset: number }) =>
+      $trpc.resource.readResources.query({ limit, offset, ...input });
+  };
   const refresh = () => (lastOptions ? readResources(lastOptions) : Promise.resolve());
-  return { count, error, isLoading, items, readResources, readResourcesPage, refresh };
+  return { count, createResourcesPageReader, error, isLoading, items, readResources, refresh };
 };

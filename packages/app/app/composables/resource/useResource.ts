@@ -1,22 +1,9 @@
 import type { Resource, ResourcePublication } from "@esposter/db-schema";
 
-import { STALE_CONTENT_VERSION_MESSAGE } from "#shared/services/resource/constants";
+import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { useNotificationStore } from "@/store/notification";
-import { DatabaseEntityType } from "@esposter/db-schema";
-import {
-  getResultAsync,
-  InvalidOperationError,
-  noop,
-  Operation,
-  RoutePath,
-  withFinalizerAsync,
-} from "@esposter/shared";
+import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
-const staleContentVersionErrorMessage = new InvalidOperationError(
-  Operation.Update,
-  DatabaseEntityType.Resource,
-  STALE_CONTENT_VERSION_MESSAGE,
-).message;
 // Blade-scoped state for one resource (metadata + content + publication)
 export const useResource = (id: MaybeRefOrGetter<string>) => {
   const { $trpc } = useNuxtApp();
@@ -71,8 +58,13 @@ export const useResource = (id: MaybeRefOrGetter<string>) => {
         onError: (error) => {
           if (error.message === staleContentVersionErrorMessage)
             createNotification({
-              // A hard reload is the one path guaranteed to re-run every blade's content loader
-              action: { handler: () => reloadNuxtApp({ force: true }), title: "Refresh" },
+              action: {
+                // A hard reload is the one path guaranteed to re-run every blade's content loader
+                handler: () => {
+                  reloadNuxtApp({ force: true });
+                },
+                title: "Refresh",
+              },
               severity: "warning",
               title: `"${current.name}" was modified elsewhere — refresh to load the latest`,
             });

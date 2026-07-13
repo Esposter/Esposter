@@ -26,6 +26,7 @@ const confirmName = computed(() => `delete ${selectedResources.length}`);
       :confirm-name
       @delete="
         async (onComplete) => {
+          let isSuccessful = false;
           await executeMutation(
             () => $trpc.resource.deleteResources.mutate({ ids: selectedResources.map(({ id }) => id) }),
             {
@@ -35,10 +36,11 @@ const confirmName = computed(() => `delete ${selectedResources.length}`);
               onSuccess: (deletedResources) => {
                 createNotification({ severity: 'success', title: `Deleted ${deletedResources.length} resources` });
                 emit('delete');
+                isSuccessful = true;
               },
             },
           );
-          onComplete();
+          onComplete(isSuccessful);
         }
       "
     >

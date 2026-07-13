@@ -3,7 +3,7 @@ import type { PublishableResourceProcedureOptions } from "@@/server/models/resou
 import type { Resource, ResourcePublication, ResourceType } from "@esposter/db-schema";
 
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { STALE_CONTENT_VERSION_MESSAGE } from "#shared/services/resource/constants";
+import { staleContentVersionErrorMessage } from "#shared/services/resource/constants";
 import { hasCapability } from "#shared/services/resource/hasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -138,15 +138,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
               .where(and(eq(resources.id, id), eq(resources.contentVersion, contentVersion)))
               .returning()
           )[0];
-          if (!updatedResource)
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: new InvalidOperationError(
-                Operation.Update,
-                DatabaseEntityType.Resource,
-                STALE_CONTENT_VERSION_MESSAGE,
-              ).message,
-            });
+          if (!updatedResource) throw new TRPCError({ code: "BAD_REQUEST", message: staleContentVersionErrorMessage });
 
           await useUpload(AzureContainer.ResourceAssets, getContentBlobName(id), JSON.stringify(content));
           return updatedResource;

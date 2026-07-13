@@ -27,6 +27,7 @@ import {
   createUniqueArraySchema,
   getResultAsync,
   MAX_READ_LIMIT,
+  noop,
   Operation,
   streamToText,
   takeOne,
@@ -94,11 +95,28 @@ export const resourceRouter = router({
         .where(and(eq(resources.userId, ctx.getSessionPayload.user.id), inArray(resources.id, ids)))
         .returning();
       const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
-      await Promise.all(deletedResources.map(({ id }) => deleteDirectory(containerClient, id, true)));
+      // The rows are already gone, so blob cleanup is best-effort — a storage hiccup must not report the delete as failed
+      await Promise.all(
+        deletedResources.map(({ id }) =>
+          getResultAsync(() => deleteDirectory(containerClient, id, true)).match(noop, console.error),
+        ),
+      );
       return deletedResources;
     }),
   duplicateResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").mutation<Resource>(async ({ ctx }) => {
     const { name, type, userId } = ctx.resource;
+    // A copy starts as Draft, so only the draft content blob is copied — never the publication.
+    // The blob is written on first save, so a missing blob just means there is no content to copy yet.
+    // Read before inserting so a failed download never strands a half-created copy.
+    const content = await getResultAsync(() =>
+      useDownload(AzureContainer.ResourceAssets, getContentBlobName(ctx.resource.id)),
+    ).match(
+      ({ readableStreamBody }) => (readableStreamBody ? streamToText(readableStreamBody) : undefined),
+      (error) => {
+        if (error instanceof RestError && error.statusCode === 404) return undefined;
+        throw error;
+      },
+    );
     const newResource = requireMutation(
       (
         await ctx.db
@@ -110,19 +128,14 @@ export const resourceRouter = router({
       DatabaseEntityType.Resource,
       ctx.resource.id,
     );
-    // A copy starts as Draft, so only the draft content blob is copied — never the publication.
-    // The blob is written on first save, so a missing blob just means there is no content to copy yet.
-    const content = await getResultAsync(() =>
-      useDownload(AzureContainer.ResourceAssets, getContentBlobName(ctx.resource.id)),
-    ).match(
-      ({ readableStreamBody }) => (readableStreamBody ? streamToText(readableStreamBody) : undefined),
-      (error) => {
-        if (error instanceof RestError && error.statusCode === 404) return undefined;
-        throw error;
-      },
-    );
     if (content !== undefined)
-      await useUpload(AzureContainer.ResourceAssets, getContentBlobName(newResource.id), content);
+      await getResultAsync(() =>
+        useUpload(AzureContainer.ResourceAssets, getContentBlobName(newResource.id), content),
+      ).match(noop, async (error) => {
+        // Never leave a content-less orphan copy behind when the blob write fails
+        await ctx.db.delete(resources).where(eq(resources.id, newResource.id));
+        throw error;
+      });
     return newResource;
   }),
   readResource: getOwnerProcedure(undefined, readResourceInputSchema, "id").query(({ ctx }) => ctx.resource),

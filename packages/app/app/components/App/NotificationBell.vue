@@ -24,7 +24,7 @@ const { deleteNotifications, markAllAsRead } = notificationStore;
     <template #activator="{ props: menuProps }">
       <v-tooltip location="bottom" text="Notifications">
         <template #activator="{ props: tooltipProps }">
-          <v-btn icon :="mergeProps(menuProps, tooltipProps)">
+          <v-btn aria-label="Notifications" icon :="mergeProps(menuProps, tooltipProps)">
             <v-badge v-if="unreadCount > 0" color="error" :content="unreadCount">
               <v-icon icon="mdi-bell-outline" />
             </v-badge>

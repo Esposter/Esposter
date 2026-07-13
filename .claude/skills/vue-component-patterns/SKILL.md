@@ -1,6 +1,6 @@
 ---
 name: vue-component-patterns
-description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, slot extraction, same-level abstraction, present-tense emit names, and inline template event handlers. Apply when designing or refactoring Vue components.
+description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, slot extraction, same-level abstraction, present-tense emit names, inline template event handlers, and useCloned local copies over ref + watch. Apply when designing or refactoring Vue components.
 ---
 
 # Vue Component Patterns (Esposter)
@@ -81,6 +81,23 @@ const nickname = ref(userToRoom.nickname);
 ```
 
 **When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data, where the store can be empty at component creation time.
+
+## Local Copies of Reactive Sources — `useCloned`, Never `ref` + `watch`
+
+A local editable copy of a reactive source (edit drafts, buffered inputs, slider values) is always VueUse `useCloned` — never a hand-rolled `ref(source.value)` plus a `watch` syncing source → copy:
+
+```ts
+// ❌ const searchInput = ref(searchQuery.value);
+//    watch(searchQuery, (newSearchQuery) => { searchInput.value = newSearchQuery; });
+// ✅
+const { cloned: searchInput } = useCloned(searchQuery);
+const { cloned: editedName } = useCloned(() => name); // getter form for props/store fields
+```
+
+- Destructure `sync` when a Reset button must re-copy on demand (`Resource/File/Row/EditDialog.vue`)
+- The write-back direction (copy → source) is a genuine side effect — a single `watch` (often on a `refDebounced` of the copy) or an explicit save action is fine there
+
+More generally, before writing any `watch`, express it as a `computed`, a template `v-if`, or a purpose-built VueUse composable first. Reserve `watch` for side effects that can't be reactive values: emits, navigation, DOM calls (`focus`/`scrollIntoView`/measure), fetch-on-change, library bridges (Phaser/tiptap/LiveKit), and state resets/clamps triggered by another value changing.
 
 ## Generic SFC Components
 

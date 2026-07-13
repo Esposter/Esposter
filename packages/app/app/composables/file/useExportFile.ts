@@ -39,9 +39,9 @@ export const useExportFile = () => {
         ),
       )
       .match(
-        // A cancelled save picker is not a completed export, so it reports false without a notification
         () => true,
         (error) => {
+          // A cancelled save picker is not a completed export, so it reports false without a notification
           if (!(error instanceof Error && error.name === "AbortError"))
             createNotification({ severity: "error", title: error instanceof Error ? error.message : String(error) });
           return false;

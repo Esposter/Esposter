@@ -15,6 +15,18 @@ interface ResourceBladeOverflowMenuProps {
 const { duplicate, publication, publish, resource, unpublish } = defineProps<ResourceBladeOverflowMenuProps>();
 const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
+const portableFormatItems = computed(() => [
+  ...importFormats.value.map(({ import: importFormat, label }) => ({
+    action: importFormat,
+    icon: "mdi-import",
+    title: `Import ${label}`,
+  })),
+  ...exportFormats.value.map(({ export: exportFormat, label }) => ({
+    action: exportFormat,
+    icon: "mdi-export",
+    title: `Export ${label}`,
+  })),
+]);
 </script>
 
 <template>
@@ -33,24 +45,13 @@ const { exportFormats, importFormats } = usePortableFormats(() => resource);
         <v-list-item v-else prepend-icon="mdi-cloud-upload" title="Publish" @click="publish()" />
       </template>
       <v-list-item
-        v-for="format in importFormats"
-        :key="format.label"
-        prepend-icon="mdi-import"
-        :title="`Import ${format.label}`"
+        v-for="{ action, icon, title } of portableFormatItems"
+        :key="title"
+        :prepend-icon="icon"
+        :title
         @click="
           () => {
-            format.import?.();
-          }
-        "
-      />
-      <v-list-item
-        v-for="format in exportFormats"
-        :key="format.label"
-        prepend-icon="mdi-export"
-        :title="`Export ${format.label}`"
-        @click="
-          () => {
-            format.export?.();
+            action?.();
           }
         "
       />

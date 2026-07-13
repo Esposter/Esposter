@@ -69,7 +69,7 @@ export const useResourceMutations = () => {
           updateResource: (input) => $trpc.webpage.updateResource.mutate(input),
         };
       default:
-        throw new InvalidOperationError(Operation.Read, type, "resource type is not editable in the explorer");
+        throw new InvalidOperationError(Operation.Read, type satisfies never, "resource type is not supported");
     }
   };
 };

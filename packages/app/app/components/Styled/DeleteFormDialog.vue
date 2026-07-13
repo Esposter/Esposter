@@ -15,7 +15,7 @@ defineSlots<{
 }>();
 const modelValue = defineModel<boolean>({ default: false });
 const { cardProps, confirmButtonProps, confirmName = "" } = defineProps<StyledDeleteFormDialogProps>();
-const emit = defineEmits<{ delete: [onComplete: () => void] }>();
+const emit = defineEmits<{ delete: [onComplete: (isSuccessful?: boolean) => void] }>();
 const confirmNameValue = ref("");
 
 watch(modelValue, (newModelValue) => {

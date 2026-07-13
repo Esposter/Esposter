@@ -25,11 +25,13 @@ const isStatusPillVisible = computed(
 const isUpdatedPillVisible = computed(
   () => Boolean(updatedFilter.value) || addedFilterTypes.value.includes(ResourceListFilterType.Updated),
 );
+// Keyed by filter type so adding a new ResourceListFilterType is a compile error here instead of a silent fallthrough
+const filterTypeVisibilityMap: Record<ResourceListFilterType, ComputedRef<boolean>> = {
+  [ResourceListFilterType.Status]: isStatusPillVisible,
+  [ResourceListFilterType.Updated]: isUpdatedPillVisible,
+};
 const availableFilterTypes = computed(() =>
-  [...ResourceListFilterTypes].filter((filterType) => {
-    if (filterType === ResourceListFilterType.Status) return !isStatusPillVisible.value;
-    else return !isUpdatedPillVisible.value;
-  }),
+  [...ResourceListFilterTypes].filter((filterType) => !filterTypeVisibilityMap[filterType].value),
 );
 const removeFilter = (filterType: ResourceListFilterType) => {
   if (filterType === ResourceListFilterType.Status) status.value = "";

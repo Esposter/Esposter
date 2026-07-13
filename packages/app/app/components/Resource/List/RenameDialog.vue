@@ -28,6 +28,7 @@ const renameValue = ref(resource.name);
     :confirm-button-props="{ text: 'Save' }"
     @submit="
       async (_event, onComplete) => {
+        let isSuccessful = false;
         await executeMutation(
           () => getResourceMutations(resource.type).updateResource({ id: resource.id, name: renameValue }),
           {
@@ -36,10 +37,11 @@ const renameValue = ref(resource.name);
             },
             onSuccess: () => {
               emit('update');
+              isSuccessful = true;
             },
           },
         );
-        onComplete();
+        onComplete(isSuccessful);
       }
     "
   >

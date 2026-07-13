@@ -28,6 +28,7 @@ const deletedNotificationTitle = computed(() => `Deleted "${resource.name}"`);
     :confirm-name="resource.name"
     @delete="
       async (onComplete) => {
+        let isSuccessful = false;
         // The batch procedure with one id shares the exact cleanup path (row + publication + blob directory)
         await executeMutation(() => $trpc.resource.deleteResources.mutate({ ids: [resource.id] }), {
           onError: (error) => {
@@ -36,9 +37,10 @@ const deletedNotificationTitle = computed(() => `Deleted "${resource.name}"`);
           onSuccess: () => {
             createNotification({ severity: 'success', title: deletedNotificationTitle });
             emit('delete');
+            isSuccessful = true;
           },
         });
-        onComplete();
+        onComplete(isSuccessful);
       }
     "
   >

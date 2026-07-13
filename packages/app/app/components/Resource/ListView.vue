@@ -35,8 +35,14 @@ const {
   updatedBefore,
   updatedFilter,
 } = useResourceListFilters();
-const search = refDebounced(searchQuery, RESOURCE_SEARCH_DEBOUNCE_MS);
-const { count, error, isLoading, items, readResources, readResourcesPage, refresh } = useReadResources({
+// Typing buffers in a local clone so router.replace isn't spammed per keystroke;
+// useCloned keeps route → field flowing (back-nav, clear filters) while the debounced value follows field → route
+const { cloned: searchInput } = useCloned(searchQuery);
+const search = refDebounced(searchInput, RESOURCE_SEARCH_DEBOUNCE_MS);
+watch(search, (newSearch) => {
+  searchQuery.value = newSearch;
+});
+const { count, createResourcesPageReader, error, isLoading, items, readResources, refresh } = useReadResources({
   searchQuery: search,
   status,
   types,
@@ -98,7 +104,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
     <template v-if="isSearchable">
       <v-toolbar px-4 py-2 b-1 b-border b-solid flex flex-wrap gap-2 items-center>
         <v-text-field
-          v-model="searchQuery"
+          v-model="searchInput"
           clearable
           density="comfortable"
           hide-details
@@ -118,7 +124,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         <StyledTooltipIconButton
           icon="mdi-file-export-outline"
           text="Export CSV"
-          @click="exportAllResourcesCsv(readResourcesPage)"
+          @click="exportAllResourcesCsv(createResourcesPageReader())"
         />
         <StyledTooltipIconButton icon="mdi-refresh" text="Refresh" @click="refresh()" />
         <StyledTooltipIconButton v-if="closeTo" icon="mdi-close" text="Close" :button-props="{ to: closeTo }" />
@@ -185,10 +191,12 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         <NuxtLink text-info :to="RoutePath.Resource(item.id)" @click.stop>{{ item.name }}</NuxtLink>
       </template>
       <template #[`item.actions`]="{ item }">
+        <!-- stop keeps the row's navigateTo from double-firing on top of the button's own `to` -->
         <StyledTooltipIconButton
           icon="mdi-open-in-new"
           text="Open"
           :button-props="{ to: RoutePath.Resource(item.id) }"
+          @click.stop
         />
       </template>
       <template #group-header="{ columns, isGroupOpen, item, toggleGroup }">
