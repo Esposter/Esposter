@@ -18,7 +18,7 @@ const isOpen = useSingletonDialog(renamingId);
 const notificationStore = useNotificationStore();
 const { createNotification } = notificationStore;
 const getResourceMutations = useResourceMutations();
-const renameValue = ref(resource.name);
+const editedName = ref(resource.name);
 </script>
 
 <template>
@@ -30,7 +30,7 @@ const renameValue = ref(resource.name);
       async (_event, onComplete) => {
         let isSuccessful = false;
         await executeMutation(
-          () => getResourceMutations(resource.type).updateResource({ id: resource.id, name: renameValue }),
+          () => getResourceMutations(resource.type).updateResource({ id: resource.id, name: editedName }),
           {
             onError: (error) => {
               createNotification({ severity: 'error', title: error.message });
@@ -45,6 +45,6 @@ const renameValue = ref(resource.name);
       }
     "
   >
-    <v-text-field v-model="renameValue" autofocus label="Name" :rules="resourceNameRules" />
+    <v-text-field v-model="editedName" autofocus label="Name" :rules="resourceNameRules" />
   </StyledFormDialog>
 </template>

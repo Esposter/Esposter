@@ -5,7 +5,7 @@ import { getResultAsync } from "@esposter/shared";
 
 interface MutationOptions<TResult> {
   applyOptimistic?: () => () => void;
-  onError?: (error: Error) => void;
+  onError?: (error: Error) => Promisable<void>;
   onSuccess?: (result: TResult) => Promisable<void>;
 }
 
@@ -23,10 +23,10 @@ export const useMutation = () => {
       async (result) => {
         if (!checkIsStale()) await onSuccess?.(result);
       },
-      (error) => {
+      async (error) => {
         if (checkIsStale()) return;
         rollback?.();
-        if (onError) onError(error);
+        if (onError) await onError(error);
         else createAlert(error.message, "error");
       },
     );

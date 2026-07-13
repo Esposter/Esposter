@@ -9,7 +9,7 @@ interface ResourceRenameDialogButtonProps {
 }
 
 const { rename, resource } = defineProps<ResourceRenameDialogButtonProps>();
-const renameValue = ref(resource.name);
+const editedName = ref(resource.name);
 </script>
 
 <template>
@@ -18,7 +18,7 @@ const renameValue = ref(resource.name);
     :confirm-button-props="{ text: 'Save' }"
     @submit="
       async (_event, onComplete) => {
-        await rename(renameValue);
+        await rename(editedName);
         onComplete();
       }
     "
@@ -28,13 +28,13 @@ const renameValue = ref(resource.name);
         prepend-icon="mdi-pencil"
         variant="text"
         @click="
-          renameValue = resource.name;
+          editedName = resource.name;
           updateIsOpen(true);
         "
       >
         Rename
       </v-btn>
     </template>
-    <v-text-field v-model="renameValue" autofocus label="Name" :rules="resourceNameRules" />
+    <v-text-field v-model="editedName" autofocus label="Name" :rules="resourceNameRules" />
   </StyledFormDialog>
 </template>
