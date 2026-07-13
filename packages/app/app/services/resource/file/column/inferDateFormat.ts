@@ -6,5 +6,5 @@ export const inferDateFormat = (values: string[]): DateFormat => {
   const normalizedValues = values.map((value) => normalizeString(value)).filter(Boolean);
   for (const format of DateFormats)
     if (normalizedValues.every((value) => dayjs(value, format, true).isValid())) return format;
-  return takeOne([...DateFormats]);
+  return takeOne(DateFormats);
 };

@@ -5,8 +5,6 @@ describe("grandmaUpgradeMap", () => {
   test("sorted by price", () => {
     expect.hasAssertions();
 
-    const grandmaUpgrades = [...GrandmaUpgrades];
-
-    expect(grandmaUpgrades).toStrictEqual(grandmaUpgrades.toSorted((a, b) => a.price - b.price));
+    expect(GrandmaUpgrades).toStrictEqual(GrandmaUpgrades.toSorted((a, b) => a.price - b.price));
   });
 });

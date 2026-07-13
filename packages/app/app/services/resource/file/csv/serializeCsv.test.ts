@@ -87,6 +87,17 @@ describe(serializeCsv, () => {
     expect(text).toBe('a\n"0\n1"');
   });
 
+  test("escapes cells containing carriage returns", async () => {
+    expect.hasAssertions();
+
+    const dataSource = createDataSource([createColumn("a")], [new Row({ data: { a: "0\r1" } })]);
+    const item = defaultSettings;
+    const blob = await serializeCsv(dataSource, item, MIME_TYPE);
+    const text = await blob.text();
+
+    expect(text).toBe('a\n"0\r1"');
+  });
+
   test("returns blob with correct mime type", async () => {
     expect.hasAssertions();
 

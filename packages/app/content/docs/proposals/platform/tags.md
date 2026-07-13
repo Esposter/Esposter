@@ -32,7 +32,7 @@ flowchart LR
 ## Components
 
 - Essentials gains a **Tags** row: `{name}: {value}` chips + an Edit link opening a tag editor dialog (rows of name/value fields, add/remove)
-- `/all` filter pill **Tag** ([list filters & views](/docs/proposals/platform/list-filters-and-views)): name + optional value; tag chips could later render as an opt-in column via the column chooser
+- `/all` filter pill **Tag** ([list filters & views](/docs/platform/list-filters-and-views)): name + optional value; tag chips could later render as an opt-in column via the column chooser
 
 ## Key files
 

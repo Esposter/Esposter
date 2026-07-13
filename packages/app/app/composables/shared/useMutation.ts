@@ -5,6 +5,7 @@ import { getResultAsync } from "@esposter/shared";
 
 interface MutationOptions<TResult> {
   applyOptimistic?: () => () => void;
+  onError?: (error: Error) => Promisable<void>;
   onSuccess?: (result: TResult) => Promisable<void>;
 }
 
@@ -13,7 +14,7 @@ export const useMutation = () => {
   let callId = 0;
   return async <TResult>(
     mutate: () => Promise<TResult>,
-    { applyOptimistic, onSuccess }: MutationOptions<TResult> = {},
+    { applyOptimistic, onError, onSuccess }: MutationOptions<TResult> = {},
   ) => {
     const id = ++callId;
     const checkIsStale = () => id !== callId;
@@ -22,10 +23,11 @@ export const useMutation = () => {
       async (result) => {
         if (!checkIsStale()) await onSuccess?.(result);
       },
-      (error) => {
+      async (error) => {
         if (checkIsStale()) return;
         rollback?.();
-        createAlert(error.message, "error");
+        if (onError) await onError(error);
+        else createAlert(error.message, "error");
       },
     );
   };

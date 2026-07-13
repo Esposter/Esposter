@@ -45,6 +45,19 @@ describe(useMutation, () => {
     expect(alerts.value).toHaveLength(1);
   });
 
+  test("routes failure to onError instead of the default alert", async () => {
+    expect.hasAssertions();
+
+    const onError = vi.fn<(error: Error) => void>();
+    const executeMutation = useMutation();
+    const { alerts } = storeToRefs(useAlertStore());
+    const error = new Error("error");
+    await executeMutation(() => Promise.reject(error), { onError });
+
+    expect(onError).toHaveBeenCalledExactlyOnceWith(error);
+    expect(alerts.value).toHaveLength(0);
+  });
+
   test("does not roll back a superseded call once a newer one has started", async () => {
     expect.hasAssertions();
 

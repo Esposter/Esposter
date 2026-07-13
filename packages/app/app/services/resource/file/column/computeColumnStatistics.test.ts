@@ -147,7 +147,7 @@ describe(computeColumnStatistics, () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource(
-      [createDateColumn("", takeOne([...DateFormats]))],
+      [createDateColumn("", takeOne(DateFormats))],
       [
         createRow({ "": "1970-01-01" }),
         createRow({ "": "1970-01-02" }),

@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export enum EffectType {
   Additive = "Additive",
   // Adds value based on number of specific buildings we have
@@ -9,6 +7,4 @@ export enum EffectType {
   Multiplicative = "Multiplicative",
 }
 
-export const effectTypeSchema = z.enum(EffectType) satisfies z.ZodType<EffectType>;
-
-export const EffectTypes: ReadonlySet<EffectType> = new Set(Object.values(EffectType));
+export const EffectTypes = Object.values(EffectType);

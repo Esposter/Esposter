@@ -1,4 +1,5 @@
 import { KEY_CHORD_TIMEOUT_MS } from "@/services/resource/constants";
+import { useNotificationStore } from "@/store/notification";
 import { useSearchDialogStore } from "@/store/resource/searchDialog";
 import { useShortcutsOverlayStore } from "@/store/resource/shortcutsOverlay";
 import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
@@ -9,6 +10,8 @@ export const useResourceKeyboardShortcuts = () => {
   const { isOpen: isSearchDialogOpen } = storeToRefs(searchDialogStore);
   const shortcutsOverlayStore = useShortcutsOverlayStore();
   const { isOpen: isShortcutsOverlayOpen } = storeToRefs(shortcutsOverlayStore);
+  const notificationStore = useNotificationStore();
+  const { isPanelOpen: isNotificationPanelOpen } = storeToRefs(notificationStore);
   let chordStartedAtMs = 0;
 
   useEventListener("keydown", async (event) => {
@@ -35,5 +38,6 @@ export const useResourceKeyboardShortcuts = () => {
       event.preventDefault();
       isSearchDialogOpen.value = true;
     } else if (key === "a") await navigateTo(RoutePath.ResourcesAll);
+    else if (key === "n") isNotificationPanelOpen.value = true;
   });
 };

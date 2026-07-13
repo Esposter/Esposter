@@ -1,44 +1,66 @@
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
+import type { ResourceListFilters } from "@/models/resource/list/ResourceListFilters";
+import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatusFilter";
+import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import type { Resource, ResourceType } from "@esposter/db-schema";
 
-import { withFinalizerAsync } from "@esposter/shared";
+import { getResourceFilterInput } from "@/services/resource/list/getResourceFilterInput";
+import { getResultAsync, noop } from "@esposter/shared";
 
-export const useReadResources = (searchQuery: Ref<string>, types: Ref<ResourceType[]>) => {
+export const useReadResources = ({
+  searchQuery = ref(""),
+  status = ref<"" | ResourceStatusFilter>(""),
+  types = ref<ResourceType[]>([]),
+  updatedAfter = ref<Date>(),
+  updatedBefore = ref<Date>(),
+  updatedFilter = ref<"" | ResourceUpdatedFilter>(""),
+}: Partial<ResourceListFilters> = {}) => {
   const { $trpc } = useNuxtApp();
   const items = ref<Resource[]>([]);
   const count = ref(0);
   const isLoading = ref(false);
-  const readResources = async ({
-    itemsPerPage,
-    page,
-    sortBy,
-  }: {
-    itemsPerPage: number;
-    page: number;
-    sortBy: SortItem<keyof Resource>[];
-  }) => {
-    const searchQueryValue = searchQuery.value || undefined;
-    const typesValue = types.value.length > 0 ? types.value : undefined;
+  const error = ref("");
+  // Remembered so Refresh / error Retry can re-run the exact query the table last asked for
+  let lastOptions: ReadResourcesOptions | undefined;
+  const getFilterInput = () =>
+    getResourceFilterInput({
+      searchQuery: searchQuery.value,
+      status: status.value,
+      types: types.value,
+      updatedAfter: updatedAfter.value,
+      updatedBefore: updatedBefore.value,
+      updatedFilter: updatedFilter.value,
+    });
+  const readResources = async (options: ReadResourcesOptions) => {
+    lastOptions = options;
+    const { itemsPerPage, page, sortBy } = options;
+    const filterInput = getFilterInput();
     isLoading.value = true;
-    await withFinalizerAsync(
-      async () => {
-        const [newCount, { items: newItems }] = await Promise.all([
-          $trpc.resource.count.query({ searchQuery: searchQueryValue, types: typesValue }),
-          $trpc.resource.readResources.query({
-            limit: itemsPerPage,
-            offset: (page - 1) * itemsPerPage,
-            searchQuery: searchQueryValue,
-            sortBy,
-            types: typesValue,
-          }),
-        ]);
-        count.value = newCount;
-        items.value = newItems;
-      },
-      () => {
-        isLoading.value = false;
-      },
-    );
+    error.value = "";
+    await getResultAsync(async () => {
+      const [newCount, { items: newItems }] = await Promise.all([
+        $trpc.resource.count.query(filterInput),
+        $trpc.resource.readResources.query({
+          limit: itemsPerPage,
+          offset: (page - 1) * itemsPerPage,
+          sortBy,
+          ...filterInput,
+        }),
+      ]);
+      count.value = newCount;
+      items.value = newItems;
+    }).match(noop, (readError) => {
+      error.value = readError.message;
+    });
+    isLoading.value = false;
   };
-  return { count, isLoading, items, readResources };
+  // Snapshots the filter + sort at call time so a chunked consumer (CSV export) pages one consistent query
+  // Even if the filters change mid-export
+  const createResourcesPageReader = () => {
+    const input = { sortBy: lastOptions?.sortBy ?? [], ...getFilterInput() };
+    return ({ limit, offset }: { limit: number; offset: number }) =>
+      $trpc.resource.readResources.query({ limit, offset, ...input });
+  };
+  const refresh = () => (lastOptions ? readResources(lastOptions) : Promise.resolve());
+  return { count, createResourcesPageReader, error, isLoading, items, readResources, refresh };
 };

@@ -5,7 +5,7 @@ import { FilterTypeHasIconMap } from "@/models/message/FilterTypeHasIconMap";
 import { FilterTypeHases } from "@esposter/db-schema";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
-const items = Array.from(FilterTypeHases, (filterTypeHas) => ({
+const items = FilterTypeHases.map((filterTypeHas) => ({
   icon: FilterTypeHasIconMap[filterTypeHas],
   label: filterTypeHas,
   value: filterTypeHas,

@@ -103,7 +103,9 @@ const defaults: DefaultsOptions = {
   VToolbar: { color: "surface" },
   VToolbarTitle: {
     style: {
+      // Neutralise Vuetify's default title margin so the padding below is the single source of horizontal spacing
       marginInlineStart: 0,
+      paddingLeft: "1rem",
     },
   },
   VTooltip: { location: "top" },

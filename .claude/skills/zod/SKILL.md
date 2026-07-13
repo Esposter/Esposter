@@ -112,6 +112,11 @@ Rules:
 
 Always use the `z` namespace export: `z.ZodType`, `z.ZodError`. Never named imports like `import type { ZodType }`.
 
+## Inferring Types from a Schema
+
+- **`type X = z.infer<typeof xSchema>`, never `interface X extends z.infer<typeof xSchema> {}`.** The empty-extends-interface form is pure indirection — it only exists to rename the inferred type and reads as if it adds members when it adds none. Use a plain `type` alias.
+- **Declare the `type` directly beneath its schema and reference it by name** — the alias lives next to the `const xSchema = z.object({...})` it derives from (the standard schema-then-type pairing), and use sites refer to `X`. Don't inline `z.infer<typeof xSchema>` at the use site — the named type beside the schema documents the relationship and keeps call signatures readable.
+
 ## Zod 4 Shorthand APIs
 
 **Never use the old chained syntax** — Zod 4 promotes format validators and numeric refinements to top-level functions:

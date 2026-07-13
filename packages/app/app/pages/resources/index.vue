@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { RECENT_RESOURCES_LIMIT } from "@/services/resource/constants";
+import { DEFAULT_RESOURCE_SORT_BY, RECENT_RESOURCES_LIMIT } from "@/services/resource/constants";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
 useResourceKeyboardShortcuts();
 
-const { isLoading, items: recentResources, readResources } = useReadResources(ref(""), ref([]));
-await readResources({
-  itemsPerPage: RECENT_RESOURCES_LIMIT,
-  page: 1,
-  sortBy: [{ key: "updatedAt", order: SortOrder.Desc }],
+const { isLoading, items: recentResources, readResources } = useReadResources();
+// Fetched after mount (not awaited in setup) so the recents card shows its skeleton instead of blocking navigation
+const hasLoaded = ref(false);
+
+onMounted(async () => {
+  await readResources({ itemsPerPage: RECENT_RESOURCES_LIMIT, page: 1, sortBy: [...DEFAULT_RESOURCE_SORT_BY] });
+  hasLoaded.value = true;
 });
 </script>
 
@@ -49,8 +50,9 @@ await readResources({
                   <v-btn append-icon="mdi-arrow-right" variant="text" :to="RoutePath.ResourcesAll">See all</v-btn>
                 </div>
               </v-card-item>
+              <StyledSkeleton v-if="isLoading || !hasLoaded" type="list-item-two-line@5" />
               <StyledEmptyState
-                v-if="!isLoading && recentResources.length === 0"
+                v-else-if="recentResources.length === 0"
                 description="Create a resource and it will show up here."
                 icon="mdi-folder-multiple-outline"
                 title="No resources yet"

@@ -1,18 +1,18 @@
 import type { MimeType } from "#shared/models/file/MimeType";
 
-import { useAlertStore } from "@/store/alert";
+import { useNotificationStore } from "@/store/notification";
 import { getResultAsync, noop, normalizeString } from "@esposter/shared";
 import { showSaveFilePicker } from "show-open-file-picker";
 
 export const useExportFile = () => {
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
+  const notificationStore = useNotificationStore();
+  const { createNotification } = notificationStore;
   return (
     serialize: (type: MimeType) => Promise<Blob>,
     fileName: string,
     mimeType: MimeType,
     accept: string,
-  ): Promise<void> =>
+  ): Promise<boolean> =>
     getResultAsync(async () => {
       const fileHandle = await showSaveFilePicker({
         suggestedName: fileName,
@@ -38,8 +38,13 @@ export const useExportFile = () => {
           }),
         ),
       )
-      .match(noop, (error) => {
-        if (error instanceof Error && error.name === "AbortError") return;
-        createAlert(error instanceof Error ? error.message : String(error), "error");
-      });
+      .match(
+        () => true,
+        (error) => {
+          // A cancelled save picker is not a completed export, so it reports false without a notification
+          if (!(error instanceof Error && error.name === "AbortError"))
+            createNotification({ severity: "error", title: error instanceof Error ? error.message : String(error) });
+          return false;
+        },
+      );
 };

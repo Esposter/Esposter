@@ -5,11 +5,8 @@ import { TitleKey } from "#shared/models/dungeons/keys/image/TitleKey";
 import { ImageKey as UIImageKey } from "#shared/models/dungeons/keys/image/UI/ImageKey";
 import { WorldKey } from "#shared/models/dungeons/keys/image/world/WorldKey";
 import { mergeObjectsStrict } from "@esposter/shared";
-import { z } from "zod";
 
 export const ImageKey = mergeObjectsStrict(BattleKey, InventoryKey, MonsterPartyKey, TitleKey, WorldKey, UIImageKey);
 export type ImageKey = BattleKey | InventoryKey | MonsterPartyKey | TitleKey | UIImageKey | WorldKey;
-
-export const imageKeySchema = z.enum(ImageKey) satisfies z.ZodType<ImageKey>;
 
 export const ImageKeys: ReadonlySet<ImageKey> = new Set(Object.values(ImageKey));

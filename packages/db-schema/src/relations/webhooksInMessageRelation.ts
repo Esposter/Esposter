@@ -1,7 +1,3 @@
-import type { RoomInMessage } from "@/schema/roomsInMessage";
-import type { User } from "@/schema/users";
-import type { WebhookInMessage } from "@/schema/webhooksInMessage";
-
 import { schema } from "@/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -29,4 +25,3 @@ export const WebhookInMessageRelations = {
   roomInMessage: true,
   user: true,
 } as const;
-export type WebhookInMessageWithRelations = WebhookInMessage & { roomInMessage: RoomInMessage; user: User };

@@ -17,4 +17,4 @@ New-user onboarding exists as a goal, or one type (Survey is the obvious first) 
 
 ## Cheaper interim
 
-[Duplicate](/docs/proposals/platform/resource-page-parity) an existing resource and edit the copy.
+[Duplicate](/docs/platform/resource-page-parity) an existing resource and edit the copy.

@@ -30,7 +30,14 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
     Infrastructure: ["push-notifications", "offline-cache"],
   },
   platform: {
-    "Explorer & shell": ["resource-explorer", "shell-cohesion", "resource-consolidation"],
+    "Explorer & shell": [
+      "resource-explorer",
+      "list-filters-and-views",
+      "resource-page-parity",
+      "notifications",
+      "shell-cohesion",
+      "resource-consolidation",
+    ],
     Resources: ["file-resource", "survey-resource"],
     Editors: ["dashboard-data-binding", "email-personalization"],
   },

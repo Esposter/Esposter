@@ -10,7 +10,6 @@ const { createFilter } = searchMessageStore;
 const { activeSelectedFilter, isSearchQueryEmpty, menu, searchQuery, selectedFilters } =
   storeToRefs(searchMessageStore);
 const searchQueryOnFocus = ref("");
-const filterTypes = [...FilterTypes];
 const searchInput = useTemplateRef("searchInput");
 const blur = () => {
   const input = searchInput.value?.$el.querySelector("input");
@@ -73,7 +72,7 @@ const blur = () => {
 
         if (value[value.length - 1] === ':') {
           const normalizedValue = normalizeString(value);
-          const filterType = filterTypes.find(
+          const filterType = FilterTypes.find(
             (type) => type.toLowerCase() === normalizedValue.slice(0, normalizedValue.length - 1).toLowerCase(),
           );
           if (filterType) {

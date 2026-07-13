@@ -12,7 +12,7 @@ const headers = [
   { key: "chart", sortable: false, title: "" },
   { key: "columnName", sortable: false, title: "Column" },
   { key: "columnType", sortable: false, title: "Type" },
-  ...Array.from(ColumnStatisticsDefinitions, ({ key, sortable, title }) => ({ key, sortable, title })),
+  ...ColumnStatisticsDefinitions.map(({ key, sortable, title }) => ({ key, sortable, title })),
 ];
 </script>
 

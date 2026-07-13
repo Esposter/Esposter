@@ -96,7 +96,7 @@ const isCopied = ref(false);
       :placeholder="`${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite('example')}`"
     >
       <template #append-inner>
-        <StyledClipboardButton w-20 :source="inviteLink" @copied="isCopied = $event" @create="createInvite" />
+        <StyledClipboardButton w-20 :source="inviteLink" @update:copied="isCopied = $event" @create="createInvite" />
       </template>
     </v-text-field>
     <div v-if="inviteStateText" text-gray pt-2 text-title-small>{{ inviteStateText }}</div>

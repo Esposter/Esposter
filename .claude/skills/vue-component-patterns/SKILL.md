@@ -1,6 +1,6 @@
 ---
 name: vue-component-patterns
-description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, slot extraction, and same-level abstraction. Apply when designing or refactoring Vue components.
+description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, slot extraction, same-level abstraction, present-tense emit names, inline template event handlers, and useCloned local copies over ref + watch. Apply when designing or refactoring Vue components.
 ---
 
 # Vue Component Patterns (Esposter)
@@ -82,6 +82,23 @@ const nickname = ref(userToRoom.nickname);
 
 **When to apply:** any component that reads from a store/API and initializes a local editable `ref` from that data, where the store can be empty at component creation time.
 
+## Local Copies of Reactive Sources — `useCloned`, Never `ref` + `watch`
+
+A local editable copy of a reactive source (edit drafts, buffered inputs, slider values) is always VueUse `useCloned` — never a hand-rolled `ref(source.value)` plus a `watch` syncing source → copy:
+
+```ts
+// ❌ const searchInput = ref(searchQuery.value);
+//    watch(searchQuery, (newSearchQuery) => { searchInput.value = newSearchQuery; });
+// ✅
+const { cloned: searchInput } = useCloned(searchQuery);
+const { cloned: editedName } = useCloned(() => name); // getter form for props/store fields
+```
+
+- Destructure `sync` when a Reset button must re-copy on demand (`Resource/File/Row/EditDialog.vue`)
+- The write-back direction (copy → source) is a genuine side effect — a single `watch` (often on a `refDebounced` of the copy) or an explicit save action is fine there
+
+More generally, before writing any `watch`, express it as a `computed`, a template `v-if`, or a purpose-built VueUse composable first. Reserve `watch` for side effects that can't be reactive values: emits, navigation, DOM calls (`focus`/`scrollIntoView`/measure), fetch-on-change, library bridges (Phaser/tiptap/LiveKit), and state resets/clamps triggered by another value changing.
+
 ## Generic SFC Components
 
 When a component's model value (or other prop) type depends on an enum/discriminant key, make the component generic:
@@ -146,7 +163,36 @@ A **derived/computed** value still fits the literal type as long as it can only 
 
 **Exception — genuinely two-way boolean.** Use the full `boolean` type only when the prop carries a real, changeable boolean: a `v-model` / `defineModel<boolean>()`, or a ref/computed whose value legitimately flips **both** ways at the call site. A flag that only ever toggles away from its default is not this case — keep it a literal.
 
-## Component Co-location (Folder = Auto-import Prefix)
+## Emits — Present-Tense Event Names
+
+Emit names are **present-tense verbs**: `delete`, `update`, `create`, `save`, `submit` — never past tense (`deleted`, `updated`, `copied`). The event names the action the parent should handle, not a completed fact; past-tense names also drift from Vue/DOM convention (`click`, `submit`, `change`).
+
+```ts
+// ❌ const emit = defineEmits<{ deleted: []; updated: [] }>();
+// ✅
+const emit = defineEmits<{ delete: []; update: [] }>();
+```
+
+For state-sync emits, use the `update:x` form where `x` is the state name (`"update:copied": [boolean]`) — the verb stays present tense; the state name may be any shape.
+
+## Event Handlers — Inline in the Template Binding
+
+Inline handler logic directly in the `@event` binding instead of declaring a one-use `onSubmit`/`deleteResource` function in script — the binding reuses the emitter's parameter inference (`onComplete`, `_event`, slot props) that a script-level function would have to re-type.
+
+```vue
+<!-- ❌ @submit="onSubmit" with const onSubmit = async () => {...} in script -->
+<!-- ✅ -->
+<StyledFormDialog
+  @submit="
+    async (_event, onComplete) => {
+      await executeMutation(() => $trpc.resource.deleteResources.mutate({ ids: [resource.id] }));
+      onComplete();
+    }
+  "
+/>
+```
+
+Extract to script only when the template genuinely can't express it: globals unreachable from templates (`window`), logic reused across multiple bindings, or literals a template attribute can't carry (a string containing double quotes → hoist just that string to a `computed`).
 
 **Group components with the same prefix into a folder** — Nuxt auto-imports with the folder path as prefix, so co-located components share it without repeating it in filenames.
 

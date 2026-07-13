@@ -57,6 +57,7 @@ describe(defineVuetifyConfiguration, () => {
           "VToolbarTitle": {
             "style": {
               "marginInlineStart": 0,
+              "paddingLeft": "1rem",
             },
           },
           "VTooltip": {

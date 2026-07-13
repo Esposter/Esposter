@@ -39,6 +39,12 @@ const items = computed<ListLinkItem[]>(() => {
       icon: "mdi-lock",
       title: "Privacy Policy",
     },
+    {
+      external: true,
+      href: RoutePath.Github,
+      icon: "mdi-github",
+      title: "Github",
+    },
   ];
   return session.value
     ? [

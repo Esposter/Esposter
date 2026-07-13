@@ -45,7 +45,7 @@ stateDiagram-v2
 
 - `/resources/recycle-bin` page (linked from the `/all` toolbar overflow): `StyledDataTableServer` of deleted resources (type, name, deleted at, "purges in {n}d"), row commands **Restore** / **Delete forever** (purge keeps the type-the-name guard); empty state
 - Delete confirmations reworded: "moves to the Recycle bin for 30 days"
-- Post-delete notification gains a **Restore** action ([notifications](/docs/proposals/platform/notifications)) — the undo toast
+- Post-delete notification gains a **Restore** action ([notifications](/docs/platform/notifications)) — the undo toast
 
 ## Key files
 

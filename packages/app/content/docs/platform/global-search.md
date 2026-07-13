@@ -73,4 +73,4 @@ With a query set the dropdown shows three groups plus a footer:
 - Explorer-scoped, not app chrome — the app bar spans every product area, so it carries no resource-search button; each area owns its own palette (messaging precedent).
 - The Services group answers "search matches type names" client-side ("survey" surfaces the Survey service row) — pushing type-title matching into the server `where` was rejected; the client already knows `ResourceDefinitionMap`. Seven types don't justify a fuzzy library; if the Pages/actions list ever grows, add `fuse.js`/`minisearch` (tiny, client-only) rather than server work.
 - Recent searches/views are per-device by design (localStorage); server-side history is not worth a table.
-- `G N` (notifications panel) ships with the [notifications proposal](/docs/proposals/platform/notifications) — there is no panel to open yet.
+- `G N` opens the [notifications](/docs/platform/notifications) bell panel — registered with the other `G`-chords.
