@@ -46,7 +46,7 @@ export const likeRouter = router({
           message: new NotFoundError(DatabaseEntityType.Post, input.postId).message,
         });
       // A like already exists for this (user, post) — the client desynced (double-click / stale feed);
-      // fail cleanly instead of surfacing the raw likes_pkey duplicate-key error as a 500
+      // Fail cleanly instead of surfacing the raw likes_pkey duplicate-key error as a 500
       else if (existingLike)
         throw new TRPCError({
           code: "BAD_REQUEST",

@@ -8,9 +8,9 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]
   const executeCreateLikeMutation = useMutation();
   const executeUpdateLikeMutation = useMutation();
   const executeDeleteLikeMutation = useMutation();
-  // createLike is non-optimistic (the row is server-generated), so viewerLike stays undefined for the whole
-  // round trip. Without this guard a rapid second vote sees viewerLike undefined too and fires another
-  // createLike, hitting the likes primary-key constraint. Track in-flight posts so only the first create runs.
+  // CreateLike is non-optimistic (the row is server-generated), so viewerLike stays undefined for the whole
+  // Round trip. Without this guard a rapid second vote sees viewerLike undefined too and fires another
+  // CreateLike, hitting the likes primary-key constraint. Track in-flight posts so only the first create runs.
   const pendingCreatePostIds = new Set<PostWithRelations["id"]>();
 
   // Server-generated like row — non-optimistic, applied in onSuccess
