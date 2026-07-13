@@ -8,7 +8,6 @@ import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { filterRouter } from "@@/server/trpc/routers/room/filter";
 import { RoomPermission, roomsInMessage } from "@esposter/db-schema";
-import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("room/filter", () => {
@@ -86,7 +85,7 @@ describe("room/filter", () => {
       const { user } = await mockSessionOnce(mockContext.db);
       await roomCaller.joinRoom(invite.id);
       const role = await roleCaller.createRole({
-        name: randomUUID(),
+        name: crypto.randomUUID(),
         permissions: RoomPermission.ManageRoom,
         position: 5,
         roomId,

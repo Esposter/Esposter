@@ -1,6 +1,5 @@
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { getMockSession } from "@@/server/trpc/context.test";
-import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 
 describe(getIsSameDevice, () => {
@@ -18,7 +17,10 @@ describe(getIsSameDevice, () => {
     const { session, user } = getMockSession();
 
     expect(
-      getIsSameDevice({ sessionId: session.id, userId: user.id }, { session: { ...session, id: randomUUID() }, user }),
+      getIsSameDevice(
+        { sessionId: session.id, userId: user.id },
+        { session: { ...session, id: crypto.randomUUID() }, user },
+      ),
     ).toBe(false);
   });
 });

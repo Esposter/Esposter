@@ -18,7 +18,6 @@ import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { AzureContainer, DatabaseEntityType, friends, INVITE_ID_LENGTH, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL, MockContainerDatabase } from "azure-mock";
-import { randomUUID } from "node:crypto";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("room", () => {
@@ -26,7 +25,7 @@ describe("room", () => {
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["room"]["directMessage"]>;
   let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
-  const roomId = randomUUID();
+  const roomId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
@@ -238,7 +237,7 @@ describe("room", () => {
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
-    const id = randomUUID();
+    const id = crypto.randomUUID();
 
     await expect(roomCaller.updateRoom({ id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,

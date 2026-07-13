@@ -10,7 +10,6 @@ import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("friend", () => {
@@ -84,7 +83,7 @@ describe("friend", () => {
   test("fails to delete non-existent friend", async () => {
     expect.hasAssertions();
 
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
     const friendshipId = getFriendshipId(getMockSession().user.id, userId);
 
     await expect(friendCaller.deleteFriend(userId)).rejects.toThrowErrorMatchingInlineSnapshot(

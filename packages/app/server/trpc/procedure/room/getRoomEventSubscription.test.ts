@@ -8,10 +8,9 @@ import { getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { getRoomEventSubscription } from "@@/server/trpc/procedure/room/getRoomEventSubscription";
 import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
-import { randomUUID } from "node:crypto";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
-const createDevice = (): Device => ({ sessionId: randomUUID(), userId: randomUUID() });
+const createDevice = (): Device => ({ sessionId: crypto.randomUUID(), userId: crypto.randomUUID() });
 
 describe(getRoomEventSubscription, () => {
   const { getMockContext, getRoleCaller, getRoomCaller, getRoomId } = setupRoomSuite();

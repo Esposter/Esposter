@@ -7,7 +7,6 @@ import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { BinaryOperator, users } from "@esposter/db-schema";
 import { and, eq, gt, gte, lt, lte, or } from "drizzle-orm";
-import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 
 describe(getCursorWhere, () => {
@@ -18,7 +17,7 @@ describe(getCursorWhere, () => {
     deletedAt: null,
     email: "",
     emailVerified: false,
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     image: "",
     name: "",
     updatedAt: createdAt,

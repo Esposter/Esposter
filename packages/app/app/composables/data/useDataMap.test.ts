@@ -1,10 +1,9 @@
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 
 describe(useDataMap, () => {
-  const id = randomUUID();
-  const otherId = randomUUID();
+  const id = crypto.randomUUID();
+  const otherId = crypto.randomUUID();
 
   test("stores data per id", () => {
     expect.hasAssertions();

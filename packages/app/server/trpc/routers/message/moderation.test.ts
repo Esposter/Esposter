@@ -18,7 +18,6 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
-import { randomUUID } from "node:crypto";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("moderation", () => {
@@ -377,7 +376,7 @@ describe("moderation", () => {
       await mockSessionOnce(mockContext.db, member);
 
       await expect(
-        moderationCaller.deleteBan({ roomId, userId: randomUUID() }),
+        moderationCaller.deleteBan({ roomId, userId: crypto.randomUUID() }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
   });

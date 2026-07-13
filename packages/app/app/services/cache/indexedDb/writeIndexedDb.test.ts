@@ -7,17 +7,16 @@ import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSu
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { RoomType, StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 
 describe(writeIndexedDb, () => {
   const { message1, message2, message3 } = setupIndexedDbSuite();
-  const userId = randomUUID();
+  const userId = crypto.randomUUID();
   const room = {
     categoryId: null,
     createdAt: new Date(),
     deletedAt: null,
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     image: "",
     isReadOnly: false,
     name: "",
@@ -56,7 +55,7 @@ describe(writeIndexedDb, () => {
     const { limit } = MessageIndexedDbStoreConfiguration;
     const messages = Array.from(
       { length: limit + 10 },
-      (_) => new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: randomUUID() }),
+      (_) => new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() }),
     );
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.partitionKey);
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);

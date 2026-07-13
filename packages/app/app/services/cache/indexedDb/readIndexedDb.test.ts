@@ -4,7 +4,6 @@ import { setupIndexedDbSuite } from "@/services/cache/indexedDb/setupIndexedDbSu
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 
 describe(readIndexedDb, () => {
@@ -59,7 +58,7 @@ describe(readIndexedDb, () => {
     const { limit } = MessageIndexedDbStoreConfiguration;
     const messages = Array.from(
       { length: limit + 10 },
-      (_) => new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: randomUUID() }),
+      (_) => new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() }),
     );
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.partitionKey);
 

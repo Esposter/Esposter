@@ -11,7 +11,6 @@ import { getFirstEmit } from "@@/server/trpc/routers/getFirstEmit.test";
 import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("friendRequest", () => {
@@ -104,7 +103,7 @@ describe("friendRequest", () => {
   test("fails send friend request to non-existent user", async () => {
     expect.hasAssertions();
 
-    const userId = randomUUID();
+    const userId = crypto.randomUUID();
 
     await expect(friendRequestCaller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, userId).message}]`,

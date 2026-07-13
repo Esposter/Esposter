@@ -8,7 +8,6 @@ import { users } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
-import { randomUUID } from "node:crypto";
 import { describe, vi } from "vitest";
 
 const mocks = vi.hoisted(() => {
@@ -17,7 +16,7 @@ const mocks = vi.hoisted(() => {
     createdAt,
     email: "",
     emailVerified: true,
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     image: null,
     name: "name",
     updatedAt: createdAt,
@@ -75,11 +74,11 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
         .insert(users)
         .values({
           createdAt,
-          email: randomUUID(),
+          email: crypto.randomUUID(),
           emailVerified: true,
-          id: randomUUID(),
-          image: randomUUID(),
-          name: randomUUID(),
+          id: crypto.randomUUID(),
+          image: crypto.randomUUID(),
+          name: crypto.randomUUID(),
           updatedAt: createdAt,
         })
         .returning(),
@@ -100,7 +99,7 @@ const createSession = (userId: string): Session => {
   return {
     createdAt,
     expiresAt: new Date(createdAt.getTime() + dayjs.duration(1, "day").asMilliseconds()),
-    id: randomUUID(),
+    id: crypto.randomUUID(),
     token: "",
     updatedAt: createdAt,
     userId,

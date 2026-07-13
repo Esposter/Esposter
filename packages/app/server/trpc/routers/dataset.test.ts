@@ -16,7 +16,6 @@ import { fileRouter } from "@@/server/trpc/routers/file";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { AZURE_MAX_PAGE_SIZE, resources } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("dataset", () => {
@@ -70,7 +69,7 @@ describe("dataset", () => {
     await surveyCaller.createSurveyResponse({
       model: { comments: "great", satisfaction: 5, wouldRecommend: true },
       partitionKey: newSurvey.id,
-      rowKey: randomUUID(),
+      rowKey: crypto.randomUUID(),
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
@@ -90,7 +89,7 @@ describe("dataset", () => {
       await surveyCaller.createSurveyResponse({
         model: { satisfaction: 1 },
         partitionKey: newSurvey.id,
-        rowKey: randomUUID(),
+        rowKey: crypto.randomUUID(),
       });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
@@ -113,7 +112,7 @@ describe("dataset", () => {
     await surveyCaller.createSurveyResponse({
       model: { satisfaction: 3 },
       partitionKey: newSurvey.id,
-      rowKey: randomUUID(),
+      rowKey: crypto.randomUUID(),
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
@@ -127,7 +126,7 @@ describe("dataset", () => {
     await surveyCaller.createSurveyResponse({
       model: { comments: ["a", "b"] },
       partitionKey: newSurvey.id,
-      rowKey: randomUUID(),
+      rowKey: crypto.randomUUID(),
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
@@ -149,7 +148,7 @@ describe("dataset", () => {
     expect.hasAssertions();
 
     await expect(
-      caller.readDataset({ id: randomUUID(), type: DatasetProviderType.SurveyResponses }),
+      caller.readDataset({ id: crypto.randomUUID(), type: DatasetProviderType.SurveyResponses }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 

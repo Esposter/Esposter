@@ -9,7 +9,6 @@ import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
 import { setupRoomSuite } from "@@/server/trpc/routers/setupRoomSuite.test";
 import { searchHistoriesInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("searchHistory", () => {
@@ -57,7 +56,7 @@ describe("searchHistory", () => {
     expect.hasAssertions();
 
     await expect(
-      searchHistoryCaller.readSearchHistories({ roomId: randomUUID() }),
+      searchHistoryCaller.readSearchHistories({ roomId: crypto.randomUUID() }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 

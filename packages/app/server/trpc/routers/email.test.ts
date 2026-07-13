@@ -10,7 +10,6 @@ import { emailRouter } from "@@/server/trpc/routers/email";
 import { resources, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
-import { randomUUID } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The generic resource-procedure matrix is covered once in createResourceProcedures.test.ts;
@@ -39,7 +38,7 @@ describe("email", () => {
 
     // The dataset binding is part of the round-trip so the schema provably preserves it
     const emailEditor = new EmailEditor({
-      datasetReference: { id: randomUUID(), type: DatasetProviderType.SurveyResponses },
+      datasetReference: { id: crypto.randomUUID(), type: DatasetProviderType.SurveyResponses },
     });
     await caller.saveResourceContent({
       content: emailEditor,
