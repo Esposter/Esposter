@@ -4,27 +4,20 @@ import { useSearchStore } from "@/store/message/room/search";
 const searchStore = useSearchStore();
 const { searchQuery } = storeToRefs(searchStore);
 const dialog = ref(false);
-
-onKeyStroke("k", (event) => {
-  if (event.ctrlKey || event.metaKey) {
-    event.preventDefault();
-    dialog.value = true;
-  }
-});
 </script>
 
 <template>
-  <v-dialog v-model="dialog">
-    <template #activator>
-      <v-btn text="Find or start a conversation" variant="outlined" @click="dialog = true" />
+  <StyledSearchDialog
+    v-model="dialog"
+    v-model:search-query="searchQuery"
+    hotkey="ctrl+k"
+    placeholder="Where would you like to go?"
+  >
+    <template #activator="{ updateIsOpen }">
+      <v-btn text="Find or start a conversation" variant="outlined" @click="updateIsOpen(true)" />
     </template>
-    <StyledCard>
-      <v-card-title>
-        <v-text-field v-model="searchQuery" placeholder="Where would you like to go?" hide-details />
-      </v-card-title>
-      <v-card-text overflow-y-auto>
-        <MessageModelRoomListSearched @update:room="dialog = false" />
-      </v-card-text>
-    </StyledCard>
-  </v-dialog>
+    <v-card-text overflow-y-auto>
+      <MessageModelRoomListSearched @update:room="dialog = false" />
+    </v-card-text>
+  </StyledSearchDialog>
 </template>

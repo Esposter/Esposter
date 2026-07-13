@@ -2,7 +2,6 @@
 import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
-import { withFinalizerAsync } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const blockStore = useBlockStore();
@@ -14,25 +13,17 @@ const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
 const searchQuery = ref("");
 const searchResults = ref<Awaited<ReturnType<typeof $trpc.friend.searchUsers.query>>>([]);
-const isSearching = ref(false);
+const { isPending } = useAutoSearch(searchQuery, {
+  reset: () => {
+    searchResults.value = [];
+  },
+  search: async (sanitizedSearchQuery, signal) => {
+    searchResults.value = await $trpc.friend.searchUsers.query(sanitizedSearchQuery, { signal });
+  },
+});
 const isFriend = (userId: string) => friends.value.some(({ id }) => id === userId);
 const hasSentRequest = (userId: string) => sentFriendRequests.value.some(({ receiverId }) => receiverId === userId);
 const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id === userId);
-const onSearch = async () => {
-  if (!searchQuery.value) {
-    searchResults.value = [];
-    return;
-  }
-  isSearching.value = true;
-  await withFinalizerAsync(
-    async () => {
-      searchResults.value = await $trpc.friend.searchUsers.query(searchQuery.value);
-    },
-    () => {
-      isSearching.value = false;
-    },
-  );
-};
 </script>
 
 <template>
@@ -44,8 +35,7 @@ const onSearch = async () => {
         placeholder="Search by name"
         hide-details
         clearable
-        @input="onSearch"
-        @click:clear="searchResults = []"
+        @click:clear="searchQuery = ''"
       />
     </div>
     <v-list v-if="searchResults.length > 0" mt-2 rd>
@@ -73,6 +63,6 @@ const onSearch = async () => {
         </template>
       </MessageFriendsUserListItem>
     </v-list>
-    <v-progress-linear v-if="isSearching" indeterminate mt-2 />
+    <v-progress-linear v-if="isPending" indeterminate mt-2 />
   </div>
 </template>

@@ -69,5 +69,6 @@ Both primitives alert on failure. Two neighbouring patterns stay on the lower-le
 
 - **Paginated / event-driven reads** (e.g. `useReadMessages`, `useDataset`) — own their own cursor/error state and surface failure inline rather than as an alert; they are not one-shot setup fetches, so `useQuery` doesn't fit.
 - **Local-only concurrency** (e.g. LiveKit virtual-background switching) — no server call, nothing to alert.
+- **Search-as-you-type reads** go through `useAutoSearch` (see [Search](/docs/architecture/search)) — it shares the `getResultAsync` → `createAlert` error stack but replaces `getConcurrentFunction` with an `AbortController`, cancelling the superseded request instead of merely ignoring its result.
 
 Device-coupled call operations that compose a local LiveKit step with a remote sync in one flow (`setCameraEnabled`, `setMuteEnabled`) stay hand-rolled — their error handling belongs to the composing `toggle*` action, not to a single mutation.
