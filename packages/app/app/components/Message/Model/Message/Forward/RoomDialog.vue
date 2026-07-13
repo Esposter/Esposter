@@ -42,6 +42,33 @@ const {
   true,
   true,
 );
+const executeMutation = useMutation();
+// Forwarded messages land in the target rooms via the subscription echo — non-optimistic
+const forwardMessage = async () => {
+  if (!forward.value) return;
+  const { partitionKey, rowKey } = forward.value;
+  await executeMutation(
+    () =>
+      $trpc.message.forwardMessage.mutate({
+        message: messageInput.value,
+        partitionKey,
+        roomIds: roomIds.value,
+        rowKey,
+      }),
+    {
+      onSuccess: async () => {
+        if (roomIds.value.length === 1) {
+          await navigateTo(RoutePath.Messages(takeOne(roomIds.value)));
+          createAlert("Message forwarded!", "success", { icon: "mdi-share", location: "top center" });
+        }
+        dialog.value = false;
+        searchQuery.value = "";
+        roomIds.value = [];
+        messageInput.value = "";
+      },
+    },
+  );
+};
 </script>
 
 <template>
@@ -80,21 +107,7 @@ const {
             disabled: roomIds.length === 0,
             text: `Send ${roomIds.length > 1 ? `(${roomIds.length})` : ''}`,
           }"
-          @click="
-            async () => {
-              if (!forward) return;
-              const { partitionKey, rowKey } = forward;
-              await $trpc.message.forwardMessage.mutate({ partitionKey, rowKey, roomIds, message: messageInput });
-              if (roomIds.length === 1) {
-                await navigateTo(RoutePath.Messages(takeOne(roomIds)));
-                createAlert('Message forwarded!', 'success', { location: 'top center', icon: 'mdi-share' });
-              }
-              dialog = false;
-              searchQuery = '';
-              roomIds = [];
-              messageInput = '';
-            }
-          "
+          @click="forwardMessage"
         />
       </v-card-actions>
     </StyledCard>

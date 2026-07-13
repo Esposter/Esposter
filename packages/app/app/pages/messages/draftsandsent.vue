@@ -14,7 +14,7 @@ await readDraftsAndSent();
     <template #left>
       <MessageLeftSideBar />
     </template>
-    <v-sheet flex flex-col h-full min-h-0>
+    <v-sheet flex flex-col h-full>
       <div px-6 pt-5>
         <h1 font-bold text-headline-small>Drafts & sent</h1>
         <MessageDraftsAndSentTabs v-model="tab" />

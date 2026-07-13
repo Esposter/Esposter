@@ -2,7 +2,7 @@ import type { SourceMirrorManifest } from "@/models/exec/wsl/SourceMirrorManifes
 
 import { SourceMirrorEntryType } from "@/models/exec/wsl/SourceMirrorEntryType";
 import { getResult, noop } from "@esposter/shared";
-import { lstatSync, readdirSync, readlinkSync, statSync } from "node:fs";
+import { lstatSync, readdirSync, readlinkSync } from "node:fs";
 import { join } from "node:path";
 // Walk the host working tree on the native filesystem and record every mirrored entry's change signature, keyed by
 // Posix relative path. This is the stat-walk an rsync quick-check would do, moved off v9fs onto the host FS where it
@@ -25,10 +25,11 @@ export const buildSourceMirrorManifest = (cwd: string, excludes: readonly string
       if (nameExcludes.has(entry.name) || pathExcludes.has(relativePath)) continue;
       const path = join(directory, entry.name);
       if (entry.isSymbolicLink()) {
-        // The archive dereferences symlinks (tar -h — createSourceMirrorArchive), so the change signal follows the
-        // Target's stat, plus the target path so a retarget still flips the entry. A broken link drops out like any
-        // Unreadable entry.
-        const stats = getResult(() => statSync(path)).unwrapOr(undefined);
+        // The archive preserves symlinks (createSourceMirrorArchive), so the change signal is the link's OWN lstat
+        // Plus its target path — a retarget flips `target`, and the target's content changing flips that target's own
+        // Manifest entry (walked separately), never this one. lstat/readlink both succeed on a broken link too, so it
+        // Mirrors as-is (rsync parity) instead of dropping out; a link the host can't read at all still drops.
+        const stats = getResult(() => lstatSync(path)).unwrapOr(undefined);
         const target = getResult(() => readlinkSync(path)).unwrapOr(undefined);
         if (stats !== undefined && target !== undefined)
           manifest[relativePath] = {

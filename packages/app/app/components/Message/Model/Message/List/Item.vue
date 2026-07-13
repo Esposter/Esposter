@@ -3,9 +3,11 @@ import type { Creator } from "@/models/message/Creator";
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
+import { MessageDisplayMode } from "@/models/message/MessageDisplayMode";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
 import { useMessageDialogStore } from "@/store/message/dialog";
+import { useAppearanceStore } from "@/store/message/ui/appearance";
 import { useScrollStore } from "@/store/message/ui/scroll";
 import { MessageType } from "@esposter/db-schema";
 
@@ -25,6 +27,10 @@ const isSameBatch = computed(
       message.userId === nextMessage.userId) &&
     dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
+const appearanceStore = useAppearanceStore();
+const { messageDisplayMode } = storeToRefs(appearanceStore);
+// Compact mode halves the batch gap and per-message padding so more messages fit on screen
+const isCompact = computed(() => messageDisplayMode.value === MessageDisplayMode.Compact);
 const messageStore = useMessageStore();
 const { editingRowKey, optionsMenu } = storeToRefs(messageStore);
 const messageDialogStore = useMessageDialogStore();
@@ -60,8 +66,8 @@ const isOptionsMenuVisible = computed(
     <component
       :is="MessageComponentMap[message.type]"
       :id="message.rowKey"
-      :mt="isSameBatch ? undefined : 4"
-      py-1
+      :mt="isSameBatch ? undefined : isCompact ? 2 : 4"
+      :py="isCompact ? 0.5 : 1"
       min-h-auto
       :op-loading="message.isLoading ? '' : undefined"
       :active="(isActive || activeRowKey === message.rowKey) && !isDeleting"

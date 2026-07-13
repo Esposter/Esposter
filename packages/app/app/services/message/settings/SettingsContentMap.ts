@@ -7,14 +7,20 @@ export const SettingsContentMap = {
   [SettingsType.Bans]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/Bans/Index.vue"),
   ),
+  [SettingsType.Invites]: defineAsyncComponent(
+    () => import("@/components/Message/Model/Room/Settings/Type/Invite/Index.vue"),
+  ),
+  [SettingsType.Members]: defineAsyncComponent(
+    () => import("@/components/Message/Model/Room/Settings/Type/Member/Index.vue"),
+  ),
   [SettingsType.Overview]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/Overview/Index.vue"),
   ),
-  [SettingsType.Permissions]: defineAsyncComponent(
-    () => import("@/components/Message/Model/Room/Settings/Type/Permissions/Index.vue"),
-  ),
   [SettingsType.Profile]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/Profile/Index.vue"),
+  ),
+  [SettingsType.Roles]: defineAsyncComponent(
+    () => import("@/components/Message/Model/Room/Settings/Type/Role/Index.vue"),
   ),
   [SettingsType.Webhooks]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/Webhook/Index.vue"),

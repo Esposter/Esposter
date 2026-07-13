@@ -17,14 +17,32 @@ const message = computed(() => statusMap.value.get(userId.value)?.message ?? "")
 const selectedStatus = ref(status.value);
 const statusMessage = ref(message.value);
 const menu = ref(false);
+const executeMutation = useMutation();
 const save = async () => {
-  const upsertedStatus = await $trpc.user.upsertStatus.mutate({
-    message: statusMessage.value,
-    status: selectedStatus.value,
-  });
-  const { userId, ...rest } = upsertedStatus;
-  statusMap.value.set(userId, rest);
   menu.value = false;
+  const previousStatus = statusMap.value.get(userId.value);
+  const onSuccess = (upsertedStatus: Awaited<ReturnType<typeof $trpc.user.upsertStatus.mutate>>) => {
+    const { userId: upsertedUserId, ...rest } = upsertedStatus;
+    statusMap.value.set(upsertedUserId, rest);
+  };
+  await executeMutation(
+    () => $trpc.user.upsertStatus.mutate({ message: statusMessage.value, status: selectedStatus.value }),
+    previousStatus
+      ? {
+          applyOptimistic: () => {
+            statusMap.value.set(userId.value, {
+              ...previousStatus,
+              message: statusMessage.value,
+              status: selectedStatus.value,
+            });
+            return () => {
+              statusMap.value.set(userId.value, previousStatus);
+            };
+          },
+          onSuccess,
+        }
+      : { onSuccess },
+  );
 };
 </script>
 

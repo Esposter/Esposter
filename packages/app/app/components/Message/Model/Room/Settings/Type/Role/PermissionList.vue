@@ -7,7 +7,7 @@ const roomPermissions = Object.entries(RoomPermission);
 
 <template>
   <v-list density="compact" rd>
-    <MessageModelRoomSettingsTypePermissionsPermissionListItem
+    <MessageModelRoomSettingsTypeRolePermissionListItem
       v-for="[key, permission] of roomPermissions"
       :key
       v-model="modelValue"

@@ -12,20 +12,19 @@ const { roomId, userToRoom } = defineProps<ProfileFormProps>();
 const { $trpc } = useNuxtApp();
 const userToRoomStore = useUserToRoomStore();
 const { setMyUserToRoom } = userToRoomStore;
-const executeOptimisticMutation = useOptimisticMutation();
+const executeMutation = useMutation();
 const nickname = ref(userToRoom.nickname);
 const save = async () => {
   const newNickname = nickname.value;
-  await executeOptimisticMutation(
-    () => {
+  await executeMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ nickname: newNickname, roomId }), {
+    applyOptimistic: () => {
       const oldNickname = userToRoom.nickname;
       setMyUserToRoom(roomId, { ...userToRoom, nickname: newNickname });
       return () => {
         setMyUserToRoom(roomId, { ...userToRoom, nickname: oldNickname });
       };
     },
-    () => $trpc.userToRoom.updateUserToRoom.mutate({ nickname: newNickname, roomId }),
-  );
+  });
 };
 </script>
 

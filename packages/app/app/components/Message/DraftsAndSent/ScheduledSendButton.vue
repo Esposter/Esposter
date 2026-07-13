@@ -10,6 +10,18 @@ interface MessageDraftsAndSentScheduledSendButtonProps {
 const { scheduledMessageJob } = defineProps<MessageDraftsAndSentScheduledSendButtonProps>();
 const { $trpc } = useNuxtApp();
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
+const executeMutation = useMutation();
+const sendScheduledMessageNow = async () => {
+  if (scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage) return;
+  await executeMutation(
+    () => $trpc.message.scheduledMessageJob.sendScheduledMessageNow.mutate({ id: scheduledMessageJob.id }),
+    {
+      onSuccess: async () => {
+        await readScheduledMessageJobs();
+      },
+    },
+  );
+};
 </script>
 
 <template>
@@ -17,12 +29,6 @@ const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
     :button-props="{ disabled: scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage }"
     icon="mdi-send-outline"
     text="Send message"
-    @click="
-      async () => {
-        if (scheduledMessageJob.payload.type !== ScheduledMessageJobType.ScheduledMessage) return;
-        await $trpc.message.scheduledMessageJob.sendScheduledMessageNow.mutate({ id: scheduledMessageJob.id });
-        await readScheduledMessageJobs();
-      }
-    "
+    @click="sendScheduledMessageNow"
   />
 </template>

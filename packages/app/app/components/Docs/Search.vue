@@ -37,44 +37,31 @@ const results = computed(() => {
   }
   return [...resultsByPagePath.values()];
 });
-
-useVHotkey("ctrl+k", () => {
-  isOpen.value = !isOpen.value;
-});
 </script>
 
 <template>
-  <StyledTooltipIconButton
-    :button-props="{ class: 'mx-2' }"
-    icon="mdi-magnify"
-    text="Search (Ctrl+K)"
-    @click="isOpen = true"
-  />
-  <v-dialog v-model="isOpen" width="600">
-    <v-card>
-      <v-text-field
-        v-model="query"
-        autofocus
-        clearable
-        hide-details
-        placeholder="Search docs"
-        prepend-inner-icon="mdi-magnify"
-        variant="solo"
+  <StyledSearchDialog v-model="isOpen" v-model:search-query="query" hotkey="ctrl+k" placeholder="Search docs">
+    <template #activator="{ updateIsOpen }">
+      <StyledTooltipIconButton
+        :button-props="{ class: 'mx-2' }"
+        icon="mdi-magnify"
+        text="Search (Ctrl+K)"
+        @click="updateIsOpen(true)"
       />
-      <template v-if="query">
-        <v-divider />
-        <v-list v-if="results.length > 0" max-h-96 overflow-y-auto>
-          <v-list-item
-            v-for="result of results"
-            :key="result.id"
-            :subtitle="result.subtitle"
-            :title="result.title"
-            :to="result.id"
-            @click="isOpen = false"
-          />
-        </v-list>
-        <p v-else m-0 p-4 text-center op-medium-emphasis>No results for "{{ query }}"</p>
-      </template>
-    </v-card>
-  </v-dialog>
+    </template>
+    <template v-if="query">
+      <v-divider />
+      <v-list v-if="results.length > 0" max-h-96 overflow-y-auto>
+        <v-list-item
+          v-for="result of results"
+          :key="result.id"
+          :subtitle="result.subtitle"
+          :title="result.title"
+          :to="result.id"
+          @click="isOpen = false"
+        />
+      </v-list>
+      <p v-else m-0 p-4 text-center op-medium-emphasis>No results for "{{ query }}"</p>
+    </template>
+  </StyledSearchDialog>
 </template>

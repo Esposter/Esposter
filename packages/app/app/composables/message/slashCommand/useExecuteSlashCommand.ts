@@ -14,6 +14,7 @@ import { marked } from "marked";
 
 export const useExecuteSlashCommand = () => {
   const { $trpc } = useNuxtApp();
+  const executeMutation = useMutation();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
@@ -66,7 +67,7 @@ export const useExecuteSlashCommand = () => {
         createMessageInput = { message: `(╯°□°）╯︵ ┻━┻`, roomId, type: MessageType.Message };
         break;
       case SlashCommandType.Topic: {
-        await $trpc.room.updateRoom.mutate({ id: roomId, topic: command.parameterValues.text });
+        await executeMutation(() => $trpc.room.updateRoom.mutate({ id: roomId, topic: command.parameterValues.text }));
         break;
       }
       case SlashCommandType.Unflip:

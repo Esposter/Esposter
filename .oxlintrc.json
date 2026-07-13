@@ -6,7 +6,7 @@
     "style": "error",
     "suspicious": "error"
   },
-  "ignorePatterns": ["public"],
+  "ignorePatterns": [".claude", "public"],
   "options": {
     "typeAware": true
   },

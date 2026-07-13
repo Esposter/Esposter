@@ -8,6 +8,13 @@ const directMessageName = useDirectMessageName(currentDirectMessage);
 const participants = computed(() =>
   currentDirectMessage.value ? (directMessageParticipantsMap.value.get(currentDirectMessage.value.id) ?? []) : [],
 );
+const executeMutation = useMutation();
+// Participant removal applies via the subscription echo — non-optimistic
+const deleteDirectMessageParticipant = (userId: string) => {
+  const roomId = currentDirectMessage.value?.id;
+  if (roomId)
+    void executeMutation(() => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }));
+};
 </script>
 
 <template>
@@ -23,12 +30,7 @@ const participants = computed(() =>
           density="compact"
           size="small"
           closable
-          @click:close="
-            $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({
-              roomId: currentDirectMessage.id,
-              userId: id,
-            })
-          "
+          @click:close="deleteDirectMessageParticipant(id)"
         >
           <StyledAvatar mr-1 :image :name :avatar-props="{ size: '1rem' }" />
           {{ name }}

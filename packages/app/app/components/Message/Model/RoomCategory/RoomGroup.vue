@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
+import { ROOM_CATEGORY_DRAG_HANDLE_CLASS } from "@/services/message/roomCategory/constants";
+
 interface RoomCategoryRoomGroupProps {
   category?: RoomCategoryInMessage;
   rooms: RoomInMessage[];
 }
 
 const { category, rooms } = defineProps<RoomCategoryRoomGroupProps>();
+const emit = defineEmits<{ move: [direction: -1 | 1] }>();
 const isCollapsed = useLocalStorage(`message-category-${category?.id ?? "uncategorized"}-collapsed`, false);
 </script>
 
@@ -14,11 +17,14 @@ const isCollapsed = useLocalStorage(`message-category-${category?.id ?? "uncateg
   <div>
     <v-list-item
       v-if="category"
+      :class="ROOM_CATEGORY_DRAG_HANDLE_CLASS"
       density="compact"
       font-bold
       uppercase
       text-label-medium
       @click="isCollapsed = !isCollapsed"
+      @keydown.alt.up.prevent="emit('move', -1)"
+      @keydown.alt.down.prevent="emit('move', 1)"
     >
       <v-list-item-title>
         <div flex gap-1 items-center>

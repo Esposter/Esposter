@@ -3,7 +3,6 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { withFinalizerAsync } from "@esposter/shared";
 
 interface CreateDirectMessageParticipantDialogProps {
   roomId: RoomInMessage["id"];
@@ -22,6 +21,20 @@ const excludedUserIds = computed(() => {
   excludedUserIds.push(...(directMessageParticipantsMap.value.get(roomId) ?? []).map(({ id }) => id));
   return excludedUserIds;
 });
+const executeMutation = useMutation();
+// Participant rows apply via the subscription echo — non-optimistic
+const createDirectMessageParticipants = async (onComplete: () => void) => {
+  await executeMutation(
+    () => $trpc.room.directMessage.createDirectMessageParticipants.mutate({ roomId, userIds: selectedUserIds.value }),
+    {
+      onSuccess: () => {
+        selectedUserIds.value = [];
+        friendPicker.value?.reset();
+      },
+    },
+  );
+  onComplete();
+};
 </script>
 
 <template>
@@ -30,18 +43,7 @@ const excludedUserIds = computed(() => {
     :card-props="{ title: 'Add People' }"
     :confirm-button-props="{ text: 'Add' }"
     :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
-    @submit="
-      async (_event, onComplete) => {
-        await withFinalizerAsync(async () => {
-          await $trpc.room.directMessage.createDirectMessageParticipants.mutate({
-            roomId,
-            userIds: selectedUserIds,
-          });
-          selectedUserIds = [];
-          friendPicker?.reset();
-        }, onComplete);
-      }
-    "
+    @submit="(_event, onComplete) => createDirectMessageParticipants(onComplete)"
   >
     <MessageModelRoomDirectMessageFriendPicker
       ref="friendPicker"

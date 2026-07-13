@@ -12,6 +12,7 @@ Cross-product chrome is a small set of shared components in `components/Styled/`
 - `StyledPageHeader` — the canonical editor/page header (breadcrumb row + `actions` slot + `controls` slot). Every editor header mounts document picker / selects / search through it; controls never go inside `v-toolbar-title`.
 - `StyledEmptyState` — icon + title + description + action slot for empty lists/states.
 - `StyledSkeleton` — bordered `v-skeleton-loader` for per-region loading.
+- `StyledSearchDialog` — the canonical Ctrl+K search palette (dialog + solo autofocus search field + `hotkey` prop registered via `useVHotkey`, `activator` slot, results in the default slot). Every dialog-style search UI mounts through it — never re-roll a `v-dialog` + `v-text-field` + hotkey listener (`onKeyStroke`/`useEventListener`) per feature. See `docs/architecture/search.md`.
 - `AppBreadcrumbs` — route→product trail (matched against `ProductListLinkItems`), rendered by `StyledPageHeader`.
 
 When a new product/editor is added, give it a `StyledPageHeader`, a launcher entry in `ProductListLinkItems`, and — if it is document-backed — a row in the `/documents` hub maps (`DocumentTypeRoutePathMap` / `DocumentTypeIconMap`). Document the result in the shell-cohesion spec.

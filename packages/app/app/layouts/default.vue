@@ -2,6 +2,7 @@
 import type { CSSProperties } from "vue";
 import type { VNavigationDrawer } from "vuetify/components";
 
+import { LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { useLayoutStore } from "@/store/layout";
 import { takeOne } from "@esposter/shared";
 
@@ -28,7 +29,11 @@ const container = useTemplateRef("container");
 const footer = useTemplateRef("footer");
 const bottomOffset = ref(0);
 // Fix the layout structure so navigating does not cause a layout shift
-const { bottom, left, middle, right } = useFixedLayoutStyles(bottomOffset);
+const { bottom, left, middle, right } = useFixedLayoutStyles(
+  bottomOffset,
+  () => Number(leftNavigationDrawerProps?.width ?? LEFT_DRAWER_WIDTH),
+  () => Number(rightNavigationDrawerProps?.width ?? RIGHT_DRAWER_WIDTH),
+);
 
 useResizeObserver(footer, (entries) => {
   const entry = takeOne(entries);
