@@ -31,7 +31,7 @@ const filterTypeVisibilityMap: Record<ResourceListFilterType, ComputedRef<boolea
   [ResourceListFilterType.Updated]: isUpdatedPillVisible,
 };
 const availableFilterTypes = computed(() =>
-  [...ResourceListFilterTypes].filter((filterType) => !filterTypeVisibilityMap[filterType].value),
+  ResourceListFilterTypes.filter((filterType) => !filterTypeVisibilityMap[filterType].value),
 );
 const removeFilter = (filterType: ResourceListFilterType) => {
   if (filterType === ResourceListFilterType.Status) status.value = "";

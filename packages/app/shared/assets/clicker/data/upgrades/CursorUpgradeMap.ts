@@ -231,6 +231,4 @@ export const CursorUpgradeMap = {
   },
 } as const satisfies Record<CursorUpgradeId, Except<Upgrade<CursorUpgradeId>, "id">>;
 
-export const CursorUpgrades: ReadonlySet<(typeof CursorUpgradeMap)[keyof typeof CursorUpgradeMap]> = new Set(
-  Object.values(CursorUpgradeMap),
-);
+export const CursorUpgrades = Object.values(CursorUpgradeMap);

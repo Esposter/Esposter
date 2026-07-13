@@ -5,8 +5,6 @@ describe("cursorUpgradeMap", () => {
   test("sorted by price", () => {
     expect.hasAssertions();
 
-    const cursorUpgrades = [...CursorUpgrades];
-
-    expect(cursorUpgrades).toStrictEqual(cursorUpgrades.toSorted((a, b) => a.price - b.price));
+    expect(CursorUpgrades).toStrictEqual(CursorUpgrades.toSorted((a, b) => a.price - b.price));
   });
 });

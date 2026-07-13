@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: Esposter TypeScript conventions — banned patterns (any, Omit, !, forEach, parameter properties), error handling with InvalidOperationError, control flow guard clauses, and enum ref defaults. Apply when writing any TypeScript in this project.
+description: Esposter TypeScript conventions — banned patterns (any, Omit, !, forEach, parameter properties), error handling with InvalidOperationError, control flow guard clauses, enum ref defaults, no unused/speculative exports, and Object.values arrays over enum Sets. Apply when writing any TypeScript in this project.
 ---
 
 # TypeScript Conventions
@@ -21,6 +21,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
   - `arr.toSpliced(...)` not manual splice+spread — `splice()` **BANNED** for producing new arrays (still allowed for in-place mutation of store/reactive arrays)
   - `arr.with(index, value)` not `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`
 - **`new Set` only for dedup** — use `.some()` for unique arrays. `Set` only when (a) deduplication is the goal, or (b) collection large enough that O(n) `.some()` hurts perf.
+- **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too.
 - Named imports from libraries, but only when not auto-imported by Nuxt/modules (`ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; all VueUse composables are auto-imported — never import manually).
 - **Use the `node:` protocol for Node.js built-ins** — `import { readFileSync } from "node:fs"`, never bare `"fs"`/`"path"`/`"crypto"`. Enforced by `unicorn/prefer-node-protocol`.
 - **Never import ambient globals** — `process`, `console`, `Buffer`, `URL`, `fetch`, etc. are already global; use them directly, never `import process from "node:process"`. Only import the built-ins that aren't ambient (`node:fs`, `node:path`, `node:crypto`, …).
@@ -207,16 +208,21 @@ export const stringTransformationTypeSchema = z.enum(
 
 ## Enum Values Array
 
-- **Export a pluralized `Set` from the enum file only when `Object.values` is actually used** — `export const EnumNames = new Set(Object.values(EnumName))` at the bottom (after the Zod schema). Don't add pre-emptively if never iterated/checked. Use it at every call site.
+- **Export a pluralized values collection from the enum file only when it's actually used** — at the bottom (after the Zod schema). Never pre-emptively: an export with zero call sites is dead code.
+- **Plain `Object.values` array by default, `new Set` only when Set functionality is genuinely used** — enum values are unique by construction, so a Set adds nothing for iteration and forces `[...EnumNames]` spreads at every array call site (`v-for`, `.map`, `.filter`, `.join` all want arrays). Reach for a Set only when call sites actually use `.has()`/`.difference()` or the source can contain duplicates (e.g. `ContentTypes` dedupes mime-type values):
 
   ```ts
-  export const BooleanFormats = new Set(Object.values(BooleanFormat));
-  BooleanFormats.has(format); // O(1)
-  for (const f of BooleanFormats) { ... } // Set is iterable
-  Array.from(BooleanFormats, fn); // map over a Set
+  // Default — plain array; iterate, map, filter, join directly with no spreads
+  export const PostSortTypes = Object.values(PostSortType);
+
+  // Set — earned by real membership checks at the call sites
+  export const NumberFormats: ReadonlySet<NumberFormat> = new Set(Object.values(NumberFormat));
+  NumberFormats.has(format); // O(1)
   ```
 
-- **Never write `Object.values(SomeEnum)` inline** — use the exported `Set`.
+  In published packages (`db-schema` etc., isolatedDeclarations) annotate the array explicitly: `export const MessageTypes: readonly MessageType[] = Object.values(MessageType);`. In the app, let it infer.
+
+- **Never write `Object.values(SomeEnum)` inline** — use the exported array.
 
 ## Iterating Non-Array Iterables (Set, Map, etc.)
 

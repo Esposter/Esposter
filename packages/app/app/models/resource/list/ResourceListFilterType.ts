@@ -3,4 +3,4 @@ export enum ResourceListFilterType {
   Updated = "Updated",
 }
 
-export const ResourceListFilterTypes = new Set(Object.values(ResourceListFilterType));
+export const ResourceListFilterTypes = Object.values(ResourceListFilterType);

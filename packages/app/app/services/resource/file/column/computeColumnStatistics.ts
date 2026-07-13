@@ -20,7 +20,7 @@ export const computeColumnStatistics = (dataSource: DataSource): ColumnStatistic
       values,
     );
     const statisticsValues = Object.fromEntries(
-      Array.from(ColumnStatisticsDefinitions, ({ applicableColumnTypes, compute, key }) => [
+      ColumnStatisticsDefinitions.map(({ applicableColumnTypes, compute, key }) => [
         key,
         applicableColumnTypes.includes(effectiveColumnType) ? compute(context) : null,
       ]),

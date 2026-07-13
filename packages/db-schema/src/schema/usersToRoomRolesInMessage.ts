@@ -7,7 +7,6 @@ import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
 import { usersToRoomsInMessage } from "@/schema/usersToRoomsInMessage";
 import { foreignKey, index, primaryKey, text, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-orm/zod";
 
 export const usersToRoomRolesInMessage = pgTable(
   "usersToRoomRoles",
@@ -38,5 +37,3 @@ export const usersToRoomRolesInMessage = pgTable(
 
 export type UserToRoomRoleInMessage = typeof usersToRoomRolesInMessage.$inferSelect;
 export type UserToRoomRoleInMessageWithRelations = UserToRoomRoleInMessage & { role: RoomRoleInMessage };
-
-export const selectUserToRoomRoleInMessageSchema = createSelectSchema(usersToRoomRolesInMessage);

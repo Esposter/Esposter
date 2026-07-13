@@ -15,7 +15,7 @@ const pluralizedLabel = computed(() => pluralize(label, selectedIds.value.length
 
 <template>
   <v-toolbar>
-    <v-toolbar-title pl-3>{{ selectedIds.length }} {{ pluralizedLabel }} selected</v-toolbar-title>
+    <v-toolbar-title>{{ selectedIds.length }} {{ pluralizedLabel }} selected</v-toolbar-title>
     <slot />
     <StyledConfirmDeleteDialogButton
       :card-props="{

@@ -17,7 +17,6 @@ import { RoutePath, SITE_NAME } from "@esposter/shared";
         <AppNotificationBell />
         <AppMenuButton />
         <AppToggleThemeButton />
-        <AppGithubButton />
         <AppMoreDropdownButton />
       </div>
     </template>

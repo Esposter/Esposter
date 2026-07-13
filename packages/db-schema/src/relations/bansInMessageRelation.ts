@@ -20,9 +20,3 @@ export const bansInMessageRelation = defineRelationsPart(schema, (r) => ({
     }),
   },
 }));
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const BanInMessageRelations = {
-  bannedByUser: true,
-  roomInMessage: true,
-  user: true,
-} as const;

@@ -7,7 +7,7 @@ export const FilterTypePlaceholderMap = {
   [FilterType.From]: "user",
   [FilterType.In]: "room",
   [FilterType.Mentions]: "user",
-  [FilterType.Has]: EN_US_DISJUNCTION_FORMATTER.format(Array.from(FilterTypeHases, (has) => uncapitalize(has))),
+  [FilterType.Has]: EN_US_DISJUNCTION_FORMATTER.format(FilterTypeHases.map((has) => uncapitalize(has))),
   [FilterType.Before]: "specific date",
   [FilterType.During]: "specific date",
   [FilterType.After]: "specific date",

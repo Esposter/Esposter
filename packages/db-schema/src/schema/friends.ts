@@ -2,7 +2,6 @@ import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, index, text } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-orm/zod";
 
 export const friends = pgTable(
   "friends",
@@ -28,7 +27,3 @@ export const friends = pgTable(
 );
 
 export type Friend = typeof friends.$inferSelect;
-
-export const selectFriendSchema = createSelectSchema(friends, {
-  id: (schema) => schema.min(1),
-});

@@ -7,4 +7,4 @@ export enum ObjectgroupName {
   Sign = "Sign",
 }
 
-export const ObjectgroupNames: ReadonlySet<ObjectgroupName> = new Set(Object.values(ObjectgroupName));
+export const ObjectgroupNames = Object.values(ObjectgroupName);

@@ -115,6 +115,4 @@ export const ColumnStatisticsDefinitionMap = {
   }),
 } as const satisfies { [K in ColumnStatisticsKey]: ColumnStatisticsDefinition<K> };
 
-export const ColumnStatisticsDefinitions: ReadonlySet<
-  (typeof ColumnStatisticsDefinitionMap)[keyof typeof ColumnStatisticsDefinitionMap]
-> = new Set(Object.values(ColumnStatisticsDefinitionMap));
+export const ColumnStatisticsDefinitions = Object.values(ColumnStatisticsDefinitionMap);

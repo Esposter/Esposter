@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export enum ColumnTransformationType {
   Aggregation = "Aggregation",
   ConvertTo = "ConvertTo",
@@ -12,7 +10,3 @@ export enum ColumnTransformationType {
   StringPattern = "StringPattern",
   StringSplit = "StringSplit",
 }
-
-export const columnTransformationTypeSchema = z.enum(
-  ColumnTransformationType,
-) satisfies z.ZodType<ColumnTransformationType>;
