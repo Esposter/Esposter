@@ -20,7 +20,6 @@ import {
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
 } from "@esposter/shared";
-import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
@@ -30,14 +29,14 @@ const getMentionMessage = (id: string) =>
 describe(getPushSubscriptionsForMessage, () => {
   let db: PostgresJsDatabase<typeof relations>;
   const name = "name";
-  const roomId = randomUUID();
-  const allOnlineUserId = randomUUID();
-  const allOfflineUserId = randomUUID();
-  const allNullStatusUserId = randomUUID();
-  const directMessageOnlineUserId = randomUUID();
-  const directMessageOfflineUserId = randomUUID();
-  const neverUserId = randomUUID();
-  const senderUserId = randomUUID();
+  const roomId = crypto.randomUUID();
+  const allOnlineUserId = crypto.randomUUID();
+  const allOfflineUserId = crypto.randomUUID();
+  const allNullStatusUserId = crypto.randomUUID();
+  const directMessageOnlineUserId = crypto.randomUUID();
+  const directMessageOfflineUserId = crypto.randomUUID();
+  const neverUserId = crypto.randomUUID();
+  const senderUserId = crypto.randomUUID();
   const sender = { partitionKey: roomId, userId: senderUserId };
 
   beforeAll(async () => {

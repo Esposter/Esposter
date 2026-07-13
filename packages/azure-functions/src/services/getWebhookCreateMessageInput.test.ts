@@ -2,13 +2,12 @@ import type { WebhookInMessage, WebhookPayload } from "@esposter/db-schema";
 
 import { getWebhookCreateMessageInput } from "@/services/getWebhookCreateMessageInput";
 import { MessageType } from "@esposter/db-schema";
-import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 
 describe(getWebhookCreateMessageInput, () => {
   const webhook: Pick<WebhookInMessage, "roomId" | "userId"> = {
-    roomId: randomUUID(),
-    userId: randomUUID(),
+    roomId: crypto.randomUUID(),
+    userId: crypto.randomUUID(),
   };
   const payload: WebhookPayload = {
     avatar_url: "url",

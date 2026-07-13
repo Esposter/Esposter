@@ -12,7 +12,6 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
-import { randomUUID } from "node:crypto";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -24,10 +23,10 @@ vi.mock(import("@/services/db"), () => ({
 }));
 
 describe(assertCanCreateMessage, () => {
-  const memberUserId = randomUUID();
+  const memberUserId = crypto.randomUUID();
   const name = "name";
-  const ownerUserId = randomUUID();
-  const roomId = randomUUID();
+  const ownerUserId = crypto.randomUUID();
+  const roomId = crypto.randomUUID();
 
   beforeAll(async () => {
     mockDb = await createMockDb();
@@ -67,7 +66,7 @@ describe(assertCanCreateMessage, () => {
   test("throws when room not found", async () => {
     expect.hasAssertions();
 
-    const missingRoomId = randomUUID();
+    const missingRoomId = crypto.randomUUID();
 
     await expect(assertCanCreateMessage(memberUserId, missingRoomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, missingRoomId).message}]`,
@@ -77,7 +76,7 @@ describe(assertCanCreateMessage, () => {
   test("throws when member not found", async () => {
     expect.hasAssertions();
 
-    await expect(assertCanCreateMessage(randomUUID(), roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(crypto.randomUUID(), roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });

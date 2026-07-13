@@ -9,7 +9,6 @@ import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInMessage, users } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { randomUUID } from "node:crypto";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { WebPushError } from "web-push";
 
@@ -27,7 +26,7 @@ describe(sendWebPushNotifications, () => {
   const context = new InvocationContext();
   const name = "name";
   const payload = "";
-  const userId = randomUUID();
+  const userId = crypto.randomUUID();
   const { pushSubscription } = setupWebPushSuite(() => mockDb, userId);
   const seedSubscription = async () =>
     takeOne(await mockDb.insert(pushSubscriptionsInMessage).values(pushSubscription).returning(), 0);

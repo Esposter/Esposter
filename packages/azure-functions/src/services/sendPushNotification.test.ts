@@ -13,7 +13,6 @@ import {
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { randomUUID } from "node:crypto";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: PostgresJsDatabase<typeof relations>;
@@ -31,10 +30,10 @@ describe(sendPushNotification, () => {
   const context = new InvocationContext();
   const message = "<p>a</p>";
   const name = "name";
-  const senderUserId = randomUUID();
-  const subscriberUserId = randomUUID();
-  const roomId = randomUUID();
-  const rowKey = randomUUID();
+  const senderUserId = crypto.randomUUID();
+  const subscriberUserId = crypto.randomUUID();
+  const roomId = crypto.randomUUID();
+  const rowKey = crypto.randomUUID();
   const notificationOptions = { icon: "", title: "" };
   const baseMessage = { message, partitionKey: roomId, rowKey };
   const standardMessage = { ...baseMessage, userId: senderUserId };

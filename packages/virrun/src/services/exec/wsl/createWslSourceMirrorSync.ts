@@ -21,7 +21,6 @@ import { reapStaleSourceMirrorTemps } from "@/services/exec/wsl/reapStaleSourceM
 import { resolveMirrorExcludes } from "@/services/exec/wsl/resolveMirrorExcludes";
 import { shellQuote } from "@/services/exec/wsl/shellQuote";
 import { getResult, InvalidOperationError, Operation, toAppError } from "@esposter/shared";
-import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 // Plan the win32 source-mirror sync for a host cwd and return { mirrorPath, script }: the ext4 mirror tree's Linux
@@ -77,7 +76,7 @@ export const createWslSourceMirrorSync = (cwd: string): WslSourceMirrorSync => {
   const delta = previousManifest === undefined ? undefined : diffSourceMirrorManifests(previousManifest, manifest);
   if (delta?.copyPaths.length === 0 && delta.deletePaths.length === 0) return { lockPath, mirrorPath, script: "" };
   return getResult(() => {
-    const tag = `${process.pid}.${randomUUID()}`;
+    const tag = `${process.pid}.${crypto.randomUUID()}`;
     const manifestTempFilename = `${VIRRUN_SOURCE_MIRROR_MANIFEST_TEMP_PREFIX}${tag}`;
     const originTempFilename = `${VIRRUN_SOURCE_MIRROR_ORIGIN_TEMP_PREFIX}${tag}`;
     mkdirSync(entryUnc, { recursive: true });

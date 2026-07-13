@@ -24,7 +24,6 @@ import {
   MentionType,
 } from "@esposter/shared";
 import { eq } from "drizzle-orm";
-import { randomUUID } from "node:crypto";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 const getMentionMessage = (id: string, type?: MentionType) =>
@@ -36,14 +35,14 @@ const getMentionedUserIds = (updatedUsersToRooms: { userId: string }[]) =>
 describe(incrementMentionCounts, () => {
   let db: PostgresJsDatabase<typeof relations>;
   const name = "name";
-  const roomId = randomUUID();
-  const roleId = randomUUID();
-  const onlineUserId = randomUUID();
-  const offlineUserId = randomUUID();
-  const nullStatusUserId = randomUUID();
-  const neverUserId = randomUUID();
-  const roleMemberUserId = randomUUID();
-  const senderUserId = randomUUID();
+  const roomId = crypto.randomUUID();
+  const roleId = crypto.randomUUID();
+  const onlineUserId = crypto.randomUUID();
+  const offlineUserId = crypto.randomUUID();
+  const nullStatusUserId = crypto.randomUUID();
+  const neverUserId = crypto.randomUUID();
+  const roleMemberUserId = crypto.randomUUID();
+  const senderUserId = crypto.randomUUID();
   const sender = { partitionKey: roomId, userId: senderUserId };
 
   beforeAll(async () => {
