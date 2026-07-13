@@ -49,14 +49,22 @@ describe(useMutation, () => {
 
     const staleRollback = vi.fn<() => void>();
     const executeMutation = useMutation();
+    const { alerts } = storeToRefs(useAlertStore());
     let rejectStale: (reason: unknown) => void = () => undefined;
-    const stale = executeMutation(() => new Promise<void>((_, reject) => (rejectStale = reject)), {
-      applyOptimistic: () => staleRollback,
-    });
+    const stale = executeMutation(
+      () =>
+        new Promise<void>((_, reject) => {
+          rejectStale = reject;
+        }),
+      {
+        applyOptimistic: () => staleRollback,
+      },
+    );
     await executeMutation(() => Promise.resolve());
     rejectStale(new Error("error"));
     await stale;
 
     expect(staleRollback).not.toHaveBeenCalled();
+    expect(alerts.value).toHaveLength(0);
   });
 });

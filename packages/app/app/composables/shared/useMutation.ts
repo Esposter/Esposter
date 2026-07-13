@@ -21,7 +21,8 @@ export const useMutation = () => {
         if (!checkIsStale()) onSuccess?.(result);
       },
       (error) => {
-        if (!checkIsStale()) rollback?.();
+        if (checkIsStale()) return;
+        rollback?.();
         createAlert(error.message, "error");
       },
     );

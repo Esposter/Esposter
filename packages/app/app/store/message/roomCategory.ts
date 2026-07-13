@@ -40,7 +40,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     if (updates.length === 0) return;
     await executeMutation(() => $trpc.room.category.reorderRoomCategories.mutate(updates), {
       applyOptimistic: () => {
-        const snapshot = [...categories.value];
+        const snapshot = categories.value.map((category) => ({ ...category }));
         for (const update of updates) storeUpdateRoomCategory(update);
         return () => {
           categories.value = snapshot;

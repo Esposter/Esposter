@@ -74,7 +74,9 @@ export const useCallStore = defineStore("message/room/call", () => {
             participantStore.callSessionParticipantsMap.get(callSessionId)?.get(participantSessionId)?.isHandRaised ??
             false;
           setHandRaised(callSessionId, participantSessionId, newIsHandRaised);
-          return () => setHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
+          return () => {
+            setHandRaised(callSessionId, participantSessionId, oldIsHandRaised);
+          };
         },
       },
     );
