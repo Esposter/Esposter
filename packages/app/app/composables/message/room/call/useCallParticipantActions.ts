@@ -7,6 +7,7 @@ import { AdminActionType, RoomPermission } from "@esposter/db-schema";
 
 export const useCallParticipantActions = () => {
   const { $trpc } = useNuxtApp();
+  const executeMutation = useMutation();
   const callStore = useCallStore();
   const { activeCallSessionId, callRoomId } = storeToRefs(callStore);
   const roleStore = useRoleStore();
@@ -34,48 +35,56 @@ export const useCallParticipantActions = () => {
     if (isForceMuteable.value && isHandRaised)
       items.push({
         icon: "mdi-hand-back-right-off",
-        onClick: async () => {
-          await $trpc.callSession.setHandRaised.mutate({
-            callSessionId,
-            isHandRaised: false,
-            participantId,
-          });
+        onClick: () => {
+          void executeMutation(() =>
+            $trpc.callSession.setHandRaised.mutate({
+              callSessionId,
+              isHandRaised: false,
+              participantId,
+            }),
+          );
         },
         title: "Lower Hand",
       });
     if (isForceMuteable.value && !participantIsMuted)
       items.push({
         icon: "mdi-microphone-off",
-        onClick: async () => {
-          await $trpc.message.moderation.executeAdminAction.mutate({
-            roomId,
-            targetUserId: userId,
-            type: AdminActionType.ForceMute,
-          });
+        onClick: () => {
+          void executeMutation(() =>
+            $trpc.message.moderation.executeAdminAction.mutate({
+              roomId,
+              targetUserId: userId,
+              type: AdminActionType.ForceMute,
+            }),
+          );
         },
         title: "Force Mute",
       });
     if (isForceMuteable.value && participantIsMuted)
       items.push({
         icon: "mdi-microphone",
-        onClick: async () => {
-          await $trpc.message.moderation.executeAdminAction.mutate({
-            roomId,
-            targetUserId: userId,
-            type: AdminActionType.ForceUnmute,
-          });
+        onClick: () => {
+          void executeMutation(() =>
+            $trpc.message.moderation.executeAdminAction.mutate({
+              roomId,
+              targetUserId: userId,
+              type: AdminActionType.ForceUnmute,
+            }),
+          );
         },
         title: "Force Unmute",
       });
     if (isKickableFromCall.value)
       items.push({
         icon: "mdi-account-remove",
-        onClick: async () => {
-          await $trpc.message.moderation.executeAdminAction.mutate({
-            roomId,
-            targetUserId: userId,
-            type: AdminActionType.KickFromCall,
-          });
+        onClick: () => {
+          void executeMutation(() =>
+            $trpc.message.moderation.executeAdminAction.mutate({
+              roomId,
+              targetUserId: userId,
+              type: AdminActionType.KickFromCall,
+            }),
+          );
         },
         title: "Kick from Call",
       });

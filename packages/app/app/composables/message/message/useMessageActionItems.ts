@@ -16,6 +16,7 @@ import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
   const { $trpc } = useNuxtApp();
+  const executeMutation = useMutation();
   const messageStore = useMessageStore();
   const { copy } = messageStore;
   const { editingRowKey } = storeToRefs(messageStore);
@@ -64,8 +65,18 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     message.isPinned
       ? {
           icon: "mdi-pin-off",
-          onClick: async () => {
-            await $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
+          onClick: () => {
+            void executeMutation(
+              () => $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
+              {
+                applyOptimistic: () => {
+                  delete message.isPinned;
+                  return () => {
+                    message.isPinned = true;
+                  };
+                },
+              },
+            );
           },
           title: "Unpin Message",
         }
@@ -95,11 +106,13 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   };
   const markUnreadFromHereItem: Item = {
     icon: "mdi-email-mark-as-unread",
-    onClick: async () => {
-      await $trpc.userToRoom.updateUserToRoom.mutate({
-        lastMessageAt: dayjs(message.createdAt).subtract(1, "millisecond").toDate(),
-        roomId: message.partitionKey,
-      });
+    onClick: () => {
+      void executeMutation(() =>
+        $trpc.userToRoom.updateUserToRoom.mutate({
+          lastMessageAt: dayjs(message.createdAt).subtract(1, "millisecond").toDate(),
+          roomId: message.partitionKey,
+        }),
+      );
     },
     title: "Mark Unread From Here",
   };

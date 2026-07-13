@@ -9,9 +9,7 @@ Route **every user-facing tRPC mutation** through [`useMutation`](/docs/architec
 
 ## Scope
 
-**Today:** `useMutation` is the single primitive for mutations. Optimistic settings mutations (notification preference, room overview, nickname), `updateUserSettings`, hand-raise, category drag-reorder, and the (non-optimistic) invite link all go through it. Most other mutations still `await` the server before the store updates or rely solely on the subscription echo.
-
-**This adds:** a sweep over the remaining mutation call sites, migrating each to `useMutation`.
+**Today:** `useMutation` is the single primitive for mutations. Optimistic settings mutations (notification preference, room overview, nickname), `updateUserSettings`, hand-raise, category drag-reorder, and the (non-optimistic) invite link all go through it — and the sweep below has migrated the remaining user-facing esbabbler mutation call sites.
 
 ## How it works
 
@@ -19,11 +17,14 @@ See the [client data access](/docs/architecture/client-data) standard for the pr
 
 Sweep order (by user-perceived latency):
 
-- [ ] Message actions — reactions, pin/unpin, mark-unread, delete
-- [ ] Room membership — hide DM, leave room
-- [ ] Roles/permissions editors (Roles tab save)
-- [ ] Word filter + webhook CRUD
-- [ ] Friends — send/accept/decline/block
+- [x] Message actions — reactions, pin/unpin, mark-unread, delete
+- [x] Room membership — hide DM, leave room (plus create/join/delete room and create DM, non-optimistic via `onSuccess`)
+- [x] Roles/permissions editors (create/update/delete/assign/revoke role)
+- [x] Word filter + webhook CRUD
+- [x] Friends — send/accept/decline/remove/block/unblock (mutations moved into the friend/friendRequest/block stores)
+- [x] Long tail — room categories, bans, admin actions, status, search history, scheduled jobs, forward/edit message, DM participants, link previews, message files, posts/comments/likes, survey responses
+
+Still outside `useMutation` by design: the message send path (bespoke optimistic `isLoading` placeholder + hooks in `store/message/data.ts`), and the sanctioned exceptions in [client data access](/docs/architecture/client-data). The platform resource layer (`useResource` CRUD map + editor save flows) is deferred to its own sweep — it overlaps the portal-parity branch.
 
 Non-optimistic sites still use `useMutation` (for staleness + error surfacing) but omit `applyOptimistic` and take the server result via `onSuccess`: mutations whose result the client can't predict (server-generated ids/tokens like `createInvite`, `createRoom` navigation targets, file uploads with SAS URLs). Device-coupled call operations (`setCameraEnabled`, `setMuteEnabled`) stay hand-rolled because they compose a local LiveKit step with the remote sync in one flow.
 

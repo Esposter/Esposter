@@ -8,6 +8,7 @@ const blockStore = useBlockStore();
 const { blockedUsers } = storeToRefs(blockStore);
 const { blockUser } = blockStore;
 const friendRequestStore = useFriendRequestStore();
+const { sendFriendRequest } = friendRequestStore;
 const { sentFriendRequests } = storeToRefs(friendRequestStore);
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
@@ -47,7 +48,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
               text="Send Request"
               variant="tonal"
               size="small"
-              @click="$trpc.friendRequest.sendFriendRequest.mutate(id)"
+              @click="sendFriendRequest(id)"
             />
             <v-chip v-else-if="hasSentRequest(id)" text="Request Sent" size="small" />
             <v-chip v-else text="Friends" size="small" color="success" />

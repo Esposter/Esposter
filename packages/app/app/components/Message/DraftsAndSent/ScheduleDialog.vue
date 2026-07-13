@@ -2,7 +2,6 @@
 import { getTextFromHtml } from "@/services/message/draftsAndSent/getTextFromHtml";
 import { useDraftsAndSentScheduleDialogStore } from "@/store/message/draftsAndSent/scheduleDialog";
 import { useInputStore } from "@/store/message/input";
-import { withFinalizerAsync } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const scheduleDialogStore = useDraftsAndSentScheduleDialogStore();
@@ -10,6 +9,38 @@ const { isOpen, minScheduledAt, scheduledAt, target } = storeToRefs(scheduleDial
 const inputStore = useInputStore();
 const { clearDraft } = inputStore;
 const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
+const executeMutation = useMutation();
+// Server-scheduled job — non-optimistic, store refresh in onSuccess
+const scheduleMessage = async (onComplete: () => void) => {
+  const currentTarget = target.value;
+  if (!currentTarget) {
+    onComplete();
+    return;
+  }
+  await executeMutation(
+    () =>
+      currentTarget.scheduledMessageJobId
+        ? $trpc.message.scheduledMessageJob.rescheduleMessage.mutate({
+            id: currentTarget.scheduledMessageJobId,
+            message: currentTarget.content,
+            roomId: currentTarget.roomId,
+            runAt: scheduledAt.value,
+          })
+        : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
+            message: currentTarget.content,
+            roomId: currentTarget.roomId,
+            runAt: scheduledAt.value,
+          }),
+    {
+      onSuccess: async () => {
+        if (!currentTarget.scheduledMessageJobId) clearDraft(currentTarget.roomId);
+        await readScheduledMessageJobs();
+        target.value = undefined;
+      },
+    },
+  );
+  onComplete();
+};
 </script>
 
 <template>
@@ -18,29 +49,7 @@ const { readScheduledMessageJobs } = useReadScheduledMessageJobs();
     :card-props="{ title: target?.scheduledMessageJobId ? 'Reschedule Message' : 'Schedule Message' }"
     :confirm-button-props="{ prependIcon: 'mdi-send-clock', text: 'Schedule Message' }"
     :confirm-button-attrs="{ disabled: !scheduledAt }"
-    @submit="
-      (_event, onComplete) =>
-        withFinalizerAsync(async () => {
-          if (!target) return;
-          if (target.scheduledMessageJobId)
-            await $trpc.message.scheduledMessageJob.rescheduleMessage.mutate({
-              id: target.scheduledMessageJobId,
-              message: target.content,
-              roomId: target.roomId,
-              runAt: scheduledAt,
-            });
-          else {
-            await $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
-              message: target.content,
-              roomId: target.roomId,
-              runAt: scheduledAt,
-            });
-            clearDraft(target.roomId);
-          }
-          await readScheduledMessageJobs();
-          target = undefined;
-        }, onComplete)
-    "
+    @submit="(_event, onComplete) => scheduleMessage(onComplete)"
   >
     <v-container>
       <v-row>

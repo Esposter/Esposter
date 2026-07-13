@@ -2,6 +2,7 @@ import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMe
 import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
+import { useMutation } from "@/composables/shared/useMutation";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 import { RoutePath, takeOne, uuidValidateV4 } from "@esposter/shared";
@@ -25,25 +26,37 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const currentDirectMessage = computed(() =>
     directMessages.value.find(({ id }) => id === currentDirectMessageId.value),
   );
+  const executeMutation = useMutation();
   const createDirectMessage = async (userIds: string[]) => {
-    const room = await $trpc.room.directMessage.createDirectMessage.mutate(userIds);
-    const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
-    if (!existingDirectMessage) storeCreateDirectMessage(room, true);
-    await navigateTo(RoutePath.Messages(room.id));
+    // Server-generated room — non-optimistic, applied in onSuccess
+    await executeMutation(() => $trpc.room.directMessage.createDirectMessage.mutate(userIds), {
+      onSuccess: async (room) => {
+        const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
+        if (!existingDirectMessage) storeCreateDirectMessage(room, true);
+        await navigateTo(RoutePath.Messages(room.id));
+      },
+    });
   };
   const hideDirectMessage = async (input: HideDirectMessageInput) => {
-    await $trpc.room.directMessage.hideDirectMessage.mutate(input);
-    storeDeleteDirectMessage({ id: input });
-    if (currentDirectMessageId.value === input) {
-      const remainingDirectMessages = directMessages.value.filter(({ id }) => id !== input);
-      await router.push({
-        path:
-          remainingDirectMessages.length > 0
-            ? RoutePath.Messages(takeOne(remainingDirectMessages).id)
-            : RoutePath.MessagesIndex,
-        replace: true,
-      });
-    }
+    const snapshot = [...items.value];
+    await executeMutation(() => $trpc.room.directMessage.hideDirectMessage.mutate(input), {
+      applyOptimistic: () => {
+        storeDeleteDirectMessage({ id: input });
+        if (currentDirectMessageId.value === input) {
+          const remainingDirectMessages = directMessages.value.filter(({ id }) => id !== input);
+          void router.push({
+            path:
+              remainingDirectMessages.length > 0
+                ? RoutePath.Messages(takeOne(remainingDirectMessages).id)
+                : RoutePath.MessagesIndex,
+            replace: true,
+          });
+        }
+        return () => {
+          items.value = snapshot;
+        };
+      },
+    });
   };
 
   return {

@@ -23,6 +23,13 @@ const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
 const url = computed(() => fileUrlMap.value.get(file.id)?.url ?? "");
 const viewableFileIndex = computed(() => viewableFiles.value.findIndex(({ id }) => id === file.id));
 const isActive = ref(false);
+const executeMutation = useMutation();
+// File removal applies via the subscription echo — non-optimistic
+const deleteFile = () => {
+  void executeMutation(() =>
+    $trpc.message.deleteFile.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey, id: file.id }),
+  );
+};
 </script>
 
 <template>
@@ -60,9 +67,7 @@ const isActive = ref(false);
           :is-hovering
           :hover-props
           :url
-          @delete="
-            $trpc.message.deleteFile.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey, id: file.id })
-          "
+          @delete="deleteFile"
         />
       </v-hover>
     </div>

@@ -5,30 +5,54 @@ import type { PostWithRelations } from "@esposter/db-schema";
 
 export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
   const { $trpc } = useNuxtApp();
+  const executeMutation = useMutation();
 
+  // Server-generated like row — non-optimistic, applied in onSuccess
   const createLike = async (input: CreateLikeInput) => {
-    const newLike = await $trpc.like.createLike.mutate(input);
-    const post = toValue(allPosts).find(({ id }) => id === newLike.postId);
-    if (!post) return;
+    await executeMutation(() => $trpc.like.createLike.mutate(input), {
+      onSuccess: (newLike) => {
+        const post = toValue(allPosts).find(({ id }) => id === newLike.postId);
+        if (!post) return;
 
-    post.viewerLike = newLike;
-    post.noLikes += newLike.value;
+        post.viewerLike = newLike;
+        post.noLikes += newLike.value;
+      },
+    });
   };
   const updateLike = async (input: UpdateLikeInput) => {
-    const updatedLike = await $trpc.like.updateLike.mutate(input);
-    const post = toValue(allPosts).find(({ id }) => id === updatedLike.postId);
-    if (!post) return;
+    const post = toValue(allPosts).find(({ id }) => id === input.postId);
+    if (!post?.viewerLike) return;
 
-    post.viewerLike = updatedLike;
-    post.noLikes += updatedLike.value * 2;
+    const previousViewerLike = post.viewerLike;
+    await executeMutation(() => $trpc.like.updateLike.mutate(input), {
+      applyOptimistic: () => {
+        post.viewerLike = { ...previousViewerLike, value: input.value };
+        post.noLikes += input.value * 2;
+        return () => {
+          post.viewerLike = previousViewerLike;
+          post.noLikes -= input.value * 2;
+        };
+      },
+      onSuccess: (updatedLike) => {
+        post.viewerLike = updatedLike;
+      },
+    });
   };
   const deleteLike = async (postId: DeleteLikeInput) => {
-    const deletedLike = await $trpc.like.deleteLike.mutate(postId);
     const post = toValue(allPosts).find(({ id }) => id === postId);
-    if (!post) return;
+    if (!post?.viewerLike) return;
 
-    post.viewerLike = undefined;
-    post.noLikes -= deletedLike.value;
+    const previousViewerLike = post.viewerLike;
+    await executeMutation(() => $trpc.like.deleteLike.mutate(postId), {
+      applyOptimistic: () => {
+        post.viewerLike = undefined;
+        post.noLikes -= previousViewerLike.value;
+        return () => {
+          post.viewerLike = previousViewerLike;
+          post.noLikes += previousViewerLike.value;
+        };
+      },
+    });
   };
 
   return {
