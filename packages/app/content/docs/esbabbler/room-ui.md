@@ -29,7 +29,7 @@ On `smAndDown` a bottom action bar sits above the composer, keeping room actions
 
 ## Category drag-reorder
 
-Room categories in the left sidebar reorder by dragging their headers (SortableJS via `vue-draggable-plus`); a ghost placeholder with a primary-colored top border marks the drop target. Alt+↑/Alt+↓ on a focused category header moves it without a pointer. The store applies the new positions optimistically (via [`useMutation`](/docs/architecture/client-mutations)), then persists only the rows whose position changed (`getCategoryPositionUpdates`) through the `reorderRoomCategories` procedure — a single DB transaction, so a drag either fully lands or fully rolls back. `readRoomCategories` orders by `position` first with `name` as tiebreaker.
+Room categories in the left sidebar reorder by dragging their headers (SortableJS via `vue-draggable-plus`); a ghost placeholder with a primary-colored top border marks the drop target. Alt+↑/Alt+↓ on a focused category header moves it without a pointer. The store applies the new positions optimistically (via [`useMutation`](/docs/architecture/client-data)), then persists only the rows whose position changed (`getCategoryPositionUpdates`) through the `reorderRoomCategories` procedure — a single DB transaction, so a drag either fully lands or fully rolls back. `readRoomCategories` orders by `position` first with `name` as tiebreaker.
 
 ## Key files
 

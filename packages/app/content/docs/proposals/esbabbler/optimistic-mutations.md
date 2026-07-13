@@ -5,7 +5,7 @@ description: Proposal — route every user-facing tRPC mutation through the unif
 
 # Optimistic Mutations Sweep
 
-Route **every user-facing tRPC mutation** through [`useMutation`](/docs/architecture/client-mutations): apply the change to the store immediately, run the mutation in the background, roll back + surface the error on failure. No control ever waits on a server round-trip.
+Route **every user-facing tRPC mutation** through [`useMutation`](/docs/architecture/client-data): apply the change to the store immediately, run the mutation in the background, roll back + surface the error on failure. No control ever waits on a server round-trip.
 
 ## Scope
 
@@ -15,7 +15,7 @@ Route **every user-facing tRPC mutation** through [`useMutation`](/docs/architec
 
 ## How it works
 
-See the [client mutations](/docs/architecture/client-mutations) standard for the primitive itself. Per call site: identify the store mutation that the subscription would eventually apply, run it inside `applyOptimistic` (returning the rollback closure), and fire the tRPC mutation as the `mutate` argument. Subscriptions stay the confirming source of truth — the optimistic write is provisional, the echo idempotently re-applies the same state (create/update store operations already guard duplicates).
+See the [client data access](/docs/architecture/client-data) standard for the primitive itself. Per call site: identify the store mutation that the subscription would eventually apply, run it inside `applyOptimistic` (returning the rollback closure), and fire the tRPC mutation as the `mutate` argument. Subscriptions stay the confirming source of truth — the optimistic write is provisional, the echo idempotently re-applies the same state (create/update store operations already guard duplicates).
 
 Sweep order (by user-perceived latency):
 

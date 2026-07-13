@@ -23,21 +23,7 @@ const dialog = ref(false);
       </v-card-title>
       <v-card-text px-0 py-2>
         <div mb-2>Send An Invite Link To A Friend!</div>
-        <NuxtErrorBoundary v-if="currentRoomId" :key="currentRoomId">
-          <Suspense>
-            <MessageModelRoomInviteManager :room-id="currentRoomId" />
-            <template #fallback>
-              <v-skeleton-loader type="list-item-two-line" />
-            </template>
-          </Suspense>
-          <template #error="{ clearError }">
-            <v-alert type="error" text="Couldn't load your invite link.">
-              <template #append>
-                <v-btn variant="text" @click="clearError">Retry</v-btn>
-              </template>
-            </v-alert>
-          </template>
-        </NuxtErrorBoundary>
+        <MessageModelRoomInviteManager v-if="currentRoomId" :key="currentRoomId" :room-id="currentRoomId" />
       </v-card-text>
     </StyledCard>
   </v-dialog>

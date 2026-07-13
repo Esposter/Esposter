@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
-import type { InviteInMessage, RoomInMessage } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
@@ -16,13 +16,15 @@ const { roomId } = defineProps<InviteManagerProps>();
 const { $trpc } = useNuxtApp();
 const executeMutation = useMutation();
 const runtimeConfig = useRuntimeConfig();
-const invite = ref<InviteInMessage | null>(await $trpc.room.readMyInvite.query({ roomId }));
 const expireAfterMinutes = ref<CreateInviteInput["expireAfterMinutes"]>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
-// Seed from the loaded invite so regenerating via one option doesn't silently reset the other to unlimited
-// (expireAfterMinutes can't be recovered from the absolute expiresAt, so it falls back to the default)
-const maxUses = ref<CreateInviteInput["maxUses"]>(
-  INVITE_MAX_USES_OPTIONS.find((uses) => uses === invite.value?.maxUses) ?? 0,
-);
+const maxUses = ref<CreateInviteInput["maxUses"]>(0);
+const { data: invite } = useQuery(() => $trpc.room.readMyInvite.query({ roomId }), {
+  // Seed from the loaded invite so regenerating via one option doesn't silently reset the other to unlimited
+  // (expireAfterMinutes can't be recovered from the absolute expiresAt, so it falls back to the default)
+  onSuccess: (newInvite) => {
+    maxUses.value = INVITE_MAX_USES_OPTIONS.find((uses) => uses === newInvite?.maxUses) ?? 0;
+  },
+});
 const expireAfterItems: SelectItemCategoryDefinition<CreateInviteInput["expireAfterMinutes"]>[] = [
   ...Object.entries(InviteExpireAfterMinutesMap).map(([title, value]) => ({ title, value })),
   { title: "Never", value: 0 },

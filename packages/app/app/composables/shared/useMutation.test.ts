@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { useAlertStore } from "@/store/alert";
+import { noop } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -50,7 +51,7 @@ describe(useMutation, () => {
     const staleRollback = vi.fn<() => void>();
     const executeMutation = useMutation();
     const { alerts } = storeToRefs(useAlertStore());
-    let rejectStale: (reason: unknown) => void = () => undefined;
+    let rejectStale: (reason: unknown) => void = noop;
     const stale = executeMutation(
       () =>
         new Promise<void>((_, reject) => {
