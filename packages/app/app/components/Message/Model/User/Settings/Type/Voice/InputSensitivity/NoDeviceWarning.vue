@@ -7,7 +7,15 @@ defineEmits<{ grant: [] }>();
 <template>
   <v-alert density="compact" type="warning" variant="tonal">
     You do not have any input devices enabled. You must
-    <span text-info underline cursor-pointer @click="$emit('grant')">
+    <span
+      text-info
+      underline
+      cursor-pointer
+      role="button"
+      tabindex="0"
+      @click="$emit('grant')"
+      @keydown.enter.prevent="$emit('grant')"
+    >
       grant {{ MESSAGE_DISPLAY_NAME }} access to your microphone
     </span>
     in order to observe input sensitivity.

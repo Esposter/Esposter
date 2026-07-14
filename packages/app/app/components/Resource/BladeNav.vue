@@ -46,8 +46,8 @@ const activeItem = computed(() => items.value.find(({ blade }) => blade === acti
     <template #activator="{ props }">
       <v-list nav w-full>
         <v-list-item :="props" :prepend-icon="activeItem.icon" :title="activeItem.title">
-          <template v-if="isOpen" #append>
-            <v-icon icon="mdi-chevron-up" />
+          <template #append>
+            <v-icon :icon="isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
           </template>
         </v-list-item>
       </v-list>

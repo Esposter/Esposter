@@ -64,7 +64,8 @@ export default Object.assign(
         // `router.replace({ query })` is a query-string update, not navigation, so only `push` is banned.
         message:
           "Use `navigateTo(target, { replace: true })` instead of `router.push` for navigation. (`router.replace({ query })` for query-only updates is fine.)",
-        selector: "CallExpression[callee.object.name=/^\\$?router$/][callee.property.name='push']",
+        selector:
+          "CallExpression[callee.property.name='push']:matches([callee.object.name=/^\\$?router$/], [callee.object.callee.name='useRouter'], [callee.object.property.name='$router'])",
       },
     ],
     // Computationally expensive

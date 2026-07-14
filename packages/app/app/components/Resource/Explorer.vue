@@ -22,7 +22,7 @@ const isListDrawerOpen = ref(false);
 const route = useRoute();
 // Selecting a resource navigates, so close the mobile drawer whenever the route changes
 watch(
-  () => route.fullPath,
+  () => route.path,
   () => {
     isListDrawerOpen.value = false;
   },
@@ -58,7 +58,7 @@ watch(
         </div>
       </div>
     </div>
-    <v-navigation-drawer v-if="smAndDown" v-model="isListDrawerOpen" absolute temporary>
+    <v-navigation-drawer v-if="smAndDown" v-model="isListDrawerOpen" temporary absolute>
       <v-toolbar title="Resources" b-b-1 b-border b-solid>
         <template #append>
           <StyledTooltipIconButton icon="mdi-close" text="Close" @click="isListDrawerOpen = false" />

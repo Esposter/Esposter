@@ -53,7 +53,7 @@ const copyPublicLink = async () => {
           <template v-if="publicUrl">
             <span op-medium-emphasis>Public link</span>
             <div flex flex-wrap gap-2 items-center>
-              <NuxtLink text-info :to="publicUrl" external target="_blank">{{ publicUrl }}</NuxtLink>
+              <NuxtLink :to="publicUrl" external text-info target="_blank">{{ publicUrl }}</NuxtLink>
               <StyledTooltipIconButton icon="mdi-content-copy" text="Copy link" @click="copyPublicLink" />
             </div>
           </template>
