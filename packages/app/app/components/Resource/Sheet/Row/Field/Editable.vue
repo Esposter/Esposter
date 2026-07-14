@@ -4,6 +4,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import type { EditableColumnValue } from "#shared/models/resource/sheet/column/EditableColumnValue";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { takeOne, toRawDeep } from "@esposter/shared";
@@ -24,15 +25,17 @@ const editableColumns = computed(() => columns.filter((column) => checkIsEditabl
 const localValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
 let isSubmitted = false;
 
-const submitEdit = () => {
+// Fire-and-forget: navigateTo focuses the next cell straight after this, and awaiting the row save
+// Would stall focus behind the network round-trip on every keyboard move.
+const submitEdit = getSynchronizedFunction(async () => {
   if (isSubmitted) return;
   isSubmitted = true;
   clearFocus();
   if (localValue.value === (takeOne(item.data, column.name) ?? null)) return;
-  updateRow(
+  await updateRow(
     Object.assign(structuredClone(toRawDeep(item)), { data: { ...item.data, [column.name]: localValue.value } }),
   );
-};
+});
 
 const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
   submitEdit();

@@ -32,14 +32,14 @@ useEventListener("pointermove", (event) => {
   if (isDragging.value) setThresholdFromClientX(event.clientX);
 });
 
-useEventListener("pointerup", () => {
+useEventListener("pointerup", async () => {
   if (!isDragging.value) return;
   isDragging.value = false;
-  updateUserSettings({ inputSensitivityDecibels: inputSensitivityDecibels.value });
+  await updateUserSettings({ inputSensitivityDecibels: inputSensitivityDecibels.value });
 });
 
-onMounted(() => {
-  start();
+onMounted(async () => {
+  await start();
 });
 </script>
 
