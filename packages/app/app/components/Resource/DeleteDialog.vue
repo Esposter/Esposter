@@ -3,16 +3,18 @@ import type { Resource } from "@esposter/db-schema";
 
 import { RoutePath } from "@esposter/shared";
 
-interface ResourceDeleteDialogButtonProps {
+interface ResourceDeleteDialogProps {
   remove: () => Promise<boolean>;
   resource: Resource;
 }
 
-const { remove, resource } = defineProps<ResourceDeleteDialogButtonProps>();
+const isOpen = defineModel<boolean>({ default: false });
+const { remove, resource } = defineProps<ResourceDeleteDialogProps>();
 </script>
 
 <template>
   <StyledDeleteFormDialog
+    v-model="isOpen"
     :card-props="{ title: 'Delete resource' }"
     :confirm-name="resource.name"
     @delete="
@@ -23,9 +25,6 @@ const { remove, resource } = defineProps<ResourceDeleteDialogButtonProps>();
       }
     "
   >
-    <template #activator="{ updateIsOpen }">
-      <v-btn color="error" prepend-icon="mdi-delete" variant="text" @click="updateIsOpen(true)">Delete</v-btn>
-    </template>
     Delete "{{ resource.name }}"? This cannot be undone.
   </StyledDeleteFormDialog>
 </template>

@@ -415,6 +415,36 @@ const controlItems = computed<ControlItem[]>(() => [
 
 **When NOT to extract:** Items rendering fundamentally different components (e.g. `StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — the template structure diverges too much for a shared shape.
 
+## One Affordance Per Action — No Duplicate Behaviour
+
+**Every action gets exactly one visible way to trigger it.** Two controls that do the identical thing are not "convenience" — they make the user stop and ask whether the two differ, and they double the surface that has to stay in sync.
+
+The resource list had three routes to the same destination per row: the row's `@click:row`, a `text-info` `NuxtLink` on the name, and an `Open` icon button in the actions column (plus an `Open` item in the right-click menu). All four navigated to `RoutePath.Resource(item.id)`. Now the row click is the only one, and the name renders as plain text.
+
+When you find duplicates, keep the affordance with the **largest hit target and the least chrome**, and delete the rest:
+
+```vue
+<!-- WRONG — the name link and the Open button both repeat the row click -->
+<template #[`item.name`]="{ item }">
+  <NuxtLink text-info :to="RoutePath.Resource(item.id)" @click.stop>{{ item.name }}</NuxtLink>
+</template>
+<template #[`item.actions`]="{ item }">
+  <StyledTooltipIconButton icon="mdi-open-in-new" text="Open" :button-props="{ to: RoutePath.Resource(item.id) }" />
+</template>
+
+<!-- CORRECT — row click navigates; the name is plain text (drop the slot entirely), actions hold only what the row click can't do -->
+<template #[`item.actions`]="{ item }">
+  <StyledOverflowMenu :items="getActionItems(item)" @click.stop />
+</template>
+```
+
+Corollaries:
+
+- **Don't style non-links like links.** `text-info` + underline is a promise of a distinct navigation target. If the row already navigates, the name is plain text — styling it as a link implies it goes somewhere else.
+- **A different trigger for the same command is not a duplicate.** A right-click context menu and a row `⋮` menu are two triggers for one list of commands — that is fine, and they must be driven by **one** shared `Item[]` (see [Permission-Filtered Action Items](#permission-filtered-action-items-composable--v-for)). What is banned is a second _visible_ control for a command that already has one.
+- **A genuinely different behaviour is not a duplicate.** `Open in new tab` survives next to row-click because it does something row-click cannot.
+- If a slot exists only to re-render the default value (`{{ item.name }}`), delete the slot and let the default rendering do it.
+
 ## Singleton Dialogs — Store-Driven Target, Never Per-Item
 
 **Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded `v-dialog`/menu creates N full component trees that all mount, hydrate, and re-render together — the root cause of a seconds-long INP on the messages page. The full rationale and canonical wiring live in `packages/app/content/docs/architecture/singleton-dialogs.md`; keep that page updated when this pattern evolves.

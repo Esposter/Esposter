@@ -3,17 +3,20 @@ import type { Resource } from "@esposter/db-schema";
 
 import { resourceNameRules } from "@/services/resource/resourceNameRules";
 
-interface ResourceRenameDialogButtonProps {
+interface ResourceRenameDialogProps {
   rename: (name: string) => Promise<void>;
   resource: Resource;
 }
 
-const { rename, resource } = defineProps<ResourceRenameDialogButtonProps>();
+const isOpen = defineModel<boolean>({ default: false });
+const { rename, resource } = defineProps<ResourceRenameDialogProps>();
+// The caller mounts this only while it is open, so the field starts from the current name on every open
 const editedName = ref(resource.name);
 </script>
 
 <template>
   <StyledFormDialog
+    v-model="isOpen"
     :card-props="{ title: 'Rename resource' }"
     :confirm-button-props="{ text: 'Save' }"
     @submit="
@@ -23,18 +26,6 @@ const editedName = ref(resource.name);
       }
     "
   >
-    <template #activator="{ updateIsOpen }">
-      <v-btn
-        prepend-icon="mdi-pencil"
-        variant="text"
-        @click="
-          editedName = resource.name;
-          updateIsOpen(true);
-        "
-      >
-        Rename
-      </v-btn>
-    </template>
     <v-text-field v-model="editedName" autofocus label="Name" :rules="resourceNameRules" />
   </StyledFormDialog>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ReadResourcesOptions } from "@/models/resource/list/ReadResourcesOptions";
+import type { Item } from "@/models/shared/Item";
 import type { Resource, ResourceType } from "@esposter/db-schema";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
@@ -19,6 +20,9 @@ interface ResourceListViewProps {
 }
 
 const { closeTo, isSearchable = true } = defineProps<ResourceListViewProps>();
+// When narrow, the toolbar commands collapse into the … overflow menu — the close ✕ never collapses
+const { smAndDown } = useVDisplay();
+const { getActionItems } = useResourceListActionItems();
 const listDialogStore = useListDialogStore();
 const { deletingId, renamingId } = storeToRefs(listDialogStore);
 // The workbench filter state mirrors to query params (deep links from global search included);
@@ -79,6 +83,22 @@ const showingText = computed(() => {
   const end = Math.min(page.value * itemsPerPage.value, count.value);
   return `Showing ${start}–${end} of ${count.value} records`;
 });
+const toolbarItems = computed<Item[]>(() => [
+  {
+    active: isGroupedByType.value,
+    icon: "mdi-format-list-group",
+    onClick: () => {
+      isGroupedByType.value = !isGroupedByType.value;
+    },
+    title: "Group by type",
+  },
+  {
+    icon: "mdi-file-export-outline",
+    onClick: () => exportAllResourcesCsv(createResourcesPageReader()),
+    title: "Export CSV",
+  },
+  { icon: "mdi-refresh", onClick: () => refresh(), title: "Refresh" },
+]);
 const getResourceIcon = (type: ResourceType) => ResourceDefinitionMap[type].icon;
 const getResourceTitle = (type: ResourceType) => ResourceDefinitionMap[type].title;
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Resource>) => navigateTo(RoutePath.Resource(item.id));
@@ -115,18 +135,15 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
         />
         <v-spacer />
         <StyledTooltipIconButton
-          icon="mdi-format-list-group"
-          text="Group by type"
-          :button-props="{ active: isGroupedByType }"
-          @click="isGroupedByType = !isGroupedByType"
+          v-for="{ active, icon, onClick, title } of smAndDown ? [] : toolbarItems"
+          :key="title"
+          :icon
+          :text="title"
+          :button-props="{ active }"
+          @click="onClick"
         />
         <ResourceListColumnChooserMenu v-model="hiddenColumnKeys" />
-        <StyledTooltipIconButton
-          icon="mdi-file-export-outline"
-          text="Export CSV"
-          @click="exportAllResourcesCsv(createResourcesPageReader())"
-        />
-        <StyledTooltipIconButton icon="mdi-refresh" text="Refresh" @click="refresh()" />
+        <StyledOverflowMenu v-if="smAndDown" icon="mdi-dots-horizontal" :items="toolbarItems" />
         <StyledTooltipIconButton v-if="closeTo" icon="mdi-close" text="Close" :button-props="{ to: closeTo }" />
       </v-toolbar>
       <ResourceListSelectionToolbar
@@ -186,18 +203,9 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
           {{ getResourceTitle(item.type) }}
         </div>
       </template>
-      <template #[`item.name`]="{ item }">
-        <!-- A real link so middle-click/ctrl-click work; stop keeps the row's navigateTo from double-firing -->
-        <NuxtLink text-info :to="RoutePath.Resource(item.id)" @click.stop>{{ item.name }}</NuxtLink>
-      </template>
       <template #[`item.actions`]="{ item }">
-        <!-- stop keeps the row's navigateTo from double-firing on top of the button's own `to` -->
-        <StyledTooltipIconButton
-          icon="mdi-open-in-new"
-          text="Open"
-          :button-props="{ to: RoutePath.Resource(item.id) }"
-          @click.stop
-        />
+        <!-- stop keeps the row's navigateTo from firing when the menu is opened -->
+        <StyledOverflowMenu :items="getActionItems(item)" @click.stop />
       </template>
       <template #group-header="{ columns, isGroupOpen, item, toggleGroup }">
         <tr>
