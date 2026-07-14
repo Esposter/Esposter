@@ -38,6 +38,6 @@ flowchart LR
 
 ## Notes
 
-- Naming: **Note**, not Document — "document" was the old pre-consolidation umbrella term for all editor resources and would be actively confusing in this codebase.
+- Naming: **Note**, not Document — "document" was the old pre-consolidation umbrella term for all editor resources and would be actively confusing in this codebase. Singular, like every `ResourceType` value — pluralized display titles ("Notes") are a UX-only decision deferred to `ResourceDefinitionMap` title changes across all types at once, never identifier changes.
 - Collaboration, comments, and version history remain the platform-wide deferrals they already are ([collaboration](/docs/platform/deferred/document-collaboration), [comments](/docs/platform/deferred/resource-comments), [draft history](/docs/platform/deferred/draft-version-history)) — Note adds no special urgency, it just rides whatever the platform decides.
 - Cost: one pg enum migration, zero new dependencies, zero new services.

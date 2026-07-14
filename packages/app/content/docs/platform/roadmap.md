@@ -9,10 +9,10 @@ Azure-portal parity program for the Resource Explorer: the [consolidation](/docs
 
 ## Next — end-to-end survey funnel (invite → respond → analyze)
 
-The audience → email invite → survey → responses → dashboard loop works today but leaks in the middle: responses can't be joined back to invites, a survey can't close without 404ing its links, junk responses can't be removed, and the view step is invisible. These close it (response modes + campaign ship together; the rest are independent):
+The audience → email invite → survey → responses → dashboard loop works today but leaks in the middle: responses can't be joined back to invites, a survey can't close without 404ing its links, junk responses can't be removed, and the view step is invisible. These close it (response modes + program ship together; the rest are independent):
 
 - [ ] Survey response modes ([spec](/docs/proposals/platform/survey-response-modes)): explicit Anonymous | Invited mode in survey settings, opaque `inviteToken` on responses, per-mode server validation — the extensible identity foundation
-- [ ] Campaign resource ([spec](/docs/proposals/platform/campaign-resource)): the distribution orchestrator — binds audience + email + survey, issues opaque invite tokens, Status blade + `CampaignStatus` dataset provider for funnel dashboards
+- [ ] Program resource ([spec](/docs/proposals/platform/program-resource)): the distribution orchestrator — binds audience + email + survey, issues opaque invite tokens, Status blade + `ProgramStatus` dataset provider for funnel dashboards
 - [ ] Survey response controls ([spec](/docs/proposals/platform/survey-response-controls)): Accepting-responses toggle enforced server-side, closed state on the respondent page instead of unpublish-404
 - [ ] Survey response management ([spec](/docs/proposals/platform/survey-response-management)): per-response detail dialog, owner delete, response count on Overview
 - [ ] Published view analytics ([spec](/docs/proposals/platform/published-view-analytics)): best-effort view counter (Azure Table) on public reads, Views row on Overview — views vs responses is the completion rate
@@ -21,6 +21,7 @@ The audience → email invite → survey → responses → dashboard loop works 
 
 ## Later — editors and capability parity
 
+- [ ] File → Sheet rename ([spec](/docs/proposals/platform/file-to-sheet-rename)): mechanical whole-hog rename (pg enum value, router, models, components, docs area) — land before new "File" consumers multiply; no backwards compat needed
 - [ ] Resource file assets ([spec](/docs/proposals/platform/resource-file-assets)): promote Survey's `{id}/files` SAS machinery to a FileAssets capability + GrapesJS Asset Manager wiring — hosted images for Email/Webpage instead of base64, prerequisite for email sending
 - [ ] Email web view ([spec](/docs/proposals/platform/email-web-view)): Email opts into Publishable — save-time HTML capture, `/view/email/[id]` "view in browser" page (best after file assets)
 - [ ] Flowchart publish ([spec](/docs/proposals/platform/flowchart-publish)): Flowchart opts into Publishable — read-only VueFlow view, the simplest capability adoption

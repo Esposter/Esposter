@@ -5,7 +5,7 @@ description: TDD test plan for the end-to-end resource chain — enumerated acce
 
 # Funnel Integration Tests
 
-The executable specification for the survey funnel program: every funnel proposal ships with its acceptance cases enumerated **here, first**, and one grand integration spec walks the whole real-world chain — contacts file → email → invited survey → campaign tokens → responses → status → dashboard → publish. An implementation session picks up a proposal, writes these tests, watches them fail, then builds until they pass — the tests are the contract, the proposals are the design, this page binds them.
+The executable specification for the survey funnel program: every funnel proposal ships with its acceptance cases enumerated **here, first**, and one grand integration spec walks the whole real-world chain — contacts file → email → invited survey → program tokens → responses → status → dashboard → publish. An implementation session picks up a proposal, writes these tests, watches them fail, then builds until they pass — the tests are the contract, the proposals are the design, this page binds them.
 
 Everything runs on the existing server-test stack ([server testing](/docs/architecture/server-testing)): `createMockContext()` (PGlite + azure-mock + mocked auth), `createCallerFactory` per router, `getMockSession()` as the owner, `mockSessionOnce(db)` for non-owner perspectives. No new test infrastructure. Client-only pieces (GrapesJS export zip, SurveyJS rendering, blade UI) are explicitly out of scope here — they get co-located component/unit tests under their own proposals; this plan covers the server truth.
 
@@ -16,14 +16,14 @@ One concrete real-world case anchors everything — **a café owner running a cu
 1. Imports `customers.csv` into a **File** (name + email columns).
 2. Authors a feedback **Survey**, sets it **Invited** mode, publishes it.
 3. Authors an invite **Email** bound to the customers dataset with a survey invite block.
-4. Creates a **Campaign** binding audience (customers File, key column `email`) + email + survey, generates invites, exports tokened HTML (delivery is manual for now).
+4. Creates a **Program** binding audience (customers File, key column `email`) + email + survey, generates invites, exports tokened HTML (delivery is manual for now).
 5. Customers open `/view/survey/{id}?t={token}` and respond; one token is reused, one is forged, one customer never responds.
 6. The owner checks the **Status** — 2 of 3 responded — deletes a test response, then **closes** the survey.
-7. A **Dashboard** visual binds the `CampaignStatus` dataset (response rate), and the owner publishes the dashboard; view analytics count the public reads.
+7. A **Dashboard** visual binds the `ProgramStatus` dataset (response rate), and the owner publishes the dashboard; view analytics count the public reads.
 
 ```mermaid
 flowchart LR
-  S1["suite: response modes<br/>(survey router)"] --> S2["suite: campaign<br/>(campaign router)"]
+  S1["suite: response modes<br/>(survey router)"] --> S2["suite: program<br/>(program router)"]
   S2 --> S3["suite: controls + management<br/>(survey router)"]
   S3 --> S4["suite: view analytics<br/>(resource factory)"]
   S4 --> CHAIN["surveyFunnel integration spec<br/>the scenario, end to end, one test file"]
@@ -31,7 +31,7 @@ flowchart LR
 
 ## Test home
 
-Per-proposal cases live in the routers' existing co-located test files (`server/trpc/routers/survey.test.ts`, new `campaign.test.ts`, `dataset.test.ts`). The cross-router scenario spec is a new category — it exercises five routers in one flow — and lives at `server/trpc/routers/surveyFunnel.integration.test.ts`, node environment, same `createMockContext` lifecycle, with one caller per router bound to the same context. Integration specs use scenario-named `describe` strings (there is no single function to reference — a deliberate, documented deviation from the function-ref describe convention).
+Per-proposal cases live in the routers' existing co-located test files (`server/trpc/routers/survey.test.ts`, new `program.test.ts`, `dataset.test.ts`). The cross-router scenario spec is a new category — it exercises five routers in one flow — and lives at `server/trpc/routers/surveyFunnel.integration.test.ts`, node environment, same `createMockContext` lifecycle, with one caller per router bound to the same context. Integration specs use scenario-named `describe` strings (there is no single function to reference — a deliberate, documented deviation from the function-ref describe convention).
 
 ## Acceptance cases per proposal
 
@@ -40,21 +40,21 @@ Each list is the TDD checklist an implementation session turns into `it` blocks 
 ### [Response modes](/docs/proposals/platform/survey-response-modes) — `survey.test.ts`
 
 - default mode is Anonymous: `createSurveyResponse` without a token succeeds; a supplied token is stored as `""`
-- Invited mode rejects a missing token, a forged token, and a token issued for a _different_ survey's campaign
+- Invited mode rejects a missing token, a forged token, and a token issued for a _different_ survey's program
 - Invited mode accepts a valid token and stores it on the entity
 - the same valid token on `updateSurveyResponse` (resume) still passes; a token swap mid-resume rejects
 - switching Invited → Anonymous takes effect on the next write without re-publish (live settings, not snapshot)
 - existing responses are untouched by a mode switch
 
-### [Campaign resource](/docs/proposals/platform/campaign-resource) — `campaign.test.ts`
+### [Program resource](/docs/proposals/platform/program-resource) — `program.test.ts`
 
-- `generateCampaignInvites` issues one token per distinct audience key value; tokens are UUIDs, never derived from the key
+- `generateProgramInvites` issues one token per distinct audience key value; tokens are UUIDs, never derived from the key
 - re-running after the audience grows issues only the missing tokens (idempotent), never rotates existing ones
 - a non-owner calling generate/status/token-map gets rejected (`mockSessionOnce`)
-- `readCampaignStatus` joins invites × responses: invited-not-responded, responded, and never-invited-responder (anonymous-era row) each land correctly
-- `CampaignStatus` dataset provider returns `keyValue · invitedAt · responded` columns through `dataset.readDataset`, owner-gated like every provider
+- `readProgramStatus` joins invites × responses: invited-not-responded, responded, and never-invited-responder (anonymous-era row) each land correctly
+- `ProgramStatus` dataset provider returns `keyValue · invitedAt · responded` columns through `dataset.readDataset`, owner-gated like every provider
 - a dangling audience/email/survey binding fails soft (error state, no throw-through)
-- `deleteResource` on the campaign clears its invite partition; deleting the bound survey leaves status readable
+- `deleteResource` on the program clears its invite partition; deleting the bound survey leaves status readable
 
 ### [Response controls](/docs/proposals/platform/survey-response-controls) — `survey.test.ts`
 
@@ -82,7 +82,7 @@ Each list is the TDD checklist an implementation session turns into `it` blocks 
 
 ```ts
 describe("survey funnel — café feedback drive", () => {
-  // beforeAll: createMockContext(); bind callers: file, survey, email, campaign, dashboard, dataset, resource
+  // beforeAll: createMockContext(); bind callers: file, survey, email, program, dashboard, dataset, resource
 
   test("the whole chain", async () => {
     // 1. audience — File resource with name/email columns, 3 rows
@@ -98,16 +98,16 @@ describe("survey funnel — café feedback drive", () => {
     });
     await surveyCaller.publishResource({ id: survey.id });
 
-    // 3 + 4. email + campaign — bind audience/email/survey, issue tokens
+    // 3 + 4. email + program — bind audience/email/survey, issue tokens
     const email = await emailCaller.createResource({ name: "invite" });
-    const campaign = await campaignCaller.createResource({ name: "feedback drive" });
-    await campaignCaller.saveResourceContent({
-      id: campaign.id,
+    const program = await programCaller.createResource({ name: "feedback drive" });
+    await programCaller.saveResourceContent({
+      id: program.id,
       content: bindings(file, email, survey),
       contentVersion: 0,
     });
-    const tokens = await campaignCaller.generateCampaignInvites({ id: campaign.id }); // 3 tokens
-    expect(await campaignCaller.generateCampaignInvites({ id: campaign.id })).toHaveLength(3); // idempotent
+    const tokens = await programCaller.generateProgramInvites({ id: program.id }); // 3 tokens
+    expect(await programCaller.generateProgramInvites({ id: program.id })).toHaveLength(3); // idempotent
 
     // 5. respondents — 2 valid tokens answer; forged token rejected
     await surveyCaller.createSurveyResponse({ ...answers1, inviteToken: tokens[0].token });
@@ -117,17 +117,17 @@ describe("survey funnel — café feedback drive", () => {
     ).rejects.toThrow();
 
     // 6. status + moderation + close
-    const status = await datasetCaller.readDataset({ type: DatasetProviderType.CampaignStatus, id: campaign.id });
+    const status = await datasetCaller.readDataset({ type: DatasetProviderType.ProgramStatus, id: program.id });
     expect(respondedCount(status)).toBe(2); // and tokens[2] shows invited-not-responded
     await surveyCaller.deleteSurveyResponse({ id: survey.id, rowKey: answers2.rowKey });
     await surveyCaller.saveResourceContent({ id: survey.id, content: closed, contentVersion: 2 });
     await expect(surveyCaller.createSurveyResponse({ ...answers3, inviteToken: tokens[2].token })).rejects.toThrow();
 
-    // 7. dashboard — bind CampaignStatus, publish, snapshot bakes the funnel; views count
+    // 7. dashboard — bind ProgramStatus, publish, snapshot bakes the funnel; views count
     const dashboard = await dashboardCaller.createResource({ name: "drive results" });
     await dashboardCaller.saveResourceContent({
       id: dashboard.id,
-      content: visualBoundTo(campaign.id),
+      content: visualBoundTo(program.id),
       contentVersion: 0,
     });
     await dashboardCaller.publishResource({ id: dashboard.id });

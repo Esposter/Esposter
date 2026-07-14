@@ -25,7 +25,7 @@ flowchart LR
 ```
 
 - The email variant renders MJML button markup; the webpage variant renders plain HTML button markup — the shared core produces the survey list + URLs, thin per-editor wrappers own the markup (shared-core-and-thin-wrappers, not a copy).
-- No per-recipient identity on webpages (there is no audience row behind an anonymous page visitor), so the webpage block is always the plain published URL — a webpage-distributed survey is the Anonymous [response mode](/docs/proposals/platform/survey-response-modes); invite tokens belong to [campaigns](/docs/proposals/platform/campaign-resource).
+- No per-recipient identity on webpages (there is no audience row behind an anonymous page visitor), so the webpage block is always the plain published URL — a webpage-distributed survey is the Anonymous [response mode](/docs/proposals/platform/survey-response-modes); invite tokens belong to [programs](/docs/proposals/platform/program-resource).
 
 ## Key files
 
