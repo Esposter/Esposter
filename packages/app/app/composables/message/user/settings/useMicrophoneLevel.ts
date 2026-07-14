@@ -37,7 +37,7 @@ export const useMicrophoneLevel = () => {
     await getResultAsync(startStream).match(
       (stream) => {
         if (!stream) return;
-        // getUserMedia cannot be cancelled, so the scope can dispose while it is still pending.
+        // A dispose can land while getUserMedia is still pending, and it cannot be cancelled.
         // UseUserMedia's own dispose then no-ops (its stream ref is still empty) and assigns the live
         // Stream afterwards, leaving the mic hot with nothing left to tear it down - so stop it here.
         else if (isDisposed) {
