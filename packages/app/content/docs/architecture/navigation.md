@@ -21,7 +21,7 @@ flowchart TD
 - **Internal route** — `<NuxtLink :to="RoutePath.Resource(id)">`, or `:to` on a routable Vuetify component (`v-card`, `v-list-item`, `v-tab`, `v-btn`). Real anchors, so keyboard and middle-/ctrl-click work. Route targets always come from `RoutePath` (`@esposter/shared`), never string-built.
 - **External URL** — `<NuxtLink :to="url" external target="_blank">`; NuxtLink adds `rel="noopener noreferrer"` for `_blank`, so a manual `rel` is redundant.
 - **In-page anchor** — `<NuxtInvisibleLink :to="{ hash: '#id' }" @click.prevent="…">`; the `.prevent` suppresses router navigation so a custom smooth-scroll + `history.replaceState` handler drives the behavior (see the docs table of contents).
-- **Imperative** — `navigateTo(target, { replace: true })` for post-mutation redirects, form submits, and route-guard cases where there is no element to click. Never `useRouter().push`/`replace` for navigation (query-string-only `router.replace({ query })` is not navigation and is fine).
+- **Imperative** — `navigateTo(target, { replace: true })` for post-mutation redirects, form submits, and route-guard cases where there is no element to click. `router.push` is banned by lint (`no-restricted-syntax`) — use `navigateTo`. `router.replace({ query })` is a query-string update, not navigation, so it is exempt and allowed.
 
 ## NuxtInvisibleLink
 
@@ -38,7 +38,8 @@ The docs page (`pages/docs/[...slug].vue`) must feel instant when moving between
 | File                                                  | Role                                                                 |
 | ----------------------------------------------------- | -------------------------------------------------------------------- |
 | `app/components/Nuxt/InvisibleLink.vue`               | base link primitive — `NuxtLink` clone with default styling stripped |
-| `packages/configuration/eslint/overrides/vueRules.js` | `vue/no-restricted-html-elements` bans the raw `a` element           |
+| `packages/configuration/eslint/overrides/vueRules.js` | bans the raw `a` element + `router.push` in templates                |
+| `packages/configuration/eslint/typescriptRules.js`    | bans `router.push` in `.ts` + `.vue` script (`no-restricted-syntax`) |
 | `app/pages/docs/[...slug].vue`                        | reactive-key docs page — instant in-place navigation                 |
 | `app/components/Docs/TableOfContentsItem.vue`         | in-page hash anchor via `NuxtInvisibleLink` + custom smooth scroll   |
 

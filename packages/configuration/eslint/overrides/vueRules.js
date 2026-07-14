@@ -24,6 +24,12 @@ export default {
         "Don't call Object.* inline in a template render expression — it allocates a new reference every render. Hoist it to a script-setup const (static) or computed (reactive). (Event handlers are exempt.)",
       selector: "CallExpression[callee.object.name='Object']:not(VAttribute[key.name.name='on'] CallExpression)",
     },
+    {
+      // `router.replace({ query })` is a query-string update, not navigation, so only `push` is banned.
+      message:
+        "Use `navigateTo(target, { replace: true })` instead of `router.push` for navigation. (`router.replace({ query })` for query-only updates is fine.)",
+      selector: "CallExpression[callee.object.name=/^\\$?router$/][callee.property.name='push']",
+    },
   ],
   "vue/no-unused-vars": "off",
   "vue/no-v-html": "off",

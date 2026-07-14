@@ -60,6 +60,12 @@ export default Object.assign(
           "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",
         selector: "MemberExpression[object.name='expect'][property.name='any']",
       },
+      {
+        // `router.replace({ query })` is a query-string update, not navigation, so only `push` is banned.
+        message:
+          "Use `navigateTo(target, { replace: true })` instead of `router.push` for navigation. (`router.replace({ query })` for query-only updates is fine.)",
+        selector: "CallExpression[callee.object.name=/^\\$?router$/][callee.property.name='push']",
+      },
     ],
     // Computationally expensive
     // "@typescript-eslint/naming-convention": [
