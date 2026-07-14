@@ -151,14 +151,9 @@ Docs sessions produce **specs, not code**: the deliverable of ideation/triage is
 
 ## Batch size — PR review budget
 
-Docs work lands in PRs reviewed by CodeRabbit free tier (hard cap ~150 files). Keep every chunk of work to **~100 changed files measured from the branch point**, since work is committed+pushed continuously and dirty-file counts see nothing:
+Docs sweeps hit the PR file budget fast. See the `coderabbit` skill for the budget and how to measure it.
 
-```bash
-git diff --name-only "$(git merge-base <base-branch> HEAD)" | wc -l   # committed changes since branching (base is what this branch was cut from, e.g. develop)
-git status --porcelain -uall | wc -l                                  # plus anything not yet committed
-```
-
-Before starting a sweep, run both and sum; when the budget is reached, stop and hand back for a PR — don't start a new area you can't finish inside the budget. Large deletions (retiring an old tree) are their own PR. Chunk by area/folder (e.g. "feature pages this PR, decision pages next"), never by squeezing multiple topics into one file — the single-responsibility rule always wins over file count.
+Chunk by area/folder (e.g. "feature pages this PR, decision pages next"), never by squeezing multiple topics into one file — the single-responsibility rule always wins over file count. Don't start an area you can't finish inside the budget, and give large deletions (retiring an old tree) their own PR.
 
 ## Standards vs feature pages
 
