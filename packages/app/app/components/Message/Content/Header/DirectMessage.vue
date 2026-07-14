@@ -10,10 +10,10 @@ const participants = computed(() =>
 );
 const executeMutation = useMutation();
 // Participant removal applies via the subscription echo — non-optimistic
-const deleteDirectMessageParticipant = (userId: string) => {
+const deleteDirectMessageParticipant = async (userId: string) => {
   const roomId = currentDirectMessage.value?.id;
   if (roomId)
-    void executeMutation(() => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }));
+    await executeMutation(() => $trpc.room.directMessage.deleteDirectMessageParticipant.mutate({ roomId, userId }));
 };
 </script>
 

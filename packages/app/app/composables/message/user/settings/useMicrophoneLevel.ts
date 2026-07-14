@@ -1,3 +1,4 @@
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
@@ -48,18 +49,20 @@ export const useMicrophoneLevel = () => {
       },
     );
   };
-  const stop = () => {
+  const stop = async () => {
     pause();
-    void audioContext?.close();
+    // Tear down synchronously, then close last, so a re-entrant start() cannot observe a half-stopped graph
+    const previousAudioContext = audioContext;
     audioContext = undefined;
     analyser = undefined;
     timeDomainData = undefined;
     stopStream();
     level.value = MIN_INPUT_SENSITIVITY_DECIBELS;
     isTesting.value = false;
+    await previousAudioContext?.close();
   };
 
-  onScopeDispose(stop);
+  onScopeDispose(getSynchronizedFunction(stop));
 
   return { isTesting, level, start, stop };
 };

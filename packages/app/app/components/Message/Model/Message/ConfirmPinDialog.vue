@@ -12,12 +12,12 @@ const message = computed(() => items.value.find(({ rowKey }) => rowKey === pinni
 const creator = useCreator(message);
 const isOpen = useSingletonDialog(pinningRowKey);
 const executeMutation = useMutation();
-const pinMessage = (onComplete: () => void) => {
+const pinMessage = async (onComplete: () => void) => {
   if (!message.value) return;
   const target = message.value;
   const { partitionKey, rowKey } = target;
   onComplete();
-  void executeMutation(() => $trpc.message.pinMessage.mutate({ partitionKey, rowKey }), {
+  await executeMutation(() => $trpc.message.pinMessage.mutate({ partitionKey, rowKey }), {
     applyOptimistic: () => {
       target.isPinned = true;
       return () => {

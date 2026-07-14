@@ -13,14 +13,14 @@ const message = computed(() => items.value.find(({ rowKey }) => rowKey === delet
 const creator = useCreator(message);
 const isOpen = useSingletonDialog(deletingRowKey);
 const executeMutation = useMutation();
-const deleteMessage = (onComplete: () => void) => {
+const deleteMessage = async (onComplete: () => void) => {
   if (!message.value) return;
   const { partitionKey, rowKey } = message.value;
   const snapshot = [...items.value];
   onComplete();
-  void executeMutation(() => $trpc.message.deleteMessage.mutate({ partitionKey, rowKey }), {
-    applyOptimistic: () => {
-      void storeDeleteMessage({ partitionKey, rowKey });
+  await executeMutation(() => $trpc.message.deleteMessage.mutate({ partitionKey, rowKey }), {
+    applyOptimistic: async () => {
+      await storeDeleteMessage({ partitionKey, rowKey });
       return () => {
         items.value = snapshot;
       };

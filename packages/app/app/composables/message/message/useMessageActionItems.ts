@@ -66,8 +66,8 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     message.isPinned
       ? {
           icon: "mdi-pin-off",
-          onClick: () => {
-            void executeUnpinMessageMutation(
+          onClick: async () => {
+            await executeUnpinMessageMutation(
               () => $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
               {
                 applyOptimistic: () => {
@@ -107,8 +107,8 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   };
   const markUnreadFromHereItem: Item = {
     icon: "mdi-email-mark-as-unread",
-    onClick: () => {
-      void executeMarkUnreadMutation(() =>
+    onClick: async () => {
+      await executeMarkUnreadMutation(() =>
         $trpc.userToRoom.updateUserToRoom.mutate({
           lastMessageAt: dayjs(message.createdAt).subtract(1, "millisecond").toDate(),
           roomId: message.partitionKey,

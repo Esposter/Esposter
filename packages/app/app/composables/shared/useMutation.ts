@@ -4,7 +4,7 @@ import { useAlertStore } from "@/store/alert";
 import { getResultAsync } from "@esposter/shared";
 
 interface MutationOptions<TResult> {
-  applyOptimistic?: () => () => void;
+  applyOptimistic?: () => Promisable<() => void>;
   onError?: (error: Error) => Promisable<void>;
   onSuccess?: (result: TResult) => Promisable<void>;
 }
@@ -18,7 +18,7 @@ export const useMutation = () => {
   ) => {
     const id = ++callId;
     const checkIsStale = () => id !== callId;
-    const rollback = applyOptimistic?.();
+    const rollback = await applyOptimistic?.();
     await getResultAsync(mutate).match(
       async (result) => {
         if (!checkIsStale()) await onSuccess?.(result);

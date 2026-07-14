@@ -106,10 +106,22 @@ export const getPermissions: GetPermissions = async (db, userId, roomIds: string
 
 - **`try`/`catch` is BANNED** for fallible work — use neverthrow `getResult`/`getResultAsync` (+ `withFinalizer`/`withFinalizerAsync` for cleanup, never `try`/`finally`); never `.catch()` chains. Full patterns, utilities, consumption rules, and Azure Functions logging/retry live in the **error-handling** skill.
 - **`.then()` exception**: acceptable only for a **promise queue** (serialising sequential async ops in a sync context, e.g. `chain = chain.then(async () => {...})`) — can't be expressed with `await` in a sync watcher/callback. All other `.then()`/`.catch()` must be converted.
-- Fire-and-forget: extract to a named `async` function and call without `await`.
 - **Never `await import(...)`** for code-splitting — always static top-level `import`. Components are already chunk-split per component by the build, so a nested dynamic import only hides the dependency and (in dev) defers Vite discovery until first use, which can trigger a mid-session re-optimization that leaves chunks referencing stale dep hashes. Only touch `optimizeDeps` when the dependency's own docs instruct it. Sole exception: a library-mandated lazy-loader contract (e.g. CodeMirror `LanguageDescription.of({ load })`).
-- **Never `void asyncFn()`** — when passing an async function to a sync callback slot (`onScopeDispose`, event listeners, Phaser callbacks), wrap with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction`. This satisfies `no-misused-promises` without suppressing the rule.
-- **Callback types you own should accept `Promisable<void>` and be awaited** — when defining a callback slot in your own option/hook interface (e.g. `useMutation`'s `onSuccess`), type it `(...) => Promisable<void>` (`Promisable` from `type-fest`) and `await` it at the call site, so callers can pass `async` handlers that run to completion. Never type it `() => void` and force callers to `void`/`getSynchronizedFunction` their async work — that workaround is only for third-party sync slots you can't change.
+
+### The `void` operator is BANNED
+
+`no-void` is an **error** (enabled in `.oxlintrc.json`, so it covers `.ts` **and** `.vue`). The only `void` in the codebase is the one inside `getSynchronizedFunction`; there is never a second one. `void` is not a fix — it silences `no-floating-promises` while throwing away the promise, so rejections become unhandled and the caller can't await completion.
+
+When you reach for `void asyncFn()`, work down this list and stop at the first that applies:
+
+1. **Can the enclosing function be `async`?** Then make it `async` and `await`. This is the answer for nearly every case — including **Vue template/emit handlers** (`@click`, `@confirm`, `@delete`) and any callback typed `Promisable<void>` (e.g. `Item.onClick`). Vue does not care that a handler returns a promise, so `onClick: async () => { await executeMutation(...) }` is correct and needs no wrapper.
+2. **Do you own the callback's type?** Then widen it to `Promisable<void>` (from `type-fest`) and `await` it at the call site — see the next bullet. Never force callers to `void` their async work.
+3. **Third-party sync slot you genuinely cannot change** (`onScopeDispose`, `addEventListener`, Phaser callbacks) — wrap with `getSynchronizedFunction(asyncFn)` from `#shared/util/function/getSynchronizedFunction` (explicit import; not auto-imported). This is the _only_ sanctioned fire-and-forget.
+
+Do not reach for step 3 before ruling out 1 and 2 — `getSynchronizedFunction` drops the promise just like `void` does, so it's a last resort, not a synonym for "make the lint error go away".
+
+- **Callback types you own should accept `Promisable<void>` and be awaited** — when defining a callback slot in your own option/hook interface (e.g. `useMutation`'s `onSuccess`/`applyOptimistic`), type it `(...) => Promisable<void>` (`Promisable` from `type-fest`) and `await` it at the call site, so callers can pass `async` handlers that run to completion.
+- **Fire-and-forget in a sync body**: if the enclosing function can't be `async` and there's no callback slot to widen, restructure so the sync teardown stays sync and the promise is awaited last (see `useMicrophoneLevel`'s `stop`) — don't `void` it.
 
 ## Error Handling
 
