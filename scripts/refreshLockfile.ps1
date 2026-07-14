@@ -1,5 +1,4 @@
 Remove-Item "pnpm-lock.yaml" -Force -ErrorAction SilentlyContinue
-
 # Collect every node_modules at any depth, but prune (don't descend into) a matched
 # node_modules so we never walk the huge .pnpm tree. Mirrors `find -prune` in the
 # sh script. rmdir /s /q handles pnpm junctions + long paths, which
