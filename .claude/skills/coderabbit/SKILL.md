@@ -100,8 +100,12 @@ Verify the count matches what you expect before committing, and validate the res
 
 ```bash
 node -e "
-const yaml=require('./node_modules/.pnpm/js-yaml@4.3.0/node_modules/js-yaml');
-const d=yaml.load(require('fs').readFileSync('.coderabbit.yaml','utf8'));
+const fs=require('node:fs');
+// js-yaml is only a transitive dep, so pnpm's strict layout leaves it unresolvable by bare name -
+// reach into .pnpm, but discover the version rather than pinning it.
+const [dir]=fs.readdirSync('node_modules/.pnpm').filter((d)=>d.startsWith('js-yaml@'));
+const yaml=require('./node_modules/.pnpm/'+dir+'/node_modules/js-yaml');
+const d=yaml.load(fs.readFileSync('.coderabbit.yaml','utf8'));
 console.log('path_filters:', d.reviews.path_filters.length);
 "
 ```

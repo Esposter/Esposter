@@ -32,10 +32,18 @@ export const useMicrophoneLevel = () => {
     },
     { immediate: false },
   );
+  let isDisposed = false;
   const start = async () => {
     await getResultAsync(startStream).match(
       (stream) => {
         if (!stream) return;
+        // getUserMedia cannot be cancelled, so the scope can dispose while it is still pending.
+        // UseUserMedia's own dispose then no-ops (its stream ref is still empty) and assigns the live
+        // Stream afterwards, leaving the mic hot with nothing left to tear it down - so stop it here.
+        else if (isDisposed) {
+          stopStream();
+          return;
+        }
         audioContext = new window.AudioContext();
         analyser = audioContext.createAnalyser();
         analyser.fftSize = 1024;
@@ -62,7 +70,12 @@ export const useMicrophoneLevel = () => {
     await previousAudioContext?.close();
   };
 
-  onScopeDispose(getSynchronizedFunction(stop));
+  onScopeDispose(
+    getSynchronizedFunction(async () => {
+      isDisposed = true;
+      await stop();
+    }),
+  );
 
   return { isTesting, level, start, stop };
 };
