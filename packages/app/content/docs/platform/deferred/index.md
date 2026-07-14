@@ -31,7 +31,6 @@ One page per deferred idea (not now — with a revisit trigger). Check here and 
 - [Resource groups](/docs/platform/deferred/resource-groups) — type facets + search suffice; a group column would be speculative schema
 - [Resource references](/docs/platform/deferred/resource-references) — a maintained lineage index is a second source of truth; design with dangling-references
 - [Resource locks](/docs/platform/deferred/resource-locks) — delete guard + recycle bin cover the single-owner threat model
-- [Resource templates](/docs/platform/deferred/resource-templates) — needs authored seed content; Duplicate covers it today
 - [Saved views](/docs/platform/deferred/saved-views) — URL-synced state already makes any view a bookmark
 - [Storage usage surface](/docs/platform/deferred/storage-usage-surface) — no quotas, so the number drives no decision
 - [Survey response push](/docs/platform/deferred/survey-response-push) — anonymous writes need digest-first design or they're a harassment vector

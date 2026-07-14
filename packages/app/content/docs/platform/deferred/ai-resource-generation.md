@@ -13,8 +13,8 @@ The app has no LLM integration anywhere: this would introduce a paid external de
 
 ## Revisit when
 
-An LLM integration is adopted anywhere in Esposter (the platform decision is made), or empty-resource starting friction is a validated user complaint that [templates](/docs/platform/deferred/resource-templates) fail to solve.
+An LLM integration is adopted anywhere in Esposter (the platform decision is made), or empty-resource starting friction is a validated user complaint that [blueprints](/docs/proposals/platform/blueprint-resource) fail to solve. When this un-defers, the blueprint manifest is the natural output unit: the model emits a schema-validated manifest and deploy is the only side-effectful step — no per-type generation paths needed.
 
 ## Cheaper interim
 
-[Resource templates](/docs/platform/deferred/resource-templates) cover the "don't start from blank" need without a model in the loop.
+[Duplicate](/docs/platform/resource-page-parity) an existing resource, and — once [blueprints](/docs/proposals/platform/blueprint-resource) ship — capture-and-deploy covers the "don't start from blank" need without a model in the loop.
