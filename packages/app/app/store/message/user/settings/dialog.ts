@@ -5,6 +5,8 @@ import { UserSettingsType } from "@/models/message/user/UserSettingsType";
 
 export const useUserSettingsDialogStore = defineStore("message/user/settings/dialog", () => {
   const isVisible = ref(false);
+  // Mobile-only: the settings sidebar becomes a temporary drawer toggled from the content header
+  const isDrawerOpen = ref(false);
   const settingsType = ref(UserSettingsType.Voice);
   const activeSectionId = ref<SettingsSection>(VoiceSettingsSection.Devices);
   const isScrollingToSection = ref(false);
@@ -15,5 +17,13 @@ export const useUserSettingsDialogStore = defineStore("message/user/settings/dia
     else next.delete(section);
     visibleSectionIds.value = next;
   };
-  return { activeSectionId, isScrollingToSection, isVisible, setSectionVisibility, settingsType, visibleSectionIds };
+  return {
+    activeSectionId,
+    isDrawerOpen,
+    isScrollingToSection,
+    isVisible,
+    setSectionVisibility,
+    settingsType,
+    visibleSectionIds,
+  };
 });

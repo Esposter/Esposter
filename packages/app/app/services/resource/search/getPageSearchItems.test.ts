@@ -11,7 +11,10 @@ describe(getPageSearchItems, () => {
 
   test("matches the page title case-insensitively", () => {
     expect.hasAssertions();
-    expect(getPageSearchItems("HOME")).toStrictEqual([takeOne([...PageSearchItems], 0)]);
+
+    const homePage = takeOne([...PageSearchItems], 0);
+
+    expect(getPageSearchItems(homePage.title.toUpperCase())).toStrictEqual([homePage]);
   });
 
   test("returns no items when nothing matches", () => {

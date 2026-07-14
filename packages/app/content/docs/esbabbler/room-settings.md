@@ -29,12 +29,17 @@ Gating lives in `SettingsPermissionMap` — a panel with an entry is hidden from
 flowchart LR
   Dialog["Settings/Dialog.vue<br/>(singleton, settingsRoomId)"] --> LeftSideBar["LeftSideBar.vue<br/>v-list-group per SettingsCategory"]
   Dialog --> Content["Content.vue<br/>Suspense + skeleton"]
-  LeftSideBar -- "select SettingsType" --> Content
+  LeftSideBar -- "select SettingsType (closes drawer on mobile)" --> Content
   Content -- "SettingsContentMap[settingsType]" --> Panel["Type/*/Index.vue<br/>lazy async panel"]
+  Content -- "mobile hamburger — open v-model" --> LeftSideBar
   LeftSideBar -- "SettingsPermissionMap gate" --> RBAC["useRoleStore.getMyPermissions"]
 ```
 
 The dialog mirrors the [user settings dialog](/docs/esbabbler/settings) conventions: panels are lazy `defineAsyncComponent`s rendered in `<Suspense :timeout="0">` with the shared `MessageModelSettingsSkeleton` fallback, and the active panel item in the open category group is highlighted by the generic `StyledSlideIndicator` rail (items carry `data-slide-indicator-key`). Unlike the user dialog there is no in-panel section scrollspy — room panels are single-view tools (tables and two-pane editors), so the second nav level selects panels, not scroll sections.
+
+## Mobile
+
+The shared `MessageModelSettingsLeftSideBar` drawer is `permanent` only on desktop; on `smAndDown` (`useVDisplay`) it becomes a `temporary` overlay drawer, closed by default and opened by a `mdi-menu` hamburger the content header renders on mobile. Selecting any panel closes the drawer so the content takes the full width — the room dialog threads this open-state through the `Dialog` (`open` v-model on the sidebar, `open:drawer` emit from the content), and the [user settings dialog](/docs/esbabbler/settings) does the same via `isDrawerOpen` on its dialog store. The two-pane panels that would otherwise sit side by side — Roles and Members (list column + editor column) — stack to a single column under the `sm` breakpoint (`cols="12" sm="4"` on the list column) so neither pane is squeezed.
 
 ## Key files
 

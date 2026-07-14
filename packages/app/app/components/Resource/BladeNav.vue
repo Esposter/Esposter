@@ -6,7 +6,7 @@ import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { ResourceBladeDefinitionMap } from "@/services/resource/ResourceBladeDefinitionMap";
 import { ResourceBladeTitleMap } from "@/services/resource/ResourceBladeTitleMap";
 import { ResourceEditorComponentMap } from "@/services/resource/ResourceEditorComponentMap";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, takeOne } from "@esposter/shared";
 
 interface ResourceBladeNavProps {
   activeBlade: string;
@@ -14,8 +14,9 @@ interface ResourceBladeNavProps {
 }
 
 const { activeBlade, resource } = defineProps<ResourceBladeNavProps>();
-// Titles collapse to an icon rail on mobile so the blade content keeps the width.
+// On mobile the rail collapses into a dropdown so the blade content keeps the full width.
 const { smAndDown } = useVDisplay();
+const isOpen = ref(false);
 const items = computed(() => {
   const results = [
     {
@@ -37,16 +38,38 @@ const items = computed(() => {
     results.push({ blade: slug, icon, title, to: `${RoutePath.Resource(resource.id)}/${slug}` });
   return results;
 });
+const activeItem = computed(() => items.value.find(({ blade }) => blade === activeBlade) ?? takeOne(items.value));
 </script>
 
 <template>
-  <v-list nav>
+  <v-menu v-if="smAndDown" v-model="isOpen">
+    <template #activator="{ props }">
+      <v-list nav w-full>
+        <v-list-item :="props" :prepend-icon="activeItem.icon" :title="activeItem.title">
+          <template #append>
+            <v-icon :icon="isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
+          </template>
+        </v-list-item>
+      </v-list>
+    </template>
+    <v-list nav>
+      <v-list-item
+        v-for="item in items"
+        :key="item.blade"
+        :active="activeBlade === item.blade"
+        :prepend-icon="item.icon"
+        :title="item.title"
+        :to="item.to"
+      />
+    </v-list>
+  </v-menu>
+  <v-list v-else nav>
     <v-list-item
       v-for="item in items"
       :key="item.blade"
       :active="activeBlade === item.blade"
       :prepend-icon="item.icon"
-      :title="smAndDown ? undefined : item.title"
+      :title="item.title"
       :to="item.to"
     />
   </v-list>

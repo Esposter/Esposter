@@ -2,7 +2,6 @@
 import { useCallStore } from "@/store/message/room/call";
 import { RoutePath, withFinalizerAsync } from "@esposter/shared";
 
-const router = useRouter();
 const callStore = useCallStore();
 const { createCall } = callStore;
 const isCreating = ref(false);
@@ -21,7 +20,7 @@ const isCreating = ref(false);
               async () => {
                 const newCallSessionId = await createCall();
                 if (!newCallSessionId) return;
-                await router.push(RoutePath.Calls(newCallSessionId));
+                await navigateTo(RoutePath.Calls(newCallSessionId));
               },
               () => {
                 isCreating = false;

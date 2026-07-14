@@ -13,4 +13,4 @@ const getWeight = ({ path }: ContentNavigationItem) => {
 export const getSortedNavigationItems = (items: ContentNavigationItem[]): ContentNavigationItem[] =>
   items
     .map((item) => (item.children ? { ...item, children: getSortedNavigationItems(item.children) } : item))
-    .toSorted((a, b) => getWeight(a) - getWeight(b) || a.title.localeCompare(b.title));
+    .toSorted((a, b) => getWeight(a) - getWeight(b) || (a.title ?? "").localeCompare(b.title ?? ""));

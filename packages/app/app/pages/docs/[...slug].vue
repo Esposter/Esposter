@@ -8,12 +8,17 @@ import { getSurroundingPages } from "@/services/docs/getSurroundingPages";
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
 import { RoutePath } from "@esposter/shared";
 
-definePageMeta({ key: (route) => route.path });
-
 const route = useRoute();
-const path = route.path.endsWith("/") ? route.path.slice(0, -1) : route.path;
+// Reactive so doc→doc navigation refetches in place instead of hard-remounting the page (which felt like a full reload)
+const path = computed(() => (route.path.endsWith("/") ? route.path.slice(0, -1) : route.path));
 const [{ data: page }, { data: navigation }] = await Promise.all([
-  useAsyncData(AsyncDataKey.DocsPage(path), () => queryCollection(ContentCollection.Docs).path(path).first()),
+  useAsyncData(
+    AsyncDataKey.DocsPage(path.value),
+    () => queryCollection(ContentCollection.Docs).path(path.value).first(),
+    {
+      watch: [path],
+    },
+  ),
   useAsyncData(AsyncDataKey.DocsNavigation, () =>
     queryCollectionNavigation(ContentCollection.Docs, [DocsCollectionItemPropertyNames.description]),
   ),
@@ -28,7 +33,9 @@ const sections = computed(() =>
   ).filter(({ path: itemPath }) => itemPath !== RoutePath.Docs),
 );
 const section = computed(() =>
-  sections.value.find(({ path: sectionPath }) => path === sectionPath || path.startsWith(`${sectionPath}/`)),
+  sections.value.find(
+    ({ path: sectionPath }) => path.value === sectionPath || path.value.startsWith(`${sectionPath}/`),
+  ),
 );
 const category = computed(() => (section.value ? getSectionCategory(section.value.path) : undefined));
 const categorySections = computed(() =>
@@ -37,10 +44,10 @@ const categorySections = computed(() =>
     : [],
 );
 // Surround walks the same sorted+grouped order as the sidebar, not the collection's path order
-const surround = computed(() => getSurroundingPages(getFlattenedNavigationPages(categorySections.value), path));
+const surround = computed(() => getSurroundingPages(getFlattenedNavigationPages(categorySections.value), path.value));
 const tocLinks = computed(() => page.value?.body.toc?.links ?? []);
 
-useSeoMeta({ description: page.value.description, title: page.value.title });
+useSeoMeta({ description: () => page.value?.description, title: () => page.value?.title });
 </script>
 
 <template>

@@ -10,6 +10,7 @@ const { settingsRoomId } = storeToRefs(dialogStore);
 const isOpen = useSingletonDialog(settingsRoomId);
 const settingsType = ref<keyof typeof SettingsContentMap>(SettingsType.Overview);
 const isDeleteOpen = ref(false);
+const isSettingsDrawerOpen = ref(false);
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === settingsRoomId.value));
@@ -20,8 +21,18 @@ const room = computed(() => rooms.value.find(({ id }) => id === settingsRoomId.v
     <MessageModelRoomConfirmDeleteDialog v-model="isDeleteOpen" :room-id="room.id" :creator-id="room.userId" />
     <v-dialog v-model="isOpen" fullscreen>
       <v-app>
-        <MessageModelRoomSettingsLeftSideBar v-model="settingsType" :room @open:delete="isDeleteOpen = true" />
-        <MessageModelRoomSettingsContent :room :settings-type @close="isOpen = false" />
+        <MessageModelRoomSettingsLeftSideBar
+          v-model="settingsType"
+          v-model:open="isSettingsDrawerOpen"
+          :room
+          @open:delete="isDeleteOpen = true"
+        />
+        <MessageModelRoomSettingsContent
+          :room
+          :settings-type
+          @close="isOpen = false"
+          @open:drawer="isSettingsDrawerOpen = true"
+        />
       </v-app>
     </v-dialog>
   </template>

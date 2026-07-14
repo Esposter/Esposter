@@ -51,13 +51,12 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
       },
       onSuccess: async () => {
         if (!isCurrent) return;
-        await router.push({
-          path:
-            remainingDirectMessages.length > 0
-              ? RoutePath.Messages(takeOne(remainingDirectMessages).id)
-              : RoutePath.MessagesIndex,
-          replace: true,
-        });
+        await navigateTo(
+          remainingDirectMessages.length > 0
+            ? RoutePath.Messages(takeOne(remainingDirectMessages).id)
+            : RoutePath.MessagesIndex,
+          { replace: true },
+        );
       },
     });
   };

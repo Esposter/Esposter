@@ -16,7 +16,7 @@ const roles = computed(() => getRoles(room.id).toSorted((a, b) => (a.isEveryone 
 
 <template>
   <v-row no-gutters>
-    <v-col cols="4" md="3" lg="2" pe-6 flex flex-col gap-y-3>
+    <v-col cols="12" sm="4" md="3" lg="2" pe-6 flex flex-col gap-y-3>
       <MessageModelRoomSettingsTypeRoleCreateForm :room-id="room.id" />
       <MessageModelRoomSettingsTypeRoleList :roles :room-id="room.id" />
     </v-col>

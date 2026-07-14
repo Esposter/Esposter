@@ -16,6 +16,7 @@ interface LeftSideBarProps {
 
 const { room } = defineProps<LeftSideBarProps>();
 const modelValue = defineModel<keyof typeof SettingsContentMap>({ required: true });
+const isDrawerOpen = defineModel<boolean>("open", { default: false });
 const emit = defineEmits<{ "open:delete": [] }>();
 const roleStore = useRoleStore();
 const { getMyPermissions } = roleStore;
@@ -40,11 +41,13 @@ const openedCategories = ref<SettingsCategory[]>(Object.values(SettingsCategory)
 const onClick = (settingsType: SettingsType) => {
   if (settingsType === SettingsType.Delete) emit("open:delete");
   else modelValue.value = settingsType;
+  // Close the mobile drawer after a selection (no-op on desktop where the drawer is permanent)
+  isDrawerOpen.value = false;
 };
 </script>
 
 <template>
-  <MessageModelSettingsLeftSideBar>
+  <MessageModelSettingsLeftSideBar v-model:open="isDrawerOpen">
     <v-list v-model:opened="openedCategories">
       <v-list-group v-for="{ category, settingsTypes } of visibleCategories" :key="category" :value="category">
         <template #activator="{ props: activatorProps }">
