@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRowStore } from "@/store/resource/sheet/row";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
+import { withFinalizerAsync } from "@esposter/shared";
 
 const rowDialogStore = useRowDialogStore();
 const { deletingId } = storeToRefs(rowDialogStore);
@@ -17,10 +18,9 @@ const isOpen = useSingletonDialog(deletingId);
     v-model="isOpen"
     :card-props="{ title }"
     @delete="
-      (onComplete) => {
+      async (onComplete) => {
         if (!deletingId) return;
-        deleteRow(deletingId);
-        onComplete();
+        await withFinalizerAsync(() => deleteRow(deletingId), onComplete);
       }
     "
   >

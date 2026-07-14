@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
+import { withFinalizerAsync } from "@esposter/shared";
 
 const columnDialogStore = useColumnDialogStore();
 const { deletingColumnName } = storeToRefs(columnDialogStore);
@@ -13,10 +14,9 @@ const isOpen = useSingletonDialog(deletingColumnName);
     v-model="isOpen"
     :card-props="{ title }"
     @delete="
-      (onComplete) => {
+      async (onComplete) => {
         if (!deletingColumnName) return;
-        deleteColumn(deletingColumnName);
-        onComplete();
+        await withFinalizerAsync(() => deleteColumn(deletingColumnName), onComplete);
       }
     "
   >
