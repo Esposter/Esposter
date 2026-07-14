@@ -25,8 +25,8 @@ const viewableFileIndex = computed(() => viewableFiles.value.findIndex(({ id }) 
 const isActive = ref(false);
 const executeMutation = useMutation();
 // File removal applies via the subscription echo — non-optimistic
-const deleteFile = () => {
-  void executeMutation(() =>
+const deleteFile = async () => {
+  await executeMutation(() =>
     $trpc.message.deleteFile.mutate({ id: file.id, partitionKey: message.partitionKey, rowKey: message.rowKey }),
   );
 };

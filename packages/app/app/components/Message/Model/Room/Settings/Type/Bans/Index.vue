@@ -33,7 +33,7 @@ await readBans();
         </v-list-item-subtitle>
         <template #append>
           <StyledDeleteFormDialog
-            :card-props="{ title: 'Unban User', text: `Are you sure you want to unban ${user.name}?` }"
+            :card-props="{ title: 'Unban User' }"
             :confirm-button-props="{ color: 'primary', text: 'Unban' }"
             @delete="
               async (onComplete) => {
@@ -50,6 +50,7 @@ await readBans();
                 @click.stop="updateIsOpen(true)"
               />
             </template>
+            Are you sure you want to unban {{ user.name }}?
           </StyledDeleteFormDialog>
         </template>
       </v-list-item>

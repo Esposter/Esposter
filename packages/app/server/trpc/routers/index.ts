@@ -8,7 +8,6 @@ import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
 import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
 import { emailRouter } from "@@/server/trpc/routers/email";
-import { fileRouter } from "@@/server/trpc/routers/file";
 import { flowchartRouter } from "@@/server/trpc/routers/flowchart";
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
@@ -20,6 +19,7 @@ import { resourceRouter } from "@@/server/trpc/routers/resource";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
+import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { todoListRouter } from "@@/server/trpc/routers/todoList";
 import { userRouter } from "@@/server/trpc/routers/user";
@@ -37,7 +37,6 @@ const trpcRouterWithoutAchievements = router({
   dataset: datasetRouter,
   dungeons: dungeonsRouter,
   email: emailRouter,
-  file: fileRouter,
   flowchart: flowchartRouter,
   friend: friendRouter,
   friendRequest: friendRequestRouter,
@@ -49,6 +48,7 @@ const trpcRouterWithoutAchievements = router({
   role: roleRouter,
   room: roomRouter,
   searchHistory: searchHistoryRouter,
+  sheet: sheetRouter,
   survey: surveyRouter,
   todoList: todoListRouter,
   user: userRouter,

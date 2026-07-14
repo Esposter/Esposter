@@ -56,22 +56,16 @@ watch(isOpen, (newIsOpen) => {
     :confirm-button-attrs="{ disabled: !scheduledAt }"
     @submit="(_event, onComplete) => scheduleJob(onComplete)"
   >
-    <v-container>
-      <v-row>
-        <v-col cols="12">
-          <StyledDatePicker
-            v-model="scheduledAt"
-            :date-picker-props="{
-              minDate: minScheduledAt,
-              placeholder: 'Run at',
-              sixWeeks: 'append',
-            }"
-          />
-        </v-col>
-        <v-col cols="12">
-          <v-textarea v-model="text" :label="textLabel" :rules="[rules.required()]" auto-grow />
-        </v-col>
-      </v-row>
-    </v-container>
+    <div flex flex-col gap-4>
+      <StyledDatePicker
+        v-model="scheduledAt"
+        :date-picker-props="{
+          minDate: minScheduledAt,
+          placeholder: 'Run at',
+          sixWeeks: 'append',
+        }"
+      />
+      <v-textarea v-model="text" :label="textLabel" :rules="[rules.required()]" auto-grow />
+    </div>
   </StyledFormDialog>
 </template>

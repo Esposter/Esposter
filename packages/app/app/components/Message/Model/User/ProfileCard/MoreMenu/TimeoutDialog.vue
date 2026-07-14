@@ -35,8 +35,6 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
     <template #activator="{ updateIsOpen }">
       <v-list-item :="AdminActionListItemPropsMap[AdminActionType.TimeoutUser]" @click.stop="updateIsOpen(true)" />
     </template>
-    <div px-4 py-2>
-      <v-select v-model="selectedTimeoutDurationMs" :items="timeoutDurationSelectItems" label="Duration" />
-    </div>
+    <v-select v-model="selectedTimeoutDurationMs" :items="timeoutDurationSelectItems" label="Duration" />
   </StyledFormDialog>
 </template>

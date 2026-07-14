@@ -1,3 +1,4 @@
+import { getSynchronizedFunction } from "#shared/util/function/getSynchronizedFunction";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voice";
 import { MAX_INPUT_SENSITIVITY_DECIBELS, MIN_INPUT_SENSITIVITY_DECIBELS } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
@@ -31,10 +32,18 @@ export const useMicrophoneLevel = () => {
     },
     { immediate: false },
   );
+  let isDisposed = false;
   const start = async () => {
     await getResultAsync(startStream).match(
       (stream) => {
         if (!stream) return;
+        // getUserMedia cannot be cancelled, so the scope can dispose while it is still pending.
+        // UseUserMedia's own dispose then no-ops (its stream ref is still empty) and assigns the live
+        // Stream afterwards, leaving the mic hot with nothing left to tear it down - so stop it here.
+        else if (isDisposed) {
+          stopStream();
+          return;
+        }
         audioContext = new window.AudioContext();
         analyser = audioContext.createAnalyser();
         analyser.fftSize = 1024;
@@ -48,18 +57,25 @@ export const useMicrophoneLevel = () => {
       },
     );
   };
-  const stop = () => {
+  const stop = async () => {
     pause();
-    void audioContext?.close();
+    // Tear down synchronously, then close last, so a re-entrant start() cannot observe a half-stopped graph
+    const previousAudioContext = audioContext;
     audioContext = undefined;
     analyser = undefined;
     timeDomainData = undefined;
     stopStream();
     level.value = MIN_INPUT_SENSITIVITY_DECIBELS;
     isTesting.value = false;
+    await previousAudioContext?.close();
   };
 
-  onScopeDispose(stop);
+  onScopeDispose(
+    getSynchronizedFunction(async () => {
+      isDisposed = true;
+      await stop();
+    }),
+  );
 
   return { isTesting, level, start, stop };
 };

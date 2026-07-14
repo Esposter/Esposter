@@ -1,4 +1,4 @@
-import type { ColumnValue } from "#shared/models/resource/file/column/ColumnValue";
+import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 

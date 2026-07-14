@@ -27,11 +27,7 @@ const roomName = computed(() => rooms.value.find(({ id }) => id === roomId)?.nam
 <template>
   <StyledDeleteFormDialog
     v-model="modelValue"
-    :card-props="
-      isCreator
-        ? { title: 'Delete Room', text: 'Are you sure you want to delete this room?' }
-        : { title: 'Leave Room', text: 'Are you sure you want to leave this room?' }
-    "
+    :card-props="{ title: isCreator ? 'Delete Room' : 'Leave Room' }"
     :confirm-button-props="{ text: isCreator ? 'Delete' : 'Leave' }"
     :confirm-name="isCreator ? roomName : undefined"
     @delete="
@@ -47,5 +43,6 @@ const roomName = computed(() => rooms.value.find(({ id }) => id === roomId)?.nam
         </template>
       </v-tooltip>
     </template>
+    Are you sure you want to {{ isCreator ? "delete this room" : "leave this room" }}?
   </StyledDeleteFormDialog>
 </template>

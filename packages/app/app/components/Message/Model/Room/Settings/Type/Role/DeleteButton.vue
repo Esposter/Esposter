@@ -16,7 +16,7 @@ const { deleteRole } = roleStore;
 
 <template>
   <StyledDeleteFormDialog
-    :card-props="{ title: 'Delete Role', text: 'Are you sure you want to delete this role?' }"
+    :card-props="{ title: 'Delete Role' }"
     @delete="async (onComplete) => await withFinalizerAsync(() => deleteRole({ roomId, id: roleId }), onComplete)"
   >
     <template #activator="{ updateIsOpen }">
@@ -27,5 +27,6 @@ const { deleteRole } = roleStore;
         @click.stop="updateIsOpen(true)"
       />
     </template>
+    Are you sure you want to delete this role?
   </StyledDeleteFormDialog>
 </template>

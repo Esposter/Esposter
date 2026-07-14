@@ -28,8 +28,6 @@ const reason = ref("");
     <template #activator="{ updateIsOpen }">
       <v-list-item :="AdminActionListItemPropsMap[AdminActionType.Warn]" @click.stop="updateIsOpen(true)" />
     </template>
-    <div px-4 py-2>
-      <v-text-field v-model="reason" label="Reason (optional)" hint="Visible in the audit log" persistent-hint />
-    </div>
+    <v-text-field v-model="reason" hint="Visible in the audit log" label="Reason (optional)" persistent-hint />
   </StyledFormDialog>
 </template>

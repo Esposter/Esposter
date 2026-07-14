@@ -27,19 +27,19 @@ export const useResourceMutations = () => {
           saveResourceContent: (input) => $trpc.email.saveResourceContent.mutate(input as never),
           updateResource: (input) => $trpc.email.updateResource.mutate(input),
         };
-      case ResourceType.File:
-        return {
-          deleteResource: (input) => $trpc.file.deleteResource.mutate(input),
-          readResourceContent: (input) => $trpc.file.readResourceContent.query(input),
-          saveResourceContent: (input) => $trpc.file.saveResourceContent.mutate(input as never),
-          updateResource: (input) => $trpc.file.updateResource.mutate(input),
-        };
       case ResourceType.Flowchart:
         return {
           deleteResource: (input) => $trpc.flowchart.deleteResource.mutate(input),
           readResourceContent: (input) => $trpc.flowchart.readResourceContent.query(input),
           saveResourceContent: (input) => $trpc.flowchart.saveResourceContent.mutate(input as never),
           updateResource: (input) => $trpc.flowchart.updateResource.mutate(input),
+        };
+      case ResourceType.Sheet:
+        return {
+          deleteResource: (input) => $trpc.sheet.deleteResource.mutate(input),
+          readResourceContent: (input) => $trpc.sheet.readResourceContent.query(input),
+          saveResourceContent: (input) => $trpc.sheet.saveResourceContent.mutate(input as never),
+          updateResource: (input) => $trpc.sheet.updateResource.mutate(input),
         };
       case ResourceType.Survey:
         return {

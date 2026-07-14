@@ -7,8 +7,8 @@ export const useCreateResource = () => {
   const ResourceCreateProcedureMap = {
     [ResourceType.Dashboard]: $trpc.dashboard.createResource,
     [ResourceType.Email]: $trpc.email.createResource,
-    [ResourceType.File]: $trpc.file.createResource,
     [ResourceType.Flowchart]: $trpc.flowchart.createResource,
+    [ResourceType.Sheet]: $trpc.sheet.createResource,
     [ResourceType.Survey]: $trpc.survey.createResource,
     [ResourceType.TodoList]: $trpc.todoList.createResource,
     [ResourceType.Webpage]: $trpc.webpage.createResource,

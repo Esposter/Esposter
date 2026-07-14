@@ -46,6 +46,7 @@
     "no-unassigned-import": "off",
     "no-underscore-dangle": ["error", { "allow": ["_def"] }],
     "no-useless-return": "off",
+    "no-void": "error",
     "prefer-add-event-listener": "off",
     "prefer-destructuring": "off",
     "prefer-global-this": "off",

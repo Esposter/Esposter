@@ -12,13 +12,13 @@ All documentation lives in `packages/app/content/docs/` and is rendered in the a
 **Where a page lives states whether it is built.** Never mix built and unbuilt in one page.
 
 - `docs/<area>/` and `docs/architecture/` describe **only what exists in code today**. If you can't point at the file that implements a sentence, the sentence doesn't belong here.
-- `docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal.
+- `docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal. **Exception — one-time changes** (renames, migrations, mechanical sweeps): these have no as-built feature to describe, so when done just delete the proposal and its roadmap item and sweep every reference — never convert them into a docs page; the shipped log line in the area `index.md` is the only trace.
 - `docs/<area>/deferred/` holds ideas we chose **not to build yet** (one page per idea, each with a revisit trigger); `docs/<area>/rejected/` holds ideas we decided **against** (one page per idea). Folder names are deliberately direct — never a vague umbrella like `decisions/` or `misc/`.
 - `docs/<area>/roadmap.md` holds **open work** (checkbox backlog).
 
 ## Single responsibility — one file per feature/idea
 
-Doc files are like Vue SFCs: **one feature, proposal, or decision per file — never merge them.** Do not consolidate multiple specs into one page or multiple decisions into one file; modularity beats file count. A page may have sub-pages (nested folder with `index.md`) when a feature has cohesive sub-features (e.g. `file-table-editor/computed-columns/aggregation.md`). Never delete or merge a doc file "to tidy up" — split when a page grows two responsibilities, and only remove a file when the idea itself is superseded (record that in a decision page).
+Doc files are like Vue SFCs: **one feature, proposal, or decision per file — never merge them.** Do not consolidate multiple specs into one page or multiple decisions into one file; modularity beats file count. A page may have sub-pages (nested folder with `index.md`) when a feature has cohesive sub-features (e.g. `sheet-editor/computed-columns/aggregation.md`). Never delete or merge a doc file "to tidy up" — split when a page grows two responsibilities, and only remove a file when the idea itself is superseded (record that in a decision page).
 
 ## Directory layout
 
@@ -28,7 +28,7 @@ packages/app/content/docs/
   architecture/
     index.md                  ← index of cross-cutting topics
     <topic>.md                ← as-built system explanation shared by multiple areas
-  <area>/                     ← esbabbler · platform · file-table-editor · virrun · vue-phaserjs · infra
+  <area>/                     ← esbabbler · platform · sheet-editor · virrun · vue-phaserjs · infra
     index.md                  ← what the area is, key concepts, terse chronological shipped log
     <feature>.md              ← one page per implemented feature (or <feature>/ folder with index.md + sub-feature pages)
     deferred/
@@ -118,17 +118,18 @@ Check both folders before adding a roadmap item or proposal — never re-argue a
 
 ## Roadmap pages
 
-Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped by horizon (`## In progress`, `## Next`, `## Later`). When an item ships: add one terse line to the area `index.md` shipped log, write/refresh the feature page, delete the roadmap item.
+Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped by horizon (`## In progress`, `## Next`, `## Later`). When an item ships: add one terse line to the area `index.md` shipped log, write/refresh the feature page unless it was a one-time change with no standing behaviour to document (see the Lifecycle table), delete the roadmap item.
 
 ## Lifecycle
 
-| State    | Location                     | Action                                                                                  |
-| -------- | ---------------------------- | --------------------------------------------------------------------------------------- |
-| Idea     | `<area>/roadmap.md`          | Checkbox item; grep `deferred/` + `rejected/` first                                     |
-| Designed | `proposals/<area>/<name>.md` | Write the proposal; roadmap item links to it                                            |
-| Shipped  | `<area>/<feature>.md`        | Rewrite proposal as an as-built page; delete proposal + roadmap item; log in `index.md` |
-| Won't do | `<area>/rejected/<idea>.md`  | One page with rationale                                                                 |
-| Deferred | `<area>/deferred/<idea>.md`  | One page with rationale + revisit trigger                                               |
+| State                     | Location                     | Action                                                                                   |
+| ------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------- |
+| Idea                      | `<area>/roadmap.md`          | Checkbox item; grep `deferred/` + `rejected/` first                                      |
+| Designed                  | `proposals/<area>/<name>.md` | Write the proposal; roadmap item links to it                                             |
+| Shipped                   | `<area>/<feature>.md`        | Rewrite proposal as an as-built page; delete proposal + roadmap item; log in `index.md`  |
+| Shipped (one-time change) | —                            | Delete proposal + roadmap item, sweep references, one shipped-log line — no feature page |
+| Won't do                  | `<area>/rejected/<idea>.md`  | One page with rationale                                                                  |
+| Deferred                  | `<area>/deferred/<idea>.md`  | One page with rationale + revisit trigger                                                |
 
 ## Sequential per-area work — never parallelize
 
@@ -150,14 +151,9 @@ Docs sessions produce **specs, not code**: the deliverable of ideation/triage is
 
 ## Batch size — PR review budget
 
-Docs work lands in PRs reviewed by CodeRabbit free tier (hard cap ~150 files). Keep every chunk of work to **~100 changed files measured from the branch point**, since work is committed+pushed continuously and dirty-file counts see nothing:
+Docs sweeps hit the PR file budget fast. See the `coderabbit` skill for the budget and how to measure it.
 
-```bash
-git diff --name-only "$(git merge-base <base-branch> HEAD)" | wc -l   # committed changes since branching (base is what this branch was cut from, e.g. develop)
-git status --porcelain -uall | wc -l                                  # plus anything not yet committed
-```
-
-Before starting a sweep, run both and sum; when the budget is reached, stop and hand back for a PR — don't start a new area you can't finish inside the budget. Large deletions (retiring an old tree) are their own PR. Chunk by area/folder (e.g. "feature pages this PR, decision pages next"), never by squeezing multiple topics into one file — the single-responsibility rule always wins over file count.
+Chunk by area/folder (e.g. "feature pages this PR, decision pages next"), never by squeezing multiple topics into one file — the single-responsibility rule always wins over file count. Don't start an area you can't finish inside the budget, and give large deletions (retiring an old tree) their own PR.
 
 ## Standards vs feature pages
 

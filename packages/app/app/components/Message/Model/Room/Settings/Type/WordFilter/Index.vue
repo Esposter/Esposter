@@ -27,9 +27,9 @@ const createWord = () => {
   newWord.value = "";
 };
 const executeMutation = useMutation();
-const saveWords = () => {
+const saveWords = async () => {
   const previousInitialWords = initialWords.value;
-  void executeMutation(() => $trpc.room.filter.upsertRoomFilter.mutate({ roomId: room.id, words: words.value }), {
+  await executeMutation(() => $trpc.room.filter.upsertRoomFilter.mutate({ roomId: room.id, words: words.value }), {
     applyOptimistic: () => {
       initialWords.value = [...words.value];
       return () => {

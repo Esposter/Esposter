@@ -100,7 +100,7 @@ const onUpdateOptions = async (options: ReadResourcesOptions) => {
 </script>
 
 <template>
-  <div flex flex-col h-full>
+  <div flex flex-col h-full min-w-0>
     <template v-if="isSearchable">
       <v-toolbar px-4 py-2 b-1 b-border b-solid flex flex-wrap gap-2 items-center>
         <v-text-field

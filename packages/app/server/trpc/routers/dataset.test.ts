@@ -1,18 +1,18 @@
-import type { FileResource } from "#shared/models/resource/file/FileResource";
+import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { ColumnType } from "#shared/models/resource/file/column/ColumnType";
-import { StringColumn } from "#shared/models/resource/file/column/StringColumn";
-import { CsvDelimiter } from "#shared/models/resource/file/csv/CsvDelimiter";
-import { DataSourceType } from "#shared/models/resource/file/datasource/DataSourceType";
-import { Row } from "#shared/models/resource/file/datasource/Row";
+import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
+import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
+import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
+import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { datasetRouter } from "@@/server/trpc/routers/dataset";
-import { fileRouter } from "@@/server/trpc/routers/file";
+import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { AZURE_MAX_PAGE_SIZE, resources } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
@@ -22,7 +22,7 @@ describe("dataset", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["dataset"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
-  let fileCaller: DecorateRouterRecord<TRPCRouter["file"]>;
+  let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   const name = "name";
   const columnName = "columnName";
   const value = "value";
@@ -43,7 +43,7 @@ describe("dataset", () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(datasetRouter)(mockContext);
     surveyCaller = createCallerFactory(surveyRouter)(mockContext);
-    fileCaller = createCallerFactory(fileRouter)(mockContext);
+    sheetCaller = createCallerFactory(sheetRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -155,8 +155,8 @@ describe("dataset", () => {
   test("reads file dataset", async () => {
     expect.hasAssertions();
 
-    const newResource = await fileCaller.createResource({ name });
-    const content: FileResource = {
+    const newResource = await sheetCaller.createResource({ name });
+    const content: SheetResource = {
       data: {
         columns: [new StringColumn({ name: columnName, sourceName: columnName })],
         metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
@@ -165,8 +165,8 @@ describe("dataset", () => {
       },
       settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
     };
-    await fileCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
-    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.File });
+    await sheetCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
+    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet });
 
     expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
     expect(dataset.rows).toStrictEqual([{ [columnName]: value }]);
@@ -175,8 +175,8 @@ describe("dataset", () => {
   test("reads file dataset within the azure page size limit", async () => {
     expect.hasAssertions();
 
-    const newResource = await fileCaller.createResource({ name });
-    const content: FileResource = {
+    const newResource = await sheetCaller.createResource({ name });
+    const content: SheetResource = {
       data: {
         columns: [new StringColumn({ name: columnName, sourceName: columnName })],
         metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(), name, size: 0 },
@@ -185,8 +185,8 @@ describe("dataset", () => {
       },
       settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
     };
-    await fileCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
-    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.File });
+    await sheetCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
+    const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet });
 
     expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
   });
@@ -194,21 +194,21 @@ describe("dataset", () => {
   test("fails read file dataset without content", async () => {
     expect.hasAssertions();
 
-    const newResource = await fileCaller.createResource({ name });
+    const newResource = await sheetCaller.createResource({ name });
 
     await expect(
-      caller.readDataset({ id: newResource.id, type: DatasetProviderType.File }),
+      caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: NOT_FOUND]`);
   });
 
   test("fails read file dataset with wrong user", async () => {
     expect.hasAssertions();
 
-    const newResource = await fileCaller.createResource({ name });
+    const newResource = await sheetCaller.createResource({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      caller.readDataset({ id: newResource.id, type: DatasetProviderType.File }),
+      caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

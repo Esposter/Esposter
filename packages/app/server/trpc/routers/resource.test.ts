@@ -6,8 +6,8 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
-import { fileRouter } from "@@/server/trpc/routers/file";
 import { resourceRouter } from "@@/server/trpc/routers/resource";
+import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { webpageRouter } from "@@/server/trpc/routers/webpage";
 import { resources, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
@@ -18,7 +18,7 @@ describe("resource", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
-  let fileCaller: DecorateRouterRecord<TRPCRouter["file"]>;
+  let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
   const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
@@ -27,7 +27,7 @@ describe("resource", () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(resourceRouter)(mockContext);
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
-    fileCaller = createCallerFactory(fileRouter)(mockContext);
+    sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
@@ -64,12 +64,12 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    const fileResource = await fileCaller.createResource({ name });
+    const sheetResource = await sheetCaller.createResource({ name });
     const { items } = await caller.readResources();
 
-    expect(items.map(({ id }) => id).toSorted()).toStrictEqual([dashboardResource.id, fileResource.id].toSorted());
+    expect(items.map(({ id }) => id).toSorted()).toStrictEqual([dashboardResource.id, sheetResource.id].toSorted());
     expect(items.map(({ type }) => type).toSorted()).toStrictEqual(
-      [ResourceType.Dashboard, ResourceType.File].toSorted(),
+      [ResourceType.Dashboard, ResourceType.Sheet].toSorted(),
     );
   });
 
@@ -77,7 +77,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    await fileCaller.createResource({ name });
+    await sheetCaller.createResource({ name });
     const { items } = await caller.readResources({ types: [ResourceType.Dashboard] });
 
     expect(items.map(({ id }) => id)).toStrictEqual([dashboardResource.id]);
@@ -87,7 +87,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const matchingResource = await dashboardCaller.createResource({ name: "quarterly report" });
-    await fileCaller.createResource({ name: "grocery list" });
+    await sheetCaller.createResource({ name: "grocery list" });
     const { items } = await caller.readResources({ searchQuery: "report" });
 
     expect(items.map(({ id }) => id)).toStrictEqual([matchingResource.id]);
@@ -99,7 +99,7 @@ describe("resource", () => {
     // The prefix match is created first (older), so without ranking the newer substring match would come first
     const prefixResource = await dashboardCaller.createResource({ name: `${name} a` });
     vi.advanceTimersByTime(1);
-    const substringResource = await fileCaller.createResource({ name: `a ${name}` });
+    const substringResource = await sheetCaller.createResource({ name: `a ${name}` });
     const { items } = await caller.readResources({ searchQuery: name });
 
     expect(items.map(({ id }) => id)).toStrictEqual([prefixResource.id, substringResource.id]);
@@ -110,7 +110,7 @@ describe("resource", () => {
 
     const olderResource = await dashboardCaller.createResource({ name });
     vi.advanceTimersByTime(1);
-    const newerResource = await fileCaller.createResource({ name });
+    const newerResource = await sheetCaller.createResource({ name });
     const { items } = await caller.readResources({ searchQuery: name });
 
     expect(items.map(({ id }) => id)).toStrictEqual([newerResource.id, olderResource.id]);
@@ -120,7 +120,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     await dashboardCaller.createResource({ name });
-    await fileCaller.createResource({ name });
+    await sheetCaller.createResource({ name });
 
     const count = await caller.count();
 
@@ -131,7 +131,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     await dashboardCaller.createResource({ name });
-    await fileCaller.createResource({ name });
+    await sheetCaller.createResource({ name });
 
     const count = await caller.count({ types: [ResourceType.Dashboard] });
 
@@ -142,7 +142,7 @@ describe("resource", () => {
     expect.hasAssertions();
 
     await dashboardCaller.createResource({ name: "quarterly report" });
-    await fileCaller.createResource({ name: "grocery list" });
+    await sheetCaller.createResource({ name: "grocery list" });
 
     const count = await caller.count({ searchQuery: "report" });
 
@@ -174,7 +174,7 @@ describe("resource", () => {
 
     const olderResource = await dashboardCaller.createResource({ name });
     vi.advanceTimersByTime(1);
-    const newerResource = await fileCaller.createResource({ name });
+    const newerResource = await sheetCaller.createResource({ name });
     const { items: updatedAfterItems } = await caller.readResources({ updatedAfter: new Date(1) });
     const { items: updatedBeforeItems } = await caller.readResources({ updatedBefore: new Date(0) });
 
@@ -186,12 +186,12 @@ describe("resource", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    const fileResource = await fileCaller.createResource({ name });
-    const deletedResources = await caller.deleteResources({ ids: [dashboardResource.id, fileResource.id] });
+    const sheetResource = await sheetCaller.createResource({ name });
+    const deletedResources = await caller.deleteResources({ ids: [dashboardResource.id, sheetResource.id] });
     const count = await caller.count();
 
     expect(deletedResources.map(({ id }) => id).toSorted()).toStrictEqual(
-      [dashboardResource.id, fileResource.id].toSorted(),
+      [dashboardResource.id, sheetResource.id].toSorted(),
     );
     expect(count).toBe(0);
   });
@@ -201,7 +201,7 @@ describe("resource", () => {
 
     await mockSessionOnce(mockContext.db);
     const otherUserResource = await dashboardCaller.createResource({ name });
-    const ownResource = await fileCaller.createResource({ name });
+    const ownResource = await sheetCaller.createResource({ name });
     const deletedResources = await caller.deleteResources({ ids: [otherUserResource.id, ownResource.id] });
 
     expect(deletedResources.map(({ id }) => id)).toStrictEqual([ownResource.id]);

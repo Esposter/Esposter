@@ -94,7 +94,7 @@ const { cloned: searchInput } = useCloned(searchQuery);
 const { cloned: editedName } = useCloned(() => name); // getter form for props/store fields
 ```
 
-- Destructure `sync` when a Reset button must re-copy on demand (`Resource/File/Row/EditDialog.vue`)
+- Destructure `sync` when a Reset button must re-copy on demand (`Resource/Sheet/Row/EditDialog.vue`)
 - The write-back direction (copy → source) is a genuine side effect — a single `watch` (often on a `refDebounced` of the copy) or an explicit save action is fine there
 
 More generally, before writing any `watch`, express it as a `computed`, a template `v-if`, or a purpose-built VueUse composable first. Reserve `watch` for side effects that can't be reactive values: emits, navigation, DOM calls (`focus`/`scrollIntoView`/measure), fetch-on-change, library bridges (Phaser/tiptap/LiveKit), and state resets/clamps triggered by another value changing.
@@ -421,7 +421,7 @@ const controlItems = computed<ControlItem[]>(() => [
 
 The pattern (three parts):
 
-1. **Target ref in a per-service dialog store** — dialog UI state never lives in a business-logic store. Each service gets its own dialog store next to its business store (`store/message/dialog.ts` → `useMessageDialogStore`, `store/post/dialog.ts`, `store/resource/file/rowDialog.ts`, …) holding only targets like `deletingId` / `editingColumnName`. Targets are strings defaulting to `""` — never `undefined` (empty-string default rule).
+1. **Target ref in a per-service dialog store** — dialog UI state never lives in a business-logic store. Each service gets its own dialog store next to its business store (`store/message/dialog.ts` → `useMessageDialogStore`, `store/post/dialog.ts`, `store/resource/sheet/rowDialog.ts`, …) holding only targets like `deletingId` / `editingColumnName`. Targets are strings defaulting to `""` — never `undefined` (empty-string default rule).
 2. **Action buttons write the target** — the per-item button is a dumb `StyledTooltipIconButton` with `@click.stop="deletingId = item.id"`. No activator slots, no emit plumbing up the tree.
 3. **One dialog instance mounted at list level** — a `ConfirmDeleteDialog.vue`/`EditDialog.vue` singleton mounted once (in the list/table/page component). It resolves the full item from the business store by target, guards with `v-if="item"`, and derives its model via `useSingletonDialog`:
 
@@ -435,11 +435,11 @@ const isOpen = useSingletonDialog(deletingId); // get: Boolean(target); set fals
 <StyledDeleteFormDialog v-if="item" v-model="isOpen" :card-props="{ title, text }" @delete="..." />
 ```
 
-- When the dialog needs per-open local state (a `structuredClone` edit draft), mount it `v-if`-guarded **with a `:key`** at the list level so it re-creates per target: `<ResourceFileRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" />`.
+- When the dialog needs per-open local state (a `structuredClone` edit draft), mount it `v-if`-guarded **with a `:key`** at the list level so it re-creates per target: `<ResourceSheetRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" />`.
 - Hover toolbars / options menus in list items follow the same idea with `v-if` (mount on hover), not `v-show` — see `Message/Model/Message/List/Item.vue`.
 - Single-instance dialogs (one create button per toolbar, one settings dialog per page) may keep the button+dialog combined component — the rule targets per-item multiplication.
 
-Canonical examples: `Message/Model/Message/ConfirmDeleteDialog.vue`, `Resource/File/Column/{ActionSlot,Table,EditDialog,ConfirmDeleteDialog}.vue`, `Message/Model/Room/Settings/Dialog.vue`.
+Canonical examples: `Message/Model/Message/ConfirmDeleteDialog.vue`, `Resource/Sheet/Column/{ActionSlot,Table,EditDialog,ConfirmDeleteDialog}.vue`, `Message/Model/Room/Settings/Dialog.vue`.
 
 ## Page Decomposition — Pages are Layout + Composition
 

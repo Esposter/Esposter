@@ -25,7 +25,7 @@ The standards the platform applies live in architecture: the layer model ([/docs
 - [Notifications bell](/docs/platform/notifications) — session-scoped operation-outcome toasts + app-bar bell panel
 - [Global search](/docs/platform/global-search) — grouped as-you-type dropdown, `Ctrl+K` command palette, keyboard chords, prefix-match ranking
 - [Shell cohesion](/docs/platform/shell-cohesion) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
-- [File resource](/docs/platform/file-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
+- [Sheet resource](/docs/platform/sheet-resource) — CSV/JSON/XLSX files as resources with Data + Settings blades
 - [Survey resource](/docs/platform/survey-resource) — SurveyJS authoring, public respondent page, responses dataset
 - [Dashboard data binding](/docs/platform/dashboard-data-binding) — visuals bound to datasets with client aggregation and publish-time snapshots
 - [Email personalization](/docs/platform/email-personalization) — merge fields, survey invite blocks, personalized HTML export
@@ -35,17 +35,18 @@ Open work is in the [roadmap](/docs/platform/roadmap); the Azure-portal-parity d
 
 ## Shipped
 
-- Dataset contract — `dataset.readDataset` + File/SurveyResponses providers
+- Dataset contract — `dataset.readDataset` + Sheet/SurveyResponses providers
 - Dashboard visual dataset binding — reference + query per visual, client aggregation, bind-to-data form, per-visual refresh
 - Document publish lifecycle — versioned snapshots + public `/view/[type]/[id]` (now the Publishable capability)
 - Email personalization — merge-field blocks, survey invite blocks, per-row personalized HTML export
-- Dashboard binding polish — multi-series editing, File sources; published-view OG meta tags
+- Dashboard binding polish — multi-series editing, Sheet sources; published-view OG meta tags
 - Survey distribution fixes — publishing snapshots the model; the public respondent page serves that snapshot and 404s for unpublished surveys
 - **Resource Explorer consolidation (Phases 1–6)** — everything became a resource behind one explorer: `resources` + `resource_publications` tables, one `ResourceAssets` container replacing six, `createResourceProcedures` factory, the explorer shell, all editors migrated to inline blades, the `surveys` table folded in, and every per-editor page/picker/hub deleted. Zero new dependencies and zero new Azure services across all six phases.
 - Global search overhaul — `ResourceSearchMenu` grouped dropdown (inline Home mount + `Ctrl+K` palette), localStorage recents, `G`-chords + `?` shortcuts overlay, prefix-match ranking in `readResources`
 - `/all` list workbench — filter pills (type/status/updated), URL-synced state, bulk select + batch delete, column chooser, group-by-type, chunked CSV export, real-link name cells, skeleton/empty/error states
 - Resource page command-bar parity — labeled commands with `…` overflow, Refresh, `duplicateResource`, type-the-name/`delete {n}` destructive guards
 - Notifications bell — session-scoped notification store, app-bar bell + single snackbar queue, `G N` chord, stale-`contentVersion` save-conflict surface
+- File resource renamed to **Sheet** — pg enum value, `sheet` router, models/components/store, and the docs area (`sheet-editor`, `sheet-resource`); no backwards compat
 
 ### Consolidation notes
 

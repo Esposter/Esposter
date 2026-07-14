@@ -13,7 +13,7 @@ Each product area's roadmap is the prioritized index over its proposals:
 - [users roadmap](/docs/users/roadmap)
 - [esbabbler roadmap](/docs/esbabbler/roadmap)
 - [platform roadmap](/docs/platform/roadmap)
-- [file table editor roadmap](/docs/file-table-editor/roadmap)
+- [sheet editor roadmap](/docs/sheet-editor/roadmap)
 - [clicker roadmap](/docs/clicker/roadmap)
 - [dungeons roadmap](/docs/dungeons/roadmap)
 - [achievements roadmap](/docs/achievements/roadmap)

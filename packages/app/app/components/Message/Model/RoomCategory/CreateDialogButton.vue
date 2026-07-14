@@ -31,16 +31,13 @@ const name = ref("");
         @click.stop="updateIsOpen(true)"
       />
     </template>
-    <v-container>
-      <v-text-field
-        v-model="name"
-        label="Category name"
-        density="compact"
-        autofocus
-        :maxlength="ROOM_CATEGORY_NAME_MAX_LENGTH"
-        :rules="[rules.required(), rules.maxLength(ROOM_CATEGORY_NAME_MAX_LENGTH)]"
-        variant="outlined"
-      />
-    </v-container>
+    <v-text-field
+      v-model="name"
+      autofocus
+      density="compact"
+      label="Category name"
+      :maxlength="ROOM_CATEGORY_NAME_MAX_LENGTH"
+      :rules="[rules.required(), rules.maxLength(ROOM_CATEGORY_NAME_MAX_LENGTH)]"
+    />
   </StyledFormDialog>
 </template>

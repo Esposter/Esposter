@@ -36,8 +36,8 @@ export const useCallParticipantActions = () => {
     if (isForceMuteable.value && isHandRaised)
       items.push({
         icon: "mdi-hand-back-right-off",
-        onClick: () => {
-          void executeLowerHandMutation(() =>
+        onClick: async () => {
+          await executeLowerHandMutation(() =>
             $trpc.callSession.setHandRaised.mutate({
               callSessionId,
               isHandRaised: false,
@@ -50,8 +50,8 @@ export const useCallParticipantActions = () => {
     if (isForceMuteable.value && !participantIsMuted)
       items.push({
         icon: "mdi-microphone-off",
-        onClick: () => {
-          void executeAdminActionMutation(() =>
+        onClick: async () => {
+          await executeAdminActionMutation(() =>
             $trpc.message.moderation.executeAdminAction.mutate({
               roomId,
               targetUserId: userId,
@@ -64,8 +64,8 @@ export const useCallParticipantActions = () => {
     if (isForceMuteable.value && participantIsMuted)
       items.push({
         icon: "mdi-microphone",
-        onClick: () => {
-          void executeAdminActionMutation(() =>
+        onClick: async () => {
+          await executeAdminActionMutation(() =>
             $trpc.message.moderation.executeAdminAction.mutate({
               roomId,
               targetUserId: userId,
@@ -78,8 +78,8 @@ export const useCallParticipantActions = () => {
     if (isKickableFromCall.value)
       items.push({
         icon: "mdi-account-remove",
-        onClick: () => {
-          void executeAdminActionMutation(() =>
+        onClick: async () => {
+          await executeAdminActionMutation(() =>
             $trpc.message.moderation.executeAdminAction.mutate({
               roomId,
               targetUserId: userId,

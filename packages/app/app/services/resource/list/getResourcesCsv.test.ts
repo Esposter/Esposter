@@ -14,7 +14,7 @@ describe(getResourcesCsv, () => {
     deletedAt: null,
     id: crypto.randomUUID(),
     name,
-    type: ResourceType.File,
+    type: ResourceType.Sheet,
     updatedAt: epochDate,
     userId,
   });
@@ -33,8 +33,8 @@ describe(getResourcesCsv, () => {
     expect(csv).toBe(
       [
         "Type,Name,Created At,Updated At",
-        'File,,"Thu, Jan 1, 1970 12:00 AM","Thu, Jan 1, 1970 12:00 AM"',
-        'File,"a,""a""","Thu, Jan 1, 1970 12:00 AM","Thu, Jan 1, 1970 12:00 AM"',
+        'Sheet,,"Thu, Jan 1, 1970 12:00 AM","Thu, Jan 1, 1970 12:00 AM"',
+        'Sheet,"a,""a""","Thu, Jan 1, 1970 12:00 AM","Thu, Jan 1, 1970 12:00 AM"',
       ].join("\n"),
     );
   });
