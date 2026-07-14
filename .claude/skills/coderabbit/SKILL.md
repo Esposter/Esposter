@@ -1,6 +1,6 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — .coderabbit.yaml lives on main and is read from the PR base branch, per-file path_filters for mechanical renames, and the standardized exclude/re-enable commit pair. Apply when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
+description: Esposter CodeRabbit review conventions — checking review state before pushing (never push into a running review), .coderabbit.yaml lives on main and is read from the PR base branch, per-file path_filters for mechanical renames, and the standardized exclude/re-enable commit pair. Apply before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
 ---
 
 # CodeRabbit Conventions
@@ -18,6 +18,23 @@ CodeRabbit's `path_filters` are static globs with no notion of "this file was on
 List every excluded file explicitly instead. It is verbose, and that verbosity is the point — a 70-line block is obviously temporary and obviously scoped, where a 3-line glob quietly rots.
 
 Keep permanent structural entries (`!pnpm-lock.yaml`, generated migrations) at the top of `path_filters`, above any temporary block.
+
+## Never Push Into an In-Flight Review
+
+**Check CodeRabbit's state before every push to a branch with an open PR.** Pushing while a review is running cancels it and retriggers a fresh one, which costs a rate-limit slot and loses the in-progress review's findings. CodeRabbit is an **incremental** system — it does not re-review commits it has already reviewed — so a cancelled review's comments do not reliably come back on the next run. They are simply gone.
+
+The check run exposes the state directly:
+
+```bash
+gh pr checks --json name,state,description --jq '.[] | select(.name=="CodeRabbit")'
+# {"description":"Review completed","name":"CodeRabbit","state":"SUCCESS"}
+```
+
+Push only on `SUCCESS` / `Review completed`. Anything else (`PENDING`, a review-in-progress description) means **wait** — poll until it settles, then push. If there is no open PR for the branch yet, there is no review to interrupt; push freely.
+
+This applies per push, not per work session — a second push minutes after the first will land while the first push's review is still running. Batch commits and push once when the work is coherent, rather than pushing each commit as it lands.
+
+Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit) comment` / `putComment timed out` comment from `coderabbitai[bot]`, or a review that silently returns far fewer comments than the diff warrants.
 
 ## PR File Budget
 
