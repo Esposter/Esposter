@@ -118,7 +118,7 @@ Check both folders before adding a roadmap item or proposal — never re-argue a
 
 ## Roadmap pages
 
-Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped by horizon (`## In progress`, `## Next`, `## Later`). When an item ships: add one terse line to the area `index.md` shipped log, write/refresh the feature page, delete the roadmap item.
+Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped by horizon (`## In progress`, `## Next`, `## Later`). When an item ships: add one terse line to the area `index.md` shipped log, write/refresh the feature page unless it was a one-time change with no standing behaviour to document (see the Lifecycle table), delete the roadmap item.
 
 ## Lifecycle
 

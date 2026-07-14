@@ -8,8 +8,9 @@ $processMap = @{}
 foreach ($process in Get-CimInstance Win32_Process) { $processMap[[int]$process.ProcessId] = $process }
 $ancestors = [System.Collections.Generic.HashSet[int]]::new()
 $currentId = $PID
-while ($currentId -and $processMap.ContainsKey($currentId)) {
-  [void]$ancestors.Add($currentId)
+# $ancestors.Add returns false on a repeat, which also breaks the loop if PID reuse
+# has made the snapshot's parent chain cyclic.
+while ($currentId -and $processMap.ContainsKey($currentId) -and $ancestors.Add($currentId)) {
   $currentId = [int]$processMap[$currentId].ParentProcessId
 }
 $processMap.Values |

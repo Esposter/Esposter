@@ -24,14 +24,20 @@ flowchart LR
   GEN -->|"token map to owner client"| EXPORT["personalized export<br/>invite href = /view/survey/{surveyId}?t={token}"]
   EXPORT -.->|"sent outside the platform (for now)"| RESP["respondent"]
   RESP -->|"?t= → createSurveyResponse"| SR[("SurveyResponseEntity.inviteToken")]
-  STATUS["Status blade / ProgramStatus dataset"] -->|"join invites × responses<br/>(server-side, owner)"| FUNNEL["keyValue · invitedAt · responded"]
-  FUNNEL --> DASH["Dashboard visual<br/>(response rate)"]
+  STATUS["Status blade (owner-only)"] -->|"join invites × responses<br/>(server-side, owner)"| FUNNEL["keyValue · invitedAt · responded"]
+  STATUS -->|"ProgramStatus dataset<br/>(key column dropped)"| PUBSAFE["recipient · invitedAt · responded"]
+  PUBSAFE --> DASH["Dashboard visual<br/>(response rate)"]
 ```
 
 - **Content blob**: `{ audience: DatasetReference; keyColumn: string; emailId: string; surveyId: string }` — bare ids like every cross-resource link (re-resolved on read, fails soft when a binding is deleted, per the explorer's linking standard). `keyColumn` names the audience column that identifies a recipient (email address, customer id — display and dedupe key, never leaves the server/owner client).
 - **Invite tokens**: `AzureTable.ProgramInvites` — partitionKey = program id, rowKey = token (UUID), storing the recipient's key value and `createdAt`. **Generate invites** resolves the audience dataset and creates one entity per key value, idempotently (re-running after adding rows issues only the missing ones). Tokens are meaningless outside this table; resolution is owner-gated. Respondents present them, never decode them.
 - **Personalized export**: the program's export action reuses the email export pipeline with one addition — the survey invite block's href becomes `/view/survey/{surveyId}?t={token}`, token matched to the row by key value. The owner client sees its own audience data (it always did); the _URL_ carries only the opaque token.
-- **Status**: invited × responded, joined server-side (invites table × `SurveyResponseEntity.inviteToken`). Rendered as the **Status blade** table and declared as a **DatasetProvider** (`DatasetProviderType.ProgramStatus`, columns `keyValue · invitedAt · responded`) — so the funnel is chartable in dashboards through the front door, and the canonical "responses × audience" join lands purpose-built instead of via a generic join engine ([dataset joins](/docs/platform/deferred/dataset-joins) stays deferred).
+- **Status**: invited × responded, joined server-side (invites table × `SurveyResponseEntity.inviteToken`). Two surfaces with deliberately different shapes:
+  - the **Status blade** — owner-only, never a dataset; columns `keyValue · invitedAt · responded`, so the owner can see _who_ hasn't answered.
+  - the **DatasetProvider** (`DatasetProviderType.ProgramStatus`) — columns `recipient · invitedAt · responded`, where `recipient` is the opaque invite token, never `keyValue`. A dataset flows into dashboards, and a dashboard is publishable — its snapshot is a public read. Putting the key column (often an email address) in the dataset would make publishing a funnel chart leak the recipient list, so it never enters the dataset at all. Response-rate charting needs counts and dates, not identities; anything genuinely per-recipient is blade work, not chart work.
+
+  That keeps the canonical "responses × audience" join purpose-built instead of via a generic join engine ([dataset joins](/docs/platform/deferred/dataset-joins) stays deferred).
+
 - **Blades**: Overview (bindings summary + invite/response counts), Setup (the three pickers — reusing `DatasetReferencePicker` and resource selects), Status. No Editor blade; a program has no canvas.
 - **Lifecycle**: standard resource create/save/delete; `deleteResource` also clears the program's invite partition. Deleting the bound survey leaves status readable (invites persist) with responses gone — the same fail-soft posture as every dangling reference.
 

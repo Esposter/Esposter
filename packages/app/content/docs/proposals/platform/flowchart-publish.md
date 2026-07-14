@@ -29,5 +29,5 @@ Flowchart is the only visual artifact type that cannot be shared at all — no e
 
 ## Notes
 
-- After this, the only non-publishable types are File, TodoList, and Email ([email web view](/docs/proposals/platform/email-web-view) covers Email). File and TodoList stay non-publishable on purpose — sharing data rows is the dataset/export path, and a todo list is personal working state; the type system guaranteeing _absence_ of publish endpoints there is a feature of the capability model, not a gap.
+- After this, the only permanently non-publishable types are File and TodoList. Email is non-publishable only until [email web view](/docs/proposals/platform/email-web-view) lands, which opts it in. File and TodoList stay non-publishable on purpose — sharing data rows is the dataset/export path, and a todo list is personal working state; the type system guaranteeing _absence_ of publish endpoints there is a feature of the capability model, not a gap.
 - Image export (PNG/SVG of the diagram, via the Portable capability) is a natural sibling but a separate decision — it needs a client-side rasterization dependency; not bundled here.

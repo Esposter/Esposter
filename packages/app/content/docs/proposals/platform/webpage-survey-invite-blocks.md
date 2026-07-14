@@ -38,4 +38,4 @@ flowchart LR
 ## Notes
 
 - Embedding the survey _inline_ (iframe of the respondent page) is deliberately out: iframes inside GrapesJS canvases and published pages bring sizing/sandboxing complexity for marginal gain over a button — the respondent page is already mobile-friendly. Revisit only on real demand.
-- Blocks list **published** surveys only, same rule as email — a draft survey has no public URL to link.
+- Blocks list **published, Anonymous-mode** surveys only. Published is the same rule as email — a draft survey has no public URL to link. Anonymous-mode is webpage-specific: an Invited survey linked from a public page would gate every visitor behind an invite-required screen, which reads as a broken link, so those surveys are excluded from the webpage block list rather than offered and then rejected at the door. Email keeps listing both modes — it is the surface that _can_ carry a token.

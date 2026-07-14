@@ -31,7 +31,7 @@ flowchart LR
 
 ## Test home
 
-Per-proposal cases live in the routers' existing co-located test files (`server/trpc/routers/survey.test.ts`, new `program.test.ts`, `dataset.test.ts`). The cross-router scenario spec is a new category — it exercises five routers in one flow — and lives at `server/trpc/routers/surveyFunnel.integration.test.ts`, node environment, same `createMockContext` lifecycle, with one caller per router bound to the same context. Integration specs use scenario-named `describe` strings (there is no single function to reference — a deliberate, documented deviation from the function-ref describe convention).
+Per-proposal cases live in the routers' existing co-located test files (`server/trpc/routers/survey.test.ts`, new `program.test.ts`, `dataset.test.ts`). The cross-router scenario spec is a new category — it exercises seven routers in one flow (`file`, `survey`, `email`, `program`, `dashboard`, `dataset`, `resource`) — and lives at `server/trpc/routers/surveyFunnel.integration.test.ts`, node environment, same `createMockContext` lifecycle, with one caller per router bound to the same context. Integration specs use scenario-named `describe` strings (there is no single function to reference — a deliberate, documented deviation from the function-ref describe convention).
 
 ## Acceptance cases per proposal
 
@@ -52,7 +52,7 @@ Each list is the TDD checklist an implementation session turns into `it` blocks 
 - re-running after the audience grows issues only the missing tokens (idempotent), never rotates existing ones
 - a non-owner calling generate/status/token-map gets rejected (`mockSessionOnce`)
 - `readProgramStatus` joins invites × responses: invited-not-responded, responded, and never-invited-responder (anonymous-era row) each land correctly
-- `ProgramStatus` dataset provider returns `keyValue · invitedAt · responded` columns through `dataset.readDataset`, owner-gated like every provider
+- `ProgramStatus` dataset provider returns `recipient · invitedAt · responded` through `dataset.readDataset`, owner-gated like every provider — and never the audience key column, so a published dashboard bound to it cannot leak the recipient list
 - a dangling audience/email/survey binding fails soft (error state, no throw-through)
 - `deleteResource` on the program clears its invite partition; deleting the bound survey leaves status readable
 
