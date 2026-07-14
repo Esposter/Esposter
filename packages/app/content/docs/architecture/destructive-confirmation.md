@@ -21,11 +21,11 @@ The component renders an autofocused text field labelled `Type '<name>' to confi
 
 ## Choosing the tier
 
-| Tier                         | When                                                                                | Example consumers                                        |
-| ---------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| Plain confirm (no guard)     | Routine, low-blast-radius deletes — a single message, draft, row, ban, or webhook   | Message/draft delete, file-table row delete, ban removal |
-| `confirmName` = entity name  | Irreversible container-level deletes where losing the wrong one is expensive        | Resource delete, edit-form entity delete                 |
-| `confirmName` = count phrase | Bulk destructive actions — the phrase encodes how many items are about to disappear | Resource list bulk delete (`delete 12`)                  |
+| Tier                         | When                                                                                                      | Example consumers                                                                              |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Plain confirm (no guard)     | Routine, low-blast-radius deletes — a single message, draft, row, ban, webhook, role, or dashboard visual | Message/draft delete, file-table row delete, ban removal, role delete, dashboard visual delete |
+| `confirmName` = entity name  | Irreversible container-level deletes where losing the wrong one is expensive                              | Resource delete, edit-form entity delete, room delete (type the room name)                     |
+| `confirmName` = count phrase | Bulk destructive actions — the phrase encodes how many items are about to disappear                       | Resource list bulk delete (`delete 12`)                                                        |
 
 ## Key files
 
@@ -39,5 +39,6 @@ The component renders an autofocused text field labelled `Type '<name>' to confi
 
 ## Notes
 
+- No destructive button deletes on click — every one opens this dialog first. A button keeps its own styling by supplying the activator slot and calling `updateIsOpen(true)` (e.g. the role and dashboard-visual delete buttons wrap `StyledDeleteFormDialog` around their existing icon button rather than adopting `StyledConfirmDeleteDialogButton`'s look).
 - List-item deletes mount the dialog once per list and target it through a dialog store — see [Singleton dialogs](/docs/architecture/singleton-dialogs).
 - `StyledEditFormDialogConfirmCloseDialogButton` (save/discard/cancel on dirty close) is a three-action decision dialog, not a destructive confirmation — it stays outside this component on purpose.

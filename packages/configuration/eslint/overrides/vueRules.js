@@ -3,6 +3,17 @@ export default {
   "@typescript-eslint/unified-signatures": "off",
   "vue/html-self-closing": "off",
   "vue/multi-word-component-names": "off",
+  // Raw <a> bypasses client-side routing (full reloads) and default link styles. Use <NuxtLink :to> for internal
+  // Routes, <NuxtLink :to external target> for external URLs, <NuxtInvisibleLink :to="{ hash }"> for in-page anchors,
+  // And navigateTo for imperative navigation.
+  "vue/no-restricted-html-elements": [
+    "error",
+    {
+      element: "a",
+      message:
+        'Don\'t use a raw <a>. Use <NuxtLink :to> (internal), <NuxtLink :to external target> (external), <NuxtInvisibleLink :to="{ hash }"> (in-page anchor), or navigateTo for imperative navigation.',
+    },
+  ],
   // Object.* calls in a render-evaluated template expression (bind, v-for, interpolation) allocate a fresh
   // Reference every render, breaking prop reference-equality and forcing needless re-renders. Hoist to a
   // Script-setup const (static maps) or computed (reactive). Event handlers (@on) run per-event, so exempt.

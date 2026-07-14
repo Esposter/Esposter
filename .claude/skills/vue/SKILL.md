@@ -379,7 +379,9 @@ useScript<typeof Desmos>(API_URL, {
 
 ## Routing
 
-- **`useRouter()` for reactive contexts** — reading route data inside a `computed`/`watch` (e.g. `router.currentRoute.value.params.id`) or calling navigation methods (`router.push`, `router.replace`).
+- **Links use `:to` / `NuxtLink`, never a raw `<a>`** — internal `<NuxtLink :to>` (or Vuetify `:to`), external `<NuxtLink :to external target>`, in-page `<NuxtInvisibleLink :to="{ hash }">`. A raw `<a>` is banned by lint. Full standard: [navigation](/docs/architecture/navigation) + the `vuetify` skill's Navigation section.
+- **`navigateTo(target, options)` for imperative navigation** — post-mutation redirects, form submits, route guards. Never `useRouter().push`/`replace` to navigate (query-string-only `router.replace({ query })` is not navigation and is fine).
+- **`useRouter()` for reactive route reads** — reading route data inside a `computed`/`watch` (e.g. `router.currentRoute.value.params.id`).
 - **`useRoute()` for plain reads** — reading params/query outside a reactive context (regular function or async handler).
 
 > This inverts the usual Vue Router split deliberately: `useRoute()` returns a stale, non-reactive snapshot when called outside a component setup (composables, stores, middleware, async handlers), whereas `useRouter().currentRoute` stays reactive everywhere. Standardizing on `useRouter()` for reactive reads avoids that footgun since route reads often live in composables.

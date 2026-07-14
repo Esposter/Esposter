@@ -4,7 +4,15 @@
 // Is enough below ~6 pages), and roadmap/deferred/rejected always trail in an automatic Planning group.
 export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
   architecture: {
-    "Core standards": ["platform", "resources", "datasets", "publishing", "serialization", "singleton-dialogs"],
+    "Core standards": [
+      "platform",
+      "resources",
+      "datasets",
+      "publishing",
+      "serialization",
+      "singleton-dialogs",
+      "navigation",
+    ],
     Backend: ["auth", "azure-services", "file-uploads"],
     Development: ["environment", "monorepo-tooling", "server-testing"],
   },

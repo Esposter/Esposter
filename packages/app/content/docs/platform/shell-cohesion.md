@@ -22,18 +22,20 @@ Shell primitives live in `app/components/Styled/` (design-system set) and `app/c
 
 - `ListLinkItem` carries `children?: readonly ListLinkItem[]`. `MenuLinkList` renders a child-bearing item as a `v-list-group`; leaves go through `MenuLinkListItem`.
 - `ProductListLinkItems`: one **Resources** entry replaces the old per-editor entries; Clicker + Dungeons live under a "Games" group. `ProductList` (home/login drawer) reuses `MenuLinkList` so both surfaces stay in sync.
+- The app bar's `#append` cluster (`App/Bar.vue`) orders the app launcher (nine-dot `mdi-dots-grid`) first, then the theme toggle, the notification bell, and the More/account menu last — the launcher leads so the product grid is the first affordance, and the bell sits directly beside the More menu.
 
 ## Key files
 
-| File                                       | Role                                                      |
-| ------------------------------------------ | --------------------------------------------------------- |
-| `app/components/Styled/PageHeader.vue`     | shared page header (title + breadcrumbs/controls/actions) |
-| `app/components/Styled/EmptyState.vue`     | shared empty state                                        |
-| `app/components/Styled/Skeleton.vue`       | shared skeleton loader                                    |
-| `app/components/App/Breadcrumbs.vue`       | route-derived breadcrumb trail rendered by `PageHeader`   |
-| `app/components/App/MenuLinkListItem.vue`  | launcher leaf, reused by group + top level                |
-| `app/services/app/ProductListLinkItems.ts` | launcher data (Resources entry + Games group)             |
-| `app/models/shared/ListLinkItem.ts`        | `children` field for submenus                             |
+| File                                       | Role                                                                 |
+| ------------------------------------------ | -------------------------------------------------------------------- |
+| `app/components/Styled/PageHeader.vue`     | shared page header (title + breadcrumbs/controls/actions)            |
+| `app/components/Styled/EmptyState.vue`     | shared empty state                                                   |
+| `app/components/Styled/Skeleton.vue`       | shared skeleton loader                                               |
+| `app/components/App/Breadcrumbs.vue`       | route-derived breadcrumb trail rendered by `PageHeader`              |
+| `app/components/App/MenuLinkListItem.vue`  | launcher leaf, reused by group + top level                           |
+| `app/services/app/ProductListLinkItems.ts` | launcher data (Resources entry + Games group)                        |
+| `app/models/shared/ListLinkItem.ts`        | `children` field for submenus                                        |
+| `app/components/App/Bar.vue`               | top app bar; `#append` button order (launcher · theme · bell · more) |
 
 ## Notes
 

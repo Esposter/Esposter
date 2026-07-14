@@ -26,8 +26,7 @@ export const useRoomStore = defineStore("message/room", () => {
     const [{ id }] = args;
     baseStoreDeleteRoom(...args);
     if (currentRoomId.value !== id) return;
-    await router.push({
-      path: rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
+    await navigateTo(rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex, {
       replace: true,
     });
   };
@@ -81,10 +80,12 @@ export const useRoomStore = defineStore("message/room", () => {
       },
       onSuccess: async () => {
         if (currentRoomId.value !== input) return;
-        await router.push({
-          path: rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
-          replace: true,
-        });
+        await navigateTo(
+          rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
+          {
+            replace: true,
+          },
+        );
       },
     });
   };

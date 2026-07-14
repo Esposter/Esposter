@@ -9,14 +9,18 @@ interface RoomSettingsContentProps {
 }
 
 const { room, settingsType } = defineProps<RoomSettingsContentProps>();
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: []; "open:drawer": [] }>();
+const { smAndDown } = useVDisplay();
 const component = computed(() => SettingsContentMap[settingsType]);
 </script>
 
 <template>
   <MessageModelSettingsContent>
     <v-sheet tag="header" mb-4 pb-4 flex items-center top-0 justify-between sticky z-1>
-      <div font-bold text-headline-medium>{{ settingsType }}</div>
+      <div flex gap-2 items-center>
+        <StyledTooltipIconButton v-if="smAndDown" icon="mdi-menu" text="Show menu" @click="emit('open:drawer')" />
+        <div font-bold text-headline-medium>{{ settingsType }}</div>
+      </div>
       <v-tooltip text="Close">
         <template #activator="{ props: tooltipProps }">
           <v-btn :="tooltipProps" icon="mdi-close" variant="text" @click="emit('close')" />

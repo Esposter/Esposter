@@ -19,6 +19,9 @@ const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => creatorId === session.value?.user.id);
 const roomStore = useRoomStore();
 const { deleteRoom, leaveRoom } = roomStore;
+const { rooms } = storeToRefs(roomStore);
+// Deleting a room is irreversible (all messages/members), so the creator must type the room name to confirm
+const roomName = computed(() => rooms.value.find(({ id }) => id === roomId)?.name ?? "");
 </script>
 
 <template>
@@ -30,6 +33,7 @@ const { deleteRoom, leaveRoom } = roomStore;
         : { title: 'Leave Room', text: 'Are you sure you want to leave this room?' }
     "
     :confirm-button-props="{ text: isCreator ? 'Delete' : 'Leave' }"
+    :confirm-name="isCreator ? roomName : undefined"
     @delete="
       async (onComplete) => {
         await withFinalizerAsync(() => (isCreator ? deleteRoom(roomId) : leaveRoom(roomId)), onComplete);

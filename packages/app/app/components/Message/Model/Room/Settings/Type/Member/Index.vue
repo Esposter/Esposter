@@ -20,7 +20,7 @@ const selectedMember = computed(() =>
 
 <template>
   <v-row no-gutters>
-    <v-col cols="4" md="3" lg="2" pe-6>
+    <v-col cols="12" sm="4" md="3" lg="2" pe-6>
       <MessageModelRoomSettingsTypeMemberList :room-id="room.id" />
     </v-col>
     <v-col v-if="selectedMember">

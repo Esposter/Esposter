@@ -18,7 +18,9 @@ Use `StyledButton` for every confirm / complete / primary call-to-action button 
 
 Vuetify components with router integration (`v-btn`, `v-card`, `v-list-item`, `v-breadcrumbs` items) take a `:to` prop that renders a real `<a>` / `RouterLink` with keyboard focus, `aria-current`, and middleware handling for free. **Use `:to` for any navigation to a static route.** For wrapper components pass it through their props object — `StyledButton` / `StyledTooltipIconButton` → `:button-props="{ to: RoutePath.X }"`.
 
-Reserve `navigateTo(...)` inside a handler for **dynamic-only** targets where there is no element to hang `:to` on: search submit (`@keyup.enter`), a redirect after a create/delete mutation resolves, or a `v-data-table` `@click:row`.
+Reserve `navigateTo(...)` inside a handler for **dynamic-only** targets where there is no element to hang `:to` on: search submit (`@keyup.enter`), a redirect after a create/delete mutation resolves, or a `v-data-table` `@click:row`. Never use `useRouter().push`/`replace` for navigation — `navigateTo` is the imperative form (query-only `router.replace({ query })` is not navigation and is fine).
+
+**A raw `<a>` is banned** (`vue/no-restricted-html-elements`). When no Vuetify `:to` component fits, use `<NuxtLink :to>` for internal routes, `<NuxtLink :to external target="_blank">` for external URLs, and `<NuxtInvisibleLink :to="{ hash }">` (a `NuxtLink` clone that strips default link styling) for in-page anchors. A link-styled control with no destination is a `<span text-info underline cursor-pointer>`, not an anchor. Full standard: [navigation](/docs/architecture/navigation) — mirror it in the `vue` skill.
 
 ## Auto-Imported Composables — `v` Prefix
 

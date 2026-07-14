@@ -49,4 +49,15 @@ describe(getSortedNavigationItems, () => {
       "/docs/esbabbler/rejected",
     ]);
   });
+
+  test("does not throw when navigation items lack a title", () => {
+    expect.hasAssertions();
+
+    const items = getSortedNavigationItems([
+      { path: "/docs/clicker" },
+      { path: "/docs/esbabbler" },
+    ] as ContentNavigationItem[]);
+
+    expect(items.map(({ path }) => path)).toStrictEqual(["/docs/clicker", "/docs/esbabbler"]);
+  });
 });
