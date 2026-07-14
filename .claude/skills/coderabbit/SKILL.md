@@ -1,6 +1,6 @@
 ---
 name: coderabbit
-description: Esposter CodeRabbit review conventions — checking review state before pushing (never push into a running review), .coderabbit.yaml lives on main and is read from the PR base branch, per-file path_filters for mechanical renames, and the standardized exclude/re-enable commit pair. Apply before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
+description: Esposter CodeRabbit review conventions — retrieving review feedback across all three endpoints (nitpicks live in the review body, not inline comments; the bot login is coderabbitai[bot]), replying to findings, checking review state before pushing (never push into a running review), .coderabbit.yaml lives on main and is read from the PR base branch, per-file path_filters for mechanical renames, and the standardized exclude/re-enable commit pair. Apply when fetching, addressing, or replying to CodeRabbit comments or nitpicks, before any git push to a branch with an open PR, when a PR is too large for review, when excluding files from CodeRabbit, or when the user says "remove the exclusions".
 ---
 
 # CodeRabbit Conventions
@@ -35,6 +35,41 @@ Push only on `SUCCESS` / `Review completed`. Anything else (`PENDING`, a review-
 This applies per push, not per work session — a second push minutes after the first will land while the first push's review is still running. Batch commits and push once when the work is coherent, rather than pushing each commit as it lands.
 
 Symptoms that a push landed mid-review: a `> [!CAUTION] Failed to replace (edit) comment` / `putComment timed out` comment from `coderabbitai[bot]`, or a review that silently returns far fewer comments than the diff warrants.
+
+## Retrieving Review Feedback — All Three Places
+
+CodeRabbit's feedback is split across **three different endpoints**. Reading only one silently loses findings, and the loss is invisible — nothing tells you a category was missed.
+
+```bash
+# 1. Review bodies -> "Actionable comments posted: N" + the collapsed NITPICK block.
+#    Nitpicks live ONLY here. They are not inline comments.
+gh api "repos/Esposter/Esposter/pulls/<pr>/reviews?per_page=100" --paginate \
+  --jq '.[] | select(.user.login=="coderabbitai[bot]") | select(.body|length > 0) | .body'
+
+# 2. Inline review comments -> the actionable, file-anchored findings.
+gh api "repos/Esposter/Esposter/pulls/<pr>/comments?per_page=100" --paginate \
+  --jq '.[] | "\(.id) \(.path):\(.line // .original_line)\n\(.body)\n"'
+
+# 3. Issue comments -> the walkthrough, status, and rate-limit notices.
+gh api "repos/Esposter/Esposter/issues/<pr>/comments?per_page=100" --paginate \
+  --jq '.[] | select(.user.login=="coderabbitai[bot]") | .body'
+```
+
+**The bot's login is `coderabbitai[bot]`, not `coderabbitai`.** A `--jq` filter on the wrong login returns empty and exits 0. Empty output from a filtered query means _"my filter was wrong"_ until proven otherwise — never read it as "there are none".
+
+**Reconcile before concluding.** Each review body opens with `Actionable comments posted: N` and its nitpick block is headed `🧹 Nitpick comments (M)`. Both counts are ground truth: if you have fewer than N inline comments or fewer than M nitpicks in hand, you are missing some — go find them rather than reporting what you happened to fetch.
+
+Note the walkthrough issue-comment is **edited in place** across reviews, so its `created_at` stays pinned to the first review while `updated_at` moves. Filtering issue comments by `created_at` hides the current walkthrough. Sort by `updated_at`.
+
+## Replying to Review Comments
+
+```bash
+gh api "repos/Esposter/Esposter/pulls/<pr>/comments/<comment_id>/replies" -f body="..."
+```
+
+Reply to every finding, including rejected ones — a silent skip is indistinguishable from an oversight. State the verdict in the first line (`Agreed, fixed in <sha>` / `Not a real issue, no change`) and give the evidence, since these threads are the record of why the code looks the way it does.
+
+Verify before accepting. CodeRabbit reasons from names and prior "learnings" and will confidently assert semantics the code does not have — check the implementation, and when it flags a pattern, grep for the repo's existing convention rather than taking the suggested diff. If a finding is real, also check whether its twin exists elsewhere; the scan is per-file and routinely stops one file short.
 
 ## PR File Budget
 
