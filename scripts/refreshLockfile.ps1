@@ -1,4 +1,4 @@
-# Kill node processes first — on Windows a running process locks native .node
+# Kill node processes first - on Windows a running process locks native .node
 # binaries, so rmdir /s /q below fails "Access is denied" while dev/vitest/tsserver
 # hold them open. (Not needed on Linux, where rm -rf unlinks open files fine.)
 # Skip our own ancestry: pnpm runs this script through node, so a blanket
