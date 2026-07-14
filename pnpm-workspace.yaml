@@ -65,7 +65,7 @@ catalog:
   "@pulumi/github": ^6.14.0
   "@pulumi/pulumi": ^3.252.0
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^2.1.2
+  "@takumi-rs/core": ^2.2.0
   "@tiptap/core": ^3.27.4
   "@tiptap/extension-code-block-lowlight": ^3.27.4
   "@tiptap/extension-file-handler": ^3.27.4
@@ -185,8 +185,8 @@ catalog:
   node-html-parser: ^9.0.0
   nuxt: ^4.4.8
   nuxt-security: ^2.6.0
-  oxfmt: ^0.58.0
-  oxlint: ^1.73.0
+  oxfmt: ^0.59.0
+  oxlint: ^1.74.0
   oxlint-tsgolint: ^0.24.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
