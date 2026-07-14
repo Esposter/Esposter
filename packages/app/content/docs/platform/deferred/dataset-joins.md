@@ -5,7 +5,7 @@ description: Deferred — a generic join over two datasets on a key column, beyo
 
 # Dataset joins
 
-A generic join operation over the dataset contract: resolve two `DatasetReference`s and combine rows on a key column, for arbitrary analysis pairs. Shapes considered: a `JoinedDataset` provider taking two references + key columns, or a computed "lookup" column type on File.
+A generic join operation over the dataset contract: resolve two `DatasetReference`s and combine rows on a key column, for arbitrary analysis pairs. Shapes considered: a `JoinedDataset` provider taking two references + key columns, or a computed "lookup" column type on Sheet.
 
 ## Why deferred
 
@@ -17,4 +17,4 @@ A second concrete join pair appears that no purpose-built provider reasonably co
 
 ## Cheaper interim
 
-Import both datasets into one File resource side by side and flag matches with computed columns; for small datasets this is minutes of work.
+Import both datasets into one Sheet resource side by side and flag matches with computed columns; for small datasets this is minutes of work.

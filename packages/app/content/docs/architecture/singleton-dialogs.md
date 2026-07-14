@@ -11,7 +11,7 @@ Every dialog that acts on a list item (delete a message, edit a row, open room s
 
 Three parts cooperate, and each lives in a fixed place:
 
-1. **A per-service dialog store** holds only the dialog targets — plain string refs like `deletingId` or `editingColumnName` that default to `""` (the empty-string default convention, never `undefined`). Dialog UI state is deliberately kept out of business-logic stores: each service gets a dialog store next to its business store, e.g. `store/message/dialog.ts` (`useMessageDialogStore`), `store/post/dialog.ts`, `store/resource/file/rowDialog.ts`.
+1. **A per-service dialog store** holds only the dialog targets — plain string refs like `deletingId` or `editingColumnName` that default to `""` (the empty-string default convention, never `undefined`). Dialog UI state is deliberately kept out of business-logic stores: each service gets a dialog store next to its business store, e.g. `store/message/dialog.ts` (`useMessageDialogStore`), `store/post/dialog.ts`, `store/resource/sheet/rowDialog.ts`.
 2. **Per-item action buttons write the target.** The button in the list item is a dumb icon button whose click handler is one assignment: `@click.stop="deletingId = item.id"`. There are no activator slots and no `@update:delete-mode` emit chains plumbed up the component tree.
 3. **One singleton dialog component** is mounted at the list/table/page level. It resolves the full item from the business store by the target (`items.find(({ id }) => id === deletingId)`), guards rendering with `v-if="item"`, and derives its open state from the target via the `useSingletonDialog` composable — a writable computed whose getter is `Boolean(target)` and whose setter resets the target to `""` on close.
 
@@ -31,7 +31,7 @@ Because the target is a single ref, only two components react when it changes: t
 A confirm dialog is stateless, so a plain `v-if="item"` guard inside the singleton suffices. An edit dialog that clones its item into a local draft (`structuredClone` for vjsf, `useCloned` for row edits) must re-create that draft per target — mount it at the list level with a `v-if` **and a `:key`** so Vue recreates the component when the target changes:
 
 ```vue
-<ResourceFileRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" :index="..." />
+<ResourceSheetRowEditDialog v-if="editingRow" :key="editingRow.id" :row="editingRow" :index="..." />
 ```
 
 ## Scope and non-goals
@@ -48,9 +48,9 @@ A confirm dialog is stateless, so a plain `v-if="item"` guard inside the singlet
 | `app/store/message/room/dialog.ts`                                                   | Room dialog state (`settingsRoomId`, `isEditRoomDialogOpen`)                         |
 | `app/store/message/roomCategoryDialog.ts`, `app/store/message/room/webhookDialog.ts` | Category / webhook delete targets                                                    |
 | `app/store/post/dialog.ts`, `app/store/post/comment/dialog.ts`                       | Post / comment delete targets                                                        |
-| `app/store/resource/file/columnDialog.ts`, `app/store/resource/file/rowDialog.ts`    | File table editor chart/edit/delete targets                                          |
+| `app/store/resource/sheet/columnDialog.ts`, `app/store/resource/sheet/rowDialog.ts`  | File table editor chart/edit/delete targets                                          |
 | `app/components/Message/Model/Message/ConfirmDeleteDialog.vue`                       | Canonical stateless singleton (resolve → `v-if` → `useSingletonDialog`)              |
-| `app/components/Resource/File/Row/EditDialog.vue`                                    | Canonical stateful singleton (`v-if` + `:key` mount for a fresh edit draft)          |
+| `app/components/Resource/Sheet/Row/EditDialog.vue`                                   | Canonical stateful singleton (`v-if` + `:key` mount for a fresh edit draft)          |
 | `app/components/Message/Model/Room/Settings/Dialog.vue`                              | Fullscreen settings dialog driven by `settingsRoomId`                                |
 
 ## Notes

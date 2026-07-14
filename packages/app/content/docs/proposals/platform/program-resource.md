@@ -5,7 +5,7 @@ description: The distribution orchestrator — a resource binding an audience da
 
 # Program Resource
 
-A **Program** is the resource that orchestrates the end-to-end distribution loop the other resources deliberately don't know about: it binds an **audience** dataset (a File of recipients), an **Email**, and a **Survey**; issues one opaque invite token per recipient; personalizes the export with tokened links; and joins tokens back to responses into a per-recipient **status** — served through the standard dataset contract so a dashboard can chart the funnel like any other data.
+A **Program** is the resource that orchestrates the end-to-end distribution loop the other resources deliberately don't know about: it binds an **audience** dataset (a Sheet of recipients), an **Email**, and a **Survey**; issues one opaque invite token per recipient; personalizes the export with tokened links; and joins tokens back to responses into a per-recipient **status** — served through the standard dataset contract so a dashboard can chart the funnel like any other data.
 
 The shape is Logic-Apps-_positioned_ (orchestration is its own resource, the orchestrated resources stay pure), but deliberately not Logic-Apps-_shaped_: no trigger/action graph, no expression language — one domain, three bindings, one background-free run model. Extensibility lives in the content schema, not in a workflow engine.
 

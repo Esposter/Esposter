@@ -1,12 +1,12 @@
 ---
 title: Roadmap
-description: Open work for the file table editor — prioritized checkboxes linking their proposals.
+description: Open work for the sheet editor — prioritized checkboxes linking their proposals.
 ---
 
 # Roadmap
 
-Open work only. Decided ideas live in [deferred](/docs/file-table-editor/deferred) and [rejected](/docs/file-table-editor/rejected) — grep both before adding an item.
+Open work only. Decided ideas live in [deferred](/docs/sheet-editor/deferred) and [rejected](/docs/sheet-editor/rejected) — grep both before adding an item.
 
 ## Next
 
-- [ ] Copy computed values — range copy materializes computed cells instead of yielding empty ones → [proposal](/docs/proposals/file-table-editor/copy-computed-values)
+- [ ] Copy computed values — range copy materializes computed cells instead of yielding empty ones → [proposal](/docs/proposals/sheet-editor/copy-computed-values)

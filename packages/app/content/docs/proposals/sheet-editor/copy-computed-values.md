@@ -23,12 +23,12 @@ Paste needs no change: computed columns are read-only and every write site alrea
 
 Paths relative to `packages/app/app`.
 
-| File                                                           | Change                                                  |
-| -------------------------------------------------------------- | ------------------------------------------------------- |
-| `composables/resource/file/useCopyRangeToClipboard.ts`         | materialize cell values via `computeValue` when slicing |
-| `services/resource/file/dataSource/filterDataSourceColumns.ts` | reuse if the shared materialization path fits           |
+| File                                                            | Change                                                  |
+| --------------------------------------------------------------- | ------------------------------------------------------- |
+| `composables/resource/sheet/useCopyRangeToClipboard.ts`         | materialize cell values via `computeValue` when slicing |
+| `services/resource/sheet/dataSource/filterDataSourceColumns.ts` | reuse if the shared materialization path fits           |
 
-Update the [clipboard](/docs/file-table-editor/clipboard) and [computed columns](/docs/file-table-editor/computed-columns) Notes (both currently document the empty-cell behaviour) when this ships.
+Update the [clipboard](/docs/sheet-editor/clipboard) and [computed columns](/docs/sheet-editor/computed-columns) Notes (both currently document the empty-cell behaviour) when this ships.
 
 ## Notes
 

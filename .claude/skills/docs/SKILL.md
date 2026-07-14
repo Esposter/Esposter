@@ -18,7 +18,7 @@ All documentation lives in `packages/app/content/docs/` and is rendered in the a
 
 ## Single responsibility — one file per feature/idea
 
-Doc files are like Vue SFCs: **one feature, proposal, or decision per file — never merge them.** Do not consolidate multiple specs into one page or multiple decisions into one file; modularity beats file count. A page may have sub-pages (nested folder with `index.md`) when a feature has cohesive sub-features (e.g. `file-table-editor/computed-columns/aggregation.md`). Never delete or merge a doc file "to tidy up" — split when a page grows two responsibilities, and only remove a file when the idea itself is superseded (record that in a decision page).
+Doc files are like Vue SFCs: **one feature, proposal, or decision per file — never merge them.** Do not consolidate multiple specs into one page or multiple decisions into one file; modularity beats file count. A page may have sub-pages (nested folder with `index.md`) when a feature has cohesive sub-features (e.g. `sheet-editor/computed-columns/aggregation.md`). Never delete or merge a doc file "to tidy up" — split when a page grows two responsibilities, and only remove a file when the idea itself is superseded (record that in a decision page).
 
 ## Directory layout
 
@@ -28,7 +28,7 @@ packages/app/content/docs/
   architecture/
     index.md                  ← index of cross-cutting topics
     <topic>.md                ← as-built system explanation shared by multiple areas
-  <area>/                     ← esbabbler · platform · file-table-editor · virrun · vue-phaserjs · infra
+  <area>/                     ← esbabbler · platform · sheet-editor · virrun · vue-phaserjs · infra
     index.md                  ← what the area is, key concepts, terse chronological shipped log
     <feature>.md              ← one page per implemented feature (or <feature>/ folder with index.md + sub-feature pages)
     deferred/

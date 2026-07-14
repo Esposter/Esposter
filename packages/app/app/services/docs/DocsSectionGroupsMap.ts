@@ -46,7 +46,7 @@ export const DocsSectionGroupsMap: Readonly<Record<string, Readonly<Record<strin
       "shell-cohesion",
       "resource-consolidation",
     ],
-    Resources: ["file-resource", "survey-resource"],
+    Resources: ["sheet-resource", "survey-resource"],
     Editors: ["dashboard-data-binding", "email-personalization"],
   },
   virrun: {

@@ -90,22 +90,22 @@ Non-numeric and `null` source cells are ignored; an all-null column yields `null
 
 All paths relative to `packages/app`.
 
-| File                                                                                      | Role                                                            |
-| ----------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `shared/models/resource/file/column/ComputedColumn.ts`                                    | Column class + Zod schema                                       |
-| `shared/models/resource/file/column/transformation/ColumnTransformation.ts`               | Discriminated union of all transformation variants              |
-| `shared/models/resource/file/column/transformation/ColumnTransformationType.ts`           | Discriminant enum                                               |
-| `app/services/resource/file/column/computeValue.ts`                                       | Lazy resolver with inline cycle guard                           |
-| `app/services/resource/file/column/transformation/ColumnTransformationComputeMap.ts`      | Dispatch map: transformation type → computer                    |
-| `app/services/resource/file/column/computeAggregationValue.ts`                            | Aggregation entry point (source resolution + numeric filtering) |
-| `app/services/resource/file/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type computers                                  |
-| `app/services/resource/file/column/transformation/computeMathTransformation.ts`           | mathjs `evaluate` with variable scope                           |
-| `app/services/resource/file/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                       |
-| `app/services/resource/file/dataSource/filterDataSourceColumns.ts`                        | Materializes computed values for export                         |
-| `app/models/resource/file/commands/CreateComputedColumnCommand.ts`                        | Undoable create command                                         |
+| File                                                                                       | Role                                                            |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `shared/models/resource/sheet/column/ComputedColumn.ts`                                    | Column class + Zod schema                                       |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformation.ts`               | Discriminated union of all transformation variants              |
+| `shared/models/resource/sheet/column/transformation/ColumnTransformationType.ts`           | Discriminant enum                                               |
+| `app/services/resource/sheet/column/computeValue.ts`                                       | Lazy resolver with inline cycle guard                           |
+| `app/services/resource/sheet/column/transformation/ColumnTransformationComputeMap.ts`      | Dispatch map: transformation type → computer                    |
+| `app/services/resource/sheet/column/computeAggregationValue.ts`                            | Aggregation entry point (source resolution + numeric filtering) |
+| `app/services/resource/sheet/column/transformation/AggregationTransformationComputeMap.ts` | Per-aggregation-type computers                                  |
+| `app/services/resource/sheet/column/transformation/computeMathTransformation.ts`           | mathjs `evaluate` with variable scope                           |
+| `app/services/resource/sheet/column/getComputedColumnEffectiveType.ts`                     | Transformation type → output `ColumnType`                       |
+| `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                        | Materializes computed values for export                         |
+| `app/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                        | Undoable create command                                         |
 
 ## Notes
 
 - Values are recomputed on every read — there is no cache. Row data are plain objects with no dirty-tracking, and recomputation has been cheap enough in practice.
 - Cycle handling is deliberately inline (the `visited` set) rather than a separate pre-validation pass; a cycle renders as empty cells instead of an error.
-- Range copy ([clipboard](/docs/file-table-editor/clipboard)) serializes stored `row.data` directly, so computed columns copy as empty cells; the export dialog is the path that materializes them.
+- Range copy ([clipboard](/docs/sheet-editor/clipboard)) serializes stored `row.data` directly, so computed columns copy as empty cells; the export dialog is the path that materializes them.

@@ -26,7 +26,7 @@ New products join the platform by adding one `ResourceType` and one `ResourceDef
 ```mermaid
 flowchart TB
   subgraph explorer [Resource Explorer — /resources]
-    FILE[File<br/>datasetProvider · portable]
+    SHEET[Sheet<br/>datasetProvider · portable]
     SURVEY[Survey<br/>publishable · datasetProvider]
     TODO[TodoList]
     DASH[Dashboard<br/>publishable]
@@ -42,10 +42,10 @@ flowchart TB
   end
 
   explorer --- RES
-  FILE -- File provider --> DS
+  SHEET -- Sheet provider --> DS
   SURVEY -- SurveyResponses provider --> DS
   DS -- bind / import / merge fields --> DASH
-  DS --> FILE
+  DS --> SHEET
   DS --> EMAIL
   SURVEY --> PUB
   DASH --> PUB
@@ -68,7 +68,7 @@ sequenceDiagram
   actor Respondent
   participant SV as Survey resource<br/>(Editor blade)
   participant AT as Azure Table<br/>(SurveyResponses)
-  participant FI as File resource<br/>(Data blade)
+  participant FI as Sheet resource<br/>(Data blade)
   participant DB as Dashboard resource
   participant PUB as Public /view/[type]/[id]
 
@@ -77,7 +77,7 @@ sequenceDiagram
   PUB-->>Respondent: 3. Share /view/survey/{id} (esbabbler, email block, anywhere)
   Respondent->>AT: 4. Respond → rows (partitionKey = survey resource id)
   Note over SV,AT: Respondents are served the published snapshot — unpublished 404s
-  Creator->>FI: 5. Import responses (dataset.readDataset → one-time copy into a File resource)
+  Creator->>FI: 5. Import responses (dataset.readDataset → one-time copy into a Sheet resource)
   FI->>FI: 6. Computed columns — Aggregation / Math / Regex / String
   Creator->>DB: 7. Bind visual to a DatasetReference (live re-resolve on load)
   DB->>PUB: 8. Publish dashboard — bakes dataset snapshots → shareable /view/dashboard/{id}
@@ -91,8 +91,8 @@ sequenceDiagram
 | ------------ | :---------: | :-------------: | :-------: | ----------------------------- |
 | Dashboard    |     ✅      |                 |           |                               |
 | Email        |             |                 | ✅ export |                               |
-| File         |             |       ✅        |    ✅     | Data, Settings                |
 | Flowchart    |             |                 |           |                               |
+| Sheet        |             |       ✅        |    ✅     | Data, Settings                |
 | Survey       |     ✅      |  ✅ responses   |           | Responses                     |
 | TodoList     |             |                 |           | Items, Calendar               |
 | Webpage      |     ✅      |                 |           |                               |

@@ -39,7 +39,7 @@ sequenceDiagram
   PP->>CB: readText()
   PP->>PP: parseClipboardValuesByPosition → coerceValue
   PP->>H: push PasteRangeCommand (overwrite) or CreateRowsCommand (shift down)
-  PP->>PP: saveFile()
+  PP->>PP: saveSheet()
 ```
 
 ## Selection UX
@@ -60,20 +60,20 @@ The anchor is preserved across Shift+click and Shift+Arrow; dragging re-anchors 
 
 All paths relative to `packages/app/app`.
 
-| File                                                                | Role                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `models/resource/file/CellRange.ts`                                 | `CellRange` interface                                        |
-| `models/resource/file/commands/PasteMode.ts`                        | `PasteMode` enum (`Overwrite` / `ShiftDown`)                 |
-| `models/resource/file/commands/PasteRangeCommand.ts`                | Overwrite paste + undo snapshot                              |
-| `services/resource/file/commands/parseClipboardValuesByPosition.ts` | TSV → `string[][]` (no header row)                           |
-| `services/resource/file/commands/copyToClipboard.ts`                | TSV + HTML `ClipboardItem` write with `writeText` fallback   |
-| `composables/resource/file/useCopyRangeToClipboard.ts`              | Slices the selected range and writes it to the clipboard     |
-| `composables/resource/file/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `PasteRangeCommand` or `CreateRowsCommand` |
-| `components/Resource/File/Row/Table.vue`                            | Keyboard handlers; maps `shiftKey` → `PasteMode`             |
-| `store/resource/file/cell.ts`                                       | Anchor/focus selection state, keyboard navigation            |
+| File                                                                 | Role                                                         |
+| -------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `models/resource/sheet/CellRange.ts`                                 | `CellRange` interface                                        |
+| `models/resource/sheet/commands/PasteMode.ts`                        | `PasteMode` enum (`Overwrite` / `ShiftDown`)                 |
+| `models/resource/sheet/commands/PasteRangeCommand.ts`                | Overwrite paste + undo snapshot                              |
+| `services/resource/sheet/commands/parseClipboardValuesByPosition.ts` | TSV → `string[][]` (no header row)                           |
+| `services/resource/sheet/commands/copyToClipboard.ts`                | TSV + HTML `ClipboardItem` write with `writeText` fallback   |
+| `composables/resource/sheet/useCopyRangeToClipboard.ts`              | Slices the selected range and writes it to the clipboard     |
+| `composables/resource/sheet/commands/usePasteRangeFromClipboard.ts`  | Wires clipboard → `PasteRangeCommand` or `CreateRowsCommand` |
+| `components/Resource/Sheet/Row/Table.vue`                            | Keyboard handlers; maps `shiftKey` → `PasteMode`             |
+| `store/resource/sheet/cell.ts`                                       | Anchor/focus selection state, keyboard navigation            |
 
 ## Notes
 
-- Copy serializes stored cell values (`row.data`), so [computed columns](/docs/file-table-editor/computed-columns) copy as empty cells — use the export dialog when derived values are needed.
+- Copy serializes stored cell values (`row.data`), so [computed columns](/docs/sheet-editor/computed-columns) copy as empty cells — use the export dialog when derived values are needed.
 - Paste target columns are pre-indexed by name to avoid repeated linear scans over wide tables.
 - The dedicated copy/paste buttons were removed from the cell text slot when keyboard range copy/paste shipped; row-level copy of checkbox-selected rows remains in the toolbar, alongside the `copyIncludesHeaders` toggle.

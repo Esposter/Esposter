@@ -40,11 +40,11 @@ Add `nullToUndefined` in `packages/shared` (`value === null ? undefined : value`
 
 Replace `.nullable()` with `.optional()` in the three files that use it, then verify all consumers handle `undefined`:
 
-| File                                                     | Fields                                                                     |
-| -------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `shared/models/resource/file/column/ColumnStatistics.ts` | `average`, `falseCount`, `trueCount`, `min`, `max`, `topFrequencies`, etc. |
-| `shared/models/flowchartEditor/data/HandleBounds.ts`     | `source`, `target`                                                         |
-| `shared/models/resource/todoList/TodoListItem.ts`        | `dueAt`                                                                    |
+| File                                                      | Fields                                                                     |
+| --------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `shared/models/resource/sheet/column/ColumnStatistics.ts` | `average`, `falseCount`, `trueCount`, `min`, `max`, `topFrequencies`, etc. |
+| `shared/models/flowchartEditor/data/HandleBounds.ts`      | `source`, `target`                                                         |
+| `shared/models/resource/todoList/TodoListItem.ts`         | `dueAt`                                                                    |
 
 `ColumnValue.ts` uses `z.null()` in a union — replace with `z.undefined()` or drop the member if unused. `SerializableValue` in `packages/db-schema/src/models/azure/` stays as-is (carve-out).
 

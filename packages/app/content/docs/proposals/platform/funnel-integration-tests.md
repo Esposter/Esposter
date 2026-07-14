@@ -85,7 +85,7 @@ describe("survey funnel — café feedback drive", () => {
   // beforeAll: createMockContext(); bind callers: file, survey, email, program, dashboard, dataset, resource
 
   test("the whole chain", async () => {
-    // 1. audience — File resource with name/email columns, 3 rows
+    // 1. audience — Sheet resource with name/email columns, 3 rows
     const file = await fileCaller.createResource({ name: "customers" });
     await fileCaller.saveResourceContent({ id: file.id, content: customersCsvAsDataSource, contentVersion: 0 });
 
