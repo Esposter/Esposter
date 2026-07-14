@@ -33,14 +33,14 @@ const deleteMessage = (onComplete: () => void) => {
   <StyledDeleteFormDialog
     v-if="message && creator"
     v-model="isOpen"
-    :card-props="{
-      title: 'Delete Message',
-      text: 'Are you sure you want to delete this message?',
-    }"
+    :card-props="{ title: 'Delete Message' }"
     @delete="deleteMessage"
   >
-    <div mx-4 py-2 b-1 b-text rd-lg b-solid shadow-md>
-      <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
+    <div flex flex-col gap-4>
+      Are you sure you want to delete this message?
+      <div py-2 b-1 b-text rd-lg b-solid shadow-md>
+        <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
+      </div>
     </div>
   </StyledDeleteFormDialog>
 </template>

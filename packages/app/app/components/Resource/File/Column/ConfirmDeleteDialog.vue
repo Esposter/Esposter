@@ -11,10 +11,7 @@ const isOpen = useSingletonDialog(deletingColumnName);
 <template>
   <StyledDeleteFormDialog
     v-model="isOpen"
-    :card-props="{
-      title,
-      text: 'Are you sure you want to delete this column?',
-    }"
+    :card-props="{ title }"
     @delete="
       (onComplete) => {
         if (!deletingColumnName) return;
@@ -22,5 +19,7 @@ const isOpen = useSingletonDialog(deletingColumnName);
         onComplete();
       }
     "
-  />
+  >
+    Are you sure you want to delete this column?
+  </StyledDeleteFormDialog>
 </template>

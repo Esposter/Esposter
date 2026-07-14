@@ -17,7 +17,7 @@ const { deleteVisual } = visualStore;
 
 <template>
   <StyledDeleteFormDialog
-    :card-props="{ title: `Delete ${prettify(type)} Visual`, text: 'Are you sure you want to delete this visual?' }"
+    :card-props="{ title: `Delete ${prettify(type)} Visual` }"
     @delete="async (onComplete) => await withFinalizerAsync(() => deleteVisual({ id }), onComplete)"
   >
     <template #activator="{ updateIsOpen }">
@@ -28,5 +28,6 @@ const { deleteVisual } = visualStore;
         @click.stop="updateIsOpen(true)"
       />
     </template>
+    Are you sure you want to delete this visual?
   </StyledDeleteFormDialog>
 </template>

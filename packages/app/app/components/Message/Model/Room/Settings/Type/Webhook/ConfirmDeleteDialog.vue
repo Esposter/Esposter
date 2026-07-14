@@ -23,7 +23,7 @@ const isOpen = useSingletonDialog(deletingId);
   <StyledDeleteFormDialog
     v-if="webhook"
     v-model="isOpen"
-    :card-props="{ title: 'Delete Webhook', text: `Are you sure you want to delete ${webhook.name}?` }"
+    :card-props="{ title: 'Delete Webhook' }"
     @delete="
       async (onComplete) => {
         if (!webhook) return;
@@ -31,5 +31,7 @@ const isOpen = useSingletonDialog(deletingId);
         await withFinalizerAsync(() => deleteWebhook(roomId, { id: webhookId }), onComplete);
       }
     "
-  />
+  >
+    Are you sure you want to delete {{ webhook.name }}?
+  </StyledDeleteFormDialog>
 </template>

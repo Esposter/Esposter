@@ -48,9 +48,7 @@ watch(dialog, async (newDialog) => {
           )
       "
     >
-      <v-card-text>
-        <v-select v-model="selectedSurveyId" item-title="name" item-value="id" label="Survey" :items="surveys" />
-      </v-card-text>
+      <v-select v-model="selectedSurveyId" item-title="name" item-value="id" label="Survey" :items="surveys" />
     </StyledDialog>
   </template>
 </template>

@@ -1,3 +1,8 @@
+# Kill node processes first — on Windows a running process locks native .node
+# binaries, so rmdir /s /q below fails "Access is denied" while dev/vitest/tsserver
+# hold them open. (Not needed on Linux, where rm -rf unlinks open files fine.)
+taskkill /F /IM node.exe 2>$null
+
 Remove-Item "pnpm-lock.yaml" -Force -ErrorAction SilentlyContinue
 # Collect every node_modules at any depth, but prune (don't descend into) a matched
 # node_modules so we never walk the huge .pnpm tree. Mirrors `find -prune` in the

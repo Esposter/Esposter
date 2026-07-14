@@ -36,48 +36,35 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) =>
     :confirm-button-props="{ text: 'Create Poll', prependIcon: 'mdi-poll' }"
     @submit="submit"
   >
-    <v-container>
-      <v-row>
-        <v-col cols="12">
-          <v-text-field v-model="question" :rules="[rules.required()]" label="Question" />
-        </v-col>
-        <v-col cols="12">
-          <v-list bg-color="transparent">
-            <v-list-item v-for="(option, index) of options" :key="index" :ripple="false" px-0>
-              <v-text-field
-                :model-value="option"
-                :rules="[rules.required()]"
-                :label="`Option ${index + 1}`"
-                hide-details="auto"
-                @update:model-value="options[index] = $event"
-              />
-              <template #append>
-                <StyledTooltipIconButton
-                  :button-props="{ disabled: options.length <= 2, size: 'small' }"
-                  icon="mdi-close"
-                  text="Remove option"
-                  @click="options.splice(index, 1)"
-                />
-              </template>
-            </v-list-item>
-          </v-list>
-        </v-col>
-        <v-col cols="12">
-          <v-tooltip text="Add option">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                :disabled="options.length >= 10"
-                prepend-icon="mdi-plus"
-                :="tooltipProps"
-                @click="options.push('')"
-              >
-                Add Option
-              </v-btn>
-            </template>
-          </v-tooltip>
-        </v-col>
-      </v-row>
-    </v-container>
+    <div flex flex-col gap-4>
+      <v-text-field v-model="question" :rules="[rules.required()]" label="Question" />
+      <v-list bg-color="transparent">
+        <v-list-item v-for="(option, index) of options" :key="index" :ripple="false" px-0>
+          <v-text-field
+            :model-value="option"
+            :rules="[rules.required()]"
+            :label="`Option ${index + 1}`"
+            hide-details="auto"
+            @update:model-value="options[index] = $event"
+          />
+          <template #append>
+            <StyledTooltipIconButton
+              :button-props="{ disabled: options.length <= 2, size: 'small' }"
+              icon="mdi-close"
+              text="Remove option"
+              @click="options.splice(index, 1)"
+            />
+          </template>
+        </v-list-item>
+      </v-list>
+      <v-tooltip text="Add option">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn :disabled="options.length >= 10" prepend-icon="mdi-plus" :="tooltipProps" @click="options.push('')">
+            Add Option
+          </v-btn>
+        </template>
+      </v-tooltip>
+    </div>
     <template #prepend-actions> {{ options.length }}/10 options </template>
   </StyledFormDialog>
 </template>

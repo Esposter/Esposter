@@ -18,10 +18,7 @@ const pluralizedLabel = computed(() => pluralize(label, selectedIds.value.length
     <v-toolbar-title>{{ selectedIds.length }} {{ pluralizedLabel }} selected</v-toolbar-title>
     <slot />
     <StyledConfirmDeleteDialogButton
-      :card-props="{
-        title: `Delete ${selectedIds.length} ${capitalize(pluralizedLabel)}`,
-        text: `Are you sure you want to delete ${selectedIds.length} selected ${pluralizedLabel}?`,
-      }"
+      :card-props="{ title: `Delete ${selectedIds.length} ${capitalize(pluralizedLabel)}` }"
       @delete="
         (onComplete) => {
           emit('delete', selectedIds);
@@ -29,6 +26,8 @@ const pluralizedLabel = computed(() => pluralize(label, selectedIds.value.length
           onComplete();
         }
       "
-    />
+    >
+      Are you sure you want to delete {{ selectedIds.length }} selected {{ pluralizedLabel }}?
+    </StyledConfirmDeleteDialogButton>
   </v-toolbar>
 </template>

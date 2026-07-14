@@ -73,24 +73,16 @@ const displayName = computed(() => name || placeholder);
         </template>
       </v-tooltip>
     </template>
-    <v-container fluid px-6>
-      <v-row v-if="$slots['prepend-content']">
-        <v-col cols="12">
-          <slot name="prepend-content" />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <v-text-field
-            v-model="editedName"
-            density="compact"
-            :placeholder
-            autofocus
-            :rules="[rules.maxLength(maxLength), rules.isNotProfanity()]"
-          />
-        </v-col>
-      </v-row>
-    </v-container>
+    <div flex flex-col gap-4>
+      <slot name="prepend-content" />
+      <v-text-field
+        v-model="editedName"
+        autofocus
+        density="compact"
+        :placeholder
+        :rules="[rules.maxLength(maxLength), rules.isNotProfanity()]"
+      />
+    </div>
   </StyledFormDialog>
 </template>
 

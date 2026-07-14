@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { StyledDeleteFormDialogProps } from "@/components/Styled/DeleteFormDialog.vue";
 
+defineSlots<{ default?: () => VNode }>();
 const { cardProps, confirmButtonProps } = defineProps<StyledDeleteFormDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 </script>
@@ -15,5 +16,6 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
         @click.stop="updateIsOpen(true)"
       />
     </template>
+    <slot />
   </StyledDeleteFormDialog>
 </template>

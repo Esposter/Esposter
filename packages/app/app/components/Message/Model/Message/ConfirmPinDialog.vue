@@ -32,15 +32,15 @@ const pinMessage = (onComplete: () => void) => {
   <StyledDialog
     v-if="message && creator"
     v-model="isOpen"
-    :card-props="{
-      title: 'Pin It. Pin It Good.',
-      text: 'Hey, just double-checking that you want to pin this message to the current room for posterity and greatness?',
-    }"
+    :card-props="{ title: 'Pin It. Pin It Good.' }"
     :confirm-button-props="{ text: 'Oh yeah. Pin it' }"
     @confirm="pinMessage"
   >
-    <div mx-4 py-2 b-1 b-text rd-lg b-solid shadow-md>
-      <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
+    <div flex flex-col gap-4>
+      Hey, just double-checking that you want to pin this message to the current room for posterity and greatness?
+      <div py-2 b-1 b-text rd-lg b-solid shadow-md>
+        <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
+      </div>
     </div>
   </StyledDialog>
 </template>

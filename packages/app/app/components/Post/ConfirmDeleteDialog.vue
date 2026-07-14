@@ -24,10 +24,7 @@ const isOpen = useSingletonDialog(deletingId);
   <StyledDeleteFormDialog
     v-if="post"
     v-model="isOpen"
-    :card-props="{
-      title: 'Delete Post',
-      text: 'Are you sure you want to delete this post?',
-    }"
+    :card-props="{ title: 'Delete Post' }"
     @delete="
       async (onComplete) => {
         if (!post) return;
@@ -39,8 +36,11 @@ const isOpen = useSingletonDialog(deletingId);
       }
     "
   >
-    <div mx-4 py-2 b-1 b-text rd-lg b-solid shadow-md>
-      <PostPreview :post />
+    <div flex flex-col gap-4>
+      Are you sure you want to delete this post?
+      <div py-2 b-1 b-text rd-lg b-solid shadow-md>
+        <PostPreview :post />
+      </div>
     </div>
   </StyledDeleteFormDialog>
 </template>

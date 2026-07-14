@@ -15,10 +15,7 @@ const isOpen = useSingletonDialog(deletingId);
 <template>
   <StyledDeleteFormDialog
     v-model="isOpen"
-    :card-props="{
-      title,
-      text: 'Are you sure you want to delete this row?',
-    }"
+    :card-props="{ title }"
     @delete="
       (onComplete) => {
         if (!deletingId) return;
@@ -26,5 +23,7 @@ const isOpen = useSingletonDialog(deletingId);
         onComplete();
       }
     "
-  />
+  >
+    Are you sure you want to delete this row?
+  </StyledDeleteFormDialog>
 </template>

@@ -26,7 +26,7 @@ watch(modelValue, (newModelValue) => {
 <template>
   <StyledFormDialog
     v-model="modelValue"
-    :card-props
+    :card-props="{ prependIcon: 'mdi-delete-alert-outline', ...cardProps }"
     :confirm-button-attrs="{ disabled: Boolean(confirmName) && confirmNameValue !== confirmName }"
     :confirm-button-props="{ color: 'error', text: 'Delete', ...confirmButtonProps }"
     @submit="(_event, onComplete) => emit('delete', onComplete)"

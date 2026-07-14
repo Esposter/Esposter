@@ -55,16 +55,16 @@ const displayedSelectedColumnIds = computed(() => {
       }
     "
   >
-    <v-container fluid py-0>
+    <div flex flex-col>
       <v-checkbox
         v-for="{ id, name } of dataSource.columns"
         :key="id"
         v-model="selectedColumnIds"
-        :label="name"
-        :value="id"
         density="compact"
         hide-details
+        :label="name"
+        :value="id"
       />
-    </v-container>
+    </div>
   </StyledDialog>
 </template>

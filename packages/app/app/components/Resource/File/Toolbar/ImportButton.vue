@@ -53,8 +53,6 @@ const previewRows = computed(() => previewDataSource.value?.rows.slice(0, 5) ?? 
       }
     "
   >
-    <v-card-text>
-      <v-data-table density="compact" hide-default-footer :headers="previewHeaders" :items="previewRows" />
-    </v-card-text>
+    <v-data-table density="compact" hide-default-footer :headers="previewHeaders" :items="previewRows" />
   </StyledDialog>
 </template>

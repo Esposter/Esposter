@@ -16,7 +16,7 @@ const isOpen = useSingletonDialog(deletingId);
   <StyledDeleteFormDialog
     v-if="category"
     v-model="isOpen"
-    :card-props="{ title: 'Delete Category', text: `Are you sure you want to delete ${category.name}?` }"
+    :card-props="{ title: 'Delete Category' }"
     @delete="
       async (onComplete) => {
         if (!category) return;
@@ -24,5 +24,7 @@ const isOpen = useSingletonDialog(deletingId);
         await withFinalizerAsync(() => deleteRoomCategory(categoryId), onComplete);
       }
     "
-  />
+  >
+    Are you sure you want to delete {{ category.name }}?
+  </StyledDeleteFormDialog>
 </template>

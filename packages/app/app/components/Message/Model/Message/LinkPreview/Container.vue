@@ -22,13 +22,11 @@ const deleteLinkPreviewResponse = async (onComplete: () => void) => {
   <div flex @mouseenter="isActive = true" @mouseleave="isActive = false">
     <MessageModelMessageLinkPreview max-w-140 :="linkPreviewResponse" />
     <StyledDeleteFormDialog
-      :card-props="{
-        title: 'Are you sure?',
-        text: 'This will remove all embeds on this message for everyone.',
-      }"
+      :card-props="{ title: 'Are you sure?' }"
       :confirm-button-props="{ text: 'Remove All Embeds' }"
       @delete="deleteLinkPreviewResponse"
     >
+      This will remove all embeds on this message for everyone.
       <template #activator="{ updateIsOpen }">
         <v-btn
           :class="isActive ? undefined : 'invisible'"
