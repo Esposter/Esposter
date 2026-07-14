@@ -1,10 +1,10 @@
 import type { Resource } from "@esposter/db-schema";
 
-import { CsvDelimiter } from "#shared/models/resource/file/csv/CsvDelimiter";
+import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { dayjs } from "#shared/services/dayjs";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { RESOURCE_DATE_FORMAT } from "@/services/resource/constants";
-import { escapeCsvCell } from "@/services/resource/file/csv/escapeCsvCell";
+import { escapeCsvCell } from "@/services/resource/sheet/csv/escapeCsvCell";
 
 const HEADER_TITLES = ["Type", "Name", "Created At", "Updated At"];
 

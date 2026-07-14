@@ -2,7 +2,7 @@ import { ResourceType } from "@esposter/db-schema";
 // Explorer-creatable types: those backed by createResourceProcedures on the resources table, so a create
 // Immediately shows up in resource.readResources.
 export const CreatableResourceTypes = [
-  ResourceType.File,
+  ResourceType.Sheet,
   ResourceType.TodoList,
   ResourceType.Dashboard,
   ResourceType.Webpage,

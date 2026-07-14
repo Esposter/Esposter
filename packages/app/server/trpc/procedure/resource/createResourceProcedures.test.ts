@@ -7,7 +7,7 @@ import { Visual } from "#shared/models/dashboard/data/Visual";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
-import { fileRouter } from "@@/server/trpc/routers/file";
+import { sheetRouter } from "@@/server/trpc/routers/sheet";
 import { DatabaseEntityType, resources, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
@@ -241,7 +241,7 @@ describe("createResourceProcedures", () => {
     // A non-publishable type (Table) has no publish endpoints at all — capability gating, not just a guard.
     // The caller proxy is permissive at runtime, so absence is asserted on the router's procedure record.
     const publishableProcedures = Object.keys(dashboardRouter._def.procedures);
-    const nonPublishableProcedures = Object.keys(fileRouter._def.procedures);
+    const nonPublishableProcedures = Object.keys(sheetRouter._def.procedures);
 
     expect(publishableProcedures).toContain("publishResource");
     expect(nonPublishableProcedures).not.toContain("publishResource");
