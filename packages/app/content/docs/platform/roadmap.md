@@ -17,6 +17,7 @@ The audience → email invite → survey → responses → dashboard loop works 
 - [ ] Survey response management ([spec](/docs/proposals/platform/survey-response-management)): per-response detail dialog, owner delete, response count on Overview
 - [ ] Published view analytics ([spec](/docs/proposals/platform/published-view-analytics)): best-effort view counter (Azure Table) on public reads, Views row on Overview — views vs responses is the completion rate
 - [ ] Webpage survey invite blocks ([spec](/docs/proposals/platform/webpage-survey-invite-blocks)): the email editor's invite blocks in the webpage editor via a shared block builder
+- [ ] Funnel integration tests ([spec](/docs/proposals/platform/funnel-integration-tests)): the TDD contract — per-proposal acceptance checklists land red→green with each item above; the café-scenario integration spec closes the section
 
 ## Later — editors and capability parity
 
