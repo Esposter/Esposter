@@ -12,7 +12,7 @@ All documentation lives in `packages/app/content/docs/` and is rendered in the a
 **Where a page lives states whether it is built.** Never mix built and unbuilt in one page.
 
 - `docs/<area>/` and `docs/architecture/` describe **only what exists in code today**. If you can't point at the file that implements a sentence, the sentence doesn't belong here.
-- `docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal.
+- `docs/proposals/<area>/` holds designs **not yet implemented**. When one ships, rewrite it as an area feature page (present tense, as-built) and delete the proposal. **Exception — one-time changes** (renames, migrations, mechanical sweeps): these have no as-built feature to describe, so when done just delete the proposal and its roadmap item and sweep every reference — never convert them into a docs page; the shipped log line in the area `index.md` is the only trace.
 - `docs/<area>/deferred/` holds ideas we chose **not to build yet** (one page per idea, each with a revisit trigger); `docs/<area>/rejected/` holds ideas we decided **against** (one page per idea). Folder names are deliberately direct — never a vague umbrella like `decisions/` or `misc/`.
 - `docs/<area>/roadmap.md` holds **open work** (checkbox backlog).
 
@@ -122,13 +122,14 @@ Prioritized top-down, checkbox-driven (`- [ ]` with nested sub-steps), grouped b
 
 ## Lifecycle
 
-| State    | Location                     | Action                                                                                  |
-| -------- | ---------------------------- | --------------------------------------------------------------------------------------- |
-| Idea     | `<area>/roadmap.md`          | Checkbox item; grep `deferred/` + `rejected/` first                                     |
-| Designed | `proposals/<area>/<name>.md` | Write the proposal; roadmap item links to it                                            |
-| Shipped  | `<area>/<feature>.md`        | Rewrite proposal as an as-built page; delete proposal + roadmap item; log in `index.md` |
-| Won't do | `<area>/rejected/<idea>.md`  | One page with rationale                                                                 |
-| Deferred | `<area>/deferred/<idea>.md`  | One page with rationale + revisit trigger                                               |
+| State                     | Location                     | Action                                                                                   |
+| ------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------- |
+| Idea                      | `<area>/roadmap.md`          | Checkbox item; grep `deferred/` + `rejected/` first                                      |
+| Designed                  | `proposals/<area>/<name>.md` | Write the proposal; roadmap item links to it                                             |
+| Shipped                   | `<area>/<feature>.md`        | Rewrite proposal as an as-built page; delete proposal + roadmap item; log in `index.md`  |
+| Shipped (one-time change) | —                            | Delete proposal + roadmap item, sweep references, one shipped-log line — no feature page |
+| Won't do                  | `<area>/rejected/<idea>.md`  | One page with rationale                                                                  |
+| Deferred                  | `<area>/deferred/<idea>.md`  | One page with rationale + revisit trigger                                                |
 
 ## Sequential per-area work — never parallelize
 
