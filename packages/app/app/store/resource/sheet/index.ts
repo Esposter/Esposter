@@ -23,5 +23,5 @@ export const useSheetStore = defineStore("resource/sheet", () => {
     clear();
   };
   const saveSheet = () => save(sheetResource.value);
-  return { dataSource, sheetResource, loadContent, resource, saveSheet, settings };
+  return { dataSource, loadContent, resource, saveSheet, settings, sheetResource };
 });
