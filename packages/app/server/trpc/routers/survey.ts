@@ -1,11 +1,13 @@
 import type { CountSurveyResponsesOutput } from "#shared/models/resource/survey/CountSurveyResponsesOutput";
+import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
 import type { FileSasEntity } from "@esposter/db-schema";
 
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { countSurveyResponses } from "@@/server/services/survey/countSurveyResponses";
 import { invalidInviteTokenError } from "@@/server/services/survey/invalidInviteTokenError";
-import { readSurveyResponseEntities } from "@@/server/services/survey/readSurveyResponseEntities";
+import { readSurveyResponseRecords } from "@@/server/services/survey/readSurveyResponseRecords";
+import { resolveSurveyResponseRead } from "@@/server/services/survey/resolveSurveyResponseRead";
 import { resolveSurveyResponseWrite } from "@@/server/services/survey/resolveSurveyResponseWrite";
 import { transformPublicReadSurvey } from "@@/server/services/survey/transformPublicReadSurvey";
 import { transformPublishedSurvey } from "@@/server/services/survey/transformPublishedSurvey";
@@ -59,7 +61,11 @@ const deleteFileInputSchema = z.object({
   surveyId: selectResourceSchema.shape.id,
 });
 
-const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({ partitionKey: true, rowKey: true });
+const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
+  inviteToken: true,
+  partitionKey: true,
+  rowKey: true,
+});
 
 const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   inviteToken: true,
@@ -139,16 +145,25 @@ export const surveyRouter = router({
     const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
     return generateUploadFileSasEntities(containerClient, files, getFilesDirectoryName(surveyId));
   }),
-  // The dataset contract carries no keys, so the blade reads them alongside its rows through the same
-  // Capped read the provider uses — a blade-local read concern, not a Dataset shape change
-  readSurveyResponseRowKeys: getOwnerProcedure(ResourceType.Survey, countSurveyResponsesInputSchema, "id").query<
-    string[]
-  >(async ({ ctx }) => (await readSurveyResponseEntities(ctx.resource.id)).map(({ rowKey }) => rowKey)),
+  // The dataset contract carries no keys, so the blade reads rows keyed through its own procedure —
+  // A blade-local read concern, not a Dataset shape change
+  readSurveyResponseRecords: getOwnerProcedure(
+    ResourceType.Survey,
+    countSurveyResponsesInputSchema,
+    "id",
+  ).query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.resource.id)),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
-    .query<null | SurveyResponseEntity>(async ({ input: { partitionKey, rowKey } }) => {
+    .query<null | SurveyResponseEntity>(async ({ ctx, input: { inviteToken, partitionKey, rowKey } }) => {
+      const resolvedInviteToken = await resolveSurveyResponseRead(ctx.db, partitionKey, inviteToken);
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       const surveyResponse = await getEntity(surveyResponseClient, SurveyResponseEntity, partitionKey, rowKey);
+      if (!surveyResponse) return null;
+      // A resume must present the identity the response was started with, so another recipient's row is
+      // Indistinguishable from one that does not exist. Only Invited mode resolves a token to compare —
+      // Anonymous carries no identity to contradict, so a survey switched to it still resumes its
+      // Invited-era responses, exactly as the write boundary treats them
+      if (resolvedInviteToken && resolvedInviteToken !== surveyResponse.inviteToken) return null;
       return surveyResponse;
     }),
   updateSurveyResponse: standardRateLimitedProcedure

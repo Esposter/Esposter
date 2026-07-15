@@ -16,6 +16,7 @@ import {
   ProgramInviteEntity,
 } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 
 // Idempotent by the audience key value: re-running after the audience grows issues only the missing
 // Tokens and never rotates an existing one, because a rotated token would dead-link an already-sent invite
@@ -27,12 +28,15 @@ export const generateProgramInvites = async (
   if (!content?.audience || !content.keyColumn) throw danglingProgramBindingError();
 
   // A deleted audience makes its provider throw UNAUTHORIZED — surfaced as the program's own
-  // Dangling-binding error rather than thrown through as if the owner had lost access to their program
+  // Dangling-binding error rather than thrown through as if the owner had lost access to their program.
+  // Every other failure is a real fault and propagates, so a transient storage or parse error is never
+  // Mistaken for a permanently broken binding
   const audience = content.audience;
   const { columns, rows } = await getResultAsync(() => DatasetProviderMap[audience.type](ctx, audience)).match(
     (dataset) => dataset,
-    () => {
-      throw danglingProgramBindingError();
+    (error) => {
+      if (error instanceof TRPCError && error.code === "UNAUTHORIZED") throw danglingProgramBindingError();
+      throw error;
     },
   );
   if (!columns.some(({ name }) => name === content.keyColumn)) throw danglingProgramBindingError();
@@ -56,7 +60,7 @@ export const generateProgramInvites = async (
     const token = crypto.randomUUID();
     await createEntity(
       programInviteClient,
-      new ProgramInviteEntity({ keyValue, partitionKey: programId, rowKey: token }),
+      new ProgramInviteEntity({ keyValue, partitionKey: programId, publicId: crypto.randomUUID(), rowKey: token }),
     );
     invitesByKeyValue.set(keyValue, { keyValue, token });
   }

@@ -310,7 +310,7 @@ describe("program", () => {
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
   });
 
-  test("serves the status dataset without the audience key column", async () => {
+  test("serves the status dataset without the audience key value or the invite token", async () => {
     expect.hasAssertions();
 
     const survey = await setupInvitedSurvey();
@@ -328,11 +328,12 @@ describe("program", () => {
     const dataset = await datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus });
 
     expect(dataset.columns.map(({ name }) => name)).toStrictEqual(["recipient", "invitedAt", "responded"]);
-    // A dashboard bound to this dataset is publishable, so the recipient list must never enter it
-    expect(dataset.rows.map(({ recipient, responded }) => ({ recipient, responded }))).toStrictEqual([
-      { recipient: invite.token, responded: false },
-    ]);
+    expect(dataset.rows.map(({ responded }) => responded)).toStrictEqual([false]);
+    // A dashboard bound to this dataset is publishable, so neither the recipient list nor the token
+    // May enter it — the token is the credential survey writes accept, so publishing it would let any
+    // Viewer respond as the invitee
     expect(JSON.stringify(dataset)).not.toContain(invite.keyValue);
+    expect(JSON.stringify(dataset)).not.toContain(invite.token);
   });
 
   test("fails read status dataset with wrong user", async () => {

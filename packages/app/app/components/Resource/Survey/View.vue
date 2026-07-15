@@ -6,7 +6,7 @@ import { parseSurveyModel } from "#shared/services/survey/parseSurveyModel";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { THEME_KEY } from "@/services/survey/constants";
 import { SurveyResponseMode } from "@esposter/db-schema";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
 
@@ -41,7 +41,7 @@ const saveSurveyResponse = async (survey: Model) => {
       {
         onSuccess: (newSurveyResponse) => {
           surveyResponse = newSurveyResponse;
-          localStorage.setItem(LocalStorageKey.SurveyResponseId(id), newSurveyResponse.rowKey);
+          localStorage.setItem(LocalStorageKey.SurveyResponseId(id, inviteToken), newSurveyResponse.rowKey);
         },
       },
     );
@@ -86,7 +86,7 @@ model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSav
   await getResultAsync(() => saveSurveyResponse(survey)).match(
     () => {
       // The resume id must not outlive the submission — a shared device could otherwise reopen the answers
-      localStorage.removeItem(LocalStorageKey.SurveyResponseId(id));
+      localStorage.removeItem(LocalStorageKey.SurveyResponseId(id, inviteToken));
       showSaveSuccess();
     },
     (error) => showSaveError(error.message),
@@ -97,10 +97,14 @@ useSeoMeta({ ogTitle: name, ogUrl: useRequestURL().href, title: name });
 const isLoading = ref(true);
 // Respondent progress is tracked per browser, so an interrupted survey resumes where it left off
 const onMount = async () => {
-  const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId(id));
+  const surveyResponseId = localStorage.getItem(LocalStorageKey.SurveyResponseId(id, inviteToken));
   if (!surveyResponseId) return;
 
-  surveyResponse = await $trpc.survey.readSurveyResponse.query({ partitionKey: id, rowKey: surveyResponseId });
+  surveyResponse = await $trpc.survey.readSurveyResponse.query({
+    inviteToken,
+    partitionKey: id,
+    rowKey: surveyResponseId,
+  });
   if (!surveyResponse) return;
 
   model.data = surveyResponse.model;
@@ -109,7 +113,8 @@ const onMount = async () => {
 };
 
 onMounted(async () => {
-  if (isAcceptingResponses && !isInviteRequired) await onMount();
+  // A failed resume falls back to a blank survey rather than stranding the respondent on the skeleton
+  if (isAcceptingResponses && !isInviteRequired) await getResultAsync(onMount).match(noop, console.error);
   isLoading.value = false;
 });
 </script>

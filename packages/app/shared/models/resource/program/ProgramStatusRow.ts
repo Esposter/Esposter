@@ -1,9 +1,11 @@
 // The owner-only Status blade shape — keyValue answers "who hasn't answered yet".
-// The ProgramStatus dataset deliberately drops keyValue for the opaque token, because a dataset
-// Flows into dashboards and a dashboard is publishable
+// The ProgramStatus dataset drops both keyValue and token for publicId, because a dataset flows into
+// Dashboards and a dashboard is publishable: keyValue is the recipient list and token is the
+// Credential that responds on their behalf, so neither can be the published identity
 export interface ProgramStatusRow {
   invitedAt: Date;
   isResponded: boolean;
   keyValue: string;
+  publicId: string;
   token: string;
 }

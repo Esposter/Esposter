@@ -8,7 +8,9 @@ export const LocalStorageKey = {
   ResourceListHiddenColumns: "resource-list-hidden-columns",
   ResourceRecentSearches: "resource-recent-searches",
   ResourceRecentViews: "resource-recent-views",
-  SurveyResponseId: (surveyId: string) => `survey-response-id:${surveyId}`,
+  // Scoped by invite token as well as survey: a shared browser must not resume a response that was
+  // Started under a different recipient's invite
+  SurveyResponseId: (surveyId: string, inviteToken: string) => `survey-response-id:${surveyId}:${inviteToken}`,
   VoiceCameraDeviceId: "user-settings-voice-camera-device-id",
   VoiceInputDeviceId: "user-settings-voice-input-device-id",
   VoiceOutputDeviceId: "user-settings-voice-output-device-id",

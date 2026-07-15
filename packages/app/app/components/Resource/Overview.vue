@@ -20,15 +20,15 @@ const getResourceMutations = useResourceMutations();
 const isPublishable = computed(() => "publishable" in ResourceDefinitionMap[resource.type].capabilities);
 const publicUrl = computed(() => (publication ? RoutePath.View(resource.type, resource.id) : undefined));
 // Best-effort telemetry, so a failed count leaves the row out rather than erroring the whole blade
+// The page is keyed by resource id, so this instance only ever describes one resource — the count is
+// Read once on mount rather than watching an id that cannot change underneath it
 const viewCount = ref<number>();
-watchImmediate(
-  () => resource.id,
-  async (id) => {
-    const { readResourceViewCount } = getResourceMutations(resource.type);
-    if (!readResourceViewCount) return;
-    viewCount.value = await getResultAsync(() => readResourceViewCount({ id })).unwrapOr(undefined);
-  },
-);
+onMounted(async () => {
+  const { readResourceViewCount } = getResourceMutations(resource.type);
+  if (!readResourceViewCount) return;
+
+  viewCount.value = await getResultAsync(() => readResourceViewCount({ id: resource.id })).unwrapOr(undefined);
+});
 const copyPublicLink = async () => {
   if (!publicUrl.value) return;
   await getResultAsync(() => window.navigator.clipboard.writeText(`${window.location.origin}${publicUrl.value}`)).match(

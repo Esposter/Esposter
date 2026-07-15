@@ -9,6 +9,10 @@ import { z } from "zod";
 export class ProgramInviteEntity extends AzureEntity {
   // The audience key column's value for this recipient — never leaves the server or the owner client
   keyValue = "";
+  // A non-secret stand-in for the recipient, safe to publish. The rowKey token is the bearer credential
+  // Survey writes accept, so it can never be the identity a publishable dataset carries — a published
+  // Funnel chart would otherwise hand every viewer the ability to respond as any invitee
+  publicId = "";
 
   constructor(init?: Partial<ProgramInviteEntity> & ToData<CompositeKeyEntity>) {
     super();
@@ -24,4 +28,5 @@ export const programInviteEntitySchema = z.object({
     }),
   ).shape,
   keyValue: z.string().min(1),
+  publicId: z.uuid(),
 }) satisfies z.ZodType<ToData<ProgramInviteEntity>>;

@@ -32,10 +32,11 @@ export const readProgramStatusRows = async (programId: Resource["id"]): Promise<
     const surveyResponses = await readSurveyResponseEntities(content.surveyId);
     for (const { inviteToken } of surveyResponses) if (inviteToken) respondedTokens.add(inviteToken);
   }
-  return invites.map(({ createdAt, keyValue, rowKey }) => ({
+  return invites.map(({ createdAt, keyValue, publicId, rowKey }) => ({
     invitedAt: createdAt,
     isResponded: respondedTokens.has(rowKey),
     keyValue,
+    publicId,
     token: rowKey,
   }));
 };

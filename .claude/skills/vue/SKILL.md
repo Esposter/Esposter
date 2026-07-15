@@ -282,7 +282,35 @@ const selectedStatus = ref(status.value);
 
 If the user opens → changes → closes without saving → reopens, they see their unsaved selection — usually acceptable (it indicates intent). Watch-to-reset forces a reset on every open, which can feel punishing.
 
-### 4. Bridging to external imperative APIs → `watch` is correct
+### 4. Async read of a source the instance can't outlive → `onMounted`, not `watch`
+
+Before watching an id to re-read on change, ask: **can it actually change under this instance?** When the router or the parent already keys the component by that id, a change unmounts and remounts it — the watch's re-run branch is dead code, and any staleness guard defends a transition that cannot happen.
+
+Resource pages are keyed by id (`definePageMeta({ key: (route) => \`resource-${route.params.id}\` })`), and `BladeOutlet` keys each blade by `\`${resource.id}-${activeBlade}\``inside`<Suspense>`. So inside a page, an Overview, or a blade, the resource id is **fixed for the instance's lifetime**:
+
+```typescript
+// The page is keyed by resource id, so this instance only ever describes one resource — read once
+const viewCount = ref<number>();
+onMounted(async () => {
+  viewCount.value = await getResultAsync(() => readResourceViewCount({ id: resource.id })).unwrapOr(undefined);
+});
+
+// Not: watchImmediate(() => resource.id, ...) — the id cannot change, so the watch is a once-only hook
+// Wearing a reactive costume, and it invites stale-response guards for a race that cannot occur
+```
+
+A blade sits inside `<Suspense>`, so it can go further and `await` the read at setup — the `<Suspense>` fallback renders the skeleton, replacing a local `isLoading` ref:
+
+```typescript
+const id = route.params.id as string; // keyed by id upstream, so a plain cast is safe
+await refreshResponses(); // Suspense shows StyledSkeleton until this resolves
+```
+
+Keep the read in a named function when a mutation must re-run it (a delete dialog's `@delete`), and call that same function at setup.
+
+**A watch is only right here when the source genuinely varies under a live instance** — a reactive reference bound to a form control, e.g. `useDataset(() => modelValue.value?.reference)` in a picker. Then the concurrency guard earns its place, because two reads really can overlap.
+
+### 5. Bridging to external imperative APIs → `watch` is correct
 
 Vue reactivity can't reach Phaser, Three.js, Tiptap, Desmos, or DOM-imperative APIs:
 
@@ -292,9 +320,9 @@ watch(isDark, (newIsDark) => {
 });
 ```
 
-### 5. Async side effects triggered by reactive state → `watch` is correct
+### 6. Async side effects triggered by reactive state → `watch` is correct
 
-Auto-save, API calls on throttled search, typing indicators:
+Auto-save, API calls on throttled search, typing indicators — the source genuinely changes under a live instance (see case 4 before reaching for this):
 
 ```typescript
 watch(throttledSearchQuery, async (newQuery) => {
